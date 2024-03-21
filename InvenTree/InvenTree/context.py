@@ -72,7 +72,7 @@ def user_roles(request):
 
     roles = {}
 
-    for role in RuleSet.RULESET_MODELS.keys():
+    for role in RuleSet.get_ruleset_models().keys():
         permissions = {}
 
         for perm in ['view', 'add', 'change', 'delete']:

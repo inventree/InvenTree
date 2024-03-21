@@ -225,7 +225,7 @@ function createPurchaseOrder(options={}) {
         };
     }
 
-    constructForm('{% url "api-po-list" %}', {
+    constructForm('{% url "api-po-list" %}?supplier_detail=true', {
         method: 'POST',
         fields: fields,
         groups: groups,
@@ -268,7 +268,6 @@ function duplicatePurchaseOrder(order_id, options={}) {
 
 /* Construct a set of fields for the PurchaseOrderLineItem form */
 function poLineItemFields(options={}) {
-
     var fields = {
         order: {
             filters: {
@@ -286,8 +285,6 @@ function poLineItemFields(options={}) {
                 // If the pack_quantity != 1, add a note to the field
                 var pack_quantity = 1;
                 var units = '';
-                var supplier_part_id = value;
-                var quantity = getFormFieldValue('quantity', {}, opts);
 
                 // Remove any existing note fields
                 $(opts.modal).find('#info-pack-size').remove();
@@ -313,37 +310,6 @@ function poLineItemFields(options={}) {
                     if (pack_quantity != 1) {
                         var txt = `<span class='fas fa-info-circle icon-blue'></span> {% trans "Pack Quantity" %}: ${formatDecimal(pack_quantity)} ${units}`;
                         $(opts.modal).find('#hint_id_quantity').after(`<div class='form-info-message' id='info-pack-size'>${txt}</div>`);
-                    }
-                }).then(function() {
-                    // Update pricing data (if available)
-                    if (options.update_pricing) {
-                        inventreeGet(
-                            '{% url "api-part-supplier-price-list" %}',
-                            {
-                                part: supplier_part_id,
-                                ordering: 'quantity',
-                            },
-                            {
-                                success: function(response) {
-                                    // Returned prices are in increasing order of quantity
-                                    if (response.length > 0) {
-                                        let index = 0;
-
-                                        for (var idx = 0; idx < response.length; idx++) {
-                                            if (response[idx].quantity > quantity) {
-                                                break;
-                                            }
-
-                                            index = idx;
-                                        }
-
-                                        // Update price and currency data in the form
-                                        updateFieldValue('purchase_price', response[index].price, {}, opts);
-                                        updateFieldValue('purchase_price_currency', response[index].price_currency, {}, opts);
-                                    }
-                                }
-                            }
-                        );
                     }
                 });
             },
@@ -377,9 +343,19 @@ function poLineItemFields(options={}) {
         reference: {},
         purchase_price: {
             icon: 'fa-dollar-sign',
+            onEdit: function(value, name, field, opts) {
+                updateFieldValue('auto_pricing', value === '', {}, opts);
+            }
         },
         purchase_price_currency: {
             icon: 'fa-coins',
+        },
+        auto_pricing: {
+            onEdit: function(value, name, field, opts) {
+                if (value) {
+                    updateFieldValue('purchase_price', '', {}, opts);
+                }
+            }
         },
         target_date: {
             icon: 'fa-calendar-alt',
@@ -411,6 +387,10 @@ function poLineItemFields(options={}) {
         fields.target_date.value = options.target_date;
     }
 
+    if (options.create) {
+        fields.merge_items = {};
+    }
+
     return fields;
 }
 
@@ -425,6 +405,7 @@ function createPurchaseOrderLineItem(order, options={}) {
         currency: options.currency,
         target_date: options.target_date,
         update_pricing: true,
+        create: true,
     });
 
     constructForm('{% url "api-po-line-list" %}', {
@@ -697,6 +678,15 @@ function orderParts(parts_list, options={}) {
             }
         );
 
+        const merge_item_input = constructField(
+            `merge_item_${pk}`,
+            {
+                type: 'boolean',
+                value: true,
+            },
+            { hideLabels: true },
+        );
+
         let buttons = '';
 
         if (parts.length > 1) {
@@ -723,6 +713,7 @@ function orderParts(parts_list, options={}) {
             <td id='td_supplier_part_${pk}'>${supplier_part_input}</td>
             <td id='td_order_${pk}'>${purchase_order_input}</td>
             <td id='td_quantity_${pk}'>${quantity_input}</td>
+            <td id='td_merge_item_${pk}'>${merge_item_input}</td>
             <td id='td_actions_${pk}'>${buttons}</td>
         </tr>`;
 
@@ -761,6 +752,7 @@ function orderParts(parts_list, options={}) {
                 <th style='min-width: 300px;'>{% trans "Supplier Part" %}</th>
                 <th style='min-width: 300px;'>{% trans "Purchase Order" %}</th>
                 <th style='min-width: 50px;'>{% trans "Quantity" %}</th>
+                <th style='min-width: 50px;'>{% trans "Merge" %}</th>
                 <th><!-- Actions --></th>
             </tr>
         </thead>
@@ -838,6 +830,10 @@ function orderParts(parts_list, options={}) {
                                 success: function(response) {
                                     pack_quantity = response.pack_quantity_native || 1;
                                     units = response.part_detail.units || '';
+                                    if(response.supplier) {
+                                        order_filters.supplier = response.supplier;
+                                        options.supplier = response.supplier;
+                                    }
                                 }
                             }
                         ).then(function() {
@@ -926,6 +922,7 @@ function orderParts(parts_list, options={}) {
                     quantity: getFormFieldValue(`quantity_${pk}`, {type: 'decimal'}, opts),
                     part: getFormFieldValue(`part_${pk}`, {}, opts),
                     order: getFormFieldValue(`order_${pk}`, {}, opts),
+                    merge_items: getFormFieldValue(`merge_item_${pk}`, {type: 'boolean'}, opts),
                 };
 
                 // Duplicate the form options, to prevent 'field_suffix' override
@@ -984,7 +981,7 @@ function orderParts(parts_list, options={}) {
                 var pk = $(this).attr('pk');
 
                 // Launch dialog to create new purchase order
-                createPurchaseOrder({
+                const poOptions = {
                     onSuccess: function(response) {
                         setRelatedFieldData(
                             `order_${pk}`,
@@ -992,7 +989,14 @@ function orderParts(parts_list, options={}) {
                             opts
                         );
                     }
-                });
+                }
+
+                if(options.supplier) {
+                    poOptions.supplier = options.supplier;
+                    poOptions.hide_supplier = true;
+                }
+
+                createPurchaseOrder(poOptions);
             });
         }
     });

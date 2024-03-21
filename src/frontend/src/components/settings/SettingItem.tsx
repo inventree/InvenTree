@@ -26,10 +26,12 @@ import { ApiFormFieldType } from '../forms/fields/ApiFormField';
  */
 function SettingValue({
   settingsState,
-  setting
+  setting,
+  onChange
 }: {
   settingsState: SettingsStateProps;
   setting: Setting;
+  onChange?: () => void;
 }) {
   // Callback function when a boolean value is changed
   function onToggle(value: boolean) {
@@ -45,9 +47,9 @@ function SettingValue({
           color: 'green'
         });
         settingsState.fetchSettings();
+        onChange?.();
       })
       .catch((error) => {
-        console.log('Error editing setting', error);
         showNotification({
           title: t`Error editing setting`,
           message: error.message,
@@ -98,6 +100,7 @@ function SettingValue({
           color: 'green'
         });
         settingsState.fetchSettings();
+        onChange?.();
       }
     });
   }
@@ -154,11 +157,13 @@ function SettingValue({
 export function SettingItem({
   settingsState,
   setting,
-  shaded
+  shaded,
+  onChange
 }: {
   settingsState: SettingsStateProps;
   setting: Setting;
   shaded: boolean;
+  onChange?: () => void;
 }) {
   const theme = useMantineTheme();
 
@@ -174,10 +179,17 @@ export function SettingItem({
     <Paper style={style}>
       <Group position="apart" p="3">
         <Stack spacing="2" p="4px">
-          <Text>{setting.name}</Text>
+          <Text>
+            {setting.name}
+            {setting.required ? ' *' : ''}
+          </Text>
           <Text size="xs">{setting.description}</Text>
         </Stack>
-        <SettingValue settingsState={settingsState} setting={setting} />
+        <SettingValue
+          settingsState={settingsState}
+          setting={setting}
+          onChange={onChange}
+        />
       </Group>
     </Paper>
   );

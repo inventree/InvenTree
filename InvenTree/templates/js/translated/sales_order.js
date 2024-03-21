@@ -2174,7 +2174,8 @@ function loadSalesOrderLineItemTable(table, options={}) {
                 part: pk,
                 sales_order: options.order,
                 quantity: quantity,
-                success: reloadTable
+                success: reloadTable,
+                ...options
             });
         });
 

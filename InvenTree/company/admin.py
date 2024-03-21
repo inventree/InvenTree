@@ -33,6 +33,7 @@ class CompanyResource(InvenTreeResource):
         clean_model_instances = True
 
 
+@admin.register(Company)
 class CompanyAdmin(ImportExportModelAdmin):
     """Admin class for the Company model."""
 
@@ -69,6 +70,7 @@ class SupplierPriceBreakInline(admin.TabularInline):
     model = SupplierPriceBreak
 
 
+@admin.register(SupplierPart)
 class SupplierPartAdmin(ImportExportModelAdmin):
     """Admin class for the SupplierPart model."""
 
@@ -105,6 +107,7 @@ class ManufacturerPartResource(InvenTreeResource):
     manufacturer_name = Field(attribute='manufacturer__name', readonly=True)
 
 
+@admin.register(ManufacturerPart)
 class ManufacturerPartAdmin(ImportExportModelAdmin):
     """Admin class for ManufacturerPart model."""
 
@@ -117,6 +120,7 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('part', 'manufacturer')
 
 
+@admin.register(ManufacturerPartAttachment)
 class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
     """Admin class for ManufacturerPartAttachment model."""
 
@@ -137,6 +141,7 @@ class ManufacturerPartParameterResource(InvenTreeResource):
         clean_model_instance = True
 
 
+@admin.register(ManufacturerPartParameter)
 class ManufacturerPartParameterAdmin(ImportExportModelAdmin):
     """Admin class for ManufacturerPartParameter model."""
 
@@ -173,6 +178,7 @@ class SupplierPriceBreakResource(InvenTreeResource):
     MPN = Field(attribute='part__MPN', readonly=True)
 
 
+@admin.register(SupplierPriceBreak)
 class SupplierPriceBreakAdmin(ImportExportModelAdmin):
     """Admin class for the SupplierPriceBreak model."""
 
@@ -197,6 +203,7 @@ class AddressResource(InvenTreeResource):
     company = Field(attribute='company', widget=widgets.ForeignKeyWidget(Company))
 
 
+@admin.register(Address)
 class AddressAdmin(ImportExportModelAdmin):
     """Admin class for the Address model."""
 
@@ -221,6 +228,7 @@ class ContactResource(InvenTreeResource):
     company = Field(attribute='company', widget=widgets.ForeignKeyWidget(Company))
 
 
+@admin.register(Contact)
 class ContactAdmin(ImportExportModelAdmin):
     """Admin class for the Contact model."""
 
@@ -229,15 +237,3 @@ class ContactAdmin(ImportExportModelAdmin):
     list_display = ('company', 'name', 'role', 'email', 'phone')
 
     search_fields = ['company', 'name', 'email']
-
-
-admin.site.register(Company, CompanyAdmin)
-admin.site.register(SupplierPart, SupplierPartAdmin)
-admin.site.register(SupplierPriceBreak, SupplierPriceBreakAdmin)
-
-admin.site.register(ManufacturerPart, ManufacturerPartAdmin)
-admin.site.register(ManufacturerPartAttachment, ManufacturerPartAttachmentAdmin)
-admin.site.register(ManufacturerPartParameter, ManufacturerPartParameterAdmin)
-
-admin.site.register(Address, AddressAdmin)
-admin.site.register(Contact, ContactAdmin)

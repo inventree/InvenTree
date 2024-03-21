@@ -68,7 +68,7 @@ a parameter shall be transferred . The result will look like that:
 First we need to write the plugin code, similar as in the example above.
 
 ```python
-from django.conf.urls import url
+from django.urls import re_path
 from django.http import HttpResponse
 
 from order.views import PurchaseOrderDetail
@@ -99,7 +99,7 @@ class MouserCartPanel(PanelMixin, InvenTreePlugin, UrlsMixin):
 
     def setup_urls(self):
         return [
-            url(r'transfercart/(?P<pk>\d+)/', self.TransferCart, name='get-cart')
+            re_path(r'transfercart/(?P<pk>\d+)/', self.TransferCart, name='get-cart')
         ]
 
 #----------------------------------------------------------------------------
@@ -294,14 +294,14 @@ does the rest of the work.
 The python code in the plugin also needs minor changes:
 
 ```python
-from django.conf.urls import url
+from django.urls import re_path
 import json
 
 ...
 
     def setup_urls(self):
         return [
-                url(r'example(?:\.(?P<format>json))?$', self.do_something, name='transfer'),
+                re_path(r'example(?:\.(?P<format>json))?$', self.do_something, name='transfer'),
         ]
 
 # Define the function that will be called.

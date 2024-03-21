@@ -42,11 +42,13 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = Company
-        fields = ['pk', 'url', 'name', 'description', 'image']
+        fields = ['pk', 'url', 'name', 'description', 'image', 'thumbnail']
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    image = serializers.CharField(source='get_thumbnail_url', read_only=True)
+    image = InvenTreeImageSerializerField(read_only=True)
+
+    thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
 
 class AddressSerializer(InvenTreeModelSerializer):
@@ -309,6 +311,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
             'manufacturer_part',
             'manufacturer_part_detail',
             'MPN',
+            'name',
             'note',
             'pk',
             'barcode_hash',
@@ -394,6 +397,8 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
     manufacturer_part_detail = ManufacturerPartSerializer(
         source='manufacturer_part', part_detail=False, read_only=True
     )
+
+    name = serializers.CharField(read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 

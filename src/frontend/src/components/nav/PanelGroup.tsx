@@ -34,6 +34,7 @@ export type PanelType = {
   content?: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
+  showHeadline?: boolean;
 };
 
 export type PanelProps = {
@@ -122,8 +123,11 @@ function BasePanelGroup({
                   <Tabs.Tab
                     p="xs"
                     value={panel.name}
+                    //                    icon={(<InvenTreeIcon icon={panel.name}/>)}  // Enable when implementing Icon manager everywhere
                     icon={panel.icon}
                     hidden={panel.hidden}
+                    disabled={panel.disabled}
+                    style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}
                   >
                     {expanded && panel.label}
                   </Tabs.Tab>
@@ -158,8 +162,12 @@ function BasePanelGroup({
                 }}
               >
                 <Stack spacing="md">
-                  <StylishText size="xl">{panel.label}</StylishText>
-                  <Divider />
+                  {panel.showHeadline !== false && (
+                    <>
+                      <StylishText size="xl">{panel.label}</StylishText>
+                      <Divider />
+                    </>
+                  )}
                   {panel.content ?? <PlaceholderPanel />}
                 </Stack>
               </Tabs.Panel>
@@ -175,12 +183,11 @@ function IndexPanelComponent({ pageKey, selectedPanel, panels }: PanelProps) {
     const panelName =
       selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
 
-    if (
-      panels.findIndex(
-        (p) => p.name === panelName && !p.disabled && !p.hidden
-      ) === -1
-    ) {
-      return panels[0]?.name;
+    const panel = panels.findIndex(
+      (p) => p.name === panelName && !p.disabled && !p.hidden
+    );
+    if (panel === -1) {
+      return panels.find((p) => !p.disabled && !p.hidden)?.name || '';
     }
 
     return panelName;

@@ -181,6 +181,7 @@
     name: 'Green chair'
     description: 'A template chair part which is green'
     variant_of: 10000
+    is_template: true
     category: 7
     trackable: true
     creation_date: '2030-01-01'

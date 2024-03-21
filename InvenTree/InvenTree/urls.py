@@ -22,6 +22,7 @@ import build.api
 import common.api
 import company.api
 import label.api
+import machine.api
 import order.api
 import part.api
 import plugin.api
@@ -35,6 +36,7 @@ from order.urls import order_urls
 from part.urls import part_urls
 from plugin.urls import get_plugin_urls
 from stock.urls import stock_urls
+from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
 
 from .api import APISearchView, InfoView, NotFoundView, VersionTextView, VersionView
@@ -82,8 +84,10 @@ apipatterns = [
     path('order/', include(order.api.order_api_urls)),
     path('label/', include(label.api.label_api_urls)),
     path('report/', include(report.api.report_api_urls)),
+    path('machine/', include(machine.api.machine_api_urls)),
     path('user/', include(users.api.user_urls)),
     path('admin/', include(common.api.admin_api_urls)),
+    path('web/', include(web_api_urls)),
     # Plugin endpoints
     path('', include(plugin.api.plugin_api_urls)),
     # Common endpoints endpoint
@@ -147,6 +151,12 @@ apipatterns = [
                 'social/<int:pk>/disconnect/',
                 SocialAccountDisconnectView.as_view(),
                 name='social_account_disconnect',
+            ),
+            path('logout/', users.api.Logout.as_view(), name='api-logout'),
+            path(
+                'login-redirect/',
+                users.api.LoginRedirect.as_view(),
+                name='api-login-redirect',
             ),
             path('', include('dj_rest_auth.urls')),
         ]),
@@ -352,14 +362,18 @@ translated_javascript_urls = [
 ]
 
 backendpatterns = [
-    # "Dynamic" javascript files which are rendered using InvenTree templating.
-    path('js/dynamic/', include(dynamic_javascript_urls)),
-    path('js/i18n/', include(translated_javascript_urls)),
     path('auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('auth/', auth_request),
     path('api/', include(apipatterns)),
     path('api-doc/', SpectacularRedocView.as_view(url_name='schema'), name='api-doc'),
 ]
+
+if settings.ENABLE_CLASSIC_FRONTEND:
+    # "Dynamic" javascript files which are rendered using InvenTree templating.
+    backendpatterns += [
+        re_path(r'^js/dynamic/', include(dynamic_javascript_urls)),
+        re_path(r'^js/i18n/', include(translated_javascript_urls)),
+    ]
 
 classic_frontendpatterns = [
     # Apps
@@ -425,6 +439,15 @@ if settings.ENABLE_CLASSIC_FRONTEND:
     frontendpatterns += classic_frontendpatterns
 if settings.ENABLE_PLATFORM_FRONTEND:
     frontendpatterns += platform_urls
+    if not settings.ENABLE_CLASSIC_FRONTEND:
+        # Add a redirect for login views
+        frontendpatterns += [
+            path(
+                'accounts/login/',
+                RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
+                name='account_login',
+            )
+        ]
 
 urlpatterns += frontendpatterns
 
@@ -450,5 +473,14 @@ urlpatterns.append(
 
 # Send any unknown URLs to the parts page
 urlpatterns += [
-    re_path(r'^.*$', RedirectView.as_view(url='/index/', permanent=False), name='index')
+    re_path(
+        r'^.*$',
+        RedirectView.as_view(
+            url='/index/'
+            if settings.ENABLE_CLASSIC_FRONTEND
+            else settings.FRONTEND_URL_BASE,
+            permanent=False,
+        ),
+        name='index',
+    )
 ]

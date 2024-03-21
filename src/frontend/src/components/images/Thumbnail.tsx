@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Anchor } from '@mantine/core';
+import { Anchor, Skeleton } from '@mantine/core';
 import { Group } from '@mantine/core';
 import { Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
@@ -13,17 +13,19 @@ export function Thumbnail({
   src,
   alt = t`Thumbnail`,
   size = 20,
-  text
+  text,
+  align
 }: {
   src?: string | undefined;
   alt?: string;
   size?: number;
   text?: ReactNode;
+  align?: string;
 }) {
   const backup_image = '/static/img/blank_image.png';
 
   return (
-    <Group align="left" spacing="xs" noWrap={true}>
+    <Group align={align ?? 'left'} spacing="xs" noWrap={true}>
       <ApiImage
         src={src || backup_image}
         alt={alt}
@@ -73,4 +75,17 @@ export function ThumbnailHoverCard({
   }
 
   return <div>{card}</div>;
+}
+
+export function PartHoverCard({ part }: { part: any }) {
+  return part ? (
+    <ThumbnailHoverCard
+      src={part.thumbnail || part.image}
+      text={part.full_name}
+      alt={part.description}
+      link=""
+    />
+  ) : (
+    <Skeleton />
+  );
 }

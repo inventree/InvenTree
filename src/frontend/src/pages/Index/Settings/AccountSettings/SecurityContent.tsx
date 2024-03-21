@@ -19,7 +19,7 @@ import { useEffect, useState } from 'react';
 
 import { api, queryClient } from '../../../../App';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
-import { ApiPaths } from '../../../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { apiUrl } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
 
@@ -30,7 +30,7 @@ export function SecurityContent() {
   const { isLoading: isLoadingProvider, data: dataProvider } = useQuery({
     queryKey: ['sso-providers'],
     queryFn: () =>
-      api.get(apiUrl(ApiPaths.sso_providers)).then((res) => res.data)
+      api.get(apiUrl(ApiEndpoints.sso_providers)).then((res) => res.data)
   });
 
   // evaluate if security options are enabled
@@ -95,10 +95,11 @@ function EmailContent({}: {}) {
   const [user] = useUserState((state) => [state.user]);
   const { isLoading, data, refetch } = useQuery({
     queryKey: ['emails'],
-    queryFn: () => api.get(apiUrl(ApiPaths.user_emails)).then((res) => res.data)
+    queryFn: () =>
+      api.get(apiUrl(ApiEndpoints.user_emails)).then((res) => res.data)
   });
 
-  function runServerAction(url: ApiPaths) {
+  function runServerAction(url: ApiEndpoints) {
     api
       .post(apiUrl(url, undefined, { id: value }), {})
       .then(() => {
@@ -109,7 +110,7 @@ function EmailContent({}: {}) {
 
   function addEmail() {
     api
-      .post(apiUrl(ApiPaths.user_emails), {
+      .post(apiUrl(ApiEndpoints.user_emails), {
         email: newEmailValue,
         user: user?.pk
       })
@@ -175,13 +176,19 @@ function EmailContent({}: {}) {
       </Grid.Col>
       <Grid.Col span={6}>
         <Group>
-          <Button onClick={() => runServerAction(ApiPaths.user_email_primary)}>
+          <Button
+            onClick={() => runServerAction(ApiEndpoints.user_email_primary)}
+          >
             <Trans>Make Primary</Trans>
           </Button>
-          <Button onClick={() => runServerAction(ApiPaths.user_email_verify)}>
+          <Button
+            onClick={() => runServerAction(ApiEndpoints.user_email_verify)}
+          >
             <Trans>Re-send Verification</Trans>
           </Button>
-          <Button onClick={() => runServerAction(ApiPaths.user_email_remove)}>
+          <Button
+            onClick={() => runServerAction(ApiEndpoints.user_email_remove)}
+          >
             <Trans>Remove</Trans>
           </Button>
         </Group>
@@ -200,7 +207,8 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   const [currentProviders, setcurrentProviders] = useState<[]>();
   const { isLoading, data } = useQuery({
     queryKey: ['sso-list'],
-    queryFn: () => api.get(apiUrl(ApiPaths.user_sso)).then((res) => res.data)
+    queryFn: () =>
+      api.get(apiUrl(ApiEndpoints.user_sso)).then((res) => res.data)
   });
 
   useEffect(() => {
@@ -222,7 +230,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
 
   function removeProvider() {
     api
-      .post(apiUrl(ApiPaths.user_sso_remove, undefined, { id: value }))
+      .post(apiUrl(ApiEndpoints.user_sso_remove, undefined, { id: value }))
       .then(() => {
         queryClient.removeQueries({
           queryKey: ['sso-list']

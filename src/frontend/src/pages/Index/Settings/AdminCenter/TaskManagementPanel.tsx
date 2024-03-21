@@ -6,17 +6,15 @@ import { StylishText } from '../../../../components/items/StylishText';
 import { Loadable } from '../../../../functions/loading';
 
 const PendingTasksTable = Loadable(
-  lazy(() => import('../../../../components/tables/settings/PendingTasksTable'))
+  lazy(() => import('../../../../tables/settings/PendingTasksTable'))
 );
 
 const ScheduledTasksTable = Loadable(
-  lazy(
-    () => import('../../../../components/tables/settings/ScheduledTasksTable')
-  )
+  lazy(() => import('../../../../tables/settings/ScheduledTasksTable'))
 );
 
 const FailedTasksTable = Loadable(
-  lazy(() => import('../../../../components/tables/settings/FailedTasksTable'))
+  lazy(() => import('../../../../tables/settings/FailedTasksTable'))
 );
 
 export default function TaskManagementPanel() {

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 import { api } from '../App';
-import { ApiPaths } from '../enums/ApiEndpoints';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { StatisticItem } from './items/DashboardItem';
 import { ErrorItem } from './items/ErrorItem';
@@ -17,7 +17,7 @@ export function DashboardItemProxy({
 }: {
   id: string;
   text: string;
-  url: ApiPaths;
+  url: ApiEndpoints;
   params: any;
   autoupdate: boolean;
 }) {

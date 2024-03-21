@@ -7,7 +7,6 @@ import { RenderInlineModel } from './Instance';
  */
 export function RenderAddress({ instance }: { instance: any }): ReactNode {
   let text = [
-    instance.title,
     instance.country,
     instance.postal_code,
     instance.postal_city,
@@ -18,12 +17,7 @@ export function RenderAddress({ instance }: { instance: any }): ReactNode {
     .filter(Boolean)
     .join(', ');
 
-  return (
-    <RenderInlineModel
-      primary={instance.description}
-      secondary={instance.address}
-    />
-  );
+  return <RenderInlineModel primary={instance.title} secondary={text} />;
 }
 
 /**

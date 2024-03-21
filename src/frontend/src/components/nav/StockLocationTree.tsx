@@ -1,12 +1,16 @@
 import { t } from '@lingui/macro';
 import { Drawer, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { ReactTree } from '@naisutech/react-tree';
-import { IconSitemap } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  IconSitemap
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 
@@ -26,13 +30,14 @@ export function StockLocationTree({
     queryKey: ['stock_location_tree', opened],
     queryFn: async () =>
       api
-        .get(apiUrl(ApiPaths.stock_location_tree), {})
+        .get(apiUrl(ApiEndpoints.stock_location_tree), {})
         .then((response) =>
           response.data.map((location: any) => {
             return {
               id: location.pk,
               label: location.name,
-              parentId: location.parent
+              parentId: location.parent,
+              children: location.sublocations
             };
           })
         )
@@ -57,6 +62,14 @@ export function StockLocationTree({
         <Text>{node.label}</Text>
       </Group>
     );
+  }
+
+  function renderIcon({ node, open }: { node: any; open?: boolean }) {
+    if (node.children == 0) {
+      return undefined;
+    }
+
+    return open ? <IconChevronDown /> : <IconChevronRight />;
   }
 
   return (
@@ -87,6 +100,7 @@ export function StockLocationTree({
           nodes={treeQuery.data ?? []}
           showEmptyItems={false}
           RenderNode={renderNode}
+          RenderIcon={renderIcon}
           defaultSelectedNodes={selectedLocation ? [selectedLocation] : []}
         />
       </Stack>

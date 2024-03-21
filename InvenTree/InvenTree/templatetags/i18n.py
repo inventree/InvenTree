@@ -52,7 +52,18 @@ class CustomTranslateNode(TranslateNode):
         # Escape any quotes contained in the string, if the request is for a javascript file
         request = context.get('request', None)
 
-        if self.escape or (request and request.path.endswith('.js')):
+        template = getattr(context, 'template_name', None)
+        request = context.get('request', None)
+
+        escape = self.escape
+
+        if template and str(template).endswith('.js'):
+            escape = True
+
+        if request and str(request.path).endswith('.js'):
+            escape = True
+
+        if escape:
             result = result.replace("'", r'\'')
             result = result.replace('"', r'\"')
 

@@ -68,6 +68,8 @@ function getModelRenderer(model) {
         return renderPartCategory;
     case 'partparametertemplate':
         return renderPartParameterTemplate;
+    case 'parttesttemplate':
+        return renderPartTestTemplate;
     case 'purchaseorder':
         return renderPurchaseOrder;
     case 'salesorder':
@@ -477,6 +479,18 @@ function renderPartParameterTemplate(data, parameters={}) {
     return renderModel(
         {
             text: `${data.name}${units}`,
+        },
+        parameters
+    );
+}
+
+
+function renderPartTestTemplate(data, parameters={}) {
+
+    return renderModel(
+        {
+            text: data.test_name,
+            textSecondary: data.description,
         },
         parameters
     );

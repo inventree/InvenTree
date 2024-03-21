@@ -57,7 +57,6 @@ class AddFieldOrSkip(migrations.AddField):
 
         try:
             super().database_forwards(app_label, schema_editor, from_state, to_state)
-            print(f'Added field {self.name} to model {self.model_name}')
         except Exception as exc:
             pass
 

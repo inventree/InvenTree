@@ -39,15 +39,6 @@ local_settings.py
 # Files used for testing
 inventree-demo-dataset/
 inventree-data/
-dummy_image.*
-_tmp.csv
-InvenTree/label.pdf
-InvenTree/label.png
-InvenTree/part_image_123abc.png
-label.pdf
-label.png
-InvenTree/my_special*
-_tests*.txt
 
 # Local static and media file storage (only when running in development mode)
 inventree_media
@@ -70,6 +61,7 @@ secret_key.txt
 .idea/
 *.code-workspace
 .bash_history
+.DS_Store
 
 # https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
 .vscode/*
@@ -107,5 +99,12 @@ InvenTree/plugins/
 *.mo
 messages.ts
 
+# Generated API schema file
+api.yaml
+
 # web frontend (static files)
 InvenTree/web/static
+
+# Generated docs files
+docs/docs/api/*.yml
+docs/docs/api/schema/*.yml

@@ -28,6 +28,14 @@ export const ManufacturerDetail = Loadable(
   lazy(() => import('./pages/company/ManufacturerDetail'))
 );
 
+export const SupplierPartDetail = Loadable(
+  lazy(() => import('./pages/company/SupplierPartDetail'))
+);
+
+export const ManufacturerPartDetail = Loadable(
+  lazy(() => import('./pages/company/ManufacturerPartDetail'))
+);
+
 export const CategoryDetail = Loadable(
   lazy(() => import('./pages/part/CategoryDetail'))
 );
@@ -137,7 +145,12 @@ export const routes = (
         <Route path="index/*" element={<PurchasingIndex />} />
         <Route path="purchase-order/:id/*" element={<PurchaseOrderDetail />} />
         <Route path="supplier/:id/*" element={<SupplierDetail />} />
+        <Route path="supplier-part/:id/*" element={<SupplierPartDetail />} />
         <Route path="manufacturer/:id/*" element={<ManufacturerDetail />} />
+        <Route
+          path="manufacturer-part/:id/*"
+          element={<ManufacturerPartDetail />}
+        />
       </Route>
       <Route path="company/:id/*" element={<CompanyDetail />} />
       <Route path="sales/">

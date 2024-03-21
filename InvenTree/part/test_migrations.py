@@ -229,3 +229,47 @@ class TestPartParameterTemplateMigration(MigratorTestCase):
 
         self.assertEqual(template.choices, '')
         self.assertEqual(template.checkbox, False)
+
+
+class TestPartTestParameterMigration(MigratorTestCase):
+    """Unit tests for the PartTestTemplate model migrations."""
+
+    migrate_from = ('part', '0119_auto_20231120_0457')
+    migrate_to = ('part', '0121_auto_20240207_0344')
+
+    test_keys = {
+        'atest': 'A test',
+        'someresult': 'Some result',
+        'anotherresult': 'Another result',
+    }
+
+    def prepare(self):
+        """Setup initial database state."""
+        Part = self.old_state.apps.get_model('part', 'part')
+        PartTestTemplate = self.old_state.apps.get_model('part', 'parttesttemplate')
+
+        # Create a part
+        p = Part.objects.create(
+            name='Test Part',
+            description='A test part',
+            level=0,
+            lft=0,
+            rght=0,
+            tree_id=0,
+        )
+
+        # Create some test templates
+        for v in self.test_keys.values():
+            PartTestTemplate.objects.create(
+                test_name=v, part=p, description='A test template'
+            )
+
+        self.assertEqual(PartTestTemplate.objects.count(), 3)
+
+    def test_key_field(self):
+        """Self that the key field is created and correctly filled."""
+        PartTestTemplate = self.new_state.apps.get_model('part', 'parttesttemplate')
+
+        for key, value in self.test_keys.items():
+            template = PartTestTemplate.objects.get(test_name=value)
+            self.assertEqual(template.key, key)

@@ -29,6 +29,7 @@
 </div>
 
 {% plugins_enabled as plug %}
+{% plugins_install_disabled as plug_disabled %}
 
 <div class='panel-heading'>
     <div class='d-flex flex-wrap'>
@@ -38,7 +39,7 @@
             {% admin_url user "plugin.pluginconfig" None as url %}
             {% include "admin_button.html" with url=url %}
             {% if plug %}
-            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}">
+            <button class="btn btn-success" id="install-plugin" title="{% trans 'Install Plugin' %}"{% if plug_disabled %}disabled{% endif %}>
                 <span class='fas fa-plus-circle'></span> {% trans "Install Plugin" %}
             </button>
             <button class='btn btn-success' id='reload-plugins' title='{% trans "Reload Plugins" %}'>

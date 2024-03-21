@@ -1,5 +1,6 @@
 """URL lookup for plugin app."""
 
+from django.conf import settings
 from django.urls import include, re_path
 
 PLUGIN_BASE = 'plugin'  # Constant for links
@@ -13,8 +14,11 @@ def get_plugin_urls():
     urls = []
 
     # Only allow custom routing if the setting is enabled
-    if InvenTreeSetting.get_setting(
-        'ENABLE_PLUGINS_URL', False, create=False, cache=False
+    if (
+        InvenTreeSetting.get_setting(
+            'ENABLE_PLUGINS_URL', False, create=False, cache=False
+        )
+        or settings.PLUGIN_TESTING_SETUP
     ):
         for plugin in registry.plugins.values():
             if plugin.mixin_enabled('urls'):

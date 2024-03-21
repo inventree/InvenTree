@@ -58,6 +58,7 @@ class InvenTreeConfig(AppConfig):
                 # Let the background worker check for migrations
                 InvenTree.tasks.offload_task(InvenTree.tasks.check_for_migrations)
 
+        self.update_site_url()
         self.collect_notification_methods()
         self.collect_state_transition_methods()
 
@@ -222,6 +223,46 @@ class InvenTreeConfig(AppConfig):
                 logger.warning('Could not update exchange rates - database not ready')
             except Exception as e:
                 logger.exception('Error updating exchange rates: %s (%s)', e, type(e))
+
+    def update_site_url(self):
+        """Update the site URL setting.
+
+        - If a fixed SITE_URL is specified (via configuration), it should override the INVENTREE_BASE_URL setting
+        - If multi-site support is enabled, update the site URL for the current site
+        """
+        import common.models
+
+        if not InvenTree.ready.canAppAccessDatabase():
+            return
+
+        if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
+            return
+
+        if settings.SITE_URL:
+            try:
+                if (
+                    common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
+                    != settings.SITE_URL
+                ):
+                    common.models.InvenTreeSetting.set_setting(
+                        'INVENTREE_BASE_URL', settings.SITE_URL
+                    )
+                    logger.info('Updated INVENTREE_SITE_URL to %s', settings.SITE_URL)
+            except Exception:
+                pass
+
+            # If multi-site support is enabled, update the site URL for the current site
+            try:
+                from django.contrib.sites.models import Site
+
+                site = Site.objects.get_current()
+                site.domain = settings.SITE_URL
+                site.save()
+
+                logger.info('Updated current site URL to %s', settings.SITE_URL)
+
+            except Exception:
+                pass
 
     def add_user_on_startup(self):
         """Add a user on startup."""

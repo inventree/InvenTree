@@ -2,7 +2,7 @@ import { Badge, Center, MantineSize } from '@mantine/core';
 
 import { colorMap } from '../../defaults/backendMappings';
 import { ModelType } from '../../enums/ModelType';
-import { useServerApiState } from '../../states/ApiState';
+import { useGlobalStatusState } from '../../states/StatusState';
 
 interface StatusCodeInterface {
   key: string;
@@ -22,7 +22,7 @@ interface renderStatusLabelOptionsInterface {
  * Generic function to render a status label
  */
 function renderStatusLabel(
-  key: string,
+  key: string | number,
   codes: StatusCodeListInterface,
   options: renderStatusLabelOptionsInterface = {}
 ) {
@@ -68,11 +68,11 @@ export const StatusRenderer = ({
   type,
   options
 }: {
-  status: string;
+  status: string | number;
   type: ModelType | string;
   options?: renderStatusLabelOptionsInterface;
 }) => {
-  const statusCodeList = useServerApiState.getState().status;
+  const statusCodeList = useGlobalStatusState.getState().status;
 
   if (status === undefined) {
     console.log('StatusRenderer: status is undefined');

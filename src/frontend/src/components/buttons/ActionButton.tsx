@@ -1,4 +1,5 @@
 import { ActionIcon, Group, Tooltip } from '@mantine/core';
+import { FloatingPosition } from '@mantine/core/lib/Floating';
 import { ReactNode } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
@@ -10,23 +11,26 @@ export type ActionButtonProps = {
   color?: string;
   tooltip?: string;
   variant?: string;
-  size?: number;
+  size?: number | string;
   disabled?: boolean;
   onClick?: any;
   hidden?: boolean;
+  tooltipAlignment?: FloatingPosition;
 };
 
 /**
  * Construct a simple action button with consistent styling
  */
 export function ActionButton(props: ActionButtonProps) {
+  const hidden = props.hidden ?? false;
+
   return (
-    !props.hidden && (
+    !hidden && (
       <Tooltip
         key={`tooltip-${props.key}`}
         disabled={!props.tooltip && !props.text}
         label={props.tooltip ?? props.text}
-        position="left"
+        position={props.tooltipAlignment ?? 'left'}
       >
         <ActionIcon
           key={`action-icon-${props.key}`}
@@ -35,6 +39,7 @@ export function ActionButton(props: ActionButtonProps) {
           color={props.color}
           size={props.size}
           onClick={props.onClick ?? notYetImplemented}
+          variant={props.variant ?? 'light'}
         >
           <Group spacing="xs" noWrap={true}>
             {props.icon}

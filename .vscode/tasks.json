@@ -45,7 +45,7 @@
     {
       "label": "setup-test",
       "type": "shell",
-      "command": "inv setup-test --path dev/inventree-demo-dataset",
+      "command": "inv setup-test -i --path dev/inventree-demo-dataset",
       "problemMatcher": [],
     },
     {

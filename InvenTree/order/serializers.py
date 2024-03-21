@@ -5,7 +5,16 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
-from django.db.models import BooleanField, Case, ExpressionWrapper, F, Q, Value, When
+from django.db.models import (
+    BooleanField,
+    Case,
+    ExpressionWrapper,
+    F,
+    Prefetch,
+    Q,
+    Value,
+    When,
+)
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -14,6 +23,8 @@ from sql_util.utils import SubqueryCount
 
 import order.models
 import part.filters
+import part.filters as part_filters
+import part.models as part_models
 import stock.models
 import stock.serializers
 from common.serializers import ProjectCodeSerializer
@@ -96,6 +107,8 @@ class AbstractOrderSerializer(serializers.Serializer):
     overdue = serializers.BooleanField(required=False, read_only=True)
 
     barcode_hash = serializers.CharField(read_only=True)
+
+    creation_date = serializers.DateField(required=False, allow_null=True)
 
     def validate_reference(self, reference):
         """Custom validation for the reference field."""
@@ -338,11 +351,13 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             'received',
             'purchase_price',
             'purchase_price_currency',
+            'auto_pricing',
             'destination',
             'destination_detail',
             'target_date',
             'total_price',
             'link',
+            'merge_items',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -360,6 +375,10 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         if order_detail is not True:
             self.fields.pop('order_detail')
 
+    def skip_create_fields(self):
+        """Return a list of fields to skip when creating a new object."""
+        return ['auto_pricing', 'merge_items'] + super().skip_create_fields()
+
     @staticmethod
     def annotate_queryset(queryset):
         """Add some extra annotations to this queryset.
@@ -367,6 +386,17 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         - "total_price" = purchase_price * quantity
         - "overdue" status (boolean field)
         """
+        queryset = queryset.prefetch_related(
+            Prefetch(
+                'part__part',
+                queryset=part_models.Part.objects.annotate(
+                    category_default_location=part_filters.annotate_default_location(
+                        'category__'
+                    )
+                ).prefetch_related(None),
+            )
+        )
+
         queryset = queryset.annotate(
             total_price=ExpressionWrapper(
                 F('purchase_price') * F('quantity'), output_field=models.DecimalField()
@@ -417,6 +447,14 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
 
     purchase_price = InvenTreeMoneySerializer(allow_null=True)
 
+    auto_pricing = serializers.BooleanField(
+        label=_('Auto Pricing'),
+        help_text=_(
+            'Automatically calculate purchase price based on supplier part data'
+        ),
+        default=True,
+    )
+
     destination_detail = stock.serializers.LocationBriefSerializer(
         source='get_destination', read_only=True
     )
@@ -426,6 +464,14 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
     )
 
     order_detail = PurchaseOrderSerializer(source='order', read_only=True, many=False)
+
+    merge_items = serializers.BooleanField(
+        label=_('Merge Items'),
+        help_text=_(
+            'Merge items with the same part, destination and target date into one line item'
+        ),
+        default=True,
+    )
 
     def validate(self, data):
         """Custom validation for the serializer.

@@ -822,6 +822,58 @@ class BuildAllocationTest(BuildAPITest):
         allocation.refresh_from_db()
         self.assertEqual(allocation.quantity, 5000)
 
+    def test_fractional_allocation(self):
+        """Test allocation of a fractional quantity of stock items.
+
+        Ref: https://github.com/inventree/InvenTree/issues/6508
+        """
+
+        si = StockItem.objects.get(pk=2)
+
+        # Find line item
+        line = self.build.build_lines.all().filter(bom_item__sub_part=si.part).first()
+
+        # Test a fractional quantity when the *available* quantity is greater than 1
+        si.quantity = 100
+        si.save()
+
+        response = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "build_line": line.pk,
+                        "stock_item": si.pk,
+                        "quantity": 0.1616,
+                    }
+                ]
+            },
+            expected_code=201
+        )
+
+        # Test a fractional quantity when the *available* quantity is less than 1
+        si = StockItem.objects.create(
+            part=si.part,
+            quantity=0.3159,
+            tree_id=0,
+            level=0,
+            lft=0, rght=0
+        )
+
+        response = self.post(
+            self.url,
+            {
+                "items": [
+                    {
+                        "build_line": line.pk,
+                        "stock_item": si.pk,
+                        "quantity": 0.1616,
+                    }
+                ]
+            },
+            expected_code=201,
+        )
+
 
 class BuildOverallocationTest(BuildAPITest):
     """Unit tests for over allocation of stock items against a build order.

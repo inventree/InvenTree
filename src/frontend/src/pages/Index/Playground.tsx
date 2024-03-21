@@ -8,49 +8,64 @@ import { OptionsApiForm } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import {
-  createPart,
-  editPart,
-  partCategoryFields,
-  partFields
-} from '../../forms/PartForms';
+import { partCategoryFields, usePartFields } from '../../forms/PartForms';
 import { useCreateStockItem } from '../../forms/StockForms';
 import {
-  OpenApiFormProps,
-  openCreateApiForm,
-  openEditApiForm
-} from '../../functions/forms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 
 // Generate some example forms using the modal API forms interface
 const fields = partCategoryFields({});
+
 function ApiFormsPlayground() {
-  const editCategoryForm: OpenApiFormProps = {
-    url: ApiPaths.category_list,
+  const editCategory = useEditApiFormModal({
+    url: ApiEndpoints.category_list,
     pk: 2,
     title: 'Edit Category',
     fields: fields
-  };
+  });
 
-  const createAttachmentForm: OpenApiFormProps = {
-    url: ApiPaths.part_attachment_list,
+  const createPartFields = usePartFields({ create: true });
+  const editPartFields = usePartFields({ create: false });
+
+  const newPart = useCreateApiFormModal({
+    url: ApiEndpoints.part_list,
+    title: 'Create Part',
+    fields: createPartFields,
+    initialData: {
+      description: 'A part created via the API'
+    }
+  });
+
+  const editPart = useEditApiFormModal({
+    url: ApiEndpoints.part_list,
+    pk: 1,
+    title: 'Edit Part',
+    fields: editPartFields
+  });
+
+  const newAttachment = useCreateApiFormModal({
+    url: ApiEndpoints.part_attachment_list,
     title: 'Create Attachment',
-    successMessage: 'Attachment uploaded',
     fields: {
-      part: {
-        value: 1
-      },
+      part: {},
       attachment: {},
       comment: {}
-    }
-  };
+    },
+    initialData: {
+      part: 1
+    },
+    successMessage: 'Attachment uploaded'
+  });
+
   const [active, setActive] = useState(true);
   const [name, setName] = useState('Hello');
 
   const partFieldsState: any = useMemo<any>(() => {
-    const fields = partFields({});
+    const fields = editPartFields;
     fields.name = {
       ...fields.name,
       value: name,
@@ -70,9 +85,17 @@ function ApiFormsPlayground() {
 
   const { modal: createPartModal, open: openCreatePart } =
     useCreateApiFormModal({
-      url: ApiPaths.part_list,
+      url: ApiEndpoints.part_list,
       title: 'Create part',
       fields: partFieldsState,
+      initialData: {
+        is_template: true,
+        virtual: true,
+        minimum_stock: 10,
+        description: 'An example part description',
+        keywords: 'apple, banana, carrottt',
+        'initial_supplier.sku': 'SKU-123'
+      },
       preFormContent: (
         <Button onClick={() => setName('Hello world')}>
           Set name="Hello world"
@@ -86,19 +109,20 @@ function ApiFormsPlayground() {
   return (
     <Stack>
       <Group>
-        <Button onClick={() => createPart()}>Create New Part</Button>
-        <Button onClick={() => editPart({ part_id: 1 })}>Edit Part</Button>
+        <Button onClick={() => newPart.open()}>Create New Part</Button>
+        {newPart.modal}
+
+        <Button onClick={() => editPart.open()}>Edit Part</Button>
+        {editPart.modal}
 
         <Button onClick={() => openCreateStockItem()}>Create Stock Item</Button>
         {createStockItemModal}
 
-        <Button onClick={() => openEditApiForm(editCategoryForm)}>
-          Edit Category
-        </Button>
+        <Button onClick={() => editCategory.open()}>Edit Category</Button>
+        {editCategory.modal}
 
-        <Button onClick={() => openCreateApiForm(createAttachmentForm)}>
-          Create Attachment
-        </Button>
+        <Button onClick={() => newAttachment.open()}>Create Attachment</Button>
+        {newAttachment.modal}
 
         <Button onClick={() => openCreatePart()}>Create Part new Modal</Button>
         {createPartModal}
@@ -106,7 +130,7 @@ function ApiFormsPlayground() {
       <Card sx={{ padding: '30px' }}>
         <OptionsApiForm
           props={{
-            url: ApiPaths.part_list,
+            url: ApiEndpoints.part_list,
             method: 'POST',
             fields: {
               active: {

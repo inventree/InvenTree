@@ -3,8 +3,8 @@ import { Anchor, Divider, Group, Stack, Text, Title } from '@mantine/core';
 import { Link } from 'react-router-dom';
 
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
-import { GroupTable } from '../../../../components/tables/settings/GroupTable';
-import { UserTable } from '../../../../components/tables/settings/UserTable';
+import { GroupTable } from '../../../../tables/settings/GroupTable';
+import { UserTable } from '../../../../tables/settings/UserTable';
 
 export default function UserManagementPanel() {
   return (

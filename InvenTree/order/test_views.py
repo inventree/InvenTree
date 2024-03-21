@@ -1,5 +1,6 @@
 """Unit tests for Order views (see views.py)."""
 
+from django.test import tag
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeTestCase
@@ -34,6 +35,7 @@ class OrderViewTestCase(InvenTreeTestCase):
     ]
 
 
+@tag('cui')
 class PurchaseOrderListTest(OrderViewTestCase):
     """Unit tests for the PurchaseOrder index page."""
 
@@ -44,6 +46,7 @@ class PurchaseOrderListTest(OrderViewTestCase):
         self.assertEqual(response.status_code, 200)
 
 
+@tag('cui')
 class PurchaseOrderTests(OrderViewTestCase):
     """Tests for PurchaseOrder views."""
 
@@ -57,13 +60,15 @@ class PurchaseOrderTests(OrderViewTestCase):
     def test_po_export(self):
         """Export PurchaseOrder."""
         response = self.client.get(
-            reverse('po-export', args=(1,)), HTTP_X_REQUESTED_WITH='XMLHttpRequest'
+            reverse('po-export', args=(1,)),
+            headers={'x-requested-with': 'XMLHttpRequest'},
         )
 
         # Response should be streaming-content (file download)
         self.assertIn('streaming_content', dir(response))
 
 
+@tag('cui')
 class SalesOrderViews(OrderViewTestCase):
     """Unit tests for the SalesOrder pages."""
 
@@ -78,6 +83,7 @@ class SalesOrderViews(OrderViewTestCase):
         self.assertEqual(response.status_code, 200)
 
 
+@tag('cui')
 class ReturnOrderVIews(OrderViewTestCase):
     """Unit tests for the ReturnOrder pages."""
 

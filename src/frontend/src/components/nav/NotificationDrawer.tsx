@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
 import { api } from '../../App';
-import { ApiPaths } from '../../enums/ApiEndpoints';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 
@@ -36,7 +36,7 @@ export function NotificationDrawer({
     queryKey: ['notifications', opened],
     queryFn: async () =>
       api
-        .get(apiUrl(ApiPaths.notifications_list), {
+        .get(apiUrl(ApiEndpoints.notifications_list), {
           params: {
             read: false,
             limit: 10
@@ -115,7 +115,10 @@ export function NotificationDrawer({
               color="gray"
               variant="hover"
               onClick={() => {
-                let url = apiUrl(ApiPaths.notifications_list, notification.pk);
+                let url = apiUrl(
+                  ApiEndpoints.notifications_list,
+                  notification.pk
+                );
                 api
                   .patch(url, {
                     read: true

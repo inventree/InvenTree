@@ -3,6 +3,7 @@
 import base64
 import logging
 import os
+from decimal import Decimal
 
 from django import template
 from django.conf import settings
@@ -86,7 +87,7 @@ def asset(filename):
         filename = '' + filename
 
     # If in debug mode, return URL to the image, not a local file
-    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
 
     # Test if the file actually exists
     full_path = settings.MEDIA_ROOT.joinpath('report', 'assets', filename).resolve()
@@ -131,7 +132,7 @@ def uploaded_image(
         filename = '' + filename
 
     # If in debug mode, return URL to the image, not a local file
-    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
 
     # Check if the file exists
     if not filename:
@@ -299,7 +300,7 @@ def logo_image(**kwargs):
     - Otherwise, return a path to the default InvenTree logo
     """
     # If in debug mode, return URL to the image, not a local file
-    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE')
+    debug_mode = InvenTreeSetting.get_setting('REPORT_DEBUG_MODE', cache=False)
 
     return InvenTree.helpers.getLogoImage(as_file=not debug_mode, **kwargs)
 
@@ -376,3 +377,85 @@ def render_html_text(text: str, **kwargs):
     output += ''.join([f'</{tag}>' for tag in tags])
 
     return mark_safe(output)
+
+
+@register.simple_tag
+def format_number(number, **kwargs):
+    """Render a number with optional formatting options.
+
+    kwargs:
+        decimal_places: Number of decimal places to render
+        integer: Boolean, whether to render the number as an integer
+        leading: Number of leading zeros
+    """
+    try:
+        number = Decimal(str(number))
+    except Exception:
+        # If the number cannot be converted to a Decimal, just return the original value
+        return str(number)
+
+    if kwargs.get('integer', False):
+        # Convert to integer
+        number = Decimal(int(number))
+
+    # Normalize the number (remove trailing zeroes)
+    number = number.normalize()
+
+    decimals = kwargs.get('decimal_places', None)
+
+    if decimals is not None:
+        try:
+            decimals = int(decimals)
+            number = round(number, decimals)
+        except ValueError:
+            pass
+
+    # Re-encode, and normalize again
+    value = Decimal(number).normalize()
+    value = format(value, 'f')
+    value = str(value)
+
+    leading = kwargs.get('leading', None)
+
+    if leading is not None:
+        try:
+            leading = int(leading)
+            value = '0' * leading + value
+        except ValueError:
+            pass
+
+    return value
+
+
+@register.simple_tag
+def format_datetime(datetime, timezone=None, format=None):
+    """Format a datetime object for display.
+
+    Arguments:
+        datetime: The datetime object to format
+        timezone: The timezone to use for the date (defaults to the server timezone)
+        format: The format string to use (defaults to ISO formatting)
+    """
+    datetime = InvenTree.helpers.to_local_time(datetime, timezone)
+
+    if format:
+        return datetime.strftime(format)
+    else:
+        return datetime.isoformat()
+
+
+@register.simple_tag
+def format_date(date, timezone=None, format=None):
+    """Format a date object for display.
+
+    Arguments:
+        date: The date to format
+        timezone: The timezone to use for the date (defaults to the server timezone)
+        format: The format string to use (defaults to ISO formatting)
+    """
+    date = InvenTree.helpers.to_local_time(date, timezone).date()
+
+    if format:
+        return date.strftime(format)
+    else:
+        return date.isoformat()
