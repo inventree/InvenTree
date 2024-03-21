@@ -139,12 +139,6 @@ export function OptionsApiForm({
   const formProps: ApiFormProps = useMemo(() => {
     const _props = { ...props };
 
-    // This forcefully overrides initial data
-    // Currently, most modals do not get pre-loaded correctly
-    if (!data) {
-      _props.fields = undefined;
-    }
-
     if (!_props.fields) return _props;
 
     for (const [k, v] of Object.entries(_props.fields)) {
@@ -227,6 +221,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
       try {
         // Await API call
         let response = await api.get(url);
+
         // Define function to process API response
         const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
           const res: NestedDict = {};
