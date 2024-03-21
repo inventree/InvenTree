@@ -10,7 +10,7 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 16
+  node_version: 18
   # The OS version must be set per job
   server_start_sleep: 60
 
