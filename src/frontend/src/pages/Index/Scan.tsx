@@ -468,8 +468,8 @@ function HistoryTable({
 
 // region input stuff
 enum InputMethod {
-  Manual = 'manually',
-  ImageBarcode = 'imageBarcode'
+  Manual = 'manual',
+  ImageBarcode = 'camera'
 }
 
 interface inputProps {
