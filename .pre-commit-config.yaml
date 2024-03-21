@@ -6,7 +6,6 @@ exclude: |
         InvenTree/locale/.*|
         src/frontend/src/locales/.*|
         .*/migrations/.* |
-        src/frontend/.yarn/.* |
         src/frontend/yarn.lock |
         yarn.lock
     )$
