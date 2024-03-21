@@ -31,6 +31,8 @@ cffi==1.16.0
     #   weasyprint
 charset-normalizer==3.3.2
     # via requests
+click==8.1.7
+    # via itertable
 coreapi==2.3.3
 coreschema==0.0.4
     # via coreapi
@@ -40,6 +42,7 @@ cryptography==42.0.4
     #   pyjwt
 cssselect2==0.7.0
     # via weasyprint
+data-wizard==2.0.0
 defusedxml==0.7.1
     # via
     #   odfpy
@@ -122,6 +125,7 @@ django-weasyprint==2.2.2
 django-xforwardedfor-middleware==2.0
 djangorestframework==3.14.0
     # via
+    #   data-wizard
     #   dj-rest-auth
     #   djangorestframework-simplejwt
     #   drf-spectacular
@@ -140,6 +144,10 @@ googleapis-common-protos==1.62.0
 grpcio==1.62.0
     # via opentelemetry-exporter-otlp-proto-grpc
 gunicorn==21.2.0
+html-json-forms==1.1.1
+    # via
+    #   data-wizard
+    #   natural-keys
 html5lib==1.1
     # via weasyprint
 icalendar==5.0.11
@@ -153,6 +161,8 @@ importlib-metadata==6.11.0
     #   opentelemetry-api
 inflection==0.5.1
     # via drf-spectacular
+itertable==2.2.0
+    # via data-wizard
 itypes==1.2.0
     # via coreapi
 jinja2==3.1.3
@@ -167,12 +177,16 @@ markuppy==1.14
     # via tablib
 markupsafe==2.1.5
     # via jinja2
+natural-keys==2.1.0
+    # via data-wizard
 oauthlib==3.2.2
     # via requests-oauthlib
 odfpy==1.4.1
     # via tablib
 openpyxl==3.1.2
-    # via tablib
+    # via
+    #   itertable
+    #   tablib
 opentelemetry-api==1.22.0
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
@@ -256,6 +270,7 @@ pypng==0.20220715.0
 python-barcode==0.15.1
 python-dateutil==2.8.2
     # via
+    #   data-wizard
     #   django-recurrence
     #   icalendar
 python-dotenv==1.0.1
@@ -286,6 +301,7 @@ requests==2.31.0
     # via
     #   coreapi
     #   django-allauth
+    #   itertable
     #   opentelemetry-exporter-otlp-proto-http
     #   requests-oauthlib
 requests-oauthlib==1.3.1
