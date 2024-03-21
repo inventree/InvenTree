@@ -41,6 +41,7 @@ from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
 import build.validators
+import common.status_codes
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -3074,3 +3075,38 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     from InvenTree.conversion import reload_unit_registry
 
     reload_unit_registry()
+
+
+class DataImportSession(models.Model):
+    """Database model representing a data import session.
+
+    An initial file is uploaded, and used to populate the database.
+
+    Fields:
+        data_file: FileField for the data file to import
+        user: ForeignKey to the User who initiated the import
+        progress: IntegerField for the progress of the import (number of rows imported)
+        data_columns: JSONField for the data columns in the import file (mapped to database columns)
+    """
+
+    data_file = models.FileField(
+        upload_to='import',
+        verbose_name=_('Data File'),
+        help_text=_('Data file to import'),
+    )
+
+    status = models.PositiveIntegerField(
+        default=common.status_codes.DataImportStatusCode.INITIAL.value,
+        choices=common.status_codes.DataImportStatusCode.items(),
+        help_text=_('Import status'),
+    )
+
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('User')
+    )
+
+    progress = models.PositiveIntegerField(default=0, verbose_name=_('Progress'))
+
+    data_columns = models.JSONField(
+        blank=True, null=True, verbose_name=_('Data Columns')
+    )
