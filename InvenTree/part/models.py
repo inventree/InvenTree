@@ -3428,6 +3428,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         self.key = helpers.generateTestKey(self.test_name)
 
+        if len(self.key) == 0:
+            raise ValidationError({
+                'test_name': _(
+                    'Invalid template name - must include at least one alphanumeric character'
+                )
+            })
+
         self.validate_unique()
         super().clean()
 
@@ -3445,7 +3452,9 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         if tests.exists():
             raise ValidationError({
-                'test_name': _('Test with this name already exists for this part')
+                'test_name': _(
+                    'Test template with the same key already exists for part'
+                )
             })
 
         super().validate_unique(exclude)
@@ -3823,6 +3832,28 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
         if self.default_value:
             return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
         return f'{self.category.name} | {self.parameter_template.name}'
+
+    def clean(self):
+        """Validate this PartCategoryParameterTemplate instance.
+
+        Checks the provided 'default_value', and (if not blank), ensure it is valid.
+        """
+        super().clean()
+
+        self.default_value = (
+            '' if self.default_value is None else str(self.default_value.strip())
+        )
+
+        if self.default_value and InvenTreeSetting.get_setting(
+            'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+        ):
+            if self.parameter_template.units:
+                try:
+                    InvenTree.conversion.convert_physical_value(
+                        self.default_value, self.parameter_template.units
+                    )
+                except ValidationError as e:
+                    raise ValidationError({'default_value': e.message})
 
     category = models.ForeignKey(
         PartCategory,

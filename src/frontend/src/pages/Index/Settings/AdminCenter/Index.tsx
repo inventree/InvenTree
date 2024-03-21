@@ -9,6 +9,8 @@ import {
   IconListDetails,
   IconPlugConnected,
   IconScale,
+  IconSitemap,
+  IconTemplate,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
@@ -51,8 +53,16 @@ const PartParameterTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
 );
 
+const PartCategoryTemplateTable = Loadable(
+  lazy(() => import('../../../../tables/part/PartCategoryTemplateTable'))
+);
+
 const CurrencyTable = Loadable(
   lazy(() => import('../../../../tables/settings/CurrencyTable'))
+);
+
+const TemplateManagementPanel = Loadable(
+  lazy(() => import('./TemplateManagementPanel'))
 );
 
 export default function AdminCenter() {
@@ -101,10 +111,22 @@ export default function AdminCenter() {
         content: <CustomUnitsTable />
       },
       {
-        name: 'parameters',
+        name: 'part-parameters',
         label: t`Part Parameters`,
         icon: <IconList />,
         content: <PartParameterTemplateTable />
+      },
+      {
+        name: 'category-parameters',
+        label: t`Category Parameters`,
+        icon: <IconSitemap />,
+        content: <PartCategoryTemplateTable />
+      },
+      {
+        name: 'templates',
+        label: t`Templates`,
+        icon: <IconTemplate />,
+        content: <TemplateManagementPanel />
       },
       {
         name: 'plugin',

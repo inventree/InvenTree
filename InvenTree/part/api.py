@@ -1767,6 +1767,7 @@ class BomFilter(rest_filters.FilterSet):
     part_active = rest_filters.BooleanFilter(
         label='Master part is active', field_name='part__active'
     )
+
     part_trackable = rest_filters.BooleanFilter(
         label='Master part is trackable', field_name='part__trackable'
     )
@@ -1775,6 +1776,7 @@ class BomFilter(rest_filters.FilterSet):
     sub_part_trackable = rest_filters.BooleanFilter(
         label='Sub part is trackable', field_name='sub_part__trackable'
     )
+
     sub_part_assembly = rest_filters.BooleanFilter(
         label='Sub part is an assembly', field_name='sub_part__assembly'
     )
@@ -1813,6 +1815,22 @@ class BomFilter(rest_filters.FilterSet):
             return queryset.exclude(q_a | q_b)
 
         return queryset.filter(q_a | q_b).distinct()
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter the queryset based on the specified part."""
+        return queryset.filter(part.get_bom_item_filter())
+
+    uses = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_uses', label=_('Uses')
+    )
+
+    def filter_uses(self, queryset, name, part):
+        """Filter the queryset based on the specified part."""
+        return queryset.filter(part.get_used_in_bom_item_filter())
 
 
 class BomMixin:
@@ -1888,62 +1906,6 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
-
-    def filter_queryset(self, queryset):
-        """Custom query filtering for the BomItem list API."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by part?
-        part = params.get('part', None)
-
-        if part is not None:
-            """
-            If we are filtering by "part", there are two cases to consider:
-
-            a) Bom items which are defined for *this* part
-            b) Inherited parts which are defined for a *parent* part
-
-            So we need to construct two queries!
-            """
-
-            # First, check that the part is actually valid!
-            try:
-                part = Part.objects.get(pk=part)
-
-                queryset = queryset.filter(part.get_bom_item_filter())
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        """
-        Filter by 'uses'?
-
-        Here we pass a part ID and return BOM items for any assemblies which "use" (or "require") that part.
-
-        There are multiple ways that an assembly can "use" a sub-part:
-
-        A) Directly specifying the sub_part in a BomItem field
-        B) Specifying a "template" part with inherited=True
-        C) Allowing variant parts to be substituted
-        D) Allowing direct substitute parts to be specified
-
-        - BOM items which are "inherited" by parts which are variants of the master BomItem
-        """
-        uses = params.get('uses', None)
-
-        if uses is not None:
-            try:
-                # Extract the part we are interested in
-                uses_part = Part.objects.get(pk=uses)
-
-                queryset = queryset.filter(uses_part.get_used_in_bom_item_filter())
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 

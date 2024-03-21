@@ -1172,10 +1172,16 @@ function loadBomTable(table, options={}) {
 
             var available_stock = availableQuantity(row);
 
+            var external_stock = row.external_stock ?? 0;
+
             var text = renderLink(`${available_stock}`, url);
 
             if (row.sub_part_detail && row.sub_part_detail.units) {
                 text += ` <small>${row.sub_part_detail.units}</small>`;
+            }
+
+            if (external_stock > 0) {
+                text += makeIconBadge('fa-sitemap', `{% trans "External stock" %}: ${external_stock}`);
             }
 
             if (available_stock <= 0) {

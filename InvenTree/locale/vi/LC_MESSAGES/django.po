@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-28 04:05+0000\n"
+"POT-Creation-Date: 2024-03-05 00:41+0000\n"
 "PO-Revision-Date: 2024-02-28 07:23\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -66,9 +66,9 @@ msgstr "Nhập ngày"
 #: report/templates/report/inventree_build_order_base.html:172
 #: stock/admin.py:226 stock/models.py:2335 stock/models.py:2451
 #: stock/serializers.py:479 stock/serializers.py:632 stock/serializers.py:728
-#: stock/serializers.py:778 stock/serializers.py:1081 stock/serializers.py:1170
-#: stock/serializers.py:1335 stock/templates/stock/stock_sidebar.html:25
-#: templates/js/translated/barcode.js:143 templates/js/translated/bom.js:1259
+#: stock/serializers.py:778 stock/serializers.py:1087 stock/serializers.py:1176
+#: stock/serializers.py:1341 stock/templates/stock/stock_sidebar.html:25
+#: templates/js/translated/barcode.js:143 templates/js/translated/bom.js:1265
 #: templates/js/translated/company.js:1674 templates/js/translated/order.js:347
 #: templates/js/translated/part.js:1080
 #: templates/js/translated/purchase_order.js:2201
@@ -523,7 +523,7 @@ msgstr "Tên"
 #: templates/js/translated/order.js:298 templates/js/translated/part.js:1238
 #: templates/js/translated/part.js:1483 templates/js/translated/part.js:1621
 #: templates/js/translated/part.js:1958 templates/js/translated/part.js:2355
-#: templates/js/translated/part.js:2785 templates/js/translated/part.js:2887
+#: templates/js/translated/part.js:2785 templates/js/translated/part.js:2896
 #: templates/js/translated/plugin.js:80
 #: templates/js/translated/purchase_order.js:1707
 #: templates/js/translated/purchase_order.js:1850
@@ -678,7 +678,7 @@ msgstr "URL của tệp hình ảnh bên ngoài"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Chức năng tải hình ảnh từ URL bên ngoài không được bật"
 
-#: InvenTree/status.py:66 part/serializers.py:1120
+#: InvenTree/status.py:66 part/serializers.py:1138
 msgid "Background worker check failed"
 msgstr "Nhân công chạy ngầm kiểm tra thất bại"
 
@@ -960,7 +960,7 @@ msgid "Tracked"
 msgstr "Đã theo dõi"
 
 #: build/api.py:285 part/admin.py:144 templates/js/translated/build.js:1741
-#: templates/js/translated/build.js:2626
+#: templates/js/translated/build.js:2630
 #: templates/js/translated/sales_order.js:1929
 #: templates/js/translated/table_filters.js:571
 msgid "Allocated"
@@ -1044,11 +1044,11 @@ msgstr "Đơn đặt bản dựng với bản dựng này đã được phân b�
 #: build/models.py:199 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:1044
 #: order/models.py:1389 order/models.py:1532 order/models.py:1533
-#: part/api.py:1528 part/models.py:389 part/models.py:3003 part/models.py:3147
-#: part/models.py:3291 part/models.py:3314 part/models.py:3335
-#: part/models.py:3357 part/models.py:3458 part/models.py:3754
-#: part/models.py:3885 part/models.py:3978 part/models.py:4339
-#: part/serializers.py:1066 part/serializers.py:1631
+#: part/api.py:1528 part/api.py:1820 part/models.py:389 part/models.py:3003
+#: part/models.py:3147 part/models.py:3291 part/models.py:3314
+#: part/models.py:3335 part/models.py:3357 part/models.py:3458
+#: part/models.py:3754 part/models.py:3885 part/models.py:3978
+#: part/models.py:4339 part/serializers.py:1084 part/serializers.py:1659
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1147,7 +1147,7 @@ msgid "Build status code"
 msgstr "Mã trạng thái bản dựng"
 
 #: build/models.py:264 build/serializers.py:280 order/serializers.py:549
-#: stock/models.py:826 stock/serializers.py:1300
+#: stock/models.py:826 stock/serializers.py:1306
 #: templates/js/translated/purchase_order.js:1129
 msgid "Batch Code"
 msgstr "Mã lô hàng"
@@ -1242,48 +1242,48 @@ msgstr "Mã dự án"
 msgid "Project code for this build order"
 msgstr "Mã dự án cho đơn đặt bản dựng này"
 
-#: build/models.py:559
+#: build/models.py:575
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "Đơn đặt bản dựng {build} đã được hoàn thành"
 
-#: build/models.py:565
+#: build/models.py:581
 msgid "A build order has been completed"
 msgstr "Một đơn đặt bản dựng đã được hoàn thành"
 
-#: build/models.py:783 build/models.py:858
+#: build/models.py:799 build/models.py:874
 msgid "No build output specified"
 msgstr "Không có đầu ra bản dựng đã được chỉ ra"
 
-#: build/models.py:786
+#: build/models.py:802
 msgid "Build output is already completed"
 msgstr "Đầu ra bản dựng đã được hoàn thiện"
 
-#: build/models.py:789
+#: build/models.py:805
 msgid "Build output does not match Build Order"
 msgstr "Đầu ra bản dựng không phù hợp với đơn đặt bản dựng"
 
-#: build/models.py:862 build/serializers.py:223 build/serializers.py:262
+#: build/models.py:878 build/serializers.py:223 build/serializers.py:262
 #: build/serializers.py:831 order/models.py:526 order/serializers.py:401
-#: order/serializers.py:544 part/serializers.py:1423 part/serializers.py:1789
+#: order/serializers.py:544 part/serializers.py:1442 part/serializers.py:1817
 #: stock/models.py:665 stock/models.py:1477 stock/serializers.py:450
 msgid "Quantity must be greater than zero"
 msgstr "Số lượng phải lớn hơn 0"
 
-#: build/models.py:867 build/serializers.py:228
+#: build/models.py:883 build/serializers.py:228
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Số lượng không thể lớn hơn số lượng đầu ra"
 
-#: build/models.py:924 build/serializers.py:533
+#: build/models.py:940 build/serializers.py:533
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr ""
 
-#: build/models.py:1286
+#: build/models.py:1302
 msgid "Build object"
 msgstr "Dựng đối tượng"
 
-#: build/models.py:1300 build/models.py:1558 build/serializers.py:210
+#: build/models.py:1316 build/models.py:1574 build/serializers.py:210
 #: build/serializers.py:247 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2432
 #: order/models.py:1247 order/models.py:1902 order/serializers.py:1306
@@ -1310,7 +1310,7 @@ msgstr "Dựng đối tượng"
 #: templates/js/translated/company.js:1808
 #: templates/js/translated/model_renderers.js:230
 #: templates/js/translated/order.js:304 templates/js/translated/part.js:961
-#: templates/js/translated/part.js:1811 templates/js/translated/part.js:3332
+#: templates/js/translated/part.js:1811 templates/js/translated/part.js:3341
 #: templates/js/translated/pricing.js:381
 #: templates/js/translated/pricing.js:474
 #: templates/js/translated/pricing.js:522
@@ -1330,38 +1330,38 @@ msgstr "Dựng đối tượng"
 msgid "Quantity"
 msgstr "Số lượng"
 
-#: build/models.py:1301
+#: build/models.py:1317
 msgid "Required quantity for build order"
 msgstr "Yêu cầu số lượng để dựng đơn đặt"
 
-#: build/models.py:1381
+#: build/models.py:1397
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Xây dựng mục phải xác định đầu ra, bởi vì sản phẩm chủ được đánh dấu là có thể theo dõi"
 
-#: build/models.py:1390
+#: build/models.py:1406
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Số lượng được phân bổ ({q}) không thể vượt quá số lượng có trong kho ({a})"
 
-#: build/models.py:1400 order/models.py:1853
+#: build/models.py:1416 order/models.py:1853
 msgid "Stock item is over-allocated"
 msgstr "Kho hàng đã bị phân bổ quá đà"
 
-#: build/models.py:1406 order/models.py:1856
+#: build/models.py:1422 order/models.py:1856
 msgid "Allocation quantity must be greater than zero"
 msgstr "Số lượng phân bổ phải lớn hơn 0"
 
-#: build/models.py:1412
+#: build/models.py:1428
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Số lượng phải là 1 cho kho sê ri"
 
-#: build/models.py:1473
+#: build/models.py:1489
 msgid "Selected stock item does not match BOM line"
 msgstr "Hàng trong kho đã chọn không phù hợp với đường BOM"
 
-#: build/models.py:1545 build/serializers.py:811 order/serializers.py:1150
-#: order/serializers.py:1171 stock/serializers.py:544 stock/serializers.py:1019
-#: stock/serializers.py:1131 stock/templates/stock/item_base.html:10
+#: build/models.py:1561 build/serializers.py:811 order/serializers.py:1150
+#: order/serializers.py:1171 stock/serializers.py:544 stock/serializers.py:1025
+#: stock/serializers.py:1137 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
 #: stock/templates/stock/item_base.html:194
 #: templates/js/translated/build.js:1742
@@ -1376,19 +1376,19 @@ msgstr "Hàng trong kho đã chọn không phù hợp với đường BOM"
 msgid "Stock Item"
 msgstr "Kho hàng"
 
-#: build/models.py:1546
+#: build/models.py:1562
 msgid "Source stock item"
 msgstr "Kho hàng gốc"
 
-#: build/models.py:1559
+#: build/models.py:1575
 msgid "Stock quantity to allocate to build"
 msgstr "Số lượng kho hàng cần chỉ định để xây dựng"
 
-#: build/models.py:1567
+#: build/models.py:1583
 msgid "Install into"
 msgstr "Cài đặt vào"
 
-#: build/models.py:1568
+#: build/models.py:1584
 msgid "Destination stock item"
 msgstr "Kho hàng đích"
 
@@ -1452,9 +1452,9 @@ msgid "A list of build outputs must be provided"
 msgstr "Danh sách đầu ra bản dựng phải được cung cấp"
 
 #: build/serializers.py:426 build/serializers.py:498 order/serializers.py:533
-#: order/serializers.py:641 order/serializers.py:1646 part/serializers.py:1086
+#: order/serializers.py:641 order/serializers.py:1646 part/serializers.py:1104
 #: stock/serializers.py:472 stock/serializers.py:627 stock/serializers.py:723
-#: stock/serializers.py:1163 stock/serializers.py:1419
+#: stock/serializers.py:1169 stock/serializers.py:1425
 #: stock/templates/stock/item_base.html:394
 #: templates/js/translated/barcode.js:547
 #: templates/js/translated/barcode.js:795 templates/js/translated/build.js:999
@@ -1494,7 +1494,7 @@ msgstr "Vị trí cho đầu ra bản dựng hoàn thiện"
 #: build/serializers.py:505 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:910
 #: order/models.py:2005 order/serializers.py:565 stock/admin.py:165
-#: stock/serializers.py:774 stock/serializers.py:1307
+#: stock/serializers.py:774 stock/serializers.py:1313
 #: stock/templates/stock/item_base.html:427
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2189
 #: templates/js/translated/purchase_order.js:1308
@@ -1602,7 +1602,7 @@ msgstr "Mục chi tiết bản dựng"
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part phải trỏ đến phần tương tự của đơn đặt bản dựng"
 
-#: build/serializers.py:817 stock/serializers.py:1032
+#: build/serializers.py:817 stock/serializers.py:1038
 msgid "Item must be in stock"
 msgstr "Hàng hóa phải trong kho"
 
@@ -1659,44 +1659,45 @@ msgstr "Mục tùy chọn"
 msgid "Allocate optional BOM items to build order"
 msgstr "Phân bổ các mục hóa đơn vật liệu tùy chọn đến đơn đặt bản dựng"
 
-#: build/serializers.py:1096 part/models.py:3895 part/models.py:4331
+#: build/serializers.py:1097 part/models.py:3895 part/models.py:4331
 #: stock/api.py:745
 msgid "BOM Item"
 msgstr "Mục BOM"
 
-#: build/serializers.py:1105 templates/js/translated/index.js:130
+#: build/serializers.py:1106 templates/js/translated/index.js:130
 msgid "Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:1110 part/admin.py:132 part/bom.py:173
-#: part/serializers.py:1441 part/templates/part/part_base.html:210
-#: templates/js/translated/bom.js:1202 templates/js/translated/build.js:2614
-#: templates/js/translated/part.js:709 templates/js/translated/part.js:2148
+#: build/serializers.py:1111 part/admin.py:132 part/bom.py:173
+#: part/serializers.py:798 part/serializers.py:1460
+#: part/templates/part/part_base.html:210 templates/js/translated/bom.js:1208
+#: templates/js/translated/build.js:2614 templates/js/translated/part.js:709
+#: templates/js/translated/part.js:2148
 #: templates/js/translated/table_filters.js:170
 msgid "On Order"
 msgstr "Bật đơn hàng"
 
-#: build/serializers.py:1115 part/serializers.py:1443
+#: build/serializers.py:1116 part/serializers.py:1462
 #: templates/js/translated/build.js:2618
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
 msgstr "Đang sản xuất"
 
-#: build/serializers.py:1120 part/bom.py:172 part/serializers.py:1454
+#: build/serializers.py:1121 part/bom.py:172 part/serializers.py:1473
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1893
 msgid "Available Stock"
 msgstr "Số hàng tồn"
 
-#: build/tasks.py:149
+#: build/tasks.py:171
 msgid "Stock required for build order"
 msgstr "Kho được yêu cầu cho đặt hàng bản dựng"
 
-#: build/tasks.py:166
+#: build/tasks.py:188
 msgid "Overdue Build Order"
 msgstr "Đơn đặt bản dựng quá hạn"
 
-#: build/tasks.py:171
+#: build/tasks.py:193
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
 msgstr "Đặt hàng bản dựng {bo} đang quá hạn"
@@ -1990,27 +1991,31 @@ msgstr "Đơn đặt yêu cầu sản phẩm"
 msgid "Order Parts"
 msgstr "Đặt hàng sản phẩm"
 
-#: build/templates/build/detail.html:210
+#: build/templates/build/detail.html:205
+msgid "Available stock has been filtered based on specified source location for this build order"
+msgstr ""
+
+#: build/templates/build/detail.html:215
 msgid "Incomplete Build Outputs"
 msgstr "Đầu ra bản dựng chưa hoàn thành"
 
-#: build/templates/build/detail.html:214
+#: build/templates/build/detail.html:219
 msgid "Create new build output"
 msgstr "Tạo đầu ra bản dựng mới"
 
-#: build/templates/build/detail.html:215
+#: build/templates/build/detail.html:220
 msgid "New Build Output"
 msgstr "Đầu ra bản dựng mới"
 
-#: build/templates/build/detail.html:232 build/templates/build/sidebar.html:15
+#: build/templates/build/detail.html:237 build/templates/build/sidebar.html:15
 msgid "Consumed Stock"
 msgstr "Kho tiêu thụ"
 
-#: build/templates/build/detail.html:244
+#: build/templates/build/detail.html:249
 msgid "Completed Build Outputs"
 msgstr "Đầu ra bản dựng hoàn thiện"
 
-#: build/templates/build/detail.html:256 build/templates/build/sidebar.html:19
+#: build/templates/build/detail.html:261 build/templates/build/sidebar.html:19
 #: company/templates/company/detail.html:229
 #: company/templates/company/manufacturer_part.html:141
 #: company/templates/company/manufacturer_part_sidebar.html:9
@@ -2026,15 +2031,15 @@ msgstr "Đầu ra bản dựng hoàn thiện"
 msgid "Attachments"
 msgstr "Tập tin đính kèm"
 
-#: build/templates/build/detail.html:271
+#: build/templates/build/detail.html:276
 msgid "Build Notes"
 msgstr "Ghi chép bản dựng"
 
-#: build/templates/build/detail.html:426
+#: build/templates/build/detail.html:434
 msgid "Allocation Complete"
 msgstr ""
 
-#: build/templates/build/detail.html:427
+#: build/templates/build/detail.html:435
 msgid "All lines have been fully allocated"
 msgstr ""
 
@@ -2436,7 +2441,7 @@ msgid "Parts are templates by default"
 msgstr "Sản phẩm là mẫu bởi mặc định"
 
 #: common/models.py:1456 part/admin.py:91 part/admin.py:431 part/models.py:1015
-#: templates/js/translated/bom.js:1633
+#: templates/js/translated/bom.js:1639
 #: templates/js/translated/table_filters.js:330
 #: templates/js/translated/table_filters.js:721
 msgid "Assembly"
@@ -3495,7 +3500,7 @@ msgstr ""
 msgid "Price break quantity"
 msgstr "Số lượng giá phá vỡ"
 
-#: common/models.py:2440 company/serializers.py:484 order/admin.py:42
+#: common/models.py:2440 company/serializers.py:486 order/admin.py:42
 #: order/models.py:1321 order/models.py:2226
 #: templates/js/translated/company.js:1813 templates/js/translated/part.js:1885
 #: templates/js/translated/pricing.js:621
@@ -3972,7 +3977,7 @@ msgstr "Chọn sản phẩm"
 
 #: company/models.py:495 company/templates/company/company_base.html:76
 #: company/templates/company/manufacturer_part.html:90
-#: company/templates/company/supplier_part.html:145 part/serializers.py:497
+#: company/templates/company/supplier_part.html:145 part/serializers.py:505
 #: stock/templates/stock/item_base.html:207
 #: templates/js/translated/company.js:506
 #: templates/js/translated/company.js:1108
@@ -3987,7 +3992,7 @@ msgid "Select manufacturer"
 msgstr "Chọn nhà sản xuất"
 
 #: company/models.py:502 company/templates/company/manufacturer_part.html:101
-#: company/templates/company/supplier_part.html:153 part/serializers.py:507
+#: company/templates/company/supplier_part.html:153 part/serializers.py:515
 #: templates/js/translated/company.js:351
 #: templates/js/translated/company.js:1107
 #: templates/js/translated/company.js:1302
@@ -4059,7 +4064,7 @@ msgstr "Sản phẩm nhà sản xuất đã liên kết phải tham chiếu vớ
 #: company/models.py:795 company/templates/company/company_base.html:81
 #: company/templates/company/supplier_part.html:129 order/models.py:453
 #: order/templates/order/order_base.html:136 part/bom.py:272 part/bom.py:310
-#: part/serializers.py:481 plugin/builtin/suppliers/digikey.py:25
+#: part/serializers.py:489 plugin/builtin/suppliers/digikey.py:25
 #: plugin/builtin/suppliers/lcsc.py:26 plugin/builtin/suppliers/mouser.py:24
 #: plugin/builtin/suppliers/tme.py:26 stock/templates/stock/item_base.html:224
 #: templates/email/overdue_purchase_order.html:16
@@ -4076,7 +4081,7 @@ msgstr "Nhà cung cấp"
 msgid "Select supplier"
 msgstr "Chọn nhà cung cấp"
 
-#: company/models.py:802 part/serializers.py:492
+#: company/models.py:802 part/serializers.py:500
 msgid "Supplier stock keeping unit"
 msgstr "Đơn vị quản lý kho nhà cung cấp"
 
@@ -4112,7 +4117,7 @@ msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Thu phí tối thiểu (vd: phí kho bãi)"
 
 #: company/models.py:851 company/templates/company/supplier_part.html:160
-#: stock/admin.py:224 stock/models.py:785 stock/serializers.py:1317
+#: stock/admin.py:224 stock/models.py:785 stock/serializers.py:1323
 #: stock/templates/stock/item_base.html:240
 #: templates/js/translated/company.js:1636
 #: templates/js/translated/stock.js:2387
@@ -4157,7 +4162,7 @@ msgstr "Sẵn hàng đã được cập nhật"
 msgid "Date of last update of availability data"
 msgstr "Ngày cập nhật cuối thông tin tồn kho"
 
-#: company/serializers.py:153
+#: company/serializers.py:155
 msgid "Default currency used for this supplier"
 msgstr "Tiền tệ mặc định được sử dụng cho nhà cung cấp này"
 
@@ -4218,7 +4223,7 @@ msgstr "Xóa ảnh"
 #: company/templates/company/company_base.html:86 order/models.py:898
 #: order/models.py:1993 order/templates/order/return_order_base.html:131
 #: order/templates/order/sales_order_base.html:144 stock/models.py:807
-#: stock/models.py:808 stock/serializers.py:1067
+#: stock/models.py:808 stock/serializers.py:1073
 #: stock/templates/stock/item_base.html:405
 #: templates/email/overdue_sales_order.html:16
 #: templates/js/translated/company.js:502
@@ -4429,8 +4434,9 @@ msgstr "Chưa có thông tin nhà sản xuất"
 
 #: company/templates/company/manufacturer_part.html:119
 #: company/templates/company/supplier_part.html:15 company/views.py:31
-#: part/admin.py:122 part/templates/part/part_sidebar.html:33
-#: templates/InvenTree/search.html:190 templates/navbar.html:48
+#: part/admin.py:122 part/serializers.py:802
+#: part/templates/part/part_sidebar.html:33 templates/InvenTree/search.html:190
+#: templates/navbar.html:48
 msgid "Suppliers"
 msgstr "Nhà cung cấp"
 
@@ -4528,7 +4534,7 @@ msgid "No supplier information available"
 msgstr "Chưa có thông tin nhà cung cấp"
 
 #: company/templates/company/supplier_part.html:139 part/bom.py:279
-#: part/bom.py:311 part/serializers.py:491
+#: part/bom.py:311 part/serializers.py:499
 #: templates/js/translated/company.js:349 templates/js/translated/part.js:1786
 #: templates/js/translated/pricing.js:510
 #: templates/js/translated/purchase_order.js:1851
@@ -4577,10 +4583,12 @@ msgstr "Liên kết mã vạch đến hàng hóa nhà cung cấp"
 msgid "Update Part Availability"
 msgstr "Cập nhật độ sẵn sàng sản phẩm"
 
-#: company/templates/company/supplier_part_sidebar.html:5 part/stocktake.py:223
+#: company/templates/company/supplier_part_sidebar.html:5
+#: part/serializers.py:801 part/stocktake.py:223
 #: part/templates/part/category.html:183
 #: part/templates/part/category_sidebar.html:17 stock/admin.py:69
-#: stock/serializers.py:760 stock/templates/stock/location.html:170
+#: stock/serializers.py:760 stock/serializers.py:924
+#: stock/templates/stock/location.html:170
 #: stock/templates/stock/location.html:184
 #: stock/templates/stock/location.html:196
 #: stock/templates/stock/location_sidebar.html:7
@@ -4640,7 +4648,7 @@ msgid "Label template file"
 msgstr "Tệp mẫu nhãn"
 
 #: label/models.py:143 part/models.py:3484 report/models.py:322
-#: templates/js/translated/part.js:2891
+#: templates/js/translated/part.js:2900
 #: templates/js/translated/table_filters.js:481
 msgid "Enabled"
 msgstr "Đã bật"
@@ -5733,7 +5741,7 @@ msgid "Pending Shipments"
 msgstr "Vận chuyển đang chờ xử lý"
 
 #: order/templates/order/sales_order_detail.html:71
-#: templates/js/translated/bom.js:1271 templates/js/translated/filters.js:296
+#: templates/js/translated/bom.js:1277 templates/js/translated/filters.js:296
 msgid "Actions"
 msgstr "Chức năng"
 
@@ -5861,10 +5869,10 @@ msgstr "Tên cha"
 msgid "Category Path"
 msgstr "Đưỡng dẫn danh mục"
 
-#: part/admin.py:323 part/models.py:390 part/serializers.py:259
-#: part/serializers.py:373 part/templates/part/cat_link.html:3
-#: part/templates/part/category.html:23 part/templates/part/category.html:141
-#: part/templates/part/category.html:161
+#: part/admin.py:323 part/models.py:390 part/serializers.py:112
+#: part/serializers.py:265 part/serializers.py:381
+#: part/templates/part/cat_link.html:3 part/templates/part/category.html:23
+#: part/templates/part/category.html:141 part/templates/part/category.html:161
 #: part/templates/part/category_sidebar.html:9
 #: templates/InvenTree/index.html:36 templates/InvenTree/search.html:84
 #: templates/InvenTree/settings/sidebar.html:47
@@ -5889,13 +5897,13 @@ msgstr "IPN cha"
 msgid "Part IPN"
 msgstr "IPN sản phẩm"
 
-#: part/admin.py:421 part/serializers.py:1220
+#: part/admin.py:421 part/serializers.py:1238
 #: templates/js/translated/pricing.js:358
 #: templates/js/translated/pricing.js:1024
 msgid "Minimum Price"
 msgstr "Giá thấp nhất"
 
-#: part/admin.py:426 part/serializers.py:1235
+#: part/admin.py:426 part/serializers.py:1253
 #: templates/js/translated/pricing.js:353
 #: templates/js/translated/pricing.js:1032
 msgid "Maximum Price"
@@ -5974,7 +5982,7 @@ msgid "This option must be selected"
 msgstr "Tùy chọn này phải được chọn"
 
 #: part/api.py:1541 part/models.py:895 part/models.py:3385 part/models.py:3831
-#: part/serializers.py:388 part/serializers.py:1076
+#: part/serializers.py:396 part/serializers.py:1094
 #: part/templates/part/part_base.html:260 stock/api.py:733
 #: templates/InvenTree/settings/settings_staff_js.html:300
 #: templates/js/translated/notification.js:60
@@ -5982,12 +5990,17 @@ msgstr "Tùy chọn này phải được chọn"
 msgid "Category"
 msgstr "Danh mục"
 
+#: part/api.py:1828
+msgid "Uses"
+msgstr ""
+
 #: part/bom.py:170 part/models.py:100 part/models.py:938
 #: part/templates/part/category.html:116 part/templates/part/part_base.html:367
 msgid "Default Location"
 msgstr "Điểm bán mặc định"
 
-#: part/bom.py:171 templates/email/low_stock_notification.html:16
+#: part/bom.py:171 part/serializers.py:803
+#: templates/email/low_stock_notification.html:16
 msgid "Total Stock"
 msgstr "Tổng số lượng"
 
@@ -6010,7 +6023,8 @@ msgstr "Danh mục sản phẩm"
 msgid "Default location for parts in this category"
 msgstr "Vị trí mặc định cho sản phẩm trong danh mục này"
 
-#: part/models.py:106 stock/models.py:165 templates/js/translated/stock.js:2736
+#: part/models.py:106 stock/models.py:165 templates/js/translated/part.js:2810
+#: templates/js/translated/stock.js:2736
 #: templates/js/translated/table_filters.js:239
 #: templates/js/translated/table_filters.js:283
 msgid "Structural"
@@ -6418,7 +6432,7 @@ msgstr "Chỉ có thể tạo mẫu kiểm thử cho sản phẩm có thể theo
 msgid "Test with this name already exists for this part"
 msgstr "Kiểm thử với tên này đã tồn tại cho sản phẩm này"
 
-#: part/models.py:3464 templates/js/translated/part.js:2870
+#: part/models.py:3464 templates/js/translated/part.js:2879
 msgid "Test Name"
 msgstr "Tên kiểm thử"
 
@@ -6446,7 +6460,7 @@ msgstr "Nhập mô tả cho kiểm thử này"
 msgid "Is this test enabled?"
 msgstr ""
 
-#: part/models.py:3489 templates/js/translated/part.js:2899
+#: part/models.py:3489 templates/js/translated/part.js:2908
 #: templates/js/translated/table_filters.js:477
 msgid "Required"
 msgstr "Bắt buộc"
@@ -6455,7 +6469,7 @@ msgstr "Bắt buộc"
 msgid "Is this test required to pass?"
 msgstr "Kiểm thử này bắt buộc phải đạt?"
 
-#: part/models.py:3495 templates/js/translated/part.js:2907
+#: part/models.py:3495 templates/js/translated/part.js:2916
 msgid "Requires Value"
 msgstr "Giá trị bắt buộc"
 
@@ -6463,7 +6477,7 @@ msgstr "Giá trị bắt buộc"
 msgid "Does this test require a value when adding a test result?"
 msgstr "Kiểm thử này yêu cầu 1 giá trị khi thêm một kết quả kiểm thử?"
 
-#: part/models.py:3501 templates/js/translated/part.js:2914
+#: part/models.py:3501 templates/js/translated/part.js:2923
 msgid "Requires Attachment"
 msgstr "Yêu cầu đính kèm"
 
@@ -6685,311 +6699,329 @@ msgstr "Không thể tạo mối quan hệ giữa một sản phẩm và chính 
 msgid "Duplicate relationship already exists"
 msgstr "Đã tồn tại mối quan hệ trùng lặp"
 
-#: part/serializers.py:128 part/templates/part/category.html:122
-#: part/templates/part/category.html:207
+#: part/serializers.py:114 part/serializers.py:134
+#: part/templates/part/category.html:122 part/templates/part/category.html:207
 #: part/templates/part/category_sidebar.html:7
 msgid "Subcategories"
 msgstr "Phụ mục"
 
-#: part/serializers.py:172
+#: part/serializers.py:178
 msgid "Results"
 msgstr ""
 
-#: part/serializers.py:173
+#: part/serializers.py:179
 msgid "Number of results recorded against this template"
 msgstr ""
 
-#: part/serializers.py:197 part/serializers.py:215 stock/serializers.py:384
+#: part/serializers.py:203 part/serializers.py:221 stock/serializers.py:384
 msgid "Purchase currency of this stock item"
 msgstr "Loại tiền mua hàng của hàng hóa này"
 
-#: part/serializers.py:260
+#: part/serializers.py:266
 msgid "Number of parts using this template"
 msgstr ""
 
-#: part/serializers.py:379
+#: part/serializers.py:387
 msgid "No parts selected"
 msgstr "Chưa chọn sản phẩm"
 
-#: part/serializers.py:389
+#: part/serializers.py:397
 msgid "Select category"
 msgstr "Chọn danh mục"
 
-#: part/serializers.py:419
+#: part/serializers.py:427
 msgid "Original Part"
 msgstr "Sản phẩm gốc"
 
-#: part/serializers.py:420
+#: part/serializers.py:428
 msgid "Select original part to duplicate"
 msgstr "Chọn sản phẩm gốc để nhân bản"
 
-#: part/serializers.py:425
+#: part/serializers.py:433
 msgid "Copy Image"
 msgstr "Sao chép ảnh"
 
-#: part/serializers.py:426
+#: part/serializers.py:434
 msgid "Copy image from original part"
 msgstr "Sao chép hình ảnh từ sản phẩm gốc"
 
-#: part/serializers.py:432 part/templates/part/detail.html:277
+#: part/serializers.py:440 part/templates/part/detail.html:277
 msgid "Copy BOM"
 msgstr "Sao chép BOM"
 
-#: part/serializers.py:433
+#: part/serializers.py:441
 msgid "Copy bill of materials from original part"
 msgstr "Sao chép định mức nguyên vật liệu từ sản phẩm gốc"
 
-#: part/serializers.py:439
+#: part/serializers.py:447
 msgid "Copy Parameters"
 msgstr "Sao chép thông số"
 
-#: part/serializers.py:440
+#: part/serializers.py:448
 msgid "Copy parameter data from original part"
 msgstr "Sao chép thông tin tham số từ sản phẩm gốc"
 
-#: part/serializers.py:446
+#: part/serializers.py:454
 msgid "Copy Notes"
 msgstr "Sao chép ghi chú"
 
-#: part/serializers.py:447
+#: part/serializers.py:455
 msgid "Copy notes from original part"
 msgstr "Sao chép ghi chú từ sản phẩm gốc"
 
-#: part/serializers.py:460
+#: part/serializers.py:468
 msgid "Initial Stock Quantity"
 msgstr "Số liệu tồn kho ban đầu"
 
-#: part/serializers.py:462
+#: part/serializers.py:470
 msgid "Specify initial stock quantity for this Part. If quantity is zero, no stock is added."
 msgstr "Chỉ ra số lượng tồn kho ban đầu cho sản phẩm. Nếu điền là không, không thêm kho nào."
 
-#: part/serializers.py:469
+#: part/serializers.py:477
 msgid "Initial Stock Location"
 msgstr "Vị trí kho ban đầu"
 
-#: part/serializers.py:470
+#: part/serializers.py:478
 msgid "Specify initial stock location for this Part"
 msgstr "Chỉ định vị trí kho ban đầu cho sản phẩm này"
 
-#: part/serializers.py:482
+#: part/serializers.py:490
 msgid "Select supplier (or leave blank to skip)"
 msgstr "Chọn nhà cung cấp (hoặc để trống để bỏ qua)"
 
-#: part/serializers.py:498
+#: part/serializers.py:506
 msgid "Select manufacturer (or leave blank to skip)"
 msgstr "Chọn nhà sản xuất (hoặc để trống để bỏ qua)"
 
-#: part/serializers.py:508
+#: part/serializers.py:516
 msgid "Manufacturer part number"
 msgstr "Mã số nhà sản xuất"
 
-#: part/serializers.py:515
+#: part/serializers.py:523
 msgid "Selected company is not a valid supplier"
 msgstr "Công ty đã chọn không phải là nhà cung ứng hợp lệ"
 
-#: part/serializers.py:524
+#: part/serializers.py:532
 msgid "Selected company is not a valid manufacturer"
 msgstr "Công ty đã chọn không phải là nhà sản xuất hợp lệ"
 
-#: part/serializers.py:535
+#: part/serializers.py:543
 msgid "Manufacturer part matching this MPN already exists"
 msgstr "Mã số nhà sản xuất khớp với MPN này đã tồn tại"
 
-#: part/serializers.py:542
+#: part/serializers.py:550
 msgid "Supplier part matching this SKU already exists"
 msgstr "Mã số nhà cung cấp khớp với SKU này đã tồn tại"
 
-#: part/serializers.py:815 part/templates/part/copy_part.html:9
+#: part/serializers.py:804
+#, fuzzy
+#| msgid "Exclude External Stock"
+msgid "External Stock"
+msgstr "Ngoại trừ kho bên ngoài"
+
+#: part/serializers.py:806
+#, fuzzy
+#| msgid "Deallocate Stock"
+msgid "Unallocated Stock"
+msgstr "Phân kho"
+
+#: part/serializers.py:808
+#, fuzzy
+#| msgid "Part Stock"
+msgid "Variant Stock"
+msgstr "Kho hàng"
+
+#: part/serializers.py:833 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
 msgid "Duplicate Part"
 msgstr "Nhân bản sản phẩm"
 
-#: part/serializers.py:816
+#: part/serializers.py:834
 msgid "Copy initial data from another Part"
 msgstr "Sao chép dữ liệu ban đầu từ sản phẩm khác"
 
-#: part/serializers.py:822 templates/js/translated/part.js:102
+#: part/serializers.py:840 templates/js/translated/part.js:102
 msgid "Initial Stock"
 msgstr "Số liệu kho ban đầu"
 
-#: part/serializers.py:823
+#: part/serializers.py:841
 msgid "Create Part with initial stock quantity"
 msgstr "Tạo sản phẩm với số lượng tồn kho ban đầu"
 
-#: part/serializers.py:829
+#: part/serializers.py:847
 msgid "Supplier Information"
 msgstr "Thông tin nhà cung cấp"
 
-#: part/serializers.py:830
+#: part/serializers.py:848
 msgid "Add initial supplier information for this part"
 msgstr "Thêm thông tin nhà cung cấp ban đầu cho sản phẩm này"
 
-#: part/serializers.py:838
+#: part/serializers.py:856
 msgid "Copy Category Parameters"
 msgstr "Sao chép thông số nhóm hàng"
 
-#: part/serializers.py:839
+#: part/serializers.py:857
 msgid "Copy parameter templates from selected part category"
 msgstr "Sao chép mẫu tham số từ nhóm sản phẩm được chọn"
 
-#: part/serializers.py:844
+#: part/serializers.py:862
 msgid "Existing Image"
 msgstr "Ảnh hiện có"
 
-#: part/serializers.py:845
+#: part/serializers.py:863
 msgid "Filename of an existing part image"
 msgstr "Tên tệp của ảnh sản phẩm hiện hữu"
 
-#: part/serializers.py:862
+#: part/serializers.py:880
 msgid "Image file does not exist"
 msgstr "Tệp hình ảnh không tồn tại"
 
-#: part/serializers.py:1068
+#: part/serializers.py:1086
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr "Hạn chế báo cáo kiểm kê với sản phẩm riêng biệt và sản phẩm biến thể bất kỳ"
 
-#: part/serializers.py:1078
+#: part/serializers.py:1096
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr "Hạn chế báo cáo kiểm kê với danh mục sản phẩm riêng biệt và danh mục con bất kỳ"
 
-#: part/serializers.py:1088
+#: part/serializers.py:1106
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr "Hạn chế báo cáo kiểm kê với vị trí kho riêng biệt và vị trí con bất kỳ"
 
-#: part/serializers.py:1094
+#: part/serializers.py:1112
 msgid "Exclude External Stock"
 msgstr "Ngoại trừ kho bên ngoài"
 
-#: part/serializers.py:1095
+#: part/serializers.py:1113
 msgid "Exclude stock items in external locations"
 msgstr "Loại trừ hàng trong kho của vị trí bên ngoài"
 
-#: part/serializers.py:1100
+#: part/serializers.py:1118
 msgid "Generate Report"
 msgstr "Tạo báo cáo"
 
-#: part/serializers.py:1101
+#: part/serializers.py:1119
 msgid "Generate report file containing calculated stocktake data"
 msgstr "Tạo tệp báo cáo chứa dữ liệu kiểm kê đã tính toán"
 
-#: part/serializers.py:1106
+#: part/serializers.py:1124
 msgid "Update Parts"
 msgstr "Cập nhật sản phẩm"
 
-#: part/serializers.py:1107
+#: part/serializers.py:1125
 msgid "Update specified parts with calculated stocktake data"
 msgstr "Cập nhật sản phẩm cụ thể với dữ liệu kiểm kê đã tính"
 
-#: part/serializers.py:1115
+#: part/serializers.py:1133
 msgid "Stocktake functionality is not enabled"
 msgstr "Chức năng kiểm kê chưa được bật"
 
-#: part/serializers.py:1221
+#: part/serializers.py:1239
 msgid "Override calculated value for minimum price"
 msgstr "Giá trị tính toán ghi đè cho giá tối thiểu"
 
-#: part/serializers.py:1228
+#: part/serializers.py:1246
 msgid "Minimum price currency"
 msgstr "Tiền tế giá tối thiểu"
 
-#: part/serializers.py:1236
+#: part/serializers.py:1254
 msgid "Override calculated value for maximum price"
 msgstr "Giá trị tính toán ghi đè cho giá tối đa"
 
-#: part/serializers.py:1243
+#: part/serializers.py:1261
 msgid "Maximum price currency"
 msgstr "Tiền tế giá tối đa"
 
-#: part/serializers.py:1272
+#: part/serializers.py:1290
 msgid "Update"
 msgstr "Cập nhật"
 
-#: part/serializers.py:1273
+#: part/serializers.py:1291
 msgid "Update pricing for this part"
 msgstr "Cập nhật giá cho sản phẩm này"
 
-#: part/serializers.py:1296
+#: part/serializers.py:1314
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr "Không thể chuyển đổi từ tiền tệ đã cung cấp cho {default_currency}"
 
-#: part/serializers.py:1303
+#: part/serializers.py:1321
 msgid "Minimum price must not be greater than maximum price"
 msgstr "Giá tối thiểu không được lớn hơn giá tối đa"
 
-#: part/serializers.py:1306
+#: part/serializers.py:1324
 msgid "Maximum price must not be less than minimum price"
 msgstr "Giá tối đa không được nhỏ hơn giá tối thiểu"
 
-#: part/serializers.py:1632
+#: part/serializers.py:1660
 msgid "Select part to copy BOM from"
 msgstr "Chọn sản phẩm để sao chép định mức nguyên vật liệu"
 
-#: part/serializers.py:1640
+#: part/serializers.py:1668
 msgid "Remove Existing Data"
 msgstr "Xóa dữ liệu đã tồn tại"
 
-#: part/serializers.py:1641
+#: part/serializers.py:1669
 msgid "Remove existing BOM items before copying"
 msgstr "Xóa mục BOM đã tồn tại trước khi sao chép"
 
-#: part/serializers.py:1646
+#: part/serializers.py:1674
 msgid "Include Inherited"
 msgstr "Bao gồm thừa hưởng"
 
-#: part/serializers.py:1647
+#: part/serializers.py:1675
 msgid "Include BOM items which are inherited from templated parts"
 msgstr "Bao gồm mục BOM được thừa hưởng từ sản phẩm mẫu"
 
-#: part/serializers.py:1652
+#: part/serializers.py:1680
 msgid "Skip Invalid Rows"
 msgstr "Bỏ qua dòng không hợp lệ"
 
-#: part/serializers.py:1653
+#: part/serializers.py:1681
 msgid "Enable this option to skip invalid rows"
 msgstr "Bật tùy chọn này để bỏ qua dòng không hợp lệ"
 
-#: part/serializers.py:1658
+#: part/serializers.py:1686
 msgid "Copy Substitute Parts"
 msgstr "Sao chép sản phẩm thay thế"
 
-#: part/serializers.py:1659
+#: part/serializers.py:1687
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr "Sao chép sản phẩm thay thế khi nhân bản hàng hóa BOM"
 
-#: part/serializers.py:1693
+#: part/serializers.py:1721
 msgid "Clear Existing BOM"
 msgstr "Dọn dẹp BOM đang tồn tại"
 
-#: part/serializers.py:1694
+#: part/serializers.py:1722
 msgid "Delete existing BOM items before uploading"
 msgstr "Xóa mục BOM đang tồn tại trước khi tải lên"
 
-#: part/serializers.py:1724
+#: part/serializers.py:1752
 msgid "No part column specified"
 msgstr "Chưa chỉ ra cột sản phẩm"
 
-#: part/serializers.py:1768
+#: part/serializers.py:1796
 msgid "Multiple matching parts found"
 msgstr "Tìm thấy nhiều sản phẩm phù hợp"
 
-#: part/serializers.py:1771
+#: part/serializers.py:1799
 msgid "No matching part found"
 msgstr "Không tìm thấy sản phẩm nào"
 
-#: part/serializers.py:1774
+#: part/serializers.py:1802
 msgid "Part is not designated as a component"
 msgstr "Sản phẩm không được chỉ định như là một thành phần"
 
-#: part/serializers.py:1783
+#: part/serializers.py:1811
 msgid "Quantity not provided"
 msgstr "Chưa cung cấp số lượng"
 
-#: part/serializers.py:1791
+#: part/serializers.py:1819
 msgid "Invalid quantity"
 msgstr "Số lượng không hợp lệ"
 
-#: part/serializers.py:1812
+#: part/serializers.py:1840
 msgid "At least one BOM item is required"
 msgstr "Buộc phải nhập ít nhất một mục BOM"
 
@@ -7221,7 +7253,7 @@ msgid "Validate BOM"
 msgstr "Xác minh BOM"
 
 #: part/templates/part/detail.html:283 part/templates/part/detail.html:284
-#: templates/js/translated/bom.js:1314 templates/js/translated/bom.js:1315
+#: templates/js/translated/bom.js:1320 templates/js/translated/bom.js:1321
 msgid "Add BOM Item"
 msgstr "Thêm mục BOM"
 
@@ -7405,7 +7437,7 @@ msgstr "Phân bổ đến đơn đặt bản dựng"
 msgid "Allocated to Sales Orders"
 msgstr "Phân bổ đến đơn bán hàng"
 
-#: part/templates/part/part_base.html:235 templates/js/translated/bom.js:1213
+#: part/templates/part/part_base.html:235 templates/js/translated/bom.js:1219
 msgid "Can Build"
 msgstr "Có thể dựng"
 
@@ -8784,7 +8816,7 @@ msgstr "Chọn sản phẩm nhà cung cấp khớp với hàng hóa trong kho n�
 msgid "Where is this stock item located?"
 msgstr "Hàng trong kho này được đặt ở đâu?"
 
-#: stock/models.py:786 stock/serializers.py:1318
+#: stock/models.py:786 stock/serializers.py:1324
 msgid "Packaging this stock item is stored in"
 msgstr "Đóng gói hàng hóa này được lưu trữ lại"
 
@@ -8796,7 +8828,7 @@ msgstr "Mục này đã được cài đặt trong mục khác?"
 msgid "Serial number for this item"
 msgstr "Số sê ri cho mục này"
 
-#: stock/models.py:830 stock/serializers.py:1301
+#: stock/models.py:830 stock/serializers.py:1307
 msgid "Batch code for this stock item"
 msgstr "Mã lô cho hàng trong kho này"
 
@@ -8905,7 +8937,7 @@ msgstr "Hàng trong kho hiện đang sản xuất"
 msgid "Serialized stock cannot be merged"
 msgstr "Không thể hợp nhất kho nối tiếp"
 
-#: stock/models.py:1639 stock/serializers.py:1207
+#: stock/models.py:1639 stock/serializers.py:1213
 msgid "Duplicate stock items"
 msgstr "Mặt hàng trùng lặp"
 
@@ -8986,7 +9018,7 @@ msgstr "Số lượng phải không vượt quá số lượng trong kho đang c
 msgid "Enter serial numbers for new items"
 msgstr "Điền số sêri cho hàng hóa mới"
 
-#: stock/serializers.py:473 stock/serializers.py:1164 stock/serializers.py:1420
+#: stock/serializers.py:473 stock/serializers.py:1170 stock/serializers.py:1426
 msgid "Destination stock location"
 msgstr "Vị trí kho đích"
 
@@ -9059,77 +9091,78 @@ msgstr "Chọn mặt hàng để đổi trạng thái"
 msgid "No stock items selected"
 msgstr "Không có mặt hàng nào được chọn"
 
-#: stock/serializers.py:863 stock/templates/stock/location.html:165
+#: stock/serializers.py:863 stock/serializers.py:926
+#: stock/templates/stock/location.html:165
 #: stock/templates/stock/location.html:213
 #: stock/templates/stock/location_sidebar.html:5
 msgid "Sublocations"
 msgstr "Kho phụ"
 
-#: stock/serializers.py:1036
+#: stock/serializers.py:1042
 msgid "Part must be salable"
 msgstr "Sản phẩm phải có thể bán được"
 
-#: stock/serializers.py:1040
+#: stock/serializers.py:1046
 msgid "Item is allocated to a sales order"
 msgstr "Hàng hóa được phân bổ đến một đơn hàng bán"
 
-#: stock/serializers.py:1044
+#: stock/serializers.py:1050
 msgid "Item is allocated to a build order"
 msgstr "Hàng hóa được phân bổ đến một đơn đặt bản dựng"
 
-#: stock/serializers.py:1068
+#: stock/serializers.py:1074
 msgid "Customer to assign stock items"
 msgstr "Khách hàng được gán vào các mặt hàng"
 
-#: stock/serializers.py:1074
+#: stock/serializers.py:1080
 msgid "Selected company is not a customer"
 msgstr "Công ty đã chọn không phải là khách hàng"
 
-#: stock/serializers.py:1082
+#: stock/serializers.py:1088
 msgid "Stock assignment notes"
 msgstr "Ghi chú phân bổ kho"
 
-#: stock/serializers.py:1092 stock/serializers.py:1346
+#: stock/serializers.py:1098 stock/serializers.py:1352
 msgid "A list of stock items must be provided"
 msgstr "Phải cung cấp danh sách mặt hàng"
 
-#: stock/serializers.py:1171
+#: stock/serializers.py:1177
 msgid "Stock merging notes"
 msgstr "Ghi chú gộp kho"
 
-#: stock/serializers.py:1176
+#: stock/serializers.py:1182
 msgid "Allow mismatched suppliers"
 msgstr "Cho phép nhiều nhà cung không khớp"
 
-#: stock/serializers.py:1177
+#: stock/serializers.py:1183
 msgid "Allow stock items with different supplier parts to be merged"
 msgstr "Cho phép mặt hàng cùng sản phẩm nhà cung cấp khác phải được gộp"
 
-#: stock/serializers.py:1182
+#: stock/serializers.py:1188
 msgid "Allow mismatched status"
 msgstr "Cho phép trạng thái không khớp"
 
-#: stock/serializers.py:1183
+#: stock/serializers.py:1189
 msgid "Allow stock items with different status codes to be merged"
 msgstr "Cho phép mặt hàng với mã trạng thái khác nhau để gộp lại"
 
-#: stock/serializers.py:1193
+#: stock/serializers.py:1199
 msgid "At least two stock items must be provided"
 msgstr "Cần cung cấp ít nhất hai mặt hàng"
 
-#: stock/serializers.py:1260
+#: stock/serializers.py:1266
 msgid "No Change"
 msgstr ""
 
-#: stock/serializers.py:1289
+#: stock/serializers.py:1295
 msgid "StockItem primary key value"
 msgstr "Giá trị khóa chính mặt hàng"
 
-#: stock/serializers.py:1308
+#: stock/serializers.py:1314
 msgid "Stock item status code"
 msgstr "Mã trạng thái mặt hàng"
 
-#: stock/serializers.py:1336
+#: stock/serializers.py:1342
 msgid "Stock transaction notes"
 msgstr "Ghi chú giao dịch kho"
 
@@ -10662,7 +10695,7 @@ msgid "The following parts are low on required stock"
 msgstr "Sản phẩm sau còn ít hàng trong kho yêu cầu"
 
 #: templates/email/build_order_required_stock.html:18
-#: templates/js/translated/bom.js:1668 templates/js/translated/build.js:2557
+#: templates/js/translated/bom.js:1674 templates/js/translated/build.js:2557
 msgid "Required Quantity"
 msgstr "Số lượng bắt buộc"
 
@@ -10676,7 +10709,7 @@ msgid "Click on the following link to view this part"
 msgstr "Nhấp chuột vào liên kết dưới đây để xem sản phẩm này"
 
 #: templates/email/low_stock_notification.html:18
-#: templates/js/translated/part.js:3209
+#: templates/js/translated/part.js:3218
 msgid "Minimum Quantity"
 msgstr "Số lượng tối thiểu"
 
@@ -11051,62 +11084,68 @@ msgstr ""
 msgid "No pricing available"
 msgstr ""
 
-#: templates/js/translated/bom.js:1182 templates/js/translated/build.js:2596
+#: templates/js/translated/bom.js:1184 templates/js/translated/build.js:2622
+#, fuzzy
+#| msgid "External Link"
+msgid "External stock"
+msgstr "Liên kết bên ngoài"
+
+#: templates/js/translated/bom.js:1188 templates/js/translated/build.js:2596
 #: templates/js/translated/sales_order.js:1910
 msgid "No Stock Available"
 msgstr ""
 
-#: templates/js/translated/bom.js:1187 templates/js/translated/build.js:2600
+#: templates/js/translated/bom.js:1193 templates/js/translated/build.js:2600
 msgid "Includes variant and substitute stock"
 msgstr ""
 
-#: templates/js/translated/bom.js:1189 templates/js/translated/build.js:2602
+#: templates/js/translated/bom.js:1195 templates/js/translated/build.js:2602
 #: templates/js/translated/part.js:1256
 #: templates/js/translated/sales_order.js:1907
 msgid "Includes variant stock"
 msgstr ""
 
-#: templates/js/translated/bom.js:1191 templates/js/translated/build.js:2604
+#: templates/js/translated/bom.js:1197 templates/js/translated/build.js:2604
 msgid "Includes substitute stock"
 msgstr ""
 
-#: templates/js/translated/bom.js:1219 templates/js/translated/build.js:2587
+#: templates/js/translated/bom.js:1225 templates/js/translated/build.js:2587
 msgid "Consumable item"
 msgstr ""
 
-#: templates/js/translated/bom.js:1279
+#: templates/js/translated/bom.js:1285
 msgid "Validate BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:1281
+#: templates/js/translated/bom.js:1287
 msgid "This line has been validated"
 msgstr ""
 
-#: templates/js/translated/bom.js:1283
+#: templates/js/translated/bom.js:1289
 msgid "Edit substitute parts"
 msgstr ""
 
-#: templates/js/translated/bom.js:1285 templates/js/translated/bom.js:1480
+#: templates/js/translated/bom.js:1291 templates/js/translated/bom.js:1486
 msgid "Edit BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:1287
+#: templates/js/translated/bom.js:1293
 msgid "Delete BOM Item"
 msgstr ""
 
-#: templates/js/translated/bom.js:1307
+#: templates/js/translated/bom.js:1313
 msgid "View BOM"
 msgstr ""
 
-#: templates/js/translated/bom.js:1391
+#: templates/js/translated/bom.js:1397
 msgid "No BOM items found"
 msgstr ""
 
-#: templates/js/translated/bom.js:1651 templates/js/translated/build.js:2486
+#: templates/js/translated/bom.js:1657 templates/js/translated/build.js:2486
 msgid "Required Part"
 msgstr ""
 
-#: templates/js/translated/bom.js:1677
+#: templates/js/translated/bom.js:1683
 msgid "Inherited from parent BOM"
 msgstr ""
 
@@ -11449,29 +11488,29 @@ msgstr ""
 msgid "Sufficient stock available"
 msgstr ""
 
-#: templates/js/translated/build.js:2643
+#: templates/js/translated/build.js:2647
 msgid "Consumable Item"
 msgstr ""
 
-#: templates/js/translated/build.js:2648
+#: templates/js/translated/build.js:2652
 msgid "Tracked item"
 msgstr ""
 
-#: templates/js/translated/build.js:2655
+#: templates/js/translated/build.js:2659
 #: templates/js/translated/sales_order.js:2016
 msgid "Build stock"
 msgstr ""
 
-#: templates/js/translated/build.js:2660 templates/js/translated/stock.js:1829
+#: templates/js/translated/build.js:2664 templates/js/translated/stock.js:1829
 msgid "Order stock"
 msgstr ""
 
-#: templates/js/translated/build.js:2664
+#: templates/js/translated/build.js:2668
 #: templates/js/translated/sales_order.js:2010
 msgid "Allocate stock"
 msgstr ""
 
-#: templates/js/translated/build.js:2668
+#: templates/js/translated/build.js:2672
 msgid "Remove stock allocation"
 msgstr ""
 
@@ -12313,64 +12352,64 @@ msgstr ""
 msgid "Subscribed category"
 msgstr ""
 
-#: templates/js/translated/part.js:2855
+#: templates/js/translated/part.js:2864
 msgid "No test templates matching query"
 msgstr ""
 
-#: templates/js/translated/part.js:2877 templates/js/translated/search.js:342
+#: templates/js/translated/part.js:2886 templates/js/translated/search.js:342
 msgid "results"
 msgstr ""
 
-#: templates/js/translated/part.js:2927 templates/js/translated/stock.js:1446
+#: templates/js/translated/part.js:2936 templates/js/translated/stock.js:1446
 msgid "Edit test result"
 msgstr ""
 
-#: templates/js/translated/part.js:2928 templates/js/translated/stock.js:1447
+#: templates/js/translated/part.js:2937 templates/js/translated/stock.js:1447
 #: templates/js/translated/stock.js:1692
 msgid "Delete test result"
 msgstr ""
 
-#: templates/js/translated/part.js:2932
+#: templates/js/translated/part.js:2941
 msgid "This test is defined for a parent part"
 msgstr ""
 
-#: templates/js/translated/part.js:2948
+#: templates/js/translated/part.js:2957
 msgid "Edit Test Result Template"
 msgstr ""
 
-#: templates/js/translated/part.js:2962
+#: templates/js/translated/part.js:2971
 msgid "Delete Test Result Template"
 msgstr ""
 
-#: templates/js/translated/part.js:3041 templates/js/translated/part.js:3042
+#: templates/js/translated/part.js:3050 templates/js/translated/part.js:3051
 msgid "No date specified"
 msgstr ""
 
-#: templates/js/translated/part.js:3044
+#: templates/js/translated/part.js:3053
 msgid "Specified date is in the past"
 msgstr ""
 
-#: templates/js/translated/part.js:3050
+#: templates/js/translated/part.js:3059
 msgid "Speculative"
 msgstr ""
 
-#: templates/js/translated/part.js:3100
+#: templates/js/translated/part.js:3109
 msgid "No scheduling information available for this part"
 msgstr ""
 
-#: templates/js/translated/part.js:3106
+#: templates/js/translated/part.js:3115
 msgid "Error fetching scheduling information for this part"
 msgstr ""
 
-#: templates/js/translated/part.js:3202
+#: templates/js/translated/part.js:3211
 msgid "Scheduled Stock Quantities"
 msgstr ""
 
-#: templates/js/translated/part.js:3218
+#: templates/js/translated/part.js:3227
 msgid "Maximum Quantity"
 msgstr ""
 
-#: templates/js/translated/part.js:3263
+#: templates/js/translated/part.js:3272
 msgid "Minimum Stock Level"
 msgstr ""
 
@@ -14052,4 +14091,3 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
-

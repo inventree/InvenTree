@@ -105,7 +105,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     pk: selectedLocation,
     title: t`Edit Stock Location`,
     fields: stockLocationFields({}),
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const tableActions = useMemo(() => {
@@ -153,9 +153,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
           tableFilters: tableFilters,
           tableActions: tableActions,
           rowActions: rowActions,
-          onRowClick: (record) => {
-            navigate(getDetailUrl(ModelType.stocklocation, record.pk));
-          }
+          modelType: ModelType.stocklocation
         }}
       />
     </>
