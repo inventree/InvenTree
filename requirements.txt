@@ -79,7 +79,7 @@ django==4.2.11
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth==0.60.1
+django-allauth==0.61.1
     # via django-allauth-2fa
 django-allauth-2fa==0.11.1
 django-cleanup==8.1.0
@@ -329,7 +329,7 @@ urllib3==2.2.1
     #   dulwich
     #   requests
     #   sentry-sdk
-weasyprint==60.2
+weasyprint==61.2
     # via django-weasyprint
 webencodings==0.5.1
     # via
