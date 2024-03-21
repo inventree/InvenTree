@@ -3,8 +3,10 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
+import django.core.validators
 
 import common.status_codes
+import InvenTree.helpers
 
 
 class Migration(migrations.Migration):
@@ -19,7 +21,7 @@ class Migration(migrations.Migration):
             name='DataImportSession',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data_file', models.FileField(help_text='Data file to import', upload_to='import', verbose_name='Data File')),
+                ('data_file', models.FileField(help_text='Data file to import', upload_to='import', verbose_name='Data File', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=InvenTree.helpers.GetExportFormats())])),
                 ('status', models.PositiveIntegerField(choices=common.status_codes.DataImportStatusCode.items(), default=0, help_text='Import status')),
                 ('progress', models.PositiveIntegerField(default=0, verbose_name='Progress')),
                 ('data_columns', models.JSONField(blank=True, null=True, verbose_name='Data Columns')),
