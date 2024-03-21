@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -16,7 +15,6 @@ import {
   usePurchaseOrderLineItemFields,
   useReceiveLineItems
 } from '../../forms/PurchaseOrderForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -28,6 +26,7 @@ import { useUserState } from '../../states/UserState';
 import {
   CurrencyColumn,
   LinkColumn,
+  NoteColumn,
   ReferenceColumn,
   TargetDateColumn,
   TotalPriceColumn
@@ -52,7 +51,6 @@ export function PurchaseOrderLineItemTable({
 }) {
   const table = useTable('purchase-order-line-item');
 
-  const navigate = useNavigate();
   const user = useUserState();
 
   const [singleRecord, setSingeRecord] = useState(null);
@@ -180,11 +178,8 @@ export function PurchaseOrderLineItemTable({
             ? RenderStockLocation({ instance: record.destination_detail })
             : '-'
       },
-      {
-        accessor: 'notes',
-        title: t`Notes`
-      },
-      LinkColumn()
+      NoteColumn(),
+      LinkColumn({})
     ];
   }, [orderId, user]);
 
@@ -291,11 +286,7 @@ export function PurchaseOrderLineItemTable({
           },
           rowActions: rowActions,
           tableActions: tableActions,
-          onRowClick: (row: any) => {
-            if (row.part) {
-              navigate(getDetailUrl(ModelType.supplierpart, row.part));
-            }
-          }
+          modelType: ModelType.supplierpart
         }}
       />
     </>

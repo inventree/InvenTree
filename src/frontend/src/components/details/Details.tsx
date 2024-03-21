@@ -20,6 +20,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
+import { base_url } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { ProgressBar } from '../items/ProgressBar';
@@ -198,7 +199,14 @@ function TableStringValue(props: FieldProps) {
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        wordBreak: 'break-word',
+        alignItems: 'flex-start'
+      }}
+    >
       <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
         <span>
           {value ? value : props.field_data?.unit && '0'}{' '}
@@ -285,7 +293,7 @@ function TableAnchorValue(props: FieldProps) {
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
       {make_link ? (
         <Anchor
-          href={`/platform${detailUrl}`}
+          href={`/${base_url}${detailUrl}`}
           target={data?.external ? '_blank' : undefined}
           rel={data?.external ? 'noreferrer noopener' : undefined}
         >
@@ -360,22 +368,19 @@ export function DetailsTableField({
   const FieldType: any = getFieldType(field.type);
 
   return (
-    <tr>
+    <tr style={{ verticalAlign: 'top' }}>
       <td
         style={{
-          display: 'flex',
-          alignItems: 'center',
           gap: '20px',
-          width: '50',
-          justifyContent: 'flex-start'
+          width: '50'
         }}
       >
         <InvenTreeIcon icon={(field.icon ?? field.name) as InvenTreeIconType} />
       </td>
-      <td>
+      <td style={{ minWidth: '25%', maxWidth: '65%' }}>
         <Text>{field.label}</Text>
       </td>
-      <td style={{ minWidth: '40%' }}>
+      <td style={{ width: '100%' }}>
         <FieldType field_data={field} field_value={item[field.name]} />
       </td>
       <td style={{ width: '50' }}>

@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "@codemirror/lang-liquid": "^6.2.1",
-        "@emotion/react": "^11.11.3",
+        "@emotion/react": "^11.11.4",
         "@fortawesome/fontawesome-svg-core": "^6.5.1",
         "@fortawesome/free-regular-svg-icons": "^6.5.1",
         "@fortawesome/free-solid-svg-icons": "^6.5.1",
@@ -43,7 +43,7 @@
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "react-grid-layout": "^1.4.4",
-        "react-hook-form": "^7.50.1",
+        "react-hook-form": "^7.51.1",
         "react-is": "^18.2.0",
         "react-router-dom": "^6.22.1",
         "react-select": "^5.8.0",

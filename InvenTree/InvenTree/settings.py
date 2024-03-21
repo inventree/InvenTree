@@ -26,6 +26,7 @@ import pytz
 from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
+from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
@@ -1002,10 +1003,14 @@ if not ALLOWED_HOSTS:
             'No ALLOWED_HOSTS specified. Defaulting to ["*"] for debug mode. This is not recommended for production use'
         )
         ALLOWED_HOSTS = ['*']
-    else:
+    elif not TESTING:
         logger.error(
             'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
         )
+
+        # Server cannot run without ALLOWED_HOSTS
+        if isInMainThread():
+            sys.exit(-1)
 
 # Ensure that the ALLOWED_HOSTS do not contain any scheme info
 for i, host in enumerate(ALLOWED_HOSTS):
@@ -1024,6 +1029,20 @@ CSRF_TRUSTED_ORIGINS = get_setting(
 # If a list of trusted is not specified, but a site URL has been specified, use that
 if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
+
+if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
+    if DEBUG:
+        logger.warning(
+            'No CSRF_TRUSTED_ORIGINS specified. Defaulting to http://* for debug mode. This is not recommended for production use'
+        )
+        CSRF_TRUSTED_ORIGINS = ['http://*']
+
+    elif isInMainThread():
+        # Server thread cannot run without CSRF_TRUSTED_ORIGINS
+        logger.error(
+            'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+        )
+        sys.exit(-1)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
@@ -1202,6 +1221,9 @@ PLUGIN_RETRY = get_setting(
 )  # How often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 
+# Flag to allow table events during testing
+TESTING_TABLE_EVENTS = False
+
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
     'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True
@@ -1265,5 +1287,5 @@ SPECTACULAR_SETTINGS = {
     'SCHEMA_PATH_PREFIX': '/api/',
 }
 
-if SITE_URL:
+if SITE_URL and not TESTING:
     SPECTACULAR_SETTINGS['SERVERS'] = [{'url': SITE_URL}]

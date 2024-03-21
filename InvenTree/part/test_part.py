@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from allauth.account.models import EmailAddress
 
@@ -63,6 +64,7 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
 
+    @override_settings(SITE_URL=None)
     def test_inventree_base_url(self):
         """Test that the base URL tag returns correctly."""
         self.assertEqual(inventree_extras.inventree_base_url(), '')
