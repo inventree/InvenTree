@@ -27,7 +27,8 @@ def spa_bundle(manifest_path: Union[str, Path] = '', app: str = 'web'):
         manifest_path = Path(__file__).parent.parent.joinpath(
             'static/web/.vite/manifest.json'
         )
-    manifest = Path(manifest_path)
+    else:
+        manifest = Path(manifest_path)
 
     if not manifest.exists():
         logger.error('Manifest file not found')
