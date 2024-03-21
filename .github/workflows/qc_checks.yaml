@@ -10,7 +10,7 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 16
+  node_version: 18
   # The OS version must be set per job
   server_start_sleep: 60
 
@@ -182,7 +182,7 @@ jobs:
             name: Push new schema
             runs-on: ubuntu-20.04
             needs: [paths-filter, schema]
-            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
             env:
               version: ${{ needs.schema.outputs.version }}
 
