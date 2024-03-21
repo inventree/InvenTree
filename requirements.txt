@@ -115,7 +115,7 @@ django-taggit==5.0.1
 django-user-sessions==2.0.0
 django-weasyprint==2.3.0
 django-xforwardedfor-middleware==2.0
-djangorestframework==3.15.0
+djangorestframework==3.14.0
     # via
     #   dj-rest-auth
     #   djangorestframework-simplejwt
@@ -261,6 +261,7 @@ python3-openid==3.2.0
 pytz==2024.1
     # via
     #   django-dbbackup
+    #   djangorestframework
     #   icalendar
 pyyaml==6.0.1
     # via
