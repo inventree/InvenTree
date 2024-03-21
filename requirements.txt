@@ -52,7 +52,7 @@ deprecated==1.2.14
 diff-match-patch==20230430
     # via django-import-export
 dj-rest-auth==5.0.2
-django==4.2.10
+django==4.2.11
     # via
     #   dj-rest-auth
     #   django-allauth
@@ -137,7 +137,7 @@ googleapis-common-protos==1.62.0
     # via
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-exporter-otlp-proto-http
-grpcio==1.60.1
+grpcio==1.62.0
     # via opentelemetry-exporter-otlp-proto-grpc
 gunicorn==21.2.0
 html5lib==1.1
@@ -296,7 +296,7 @@ rpds-py==0.17.1
     #   referencing
 sentry-sdk==1.40.0
     # via django-q-sentry
-setuptools==69.1.0
+setuptools==69.2.0
     # via
     #   django-money
     #   opentelemetry-instrumentation
@@ -342,6 +342,7 @@ webencodings==0.5.1
     #   cssselect2
     #   html5lib
     #   tinycss2
+whitenoise==6.6.0
 wrapt==1.16.0
     # via
     #   deprecated

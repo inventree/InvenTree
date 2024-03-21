@@ -2363,6 +2363,9 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         value: Recorded test output value (optional)
         attachment: Link to StockItem attachment (optional)
         notes: Extra user notes related to the test (optional)
+        test_station: the name of the test station where the test was performed
+        started_datetime: Date when the test was started
+        finished_datetime: Date when the test was finished
         user: User who uploaded the test result
         date: Date the test result was recorded
     """
@@ -2449,6 +2452,29 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
 
     notes = models.CharField(
         blank=True, max_length=500, verbose_name=_('Notes'), help_text=_('Test notes')
+    )
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+
+    test_station = models.CharField(
+        blank=True,
+        max_length=500,
+        verbose_name=_('Test station'),
+        help_text=_('The identifier of the test station where the test was performed'),
+    )
+
+    started_datetime = models.DateTimeField(
+        default=datetime.now,
+        blank=True,
+        verbose_name=_('Started'),
+        help_text=_('The timestamp of the test start'),
+    )
+
+    finished_datetime = models.DateTimeField(
+        default=datetime.now,
+        blank=True,
+        verbose_name=_('Finished'),
+        help_text=_('The timestamp of the test finish'),
     )
 
     user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)

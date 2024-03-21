@@ -3,7 +3,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useMatch, useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
@@ -37,20 +37,22 @@ export function Header() {
   const notifications = useQuery({
     queryKey: ['notification-count'],
     queryFn: async () => {
-      return api
-        .get(apiUrl(ApiEndpoints.notifications_list), {
+      try {
+        const params = {
           params: {
             read: false,
             limit: 1
           }
-        })
-        .then((response) => {
-          setNotificationCount(response.data.count);
-          return response.data;
-        })
-        .catch((error) => {
-          return error;
-        });
+        };
+        let response = await api.get(
+          apiUrl(ApiEndpoints.notifications_list),
+          params
+        );
+        setNotificationCount(response.data.count);
+        return response.data;
+      } catch (error) {
+        return error;
+      }
     },
     refetchInterval: 30000,
     refetchOnMount: true,
@@ -100,8 +102,9 @@ export function Header() {
 
 function NavTabs() {
   const { classes } = InvenTreeStyle();
-  const { tabValue } = useParams();
   const navigate = useNavigate();
+  const match = useMatch(':tabName/*');
+  const tabValue = match?.params.tabName;
 
   return (
     <Tabs

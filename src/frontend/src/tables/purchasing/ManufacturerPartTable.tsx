@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { ReactNode, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -9,8 +8,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
-import { notYetImplemented } from '../../functions/notifications';
-import { getDetailUrl } from '../../functions/urls';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -26,7 +24,6 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   const table = useTable('manufacturerparts');
 
   const user = useUserState();
-  const navigate = useNavigate();
 
   // Construct table columns for this table
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -57,13 +54,19 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
         sortable: true
       },
       DescriptionColumn({}),
-      LinkColumn()
+      LinkColumn({})
     ];
   }, [params]);
 
-  const addManufacturerPart = useCallback(() => {
-    notYetImplemented();
-  }, []);
+  const createManufacturerPart = useCreateApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    title: t`Create Manufacturer Part`,
+    fields: useManufacturerPartFields(),
+    onFormSuccess: table.refreshTable,
+    initialData: {
+      manufacturer: params?.manufacturer
+    }
+  });
 
   const tableActions = useMemo(() => {
     let can_add =
@@ -73,7 +76,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     return [
       <AddItemButton
         tooltip={t`Add Manufacturer Part`}
-        onClick={addManufacturerPart}
+        onClick={() => createManufacturerPart.open()}
         hidden={!can_add}
       />
     ];
@@ -118,24 +121,23 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   );
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.manufacturer_part_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          part_detail: true,
-          manufacturer_detail: true
-        },
-        rowActions: rowActions,
-        tableActions: tableActions,
-        onRowClick: (record: any) => {
-          if (record?.pk) {
-            navigate(getDetailUrl(ModelType.manufacturerpart, record.pk));
-          }
-        }
-      }}
-    />
+    <>
+      {createManufacturerPart.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.manufacturer_part_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            part_detail: true,
+            manufacturer_detail: true
+          },
+          rowActions: rowActions,
+          tableActions: tableActions,
+          modelType: ModelType.manufacturerpart
+        }}
+      />
+    </>
   );
 }

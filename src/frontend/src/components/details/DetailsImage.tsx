@@ -1,26 +1,29 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  AspectRatio,
   Button,
   Group,
   Image,
-  Modal,
+  Overlay,
   Paper,
   Text,
   rem,
   useMantineTheme
 } from '@mantine/core';
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { useDisclosure, useHover } from '@mantine/hooks';
+import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { UserRoles } from '../../enums/Roles';
+import { cancelEvent } from '../../functions/events';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
 import { ActionButton } from '../buttons/ActionButton';
-import { ApiImage } from './ApiImage';
+import { ApiImage } from '../images/ApiImage';
+import { StylishText } from '../items/StylishText';
 
 /**
  * Props for detail image
@@ -29,7 +32,7 @@ export type DetailImageProps = {
   appRole: UserRoles;
   src: string;
   apiPath: string;
-  refresh: () => void;
+  refresh?: () => void;
   imageActions?: DetailImageButtonProps;
   pk: string;
 };
@@ -58,9 +61,9 @@ const backup_image = '/static/img/blank_image.png';
  */
 const removeModal = (apiPath: string, setImage: (image: string) => void) =>
   modals.openConfirmModal({
-    title: t`Remove Image`,
+    title: <StylishText size="xl">{t`Remove Image`}</StylishText>,
     children: (
-      <Text size="sm">
+      <Text>
         <Trans>Remove the associated image from this item?</Trans>
       </Text>
     ),
@@ -245,13 +248,8 @@ function ImageActionButtons({
   pk: string;
   setImage: (image: string) => void;
 }) {
-  const [opened, { open, close }] = useDisclosure(false);
-
   return (
     <>
-      <Modal opened={opened} onClose={close} title={t`Select image`} size="70%">
-        <PartThumbTable pk={pk} close={close} setImage={setImage} />
-      </Modal>
       {visible && (
         <Group
           spacing="xs"
@@ -259,24 +257,40 @@ function ImageActionButtons({
         >
           {actions.selectExisting && (
             <ActionButton
-              icon={<InvenTreeIcon icon="select_image" />}
+              icon={
+                <InvenTreeIcon
+                  icon="select_image"
+                  iconProps={{ color: 'white' }}
+                />
+              }
               tooltip={t`Select from existing images`}
               variant="outline"
               size="lg"
               tooltipAlignment="top"
-              onClick={open}
+              onClick={(event: any) => {
+                cancelEvent(event);
+
+                modals.open({
+                  title: <StylishText size="xl">{t`Select Image`}</StylishText>,
+                  size: 'xxl',
+                  children: <PartThumbTable pk={pk} setImage={setImage} />
+                });
+              }}
             />
           )}
           {actions.uploadFile && (
             <ActionButton
-              icon={<InvenTreeIcon icon="upload" />}
+              icon={
+                <InvenTreeIcon icon="upload" iconProps={{ color: 'white' }} />
+              }
               tooltip={t`Upload new image`}
               variant="outline"
               size="lg"
               tooltipAlignment="top"
-              onClick={() => {
+              onClick={(event: any) => {
+                cancelEvent(event);
                 modals.open({
-                  title: t`Upload Image`,
+                  title: <StylishText size="xl">{t`Upload Image`}</StylishText>,
                   children: (
                     <UploadModal apiPath={apiPath} setImage={setImage} />
                   )
@@ -293,7 +307,10 @@ function ImageActionButtons({
               variant="outline"
               size="lg"
               tooltipAlignment="top"
-              onClick={() => removeModal(apiPath, setImage)}
+              onClick={(event: any) => {
+                cancelEvent(event);
+                removeModal(apiPath, setImage);
+              }}
             />
           )}
         </Group>
@@ -313,46 +330,54 @@ export function DetailsImage(props: DetailImageProps) {
   // Sets a new image, and triggers upstream instance refresh
   const setAndRefresh = (image: string) => {
     setImg(image);
-    props.refresh();
+    props.refresh && props.refresh();
   };
 
   const permissions = useUserState();
 
+  const hasOverlay: boolean = useMemo(() => {
+    return (
+      props.imageActions?.selectExisting ||
+      props.imageActions?.uploadFile ||
+      props.imageActions?.deleteFile ||
+      false
+    );
+  }, [props.imageActions]);
+
+  const expandImage = (event: any) => {
+    cancelEvent(event);
+    modals.open({
+      children: <ApiImage src={img} />,
+      withCloseButton: false
+    });
+  };
+
   return (
     <>
-      <Paper
-        ref={ref}
-        style={{
-          position: 'relative',
-          width: `${IMAGE_DIMENSION}px`,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center'
-        }}
-      >
-        <ApiImage
-          src={img}
-          style={{ zIndex: 1 }}
-          height={IMAGE_DIMENSION}
-          width={IMAGE_DIMENSION}
-          onClick={() => {
-            modals.open({
-              children: <ApiImage src={img} />,
-              withCloseButton: false
-            });
-          }}
-        />
-        {permissions.hasChangeRole(props.appRole) && (
-          <ImageActionButtons
-            visible={hovered}
-            actions={props.imageActions}
-            apiPath={props.apiPath}
-            hasImage={props.src ? true : false}
-            pk={props.pk}
-            setImage={setAndRefresh}
+      <AspectRatio ref={ref} maw={IMAGE_DIMENSION} ratio={1}>
+        <>
+          <ApiImage
+            src={img}
+            height={IMAGE_DIMENSION}
+            width={IMAGE_DIMENSION}
+            onClick={expandImage}
           />
-        )}
-      </Paper>
+          {permissions.hasChangeRole(props.appRole) &&
+            hasOverlay &&
+            hovered && (
+              <Overlay color="black" opacity={0.8} onClick={expandImage}>
+                <ImageActionButtons
+                  visible={hovered}
+                  actions={props.imageActions}
+                  apiPath={props.apiPath}
+                  hasImage={props.src ? true : false}
+                  pk={props.pk}
+                  setImage={setAndRefresh}
+                />
+              </Overlay>
+            )}
+        </>
+      </AspectRatio>
     </>
   );
 }

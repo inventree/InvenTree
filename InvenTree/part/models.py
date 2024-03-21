@@ -3428,6 +3428,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         self.key = helpers.generateTestKey(self.test_name)
 
+        if len(self.key) == 0:
+            raise ValidationError({
+                'test_name': _(
+                    'Invalid template name - must include at least one alphanumeric character'
+                )
+            })
+
         self.validate_unique()
         super().clean()
 
@@ -3445,7 +3452,9 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         if tests.exists():
             raise ValidationError({
-                'test_name': _('Test with this name already exists for this part')
+                'test_name': _(
+                    'Test template with the same key already exists for part'
+                )
             })
 
         super().validate_unique(exclude)
