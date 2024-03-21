@@ -188,6 +188,9 @@ INVENTREE_ADMIN_URL = get_setting(
 INSTALLED_APPS = [
     # Admin site integration
     'django.contrib.admin',
+    # django data wizard
+    'data_wizard',
+    'data_wizard.sources',
     # InvenTree apps
     'build.apps.BuildConfig',
     'common.apps.CommonConfig',
@@ -217,8 +220,8 @@ INSTALLED_APPS = [
     'django_filters',  # Extended filter functionality
     'rest_framework',  # DRF (Django Rest Framework)
     'corsheaders',  # Cross-origin Resource Sharing for DRF
-    'crispy_forms',  # Improved form rendering
-    'import_export',  # Import / export tables to file
+    'crispy_forms',  # Improved form rendering (TODO: Remove after migration to React)
+    'import_export',  # Import / export tables to file (TODO: Remove after implementation of data-wizard)
     'django_cleanup.apps.CleanupConfig',  # Automatically delete orphaned MEDIA files
     'mptt',  # Modified Preorder Tree Traversal
     'markdownify',  # Markdown template rendering

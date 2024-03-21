@@ -452,6 +452,8 @@ if settings.ENABLE_PLATFORM_FRONTEND:
 
 urlpatterns += frontendpatterns
 
+urlpatterns.append(path('datawizard/', include('data_wizard.urls')))
+
 # Append custom plugin URLs (if plugin support is enabled)
 if settings.PLUGINS_ENABLED:
     urlpatterns.append(get_plugin_urls())
