@@ -42,7 +42,7 @@ jobs:
         run: |
           cd InvenTree/web/static/web
           zip -r ../frontend-build.zip *
-      - uses: svenstaro/upload-release-action@1beeb572c19a9242f4361f4cee78f8e0d9aec5df # pin@2.7.0
+      - uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           file: InvenTree/web/static/frontend-build.zip

@@ -315,14 +315,7 @@
     "@babel/plugin-transform-modules-commonjs" "^7.23.0"
     "@babel/plugin-transform-typescript" "^7.22.15"
 
-"@babel/runtime@^7.10.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.18.3", "@babel/runtime@^7.20.13", "@babel/runtime@^7.21.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
-  version "7.23.2"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.2.tgz#062b0ac103261d68a966c4c7baf2ae3e62ec3885"
-  integrity sha512-mM8eg4yl5D6i3lu2QKPuPH4FArvJ8KhTofbE7jwMUv9KX5mBvwPAqnV3MlyBNqdp9RyRKP6Yck8TrfYrPvX3bg==
-  dependencies:
-    regenerator-runtime "^0.14.0"
-
-"@babel/runtime@^7.18.6":
+"@babel/runtime@^7.10.2", "@babel/runtime@^7.12.0", "@babel/runtime@^7.12.5", "@babel/runtime@^7.13.10", "@babel/runtime@^7.18.3", "@babel/runtime@^7.18.6", "@babel/runtime@^7.20.13", "@babel/runtime@^7.21.0", "@babel/runtime@^7.5.5", "@babel/runtime@^7.8.7":
   version "7.23.9"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.23.9.tgz#47791a15e4603bb5f905bc0753801cf21d6345f7"
   integrity sha512-0CX6F+BI2s9dkUqr08KFrAIZgNFj75rdBU/DjCyYLIaV/quFjkk6T+EJ2LkZHyZTbEV4L5p97mNkUsHl2wLFAw==
@@ -535,24 +528,24 @@
   resolved "https://registry.yarnpkg.com/@emotion/memoize/-/memoize-0.8.1.tgz#c1ddb040429c6d21d38cc945fe75c818cfb68e17"
   integrity sha512-W2P2c/VRW1/1tLox0mVUalvnWXxavmv/Oum2aPsRcoDJuob75FC3Y8FbpfLwUegRcxINtGUMPq0tFCvYNTBXNA==
 
-"@emotion/react@^11.11.1", "@emotion/react@^11.8.1":
-  version "11.11.1"
-  resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.11.1.tgz#b2c36afac95b184f73b08da8c214fdf861fa4157"
-  integrity sha512-5mlW1DquU5HaxjLkfkGN1GA/fvVGdyHURRiX/0FHl2cfIfRxSOfmxEH5YS43edp0OldZrZ+dkBKbngxcNCdZvA==
+"@emotion/react@^11.11.4", "@emotion/react@^11.8.1":
+  version "11.11.4"
+  resolved "https://registry.yarnpkg.com/@emotion/react/-/react-11.11.4.tgz#3a829cac25c1f00e126408fab7f891f00ecc3c1d"
+  integrity sha512-t8AjMlF0gHpvvxk5mAtCqR4vmxiGHCeJBaQO6gncUSdklELOgtwjerNY2yuJNfwnc6vi16U/+uMF+afIawJ9iw==
   dependencies:
     "@babel/runtime" "^7.18.3"
     "@emotion/babel-plugin" "^11.11.0"
     "@emotion/cache" "^11.11.0"
-    "@emotion/serialize" "^1.1.2"
+    "@emotion/serialize" "^1.1.3"
     "@emotion/use-insertion-effect-with-fallbacks" "^1.0.1"
     "@emotion/utils" "^1.2.1"
     "@emotion/weak-memoize" "^0.3.1"
     hoist-non-react-statics "^3.3.1"
 
-"@emotion/serialize@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@emotion/serialize/-/serialize-1.1.2.tgz#017a6e4c9b8a803bd576ff3d52a0ea6fa5a62b51"
-  integrity sha512-zR6a/fkFP4EAcCMQtLOhIgpprZOwNmCldtpaISpvz348+DP4Mz8ZoKaGGCQpbzepNIUWbq4w6hNZkwDyKoS+HA==
+"@emotion/serialize@^1.1.2", "@emotion/serialize@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@emotion/serialize/-/serialize-1.1.3.tgz#84b77bfcfe3b7bb47d326602f640ccfcacd5ffb0"
+  integrity sha512-iD4D6QVZFDhcbH0RAG1uVu1CwVLMWUkCvAqqlewO/rxf8+87yIBAlt4+AxMiiKPLs5hFc0owNk/sLLAOROw3cA==
   dependencies:
     "@emotion/hash" "^0.9.1"
     "@emotion/memoize" "^0.8.1"
@@ -846,6 +839,11 @@
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.4.2.tgz#1766039cad33f8ad87f9467b98e0d18fbc8f01c5"
   integrity sha512-1DgP7f+XQIJbLFCTX1V2QnxVmpLdKdzzo2k8EmvDOePfchaIGQ9eCHj2up3/jNEbZuBqel5OxiaOJf37TWauRA==
 
+"@fortawesome/fontawesome-common-types@6.5.1":
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.5.1.tgz#fdb1ec4952b689f5f7aa0bffe46180bb35490032"
+  integrity sha512-GkWzv+L6d2bI5f/Vk6ikJ9xtl7dfXtoRu3YGE6nq0p/FFqA1ebMOAWg3XgRyb0I6LYyYkiAo+3/KrwuBp8xG7A==
+
 "@fortawesome/fontawesome-svg-core@^6.4.2":
   version "6.4.2"
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-6.4.2.tgz#37f4507d5ec645c8b50df6db14eced32a6f9be09"
@@ -860,12 +858,12 @@
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.4.2"
 
-"@fortawesome/free-solid-svg-icons@^6.4.2":
-  version "6.4.2"
-  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.4.2.tgz#33a02c4cb6aa28abea7bc082a9626b7922099df4"
-  integrity sha512-sYwXurXUEQS32fZz9hVCUUv/xu49PEJEyUOsA51l6PU/qVgfbTb2glsTEaJngVVT8VqBATRIdh7XVgV1JF1LkA==
+"@fortawesome/free-solid-svg-icons@^6.5.1":
+  version "6.5.1"
+  resolved "https://registry.yarnpkg.com/@fortawesome/free-solid-svg-icons/-/free-solid-svg-icons-6.5.1.tgz#737b8d787debe88b400ab7528f47be333031274a"
+  integrity sha512-S1PPfU3mIJa59biTtXJz1oI0+KAXW6bkAb31XKhxdxtuXDiUIFsih4JR1v5BbxY7hVHsD1RKq+jRkVRaf773NQ==
   dependencies:
-    "@fortawesome/fontawesome-common-types" "6.4.2"
+    "@fortawesome/fontawesome-common-types" "6.5.1"
 
 "@fortawesome/react-fontawesome@^0.2.0":
   version "0.2.0"
@@ -971,26 +969,26 @@
   dependencies:
     "@lezer/common" "^1.0.0"
 
-"@lingui/babel-plugin-extract-messages@4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@lingui/babel-plugin-extract-messages/-/babel-plugin-extract-messages-4.5.0.tgz#71e56cc2eae73890caeea15a00ae4965413430ec"
-  integrity sha512-jZq3Gbi691jsHyQ4+OPnGgIqZt5eKEGnmI75akYlZpwTPxF7n+hiuKlQS+YB3xfKvcvlAED76ZAMCcwYG5fNrQ==
+"@lingui/babel-plugin-extract-messages@4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/babel-plugin-extract-messages/-/babel-plugin-extract-messages-4.7.1.tgz#6fa13ce0991e83c09fb216b2c4a209922c1fcbfe"
+  integrity sha512-grz6RyuroLCce2G6/gIGGvvs4Piu7Fs7OVGqTJCTt8Jfy+N78E5tUMBiyqNiOglz3+bLXB0qxznGha8RSAcD/g==
 
-"@lingui/cli@^4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@lingui/cli/-/cli-4.5.0.tgz#fb8685cb682cf624b6e5b6d1207f8127b98ed95a"
-  integrity sha512-MzhxNUNd+YYEmK79TwmneUow5BuLwpOlrUrZq9EyIAWUM4N6kkCVkZ8VIMYCL4TXGQ4kBQjstgDpkF8wdFRtNg==
+"@lingui/cli@^4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/cli/-/cli-4.7.1.tgz#512c33b49ff9c331ee6d73a58f99fcc8e0194d59"
+  integrity sha512-PlXtQjfv01VY1eL/uZMG+xakBcFXzrDqMIk1IlCO2kRvLdqQZxCgIrLePLdmYypEq7oc+nnoHv6ctuhL9mh4MA==
   dependencies:
     "@babel/core" "^7.21.0"
     "@babel/generator" "^7.21.1"
     "@babel/parser" "^7.21.2"
     "@babel/runtime" "^7.21.0"
     "@babel/types" "^7.21.2"
-    "@lingui/babel-plugin-extract-messages" "4.5.0"
-    "@lingui/conf" "4.5.0"
-    "@lingui/core" "4.5.0"
-    "@lingui/format-po" "4.5.0"
-    "@lingui/message-utils" "4.5.0"
+    "@lingui/babel-plugin-extract-messages" "4.7.1"
+    "@lingui/conf" "4.7.1"
+    "@lingui/core" "4.7.1"
+    "@lingui/format-po" "4.7.1"
+    "@lingui/message-utils" "4.7.1"
     babel-plugin-macros "^3.0.1"
     chalk "^4.1.0"
     chokidar "3.5.1"
@@ -1023,7 +1021,19 @@
     jiti "^1.17.1"
     lodash.get "^4.4.2"
 
-"@lingui/core@4.5.0", "@lingui/core@^4.5.0":
+"@lingui/conf@4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/conf/-/conf-4.7.1.tgz#a9aafa03fe3cce3b241feaea424e583b661ef39e"
+  integrity sha512-SbAHmAfIX0HTjmhmBF93GhmfTNMsca3sq2x7g1X6Di4kHx1jCpOpwTVK6ruaCfwhjLGSAC01WHQQ/r69ke+E0g==
+  dependencies:
+    "@babel/runtime" "^7.20.13"
+    chalk "^4.1.0"
+    cosmiconfig "^8.0.0"
+    jest-validate "^29.4.3"
+    jiti "^1.17.1"
+    lodash.get "^4.4.2"
+
+"@lingui/core@4.5.0":
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/@lingui/core/-/core-4.5.0.tgz#8b907238bd0b420b372272d0a757c56bed3aed14"
   integrity sha512-8zTuIXJo5Qvjato7LWE6Q4RHiO4LjTBVOoRlqfOGYDp8VZ9w9P7Z7IJgxI7UP5Z1wiuEvnMdVF9I1C4acqXGlQ==
@@ -1032,13 +1042,22 @@
     "@lingui/message-utils" "4.5.0"
     unraw "^3.0.0"
 
-"@lingui/format-po@4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@lingui/format-po/-/format-po-4.5.0.tgz#88dabeaa565ce5e4ff2a1b9865da7759b393af27"
-  integrity sha512-xQNzZ4RCQfh6TjzjUsyHz3B0R9FJuzhBit9R37NyMn6mL3kBTCUExpPczknm8gWZjtfFO4T8EH5eJhhC5vgJYg==
+"@lingui/core@4.7.1", "@lingui/core@^4.5.0":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/core/-/core-4.7.1.tgz#7bf1fa22ff0c6892ff6fb965f96c3775c7050697"
+  integrity sha512-Ign2qnyy1WNY7hPzkYTPYaja+5ucs3oDy+rgxs8ChGsqGFf4RjchU4W+CxqliKJ19f/hy4gaDK1DWA9h47kGvw==
   dependencies:
-    "@lingui/conf" "4.5.0"
-    "@lingui/message-utils" "4.5.0"
+    "@babel/runtime" "^7.20.13"
+    "@lingui/message-utils" "4.7.1"
+    unraw "^3.0.0"
+
+"@lingui/format-po@4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/format-po/-/format-po-4.7.1.tgz#b0783765a00961155a8e1bf5a4140a9e3ec469e1"
+  integrity sha512-O5Tr/x0Pr+buk7YtbwrWR8MIaKV0ruwoIPuc05QlEHW/D15kcSRldHJ1lEKEB+bXRw050AeUxyRY7ibbZFyQ0g==
+  dependencies:
+    "@lingui/conf" "4.7.1"
+    "@lingui/message-utils" "4.7.1"
     date-fns "^2.29.3"
     pofile "^1.1.4"
 
@@ -1060,13 +1079,21 @@
   dependencies:
     "@messageformat/parser" "^5.0.0"
 
-"@lingui/react@^4.5.0":
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/@lingui/react/-/react-4.5.0.tgz#1cae72e89890f8d270b37cdde051a3c69df97727"
-  integrity sha512-dv/oxBshyaVJ3XzbPDnWn3abhwtaS1sx8cEO2qDjs+OhW0AeWD9hyVDrduf5SBIuXFJfJQNNA8+2P2nO0lxRbQ==
+"@lingui/message-utils@4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/message-utils/-/message-utils-4.7.1.tgz#d5dfb95f2cfba44721c933cafdbf54a4a08ce6db"
+  integrity sha512-c4D9Qg575LHvJHNyDDJfw+lAfyVv+3L+j4ZkaG8elNjc06ITx6sBWETFlj9FwoE8krF/r4yyXuCdnhBgUMrvJg==
+  dependencies:
+    "@messageformat/parser" "^5.0.0"
+    js-sha256 "^0.10.1"
+
+"@lingui/react@^4.7.1":
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/@lingui/react/-/react-4.7.1.tgz#ba59312f8dda17e423f0f360cb413850f1e4c0aa"
+  integrity sha512-acfmKDt6kg2z8wYJXc8S5SmZk1sM46f6xIZFVN+HrJBN/Z7MO9pp4FroTScOBI5zbRsdvoaRdyruNJedLplnhQ==
   dependencies:
     "@babel/runtime" "^7.20.13"
-    "@lingui/core" "4.5.0"
+    "@lingui/core" "4.7.1"
 
 "@mantine/carousel@<7":
   version "6.0.21"
@@ -2376,6 +2403,11 @@ jiti@^1.17.1:
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.20.0.tgz#2d823b5852ee8963585c8dd8b7992ffc1ae83b42"
   integrity sha512-3TV69ZbrvV6U5DfQimop50jE9Dl6J8O1ja1dvBbMba/sZ3YBEQqJ2VZRoQPVnhlzjNtU1vaXRZVrVjU4qtm8yA==
 
+js-sha256@^0.10.1:
+  version "0.10.1"
+  resolved "https://registry.yarnpkg.com/js-sha256/-/js-sha256-0.10.1.tgz#b40104ba1368e823fdd5f41b66b104b15a0da60d"
+  integrity sha512-5obBtsz9301ULlsgggLg542s/jqtddfOpV5KJc4hajc9JV8GeY2gZHSVpYBn4nWqAUTJ9v+xwtbJ1mIBgIH5Vw==
+
 "js-tokens@^3.0.0 || ^4.0.0", js-tokens@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
@@ -2772,10 +2804,10 @@ react-grid-layout@^1.4.2:
     react-resizable "^3.0.5"
     resize-observer-polyfill "^1.5.1"
 
-react-hook-form@^7.48.2:
-  version "7.48.2"
-  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.48.2.tgz#01150354d2be61412ff56a030b62a119283b9935"
-  integrity sha512-H0T2InFQb1hX7qKtDIZmvpU1Xfn/bdahWBN1fH19gSe4bBEqTfmlr7H3XWTaVtiK4/tpPaI1F3355GPMZYge+A==
+react-hook-form@^7.51.1:
+  version "7.51.1"
+  resolved "https://registry.yarnpkg.com/react-hook-form/-/react-hook-form-7.51.1.tgz#3ce5f8b5ef41903b4054a641cef8c0dc8bf8ae85"
+  integrity sha512-ifnBjl+kW0ksINHd+8C/Gp6a4eZOdWyvRv0UBaByShwU8JbVx5hTcTWEcd5VdybvmPTATkVVXk9npXArHmo56w==
 
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"

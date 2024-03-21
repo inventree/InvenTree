@@ -1,5 +1,7 @@
 import { t } from '@lingui/macro';
+import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
+import { set } from 'react-hook-form';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
@@ -14,99 +16,94 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
-export default function PartParameterTemplateTable() {
-  const table = useTable('part-parameter-templates');
-
+export default function PartCategoryTemplateTable({}: {}) {
+  const table = useTable('part-category-parameter-templates');
   const user = useUserState();
 
+  const formFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      category: {},
+      parameter_template: {},
+      default_value: {}
+    };
+  }, []);
+
+  const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
+
+  const newTemplate = useCreateApiFormModal({
+    url: ApiEndpoints.category_parameter_list,
+    title: t`Add Category Parameter`,
+    fields: formFields,
+    onFormSuccess: table.refreshTable
+  });
+
+  const editTemplate = useEditApiFormModal({
+    url: ApiEndpoints.category_parameter_list,
+    pk: selectedTemplate,
+    title: t`Edit Category Parameter`,
+    fields: formFields,
+    onFormSuccess: (record: any) => table.updateRecord(record)
+  });
+
+  const deleteTemplate = useDeleteApiFormModal({
+    url: ApiEndpoints.category_parameter_list,
+    pk: selectedTemplate,
+    title: t`Delete Category Parameter`,
+    onFormSuccess: table.refreshTable
+  });
+
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [
-      {
-        name: 'checkbox',
-        label: t`Checkbox`,
-        description: t`Show checkbox templates`
-      },
-      {
-        name: 'has_choices',
-        label: t`Has choices`,
-        description: t`Show templates with choices`
-      },
-      {
-        name: 'has_units',
-        label: t`Has Units`,
-        description: t`Show templates with units`
-      }
-    ];
+    // TODO
+    return [];
   }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
-        accessor: 'name',
+        accessor: 'category_detail.name',
+        title: t`Category`,
         sortable: true,
         switchable: false
       },
       {
-        accessor: 'parts',
+        accessor: 'category_detail.pathstring'
+      },
+      {
+        accessor: 'parameter_template_detail.name',
+        title: t`Parameter Template`,
         sortable: true,
-        switchable: true
+        switchable: false
       },
       {
-        accessor: 'units',
-        sortable: true
-      },
-      DescriptionColumn({}),
-      BooleanColumn({
-        accessor: 'checkbox'
-      }),
-      {
-        accessor: 'choices'
+        accessor: 'default_value',
+        sortable: true,
+        switchable: false,
+        render: (record: any) => {
+          if (!record?.default_value) {
+            return '-';
+          }
+
+          let units = '';
+
+          if (record?.parameter_template_detail?.units) {
+            units = t`[${record.parameter_template_detail.units}]`;
+          }
+
+          return (
+            <Group position="apart" grow>
+              <Text>{record.default_value}</Text>
+              {units && <Text size="xs">{units}</Text>}
+            </Group>
+          );
+        }
       }
     ];
   }, []);
 
-  const partParameterTemplateFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      name: {},
-      description: {},
-      units: {},
-      choices: {},
-      checkbox: {}
-    };
-  }, []);
-
-  const newTemplate = useCreateApiFormModal({
-    url: ApiEndpoints.part_parameter_template_list,
-    title: t`Add Parameter Template`,
-    fields: partParameterTemplateFields,
-    onFormSuccess: table.refreshTable
-  });
-
-  const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
-    undefined
-  );
-
-  const editTemplate = useEditApiFormModal({
-    url: ApiEndpoints.part_parameter_template_list,
-    pk: selectedTemplate,
-    title: t`Edit Parameter Template`,
-    fields: partParameterTemplateFields,
-    onFormSuccess: (record: any) => table.updateRecord(record)
-  });
-
-  const deleteTemplate = useDeleteApiFormModal({
-    url: ApiEndpoints.part_parameter_template_list,
-    pk: selectedTemplate,
-    title: t`Delete Parameter Template`,
-    onFormSuccess: table.refreshTable
-  });
-
-  // Callback for row actions
   const rowActions = useCallback(
     (record: any) => {
       return [
@@ -132,7 +129,7 @@ export default function PartParameterTemplateTable() {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        tooltip={t`Add parameter template`}
+        tooltip={t`Add Category Parameter`}
         onClick={() => newTemplate.open()}
         hidden={!user.hasAddRole(UserRoles.part)}
       />
@@ -145,7 +142,7 @@ export default function PartParameterTemplateTable() {
       {editTemplate.modal}
       {deleteTemplate.modal}
       <InvenTreeTable
-        url={apiUrl(ApiEndpoints.part_parameter_template_list)}
+        url={apiUrl(ApiEndpoints.category_parameter_list)}
         tableState={table}
         columns={tableColumns}
         props={{
