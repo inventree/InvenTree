@@ -37,6 +37,17 @@ def get_supported_serializers():
     return _serializer_registry.supported_serializers
 
 
+def supported_models():
+    """Return a map of supported models to their respective serializers."""
+    data = {}
+
+    for serializer in get_supported_serializers():
+        model = serializer.Meta.model
+        data[model.__name__.lower()] = serializer
+
+    return data
+
+
 def register_importer():
     """Decorator function to register a serializer with the importer registry."""
 
