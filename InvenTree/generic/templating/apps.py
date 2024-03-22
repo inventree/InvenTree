@@ -130,5 +130,7 @@ class TemplatingMixin:
             obj_data = self.get_new_obj_data(data, filename)
             logger.info('Creating %s with data: %s', model, obj_data)
             model.objects.create(**obj_data)
-        except Exception:
-            logger.warning("Failed to create %s '%s'", self.name, data['name'])
+        except Exception as _e:
+            logger.warning(
+                "Failed to create %s '%s' with error '%s'", self.name, data['name'], _e
+            )
