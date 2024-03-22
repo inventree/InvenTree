@@ -63,12 +63,12 @@ class DataImportSession(models.Model):
 
     progress = models.PositiveIntegerField(default=0, verbose_name=_('Progress'))
 
-    data_columns = models.JSONField(
-        blank=True, null=True, verbose_name=_('Data Columns')
-    )
-
     field_defaults = models.JSONField(
         blank=True, null=True, verbose_name=_('Field Defaults')
+    )
+
+    field_mapping = models.JSONField(
+        blank=True, null=True, verbose_name=_('Field Mapping')
     )
 
     @property
