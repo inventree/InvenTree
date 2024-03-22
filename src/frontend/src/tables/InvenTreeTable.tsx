@@ -378,7 +378,7 @@ export function InvenTreeTable<T = any>({
     return api
       .get(url, {
         params: queryParams,
-        timeout: 30 * 1000
+        timeout: 5 * 1000
       })
       .then(function (response) {
         switch (response.status) {

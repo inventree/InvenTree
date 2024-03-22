@@ -10,7 +10,7 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 16
+  node_version: 18
   # The OS version must be set per job
   server_start_sleep: 60
 
@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
-      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # pin@v2.11.1
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
           filters: |
@@ -89,7 +89,7 @@ jobs:
           python-version: ${{ env.python_version }}
           cache: 'pip'
       - name: Run pre-commit Checks
-        uses: pre-commit/action@646c83fcd040023954eafda54b4db0192ce70507 # pin@v3.0.0
+        uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
       - name: Check Version
         run: |
           pip install requests
@@ -184,7 +184,7 @@ jobs:
             name: Push new schema
             runs-on: ubuntu-20.04
             needs: [paths-filter, schema]
-            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
             env:
               version: ${{ needs.schema.outputs.version }}
 

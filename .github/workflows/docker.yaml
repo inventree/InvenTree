@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
-      - uses: dorny/paths-filter@4512585405083f25c027a35db413c2b3b9006d50 # pin@v2.11.1
+      - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
           filters: |
@@ -128,8 +128,16 @@ jobs:
       - name: Set up cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19 # pin@v3.1.2
+      - name: Check if Dockerhub login is required
+        id: docker_login
+        run: |
+          if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
+            echo "skip_dockerhub_login=true" >> $GITHUB_ENV
+          else
+            echo "skip_dockerhub_login=false" >> $GITHUB_ENV
+          fi
       - name: Login to Dockerhub
-        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request' && steps.docker_login.outputs.skip_dockerhub_login != 'true'
         uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # pin@v3.0.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -146,16 +154,16 @@ jobs:
       - name: Extract Docker metadata
         if: github.event_name != 'pull_request'
         id: meta
-        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # pin@v5.0.0
+        uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # pin@v5.5.1
         with:
           images: |
             inventree/inventree
-            ghcr.io/inventree/inventree
+            ghcr.io/${{ github.repository }}
 
       - name: Push Docker Images
         id: push-docker
         if: github.event_name != 'pull_request'
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 # pin@v5.0.0
+        uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # pin@v5.3.0
         with:
           context: .
           platforms: linux/amd64,linux/arm64

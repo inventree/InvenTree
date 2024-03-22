@@ -105,7 +105,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
       <AddItemButton
         tooltip={t`Add Part Category`}
         onClick={() => newCategory.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);
