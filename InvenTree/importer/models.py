@@ -102,3 +102,29 @@ class DataImportSession(models.Model):
         # TODO... implement auto mapping
 
         self.data_columns = column_map
+
+
+class DataImportRow(models.Model):
+    """Database model representing a single row in a data import session.
+
+    Each row corresponds to a single row in the import file, and is used to populate the database.
+
+    Fields:
+        session: ForeignKey to the parent DataImportSession object
+        data: JSONField for the data in this row
+        status: IntegerField for the status of the row import
+    """
+
+    session = models.ForeignKey(
+        DataImportSession, on_delete=models.CASCADE, verbose_name=_('Import Session')
+    )
+
+    row_index = models.PositiveIntegerField(default=0, verbose_name=_('Row Index'))
+
+    row_data = models.JSONField(
+        blank=True, null=True, verbose_name=_('Original row data')
+    )
+
+    data = models.JSONField(blank=True, null=True, verbose_name=_('Data'))
+
+    errors = models.JSONField(blank=True, null=True, verbose_name=_('Errors'))

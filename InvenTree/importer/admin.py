@@ -12,3 +12,10 @@ class DataImportSessionAdmin(admin.ModelAdmin):
     list_display = ['id', 'data_file', 'status', 'progress', 'user']
 
     list_filter = ['status']
+
+
+@admin.register(importer.models.DataImportRow)
+class DataImportRowAdmin(admin.ModelAdmin):
+    """Admin interface for the DataImportRow model."""
+
+    list_display = ['id', 'session', 'row_index']
