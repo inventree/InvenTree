@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-19 01:26+0000\n"
-"PO-Revision-Date: 2024-03-19 11:51\n"
+"POT-Creation-Date: 2024-03-22 10:34+0000\n"
+"PO-Revision-Date: 2024-03-22 14:07\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -273,7 +273,7 @@ msgstr "Koreanisch"
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr ""
+msgstr "Lettisch"
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
@@ -585,7 +585,7 @@ msgstr "Serverfehler"
 msgid "An error has been logged by the server."
 msgstr "Ein Fehler wurde vom Server protokolliert."
 
-#: InvenTree/serializers.py:62 part/models.py:4143
+#: InvenTree/serializers.py:62 part/models.py:4165
 msgid "Must be a valid number"
 msgstr "Muss eine gültige Nummer sein"
 
@@ -942,14 +942,14 @@ msgstr "Über InvenTree"
 msgid "Build must be cancelled before it can be deleted"
 msgstr "Bauauftrag muss abgebrochen werden, bevor er gelöscht werden kann"
 
-#: build/api.py:281 part/models.py:4021 templates/js/translated/bom.js:997
+#: build/api.py:281 part/models.py:4043 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2521
 #: templates/js/translated/table_filters.js:190
 #: templates/js/translated/table_filters.js:583
 msgid "Consumable"
 msgstr "Verbrauchsmaterial"
 
-#: build/api.py:282 part/models.py:4015 part/templates/part/upload_bom.html:58
+#: build/api.py:282 part/models.py:4037 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:1001 templates/js/translated/bom.js:1028
 #: templates/js/translated/build.js:2530
 #: templates/js/translated/table_filters.js:186
@@ -1018,7 +1018,7 @@ msgstr "Bauauftragsreferenz"
 
 #: build/models.py:174 order/models.py:430 order/models.py:886
 #: order/models.py:1264 order/models.py:1981 part/admin.py:417
-#: part/models.py:4036 part/templates/part/upload_bom.html:54
+#: part/models.py:4058 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:26
@@ -1051,8 +1051,8 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: part/api.py:1528 part/api.py:1820 part/models.py:389 part/models.py:3003
 #: part/models.py:3147 part/models.py:3291 part/models.py:3314
 #: part/models.py:3335 part/models.py:3357 part/models.py:3467
-#: part/models.py:3763 part/models.py:3894 part/models.py:3987
-#: part/models.py:4348 part/serializers.py:1102 part/serializers.py:1677
+#: part/models.py:3763 part/models.py:3916 part/models.py:4009
+#: part/models.py:4370 part/serializers.py:1102 part/serializers.py:1677
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1292,7 +1292,7 @@ msgstr "Objekt bauen"
 #: build/templates/build/detail.html:34 common/models.py:2459
 #: order/models.py:1247 order/models.py:1902 order/serializers.py:1328
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:416
-#: part/forms.py:48 part/models.py:3161 part/models.py:4009
+#: part/forms.py:48 part/models.py:3161 part/models.py:4031
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1663,7 +1663,7 @@ msgstr "Optionale Positionen"
 msgid "Allocate optional BOM items to build order"
 msgstr "Optionale Stücklisten-Positionen dem Bauauftrag hinzufügen"
 
-#: build/serializers.py:1097 part/models.py:3904 part/models.py:4340
+#: build/serializers.py:1097 part/models.py:3926 part/models.py:4362
 #: stock/api.py:745
 msgid "BOM Item"
 msgstr "Stücklisten-Position"
@@ -2802,11 +2802,11 @@ msgstr "Anzeige der installierten Lagerartikel in Bestandstabellen"
 
 #: common/models.py:1754
 msgid "Check BOM when installing items"
-msgstr ""
+msgstr "Prüfe BOM bei der Installation von Elementen"
 
 #: common/models.py:1756
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr ""
+msgstr "Installierte Lagerbestandteile müssen im BOM für den übergeordneten Teil vorhanden sein"
 
 #: common/models.py:1762
 msgid "Build Order Reference Pattern"
@@ -2830,7 +2830,7 @@ msgstr "Referenz Muster für Rücksendungen"
 
 #: common/models.py:1778
 msgid "Required pattern for generating Return Order reference field"
-msgstr ""
+msgstr "Benötigtes Muster für die Generierung des Referenzfeldes für Rücksendungen"
 
 #: common/models.py:1784
 msgid "Edit Completed Return Orders"
@@ -3090,11 +3090,11 @@ msgstr "Verhindert die Fertigstellung bis alle erforderlichen Tests bestanden si
 
 #: common/models.py:2016
 msgid "Enable Test Station Data"
-msgstr ""
+msgstr "Teststation-Daten aktivieren"
 
 #: common/models.py:2017
 msgid "Enable test station data collection for test results"
-msgstr ""
+msgstr "Teststation-Datenerfassung für Testergebnisse aktivieren"
 
 #: common/models.py:2029 common/models.py:2429
 msgid "Settings key (must be unique - case insensitive"
@@ -4126,7 +4126,7 @@ msgid "Supplier part description"
 msgstr "Zuliefererbeschreibung des Teils"
 
 #: company/models.py:834 company/templates/company/supplier_part.html:187
-#: part/admin.py:418 part/models.py:4044 part/templates/part/upload_bom.html:59
+#: part/admin.py:418 part/models.py:4066 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
 #: report/templates/report/inventree_return_order_report_base.html:27
@@ -5799,12 +5799,12 @@ msgstr "Stückpreis für {part} auf {price} aktualisiert"
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr "{part} Stückpreis auf {price} und Menge auf {qty} aktualisiert"
 
-#: part/admin.py:39 part/admin.py:404 part/models.py:3895 part/stocktake.py:218
+#: part/admin.py:39 part/admin.py:404 part/models.py:3917 part/stocktake.py:218
 #: stock/admin.py:153
 msgid "Part ID"
 msgstr "Teil-ID"
 
-#: part/admin.py:41 part/admin.py:411 part/models.py:3896 part/stocktake.py:219
+#: part/admin.py:41 part/admin.py:411 part/models.py:3918 part/stocktake.py:219
 #: stock/admin.py:157
 msgid "Part Name"
 msgstr "Name des Teils"
@@ -5921,7 +5921,7 @@ msgstr "Stücklisten-Position ID"
 msgid "Parent IPN"
 msgstr "Übergeordnete IPN"
 
-#: part/admin.py:408 part/models.py:3897
+#: part/admin.py:408 part/models.py:3919
 msgid "Part IPN"
 msgstr "Teil IPN"
 
@@ -6009,7 +6009,7 @@ msgstr "Gesamte Stückliste validieren"
 msgid "This option must be selected"
 msgstr "Diese Option muss ausgewählt werden"
 
-#: part/api.py:1541 part/models.py:895 part/models.py:3385 part/models.py:3840
+#: part/api.py:1541 part/models.py:895 part/models.py:3385 part/models.py:3862
 #: part/serializers.py:406 part/serializers.py:1112
 #: part/templates/part/part_base.html:260 stock/api.py:733
 #: templates/InvenTree/settings/settings_staff_js.html:300
@@ -6036,7 +6036,7 @@ msgstr "Gesamtbestand"
 msgid "Input quantity for price calculation"
 msgstr "Menge für die Preisberechnung"
 
-#: part/models.py:81 part/models.py:3841 part/templates/part/category.html:16
+#: part/models.py:81 part/models.py:3863 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr "Teil-Kategorie"
@@ -6118,7 +6118,7 @@ msgstr "Teil mit diesem Namen, IPN und Revision existiert bereits."
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr "Strukturellen Teilekategorien können keine Teile zugewiesen werden!"
 
-#: part/models.py:854 part/models.py:3896
+#: part/models.py:854 part/models.py:3918
 msgid "Part name"
 msgstr "Name des Teils"
 
@@ -6462,7 +6462,7 @@ msgstr "Test-Vorlagen können nur für verfolgbare Teile angelegt werden"
 
 #: part/models.py:3456
 msgid "Test template with the same key already exists for part"
-msgstr ""
+msgstr "Testvorlage mit demselben Schlüssel existiert bereits für Teil"
 
 #: part/models.py:3473 templates/js/translated/part.js:2879
 msgid "Test Name"
@@ -6570,7 +6570,7 @@ msgstr "Ungültige Auswahl für Parameterwert"
 msgid "Parent Part"
 msgstr "Ausgangsteil"
 
-#: part/models.py:3772 part/models.py:3848 part/models.py:3849
+#: part/models.py:3772 part/models.py:3870 part/models.py:3871
 #: templates/InvenTree/settings/settings_staff_js.html:295
 msgid "Parameter Template"
 msgstr "Parameter Vorlage"
@@ -6583,151 +6583,151 @@ msgstr "Wert"
 msgid "Parameter Value"
 msgstr "Parameter Wert"
 
-#: part/models.py:3855 templates/InvenTree/settings/settings_staff_js.html:304
+#: part/models.py:3877 templates/InvenTree/settings/settings_staff_js.html:304
 msgid "Default Value"
 msgstr "Standard-Wert"
 
-#: part/models.py:3856
+#: part/models.py:3878
 msgid "Default Parameter Value"
 msgstr "Standard Parameter Wert"
 
-#: part/models.py:3894
+#: part/models.py:3916
 msgid "Part ID or part name"
 msgstr "Teilnummer oder Teilname"
 
-#: part/models.py:3895
+#: part/models.py:3917
 msgid "Unique part ID value"
 msgstr "Eindeutige Teil-ID"
 
-#: part/models.py:3897
+#: part/models.py:3919
 msgid "Part IPN value"
 msgstr "IPN-Wert des Teils"
 
-#: part/models.py:3898
+#: part/models.py:3920
 msgid "Level"
 msgstr "Stufe"
 
-#: part/models.py:3898
+#: part/models.py:3920
 msgid "BOM level"
 msgstr "Stücklistenebene"
 
-#: part/models.py:3988
+#: part/models.py:4010
 msgid "Select parent part"
 msgstr "Ausgangsteil auswählen"
 
-#: part/models.py:3998
+#: part/models.py:4020
 msgid "Sub part"
 msgstr "Untergeordnetes Teil"
 
-#: part/models.py:3999
+#: part/models.py:4021
 msgid "Select part to be used in BOM"
 msgstr "Teil für die Nutzung in der Stückliste auswählen"
 
-#: part/models.py:4010
+#: part/models.py:4032
 msgid "BOM quantity for this BOM item"
 msgstr "Stücklisten-Anzahl für dieses Stücklisten-Teil"
 
-#: part/models.py:4016
+#: part/models.py:4038
 msgid "This BOM item is optional"
 msgstr "Diese Stücklisten-Position ist optional"
 
-#: part/models.py:4022
+#: part/models.py:4044
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr "Diese Stücklisten-Position ist ein Verbrauchsartikel (sie wird nicht in Bauaufträgen verfolgt)"
 
-#: part/models.py:4029 part/templates/part/upload_bom.html:55
+#: part/models.py:4051 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr "Überschuss"
 
-#: part/models.py:4030
+#: part/models.py:4052
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr "Geschätzter Ausschuss (absolut oder prozentual)"
 
-#: part/models.py:4037
+#: part/models.py:4059
 msgid "BOM item reference"
 msgstr "Referenz der Postion auf der Stückliste"
 
-#: part/models.py:4045
+#: part/models.py:4067
 msgid "BOM item notes"
 msgstr "Notizen zur Stücklisten-Position"
 
-#: part/models.py:4051
+#: part/models.py:4073
 msgid "Checksum"
 msgstr "Prüfsumme"
 
-#: part/models.py:4052
+#: part/models.py:4074
 msgid "BOM line checksum"
 msgstr "Prüfsumme der Stückliste"
 
-#: part/models.py:4057 templates/js/translated/table_filters.js:174
+#: part/models.py:4079 templates/js/translated/table_filters.js:174
 msgid "Validated"
 msgstr "überprüft"
 
-#: part/models.py:4058
+#: part/models.py:4080
 msgid "This BOM item has been validated"
 msgstr "Diese Stücklistenposition wurde validiert"
 
-#: part/models.py:4063 part/templates/part/upload_bom.html:57
+#: part/models.py:4085 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1054
 #: templates/js/translated/table_filters.js:178
 #: templates/js/translated/table_filters.js:211
 msgid "Gets inherited"
 msgstr "Wird vererbt"
 
-#: part/models.py:4064
+#: part/models.py:4086
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr "Diese Stücklisten-Position wird in die Stücklisten von Teil-Varianten vererbt"
 
-#: part/models.py:4069 part/templates/part/upload_bom.html:56
+#: part/models.py:4091 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1046
 msgid "Allow Variants"
 msgstr "Varianten zulassen"
 
-#: part/models.py:4070
+#: part/models.py:4092
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr "Bestand von Varianten kann für diese Stücklisten-Position verwendet werden"
 
-#: part/models.py:4155 stock/models.py:649
+#: part/models.py:4177 stock/models.py:649
 msgid "Quantity must be integer value for trackable parts"
 msgstr "Menge muss eine Ganzzahl sein"
 
-#: part/models.py:4165 part/models.py:4167
+#: part/models.py:4187 part/models.py:4189
 msgid "Sub part must be specified"
 msgstr "Zuliefererteil muss festgelegt sein"
 
-#: part/models.py:4307
+#: part/models.py:4329
 msgid "BOM Item Substitute"
 msgstr "Stücklisten Ersatzteile"
 
-#: part/models.py:4328
+#: part/models.py:4350
 msgid "Substitute part cannot be the same as the master part"
 msgstr "Ersatzteil kann nicht identisch mit dem Hauptteil sein"
 
-#: part/models.py:4341
+#: part/models.py:4363
 msgid "Parent BOM item"
 msgstr "Übergeordnete Stücklisten Position"
 
-#: part/models.py:4349
+#: part/models.py:4371
 msgid "Substitute part"
 msgstr "Ersatzteil"
 
-#: part/models.py:4365
+#: part/models.py:4387
 msgid "Part 1"
 msgstr "Teil 1"
 
-#: part/models.py:4373
+#: part/models.py:4395
 msgid "Part 2"
 msgstr "Teil 2"
 
-#: part/models.py:4374
+#: part/models.py:4396
 msgid "Select Related Part"
 msgstr "verknüpftes Teil auswählen"
 
-#: part/models.py:4393
+#: part/models.py:4415
 msgid "Part relationship cannot be created between a part and itself"
 msgstr "Teil-Beziehung kann nicht zwischen einem Teil und sich selbst erstellt werden"
 
-#: part/models.py:4398
+#: part/models.py:4420
 msgid "Duplicate relationship already exists"
 msgstr "Doppelte Beziehung existiert bereits"
 
@@ -8228,7 +8228,7 @@ msgstr "Plugin"
 msgid "Method"
 msgstr "Methode"
 
-#: plugin/plugin.py:264
+#: plugin/plugin.py:270
 msgid "No author found"
 msgstr "Kein Autor gefunden"
 
@@ -8484,7 +8484,7 @@ msgstr "Snippet-Beschreibung"
 
 #: report/models.py:713
 msgid "Asset file with this name already exists"
-msgstr ""
+msgstr "Eine Datei mit diesem Namen existiert bereits"
 
 #: report/models.py:721
 msgid "Asset"
@@ -9021,27 +9021,27 @@ msgstr "Test Notizen"
 
 #: stock/models.py:2462 templates/js/translated/stock.js:1545
 msgid "Test station"
-msgstr ""
+msgstr "Teststation"
 
 #: stock/models.py:2463
 msgid "The identifier of the test station where the test was performed"
-msgstr ""
+msgstr "Der Bezeichner der Teststation, in der der Test durchgeführt wurde"
 
 #: stock/models.py:2469
 msgid "Started"
-msgstr ""
+msgstr "Gestartet"
 
 #: stock/models.py:2470
 msgid "The timestamp of the test start"
-msgstr ""
+msgstr "Der Zeitstempel des Teststarts"
 
 #: stock/models.py:2476
 msgid "Finished"
-msgstr ""
+msgstr "Fertiggestellt"
 
 #: stock/models.py:2477
 msgid "The timestamp of the test finish"
-msgstr ""
+msgstr "Der Zeitstempel der Test-Beendigung"
 
 #: stock/serializers.py:100
 msgid "Test template for this result"
@@ -9053,7 +9053,7 @@ msgstr "Vorlagen-ID oder Testname muss angegeben werden"
 
 #: stock/serializers.py:151
 msgid "The test finished time cannot be earlier than the test started time"
-msgstr ""
+msgstr "Die Test-Endzeit kann nicht früher als die Startzeit des Tests sein"
 
 #: stock/serializers.py:184
 msgid "Serial number is too large"
@@ -11273,7 +11273,7 @@ msgstr "Nachverfolgbare Teile können Seriennummern haben"
 
 #: templates/js/translated/build.js:389
 msgid "Enter serial numbers to generate multiple single build outputs"
-msgstr ""
+msgstr "Seriennummern für mehrere einzelne Endprodukte angeben"
 
 #: templates/js/translated/build.js:396
 msgid "Create Build Output"
@@ -11368,7 +11368,7 @@ msgstr "Endprodukte entfernen"
 
 #: templates/js/translated/build.js:960
 msgid "No build order allocations found"
-msgstr ""
+msgstr "Keine Allokationen für Bauauftrag gefunden"
 
 #: templates/js/translated/build.js:989 templates/js/translated/build.js:2342
 msgid "Allocated Quantity"
@@ -11559,20 +11559,20 @@ msgstr "Verfolgtes Objekt"
 #: templates/js/translated/build.js:2659
 #: templates/js/translated/sales_order.js:2016
 msgid "Build stock"
-msgstr ""
+msgstr "Bestand bauen"
 
 #: templates/js/translated/build.js:2664 templates/js/translated/stock.js:1865
 msgid "Order stock"
-msgstr ""
+msgstr "Bestand bestellen"
 
 #: templates/js/translated/build.js:2668
 #: templates/js/translated/sales_order.js:2010
 msgid "Allocate stock"
-msgstr ""
+msgstr "Bestand zuweisen"
 
 #: templates/js/translated/build.js:2672
 msgid "Remove stock allocation"
-msgstr ""
+msgstr "Bestands-Zuordnung löschen"
 
 #: templates/js/translated/company.js:98
 msgid "Add Manufacturer"
@@ -11872,15 +11872,15 @@ msgstr "Aktualisieren ist nicht erlaubt"
 
 #: templates/js/translated/forms.js:409
 msgid "Delete operation not allowed"
-msgstr ""
+msgstr "Löschvorgang nicht erlaubt"
 
 #: templates/js/translated/forms.js:423
 msgid "View operation not allowed"
-msgstr ""
+msgstr "Anzeigevorgang nicht erlaubt"
 
 #: templates/js/translated/forms.js:800
 msgid "Keep this form open"
-msgstr ""
+msgstr "Dieses Formular offen lassen"
 
 #: templates/js/translated/forms.js:903
 msgid "Enter a valid number"
@@ -11917,23 +11917,23 @@ msgstr "Spalten auswählen"
 
 #: templates/js/translated/helpers.js:77
 msgid "YES"
-msgstr ""
+msgstr "JA"
 
 #: templates/js/translated/helpers.js:80
 msgid "NO"
-msgstr ""
+msgstr "NEIN"
 
 #: templates/js/translated/helpers.js:93
 msgid "True"
-msgstr ""
+msgstr "Wahr"
 
 #: templates/js/translated/helpers.js:94
 msgid "False"
-msgstr ""
+msgstr "Falsch"
 
 #: templates/js/translated/index.js:104
 msgid "No parts required for builds"
-msgstr ""
+msgstr "Keine Ersatzteile für Montage erforderlich"
 
 #: templates/js/translated/label.js:53 templates/js/translated/report.js:123
 msgid "Select Items"
@@ -11949,7 +11949,7 @@ msgstr "Keine Etiketten gefunden"
 
 #: templates/js/translated/label.js:73
 msgid "No label templates found which match the selected items"
-msgstr ""
+msgstr "Keine Berichtvorlagen für ausgewählte Bestellungen gefunden"
 
 #: templates/js/translated/label.js:97
 msgid "selected"
@@ -12020,11 +12020,11 @@ msgstr "Ungültige Antwort vom Server"
 
 #: templates/js/translated/modals.js:1011
 msgid "Form data missing from server response"
-msgstr ""
+msgstr "Formulardaten fehlen bei Serverantwort"
 
 #: templates/js/translated/modals.js:1023
 msgid "Error posting form data"
-msgstr ""
+msgstr "Formulardaten fehlerhaft"
 
 #: templates/js/translated/modals.js:1120
 msgid "JSON response missing form data"
@@ -12032,15 +12032,15 @@ msgstr "JSON Antwort enthält keine Formulardaten"
 
 #: templates/js/translated/modals.js:1135
 msgid "Error 400: Bad Request"
-msgstr ""
+msgstr "Fehler 400: Ungültige Anfrage"
 
 #: templates/js/translated/modals.js:1136
 msgid "Server returned error code 400"
-msgstr ""
+msgstr "Fehler 400 von Server erhalten"
 
 #: templates/js/translated/modals.js:1159
 msgid "Error requesting form data"
-msgstr ""
+msgstr "Fehler bei Formulardaten-Anfrage"
 
 #: templates/js/translated/news.js:33
 msgid "No news found"
@@ -12115,63 +12115,63 @@ msgstr "Position löschen"
 
 #: templates/js/translated/part.js:90
 msgid "Part Attributes"
-msgstr ""
+msgstr "Teileigenschaften"
 
 #: templates/js/translated/part.js:94
 msgid "Part Creation Options"
-msgstr ""
+msgstr "Erstellungsoptionen für Teile"
 
 #: templates/js/translated/part.js:98
 msgid "Part Duplication Options"
-msgstr ""
+msgstr "Duplizierungsoptionen für Teile"
 
 #: templates/js/translated/part.js:121
 msgid "Add Part Category"
-msgstr ""
+msgstr "Teil-Kategorie hinzufügen"
 
 #: templates/js/translated/part.js:308
 msgid "Parent part category"
-msgstr ""
+msgstr "Übergeordnete Teilkategorie"
 
 #: templates/js/translated/part.js:332 templates/js/translated/stock.js:175
 msgid "Icon (optional) - Explore all available icons on"
-msgstr ""
+msgstr "Icon (optional) - alle verfügbaren Icons einsehbar auf"
 
 #: templates/js/translated/part.js:352
 msgid "Create Part Category"
-msgstr ""
+msgstr "Teil-Kategorie hinzufügen"
 
 #: templates/js/translated/part.js:355
 msgid "Create new category after this one"
-msgstr ""
+msgstr "Neue Kategorie nach dieser Kategorie erstellen"
 
 #: templates/js/translated/part.js:356
 msgid "Part category created"
-msgstr ""
+msgstr "Artikelkategorie erstellt"
 
 #: templates/js/translated/part.js:370
 msgid "Edit Part Category"
-msgstr ""
+msgstr "Teilekategorie bearbeiten"
 
 #: templates/js/translated/part.js:383
 msgid "Are you sure you want to delete this part category?"
-msgstr ""
+msgstr "Möchten Sie diese Artikel-Kategorie wirklich löschen?"
 
 #: templates/js/translated/part.js:388
 msgid "Move to parent category"
-msgstr ""
+msgstr "In übergeordnete Kategorie verschieben"
 
 #: templates/js/translated/part.js:397
 msgid "Delete Part Category"
-msgstr ""
+msgstr "Teil-Kategorie löschen"
 
 #: templates/js/translated/part.js:401
 msgid "Action for parts in this category"
-msgstr ""
+msgstr "Aktion für Teile in dieser Kategorie"
 
 #: templates/js/translated/part.js:406
 msgid "Action for child categories"
-msgstr ""
+msgstr "Aktion für Unterkategorien"
 
 #: templates/js/translated/part.js:430
 msgid "Create Part"
@@ -12655,7 +12655,7 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:755
 msgid "Merge"
-msgstr ""
+msgstr "Zusammenfügen"
 
 #: templates/js/translated/purchase_order.js:859
 msgid "No matching supplier parts"
