@@ -28,6 +28,7 @@ class DataImportSession(models.Model):
         """Save the DataImportSession object."""
         if self.pk is None:
             # New object - run initial setup
+            self.status = DataImportStatusCode.INITIAL.value
             self.progress = 0
             self.auto_assign_columns()
 
