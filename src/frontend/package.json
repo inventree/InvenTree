@@ -23,7 +23,7 @@
         "@mantine/core": "<7",
         "@mantine/dates": "<7",
         "@mantine/dropzone": "<7",
-        "@mantine/form": "<7",
+        "@mantine/form": "<8",
         "@mantine/hooks": "<7",
         "@mantine/modals": "<7",
         "@mantine/notifications": "<7",
