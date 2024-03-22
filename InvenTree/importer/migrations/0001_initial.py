@@ -6,6 +6,9 @@ from django.db import migrations, models
 import django.db.models.deletion
 import importer.validators
 
+from InvenTree.helpers import GetExportFormats
+from importer.status_codes import DataImportStatusCode
+
 
 class Migration(migrations.Migration):
 
@@ -20,9 +23,9 @@ class Migration(migrations.Migration):
             name='DataImportSession',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data_file', models.FileField(help_text='Data file to import', upload_to='import', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['csv', 'tsv', 'xls', 'xlsx'])], verbose_name='Data File')),
+                ('data_file', models.FileField(help_text='Data file to import', upload_to='import', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=GetExportFormats())], verbose_name='Data File')),
                 ('model_type', models.CharField(max_length=100, validators=[importer.validators.validate_importer_model_type])),
-                ('status', models.PositiveIntegerField(choices=[(0, 'Initial'), (10, 'Mapped Fields'), (20, 'Importing'), (30, 'Complete')], default=0, help_text='Import status')),
+                ('status', models.PositiveIntegerField(choices=DataImportStatusCode.items(), default=DataImportStatusCode.INITIAL, help_text='Import status')),
                 ('progress', models.PositiveIntegerField(default=0, verbose_name='Progress')),
                 ('data_columns', models.JSONField(blank=True, null=True, verbose_name='Data Columns')),
                 ('field_overrides', models.JSONField(blank=True, null=True, verbose_name='Field Overrides')),
