@@ -127,6 +127,8 @@ class TemplatingMixin:
         logger.info("Creating entry for %s '%s'", model, data.get('name'))
 
         try:
-            model.objects.create(**self.get_new_obj_data(data, filename))
+            obj_data = self.get_new_obj_data(data, filename)
+            logger.info('Creating %s with data: %s', model, obj_data)
+            model.objects.create(**obj_data)
         except Exception:
             logger.warning("Failed to create %s '%s'", self.name, data['name'])
