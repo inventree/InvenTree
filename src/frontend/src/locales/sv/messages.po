@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-21 14:12\n"
+"PO-Revision-Date: 2024-03-22 14:07\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1826,7 +1826,7 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:37
 msgid "Latvian"
-msgstr ""
+msgstr "Lettiska"
 
 #: src/contexts/LanguageContext.tsx:38
 msgid "Dutch"
@@ -2241,7 +2241,7 @@ msgstr ""
 #: src/forms/PurchaseOrderForms.tsx:289
 #: src/forms/PurchaseOrderForms.tsx:365
 msgid "Scan Barcode"
-msgstr ""
+msgstr "Skanna streckkod"
 
 #: src/forms/PurchaseOrderForms.tsx:333
 msgid "Set Location"
@@ -2253,7 +2253,7 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:349
 msgid "Change Status"
-msgstr ""
+msgstr "Ändra status"
 
 #: src/forms/PurchaseOrderForms.tsx:374
 #: src/forms/StockForms.tsx:359
