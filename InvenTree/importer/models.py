@@ -24,6 +24,15 @@ class DataImportSession(models.Model):
         field_overrides: JSONField for field overrides (e.g. custom field values)
     """
 
+    def save(self, *args, **kwargs):
+        """Save the DataImportSession object."""
+        if self.pk is None:
+            # New object - run initial setup
+            self.progress = 0
+            self.auto_assign_columns()
+
+        super().save(*args, **kwargs)
+
     data_file = models.FileField(
         upload_to='import',
         verbose_name=_('Data File'),
@@ -58,8 +67,8 @@ class DataImportSession(models.Model):
         blank=True, null=True, verbose_name=_('Data Columns')
     )
 
-    field_overrides = models.JSONField(
-        blank=True, null=True, verbose_name=_('Field Overrides')
+    field_defaults = models.JSONField(
+        blank=True, null=True, verbose_name=_('Field Defaults')
     )
 
     @property
@@ -78,3 +87,17 @@ class DataImportSession(models.Model):
         from importer.operations import get_fields
 
         return get_fields(self.serializer, required=required, read_only=read_only)
+
+    def auto_assign_columns(self):
+        """Automatically assign columns based on the serializer fields."""
+        from importer.operations import extract_column_names
+
+        available_columns = extract_column_names(self.data_file)
+        serializer_fields = self.serializer_fields()
+
+        # Create a mapping of column names to serializer fields
+        column_map = {}
+
+        # TODO... implement auto mapping
+
+        self.data_columns = column_map

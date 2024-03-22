@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('status', models.PositiveIntegerField(choices=DataImportStatusCode.items(), default=DataImportStatusCode.INITIAL, help_text='Import status')),
                 ('progress', models.PositiveIntegerField(default=0, verbose_name='Progress')),
                 ('data_columns', models.JSONField(blank=True, null=True, verbose_name='Data Columns')),
-                ('field_overrides', models.JSONField(blank=True, null=True, verbose_name='Field Overrides')),
+                ('field_defaults', models.JSONField(blank=True, null=True, verbose_name='Field Defaults')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
         ),

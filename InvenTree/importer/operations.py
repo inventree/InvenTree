@@ -56,16 +56,7 @@ def extract_column_names(data_file) -> list:
     Raises:
         ValidationError: If the data file is not in a valid format
     """
-    try:
-        with open(data_file, 'r') as fh:
-            data = tablib.Dataset(fh, headers=True)
-    except (IOError, FileNotFoundError):
-        raise ValidationError('Failed to open data file')
-    except tablib.core.UnsupportedFormat:
-        raise ValidationError('Unsupported data file format')
-    except tablib.core.InvalidDimensions:
-        raise ValidationError('Invalid data file dimensions')
-
+    data = load_data_file(data_file)
     return data.headers
 
 
