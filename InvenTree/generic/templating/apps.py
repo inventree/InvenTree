@@ -78,10 +78,10 @@ class TemplatingMixin:
         ref_name = model.getSubdir()
 
         # Create root dir for templates
+        src_dir = self.get_src_dir(ref_name)
         ensure_dir(Path(self.name, 'inventree', ref_name), default_storage)
 
         # Copy each template across (if required)
-        src_dir = self.get_src_dir(ref_name)
         for entry in data:
             self.create_template_file(model, src_dir, entry, ref_name)
 
@@ -127,9 +127,7 @@ class TemplatingMixin:
         logger.info("Creating entry for %s '%s'", model, data.get('name'))
 
         try:
-            obj_data = self.get_new_obj_data(data, str(filename))
-            logger.info('Creating %s with data: %s', model, obj_data)
-            model.objects.create(**obj_data)
+            model.objects.create(**self.get_new_obj_data(data, str(filename)))
         except Exception as _e:
             logger.warning(
                 "Failed to create %s '%s' with error '%s'", self.name, data['name'], _e
