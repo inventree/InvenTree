@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
             name='DataImportSession',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data_file', models.FileField(help_text='Data file to import', upload_to='import', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=GetExportFormats())], verbose_name='Data File')),
+                ('data_file', models.FileField(help_text='Data file to import', upload_to='import', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=GetExportFormats()), importer.validators.validate_data_file], verbose_name='Data File')),
                 ('model_type', models.CharField(max_length=100, validators=[importer.validators.validate_importer_model_type])),
                 ('status', models.PositiveIntegerField(choices=DataImportStatusCode.items(), default=DataImportStatusCode.INITIAL, help_text='Import status')),
                 ('progress', models.PositiveIntegerField(default=0, verbose_name='Progress')),

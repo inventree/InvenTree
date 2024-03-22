@@ -1,0 +1,66 @@
+"""Data import operational functions."""
+
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+import tablib
+
+
+def load_data_file(data_file, format):
+    """Load data file into a tablib dataset.
+
+    Arguments:
+        data_file: File object containing data to import (should be already opened!)
+        format: Format specifier for the data file
+    """
+    if format and format.startswith('.'):
+        format = format[1:]
+
+    data_file.open('r')
+    data_file.seek(0)
+
+    try:
+        data = data_file.read()
+    except (IOError, FileNotFoundError):
+        raise ValidationError(_('Failed to open data file'))
+
+    if format not in ['xls', 'xlsx']:
+        data = data.decode()
+
+    try:
+        data = tablib.Dataset().load(data, headers=True, format=format)
+    except tablib.core.UnsupportedFormat:
+        raise ValidationError(_('Unsupported data file format'))
+    except tablib.core.InvalidDimensions:
+        raise ValidationError(_('Invalid data file dimensions'))
+
+    # TODO: raise exceptions!
+
+    return data
+
+
+def extract_column_names(data_file) -> list:
+    """Extract column names from a data file.
+
+    Uses the tablib library to extract column names from a data file.
+
+    Args:
+        data_file: File object containing data to import
+
+    Returns:
+        List of column names extracted from the file
+
+    Raises:
+        ValidationError: If the data file is not in a valid format
+    """
+    try:
+        with open(data_file, 'r') as fh:
+            data = tablib.Dataset(fh, headers=True)
+    except (IOError, FileNotFoundError):
+        raise ValidationError('Failed to open data file')
+    except tablib.core.UnsupportedFormat:
+        raise ValidationError('Unsupported data file format')
+    except tablib.core.InvalidDimensions:
+        raise ValidationError('Invalid data file dimensions')
+
+    return data.headers

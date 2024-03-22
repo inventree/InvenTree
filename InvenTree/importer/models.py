@@ -31,7 +31,8 @@ class DataImportSession(models.Model):
         validators=[
             FileExtensionValidator(
                 allowed_extensions=InvenTree.helpers.GetExportFormats()
-            )
+            ),
+            importer.validators.validate_data_file,
         ],
     )
 
