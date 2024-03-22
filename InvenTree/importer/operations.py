@@ -6,21 +6,26 @@ from django.utils.translation import gettext_lazy as _
 import tablib
 
 
-def load_data_file(data_file, format):
+def load_data_file(data_file, format=None):
     """Load data file into a tablib dataset.
 
     Arguments:
-        data_file: File object containing data to import (should be already opened!)
+        data_file: django file object containing data to import (should be already opened!)
         format: Format specifier for the data file
     """
+    # Introspect the file format based on the provided file
+    if not format:
+        format = data_file.name.split('.')[-1]
+
     if format and format.startswith('.'):
         format = format[1:]
 
-    data_file.open('r')
-    data_file.seek(0)
+    file_object = data_file.file
+    file_object.open('r')
+    file_object.seek(0)
 
     try:
-        data = data_file.read()
+        data = file_object.read()
     except (IOError, FileNotFoundError):
         raise ValidationError(_('Failed to open data file'))
 
@@ -33,8 +38,6 @@ def load_data_file(data_file, format):
         raise ValidationError(_('Unsupported data file format'))
     except tablib.core.InvalidDimensions:
         raise ValidationError(_('Invalid data file dimensions'))
-
-    # TODO: raise exceptions!
 
     return data
 

@@ -16,12 +16,11 @@ def validate_data_file(data_file):
     import importer.operations
 
     filesize = data_file.size
-    filetype = os.path.splitext(data_file.name)[1]
 
     if filesize > IMPORTER_MAX_FILE_SIZE:
         raise ValidationError(_('Data file exceeds maximum size limit'))
 
-    dataset = importer.operations.load_data_file(data_file.file, format=filetype)
+    dataset = importer.operations.load_data_file(data_file)
 
     if len(dataset.headers) > IMPORTER_MAX_COLS:
         raise ValidationError(_('Data file contains too many columns'))
