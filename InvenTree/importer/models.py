@@ -8,7 +8,6 @@ from django.utils.translation import gettext_lazy as _
 import importer.validators
 import InvenTree.helpers
 from importer.status_codes import DataImportStatusCode
-from importer.validators import validate_importer_model_type
 
 
 class DataImportSession(models.Model):
@@ -25,30 +24,6 @@ class DataImportSession(models.Model):
         field_overrides: JSONField for field overrides (e.g. custom field values)
     """
 
-    @staticmethod
-    def supported_serializers():
-        """Return a list of supported serializers which can be used for importing data."""
-        import part.serializers
-        import stock.serializers
-
-        return [part.serializers.PartSerializer, part.serializers.CategorySerializer]
-
-    @staticmethod
-    def serializer_model_map():
-        """Map supported models to their respective serializers."""
-        data = {}
-
-        for serializer in DataImportSession.supported_serializers():
-            model = serializer.Meta.model
-            data[model.__name__.lower()] = serializer
-
-        return data
-
-    @staticmethod
-    def supported_models():
-        """Return a list of database models which can be imported."""
-        return list(DataImportSession.serializer_model_map().keys())
-
     data_file = models.FileField(
         upload_to='import',
         verbose_name=_('Data File'),
@@ -61,7 +36,9 @@ class DataImportSession(models.Model):
     )
 
     model_type = models.CharField(
-        blank=False, max_length=100, validators=[validate_importer_model_type]
+        blank=False,
+        max_length=100,
+        validators=[importer.validators.validate_importer_model_type],
     )
 
     status = models.PositiveIntegerField(
