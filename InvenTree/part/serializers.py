@@ -33,6 +33,7 @@ import part.stocktake
 import part.tasks
 import stock.models
 import users.models
+from importer.registry import register_importer
 from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 
@@ -58,6 +59,7 @@ from .models import (
 logger = logging.getLogger('inventree')
 
 
+@register_importer()
 class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for PartCategory."""
 
@@ -159,6 +161,7 @@ class PartAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializ
         ])
 
 
+@register_importer()
 class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for the PartTestTemplate class."""
 
@@ -258,6 +261,7 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
     image = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
 
 
+@register_importer()
 class PartParameterTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """JSON serializer for the PartParameterTemplate model."""
 
@@ -336,6 +340,7 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     )
 
 
+@register_importer()
 class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """JSON serializers for the PartParameter model."""
 
@@ -563,6 +568,7 @@ class InitialSupplierSerializer(serializers.Serializer):
         return data
 
 
+@register_importer()
 class PartSerializer(
     InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
@@ -1394,6 +1400,7 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
     )
 
 
+@register_importer()
 class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for BomItem object."""
 
@@ -1630,6 +1637,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset
 
 
+@register_importer()
 class CategoryParameterTemplateSerializer(
     InvenTree.serializers.InvenTreeModelSerializer
 ):
@@ -1722,7 +1730,10 @@ class PartCopyBOMSerializer(serializers.Serializer):
 
 
 class BomImportUploadSerializer(InvenTree.serializers.DataFileUploadSerializer):
-    """Serializer for uploading a file and extracting data from it."""
+    """Serializer for uploading a file and extracting data from it.
+
+    TODO: Delete this entirely once the new importer process is working
+    """
 
     TARGET_MODEL = BomItem
 
@@ -1755,6 +1766,8 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
     """Serializer class for exatracting BOM data from an uploaded file.
 
     The parent class DataFileExtractSerializer does most of the heavy lifting here.
+
+    TODO: Delete this entirely once the new importer process is working
     """
 
     TARGET_MODEL = BomItem
@@ -1842,7 +1855,9 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
 class BomImportSubmitSerializer(serializers.Serializer):
     """Serializer for uploading a BOM against a specified part.
 
-    A "BOM" is a set of BomItem objects which are to be validated together as a set
+    A "BOM" is a set of BomItem objects which are to be validated together as a set.
+
+    TODO: Delete this entirely once the new importer process is working
     """
 
     items = BomItemSerializer(many=True, required=True)

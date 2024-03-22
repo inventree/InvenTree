@@ -4,22 +4,11 @@ from django.core.exceptions import ValidationError
 
 
 def supported_import_serializers():
-    """Return a list of supported serializers which can be used for importing data.
+    """Return a list of supported serializers which can be used for importing data."""
+    import importer.registry
 
-    TODO: Add a @decorator to serializers for auto discovery (this will allow plugins to import!)
-    """
-    try:
-        import part.serializers
-        import stock.serializers
-
-        return [
-            part.serializers.PartSerializer,
-            part.serializers.CategorySerializer,
-            stock.serializers.LocationSerializer,
-        ]
-    except Exception:
-        # If the app registry is not loaded yet, return an empty list
-        return []
+    val = importer.registry.get_supported_serializers()
+    return val
 
 
 def supported_models():

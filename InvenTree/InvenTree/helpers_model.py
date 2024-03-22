@@ -266,7 +266,7 @@ def render_currency(
 
 
 def getModelsWithMixin(mixin_class) -> list:
-    """Return a list of models that inherit from the given mixin class.
+    """Return a list of database models that inherit from the given mixin class.
 
     Args:
         mixin_class: The mixin class to search for
