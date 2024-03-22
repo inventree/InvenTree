@@ -64,7 +64,17 @@ class DataImportSession(models.Model):
 
     @property
     def serializer(self):
-        """Return the serializer class for this model."""
+        """Return the serializer class for this importer."""
         from importer.registry import supported_models
 
         return supported_models().get(self.model_type, None)
+
+    def serializer_fields(self, required=None, read_only=False):
+        """Return the writeable serializers fields for this importer.
+
+        Arguments:
+            required: If True, only return required fields
+        """
+        from importer.operations import get_fields
+
+        return get_fields(self.serializer, required=required, read_only=read_only)

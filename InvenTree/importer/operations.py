@@ -67,3 +67,28 @@ def extract_column_names(data_file) -> list:
         raise ValidationError('Invalid data file dimensions')
 
     return data.headers
+
+
+def get_fields(serializer_class, read_only=None, required=None):
+    """Extract the field names from a serializer class.
+
+    - Returns a dict of (writeable) field names.
+    - Read-Only fields are explicitly ignored
+    """
+    if not serializer_class:
+        return {}
+
+    serializer = serializer_class()
+
+    fields = {}
+
+    for field_name, field in serializer.fields.items():
+        if read_only is not None and getattr(field, 'read_only', None) != read_only:
+            continue
+
+        if required is not None and getattr(field, 'required', None) != required:
+            continue
+
+        fields[field_name] = field
+
+    return fields
