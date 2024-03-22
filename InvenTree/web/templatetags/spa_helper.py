@@ -46,13 +46,6 @@ def spa_bundle(manifest_path: Union[str, Path] = '', app: str = 'web'):
         return
 
     return_string = ''
-    # CSS (based on index.css file as entrypoint)
-    css_index = manifest_data.get('index.css')
-    if css_index:
-        return_string += (
-            f'<link rel="stylesheet" href="{get_url(css_index["file"])}" />'
-        )
-
     # JS (based on index.html file as entrypoint)
     index = manifest_data.get('index.html')
     dynamic_files = index.get('dynamicImports', [])
