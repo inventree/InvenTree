@@ -61,3 +61,10 @@ class DataImportSession(models.Model):
     field_overrides = models.JSONField(
         blank=True, null=True, verbose_name=_('Field Overrides')
     )
+
+    @property
+    def serializer(self):
+        """Return the serializer class for this model."""
+        from importer.registry import supported_models
+
+        return supported_models().get(self.model_type, None)
