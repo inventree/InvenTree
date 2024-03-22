@@ -9,8 +9,6 @@ from djmoney.contrib.exchange.models import Rate
 from import_export.exceptions import ImportExportError
 from import_export.resources import ModelResource
 
-import common.models
-
 
 class InvenTreeResource(ModelResource):
     """Custom subclass of the ModelResource class provided by django-import-export".
@@ -109,15 +107,6 @@ class CustomRateAdmin(RateAdmin):
     def has_add_permission(self, request: HttpRequest) -> bool:
         """Disable the 'add' permission for Rate objects."""
         return False
-
-
-@admin.register(common.models.DataImportSession)
-class DataImportSessionAdmin(admin.ModelAdmin):
-    """Admin interface for the DataImportSession model."""
-
-    list_display = ['id', 'data_file', 'status', 'progress', 'user']
-
-    list_filter = ['status']
 
 
 admin.site.unregister(Rate)
