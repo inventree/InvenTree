@@ -19,9 +19,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { doBasicLogin, doSimpleLogin } from '../../functions/auth';
+import { doBasicLogin, doSimpleLogin, hasToken } from '../../functions/auth';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
-import { useSessionState } from '../../states/SessionState';
 import { SsoButton } from '../buttons/SSOButton';
 
 export function AuthenticationForm() {
@@ -45,7 +44,7 @@ export function AuthenticationForm() {
       ).then(() => {
         setIsLoggingIn(false);
 
-        if (useSessionState.getState().hasToken()) {
+        if (hasToken()) {
           notifications.show({
             title: t`Login successful`,
             message: t`Welcome back!`,

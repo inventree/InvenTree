@@ -1,6 +1,5 @@
 /**
- * Component for loading an image from the InvenTree server,
- * using the API's token authentication.
+ * Component for loading an image from the InvenTree server using the CSRF cookie
  *
  * Image caching is handled automagically by the browsers cache
  */

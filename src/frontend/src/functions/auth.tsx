@@ -7,40 +7,29 @@ import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
-import { useSessionState } from '../states/SessionState';
-
-const tokenName: string = 'inventree-web-app';
+import { fetchGlobalStates } from '../states/states';
 
 /**
  * Attempt to login using username:password combination.
- * If login is successful, an API token will be returned.
- * This API token is used for any future API requests.
+ * If login is successful, a CSRF cookie will be set - which can be used to authenticate future requests.
  */
 export const doBasicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
-  // const apiState = useServerApiState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
   }
 
-  // At this stage, we can assume that we are not logged in, and we have no token
-  useSessionState.getState().clearToken();
-
-  // Request new token from the server
+  // Login to the server
   await axios
     .get(apiUrl(ApiEndpoints.user_token), {
       auth: { username, password },
       baseURL: host,
-      timeout: 2000,
-      params: {
-        name: tokenName
-      }
+      timeout: 2000
     })
     .then((response) => {
-      if (response.status == 200 && response.data.token) {
-        // A valid token has been returned - save, and login
-        useSessionState.getState().setToken(response.data.token);
+      if (response.status == 200) {
+        afterLogin();
       }
     })
     .catch(() => {});
@@ -48,8 +37,6 @@ export const doBasicLogin = async (username: string, password: string) => {
 
 /**
  * Logout the user from the current session
- *
- * @arg deleteToken: If true, delete the token from the server
  */
 export const doLogout = async (navigate: any) => {
   // Logout from the server session
@@ -60,9 +47,8 @@ export const doLogout = async (navigate: any) => {
   });
 
   // Logout from this session
-  // Note that clearToken() then calls setApiDefaults()
   clearCsrfCookie();
-  useSessionState.getState().clearToken();
+  afterLogin();
 
   notifications.hide('login');
   notifications.show({
@@ -124,7 +110,6 @@ export function handleReset(navigate: any, values: { email: string }) {
  * Check login state, and redirect the user as required.
  *
  * The user may be logged in via the following methods:
- * - An existing API token is stored in the session
  * - An existing CSRF cookie is stored in the browser
  */
 export function checkLoginState(
@@ -149,38 +134,15 @@ export function checkLoginState(
 
   // Callback function when login fails
   const loginFailure = () => {
-    useSessionState.getState().clearToken();
     if (!no_redirect) navigate('/login');
   };
 
-  if (useSessionState.getState().hasToken()) {
-    // An existing token is available - check if it works
+  if (getCsrfCookie()) {
+    // Try to login using the CSRF cookie
     api
-      .get(apiUrl(ApiEndpoints.user_me), {
-        timeout: 2000
-      })
-      .then((val) => {
-        if (val.status === 200) {
-          // Success: we are logged in (and we already have a token)
-          loginSuccess();
-        } else {
-          loginFailure();
-        }
-      })
-      .catch(() => {
-        loginFailure();
-      });
-  } else if (getCsrfCookie()) {
-    // Try to fetch a new token using the CSRF cookie
-    api
-      .get(apiUrl(ApiEndpoints.user_token), {
-        params: {
-          name: tokenName
-        }
-      })
+      .get(apiUrl(ApiEndpoints.user_token))
       .then((response) => {
-        if (response.status == 200 && response.data.token) {
-          useSessionState.getState().setToken(response.data.token);
+        if (response.status == 200) {
           loginSuccess();
         } else {
           loginFailure();
@@ -208,9 +170,41 @@ export function getCsrfCookie() {
 }
 
 /*
+ * Check if a CSRF cookie is available
+ */
+export function hasToken(check_backend = false) {
+  if (check_backend) {
+    // Check if the backend has a valid token
+    let is_auth = false;
+    api
+      .get(apiUrl(ApiEndpoints.user_me), { withCredentials: true })
+      .then((response) => {
+        is_auth = response.status == 200;
+      })
+      .catch(() => {
+        is_auth = false;
+        clearCsrfCookie();
+      });
+    return is_auth;
+  }
+  return !!getCsrfCookie();
+}
+
+/*
  * Clear out the CSRF cookie (force session logout)
  */
 export function clearCsrfCookie() {
+  console.log('Clearing CSRF cookie');
   document.cookie =
     'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+}
+
+/*
+ * Perform any required actions after a successful login
+ */
+export function afterLogin() {
+  setApiDefaults();
+  fetchGlobalStates();
+
+  console.log('Login successful');
 }
