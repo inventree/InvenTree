@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-19 01:26+0000\n"
-"PO-Revision-Date: 2024-03-20 12:27\n"
+"POT-Creation-Date: 2024-03-22 10:34+0000\n"
+"PO-Revision-Date: 2024-03-23 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: InvenTree/api.py:198
 msgid "API endpoint not found"
-msgstr ""
+msgstr "ไม่พบ API endpoint"
 
 #: InvenTree/api.py:462
 msgid "User does not have permission to view this model"
@@ -345,7 +345,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
 msgid "Email"
-msgstr ""
+msgstr "อีเมล"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
@@ -357,7 +357,7 @@ msgstr ""
 
 #: InvenTree/models.py:168
 msgid "Plugin Metadata"
-msgstr ""
+msgstr "ข้อมูลเมตาของปลั๊กอิน"
 
 #: InvenTree/models.py:169
 msgid "JSON metadata field, for use by external plugins"
@@ -389,7 +389,7 @@ msgstr ""
 
 #: InvenTree/models.py:537
 msgid "Missing file"
-msgstr ""
+msgstr "ไม่พบไฟล์"
 
 #: InvenTree/models.py:538
 msgid "Missing external link"
@@ -585,7 +585,7 @@ msgstr "เกิดข้อผิดพลาดที่เซิร์ฟเ
 msgid "An error has been logged by the server."
 msgstr ""
 
-#: InvenTree/serializers.py:62 part/models.py:4143
+#: InvenTree/serializers.py:62 part/models.py:4165
 msgid "Must be a valid number"
 msgstr "ต้องเป็นตัวเลข"
 
@@ -594,7 +594,7 @@ msgstr "ต้องเป็นตัวเลข"
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr ""
+msgstr "สกุลเงิน"
 
 #: InvenTree/serializers.py:102
 msgid "Select currency from available options"
@@ -618,7 +618,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:481
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "ยินดีต้อนรับเข้าสู่ Inventree"
 
 #: InvenTree/serializers.py:542
 msgid "Filename"
@@ -776,27 +776,27 @@ msgstr ""
 
 #: InvenTree/status_codes.py:97
 msgid "Assigned serial number"
-msgstr ""
+msgstr "กำหนดหมายเลขซีเรียลแล้ว"
 
 #: InvenTree/status_codes.py:100
 msgid "Stock counted"
-msgstr ""
+msgstr "นับสต็อกแล้ว"
 
 #: InvenTree/status_codes.py:101
 msgid "Stock manually added"
-msgstr ""
+msgstr "เพิ่มสต็อกแล้ว"
 
 #: InvenTree/status_codes.py:102
 msgid "Stock manually removed"
-msgstr ""
+msgstr "ลบสต็อกแล้ว"
 
 #: InvenTree/status_codes.py:105
 msgid "Location changed"
-msgstr ""
+msgstr "เปลี่ยนสถานที่แล้ว"
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr ""
+msgstr "อัพเดทสต็อกแล้ว"
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
@@ -942,14 +942,14 @@ msgstr "เกี่ยวกับ Inventree"
 msgid "Build must be cancelled before it can be deleted"
 msgstr ""
 
-#: build/api.py:281 part/models.py:4021 templates/js/translated/bom.js:997
+#: build/api.py:281 part/models.py:4043 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2521
 #: templates/js/translated/table_filters.js:190
 #: templates/js/translated/table_filters.js:583
 msgid "Consumable"
 msgstr ""
 
-#: build/api.py:282 part/models.py:4015 part/templates/part/upload_bom.html:58
+#: build/api.py:282 part/models.py:4037 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:1001 templates/js/translated/bom.js:1028
 #: templates/js/translated/build.js:2530
 #: templates/js/translated/table_filters.js:186
@@ -1018,7 +1018,7 @@ msgstr ""
 
 #: build/models.py:174 order/models.py:430 order/models.py:886
 #: order/models.py:1264 order/models.py:1981 part/admin.py:417
-#: part/models.py:4036 part/templates/part/upload_bom.html:54
+#: part/models.py:4058 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_po_report_base.html:28
 #: report/templates/report/inventree_return_order_report_base.html:26
@@ -1051,8 +1051,8 @@ msgstr ""
 #: part/api.py:1528 part/api.py:1820 part/models.py:389 part/models.py:3003
 #: part/models.py:3147 part/models.py:3291 part/models.py:3314
 #: part/models.py:3335 part/models.py:3357 part/models.py:3467
-#: part/models.py:3763 part/models.py:3894 part/models.py:3987
-#: part/models.py:4348 part/serializers.py:1102 part/serializers.py:1677
+#: part/models.py:3763 part/models.py:3916 part/models.py:4009
+#: part/models.py:4370 part/serializers.py:1102 part/serializers.py:1677
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1186,7 +1186,7 @@ msgstr ""
 
 #: build/models.py:293 templates/js/translated/build.js:2205
 msgid "Issued by"
-msgstr ""
+msgstr "ออกโดย"
 
 #: build/models.py:294
 msgid "User who issued this build order"
@@ -1272,7 +1272,7 @@ msgstr ""
 #: order/serializers.py:566 part/serializers.py:1460 part/serializers.py:1835
 #: stock/models.py:665 stock/models.py:1477 stock/serializers.py:472
 msgid "Quantity must be greater than zero"
-msgstr ""
+msgstr "จำนวนต้องมีค่ามากกว่า 0"
 
 #: build/models.py:883 build/serializers.py:228
 msgid "Quantity cannot be greater than the output quantity"
@@ -1292,7 +1292,7 @@ msgstr ""
 #: build/templates/build/detail.html:34 common/models.py:2459
 #: order/models.py:1247 order/models.py:1902 order/serializers.py:1328
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:416
-#: part/forms.py:48 part/models.py:3161 part/models.py:4009
+#: part/forms.py:48 part/models.py:3161 part/models.py:4031
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
 #: report/templates/report/inventree_bill_of_materials_report.html:138
@@ -1433,7 +1433,7 @@ msgstr ""
 #: stock/serializers.py:483 templates/js/translated/purchase_order.js:1153
 #: templates/js/translated/stock.js:367 templates/js/translated/stock.js:565
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Serial Numbers"
 
 #: build/serializers.py:288
 msgid "Enter serial numbers for build outputs"
@@ -1473,7 +1473,7 @@ msgstr ""
 #: templates/js/translated/stock.js:1060 templates/js/translated/stock.js:2200
 #: templates/js/translated/stock.js:2871
 msgid "Location"
-msgstr ""
+msgstr "สถานที่"
 
 #: build/serializers.py:427
 msgid "Stock location for scrapped outputs"
@@ -1663,7 +1663,7 @@ msgstr ""
 msgid "Allocate optional BOM items to build order"
 msgstr ""
 
-#: build/serializers.py:1097 part/models.py:3904 part/models.py:4340
+#: build/serializers.py:1097 part/models.py:3926 part/models.py:4362
 #: stock/api.py:745
 msgid "BOM Item"
 msgstr ""
@@ -1948,7 +1948,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:202
 #: templates/js/translated/table_filters.js:689
 msgid "Completed"
-msgstr ""
+msgstr "สำเร็จแล้ว"
 
 #: build/templates/build/detail.html:153
 msgid "Build not complete"
@@ -4126,7 +4126,7 @@ msgid "Supplier part description"
 msgstr ""
 
 #: company/models.py:834 company/templates/company/supplier_part.html:187
-#: part/admin.py:418 part/models.py:4044 part/templates/part/upload_bom.html:59
+#: part/admin.py:418 part/models.py:4066 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
 #: report/templates/report/inventree_return_order_report_base.html:27
@@ -5799,12 +5799,12 @@ msgstr ""
 msgid "Updated {part} unit-price to {price} and quantity to {qty}"
 msgstr ""
 
-#: part/admin.py:39 part/admin.py:404 part/models.py:3895 part/stocktake.py:218
+#: part/admin.py:39 part/admin.py:404 part/models.py:3917 part/stocktake.py:218
 #: stock/admin.py:153
 msgid "Part ID"
 msgstr ""
 
-#: part/admin.py:41 part/admin.py:411 part/models.py:3896 part/stocktake.py:219
+#: part/admin.py:41 part/admin.py:411 part/models.py:3918 part/stocktake.py:219
 #: stock/admin.py:157
 msgid "Part Name"
 msgstr ""
@@ -5907,7 +5907,7 @@ msgstr ""
 #: templates/js/translated/part.js:2804 templates/js/translated/search.js:130
 #: templates/navbar.html:24 users/models.py:190
 msgid "Parts"
-msgstr ""
+msgstr "ชิ้นส่วน"
 
 #: part/admin.py:384
 msgid "BOM Level"
@@ -5921,7 +5921,7 @@ msgstr ""
 msgid "Parent IPN"
 msgstr ""
 
-#: part/admin.py:408 part/models.py:3897
+#: part/admin.py:408 part/models.py:3919
 msgid "Part IPN"
 msgstr ""
 
@@ -6009,7 +6009,7 @@ msgstr ""
 msgid "This option must be selected"
 msgstr ""
 
-#: part/api.py:1541 part/models.py:895 part/models.py:3385 part/models.py:3840
+#: part/api.py:1541 part/models.py:895 part/models.py:3385 part/models.py:3862
 #: part/serializers.py:406 part/serializers.py:1112
 #: part/templates/part/part_base.html:260 stock/api.py:733
 #: templates/InvenTree/settings/settings_staff_js.html:300
@@ -6036,7 +6036,7 @@ msgstr ""
 msgid "Input quantity for price calculation"
 msgstr ""
 
-#: part/models.py:81 part/models.py:3841 part/templates/part/category.html:16
+#: part/models.py:81 part/models.py:3863 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
 msgstr ""
@@ -6118,7 +6118,7 @@ msgstr ""
 msgid "Parts cannot be assigned to structural part categories!"
 msgstr ""
 
-#: part/models.py:854 part/models.py:3896
+#: part/models.py:854 part/models.py:3918
 msgid "Part name"
 msgstr ""
 
@@ -6570,7 +6570,7 @@ msgstr ""
 msgid "Parent Part"
 msgstr ""
 
-#: part/models.py:3772 part/models.py:3848 part/models.py:3849
+#: part/models.py:3772 part/models.py:3870 part/models.py:3871
 #: templates/InvenTree/settings/settings_staff_js.html:295
 msgid "Parameter Template"
 msgstr ""
@@ -6583,151 +6583,151 @@ msgstr ""
 msgid "Parameter Value"
 msgstr ""
 
-#: part/models.py:3855 templates/InvenTree/settings/settings_staff_js.html:304
+#: part/models.py:3877 templates/InvenTree/settings/settings_staff_js.html:304
 msgid "Default Value"
 msgstr ""
 
-#: part/models.py:3856
+#: part/models.py:3878
 msgid "Default Parameter Value"
 msgstr ""
 
-#: part/models.py:3894
+#: part/models.py:3916
 msgid "Part ID or part name"
 msgstr ""
 
-#: part/models.py:3895
+#: part/models.py:3917
 msgid "Unique part ID value"
 msgstr ""
 
-#: part/models.py:3897
+#: part/models.py:3919
 msgid "Part IPN value"
 msgstr ""
 
-#: part/models.py:3898
+#: part/models.py:3920
 msgid "Level"
 msgstr ""
 
-#: part/models.py:3898
+#: part/models.py:3920
 msgid "BOM level"
 msgstr ""
 
-#: part/models.py:3988
+#: part/models.py:4010
 msgid "Select parent part"
 msgstr ""
 
-#: part/models.py:3998
+#: part/models.py:4020
 msgid "Sub part"
 msgstr ""
 
-#: part/models.py:3999
+#: part/models.py:4021
 msgid "Select part to be used in BOM"
 msgstr ""
 
-#: part/models.py:4010
+#: part/models.py:4032
 msgid "BOM quantity for this BOM item"
 msgstr ""
 
-#: part/models.py:4016
+#: part/models.py:4038
 msgid "This BOM item is optional"
 msgstr ""
 
-#: part/models.py:4022
+#: part/models.py:4044
 msgid "This BOM item is consumable (it is not tracked in build orders)"
 msgstr ""
 
-#: part/models.py:4029 part/templates/part/upload_bom.html:55
+#: part/models.py:4051 part/templates/part/upload_bom.html:55
 msgid "Overage"
 msgstr ""
 
-#: part/models.py:4030
+#: part/models.py:4052
 msgid "Estimated build wastage quantity (absolute or percentage)"
 msgstr ""
 
-#: part/models.py:4037
+#: part/models.py:4059
 msgid "BOM item reference"
 msgstr ""
 
-#: part/models.py:4045
+#: part/models.py:4067
 msgid "BOM item notes"
 msgstr ""
 
-#: part/models.py:4051
+#: part/models.py:4073
 msgid "Checksum"
 msgstr ""
 
-#: part/models.py:4052
+#: part/models.py:4074
 msgid "BOM line checksum"
 msgstr ""
 
-#: part/models.py:4057 templates/js/translated/table_filters.js:174
+#: part/models.py:4079 templates/js/translated/table_filters.js:174
 msgid "Validated"
 msgstr ""
 
-#: part/models.py:4058
+#: part/models.py:4080
 msgid "This BOM item has been validated"
 msgstr ""
 
-#: part/models.py:4063 part/templates/part/upload_bom.html:57
+#: part/models.py:4085 part/templates/part/upload_bom.html:57
 #: templates/js/translated/bom.js:1054
 #: templates/js/translated/table_filters.js:178
 #: templates/js/translated/table_filters.js:211
 msgid "Gets inherited"
 msgstr ""
 
-#: part/models.py:4064
+#: part/models.py:4086
 msgid "This BOM item is inherited by BOMs for variant parts"
 msgstr ""
 
-#: part/models.py:4069 part/templates/part/upload_bom.html:56
+#: part/models.py:4091 part/templates/part/upload_bom.html:56
 #: templates/js/translated/bom.js:1046
 msgid "Allow Variants"
 msgstr ""
 
-#: part/models.py:4070
+#: part/models.py:4092
 msgid "Stock items for variant parts can be used for this BOM item"
 msgstr ""
 
-#: part/models.py:4155 stock/models.py:649
+#: part/models.py:4177 stock/models.py:649
 msgid "Quantity must be integer value for trackable parts"
 msgstr ""
 
-#: part/models.py:4165 part/models.py:4167
+#: part/models.py:4187 part/models.py:4189
 msgid "Sub part must be specified"
 msgstr ""
 
-#: part/models.py:4307
+#: part/models.py:4329
 msgid "BOM Item Substitute"
 msgstr ""
 
-#: part/models.py:4328
+#: part/models.py:4350
 msgid "Substitute part cannot be the same as the master part"
 msgstr ""
 
-#: part/models.py:4341
+#: part/models.py:4363
 msgid "Parent BOM item"
 msgstr ""
 
-#: part/models.py:4349
+#: part/models.py:4371
 msgid "Substitute part"
 msgstr ""
 
-#: part/models.py:4365
+#: part/models.py:4387
 msgid "Part 1"
 msgstr ""
 
-#: part/models.py:4373
+#: part/models.py:4395
 msgid "Part 2"
 msgstr ""
 
-#: part/models.py:4374
+#: part/models.py:4396
 msgid "Select Related Part"
 msgstr ""
 
-#: part/models.py:4393
+#: part/models.py:4415
 msgid "Part relationship cannot be created between a part and itself"
 msgstr ""
 
-#: part/models.py:4398
+#: part/models.py:4420
 msgid "Duplicate relationship already exists"
 msgstr ""
 
@@ -8228,7 +8228,7 @@ msgstr ""
 msgid "Method"
 msgstr ""
 
-#: plugin/plugin.py:264
+#: plugin/plugin.py:270
 msgid "No author found"
 msgstr ""
 
