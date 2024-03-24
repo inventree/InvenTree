@@ -67,10 +67,12 @@ def extract_rows(data_file) -> list:
     """
     data = load_data_file(data_file)
 
+    headers = data.headers
+
     rows = []
 
     for row in data:
-        rows.append(row)
+        rows.append(dict(zip(headers, row)))
 
     return rows
 
