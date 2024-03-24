@@ -95,7 +95,11 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             self.assertEqual(PluginConfig.objects.all().first().active, active)
 
         # Should not work - not a superuser
-        response = self.client.post(reverse('api-plugin-activate'), {}, follow=True)
+        response = self.client.post(
+            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.pk}),
+            {},
+            follow=True,
+        )
         self.assertEqual(response.status_code, 403)
 
         # Make user superuser
@@ -109,7 +113,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         # Activate plugin with detail url
         assert_plugin_active(self, False)
         response = self.client.patch(
-            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.id}),
+            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.pk}),
             {},
             follow=True,
         )
