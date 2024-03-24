@@ -138,7 +138,13 @@ class MixinBase:
             if fnc_name is True:
                 return True
 
-            return getattr(self, fnc_name, True)
+            attr = getattr(self, fnc_name, True)
+
+            if callable(attr):
+                return attr()
+            else:
+                return attr
+
         return False
 
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):

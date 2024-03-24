@@ -63,6 +63,7 @@ export enum ApiEndpoints {
   part_stocktake_list = 'part/stocktake/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
+  category_parameter_list = 'part/category/parameters/',
   related_part_list = 'part/related/',
   part_attachment_list = 'part/attachment/',
   part_test_template_list = 'part/test-template/',
