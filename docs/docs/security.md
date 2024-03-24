@@ -1,4 +1,3 @@
-# InvenTree is commitment to security
 
 The InvenTree project is committed to providing a secure and safe environment for all users. We know that many of our users rely on InvenTree to manage the inventory and manufacturing for their small and mid-size businesses, and we take that responsibility seriously.
 
@@ -7,11 +6,11 @@ To that end, we have implemented a number of security measures over the years, w
 ## Organisational measures
 
 The InvenTree project is managed by a small team of developers, who are responsible for the ongoing development and maintenance of the software. Two geographically distributed users have administrative access to the InvenTree codebase. Merges are only done by one of these two users, the maintainer Oliver.
-InvenTree is open-source, and we welcome contributions from the community. However, all contributions are reviewed and scrutanisied before being merged into the codebase.
+InvenTree is open-source, and we welcome contributions from the community. However, all contributions are reviewed and scrutinised before being merged into the codebase.
 
 We provide a written [Security Policy](https://github.com/inventree/InvenTree/blob/master/SECURITY.md) in our main repo to ensure that all security issues are handled in a timely manner.
 
-If we become aware of a security issue, we will take immediate action to address the issue, and will provide a public disclosure of the issue once it has been resolved. We support assigning CVEs to security issues where appropriate.  Our past security advisories can be found [here](https://github.com/inventree/InvenTree/security/advisories)
+If we become aware of a security issue, we will take immediate action to address the issue, and will provide a public disclosure of the issue once it has been resolved. We support assigning CVEs to security issues where appropriate.  Our past security advisories can be found [here](https://github.com/inventree/InvenTree/security/advisories).
 
 ## Technical measures
 
@@ -27,9 +26,9 @@ Among those are:
 - (Optional but encouraged) Two-factor authentication for user accounts
 - (Optional but encouraged) Signed commits / actions
 
-### Codestyle
+### Code style
 
-We enforce style and security checks in our CI/CD pipeline, and we have a number of automated tests to ensure that the codebase is secure and functional.
+We enforce style and security checks in our CI/CD pipeline, and we have several automated tests to ensure that the codebase is secure and functional.
 Checks are run on every pull request, and we require that all checks pass before a pull request can be merged.
 
 ### Current versions
@@ -42,13 +41,13 @@ We run coverage tests on our codebase to ensure that we have a high level of tes
 
 ### Pinning dependencies
 
-We are pinning dependencies to specific versions - aiming for complete reproduceability of builds - wherever possible. Combined with continuous OSV checks, we are able to react quickly to security issues in our dependencies.
+We are pinning dependencies to specific versions - aiming for complete reproducibility of builds - wherever possible. Combined with continuous OSV checks, we are able to react quickly to security issues in our dependencies.
 
 ## Best practices
 
-We follow most of GitHubs community best practices, check our compilance [here](https://github.com/inventree/InvenTree/community).
+We follow most of GitHubs community best practices, check our compliance [here](https://github.com/inventree/InvenTree/community).
 
-We also follow OpenSSF recommodations where applicable and take part in multipbe of their security efforts:
+We also follow OpenSSF recommendations where applicable and take part in multiple of their security efforts:
 
 - OSSF Best Practices, currently at a [level of passing](https://www.bestpractices.dev/de/projects/7179)
 - OSSF Scorecard, running with each merge [check current state](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
