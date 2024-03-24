@@ -32,4 +32,15 @@ class Migration(migrations.Migration):
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
         ),
+        migrations.CreateModel(
+            name='DataImportRow',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('row_index', models.PositiveIntegerField(default=0, verbose_name='Row Index')),
+                ('row_data', models.JSONField(blank=True, null=True, verbose_name='Original row data')),
+                ('data', models.JSONField(blank=True, null=True, verbose_name='Data')),
+                ('errors', models.JSONField(blank=True, null=True, verbose_name='Errors')),
+                ('session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rows', to='importer.dataimportsession', verbose_name='Import Session')),
+            ],
+        ),
     ]

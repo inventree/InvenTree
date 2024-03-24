@@ -60,6 +60,21 @@ def extract_column_names(data_file) -> list:
     return data.headers
 
 
+def extract_rows(data_file) -> list:
+    """Extract rows from the data file.
+
+    Each returned row is a dictionary of column_name: value pairs.
+    """
+    data = load_data_file(data_file)
+
+    rows = []
+
+    for row in data:
+        rows.append(row)
+
+    return rows
+
+
 def get_fields(serializer_class, read_only=None, required=None):
     """Extract the field names from a serializer class.
 

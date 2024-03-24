@@ -2,7 +2,7 @@
 
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
-from django.db import models
+from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 
 import importer.validators
@@ -26,13 +26,15 @@ class DataImportSession(models.Model):
 
     def save(self, *args, **kwargs):
         """Save the DataImportSession object."""
-        if self.pk is None:
+        initial = self.pk is None
+        super().save(*args, **kwargs)
+
+        if initial:
             # New object - run initial setup
             self.status = DataImportStatusCode.INITIAL.value
             self.progress = 0
+            self.create_rows()
             self.auto_assign_columns()
-
-        super().save(*args, **kwargs)
 
     data_file = models.FileField(
         upload_to='import',
@@ -101,7 +103,18 @@ class DataImportSession(models.Model):
 
         # TODO... implement auto mapping
 
-        self.data_columns = column_map
+        self.field_mapping = column_map
+
+    @transaction.atomic
+    def create_rows(self):
+        """Generate DataImportRow objects for each row in the import file."""
+        from importer.operations import extract_rows
+
+        # Remove any existing rows
+        self.rows.all().delete()
+
+        for idx, row in enumerate(extract_rows(self.data_file)):
+            DataImportRow.objects.create(session=self, data=row, row_index=idx)
 
 
 class DataImportRow(models.Model):
@@ -116,7 +129,10 @@ class DataImportRow(models.Model):
     """
 
     session = models.ForeignKey(
-        DataImportSession, on_delete=models.CASCADE, verbose_name=_('Import Session')
+        DataImportSession,
+        on_delete=models.CASCADE,
+        verbose_name=_('Import Session'),
+        related_name='rows',
     )
 
     row_index = models.PositiveIntegerField(default=0, verbose_name=_('Row Index'))
