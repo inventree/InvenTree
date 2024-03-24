@@ -9,9 +9,6 @@ on:
   pull_request_target:
     types: [ "labeled", "closed" ]
 
-permissions:
-  contents: read
-
 jobs:
   backport:
     name: Backport PR

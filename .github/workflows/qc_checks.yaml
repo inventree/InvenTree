@@ -22,8 +22,6 @@ env:
   INVENTREE_BACKUP_DIR: ../test_inventree_backup
   INVENTREE_SITE_URL: http://localhost:8000
 
-permissions:
-  contents: read
 jobs:
   paths-filter:
     name: Filter

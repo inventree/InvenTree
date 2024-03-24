@@ -9,9 +9,6 @@ env:
   python_version: 3.9
   node_version: 18
 
-permissions:
-  contents: read
-
 jobs:
   build:
 
