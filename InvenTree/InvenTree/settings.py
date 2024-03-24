@@ -1137,9 +1137,7 @@ login_attempts = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
 
 try:
     login_attempts = int(login_attempts)
-    login_attempts = (
-        f'{login_attempts}/m/user,{login_attempts}/m/ip,{login_attempts}/m/key'
-    )
+    login_attempts = f'{login_attempts}/m/ip,{login_attempts}/m/key'
 except ValueError:
     pass
 
