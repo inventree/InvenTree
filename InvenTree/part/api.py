@@ -406,7 +406,7 @@ class PartInternalPriceList(ListCreateAPI):
 
 
 class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a PartAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a PartAttachment (file upload)."""
 
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer

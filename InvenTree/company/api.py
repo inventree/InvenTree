@@ -82,7 +82,7 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
 
 
 class CompanyAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for the CompanyAttachment model."""
+    """API endpoint for listing, creating and bulk deleting a CompanyAttachment."""
 
     queryset = CompanyAttachment.objects.all()
     serializer_class = CompanyAttachmentSerializer
@@ -215,7 +215,7 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
 
 
 class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a ManufacturerPartAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a ManufacturerPartAttachment (file upload)."""
 
     queryset = ManufacturerPartAttachment.objects.all()
     serializer_class = ManufacturerPartAttachmentSerializer

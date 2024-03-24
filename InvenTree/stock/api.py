@@ -813,6 +813,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
     - GET: Return a list of all StockItem objects (with optional query filters)
     - POST: Create a new StockItem
+    - DELETE: Delete multiple StockItem objects
     """
 
     serializer_class = StockSerializers.StockItemSerializer
@@ -1199,7 +1200,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
 
 class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a StockItemAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a StockItemAttachment (file upload)."""
 
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
