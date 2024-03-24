@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-22 10:34+0000\n"
+"POT-Creation-Date: 2024-03-24 22:11+0000\n"
 "PO-Revision-Date: 2024-03-22 14:07\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -132,42 +132,42 @@ msgstr "Die angegebene E-Mail-Domain ist nicht freigegeben."
 msgid "Registration is disabled."
 msgstr "Registrierung ist deaktiviert."
 
-#: InvenTree/helpers.py:528 order/models.py:529 order/models.py:731
+#: InvenTree/helpers.py:529 order/models.py:529 order/models.py:731
 msgid "Invalid quantity provided"
 msgstr "Keine gültige Menge"
 
-#: InvenTree/helpers.py:536
+#: InvenTree/helpers.py:537
 msgid "Empty serial number string"
 msgstr "Keine Seriennummer angegeben"
 
-#: InvenTree/helpers.py:565
+#: InvenTree/helpers.py:566
 msgid "Duplicate serial"
 msgstr "Duplizierter Seriennummer"
 
-#: InvenTree/helpers.py:597 InvenTree/helpers.py:640
+#: InvenTree/helpers.py:598 InvenTree/helpers.py:641
 #, python-brace-format
 msgid "Invalid group range: {group}"
 msgstr "Ungültiger Gruppenbereich: {group}"
 
-#: InvenTree/helpers.py:628
+#: InvenTree/helpers.py:629
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
 msgstr "Gruppenbereich {group} überschreitet die zulässige Menge ({expected_quantity})"
 
-#: InvenTree/helpers.py:658 InvenTree/helpers.py:665 InvenTree/helpers.py:684
+#: InvenTree/helpers.py:659 InvenTree/helpers.py:666 InvenTree/helpers.py:685
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
 msgstr "Ungültige Gruppensequenz: {group}"
 
-#: InvenTree/helpers.py:694
+#: InvenTree/helpers.py:695
 msgid "No serial numbers found"
 msgstr "Keine Seriennummern gefunden"
 
-#: InvenTree/helpers.py:699
+#: InvenTree/helpers.py:700
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
 msgstr "Anzahl der eindeutigen Seriennummern ({len(serials)}) muss mit der Menge übereinstimmen ({expected_quantity})"
 
-#: InvenTree/helpers.py:817
+#: InvenTree/helpers.py:818
 msgid "Remove HTML tags from this value"
 msgstr "Entferne HTML-Tags von diesem Wert"
 
@@ -1048,7 +1048,7 @@ msgstr "Bauauftrag, zu dem dieser Bauauftrag zugwiesen ist"
 #: build/models.py:199 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:1044
 #: order/models.py:1389 order/models.py:1532 order/models.py:1533
-#: part/api.py:1528 part/api.py:1820 part/models.py:389 part/models.py:3003
+#: part/api.py:1535 part/api.py:1829 part/models.py:389 part/models.py:3003
 #: part/models.py:3147 part/models.py:3291 part/models.py:3314
 #: part/models.py:3335 part/models.py:3357 part/models.py:3467
 #: part/models.py:3763 part/models.py:3916 part/models.py:4009
@@ -1447,7 +1447,7 @@ msgstr "Seriennummern automatisch zuweisen"
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Benötigte Lagerartikel automatisch mit passenden Seriennummern zuweisen"
 
-#: build/serializers.py:337 stock/api.py:978
+#: build/serializers.py:337 stock/api.py:994
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Die folgenden Seriennummern existieren bereits oder sind ungültig"
 
@@ -1664,7 +1664,7 @@ msgid "Allocate optional BOM items to build order"
 msgstr "Optionale Stücklisten-Positionen dem Bauauftrag hinzufügen"
 
 #: build/serializers.py:1097 part/models.py:3926 part/models.py:4362
-#: stock/api.py:745
+#: stock/api.py:757
 msgid "BOM Item"
 msgstr "Stücklisten-Position"
 
@@ -3901,7 +3901,7 @@ msgstr "Standard-Währung für diese Firma"
 
 #: company/models.py:268 company/models.py:377
 #: company/templates/company/company_base.html:8
-#: company/templates/company/company_base.html:12 stock/api.py:761
+#: company/templates/company/company_base.html:12 stock/api.py:775
 #: templates/InvenTree/search.html:178 templates/js/translated/company.js:495
 msgid "Company"
 msgstr "Firma"
@@ -5937,88 +5937,88 @@ msgstr "Niedrigster Preis"
 msgid "Maximum Price"
 msgstr "Höchster Preis"
 
-#: part/api.py:118
+#: part/api.py:120
 msgid "Starred"
 msgstr "Markiert"
 
-#: part/api.py:120
+#: part/api.py:122
 msgid "Filter by starred categories"
 msgstr "Nach markierten Kategorien filtern"
 
-#: part/api.py:137 stock/api.py:281
+#: part/api.py:139 stock/api.py:283
 msgid "Depth"
 msgstr "Ebenen"
 
-#: part/api.py:137
+#: part/api.py:139
 msgid "Filter by category depth"
 msgstr "Filter nach Kategorietiefe"
 
-#: part/api.py:155 stock/api.py:299
+#: part/api.py:157 stock/api.py:301
 msgid "Cascade"
 msgstr "Mehrstufig"
 
-#: part/api.py:157
+#: part/api.py:159
 msgid "Include sub-categories in filtered results"
 msgstr "Unterkategorien in gefilterte Ergebnisse einbeziehen"
 
-#: part/api.py:177
+#: part/api.py:179
 msgid "Parent"
 msgstr "Übergeordnetes"
 
-#: part/api.py:179
+#: part/api.py:181
 msgid "Filter by parent category"
 msgstr "Nach übergeordneter Kategorie filtern"
 
-#: part/api.py:212
+#: part/api.py:214
 msgid "Exclude Tree"
 msgstr "Baum ausschließen"
 
-#: part/api.py:214
+#: part/api.py:216
 msgid "Exclude sub-categories under the specified category"
 msgstr "Unterkategorien in der angegebenen Kategorie ausschließen"
 
-#: part/api.py:455
+#: part/api.py:458
 msgid "Has Results"
 msgstr "Ergebnisse"
 
-#: part/api.py:622
+#: part/api.py:625
 msgid "Incoming Purchase Order"
 msgstr "Eingehende Bestellung"
 
-#: part/api.py:640
+#: part/api.py:643
 msgid "Outgoing Sales Order"
 msgstr "Ausgehender Auftrag"
 
-#: part/api.py:656
+#: part/api.py:659
 msgid "Stock produced by Build Order"
 msgstr "Lagerartikel produziert von Bauauftrag"
 
-#: part/api.py:740
+#: part/api.py:743
 msgid "Stock required for Build Order"
 msgstr "Lagerartikel für Bauauftrag benötigt"
 
-#: part/api.py:887
+#: part/api.py:890
 msgid "Valid"
 msgstr "Gültig"
 
-#: part/api.py:888
+#: part/api.py:891
 msgid "Validate entire Bill of Materials"
 msgstr "Gesamte Stückliste validieren"
 
-#: part/api.py:894
+#: part/api.py:897
 msgid "This option must be selected"
 msgstr "Diese Option muss ausgewählt werden"
 
-#: part/api.py:1541 part/models.py:895 part/models.py:3385 part/models.py:3862
+#: part/api.py:1549 part/models.py:895 part/models.py:3385 part/models.py:3862
 #: part/serializers.py:406 part/serializers.py:1112
-#: part/templates/part/part_base.html:260 stock/api.py:733
+#: part/templates/part/part_base.html:260 stock/api.py:744
 #: templates/InvenTree/settings/settings_staff_js.html:300
 #: templates/js/translated/notification.js:60
 #: templates/js/translated/part.js:2377
 msgid "Category"
 msgstr "Kategorie"
 
-#: part/api.py:1828
+#: part/api.py:1837
 msgid "Uses"
 msgstr "Verwendet"
 
@@ -8685,60 +8685,60 @@ msgstr "Löschen wenn leer"
 msgid "Expiry Date"
 msgstr "Ablaufdatum"
 
-#: stock/api.py:281
+#: stock/api.py:283
 msgid "Filter by location depth"
 msgstr "Filtern nach Standorttiefe"
 
-#: stock/api.py:301
+#: stock/api.py:303
 msgid "Include sub-locations in filtered results"
 msgstr "Unterorte in gefilterte Ergebnisse einbeziehen"
 
-#: stock/api.py:322
+#: stock/api.py:324
 msgid "Parent Location"
 msgstr "Übergeordneter Ort"
 
-#: stock/api.py:323
+#: stock/api.py:325
 msgid "Filter by parent location"
 msgstr "Filtern nach übergeordnetem Ort"
 
-#: stock/api.py:568 templates/js/translated/table_filters.js:427
+#: stock/api.py:578 templates/js/translated/table_filters.js:427
 msgid "External Location"
 msgstr "Externer Standort"
 
-#: stock/api.py:753
+#: stock/api.py:766
 msgid "Part Tree"
 msgstr "Teile-Baum"
 
-#: stock/api.py:781
+#: stock/api.py:796
 msgid "Expiry date before"
 msgstr "Gültigkeitsdauer vor"
 
-#: stock/api.py:785
+#: stock/api.py:800
 msgid "Expiry date after"
 msgstr "Gültigkeitsdauer nach"
 
-#: stock/api.py:788 stock/templates/stock/item_base.html:439
+#: stock/api.py:803 stock/templates/stock/item_base.html:439
 #: templates/js/translated/table_filters.js:441
 msgid "Stale"
 msgstr "überfällig"
 
-#: stock/api.py:874
+#: stock/api.py:890
 msgid "Quantity is required"
 msgstr "Menge ist erforderlich"
 
-#: stock/api.py:880
+#: stock/api.py:896
 msgid "Valid part must be supplied"
 msgstr "Gültiges Teil muss angegeben werden"
 
-#: stock/api.py:911
+#: stock/api.py:927
 msgid "The given supplier part does not exist"
 msgstr "Der angegebene Lieferantenartikel existiert nicht"
 
-#: stock/api.py:921
+#: stock/api.py:937
 msgid "The supplier part has a pack size defined, but flag use_pack_size not set"
 msgstr "Das Zulieferteil hat eine Packungsgröße definiert, aber das Kennzeichen use_pack_size ist nicht gesetzt"
 
-#: stock/api.py:952
+#: stock/api.py:968
 msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgstr "Seriennummern können für nicht verfolgbare Teile nicht angegeben werden"
 
@@ -14159,4 +14159,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
-

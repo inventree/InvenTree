@@ -70,7 +70,7 @@ msgid "Clear"
 msgstr ""
 
 #: src/components/details/DetailsImage.tsx:226
-#: src/components/forms/ApiForm.tsx:472
+#: src/components/forms/ApiForm.tsx:490
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
@@ -221,21 +221,21 @@ msgstr ""
 msgid "Form Error"
 msgstr "Lỗi form"
 
-#: src/components/forms/ApiForm.tsx:327
+#: src/components/forms/ApiForm.tsx:336
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
 msgstr "Thành công"
 
-#: src/components/forms/ApiForm.tsx:411
+#: src/components/forms/ApiForm.tsx:427
 msgid "Form Errors Exist"
 msgstr "Từ các lỗi hiện hữu"
 
-#: src/components/forms/ApiForm.tsx:509
+#: src/components/forms/ApiForm.tsx:527
 #: src/tables/plugin/PluginListTable.tsx:441
 msgid "Update"
 msgstr "Cập nhật"
 
-#: src/components/forms/ApiForm.tsx:529
+#: src/components/forms/ApiForm.tsx:547
 #: src/components/items/ActionDropdown.tsx:199
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:121
@@ -2329,10 +2329,6 @@ msgid "Move to default location"
 msgstr ""
 
 #: src/forms/StockForms.tsx:416
-msgid "Move"
-msgstr ""
-
-#: src/forms/StockForms.tsx:416
 #: src/forms/StockForms.tsx:450
 #: src/forms/StockForms.tsx:479
 #: src/forms/StockForms.tsx:507
@@ -2344,6 +2340,10 @@ msgstr ""
 #: src/tables/stock/StockItemTable.tsx:283
 msgid "In Stock"
 msgstr "Còn hàng"
+
+#: src/forms/StockForms.tsx:416
+msgid "Move"
+msgstr ""
 
 #: src/forms/StockForms.tsx:416
 #: src/forms/StockForms.tsx:450
@@ -5884,4 +5884,3 @@ msgstr "Giao diện nền tảng được tối ưu cho máy tính bảng và m�
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Đọc tài liệu"
-
