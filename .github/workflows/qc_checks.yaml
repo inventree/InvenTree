@@ -10,7 +10,7 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 16
+  node_version: 18
   # The OS version must be set per job
   server_start_sleep: 60
 
@@ -182,7 +182,7 @@ jobs:
             name: Push new schema
             runs-on: ubuntu-20.04
             needs: [paths-filter, schema]
-            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
             env:
               version: ${{ needs.schema.outputs.version }}
 
@@ -192,7 +192,7 @@ jobs:
                     repository: inventree/schema
                     token: ${{ secrets.SCHEMA_PAT }}
               - name: Download schema artifact
-                uses: actions/download-artifact@9bc31d5ccc31df68ecc42ccf4149144866c47d8a # v3.0.2
+                uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
                 with:
                   name: schema.yml
               - name: Move schema to correct location

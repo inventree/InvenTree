@@ -128,16 +128,24 @@ jobs:
       - name: Set up cosign
         if: github.event_name != 'pull_request'
         uses: sigstore/cosign-installer@11086d25041f77fe8fe7b9ea4e48e3b9192b8f19 # pin@v3.1.2
+      - name: Check if Dockerhub login is required
+        id: docker_login
+        run: |
+          if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
+            echo "skip_dockerhub_login=true" >> $GITHUB_ENV
+          else
+            echo "skip_dockerhub_login=false" >> $GITHUB_ENV
+          fi
       - name: Login to Dockerhub
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # pin@v3.0.0
+        if: github.event_name != 'pull_request' && steps.docker_login.outputs.skip_dockerhub_login != 'true'
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # pin@v3.1.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Log into registry ghcr.io
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # pin@v3.0.0
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # pin@v3.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -150,7 +158,7 @@ jobs:
         with:
           images: |
             inventree/inventree
-            ghcr.io/inventree/inventree
+            ghcr.io/${{ github.repository }}
 
       - name: Push Docker Images
         id: push-docker
