@@ -11,6 +11,8 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
@@ -725,6 +727,7 @@ class StockFilter(rest_filters.FilterSet):
         label='Ancestor', queryset=StockItem.objects.all(), method='filter_ancestor'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_ancestor(self, queryset, name, ancestor):
         """Filter based on ancestor stock item."""
         return queryset.filter(parent__in=ancestor.get_descendants(include_self=True))
@@ -735,6 +738,7 @@ class StockFilter(rest_filters.FilterSet):
         method='filter_category',
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_category(self, queryset, name, category):
         """Filter based on part category."""
         child_categories = category.get_descendants(include_self=True)
@@ -745,6 +749,7 @@ class StockFilter(rest_filters.FilterSet):
         label=_('BOM Item'), queryset=BomItem.objects.all(), method='filter_bom_item'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_bom_item(self, queryset, name, bom_item):
         """Filter based on BOM item."""
         return queryset.filter(bom_item.get_stock_filter())
@@ -753,6 +758,7 @@ class StockFilter(rest_filters.FilterSet):
         label=_('Part Tree'), queryset=Part.objects.all(), method='filter_part_tree'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part_tree(self, queryset, name, part_tree):
         """Filter based on part tree."""
         return queryset.filter(part__tree_id=part_tree.tree_id)
@@ -761,6 +767,7 @@ class StockFilter(rest_filters.FilterSet):
         label=_('Company'), queryset=Company.objects.all(), method='filter_company'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_company(self, queryset, name, company):
         """Filter by company (either manufacturer or supplier)."""
         return queryset.filter(

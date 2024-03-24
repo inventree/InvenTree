@@ -10,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import permissions, serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -214,6 +216,7 @@ class CategoryFilter(rest_filters.FilterSet):
         help_text=_('Exclude sub-categories under the specified category'),
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_exclude_tree(self, queryset, name, value):
         """Exclude all sub-categories under the specified category."""
         # Exclude the specified category
@@ -1003,6 +1006,7 @@ class PartFilter(rest_filters.FilterSet):
         method='filter_convert_from',
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_convert_from(self, queryset, name, part):
         """Limit the queryset to valid conversion options for the specified part."""
         conversion_options = part.get_conversion_options()
@@ -1017,6 +1021,7 @@ class PartFilter(rest_filters.FilterSet):
         method='filter_exclude_tree',
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_exclude_tree(self, queryset, name, part):
         """Exclude all parts and variants 'down' from the specified part from the queryset."""
         children = part.get_descendants(include_self=True)
@@ -1027,6 +1032,7 @@ class PartFilter(rest_filters.FilterSet):
         label='Ancestor', queryset=Part.objects.all(), method='filter_ancestor'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_ancestor(self, queryset, name, part):
         """Limit queryset to descendants of the specified ancestor part."""
         descendants = part.get_descendants(include_self=False)
@@ -1044,6 +1050,7 @@ class PartFilter(rest_filters.FilterSet):
         label='In BOM Of', queryset=Part.objects.all(), method='filter_in_bom'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_in_bom(self, queryset, name, part):
         """Limit queryset to parts in the BOM for the specified part."""
         bom_parts = part.get_parts_in_bom()
@@ -1528,6 +1535,7 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter queryset to include only PartParameterTemplates which are referenced by a part."""
         parameters = PartParameter.objects.filter(part=part)
@@ -1541,6 +1549,7 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         label=_('Category'),
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_category(self, queryset, name, category):
         """Filter queryset to include only PartParameterTemplates which are referenced by parts in this category."""
         cats = category.get_descendants(include_self=True)
@@ -1828,6 +1837,7 @@ class BomFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_uses', label=_('Uses')
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_uses(self, queryset, name, part):
         """Filter the queryset based on the specified part."""
         return queryset.filter(part.get_used_in_bom_item_filter())
