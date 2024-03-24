@@ -77,7 +77,6 @@ import { IconArrowBigDownLineFilled } from '@tabler/icons-react';
 import { IconTruckReturn } from '@tabler/icons-react';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { IconCalendarTime } from '@tabler/icons-react';
-import { IconProps } from '@tabler/icons-react';
 import React from 'react';
 
 const icons = {
@@ -198,8 +197,16 @@ type IconProps = {
   iconProps?: IconProps;
 };
 
-export function InvenTreeIcon(props: IconProps) {
-  let Icon: (props: IconProps) => React.JSX.Element;
+// Aliasing the new type name to make it distinct
+type TablerIconProps = IconProps;
+
+type InvenTreeIconProps = {
+  icon: InvenTreeIconType;
+  iconProps?: TablerIconProps;
+};
+
+export function InvenTreeIcon(props: InvenTreeIconProps) {
+  let Icon: React.ForwardRefExoticComponent<React.RefAttributes<any>>;
 
   if (props.icon in icons) {
     Icon = GetIcon(props.icon);
@@ -212,6 +219,6 @@ export function InvenTreeIcon(props: IconProps) {
 
   return <Icon {...props.iconProps} />;
 }
-function IconShapes(props: IconProps): Element {
+function IconShapes(props: TablerIconProps): Element {
   throw new Error('Function not implemented.');
 }
