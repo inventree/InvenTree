@@ -1132,11 +1132,18 @@ ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
 )
 
 # allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
-ACCOUNT_RATE_LIMITS = {
-    'login_failed': get_setting(
-        'INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int
+# The default login rate limit is "5/m/user,5/m/ip,5/m/key"
+login_attempts = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
+
+try:
+    login_attempts = int(login_attempts)
+    login_attempts = (
+        f'{login_attempts}/m/user,{login_attempts}/m/ip,{login_attempts}/m/key'
     )
-}
+except ValueError:
+    pass
+
+ACCOUNT_RATE_LIMITS = {'login_failed': login_attempts}
 
 # Default protocol for login
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
