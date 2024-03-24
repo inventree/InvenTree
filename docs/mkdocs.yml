@@ -84,7 +84,6 @@ nav:
     - Credits: credits.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
-    - Security: security.md
   - Install:
     - Introduction: start/intro.md
     - Configuration: start/config.md
