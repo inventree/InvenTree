@@ -6,7 +6,7 @@ import {
   Paper,
   Text
 } from '@mantine/core';
-import { Button, Group, Stack } from '@mantine/core';
+import { Button, Divider, Group, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
@@ -466,6 +466,7 @@ export function ApiForm({
       </Paper>
 
       {/* Footer with Action Buttons */}
+      <Divider />
       <div>
         <Group position="right">
           {props.actions?.map((action, i) => (
