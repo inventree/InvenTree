@@ -1130,12 +1130,27 @@ SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
     'INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int
 )
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting(
-    'INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int
-)
+
+# allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
+ACCOUNT_RATE_LIMITS = {
+    'login_failed': get_setting(
+        'INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int
+    )
+}
+
+# Default protocol for login
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
-    'INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http'
+    'INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', None
 )
+
+if ACCOUNT_DEFAULT_HTTP_PROTOCOL is None:
+    if SITE_URL and SITE_URL.startswith('https://'):
+        # auto-detect HTTPS prtoocol
+        ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+    else:
+        # default to http
+        ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX
