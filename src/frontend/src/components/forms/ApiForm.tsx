@@ -104,7 +104,7 @@ export function OptionsApiForm({
     [props.url, props.pk, props.pathParams]
   );
 
-  const { data } = useQuery({
+  const optionsQuery = useQuery({
     enabled: true,
     queryKey: [
       'form-options-data',
@@ -144,7 +144,7 @@ export function OptionsApiForm({
     for (const [k, v] of Object.entries(_props.fields)) {
       _props.fields[k] = constructField({
         field: v,
-        definition: data?.[k]
+        definition: optionsQuery?.data?.[k]
       });
 
       // If the user has specified initial data, use that value here
@@ -156,16 +156,30 @@ export function OptionsApiForm({
     }
 
     return _props;
-  }, [data, props]);
+  }, [optionsQuery.data, props]);
 
-  return <ApiForm id={id} props={formProps} />;
+  return (
+    <ApiForm
+      id={id}
+      props={formProps}
+      optionsLoading={optionsQuery.isFetching}
+    />
+  );
 }
 
 /**
  * An ApiForm component is a modal form which is rendered dynamically,
  * based on an API endpoint.
  */
-export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
+export function ApiForm({
+  id,
+  props,
+  optionsLoading
+}: {
+  id: string;
+  props: ApiFormProps;
+  optionsLoading: boolean;
+}) {
   const defaultValues: FieldValues = useMemo(() => {
     let defaultValuesMap = mapFields(props.fields ?? {}, (_path, field) => {
       return field.value ?? field.default ?? undefined;
@@ -382,9 +396,16 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     () =>
       isFormLoading ||
       initialDataQuery.isFetching ||
+      optionsLoading ||
       isSubmitting ||
       !props.fields,
-    [isFormLoading, initialDataQuery.isFetching, isSubmitting, props.fields]
+    [
+      isFormLoading,
+      initialDataQuery.isFetching,
+      isSubmitting,
+      props.fields,
+      optionsLoading
+    ]
   );
 
   const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {
@@ -426,16 +447,17 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
             )}
             <FormProvider {...form}>
               <Stack spacing="xs">
-                {Object.entries(props.fields ?? {}).map(
-                  ([fieldName, field]) => (
-                    <ApiFormField
-                      key={fieldName}
-                      fieldName={fieldName}
-                      definition={field}
-                      control={form.control}
-                    />
-                  )
-                )}
+                {!optionsLoading &&
+                  Object.entries(props.fields ?? {}).map(
+                    ([fieldName, field]) => (
+                      <ApiFormField
+                        key={fieldName}
+                        fieldName={fieldName}
+                        definition={field}
+                        control={form.control}
+                      />
+                    )
+                  )}
               </Stack>
             </FormProvider>
             {props.postFormContent}
