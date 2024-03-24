@@ -482,9 +482,17 @@ class StockFilter(rest_filters.FilterSet):
     # Relationship filters
     manufacturer = rest_filters.ModelChoiceFilter(
         label='Manufacturer',
-        queryset=Company.objects.filter(is_manufacturer=True),
-        field_name='manufacturer_part__manufacturer',
+        queryset=Company.objects.all(),
+        method='filter_manufacturer',
     )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_manufacturer(self, queryset, name, company):
+        """Filter by manufacturer."""
+        return queryset.filter(
+            Q(is_manufacturer=True) & Q(manufacturer_part__manufacturer=company)
+        )
+
     supplier = rest_filters.ModelChoiceFilter(
         label='Supplier',
         queryset=Company.objects.filter(is_supplier=True),
