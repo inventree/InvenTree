@@ -130,7 +130,9 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         # Activate plugin
         assert_plugin_active(self, False)
         response = self.client.patch(
-            reverse('api-plugin-activate'), {'pk': test_plg.pk}, follow=True
+            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.pk}),
+            {},
+            follow=True,
         )
         self.assertEqual(response.status_code, 200)
         assert_plugin_active(self, True)
