@@ -77,7 +77,7 @@ import { IconArrowBigDownLineFilled } from '@tabler/icons-react';
 import { IconTruckReturn } from '@tabler/icons-react';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { IconCalendarTime } from '@tabler/icons-react';
-import { TablerIconsProps } from '@tabler/icons-react';
+import { IconProps } from '@tabler/icons-react';
 import React from 'react';
 
 const icons = {
@@ -195,11 +195,11 @@ export function GetIcon(field: InvenTreeIconType) {
 
 type IconProps = {
   icon: InvenTreeIconType;
-  iconProps?: TablerIconsProps;
+  iconProps?: IconProps;
 };
 
 export function InvenTreeIcon(props: IconProps) {
-  let Icon: (props: TablerIconsProps) => React.JSX.Element;
+  let Icon: (props: IconProps) => React.JSX.Element;
 
   if (props.icon in icons) {
     Icon = GetIcon(props.icon);
@@ -212,6 +212,6 @@ export function InvenTreeIcon(props: IconProps) {
 
   return <Icon {...props.iconProps} />;
 }
-function IconShapes(props: TablerIconsProps): Element {
+function IconShapes(props: IconProps): Element {
   throw new Error('Function not implemented.');
 }
