@@ -1236,7 +1236,9 @@ PLUGIN_TESTING_SETUP = get_setting(
     'INVENTREE_PLUGIN_TESTING_SETUP', 'PLUGIN_TESTING_SETUP', False
 )  # Load plugins from setup hooks in testing?
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
-PLUGIN_TESTING_APPS = False  # Flag if app models are tested right now
+PLUGIN_TESTING_APPS = get_setting(
+    'INVENTREE_PLUGIN_TESTING_APPS', 'PLUGIN_TESTING_APPS', False
+)  # Flag if app models are tested right now
 PLUGIN_RETRY = get_setting(
     'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5
 )  # How often should plugin loading be tried?
