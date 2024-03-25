@@ -9,7 +9,7 @@ import importer.models
 class DataImportSessionAdmin(admin.ModelAdmin):
     """Admin interface for the DataImportSession model."""
 
-    list_display = ['id', 'data_file', 'status', 'progress', 'user']
+    list_display = ['id', 'data_file', 'status', 'user']
 
     list_filter = ['status']
 

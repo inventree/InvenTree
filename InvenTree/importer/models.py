@@ -16,10 +16,10 @@ class DataImportSession(models.Model):
     An initial file is uploaded, and used to populate the database.
 
     Fields:
+        timestamp: Timestamp for the import session
         data_file: FileField for the data file to import
         status: IntegerField for the status of the import session
         user: ForeignKey to the User who initiated the import
-        progress: IntegerField for the progress of the import (number of rows imported)
         data_columns: JSONField for the data columns in the import file (mapped to database columns)
         field_overrides: JSONField for field overrides (e.g. custom field values)
     """
@@ -35,6 +35,9 @@ class DataImportSession(models.Model):
             self.progress = 0
             self.create_rows()
             self.auto_assign_columns()
+            self.save()
+
+    timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_('Timestamp'))
 
     data_file = models.FileField(
         upload_to='import',
@@ -63,8 +66,6 @@ class DataImportSession(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('User')
     )
-
-    progress = models.PositiveIntegerField(default=0, verbose_name=_('Progress'))
 
     field_defaults = models.JSONField(
         blank=True, null=True, verbose_name=_('Field Defaults')
@@ -144,3 +145,5 @@ class DataImportRow(models.Model):
     data = models.JSONField(blank=True, null=True, verbose_name=_('Data'))
 
     errors = models.JSONField(blank=True, null=True, verbose_name=_('Errors'))
+
+    complete = models.BooleanField(default=False, verbose_name=_('Complete'))
