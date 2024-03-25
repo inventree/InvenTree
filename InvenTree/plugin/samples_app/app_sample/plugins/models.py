@@ -35,9 +35,9 @@ class SampleModel(InvenTree.models.MetadataMixin, models.Model):
 
         verbose_name = _('Sample Model')
         verbose_name_plural = _('Sample Models')
-        app_label = 'app_sample'
+        app_label = 'app_sample_plugin'
 
     @staticmethod
     def get_api_url():
         """Return API detail URL for this object."""
-        return reverse('plugin:app_sample:api-list')
+        return reverse('plugin:app_sample_plugin:api-list')

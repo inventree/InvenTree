@@ -35,12 +35,12 @@ class SampleModelList(ListCreateAPI):
     """API endpoint for listing all SampleModel objects."""
 
     queryset = SampleModel.objects.all()
-    filter_backends = SEARCH_ORDER_FILTER_ALIAS
     serializer_class = SampleModelSerializer
-    filterset_fields = ['string_field', 'user_field', 'content_type', 'object_id']
-    search_fields = ['string_field', 'user_field']
-    ordering_fields = ['string_field', 'user_field', 'boolean_field', 'date_field']
-    ordering = '-date_field'
+    # filter_backends = SEARCH_ORDER_FILTER_ALIAS
+    # filterset_fields = ['string_field', 'user_field', 'content_type', 'object_id']
+    # search_fields = ['string_field', 'user_field']
+    # ordering_fields = ['string_field', 'user_field', 'boolean_field', 'date_field']
+    # ordering = '-date_field'
 
 
 class SampleModelDetail(RetrieveUpdateDestroyAPI):
