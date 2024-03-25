@@ -14,8 +14,8 @@ import {
   IconAlertTriangle,
   IconDeviceFloppy,
   IconExclamationCircle,
-  IconRefresh,
-  TablerIconsProps
+  IconProps,
+  IconRefresh
 } from '@tabler/icons-react';
 import Split from '@uiw/react-split';
 import React, {
@@ -28,6 +28,7 @@ import React, {
 
 import { api } from '../../../App';
 import { ModelType } from '../../../enums/ModelType';
+import { TablerIconType } from '../../../functions/icons';
 import { apiUrl } from '../../../states/ApiState';
 import { TemplateI } from '../../../tables/settings/TemplateTable';
 import { SplitButton } from '../../buttons/SplitButton';
@@ -47,7 +48,7 @@ export type EditorComponent = React.ForwardRefExoticComponent<
 export type Editor = {
   key: string;
   name: string;
-  icon: (props: TablerIconsProps) => React.JSX.Element;
+  icon: TablerIconType;
   component: EditorComponent;
 };
 
@@ -66,7 +67,7 @@ export type PreviewAreaComponent = React.ForwardRefExoticComponent<
 export type PreviewArea = {
   key: string;
   name: string;
-  icon: (props: TablerIconsProps) => React.JSX.Element;
+  icon: TablerIconType;
   component: PreviewAreaComponent;
 };
 
