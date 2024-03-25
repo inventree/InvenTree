@@ -39,7 +39,6 @@ class Migration(migrations.Migration):
                 ('row_index', models.PositiveIntegerField(default=0, verbose_name='Row Index')),
                 ('row_data', models.JSONField(blank=True, null=True, verbose_name='Original row data')),
                 ('data', models.JSONField(blank=True, null=True, verbose_name='Data')),
-                ('errors', models.JSONField(blank=True, null=True, verbose_name='Errors')),
                 ('session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rows', to='importer.dataimportsession', verbose_name='Import Session')),
                 ('complete', models.BooleanField(default=False, verbose_name='Complete')),
             ],

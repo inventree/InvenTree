@@ -36,9 +36,10 @@ class DataImportSession(models.Model):
             # New object - run initial setup
             self.status = DataImportStatusCode.INITIAL.value
             self.progress = 0
-            self.create_rows()
             self.auto_assign_columns()
             self.save()
+
+            self.create_rows()
 
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_('Timestamp'))
 
@@ -121,13 +122,10 @@ class DataImportSession(models.Model):
     @transaction.atomic
     def create_rows(self):
         """Generate DataImportRow objects for each row in the import file."""
-        from importer.operations import extract_rows
+        from importer.tasks import load_data
+        from InvenTree.tasks import offload_task
 
-        # Remove any existing rows
-        self.rows.all().delete()
-
-        for idx, row in enumerate(extract_rows(self.data_file)):
-            DataImportRow.objects.create(session=self, data=row, row_index=idx)
+        offload_task(load_data, self.pk)
 
     @property
     def row_count(self):
@@ -168,7 +166,5 @@ class DataImportRow(models.Model):
     )
 
     data = models.JSONField(blank=True, null=True, verbose_name=_('Data'))
-
-    errors = models.JSONField(blank=True, null=True, verbose_name=_('Errors'))
 
     complete = models.BooleanField(default=False, verbose_name=_('Complete'))

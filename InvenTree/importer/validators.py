@@ -22,6 +22,9 @@ def validate_data_file(data_file):
 
     dataset = importer.operations.load_data_file(data_file)
 
+    if not dataset.headers or len(dataset.headers) == 0:
+        raise ValidationError(_('Data file contains no headers'))
+
     if len(dataset.headers) > IMPORTER_MAX_COLS:
         raise ValidationError(_('Data file contains too many columns'))
 
