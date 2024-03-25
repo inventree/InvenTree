@@ -5,6 +5,8 @@ from django.utils.translation import gettext_lazy as _
 
 import tablib
 
+import InvenTree.helpers
+
 
 def load_data_file(data_file, format=None):
     """Load data file into a tablib dataset.
@@ -19,6 +21,9 @@ def load_data_file(data_file, format=None):
 
     if format and format.startswith('.'):
         format = format[1:]
+
+    if format not in InvenTree.helpers.GetExportFormats():
+        raise ValidationError(_('Unsupported data file format'))
 
     file_object = data_file.file
 
