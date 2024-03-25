@@ -38,3 +38,12 @@ def validate_importer_model_type(value):
 
     if value not in supported_models().keys():
         raise ValidationError(f"Unsupported model type '{value}'")
+
+
+def validate_field_defaults(value):
+    """Validate that the provided value is a valid dict."""
+    if value is None:
+        return
+
+    if type(value) is not dict:
+        raise ValidationError(_('Field defaults must be a dictionary'))

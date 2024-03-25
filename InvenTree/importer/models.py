@@ -31,7 +31,7 @@ class DataImportSession(models.Model):
         status: IntegerField for the status of the import session
         user: ForeignKey to the User who initiated the import
         data_columns: JSONField for the data columns in the import file (mapped to database columns)
-        field_overrides: JSONField for field overrides (e.g. custom field values)
+        field_defaults: JSONField for field overrides (e.g. custom field values)
     """
 
     @staticmethod
@@ -97,7 +97,10 @@ class DataImportSession(models.Model):
     )
 
     field_defaults = models.JSONField(
-        blank=True, null=True, verbose_name=_('Field Defaults')
+        blank=True,
+        null=True,
+        verbose_name=_('Field Defaults'),
+        validators=[importer.validators.validate_field_defaults],
     )
 
     @property
@@ -156,12 +159,50 @@ class DataImportSession(models.Model):
                 except Exception:
                     pass
 
+        self.status = DataImportStatusCode.MAPPING.value
+
+    def accept_mapping(self):
+        """Accept current mapping configuration.
+
+        - Validate that the current column mapping is correct
+        - Trigger the data import process
+        """
+        # First, we need to ensure that all the *required* columns have been mapped
+        required_fields = self.serializer_fields(required=True).keys()
+        field_defaults = self.field_defaults or {}
+
+        missing_fields = []
+
+        for field in required_fields:
+            # An explicit mapping exists
+            if self.column_mappings.filter(field=field).exists():
+                continue
+
+            # A default value exists
+            if field in field_defaults:
+                continue
+
+            missing_fields.append(field)
+
+        if len(missing_fields) > 0:
+            raise DjangoValidationError({
+                'error': _('Some required fields have not been mapped'),
+                'fields': missing_fields,
+            })
+
+        # No errors, so trigger the data import process
+        self.trigger_data_import()
+
     def trigger_data_import(self):
         """Trigger the data import process for this session.
 
         Offloads the task to the background worker process.
         """
         from InvenTree.tasks import offload_task
+
+        # Mark the import task status as "IMPORTING"
+        self.status = DataImportStatusCode.IMPORTING.value
+        self.save()
 
         offload_task(importer.tasks.import_data, self.pk)
 
@@ -182,10 +223,6 @@ class DataImportSession(models.Model):
         headers = df.headers
 
         row_objects = []
-
-        # Mark the import task status as "IMPORTING"
-        self.status = DataImportStatusCode.IMPORTING.value
-        self.save()
 
         # Iterate through each "row" in the data file, and create a new DataImportRow object
         for idx, row in enumerate(df):
@@ -370,6 +407,10 @@ class DataImportRow(models.Model):
         Note that we also use the "default" values provided by the import session
         """
         session_defaults = self.session.field_defaults or {}
+
+        print('serializer_data:')
+        print('- session_defaults:', session_defaults, ':', type(session_defaults))
+        print('- self.data:', self.data, ':', type(self.data))
 
         return {**session_defaults, **self.data}
 

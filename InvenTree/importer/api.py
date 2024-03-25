@@ -1,6 +1,12 @@
 """API endpoints for the importer app."""
 
+from django.shortcuts import get_object_or_404
 from django.urls import include, path
+
+from drf_spectacular.utils import extend_schema
+from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 import importer.models
 import importer.serializers
@@ -20,6 +26,24 @@ class DataImportSessionDetail(RetrieveUpdateDestroyAPI):
 
     queryset = importer.models.DataImportSession.objects.all()
     serializer_class = importer.serializers.DataImportSessionSerializer
+
+
+class DataImportSessionAcceptFields(APIView):
+    """API endpoint to accept the field mapping for a DataImportSession."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(
+        responses={200: importer.serializers.DataImportSessionSerializer(many=False)}
+    )
+    def post(self, request, pk):
+        """Accept the field mapping for a DataImportSession."""
+        session = get_object_or_404(importer.models.DataImportSession, pk=pk)
+
+        # Attempt to accept the mapping (may raise an exception if the mapping is invalid)
+        session.accept_mapping()
+
+        return Response(importer.serializers.DataImportSessionSerializer(session).data)
 
 
 class DataImportColumnMappingList(ListCreateAPI):
@@ -68,8 +92,18 @@ importer_api_urls = [
         include([
             path(
                 '<int:pk>/',
-                DataImportSessionDetail.as_view(),
-                name='api-import-session-detail',
+                include([
+                    path(
+                        'accept_fields/',
+                        DataImportSessionAcceptFields.as_view(),
+                        name='api-import-session-accept-fields',
+                    ),
+                    path(
+                        '',
+                        DataImportSessionDetail.as_view(),
+                        name='api-import-session-detail',
+                    ),
+                ]),
             ),
             path('', DataImportSessionList.as_view(), name='api-importer-session-list'),
         ]),
