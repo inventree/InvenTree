@@ -264,8 +264,8 @@ def offload_task(
             _func(*args, **kwargs)
         except Exception as exc:
             log_error('InvenTree.offload_task')
-            raise_warning(f"WARNING: '{taskname}' not started due to {str(exc)}")
-            return False
+            raise_warning(f"WARNING: '{taskname}' failed due to {str(exc)}")
+            raise exc
 
     # Finally, task either completed successfully or was offloaded
     return True

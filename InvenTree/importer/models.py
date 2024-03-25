@@ -1,17 +1,22 @@
 """Model definitions for the 'importer' app."""
 
+import logging
+
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import FileExtensionValidator
-from django.db import models, transaction
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import importer.operations
+import importer.tasks
 import importer.validators
 import InvenTree.helpers
 from importer.status_codes import DataImportStatusCode
+
+logger = logging.getLogger('inventree')
 
 
 class DataImportSession(models.Model):
@@ -152,10 +157,9 @@ class DataImportSession(models.Model):
 
         Offloads the task to the background worker process.
         """
-        from importer.tasks import import_data
         from InvenTree.tasks import offload_task
 
-        offload_task(import_data, self.pk)
+        offload_task(importer.tasks.import_data, self.pk)
 
     def import_data(self):
         """Perform the data import process for this session."""
@@ -333,7 +337,7 @@ class DataImportRow(models.Model):
         if not serializer_class:
             return None
 
-        return serializer_class(data=self.serializer_data)
+        return serializer_class(data=self.serializer_data())
 
     def validate(self) -> bool:
         """Validate the data in this row against the linked serializer.

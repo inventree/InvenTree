@@ -2,12 +2,9 @@
 
 import logging
 
-from django.db import transaction
-
 logger = logging.getLogger('inventree')
 
 
-@transaction.atomic
 def import_data(session_id: int):
     """Load data from the provided file.
 
