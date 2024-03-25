@@ -135,6 +135,7 @@ def allow_table_event(table_name):
         'socialaccount_',
         'user_',
         'users_',
+        'importer_',
     ]
 
     if any(table_name.startswith(prefix) for prefix in ignore_prefixes):
