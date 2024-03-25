@@ -86,6 +86,9 @@ def content_excludes(
         'common.notificationentry',
         'common.notificationmessage',
         'user_sessions.session',
+        'importer.dataimportsession',
+        'importer.dataimportcolumnmap',
+        'importer.dataimportrow',
     ]
 
     # Optionally exclude user auth data
