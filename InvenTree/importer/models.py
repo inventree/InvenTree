@@ -102,7 +102,16 @@ class DataImportSession(models.Model):
         # Create a mapping of column names to serializer fields
         column_map = {}
 
-        # TODO... implement auto mapping
+        for name, field in serializer_fields.items():
+            column = None
+            label = getattr(field, 'label', name)
+
+            if name in available_columns:
+                column = name
+            elif label in available_columns:
+                column = label
+
+            column_map[name] = column
 
         self.field_mapping = column_map
 
