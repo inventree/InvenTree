@@ -408,10 +408,6 @@ class DataImportRow(models.Model):
         """
         session_defaults = self.session.field_defaults or {}
 
-        print('serializer_data:')
-        print('- session_defaults:', session_defaults, ':', type(session_defaults))
-        print('- self.data:', self.data, ':', type(self.data))
-
         return {**session_defaults, **self.data}
 
     def construct_serializer(self):
