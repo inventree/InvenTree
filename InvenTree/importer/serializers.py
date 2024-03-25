@@ -66,3 +66,32 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             session.save()
 
         return session
+
+
+class DataImportRowSerializer(InvenTreeModelSerializer):
+    """Serializer for the DataImportRow model."""
+
+    class Meta:
+        """Meta class options for the serializer."""
+
+        model = importer.models.DataImportRow
+        fields = [
+            'pk',
+            'session',
+            'row_index',
+            'row_data',
+            'data',
+            'errors',
+            'valid',
+            'complete',
+        ]
+
+        read_only_fields = [
+            'pk',
+            'session',
+            'row_index',
+            'data',
+            'errors',
+            'valid',
+            'complete',
+        ]
