@@ -71,7 +71,7 @@ jobs:
       - name: Check out repo
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Set Up Python ${{ env.python_version }}
-        uses: actions/setup-python@65d7f2d534ac1bc67fcd62888c5f4f3d2cb2b236 # pin@v4.7.1
+        uses: actions/setup-python@0a5c61591373683505ea898e09a3ea4f39ef2b9c # pin@v5.0.0
         with:
           python-version: ${{ env.python_version }}
       - name: Version Check
@@ -138,14 +138,14 @@ jobs:
           fi
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request' && steps.docker_login.outputs.skip_dockerhub_login != 'true'
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # pin@v3.0.0
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # pin@v3.1.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Log into registry ghcr.io
         if: github.event_name != 'pull_request'
-        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d # pin@v3.0.0
+        uses: docker/login-action@e92390c5fb421da1463c202d546fed0ec5c39f20 # pin@v3.1.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}

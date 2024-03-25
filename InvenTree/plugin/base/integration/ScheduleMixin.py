@@ -112,7 +112,7 @@ class ScheduleMixin:
     @property
     def has_scheduled_tasks(self):
         """Are tasks defined for this plugin."""
-        return bool(self.scheduled_tasks)
+        return bool(self.get_scheduled_tasks())
 
     def validate_scheduled_tasks(self):
         """Check that the provided scheduled tasks are valid."""

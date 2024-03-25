@@ -6,7 +6,7 @@ import {
   Paper,
   Text
 } from '@mantine/core';
-import { Button, Group, Stack } from '@mantine/core';
+import { Button, Divider, Group, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
@@ -104,7 +104,7 @@ export function OptionsApiForm({
     [props.url, props.pk, props.pathParams]
   );
 
-  const { data } = useQuery({
+  const optionsQuery = useQuery({
     enabled: true,
     queryKey: [
       'form-options-data',
@@ -139,18 +139,12 @@ export function OptionsApiForm({
   const formProps: ApiFormProps = useMemo(() => {
     const _props = { ...props };
 
-    // This forcefully overrides initial data
-    // Currently, most modals do not get pre-loaded correctly
-    if (!data) {
-      _props.fields = undefined;
-    }
-
     if (!_props.fields) return _props;
 
     for (const [k, v] of Object.entries(_props.fields)) {
       _props.fields[k] = constructField({
         field: v,
-        definition: data?.[k]
+        definition: optionsQuery?.data?.[k]
       });
 
       // If the user has specified initial data, use that value here
@@ -162,16 +156,30 @@ export function OptionsApiForm({
     }
 
     return _props;
-  }, [data, props]);
+  }, [optionsQuery.data, props]);
 
-  return <ApiForm id={id} props={formProps} />;
+  return (
+    <ApiForm
+      id={id}
+      props={formProps}
+      optionsLoading={optionsQuery.isFetching}
+    />
+  );
 }
 
 /**
  * An ApiForm component is a modal form which is rendered dynamically,
  * based on an API endpoint.
  */
-export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
+export function ApiForm({
+  id,
+  props,
+  optionsLoading
+}: {
+  id: string;
+  props: ApiFormProps;
+  optionsLoading: boolean;
+}) {
   const defaultValues: FieldValues = useMemo(() => {
     let defaultValuesMap = mapFields(props.fields ?? {}, (_path, field) => {
       return field.value ?? field.default ?? undefined;
@@ -227,6 +235,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
       try {
         // Await API call
         let response = await api.get(url);
+
         // Define function to process API response
         const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
           const res: NestedDict = {};
@@ -387,9 +396,16 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
     () =>
       isFormLoading ||
       initialDataQuery.isFetching ||
+      optionsLoading ||
       isSubmitting ||
       !props.fields,
-    [isFormLoading, initialDataQuery.isFetching, isSubmitting, props.fields]
+    [
+      isFormLoading,
+      initialDataQuery.isFetching,
+      isSubmitting,
+      props.fields,
+      optionsLoading
+    ]
   );
 
   const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {
@@ -431,16 +447,17 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
             )}
             <FormProvider {...form}>
               <Stack spacing="xs">
-                {Object.entries(props.fields ?? {}).map(
-                  ([fieldName, field]) => (
-                    <ApiFormField
-                      key={fieldName}
-                      fieldName={fieldName}
-                      definition={field}
-                      control={form.control}
-                    />
-                  )
-                )}
+                {!optionsLoading &&
+                  Object.entries(props.fields ?? {}).map(
+                    ([fieldName, field]) => (
+                      <ApiFormField
+                        key={fieldName}
+                        fieldName={fieldName}
+                        definition={field}
+                        control={form.control}
+                      />
+                    )
+                  )}
               </Stack>
             </FormProvider>
             {props.postFormContent}
@@ -449,6 +466,7 @@ export function ApiForm({ id, props }: { id: string; props: ApiFormProps }) {
       </Paper>
 
       {/* Footer with Action Buttons */}
+      <Divider />
       <div>
         <Group position="right">
           {props.actions?.map((action, i) => (
