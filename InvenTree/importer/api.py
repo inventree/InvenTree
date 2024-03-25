@@ -45,19 +45,21 @@ importer_api_urls = [
     path(
         'session/',
         include([
-            path('', DataImportSessionList.as_view(), name='importer-session-list')
+            path('', DataImportSessionList.as_view(), name='api-importer-session-list')
         ]),
     ),
     path(
         'column-mapping/',
         include([
             path(
-                '', DataImportColumnMappingList.as_view(), name='importer-mapping-list'
+                '',
+                DataImportColumnMappingList.as_view(),
+                name='api-importer-mapping-list',
             )
         ]),
     ),
     path(
         'row/',
-        include([path('', DataImportRowList.as_view(), name='importer-row-list')]),
+        include([path('', DataImportRowList.as_view(), name='api-importer-row-list')]),
     ),
 ]

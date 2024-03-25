@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework.exceptions import ValidationError as DRFValidationError
@@ -32,6 +33,11 @@ class DataImportSession(models.Model):
         data_columns: JSONField for the data columns in the import file (mapped to database columns)
         field_overrides: JSONField for field overrides (e.g. custom field values)
     """
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the DataImportSession model."""
+        return reverse('api-importer-session-list')
 
     def save(self, *args, **kwargs):
         """Save the DataImportSession object."""
@@ -227,6 +233,11 @@ class DataImportColumnMap(models.Model):
     - Field must exist in the serializer (and not be read-only)
     """
 
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the DataImportColumnMap model."""
+        return reverse('api-importer-mapping-list')
+
     class Meta:
         """Model meta options."""
 
@@ -295,6 +306,11 @@ class DataImportRow(models.Model):
         data: JSONField for the data in this row
         status: IntegerField for the status of the row import
     """
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the DataImportRow model."""
+        return reverse('api-importer-row-list')
 
     def save(self, *args, **kwargs):
         """Save the DataImportRow object."""

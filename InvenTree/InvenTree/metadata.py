@@ -280,8 +280,11 @@ class InvenTreeMetadata(SimpleMetadata):
                 # Special case for 'user' model
                 if field_info['model'] == 'user':
                     field_info['api_url'] = '/api/user/'
-                else:
+                elif hasattr(model, 'get_api_url'):
                     field_info['api_url'] = model.get_api_url()
+                else:
+                    logger.warning("'get_api_url' method not defined for %s", model)
+                    field_info['api_url'] = getattr(model, 'api_url', None)
 
         # Add more metadata about dependent fields
         if field_info['type'] == 'dependent field':
