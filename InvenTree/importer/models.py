@@ -317,6 +317,24 @@ class DataImportRow(models.Model):
         self.data = data
         self.save()
 
+    def serializer_data(self):
+        """Construct data object to be sent to the serializer.
+
+        Note that we also use the "default" values provided by the import session
+        """
+        session_defaults = self.session.field_defaults or {}
+
+        return {**session_defaults, **self.data}
+
+    def construct_serializer(self):
+        """Construct a serializer object for this row."""
+        serializer_class = self.session.serializer
+
+        if not serializer_class:
+            return None
+
+        return serializer_class(data=self.serializer_data)
+
     def validate(self) -> bool:
         """Validate the data in this row against the linked serializer.
 
@@ -326,18 +344,17 @@ class DataImportRow(models.Model):
         Raises:
             ValidationError: If the linked serializer is not valid
         """
-        serializer_class = self.session.serializer if self.session else None
+        serializer = self.construct_serializer()
 
-        if not serializer_class:
-            self.set_errors({
+        if not serializer:
+            self.errors = {
                 'non_field_errors': 'No serializer class linked to this import session'
-            })
+            }
             return
 
         result = False
 
         try:
-            serializer = serializer_class(data=self.data)
             result = serializer.is_valid(raise_exception=True)
         except (DjangoValidationError, DRFValidationError) as e:
             self.errors = e.detail
