@@ -3817,6 +3817,11 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
                        category
     """
 
+    @staticmethod
+    def get_api_url():
+        """Return the API endpoint URL associated with the PartCategoryParameterTemplate model."""
+        return reverse('api-part-category-parameter-list')
+
     class Meta:
         """Metaclass providing extra model definition."""
 

@@ -9,9 +9,32 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import importer.models
+import importer.registry
 import importer.serializers
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+
+
+class DataImporterModelList(APIView):
+    """API endpoint for displaying a list of models available for import."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """Return a list of models available for import."""
+        models = []
+
+        for serializer in importer.registry.get_supported_serializers():
+            model = serializer.Meta.model
+            url = model.get_api_url() if hasattr(model, 'get_api_url') else None
+
+            models.append({
+                'serializer': str(serializer.__name__),
+                'model_type': model.__name__.lower(),
+                'api_url': url,
+            })
+
+        return Response(models)
 
 
 class DataImportSessionList(ListCreateAPI):
@@ -87,6 +110,7 @@ class DataImportRowDetail(RetrieveUpdateDestroyAPI):
 
 
 importer_api_urls = [
+    path('models/', DataImporterModelList.as_view(), name='api-importer-model-list'),
     path(
         'session/',
         include([
