@@ -8,6 +8,8 @@ from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer
 
+from .models import SampleModel
+
 
 class SampleModelSerializer(InvenTreeModelSerializer):
     """Serializes a SampleModel object."""
@@ -25,15 +27,14 @@ class SampleModelSerializer(InvenTreeModelSerializer):
     class Meta:
         """Meta data for SampleModel."""
 
-        # from .models import SampleModel
-
-        # model = SampleModel
+        model = SampleModel
         fields = '__all__'
 
 
 class SampleModelList(ListCreateAPI):
     """API endpoint for listing all SampleModel objects."""
 
+    queryset = SampleModel.objects.all()
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
     serializer_class = SampleModelSerializer
     filterset_fields = ['string_field', 'user_field', 'content_type', 'object_id']
@@ -41,27 +42,12 @@ class SampleModelList(ListCreateAPI):
     ordering_fields = ['string_field', 'user_field', 'boolean_field', 'date_field']
     ordering = '-date_field'
 
-    def get_queryset(self):
-        """Get the queryset."""
-        from .models import SampleModel
-
-        queryset = SampleModel.objects.all()
-
-        return queryset
-
 
 class SampleModelDetail(RetrieveUpdateDestroyAPI):
     """API endpoint for detail view."""
 
+    queryset = SampleModel.objects.all()
     serializer_class = SampleModelSerializer
-
-    def get_queryset(self):
-        """Get the queryset."""
-        from .models import SampleModel
-
-        queryset = SampleModel.objects.all()
-
-        return queryset
 
 
 api_patterns = [
