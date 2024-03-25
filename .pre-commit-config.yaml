@@ -27,8 +27,8 @@ repos:
         --fix,
         --preview
       ]
--   repo: https://github.com/matmair/ruff-pre-commit
-    rev: fac27ee349cbf0f0d71c1069854bfe371d1c62a1  # uv-0.1.23
+-   repo: https://github.com/astral-sh/uv-pre-commit
+    rev: v0.1.24
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
@@ -62,7 +62,7 @@ repos:
       - "prettier@^2.4.1"
       - "@trivago/prettier-plugin-sort-imports"
 - repo: https://github.com/pre-commit/mirrors-eslint
-  rev: "v9.0.0-beta.2"
+  rev: "v9.0.0-rc.0"
   hooks:
   - id: eslint
     additional_dependencies:

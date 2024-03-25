@@ -1,44 +1,43 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-03-19 11:11+1100\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2024-03-19 01:26+0000\n"
+"PO-Revision-Date: 2024-03-20 12:27\n"
+"Last-Translator: \n"
+"Language-Team: Latvian\n"
+"Language: lv_LV\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
-"2);\n"
+"Plural-Forms: nplurals=3; plural=(n==0 ? 0 : n%10==1 && n%100!=11 ? 1 : 2);\n"
+"X-Crowdin-Project: inventree\n"
+"X-Crowdin-Project-ID: 452300\n"
+"X-Crowdin-Language: lv\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 154\n"
+
 #: InvenTree/api.py:198
 msgid "API endpoint not found"
-msgstr ""
+msgstr "API galapunkts nav atrasts"
 
 #: InvenTree/api.py:462
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "Lietotājam nav atļaujas, lai apskatītu šo modeli"
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Norādīta nederīga vienība ({unit})"
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr ""
+msgstr "Nav norādīta vērtība"
 
 #: InvenTree/conversion.py:205
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "Nevarēja konvertēt {original} par {unit}"
 
 #: InvenTree/conversion.py:207
 msgid "Invalid quantity supplied"
@@ -55,7 +54,7 @@ msgstr ""
 
 #: InvenTree/fields.py:140
 msgid "Enter date"
-msgstr ""
+msgstr "Ievadiet datumu"
 
 #: InvenTree/fields.py:209 InvenTree/models.py:1022 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
@@ -78,171 +77,171 @@ msgstr ""
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1533 templates/js/translated/stock.js:2427
 msgid "Notes"
-msgstr ""
+msgstr "Piezīmes"
 
 #: InvenTree/format.py:164
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "Vērtība '{name}' neparādās vajadzīgajā formātā"
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "Norādītā vērtība neatbilst nepieciešamajam formātam: "
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr ""
+msgstr "Ievadiet paroli"
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr ""
+msgstr "Ievadiet jaunu paroli"
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr ""
+msgstr "Apstiprināt paroli"
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr ""
+msgstr "Apstiprināt jauno paroli"
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr ""
+msgstr "Vecā parole"
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr ""
+msgstr "E-pasts (vēlreiz)"
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr ""
+msgstr "E-pasta adreses apstiprinājums"
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Katru reizi jāievada viena un tā pati e-pasta adrese."
 
 #: InvenTree/forms.py:253 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "Norādītā primārā e-pasta adrese nav derīga."
 
 #: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "Norādītais e-pasta domēns nav apstiprināts."
 
 #: InvenTree/forms.py:395
 msgid "Registration is disabled."
-msgstr ""
+msgstr "Reģistrācija ir izslēgta."
 
 #: InvenTree/helpers.py:528 order/models.py:529 order/models.py:731
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Norādītais daudzums nav derīgs"
 
 #: InvenTree/helpers.py:536
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Tukša sērijas numura rinda"
 
 #: InvenTree/helpers.py:565
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Atkārtojas sērijas numurs"
 
 #: InvenTree/helpers.py:597 InvenTree/helpers.py:640
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr ""
+msgstr "Nederīgs grupas diapazons: {group}"
 
 #: InvenTree/helpers.py:628
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr ""
+msgstr "Grupas diapazons {group} pārsniedz pieļaujamo daudzumu ({expected_quantity})"
 
 #: InvenTree/helpers.py:658 InvenTree/helpers.py:665 InvenTree/helpers.py:684
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr ""
+msgstr "Nederīga grupas secība: {group}"
 
 #: InvenTree/helpers.py:694
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Netika atrasts neviens sērijas numurs"
 
 #: InvenTree/helpers.py:699
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr ""
+msgstr "Unikālo sērijas numuru skaitam ({len(serials)}) jāatbilst daudzumam ({expected_quantity})"
 
 #: InvenTree/helpers.py:817
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Noņemiet HTML tagus no šīs vērtības"
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr ""
+msgstr "Savienojuma kļūda"
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "Serveris atbildēja ar nederīgu statusa kodu"
 
 #: InvenTree/helpers_model.py:158
 msgid "Exception occurred"
-msgstr ""
+msgstr "Radās izņēmums"
 
 #: InvenTree/helpers_model.py:168
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "Serveris atbildēja ar nederīgu Content-Length vērtību"
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr ""
+msgstr "Attēla izmērs ir pārāk liels"
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Attēla lejupielāde pārsniedz maksimālo izmēru"
 
 #: InvenTree/helpers_model.py:188
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Attālais serveris atgrieza tukšu atbildi"
 
 #: InvenTree/helpers_model.py:196
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "Norādītajā URL nav derīgs attēla fails"
 
 #: InvenTree/locales.py:18
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgāru"
 
 #: InvenTree/locales.py:19
 msgid "Czech"
-msgstr ""
+msgstr "Čehu"
 
 #: InvenTree/locales.py:20
 msgid "Danish"
-msgstr ""
+msgstr "Dāņu"
 
 #: InvenTree/locales.py:21
 msgid "German"
-msgstr ""
+msgstr "Vācu"
 
 #: InvenTree/locales.py:22
 msgid "Greek"
-msgstr ""
+msgstr "Grieķu"
 
 #: InvenTree/locales.py:23
 msgid "English"
-msgstr ""
+msgstr "Angļu"
 
 #: InvenTree/locales.py:24
 msgid "Spanish"
-msgstr ""
+msgstr "Spāņu"
 
 #: InvenTree/locales.py:25
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spāņu (Meksikāņu)"
 
 #: InvenTree/locales.py:26
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persiešu"
 
 #: InvenTree/locales.py:27
 msgid "Finnish"
-msgstr ""
+msgstr "Somu"
 
 #: InvenTree/locales.py:28
 msgid "French"
@@ -4725,7 +4724,6 @@ msgstr ""
 #: label/templates/label/stockitem/qr.html:21
 #: label/templates/label/stocklocation/qr.html:20
 #: templates/allauth_2fa/setup.html:18
-#: web/static/web/assets/TemplateManagementPanel-e180d0d6.js:20
 msgid "QR Code"
 msgstr ""
 
@@ -14161,3 +14159,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
