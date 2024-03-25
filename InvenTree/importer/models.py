@@ -5,6 +5,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
 
+import importer.operations
 import importer.validators
 import InvenTree.helpers
 from importer.status_codes import DataImportStatusCode
@@ -39,7 +40,7 @@ class DataImportSession(models.Model):
             self.auto_assign_columns()
             self.save()
 
-            self.create_rows()
+            self.trigger_data_import()
 
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_('Timestamp'))
 
@@ -119,13 +120,54 @@ class DataImportSession(models.Model):
 
         self.field_mapping = column_map
 
-    @transaction.atomic
-    def create_rows(self):
-        """Generate DataImportRow objects for each row in the import file."""
-        from importer.tasks import load_data
+    def trigger_data_import(self):
+        """Trigger the data import process for this session.
+
+        Offloads the task to the background worker process.
+        """
+        from importer.tasks import import_data
         from InvenTree.tasks import offload_task
 
-        offload_task(load_data, self.pk)
+        offload_task(import_data, self.pk)
+
+    def import_data(self):
+        """Perform the data import process for this session."""
+        # TODO: Clear any existing error messages
+
+        # Clear any existing data rows
+        self.rows.all().delete()
+
+        df = importer.operations.load_data_file(self.data_file)
+
+        if df is None:
+            # TODO: Log an error message against the import session
+            logger.error('Failed to load data file')
+            return
+
+        headers = df.headers
+
+        row_objects = []
+
+        # Mark the import task status as "IMPORTING"
+        self.status = DataImportStatusCode.IMPORTING.value
+        self.save()
+
+        # Iterate through each "row" in the data file, and create a new DataImportRow object
+        for idx, row in enumerate(df):
+            row_data = dict(zip(headers, row))
+
+            row_objects.append(
+                importer.models.DataImportRow(
+                    session=self, row_data=row_data, row_index=idx
+                )
+            )
+
+        # Finally, create the DataImportRow objects
+        importer.models.DataImportRow.objects.bulk_create(row_objects)
+
+        # Mark the import task as "PROCESSING"
+        self.status = DataImportStatusCode.PROCESSING.value
+        self.save()
 
     @property
     def row_count(self):
