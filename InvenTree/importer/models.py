@@ -137,9 +137,7 @@ class DataImportSession(models.Model):
         serializer_fields = self.serializer_fields()
 
         # Remove any existing mappings
-
-        # Create an initial mapping of column names to serializer fields
-        column_map = {}
+        self.column_mappings.all().delete()
 
         for name, field in serializer_fields.items():
             column = None
