@@ -246,17 +246,21 @@ class DataImportColumnMap(models.Model):
                 'column': _('Column does not exist in the data file')
             })
 
-        fields = self.session.serializer_fields(read_only=None)
+        field_def = self.field_definition
 
-        if self.field not in fields:
+        if not field_def:
             raise DjangoValidationError({
                 'field': _('Field does not exist in the target model')
             })
 
-        field_def = fields[self.field]
-
         if field_def.read_only:
             raise DjangoValidationError({'field': _('Selected field is read-only')})
+
+    @property
+    def field_definition(self):
+        """Return the field definition associated with this column mapping."""
+        fields = self.session.serializer_fields(read_only=None)
+        return fields.get(self.field, None)
 
     session = models.ForeignKey(
         DataImportSession,
@@ -268,6 +272,17 @@ class DataImportColumnMap(models.Model):
     column = models.CharField(max_length=100, verbose_name=_('Column'))
 
     field = models.CharField(max_length=100, verbose_name=_('Field'))
+
+    @property
+    def label(self):
+        """Extract the 'label' associated with the mapped field."""
+        field_def = self.field_definition
+
+        if field_def:
+            return field_def.label
+
+        # Default to the field name
+        return self.field
 
 
 class DataImportRow(models.Model):
