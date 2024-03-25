@@ -10,8 +10,6 @@ from django.utils.translation import gettext_lazy as _
 from plugin import InvenTreePlugin
 from plugin.mixins import AppMixin, NavigationMixin, SettingsMixin, UrlsMixin
 
-from .api import api_patterns
-
 
 def validate_json(value):
     """Example validator for json input."""
@@ -47,7 +45,6 @@ class SampleIntegrationPlugin(
         return [
             path('hi/', self.view_test, name='hi'),
             path('ho/', include(he_urls), name='ho'),
-            path('api/', include(api_patterns)),
         ]
 
     SETTINGS = {
