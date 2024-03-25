@@ -27,6 +27,9 @@ class DataImportSession(models.Model):
     def save(self, *args, **kwargs):
         """Save the DataImportSession object."""
         initial = self.pk is None
+
+        self.clean()
+
         super().save(*args, **kwargs)
 
         if initial:
@@ -125,6 +128,19 @@ class DataImportSession(models.Model):
 
         for idx, row in enumerate(extract_rows(self.data_file)):
             DataImportRow.objects.create(session=self, data=row, row_index=idx)
+
+    @property
+    def row_count(self):
+        """Return the number of rows in the import session."""
+        return self.rows.count()
+
+    @property
+    def completed_row_count(self):
+        """Return the number of completed rows for this session."""
+        if self.row_count == 0:
+            return 0
+
+        return self.rows.filter(complete=True).count() / self.row_count * 100
 
 
 class DataImportRow(models.Model):

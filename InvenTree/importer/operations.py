@@ -21,7 +21,10 @@ def load_data_file(data_file, format=None):
         format = format[1:]
 
     file_object = data_file.file
-    file_object.open('r')
+
+    if hasattr(file_object, 'open'):
+        file_object.open('r')
+
     file_object.seek(0)
 
     try:
