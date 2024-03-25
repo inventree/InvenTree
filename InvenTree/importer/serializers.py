@@ -22,12 +22,13 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'model_type',
             'status',
             'user',
+            'columns',
             'field_defaults',
             'field_mapping',
             'row_count',
             'completed_row_count',
         ]
-        read_only_fields = ['pk', 'user', 'status']
+        read_only_fields = ['pk', 'user', 'status', 'columns']
 
     row_count = serializers.IntegerField(read_only=True)
     completed_row_count = serializers.IntegerField(read_only=True)

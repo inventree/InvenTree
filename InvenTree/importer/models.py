@@ -1,9 +1,12 @@
 """Model definitions for the 'importer' app."""
 
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models, transaction
 from django.utils.translation import gettext_lazy as _
+
+from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import importer.operations
 import importer.validators
@@ -37,6 +40,7 @@ class DataImportSession(models.Model):
             # New object - run initial setup
             self.status = DataImportStatusCode.INITIAL.value
             self.progress = 0
+            self.extract_column_names()
             self.auto_assign_columns()
             self.save()
 
@@ -55,6 +59,15 @@ class DataImportSession(models.Model):
             importer.validators.validate_data_file,
         ],
     )
+
+    columns = models.JSONField(blank=True, null=True, verbose_name=_('Columns'))
+
+    def extract_column_names(self):
+        """Extract column names from uploaded file.
+
+        This method is called once, when the file is first uploaded.
+        """
+        self.columns = importer.operations.extract_column_names(self.data_file)
 
     model_type = models.CharField(
         blank=False,
@@ -99,9 +112,7 @@ class DataImportSession(models.Model):
 
     def auto_assign_columns(self):
         """Automatically assign columns based on the serializer fields."""
-        from importer.operations import extract_column_names
-
-        available_columns = extract_column_names(self.data_file)
+        available_columns = self.columns
         serializer_fields = self.serializer_fields()
 
         # Create a mapping of column names to serializer fields
@@ -169,6 +180,11 @@ class DataImportSession(models.Model):
         self.status = DataImportStatusCode.PROCESSING.value
         self.save()
 
+        # Set initial data and errors for each row
+        for row in self.rows.all():
+            row.extract_data(field_mapping=self.field_mapping)
+            row.validate()
+
     @property
     def row_count(self):
         """Return the number of rows in the import session."""
@@ -209,4 +225,52 @@ class DataImportRow(models.Model):
 
     data = models.JSONField(blank=True, null=True, verbose_name=_('Data'))
 
+    errors = models.JSONField(blank=True, null=True, verbose_name=_('Errors'))
+
     complete = models.BooleanField(default=False, verbose_name=_('Complete'))
+
+    def extract_data(self, field_mapping: dict = None):
+        """Extract row data from the provided data dictionary."""
+        if not field_mapping:
+            field_mapping = self.session.field_mapping
+
+        data = {}
+
+        # We have mapped column (file) to field (serializer) already
+        for field, col in field_mapping.items():
+            data[field] = self.row_data.get(col, None)
+
+        self.data = data
+        self.save()
+
+    def set_errors(self, errors: dict) -> None:
+        """Set the error messages for this row."""
+        self.errors = errors
+        self.save()
+
+    def validate(self, raise_exception=True) -> bool:
+        """Validate the data in this row against the linked serializer.
+
+        Returns:
+            True if the data is valid, False otherwise
+
+        Raises:
+            ValidationError: If the linked serializer is not valid
+        """
+        serializer_class = self.session.serializer if self.session else None
+
+        if not serializer_class:
+            self.set_errors({
+                'non_field_errors': 'No serializer class linked to this import session'
+            })
+            return
+
+        result = False
+
+        try:
+            serializer = serializer_class(data=self.data)
+            result = serializer.is_valid(raise_exception=raise_exception)
+        except (DjangoValidationError, DRFValidationError) as e:
+            self.set_errors(e.detail)
+
+        return result
