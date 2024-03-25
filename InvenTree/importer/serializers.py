@@ -46,7 +46,7 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         ]
         read_only_fields = ['pk', 'user', 'status', 'columns']
 
-    data_file = InvenTreeAttachmentSerializerField(read_only=True)
+    data_file = InvenTreeAttachmentSerializerField()
 
     available_fields = serializers.JSONField(read_only=True)
 
