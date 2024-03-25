@@ -277,6 +277,11 @@ class DataImportRow(models.Model):
         status: IntegerField for the status of the row import
     """
 
+    def save(self, *args, **kwargs):
+        """Save the DataImportRow object."""
+        self.valid = self.validate()
+        super().save(*args, **kwargs)
+
     session = models.ForeignKey(
         DataImportSession,
         on_delete=models.CASCADE,
@@ -294,6 +299,8 @@ class DataImportRow(models.Model):
 
     errors = models.JSONField(blank=True, null=True, verbose_name=_('Errors'))
 
+    valid = models.BooleanField(default=False, verbose_name=_('Valid'))
+
     complete = models.BooleanField(default=False, verbose_name=_('Complete'))
 
     def extract_data(self, field_mapping: dict = None):
@@ -310,12 +317,7 @@ class DataImportRow(models.Model):
         self.data = data
         self.save()
 
-    def set_errors(self, errors: dict) -> None:
-        """Set the error messages for this row."""
-        self.errors = errors
-        self.save()
-
-    def validate(self, raise_exception=True) -> bool:
+    def validate(self) -> bool:
         """Validate the data in this row against the linked serializer.
 
         Returns:
@@ -336,8 +338,11 @@ class DataImportRow(models.Model):
 
         try:
             serializer = serializer_class(data=self.data)
-            result = serializer.is_valid(raise_exception=raise_exception)
+            result = serializer.is_valid(raise_exception=True)
         except (DjangoValidationError, DRFValidationError) as e:
-            self.set_errors(e.detail)
+            self.errors = e.detail
+
+        if result:
+            self.errors = None
 
         return result

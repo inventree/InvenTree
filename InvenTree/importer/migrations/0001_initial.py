@@ -53,6 +53,7 @@ class Migration(migrations.Migration):
                 ('data', models.JSONField(blank=True, null=True, verbose_name='Data')),
                 ('errors', models.JSONField(blank=True, null=True, verbose_name='Errors')),
                 ('session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='rows', to='importer.dataimportsession', verbose_name='Import Session')),
+                ('valid', models.BooleanField(default=False, verbose_name='Valid')),
                 ('complete', models.BooleanField(default=False, verbose_name='Complete')),
             ],
         ),

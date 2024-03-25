@@ -39,3 +39,7 @@ class DataImportRowAdmin(admin.ModelAdmin):
     """Admin interface for the DataImportRow model."""
 
     list_display = ['id', 'session', 'row_index']
+
+    def get_readonly_fields(self, request, obj=None):
+        """Return the readonly fields for the admin interface."""
+        return ['session', 'row_index', 'row_data', 'errors', 'valid']
