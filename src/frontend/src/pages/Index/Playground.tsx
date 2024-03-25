@@ -5,6 +5,7 @@ import { Accordion } from '@mantine/core';
 import { ReactNode, useMemo, useState } from 'react';
 
 import { OptionsApiForm } from '../../components/forms/ApiForm';
+import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -167,6 +168,18 @@ function StatusLabelPlayground() {
   );
 }
 
+// Data importing
+function DataImportingPlayground() {
+  const [opened, setOpened] = useState<boolean>(false);
+
+  return (
+    <>
+      <Button onClick={() => setOpened(true)}>Open Importer</Button>
+      <ImporterDrawer opened={opened} onClose={() => setOpened(false)} />
+    </>
+  );
+}
+
 /** Construct a simple accordion group with title and content */
 function PlaygroundArea({
   title,
@@ -206,6 +219,10 @@ export default function Playground() {
         <PlaygroundArea
           title="Status labels"
           content={<StatusLabelPlayground />}
+        />
+        <PlaygroundArea
+          title="Data Import"
+          content={<DataImportingPlayground />}
         />
       </Accordion>
     </>
