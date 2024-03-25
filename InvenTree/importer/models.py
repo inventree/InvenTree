@@ -224,6 +224,20 @@ class DataImportSession(models.Model):
 
         return self.rows.filter(complete=True).count() / self.row_count * 100
 
+    def available_fields(self):
+        """Returns information on the available fields.
+
+        - This method is designed to be introspected by the frontend, for rendering the various fields.
+        - We make use of the InvenTree.metadata module to provide extra information about the fields.
+        """
+        from InvenTree.metadata import InvenTreeMetadata
+
+        metadata = InvenTreeMetadata()
+        if serializer := self.serializer:
+            return metadata.get_serializer_info(serializer(data={}))
+        else:
+            return {}
+
 
 class DataImportColumnMap(models.Model):
     """Database model representing a mapping between a file column and serializer field.

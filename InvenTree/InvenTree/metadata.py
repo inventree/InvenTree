@@ -199,7 +199,8 @@ class InvenTreeMetadata(SimpleMetadata):
 
         if instance is None and model_class is not None:
             # Attempt to find the instance based on kwargs lookup
-            kwargs = getattr(self.view, 'kwargs', None)
+            view = getattr(self, 'view', None)
+            kwargs = getattr(view, 'kwargs', None) if view else None
 
             if kwargs:
                 pk = None

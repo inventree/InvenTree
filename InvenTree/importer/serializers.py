@@ -35,6 +35,7 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'timestamp',
             'data_file',
             'model_type',
+            'available_fields',
             'status',
             'user',
             'columns',
@@ -46,6 +47,8 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         read_only_fields = ['pk', 'user', 'status', 'columns']
 
     data_file = InvenTreeAttachmentSerializerField(read_only=True)
+
+    available_fields = serializers.JSONField(read_only=True)
 
     row_count = serializers.IntegerField(read_only=True)
     completed_row_count = serializers.IntegerField(read_only=True)
