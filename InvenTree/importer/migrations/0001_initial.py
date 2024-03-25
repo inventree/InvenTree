@@ -29,9 +29,20 @@ class Migration(migrations.Migration):
                 ('status', models.PositiveIntegerField(choices=DataImportStatusCode.items(), default=DataImportStatusCode.INITIAL, help_text='Import status')),
                 ('columns', models.JSONField(blank=True, null=True, verbose_name='Columns')),
                 ('field_defaults', models.JSONField(blank=True, null=True, verbose_name='Field Defaults')),
-                ('field_mapping', models.JSONField(blank=True, null=True, verbose_name='Field Mapping')),
                 ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
+        ),
+        migrations.CreateModel(
+            name='DataImportColumnMap',
+            fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('column', models.CharField(max_length=100, verbose_name='Column')),
+                ('field', models.CharField(max_length=100, verbose_name='Field')),
+                ('session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='column_mappings', to='importer.dataimportsession', verbose_name='Import Session')),
+            ],
+            options={
+                'unique_together': {('session', 'column'), ('session', 'field')},
+            },
         ),
         migrations.CreateModel(
             name='DataImportRow',

@@ -5,6 +5,12 @@ from django.contrib import admin
 import importer.models
 
 
+class DataImportColumnMapAdmin(admin.TabularInline):
+    """Inline admin for DataImportColumnMap model."""
+
+    model = importer.models.DataImportColumnMap
+
+
 @admin.register(importer.models.DataImportSession)
 class DataImportSessionAdmin(admin.ModelAdmin):
     """Admin interface for the DataImportSession model."""
@@ -12,6 +18,8 @@ class DataImportSessionAdmin(admin.ModelAdmin):
     list_display = ['id', 'data_file', 'status', 'user']
 
     list_filter = ['status']
+
+    inlines = [DataImportColumnMapAdmin]
 
     def get_readonly_fields(self, request, obj=None):
         """Update the readonly fields for the admin interface."""

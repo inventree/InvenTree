@@ -1287,7 +1287,7 @@ class BuildLine(InvenTree.models.InvenTreeModel):
     """
 
     class Meta:
-        """Model meta options"""
+        """Model meta options."""
         unique_together = [
             ('build', 'bom_item'),
         ]

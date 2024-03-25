@@ -89,9 +89,19 @@ class DataImportSession(models.Model):
         blank=True, null=True, verbose_name=_('Field Defaults')
     )
 
-    field_mapping = models.JSONField(
-        blank=True, null=True, verbose_name=_('Field Mapping')
-    )
+    @property
+    def field_mapping(self):
+        """Construct a dict of field mappings for this import session.
+
+        Returns: A dict of field: column mappings
+        """
+        mapping = {}
+
+        if self.column_mappings.exists():
+            for map in self.column_mappings.all():
+                mapping[map.field] = map.column
+
+        return mapping
 
     @property
     def serializer(self):
@@ -115,7 +125,9 @@ class DataImportSession(models.Model):
         available_columns = self.columns
         serializer_fields = self.serializer_fields()
 
-        # Create a mapping of column names to serializer fields
+        # Remove any existing mappings
+
+        # Create an initial mapping of column names to serializer fields
         column_map = {}
 
         for name, field in serializer_fields.items():
@@ -127,9 +139,13 @@ class DataImportSession(models.Model):
             elif label in available_columns:
                 column = label
 
-            column_map[name] = column
-
-        self.field_mapping = column_map
+            if column is not None:
+                try:
+                    DataImportColumnMap.objects.create(
+                        session=self, field=name, column=column
+                    )
+                except Exception:
+                    pass
 
     def trigger_data_import(self):
         """Trigger the data import process for this session.
@@ -197,6 +213,57 @@ class DataImportSession(models.Model):
             return 0
 
         return self.rows.filter(complete=True).count() / self.row_count * 100
+
+
+class DataImportColumnMap(models.Model):
+    """Database model representing a mapping between a file column and serializer field.
+
+    - Each row maps a "column" (in the import file) to a "field" (in the serializer)
+    - Column must exist in the file
+    - Field must exist in the serializer (and not be read-only)
+    """
+
+    class Meta:
+        """Model meta options."""
+
+        unique_together = [('session', 'column'), ('session', 'field')]
+
+    def clean(self):
+        """Validate the column mapping."""
+        super().clean()
+
+        if not self.session:
+            raise DjangoValidationError({
+                'session': _('Column mapping must be linked to a valid import session')
+            })
+
+        if self.column not in self.session.columns:
+            raise DjangoValidationError({
+                'column': _('Column does not exist in the data file')
+            })
+
+        fields = self.session.serializer_fields(read_only=None)
+
+        if self.field not in fields:
+            raise DjangoValidationError({
+                'field': _('Field does not exist in the target model')
+            })
+
+        field_def = fields[self.field]
+
+        if field_def.read_only:
+            raise DjangoValidationError({'field': _('Selected field is read-only')})
+
+    session = models.ForeignKey(
+        DataImportSession,
+        on_delete=models.CASCADE,
+        verbose_name=_('Import Session'),
+        related_name='column_mappings',
+    )
+
+    column = models.CharField(max_length=100, verbose_name=_('Column'))
+
+    field = models.CharField(max_length=100, verbose_name=_('Field'))
 
 
 class DataImportRow(models.Model):
