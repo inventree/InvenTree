@@ -16,7 +16,7 @@ from plugin.samples.integration.another_sample import (
     NoIntegrationPlugin,
     WrongIntegrationPlugin,
 )
-from plugin.samples.integration.sample import SampleIntegrationPlugin
+from plugin.samples.integration.sample.sample import SampleIntegrationPlugin
 
 
 class PluginTagTests(TestCase):
