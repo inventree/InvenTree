@@ -1016,7 +1016,10 @@ if not ALLOWED_HOSTS:
 # Ensure that the ALLOWED_HOSTS do not contain any scheme info
 for i, host in enumerate(ALLOWED_HOSTS):
     if '://' in host:
-        ALLOWED_HOSTS[i] = host.split('://')[1]
+        ALLOWED_HOSTS[i] = host = host.split('://')[1]
+
+    if ':' in host:
+        ALLOWED_HOSTS[i] = host = host.split(':')[0]
 
 # List of trusted origins for unsafe requests
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
