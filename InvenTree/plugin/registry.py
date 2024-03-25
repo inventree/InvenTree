@@ -344,6 +344,9 @@ class PluginsRegistry:
                 # If in TEST or DEBUG mode, load plugins from the 'samples' directory
                 dirs.append('plugin.samples')
 
+            if settings.PLUGIN_TESTING_APPS:
+                dirs.append('plugin.samples_app')
+
             if settings.TESTING:
                 custom_dirs = os.getenv('INVENTREE_PLUGIN_TEST_DIR', None)
             else:  # pragma: no cover
