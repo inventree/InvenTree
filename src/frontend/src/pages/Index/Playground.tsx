@@ -11,6 +11,7 @@ import { StylishText } from '../../components/items/StylishText';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { partCategoryFields, usePartFields } from '../../forms/PartForms';
 import { useCreateStockItem } from '../../forms/StockForms';
 import {
@@ -172,9 +173,29 @@ function StatusLabelPlayground() {
 function DataImportingPlayground() {
   const [opened, setOpened] = useState<boolean>(false);
 
+  const importSessionFields = dataImporterSessionFields({
+    model: 'partcategory'
+  });
+
+  const createNewImportSession = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: 'Create Import Session',
+    fields: importSessionFields,
+    initialData: {
+      parent: 1
+    },
+    onFormSuccess: (response: any) => {
+      console.log('response:');
+      console.log(response);
+    }
+  });
+
   return (
     <>
-      <Button onClick={() => setOpened(true)}>Open Importer</Button>
+      {createNewImportSession.modal}
+      <Button onClick={() => createNewImportSession.open()}>
+        Open Importer
+      </Button>
       <ImporterDrawer opened={opened} onClose={() => setOpened(false)} />
     </>
   );
