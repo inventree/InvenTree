@@ -1032,13 +1032,22 @@
     jiti "^1.17.1"
     lodash.get "^4.4.2"
 
-"@lingui/core@4.7.1", "@lingui/core@^4.7.1":
+"@lingui/core@4.7.1":
   version "4.7.1"
   resolved "https://registry.yarnpkg.com/@lingui/core/-/core-4.7.1.tgz#7bf1fa22ff0c6892ff6fb965f96c3775c7050697"
   integrity sha512-Ign2qnyy1WNY7hPzkYTPYaja+5ucs3oDy+rgxs8ChGsqGFf4RjchU4W+CxqliKJ19f/hy4gaDK1DWA9h47kGvw==
   dependencies:
     "@babel/runtime" "^7.20.13"
     "@lingui/message-utils" "4.7.1"
+    unraw "^3.0.0"
+
+"@lingui/core@4.7.2", "@lingui/core@^4.7.1":
+  version "4.7.2"
+  resolved "https://registry.yarnpkg.com/@lingui/core/-/core-4.7.2.tgz#b42272e041dc7a9d698d19d3c2899e5840ae22c0"
+  integrity sha512-6ZClr1NZV9vanMcwiRLpimQl/7Ot1xSKggIYfWDD8hUrDvuPa2FIb59avNmDBrAadcmr4IeJl+z/DmzudZNXbA==
+  dependencies:
+    "@babel/runtime" "^7.20.13"
+    "@lingui/message-utils" "4.7.2"
     unraw "^3.0.0"
 
 "@lingui/format-po@4.7.1":
@@ -1070,13 +1079,21 @@
     "@messageformat/parser" "^5.0.0"
     js-sha256 "^0.10.1"
 
-"@lingui/react@^4.7.1":
-  version "4.7.1"
-  resolved "https://registry.yarnpkg.com/@lingui/react/-/react-4.7.1.tgz#ba59312f8dda17e423f0f360cb413850f1e4c0aa"
-  integrity sha512-acfmKDt6kg2z8wYJXc8S5SmZk1sM46f6xIZFVN+HrJBN/Z7MO9pp4FroTScOBI5zbRsdvoaRdyruNJedLplnhQ==
+"@lingui/message-utils@4.7.2":
+  version "4.7.2"
+  resolved "https://registry.yarnpkg.com/@lingui/message-utils/-/message-utils-4.7.2.tgz#75ec495e59c331009c38ba7169c25ce3aad0145a"
+  integrity sha512-/LAKXNNR//JDCUKmfJQ5ucZK9HLcpT35C/YYNhk/2HWPSUdmocz4g7a0+SuFR/IeTOLTtWfSQWQvecl1ITQh/Q==
+  dependencies:
+    "@messageformat/parser" "^5.0.0"
+    js-sha256 "^0.10.1"
+
+"@lingui/react@^4.7.2":
+  version "4.7.2"
+  resolved "https://registry.yarnpkg.com/@lingui/react/-/react-4.7.2.tgz#3e7912e53e60184f9e9f995f34eb538c1e3a0c08"
+  integrity sha512-7pbeGQ+vLiaW83yB44LgdA2amBFCp/Mr34WRom14NdOWvMnREt3jUHgAuPd/15TGVkUBqia1vTJSjgF/BabR1A==
   dependencies:
     "@babel/runtime" "^7.20.13"
-    "@lingui/core" "4.7.1"
+    "@lingui/core" "4.7.2"
 
 "@mantine/carousel@<7":
   version "6.0.21"
