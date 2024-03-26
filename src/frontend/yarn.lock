@@ -1576,10 +1576,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@^18.2.68":
-  version "18.2.68"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.68.tgz#b4d0c3a9c883165d11842f7b998532743fc5adda"
-  integrity sha512-Fj/BAR6LDSRkqinWfo9nGzW9ndpjEtP049oIW8KWToucUq7AJVCr/fyY9NFpaJaCXnGrKHLLs2mwiHYE1SxaxA==
+"@types/react@*", "@types/react@^18.2.70":
+  version "18.2.70"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.2.70.tgz#89a37f9e0a6a4931f4259c598f40fd44dd6abf71"
+  integrity sha512-hjlM2hho2vqklPhopNkXkdkeq6Lv8WSZTpr7956zY+3WS5cfYUewtCzsJLsbW5dEv3lfSeQ4W14ZFeKC437JRQ==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -1622,17 +1622,17 @@
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
 
-"@uiw/codemirror-theme-vscode@^4.21.22":
-  version "4.21.24"
-  resolved "https://registry.yarnpkg.com/@uiw/codemirror-theme-vscode/-/codemirror-theme-vscode-4.21.24.tgz#c4a7dafc26aceed8f89e18570114a457f634aad7"
-  integrity sha512-319zklfinRpKxs9OIowhIt3kDYDe2uTg7Xx5tpYO9lHnU1GiJRQZflXUqxroLqZU1Zfx7pjXtFtVstL3sTuhqw==
+"@uiw/codemirror-theme-vscode@^4.21.25":
+  version "4.21.25"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-theme-vscode/-/codemirror-theme-vscode-4.21.25.tgz#cf868c219e2ca8253dd2845e451c92920bea27ce"
+  integrity sha512-1gubCz7kHE5XH3H1IUTSrnyK/G3dQRmOIgPFsefE9e+TizhBJnkbKSDSfRfpm5l7jl1G7v/as0HQvN3cYg/Rkg==
   dependencies:
-    "@uiw/codemirror-themes" "4.21.24"
+    "@uiw/codemirror-themes" "4.21.25"
 
-"@uiw/codemirror-themes@4.21.24":
-  version "4.21.24"
-  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.21.24.tgz#69b83d1d77f8ad40a2a8689e8bf54e4b445b88f3"
-  integrity sha512-InY24KWP8YArDBACWHKFZ6ZU+WCvRHf3ZB2cCVxMVN35P1ANUmRzpAP2ernZQ5OIriL1/A/kXgD0Zg3Y65PNgg==
+"@uiw/codemirror-themes@4.21.25":
+  version "4.21.25"
+  resolved "https://registry.yarnpkg.com/@uiw/codemirror-themes/-/codemirror-themes-4.21.25.tgz#562e7e4d36b34329858ffe9c9c06d7f50cfe0d3c"
+  integrity sha512-C3t/voELxQj0eaVhrlgzaOnSALNf8bOcRbL5xN9r2+RkdsbFOmvNl3VVhlxEB7PSGc1jUZwVO4wQsB2AP178ag==
   dependencies:
     "@codemirror/language" "^6.0.0"
     "@codemirror/state" "^6.0.0"
@@ -3343,10 +3343,10 @@ vite-plugin-babel-macros@^1.0.6:
     "@types/babel__core" "^7.1.18"
     babel-plugin-macros "^3.1.0"
 
-vite@^5.2.3:
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-5.2.3.tgz#198efc2fd4d80eac813b146a68a4b0dbde884fc2"
-  integrity sha512-+i1oagbvkVIhEy9TnEV+fgXsng13nZM90JQbrcPrf6DvW2mXARlz+DK7DLiDP+qeKoD1FCVx/1SpFL1CLq9Mhw==
+vite@^5.2.6:
+  version "5.2.6"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-5.2.6.tgz#fc2ce309e0b4871e938cb0aca3b96c422c01f222"
+  integrity sha512-FPtnxFlSIKYjZ2eosBQamz4CbyrTizbZ3hnGJlh/wMtCrlp1Hah6AzBLjGI5I2urTfNnpovpHdrL6YRuBOPnCA==
   dependencies:
     esbuild "^0.20.1"
     postcss "^8.4.36"
