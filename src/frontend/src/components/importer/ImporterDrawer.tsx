@@ -15,10 +15,12 @@ import {
 } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
+import { api } from '../../App';
 import { getStatusCodes } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useInstance } from '../../hooks/UseInstance';
+import { apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
 import { StatusRenderer, getStatusCodeName } from '../render/StatusRenderer';
 import ImporterColumnSelector from './ImporterColumnSelector';
@@ -68,7 +70,8 @@ export default function ImporterDrawer({
   }, [session]);
 
   const cancelImport = useCallback(() => {
-    // TODO: Cancel import session by deleting on the server
+    // Cancel import session by deleting on the server
+    api.delete(apiUrl(ApiEndpoints.import_session_list, sessionId));
 
     // Close the modal
     onClose();
