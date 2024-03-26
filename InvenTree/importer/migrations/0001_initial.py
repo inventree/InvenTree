@@ -39,9 +39,6 @@ class Migration(migrations.Migration):
                 ('field', models.CharField(max_length=100, verbose_name='Field')),
                 ('session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='column_mappings', to='importer.dataimportsession', verbose_name='Import Session')),
             ],
-            options={
-                'unique_together': {('session', 'column'), ('session', 'field')},
-            },
         ),
         migrations.CreateModel(
             name='DataImportRow',

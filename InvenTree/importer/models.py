@@ -1,6 +1,7 @@
 """Model definitions for the 'importer' app."""
 
 import logging
+from typing import Collection
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -141,6 +142,8 @@ class DataImportSession(models.Model):
 
         matched_fields = set()
 
+        column_mappings = []
+
         # Create a default mapping for each column in the dataset
         for column in columns:
             field_name = ''
@@ -155,16 +158,20 @@ class DataImportSession(models.Model):
 
                 if column in field_options:
                     field_name = field
+                    matched_fields.add(field)
                     break
 
                 if column.lower() in [f.lower() for f in field_options]:
                     field_name = field
+                    matched_fields.add(field)
                     break
 
-            # Generate a new mapping
-            DataImportColumnMap.objects.create(
-                session=self, column=column, field=field_name
+            column_mappings.append(
+                DataImportColumnMap(session=self, column=column, field=field_name)
             )
+
+        # Create the column mappings
+        DataImportColumnMap.objects.bulk_create(column_mappings)
 
         self.status = DataImportStatusCode.MAPPING.value
         self.save()
@@ -295,10 +302,25 @@ class DataImportColumnMap(models.Model):
         """Return the API URL associated with the DataImportColumnMap model."""
         return reverse('api-importer-mapping-list')
 
-    class Meta:
-        """Model meta options."""
+    def save(self, *args, **kwargs):
+        """Save the DataImportColumnMap object."""
+        self.clean()
+        self.validate_unique()
 
-        unique_together = [('session', 'column'), ('session', 'field')]
+        super().save(*args, **kwargs)
+
+    def validate_unique(self, exclude=None):
+        """Ensure that the column mapping is unique within the session."""
+        super().validate_unique(exclude)
+
+        if self.session.column_mappings.filter(column=self.column).exists():
+            raise DjangoValidationError({'column': _('Column is already mapped')})
+
+        if (
+            self.field not in ['', None]
+            and self.session.column_mappings.filter(field=self.field).exists()
+        ):
+            raise DjangoValidationError({'field': _('Field is already mapped')})
 
     def clean(self):
         """Validate the column mapping."""
@@ -313,6 +335,10 @@ class DataImportColumnMap(models.Model):
             raise DjangoValidationError({
                 'column': _('Column does not exist in the data file')
             })
+
+        # Field is allowed to be empty
+        if self.field in ['', None]:
+            return
 
         field_def = self.field_definition
 
