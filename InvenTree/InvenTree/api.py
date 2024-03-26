@@ -1,6 +1,7 @@
 """Main JSON interface views."""
 
 import sys
+from pathlib import Path
 
 from django.conf import settings
 from django.db import transaction
@@ -35,8 +36,10 @@ from .views import AjaxView
 class LicenseViewSerializer(serializers.Serializer):
     """Serializer for license information."""
 
-    backend = serializers.URLField()
-    frontend = serializers.URLField()
+    backend = serializers.CharField(help_text='Backend licenses texts', read_only=True)
+    frontend = serializers.CharField(
+        help_text='Frontend licenses texts', read_only=True
+    )
 
 
 class LicenseView(APIView):
@@ -47,9 +50,14 @@ class LicenseView(APIView):
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
-        backend = ''
-        frontend = ''
-        return JsonResponse({'backend': backend, 'frontend': frontend})
+        backend = Path(__file__).parent.joinpath('licenses.txt')
+        frontend = Path(__file__).parent.parent.joinpath(
+            'web/static/web/.vite/dependencies.txt'
+        )
+        return JsonResponse({
+            'backend': backend.read_text(),
+            'frontend': frontend.read_text(),
+        })
 
 
 class VersionViewSerializer(serializers.Serializer):
