@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import {
   Button,
-  CloseButton,
   Divider,
   Drawer,
   Group,
@@ -9,20 +8,19 @@ import {
   Paper,
   Progress,
   ScrollArea,
-  Space,
   Stack,
   Text
 } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
 import { api } from '../../App';
-import { getStatusCodes } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { StylishText } from '../items/StylishText';
-import { StatusRenderer, getStatusCodeName } from '../render/StatusRenderer';
+import { getStatusCodeName } from '../render/StatusRenderer';
+import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
 
 export default function ImporterDrawer({
@@ -64,7 +62,12 @@ export default function ImporterDrawer({
       case 'IMPORTING':
         return <Text>Importing...</Text>;
       case 'PROCESSING':
-        return <Text>Processing</Text>;
+        return (
+          <ImporterDataSelector
+            session={session}
+            onComplete={refreshInstance}
+          />
+        );
       case 'COMPLETE':
         return <Text>Complete!</Text>;
       default:
