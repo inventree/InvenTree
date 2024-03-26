@@ -12,7 +12,12 @@ import importer.models
 import importer.registry
 import importer.serializers
 from InvenTree.filters import SEARCH_ORDER_FILTER
-from InvenTree.mixins import ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (
+    ListAPI,
+    ListCreateAPI,
+    RetrieveUpdateAPI,
+    RetrieveUpdateDestroyAPI,
+)
 
 
 class DataImporterModelList(APIView):
@@ -69,7 +74,7 @@ class DataImportSessionAcceptFields(APIView):
         return Response(importer.serializers.DataImportSessionSerializer(session).data)
 
 
-class DataImportColumnMappingList(ListCreateAPI):
+class DataImportColumnMappingList(ListAPI):
     """API endpoint for accessing a list of DataImportColumnMap objects."""
 
     queryset = importer.models.DataImportColumnMap.objects.all()
@@ -80,7 +85,7 @@ class DataImportColumnMappingList(ListCreateAPI):
     filterset_fields = ['session']
 
 
-class DataImportColumnMappingDetail(RetrieveUpdateDestroyAPI):
+class DataImportColumnMappingDetail(RetrieveUpdateAPI):
     """Detail endpoint for a single DataImportColumnMap object."""
 
     queryset = importer.models.DataImportColumnMap.objects.all()
