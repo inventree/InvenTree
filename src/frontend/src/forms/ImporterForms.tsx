@@ -7,8 +7,7 @@ export function dataImporterSessionFields({ model }: { model: string }) {
     const fields: ApiFormFieldSet = {
       data_file: {},
       model_type: {
-        value: model,
-        hidden: true
+        value: model
       },
       field_detauls: {
         hidden: true

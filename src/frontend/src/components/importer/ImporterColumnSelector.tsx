@@ -28,7 +28,7 @@ function ImporterColumn({ column, options }: { column: any; options: any }) {
         .patch(
           apiUrl(ApiEndpoints.import_session_column_mapping_list, column.pk),
           {
-            field: value
+            field: value || ''
           }
         )
         .then((response) => {
