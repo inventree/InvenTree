@@ -245,8 +245,9 @@ def install(c, uv=False):
     plugins(c, uv=uv)
 
     # Compile license information
+    lic_path = managePyDir().joinpath('InvenTree', 'licenses.txt')
     c.run(
-        'pip-licenses --format=plain-vertical --with-license-file --no-license-path > licenses.txt'
+        f'pip-licenses --format=plain-vertical --with-license-file --no-license-path > {lic_path}'
     )
 
 
