@@ -87,8 +87,8 @@ export default function ImporterDrawer({
 
   return (
     <Drawer
-      position="bottom"
-      size="xl"
+      position="right"
+      size="80%"
       opened={opened}
       onClose={onClose}
       withCloseButton={false}
