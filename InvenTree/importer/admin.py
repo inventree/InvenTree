@@ -1,6 +1,9 @@
 """Admin site specification for the 'importer' app."""
 
+from typing import Any
+
 from django.contrib import admin
+from django.http import HttpRequest
 
 import importer.models
 
@@ -9,6 +12,12 @@ class DataImportColumnMapAdmin(admin.TabularInline):
     """Inline admin for DataImportColumnMap model."""
 
     model = importer.models.DataImportColumnMap
+    can_delete = False
+    max_num = 0
+
+    def get_readonly_fields(self, request, obj=None):
+        """Return the readonly fields for the admin interface."""
+        return ['column']
 
 
 @admin.register(importer.models.DataImportSession)
