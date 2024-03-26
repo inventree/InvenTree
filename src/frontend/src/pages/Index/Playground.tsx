@@ -2,7 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Button, Card, Stack, TextInput } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { Accordion } from '@mantine/core';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { OptionsApiForm } from '../../components/forms/ApiForm';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
@@ -177,6 +177,8 @@ function DataImportingPlayground() {
     model: 'partcategory'
   });
 
+  const [importSessionId, setImportSessionId] = useState<int>(0);
+
   const createNewImportSession = useCreateApiFormModal({
     url: ApiEndpoints.import_session_list,
     title: 'Create Import Session',
@@ -190,13 +192,20 @@ function DataImportingPlayground() {
     }
   });
 
+  const openDrawer = useCallback(() => {
+    setImportSessionId(1);
+    setOpened(true);
+  }, []);
+
   return (
     <>
       {createNewImportSession.modal}
-      <Button onClick={() => createNewImportSession.open()}>
-        Open Importer
-      </Button>
-      <ImporterDrawer opened={opened} onClose={() => setOpened(false)} />
+      <Button onClick={() => openDrawer()}>Open Importer</Button>
+      <ImporterDrawer
+        sessionId={importSessionId}
+        opened={opened}
+        onClose={() => setOpened(false)}
+      />
     </>
   );
 }

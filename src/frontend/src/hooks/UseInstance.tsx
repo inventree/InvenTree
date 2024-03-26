@@ -26,7 +26,7 @@ export function useInstance<T = any>({
   throwError = false
 }: {
   endpoint: ApiEndpoints;
-  pk?: string | undefined;
+  pk?: string | number | undefined;
   hasPrimaryKey?: boolean;
   params?: any;
   pathParams?: PathParams;
