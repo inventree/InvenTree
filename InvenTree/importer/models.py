@@ -30,7 +30,6 @@ class DataImportSession(models.Model):
         data_file: FileField for the data file to import
         status: IntegerField for the status of the import session
         user: ForeignKey to the User who initiated the import
-        data_columns: JSONField for the data columns in the import file (mapped to database columns)
         field_defaults: JSONField for field overrides (e.g. custom field values)
     """
 
@@ -51,10 +50,7 @@ class DataImportSession(models.Model):
             # New object - run initial setup
             self.status = DataImportStatusCode.INITIAL.value
             self.progress = 0
-            self.extract_column_names()
-            self.auto_assign_columns()
-            self.save()
-
+            self.create_columns()
             self.trigger_data_import()
 
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_('Timestamp'))
@@ -70,15 +66,6 @@ class DataImportSession(models.Model):
             importer.validators.validate_data_file,
         ],
     )
-
-    columns = models.JSONField(blank=True, null=True, verbose_name=_('Columns'))
-
-    def extract_column_names(self):
-        """Extract column names from uploaded file.
-
-        This method is called once, when the file is first uploaded.
-        """
-        self.columns = importer.operations.extract_column_names(self.data_file)
 
     model_type = models.CharField(
         blank=False,
@@ -134,32 +121,53 @@ class DataImportSession(models.Model):
 
         return get_fields(self.serializer, required=required, read_only=read_only)
 
-    def auto_assign_columns(self):
-        """Automatically assign columns based on the serializer fields."""
-        available_columns = self.columns
-        serializer_fields = self.serializer_fields()
+    @property
+    def columns(self) -> list:
+        """Returns a list of the columns available for this data import session."""
+        return [m.column for m in self.column_mappings.all()]
+
+    def create_columns(self):
+        """Generate column mappings based on the serializer fields.
+
+        This method is called once, when the file is first imported.
+        """
+        # Extract list of column names from the file
+        columns = importer.operations.extract_column_names(self.data_file)
+
+        serializer_fields = self.serializer_fields(read_only=False)
 
         # Remove any existing mappings
         self.column_mappings.all().delete()
 
-        for name, field in serializer_fields.items():
-            column = None
-            label = getattr(field, 'label', name)
+        matched_fields = set()
 
-            if name in available_columns:
-                column = name
-            elif label in available_columns:
-                column = label
+        # Create a default mapping for each column in the dataset
+        for column in columns:
+            field_name = ''
 
-            if column is not None:
-                try:
-                    DataImportColumnMap.objects.create(
-                        session=self, field=name, column=column
-                    )
-                except Exception:
-                    pass
+            # Check each field for a direct match
+            for field, field_def in serializer_fields.items():
+                # Ignore if this field has already been matched to a column
+                if field in matched_fields:
+                    continue
+
+                field_options = [field, getattr(field_def, 'label', field)]
+
+                if column in field_options:
+                    field_name = field
+                    break
+
+                if column.lower() in [f.lower() for f in field_options]:
+                    field_name = field
+                    break
+
+            # Generate a new mapping
+            DataImportColumnMap.objects.create(
+                session=self, column=column, field=field_name
+            )
 
         self.status = DataImportStatusCode.MAPPING.value
+        self.save()
 
     def accept_mapping(self):
         """Accept current mapping configuration.
