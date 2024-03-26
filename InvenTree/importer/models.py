@@ -312,13 +312,12 @@ class DataImportColumnMap(models.Model):
         """Ensure that the column mapping is unique within the session."""
         super().validate_unique(exclude)
 
-        if self.session.column_mappings.filter(column=self.column).exists():
+        columns = self.session.column_mappings.exclude(pk=self.pk)
+
+        if columns.filter(column=self.column).exists():
             raise DjangoValidationError({'column': _('Column is already mapped')})
 
-        if (
-            self.field not in ['', None]
-            and self.session.column_mappings.filter(field=self.field).exists()
-        ):
+        if self.field not in ['', None] and columns.filter(field=self.field).exists():
             raise DjangoValidationError({'field': _('Field is already mapped')})
 
     def clean(self):
@@ -364,7 +363,7 @@ class DataImportColumnMap(models.Model):
 
     column = models.CharField(max_length=100, verbose_name=_('Column'))
 
-    field = models.CharField(max_length=100, verbose_name=_('Field'))
+    field = models.CharField(blank=True, max_length=100, verbose_name=_('Field'))
 
     @property
     def label(self):

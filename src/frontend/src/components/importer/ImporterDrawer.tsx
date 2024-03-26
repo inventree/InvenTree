@@ -1,15 +1,19 @@
 import { t } from '@lingui/macro';
 import {
+  Button,
+  CloseButton,
   Divider,
   Drawer,
   Group,
   LoadingOverlay,
+  Paper,
   Progress,
+  ScrollArea,
   Space,
   Stack,
   Text
 } from '@mantine/core';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { getStatusCodes } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -63,6 +67,13 @@ export default function ImporterDrawer({
     return '-';
   }, [session]);
 
+  const cancelImport = useCallback(() => {
+    // TODO: Cancel import session by deleting on the server
+
+    // Close the modal
+    onClose();
+  }, [session]);
+
   return (
     <Drawer
       position="bottom"
@@ -70,9 +81,10 @@ export default function ImporterDrawer({
       opened={opened}
       onClose={onClose}
       withCloseButton={false}
+      closeOnEscape={false}
+      closeOnClickOutside={false}
     >
       <Stack spacing="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
         <Group position="apart" grow>
           <StylishText size="xl">{t`Importing Data`}</StylishText>
           <Progress
@@ -81,9 +93,20 @@ export default function ImporterDrawer({
             size="20px"
             radius="md"
           />
+          <Group position="right">
+            <Button color="red" variant="filled" onClick={cancelImport}>
+              {t`Cancel Import`}
+            </Button>
+          </Group>
         </Group>
         <Divider />
-        {instanceQuery.isFetching || widget}
+        <ScrollArea>
+          <Stack spacing="xs">
+            <LoadingOverlay visible={instanceQuery.isFetching} />
+            {/* TODO: Fix the header, while the content scrolls! */}
+            <Paper p="md">{instanceQuery.isFetching || widget}</Paper>
+          </Stack>
+        </ScrollArea>
       </Stack>
     </Drawer>
   );

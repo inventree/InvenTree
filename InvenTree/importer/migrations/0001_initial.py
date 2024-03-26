@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('column', models.CharField(max_length=100, verbose_name='Column')),
-                ('field', models.CharField(max_length=100, verbose_name='Field')),
+                ('field', models.CharField(blank=True, max_length=100, verbose_name='Field')),
                 ('session', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='column_mappings', to='importer.dataimportsession', verbose_name='Import Session')),
             ],
         ),

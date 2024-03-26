@@ -177,7 +177,7 @@ function DataImportingPlayground() {
     model: 'partcategory'
   });
 
-  const [importSessionId, setImportSessionId] = useState<int>(0);
+  const [importSessionId, setImportSessionId] = useState<number>(0);
 
   const createNewImportSession = useCreateApiFormModal({
     url: ApiEndpoints.import_session_list,
@@ -187,14 +187,13 @@ function DataImportingPlayground() {
       parent: 1
     },
     onFormSuccess: (response: any) => {
-      console.log('response:');
-      console.log(response);
+      setImportSessionId(response.pk);
+      setOpened(true);
     }
   });
 
   const openDrawer = useCallback(() => {
-    setImportSessionId(1);
-    setOpened(true);
+    createNewImportSession.open();
   }, []);
 
   return (
