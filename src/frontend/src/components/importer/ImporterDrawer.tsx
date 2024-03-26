@@ -55,7 +55,12 @@ export default function ImporterDrawer({
       case 'INITIAL':
         return <Text>Initial</Text>;
       case 'MAPPING':
-        return <ImporterColumnSelector session={session} />;
+        return (
+          <ImporterColumnSelector
+            session={session}
+            onComplete={refreshInstance}
+          />
+        );
       case 'IMPORTING':
         return <Text>Importing...</Text>;
       case 'PROCESSING':

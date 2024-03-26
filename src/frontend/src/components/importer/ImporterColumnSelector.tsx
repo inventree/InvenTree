@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Button, Group, Select, Stack, Text } from '@mantine/core';
+import { Alert, Button, Group, Select, Stack, Text } from '@mantine/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
@@ -59,7 +59,13 @@ function ImporterColumn({ column, options }: { column: any; options: any }) {
   );
 }
 
-export default function ImporterColumnSelector({ session }: { session: any }) {
+export default function ImporterColumnSelector({
+  session,
+  onComplete
+}: {
+  session: any;
+  onComplete: () => void;
+}) {
   // Available fields
   const fields = useMemo(() => {
     const available_fields = session?.available_fields ?? {};
@@ -79,6 +85,21 @@ export default function ImporterColumnSelector({ session }: { session: any }) {
     return options;
   }, [session]);
 
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const acceptMapping = useCallback(() => {
+    const url = apiUrl(ApiEndpoints.import_session_accept_fields, session.pk);
+
+    api
+      .post(url)
+      .then((response) => {
+        onComplete();
+      })
+      .catch((error) => {
+        setErrorMessage(error.response?.data?.error ?? t`An error occurred`);
+      });
+  }, [session]);
+
   return (
     <Stack spacing="xs">
       <Group position="apart">
@@ -86,8 +107,14 @@ export default function ImporterColumnSelector({ session }: { session: any }) {
         <Button
           color="green"
           variant="filled"
+          onClick={acceptMapping}
         >{t`Accept Column Mapping`}</Button>
       </Group>
+      {errorMessage && (
+        <Alert color="red" title={t`Error`}>
+          <Text>{errorMessage}</Text>
+        </Alert>
+      )}
       {session?.column_mappings?.map((column: any) => {
         return <ImporterColumn column={column} options={fields} />;
       })}
