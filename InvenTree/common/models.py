@@ -559,8 +559,8 @@ class BaseInvenTreeSetting(models.Model):
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
-        # Perform cache lookup by default
-        do_cache = kwargs.pop('cache', True)
+        # Specify if cache lookup should be performed
+        do_cache = kwargs.pop('cache', False)
 
         # Prevent saving to the database during data import
         if InvenTree.ready.isImportingData():
@@ -1766,6 +1766,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'BO-{ref:04d}',
             'validator': build.validators.validate_build_order_reference_pattern,
         },
+        'BUILDORDER_REQUIRE_RESPONSIBLE': {
+            'name': _('Require Responsible Owner'),
+            'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
+        },
+        'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
+            'name': _('Block Until Tests Pass'),
+            'description': _(
+                'Prevent build outputs from being completed until all required tests pass'
+            ),
+            'default': False,
+            'validator': bool,
+        },
         'RETURNORDER_ENABLED': {
             'name': _('Enable Return Orders'),
             'description': _('Enable return order functionality in the user interface'),
@@ -2001,14 +2015,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'DISPLAY_FULL_NAMES': {
             'name': _('Display Users full names'),
             'description': _('Display Users full names instead of usernames'),
-            'default': False,
-            'validator': bool,
-        },
-        'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
-            'name': _('Block Until Tests Pass'),
-            'description': _(
-                'Prevent build outputs from being completed until all required tests pass'
-            ),
             'default': False,
             'validator': bool,
         },

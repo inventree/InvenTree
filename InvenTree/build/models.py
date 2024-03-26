@@ -121,6 +121,12 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
 
         super().clean()
 
+        if common.models.InvenTreeSetting.get_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
+            if not self.responsible:
+                raise ValidationError({
+                    'responsible': _('Responsible user or group must be specified')
+                })
+
         # Prevent changing target part after creation
         if self.has_field_changed('part'):
             raise ValidationError({
