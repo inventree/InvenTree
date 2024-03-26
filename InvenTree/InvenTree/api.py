@@ -32,6 +32,26 @@ from .version import inventreeApiText
 from .views import AjaxView
 
 
+class LicenseViewSerializer(serializers.Serializer):
+    """Serializer for license information."""
+
+    backend = serializers.URLField()
+    frontend = serializers.URLField()
+
+
+class LicenseView(APIView):
+    """Simple JSON endpoint for InvenTree license information."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
+    def get(self, request, *args, **kwargs):
+        """Return information about the InvenTree server."""
+        backend = ''
+        frontend = ''
+        return JsonResponse({'backend': backend, 'frontend': frontend})
+
+
 class VersionViewSerializer(serializers.Serializer):
     """Serializer for a single version."""
 
