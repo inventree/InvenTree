@@ -230,6 +230,9 @@ pillow==10.2.0
     #   qrcode
     #   weasyprint
 pint==0.21
+pip-licenses==4.3.4
+prettytable==3.10.0
+    # via pip-licenses
 protobuf==4.25.3
     # via
     #   googleapis-common-protos
@@ -329,6 +332,8 @@ urllib3==2.2.1
     #   dulwich
     #   requests
     #   sentry-sdk
+wcwidth==0.2.13
+    # via prettytable
 weasyprint==61.2
     # via django-weasyprint
 webencodings==0.5.1

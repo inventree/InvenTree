@@ -244,6 +244,11 @@ def install(c, uv=False):
     # Run plugins install
     plugins(c, uv=uv)
 
+    # Compile license information
+    c.run(
+        'pip-licenses --format=plain-vertical --with-license-file --no-license-path > licenses.txt'
+    )
+
 
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
