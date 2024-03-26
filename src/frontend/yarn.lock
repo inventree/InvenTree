@@ -1032,6 +1032,18 @@
     jiti "^1.17.1"
     lodash.get "^4.4.2"
 
+"@lingui/conf@4.7.2":
+  version "4.7.2"
+  resolved "https://registry.yarnpkg.com/@lingui/conf/-/conf-4.7.2.tgz#9cf0611c3366b83c3c8a8be203cbbf8f099b0be4"
+  integrity sha512-zlajCM0J7SYPpw/MOslMMJQHUaymdlHS42gWVhE17clKOOBz+xPG5kl7OXI4p3FpPDaP+ZzMMk6Z8bq7r6iSjQ==
+  dependencies:
+    "@babel/runtime" "^7.20.13"
+    chalk "^4.1.0"
+    cosmiconfig "^8.0.0"
+    jest-validate "^29.4.3"
+    jiti "^1.17.1"
+    lodash.get "^4.4.2"
+
 "@lingui/core@4.7.1":
   version "4.7.1"
   resolved "https://registry.yarnpkg.com/@lingui/core/-/core-4.7.1.tgz#7bf1fa22ff0c6892ff6fb965f96c3775c7050697"
@@ -1060,16 +1072,16 @@
     date-fns "^2.29.3"
     pofile "^1.1.4"
 
-"@lingui/macro@^4.7.1":
-  version "4.7.1"
-  resolved "https://registry.yarnpkg.com/@lingui/macro/-/macro-4.7.1.tgz#c57853e909c7e2fd291aa3299e789700bef4f11e"
-  integrity sha512-weU8Z7QNt+M0wuPIs/xqnlt7Y/g1o4fASamvbyJxh9J68is7mnGwhevj+nVW2VZCEq4+yR34qvF0bsVeTQ332A==
+"@lingui/macro@^4.7.2":
+  version "4.7.2"
+  resolved "https://registry.yarnpkg.com/@lingui/macro/-/macro-4.7.2.tgz#b28eb590e753245d11b5058b3e1d85fe997583ca"
+  integrity sha512-QCwH8cFGrWQNemFLaSnpjRX+rohnbtl+pbTKvdiu2WYH4CVievpx8WHUcTD+hTvFqGUWRKTgCbc3fMxQJnkgmw==
   dependencies:
     "@babel/runtime" "^7.20.13"
     "@babel/types" "^7.20.7"
-    "@lingui/conf" "4.7.1"
-    "@lingui/core" "4.7.1"
-    "@lingui/message-utils" "4.7.1"
+    "@lingui/conf" "4.7.2"
+    "@lingui/core" "4.7.2"
+    "@lingui/message-utils" "4.7.2"
 
 "@lingui/message-utils@4.7.1":
   version "4.7.1"
