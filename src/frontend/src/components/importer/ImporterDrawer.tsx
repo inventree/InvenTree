@@ -1,8 +1,23 @@
-import { Drawer, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { t } from '@lingui/macro';
+import {
+  Divider,
+  Drawer,
+  Group,
+  LoadingOverlay,
+  Progress,
+  Space,
+  Stack,
+  Text
+} from '@mantine/core';
 import { useMemo } from 'react';
 
+import { getStatusCodes } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { useInstance } from '../../hooks/UseInstance';
+import { StylishText } from '../items/StylishText';
+import { StatusRenderer, getStatusCodeName } from '../render/StatusRenderer';
+import ImporterColumnSelector from './ImporterColumnSelector';
 
 export default function ImporterDrawer({
   sessionId,
@@ -23,24 +38,29 @@ export default function ImporterDrawer({
     refetchOnMount: true
   });
 
-  // Construct list of field selections
-  const fieldOptions = useMemo(() => {
-    const fields = session?.available_fields ?? {};
+  const statusText = useMemo(() => {
+    const status = getStatusCodeName(ModelType.importsession, session?.status);
 
-    let options = [];
+    return status;
+  }, [session]);
 
-    for (const key in fields) {
-      let field = fields[key];
-
-      if (!field.read_only) {
-        options.push({
-          value: key,
-          label: field.label ?? key
-        });
-      }
+  const widget = useMemo(() => {
+    switch (statusText) {
+      case 'INITIAL':
+        return <Text>Initial</Text>;
+      case 'MAPPING':
+        return <ImporterColumnSelector session={session} />;
+      case 'IMPORTING':
+        return <Text>Importing...</Text>;
+      case 'PROCESSING':
+        return <Text>Processing</Text>;
+      case 'COMPLETE':
+        return <Text>Complete!</Text>;
+      default:
+        return <Text>Unknown status code: {session?.status}</Text>;
     }
 
-    return options;
+    return '-';
   }, [session]);
 
   return (
@@ -53,12 +73,17 @@ export default function ImporterDrawer({
     >
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
-        <Text>Model Type: {session.model_type}</Text>
-        <Text>Rows: {session.row_count}</Text>
-        <Text weight={700}>Columns:</Text>
-        {session?.column_mappings?.map((column: any) => (
-          <Text key={column.pk}>{column.column}</Text>
-        ))}
+        <Group position="apart" grow>
+          <StylishText size="xl">{t`Importing Data`}</StylishText>
+          <Progress
+            value={20}
+            label={t`Mapping Columns`}
+            size="20px"
+            radius="md"
+          />
+        </Group>
+        <Divider />
+        {instanceQuery.isFetching || widget}
       </Stack>
     </Drawer>
   );

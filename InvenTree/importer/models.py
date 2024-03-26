@@ -52,7 +52,6 @@ class DataImportSession(models.Model):
             self.status = DataImportStatusCode.INITIAL.value
             self.progress = 0
             self.create_columns()
-            self.trigger_data_import()
 
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_('Timestamp'))
 
