@@ -10,7 +10,7 @@ from django.apps import AppConfig
 
 from maintenance_mode.core import set_maintenance_mode
 
-from InvenTree.ready import canAppAccessDatabase, isInMainThread
+from InvenTree.ready import canAppAccessDatabase, isInMainThread, isInWorkerThread
 from plugin import registry
 
 logger = logging.getLogger('inventree')
@@ -24,7 +24,8 @@ class PluginAppConfig(AppConfig):
     def ready(self):
         """The ready method is extended to initialize plugins."""
         # skip loading if we run in a background thread
-        if not isInMainThread():
+
+        if not isInMainThread() and not isInWorkerThread():
             return
 
         if not canAppAccessDatabase(

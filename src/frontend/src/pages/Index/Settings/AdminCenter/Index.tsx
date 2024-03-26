@@ -9,6 +9,7 @@ import {
   IconListDetails,
   IconPlugConnected,
   IconScale,
+  IconSitemap,
   IconTemplate,
   IconUsersGroup
 } from '@tabler/icons-react';
@@ -50,6 +51,10 @@ const CustomUnitsTable = Loadable(
 
 const PartParameterTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
+);
+
+const PartCategoryTemplateTable = Loadable(
+  lazy(() => import('../../../../tables/part/PartCategoryTemplateTable'))
 );
 
 const CurrencyTable = Loadable(
@@ -106,10 +111,16 @@ export default function AdminCenter() {
         content: <CustomUnitsTable />
       },
       {
-        name: 'parameters',
+        name: 'part-parameters',
         label: t`Part Parameters`,
         icon: <IconList />,
         content: <PartParameterTemplateTable />
+      },
+      {
+        name: 'category-parameters',
+        label: t`Category Parameters`,
+        icon: <IconSitemap />,
+        content: <PartCategoryTemplateTable />
       },
       {
         name: 'templates',

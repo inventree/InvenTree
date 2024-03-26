@@ -11,6 +11,9 @@ on:
 env:
   python_version: 3.9
 
+permissions:
+  contents: read
+
 jobs:
 
   check:

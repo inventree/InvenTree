@@ -1,9 +1,16 @@
 import { Trans, t } from '@lingui/macro';
-import { Alert, List, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import {
+  Alert,
+  List,
+  LoadingOverlay,
+  Spoiler,
+  Stack,
+  Text,
+  Title
+} from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
@@ -12,7 +19,10 @@ import {
   DetailDrawerLink
 } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { openCreateApiForm, openDeleteApiForm } from '../../functions/forms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -120,25 +130,29 @@ export function UserDrawer({
         id={`user-detail-drawer-${id}`}
       />
 
-      <Title order={5}>
-        <Trans>Groups</Trans>
-      </Title>
-      <Text ml={'md'}>
-        {userDetail?.groups && userDetail?.groups?.length > 0 ? (
-          <List>
-            {userDetail?.groups?.map((group) => (
-              <List.Item key={group.pk}>
-                <DetailDrawerLink
-                  to={`../group-${group.pk}`}
-                  text={group.name}
-                />
-              </List.Item>
-            ))}
-          </List>
-        ) : (
-          <Trans>No groups</Trans>
-        )}
-      </Text>
+      <Stack>
+        <Title order={5}>
+          <Trans>Groups</Trans>
+        </Title>
+        <Spoiler maxHeight={125} showLabel="Show More" hideLabel="Show Less">
+          <Text ml={'md'}>
+            {userDetail?.groups && userDetail?.groups?.length > 0 ? (
+              <List>
+                {userDetail?.groups?.map((group) => (
+                  <List.Item key={group.pk}>
+                    <DetailDrawerLink
+                      to={`../group-${group.pk}`}
+                      text={group.name}
+                    />
+                  </List.Item>
+                ))}
+              </List>
+            ) : (
+              <Trans>No groups</Trans>
+            )}
+          </Text>
+        </Spoiler>
+      </Stack>
     </Stack>
   );
 }
@@ -194,6 +208,9 @@ export function UserTable() {
     ];
   }, []);
 
+  // Row Actions
+  const [selectedUser, setSelectedUser] = useState<number>(-1);
+
   const rowActions = useCallback((record: UserDetailI): RowAction[] => {
     return [
       RowEditAction({
@@ -201,39 +218,45 @@ export function UserTable() {
       }),
       RowDeleteAction({
         onClick: () => {
-          openDeleteApiForm({
-            url: ApiEndpoints.user_list,
-            pk: record.pk,
-            title: t`Delete user`,
-            successMessage: t`User deleted`,
-            onFormSuccess: table.refreshTable,
-            preFormWarning: t`Are you sure you want to delete this user?`
-          });
+          setSelectedUser(record.pk);
+          deleteUser.open();
         }
       })
     ];
   }, []);
 
-  const addUser = useCallback(() => {
-    openCreateApiForm({
-      url: ApiEndpoints.user_list,
-      title: t`Add user`,
-      fields: {
-        username: {},
-        email: {},
-        first_name: {},
-        last_name: {}
-      },
-      onFormSuccess: table.refreshTable,
-      successMessage: t`Added user`
-    });
-  }, []);
+  const deleteUser = useDeleteApiFormModal({
+    url: ApiEndpoints.user_list,
+    pk: selectedUser,
+    title: t`Delete user`,
+    successMessage: t`User deleted`,
+    onFormSuccess: table.refreshTable,
+    preFormWarning: t`Are you sure you want to delete this user?`
+  });
+
+  // Table Actions - Add New User
+  const newUser = useCreateApiFormModal({
+    url: ApiEndpoints.user_list,
+    title: t`Add user`,
+    fields: {
+      username: {},
+      email: {},
+      first_name: {},
+      last_name: {}
+    },
+    onFormSuccess: table.refreshTable,
+    successMessage: t`Added user`
+  });
 
   const tableActions = useMemo(() => {
     let actions = [];
 
     actions.push(
-      <AddItemButton key="add-user" onClick={addUser} tooltip={t`Add user`} />
+      <AddItemButton
+        key="add-user"
+        onClick={newUser.open}
+        tooltip={t`Add user`}
+      />
     );
 
     return actions;
@@ -241,6 +264,8 @@ export function UserTable() {
 
   return (
     <>
+      {newUser.modal}
+      {deleteUser.modal}
       <DetailDrawer
         title={t`Edit user`}
         renderContent={(id) => {

@@ -1,10 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 183
+INVENTREE_API_VERSION = 185
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v185 - 2024-03-24 : https://github.com/inventree/InvenTree/pull/6836
+    - Remove /plugin/activate endpoint
+    - Update docstrings and typing for various API endpoints (no functional changes)
+
+v184 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/10464
+    - Add additional fields for tests (start/end datetime, test station)
 
 v183 - 2024-03-14 : https://github.com/inventree/InvenTree/pull/5972
     - Adds "category_default_location" annotated field to part serializer

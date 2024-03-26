@@ -3833,6 +3833,28 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
             return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
         return f'{self.category.name} | {self.parameter_template.name}'
 
+    def clean(self):
+        """Validate this PartCategoryParameterTemplate instance.
+
+        Checks the provided 'default_value', and (if not blank), ensure it is valid.
+        """
+        super().clean()
+
+        self.default_value = (
+            '' if self.default_value is None else str(self.default_value.strip())
+        )
+
+        if self.default_value and InvenTreeSetting.get_setting(
+            'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+        ):
+            if self.parameter_template.units:
+                try:
+                    InvenTree.conversion.convert_physical_value(
+                        self.default_value, self.parameter_template.units
+                    )
+                except ValidationError as e:
+                    raise ValidationError({'default_value': e.message})
+
     category = models.ForeignKey(
         PartCategory,
         on_delete=models.CASCADE,

@@ -574,6 +574,7 @@ class FormatTest(TestCase):
 class TestHelpers(TestCase):
     """Tests for InvenTree helper functions."""
 
+    @override_settings(SITE_URL=None)
     def test_absolute_url(self):
         """Test helper function for generating an absolute URL."""
         base = 'https://demo.inventree.org:12345'
@@ -1347,6 +1348,7 @@ class TestInstanceName(InvenTreeTestCase):
         site_obj = Site.objects.all().order_by('id').first()
         self.assertEqual(site_obj.name, 'Testing title')
 
+    @override_settings(SITE_URL=None)
     def test_instance_url(self):
         """Test instance url settings."""
         # Set up required setting

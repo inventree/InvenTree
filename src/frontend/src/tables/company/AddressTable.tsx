@@ -134,7 +134,7 @@ export function AddressTable({
     pk: selectedAddress,
     title: t`Edit Address`,
     fields: addressFields,
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const deleteAddress = useDeleteApiFormModal({
@@ -184,7 +184,7 @@ export function AddressTable({
       <AddItemButton
         tooltip={t`Add Address`}
         onClick={() => newAddress.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);

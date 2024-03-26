@@ -629,7 +629,7 @@ class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
 
 class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a SalesOrderAttachment (file upload)."""
 
     queryset = models.SalesOrderAttachment.objects.all()
     serializer_class = serializers.SalesOrderAttachmentSerializer
@@ -1097,7 +1097,7 @@ class SalesOrderShipmentComplete(CreateAPI):
 
 
 class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting) a PurchaseOrderAttachment (file upload)."""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
     serializer_class = serializers.PurchaseOrderAttachmentSerializer
@@ -1363,7 +1363,7 @@ class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
 
 class ReturnOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a ReturnOrderAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a ReturnOrderAttachment (file upload)."""
 
     queryset = models.ReturnOrderAttachment.objects.all()
     serializer_class = serializers.ReturnOrderAttachmentSerializer
