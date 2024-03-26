@@ -18,7 +18,7 @@
         "@fortawesome/free-solid-svg-icons": "^6.5.1",
         "@fortawesome/react-fontawesome": "^0.2.0",
         "@lingui/core": "^4.7.1",
-        "@lingui/react": "^4.7.1",
+        "@lingui/react": "^4.7.2",
         "@mantine/carousel": "<7",
         "@mantine/core": "<7",
         "@mantine/dates": "<7",
