@@ -192,6 +192,12 @@ export default function StockDetail() {
         hidden: !stockitem.sales_order,
         icon: 'sales_orders',
         model_field: 'reference'
+      },
+      {
+        type: 'link',
+        name: 'customer',
+        label: t`Customer`,
+        model: ModelType.company
       }
     ];
 
