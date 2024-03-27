@@ -288,16 +288,16 @@ class BaseInvenTreeSetting(models.Model):
 
     def save_to_cache(self):
         """Save this setting object to cache."""
-        ckey = self.cache_key
+        key = self.cache_key
 
         # skip saving to cache if no pk is set
         if self.pk is None:
             return
 
-        logger.debug("Saving setting '%s' to cache", ckey)
+        logger.debug("Saving setting '%s' to cache", key)
 
         try:
-            cache.set(ckey, self, timeout=3600)
+            cache.set(key, self, timeout=3600)
         except Exception:
             pass
 
@@ -574,12 +574,12 @@ class BaseInvenTreeSetting(models.Model):
             create = False
             do_cache = False
 
-        ckey = cls.create_cache_key(key, **kwargs)
+        cache_key = cls.create_cache_key(key, **kwargs)
 
         if do_cache:
             try:
                 # First attempt to find the setting object in the cache
-                cached_setting = cache.get(ckey)
+                cached_setting = cache.get(cache_key)
 
                 if cached_setting is not None:
                     return cached_setting
@@ -1720,7 +1720,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'STOCK_DELETE_DEPLETED_DEFAULT': {
             'name': _('Delete Depleted Stock'),
             'description': _(
-                'Determines default behaviour when a stock item is depleted'
+                'Determines default behavior when a stock item is depleted'
             ),
             'default': True,
             'validator': bool,
@@ -2145,7 +2145,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
         'HOMEPAGE_BOM_REQUIRES_VALIDATION': {
-            'name': _('Show unvalidated BOMs'),
+            'name': _('Show invalid BOMs'),
             'description': _('Show BOMs that await validation on the homepage'),
             'default': False,
             'validator': bool,
@@ -2676,7 +2676,7 @@ class VerificationMethod(Enum):
 
 
 class WebhookEndpoint(models.Model):
-    """Defines a Webhook entdpoint.
+    """Defines a Webhook endpoint.
 
     Attributes:
         endpoint_id: Path to the webhook,
@@ -3011,7 +3011,7 @@ class NewsFeedEntry(models.Model):
     - published: Date of publishing of the news item
     - author: Author of news item
     - summary: Summary of the news items content
-    - read: Was this iteam already by a superuser?
+    - read: Was this item already by a superuser?
     """
 
     feed_id = models.CharField(verbose_name=_('Id'), unique=True, max_length=250)
