@@ -1,5 +1,15 @@
 import { Trans, t } from '@lingui/macro';
-import { ActionIcon, Button, Group, Select, Space, Stack } from '@mantine/core';
+import {
+  ActionIcon,
+  AspectRatio,
+  Button,
+  Card,
+  Group,
+  LoadingOverlay,
+  Select,
+  Space,
+  Stack
+} from '@mantine/core';
 import { Badge, Container } from '@mantine/core';
 import { randomId, useLocalStorage } from '@mantine/hooks';
 import { useDocumentVisibility } from '@mantine/hooks';
@@ -9,7 +19,7 @@ import {
   IconPlayerStopFilled
 } from '@tabler/icons-react';
 import { IconX } from '@tabler/icons-react';
-import { Html5Qrcode } from 'html5-qrcode';
+import { Html5Qrcode, Html5QrcodeCameraScanConfig } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
 import React from 'react';
 import { useEffect, useState } from 'react';
@@ -50,6 +60,7 @@ export default function BarcodeInputImage({ action }: inputProps) {
   const [cameras, setCameras] = useState<any[]>([]);
   const [cameraValue, setCameraValue] = useState<string | null>(null);
   const [ScanningEnabled, setIsScanning] = useState<boolean>(false);
+  const [ScannerLoading, setScannerLoading] = useState<boolean>(false);
   const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
   const documentState = useDocumentVisibility();
 
@@ -77,10 +88,10 @@ export default function BarcodeInputImage({ action }: inputProps) {
   // Stop/start when leaving or reentering page
   useEffect(() => {
     if (ScanningEnabled && documentState === 'hidden') {
-      btnStopScanning();
+      stopScanning();
       setWasAutoPaused(true);
     } else if (wasAutoPaused && documentState === 'visible') {
-      btnStartScanning();
+      startScanning();
       setWasAutoPaused(false);
     }
   }, [documentState]);
@@ -113,6 +124,12 @@ export default function BarcodeInputImage({ action }: inputProps) {
       error !=
       'QR code parse error, error = NotFoundException: No MultiFormat Readers were able to detect the code.'
     ) {
+      showNotification({
+        title: t`Error while scanning`,
+        message: error,
+        color: 'red',
+        icon: <IconX />
+      });
       console.warn(`Code scan error = ${error}`);
     }
   }
@@ -135,44 +152,52 @@ export default function BarcodeInputImage({ action }: inputProps) {
       });
   }
 
-  function btnStartScanning() {
+  const startScanning = async () => {
+    const qrScannerOptions: Html5QrcodeCameraScanConfig = {
+      fps: 10,
+      qrbox: { width: 250, height: 250 }
+    };
+    setScannerLoading(true);
     if (camId && qrCodeScanner && !ScanningEnabled) {
-      qrCodeScanner
-        .start(
+      try {
+        await qrCodeScanner.start(
           camId.id,
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText) => {
-            onScanSuccess(decodedText);
-          },
-          (errorMessage) => {
-            onScanFailure(errorMessage);
-          }
-        )
-        .catch((err: string) => {
-          showNotification({
-            title: t`Error while scanning`,
-            message: err,
-            color: 'red',
-            icon: <IconX />
-          });
-        });
-      setIsScanning(true);
-    }
-  }
-
-  function btnStopScanning() {
-    if (qrCodeScanner && ScanningEnabled) {
-      qrCodeScanner.stop().catch((err: string) => {
+          qrScannerOptions,
+          (decodedText) => onScanSuccess(decodedText),
+          (errorMessage) => onScanFailure(errorMessage)
+        );
+        setIsScanning(true);
+      } catch (error) {
+        console.warn(`Error while starting QR Scanner.\n`, error);
         showNotification({
-          title: t`Error while stopping`,
-          message: err,
+          title: t`Error while scanning`,
+          message: `${error}`,
           color: 'red',
           icon: <IconX />
         });
-      });
-      setIsScanning(false);
+        setIsScanning(false);
+      }
+      setScannerLoading(false);
     }
-  }
+  };
+
+  const stopScanning = async () => {
+    if (qrCodeScanner && ScanningEnabled) {
+      try {
+        await qrCodeScanner.stop();
+        setIsScanning(false);
+      } catch (error) {
+        console.warn(`Error while stopping QR Scanner.\n`, error);
+        showNotification({
+          title: t`Error while stopping`,
+          message: `${error}`,
+          color: 'red',
+          icon: <IconX />
+        });
+        setIsScanning(false);
+      }
+    }
+  };
 
   // on value change
   useEffect(() => {
@@ -184,24 +209,14 @@ export default function BarcodeInputImage({ action }: inputProps) {
 
     const cam = cameras.find((cam) => cam.id === cameraValue);
 
-    // stop scanning if cam changed while scanning
+    // restart scanning if cam changed while scanning
     if (qrCodeScanner && ScanningEnabled) {
-      // stop scanning
-      qrCodeScanner.stop().then(() => {
-        // change ID
+      // Fire & Forget - restart scanning async
+      (async () => {
+        await stopScanning();
         setCamId(cam);
-        // start scanning
-        qrCodeScanner.start(
-          cam.id,
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          (decodedText) => {
-            onScanSuccess(decodedText);
-          },
-          (errorMessage) => {
-            onScanFailure(errorMessage);
-          }
-        );
-      });
+        await startScanning();
+      })();
     } else {
       setCamId(cam);
     }
@@ -219,12 +234,12 @@ export default function BarcodeInputImage({ action }: inputProps) {
           size="sm"
         />
         {ScanningEnabled ? (
-          <ActionIcon onClick={btnStopScanning} title={t`Stop scanning`}>
+          <ActionIcon onClick={stopScanning} title={t`Stop scanning`}>
             <IconPlayerStopFilled />
           </ActionIcon>
         ) : (
           <ActionIcon
-            onClick={btnStartScanning}
+            onClick={startScanning}
             title={t`Start scanning`}
             disabled={!camId}
           >
@@ -236,7 +251,19 @@ export default function BarcodeInputImage({ action }: inputProps) {
           {ScanningEnabled ? t`Scanning` : t`Not scanning`}
         </Badge>
       </Group>
-      <Container px={0} id="reader" w={'100%'} mih="300px" />
+      <Card>
+        <AspectRatio ratio={4 / 3} mx={'auto'}>
+          <div>
+            <LoadingOverlay visible={ScannerLoading} />
+            {!ScannerLoading && !ScanningEnabled && (
+              <Badge color="yellow">Scanner Stopped</Badge>
+            )}
+          </div>
+          <div>
+            <Container px={0} id="reader" w={'100%'} mih="300px" />
+          </div>
+        </AspectRatio>
+      </Card>
       {!camId && (
         <Button onClick={btnSelectCamera}>
           <Trans>Select Camera</Trans>

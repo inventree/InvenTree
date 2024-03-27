@@ -134,6 +134,8 @@ export default function Scan() {
 
   let scannedItems: ScanItem[] = [];
 
+  const createScanItem = () => {};
+
   const validateBarcode = async (
     barcodeValue: string
   ): Promise<false | AxiosResponse> => {
@@ -154,9 +156,7 @@ export default function Scan() {
     }
   };
 
-  const createScanItem = (barcodeResponseData) => {};
-
-  const loadBarcode = async (barcodeURL) => {
+  const loadBarcode = async (barcodeURL: string) => {
     try {
       let response = await api.get(barcodeURL);
       console.log(`GET Response:`, response);
@@ -217,15 +217,18 @@ export default function Scan() {
   const addItem = async (item: ScanItem) => {
     console.log(`Add Item:`, item);
 
+    // Validate Barcode
     const result = await validateBarcode(item.ref);
     if (!result) return;
 
+    // Match barcode to inventree item object
     const processedItem = matchObject(result);
     if (!processedItem[0]) return;
 
     item.model = processedItem[0];
     item.pk = processedItem[1];
 
+    // Extract API link
     let modelInfo = ModelInformationDict[processedItem[0]];
     const url = apiUrl(modelInfo.api_endpoint, processedItem[1]);
     const barcodeResult = await loadBarcode(url);
@@ -239,17 +242,9 @@ export default function Scan() {
     console.log(`History:`, history);
   };
 
-  const addItems = (items: ScanItem[]) => {
-    console.log(`Add Multiple Items`);
-    for (const item of items) {
-      historyHandlers.append(item);
-      runBarcode(item.ref, item.id);
-    }
-  };
-
   // save history data to session storage
   useEffect(() => {
-    console.log(history);
+    console.log(`History:`, history);
     if (history.length === 0) return;
     setHistoryStorage(history);
   }, [history]);
@@ -433,5 +428,3 @@ export default function Scan() {
     </>
   );
 }
-
-// endregion
