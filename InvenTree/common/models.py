@@ -635,6 +635,13 @@ class BaseInvenTreeSetting(models.Model):
 
         If it does not exist, return the backup value (default = None)
         """
+        if key not in cls.SETTINGS and not key.startswith('_'):
+            logger.warning(
+                "get_setting: Setting key '%s' is not defined for class %s",
+                key,
+                str(cls),
+            )
+
         # If no backup value is specified, attempt to retrieve a "default" value
         if backup_value is None:
             backup_value = cls.get_setting_default(key, **kwargs)
@@ -670,6 +677,13 @@ class BaseInvenTreeSetting(models.Model):
             change_user: User object (must be staff member to update a core setting)
             create: If True, create a new setting if the specified key does not exist.
         """
+        if key not in cls.SETTINGS and not key.startswith('_'):
+            logger.warning(
+                "set_setting: Setting key '%s' is not defined for class %s",
+                key,
+                str(cls),
+            )
+
         if change_user is not None and not change_user.is_staff:
             return
 
