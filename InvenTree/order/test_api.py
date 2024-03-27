@@ -28,6 +28,7 @@ from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from part.models import Part
 from stock.models import StockItem
+from users.models import Owner
 
 
 class OrderTest(InvenTreeAPITestCase):
@@ -371,7 +372,7 @@ class PurchaseOrderTest(OrderTest):
 
         self.assertIn('Responsible user or group must be specified', str(response.data))
 
-        data['responsible'] = 1
+        data['responsible'] = Owner.objects.first().pk
 
         response = self.post(url, data, expected_code=201)
 
