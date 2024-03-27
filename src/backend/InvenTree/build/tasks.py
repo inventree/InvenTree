@@ -1,6 +1,6 @@
 """Background task definitions for the BuildOrder app"""
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal
 import logging
 
@@ -14,6 +14,7 @@ from plugin.events import trigger_event
 import common.notifications
 import build.models
 import InvenTree.email
+import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
 from InvenTree.status_codes import BuildStatusGroups
@@ -222,7 +223,7 @@ def check_overdue_build_orders():
     - Look at the 'target_date' of any outstanding BuildOrder objects
     - If the 'target_date' expired *yesterday* then the order is just out of date
     """
-    yesterday = datetime.now().date() - timedelta(days=1)
+    yesterday = InvenTree.helpers.current_date() - timedelta(days=1)
 
     overdue_orders = build.models.Build.objects.filter(
         target_date=yesterday,

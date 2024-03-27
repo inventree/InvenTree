@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
@@ -319,9 +319,9 @@ def generate_batch_code():
         'STOCK_BATCH_CODE_TEMPLATE', ''
     )
 
-    now = datetime.now()
+    now = InvenTree.helpers.current_time()
 
-    # Pass context data through to the template randering.
+    # Pass context data through to the template rendering.
     # The following context variables are available for custom batch code generation
     context = {
         'date': now,
@@ -412,7 +412,7 @@ class StockItem(
     EXPIRED_FILTER = (
         IN_STOCK_FILTER
         & ~Q(expiry_date=None)
-        & Q(expiry_date__lt=datetime.now().date())
+        & Q(expiry_date__lt=InvenTree.helpers.current_date())
     )
 
     def update_serial_number(self):
@@ -1011,7 +1011,7 @@ class StockItem(
         if not self.in_stock:
             return False
 
-        today = datetime.now().date()
+        today = InvenTree.helpers.current_date()
 
         stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
 
@@ -1036,7 +1036,7 @@ class StockItem(
         if not self.in_stock:
             return False
 
-        today = datetime.now().date()
+        today = InvenTree.helpers.current_date()
 
         return self.expiry_date < today
 
@@ -1438,7 +1438,7 @@ class StockItem(
             item=self,
             tracking_type=entry_type.value,
             user=user,
-            date=datetime.now(),
+            date=InvenTree.helpers.current_time(),
             notes=notes,
             deltas=deltas,
         )
@@ -1962,7 +1962,7 @@ class StockItem(
         if count < 0:
             return False
 
-        self.stocktake_date = datetime.now().date()
+        self.stocktake_date = InvenTree.helpers.current_date()
         self.stocktake_user = user
 
         if self.updateQuantity(count):
@@ -2464,15 +2464,15 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     )
 
     started_datetime = models.DateTimeField(
-        default=datetime.now,
         blank=True,
+        null=True,
         verbose_name=_('Started'),
         help_text=_('The timestamp of the test start'),
     )
 
     finished_datetime = models.DateTimeField(
-        default=datetime.now,
         blank=True,
+        null=True,
         verbose_name=_('Finished'),
         help_text=_('The timestamp of the test finish'),
     )

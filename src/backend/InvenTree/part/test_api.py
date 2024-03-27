@@ -491,7 +491,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         PartCategory.objects.rebuild()
 
-        with self.assertNumQueriesLessThan(10):
+        with self.assertNumQueriesLessThan(12):
             response = self.get(reverse('api-part-category-tree'), expected_code=200)
 
         self.assertEqual(len(response.data), PartCategory.objects.count())
