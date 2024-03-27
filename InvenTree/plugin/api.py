@@ -466,7 +466,6 @@ plugin_api_urls = [
             # Plugin management
             path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
             path('install/', PluginInstall.as_view(), name='api-plugin-install'),
-            path('activate/', PluginActivate.as_view(), name='api-plugin-activate'),
             # Registry status
             path(
                 'status/',

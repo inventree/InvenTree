@@ -34,7 +34,13 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
-from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, str2bool
+from InvenTree.helpers import (
+    current_date,
+    extract_serial_numbers,
+    hash_barcode,
+    normalize,
+    str2bool,
+)
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializer,
     InvenTreeCurrencySerializer,
@@ -1140,11 +1146,12 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         user = request.user
 
         # Extract shipping date (defaults to today's date)
-        shipment_date = data.get('shipment_date', datetime.now())
+        now = current_date()
+        shipment_date = data.get('shipment_date', now)
         if shipment_date is None:
             # Shipment date should not be None - check above only
             # checks if shipment_date exists in data
-            shipment_date = datetime.now()
+            shipment_date = now
 
         shipment.complete_shipment(
             user,

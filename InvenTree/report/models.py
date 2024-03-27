@@ -18,6 +18,7 @@ from django.utils.translation import gettext_lazy as _
 import build.models
 import common.models
 import InvenTree.exceptions
+import InvenTree.helpers
 import InvenTree.models
 import order.models
 import part.models
@@ -250,8 +251,8 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         context = self.get_context_data(request)
 
         context['base_url'] = get_base_url(request=request)
-        context['date'] = datetime.datetime.now().date()
-        context['datetime'] = datetime.datetime.now()
+        context['date'] = InvenTree.helpers.current_date()
+        context['datetime'] = InvenTree.helpers.current_time()
         context['page_size'] = self.get_report_size()
         context['report_template'] = self
         context['report_description'] = self.description

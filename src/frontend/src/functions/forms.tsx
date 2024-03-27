@@ -246,7 +246,7 @@ export function openModalApiForm(props: OpenApiFormProps) {
         children: (
           <Stack spacing={'xs'}>
             <Divider />
-            <ApiForm id={modalId} props={props} />
+            <ApiForm id={modalId} props={props} optionsLoading={false} />
           </Stack>
         )
       });
