@@ -78,7 +78,7 @@ export const ReturnOrderDetail = Loadable(
   lazy(() => import('./pages/sales/ReturnOrderDetail'))
 );
 
-export const Scan = Loadable(lazy(() => import('./pages/Index/Scan')));
+export const Scan = Loadable(lazy(() => import('./pages/Scan/ScanPage')));
 
 export const Dashboard = Loadable(
   lazy(() => import('./pages/Index/Dashboard'))
