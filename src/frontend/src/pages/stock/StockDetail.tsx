@@ -51,6 +51,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { getDetailUrl } from '../../functions/urls';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -82,6 +83,7 @@ export default function StockDetail() {
 
   const detailsPanel = useMemo(() => {
     let data = stockitem;
+    let part = stockitem?.part_detail ?? {};
 
     data.available_stock = Math.max(0, data.quantity - data.allocated);
 
@@ -99,14 +101,16 @@ export default function StockDetail() {
       },
       {
         name: 'status',
-        type: 'text',
-        label: t`Stock Status`
+        type: 'status',
+        label: t`Stock Status`,
+        model: ModelType.stockitem
       },
       {
         type: 'text',
         name: 'tests',
         label: `Completed Tests`,
-        icon: 'progress'
+        icon: 'progress',
+        hidden: !part?.trackable
       },
       {
         type: 'text',
@@ -174,6 +178,7 @@ export default function StockDetail() {
 
           return text;
         },
+        icon: 'stock',
         model: ModelType.stockitem,
         hidden: !stockitem.belongs_to
       },
@@ -182,7 +187,17 @@ export default function StockDetail() {
         name: 'consumed_by',
         label: t`Consumed By`,
         model: ModelType.build,
-        hidden: !stockitem.consumed_by
+        hidden: !stockitem.consumed_by,
+        icon: 'build',
+        model_field: 'reference'
+      },
+      {
+        type: 'link',
+        name: 'build',
+        label: t`Build Order`,
+        model: ModelType.build,
+        hidden: !stockitem.build,
+        model_field: 'reference'
       },
       {
         type: 'link',
@@ -192,6 +207,13 @@ export default function StockDetail() {
         hidden: !stockitem.sales_order,
         icon: 'sales_orders',
         model_field: 'reference'
+      },
+      {
+        type: 'link',
+        name: 'customer',
+        label: t`Customer`,
+        model: ModelType.company,
+        hidden: !stockitem.customer
       }
     ];
 
@@ -317,7 +339,7 @@ export default function StockDetail() {
       { name: t`Stock`, url: '/stock' },
       ...(stockitem.location_path ?? []).map((l: any) => ({
         name: l.name,
-        url: apiUrl(ApiEndpoints.stock_location_list, l.pk)
+        url: getDetailUrl(ModelType.stocklocation, l.pk)
       }))
     ],
     [stockitem]
