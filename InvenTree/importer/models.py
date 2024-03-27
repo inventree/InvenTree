@@ -368,13 +368,14 @@ class DataImportColumnMap(models.Model):
     @property
     def label(self):
         """Extract the 'label' associated with the mapped field."""
-        field_def = self.field_definition
-
-        if field_def:
+        if field_def := self.field_definition:
             return field_def.label
 
-        # Default to the field name
-        return self.field
+    @property
+    def description(self):
+        """Extract the 'description' associated with the mapped field."""
+        if field_def := self.field_definition:
+            return field_def.help_text
 
 
 class DataImportRow(models.Model):

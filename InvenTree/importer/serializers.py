@@ -18,10 +18,11 @@ class DataImportColumnMapSerializer(InvenTreeModelSerializer):
         """Meta class options for the serializer."""
 
         model = importer.models.DataImportColumnMap
-        fields = ['pk', 'session', 'column', 'field', 'label']
+        fields = ['pk', 'session', 'column', 'field', 'label', 'description']
         read_only_fields = ['column', 'session']
 
     label = serializers.CharField(read_only=True)
+    description = serializers.CharField(read_only=True)
 
 
 class DataImportSessionSerializer(InvenTreeModelSerializer):
