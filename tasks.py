@@ -247,7 +247,7 @@ def install(c, uv=False):
     # Compile license information
     lic_path = managePyDir().joinpath('InvenTree', 'licenses.txt')
     c.run(
-        f'pip-licenses --format=plain-vertical --with-license-file --no-license-path > {lic_path}'
+        f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}'
     )
 
 
