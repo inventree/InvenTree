@@ -52,7 +52,7 @@ function ImporterDataField({
   return (
     <td>
       {field ? (
-        <StandaloneField fieldDefinition={fieldDefinition} />
+        <StandaloneField fieldDefinition={fieldDefinition} hideLabels />
       ) : (
         <Text>field value</Text>
       )}
@@ -141,7 +141,14 @@ export default function ImporterDataSelector({
           <tr>
             <th>{t`Row`}</th>
             {columns.map((column: any) => {
-              return <th>{column?.label || column?.column}</th>;
+              return (
+                <th>
+                  <Stack spacing="xs">
+                    <Text weight={700}>{column?.label || column?.column}</Text>
+                    <Text size="xs">{column.description || ' '}</Text>
+                  </Stack>
+                </th>
+              );
             })}
             <th></th>
           </tr>

@@ -5,10 +5,12 @@ import { ApiFormField, ApiFormFieldType } from './fields/ApiFormField';
 
 export function StandaloneField({
   fieldDefinition,
-  defaultValue
+  defaultValue,
+  hideLabels
 }: {
   fieldDefinition: ApiFormFieldType;
   defaultValue?: any;
+  hideLabels?: boolean;
 }) {
   const defaultValues = useMemo(() => {
     if (defaultValue)
@@ -29,6 +31,7 @@ export function StandaloneField({
         fieldName="field"
         definition={fieldDefinition}
         control={form.control}
+        hideLabels={hideLabels}
       />
     </FormProvider>
   );

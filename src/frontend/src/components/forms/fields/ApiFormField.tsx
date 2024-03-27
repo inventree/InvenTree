@@ -97,11 +97,13 @@ export type ApiFormFieldType = {
 export function ApiFormField({
   fieldName,
   definition,
-  control
+  control,
+  hideLabels
 }: {
   fieldName: string;
   definition: ApiFormFieldType;
   control: Control<FieldValues, any>;
+  hideLabels?: boolean;
 }) {
   const fieldId = useId();
   const controller = useController({
@@ -123,17 +125,25 @@ export function ApiFormField({
     }
   }, [definition.value]);
 
+  const fieldDefinition: ApiFormFieldType = useMemo(() => {
+    return {
+      ...definition,
+      label: hideLabels ? undefined : definition.label,
+      description: hideLabels ? undefined : definition.description
+    };
+  }, [definition]);
+
   // pull out onValueChange as this can cause strange errors when passing the
   // definition to the input components via spread syntax
   const reducedDefinition = useMemo(() => {
     return {
-      ...definition,
+      ...fieldDefinition,
       onValueChange: undefined,
       adjustFilters: undefined,
       read_only: undefined,
       children: undefined
     };
-  }, [definition]);
+  }, [fieldDefinition]);
 
   // Callback helper when form value changes
   const onChange = useCallback(
@@ -177,7 +187,7 @@ export function ApiFormField({
         return (
           <RelatedModelField
             controller={controller}
-            definition={definition}
+            definition={fieldDefinition}
             fieldName={fieldName}
           />
         );
@@ -215,7 +225,9 @@ export function ApiFormField({
           />
         );
       case 'date':
-        return <DateField controller={controller} definition={definition} />;
+        return (
+          <DateField controller={controller} definition={fieldDefinition} />
+        );
       case 'integer':
       case 'decimal':
       case 'float':
@@ -246,7 +258,7 @@ export function ApiFormField({
           <ChoiceField
             controller={controller}
             fieldName={fieldName}
-            definition={definition}
+            definition={fieldDefinition}
           />
         );
       case 'file upload':
@@ -264,7 +276,7 @@ export function ApiFormField({
       case 'nested object':
         return (
           <NestedObjectField
-            definition={definition}
+            definition={fieldDefinition}
             fieldName={fieldName}
             control={control}
           />
@@ -272,7 +284,7 @@ export function ApiFormField({
       case 'table':
         return (
           <TableField
-            definition={definition}
+            definition={fieldDefinition}
             fieldName={fieldName}
             control={controller}
           />
@@ -280,8 +292,8 @@ export function ApiFormField({
       default:
         return (
           <Alert color="red" title={t`Error`}>
-            Invalid field type for field '{fieldName}': '{definition.field_type}
-            '
+            Invalid field type for field '{fieldName}': '
+            {fieldDefinition.field_type}'
           </Alert>
         );
     }
