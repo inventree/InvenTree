@@ -109,3 +109,47 @@ test('PUI - Pages 1', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('tab', { name: 'Details' }).click();
 });
+
+test('PUI - Pages 2', async ({ page }) => {
+  await page.goto('./platform/');
+  await expect(page).toHaveTitle('InvenTree');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill('admin');
+  await page.getByLabel('password').fill('inventree');
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform');
+
+  await page.goto('./platform/sales/');
+  await page.waitForURL('**/platform/sales/**');
+  await page.waitForURL('**/platform/sales/index/salesorders');
+  await page.waitForTimeout(200);
+  await page.getByRole('tab', { name: 'Customers' }).click();
+  await page.getByText('Customer A').click();
+  await page.getByRole('tab', { name: 'Notes' }).click();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByRole('tab', { name: 'Contacts' }).click();
+  await page.getByRole('tab', { name: 'Assigned Stock' }).click();
+  await page.getByRole('tab', { name: 'Return Orders' }).click();
+  await page.getByRole('tab', { name: 'Sales Orders' }).click();
+  await page.getByRole('tab', { name: 'Contacts' }).click();
+  await page.getByRole('cell', { name: 'Dorathy Gross' }).click();
+  await page
+    .getByRole('row', { name: 'Dorathy Gross 	dorathy.gross@customer.com' })
+    .getByRole('button')
+    .click();
+  await page.waitForTimeout(200);
+  await page.getByLabel('Homenav').click();
+  await page.getByRole('button', { name: 'System Information' }).click();
+  await page.locator('button').filter({ hasText: 'Dismiss' }).click();
+  await page.getByRole('link', { name: 'Scanning' }).click();
+  await page.locator('.mantine-Overlay-root').click();
+  await page.getByPlaceholder('Select input method').click();
+  await page.getByRole('option', { name: 'Manual input' }).click();
+  await page.getByPlaceholder('Enter item serial or data').click();
+  await page.getByPlaceholder('Enter item serial or data').fill('123');
+  await page.getByPlaceholder('Enter item serial or data').press('Enter');
+  await page.getByRole('cell', { name: 'manually' }).click();
+  await page.getByRole('button', { name: 'Lookup part' }).click();
+  await page.getByPlaceholder('Select input method').click();
+  await page.getByRole('option', { name: 'Manual input' }).click();
+});
