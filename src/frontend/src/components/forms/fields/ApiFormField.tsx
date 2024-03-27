@@ -19,6 +19,7 @@ import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
+import { TableField } from './TableField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
 
@@ -69,7 +70,8 @@ export type ApiFormFieldType = {
     | 'number'
     | 'choice'
     | 'file upload'
-    | 'nested object';
+    | 'nested object'
+    | 'table';
   api_url?: string;
   model?: ModelType;
   modelRenderer?: (instance: any) => ReactNode;
@@ -86,6 +88,7 @@ export type ApiFormFieldType = {
   postFieldContent?: JSX.Element;
   onValueChange?: (value: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;
+  headers?: string[];
 };
 
 /**
@@ -264,6 +267,14 @@ export function ApiFormField({
             definition={definition}
             fieldName={fieldName}
             control={control}
+          />
+        );
+      case 'table':
+        return (
+          <TableField
+            definition={definition}
+            fieldName={fieldName}
+            control={controller}
           />
         );
       default:

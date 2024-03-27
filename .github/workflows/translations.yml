@@ -7,7 +7,10 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 16
+  node_version: 18
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -22,6 +25,7 @@ jobs:
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
       INVENTREE_BACKUP_DIR: ./backup
+      INVENTREE_SITE_URL: http://localhost:8000
 
     steps:
       - name: Checkout Code

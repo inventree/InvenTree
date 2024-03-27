@@ -1,10 +1,40 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 178
+INVENTREE_API_VERSION = 185
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v185 - 2024-03-24 : https://github.com/inventree/InvenTree/pull/6836
+    - Remove /plugin/activate endpoint
+    - Update docstrings and typing for various API endpoints (no functional changes)
+
+v184 - 2024-03-17 : https://github.com/inventree/InvenTree/pull/10464
+    - Add additional fields for tests (start/end datetime, test station)
+
+v183 - 2024-03-14 : https://github.com/inventree/InvenTree/pull/5972
+    - Adds "category_default_location" annotated field to part serializer
+    - Adds "part_detail.category_default_location" annotated field to stock item serializer
+    - Adds "part_detail.category_default_location" annotated field to purchase order line serializer
+    - Adds "parent_default_location" annotated field to category serializer
+
+v182 - 2024-03-13 : https://github.com/inventree/InvenTree/pull/6714
+    - Expose ReportSnippet model to the /report/snippet/ API endpoint
+    - Expose ReportAsset model to the /report/asset/ API endpoint
+
+v181 - 2024-02-21 : https://github.com/inventree/InvenTree/pull/6541
+    - Adds "width" and "height" fields to the LabelTemplate API endpoint
+    - Adds "page_size" and "landscape" fields to the ReportTemplate API endpoint
+
+v180 - 2024-3-02 : https://github.com/inventree/InvenTree/pull/6463
+    - Tweaks to API documentation to allow automatic documentation generation
+
+v179 - 2024-03-01 : https://github.com/inventree/InvenTree/pull/6605
+    - Adds "subcategories" count to PartCategory serializer
+    - Adds "sublocations" count to StockLocation serializer
+    - Adds "image" field to PartBrief serializer
+    - Adds "image" field to CompanyBrief serializer
 
 v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
     - Adds "external_stock" field to the Part API endpoint

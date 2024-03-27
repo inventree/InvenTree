@@ -27,7 +27,7 @@ The following guide provides a streamlined production InvenTree installation, wi
 
 ### Required Files
 
-The following files required for this setup are provided with the InvenTree source, located in the `./docker/` directory of the [InvenTree source code](https://github.com/inventree/InvenTree/tree/master/docker/production):
+The following files required for this setup are provided with the InvenTree source, located in the `./docker/` directory of the [InvenTree source code](https://github.com/inventree/InvenTree/tree/master/docker/):
 
 | Filename | Description |
 | --- | --- |
@@ -108,6 +108,9 @@ This command launches the following containers:
 
 !!! success "Up and Running!"
     You should now be able to view the InvenTree login screen at [http://inventree.localhost](http://inventree.localhost) (or whatever custom domain you have configured in the `.env` file).
+
+!!! tip "External Access"
+    Note that `http://inventree.localhost` will only be available from the machine you are running the code on. To make it accessible externally, change `INVENTREE_SITE_URL` to a host address which can be accessed by other computers on your network.
 
 ## Updating InvenTree
 

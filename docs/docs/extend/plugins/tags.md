@@ -8,7 +8,7 @@ Several models in InvenTree can be tagged with arbitrary tags. Tags are useful f
 Tags are shared between all models that can be tagged.
 
 The following models can be tagged:
-- [Parts](../../part/part.md) and [Supplier Parts](../../order/company#supplier-parts)/[Manufacturer Part](../../order/company#manufacturer-parts)
+- [Parts](../../part/part.md) and [Supplier Parts](../../order/company.md#supplier-parts)/[Manufacturer Part](../../order/company.md#manufacturer-parts)
 - [Stock Items](../../stock/stock.md#stock-item) / [Stock Location](../../stock/stock.md#stock-location)
 
 

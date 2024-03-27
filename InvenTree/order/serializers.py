@@ -5,7 +5,16 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models, transaction
-from django.db.models import BooleanField, Case, ExpressionWrapper, F, Q, Value, When
+from django.db.models import (
+    BooleanField,
+    Case,
+    ExpressionWrapper,
+    F,
+    Prefetch,
+    Q,
+    Value,
+    When,
+)
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -14,6 +23,8 @@ from sql_util.utils import SubqueryCount
 
 import order.models
 import part.filters
+import part.filters as part_filters
+import part.models as part_models
 import stock.models
 import stock.serializers
 from common.serializers import ProjectCodeSerializer
@@ -23,7 +34,13 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
-from InvenTree.helpers import extract_serial_numbers, hash_barcode, normalize, str2bool
+from InvenTree.helpers import (
+    current_date,
+    extract_serial_numbers,
+    hash_barcode,
+    normalize,
+    str2bool,
+)
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializer,
     InvenTreeCurrencySerializer,
@@ -375,6 +392,17 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         - "total_price" = purchase_price * quantity
         - "overdue" status (boolean field)
         """
+        queryset = queryset.prefetch_related(
+            Prefetch(
+                'part__part',
+                queryset=part_models.Part.objects.annotate(
+                    category_default_location=part_filters.annotate_default_location(
+                        'category__'
+                    )
+                ).prefetch_related(None),
+            )
+        )
+
         queryset = queryset.annotate(
             total_price=ExpressionWrapper(
                 F('purchase_price') * F('quantity'), output_field=models.DecimalField()
@@ -1118,11 +1146,12 @@ class SalesOrderShipmentCompleteSerializer(serializers.ModelSerializer):
         user = request.user
 
         # Extract shipping date (defaults to today's date)
-        shipment_date = data.get('shipment_date', datetime.now())
+        now = current_date()
+        shipment_date = data.get('shipment_date', now)
         if shipment_date is None:
             # Shipment date should not be None - check above only
             # checks if shipment_date exists in data
-            shipment_date = datetime.now()
+            shipment_date = now
 
         shipment.complete_shipment(
             user,

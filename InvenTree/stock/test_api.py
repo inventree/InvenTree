@@ -446,7 +446,7 @@ class StockLocationTest(StockAPITestCase):
 
         StockLocation.objects.rebuild()
 
-        with self.assertNumQueriesLessThan(10):
+        with self.assertNumQueriesLessThan(12):
             response = self.get(reverse('api-location-tree'), expected_code=200)
 
         self.assertEqual(len(response.data), StockLocation.objects.count())

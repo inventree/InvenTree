@@ -148,7 +148,7 @@ class CurrencyExchangeView(APIView):
 
         response = {
             'base_currency': common.models.InvenTreeSetting.get_setting(
-                'INVENTREE_DEFAULT_CURRENCY', 'USD'
+                'INVENTREE_DEFAULT_CURRENCY', backup_value='USD'
             ),
             'exchange_rates': {},
             'updated': updated,

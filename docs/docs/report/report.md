@@ -117,6 +117,7 @@ So, if you are writing a template which has custom formatting, (or any other sec
 
 ```html
 {% raw %}
+{% load l10n %}
 <head>
     <style>
         @page {
@@ -132,6 +133,9 @@ So, if you are writing a template which has custom formatting, (or any other sec
 
 !!! tip "Close it out"
     Don't forget to end with a `{% raw %}{% endlocalize %}{% endraw %}` tag!
+
+!!! tip "l10n"
+    You will need to add `{% raw %}{% load l10n %}{% endraw %}` to the top of your template file to use the `{% raw %}{% localize %}{% endraw %}` tag.
 
 ### Extending with Plugins
 

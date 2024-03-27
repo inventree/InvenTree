@@ -1,5 +1,5 @@
-import { Group, Text } from '@mantine/core';
-import { IconPhoto } from '@tabler/icons-react';
+import { Anchor, Group, Text } from '@mantine/core';
+import { IconLink, IconPhoto } from '@tabler/icons-react';
 import {
   IconFile,
   IconFileTypeCsv,
@@ -50,14 +50,20 @@ export function attachmentIcon(attachment: string): ReactNode {
  * @param attachment : string - The attachment filename
  */
 export function AttachmentLink({
-  attachment
+  attachment,
+  external
 }: {
   attachment: string;
+  external?: boolean;
 }): ReactNode {
+  let text = external ? attachment : attachment.split('/').pop();
+
   return (
     <Group position="left" spacing="sm">
-      {attachmentIcon(attachment)}
-      <Text>{attachment.split('/').pop()}</Text>
+      {external ? <IconLink /> : attachmentIcon(attachment)}
+      <Anchor href={attachment} target="_blank" rel="noopener noreferrer">
+        {text}
+      </Anchor>
     </Group>
   );
 }

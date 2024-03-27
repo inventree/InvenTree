@@ -74,7 +74,7 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         verbose_name = _("Build Order")
         verbose_name_plural = _("Build Orders")
 
-    OVERDUE_FILTER = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=datetime.now().date())
+    OVERDUE_FILTER = Q(status__in=BuildStatusGroups.ACTIVE_CODES) & ~Q(target_date=None) & Q(target_date__lte=InvenTree.helpers.current_date())
 
     # Global setting for specifying reference pattern
     REFERENCE_PATTERN_SETTING = 'BUILDORDER_REFERENCE_PATTERN'
@@ -120,6 +120,12 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         """Validate the BuildOrder model"""
 
         super().clean()
+
+        if common.models.InvenTreeSetting.get_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
+            if not self.responsible:
+                raise ValidationError({
+                    'responsible': _('Responsible user or group must be specified')
+                })
 
         # Prevent changing target part after creation
         if self.has_field_changed('part'):
@@ -519,22 +525,38 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         return True
 
     @transaction.atomic
-    def complete_build(self, user):
-        """Mark this build as complete."""
-        if self.incomplete_count > 0:
-            return
+    def complete_allocations(self, user):
+        """Complete all stock allocations for this build order.
 
-        self.completion_date = datetime.now().date()
-        self.completed_by = user
-        self.status = BuildStatus.COMPLETE.value
-        self.save()
-
+        - This function is called when a build order is completed
+        """
         # Remove untracked allocated stock
         self.subtract_allocated_stock(user)
 
         # Ensure that there are no longer any BuildItem objects
         # which point to this Build Order
         self.allocated_stock.delete()
+
+    @transaction.atomic
+    def complete_build(self, user):
+        """Mark this build as complete."""
+
+        import build.tasks
+
+        if self.incomplete_count > 0:
+            return
+
+        self.completion_date = InvenTree.helpers.current_date()
+        self.completed_by = user
+        self.status = BuildStatus.COMPLETE.value
+        self.save()
+
+        # Offload task to complete build allocations
+        InvenTree.tasks.offload_task(
+            build.tasks.complete_build_allocations,
+            self.pk,
+            user.pk if user else None
+        )
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
@@ -606,7 +628,7 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
                 output.delete()
 
         # Date of 'completion' is the date the build was cancelled
-        self.completion_date = datetime.now().date()
+        self.completion_date = InvenTree.helpers.current_date()
         self.completed_by = user
 
         self.status = BuildStatus.CANCELLED.value

@@ -134,7 +134,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     pk: selectedTest,
     title: t`Edit Test Template`,
     fields: partTestTemplateFields,
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const deleteTestTemplate = useDeleteApiFormModal({
@@ -190,7 +190,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       <AddItemButton
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);

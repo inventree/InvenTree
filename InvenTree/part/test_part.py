@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from allauth.account.models import EmailAddress
 
@@ -63,6 +64,7 @@ class TemplateTagTest(InvenTreeTestCase):
         """Test the 'instance name' setting."""
         self.assertEqual(inventree_extras.inventree_instance_name(), 'InvenTree')
 
+    @override_settings(SITE_URL=None)
     def test_inventree_base_url(self):
         """Test that the base URL tag returns correctly."""
         self.assertEqual(inventree_extras.inventree_base_url(), '')
@@ -430,6 +432,29 @@ class TestTemplateTest(TestCase):
         self.assertEqual(template.key, 'asampletest')
 
         self.assertEqual(variant.getTestTemplates().count(), n + 1)
+
+    def test_key_generation(self):
+        """Test the key generation method."""
+        variant = Part.objects.get(pk=10004)
+
+        invalid_names = ['', '+', '+++++++', '   ', '<>$&&&']
+
+        for name in invalid_names:
+            template = PartTestTemplate(part=variant, test_name=name)
+            with self.assertRaises(ValidationError):
+                template.clean()
+
+        valid_names = [
+            'Собранный щит',
+            '!! 123 Собранный щит <><><> $$$$$ !!!',
+            '----hello world----',
+            'Olá Mundo',
+            '我不懂中文',
+        ]
+
+        for name in valid_names:
+            template = PartTestTemplate(part=variant, test_name=name)
+            template.clean()
 
 
 class PartSettingsTest(InvenTreeTestCase):

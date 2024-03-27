@@ -287,6 +287,32 @@ def annotate_category_parts():
     )
 
 
+def annotate_default_location(reference=''):
+    """Construct a queryset that finds the closest default location in the part's category tree.
+
+    If the part's category has its own default_location, this is returned.
+    If not, the category tree is traversed until a value is found.
+    """
+    subquery = part.models.PartCategory.objects.filter(
+        tree_id=OuterRef(f'{reference}tree_id'),
+        lft__lt=OuterRef(f'{reference}lft'),
+        rght__gt=OuterRef(f'{reference}rght'),
+        level__lte=OuterRef(f'{reference}level'),
+        parent__isnull=False,
+    )
+
+    return Coalesce(
+        F(f'{reference}default_location'),
+        Subquery(
+            subquery.order_by('-level')
+            .filter(default_location__isnull=False)
+            .values('default_location')
+        ),
+        Value(None),
+        output_field=IntegerField(),
+    )
+
+
 def annotate_sub_categories():
     """Construct a queryset annotation which returns the number of subcategories for each provided category."""
     subquery = part.models.PartCategory.objects.filter(

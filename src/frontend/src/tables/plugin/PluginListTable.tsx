@@ -125,7 +125,9 @@ export function PluginDrawer({
 
         <Group spacing={'xs'}>
           {plugin && PluginIcon(plugin)}
-          <Title order={4}>{plugin?.meta.human_name || plugin?.name}</Title>
+          <Title order={4}>
+            {plugin?.meta?.human_name ?? plugin?.name ?? '-'}
+          </Title>
         </Group>
 
         <ActionDropdown
@@ -610,8 +612,8 @@ export default function PluginListTable() {
       {uninstallPluginModal.modal}
       {deletePluginModal.modal}
       <DetailDrawer
-        title={t`Plugin detail`}
-        size={'xl'}
+        title={t`Plugin Detail`}
+        size={'50%'}
         renderContent={(id) => {
           if (!id) return false;
           return <PluginDrawer id={id} refreshTable={table.refreshTable} />;

@@ -40,7 +40,7 @@ margin-top: 4cm;
 {% endblock %}
 
 {% block bottom_left %}
-content: "v{{report_revision}} - {{ date.isoformat }}";
+content: "v{{report_revision}} - {% format_date date %}";
 {% endblock %}
 
 {% block bottom_center %}
