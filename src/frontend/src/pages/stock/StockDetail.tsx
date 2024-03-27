@@ -82,6 +82,7 @@ export default function StockDetail() {
 
   const detailsPanel = useMemo(() => {
     let data = stockitem;
+    let part = stockitem?.part_detail ?? {};
 
     data.available_stock = Math.max(0, data.quantity - data.allocated);
 
@@ -99,14 +100,16 @@ export default function StockDetail() {
       },
       {
         name: 'status',
-        type: 'text',
-        label: t`Stock Status`
+        type: 'status',
+        label: t`Stock Status`,
+        model: ModelType.stockitem
       },
       {
         type: 'text',
         name: 'tests',
         label: `Completed Tests`,
-        icon: 'progress'
+        icon: 'progress',
+        hidden: !part?.trackable
       },
       {
         type: 'text',
