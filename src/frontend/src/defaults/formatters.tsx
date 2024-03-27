@@ -88,6 +88,7 @@ export function formatPriceRange(
 
 interface renderDateOptionsType {
   showTime?: boolean;
+  showSeconds?: boolean;
 }
 
 /*
@@ -106,6 +107,9 @@ export function renderDate(date: string, options: renderDateOptionsType = {}) {
 
   if (options.showTime) {
     fmt += ' HH:mm';
+    if (options.showSeconds) {
+      fmt += ':ss';
+    }
   }
 
   const m = dayjs(date);

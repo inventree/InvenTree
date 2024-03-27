@@ -202,6 +202,41 @@ export default function StockItemTestResultTable({
             </Group>
           );
         }
+      },
+      {
+        accessor: 'test_station',
+        sortable: true,
+        title: t`Test station`
+      },
+      {
+        accessor: 'started_datetime',
+        sortable: true,
+        title: t`Started`,
+        render: (record: any) => {
+          return (
+            <Group position="apart">
+              {renderDate(record.started_datetime, {
+                showTime: true,
+                showSeconds: true
+              })}
+            </Group>
+          );
+        }
+      },
+      {
+        accessor: 'finished_datetime',
+        sortable: true,
+        title: t`Finished`,
+        render: (record: any) => {
+          return (
+            <Group position="apart">
+              {renderDate(record.finished_datetime, {
+                showTime: true,
+                showSeconds: true
+              })}
+            </Group>
+          );
+        }
       }
     ];
   }, [itemId]);
@@ -218,6 +253,9 @@ export default function StockItemTestResultTable({
       value: {},
       attachment: {},
       notes: {},
+      test_station: {},
+      started_datetime: {},
+      finished_datetime: {},
       stock_item: {
         value: itemId,
         hidden: true
