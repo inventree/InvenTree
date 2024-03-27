@@ -2104,7 +2104,7 @@ def label_printer_options():
 
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
-    """An InvenTreeSetting object with a usercontext."""
+    """An InvenTreeSetting object with a user context."""
 
     CHECK_SETTING_KEY = True
 
