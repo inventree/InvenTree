@@ -537,16 +537,3 @@ jobs:
         with:
           name: frontend-build
           path: InvenTree/web/static/web
-
-  finish_coverage:
-    name: Finish Coverage
-    runs-on: ubuntu-20.04
-    needs: ["platform_ui", "coverage", "paths-filter"]
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
-
-    steps:
-      - name: Finish coverage reporting
-        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          carryforward: "pui,backend"
