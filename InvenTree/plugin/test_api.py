@@ -90,12 +90,19 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
     def test_plugin_activate(self):
         """Test the plugin activate."""
         test_plg = self.plugin_confs.first()
+        assert test_plg is not None
 
         def assert_plugin_active(self, active):
-            self.assertEqual(PluginConfig.objects.all().first().active, active)
+            plgs = PluginConfig.objects.all().first()
+            assert plgs is not None
+            self.assertEqual(plgs.active, active)
 
         # Should not work - not a superuser
-        response = self.client.post(reverse('api-plugin-activate'), {}, follow=True)
+        response = self.client.post(
+            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.pk}),
+            {},
+            follow=True,
+        )
         self.assertEqual(response.status_code, 403)
 
         # Make user superuser
@@ -109,7 +116,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         # Activate plugin with detail url
         assert_plugin_active(self, False)
         response = self.client.patch(
-            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.id}),
+            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.pk}),
             {},
             follow=True,
         )
@@ -123,7 +130,9 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         # Activate plugin
         assert_plugin_active(self, False)
         response = self.client.patch(
-            reverse('api-plugin-activate'), {'pk': test_plg.pk}, follow=True
+            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.pk}),
+            {},
+            follow=True,
         )
         self.assertEqual(response.status_code, 200)
         assert_plugin_active(self, True)
@@ -133,6 +142,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         url = reverse('admin:plugin_pluginconfig_changelist')
 
         test_plg = self.plugin_confs.first()
+        assert test_plg is not None
+
         # deactivate plugin
         response = self.client.post(
             url,
@@ -181,6 +192,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         """Test the PluginConfig model."""
         # check mixin registry
         plg = self.plugin_confs.first()
+        assert plg is not None
+
         mixin_dict = plg.mixins()
         self.assertIn('base', mixin_dict)
         self.assertDictContainsSubset(
@@ -190,6 +203,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         # check reload on save
         with self.assertWarns(Warning) as cm:
             plg_inactive = self.plugin_confs.filter(active=False).first()
+            assert plg_inactive is not None
+
             plg_inactive.active = True
             plg_inactive.save()
         self.assertEqual(cm.warning.args[0], 'A reload was triggered')
@@ -208,7 +223,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         # Wrong with pk
         with self.assertRaises(NotFound) as exc:
-            check_plugin(plugin_slug=None, plugin_pk='123')
+            check_plugin(plugin_slug=None, plugin_pk=123)
         self.assertEqual(str(exc.exception.detail), "Plugin '123' not installed")
 
     def test_plugin_settings(self):
@@ -219,6 +234,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         # Activate the 'sample' plugin via the API
         cfg = PluginConfig.objects.filter(key='sample').first()
+        assert cfg is not None
+
         url = reverse('api-plugin-detail-activate', kwargs={'pk': cfg.pk})
         self.client.patch(url, {}, expected_code=200)
 

@@ -8,14 +8,16 @@ import {
   createStyles,
   useMantineTheme
 } from '@mantine/core';
-import { IconChevronDown, TablerIconsProps } from '@tabler/icons-react';
+import { IconChevronDown } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
+
+import { TablerIconType } from '../../functions/icons';
 
 interface SplitButtonOption {
   key: string;
   name: string;
   onClick: () => void;
-  icon: (props: TablerIconsProps) => JSX.Element;
+  icon: TablerIconType;
   disabled?: boolean;
   tooltip?: string;
 }
