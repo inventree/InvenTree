@@ -6,7 +6,7 @@ django-allauth                          # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
-django-crispy-forms<2.0                 # Form helpers # FIXED 2023-02-18 due to required updates in the new version
+django-crispy-forms<3.0                 # Form helpers # FIXED 2023-02-18 due to required updates in the new version
 django-dbbackup                         # Backup / restore of database and media files
 django-error-report-2                   # Error report viewer for the admin interface
 django-filter                           # Extended filtering options
