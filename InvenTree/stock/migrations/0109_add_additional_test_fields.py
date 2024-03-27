@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='stockitemtestresult',
             name='test_station',
-            field=models.CharField(blank=True, help_text='The identifier of the test station where the test was performed', null=True, max_length=500, verbose_name='Test station'),        ),
+            field=models.CharField(blank=True, help_text='The identifier of the test station where the test was performed', max_length=500, verbose_name='Test station'),        ),
     ]
