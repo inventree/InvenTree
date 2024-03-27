@@ -1794,6 +1794,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'RMA-{ref:04d}',
             'validator': order.validators.validate_return_order_reference_pattern,
         },
+        'RETURNORDER_REQUIRE_RESPONSIBLE': {
+            'name': _('Require Responsible Owner'),
+            'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
+        },
         'RETURNORDER_EDIT_COMPLETED_ORDERS': {
             'name': _('Edit Completed Return Orders'),
             'description': _(
@@ -1809,6 +1815,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ),
             'default': 'SO-{ref:04d}',
             'validator': order.validators.validate_sales_order_reference_pattern,
+        },
+        'SALESORDER_REQUIRE_RESPONSIBLE': {
+            'name': _('Require Responsible Owner'),
+            'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
         },
         'SALESORDER_DEFAULT_SHIPMENT': {
             'name': _('Sales Order Default Shipment'),
@@ -1831,6 +1843,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ),
             'default': 'PO-{ref:04d}',
             'validator': order.validators.validate_purchase_order_reference_pattern,
+        },
+        'PURCHASEORDER_REQUIRE_RESPONSIBLE': {
+            'name': _('Require Responsible Owner'),
+            'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
         },
         'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
             'name': _('Edit Completed Purchase Orders'),
