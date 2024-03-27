@@ -25,7 +25,9 @@ def compile_full_name_template(*args, **kwargs):
     global _part_full_name_template
     global _part_full_name_template_string
 
-    template_string = InvenTreeSetting.get_setting('PART_NAME_FORMAT', '')
+    template_string = InvenTreeSetting.get_setting(
+        'PART_NAME_FORMAT', backup_value='', cache=True
+    )
 
     # Skip if the template string has not changed
     if (

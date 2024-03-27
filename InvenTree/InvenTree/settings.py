@@ -952,6 +952,8 @@ USE_I18N = True
 # It generates a *lot* of cruft in the logs
 if not TESTING:
     USE_TZ = True  # pragma: no cover
+else:
+    USE_TZ = False
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
