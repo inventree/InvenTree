@@ -37,7 +37,7 @@ enum InputMethod {
 }
 
 interface inputProps {
-  action: (items: ScanItem[]) => void;
+  action: (items: ScanItem) => void;
 }
 
 /* Input that uses QR code detection from images */
@@ -97,15 +97,13 @@ export default function BarcodeInputImage({ action }: inputProps) {
     lastValue = decodedText;
 
     // submit value upstream
-    action([
-      {
-        id: randomId(),
-        ref: decodedText,
-        data: decodedText,
-        timestamp: new Date(),
-        source: InputMethod.ImageBarcode
-      }
-    ]);
+    action({
+      id: randomId(),
+      ref: decodedText,
+      data: decodedText,
+      timestamp: new Date(),
+      source: InputMethod.ImageBarcode
+    });
 
     qrCodeScanner?.resume();
   }

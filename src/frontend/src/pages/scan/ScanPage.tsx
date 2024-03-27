@@ -154,6 +154,8 @@ export default function Scan() {
     }
   };
 
+  const createScanItem = (barcodeResponseData) => {};
+
   const loadBarcode = async (barcodeURL) => {
     try {
       let response = await api.get(barcodeURL);
@@ -214,15 +216,27 @@ export default function Scan() {
 
   const addItem = async (item: ScanItem) => {
     console.log(`Add Item:`, item);
+
     const result = await validateBarcode(item.ref);
     if (!result) return;
+
     const processedItem = matchObject(result);
     if (!processedItem[0]) return;
+
+    item.model = processedItem[0];
+    item.pk = processedItem[1];
+
     let modelInfo = ModelInformationDict[processedItem[0]];
     const url = apiUrl(modelInfo.api_endpoint, processedItem[1]);
     const barcodeResult = await loadBarcode(url);
-    scannedItems.push(barcodeResult);
-    console.log(scannedItems);
+
+    item.instance = barcodeResult;
+
+    scannedItems.push(item);
+    historyHandlers.append(item);
+
+    console.log(`Scanned Items:`, scannedItems);
+    console.log(`History:`, history);
   };
 
   const addItems = (items: ScanItem[]) => {
@@ -235,6 +249,7 @@ export default function Scan() {
 
   // save history data to session storage
   useEffect(() => {
+    console.log(history);
     if (history.length === 0) return;
     setHistoryStorage(history);
   }, [history]);
@@ -256,12 +271,12 @@ export default function Scan() {
     { value: InputMethod.ImageBarcode, label: t`Image Barcode` }
   ];
 
-  const barcodeInputMethod = (function () {
+  const barcodeInputMethod = (() => {
     switch (inputValue) {
       case InputMethod.Manual:
         return <BarcodeInputManual action={addItem} />;
       case InputMethod.ImageBarcode:
-        return <BarcodeInputImage action={addItems} />;
+        return <BarcodeInputImage action={addItem} />;
       default:
         return <Text>No input selected</Text>;
     }
