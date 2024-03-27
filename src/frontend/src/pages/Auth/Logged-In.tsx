@@ -1,15 +1,16 @@
 import { Trans } from '@lingui/macro';
 import { Card, Container, Group, Loader, Stack, Text } from '@mantine/core';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { checkLoginState } from '../../functions/auth';
 
 export default function Logged_In() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    checkLoginState(navigate);
+    checkLoginState(navigate, location?.state?.redirectFrom);
   }, []);
 
   return (
