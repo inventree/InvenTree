@@ -13,16 +13,16 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='stockitemtestresult',
             name='finished_datetime',
-            field=models.DateTimeField(blank=True, help_text='The timestamp of the test finish', verbose_name='Finished'),
+            field=models.DateTimeField(blank=True, null=True, help_text='The timestamp of the test finish', verbose_name='Finished'),
         ),
         migrations.AddField(
             model_name='stockitemtestresult',
             name='started_datetime',
-            field=models.DateTimeField(blank=True, help_text='The timestamp of the test start', verbose_name='Started'),
+            field=models.DateTimeField(blank=True, null=True, help_text='The timestamp of the test start', verbose_name='Started'),
         ),
         migrations.AddField(
             model_name='stockitemtestresult',
             name='test_station',
-            field=models.CharField(blank=True, help_text='The identifier of the test station where the test was performed', max_length=500, verbose_name='Test station'),
+            field=models.CharField(blank=True, null=True, help_text='The identifier of the test station where the test was performed', max_length=500, verbose_name='Test station'),
         ),
     ]
