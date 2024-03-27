@@ -8,7 +8,7 @@ import {
   Tooltip
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -143,10 +143,12 @@ export default function ImporterDataSelector({
             {columns.map((column: any) => {
               return (
                 <th>
-                  <Stack spacing="xs">
+                  <Tooltip
+                    label={column.description}
+                    hidden={!column.description}
+                  >
                     <Text weight={700}>{column?.label || column?.column}</Text>
-                    <Text size="xs">{column.description || ' '}</Text>
-                  </Stack>
+                  </Tooltip>
                 </th>
               );
             })}
