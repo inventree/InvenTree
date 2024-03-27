@@ -207,6 +207,8 @@ class Order(
         responsible: User (or group) responsible for managing the order
     """
 
+    REQUIRE_RESPONSIBLE_SETTING = None
+
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
 
@@ -226,6 +228,16 @@ class Order(
     def clean(self):
         """Custom clean method for the generic order class."""
         super().clean()
+
+        # Check if a responsible owner is required for this order type
+        if self.REQUIRE_RESPONSIBLE_SETTING:
+            if common_models.InvenTreeSetting.get_setting(
+                self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False
+            ):
+                if not self.responsible:
+                    raise ValidationError({
+                        'responsible': _('Responsible user or group must be specified')
+                    })
 
         # Check that the referenced 'contact' matches the correct 'company'
         if self.company and self.contact:
@@ -347,6 +359,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         target_date: Expected delivery target date for PurchaseOrder completion (optional)
     """
 
+    REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
+    REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
         if settings.ENABLE_CLASSIC_FRONTEND:
@@ -371,9 +386,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         }
 
         return defaults
-
-    # Global setting for specifying reference pattern
-    REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -805,6 +817,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
 class SalesOrder(TotalPriceMixin, Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer."""
 
+    REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
+    REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
+
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
         if settings.ENABLE_CLASSIC_FRONTEND:
@@ -827,9 +842,6 @@ class SalesOrder(TotalPriceMixin, Order):
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
         return defaults
-
-    # Global setting for specifying reference pattern
-    REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -1943,6 +1955,9 @@ class ReturnOrder(TotalPriceMixin, Order):
         status: The status of the order (refer to status_codes.ReturnOrderStatus)
     """
 
+    REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
+    REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
+
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
         if settings.ENABLE_CLASSIC_FRONTEND:
@@ -1967,8 +1982,6 @@ class ReturnOrder(TotalPriceMixin, Order):
         }
 
         return defaults
-
-    REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
 
     def __str__(self):
         """Render a string representation of this ReturnOrder."""
