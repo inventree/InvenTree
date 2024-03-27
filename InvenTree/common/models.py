@@ -13,7 +13,7 @@ import math
 import os
 import re
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta, timezone
 from enum import Enum
 from secrets import compare_digest
 from typing import Any, Callable, TypedDict, Union
@@ -2855,7 +2855,7 @@ class NotificationEntry(MetaMixin):
     @classmethod
     def check_recent(cls, key: str, uid: int, delta: timedelta):
         """Test if a particular notification has been sent in the specified time period."""
-        since = datetime.now().date() - delta
+        since = InvenTree.helpers.current_date() - delta
 
         entries = cls.objects.filter(key=key, uid=uid, updated__gte=since)
 
