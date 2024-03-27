@@ -190,6 +190,8 @@ class BaseInvenTreeSetting(models.Model):
 
     SETTINGS: dict[str, SettingsKeyType] = {}
 
+    CHECK_SETTING_KEY = False
+
     extra_unique_fields: list[str] = []
 
     class Meta:
@@ -635,7 +637,11 @@ class BaseInvenTreeSetting(models.Model):
 
         If it does not exist, return the backup value (default = None)
         """
-        if key not in cls.SETTINGS and not key.startswith('_'):
+        if (
+            cls.CHECK_SETTING_KEY
+            and key not in cls.SETTINGS
+            and not key.startswith('_')
+        ):
             logger.warning(
                 "get_setting: Setting key '%s' is not defined for class %s",
                 key,
@@ -677,7 +683,11 @@ class BaseInvenTreeSetting(models.Model):
             change_user: User object (must be staff member to update a core setting)
             create: If True, create a new setting if the specified key does not exist.
         """
-        if key not in cls.SETTINGS and not key.startswith('_'):
+        if (
+            cls.CHECK_SETTING_KEY
+            and key not in cls.SETTINGS
+            and not key.startswith('_')
+        ):
             logger.warning(
                 "set_setting: Setting key '%s' is not defined for class %s",
                 key,
@@ -1212,6 +1222,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
     """
 
     SETTINGS: dict[str, InvenTreeSettingsKeyType]
+
+    CHECK_SETTING_KEY = True
 
     class Meta:
         """Meta options for InvenTreeSetting."""
@@ -2094,6 +2106,8 @@ def label_printer_options():
 class InvenTreeUserSetting(BaseInvenTreeSetting):
     """An InvenTreeSetting object with a usercontext."""
 
+    CHECK_SETTING_KEY = True
+
     class Meta:
         """Meta options for InvenTreeUserSetting."""
 
@@ -2440,6 +2454,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'name': _('Default stock location label template'),
             'description': _(
                 'The stock location label template to be automatically selected'
+            ),
+            'validator': [int],
+            'default': '',
+        },
+        'DEFAULT_LINE_LABEL_TEMPLATE': {
+            'name': _('Default build line label template'),
+            'description': _(
+                'The build line label template to be automatically selected'
             ),
             'validator': [int],
             'default': '',
