@@ -3,17 +3,47 @@ import {
   Accordion,
   Alert,
   Divider,
+  Group,
   LoadingOverlay,
+  Space,
   Stack,
+  Tabs,
   Text
 } from '@mantine/core';
-import { ContextModalProps, closeModal } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
+import { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
+import { StylishText } from '../items/StylishText';
+
+export function LicenceView(entries: any[]) {
+  return (
+    <Stack spacing="xs">
+      <Divider />
+      {entries?.length && (
+        <Accordion variant="contained" defaultValue="-">
+          {entries?.map((entry: any, index: number) => (
+            <Accordion.Item key={index} value={`entry-${index}`}>
+              <Accordion.Control>
+                <Group position="apart" grow>
+                  <Text>{entry.Name}</Text>
+                  <Text>{entry.License}</Text>
+                  <Space />
+                  <Text>{entry.Version}</Text>
+                </Group>
+              </Accordion.Control>
+              <Accordion.Panel>
+                {entry.LicenseText || t`No license text available`}
+              </Accordion.Panel>
+            </Accordion.Item>
+          ))}
+        </Accordion>
+      )}
+    </Stack>
+  );
+}
 
 export function LicenseModal({}: ContextModalProps<{
   modalBody: string;
@@ -23,7 +53,7 @@ export function LicenseModal({}: ContextModalProps<{
     queryFn: () =>
       api
         .get(apiUrl(ApiEndpoints.license))
-        .then((res) => res.data)
+        .then((res) => res.data ?? {})
         .catch(() => {})
   });
 
@@ -43,16 +73,24 @@ export function LicenseModal({}: ContextModalProps<{
           </Text>
         </Alert>
       ) : (
-        <Accordion variant="contained" defaultValue="customization">
-          {Object.keys(data ?? []).map((item, key) => (
-            <Accordion.Item key={key} value={item}>
-              <Accordion.Control>{item}</Accordion.Control>
-              <Accordion.Panel>
-                <p style={{ whiteSpace: 'pre-line' }}>{data[item]}</p>
-              </Accordion.Panel>
-            </Accordion.Item>
-          ))}
-        </Accordion>
+        <Tabs defaultValue="backend">
+          <Tabs.List>
+            <Tabs.Tab value="backend">
+              <Trans>Backend Packages</Trans>
+            </Tabs.Tab>
+            <Tabs.Tab value="frontend">
+              <Trans>Frontend Packages</Trans>
+            </Tabs.Tab>
+          </Tabs.List>
+
+          <Tabs.Panel value="backend">
+            {LicenceView(data?.backend ?? [])}
+          </Tabs.Panel>
+
+          <Tabs.Panel value="frontend">
+            {LicenceView(data?.frontend ?? [])}
+          </Tabs.Panel>
+        </Tabs>
       )}
     </Stack>
   );
