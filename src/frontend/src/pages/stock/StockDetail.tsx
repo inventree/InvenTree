@@ -51,6 +51,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { getDetailUrl } from '../../functions/urls';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -338,7 +339,7 @@ export default function StockDetail() {
       { name: t`Stock`, url: '/stock' },
       ...(stockitem.location_path ?? []).map((l: any) => ({
         name: l.name,
-        url: apiUrl(ApiEndpoints.stock_location_list, l.pk)
+        url: getDetailUrl(ModelType.stocklocation, l.pk)
       }))
     ],
     [stockitem]
