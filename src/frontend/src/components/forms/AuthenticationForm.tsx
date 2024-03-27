@@ -15,7 +15,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -32,6 +32,7 @@ export function AuthenticationForm() {
   const [classicLoginMode, setMode] = useDisclosure(true);
   const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
@@ -52,7 +53,7 @@ export function AuthenticationForm() {
             color: 'green',
             icon: <IconCheck size="1rem" />
           });
-          navigate('/home');
+          navigate(location?.state?.redirectFrom ?? '/home');
         } else {
           notifications.show({
             title: t`Login failed`,
