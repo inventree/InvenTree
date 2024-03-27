@@ -77,7 +77,7 @@ import { IconArrowBigDownLineFilled } from '@tabler/icons-react';
 import { IconTruckReturn } from '@tabler/icons-react';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { IconCalendarTime } from '@tabler/icons-react';
-import { TablerIconsProps } from '@tabler/icons-react';
+import { Icon, IconProps } from '@tabler/icons-react';
 import React from 'react';
 
 const icons = {
@@ -104,6 +104,8 @@ const icons = {
   variants: IconVersions,
   allocations: IconBookmarks,
   bom: IconListTree,
+  build: IconTools,
+  build_order: IconTools,
   builds: IconTools,
   used_in: IconStack2,
   manufacturers: IconBuildingFactory2,
@@ -170,6 +172,7 @@ const icons = {
   quantity: IconNumbers,
   progress: IconProgressCheck,
   reference: IconHash,
+  serial: IconHash,
   website: IconWorld,
   email: IconMail,
   phone: IconPhone,
@@ -184,6 +187,9 @@ const icons = {
 };
 
 export type InvenTreeIconType = keyof typeof icons;
+export type TablerIconType = React.ForwardRefExoticComponent<
+  Omit<IconProps, 'ref'> & React.RefAttributes<Icon>
+>;
 
 /**
  * Returns a Tabler Icon for the model field name supplied
@@ -193,13 +199,16 @@ export function GetIcon(field: InvenTreeIconType) {
   return icons[field];
 }
 
-type IconProps = {
+// Aliasing the new type name to make it distinct
+type TablerIconProps = IconProps;
+
+type InvenTreeIconProps = {
   icon: InvenTreeIconType;
-  iconProps?: TablerIconsProps;
+  iconProps?: TablerIconProps;
 };
 
-export function InvenTreeIcon(props: IconProps) {
-  let Icon: (props: TablerIconsProps) => React.JSX.Element;
+export function InvenTreeIcon(props: InvenTreeIconProps) {
+  let Icon: React.ForwardRefExoticComponent<React.RefAttributes<any>>;
 
   if (props.icon in icons) {
     Icon = GetIcon(props.icon);
@@ -212,6 +221,6 @@ export function InvenTreeIcon(props: IconProps) {
 
   return <Icon {...props.iconProps} />;
 }
-function IconShapes(props: TablerIconsProps): Element {
+function IconShapes(props: TablerIconProps): Element {
   throw new Error('Function not implemented.');
 }

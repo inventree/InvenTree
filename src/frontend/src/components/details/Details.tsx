@@ -53,7 +53,7 @@ export type DetailsField =
       | StringDetailField
       | BooleanField
       | LinkDetailField
-      | ProgressBarfield
+      | ProgressBarField
       | StatusField
     );
 
@@ -85,7 +85,7 @@ type ExternalLinkField = {
   external: true;
 };
 
-type ProgressBarfield = {
+type ProgressBarField = {
   type: 'progressbar';
   progress: number;
   total: number;
@@ -95,8 +95,6 @@ type StatusField = {
   type: 'status';
   model: ModelType;
 };
-
-type FieldValueType = string | number | undefined;
 
 type FieldProps = {
   field_data: any;

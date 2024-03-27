@@ -9,14 +9,15 @@ import os
 import os.path
 import re
 from decimal import Decimal, InvalidOperation
-from typing import TypeVar
+from pathlib import Path
+from typing import TypeVar, Union
 from wsgiref.util import FileWrapper
 
 import django.utils.timezone as timezone
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
-from django.core.files.storage import default_storage
+from django.core.files.storage import Storage, default_storage
 from django.http import StreamingHttpResponse
 from django.utils.translation import gettext_lazy as _
 
@@ -861,9 +862,37 @@ def hash_barcode(barcode_data):
     return str(hash.hexdigest())
 
 
-def hash_file(filename: str):
+def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
     """Return the MD5 hash of a file."""
-    return hashlib.md5(open(filename, 'rb').read()).hexdigest()
+    content = (
+        open(filename, 'rb').read()
+        if storage is None
+        else storage.open(str(filename), 'rb').read()
+    )
+    return hashlib.md5(content).hexdigest()
+
+
+def current_time(local=True):
+    """Return the current date and time as a datetime object.
+
+    - If timezone support is active, returns a timezone aware time
+    - If timezone support is not active, returns a timezone naive time
+
+    Arguments:
+        local: Return the time in the local timezone, otherwise UTC (default = True)
+
+    """
+    if settings.USE_TZ:
+        now = timezone.now()
+        now = to_local_time(now, target_tz=server_timezone() if local else 'UTC')
+        return now
+    else:
+        return datetime.datetime.now()
+
+
+def current_date(local=True):
+    """Return the current date."""
+    return current_time(local=local).date()
 
 
 def server_timezone() -> str:
