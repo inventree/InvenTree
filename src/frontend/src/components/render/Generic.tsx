@@ -12,3 +12,11 @@ export function RenderProjectCode({ instance }: { instance: any }): ReactNode {
     )
   );
 }
+
+export function RenderImportSession({
+  instance
+}: {
+  instance: any;
+}): ReactNode {
+  return instance && <RenderInlineModel primary={instance.data_file} />;
+}

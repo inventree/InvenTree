@@ -13,7 +13,7 @@ import {
   RenderManufacturerPart,
   RenderSupplierPart
 } from './Company';
-import { RenderProjectCode } from './Generic';
+import { RenderImportSession, RenderProjectCode } from './Generic';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -61,7 +61,8 @@ const RendererLookup: EnumDictionary<
   [ModelType.stockitem]: RenderStockItem,
   [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,
-  [ModelType.user]: RenderUser
+  [ModelType.user]: RenderUser,
+  [ModelType.importsession]: RenderImportSession
 };
 
 // import { ApiFormFieldType } from "../forms/fields/ApiFormField";
