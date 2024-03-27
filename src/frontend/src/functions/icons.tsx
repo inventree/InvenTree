@@ -172,6 +172,7 @@ const icons = {
   quantity: IconNumbers,
   progress: IconProgressCheck,
   reference: IconHash,
+  serial: IconHash,
   website: IconWorld,
   email: IconMail,
   phone: IconPhone,
