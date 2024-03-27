@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { classicUrl } from './baseFixtures';
 
-test('Check classic index site', async ({ page }) => {
+test('CUI - Index', async ({ page }) => {
   await page.goto(`${classicUrl}/api/`);
   await page.goto(`${classicUrl}/index/`);
   await expect(page).toHaveTitle('InvenTree Demo Server | Sign In');
