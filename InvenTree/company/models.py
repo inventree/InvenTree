@@ -901,7 +901,7 @@ class SupplierPart(
     def update_available_quantity(self, quantity):
         """Update the available quantity for this SupplierPart."""
         self.available = quantity
-        self.availability_updated = datetime.now()
+        self.availability_updated = InvenTree.helpers.current_time()
         self.save()
 
     @property

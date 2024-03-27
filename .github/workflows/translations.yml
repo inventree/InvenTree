@@ -10,7 +10,7 @@ env:
   node_version: 18
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:

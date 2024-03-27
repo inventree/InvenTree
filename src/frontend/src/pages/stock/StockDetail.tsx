@@ -139,7 +139,8 @@ export default function StockDetail() {
       {
         type: 'text',
         name: 'available_stock',
-        label: t`Available`
+        label: t`Available`,
+        icon: 'quantity'
       }
       // TODO: allocated_to_sales_orders
       // TODO: allocated_to_build_orders
@@ -188,7 +189,9 @@ export default function StockDetail() {
         name: 'sales_order',
         label: t`Sales Order`,
         model: ModelType.salesorder,
-        hidden: !stockitem.sales_order
+        hidden: !stockitem.sales_order,
+        icon: 'sales_orders',
+        model_field: 'reference'
       }
     ];
 

@@ -37,6 +37,7 @@ import common.models
 import common.settings
 import InvenTree.conversion
 import InvenTree.fields
+import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
@@ -1728,7 +1729,7 @@ class Part(
 
         self.bom_checksum = self.get_bom_hash()
         self.bom_checked_by = user
-        self.bom_checked_date = datetime.now().date()
+        self.bom_checked_date = InvenTree.helpers.current_date()
 
         self.save()
 
@@ -2715,7 +2716,7 @@ class PartPricing(common.models.MetaMixin):
             )
 
             if days > 0:
-                date_threshold = datetime.now().date() - timedelta(days=days)
+                date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
                 items = items.filter(updated__gte=date_threshold)
 
             for item in items:

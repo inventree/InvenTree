@@ -872,6 +872,29 @@ def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
     return hashlib.md5(content).hexdigest()
 
 
+def current_time(local=True):
+    """Return the current date and time as a datetime object.
+
+    - If timezone support is active, returns a timezone aware time
+    - If timezone support is not active, returns a timezone naive time
+
+    Arguments:
+        local: Return the time in the local timezone, otherwise UTC (default = True)
+
+    """
+    if settings.USE_TZ:
+        now = timezone.now()
+        now = to_local_time(now, target_tz=server_timezone() if local else 'UTC')
+        return now
+    else:
+        return datetime.datetime.now()
+
+
+def current_date(local=True):
+    """Return the current date."""
+    return current_time(local=local).date()
+
+
 def server_timezone() -> str:
     """Return the timezone of the server as a string.
 

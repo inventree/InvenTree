@@ -345,7 +345,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
         # Add flag to indicate if the StockItem is stale
         stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
-        stale_date = datetime.now().date() + timedelta(days=stale_days)
+        stale_date = InvenTree.helpers.current_date() + timedelta(days=stale_days)
         stale_filter = (
             StockItem.IN_STOCK_FILTER
             & ~Q(expiry_date=None)
@@ -826,7 +826,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         deltas = {'status': status}
 
-        now = datetime.now()
+        now = InvenTree.helpers.current_time()
 
         # Instead of performing database updates for each item,
         # perform bulk database updates (much more efficient)

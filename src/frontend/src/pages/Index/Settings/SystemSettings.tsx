@@ -231,6 +231,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'BUILDORDER_REFERENCE_PATTERN',
+              'BUILDORDER_REQUIRE_RESPONSIBLE',
               'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
             ]}
           />
@@ -244,6 +245,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
+              'PURCHASEORDER_REQUIRE_RESPONSIBLE',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
               'PURCHASEORDER_AUTO_COMPLETE'
             ]}
@@ -258,6 +260,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'SALESORDER_REFERENCE_PATTERN',
+              'SALESORDER_REQUIRE_RESPONSIBLE',
               'SALESORDER_DEFAULT_SHIPMENT',
               'SALESORDER_EDIT_COMPLETED_ORDERS'
             ]}
@@ -273,6 +276,7 @@ export default function SystemSettings() {
             keys={[
               'RETURNORDER_ENABLED',
               'RETURNORDER_REFERENCE_PATTERN',
+              'RETURNORDER_REQUIRE_RESPONSIBLE',
               'RETURNORDER_EDIT_COMPLETED_ORDERS'
             ]}
           />

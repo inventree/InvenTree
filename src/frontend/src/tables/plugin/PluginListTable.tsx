@@ -612,8 +612,8 @@ export default function PluginListTable() {
       {uninstallPluginModal.modal}
       {deletePluginModal.modal}
       <DetailDrawer
-        title={t`Plugin detail`}
-        size={'xl'}
+        title={t`Plugin Detail`}
+        size={'50%'}
         renderContent={(id) => {
           if (!id) return false;
           return <PluginDrawer id={id} refreshTable={table.refreshTable} />;
