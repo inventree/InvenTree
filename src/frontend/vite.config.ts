@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { platform, release } from 'node:os';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import istanbul from 'vite-plugin-istanbul';
 
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
 
@@ -16,11 +17,18 @@ export default defineConfig({
         plugins: ['macros']
       }
     }),
-    splitVendorChunkPlugin()
+    splitVendorChunkPlugin(),
+    istanbul({
+      include: 'src/*',
+      exclude: ['node_modules', 'test/'],
+      extension: ['.js', '.ts', '.tsx'],
+      requireEnv: true
+    })
   ],
   build: {
     manifest: true,
-    outDir: '../../InvenTree/web/static/web'
+    outDir: '../../InvenTree/web/static/web',
+    sourcemap: true
   },
   server: {
     watch: {

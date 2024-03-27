@@ -471,6 +471,7 @@ jobs:
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
       INVENTREE_DEBUG: True
       INVENTREE_PLUGINS_ENABLED: false
+      VITE_COVERAGE: true
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -487,13 +488,28 @@ jobs:
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
-        run: cd src/frontend &&  npx playwright test
+        run: cd src/frontend && nyc npx playwright test
       - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
+        name: Upload playwright report
         if: always()
         with:
           name: playwright-report
           path: src/frontend/playwright-report/
           retention-days: 30
+      - name: Report coverate
+        run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
+      - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
+        name: Upload coverage report
+        if: always()
+        with:
+          name: coverage
+          path: src/frontend/coverage/
+          retention-days: 30
+      - name: Upload Coverage Report
+        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: platform-ui
 
   platform_ui_build:
     name: Build - UI Platform
