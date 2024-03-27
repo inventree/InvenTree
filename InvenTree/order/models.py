@@ -221,7 +221,7 @@ class Order(
         """
         self.reference_int = self.rebuild_reference_field(self.reference)
         if not self.creation_date:
-            self.creation_date = datetime.now().date()
+            self.creation_date = InvenTree.helpers.current_date()
 
         super().save(*args, **kwargs)
 
@@ -252,7 +252,7 @@ class Order(
 
         It requires any subclasses to implement the get_status_class() class method
         """
-        today = datetime.now().date()
+        today = InvenTree.helpers.current_date()
         return (
             Q(status__in=cls.get_status_class().OPEN)
             & ~Q(target_date=None)
@@ -584,7 +584,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """
         if self.is_pending:
             self.status = PurchaseOrderStatus.PLACED.value
-            self.issue_date = datetime.now().date()
+            self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('purchaseorder.placed', id=self.pk)
@@ -604,7 +604,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """
         if self.status == PurchaseOrderStatus.PLACED:
             self.status = PurchaseOrderStatus.COMPLETE.value
-            self.complete_date = datetime.now().date()
+            self.complete_date = InvenTree.helpers.current_date()
 
             self.save()
 
@@ -1030,7 +1030,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Change this order from 'PENDING' to 'IN_PROGRESS'."""
         if self.status == SalesOrderStatus.PENDING:
             self.status = SalesOrderStatus.IN_PROGRESS.value
-            self.issue_date = datetime.now().date()
+            self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('salesorder.issued', id=self.pk)
@@ -1044,7 +1044,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
         self.status = SalesOrderStatus.SHIPPED.value
         self.shipped_by = user
-        self.shipment_date = datetime.now()
+        self.shipment_date = InvenTree.helpers.current_date()
 
         self.save()
 
@@ -1346,7 +1346,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     OVERDUE_FILTER = (
         Q(received__lt=F('quantity'))
         & ~Q(target_date=None)
-        & Q(target_date__lt=datetime.now().date())
+        & Q(target_date__lt=InvenTree.helpers.current_date())
     )
 
     @staticmethod
@@ -1505,7 +1505,7 @@ class SalesOrderLineItem(OrderLineItem):
     OVERDUE_FILTER = (
         Q(shipped__lt=F('quantity'))
         & ~Q(target_date=None)
-        & Q(target_date__lt=datetime.now().date())
+        & Q(target_date__lt=InvenTree.helpers.current_date())
     )
 
     @staticmethod
@@ -1748,7 +1748,9 @@ class SalesOrderShipment(
             allocation.complete_allocation(user)
 
         # Update the "shipment" date
-        self.shipment_date = kwargs.get('shipment_date', datetime.now())
+        self.shipment_date = kwargs.get(
+            'shipment_date', InvenTree.helpers.current_date()
+        )
         self.shipped_by = user
 
         # Was a tracking number provided?
@@ -2076,7 +2078,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Complete this ReturnOrder (if not already completed)."""
         if self.status == ReturnOrderStatus.IN_PROGRESS:
             self.status = ReturnOrderStatus.COMPLETE.value
-            self.complete_date = datetime.now().date()
+            self.complete_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('returnorder.completed', id=self.pk)
@@ -2089,7 +2091,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Issue this ReturnOrder (if currently pending)."""
         if self.status == ReturnOrderStatus.PENDING:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
-            self.issue_date = datetime.now().date()
+            self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('returnorder.issued', id=self.pk)
@@ -2162,7 +2164,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         )
 
         # Update the LineItem
-        line.received_date = datetime.now().date()
+        line.received_date = InvenTree.helpers.current_date()
         line.save()
 
         trigger_event('returnorder.received', id=self.pk)
