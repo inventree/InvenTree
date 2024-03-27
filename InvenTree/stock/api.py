@@ -19,6 +19,7 @@ from rest_framework.serializers import ValidationError
 
 import common.models
 import common.settings
+import InvenTree.helpers
 import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
@@ -810,7 +811,7 @@ class StockFilter(rest_filters.FilterSet):
             # No filtering, does not make sense
             return queryset
 
-        stale_date = datetime.now().date() + timedelta(days=stale_days)
+        stale_date = InvenTree.helpers.current_date() + timedelta(days=stale_days)
         stale_filter = (
             StockItem.IN_STOCK_FILTER
             & ~Q(expiry_date=None)
@@ -906,7 +907,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         # An expiry date was *not* specified - try to infer it!
         if expiry_date is None and part.default_expiry > 0:
-            data['expiry_date'] = datetime.now().date() + timedelta(
+            data['expiry_date'] = InvenTree.helpers.current_date() + timedelta(
                 days=part.default_expiry
             )
 
@@ -1050,7 +1051,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         filedata = dataset.export(export_format)
 
-        filename = f'InvenTree_StockItems_{datetime.now().strftime("%d-%b-%Y")}.{export_format}'
+        filename = f'InvenTree_StockItems_{InvenTree.helpers.current_date().strftime("%d-%b-%Y")}.{export_format}'
 
         return DownloadFile(filedata, filename)
 

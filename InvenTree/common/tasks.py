@@ -2,7 +2,7 @@
 
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
@@ -12,6 +12,7 @@ from django.utils import timezone
 import feedparser
 import requests
 
+import InvenTree.helpers
 from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeNotesMixin
 from InvenTree.tasks import ScheduledTask, scheduled_task
@@ -107,7 +108,7 @@ def delete_old_notes_images():
             note.delete()
 
     note_classes = getModelsWithMixin(InvenTreeNotesMixin)
-    before = datetime.now() - timedelta(days=90)
+    before = InvenTree.helpers.current_date() - timedelta(days=90)
 
     for note in NotesImage.objects.filter(date__lte=before):
         # Find any images which are no longer referenced by a note
