@@ -65,6 +65,7 @@
         "@types/react-router-dom": "^5.3.3",
         "@vitejs/plugin-react": "^4.2.1",
         "babel-plugin-macros": "^3.1.0",
+        "rollup-plugin-license": "^3.3.1",
         "typescript": "^5.3.3",
         "vite": "^5.2.6",
         "vite-plugin-babel-macros": "^1.0.6"

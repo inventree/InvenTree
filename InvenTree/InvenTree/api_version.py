@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 185
+INVENTREE_API_VERSION = 186
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v186 - 2024-03-26 : https://github.com/inventree/InvenTree/pull/6855
+    - Adds license information to the API
 
 v185 - 2024-03-24 : https://github.com/inventree/InvenTree/pull/6836
     - Remove /plugin/activate endpoint

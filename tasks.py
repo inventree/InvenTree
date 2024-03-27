@@ -244,6 +244,12 @@ def install(c, uv=False):
     # Run plugins install
     plugins(c, uv=uv)
 
+    # Compile license information
+    lic_path = managePyDir().joinpath('InvenTree', 'licenses.txt')
+    c.run(
+        f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}'
+    )
+
 
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):

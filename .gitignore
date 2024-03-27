@@ -83,8 +83,9 @@ dev/
 data/
 env/
 
-# Locale stats file
-locale_stats.json
+# Generated files
+InvenTree/InvenTree/locale_stats.json
+InvenTree/InvenTree/licenses.txt
 
 # node.js
 node_modules/

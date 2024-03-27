@@ -1,6 +1,9 @@
 """Main JSON interface views."""
 
+import json
+import logging
 import sys
+from pathlib import Path
 
 from django.conf import settings
 from django.db import transaction
@@ -30,6 +33,60 @@ from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
 from .version import inventreeApiText
 from .views import AjaxView
+
+logger = logging.getLogger('inventree')
+
+
+class LicenseViewSerializer(serializers.Serializer):
+    """Serializer for license information."""
+
+    backend = serializers.CharField(help_text='Backend licenses texts', read_only=True)
+    frontend = serializers.CharField(
+        help_text='Frontend licenses texts', read_only=True
+    )
+
+
+class LicenseView(APIView):
+    """Simple JSON endpoint for InvenTree license information."""
+
+    permission_classes = [permissions.IsAuthenticated]
+
+    def read_license_file(self, path: Path) -> list:
+        """Extract license information from the provided file.
+
+        Arguments:
+            path: Path to the license file
+
+        Returns: A list of items containing the license information
+        """
+        # Check if the file exists
+        if not path.exists():
+            logger.error("License file not found at '%s'", path)
+            return []
+
+        try:
+            data = json.loads(path.read_text())
+        except json.JSONDecodeError as e:
+            logger.exception("Failed to parse license file '%s': %s", path, e)
+            return []
+        except Exception as e:
+            logger.exception("Exception while reading license file '%s': %s", path, e)
+            return []
+
+        # Ensure consistent string between backend and frontend licenses
+        return [{key.lower(): value for key, value in entry.items()} for entry in data]
+
+    @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
+    def get(self, request, *args, **kwargs):
+        """Return information about the InvenTree server."""
+        backend = Path(__file__).parent.joinpath('licenses.txt')
+        frontend = Path(__file__).parent.parent.joinpath(
+            'web/static/web/.vite/dependencies.json'
+        )
+        return JsonResponse({
+            'backend': self.read_license_file(backend),
+            'frontend': self.read_license_file(frontend),
+        })
 
 
 class VersionViewSerializer(serializers.Serializer):

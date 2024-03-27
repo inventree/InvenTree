@@ -39,7 +39,14 @@ from stock.urls import stock_urls
 from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
 
-from .api import APISearchView, InfoView, NotFoundView, VersionTextView, VersionView
+from .api import (
+    APISearchView,
+    InfoView,
+    LicenseView,
+    NotFoundView,
+    VersionTextView,
+    VersionView,
+)
 from .magic_login import GetSimpleLoginView
 from .social_auth_urls import (
     EmailListView,
@@ -99,6 +106,7 @@ apipatterns = [
         name='schema',
     ),
     # InvenTree information endpoints
+    path('license/', LicenseView.as_view(), name='api-license'),  # license info
     path(
         'version-text', VersionTextView.as_view(), name='api-version-text'
     ),  # version text
