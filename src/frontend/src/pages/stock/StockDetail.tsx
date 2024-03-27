@@ -177,6 +177,7 @@ export default function StockDetail() {
 
           return text;
         },
+        icon: 'stock',
         model: ModelType.stockitem,
         hidden: !stockitem.belongs_to
       },
