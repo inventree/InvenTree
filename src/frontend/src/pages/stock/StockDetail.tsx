@@ -185,7 +185,17 @@ export default function StockDetail() {
         name: 'consumed_by',
         label: t`Consumed By`,
         model: ModelType.build,
-        hidden: !stockitem.consumed_by
+        hidden: !stockitem.consumed_by,
+        icon: 'build',
+        model_field: 'reference'
+      },
+      {
+        type: 'link',
+        name: 'build',
+        label: t`Build Order`,
+        model: ModelType.build,
+        hidden: !stockitem.build,
+        model_field: 'reference'
       },
       {
         type: 'link',
@@ -200,7 +210,8 @@ export default function StockDetail() {
         type: 'link',
         name: 'customer',
         label: t`Customer`,
-        model: ModelType.company
+        model: ModelType.company,
+        hidden: !stockitem.customer
       }
     ];
 

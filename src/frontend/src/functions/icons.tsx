@@ -104,6 +104,8 @@ const icons = {
   variants: IconVersions,
   allocations: IconBookmarks,
   bom: IconListTree,
+  build: IconTools,
+  build_order: IconTools,
   builds: IconTools,
   used_in: IconStack2,
   manufacturers: IconBuildingFactory2,
