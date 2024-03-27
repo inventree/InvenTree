@@ -94,6 +94,15 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
       );
     }
 
+    // Account for "external" stock
+    if (record.external_stock > 0) {
+      extra.push(
+        <Text key="external" size="sm">
+          {t`External stock`}: {record.external_stock}
+        </Text>
+      );
+    }
+
     return (
       <TableHoverCard
         value={

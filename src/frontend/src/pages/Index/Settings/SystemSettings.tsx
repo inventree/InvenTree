@@ -132,7 +132,6 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={['CURRENCY_UPDATE_PLUGIN', 'CURRENCY_UPDATE_INTERVAL']}
             />
-            <StylishText size="xl">{t`Exchange Rates`}</StylishText>
           </>
         )
       },
@@ -152,6 +151,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
+              'REPORT_LOG_ERRORS',
               'REPORT_ENABLE_TEST_REPORT',
               'REPORT_ATTACH_TEST_REPORT'
             ]}
@@ -211,7 +211,9 @@ export default function SystemSettings() {
               'STOCK_ALLOW_EXPIRED_BUILD',
               'STOCK_OWNERSHIP_CONTROL',
               'STOCK_LOCATION_DEFAULT_ICON',
-              'STOCK_SHOW_INSTALLED_ITEMS'
+              'STOCK_SHOW_INSTALLED_ITEMS',
+              'STOCK_ENFORCE_BOM_INSTALLATION',
+              'TEST_STATION_DATA'
             ]}
           />
         )
@@ -229,6 +231,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'BUILDORDER_REFERENCE_PATTERN',
+              'BUILDORDER_REQUIRE_RESPONSIBLE',
               'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
             ]}
           />
@@ -242,6 +245,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'PURCHASEORDER_REFERENCE_PATTERN',
+              'PURCHASEORDER_REQUIRE_RESPONSIBLE',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
               'PURCHASEORDER_AUTO_COMPLETE'
             ]}
@@ -256,6 +260,7 @@ export default function SystemSettings() {
           <GlobalSettingList
             keys={[
               'SALESORDER_REFERENCE_PATTERN',
+              'SALESORDER_REQUIRE_RESPONSIBLE',
               'SALESORDER_DEFAULT_SHIPMENT',
               'SALESORDER_EDIT_COMPLETED_ORDERS'
             ]}
@@ -271,6 +276,7 @@ export default function SystemSettings() {
             keys={[
               'RETURNORDER_ENABLED',
               'RETURNORDER_REFERENCE_PATTERN',
+              'RETURNORDER_REQUIRE_RESPONSIBLE',
               'RETURNORDER_EDIT_COMPLETED_ORDERS'
             ]}
           />

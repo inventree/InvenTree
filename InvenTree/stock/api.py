@@ -11,12 +11,15 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 import common.models
 import common.settings
+import InvenTree.helpers
 import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
@@ -257,6 +260,12 @@ class StockMerge(CreateAPI):
 class StockLocationFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the StockLocation endpoint."""
 
+    class Meta:
+        """Meta class options for this filterset."""
+
+        model = StockLocation
+        fields = ['name', 'structural', 'external']
+
     location_type = rest_filters.ModelChoiceFilter(
         queryset=StockLocationType.objects.all(), field_name='location_type'
     )
@@ -270,6 +279,80 @@ class StockLocationFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.exclude(location_type=None)
         return queryset.filter(location_type=None)
+
+    depth = rest_filters.NumberFilter(
+        label=_('Depth'), method='filter_depth', help_text=_('Filter by location depth')
+    )
+
+    def filter_depth(self, queryset, name, value):
+        """Filter by the "depth" of the StockLocation.
+
+        - This filter is used to limit the depth of the location tree
+        - If the "parent" filter is also provided, the depth is calculated from the parent location
+        """
+        parent = self.data.get('parent', None)
+
+        # Only filter if the parent filter is *not* provided
+        if not parent:
+            queryset = queryset.filter(level__lte=value)
+
+        return queryset
+
+    cascade = rest_filters.BooleanFilter(
+        label=_('Cascade'),
+        method='filter_cascade',
+        help_text=_('Include sub-locations in filtered results'),
+    )
+
+    def filter_cascade(self, queryset, name, value):
+        """Filter by whether to include sub-locations in the filtered results.
+
+        Note: If the "parent" filter is provided, we offload the logic to that method.
+        """
+        parent = self.data.get('parent', None)
+
+        # If the parent is *not* provided, update the results based on the "cascade" value
+        if not parent:
+            if not value:
+                # If "cascade" is False, only return top-level location
+                queryset = queryset.filter(parent=None)
+
+        return queryset
+
+    parent = rest_filters.ModelChoiceFilter(
+        queryset=StockLocation.objects.all(),
+        method='filter_parent',
+        label=_('Parent Location'),
+        help_text=_('Filter by parent location'),
+    )
+
+    def filter_parent(self, queryset, name, value):
+        """Filter by parent location.
+
+        Note that the filtering behaviour here varies,
+        depending on whether the 'cascade' value is set.
+
+        So, we have to check the "cascade" value here.
+        """
+        parent = value
+        depth = self.data.get('depth', None)
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if cascade:
+            # Return recursive sub-locations
+            queryset = queryset.filter(
+                parent__in=parent.get_descendants(include_self=True)
+            )
+        else:
+            # Return only direct children
+            queryset = queryset.filter(parent=parent)
+
+        if depth is not None:
+            # Filter by depth from parent
+            depth = int(depth)
+            queryset = queryset.filter(level__lte=parent.level + depth)
+
+        return queryset
 
 
 class StockLocationList(APIDownloadMixin, ListCreateAPI):
@@ -297,70 +380,7 @@ class StockLocationList(APIDownloadMixin, ListCreateAPI):
         queryset = StockSerializers.LocationSerializer.annotate_queryset(queryset)
         return queryset
 
-    def filter_queryset(self, queryset):
-        """Custom filtering: - Allow filtering by "null" parent to retrieve top-level stock locations."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        loc_id = params.get('parent', None)
-
-        cascade = str2bool(params.get('cascade', False))
-
-        depth = str2int(params.get('depth', None))
-
-        # Do not filter by location
-        if loc_id is None:
-            pass
-        # Look for top-level locations
-        elif isNull(loc_id):
-            # If we allow "cascade" at the top-level, this essentially means *all* locations
-            if not cascade:
-                queryset = queryset.filter(parent=None)
-
-            if cascade and depth is not None:
-                queryset = queryset.filter(level__lte=depth)
-
-        else:
-            try:
-                location = StockLocation.objects.get(pk=loc_id)
-
-                # All sub-locations to be returned too?
-                if cascade:
-                    parents = location.get_descendants(include_self=True)
-                    if depth is not None:
-                        parents = parents.filter(level__lte=location.level + depth)
-
-                    parent_ids = [p.id for p in parents]
-                    queryset = queryset.filter(parent__in=parent_ids)
-
-                else:
-                    queryset = queryset.filter(parent=location)
-
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
-
-        # Exclude StockLocation tree
-        exclude_tree = params.get('exclude_tree', None)
-
-        if exclude_tree is not None:
-            try:
-                loc = StockLocation.objects.get(pk=exclude_tree)
-
-                queryset = queryset.exclude(
-                    pk__in=[
-                        subloc.pk for subloc in loc.get_descendants(include_self=True)
-                    ]
-                )
-
-            except (ValueError, StockLocation.DoesNotExist):
-                pass
-
-        return queryset
-
     filter_backends = SEARCH_ORDER_FILTER
-
-    filterset_fields = ['name', 'structural', 'external', 'tags__name', 'tags__slug']
 
     search_fields = ['name', 'description', 'tags__name', 'tags__slug']
 
@@ -377,8 +397,16 @@ class StockLocationTree(ListAPI):
 
     filter_backends = ORDER_FILTER
 
+    ordering_fields = ['level', 'name', 'sublocations']
+
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
+
+    def get_queryset(self, *args, **kwargs):
+        """Return annotated queryset for the StockLocationTree endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = StockSerializers.LocationTreeSerializer.annotate_queryset(queryset)
+        return queryset
 
 
 class StockLocationTypeList(ListCreateAPI):
@@ -455,9 +483,17 @@ class StockFilter(rest_filters.FilterSet):
     # Relationship filters
     manufacturer = rest_filters.ModelChoiceFilter(
         label='Manufacturer',
-        queryset=Company.objects.filter(is_manufacturer=True),
-        field_name='manufacturer_part__manufacturer',
+        queryset=Company.objects.all(),
+        method='filter_manufacturer',
     )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_manufacturer(self, queryset, name, company):
+        """Filter by manufacturer."""
+        return queryset.filter(
+            Q(is_manufacturer=True) & Q(manufacturer_part__manufacturer=company)
+        )
+
     supplier = rest_filters.ModelChoiceFilter(
         label='Supplier',
         queryset=Company.objects.filter(is_supplier=True),
@@ -700,6 +736,7 @@ class StockFilter(rest_filters.FilterSet):
         label='Ancestor', queryset=StockItem.objects.all(), method='filter_ancestor'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_ancestor(self, queryset, name, ancestor):
         """Filter based on ancestor stock item."""
         return queryset.filter(parent__in=ancestor.get_descendants(include_self=True))
@@ -710,6 +747,7 @@ class StockFilter(rest_filters.FilterSet):
         method='filter_category',
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_category(self, queryset, name, category):
         """Filter based on part category."""
         child_categories = category.get_descendants(include_self=True)
@@ -720,6 +758,7 @@ class StockFilter(rest_filters.FilterSet):
         label=_('BOM Item'), queryset=BomItem.objects.all(), method='filter_bom_item'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_bom_item(self, queryset, name, bom_item):
         """Filter based on BOM item."""
         return queryset.filter(bom_item.get_stock_filter())
@@ -728,6 +767,7 @@ class StockFilter(rest_filters.FilterSet):
         label=_('Part Tree'), queryset=Part.objects.all(), method='filter_part_tree'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part_tree(self, queryset, name, part_tree):
         """Filter based on part tree."""
         return queryset.filter(part__tree_id=part_tree.tree_id)
@@ -736,6 +776,7 @@ class StockFilter(rest_filters.FilterSet):
         label=_('Company'), queryset=Company.objects.all(), method='filter_company'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_company(self, queryset, name, company):
         """Filter by company (either manufacturer or supplier)."""
         return queryset.filter(
@@ -770,7 +811,7 @@ class StockFilter(rest_filters.FilterSet):
             # No filtering, does not make sense
             return queryset
 
-        stale_date = datetime.now().date() + timedelta(days=stale_days)
+        stale_date = InvenTree.helpers.current_date() + timedelta(days=stale_days)
         stale_filter = (
             StockItem.IN_STOCK_FILTER
             & ~Q(expiry_date=None)
@@ -788,6 +829,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
     - GET: Return a list of all StockItem objects (with optional query filters)
     - POST: Create a new StockItem
+    - DELETE: Delete multiple StockItem objects
     """
 
     serializer_class = StockSerializers.StockItemSerializer
@@ -865,7 +907,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         # An expiry date was *not* specified - try to infer it!
         if expiry_date is None and part.default_expiry > 0:
-            data['expiry_date'] = datetime.now().date() + timedelta(
+            data['expiry_date'] = InvenTree.helpers.current_date() + timedelta(
                 days=part.default_expiry
             )
 
@@ -1009,7 +1051,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         filedata = dataset.export(export_format)
 
-        filename = f'InvenTree_StockItems_{datetime.now().strftime("%d-%b-%Y")}.{export_format}'
+        filename = f'InvenTree_StockItems_{InvenTree.helpers.current_date().strftime("%d-%b-%Y")}.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -1174,7 +1216,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
 
 class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a StockItemAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a StockItemAttachment (file upload)."""
 
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer
@@ -1245,6 +1287,10 @@ class StockItemTestResultFilter(rest_filters.FilterSet):
 
     required = rest_filters.BooleanFilter(
         label='Required', field_name='template__required'
+    )
+
+    enabled = rest_filters.BooleanFilter(
+        label='Enabled', field_name='template__enabled'
     )
 
     test = rest_filters.CharFilter(

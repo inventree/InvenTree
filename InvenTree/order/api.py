@@ -1,5 +1,8 @@
 """JSON API for the Order app."""
 
+from decimal import Decimal
+from typing import cast
+
 from django.contrib.auth import authenticate, login
 from django.db import transaction
 from django.db.models import F, Q
@@ -481,6 +484,14 @@ class PurchaseOrderLineItemMixin:
 
         return self.serializer_class(*args, **kwargs)
 
+    def perform_update(self, serializer):
+        """Override the perform_update method to auto-update pricing if required."""
+        super().perform_update(serializer)
+
+        # possibly auto-update pricing based on the supplier part pricing data
+        if serializer.validated_data.get('auto_pricing', True):
+            serializer.instance.update_pricing()
+
 
 class PurchaseOrderLineItemList(
     PurchaseOrderLineItemMixin, APIDownloadMixin, ListCreateDestroyAPIView
@@ -492,6 +503,44 @@ class PurchaseOrderLineItemList(
     """
 
     filterset_class = PurchaseOrderLineItemFilter
+
+    def create(self, request, *args, **kwargs):
+        """Create or update a new PurchaseOrderLineItem object."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = cast(dict, serializer.validated_data)
+
+        # possibly merge duplicate items
+        line_item = None
+        if data.get('merge_items', True):
+            other_line = models.PurchaseOrderLineItem.objects.filter(
+                part=data.get('part'),
+                order=data.get('order'),
+                target_date=data.get('target_date'),
+                destination=data.get('destination'),
+            ).first()
+
+            if other_line is not None:
+                other_line.quantity += Decimal(data.get('quantity', 0))
+                other_line.save()
+
+                line_item = other_line
+
+        # otherwise create a new line item
+        if line_item is None:
+            line_item = serializer.save()
+
+        # possibly auto-update pricing based on the supplier part pricing data
+        if data.get('auto_pricing', True) and isinstance(
+            line_item, models.PurchaseOrderLineItem
+        ):
+            line_item.update_pricing()
+
+        serializer = serializers.PurchaseOrderLineItemSerializer(line_item)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data, status=status.HTTP_201_CREATED, headers=headers
+        )
 
     def filter_queryset(self, queryset):
         """Additional filtering options."""
@@ -580,7 +629,7 @@ class PurchaseOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
 
 class SalesOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a SalesOrderAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a SalesOrderAttachment (file upload)."""
 
     queryset = models.SalesOrderAttachment.objects.all()
     serializer_class = serializers.SalesOrderAttachmentSerializer
@@ -1048,7 +1097,7 @@ class SalesOrderShipmentComplete(CreateAPI):
 
 
 class PurchaseOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a PurchaseOrderAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting) a PurchaseOrderAttachment (file upload)."""
 
     queryset = models.PurchaseOrderAttachment.objects.all()
     serializer_class = serializers.PurchaseOrderAttachmentSerializer
@@ -1314,7 +1363,7 @@ class ReturnOrderExtraLineDetail(RetrieveUpdateDestroyAPI):
 
 
 class ReturnOrderAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a ReturnOrderAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a ReturnOrderAttachment (file upload)."""
 
     queryset = models.ReturnOrderAttachment.objects.all()
     serializer_class = serializers.ReturnOrderAttachmentSerializer
@@ -1482,7 +1531,7 @@ class OrderCalendarExport(ICalFeed):
 
     def item_guid(self, item):
         """Return globally unique UID for event."""
-        return f'po_{item.pk}_{item.reference.replace(" ","-")}@{self.instance_url}'
+        return f'po_{item.pk}_{item.reference.replace(" ", "-")}@{self.instance_url}'
 
     def item_link(self, item):
         """Set the item link."""

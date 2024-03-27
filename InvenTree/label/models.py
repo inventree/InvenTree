@@ -1,6 +1,5 @@
 """Label printing models."""
 
-import datetime
 import logging
 import os
 import sys
@@ -15,6 +14,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import build.models
+import InvenTree.helpers
 import InvenTree.models
 import part.models
 import stock.models
@@ -96,8 +96,13 @@ class LabelTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         abstract = True
 
+    @classmethod
+    def getSubdir(cls) -> str:
+        """Return the subdirectory for this label."""
+        return cls.SUBDIR
+
     # Each class of label files will be stored in a separate subdirectory
-    SUBDIR = 'label'
+    SUBDIR: str = 'label'
 
     # Object we will be printing against (will be filled out later)
     object_to_print = None
@@ -223,8 +228,8 @@ class LabelTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         # Add "basic" context data which gets passed to every label
         context['base_url'] = get_base_url(request=request)
-        context['date'] = datetime.datetime.now().date()
-        context['datetime'] = datetime.datetime.now()
+        context['date'] = InvenTree.helpers.current_date()
+        context['datetime'] = InvenTree.helpers.current_time()
         context['request'] = request
         context['user'] = request.user
         context['width'] = self.width

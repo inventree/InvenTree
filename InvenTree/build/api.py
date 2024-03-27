@@ -314,11 +314,21 @@ class BuildLineEndpoint:
     queryset = BuildLine.objects.all()
     serializer_class = build.serializers.BuildLineSerializer
 
+    def get_source_build(self) -> Build:
+        """Return the source Build object for the BuildLine queryset.
+
+        This source build is used to filter the available stock for each BuildLine.
+
+        - If this is a "detail" view, use the build associated with the line
+        - If this is a "list" view, use the build associated with the request
+        """
+        raise NotImplementedError("get_source_build must be implemented in the child class")
+
     def get_queryset(self):
         """Override queryset to select-related and annotate"""
         queryset = super().get_queryset()
-
-        queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset)
+        source_build = self.get_source_build()
+        queryset = build.serializers.BuildLineSerializer.annotate_queryset(queryset, build=source_build)
 
         return queryset
 
@@ -353,10 +363,26 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
         'bom_item__reference',
     ]
 
+    def get_source_build(self) -> Build:
+        """Return the target build for the BuildLine queryset."""
+
+        try:
+            build_id = self.request.query_params.get('build', None)
+            if build_id:
+                build = Build.objects.get(pk=build_id)
+                return build
+        except (Build.DoesNotExist, AttributeError, ValueError):
+            pass
+
+        return None
 
 class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
-    pass
+
+    def get_source_build(self) -> Build:
+        """Return the target source location for the BuildLine queryset."""
+
+        return None
 
 
 class BuildOrderContextMixin:

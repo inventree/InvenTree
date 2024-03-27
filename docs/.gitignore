@@ -10,6 +10,9 @@ env/
 _build/
 site/
 
+# Generated API schema files
+docs/api/schema/*.yml
+
 # Temp files
 releases.json
 versions.json

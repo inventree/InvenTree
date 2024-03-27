@@ -22,9 +22,11 @@ from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
 import moneyed
+import pytz
 from dotenv import load_dotenv
 
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
+from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
 from InvenTree.version import checkMinPythonVersion, inventreeApiVersion
 
@@ -80,6 +82,10 @@ DEBUG = get_boolean_setting('INVENTREE_DEBUG', 'debug', True)
 ENABLE_CLASSIC_FRONTEND = get_boolean_setting(
     'INVENTREE_CLASSIC_FRONTEND', 'classic_frontend', True
 )
+
+# Disable CUI parts if CUI tests are disabled
+if TESTING and '--exclude-tag=cui' in sys.argv:
+    ENABLE_CLASSIC_FRONTEND = False
 ENABLE_PLATFORM_FRONTEND = get_boolean_setting(
     'INVENTREE_PLATFORM_FRONTEND', 'platform_frontend', True
 )
@@ -126,12 +132,20 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 # Web URL endpoint for served static files
 STATIC_URL = '/static/'
 
+# Web URL endpoint for served media files
+MEDIA_URL = '/media/'
+
 STATICFILES_DIRS = []
 
 # Translated Template settings
 STATICFILES_I18_PREFIX = 'i18n'
 STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
 STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
+
+# Create the target directory if it does not exist
+if not STATICFILES_I18_TRG.exists():
+    STATICFILES_I18_TRG.mkdir(parents=True)
+
 STATICFILES_DIRS.append(STATICFILES_I18_TRG)
 STATICFILES_I18_TRG = STATICFILES_I18_TRG.joinpath(STATICFILES_I18_PREFIX)
 
@@ -145,9 +159,6 @@ STATFILES_I18_PROCESSORS = ['InvenTree.context.status_codes']
 
 # Color Themes Directory
 STATIC_COLOR_THEMES_DIR = STATIC_ROOT.joinpath('css', 'color-themes').resolve()
-
-# Web URL endpoint for served media files
-MEDIA_URL = '/media/'
 
 # Database backup options
 # Ref: https://django-dbbackup.readthedocs.io/en/master/configuration.html
@@ -196,6 +207,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'user_sessions',  # db user sessions
+    'whitenoise.runserver_nostatic',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
@@ -240,6 +252,7 @@ MIDDLEWARE = CONFIG.get(
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
+        'whitenoise.middleware.WhiteNoiseMiddleware',
         'django.middleware.common.CommonMiddleware',
         'django.contrib.auth.middleware.AuthenticationMiddleware',
         'InvenTree.middleware.InvenTreeRemoteUserMiddleware',  # Remote / proxy auth
@@ -285,7 +298,10 @@ if LDAP_AUTH:
 
     # get global options from dict and use ldap.OPT_* as keys and values
     global_options_dict = get_setting(
-        'INVENTREE_LDAP_GLOBAL_OPTIONS', 'ldap.global_options', {}, dict
+        'INVENTREE_LDAP_GLOBAL_OPTIONS',
+        'ldap.global_options',
+        default_value=None,
+        typecast=dict,
     )
     global_options = {}
     for k, v in global_options_dict.items():
@@ -355,23 +371,15 @@ if LDAP_AUTH:
     )
     AUTH_LDAP_DENY_GROUP = get_setting('INVENTREE_LDAP_DENY_GROUP', 'ldap.deny_group')
     AUTH_LDAP_USER_FLAGS_BY_GROUP = get_setting(
-        'INVENTREE_LDAP_USER_FLAGS_BY_GROUP', 'ldap.user_flags_by_group', {}, dict
+        'INVENTREE_LDAP_USER_FLAGS_BY_GROUP',
+        'ldap.user_flags_by_group',
+        default_value=None,
+        typecast=dict,
     )
     AUTH_LDAP_FIND_GROUP_PERMS = True
 
-# Internal IP addresses allowed to see the debug toolbar
-INTERNAL_IPS = ['127.0.0.1']
-
 # Internal flag to determine if we are running in docker mode
 DOCKER = get_boolean_setting('INVENTREE_DOCKER', default_value=False)
-
-if DOCKER:  # pragma: no cover
-    # Internal IP addresses are different when running under docker
-    hostname, ___, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [ip[: ip.rfind('.')] + '.1' for ip in ips] + [
-        '127.0.0.1',
-        '10.0.2.2',
-    ]
 
 # Allow secure http developer server in debug mode
 if DEBUG:
@@ -460,21 +468,6 @@ if USE_JWT:
     INSTALLED_APPS.append('rest_framework_simplejwt')
 
 # WSGI default setting
-SPECTACULAR_SETTINGS = {
-    'TITLE': 'InvenTree API',
-    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
-    'LICENSE': {
-        'name': 'MIT',
-        'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE',
-    },
-    'EXTERNAL_DOCS': {
-        'description': 'More information about InvenTree in the official docs',
-        'url': 'https://docs.inventree.org',
-    },
-    'VERSION': str(inventreeApiVersion()),
-    'SERVE_INCLUDE_SCHEMA': False,
-}
-
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
 
 """
@@ -488,7 +481,7 @@ Configure the database backend based on the user-specified values.
 logger.debug('Configuring database backend:')
 
 # Extract database configuration from the config.yaml file
-db_config = CONFIG.get('database', {})
+db_config = CONFIG.get('database', None)
 
 if not db_config:
     db_config = {}
@@ -564,10 +557,15 @@ Ref: https://docs.djangoproject.com/en/3.2/ref/settings/#std:setting-OPTIONS
 # connecting to the database server (such as a replica failover) don't sit and
 # wait for possibly an hour or more, just tell the client something went wrong
 # and let the client retry when they want to.
-db_options = db_config.get('OPTIONS', db_config.get('options', {}))
+db_options = db_config.get('OPTIONS', db_config.get('options', None))
+
+if db_options is None:
+    db_options = {}
 
 # Specific options for postgres backend
 if 'postgres' in db_engine:  # pragma: no cover
+    from django.db.backends.postgresql.psycopg_any import IsolationLevel
+
     # Connection timeout
     if 'connect_timeout' not in db_options:
         # The DB server is in the same data center, it should not take very
@@ -631,7 +629,11 @@ if 'postgres' in db_engine:  # pragma: no cover
         serializable = get_boolean_setting(
             'INVENTREE_DB_ISOLATION_SERIALIZABLE', 'database.serializable', False
         )
-        db_options['isolation_level'] = 4 if serializable else 2
+        db_options['isolation_level'] = (
+            IsolationLevel.SERIALIZABLE
+            if serializable
+            else IsolationLevel.READ_COMMITTED
+        )
 
 # Specific options for MySql / MariaDB backend
 elif 'mysql' in db_engine:  # pragma: no cover
@@ -721,7 +723,10 @@ if TRACING_ENABLED:  # pragma: no cover
         logger.info('OpenTelemetry tracing enabled')
 
         _t_resources = get_setting(
-            'INVENTREE_TRACING_RESOURCES', 'tracing.resources', {}, dict
+            'INVENTREE_TRACING_RESOURCES',
+            'tracing.resources',
+            default_value=None,
+            typecast=dict,
         )
         cstm_tags = {'inventree.env.' + k: v for k, v in inventree_tags.items()}
         tracing_resources = {**cstm_tags, **_t_resources}
@@ -733,7 +738,12 @@ if TRACING_ENABLED:  # pragma: no cover
             console=get_boolean_setting(
                 'INVENTREE_TRACING_CONSOLE', 'tracing.console', False
             ),
-            auth=get_setting('INVENTREE_TRACING_AUTH', 'tracing.auth', {}),
+            auth=get_setting(
+                'INVENTREE_TRACING_AUTH',
+                'tracing.auth',
+                default_value=None,
+                typecast=dict,
+            ),
             is_http=get_setting('INVENTREE_TRACING_IS_HTTP', 'tracing.is_http', True),
             append_http=get_boolean_setting(
                 'INVENTREE_TRACING_APPEND_HTTP', 'tracing.append_http', True
@@ -819,7 +829,8 @@ SESSION_ENGINE = 'user_sessions.backends.db'
 LOGOUT_REDIRECT_URL = get_setting(
     'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
 )
-SILENCED_SYSTEM_CHECKS = ['admin.E410']
+
+SILENCED_SYSTEM_CHECKS = ['admin.E410', 'templates.E003', 'templates.W003']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -929,13 +940,20 @@ LOCALE_PATHS = (BASE_DIR.joinpath('locale/'),)
 
 TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
-USE_I18N = True
+# Check that the timezone is valid
+try:
+    pytz.timezone(TIME_ZONE)
+except pytz.exceptions.UnknownTimeZoneError:  # pragma: no cover
+    raise ValueError(f"Specified timezone '{TIME_ZONE}' is not valid")
 
+USE_I18N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
 if not TESTING:
     USE_TZ = True  # pragma: no cover
+else:
+    USE_TZ = False
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
@@ -974,9 +992,32 @@ if not SITE_MULTI:
 ALLOWED_HOSTS = get_setting(
     'INVENTREE_ALLOWED_HOSTS',
     config_key='allowed_hosts',
-    default_value=['*'],
+    default_value=[],
     typecast=list,
 )
+
+if SITE_URL and SITE_URL not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(SITE_URL)
+
+if not ALLOWED_HOSTS:
+    if DEBUG:
+        logger.info(
+            'No ALLOWED_HOSTS specified. Defaulting to ["*"] for debug mode. This is not recommended for production use'
+        )
+        ALLOWED_HOSTS = ['*']
+    elif not TESTING:
+        logger.error(
+            'No ALLOWED_HOSTS specified. Please provide a list of allowed hosts, or specify INVENTREE_SITE_URL'
+        )
+
+        # Server cannot run without ALLOWED_HOSTS
+        if isInMainThread():
+            sys.exit(-1)
+
+# Ensure that the ALLOWED_HOSTS do not contain any scheme info
+for i, host in enumerate(ALLOWED_HOSTS):
+    if '://' in host:
+        ALLOWED_HOSTS[i] = host.split('://')[1]
 
 # List of trusted origins for unsafe requests
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
@@ -988,8 +1029,22 @@ CSRF_TRUSTED_ORIGINS = get_setting(
 )
 
 # If a list of trusted is not specified, but a site URL has been specified, use that
-if SITE_URL and len(CSRF_TRUSTED_ORIGINS) == 0:
+if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
+
+if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
+    if DEBUG:
+        logger.warning(
+            'No CSRF_TRUSTED_ORIGINS specified. Defaulting to http://* for debug mode. This is not recommended for production use'
+        )
+        CSRF_TRUSTED_ORIGINS = ['http://*']
+
+    elif isInMainThread():
+        # Server thread cannot run without CSRF_TRUSTED_ORIGINS
+        logger.error(
+            'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+        )
+        sys.exit(-1)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
@@ -1018,8 +1073,8 @@ CORS_ALLOW_CREDENTIALS = get_boolean_setting(
     default_value=True,
 )
 
-# Only allow CORS access to API and media endpoints
-CORS_URLS_REGEX = r'^/(api|media|static)/.*$'
+# Only allow CORS access to the following URL endpoints
+CORS_URLS_REGEX = r'^/(api|auth|media|static)/.*$'
 
 CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
@@ -1029,8 +1084,29 @@ CORS_ALLOWED_ORIGINS = get_setting(
 )
 
 # If no CORS origins are specified, but a site URL has been specified, use that
-if SITE_URL and len(CORS_ALLOWED_ORIGINS) == 0:
+if SITE_URL and SITE_URL not in CORS_ALLOWED_ORIGINS:
     CORS_ALLOWED_ORIGINS.append(SITE_URL)
+
+CORS_ALLOWED_ORIGIN_REGEXES = get_setting(
+    'INVENTREE_CORS_ORIGIN_REGEX',
+    config_key='cors.regex',
+    default_value=[],
+    typecast=list,
+)
+
+# In debug mode allow CORS requests from localhost
+# This allows connection from the frontend development server
+if DEBUG:
+    CORS_ALLOWED_ORIGIN_REGEXES.append(r'^http://localhost:\d+$')
+
+if CORS_ALLOW_ALL_ORIGINS:
+    logger.info('CORS: All origins allowed')
+else:
+    if CORS_ALLOWED_ORIGINS:
+        logger.info('CORS: Whitelisted origins: %s', CORS_ALLOWED_ORIGINS)
+
+    if CORS_ALLOWED_ORIGIN_REGEXES:
+        logger.info('CORS: Whitelisted origin regexes: %s', CORS_ALLOWED_ORIGIN_REGEXES)
 
 for app in SOCIAL_BACKENDS:
     # Ensure that the app starts with 'allauth.socialaccount.providers'
@@ -1056,14 +1132,35 @@ SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
     'INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int
 )
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting(
-    'INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int
-)
+
+# allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
+# The default login rate limit is "5/m/user,5/m/ip,5/m/key"
+login_attempts = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
+
+try:
+    login_attempts = int(login_attempts)
+    login_attempts = f'{login_attempts}/m/ip,{login_attempts}/m/key'
+except ValueError:
+    pass
+
+ACCOUNT_RATE_LIMITS = {'login_failed': login_attempts}
+
+# Default protocol for login
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
-    'INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http'
+    'INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', None
 )
+
+if ACCOUNT_DEFAULT_HTTP_PROTOCOL is None:
+    if SITE_URL and SITE_URL.startswith('https://'):
+        # auto-detect HTTPS prtoocol
+        ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+    else:
+        # default to http
+        ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
+ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX
 # 2FA
 REMOVE_SUCCESS_URL = 'settings'
 
@@ -1127,6 +1224,9 @@ MAINTENANCE_MODE_STATE_BACKEND = 'InvenTree.backends.InvenTreeMaintenanceModeBac
 PLUGINS_ENABLED = get_boolean_setting(
     'INVENTREE_PLUGINS_ENABLED', 'plugins_enabled', False
 )
+PLUGINS_INSTALL_DISABLED = get_boolean_setting(
+    'INVENTREE_PLUGIN_NOINSTALL', 'plugin_noinstall', False
+)
 
 PLUGIN_FILE = config.get_plugin_file()
 
@@ -1143,6 +1243,9 @@ PLUGIN_RETRY = get_setting(
 )  # How often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 
+# Flag to allow table events during testing
+TESTING_TABLE_EVENTS = False
+
 # User interface customization values
 CUSTOM_LOGO = get_custom_file(
     'INVENTREE_CUSTOM_LOGO', 'customize.logo', 'custom logo', lookup_media=True
@@ -1151,7 +1254,9 @@ CUSTOM_SPLASH = get_custom_file(
     'INVENTREE_CUSTOM_SPLASH', 'customize.splash', 'custom splash'
 )
 
-CUSTOMIZE = get_setting('INVENTREE_CUSTOMIZE', 'customize', {})
+CUSTOMIZE = get_setting(
+    'INVENTREE_CUSTOMIZE', 'customize', default_value=None, typecast=dict
+)
 
 # Load settings for the frontend interface
 FRONTEND_SETTINGS = config.get_frontend_settings(debug=DEBUG)
@@ -1186,3 +1291,23 @@ if CUSTOM_FLAGS:
 # Magic login django-sesame
 SESAME_MAX_AGE = 300
 LOGIN_REDIRECT_URL = '/api/auth/login-redirect/'
+
+# Configuratino for API schema generation
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'InvenTree API',
+    'DESCRIPTION': 'API for InvenTree - the intuitive open source inventory management system',
+    'LICENSE': {
+        'name': 'MIT',
+        'url': 'https://github.com/inventree/InvenTree/blob/master/LICENSE',
+    },
+    'EXTERNAL_DOCS': {
+        'description': 'More information about InvenTree in the official docs',
+        'url': 'https://docs.inventree.org',
+    },
+    'VERSION': str(inventreeApiVersion()),
+    'SERVE_INCLUDE_SCHEMA': False,
+    'SCHEMA_PATH_PREFIX': '/api/',
+}
+
+if SITE_URL and not TESTING:
+    SPECTACULAR_SETTINGS['SERVERS'] = [{'url': SITE_URL}]

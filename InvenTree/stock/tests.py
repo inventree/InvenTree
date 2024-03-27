@@ -2,6 +2,7 @@
 
 import datetime
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
 from django.test import override_settings
@@ -256,9 +257,9 @@ class StockTest(StockTestBase):
     def test_url(self):
         """Test get_absolute_url function."""
         it = StockItem.objects.get(pk=2)
-        self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
-
-        self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertEqual(it.get_absolute_url(), '/stock/item/2/')
+            self.assertEqual(self.home.get_absolute_url(), '/stock/location/1/')
 
     def test_strings(self):
         """Test str function."""

@@ -26,14 +26,11 @@ class TemplateTagTest(InvenTreeTestCase):
     def test_spa_bundle(self):
         """Test the 'spa_bundle' template tag."""
         resp = spa_helper.spa_bundle()
-        self.assertTrue(
-            resp.startswith('<link rel="stylesheet" href="/static/web/assets/index')
-        )
         shipped_js = resp.split('<script type="module" src="')[1:]
         self.assertTrue(len(shipped_js) > 0)
         self.assertTrue(len(shipped_js) == 3)
 
-        manifest_file = Path(__file__).parent.joinpath('static/web/manifest.json')
+        manifest_file = Path(__file__).parent.joinpath('static/web/.vite/manifest.json')
         # Try with removed manifest file
         manifest_file.rename(manifest_file.with_suffix('.json.bak'))  # Rename
         resp = resp = spa_helper.spa_bundle()

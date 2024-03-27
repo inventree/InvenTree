@@ -24,14 +24,20 @@ def spa_bundle(manifest_path: Union[str, Path] = '', app: str = 'web'):
         return f'{settings.STATIC_URL}{app}/{file}'
 
     if manifest_path == '':
-        manifest_path = Path(__file__).parent.parent.joinpath(
-            'static/web/manifest.json'
+        manifest = Path(__file__).parent.parent.joinpath(
+            'static/web/.vite/manifest.json'
         )
-    manifest = Path(manifest_path)
+    else:
+        manifest = Path(manifest_path)
 
     if not manifest.exists():
-        logger.error('Manifest file not found')
-        return
+        # Try old path for manifest file
+        manifest = Path(__file__).parent.parent.joinpath('static/web/manifest.json')
+
+        # Final check - fail if manifest file not found
+        if not manifest.exists():
+            logger.error('Manifest file not found')
+            return
 
     try:
         manifest_data = json.load(manifest.open())
@@ -40,13 +46,6 @@ def spa_bundle(manifest_path: Union[str, Path] = '', app: str = 'web'):
         return
 
     return_string = ''
-    # CSS (based on index.css file as entrypoint)
-    css_index = manifest_data.get('index.css')
-    if css_index:
-        return_string += (
-            f'<link rel="stylesheet" href="{get_url(css_index["file"])}" />'
-        )
-
     # JS (based on index.html file as entrypoint)
     index = manifest_data.get('index.html')
     dynamic_files = index.get('dynamicImports', [])

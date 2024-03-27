@@ -1,6 +1,7 @@
 """Helper functions for converting between units."""
 
 import logging
+import re
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -8,7 +9,6 @@ from django.utils.translation import gettext_lazy as _
 import pint
 
 _unit_registry = None
-
 
 logger = logging.getLogger('inventree')
 
@@ -36,7 +36,12 @@ def reload_unit_registry():
 
     _unit_registry = None
 
-    reg = pint.UnitRegistry()
+    reg = pint.UnitRegistry(autoconvert_offset_to_baseunit=True)
+
+    # Aliases for temperature units
+    reg.define('@alias degC = Celsius')
+    reg.define('@alias degF = Fahrenheit')
+    reg.define('@alias degK = Kelvin')
 
     # Define some "standard" additional units
     reg.define('piece = 1')
@@ -70,6 +75,64 @@ def reload_unit_registry():
     return reg
 
 
+def from_engineering_notation(value):
+    """Convert a provided value to 'natural' representation from 'engineering' notation.
+
+    Ref: https://en.wikipedia.org/wiki/Engineering_notation
+
+    In "engineering notation", the unit (or SI prefix) is often combined with the value,
+    and replaces the decimal point.
+
+    Examples:
+    - 1K2 -> 1.2K
+    - 3n05 -> 3.05n
+    - 8R6 -> 8.6R
+
+    And, we should also take into account any provided trailing strings:
+
+    - 1K2 ohm -> 1.2K ohm
+    - 10n005F -> 10.005nF
+    """
+    value = str(value).strip()
+
+    pattern = f'(\d+)([a-zA-Z]+)(\d+)(.*)'
+
+    if match := re.match(pattern, value):
+        left, prefix, right, suffix = match.groups()
+        return f'{left}.{right}{prefix}{suffix}'
+
+    return value
+
+
+def convert_value(value, unit):
+    """Attempt to convert a value to a specified unit.
+
+    Arguments:
+        value: The value to convert
+        unit: The target unit to convert to
+
+    Returns:
+        The converted value (ideally a pint.Quantity value)
+
+    Raises:
+        Exception if the value cannot be converted to the specified unit
+    """
+    ureg = get_unit_registry()
+
+    # Convert the provided value to a pint.Quantity object
+    value = ureg.Quantity(value)
+
+    # Convert to the specified unit
+    if unit:
+        if is_dimensionless(value):
+            magnitude = value.to_base_units().magnitude
+            value = ureg.Quantity(magnitude, unit)
+        else:
+            value = value.to(unit)
+
+    return value
+
+
 def convert_physical_value(value: str, unit: str = None, strip_units=True):
     """Validate that the provided value is a valid physical quantity.
 
@@ -84,44 +147,58 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     Returns:
         The converted quantity, in the specified units
     """
+    ureg = get_unit_registry()
+
+    # Check that the provided unit is available in the unit registry
+    if unit:
+        try:
+            valid = unit in ureg
+        except Exception as exc:
+            valid = False
+
+        if not valid:
+            raise ValidationError(_(f'Invalid unit provided ({unit})'))
+
     original = str(value).strip()
 
     # Ensure that the value is a string
     value = str(value).strip() if value else ''
     unit = str(unit).strip() if unit else ''
 
+    # Handle imperial length measurements
+    if value.count("'") == 1 and value.endswith("'"):
+        value = value.replace("'", ' feet')
+
+    if value.count('"') == 1 and value.endswith('"'):
+        value = value.replace('"', ' inches')
+
     # Error on blank values
     if not value:
         raise ValidationError(_('No value provided'))
 
-    # Create a "backup" value which be tried if the first value fails
-    # e.g. value = "10k" and unit = "ohm" -> "10kohm"
-    # e.g. value = "10m" and unit = "F" -> "10mF"
+    # Construct a list of values to "attempt" to convert
+    attempts = [value]
+
+    # Attempt to convert from engineering notation
+    eng = from_engineering_notation(value)
+    attempts.append(eng)
+
+    # Append the unit, if provided
+    # These are the "final" attempts to convert the value, and *must* appear after previous attempts
     if unit:
-        backup_value = value + unit
-    else:
-        backup_value = None
+        attempts.append(f'{value}{unit}')
+        attempts.append(f'{eng}{unit}')
 
-    ureg = get_unit_registry()
+    value = None
 
-    try:
-        value = ureg.Quantity(value)
-
-        if unit:
-            if is_dimensionless(value):
-                magnitude = value.to_base_units().magnitude
-                value = ureg.Quantity(magnitude, unit)
-            else:
-                value = value.to(unit)
-
-    except Exception:
-        if backup_value:
-            try:
-                value = ureg.Quantity(backup_value)
-            except Exception:
-                value = None
-        else:
+    # Run through the available "attempts", take the first successful result
+    for attempt in attempts:
+        try:
+            value = convert_value(attempt, unit)
+            break
+        except Exception as exc:
             value = None
+            pass
 
     if value is None:
         if unit:

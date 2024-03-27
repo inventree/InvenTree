@@ -95,7 +95,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     pk: selectedCategory,
     title: t`Edit Part Category`,
     fields: partCategoryFields({}),
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const tableActions = useMemo(() => {
@@ -105,7 +105,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
       <AddItemButton
         tooltip={t`Add Part Category`}
         onClick={() => newCategory.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);
@@ -138,13 +138,12 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         props={{
           enableDownload: true,
           params: {
-            parent: parentId ?? 'null'
+            parent: parentId
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
           rowActions: rowActions,
-          onRowClick: (record) =>
-            navigate(getDetailUrl(ModelType.partcategory, record.pk))
+          modelType: ModelType.partcategory
         }}
       />
     </>

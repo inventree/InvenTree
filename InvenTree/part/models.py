@@ -37,6 +37,7 @@ import common.models
 import common.settings
 import InvenTree.conversion
 import InvenTree.fields
+import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
@@ -132,7 +133,9 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     def get_absolute_url(self):
         """Return the web URL associated with the detail view for this PartCategory instance."""
-        return reverse('category-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('category-detail', kwargs={'pk': self.id})
+        return helpers.pui_url(f'/part/category/{self.id}')
 
     def clean(self):
         """Custom clean action for the PartCategory model.
@@ -754,7 +757,9 @@ class Part(
 
     def get_absolute_url(self):
         """Return the web URL for viewing this part."""
-        return reverse('part-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('part-detail', kwargs={'pk': self.id})
+        return helpers.pui_url(f'/part/{self.id}')
 
     def get_image_url(self):
         """Return the URL of the image for this part."""
@@ -1724,7 +1729,7 @@ class Part(
 
         self.bom_checksum = self.get_bom_hash()
         self.bom_checked_by = user
-        self.bom_checked_date = datetime.now().date()
+        self.bom_checked_date = InvenTree.helpers.current_date()
 
         self.save()
 
@@ -2124,7 +2129,7 @@ class Part(
 
             parameter.save()
 
-    def getTestTemplates(self, required=None, include_parent=True):
+    def getTestTemplates(self, required=None, include_parent=True, enabled=None):
         """Return a list of all test templates associated with this Part.
 
         These are used for validation of a StockItem.
@@ -2143,6 +2148,9 @@ class Part(
         if required is not None:
             tests = tests.filter(required=required)
 
+        if enabled is not None:
+            tests = tests.filter(enabled=enabled)
+
         return tests
 
     def getTestTemplateMap(self, **kwargs):
@@ -2154,9 +2162,16 @@ class Part(
 
         return templates
 
-    def getRequiredTests(self):
-        """Return the tests which are required by this part."""
-        return self.getTestTemplates(required=True)
+    def getRequiredTests(self, include_parent=True, enabled=True):
+        """Return the tests which are required by this part.
+
+        Arguments:
+            include_parent: If True, include tests which are defined for parent parts
+            enabled: If set (either True or False), filter by template "enabled" status
+        """
+        return self.getTestTemplates(
+            required=True, enabled=enabled, include_parent=include_parent
+        )
 
     @property
     def attachment_count(self):
@@ -2701,7 +2716,7 @@ class PartPricing(common.models.MetaMixin):
             )
 
             if days > 0:
-                date_threshold = datetime.now().date() - timedelta(days=days)
+                date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
                 items = items.filter(updated__gte=date_threshold)
 
             for item in items:
@@ -3414,6 +3429,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         self.key = helpers.generateTestKey(self.test_name)
 
+        if len(self.key) == 0:
+            raise ValidationError({
+                'test_name': _(
+                    'Invalid template name - must include at least one alphanumeric character'
+                )
+            })
+
         self.validate_unique()
         super().clean()
 
@@ -3431,7 +3453,9 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         if tests.exists():
             raise ValidationError({
-                'test_name': _('Test with this name already exists for this part')
+                'test_name': _(
+                    'Test template with the same key already exists for part'
+                )
             })
 
         super().validate_unique(exclude)
@@ -3464,6 +3488,10 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         max_length=100,
         verbose_name=_('Test Description'),
         help_text=_('Enter description for this test'),
+    )
+
+    enabled = models.BooleanField(
+        default=True, verbose_name=_('Enabled'), help_text=_('Is this test enabled?')
     )
 
     required = models.BooleanField(
@@ -3805,6 +3833,28 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
         if self.default_value:
             return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
         return f'{self.category.name} | {self.parameter_template.name}'
+
+    def clean(self):
+        """Validate this PartCategoryParameterTemplate instance.
+
+        Checks the provided 'default_value', and (if not blank), ensure it is valid.
+        """
+        super().clean()
+
+        self.default_value = (
+            '' if self.default_value is None else str(self.default_value.strip())
+        )
+
+        if self.default_value and InvenTreeSetting.get_setting(
+            'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+        ):
+            if self.parameter_template.units:
+                try:
+                    InvenTree.conversion.convert_physical_value(
+                        self.default_value, self.parameter_template.units
+                    )
+                except ValidationError as e:
+                    raise ValidationError({'default_value': e.message})
 
     category = models.ForeignKey(
         PartCategory,

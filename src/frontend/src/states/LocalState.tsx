@@ -3,7 +3,6 @@ import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-import { Locales } from '../contexts/LanguageContext';
 import { HostList } from './states';
 
 interface LocalStateProps {
@@ -14,8 +13,8 @@ interface LocalStateProps {
   hostKey: string;
   hostList: HostList;
   setHostList: (newHostList: HostList) => void;
-  language: Locales;
-  setLanguage: (newLanguage: Locales) => void;
+  language: string;
+  setLanguage: (newLanguage: string) => void;
   // theme
   primaryColor: string;
   whiteColor: string;
@@ -30,6 +29,8 @@ interface LocalStateProps {
     tableKey: string
   ) => (names: Record<string, string>) => void;
   clearTableColumnNames: () => void;
+  detailDrawerStack: number;
+  addDetailDrawer: (value: number | false) => void;
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -62,6 +63,7 @@ export const useLocalState = create<LocalStateProps>()(
           });
         }
       },
+      // tables
       tableColumnNames: {},
       getTableColumnNames: (tableKey) => {
         return get().tableColumnNames[tableKey] || {};
@@ -77,6 +79,14 @@ export const useLocalState = create<LocalStateProps>()(
       },
       clearTableColumnNames: () => {
         set({ tableColumnNames: {} });
+      },
+      // detail drawers
+      detailDrawerStack: 0,
+      addDetailDrawer: (value) => {
+        set({
+          detailDrawerStack:
+            value === false ? 0 : get().detailDrawerStack + value
+        });
       }
     }),
     {

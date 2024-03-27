@@ -13,7 +13,7 @@ import math
 import os
 import re
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import timedelta, timezone
 from enum import Enum
 from secrets import compare_digest
 from typing import Any, Callable, TypedDict, Union
@@ -101,7 +101,7 @@ class BaseURLValidator(URLValidator):
         value = str(value).strip()
 
         # If a configuration level value has been specified, prevent change
-        if settings.SITE_URL:
+        if settings.SITE_URL and value != settings.SITE_URL:
             raise ValidationError(_('Site URL is locked by configuration'))
 
         if len(value) == 0:
@@ -190,6 +190,8 @@ class BaseInvenTreeSetting(models.Model):
 
     SETTINGS: dict[str, SettingsKeyType] = {}
 
+    CHECK_SETTING_KEY = False
+
     extra_unique_fields: list[str] = []
 
     class Meta:
@@ -226,9 +228,12 @@ class BaseInvenTreeSetting(models.Model):
         """
         cache_key = f'BUILD_DEFAULT_VALUES:{str(cls.__name__)}'
 
-        if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
-            # Already built default values
-            return
+        try:
+            if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
+                # Already built default values
+                return
+        except Exception:
+            pass
 
         try:
             existing_keys = cls.objects.filter(**kwargs).values_list('key', flat=True)
@@ -251,7 +256,10 @@ class BaseInvenTreeSetting(models.Model):
             )
             pass
 
-        cache.set(cache_key, True, timeout=3600)
+        try:
+            cache.set(cache_key, True, timeout=3600)
+        except Exception:
+            pass
 
     def _call_settings_function(self, reference: str, args, kwargs):
         """Call a function associated with a particular setting.
@@ -280,18 +288,17 @@ class BaseInvenTreeSetting(models.Model):
 
     def save_to_cache(self):
         """Save this setting object to cache."""
-        ckey = self.cache_key
+        key = self.cache_key
 
         # skip saving to cache if no pk is set
         if self.pk is None:
             return
 
-        logger.debug("Saving setting '%s' to cache", ckey)
+        logger.debug("Saving setting '%s' to cache", key)
 
         try:
-            cache.set(ckey, self, timeout=3600)
-        except TypeError:
-            # Some characters cause issues with caching; ignore and move on
+            cache.set(key, self, timeout=3600)
+        except Exception:
             pass
 
     @classmethod
@@ -554,28 +561,30 @@ class BaseInvenTreeSetting(models.Model):
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
+        # Specify if cache lookup should be performed
+        do_cache = kwargs.pop('cache', False)
+
         # Prevent saving to the database during data import
         if InvenTree.ready.isImportingData():
             create = False
+            do_cache = False
 
         # Prevent saving to the database during migrations
         if InvenTree.ready.isRunningMigrations():
             create = False
+            do_cache = False
 
-        # Perform cache lookup by default
-        do_cache = kwargs.pop('cache', True)
-
-        ckey = cls.create_cache_key(key, **kwargs)
+        cache_key = cls.create_cache_key(key, **kwargs)
 
         if do_cache:
             try:
                 # First attempt to find the setting object in the cache
-                cached_setting = cache.get(ckey)
+                cached_setting = cache.get(cache_key)
 
                 if cached_setting is not None:
                     return cached_setting
 
-            except AppRegistryNotReady:
+            except Exception:
                 # Cache is not ready yet
                 do_cache = False
 
@@ -628,6 +637,17 @@ class BaseInvenTreeSetting(models.Model):
 
         If it does not exist, return the backup value (default = None)
         """
+        if (
+            cls.CHECK_SETTING_KEY
+            and key not in cls.SETTINGS
+            and not key.startswith('_')
+        ):
+            logger.warning(
+                "get_setting: Setting key '%s' is not defined for class %s",
+                key,
+                str(cls),
+            )
+
         # If no backup value is specified, attempt to retrieve a "default" value
         if backup_value is None:
             backup_value = cls.get_setting_default(key, **kwargs)
@@ -663,6 +683,17 @@ class BaseInvenTreeSetting(models.Model):
             change_user: User object (must be staff member to update a core setting)
             create: If True, create a new setting if the specified key does not exist.
         """
+        if (
+            cls.CHECK_SETTING_KEY
+            and key not in cls.SETTINGS
+            and not key.startswith('_')
+        ):
+            logger.warning(
+                "set_setting: Setting key '%s' is not defined for class %s",
+                key,
+                str(cls),
+            )
+
         if change_user is not None and not change_user.is_staff:
             return
 
@@ -675,12 +706,14 @@ class BaseInvenTreeSetting(models.Model):
         }
 
         try:
-            setting = cls.objects.get(**filters)
-        except cls.DoesNotExist:
-            if create:
-                setting = cls(key=key, **kwargs)
-            else:
-                return
+            setting = cls.objects.filter(**filters).first()
+
+            if not setting:
+                if create:
+                    setting = cls(key=key, **kwargs)
+                else:
+                    return
+
         except (OperationalError, ProgrammingError):
             if not key.startswith('_'):
                 logger.warning("Database is locked, cannot set setting '%s'", key)
@@ -1190,6 +1223,8 @@ class InvenTreeSetting(BaseInvenTreeSetting):
 
     SETTINGS: dict[str, InvenTreeSettingsKeyType]
 
+    CHECK_SETTING_KEY = True
+
     class Meta:
         """Meta options for InvenTreeSetting."""
 
@@ -1644,6 +1679,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'REPORT_LOG_ERRORS': {
+            'name': _('Log Report Errors'),
+            'description': _('Log errors which occur when generating reports'),
+            'default': False,
+            'validator': bool,
+        },
         'REPORT_DEFAULT_PAGE_SIZE': {
             'name': _('Page Size'),
             'description': _('Default page size for PDF reports'),
@@ -1679,7 +1720,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'STOCK_DELETE_DEPLETED_DEFAULT': {
             'name': _('Delete Depleted Stock'),
             'description': _(
-                'Determines default behaviour when a stock item is depleted'
+                'Determines default behavior when a stock item is depleted'
             ),
             'default': True,
             'validator': bool,
@@ -1735,6 +1776,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'STOCK_ENFORCE_BOM_INSTALLATION': {
+            'name': _('Check BOM when installing items'),
+            'description': _(
+                'Installed stock items must exist in the BOM for the parent part'
+            ),
+            'default': True,
+            'validator': bool,
+        },
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _(
@@ -1742,6 +1791,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ),
             'default': 'BO-{ref:04d}',
             'validator': build.validators.validate_build_order_reference_pattern,
+        },
+        'BUILDORDER_REQUIRE_RESPONSIBLE': {
+            'name': _('Require Responsible Owner'),
+            'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
+        },
+        'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
+            'name': _('Block Until Tests Pass'),
+            'description': _(
+                'Prevent build outputs from being completed until all required tests pass'
+            ),
+            'default': False,
+            'validator': bool,
         },
         'RETURNORDER_ENABLED': {
             'name': _('Enable Return Orders'),
@@ -1756,6 +1819,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ),
             'default': 'RMA-{ref:04d}',
             'validator': order.validators.validate_return_order_reference_pattern,
+        },
+        'RETURNORDER_REQUIRE_RESPONSIBLE': {
+            'name': _('Require Responsible Owner'),
+            'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
         },
         'RETURNORDER_EDIT_COMPLETED_ORDERS': {
             'name': _('Edit Completed Return Orders'),
@@ -1772,6 +1841,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ),
             'default': 'SO-{ref:04d}',
             'validator': order.validators.validate_sales_order_reference_pattern,
+        },
+        'SALESORDER_REQUIRE_RESPONSIBLE': {
+            'name': _('Require Responsible Owner'),
+            'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
         },
         'SALESORDER_DEFAULT_SHIPMENT': {
             'name': _('Sales Order Default Shipment'),
@@ -1794,6 +1869,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             ),
             'default': 'PO-{ref:04d}',
             'validator': order.validators.validate_purchase_order_reference_pattern,
+        },
+        'PURCHASEORDER_REQUIRE_RESPONSIBLE': {
+            'name': _('Require Responsible Owner'),
+            'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
         },
         'PURCHASEORDER_EDIT_COMPLETED_ORDERS': {
             'name': _('Edit Completed Purchase Orders'),
@@ -1981,11 +2062,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
-        'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
-            'name': _('Block Until Tests Pass'),
-            'description': _(
-                'Prevent build outputs from being completed until all required tests pass'
-            ),
+        'TEST_STATION_DATA': {
+            'name': _('Enable Test Station Data'),
+            'description': _('Enable test station data collection for test results'),
             'default': False,
             'validator': bool,
         },
@@ -2025,7 +2104,9 @@ def label_printer_options():
 
 
 class InvenTreeUserSetting(BaseInvenTreeSetting):
-    """An InvenTreeSetting object with a usercontext."""
+    """An InvenTreeSetting object with a user context."""
+
+    CHECK_SETTING_KEY = True
 
     class Meta:
         """Meta options for InvenTreeUserSetting."""
@@ -2064,7 +2145,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
         'HOMEPAGE_BOM_REQUIRES_VALIDATION': {
-            'name': _('Show unvalidated BOMs'),
+            'name': _('Show invalid BOMs'),
             'description': _('Show BOMs that await validation on the homepage'),
             'default': False,
             'validator': bool,
@@ -2377,6 +2458,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int],
             'default': '',
         },
+        'DEFAULT_LINE_LABEL_TEMPLATE': {
+            'name': _('Default build line label template'),
+            'description': _(
+                'The build line label template to be automatically selected'
+            ),
+            'validator': [int],
+            'default': '',
+        },
         'NOTIFICATION_ERROR_REPORT': {
             'name': _('Receive error reports'),
             'description': _('Receive notifications for system errors'),
@@ -2587,7 +2676,7 @@ class VerificationMethod(Enum):
 
 
 class WebhookEndpoint(models.Model):
-    """Defines a Webhook entdpoint.
+    """Defines a Webhook endpoint.
 
     Attributes:
         endpoint_id: Path to the webhook,
@@ -2826,7 +2915,7 @@ class NotificationEntry(MetaMixin):
     @classmethod
     def check_recent(cls, key: str, uid: int, delta: timedelta):
         """Test if a particular notification has been sent in the specified time period."""
-        since = datetime.now().date() - delta
+        since = InvenTree.helpers.current_date() - delta
 
         entries = cls.objects.filter(key=key, uid=uid, updated__gte=since)
 
@@ -2922,7 +3011,7 @@ class NewsFeedEntry(models.Model):
     - published: Date of publishing of the news item
     - author: Author of news item
     - summary: Summary of the news items content
-    - read: Was this iteam already by a superuser?
+    - read: Was this item already by a superuser?
     """
 
     feed_id = models.CharField(verbose_name=_('Id'), unique=True, max_length=250)

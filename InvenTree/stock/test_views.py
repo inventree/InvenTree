@@ -1,6 +1,7 @@
 """Unit tests for Stock views (see views.py)."""
 
 from django.contrib.auth.models import Group
+from django.test import tag
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
@@ -18,6 +19,7 @@ class StockViewTestCase(InvenTreeTestCase):
     roles = 'all'
 
 
+@tag('cui')
 class StockListTest(StockViewTestCase):
     """Tests for Stock list views."""
 
@@ -30,6 +32,7 @@ class StockListTest(StockViewTestCase):
 class StockDetailTest(StockViewTestCase):
     """Unit test for the 'stock detail' page."""
 
+    @tag('cui')
     def test_basic_info(self):
         """Test that basic stock item info is rendered."""
         url = reverse('stock-item-detail', kwargs={'pk': 1})

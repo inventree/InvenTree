@@ -91,7 +91,7 @@ class VersionView(APIView):
         })
 
 
-class VersionSerializer(serializers.Serializer):
+class VersionInformationSerializer(serializers.Serializer):
     """Serializer for a single version."""
 
     version = serializers.CharField()
@@ -101,21 +101,21 @@ class VersionSerializer(serializers.Serializer):
     latest = serializers.BooleanField()
 
     class Meta:
-        """Meta class for VersionSerializer."""
+        """Meta class for VersionInformationSerializer."""
 
-        fields = ['version', 'date', 'gh', 'text', 'latest']
+        fields = '__all__'
 
 
 class VersionApiSerializer(serializers.Serializer):
     """Serializer for the version api endpoint."""
 
-    VersionSerializer(many=True)
+    VersionInformationSerializer(many=True)
 
 
 class VersionTextView(ListAPI):
     """Simple JSON endpoint for InvenTree version text."""
 
-    serializer_class = VersionSerializer
+    serializer_class = VersionInformationSerializer
 
     permission_classes = [permissions.IsAdminUser]
 
@@ -152,6 +152,7 @@ class InfoView(AjaxView):
             'worker_running': is_worker_running(),
             'worker_pending_tasks': self.worker_pending_tasks(),
             'plugins_enabled': settings.PLUGINS_ENABLED,
+            'plugins_install_disabled': settings.PLUGINS_INSTALL_DISABLED,
             'active_plugins': plugins_info(),
             'email_configured': is_email_configured(),
             'debug_mode': settings.DEBUG,

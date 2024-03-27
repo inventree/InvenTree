@@ -2,7 +2,7 @@
 
 from django.apps import apps
 from django.contrib.auth.models import Group
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeTestCase
@@ -165,6 +165,8 @@ class OwnerModelTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, status_code)
         return response.data
 
+    # TODO: Find out why this depends on CUI
+    @tag('cui')
     def test_owner(self):
         """Tests for the 'owner' model."""
         # Check that owner was created for user

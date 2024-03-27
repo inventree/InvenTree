@@ -53,6 +53,10 @@ If this flag is set, then a corresponding test result against a stock item must 
 
 If this flag is set, then a corresponding test result against a stock item must provide a file attachment uploaded.
 
+#### Enabled
+
+Tests can be *disabled* by setting the *enabled* flag to `False`. This can be useful if a test is no longer required, but the test template should be retained for historical purposes. Note that *deleting* a test template will also delete any associated test results. So, if a test template is no longer required, it is better to disable it rather than delete it.
+
 ### Test Results
 
 Individual stock item objects can have test results associated with them which correspond to test templates. Refer to the [stock test result](../stock/test.md) documentation for further information.
