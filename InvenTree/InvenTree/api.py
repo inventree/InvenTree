@@ -66,7 +66,6 @@ class LicenseView(APIView):
 
         try:
             data = json.loads(path.read_text())
-            return data
         except json.JSONDecodeError as e:
             logger.exception("Failed to parse license file '%s': %s", path, e)
             return []
@@ -74,12 +73,15 @@ class LicenseView(APIView):
             logger.exception("Exception while reading license file '%s': %s", path, e)
             return []
 
+        # Ensure consistent string between backend and frontend licenses
+        return [{key.lower(): value for key, value in entry.items()} for entry in data]
+
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
         """Return information about the InvenTree server."""
         backend = Path(__file__).parent.joinpath('licenses.txt')
         frontend = Path(__file__).parent.parent.joinpath(
-            'web/static/web/.vite/dependencies.txt'
+            'web/static/web/.vite/dependencies.json'
         )
         return JsonResponse({
             'backend': self.read_license_file(backend),

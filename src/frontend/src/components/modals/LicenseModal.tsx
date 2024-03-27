@@ -28,14 +28,14 @@ export function LicenceView(entries: any[]) {
             <Accordion.Item key={index} value={`entry-${index}`}>
               <Accordion.Control>
                 <Group position="apart" grow>
-                  <Text>{entry.Name}</Text>
-                  <Text>{entry.License}</Text>
+                  <Text>{entry.name}</Text>
+                  <Text>{entry.license}</Text>
                   <Space />
-                  <Text>{entry.Version}</Text>
+                  <Text>{entry.version}</Text>
                 </Group>
               </Accordion.Control>
               <Accordion.Panel>
-                {entry.LicenseText || t`No license text available`}
+                {entry.licensetext || t`No license text available`}
               </Accordion.Panel>
             </Accordion.Item>
           ))}
