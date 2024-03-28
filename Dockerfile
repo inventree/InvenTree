@@ -102,7 +102,7 @@ RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
 # Frontend builder image:
 FROM prebuild as frontend
 
-RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn@v1.22.22
 RUN yarn config set network-timeout 600000 -g
 COPY InvenTree ${INVENTREE_HOME}/InvenTree
 COPY src ${INVENTREE_HOME}/src
@@ -145,7 +145,7 @@ RUN pip install uv --no-cache-dir && pip install -r base_requirements.txt --no-c
 
 # Install nodejs / npm / yarn
 
-RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn@v1.22.22
 RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/
