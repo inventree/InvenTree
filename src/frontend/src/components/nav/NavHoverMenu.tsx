@@ -48,7 +48,7 @@ export function NavHoverMenu({
       withinPortal
     >
       <HoverCard.Target>
-        <UnstyledButton onClick={() => openDrawer()}>
+        <UnstyledButton onClick={() => openDrawer()} aria-label="Homenav">
           <InvenTreeLogo />
         </UnstyledButton>
       </HoverCard.Target>
