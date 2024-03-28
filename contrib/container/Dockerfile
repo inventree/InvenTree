@@ -90,7 +90,7 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
 COPY tasks.py contrib/container/gunicorn.conf.py contrib/container/init.sh ./
 RUN chmod +x init.sh
 
-ENTRYPOINT ["/bin/ash", "./init.sh"]
+ENTRYPOINT ["/bin/ash", "init.sh"]
 
 FROM inventree_base as prebuild
 
