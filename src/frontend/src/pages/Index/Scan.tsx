@@ -30,7 +30,6 @@ import {
   IconArrowsMaximize,
   IconArrowsMinimize,
   IconLink,
-  IconNumber,
   IconPlayerPlayFilled,
   IconPlayerStopFilled,
   IconPlus,
@@ -44,6 +43,7 @@ import { CameraDevice } from 'html5-qrcode/camera/core';
 import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
+import { ActionControls } from '../../actions';
 import { DocInfo } from '../../components/items/DocInfo';
 import { StylishText } from '../../components/items/StylishText';
 import { TitleWithDoc } from '../../components/items/TitleWithDoc';
@@ -51,7 +51,6 @@ import { RenderInstance } from '../../components/render/Instance';
 import { ModelInformationDict } from '../../components/render/ModelType';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 
@@ -228,24 +227,24 @@ export default function Scan() {
 
   // selected actions component
   const SelectedActions = () => {
-    const uniqueObjectTypes = [
+    const selectedItems = [
       ...new Set(
         selection
           .map((id) => {
-            return history.find((item) => item.id === id)?.model;
+            return history.find((item) => item.id === id);
           })
           .filter((item) => item != undefined)
       )
     ];
 
-    if (uniqueObjectTypes.length === 0) {
+    if (selectedItems.length === 0) {
       return (
         <Group spacing={0}>
           <IconQuestionMark color="orange" />
           <Trans>Selected elements are not known</Trans>
         </Group>
       );
-    } else if (uniqueObjectTypes.length > 1) {
+    } else if (selectedItems.length > 1) {
       return (
         <Group spacing={0}>
           <IconAlertCircle color="orange" />
@@ -253,16 +252,18 @@ export default function Scan() {
         </Group>
       );
     }
+    if (selectedItems[0] === undefined) return <></>;
+
     return (
       <>
         <Text fz="sm" c="dimmed">
-          <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
+          <Trans>Actions for {selectedItems[0].model} </Trans>
         </Text>
-        <Group>
-          <ActionIcon onClick={notYetImplemented} title={t`Count`}>
-            <IconNumber />
-          </ActionIcon>
-        </Group>
+        <ActionControls
+          type={selectedItems[0].model}
+          barcode={selectedItems[0].ref}
+          data={selectedItems[0]}
+        />
       </>
     );
   };
@@ -280,7 +281,7 @@ export default function Scan() {
           />
         </Group>
         <Button onClick={toggleFullscreen} size="sm" variant="subtle">
-          {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
+          {!fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
         </Button>
       </Group>
       <Space h={'md'} />
@@ -467,8 +468,8 @@ function HistoryTable({
 
 // region input stuff
 enum InputMethod {
-  Manual = 'manually',
-  ImageBarcode = 'imageBarcode'
+  Manual = 'manual',
+  ImageBarcode = 'camera'
 }
 
 interface inputProps {
