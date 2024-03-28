@@ -36,7 +36,7 @@ jobs:
       api: ${{ steps.filter.outputs.api }}
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -60,7 +60,7 @@ jobs:
     needs: [ 'pre-commit' ]
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -82,7 +82,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
         with:
@@ -103,7 +103,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+        uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
         with:
@@ -139,7 +139,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -189,7 +189,7 @@ jobs:
               version: ${{ needs.schema.outputs.version }}
 
             steps:
-              - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+              - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
                 with:
                     repository: inventree/schema
                     token: ${{ secrets.SCHEMA_PAT }}
@@ -225,7 +225,7 @@ jobs:
       INVENTREE_SITE_URL: http://127.0.0.1:12345
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -261,7 +261,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -311,7 +311,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -354,7 +354,7 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -393,7 +393,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -417,7 +417,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
         name: Checkout Code
       - name: Environment Setup
         uses: ./.github/actions/setup
@@ -473,7 +473,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -501,7 +501,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # pin@v4.1.2
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
