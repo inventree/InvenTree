@@ -141,7 +141,7 @@ EXPOSE 5173
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
-RUN pip install uv --no-cache-dir && pip install -r base_requirements.txt --no-cache
+RUN pip install uv==0.1.26 --no-cache-dir && pip install -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
