@@ -1,12 +1,10 @@
-import { Trans, t } from '@lingui/macro';
-import { ActionIcon, Button, Group, TextInput } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { ActionIcon, Group, TextInput } from '@mantine/core';
 import { getHotkeyHandler, randomId } from '@mantine/hooks';
 import { IconPlus } from '@tabler/icons-react';
-import React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
-import { IS_DEV_OR_DEMO } from '../../main';
 
 // Scan Item
 interface ScanItem {
@@ -48,17 +46,6 @@ export default function InputManual({ action }: inputProps) {
     setValue('');
   };
 
-  const btnAddDummyItem = () => {
-    const dummyItem: ScanItem = {
-      id: randomId(),
-      ref: 'Test item',
-      data: {},
-      timestamp: new Date(),
-      source: InputMethod.Manual
-    };
-    action(dummyItem);
-  };
-
   return (
     <>
       <Group>
@@ -72,12 +59,6 @@ export default function InputManual({ action }: inputProps) {
           <IconPlus />
         </ActionIcon>
       </Group>
-
-      {IS_DEV_OR_DEMO && (
-        <Button onClick={btnAddDummyItem} variant="outline">
-          <Trans>Add dummy item</Trans>
-        </Button>
-      )}
     </>
   );
 }
