@@ -6,6 +6,8 @@ import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { ApiFormFieldType } from './ApiFormField';
 
+dayjs.extend(customParseFormat);
+
 export default function DateField({
   controller,
   definition
@@ -13,8 +15,6 @@ export default function DateField({
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
 }) {
-  dayjs.extend(customParseFormat);
-
   const fieldId = useId();
 
   const {
