@@ -27,12 +27,16 @@ ENV INVENTREE_DOCKER="true"
 
 # InvenTree paths
 ENV INVENTREE_HOME="/home/inventree"
-ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/${data_dir}"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
+
+# InvenTree source directories
+ENV INVENTREE_SRC_DIR="${INVENTREE_HOME}/src"
+ENV INVENTREE_FRONTEND_DIR="${INVENTREE_SRC_DIR}/frontend"
+ENV INVENTREE_BACKEND_DIR="${INVENTREE_SRC_DIR}/backend"
 
 # InvenTree configuration files
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
@@ -90,7 +94,7 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
 COPY tasks.py contrib/container/gunicorn.conf.py contrib/container/init.sh ./
 RUN chmod +x init.sh
 
-ENTRYPOINT ["/bin/ash", "init.sh"]
+ENTRYPOINT ["/bin/ash", "./init.sh"]
 
 FROM inventree_base as prebuild
 
@@ -159,7 +163,7 @@ ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
 WORKDIR ${INVENTREE_HOME}
 
 # Entrypoint ensures that we are running in the python virtual environment
-ENTRYPOINT ["/bin/ash", "./init.sh"]
+ENTRYPOINT ["/bin/ash", "./contrib/container/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
