@@ -153,3 +153,39 @@ test('PUI - Pages 2', async ({ page }) => {
   await page.getByPlaceholder('Select input method').click();
   await page.getByRole('option', { name: 'Manual input' }).click();
 });
+
+test('PUI - Pages 3', async ({ page }) => {
+  await page.goto('./platform/');
+  await expect(page).toHaveTitle('InvenTree');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill('admin');
+  await page.getByLabel('password').fill('inventree');
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform');
+
+  await page.getByRole('button', { name: 'admin' }).click();
+  await page.getByRole('menuitem', { name: 'Logout' }).click();
+  await page.getByRole('button', { name: 'Send me an email' }).click();
+  await page.getByRole('button').nth(3).click();
+  await page.getByLabel('Select language').click();
+  await page.getByRole('option', { name: 'German' }).click();
+  await page.getByRole('button', { name: 'Benutzername und Passwort' }).click();
+  await page.getByPlaceholder('Ihr Benutzername').click();
+  await page.getByPlaceholder('Ihr Benutzername').fill('admin');
+  await page.getByPlaceholder('Ihr Benutzername').press('Tab');
+  await page.getByPlaceholder('Dein Passwort').fill('inventree');
+  await page.getByRole('button', { name: 'Anmelden' }).click();
+  await page
+    .locator('span')
+    .filter({ hasText: 'AnzeigeneinstellungenFarbmodusSprache' })
+    .getByRole('button')
+    .click();
+  await page
+    .locator('span')
+    .filter({ hasText: 'AnzeigeneinstellungenFarbmodusSprache' })
+    .getByRole('button')
+    .click();
+  await page.getByRole('button', { name: "InvenTree's Logo" }).first().click();
+  await page.getByRole('tab', { name: 'Dashboard' }).click();
+  await page.waitForURL('**/platform/dashboard');
+});
