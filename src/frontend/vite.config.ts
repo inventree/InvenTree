@@ -28,7 +28,7 @@ export default defineConfig({
   build: {
     manifest: true,
     outDir: '../../InvenTree/web/static/web',
-    sourcemap: true
+    sourcemap: import.meta.env.VITE_COVERAGE == 'true' ? true : false
   },
   server: {
     watch: {
