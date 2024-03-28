@@ -33,11 +33,6 @@ ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
 ENV INVENTREE_PLUGIN_DIR="${INVENTREE_DATA_DIR}/plugins"
 
-# InvenTree source directories
-ENV INVENTREE_SRC_DIR="${INVENTREE_HOME}/src"
-ENV INVENTREE_FRONTEND_DIR="${INVENTREE_SRC_DIR}/frontend"
-ENV INVENTREE_BACKEND_DIR="${INVENTREE_SRC_DIR}/backend"
-
 # InvenTree configuration files
 ENV INVENTREE_CONFIG_FILE="${INVENTREE_DATA_DIR}/config.yaml"
 ENV INVENTREE_SECRET_KEY_FILE="${INVENTREE_DATA_DIR}/secret_key.txt"
@@ -127,6 +122,8 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 ENV PATH=/root/.local/bin:$PATH
 COPY --from=prebuild /root/.local /root/.local
 
+ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}"
+
 # Copy source code
 COPY src/backend/InvenTree ./InvenTree
 COPY --from=frontend ${INVENTREE_HOME}/src/backend/InvenTree/web/static/web ./src/backend/InvenTree/web/static/web
@@ -137,6 +134,8 @@ COPY --from=frontend ${INVENTREE_HOME}/src/backend/InvenTree/web/static/web ./sr
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
 FROM inventree_base as dev
+
+ENV INVENTREE_BACKEND_DIR="${INVENTREE_SRC_DIR}/backend"
 
 # Vite server (for local frontend development)
 EXPOSE 5173
