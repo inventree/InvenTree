@@ -4,6 +4,7 @@ import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
+const is_coverage = process.env.VITE_COVERAGE === 'true';
 
 if (IS_IN_WSL) {
   console.log('WSL detected: using polling for file system events');
@@ -28,7 +29,7 @@ export default defineConfig({
   build: {
     manifest: true,
     outDir: '../../InvenTree/web/static/web',
-    sourcemap: import.meta.env.VITE_COVERAGE == 'true' ? true : false
+    sourcemap: is_coverage
   },
   server: {
     watch: {
