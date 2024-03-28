@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_MX\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-27 15:45\n"
+"PO-Revision-Date: 2024-03-28 15:55\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,23 +20,23 @@ msgstr ""
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
-msgstr ""
+msgstr "Titulo"
 
 #: src/components/details/Details.tsx:327
 msgid "Copied"
-msgstr ""
+msgstr "Copiado"
 
 #: src/components/details/Details.tsx:327
 msgid "Copy"
-msgstr ""
+msgstr "Copiar"
 
 #: src/components/details/DetailsImage.tsx:64
 msgid "Remove Image"
-msgstr ""
+msgstr "Quitar imagen"
 
 #: src/components/details/DetailsImage.tsx:67
 msgid "Remove the associated image from this item?"
-msgstr ""
+msgstr "¿Eliminar imagen asociada al artículo?"
 
 #: src/components/details/DetailsImage.tsx:70
 #: src/forms/StockForms.tsx:450
@@ -44,7 +44,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 #: src/pages/stock/StockDetail.tsx:403
 msgid "Remove"
-msgstr ""
+msgstr "Eliminar"
 
 #: src/components/details/DetailsImage.tsx:70
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:164
@@ -55,70 +55,70 @@ msgstr ""
 #: src/tables/InvenTreeTable.tsx:471
 #: src/tables/plugin/PluginListTable.tsx:361
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: src/components/details/DetailsImage.tsx:98
 msgid "Drag and drop to upload"
-msgstr ""
+msgstr "Arrastra y suelta para subir"
 
 #: src/components/details/DetailsImage.tsx:101
 msgid "Click to select file(s)"
-msgstr ""
+msgstr "Clic para seleccionar archivo(s)"
 
 #: src/components/details/DetailsImage.tsx:223
 msgid "Clear"
-msgstr ""
+msgstr "Borrar"
 
 #: src/components/details/DetailsImage.tsx:226
 #: src/components/forms/ApiForm.tsx:490
 #: src/contexts/ThemeContext.tsx:64
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
-msgstr ""
+msgstr "Aceptar"
 
 #: src/components/details/DetailsImage.tsx:266
 msgid "Select from existing images"
-msgstr ""
+msgstr "Seleccionar desde imágenes existentes"
 
 #: src/components/details/DetailsImage.tsx:274
 msgid "Select Image"
-msgstr ""
+msgstr "Seleccionar imagen"
 
 #: src/components/details/DetailsImage.tsx:286
 msgid "Upload new image"
-msgstr ""
+msgstr "Subir nueva imagen"
 
 #: src/components/details/DetailsImage.tsx:293
 msgid "Upload Image"
-msgstr ""
+msgstr "Subir Imagen"
 
 #: src/components/details/DetailsImage.tsx:306
 msgid "Delete image"
-msgstr ""
+msgstr "Eliminar imagen"
 
 #: src/components/details/PartIcons.tsx:28
 msgid "Part is not active"
-msgstr ""
+msgstr "La pieza no está activa"
 
 #: src/components/details/PartIcons.tsx:34
 msgid "Inactive"
-msgstr ""
+msgstr "Inactivo"
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "La pieza es una pieza de plantilla (se pueden hacer variantes de esta misma)"
 
 #: src/components/details/PartIcons.tsx:47
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "Esta pieza se puede ensamblar utilizando otras partes"
 
 #: src/components/details/PartIcons.tsx:53
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "Esta pieza se puede usar en ensamblajes"
 
 #: src/components/details/PartIcons.tsx:59
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "Stock de pieza será rastreado con número de serie"
 
 #: src/components/details/PartIcons.tsx:65
 msgid "Part can be purchased from external suppliers"
@@ -256,11 +256,11 @@ msgstr ""
 #~ msgid "Check your your input and try again."
 #~ msgstr "Check your your input and try again."
 
-#: src/components/forms/AuthenticationForm.tsx:50
+#: src/components/forms/AuthenticationForm.tsx:51
 msgid "Login successful"
 msgstr "Inicio de sesión exitoso"
 
-#: src/components/forms/AuthenticationForm.tsx:51
+#: src/components/forms/AuthenticationForm.tsx:52
 msgid "Welcome back!"
 msgstr "¡Bienvenido de vuelta!"
 
@@ -268,13 +268,13 @@ msgstr "¡Bienvenido de vuelta!"
 #~ msgid "Login successfull"
 #~ msgstr "Login successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:58
+#: src/components/forms/AuthenticationForm.tsx:59
 msgid "Login failed"
 msgstr "Error al iniciar sesión"
 
-#: src/components/forms/AuthenticationForm.tsx:59
-#: src/components/forms/AuthenticationForm.tsx:79
-#: src/components/forms/AuthenticationForm.tsx:216
+#: src/components/forms/AuthenticationForm.tsx:60
+#: src/components/forms/AuthenticationForm.tsx:80
+#: src/components/forms/AuthenticationForm.tsx:217
 #: src/functions/auth.tsx:116
 msgid "Check your input and try again."
 msgstr ""
@@ -284,46 +284,46 @@ msgstr ""
 #~ msgid "Mail delivery successfull"
 #~ msgstr "Mail delivery successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:70
+#: src/components/forms/AuthenticationForm.tsx:71
 #: src/functions/auth.tsx:107
 msgid "Mail delivery successful"
 msgstr "Envío de correo exitoso"
 
-#: src/components/forms/AuthenticationForm.tsx:71
+#: src/components/forms/AuthenticationForm.tsx:72
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
 msgstr "Revisa tu bandeja de entrada para el enlace de inicio de sesión. Si tienes una cuenta, recibirás un enlace de inicio de sesión. Revisa también el correo no deseado."
 
-#: src/components/forms/AuthenticationForm.tsx:78
-#: src/components/forms/AuthenticationForm.tsx:215
+#: src/components/forms/AuthenticationForm.tsx:79
+#: src/components/forms/AuthenticationForm.tsx:216
 msgid "Input error"
 msgstr "Error de entrada"
 
-#: src/components/forms/AuthenticationForm.tsx:98
+#: src/components/forms/AuthenticationForm.tsx:99
 msgid "Or continue with other methods"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:109
-#: src/components/forms/AuthenticationForm.tsx:233
+#: src/components/forms/AuthenticationForm.tsx:110
+#: src/components/forms/AuthenticationForm.tsx:234
 msgid "Username"
 msgstr "Nombre de usuario"
 
-#: src/components/forms/AuthenticationForm.tsx:110
-#: src/components/forms/AuthenticationForm.tsx:234
+#: src/components/forms/AuthenticationForm.tsx:111
+#: src/components/forms/AuthenticationForm.tsx:235
 msgid "Your username"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:115
-#: src/components/forms/AuthenticationForm.tsx:246
+#: src/components/forms/AuthenticationForm.tsx:116
+#: src/components/forms/AuthenticationForm.tsx:247
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
 msgstr "Contraseña"
 
-#: src/components/forms/AuthenticationForm.tsx:116
-#: src/components/forms/AuthenticationForm.tsx:247
+#: src/components/forms/AuthenticationForm.tsx:117
+#: src/components/forms/AuthenticationForm.tsx:248
 msgid "Your password"
 msgstr "Tu contraseña"
 
-#: src/components/forms/AuthenticationForm.tsx:128
+#: src/components/forms/AuthenticationForm.tsx:129
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
 msgstr "Restablecer contraseña"
@@ -336,69 +336,69 @@ msgstr "Restablecer contraseña"
 #~ msgid "I will use username and password"
 #~ msgstr "I will use username and password"
 
-#: src/components/forms/AuthenticationForm.tsx:137
-#: src/components/forms/AuthenticationForm.tsx:239
+#: src/components/forms/AuthenticationForm.tsx:138
+#: src/components/forms/AuthenticationForm.tsx:240
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: src/components/forms/AuthenticationForm.tsx:138
+#: src/components/forms/AuthenticationForm.tsx:139
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
 msgstr "Te enviaremos un enlace para iniciar sesión - si estás registrado"
 
-#: src/components/forms/AuthenticationForm.tsx:154
+#: src/components/forms/AuthenticationForm.tsx:155
 msgid "Send me an email"
 msgstr "Envíame un correo electrónico"
 
-#: src/components/forms/AuthenticationForm.tsx:156
+#: src/components/forms/AuthenticationForm.tsx:157
 msgid "Use username and password"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:165
+#: src/components/forms/AuthenticationForm.tsx:166
 msgid "Log In"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:167
+#: src/components/forms/AuthenticationForm.tsx:168
 msgid "Send Email"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:196
+#: src/components/forms/AuthenticationForm.tsx:197
 msgid "Registration successful"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:197
+#: src/components/forms/AuthenticationForm.tsx:198
 msgid "Please confirm your email address to complete the registration"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:240
+#: src/components/forms/AuthenticationForm.tsx:241
 msgid "This will be used for a confirmation"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:252
+#: src/components/forms/AuthenticationForm.tsx:253
 msgid "Password repeat"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:253
+#: src/components/forms/AuthenticationForm.tsx:254
 msgid "Repeat password"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:265
-#: src/components/forms/AuthenticationForm.tsx:310
+#: src/components/forms/AuthenticationForm.tsx:266
+#: src/components/forms/AuthenticationForm.tsx:311
 msgid "Register"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:271
+#: src/components/forms/AuthenticationForm.tsx:272
 msgid "Or use SSO"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:302
+#: src/components/forms/AuthenticationForm.tsx:303
 msgid "Don't have an account?"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:321
+#: src/components/forms/AuthenticationForm.tsx:322
 msgid "Go back to login"
 msgstr ""
 
@@ -2505,7 +2505,7 @@ msgstr ""
 msgid "Are you sure you want to delete this item?"
 msgstr ""
 
-#: src/pages/Auth/Logged-In.tsx:22
+#: src/pages/Auth/Logged-In.tsx:23
 msgid "Checking if you are already logged in"
 msgstr ""
 
