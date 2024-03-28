@@ -149,7 +149,6 @@ export default function Scan() {
   const loadBarcode = async (barcodeURL: string) => {
     try {
       let response = await api.get(barcodeURL);
-      console.log(`GET Response:`, response);
       return response.data;
     } catch (error) {
       console.log(
