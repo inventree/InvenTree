@@ -34,6 +34,7 @@ import { notYetImplemented } from '../../functions/notifications';
 import { apiUrl } from '../../states/ApiState';
 import BarcodeInputImage from './BarcodeInputImage';
 import BarcodeInputManual from './BarcodeInputManual';
+import ScanCart from './ScanCart';
 import HistoryTable from './ScanHistoryTable';
 
 interface ScanItem {
@@ -262,6 +263,7 @@ export default function Scan() {
   // rendering
   return (
     <>
+      {/* Page Header */}
       <Group position="apart">
         <Group position="left">
           <StylishText>
@@ -275,8 +277,12 @@ export default function Scan() {
           {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
         </Button>
       </Group>
+
       <Space h={'md'} />
+
+      {/* Page Content */}
       <Grid maw={'100%'}>
+        {/* Left Column */}
         <Col span={4}>
           <Stack>
             <Stack spacing="xs">
@@ -339,7 +345,15 @@ export default function Scan() {
             </Stack>
           </Stack>
         </Col>
+
+        {/* Main Content */}
         <Col span={8}>
+          {/* Scan Cart Component */}
+          <ScanCart items={history} />
+
+          <Space h={'md'} />
+
+          {/* History Table Title */}
           <Group position="apart">
             <TitleWithDoc
               order={3}
