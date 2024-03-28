@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-27 06:22+0000\n"
-"PO-Revision-Date: 2024-03-27 15:45\n"
+"PO-Revision-Date: 2024-03-28 15:55\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -28,7 +28,7 @@ msgstr "Uporabnik nima dovoljenja pogleda tega modela"
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Vnesena napačna enota ({unit})"
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
@@ -205,7 +205,7 @@ msgstr "Podani URL ni veljavna slikovna datoteka"
 
 #: InvenTree/locales.py:18
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bolgarščina"
 
 #: InvenTree/locales.py:19
 msgid "Czech"
@@ -241,7 +241,7 @@ msgstr "Farsi / Perzijsko"
 
 #: InvenTree/locales.py:27
 msgid "Finnish"
-msgstr ""
+msgstr "Finščina"
 
 #: InvenTree/locales.py:28
 msgid "French"
@@ -253,7 +253,7 @@ msgstr "Hebrejščina"
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr ""
+msgstr "Hindujščina"
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
@@ -273,7 +273,7 @@ msgstr "Korejščina"
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr ""
+msgstr "Latvijščina"
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
@@ -301,7 +301,7 @@ msgstr "Ruščina"
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
-msgstr ""
+msgstr "Slovaščina"
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
@@ -309,7 +309,7 @@ msgstr "Slovenščina"
 
 #: InvenTree/locales.py:44
 msgid "Serbian"
-msgstr ""
+msgstr "Srbščina"
 
 #: InvenTree/locales.py:45
 msgid "Swedish"
@@ -329,11 +329,11 @@ msgstr "Vietnamščina"
 
 #: InvenTree/locales.py:49
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Kitajščina (poenostavljena)"
 
 #: InvenTree/locales.py:50
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Kitajščina (tradicionalno)"
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
