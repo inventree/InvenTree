@@ -23,7 +23,7 @@ INVENTREE_SW_VERSION = '0.15.0 dev'
 
 # Discover git
 try:
-    main_repo = Repo(pathlib.Path(__file__).parent.parent.parent)
+    main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
     main_commit = main_repo[main_repo.head()]
 except (NotGitRepository, FileNotFoundError):
     main_commit = None

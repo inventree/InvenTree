@@ -159,7 +159,7 @@ InvenTree supports the following reporting functionality:
 InvenTree is supplied with a number of default templates "out of the box". These are generally quite simple, but serve as a starting point for building custom reports to suit a specific need.
 
 !!! tip "Read the Source"
-    The source code for the default reports is [available on GitHub](https://github.com/inventree/InvenTree/tree/master/InvenTree/report/templates/report). Use this as a guide for generating your own reports!
+    The source code for the default reports is [available on GitHub](https://github.com/inventree/InvenTree/tree/master/src/backend/InvenTree/report/templates/report). Use this as a guide for generating your own reports!
 
 ## Creating Reports
 

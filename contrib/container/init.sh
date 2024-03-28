@@ -28,8 +28,8 @@ fi
 if test -f "$INVENTREE_CONFIG_FILE"; then
     echo "Loading config file : $INVENTREE_CONFIG_FILE"
 else
-    echo "Copying config file to $INVENTREE_CONFIG_FILE"
-    cp $INVENTREE_HOME/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
+    echo "Copying config file from $INVENTREE_BACKEND_DIR/InvenTree/config_template.yml to $INVENTREE_CONFIG_FILE"
+    cp $INVENTREE_BACKEND_DIR/InvenTree/config_template.yaml $INVENTREE_CONFIG_FILE
 fi
 
 # Setup a python virtual environment

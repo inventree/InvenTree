@@ -84,7 +84,7 @@ data/
 env/
 
 # Locale stats file
-locale_stats.json
+src/backend/InvenTree/InvenTree/locale_stats.json
 
 # node.js
 node_modules/
@@ -93,7 +93,7 @@ node_modules/
 maintenance_mode_state.txt
 
 # plugin dev directory
-InvenTree/plugins/
+src/backend/InvenTree/plugins/
 
 # Compiled translation files
 *.mo
@@ -103,6 +103,7 @@ messages.ts
 api.yaml
 
 # web frontend (static files)
+src/backend/InvenTree/web/static
 InvenTree/web/static
 
 # Generated docs files

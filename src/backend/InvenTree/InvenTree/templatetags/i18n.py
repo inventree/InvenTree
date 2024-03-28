@@ -74,10 +74,9 @@ class CustomTranslateNode(TranslateNode):
 @register.tag('translate')
 @register.tag('trans')
 def do_translate(parser, token):
-    """Custom translation function.
+    """Custom translation function, lifted from https://github.com/django/django/blob/main/django/templatetags/i18n.py.
 
-    - Lifted from https://github.com/django/django/blob/main/django/templatetags/i18n.py.
-    - The only difference is that we pass this to our custom rendering node class
+    The only difference is that we pass this to our custom rendering node class
     """
     bits = token.split_contents()
     if len(bits) < 2:

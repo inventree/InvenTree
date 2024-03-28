@@ -8,7 +8,7 @@
       "name": "InvenTree Server",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/InvenTree/manage.py",
+      "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
       "args": ["runserver"],
       "django": true,
       "justMyCode": true
@@ -17,7 +17,7 @@
       "name": "InvenTree Server - 3rd party",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/InvenTree/manage.py",
+      "program": "${workspaceFolder}/src/backend/InvenTree/manage.py",
       "args": ["runserver"],
       "django": true,
       "justMyCode": false

@@ -22,7 +22,7 @@ The InvenTree server tries to locate the `config.yaml` configuration file on sta
 !!! tip "Config File Location"
     When the InvenTree server boots, it will report the location where it expects to find the configuration file
 
-The configuration file *template* can be found on [GitHub](https://github.com/inventree/InvenTree/blob/master/InvenTree/config_template.yaml)
+The configuration file *template* can be found on [GitHub](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/config_template.yaml)
 
 !!! info "Template File"
     The default configuration file (as defined by the template linked above) will be copied to the specified configuration file location on first run, if a configuration file is not found in that location.
