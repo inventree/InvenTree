@@ -18,11 +18,9 @@ import {
   IconLink,
   IconNumber,
   IconQuestionMark,
-  IconSearch,
   IconTrash
 } from '@tabler/icons-react';
 import { AxiosResponse } from 'axios';
-import React from 'react';
 import { useEffect, useState } from 'react';
 
 import { api } from '../../App';
@@ -86,13 +84,6 @@ export default function Scan() {
     defaultValue: null
   });
 
-  // button handlers
-  function btnRunSelectedBarcode() {
-    const item = getSelectedItem(selection[0]);
-    if (!item) return;
-    runBarcode(item?.ref, item?.id);
-  }
-
   const selectionLinked =
     selection.length === 1 && getSelectedItem(selection[0])?.link != undefined;
 
@@ -143,7 +134,6 @@ export default function Scan() {
       let response = await api.post(apiUrl(ApiEndpoints.barcode), {
         barcode: barcodeValue
       });
-      console.log(`POST Response:`, response);
 
       // Return barcode validation data
       return response.data;
@@ -170,53 +160,7 @@ export default function Scan() {
     }
   };
 
-  const runBarcode = async (value: string, id?: string) => {
-    console.log(`Scanned Barcode: '${value}'\nID:`, id);
-    try {
-      // Validate Barcode
-      let response = await validateBarcode(value);
-
-      // update item in history
-      if (!id || !response) return;
-
-      const item = getSelectedItem(selection[0]);
-      if (!item) return;
-
-      // set link data
-      item.link = response.data?.url;
-
-      const rsp = matchObject(response.data);
-      item.model = rsp[0];
-      item.pk = rsp[1];
-
-      // Fetch instance data
-      if (item.model && item.pk) {
-        let model_info = ModelInformationDict[item.model];
-
-        if (model_info && model_info.api_endpoint) {
-          const url = apiUrl(model_info.api_endpoint, item.pk);
-          let apiResponseData = await loadBarcode(url);
-          if (apiResponseData) item.instance = apiResponseData;
-        }
-      }
-
-      historyHandlers.setState(history);
-    } catch (error) {
-      // 400 and no plugin means no match
-      // if (
-      //   error.response?.status === 400 &&
-      //   error.response?.data?.plugin === 'None'
-      // )
-      //   return;
-
-      // otherwise log error
-      console.log('error while running barcode', error);
-    }
-  };
-
   const addItem = async (item: ScanItem) => {
-    console.log(`Add Item:`, item);
-
     // Validate Barcode
     const result = await validateBarcode(item.ref);
     if (!result) return;
@@ -225,6 +169,7 @@ export default function Scan() {
     const processedItem = matchObject(result);
     if (!processedItem[0]) return;
 
+    // Update item properties
     item.model = processedItem[0];
     item.pk = processedItem[1];
 
@@ -233,18 +178,15 @@ export default function Scan() {
     const url = apiUrl(modelInfo.api_endpoint, processedItem[1]);
     const barcodeResult = await loadBarcode(url);
 
+    // Set item instance to API result
     item.instance = barcodeResult;
 
     scannedItems.push(item);
     historyHandlers.append(item);
-
-    console.log(`Scanned Items:`, scannedItems);
-    console.log(`History:`, history);
   };
 
   // save history data to session storage
   useEffect(() => {
-    console.log(`History:`, history);
     if (history.length === 0) return;
     setHistoryStorage(history);
   }, [history]);
@@ -383,13 +325,6 @@ export default function Scan() {
                       title={t`Delete`}
                     >
                       <IconTrash />
-                    </ActionIcon>
-                    <ActionIcon
-                      onClick={btnRunSelectedBarcode}
-                      disabled={selection.length > 1}
-                      title={t`Lookup part`}
-                    >
-                      <IconSearch />
                     </ActionIcon>
                     <ActionIcon
                       onClick={btnOpenSelectedLink}

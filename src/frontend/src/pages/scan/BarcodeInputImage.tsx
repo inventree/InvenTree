@@ -21,11 +21,9 @@ import {
 import { IconX } from '@tabler/icons-react';
 import { Html5Qrcode, Html5QrcodeCameraScanConfig } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
-import React from 'react';
 import { useEffect, useState } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
-import { IS_DEV_OR_DEMO } from '../../main';
 
 // Scan Item
 interface ScanItem {
@@ -65,6 +63,11 @@ export default function BarcodeInputImage({ action }: inputProps) {
   const documentState = useDocumentVisibility();
 
   let lastValue: string = '';
+
+  const qrScannerOptions: Html5QrcodeCameraScanConfig = {
+    fps: 10,
+    qrbox: { width: 250, height: 250 }
+  };
 
   // Mount QR code once we are loaded
   useEffect(() => {
@@ -153,10 +156,6 @@ export default function BarcodeInputImage({ action }: inputProps) {
   }
 
   const startScanning = async () => {
-    const qrScannerOptions: Html5QrcodeCameraScanConfig = {
-      fps: 10,
-      qrbox: { width: 250, height: 250 }
-    };
     setScannerLoading(true);
     if (camId && qrCodeScanner && !ScanningEnabled) {
       try {
