@@ -28,7 +28,7 @@
         "@mantine/modals": "<7",
         "@mantine/notifications": "<7",
         "@naisutech/react-tree": "^3.1.0",
-        "@sentry/react": "^7.108.0",
+        "@sentry/react": "^7.109.0",
         "@tabler/icons-react": "^3.1.0",
         "@tanstack/react-query": "^5.28.9",
         "@uiw/codemirror-theme-vscode": "^4.21.25",
