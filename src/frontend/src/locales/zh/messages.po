@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-28 15:55\n"
+"PO-Revision-Date: 2024-03-29 16:03\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -5127,7 +5127,7 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:536
 msgid "The selected plugin will be uninstalled."
-msgstr ""
+msgstr "所选插件将被卸载。"
 
 #: src/tables/plugin/PluginListTable.tsx:537
 msgid "This action cannot be undone."
