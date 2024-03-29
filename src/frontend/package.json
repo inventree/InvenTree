@@ -37,7 +37,7 @@
         "axios": "^1.6.7",
         "dayjs": "^1.11.10",
         "easymde": "^2.18.0",
-        "embla-carousel-react": "^7.1.0",
+        "embla-carousel-react": "^8.0.0",
         "html5-qrcode": "^2.3.8",
         "mantine-datatable": "<7",
         "react": "^18.2.0",
