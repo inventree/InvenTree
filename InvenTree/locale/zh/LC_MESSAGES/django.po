@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-03-27 06:22+0000\n"
-"PO-Revision-Date: 2024-03-28 15:55\n"
+"PO-Revision-Date: 2024-03-29 16:03\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -10871,7 +10871,7 @@ msgstr "错误代码"
 
 #: templates/js/translated/attachment.js:114
 msgid "All selected attachments will be deleted"
-msgstr "所有选定的附件将被删除"
+msgstr "所有选中的附件将被删除"
 
 #: templates/js/translated/attachment.js:129
 msgid "Delete Attachments"
@@ -11291,7 +11291,7 @@ msgstr "必须单独生成生产输出"
 
 #: templates/js/translated/build.js:388
 msgid "Trackable parts can have serial numbers specified"
-msgstr "可追踪商品可以指定序列号"
+msgstr "可追踪零件可以指定序列号"
 
 #: templates/js/translated/build.js:389
 msgid "Enter serial numbers to generate multiple single build outputs"
@@ -11311,82 +11311,82 @@ msgstr "从生产输出中取消分配库存"
 
 #: templates/js/translated/build.js:444
 msgid "Complete build output"
-msgstr ""
+msgstr "完成生产输出"
 
 #: templates/js/translated/build.js:452
 msgid "Scrap build output"
-msgstr ""
+msgstr "报废生产输出"
 
 #: templates/js/translated/build.js:459
 msgid "Delete build output"
-msgstr ""
+msgstr "删除生产输出"
 
 #: templates/js/translated/build.js:479
 msgid "Are you sure you wish to deallocate the selected stock items from this build?"
-msgstr ""
+msgstr "您确定要取消此生产的所有库存分配？"
 
 #: templates/js/translated/build.js:497
 msgid "Deallocate Stock Items"
-msgstr ""
+msgstr "取消分配库存项"
 
 #: templates/js/translated/build.js:583 templates/js/translated/build.js:711
 #: templates/js/translated/build.js:837
 msgid "Select Build Outputs"
-msgstr ""
+msgstr "选择生产输出"
 
 #: templates/js/translated/build.js:584 templates/js/translated/build.js:712
 #: templates/js/translated/build.js:838
 msgid "At least one build output must be selected"
-msgstr ""
+msgstr "必须选择至少一个生产输出"
 
 #: templates/js/translated/build.js:598
 msgid "Selected build outputs will be marked as complete"
-msgstr ""
+msgstr "选择的生产输出将被标记为完成"
 
 #: templates/js/translated/build.js:602 templates/js/translated/build.js:736
 #: templates/js/translated/build.js:860
 msgid "Output"
-msgstr ""
+msgstr "输出"
 
 #: templates/js/translated/build.js:630
 msgid "Complete Build Outputs"
-msgstr ""
+msgstr "完成生产输出"
 
 #: templates/js/translated/build.js:727
 msgid "Selected build outputs will be marked as scrapped"
-msgstr ""
+msgstr "选择的生产输出将被标记为已报废"
 
 #: templates/js/translated/build.js:729
 msgid "Scrapped output are marked as rejected"
-msgstr ""
+msgstr "报废的输出被标记为拒收"
 
 #: templates/js/translated/build.js:730
 msgid "Allocated stock items will no longer be available"
-msgstr ""
+msgstr "已分配的库存项将不再可用"
 
 #: templates/js/translated/build.js:731
 msgid "The completion status of the build order will not be adjusted"
-msgstr ""
+msgstr "生产订单的完成状态将不会调整"
 
 #: templates/js/translated/build.js:762
 msgid "Scrap Build Outputs"
-msgstr ""
+msgstr "报废生产输出"
 
 #: templates/js/translated/build.js:852
 msgid "Selected build outputs will be deleted"
-msgstr ""
+msgstr "选定的生产输出将被删除"
 
 #: templates/js/translated/build.js:854
 msgid "Build output data will be permanently deleted"
-msgstr ""
+msgstr "生产输出数据将被永久删除"
 
 #: templates/js/translated/build.js:855
 msgid "Allocated stock items will be returned to stock"
-msgstr ""
+msgstr "分配的库存项将被退回到库存"
 
 #: templates/js/translated/build.js:873
 msgid "Delete Build Outputs"
-msgstr ""
+msgstr "删除生产输出"
 
 #: templates/js/translated/build.js:960
 msgid "No build order allocations found"
@@ -11394,7 +11394,7 @@ msgstr "未找到生产订单分配"
 
 #: templates/js/translated/build.js:989 templates/js/translated/build.js:2342
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "已分配数量"
 
 #: templates/js/translated/build.js:1003
 msgid "Location not specified"
@@ -11402,27 +11402,27 @@ msgstr "未指定地点"
 
 #: templates/js/translated/build.js:1025
 msgid "Complete outputs"
-msgstr ""
+msgstr "已完成输出"
 
 #: templates/js/translated/build.js:1043
 msgid "Scrap outputs"
-msgstr ""
+msgstr "报废输出"
 
 #: templates/js/translated/build.js:1061
 msgid "Delete outputs"
-msgstr ""
+msgstr "删除输出"
 
 #: templates/js/translated/build.js:1115
 msgid "build output"
-msgstr ""
+msgstr "生产输出"
 
 #: templates/js/translated/build.js:1116
 msgid "build outputs"
-msgstr ""
+msgstr "生产输出"
 
 #: templates/js/translated/build.js:1120
 msgid "Build output actions"
-msgstr ""
+msgstr "生产输出操作"
 
 #: templates/js/translated/build.js:1294
 msgid "No active build outputs found"
@@ -11430,22 +11430,22 @@ msgstr "未找到激活的生产输出"
 
 #: templates/js/translated/build.js:1387
 msgid "Allocated Lines"
-msgstr ""
+msgstr "已分配行"
 
 #: templates/js/translated/build.js:1401
 msgid "Required Tests"
-msgstr ""
+msgstr "需要测试"
 
 #: templates/js/translated/build.js:1573
 #: templates/js/translated/purchase_order.js:611
 #: templates/js/translated/sales_order.js:1171
 msgid "Select Parts"
-msgstr ""
+msgstr "选择零件"
 
 #: templates/js/translated/build.js:1574
 #: templates/js/translated/sales_order.js:1172
 msgid "You must select at least one part to allocate"
-msgstr ""
+msgstr "您必须选择至少一个要分配的零件"
 
 #: templates/js/translated/build.js:1637
 #: templates/js/translated/sales_order.js:1121
@@ -11454,11 +11454,11 @@ msgstr "指定库存分配数量"
 
 #: templates/js/translated/build.js:1714
 msgid "All Parts Allocated"
-msgstr ""
+msgstr "所有零件已分配"
 
 #: templates/js/translated/build.js:1715
 msgid "All selected parts have been fully allocated"
-msgstr ""
+msgstr "所有选中的零件已全部分配"
 
 #: templates/js/translated/build.js:1729
 #: templates/js/translated/sales_order.js:1186
@@ -11467,7 +11467,7 @@ msgstr "选择源地点 (留空以从所有地点取出)"
 
 #: templates/js/translated/build.js:1757
 msgid "Allocate Stock Items to Build Order"
-msgstr ""
+msgstr "分配库存项到生产订单"
 
 #: templates/js/translated/build.js:1768
 #: templates/js/translated/sales_order.js:1283
@@ -11477,7 +11477,7 @@ msgstr "没有匹配的库存地点"
 #: templates/js/translated/build.js:1841
 #: templates/js/translated/sales_order.js:1362
 msgid "No matching stock items"
-msgstr ""
+msgstr "没有匹配的库存项"
 
 #: templates/js/translated/build.js:1938
 msgid "Automatic Stock Allocation"
@@ -11485,76 +11485,76 @@ msgstr "自动库存分配"
 
 #: templates/js/translated/build.js:1939
 msgid "Stock items will be automatically allocated to this build order, according to the provided guidelines"
-msgstr ""
+msgstr "根据所提供的指引，库存项将被自动分配到这个生产订单"
 
 #: templates/js/translated/build.js:1941
 msgid "If a location is specified, stock will only be allocated from that location"
-msgstr ""
+msgstr "如果指定了一个位置，库存将仅从该位置分配"
 
 #: templates/js/translated/build.js:1942
 msgid "If stock is considered interchangeable, it will be allocated from the first location it is found"
-msgstr ""
+msgstr "如果库存被认为是可互换的，则它将从第一个地点进行分配。"
 
 #: templates/js/translated/build.js:1943
 msgid "If substitute stock is allowed, it will be used where stock of the primary part cannot be found"
-msgstr ""
+msgstr "如果允许使用替代库存，则将在无法找到主要零件时使用"
 
 #: templates/js/translated/build.js:1974
 msgid "Allocate Stock Items"
-msgstr ""
+msgstr "分配库存项"
 
 #: templates/js/translated/build.js:2080
 msgid "No builds matching query"
-msgstr ""
+msgstr "没有与查询匹配的生产"
 
 #: templates/js/translated/build.js:2115 templates/js/translated/build.js:2480
 #: templates/js/translated/forms.js:2155 templates/js/translated/forms.js:2171
 #: templates/js/translated/part.js:2316 templates/js/translated/part.js:2742
 #: templates/js/translated/stock.js:1982 templates/js/translated/stock.js:2710
 msgid "Select"
-msgstr ""
+msgstr "选择"
 
 #: templates/js/translated/build.js:2129
 msgid "Build order is overdue"
-msgstr ""
+msgstr "生产订单已逾期"
 
 #: templates/js/translated/build.js:2175
 msgid "Progress"
-msgstr ""
+msgstr "进度"
 
 #: templates/js/translated/build.js:2211 templates/js/translated/stock.js:3042
 msgid "No user information"
-msgstr ""
+msgstr "没有用户信息"
 
 #: templates/js/translated/build.js:2387
 #: templates/js/translated/sales_order.js:1646
 msgid "Edit stock allocation"
-msgstr ""
+msgstr "编辑库存分配"
 
 #: templates/js/translated/build.js:2388
 #: templates/js/translated/sales_order.js:1647
 msgid "Delete stock allocation"
-msgstr ""
+msgstr "删除库存分配"
 
 #: templates/js/translated/build.js:2403
 msgid "Edit Allocation"
-msgstr ""
+msgstr "编辑分配"
 
 #: templates/js/translated/build.js:2415
 msgid "Remove Allocation"
-msgstr ""
+msgstr "删除分配"
 
 #: templates/js/translated/build.js:2456
 msgid "build line"
-msgstr ""
+msgstr "生产行"
 
 #: templates/js/translated/build.js:2457
 msgid "build lines"
-msgstr ""
+msgstr "生产行"
 
 #: templates/js/translated/build.js:2475
 msgid "No build lines found"
-msgstr ""
+msgstr "未找到生产行"
 
 #: templates/js/translated/build.js:2505 templates/js/translated/part.js:790
 #: templates/js/translated/part.js:1202
@@ -11563,180 +11563,180 @@ msgstr "可追溯零件"
 
 #: templates/js/translated/build.js:2540
 msgid "Unit Quantity"
-msgstr ""
+msgstr "单位数量"
 
 #: templates/js/translated/build.js:2592
 #: templates/js/translated/sales_order.js:1915
 msgid "Sufficient stock available"
-msgstr ""
+msgstr "库存充足"
 
 #: templates/js/translated/build.js:2647
 msgid "Consumable Item"
-msgstr ""
+msgstr "可消耗物品"
 
 #: templates/js/translated/build.js:2652
 msgid "Tracked item"
-msgstr ""
+msgstr "已跟踪项目"
 
 #: templates/js/translated/build.js:2659
 #: templates/js/translated/sales_order.js:2016
 msgid "Build stock"
-msgstr ""
+msgstr "生产库存"
 
 #: templates/js/translated/build.js:2664 templates/js/translated/stock.js:1865
 msgid "Order stock"
-msgstr ""
+msgstr "订单库存"
 
 #: templates/js/translated/build.js:2668
 #: templates/js/translated/sales_order.js:2010
 msgid "Allocate stock"
-msgstr ""
+msgstr "分配库存"
 
 #: templates/js/translated/build.js:2672
 msgid "Remove stock allocation"
-msgstr ""
+msgstr "移除库存分配"
 
 #: templates/js/translated/company.js:98
 msgid "Add Manufacturer"
-msgstr ""
+msgstr "添加制造商"
 
 #: templates/js/translated/company.js:111
 #: templates/js/translated/company.js:213
 msgid "Add Manufacturer Part"
-msgstr ""
+msgstr "添加制造商零件"
 
 #: templates/js/translated/company.js:132
 msgid "Edit Manufacturer Part"
-msgstr ""
+msgstr "编辑制造商零件"
 
 #: templates/js/translated/company.js:201
 #: templates/js/translated/purchase_order.js:93
 msgid "Add Supplier"
-msgstr ""
+msgstr "添加供应商"
 
 #: templates/js/translated/company.js:243
 #: templates/js/translated/purchase_order.js:318
 msgid "Add Supplier Part"
-msgstr ""
+msgstr "添加供应商零件"
 
 #: templates/js/translated/company.js:344
 msgid "All selected supplier parts will be deleted"
-msgstr ""
+msgstr "所有选中的供应商零件将被删除"
 
 #: templates/js/translated/company.js:360
 msgid "Delete Supplier Parts"
-msgstr ""
+msgstr "删除供应商零件"
 
 #: templates/js/translated/company.js:465
 msgid "Add new Company"
-msgstr ""
+msgstr "添加新公司"
 
 #: templates/js/translated/company.js:536
 msgid "Parts Supplied"
-msgstr ""
+msgstr "零件已提供"
 
 #: templates/js/translated/company.js:545
 msgid "Parts Manufactured"
-msgstr ""
+msgstr "零件已制造"
 
 #: templates/js/translated/company.js:560
 msgid "No company information found"
-msgstr ""
+msgstr "未找到该公司信息"
 
 #: templates/js/translated/company.js:609
 msgid "Create New Contact"
-msgstr ""
+msgstr "创建新的联系人"
 
 #: templates/js/translated/company.js:625
 #: templates/js/translated/company.js:748
 msgid "Edit Contact"
-msgstr ""
+msgstr "编辑联系人"
 
 #: templates/js/translated/company.js:662
 msgid "All selected contacts will be deleted"
-msgstr ""
+msgstr "所有选中的联系人将被删除"
 
 #: templates/js/translated/company.js:668
 #: templates/js/translated/company.js:732
 msgid "Role"
-msgstr ""
+msgstr "职位"
 
 #: templates/js/translated/company.js:676
 msgid "Delete Contacts"
-msgstr ""
+msgstr "删除联系人"
 
 #: templates/js/translated/company.js:707
 msgid "No contacts found"
-msgstr ""
+msgstr "未找到联系人"
 
 #: templates/js/translated/company.js:720
 msgid "Phone Number"
-msgstr ""
+msgstr "电话号码"
 
 #: templates/js/translated/company.js:726
 msgid "Email Address"
-msgstr ""
+msgstr "电子邮件地址"
 
 #: templates/js/translated/company.js:752
 msgid "Delete Contact"
-msgstr ""
+msgstr "删除联系人"
 
 #: templates/js/translated/company.js:849
 msgid "Create New Address"
-msgstr ""
+msgstr "创建新地址"
 
 #: templates/js/translated/company.js:864
 #: templates/js/translated/company.js:1025
 msgid "Edit Address"
-msgstr ""
+msgstr "编辑地址"
 
 #: templates/js/translated/company.js:899
 msgid "All selected addresses will be deleted"
-msgstr ""
+msgstr "所有选中的地址将被删除"
 
 #: templates/js/translated/company.js:913
 msgid "Delete Addresses"
-msgstr ""
+msgstr "删除地址"
 
 #: templates/js/translated/company.js:940
 msgid "No addresses found"
-msgstr ""
+msgstr "未找到地址"
 
 #: templates/js/translated/company.js:979
 msgid "Postal city"
-msgstr ""
+msgstr "邮编所属城市"
 
 #: templates/js/translated/company.js:985
 msgid "State/province"
-msgstr ""
+msgstr "省、自治区或直辖市"
 
 #: templates/js/translated/company.js:997
 msgid "Courier notes"
-msgstr ""
+msgstr "快递备注"
 
 #: templates/js/translated/company.js:1003
 msgid "Internal notes"
-msgstr ""
+msgstr "内部备注"
 
 #: templates/js/translated/company.js:1029
 msgid "Delete Address"
-msgstr ""
+msgstr "删除地址"
 
 #: templates/js/translated/company.js:1102
 msgid "All selected manufacturer parts will be deleted"
-msgstr ""
+msgstr "所有选中的制造商零件将被删除"
 
 #: templates/js/translated/company.js:1117
 msgid "Delete Manufacturer Parts"
-msgstr ""
+msgstr "删除制造商零件"
 
 #: templates/js/translated/company.js:1151
 msgid "All selected parameters will be deleted"
-msgstr ""
+msgstr "所有选中的参数将被删除"
 
 #: templates/js/translated/company.js:1165
 msgid "Delete Parameters"
-msgstr ""
+msgstr "删除参数"
 
 #: templates/js/translated/company.js:1181
 #: templates/js/translated/company.js:1469 templates/js/translated/part.js:2244
@@ -11745,15 +11745,15 @@ msgstr "订购零件"
 
 #: templates/js/translated/company.js:1198
 msgid "Delete manufacturer parts"
-msgstr ""
+msgstr "删除制造商零件"
 
 #: templates/js/translated/company.js:1230
 msgid "Manufacturer part actions"
-msgstr ""
+msgstr "制造商零件操作"
 
 #: templates/js/translated/company.js:1249
 msgid "No manufacturer parts found"
-msgstr ""
+msgstr "未找到制造商零件"
 
 #: templates/js/translated/company.js:1269
 #: templates/js/translated/company.js:1557 templates/js/translated/part.js:798
@@ -11769,144 +11769,144 @@ msgstr "装配零件"
 
 #: templates/js/translated/company.js:1393 templates/js/translated/part.js:1464
 msgid "No parameters found"
-msgstr ""
+msgstr "未找到参数"
 
 #: templates/js/translated/company.js:1428 templates/js/translated/part.js:1527
 msgid "Edit parameter"
-msgstr ""
+msgstr "编辑参数"
 
 #: templates/js/translated/company.js:1429 templates/js/translated/part.js:1528
 msgid "Delete parameter"
-msgstr ""
+msgstr "删除参数"
 
 #: templates/js/translated/company.js:1446 templates/js/translated/part.js:1433
 msgid "Edit Parameter"
-msgstr ""
+msgstr "编辑参数"
 
 #: templates/js/translated/company.js:1455 templates/js/translated/part.js:1549
 msgid "Delete Parameter"
-msgstr ""
+msgstr "删除参数"
 
 #: templates/js/translated/company.js:1486
 msgid "Delete supplier parts"
-msgstr ""
+msgstr "删除供应商零件"
 
 #: templates/js/translated/company.js:1536
 msgid "No supplier parts found"
-msgstr ""
+msgstr "未找到供应商零件"
 
 #: templates/js/translated/company.js:1654
 msgid "Base Units"
-msgstr ""
+msgstr "基础单位"
 
 #: templates/js/translated/company.js:1684
 msgid "Availability"
-msgstr ""
+msgstr "可用性"
 
 #: templates/js/translated/company.js:1715
 msgid "Edit supplier part"
-msgstr ""
+msgstr "编辑供应商零件"
 
 #: templates/js/translated/company.js:1716
 msgid "Delete supplier part"
-msgstr ""
+msgstr "删除供应商零件"
 
 #: templates/js/translated/company.js:1769
 #: templates/js/translated/pricing.js:694
 msgid "Delete Price Break"
-msgstr ""
+msgstr "删除批发价"
 
 #: templates/js/translated/company.js:1779
 #: templates/js/translated/pricing.js:712
 msgid "Edit Price Break"
-msgstr ""
+msgstr "编辑批发价"
 
 #: templates/js/translated/company.js:1794
 msgid "No price break information found"
-msgstr ""
+msgstr "找不到批发价信息"
 
 #: templates/js/translated/company.js:1823
 msgid "Last updated"
-msgstr ""
+msgstr "最近更新"
 
 #: templates/js/translated/company.js:1830
 msgid "Edit price break"
-msgstr ""
+msgstr "删除批发价"
 
 #: templates/js/translated/company.js:1831
 msgid "Delete price break"
-msgstr ""
+msgstr "删除批发价"
 
 #: templates/js/translated/filters.js:186
 #: templates/js/translated/filters.js:672
 msgid "true"
-msgstr ""
+msgstr "真"
 
 #: templates/js/translated/filters.js:190
 #: templates/js/translated/filters.js:673
 msgid "false"
-msgstr ""
+msgstr "假"
 
 #: templates/js/translated/filters.js:214
 msgid "Select filter"
-msgstr ""
+msgstr "选择过滤器"
 
 #: templates/js/translated/filters.js:437
 msgid "Print Labels"
-msgstr ""
+msgstr "打印标签"
 
 #: templates/js/translated/filters.js:441
 msgid "Print Reports"
-msgstr ""
+msgstr "打印报表"
 
 #: templates/js/translated/filters.js:453
 msgid "Download table data"
-msgstr ""
+msgstr "下载表格数据"
 
 #: templates/js/translated/filters.js:460
 msgid "Reload table data"
-msgstr ""
+msgstr "重新加载表格数据"
 
 #: templates/js/translated/filters.js:469
 msgid "Add new filter"
-msgstr ""
+msgstr "添加新过滤器"
 
 #: templates/js/translated/filters.js:477
 msgid "Clear all filters"
-msgstr ""
+msgstr "清除所有过滤器"
 
 #: templates/js/translated/filters.js:582
 msgid "Create filter"
-msgstr ""
+msgstr "创建过滤器"
 
 #: templates/js/translated/forms.js:378 templates/js/translated/forms.js:393
 #: templates/js/translated/forms.js:407 templates/js/translated/forms.js:421
 msgid "Action Prohibited"
-msgstr ""
+msgstr "禁止操作"
 
 #: templates/js/translated/forms.js:380
 msgid "Create operation not allowed"
-msgstr ""
+msgstr "不允许创建操作"
 
 #: templates/js/translated/forms.js:395
 msgid "Update operation not allowed"
-msgstr ""
+msgstr "不允许更新操作"
 
 #: templates/js/translated/forms.js:409
 msgid "Delete operation not allowed"
-msgstr ""
+msgstr "不允许删除操作"
 
 #: templates/js/translated/forms.js:423
 msgid "View operation not allowed"
-msgstr ""
+msgstr "不允许查看操作"
 
 #: templates/js/translated/forms.js:800
 msgid "Keep this form open"
-msgstr ""
+msgstr "保持此表单打开"
 
 #: templates/js/translated/forms.js:903
 msgid "Enter a valid number"
-msgstr ""
+msgstr "输入一个有效的数字"
 
 #: templates/js/translated/forms.js:1473 templates/modals.html:19
 #: templates/modals.html:43
@@ -11915,27 +11915,27 @@ msgstr "表单存在错误"
 
 #: templates/js/translated/forms.js:1971
 msgid "No results found"
-msgstr ""
+msgstr "未找到结果"
 
 #: templates/js/translated/forms.js:2275 templates/js/translated/search.js:239
 msgid "Searching"
-msgstr ""
+msgstr "正在搜索"
 
 #: templates/js/translated/forms.js:2489
 msgid "Clear input"
-msgstr ""
+msgstr "清空输入"
 
 #: templates/js/translated/forms.js:3091
 msgid "File Column"
-msgstr ""
+msgstr "文件列"
 
 #: templates/js/translated/forms.js:3091
 msgid "Field Name"
-msgstr ""
+msgstr "字段名称"
 
 #: templates/js/translated/forms.js:3103
 msgid "Select Columns"
-msgstr ""
+msgstr "选择列"
 
 #: templates/js/translated/helpers.js:77
 msgid "YES"
@@ -11943,31 +11943,31 @@ msgstr "是"
 
 #: templates/js/translated/helpers.js:80
 msgid "NO"
-msgstr ""
+msgstr "否"
 
 #: templates/js/translated/helpers.js:93
 msgid "True"
-msgstr ""
+msgstr "真"
 
 #: templates/js/translated/helpers.js:94
 msgid "False"
-msgstr ""
+msgstr "假"
 
 #: templates/js/translated/index.js:104
 msgid "No parts required for builds"
-msgstr ""
+msgstr "生产时无需零件"
 
 #: templates/js/translated/label.js:53 templates/js/translated/report.js:123
 msgid "Select Items"
-msgstr ""
+msgstr "选择项目"
 
 #: templates/js/translated/label.js:54
 msgid "No items selected for printing"
-msgstr ""
+msgstr "未选择要打印的项目"
 
 #: templates/js/translated/label.js:72
 msgid "No Labels Found"
-msgstr ""
+msgstr "未找到标签"
 
 #: templates/js/translated/label.js:73
 msgid "No label templates found which match the selected items"
@@ -11975,23 +11975,23 @@ msgstr ""
 
 #: templates/js/translated/label.js:97
 msgid "selected"
-msgstr ""
+msgstr "已选"
 
 #: templates/js/translated/label.js:133
 msgid "Printing Options"
-msgstr ""
+msgstr "打印选项"
 
 #: templates/js/translated/label.js:148
 msgid "Print label"
-msgstr ""
+msgstr "打印标签"
 
 #: templates/js/translated/label.js:148
 msgid "Print labels"
-msgstr ""
+msgstr "打印标签"
 
 #: templates/js/translated/label.js:149
 msgid "Print"
-msgstr ""
+msgstr "打印"
 
 #: templates/js/translated/label.js:155
 msgid "Select label template"
@@ -11999,16 +11999,16 @@ msgstr ""
 
 #: templates/js/translated/label.js:168
 msgid "Select plugin"
-msgstr ""
+msgstr "选择插件"
 
 #: templates/js/translated/label.js:187
 msgid "Labels sent to printer"
-msgstr ""
+msgstr "标签已发送到打印机"
 
 #: templates/js/translated/modals.js:58 templates/js/translated/modals.js:158
 #: templates/js/translated/modals.js:683
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: templates/js/translated/modals.js:63 templates/js/translated/modals.js:157
 #: templates/js/translated/modals.js:751 templates/js/translated/modals.js:1059
@@ -12018,7 +12018,7 @@ msgstr "提交"
 
 #: templates/js/translated/modals.js:156
 msgid "Form Title"
-msgstr ""
+msgstr "表格标题"
 
 #: templates/js/translated/modals.js:445
 msgid "Waiting for server..."
@@ -12030,11 +12030,11 @@ msgstr "显示错误信息"
 
 #: templates/js/translated/modals.js:682
 msgid "Accept"
-msgstr ""
+msgstr "接受"
 
 #: templates/js/translated/modals.js:740
 msgid "Loading Data"
-msgstr ""
+msgstr "正在加载数据"
 
 #: templates/js/translated/modals.js:1011
 msgid "Invalid response from server"
@@ -12066,33 +12066,33 @@ msgstr "请求表单数据时出错"
 
 #: templates/js/translated/news.js:33
 msgid "No news found"
-msgstr ""
+msgstr "未找到新闻"
 
 #: templates/js/translated/news.js:38
 #: templates/js/translated/notification.js:46
 #: templates/js/translated/part.js:1604
 msgid "ID"
-msgstr ""
+msgstr "ID"
 
 #: templates/js/translated/notification.js:52
 msgid "Age"
-msgstr ""
+msgstr "年龄"
 
 #: templates/js/translated/notification.js:65
 msgid "Notification"
-msgstr ""
+msgstr "通知"
 
 #: templates/js/translated/notification.js:224
 msgid "Mark as unread"
-msgstr ""
+msgstr "标记为未读"
 
 #: templates/js/translated/notification.js:228
 msgid "Mark as read"
-msgstr ""
+msgstr "标记为已读"
 
 #: templates/js/translated/notification.js:254
 msgid "No unread notifications"
-msgstr ""
+msgstr "没有未读通知"
 
 #: templates/js/translated/notification.js:296 templates/notifications.html:12
 msgid "Notifications will load here"
@@ -12100,40 +12100,40 @@ msgstr "通知将在此处加载"
 
 #: templates/js/translated/order.js:89
 msgid "Add Extra Line Item"
-msgstr ""
+msgstr "添加额外行项目"
 
 #: templates/js/translated/order.js:126
 msgid "Export Order"
-msgstr ""
+msgstr "导出订单"
 
 #: templates/js/translated/order.js:241
 msgid "Duplicate Line"
-msgstr ""
+msgstr "复制行"
 
 #: templates/js/translated/order.js:255
 msgid "Edit Line"
-msgstr ""
+msgstr "编辑行"
 
 #: templates/js/translated/order.js:268
 msgid "Delete Line"
-msgstr ""
+msgstr "删除行"
 
 #: templates/js/translated/order.js:281
 #: templates/js/translated/purchase_order.js:1991
 msgid "No line items found"
-msgstr ""
+msgstr "没有找到行项目"
 
 #: templates/js/translated/order.js:369
 msgid "Duplicate line"
-msgstr ""
+msgstr "复制行"
 
 #: templates/js/translated/order.js:370
 msgid "Edit line"
-msgstr ""
+msgstr "编辑行"
 
 #: templates/js/translated/order.js:374
 msgid "Delete line"
-msgstr ""
+msgstr "删除行"
 
 #: templates/js/translated/part.js:90
 msgid "Part Attributes"
@@ -12157,7 +12157,7 @@ msgstr "上级零件类别"
 
 #: templates/js/translated/part.js:332 templates/js/translated/stock.js:175
 msgid "Icon (optional) - Explore all available icons on"
-msgstr ""
+msgstr "图标(可选) - 浏览所有可用图标"
 
 #: templates/js/translated/part.js:352
 msgid "Create Part Category"
@@ -12165,7 +12165,7 @@ msgstr "创建零件类别"
 
 #: templates/js/translated/part.js:355
 msgid "Create new category after this one"
-msgstr ""
+msgstr "在此后创建新类别"
 
 #: templates/js/translated/part.js:356
 msgid "Part category created"
@@ -12181,7 +12181,7 @@ msgstr "确定要删除这个零件类别吗？"
 
 #: templates/js/translated/part.js:388
 msgid "Move to parent category"
-msgstr ""
+msgstr "移动到上级类别"
 
 #: templates/js/translated/part.js:397
 msgid "Delete Part Category"
@@ -12245,7 +12245,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:557
 msgid "Delete Part"
-msgstr ""
+msgstr "删除零件"
 
 #: templates/js/translated/part.js:593
 msgid "You are subscribed to notifications for this item"
@@ -12269,15 +12269,15 @@ msgstr "物料清单验证将标记每个行项目为有效"
 
 #: templates/js/translated/part.js:629
 msgid "Validate Bill of Materials"
-msgstr ""
+msgstr "验证物料清单"
 
 #: templates/js/translated/part.js:632
 msgid "Validated Bill of Materials"
-msgstr ""
+msgstr "已验证物料清单"
 
 #: templates/js/translated/part.js:657
 msgid "Copy Bill of Materials"
-msgstr ""
+msgstr "复制物料清单"
 
 #: templates/js/translated/part.js:685
 #: templates/js/translated/table_filters.js:747
@@ -12286,7 +12286,7 @@ msgstr "低库存"
 
 #: templates/js/translated/part.js:688
 msgid "No stock available"
-msgstr ""
+msgstr "无可用库存"
 
 #: templates/js/translated/part.js:748
 msgid "Demand"
@@ -12294,11 +12294,11 @@ msgstr ""
 
 #: templates/js/translated/part.js:771
 msgid "Unit"
-msgstr ""
+msgstr "单位"
 
 #: templates/js/translated/part.js:794 templates/js/translated/part.js:1206
 msgid "Virtual part"
-msgstr ""
+msgstr "虚拟零件"
 
 #: templates/js/translated/part.js:806
 msgid "Subscribed part"
@@ -12436,7 +12436,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:2864
 msgid "No test templates matching query"
-msgstr ""
+msgstr "没有与查询匹配的测试模板"
 
 #: templates/js/translated/part.js:2886 templates/js/translated/search.js:342
 msgid "results"
@@ -12465,19 +12465,19 @@ msgstr ""
 
 #: templates/js/translated/part.js:3050 templates/js/translated/part.js:3051
 msgid "No date specified"
-msgstr ""
+msgstr "无指定日期"
 
 #: templates/js/translated/part.js:3053
 msgid "Specified date is in the past"
-msgstr ""
+msgstr "指定日期已过"
 
 #: templates/js/translated/part.js:3059
 msgid "Speculative"
-msgstr ""
+msgstr "可指定的"
 
 #: templates/js/translated/part.js:3109
 msgid "No scheduling information available for this part"
-msgstr ""
+msgstr "该零件无计划信息"
 
 #: templates/js/translated/part.js:3115
 msgid "Error fetching scheduling information for this part"
@@ -12485,19 +12485,19 @@ msgstr "获取此零件的调度信息时出错"
 
 #: templates/js/translated/part.js:3211
 msgid "Scheduled Stock Quantities"
-msgstr ""
+msgstr "计划库存数量"
 
 #: templates/js/translated/part.js:3227
 msgid "Maximum Quantity"
-msgstr ""
+msgstr "最大数量"
 
 #: templates/js/translated/part.js:3272
 msgid "Minimum Stock Level"
-msgstr ""
+msgstr "最低库存水平"
 
 #: templates/js/translated/plugin.js:46
 msgid "No plugins found"
-msgstr ""
+msgstr "未发现插件"
 
 #: templates/js/translated/plugin.js:58
 msgid "This plugin is no longer installed"
@@ -12513,35 +12513,35 @@ msgstr "此插件已安装但未激活"
 
 #: templates/js/translated/plugin.js:117 templates/js/translated/plugin.js:186
 msgid "Disable Plugin"
-msgstr ""
+msgstr "禁用插件"
 
 #: templates/js/translated/plugin.js:119 templates/js/translated/plugin.js:186
 msgid "Enable Plugin"
-msgstr ""
+msgstr "启用插件"
 
 #: templates/js/translated/plugin.js:158
 msgid "The Plugin was installed"
-msgstr ""
+msgstr "插件已安装"
 
 #: templates/js/translated/plugin.js:177
 msgid "Are you sure you want to enable this plugin?"
-msgstr ""
+msgstr "您确定要启用此插件吗？"
 
 #: templates/js/translated/plugin.js:181
 msgid "Are you sure you want to disable this plugin?"
-msgstr ""
+msgstr "您确定要禁用此插件吗？"
 
 #: templates/js/translated/plugin.js:189
 msgid "Enable"
-msgstr ""
+msgstr "启用"
 
 #: templates/js/translated/plugin.js:189
 msgid "Disable"
-msgstr ""
+msgstr "禁用"
 
 #: templates/js/translated/plugin.js:203
 msgid "Plugin updated"
-msgstr ""
+msgstr "插件已更新"
 
 #: templates/js/translated/pricing.js:159
 msgid "Error fetching currency data"
@@ -12565,7 +12565,7 @@ msgstr ""
 
 #: templates/js/translated/pricing.js:791
 msgid "Purchase Price History"
-msgstr ""
+msgstr "购买价格历史记录"
 
 #: templates/js/translated/pricing.js:894
 msgid "No sales history data available"
@@ -12573,7 +12573,7 @@ msgstr ""
 
 #: templates/js/translated/pricing.js:916
 msgid "Sale Price History"
-msgstr ""
+msgstr "售出价格历史记录"
 
 #: templates/js/translated/pricing.js:1005
 msgid "No variant data available"
@@ -12581,7 +12581,7 @@ msgstr ""
 
 #: templates/js/translated/pricing.js:1045
 msgid "Variant Part"
-msgstr ""
+msgstr "变体零件"
 
 #: templates/js/translated/purchase_order.js:169
 msgid "Select purchase order to duplicate"
@@ -12593,7 +12593,7 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:177
 msgid "Duplicate all line items from the selected order"
-msgstr ""
+msgstr "复制所选订单中的所有行项目"
 
 #: templates/js/translated/purchase_order.js:184
 msgid "Duplicate Extra Lines"
@@ -12605,7 +12605,7 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:206
 msgid "Edit Purchase Order"
-msgstr ""
+msgstr "编辑采购订单"
 
 #: templates/js/translated/purchase_order.js:223
 msgid "Duplication Options"
@@ -12777,7 +12777,7 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1844
 msgid "All selected Line items will be deleted"
-msgstr ""
+msgstr "所有选中的行项目将被删除"
 
 #: templates/js/translated/purchase_order.js:1862
 msgid "Delete selected Line items?"
@@ -13453,7 +13453,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:2469
 msgid "No stock items matching query"
-msgstr ""
+msgstr "没有匹配查询的库存项"
 
 #: templates/js/translated/stock.js:2573
 msgid "stock locations"
