@@ -43,7 +43,9 @@ body:
       label: "Deployment Method"
       options:
         - label: "Docker"
+        - label: "Package"
         - label: "Bare metal"
+        - label: "Other - added info in Steps to Reproduce"
   - type: textarea
     id: version-info
     validations:
