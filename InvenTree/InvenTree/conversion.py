@@ -198,7 +198,6 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
             break
         except Exception as exc:
             value = None
-            pass
 
     if value is None:
         if unit:

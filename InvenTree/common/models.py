@@ -254,7 +254,6 @@ class BaseInvenTreeSetting(models.Model):
             logger.exception(
                 'Failed to build default values for %s (%s)', str(cls), str(type(exc))
             )
-            pass
 
         try:
             cache.set(cache_key, True, timeout=3600)
@@ -753,13 +752,11 @@ class BaseInvenTreeSetting(models.Model):
         except (OperationalError, ProgrammingError):
             logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
-            pass
         except Exception as exc:
             # Some other error
             logger.exception(
                 "Error setting setting '%s' for %s: %s", key, str(cls), str(type(exc))
             )
-            pass
 
     key = models.CharField(
         max_length=50,
