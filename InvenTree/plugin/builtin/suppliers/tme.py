@@ -65,9 +65,9 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
             return {}
 
         # Custom handling for order number
-        if SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER in barcode_fields:
-            order_number = barcode_fields[SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER]
+        if SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER in barcode_fields:
+            order_number = barcode_fields[SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER]
             order_number = order_number.split('/')[0]
-            barcode_fields[SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER] = order_number
+            barcode_fields[SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER] = order_number
 
         return barcode_fields
