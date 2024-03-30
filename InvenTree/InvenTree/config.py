@@ -443,10 +443,10 @@ def get_frontend_settings(debug=True):
     if 'environment' not in settings:
         settings['environment'] = 'development' if debug else 'production'
 
-    if debug and 'show_server_selector' not in settings:
+    if (debug and 'show_server_selector' not in settings) or len(
+        settings['server_list']
+    ) == 0:
         # In debug mode, show server selector by default
-        settings['show_server_selector'] = True
-    elif len(settings['server_list']) == 0:
         # If no servers are specified, show server selector
         settings['show_server_selector'] = True
 
