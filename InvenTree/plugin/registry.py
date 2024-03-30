@@ -95,9 +95,8 @@ class PluginsRegistry:
 
         plg = self.plugins[slug]
 
-        if active is not None:
-            if active != plg.is_active():
-                return None
+        if active is not None and active != plg.is_active():
+            return None
 
         return plg
 

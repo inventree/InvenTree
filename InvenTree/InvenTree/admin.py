@@ -91,10 +91,13 @@ class InvenTreeResource(ModelResource):
         """
         # We can automatically determine which fields might need such a conversion
         for field in self.Meta.model._meta.fields:
-            if isinstance(field, CharField):
-                if field.blank and not field.null:
-                    if field.name not in self.CONVERT_NULL_FIELDS:
-                        self.CONVERT_NULL_FIELDS.append(field.name)
+            if (
+                isinstance(field, CharField)
+                and field.blank
+                and not field.null
+                and field.name not in self.CONVERT_NULL_FIELDS
+            ):
+                self.CONVERT_NULL_FIELDS.append(field.name)
 
         for field in self.CONVERT_NULL_FIELDS:
             if field in row and row[field] is None:

@@ -202,9 +202,8 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
             purchase_order = matching_orders.first()
 
-        if supplier and purchase_order:
-            if purchase_order.supplier != supplier:
-                return {'error': _('Purchase order does not match supplier')}
+        if supplier and purchase_order and purchase_order.supplier != supplier:
+            return {'error': _('Purchase order does not match supplier')}
 
         return self.receive_purchase_order_item(
             supplier_part,

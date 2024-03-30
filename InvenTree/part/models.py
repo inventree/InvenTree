@@ -3845,16 +3845,19 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
             '' if self.default_value is None else str(self.default_value.strip())
         )
 
-        if self.default_value and InvenTreeSetting.get_setting(
-            'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+        if (
+            self.default_value
+            and InvenTreeSetting.get_setting(
+                'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+            )
+            and self.parameter_template.units
         ):
-            if self.parameter_template.units:
-                try:
-                    InvenTree.conversion.convert_physical_value(
-                        self.default_value, self.parameter_template.units
-                    )
-                except ValidationError as e:
-                    raise ValidationError({'default_value': e.message})
+            try:
+                InvenTree.conversion.convert_physical_value(
+                    self.default_value, self.parameter_template.units
+                )
+            except ValidationError as e:
+                raise ValidationError({'default_value': e.message})
 
     category = models.ForeignKey(
         PartCategory,

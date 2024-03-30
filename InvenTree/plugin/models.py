@@ -139,11 +139,10 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
             # Force active if builtin
             self.active = True
 
-        if not reload:
-            if self.active != self.__org_active:
-                if settings.PLUGIN_TESTING:
-                    warnings.warn('A reload was triggered', stacklevel=2)
-                registry.reload_plugins()
+        if not reload and self.active != self.__org_active:
+            if settings.PLUGIN_TESTING:
+                warnings.warn('A reload was triggered', stacklevel=2)
+            registry.reload_plugins()
 
     @admin.display(boolean=True, description=_('Installed'))
     def is_installed(self) -> bool:
