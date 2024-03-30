@@ -2924,7 +2924,7 @@ class NotificationEntry(MetaMixin):
     @classmethod
     def notify(cls, key: str, uid: int):
         """Notify the database that a particular notification has been sent out."""
-        entry, created = cls.objects.get_or_create(key=key, uid=uid)
+        entry, _ = cls.objects.get_or_create(key=key, uid=uid)
 
         entry.save()
 

@@ -129,7 +129,7 @@ class PluginsRegistry:
             try:
                 cfg.name = name
                 cfg.save()
-            except Exception as e:
+            except Exception:
                 logger.exception('Failed to update plugin name')
 
         return cfg
