@@ -1,5 +1,5 @@
 import { Container, Flex, Space } from '@mantine/core';
-import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import { InvenTreeStyle } from '../../globalStyle';
 import { useSessionState } from '../../states/SessionState';
