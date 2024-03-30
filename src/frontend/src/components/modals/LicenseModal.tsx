@@ -34,7 +34,7 @@ export function LicenceView(entries: any[]) {
                   <Text>{entry.version}</Text>
                 </Group>
               </Accordion.Control>
-              <Accordion.Panel style={{ whiteSpace: "pre-line" }}>
+              <Accordion.Panel style={{ whiteSpace: 'pre-line' }}>
                 {entry.licensetext || t`No license text available`}
               </Accordion.Panel>
             </Accordion.Item>
