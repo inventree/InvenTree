@@ -169,7 +169,7 @@ test('PUI - Pages 2', async ({ page }) => {
 test('PUI - Pages 3', async ({ page }) => {
   await page.goto('./platform/');
   await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
+  await page.waitForURL('**/platform/*');
   await page.getByLabel('username').fill('admin');
   await page.getByLabel('password').fill('inventree');
   await page.getByRole('button', { name: 'Log in' }).click();
