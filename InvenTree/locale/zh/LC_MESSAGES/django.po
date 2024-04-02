@@ -28,7 +28,7 @@ msgstr "用户没有权限查阅当前模型。"
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr "提供了无效的单位({{unit}})"
+msgstr "提供了无效的单位({unit})"
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
