@@ -85,7 +85,7 @@ for name, provider in providers.registry.provider_map.items():
         cls
         for cls in prov_mod.__dict__.values()
         if isinstance(cls, type)
-        and not cls == OAuth2Adapter
+        and cls != OAuth2Adapter
         and issubclass(cls, OAuth2Adapter)
     ]
 

@@ -7,7 +7,7 @@ from rest_framework import permissions
 import users.models
 
 
-def get_model_for_view(view, raise_error=True):
+def get_model_for_view(view):
     """Attempt to introspect the 'model' type for an API view."""
     if hasattr(view, 'get_permission_model'):
         return view.get_permission_model()
