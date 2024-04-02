@@ -20,7 +20,7 @@ class DataImportSerializerRegister:
         if not isinstance(serializer, Serializer) and not issubclass(
             serializer, Serializer
         ):
-            logger.error(f'Invalid serializer type: %s', type(serializer))
+            logger.error('Invalid serializer type: %s', type(serializer))
             return
 
         logger.debug('Registering serializer class for import: %s', type(serializer))
