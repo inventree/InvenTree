@@ -4,10 +4,11 @@ import os
 import re
 from pathlib import Path
 
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import reverse
 
 
+@tag('cui')
 class URLTest(TestCase):
     """Test all files for broken url tags."""
 

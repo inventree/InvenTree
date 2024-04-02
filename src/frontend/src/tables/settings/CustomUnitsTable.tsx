@@ -59,7 +59,7 @@ export default function CustomUnitsTable() {
     pk: selectedUnit,
     title: t`Edit Custom Unit`,
     fields: customUnitsFields(),
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const deleteUnit = useDeleteApiFormModal({

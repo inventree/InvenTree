@@ -1,5 +1,6 @@
 """Unit tests for the PartCategory model."""
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 
@@ -125,7 +126,8 @@ class CategoryTest(TestCase):
 
     def test_url(self):
         """Test that the PartCategory URL works."""
-        self.assertEqual(self.capacitors.get_absolute_url(), '/part/category/3/')
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertEqual(self.capacitors.get_absolute_url(), '/part/category/3/')
 
     def test_part_count(self):
         """Test that the Category part count works."""

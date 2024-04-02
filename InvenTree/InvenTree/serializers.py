@@ -6,7 +6,6 @@ from copy import deepcopy
 from decimal import Decimal
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -353,7 +352,12 @@ class InvenTreeModelSerializer(serializers.ModelSerializer):
         try:
             instance.full_clean()
         except (ValidationError, DjangoValidationError) as exc:
-            data = exc.message_dict
+            if hasattr(exc, 'message_dict'):
+                data = exc.message_dict
+            elif hasattr(exc, 'message'):
+                data = {'non_field_errors': [str(exc.message)]}
+            else:
+                data = {'non_field_errors': [str(exc)]}
 
             # Change '__all__' key (django style) to 'non_field_errors' (DRF style)
             if '__all__' in data:
@@ -394,7 +398,7 @@ class UserSerializer(InvenTreeModelSerializer):
     class Meta:
         """Metaclass defines serializer fields."""
 
-        model = User
+        model = CustomUser
         fields = ['pk', 'username', 'first_name', 'last_name', 'email']
 
         read_only_fields = ['username']

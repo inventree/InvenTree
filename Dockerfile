@@ -9,25 +9,26 @@
 # - Runs InvenTree web server under django development server
 # - Monitors source files for any changes, and live-reloads server
 
-ARG base_image=python:3.10-alpine3.18
-FROM ${base_image} as inventree_base
+ARG base_image=python:3.11-alpine3.18
+FROM ${base_image} AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
 ARG commit_hash=""
 ARG commit_date=""
 
+ARG data_dir="data"
+
 ENV PYTHONUNBUFFERED 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV INVOKE_RUN_SHELL="/bin/ash"
 
-ENV INVENTREE_LOG_LEVEL="WARNING"
 ENV INVENTREE_DOCKER="true"
 
 # InvenTree paths
 ENV INVENTREE_HOME="/home/inventree"
 ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
-ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/data"
+ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/${data_dir}"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
 ENV INVENTREE_BACKUP_DIR="${INVENTREE_DATA_DIR}/backup"
@@ -60,7 +61,12 @@ RUN apk add --no-cache \
     # Image format support
     libjpeg libwebp zlib \
     # Weasyprint requirements : https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#alpine-3-12
-    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap && \
+    py3-pip py3-pillow py3-cffi py3-brotli pango poppler-utils openldap \
+    # Postgres client
+    postgresql13-client \
+    # MySQL / MariaDB client
+    mariadb-client mariadb-connector-c \
+    && \
     # fonts
     apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
 
@@ -86,17 +92,17 @@ RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/ash", "./init.sh"]
 
-FROM inventree_base as prebuild
+FROM inventree_base AS prebuild
 
 ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install --user -r base_requirements.txt -r requirements.txt --no-cache-dir && \
+    pip install --user -r base_requirements.txt -r requirements.txt --no-cache && \
     apk --purge del .build-deps
 
 # Frontend builder image:
-FROM prebuild as frontend
+FROM prebuild AS frontend
 
-RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn@v1.22.22
 RUN yarn config set network-timeout 600000 -g
 COPY InvenTree ${INVENTREE_HOME}/InvenTree
 COPY src ${INVENTREE_HOME}/src
@@ -106,7 +112,7 @@ RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
-FROM inventree_base as production
+FROM inventree_base AS production
 
 ENV INVENTREE_DEBUG=False
 
@@ -123,11 +129,9 @@ COPY InvenTree ./InvenTree
 COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ./InvenTree/web/static/web
 
 # Launch the production server
-# TODO: Work out why environment variables cannot be interpolated in this command
-# TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
-FROM inventree_base as dev
+FROM inventree_base AS dev
 
 # Vite server (for local frontend development)
 EXPOSE 5173
@@ -135,11 +139,11 @@ EXPOSE 5173
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
-RUN pip install -r base_requirements.txt --no-cache-dir
+RUN pip install uv==0.1.26 --no-cache-dir && pip install -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
-RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn@v1.22.22
 RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/
@@ -158,10 +162,3 @@ ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
-
-# Image target for devcontainer
-FROM dev as devcontainer
-
-ARG workspace="/workspaces/InvenTree"
-
-WORKDIR ${WORKSPACE}

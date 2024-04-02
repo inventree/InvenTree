@@ -94,7 +94,7 @@ This can be used to track usage and performance of the InvenTree backend and con
 If your InvenTree instance is used in a multi-site environment, you can enable multi-site support. Note that supporting multiple sites is well outside the scope of most InvenTree installations. If you know what you are doing, and have a good reason to enable multi-site support, you can do so by setting the `INVENTREE_SITE_MULTI` environment variable to `True`.
 
 !!! tip "Django Documentation"
-    For more information on multi-site support, refer to the [Django documentation](https://docs.djangoproject.com/en/3.2/ref/contrib/sites/).
+    For more information on multi-site support, refer to the [Django documentation]({% include "django.html" %}/ref/contrib/sites/).
 
 | Environment Variable | Config Key | Description | Default |
 | --- | --- | --- | --- |

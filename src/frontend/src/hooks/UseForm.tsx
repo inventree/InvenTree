@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Divider, Stack } from '@mantine/core';
+import { Alert, Divider, MantineNumberSize, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
@@ -20,6 +20,7 @@ export interface ApiFormModalProps extends ApiFormProps {
   onClose?: () => void;
   onOpen?: () => void;
   closeOnClickOutside?: boolean;
+  size?: MantineNumberSize;
 }
 
 /**
@@ -59,7 +60,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
     onOpen: formProps.onOpen,
     onClose: formProps.onClose,
     closeOnClickOutside: formProps.closeOnClickOutside,
-    size: 'xl',
+    size: props.size ?? 'xl',
     children: (
       <Stack spacing={'xs'}>
         <Divider />
@@ -125,7 +126,7 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
           color={'red'}
         >{t`Are you sure you want to delete this item?`}</Alert>
       ),
-      fields: {}
+      fields: props.fields ?? {}
     }),
     [props]
   );

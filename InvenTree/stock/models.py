@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
@@ -42,6 +42,7 @@ from InvenTree.status_codes import (
 )
 from part import models as PartModels
 from plugin.events import trigger_event
+from users.CustomUser import CustomUser
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
@@ -258,7 +259,9 @@ class StockLocation(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return reverse('stock-location-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('stock-location-detail', kwargs={'pk': self.id})
+        return InvenTree.helpers.pui_url(f'/stock/location/{self.id}')
 
     def get_stock_items(self, cascade=True):
         """Return a queryset for all stock items under this category.
@@ -316,9 +319,9 @@ def generate_batch_code():
         'STOCK_BATCH_CODE_TEMPLATE', ''
     )
 
-    now = datetime.now()
+    now = InvenTree.helpers.current_time()
 
-    # Pass context data through to the template randering.
+    # Pass context data through to the template rendering.
     # The following context variables are available for custom batch code generation
     context = {
         'date': now,
@@ -409,7 +412,7 @@ class StockItem(
     EXPIRED_FILTER = (
         IN_STOCK_FILTER
         & ~Q(expiry_date=None)
-        & Q(expiry_date__lt=datetime.now().date())
+        & Q(expiry_date__lt=InvenTree.helpers.current_date())
     )
 
     def update_serial_number(self):
@@ -727,7 +730,9 @@ class StockItem(
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return reverse('stock-item-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('stock-item-detail', kwargs={'pk': self.id})
+        return InvenTree.helpers.pui_url(f'/stock/item/{self.id}')
 
     def get_part_name(self):
         """Returns part name."""
@@ -1006,7 +1011,7 @@ class StockItem(
         if not self.in_stock:
             return False
 
-        today = datetime.now().date()
+        today = InvenTree.helpers.current_date()
 
         stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
 
@@ -1031,7 +1036,7 @@ class StockItem(
         if not self.in_stock:
             return False
 
-        today = datetime.now().date()
+        today = InvenTree.helpers.current_date()
 
         return self.expiry_date < today
 
@@ -1401,7 +1406,7 @@ class StockItem(
     def add_tracking_entry(
         self,
         entry_type: int,
-        user: User,
+        user: CustomUser,
         deltas: dict = None,
         notes: str = '',
         **kwargs,
@@ -1433,7 +1438,7 @@ class StockItem(
             item=self,
             tracking_type=entry_type.value,
             user=user,
-            date=datetime.now(),
+            date=InvenTree.helpers.current_time(),
             notes=notes,
             deltas=deltas,
         )
@@ -1957,7 +1962,7 @@ class StockItem(
         if count < 0:
             return False
 
-        self.stocktake_date = datetime.now().date()
+        self.stocktake_date = InvenTree.helpers.current_date()
         self.stocktake_user = user
 
         if self.updateQuantity(count):
@@ -2304,7 +2309,9 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
     def get_absolute_url(self):
         """Return url for instance."""
-        return f'/stock/track/{self.id}'
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return f'/stock/track/{self.id}'
+        return InvenTree.helpers.pui_url(f'/stock/item/{self.item.id}')
 
     def label(self):
         """Return label."""
@@ -2358,6 +2365,9 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         value: Recorded test output value (optional)
         attachment: Link to StockItem attachment (optional)
         notes: Extra user notes related to the test (optional)
+        test_station: the name of the test station where the test was performed
+        started_datetime: Date when the test was started
+        finished_datetime: Date when the test was finished
         user: User who uploaded the test result
         date: Date the test result was recorded
     """
@@ -2448,6 +2458,31 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True
+    )
+
+    test_station = models.CharField(
+        blank=True,
+        max_length=500,
+        verbose_name=_('Test station'),
+        help_text=_('The identifier of the test station where the test was performed'),
+    )
+
+    started_datetime = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name=_('Started'),
+        help_text=_('The timestamp of the test start'),
+    )
+
+    finished_datetime = models.DateTimeField(
+        blank=True,
+        null=True,
+        verbose_name=_('Finished'),
+        help_text=_('The timestamp of the test finish'),
+    )
+
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.SET_NULL, blank=True, null=True
     )
 
     date = models.DateTimeField(auto_now_add=True, editable=False)

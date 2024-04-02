@@ -17,3 +17,6 @@ gunicorn>=21.2.0
 # LDAP required packages
 django-auth-ldap                # Django integration for ldap auth
 python-ldap                     # LDAP auth support
+
+# Upgraded python package installer
+uv

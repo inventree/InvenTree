@@ -125,7 +125,9 @@ export function PluginDrawer({
 
         <Group spacing={'xs'}>
           {plugin && PluginIcon(plugin)}
-          <Title order={4}>{plugin?.meta.human_name || plugin?.name}</Title>
+          <Title order={4}>
+            {plugin?.meta?.human_name ?? plugin?.name ?? '-'}
+          </Title>
         </Group>
 
         <ActionDropdown
@@ -271,8 +273,11 @@ export default function PluginListTable() {
   const navigate = useNavigate();
   const user = useUserState();
 
-  const pluginsEnabled = useServerApiState(
-    (state) => state.server.plugins_enabled
+  const [pluginsEnabled, plugins_install_disabled] = useServerApiState(
+    (state) => [
+      state.server.plugins_enabled,
+      state.server.plugins_install_disabled
+    ]
   );
 
   const pluginTableColumns: TableColumn[] = useMemo(
@@ -457,7 +462,8 @@ export default function PluginListTable() {
           onClick: () => {
             setSelectedPlugin(record.pk);
             uninstallPluginModal.open();
-          }
+          },
+          disabled: plugins_install_disabled || false
         });
       }
 
@@ -592,6 +598,7 @@ export default function PluginListTable() {
             setPluginPackage('');
             installPluginModal.open();
           }}
+          disabled={plugins_install_disabled || false}
         />
       );
     }
@@ -605,8 +612,8 @@ export default function PluginListTable() {
       {uninstallPluginModal.modal}
       {deletePluginModal.modal}
       <DetailDrawer
-        title={t`Plugin detail`}
-        size={'xl'}
+        title={t`Plugin Detail`}
+        size={'50%'}
         renderContent={(id) => {
           if (!id) return false;
           return <PluginDrawer id={id} refreshTable={table.refreshTable} />;

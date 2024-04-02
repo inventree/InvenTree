@@ -41,7 +41,7 @@ from InvenTree.fields import (
     InvenTreeURLField,
     RoundingDecimalField,
 )
-from InvenTree.helpers import decimal2string
+from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import getSetting, notify_responsible
 from InvenTree.status_codes import (
     PurchaseOrderStatus,
@@ -206,6 +206,8 @@ class Order(
         responsible: User (or group) responsible for managing the order
     """
 
+    REQUIRE_RESPONSIBLE_SETTING = None
+
     class Meta:
         """Metaclass options. Abstract ensures no database table is created."""
 
@@ -218,13 +220,23 @@ class Order(
         """
         self.reference_int = self.rebuild_reference_field(self.reference)
         if not self.creation_date:
-            self.creation_date = datetime.now().date()
+            self.creation_date = InvenTree.helpers.current_date()
 
         super().save(*args, **kwargs)
 
     def clean(self):
         """Custom clean method for the generic order class."""
         super().clean()
+
+        # Check if a responsible owner is required for this order type
+        if self.REQUIRE_RESPONSIBLE_SETTING:
+            if common_models.InvenTreeSetting.get_setting(
+                self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False
+            ):
+                if not self.responsible:
+                    raise ValidationError({
+                        'responsible': _('Responsible user or group must be specified')
+                    })
 
         # Check that the referenced 'contact' matches the correct 'company'
         if self.company and self.contact:
@@ -239,7 +251,7 @@ class Order(
 
         It requires any subclasses to implement the get_status_class() class method
         """
-        today = datetime.now().date()
+        today = InvenTree.helpers.current_date()
         return (
             Q(status__in=cls.get_status_class().OPEN)
             & ~Q(target_date=None)
@@ -346,9 +358,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
         target_date: Expected delivery target date for PurchaseOrder completion (optional)
     """
 
+    REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
+    REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        return reverse('po-detail', kwargs={'pk': self.pk})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('po-detail', kwargs={'pk': self.pk})
+        return pui_url(f'/purchasing/purchase-order/{self.pk}')
 
     @staticmethod
     def get_api_url():
@@ -368,9 +385,6 @@ class PurchaseOrder(TotalPriceMixin, Order):
         }
 
         return defaults
-
-    # Global setting for specifying reference pattern
-    REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -569,7 +583,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """
         if self.is_pending:
             self.status = PurchaseOrderStatus.PLACED.value
-            self.issue_date = datetime.now().date()
+            self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('purchaseorder.placed', id=self.pk)
@@ -589,7 +603,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """
         if self.status == PurchaseOrderStatus.PLACED:
             self.status = PurchaseOrderStatus.COMPLETE.value
-            self.complete_date = datetime.now().date()
+            self.complete_date = InvenTree.helpers.current_date()
 
             self.save()
 
@@ -802,9 +816,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
 class SalesOrder(TotalPriceMixin, Order):
     """A SalesOrder represents a list of goods shipped outwards to a customer."""
 
+    REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
+    REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
+
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        return reverse('so-detail', kwargs={'pk': self.pk})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('so-detail', kwargs={'pk': self.pk})
+        return pui_url(f'/sales/sales-order/{self.pk}')
 
     @staticmethod
     def get_api_url():
@@ -822,9 +841,6 @@ class SalesOrder(TotalPriceMixin, Order):
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
         return defaults
-
-    # Global setting for specifying reference pattern
-    REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -1013,7 +1029,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Change this order from 'PENDING' to 'IN_PROGRESS'."""
         if self.status == SalesOrderStatus.PENDING:
             self.status = SalesOrderStatus.IN_PROGRESS.value
-            self.issue_date = datetime.now().date()
+            self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('salesorder.issued', id=self.pk)
@@ -1027,7 +1043,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
         self.status = SalesOrderStatus.SHIPPED.value
         self.shipped_by = user
-        self.shipment_date = datetime.now()
+        self.shipment_date = InvenTree.helpers.current_date()
 
         self.save()
 
@@ -1329,7 +1345,7 @@ class PurchaseOrderLineItem(OrderLineItem):
     OVERDUE_FILTER = (
         Q(received__lt=F('quantity'))
         & ~Q(target_date=None)
-        & Q(target_date__lt=datetime.now().date())
+        & Q(target_date__lt=InvenTree.helpers.current_date())
     )
 
     @staticmethod
@@ -1488,7 +1504,7 @@ class SalesOrderLineItem(OrderLineItem):
     OVERDUE_FILTER = (
         Q(shipped__lt=F('quantity'))
         & ~Q(target_date=None)
-        & Q(target_date__lt=datetime.now().date())
+        & Q(target_date__lt=InvenTree.helpers.current_date())
     )
 
     @staticmethod
@@ -1731,7 +1747,9 @@ class SalesOrderShipment(
             allocation.complete_allocation(user)
 
         # Update the "shipment" date
-        self.shipment_date = kwargs.get('shipment_date', datetime.now())
+        self.shipment_date = kwargs.get(
+            'shipment_date', InvenTree.helpers.current_date()
+        )
         self.shipped_by = user
 
         # Was a tracking number provided?
@@ -1938,9 +1956,14 @@ class ReturnOrder(TotalPriceMixin, Order):
         status: The status of the order (refer to status_codes.ReturnOrderStatus)
     """
 
+    REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
+    REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
+
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
-        return reverse('return-order-detail', kwargs={'pk': self.pk})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('return-order-detail', kwargs={'pk': self.pk})
+        return pui_url(f'/sales/return-order/{self.pk}')
 
     @staticmethod
     def get_api_url():
@@ -1960,8 +1983,6 @@ class ReturnOrder(TotalPriceMixin, Order):
         }
 
         return defaults
-
-    REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
 
     def __str__(self):
         """Render a string representation of this ReturnOrder."""
@@ -2056,7 +2077,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Complete this ReturnOrder (if not already completed)."""
         if self.status == ReturnOrderStatus.IN_PROGRESS:
             self.status = ReturnOrderStatus.COMPLETE.value
-            self.complete_date = datetime.now().date()
+            self.complete_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('returnorder.completed', id=self.pk)
@@ -2069,7 +2090,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Issue this ReturnOrder (if currently pending)."""
         if self.status == ReturnOrderStatus.PENDING:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
-            self.issue_date = datetime.now().date()
+            self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('returnorder.issued', id=self.pk)
@@ -2142,7 +2163,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         )
 
         # Update the LineItem
-        line.received_date = datetime.now().date()
+        line.received_date = InvenTree.helpers.current_date()
         line.save()
 
         trigger_event('returnorder.received', id=self.pk)

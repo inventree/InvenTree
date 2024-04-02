@@ -1,5 +1,6 @@
 """Unit tests for InvenTreeBarcodePlugin."""
 
+from django.conf import settings
 from django.urls import reverse
 
 import part.models
@@ -270,9 +271,10 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertEqual(
             response.data['stocklocation']['api_url'], '/api/stock/location/5/'
         )
-        self.assertEqual(
-            response.data['stocklocation']['web_url'], '/stock/location/5/'
-        )
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertEqual(
+                response.data['stocklocation']['web_url'], '/stock/location/5/'
+            )
         self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
 
         # Scan a Part object

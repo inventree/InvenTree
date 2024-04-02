@@ -36,6 +36,7 @@ import common.models
 import common.settings
 import InvenTree.conversion
 import InvenTree.fields
+import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
@@ -131,7 +132,9 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     def get_absolute_url(self):
         """Return the web URL associated with the detail view for this PartCategory instance."""
-        return reverse('category-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('category-detail', kwargs={'pk': self.id})
+        return helpers.pui_url(f'/part/category/{self.id}')
 
     def clean(self):
         """Custom clean action for the PartCategory model.
@@ -753,7 +756,9 @@ class Part(
 
     def get_absolute_url(self):
         """Return the web URL for viewing this part."""
-        return reverse('part-detail', kwargs={'pk': self.id})
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return reverse('part-detail', kwargs={'pk': self.id})
+        return helpers.pui_url(f'/part/{self.id}')
 
     def get_image_url(self):
         """Return the URL of the image for this part."""
@@ -1723,7 +1728,7 @@ class Part(
 
         self.bom_checksum = self.get_bom_hash()
         self.bom_checked_by = user
-        self.bom_checked_date = datetime.now().date()
+        self.bom_checked_date = InvenTree.helpers.current_date()
 
         self.save()
 
@@ -2710,7 +2715,7 @@ class PartPricing(common.models.MetaMixin):
             )
 
             if days > 0:
-                date_threshold = datetime.now().date() - timedelta(days=days)
+                date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
                 items = items.filter(updated__gte=date_threshold)
 
             for item in items:
@@ -3423,6 +3428,13 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         self.key = helpers.generateTestKey(self.test_name)
 
+        if len(self.key) == 0:
+            raise ValidationError({
+                'test_name': _(
+                    'Invalid template name - must include at least one alphanumeric character'
+                )
+            })
+
         self.validate_unique()
         super().clean()
 
@@ -3440,7 +3452,9 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
 
         if tests.exists():
             raise ValidationError({
-                'test_name': _('Test with this name already exists for this part')
+                'test_name': _(
+                    'Test template with the same key already exists for part'
+                )
             })
 
         super().validate_unique(exclude)
@@ -3818,6 +3832,28 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
         if self.default_value:
             return f'{self.category.name} | {self.parameter_template.name} | {self.default_value}'
         return f'{self.category.name} | {self.parameter_template.name}'
+
+    def clean(self):
+        """Validate this PartCategoryParameterTemplate instance.
+
+        Checks the provided 'default_value', and (if not blank), ensure it is valid.
+        """
+        super().clean()
+
+        self.default_value = (
+            '' if self.default_value is None else str(self.default_value.strip())
+        )
+
+        if self.default_value and InvenTreeSetting.get_setting(
+            'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+        ):
+            if self.parameter_template.units:
+                try:
+                    InvenTree.conversion.convert_physical_value(
+                        self.default_value, self.parameter_template.units
+                    )
+                except ValidationError as e:
+                    raise ValidationError({'default_value': e.message})
 
     category = models.ForeignKey(
         PartCategory,

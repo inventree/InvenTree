@@ -180,6 +180,12 @@ export function FilterSelectDrawer({
     setAddFilter(false);
   }, [tableState.activeFilters]);
 
+  const hasFilters: boolean = useMemo(() => {
+    let filters = tableState?.activeFilters ?? [];
+
+    return filters.length > 0;
+  }, [tableState.activeFilters]);
+
   return (
     <Drawer
       size="sm"
@@ -190,13 +196,11 @@ export function FilterSelectDrawer({
       title={<StylishText size="lg">{t`Table Filters`}</StylishText>}
     >
       <Stack spacing="xs">
-        {tableState.activeFilters &&
-          tableState.activeFilters.map((f) => (
+        {hasFilters &&
+          tableState.activeFilters?.map((f) => (
             <FilterItem key={f.name} flt={f} tableState={tableState} />
           ))}
-        {tableState.activeFilters && tableState.activeFilters.length > 0 && (
-          <Divider />
-        )}
+        {hasFilters && <Divider />}
         {addFilter && (
           <Stack spacing="xs">
             <FilterAddGroup

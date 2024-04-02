@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
-from django.db.models import BooleanField, Case, Count, Q, Value, When
+from django.db.models import BooleanField, Case, Count, Prefetch, Q, Value, When
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext_lazy as _
 
@@ -20,6 +20,7 @@ import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status_codes
+import part.filters as part_filters
 import part.models as part_models
 import stock.filters
 from company.serializers import SupplierPartSerializer
@@ -63,6 +64,9 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
             'value',
             'attachment',
             'notes',
+            'test_station',
+            'started_datetime',
+            'finished_datetime',
             'user',
             'user_detail',
             'date',
@@ -136,7 +140,18 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
                     part=stock_item.part, test_name=test_name
                 )
 
-        return super().validate(data)
+        data = super().validate(data)
+
+        started = data.get('started_datetime')
+        finished = data.get('finished_datetime')
+
+        if started is not None and finished is not None and started > finished:
+            raise ValidationError({
+                'finished_datetime': _(
+                    'The test finished time cannot be earlier than the test started time'
+                )
+            })
+        return data
 
 
 class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
@@ -289,7 +304,14 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'location',
             'sales_order',
             'purchase_order',
-            'part',
+            Prefetch(
+                'part',
+                queryset=part_models.Part.objects.annotate(
+                    category_default_location=part_filters.annotate_default_location(
+                        'category__'
+                    )
+                ).prefetch_related(None),
+            ),
             'part__category',
             'part__pricing_data',
             'supplier_part',
@@ -323,7 +345,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
         # Add flag to indicate if the StockItem is stale
         stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
-        stale_date = datetime.now().date() + timedelta(days=stale_days)
+        stale_date = InvenTree.helpers.current_date() + timedelta(days=stale_days)
         stale_filter = (
             StockItem.IN_STOCK_FILTER
             & ~Q(expiry_date=None)
@@ -576,9 +598,14 @@ class InstallStockItemSerializer(serializers.Serializer):
         parent_item = self.context['item']
         parent_part = parent_item.part
 
-        # Check if the selected part is in the Bill of Materials of the parent item
-        if not parent_part.check_if_part_in_bom(stock_item.part):
-            raise ValidationError(_('Selected part is not in the Bill of Materials'))
+        if common.models.InvenTreeSetting.get_setting(
+            'STOCK_ENFORCE_BOM_INSTALLATION', backup_value=True, cache=False
+        ):
+            # Check if the selected part is in the Bill of Materials of the parent item
+            if not parent_part.check_if_part_in_bom(stock_item.part):
+                raise ValidationError(
+                    _('Selected part is not in the Bill of Materials')
+                )
 
         return stock_item
 
@@ -799,7 +826,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         deltas = {'status': status}
 
-        now = datetime.now()
+        now = InvenTree.helpers.current_time()
 
         # Instead of performing database updates for each item,
         # perform bulk database updates (much more efficient)
@@ -858,7 +885,14 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = StockLocation
-        fields = ['pk', 'name', 'parent', 'icon', 'structural']
+        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'sublocations']
+
+    sublocations = serializers.IntegerField(label=_('Sublocations'), read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with the number of sublocations."""
+        return queryset.annotate(sublocations=stock.filters.annotate_sub_locations())
 
 
 class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
@@ -879,6 +913,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'pathstring',
             'path',
             'items',
+            'sublocations',
             'owner',
             'icon',
             'custom_icon',
@@ -904,13 +939,18 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
         # Annotate the number of stock items which exist in this category (including subcategories)
-        queryset = queryset.annotate(items=stock.filters.annotate_location_items())
+        queryset = queryset.annotate(
+            items=stock.filters.annotate_location_items(),
+            sublocations=stock.filters.annotate_sub_locations(),
+        )
 
         return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    items = serializers.IntegerField(read_only=True)
+    items = serializers.IntegerField(read_only=True, label=_('Stock Items'))
+
+    sublocations = serializers.IntegerField(read_only=True, label=_('Sublocations'))
 
     level = serializers.IntegerField(read_only=True)
 

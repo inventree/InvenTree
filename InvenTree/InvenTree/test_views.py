@@ -3,6 +3,7 @@
 import os
 
 from django.contrib.auth import get_user_model
+from django.test import tag
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeTestCase
@@ -35,6 +36,7 @@ class ViewTests(InvenTreeTestCase):
 
         return str(response.content.decode())
 
+    @tag('cui')
     def test_panels(self):
         """Test that the required 'panels' are present."""
         content = self.get_index_page()
@@ -43,6 +45,7 @@ class ViewTests(InvenTreeTestCase):
 
         # TODO: In future, run the javascript and ensure that the panels get created!
 
+    @tag('cui')
     def test_settings_page(self):
         """Test that the 'settings' page loads correctly."""
         # Settings page loads
@@ -101,6 +104,8 @@ class ViewTests(InvenTreeTestCase):
             self.assertNotIn(f'select-{panel}', content)
             self.assertNotIn(f'panel-{panel}', content)
 
+    # TODO: Replace this with a PUI test
+    @tag('cui')
     def test_url_login(self):
         """Test logging in via arguments."""
         # Log out

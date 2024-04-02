@@ -1,10 +1,12 @@
 """Unit tests for Company views (see views.py)."""
 
+from django.test import tag
 from django.urls import reverse
 
 from InvenTree.unit_test import InvenTreeTestCase
 
 
+@tag('cui')
 class CompanyViewTest(InvenTreeTestCase):
     """Tests for various 'Company' views."""
 

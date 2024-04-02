@@ -39,7 +39,7 @@ export function ActionButton(props: ActionButtonProps) {
           color={props.color}
           size={props.size}
           onClick={props.onClick ?? notYetImplemented}
-          variant={props.variant}
+          variant={props.variant ?? 'light'}
         >
           <Group spacing="xs" noWrap={true}>
             {props.icon}

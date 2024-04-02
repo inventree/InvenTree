@@ -69,7 +69,7 @@ def construct_format_regex(fmt_string: str) -> str:
     for group in string.Formatter().parse(fmt_string):
         prefix = group[0]  # Prefix (literal text appearing before this group)
         name = group[1]  # Name of this format variable
-        format = group[2]  # Format specifier e.g :04d
+        _fmt = group[2]  # Format specifier e.g :04d
 
         rep = [
             '+',
@@ -106,16 +106,16 @@ def construct_format_regex(fmt_string: str) -> str:
         # Add a named capture group for the format entry
         if name:
             # Check if integer values are required
-            if format.endswith('d'):
-                chr = '\d'
+            if _fmt.endswith('d'):
+                c = '\d'
             else:
-                chr = '.'
+                c = '.'
 
             # Specify width
             # TODO: Introspect required width
             w = '+'
 
-            pattern += f'(?P<{name}>{chr}{w})'
+            pattern += f'(?P<{name}>{c}{w})'
 
     pattern += '$'
 
@@ -180,7 +180,12 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
     return result.group(name)
 
 
-def format_money(money: Money, decimal_places: int = None, format: str = None) -> str:
+def format_money(
+    money: Money,
+    decimal_places: int = None,
+    format: str = None,
+    include_symbol: bool = True,
+) -> str:
     """Format money object according to the currently set local.
 
     Args:
@@ -203,10 +208,12 @@ def format_money(money: Money, decimal_places: int = None, format: str = None) -
         if decimal_places is not None:
             pattern.frac_prec = (decimal_places, decimal_places)
 
-    return pattern.apply(
+    result = pattern.apply(
         money.amount,
         locale,
-        currency=money.currency.code,
+        currency=money.currency.code if include_symbol else '',
         currency_digits=decimal_places is None,
         decimal_quantization=decimal_places is not None,
     )
+
+    return result

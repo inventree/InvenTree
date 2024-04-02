@@ -10,6 +10,8 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import permissions, serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -214,6 +216,7 @@ class CategoryFilter(rest_filters.FilterSet):
         help_text=_('Exclude sub-categories under the specified category'),
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_exclude_tree(self, queryset, name, value):
         """Exclude all sub-categories under the specified category."""
         # Exclude the specified category
@@ -264,6 +267,8 @@ class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
         except AttributeError:
             pass
 
+        kwargs.setdefault('context', self.get_serializer_context())
+
         return self.serializer_class(*args, **kwargs)
 
     def update(self, request, *args, **kwargs):
@@ -308,8 +313,16 @@ class CategoryTree(ListAPI):
 
     filter_backends = ORDER_FILTER
 
+    ordering_fields = ['level', 'name', 'subcategories']
+
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
+
+    def get_queryset(self, *args, **kwargs):
+        """Return an annotated queryset for the CategoryTree endpoint."""
+        queryset = super().get_queryset(*args, **kwargs)
+        queryset = part_serializers.CategoryTree.annotate_queryset(queryset)
+        return queryset
 
 
 class CategoryParameterList(ListCreateAPI):
@@ -398,7 +411,7 @@ class PartInternalPriceList(ListCreateAPI):
 
 
 class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a PartAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a PartAttachment (file upload)."""
 
     queryset = PartAttachment.objects.all()
     serializer_class = part_serializers.PartAttachmentSerializer
@@ -995,6 +1008,7 @@ class PartFilter(rest_filters.FilterSet):
         method='filter_convert_from',
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_convert_from(self, queryset, name, part):
         """Limit the queryset to valid conversion options for the specified part."""
         conversion_options = part.get_conversion_options()
@@ -1009,6 +1023,7 @@ class PartFilter(rest_filters.FilterSet):
         method='filter_exclude_tree',
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_exclude_tree(self, queryset, name, part):
         """Exclude all parts and variants 'down' from the specified part from the queryset."""
         children = part.get_descendants(include_self=True)
@@ -1019,6 +1034,7 @@ class PartFilter(rest_filters.FilterSet):
         label='Ancestor', queryset=Part.objects.all(), method='filter_ancestor'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_ancestor(self, queryset, name, part):
         """Limit queryset to descendants of the specified ancestor part."""
         descendants = part.get_descendants(include_self=False)
@@ -1036,6 +1052,7 @@ class PartFilter(rest_filters.FilterSet):
         label='In BOM Of', queryset=Part.objects.all(), method='filter_in_bom'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_in_bom(self, queryset, name, part):
         """Limit queryset to parts in the BOM for the specified part."""
         bom_parts = part.get_parts_in_bom()
@@ -1520,6 +1537,7 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         queryset=Part.objects.all(), method='filter_part', label=_('Part')
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part(self, queryset, name, part):
         """Filter queryset to include only PartParameterTemplates which are referenced by a part."""
         parameters = PartParameter.objects.filter(part=part)
@@ -1533,6 +1551,7 @@ class PartParameterTemplateFilter(rest_filters.FilterSet):
         label=_('Category'),
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_category(self, queryset, name, category):
         """Filter queryset to include only PartParameterTemplates which are referenced by parts in this category."""
         cats = category.get_descendants(include_self=True)
@@ -1759,6 +1778,7 @@ class BomFilter(rest_filters.FilterSet):
     part_active = rest_filters.BooleanFilter(
         label='Master part is active', field_name='part__active'
     )
+
     part_trackable = rest_filters.BooleanFilter(
         label='Master part is trackable', field_name='part__trackable'
     )
@@ -1767,6 +1787,7 @@ class BomFilter(rest_filters.FilterSet):
     sub_part_trackable = rest_filters.BooleanFilter(
         label='Sub part is trackable', field_name='sub_part__trackable'
     )
+
     sub_part_assembly = rest_filters.BooleanFilter(
         label='Sub part is an assembly', field_name='sub_part__assembly'
     )
@@ -1805,6 +1826,23 @@ class BomFilter(rest_filters.FilterSet):
             return queryset.exclude(q_a | q_b)
 
         return queryset.filter(q_a | q_b).distinct()
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_part', label=_('Part')
+    )
+
+    def filter_part(self, queryset, name, part):
+        """Filter the queryset based on the specified part."""
+        return queryset.filter(part.get_bom_item_filter())
+
+    uses = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), method='filter_uses', label=_('Uses')
+    )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_uses(self, queryset, name, part):
+        """Filter the queryset based on the specified part."""
+        return queryset.filter(part.get_used_in_bom_item_filter())
 
 
 class BomMixin:
@@ -1880,62 +1918,6 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         elif is_ajax(request):
             return JsonResponse(data, safe=False)
         return Response(data)
-
-    def filter_queryset(self, queryset):
-        """Custom query filtering for the BomItem list API."""
-        queryset = super().filter_queryset(queryset)
-
-        params = self.request.query_params
-
-        # Filter by part?
-        part = params.get('part', None)
-
-        if part is not None:
-            """
-            If we are filtering by "part", there are two cases to consider:
-
-            a) Bom items which are defined for *this* part
-            b) Inherited parts which are defined for a *parent* part
-
-            So we need to construct two queries!
-            """
-
-            # First, check that the part is actually valid!
-            try:
-                part = Part.objects.get(pk=part)
-
-                queryset = queryset.filter(part.get_bom_item_filter())
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        """
-        Filter by 'uses'?
-
-        Here we pass a part ID and return BOM items for any assemblies which "use" (or "require") that part.
-
-        There are multiple ways that an assembly can "use" a sub-part:
-
-        A) Directly specifying the sub_part in a BomItem field
-        B) Specifying a "template" part with inherited=True
-        C) Allowing variant parts to be substituted
-        D) Allowing direct substitute parts to be specified
-
-        - BOM items which are "inherited" by parts which are variants of the master BomItem
-        """
-        uses = params.get('uses', None)
-
-        if uses is not None:
-            try:
-                # Extract the part we are interested in
-                uses_part = Part.objects.get(pk=uses)
-
-                queryset = queryset.filter(uses_part.get_used_in_bom_item_filter())
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        return queryset
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 

@@ -13,6 +13,7 @@ from django.urls.base import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+from InvenTree.helpers import pui_url
 from plugin.helpers import get_git_log
 
 logger = logging.getLogger('inventree')
@@ -137,7 +138,13 @@ class MixinBase:
             if fnc_name is True:
                 return True
 
-            return getattr(self, fnc_name, True)
+            attr = getattr(self, fnc_name, True)
+
+            if callable(attr):
+                return attr()
+            else:
+                return attr
+
         return False
 
     def add_mixin(self, key: str, fnc_enabled=True, cls=None):
@@ -364,7 +371,13 @@ class InvenTreePlugin(VersionMixin, MixinBase, MetaBase):
     @property
     def settings_url(self):
         """URL to the settings panel for this plugin."""
-        return f'{reverse("settings")}#select-plugin-{self.slug}'
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            return f'{reverse("settings")}#select-plugin-{self.slug}'
+        config = self.plugin_config()
+        if config:
+            return pui_url(f'/settings/admin/plugin/{config.pk}/')
+        else:
+            return pui_url('/settings/admin/plugin/')
 
     # region package info
     def _get_package_commit(self):

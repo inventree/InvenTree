@@ -1,7 +1,11 @@
 import { t } from '@lingui/macro';
 import { Drawer, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { ReactTree } from '@naisutech/react-tree';
-import { IconSitemap } from '@tabler/icons-react';
+import {
+  IconChevronDown,
+  IconChevronRight,
+  IconSitemap
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 
@@ -32,7 +36,8 @@ export function StockLocationTree({
             return {
               id: location.pk,
               label: location.name,
-              parentId: location.parent
+              parentId: location.parent,
+              children: location.sublocations
             };
           })
         )
@@ -57,6 +62,14 @@ export function StockLocationTree({
         <Text>{node.label}</Text>
       </Group>
     );
+  }
+
+  function renderIcon({ node, open }: { node: any; open?: boolean }) {
+    if (node.children == 0) {
+      return undefined;
+    }
+
+    return open ? <IconChevronDown /> : <IconChevronRight />;
   }
 
   return (
@@ -87,6 +100,7 @@ export function StockLocationTree({
           nodes={treeQuery.data ?? []}
           showEmptyItems={false}
           RenderNode={renderNode}
+          RenderIcon={renderIcon}
           defaultSelectedNodes={selectedLocation ? [selectedLocation] : []}
         />
       </Stack>

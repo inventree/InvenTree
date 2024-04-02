@@ -75,12 +75,14 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'level',
             'parent',
             'part_count',
+            'subcategories',
             'pathstring',
             'path',
             'starred',
             'url',
             'structural',
             'icon',
+            'parent_default_location',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -100,13 +102,22 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Annotate extra information to the queryset."""
         # Annotate the number of 'parts' which exist in each category (including subcategories!)
-        queryset = queryset.annotate(part_count=part.filters.annotate_category_parts())
+        queryset = queryset.annotate(
+            part_count=part.filters.annotate_category_parts(),
+            subcategories=part.filters.annotate_sub_categories(),
+        )
+
+        queryset = queryset.annotate(
+            parent_default_location=part.filters.annotate_default_location('parent__')
+        )
 
         return queryset
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
-    part_count = serializers.IntegerField(read_only=True)
+    part_count = serializers.IntegerField(read_only=True, label=_('Parts'))
+
+    subcategories = serializers.IntegerField(read_only=True, label=_('Subcategories'))
 
     level = serializers.IntegerField(read_only=True)
 
@@ -116,6 +127,8 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
         child=serializers.DictField(), source='get_path', read_only=True
     )
 
+    parent_default_location = serializers.IntegerField(read_only=True)
+
 
 class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for PartCategory tree."""
@@ -124,7 +137,14 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
         """Metaclass defining serializer fields."""
 
         model = PartCategory
-        fields = ['pk', 'name', 'parent', 'icon', 'structural']
+        fields = ['pk', 'name', 'parent', 'icon', 'structural', 'subcategories']
+
+    subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
+
+    @staticmethod
+    def annotate_queryset(queryset):
+        """Annotate the queryset with the number of subcategories."""
+        return queryset.annotate(subcategories=part.filters.annotate_sub_categories())
 
 
 class PartAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
@@ -271,11 +291,13 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'pk',
             'IPN',
             'barcode_hash',
+            'category_default_location',
             'default_location',
             'name',
             'revision',
             'full_name',
             'description',
+            'image',
             'thumbnail',
             'active',
             'assembly',
@@ -301,6 +323,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             self.fields.pop('pricing_min')
             self.fields.pop('pricing_max')
 
+    category_default_location = serializers.IntegerField(read_only=True)
+
+    image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
     # Pricing fields
@@ -597,6 +622,7 @@ class PartSerializer(
             'allocated_to_build_orders',
             'allocated_to_sales_orders',
             'building',
+            'category_default_location',
             'in_stock',
             'ordering',
             'required_for_build_orders',
@@ -604,6 +630,7 @@ class PartSerializer(
             'stock_item_count',
             'suppliers',
             'total_in_stock',
+            'external_stock',
             'unallocated_stock',
             'variant_stock',
             # Fields only used for Part creation
@@ -728,6 +755,12 @@ class PartSerializer(
             )
         )
 
+        queryset = queryset.annotate(
+            external_stock=part.filters.annotate_total_stock(
+                filter=Q(location__external=True)
+            )
+        )
+
         # Annotate with the total 'available stock' quantity
         # This is the current stock, minus any allocations
         queryset = queryset.annotate(
@@ -743,6 +776,12 @@ class PartSerializer(
         queryset = queryset.annotate(
             required_for_build_orders=part.filters.annotate_build_order_requirements(),
             required_for_sales_orders=part.filters.annotate_sales_order_requirements(),
+        )
+
+        queryset = queryset.annotate(
+            category_default_location=part.filters.annotate_default_location(
+                'category__'
+            )
         )
 
         return queryset
@@ -774,14 +813,18 @@ class PartSerializer(
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
     building = serializers.FloatField(read_only=True)
     in_stock = serializers.FloatField(read_only=True)
-    ordering = serializers.FloatField(read_only=True)
+    ordering = serializers.FloatField(read_only=True, label=_('On Order'))
     required_for_build_orders = serializers.IntegerField(read_only=True)
     required_for_sales_orders = serializers.IntegerField(read_only=True)
-    stock_item_count = serializers.IntegerField(read_only=True)
-    suppliers = serializers.IntegerField(read_only=True)
-    total_in_stock = serializers.FloatField(read_only=True)
-    unallocated_stock = serializers.FloatField(read_only=True)
-    variant_stock = serializers.FloatField(read_only=True)
+    stock_item_count = serializers.IntegerField(read_only=True, label=_('Stock Items'))
+    suppliers = serializers.IntegerField(read_only=True, label=_('Suppliers'))
+    total_in_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
+    external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
+    unallocated_stock = serializers.FloatField(
+        read_only=True, label=_('Unallocated Stock')
+    )
+    category_default_location = serializers.IntegerField(read_only=True)
+    variant_stock = serializers.FloatField(read_only=True, label=_('Variant Stock'))
 
     minimum_stock = serializers.FloatField()
 
@@ -1381,6 +1424,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'available_stock',
             'available_substitute_stock',
             'available_variant_stock',
+            'external_stock',
             # Annotated field describing quantity on order
             'on_order',
             # Annotated field describing quantity being built
@@ -1449,6 +1493,8 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     available_substitute_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
+
+    external_stock = serializers.FloatField(read_only=True)
 
     @staticmethod
     def setup_eager_loading(queryset):
@@ -1525,6 +1571,13 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
                 - F('allocated_to_sales_orders')
                 - F('allocated_to_build_orders'),
                 output_field=models.DecimalField(),
+            )
+        )
+
+        # Calculate 'external_stock'
+        queryset = queryset.annotate(
+            external_stock=part.filters.annotate_total_stock(
+                reference=ref, filter=Q(location__external=True)
             )
         )
 

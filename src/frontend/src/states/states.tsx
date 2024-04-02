@@ -34,6 +34,7 @@ export interface ServerAPIProps {
   worker_running: null | boolean;
   worker_pending_tasks: null | number;
   plugins_enabled: null | boolean;
+  plugins_install_disabled: null | boolean;
   active_plugins: PluginProps[];
   email_configured: null | boolean;
   debug_mode: null | boolean;

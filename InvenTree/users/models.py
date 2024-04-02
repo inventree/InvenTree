@@ -54,7 +54,7 @@ def default_token_expiry():
     """Generate an expiry date for a newly created token."""
     # TODO: Custom value for default expiry timeout
     # TODO: For now, tokens last for 1 year
-    return datetime.datetime.now().date() + datetime.timedelta(days=365)
+    return InvenTree.helpers.current_date() + datetime.timedelta(days=365)
 
 
 class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
@@ -164,7 +164,9 @@ class ApiToken(AuthToken, InvenTree.models.MetadataMixin):
     @admin.display(boolean=True, description=_('Expired'))
     def expired(self):
         """Test if this token has expired."""
-        return self.expiry is not None and self.expiry < datetime.datetime.now().date()
+        return (
+            self.expiry is not None and self.expiry < InvenTree.helpers.current_date()
+        )
 
     @property
     @admin.display(boolean=True, description=_('Active'))
@@ -718,7 +720,10 @@ def check_user_role(user, role, permission):
     # First, check the cache
     key = f'role_{user}_{role}_{permission}'
 
-    result = cache.get(key)
+    try:
+        result = cache.get(key)
+    except Exception:
+        result = None
 
     if result is not None:
         return result
@@ -746,7 +751,11 @@ def check_user_role(user, role, permission):
                     break
 
     # Save result to cache
-    cache.set(key, result, timeout=3600)
+    try:
+        cache.set(key, result, timeout=3600)
+    except Exception:
+        pass
+
     return result
 
 

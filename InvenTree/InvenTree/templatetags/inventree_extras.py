@@ -156,6 +156,12 @@ def plugins_enabled(*args, **kwargs):
 
 
 @register.simple_tag()
+def plugins_install_disabled(*args, **kwargs):
+    """Return True if plugin install is disabled for the server instance."""
+    return djangosettings.PLUGINS_INSTALL_DISABLED
+
+
+@register.simple_tag()
 def plugins_info(*args, **kwargs):
     """Return information about activated plugins."""
     # Check if plugins are even enabled
@@ -504,17 +510,6 @@ def keyvalue(dict, key):
     {% mydict|keyvalue:mykey %}
     """
     return dict.get(key)
-
-
-@register.simple_tag()
-def call_method(obj, method_name, *args):
-    """Enables calling model methods / functions from templates with arguments.
-
-    Usage:
-    {% call_method model_object 'fnc_name' argument1 %}
-    """
-    method = getattr(obj, method_name)
-    return method(*args)
 
 
 @register.simple_tag()

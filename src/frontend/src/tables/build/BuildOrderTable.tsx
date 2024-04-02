@@ -178,7 +178,7 @@ export function BuildOrderTable({
           },
           tableActions: tableActions,
           tableFilters: tableFilters,
-          onRowClick: (row) => navigate(getDetailUrl(ModelType.build, row.pk))
+          modelType: ModelType.build
         }}
       />
     </>

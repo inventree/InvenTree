@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 from decimal import Decimal, InvalidOperation
 
-from django.contrib.auth.models import User
 from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 
@@ -13,6 +12,7 @@ from company.models import Company, SupplierPart
 from order.models import PurchaseOrder, PurchaseOrderStatus
 from plugin.base.integration.SettingsMixin import SettingsMixin
 from stock.models import StockLocation
+from users.CustomUser import CustomUser
 
 logger = logging.getLogger('inventree')
 
@@ -395,7 +395,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
     @staticmethod
     def receive_purchase_order_item(
         supplier_part: SupplierPart,
-        user: User,
+        user: CustomUser,
         quantity: Decimal | str = None,
         purchase_order: PurchaseOrder = None,
         location: StockLocation = None,
