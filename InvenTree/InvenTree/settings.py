@@ -462,7 +462,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 if USE_JWT:
     JWT_AUTH_COOKIE = 'inventree-auth'
     JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
-    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] + (
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] += (
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     )
     INSTALLED_APPS.append('rest_framework_simplejwt')
