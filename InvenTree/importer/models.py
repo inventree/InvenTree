@@ -467,7 +467,7 @@ class DataImportRow(models.Model):
             self.errors = {
                 'non_field_errors': 'No serializer class linked to this import session'
             }
-            return
+            return False
 
         result = False
 
