@@ -379,11 +379,11 @@ class BomItemResource(InvenTreeResource):
         report_skipped = False
         clean_model_instances = True
 
-        exclude = ['checksum', 'id', 'part', 'sub_part', 'validated']
+        exclude = ['checksum', 'part', 'sub_part', 'validated']
 
     level = Field(attribute='level', column_name=_('BOM Level'), readonly=True)
 
-    bom_id = Field(
+    id = Field(
         attribute='pk', column_name=_('BOM Item ID'), widget=widgets.IntegerWidget()
     )
 
@@ -476,7 +476,6 @@ class BomItemResource(InvenTreeResource):
         if is_importing:
             to_remove += [
                 'level',
-                'pk',
                 'part',
                 'part__IPN',
                 'part__name',
