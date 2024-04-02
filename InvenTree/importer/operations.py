@@ -8,21 +8,21 @@ import tablib
 import InvenTree.helpers
 
 
-def load_data_file(data_file, format=None):
+def load_data_file(data_file, file_format=None):
     """Load data file into a tablib dataset.
 
     Arguments:
         data_file: django file object containing data to import (should be already opened!)
-        format: Format specifier for the data file
+        file_format: Format specifier for the data file
     """
     # Introspect the file format based on the provided file
-    if not format:
-        format = data_file.name.split('.')[-1]
+    if not file_format:
+        file_format = data_file.name.split('.')[-1]
 
-    if format and format.startswith('.'):
-        format = format[1:]
+    if file_format and file_format.startswith('.'):
+        file_format = file_format[1:]
 
-    if format not in InvenTree.helpers.GetExportFormats():
+    if file_format not in InvenTree.helpers.GetExportFormats():
         raise ValidationError(_('Unsupported data file format'))
 
     file_object = data_file.file
@@ -37,11 +37,11 @@ def load_data_file(data_file, format=None):
     except (IOError, FileNotFoundError):
         raise ValidationError(_('Failed to open data file'))
 
-    if format not in ['xls', 'xlsx']:
+    if file_format not in ['xls', 'xlsx']:
         data = data.decode()
 
     try:
-        data = tablib.Dataset().load(data, headers=True, format=format)
+        data = tablib.Dataset().load(data, headers=True, format=file_format)
     except tablib.core.UnsupportedFormat:
         raise ValidationError(_('Unsupported data file format'))
     except tablib.core.InvalidDimensions:
