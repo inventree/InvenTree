@@ -133,7 +133,8 @@ export default function SalesOrderDetail() {
         name: 'contact',
         label: t`Contact`,
         icon: 'user',
-        copy: true
+        copy: true,
+        hidden: !order.contact
       }
       // TODO: Project code
     ];
