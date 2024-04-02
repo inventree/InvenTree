@@ -248,11 +248,7 @@ def str2int(text, default=None):
 
 def is_bool(text):
     """Determine if a string value 'looks' like a boolean."""
-    if str2bool(text, True):
-        return True
-    elif str2bool(text, False):
-        return True
-    return False
+    return str2bool(text, True) or str2bool(text, False)
 
 
 def isNull(text):
