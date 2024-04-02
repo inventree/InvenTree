@@ -48,7 +48,7 @@ pip==24.0
 pip-tools==7.4.1
 platformdirs==4.2.0
     # via virtualenv
-pre-commit==3.6.2
+pre-commit==3.7.0
 pycparser==2.21
     # via cffi
 pyproject-hooks==1.0.0
