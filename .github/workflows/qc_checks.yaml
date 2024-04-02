@@ -92,7 +92,7 @@ jobs:
         uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
       - name: Check Version
         run: |
-          pip install requests
+          pip install requests==2.31.0
           python3 ci/version_check.py
 
   mkdocs:
@@ -110,7 +110,7 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Check Config
         run: |
-          pip install pyyaml
+          pip install pyyaml==6.0.1
           pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
@@ -156,7 +156,7 @@ jobs:
       - name: Download public schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
-          pip install requests >/dev/null 2>&1
+          pip install requests==2.31.0 >/dev/null 2>&1
           version="$(python3 ci/version_check.py only_version 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
@@ -175,7 +175,7 @@ jobs:
         id: version
         if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
         run: |
-          pip install requests >/dev/null 2>&1
+          pip install requests==2.31.0 >/dev/null 2>&1
           version="$(python3 ci/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
