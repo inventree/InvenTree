@@ -379,7 +379,7 @@ class BomItemResource(InvenTreeResource):
         report_skipped = False
         clean_model_instances = True
 
-        exclude = ['checksum', 'id', 'part', 'sub_part', 'validated']
+        exclude = ['checksum', 'part', 'sub_part', 'validated']
 
     level = Field(attribute='level', column_name=_('BOM Level'), readonly=True)
 
