@@ -129,8 +129,6 @@ COPY InvenTree ./InvenTree
 COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ./InvenTree/web/static/web
 
 # Launch the production server
-# TODO: Work out why environment variables cannot be interpolated in this command
-# TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
 FROM inventree_base AS dev

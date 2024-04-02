@@ -248,9 +248,7 @@ def str2int(text, default=None):
 
 def is_bool(text):
     """Determine if a string value 'looks' like a boolean."""
-    if str2bool(text, True) or str2bool(text, False):
-        return True
-    return False
+    return str2bool(text, True) or str2bool(text, False)
 
 
 def isNull(text):
@@ -471,7 +469,7 @@ def DownloadFile(
     return response
 
 
-def increment_serial_number(serial: str):
+def increment_serial_number(serial):
     """Given a serial number, (attempt to) generate the *next* serial number.
 
     Note: This method is exposed to custom plugins.
@@ -855,9 +853,9 @@ def hash_barcode(barcode_data):
     barcode_data = str(barcode_data).strip()
     barcode_data = remove_non_printable_characters(barcode_data)
 
-    hash = hashlib.md5(str(barcode_data).encode())
+    barcode_hash = hashlib.md5(str(barcode_data).encode())
 
-    return str(hash.hexdigest())
+    return str(barcode_hash.hexdigest())
 
 
 def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
