@@ -69,7 +69,7 @@ def construct_format_regex(fmt_string: str) -> str:
     for group in string.Formatter().parse(fmt_string):
         prefix = group[0]  # Prefix (literal text appearing before this group)
         name = group[1]  # Name of this format variable
-        format = group[2]  # Format specifier e.g :04d
+        _fmt = group[2]  # Format specifier e.g :04d
 
         rep = [
             '+',
@@ -106,16 +106,16 @@ def construct_format_regex(fmt_string: str) -> str:
         # Add a named capture group for the format entry
         if name:
             # Check if integer values are required
-            if format.endswith('d'):
-                chr = '\d'
+            if _fmt.endswith('d'):
+                c = '\d'
             else:
-                chr = '.'
+                c = '.'
 
             # Specify width
             # TODO: Introspect required width
             w = '+'
 
-            pattern += f'(?P<{name}>{chr}{w})'
+            pattern += f'(?P<{name}>{c}{w})'
 
     pattern += '$'
 

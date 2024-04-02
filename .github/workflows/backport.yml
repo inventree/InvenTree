@@ -16,6 +16,8 @@ jobs:
   backport:
     name: Backport PR
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: |
       github.event.pull_request.merged == true
       && contains(github.event.pull_request.labels.*.name, 'backport')

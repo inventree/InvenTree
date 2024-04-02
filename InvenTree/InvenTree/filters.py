@@ -17,11 +17,10 @@ class InvenTreeDateFilter(rest_filters.DateFilter):
 
     def filter(self, qs, value):
         """Override the filter method to handle timezones correctly."""
-        if settings.USE_TZ:
-            if value is not None:
-                tz = timezone.get_current_timezone()
-                value = datetime(value.year, value.month, value.day)
-                value = make_aware(value, tz, True)
+        if settings.USE_TZ and value is not None:
+            tz = timezone.get_current_timezone()
+            value = datetime(value.year, value.month, value.day)
+            value = make_aware(value, tz, True)
 
         return super().filter(qs, value)
 

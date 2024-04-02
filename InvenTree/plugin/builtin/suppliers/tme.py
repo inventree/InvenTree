@@ -30,7 +30,7 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
     }
 
     TME_IS_QRCODE_REGEX = re.compile(r'([^\s:]+:[^\s:]+\s+)+(\S+(\s|$)+)+')
-    TME_IS_BARCODE2D_REGEX = re.compile(r'(([^\s]+)(\s+|$))+')
+    TME_IS_OLD_BARCODE2D_REGEX = re.compile(r'(([^\s]+)(\s+|$))+')
 
     # Custom field mapping
     TME_QRCODE_FIELDS = {
@@ -52,22 +52,19 @@ class TMEPlugin(SupplierBarcodeMixin, SettingsMixin, InvenTreePlugin):
                     key, value = item.split(':')
                     if key in self.TME_QRCODE_FIELDS:
                         barcode_fields[self.TME_QRCODE_FIELDS[key]] = value
-
-            return barcode_fields
-
-        elif self.TME_IS_BARCODE2D_REGEX.fullmatch(barcode_data):
-            # 2D Barcode format e.g. "PWBP-302 1PMPNWBP-302 Q1 K19361337/1"
+        elif self.TME_IS_OLD_BARCODE2D_REGEX.fullmatch(barcode_data):
+            # Old 2D Barcode format e.g. "PWBP-302 1PMPNWBP-302 Q1 K19361337/1"
             for item in barcode_data.split(' '):
                 for k, v in self.ecia_field_map().items():
                     if item.startswith(k):
                         barcode_fields[v] = item[len(k) :]
         else:
-            return {}
+            barcode_fields = self.parse_ecia_barcode2d(barcode_data)
 
         # Custom handling for order number
-        if SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER in barcode_fields:
-            order_number = barcode_fields[SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER]
+        if SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER in barcode_fields:
+            order_number = barcode_fields[SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER]
             order_number = order_number.split('/')[0]
-            barcode_fields[SupplierBarcodeMixin.CUSTOMER_ORDER_NUMBER] = order_number
+            barcode_fields[SupplierBarcodeMixin.SUPPLIER_ORDER_NUMBER] = order_number
 
         return barcode_fields
