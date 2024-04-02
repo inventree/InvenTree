@@ -133,7 +133,7 @@ CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./Inve
 
 FROM inventree_base AS dev
 
-ENV INVENTREE_BACKEND_DIR="${INVENTREE_SRC_DIR}/backend"
+ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}/src/backend"
 
 # Vite server (for local frontend development)
 EXPOSE 5173
