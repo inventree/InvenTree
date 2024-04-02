@@ -27,7 +27,6 @@ ENV INVENTREE_DOCKER="true"
 
 # InvenTree paths
 ENV INVENTREE_HOME="/home/inventree"
-ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/${data_dir}"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
@@ -90,7 +89,7 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
 COPY tasks.py contrib/container/gunicorn.conf.py contrib/container/init.sh ./
 RUN chmod +x init.sh
 
-ENTRYPOINT ["/bin/ash", "init.sh"]
+ENTRYPOINT ["/bin/ash", "./init.sh"]
 
 FROM inventree_base AS prebuild
 
@@ -123,6 +122,8 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 ENV PATH=/root/.local/bin:$PATH
 COPY --from=prebuild /root/.local /root/.local
 
+ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}"
+
 # Copy source code
 COPY src/backend/InvenTree ./InvenTree
 COPY --from=frontend ${INVENTREE_HOME}/src/backend/InvenTree/web/static/web ./src/backend/InvenTree/web/static/web
@@ -131,6 +132,8 @@ COPY --from=frontend ${INVENTREE_HOME}/src/backend/InvenTree/web/static/web ./sr
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
 FROM inventree_base AS dev
+
+ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}/src/backend"
 
 # Vite server (for local frontend development)
 EXPOSE 5173
@@ -157,7 +160,7 @@ ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
 WORKDIR ${INVENTREE_HOME}
 
 # Entrypoint ensures that we are running in the python virtual environment
-ENTRYPOINT ["/bin/ash", "./init.sh"]
+ENTRYPOINT ["/bin/ash", "./contrib/container/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]
