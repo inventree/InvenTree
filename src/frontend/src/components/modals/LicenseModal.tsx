@@ -10,14 +10,13 @@ import {
   Tabs,
   Text
 } from '@mantine/core';
-import { ContextModalProps } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
-export function LicenceView(entries: Readonly<any>[]) {
+export function LicenceView(entries: Readonly<any[]>) {
   return (
     <Stack spacing="xs">
       <Divider />
