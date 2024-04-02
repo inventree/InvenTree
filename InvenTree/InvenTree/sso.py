@@ -27,7 +27,7 @@ def get_provider_app(provider):
     return apps.first()
 
 
-def check_provider(provider, raise_error=False):
+def check_provider(provider):
     """Check if the given provider is correctly configured.
 
     To be correctly configured, the following must be true:
