@@ -345,7 +345,7 @@ class BaseMachineType(ClassValidationMixin, ClassProviderMixin):
 
         missing_settings: dict[MachineSetting.ConfigType, list[str]] = {}
         for settings, config_type in self.setting_types:
-            _, missing = MachineSetting.check_all_settings(
+            _nbr, missing = MachineSetting.check_all_settings(
                 settings_definition=settings,
                 machine_config=self.machine_config,
                 config_type=config_type,
