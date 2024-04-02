@@ -267,6 +267,8 @@ class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
         except AttributeError:
             pass
 
+        kwargs.setdefault('context', self.get_serializer_context())
+
         return self.serializer_class(*args, **kwargs)
 
     def update(self, request, *args, **kwargs):
