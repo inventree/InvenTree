@@ -17,14 +17,14 @@ import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
-export function LicenceView(entries: any[]) {
+export function LicenceView(entries: Readonly<any>[]) {
   return (
     <Stack spacing="xs">
       <Divider />
-      {entries?.length && (
+      {entries?.length > 0 && (
         <Accordion variant="contained" defaultValue="-">
           {entries?.map((entry: any, index: number) => (
-            <Accordion.Item key={index} value={`entry-${index}`}>
+            <Accordion.Item key={entry.name} value={`entry-${index}`}>
               <Accordion.Control>
                 <Group position="apart" grow>
                   <Text>{entry.name}</Text>
@@ -44,9 +44,7 @@ export function LicenceView(entries: any[]) {
   );
 }
 
-export function LicenseModal({}: ContextModalProps<{
-  modalBody: string;
-}>) {
+export function LicenseModal() {
   const { data, isFetching, isError } = useQuery({
     queryKey: ['license'],
     queryFn: () =>
