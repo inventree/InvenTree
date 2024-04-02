@@ -23,20 +23,7 @@ import { Html5Qrcode, Html5QrcodeCameraScanConfig } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
 import { useEffect, useState } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
-
-// Scan Item
-interface ScanItem {
-  id: string;
-  ref: string;
-  data: any;
-  instance?: any;
-  timestamp: Date;
-  source: string;
-  link?: string;
-  model?: ModelType;
-  pk?: string;
-}
+import { ScanItem } from './ScanPage.interface';
 
 // Region input stuff
 enum InputMethod {

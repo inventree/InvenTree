@@ -3,19 +3,7 @@ import { Checkbox, ScrollArea, Table, Text, rem } from '@mantine/core';
 import React from 'react';
 
 import { RenderInstance } from '../../components/render/Instance';
-import { ModelType } from '../../enums/ModelType';
-
-interface ScanItem {
-  id: string;
-  ref: string;
-  data: any;
-  instance?: any;
-  timestamp: Date;
-  source: string;
-  link?: string;
-  model?: ModelType;
-  pk?: string;
-}
+import { ScanItem } from './ScanPage.interface';
 
 export interface HistoryTableProps {
   data: ScanItem[];

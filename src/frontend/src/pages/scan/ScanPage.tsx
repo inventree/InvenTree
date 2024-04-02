@@ -35,18 +35,7 @@ import { apiUrl } from '../../states/ApiState';
 import BarcodeInputImage from './BarcodeInputImage';
 import BarcodeInputManual from './BarcodeInputManual';
 import HistoryTable from './ScanHistoryTable';
-
-interface ScanItem {
-  id: string;
-  ref: string;
-  data: any;
-  instance?: any;
-  timestamp: Date;
-  source: string;
-  link?: string;
-  model?: ModelType;
-  pk?: string;
-}
+import { ScanItem } from './ScanPage.interface';
 
 /*
  * Match the scanned object to a known internal model type
