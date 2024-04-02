@@ -69,7 +69,7 @@ export function LicenseModal() {
           </Text>
         </Alert>
       ) : (
-        <Tabs defaultValue="backend">
+        <Tabs defaultValue={Object.keys(data)[0] ?? ''}>
           <Tabs.List>
             {Object.keys(data ?? {}).map((key) => (
               <Tabs.Tab key={key} value={key}>
