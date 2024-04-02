@@ -95,7 +95,7 @@ def from_engineering_notation(value):
     """
     value = str(value).strip()
 
-    pattern = f'(\d+)([a-zA-Z]+)(\d+)(.*)'
+    pattern = '(\d+)([a-zA-Z]+)(\d+)(.*)'
 
     if match := re.match(pattern, value):
         left, prefix, right, suffix = match.groups()
