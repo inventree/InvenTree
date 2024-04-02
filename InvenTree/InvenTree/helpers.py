@@ -853,9 +853,9 @@ def hash_barcode(barcode_data):
     barcode_data = str(barcode_data).strip()
     barcode_data = remove_non_printable_characters(barcode_data)
 
-    hash = hashlib.md5(str(barcode_data).encode())
+    barcode_hash = hashlib.md5(str(barcode_data).encode())
 
-    return str(hash.hexdigest())
+    return str(barcode_hash.hexdigest())
 
 
 def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
