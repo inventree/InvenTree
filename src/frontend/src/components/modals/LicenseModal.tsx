@@ -75,21 +75,18 @@ export function LicenseModal({}: ContextModalProps<{
       ) : (
         <Tabs defaultValue="backend">
           <Tabs.List>
-            <Tabs.Tab value="backend">
-              <Trans>Backend Packages</Trans>
-            </Tabs.Tab>
-            <Tabs.Tab value="frontend">
-              <Trans>Frontend Packages</Trans>
-            </Tabs.Tab>
+            {Object.keys(data ?? {}).map((key) => (
+              <Tabs.Tab key={key} value={key}>
+                <Trans>{key} Packages</Trans>
+              </Tabs.Tab>
+            ))}
           </Tabs.List>
 
-          <Tabs.Panel value="backend">
-            {LicenceView(data?.backend ?? [])}
-          </Tabs.Panel>
-
-          <Tabs.Panel value="frontend">
-            {LicenceView(data?.frontend ?? [])}
-          </Tabs.Panel>
+          {Object.keys(data ?? {}).map((key) => (
+            <Tabs.Panel key={key} value={key}>
+              {LicenceView(data[key] ?? [])}
+            </Tabs.Panel>
+          ))}
         </Tabs>
       )}
     </Stack>
