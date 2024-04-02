@@ -91,13 +91,13 @@ jobs:
           docker run --rm inventree-test pg_dump --version
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
-        run: docker-compose build --no-cache
+        run: docker compose build --no-cache
       - name: Update Docker Image
         run: |
-          docker-compose run inventree-dev-server invoke update
-          docker-compose run inventree-dev-server invoke setup-dev
-          docker-compose up -d
-          docker-compose run inventree-dev-server invoke wait
+          docker compose run inventree-dev-server invoke update
+          docker compose run inventree-dev-server invoke setup-dev
+          docker compose up -d
+          docker compose run inventree-dev-server invoke wait
       - name: Check Data Directory
         # The following file structure should have been created by the docker image
         run: |
@@ -113,9 +113,9 @@ jobs:
       - name: Run Unit Tests
         run: |
           echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
-          docker-compose run inventree-dev-server invoke test --disable-pty
-          docker-compose run inventree-dev-server invoke test --migrations --disable-pty
-          docker-compose down
+          docker compose run inventree-dev-server invoke test --disable-pty
+          docker compose run inventree-dev-server invoke test --migrations --disable-pty
+          docker compose down
       - name: Clean up test folder
         run: |
           rm -rf InvenTree/_testfolder
