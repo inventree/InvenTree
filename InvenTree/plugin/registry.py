@@ -4,12 +4,12 @@
 - Manages setup and teardown of plugin class instances
 """
 
-import imp
 import importlib
 import logging
 import os
 import time
 from collections import OrderedDict
+from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from threading import Lock
 from typing import Any
@@ -412,9 +412,9 @@ class PluginsRegistry:
 
             # Gather Modules
             if parent_path:
-                raw_module = imp.load_source(
+                raw_module = SourceFileLoader(
                     plugin, str(parent_obj.joinpath('__init__.py'))
-                )
+                ).load_module()
             else:
                 raw_module = importlib.import_module(plugin)
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)

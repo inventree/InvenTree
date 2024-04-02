@@ -110,7 +110,7 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 def get_entrypoints():
     """Returns list for entrypoints for InvenTree plugins."""
-    return entry_points().get('inventree_plugins', [])
+    return entry_points(group='inventree_plugins')
 
 
 # endregion
@@ -121,7 +121,8 @@ def get_git_log(path):
     """Get dict with info of the last commit to file named in path."""
     import datetime
 
-    from dulwich.repo import NotGitRepository, Repo
+    from dulwich.errors import NotGitRepository
+    from dulwich.repo import Repo
 
     from InvenTree.ready import isInTestMode
 
