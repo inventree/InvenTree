@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-03-21 14:12\n"
+"PO-Revision-Date: 2024-04-02 01:59\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -4000,7 +4000,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:197
 msgid "Build Order"
-msgstr "Build Order"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:205
 #~ msgid "Edit stock item"
@@ -5167,7 +5167,7 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:615
 #~ msgid "Plugin detail"
-#~ msgstr ""
+#~ msgstr "Plugin detail"
 
 #: src/tables/plugin/PluginListTable.tsx:644
 msgid "Sample"
@@ -5898,3 +5898,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
