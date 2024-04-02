@@ -23,6 +23,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
+import { getDetailUrl } from '../../functions/urls';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
@@ -212,7 +213,7 @@ export default function CategoryDetail({}: {}) {
       { name: t`Parts`, url: '/part' },
       ...(category.path ?? []).map((c: any) => ({
         name: c.name,
-        url: `/part/category/${c.pk}`
+        url: getDetailUrl(ModelType.partcategory, c.pk)
       }))
     ],
     [category]

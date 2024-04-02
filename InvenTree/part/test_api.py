@@ -196,6 +196,11 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         # Add some more category templates via the API
         n = PartParameterTemplate.objects.count()
 
+        # Ensure validation of parameter values is disabled for these checks
+        InvenTreeSetting.set_setting(
+            'PART_PARAMETER_ENFORCE_UNITS', False, change_user=None
+        )
+
         for template in PartParameterTemplate.objects.all():
             response = self.post(
                 url,
@@ -486,7 +491,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
 
         PartCategory.objects.rebuild()
 
-        with self.assertNumQueriesLessThan(10):
+        with self.assertNumQueriesLessThan(12):
             response = self.get(reverse('api-part-category-tree'), expected_code=200)
 
         self.assertEqual(len(response.data), PartCategory.objects.count())

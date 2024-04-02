@@ -63,6 +63,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { getDetailUrl } from '../../functions/urls';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -624,7 +625,7 @@ export default function PartDetail() {
       { name: t`Parts`, url: '/part' },
       ...(part.category_path ?? []).map((c: any) => ({
         name: c.name,
-        url: `/part/category/${c.pk}`
+        url: getDetailUrl(ModelType.partcategory, c.pk)
       }))
     ],
     [part]

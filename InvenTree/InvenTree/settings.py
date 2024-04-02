@@ -426,17 +426,17 @@ TEMPLATES = [
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'InvenTree.exceptions.exception_handler',
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M',
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'users.authentication.ApiTokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.SessionAuthentication',
-    ),
+    ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'DEFAULT_PERMISSION_CLASSES': (
+    'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.DjangoModelPermissions',
         'InvenTree.permissions.RolePermission',
-    ),
+    ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'DEFAULT_METADATA_CLASS': 'InvenTree.metadata.InvenTreeMetadata',
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
@@ -462,8 +462,8 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 if USE_JWT:
     JWT_AUTH_COOKIE = 'inventree-auth'
     JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
-    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'] + (
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
     )
     INSTALLED_APPS.append('rest_framework_simplejwt')
 
@@ -952,6 +952,8 @@ USE_I18N = True
 # It generates a *lot* of cruft in the logs
 if not TESTING:
     USE_TZ = True  # pragma: no cover
+else:
+    USE_TZ = False
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 
@@ -1015,7 +1017,10 @@ if not ALLOWED_HOSTS:
 # Ensure that the ALLOWED_HOSTS do not contain any scheme info
 for i, host in enumerate(ALLOWED_HOSTS):
     if '://' in host:
-        ALLOWED_HOSTS[i] = host.split('://')[1]
+        ALLOWED_HOSTS[i] = host = host.split('://')[1]
+
+    if ':' in host:
+        ALLOWED_HOSTS[i] = host = host.split(':')[0]
 
 # List of trusted origins for unsafe requests
 # Ref: https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
@@ -1131,12 +1136,32 @@ SOCIALACCOUNT_OPENID_CONNECT_URL_PREFIX = ''
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = get_setting(
     'INVENTREE_LOGIN_CONFIRM_DAYS', 'login_confirm_days', 3, typecast=int
 )
-ACCOUNT_LOGIN_ATTEMPTS_LIMIT = get_setting(
-    'INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5, typecast=int
-)
+
+# allauth rate limiting: https://docs.allauth.org/en/latest/account/rate_limits.html
+# The default login rate limit is "5/m/user,5/m/ip,5/m/key"
+login_attempts = get_setting('INVENTREE_LOGIN_ATTEMPTS', 'login_attempts', 5)
+
+try:
+    login_attempts = int(login_attempts)
+    login_attempts = f'{login_attempts}/m/ip,{login_attempts}/m/key'
+except ValueError:
+    pass
+
+ACCOUNT_RATE_LIMITS = {'login_failed': login_attempts}
+
+# Default protocol for login
 ACCOUNT_DEFAULT_HTTP_PROTOCOL = get_setting(
-    'INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', 'http'
+    'INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL', 'login_default_protocol', None
 )
+
+if ACCOUNT_DEFAULT_HTTP_PROTOCOL is None:
+    if SITE_URL and SITE_URL.startswith('https://'):
+        # auto-detect HTTPS prtoocol
+        ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+    else:
+        # default to http
+        ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'
+
 ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 ACCOUNT_PREVENT_ENUMERATION = True
 ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX

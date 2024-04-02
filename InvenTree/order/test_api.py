@@ -13,6 +13,7 @@ from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
 
+from common.models import InvenTreeSetting
 from common.settings import currency_codes
 from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.status_codes import (
@@ -27,6 +28,7 @@ from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from part.models import Part
 from stock.models import StockItem
+from users.models import Owner
 
 
 class OrderTest(InvenTreeAPITestCase):
@@ -347,15 +349,35 @@ class PurchaseOrderTest(OrderTest):
         """Test that we can create a new PurchaseOrder via the API."""
         self.assignRole('purchase_order.add')
 
-        self.post(
-            reverse('api-po-list'),
-            {
-                'reference': 'PO-12345678',
-                'supplier': 1,
-                'description': 'A test purchase order',
-            },
-            expected_code=201,
-        )
+        setting = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+        url = reverse('api-po-list')
+
+        InvenTreeSetting.set_setting(setting, False)
+
+        data = {
+            'reference': 'PO-12345678',
+            'supplier': 1,
+            'description': 'A test purchase order',
+        }
+
+        self.post(url, data, expected_code=201)
+
+        # Check the 'responsible required' field
+        InvenTreeSetting.set_setting(setting, True)
+
+        data['reference'] = 'PO-12345679'
+        data['responsible'] = None
+
+        response = self.post(url, data, expected_code=400)
+
+        self.assertIn('Responsible user or group must be specified', str(response.data))
+
+        data['responsible'] = Owner.objects.first().pk
+
+        response = self.post(url, data, expected_code=201)
+
+        # Revert the setting to previous value
+        InvenTreeSetting.set_setting(setting, False)
 
     def test_po_creation_date(self):
         """Test that we can create set the creation_date field of PurchaseOrder via the API."""

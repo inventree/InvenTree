@@ -266,7 +266,7 @@ def generate_stocktake_report(**kwargs):
     buffer = io.StringIO()
     buffer.write(dataset.export('csv'))
 
-    today = datetime.now().date().isoformat()
+    today = InvenTree.helpers.current_date().isoformat()
     filename = f'InvenTree_Stocktake_{today}.csv'
     report_file = ContentFile(buffer.getvalue(), name=filename)
 

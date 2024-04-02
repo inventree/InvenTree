@@ -45,6 +45,8 @@
 		root * /var/www/media
 		file_server
 
+		header Content-Disposition attachment
+
 		forward_auth {$INVENTREE_SERVER:"http://inventree-server:8000"} {
 			uri /auth/
 		}

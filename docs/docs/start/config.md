@@ -48,18 +48,31 @@ The following basic options are available:
 
 | Environment Variable | Configuration File | Description | Default |
 | --- | --- | --- | --- |
+| INVENTREE_SITE_URL | site_url | Specify a fixed site URL | *Not specified* |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | True |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
-| INVENTREE_SITE_URL | site_url | Specify a fixed site URL | *Not specified* |
 | INVENTREE_ADMIN_ENABLED | admin_enabled | Enable the [django administrator interface]({% include "django.html" %}/ref/contrib/admin/) | True |
 | INVENTREE_ADMIN_URL | admin_url | URL for accessing [admin interface](../settings/admin.md) | admin |
 | INVENTREE_LANGUAGE | language | Default language | en-us |
 | INVENTREE_AUTO_UPDATE | auto_update | Database migrations will be run automatically | False |
 
-!!! tip "INVENTREE_SITE_URL"
-    The *INVENTREE_SITE_URL* option defines the base URL for the InvenTree server. This is a critical setting, and it is required for correct operation of the server. If not specified, the server will attempt to determine the site URL automatically - but this may not always be correct!
+### Site URL
+
+The *INVENTREE_SITE_URL* option defines the base URL for the InvenTree server. This is a critical setting, and it is required for correct operation of the server. If not specified, the server will attempt to determine the site URL automatically - but this may not always be correct!
+
+### Timezone
+
+By default, the InvenTree server is configured to use the UTC timezone. This can be adjusted to your desired local timezone. You can refer to [Wikipedia](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for a list of available timezones. Use the values specified in the *TZ Identifier* column in the linked page.
+
+Date and time values are stored in the database in UTC format, and are converted to the selected timezone for display in the user interface or API.
+
+### Auto Update
+
+By default, the InvenTree server will not automatically apply database migrations. When the InvenTree installation is updated (*or a plugin is installed which requires database migrations*), database migrations must be applied manually by the system administrator.
+
+With "auto update" enabled, the InvenTree server will automatically apply database migrations as required. To enable automatic database updates, set `INVENTREE_AUTO_UPDATE` to `True`.
 
 ## Server Access
 
@@ -279,7 +292,10 @@ The login-experience can be altered with the following settings:
 | --- | --- | --- | --- |
 | INVENTREE_LOGIN_CONFIRM_DAYS | login_confirm_days | Duration for which confirmation links are valid | 3 |
 | INVENTREE_LOGIN_ATTEMPTS | login_attempts | Count of allowed login attempts before blocking user | 5 |
-| INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL | login_default_protocol | Default protocol to use for login callbacks (e.g. using [SSO](#single-sign-on)) | http |
+| INVENTREE_LOGIN_DEFAULT_HTTP_PROTOCOL | login_default_protocol | Default protocol to use for login callbacks (e.g. using [SSO](#single-sign-on)) | Uses the protocol specified in `INVENTREE_SITE_URL`, or defaults to *http* |
+
+!!! tip "Default Protocol"
+    If you have specified `INVENTREE_SITE_URL`, the default protocol will be used from that setting. Otherwise, the default protocol will be *http*.
 
 ### Authentication Backends
 

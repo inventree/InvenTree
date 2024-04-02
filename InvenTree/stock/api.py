@@ -11,12 +11,15 @@ from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
 import common.models
 import common.settings
+import InvenTree.helpers
 import stock.serializers as StockSerializers
 from build.models import Build
 from build.serializers import BuildSerializer
@@ -480,9 +483,17 @@ class StockFilter(rest_filters.FilterSet):
     # Relationship filters
     manufacturer = rest_filters.ModelChoiceFilter(
         label='Manufacturer',
-        queryset=Company.objects.filter(is_manufacturer=True),
-        field_name='manufacturer_part__manufacturer',
+        queryset=Company.objects.all(),
+        method='filter_manufacturer',
     )
+
+    @extend_schema_field(OpenApiTypes.INT)
+    def filter_manufacturer(self, queryset, name, company):
+        """Filter by manufacturer."""
+        return queryset.filter(
+            Q(is_manufacturer=True) & Q(manufacturer_part__manufacturer=company)
+        )
+
     supplier = rest_filters.ModelChoiceFilter(
         label='Supplier',
         queryset=Company.objects.filter(is_supplier=True),
@@ -725,6 +736,7 @@ class StockFilter(rest_filters.FilterSet):
         label='Ancestor', queryset=StockItem.objects.all(), method='filter_ancestor'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_ancestor(self, queryset, name, ancestor):
         """Filter based on ancestor stock item."""
         return queryset.filter(parent__in=ancestor.get_descendants(include_self=True))
@@ -735,6 +747,7 @@ class StockFilter(rest_filters.FilterSet):
         method='filter_category',
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_category(self, queryset, name, category):
         """Filter based on part category."""
         child_categories = category.get_descendants(include_self=True)
@@ -745,6 +758,7 @@ class StockFilter(rest_filters.FilterSet):
         label=_('BOM Item'), queryset=BomItem.objects.all(), method='filter_bom_item'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_bom_item(self, queryset, name, bom_item):
         """Filter based on BOM item."""
         return queryset.filter(bom_item.get_stock_filter())
@@ -753,6 +767,7 @@ class StockFilter(rest_filters.FilterSet):
         label=_('Part Tree'), queryset=Part.objects.all(), method='filter_part_tree'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_part_tree(self, queryset, name, part_tree):
         """Filter based on part tree."""
         return queryset.filter(part__tree_id=part_tree.tree_id)
@@ -761,6 +776,7 @@ class StockFilter(rest_filters.FilterSet):
         label=_('Company'), queryset=Company.objects.all(), method='filter_company'
     )
 
+    @extend_schema_field(OpenApiTypes.INT)
     def filter_company(self, queryset, name, company):
         """Filter by company (either manufacturer or supplier)."""
         return queryset.filter(
@@ -795,7 +811,7 @@ class StockFilter(rest_filters.FilterSet):
             # No filtering, does not make sense
             return queryset
 
-        stale_date = datetime.now().date() + timedelta(days=stale_days)
+        stale_date = InvenTree.helpers.current_date() + timedelta(days=stale_days)
         stale_filter = (
             StockItem.IN_STOCK_FILTER
             & ~Q(expiry_date=None)
@@ -813,6 +829,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
     - GET: Return a list of all StockItem objects (with optional query filters)
     - POST: Create a new StockItem
+    - DELETE: Delete multiple StockItem objects
     """
 
     serializer_class = StockSerializers.StockItemSerializer
@@ -890,7 +907,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         # An expiry date was *not* specified - try to infer it!
         if expiry_date is None and part.default_expiry > 0:
-            data['expiry_date'] = datetime.now().date() + timedelta(
+            data['expiry_date'] = InvenTree.helpers.current_date() + timedelta(
                 days=part.default_expiry
             )
 
@@ -1034,7 +1051,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
         filedata = dataset.export(export_format)
 
-        filename = f'InvenTree_StockItems_{datetime.now().strftime("%d-%b-%Y")}.{export_format}'
+        filename = f'InvenTree_StockItems_{InvenTree.helpers.current_date().strftime("%d-%b-%Y")}.{export_format}'
 
         return DownloadFile(filedata, filename)
 
@@ -1199,7 +1216,7 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
 
 
 class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) a StockItemAttachment (file upload)."""
+    """API endpoint for listing, creating and bulk deleting a StockItemAttachment (file upload)."""
 
     queryset = StockItemAttachment.objects.all()
     serializer_class = StockSerializers.StockItemAttachmentSerializer

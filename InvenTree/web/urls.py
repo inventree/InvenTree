@@ -29,11 +29,11 @@ class PreferredSerializer(serializers.Serializer):
     pui = serializers.SerializerMethodField(read_only=True)
     cui = serializers.SerializerMethodField(read_only=True)
 
-    def get_pui(self, obj):
+    def get_pui(self, obj) -> bool:
         """Return true if preferred method is PUI."""
         return obj['preferred_method'] == 'pui'
 
-    def get_cui(self, obj):
+    def get_cui(self, obj) -> bool:
         """Return true if preferred method is CUI."""
         return obj['preferred_method'] == 'cui'
 

@@ -347,7 +347,7 @@ def get_secret_key():
 
         # Create a random key file
         options = string.digits + string.ascii_letters + string.punctuation
-        key = ''.join([random.choice(options) for i in range(100)])
+        key = ''.join([random.choice(options) for _idx in range(100)])
         secret_key_file.write_text(key)
 
     logger.debug("Loading SECRET_KEY from '%s'", secret_key_file)

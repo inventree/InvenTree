@@ -1,5 +1,5 @@
 import { Container, Flex, Space } from '@mantine/core';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { hasToken } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
@@ -7,8 +7,11 @@ import { Footer } from './Footer';
 import { Header } from './Header';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
+  const location = useLocation();
   if (!hasToken()) {
-    return <Navigate to="/logged-in" replace />;
+    return (
+      <Navigate to="/logged-in" state={{ redirectFrom: location.pathname }} />
+    );
   }
 
   return children;

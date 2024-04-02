@@ -20,7 +20,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
 
     name = 'InvenTreeExchange'
 
-    def get_rates(self, **kwargs) -> None:
+    def get_rates(self, **kwargs) -> dict:
         """Set the requested currency codes and get rates."""
         from common.models import InvenTreeSetting
         from plugin import registry
