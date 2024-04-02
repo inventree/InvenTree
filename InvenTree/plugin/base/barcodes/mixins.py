@@ -328,7 +328,7 @@ class SupplierBarcodeMixin(BarcodeMixin):
 
         # Check that the barcode starts with the necessary header
         if not barcode_data.startswith(HEADER):
-            return
+            return []
 
         return SupplierBarcodeMixin.split_fields(
             barcode_data, delimiter=DELIMITER, header=HEADER, trailer=TRAILER
