@@ -10,12 +10,14 @@ env:
   node_version: 18
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

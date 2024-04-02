@@ -10,7 +10,7 @@
 # - Monitors source files for any changes, and live-reloads server
 
 ARG base_image=python:3.11-alpine3.18
-FROM ${base_image} as inventree_base
+FROM ${base_image} AS inventree_base
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -92,7 +92,7 @@ RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/ash", "./init.sh"]
 
-FROM inventree_base as prebuild
+FROM inventree_base AS prebuild
 
 ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
@@ -100,9 +100,9 @@ RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
     apk --purge del .build-deps
 
 # Frontend builder image:
-FROM prebuild as frontend
+FROM prebuild AS frontend
 
-RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn@v1.22.22
 RUN yarn config set network-timeout 600000 -g
 COPY InvenTree ${INVENTREE_HOME}/InvenTree
 COPY src ${INVENTREE_HOME}/src
@@ -112,7 +112,7 @@ RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
 # InvenTree production image:
 # - Copies required files from local directory
 # - Starts a gunicorn webserver
-FROM inventree_base as production
+FROM inventree_base AS production
 
 ENV INVENTREE_DEBUG=False
 
@@ -129,11 +129,9 @@ COPY InvenTree ./InvenTree
 COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ./InvenTree/web/static/web
 
 # Launch the production server
-# TODO: Work out why environment variables cannot be interpolated in this command
-# TODO: e.g. -b ${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT} fails here
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
-FROM inventree_base as dev
+FROM inventree_base AS dev
 
 # Vite server (for local frontend development)
 EXPOSE 5173
@@ -141,11 +139,11 @@ EXPOSE 5173
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
-RUN pip install uv --no-cache-dir && pip install -r base_requirements.txt --no-cache
+RUN pip install uv==0.1.26 --no-cache-dir && pip install -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
-RUN apk add --no-cache --update nodejs npm && npm install -g yarn
+RUN apk add --no-cache --update nodejs npm && npm install -g yarn@v1.22.22
 RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/
