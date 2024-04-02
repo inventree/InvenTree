@@ -16,7 +16,6 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
-import { StylishText } from '../items/StylishText';
 
 export function LicenceView(entries: any[]) {
   return (
