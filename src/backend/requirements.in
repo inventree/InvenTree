@@ -18,7 +18,7 @@ django-maintenance-mode                 # Shut down application while reloading 
 django-markdownify                      # Markdown rendering
 django-mptt                             # Modified Preorder Tree Traversal
 django-markdownify                      # Markdown rendering
-django-money>=3.0.0,<3.3.0              # Django app for currency management # FIXED 2023-10-31 3.3.0 breaks due to https://github.com/django-money/django-money/issues/731
+django-money>=3.0.0,<3.5.0              # Django app for currency management # FIXED 2023-10-31 3.3.0 breaks due to https://github.com/django-money/django-money/issues/731
 django-mptt                             # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
 django-q2                               # Background task scheduling

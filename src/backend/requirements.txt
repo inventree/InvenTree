@@ -46,7 +46,7 @@ deprecated==1.2.14
     #   opentelemetry-exporter-otlp-proto-http
 diff-match-patch==20230430
     # via django-import-export
-dj-rest-auth==5.0.2
+dj-rest-auth==5.1.0
 django==4.2.11
     # via
     #   dj-rest-auth
@@ -96,7 +96,7 @@ django-js-asset==2.2.0
     # via django-mptt
 django-maintenance-mode==0.21.1
 django-markdownify==0.9.3
-django-money==3.2.0
+django-money==3.4.1
 django-mptt==0.16.0
 django-otp==1.3.0
     # via django-allauth-2fa
@@ -272,7 +272,7 @@ pyyaml==6.0.1
     #   tablib
 qrcode[pil]==7.4.2
     # via django-allauth-2fa
-rapidfuzz==3.6.2
+rapidfuzz==3.7.0
 redis==5.0.3
     # via django-redis
 referencing==0.34.0
