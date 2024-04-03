@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-03 01:39+0000\n"
-"PO-Revision-Date: 2024-03-20 12:27\n"
+"PO-Revision-Date: 2024-04-03 01:57\n"
 "Last-Translator: \n"
 "Language-Team: Hindi\n"
 "Language: hi_IN\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: hi\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:198
 msgid "API endpoint not found"
@@ -54,7 +54,7 @@ msgstr ""
 
 #: InvenTree/fields.py:140
 msgid "Enter date"
-msgstr "तारीख दर्ज करें"
+msgstr ""
 
 #: InvenTree/fields.py:209 InvenTree/models.py:1022 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
@@ -90,23 +90,23 @@ msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr "पास वर्ड दर्ज करें"
+msgstr ""
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr "नया पासवर्ड दर्ज करें"
+msgstr ""
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr "पासवर्ड की पुष्टि करें"
+msgstr ""
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr "नए पासवर्ड की पुष्टि करें"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr "पुराना पासवर्ड"
+msgstr ""
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
@@ -173,7 +173,7 @@ msgstr ""
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr "कनेक्शन त्रुटि"
+msgstr ""
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
@@ -345,7 +345,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
 msgid "Email"
-msgstr "ई-मेल"
+msgstr ""
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
@@ -14181,3 +14181,4 @@ msgstr ""
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr ""
+
