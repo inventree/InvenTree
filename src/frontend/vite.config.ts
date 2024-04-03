@@ -31,7 +31,8 @@ export default defineConfig({
             return JSON.stringify(dependencies);
           }
         }
-      },
+      }
+    }),
     istanbul({
       include: 'src/*',
       exclude: ['node_modules', 'test/'],
