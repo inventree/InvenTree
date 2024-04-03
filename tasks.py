@@ -55,6 +55,9 @@ def apps():
         'users',
         'plugin',
         'InvenTree',
+        'generic',
+        'machine',
+        'web',
     ]
 
 
@@ -862,6 +865,7 @@ def test(
         # Run tests within coverage environment, and generate report
         c.run(f'coverage run {managePyPath()} {cmd}')
         c.run('coverage html -i')
+        c.run('coverage xml')
     else:
         # Run simple test runner, without coverage
         manage(c, cmd, pty=pty)
