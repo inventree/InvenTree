@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-03 01:39+0000\n"
-"PO-Revision-Date: 2024-03-20 12:27\n"
+"PO-Revision-Date: 2024-04-03 01:57\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -14,16 +14,16 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: sr-CS\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:198
 msgid "API endpoint not found"
-msgstr "API krajnja tačka nije pronađena"
+msgstr ""
 
 #: InvenTree/api.py:462
 msgid "User does not have permission to view this model"
-msgstr "Korisnik nema dozvolu za pregled ovog modela"
+msgstr ""
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
@@ -32,29 +32,29 @@ msgstr ""
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr "Nije navedena vrednost"
+msgstr ""
 
 #: InvenTree/conversion.py:204
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr "Nije moguće konvertovati {original} u {unit}"
+msgstr ""
 
 #: InvenTree/conversion.py:206
 msgid "Invalid quantity supplied"
-msgstr "Isporučena nevažeća količina"
+msgstr ""
 
 #: InvenTree/conversion.py:220
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr "Isporučena nevažeća količina ({exc})"
+msgstr ""
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr "Detalji o grešci se mogu naći u admin sekciji"
+msgstr ""
 
 #: InvenTree/fields.py:140
 msgid "Enter date"
-msgstr "Unesite datum"
+msgstr ""
 
 #: InvenTree/fields.py:209 InvenTree/models.py:1022 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
@@ -77,199 +77,199 @@ msgstr "Unesite datum"
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1533 templates/js/translated/stock.js:2427
 msgid "Notes"
-msgstr "Napomene"
+msgstr ""
 
 #: InvenTree/format.py:164
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "Vrednost '{name}' se ne pojavljuje u formatu obrasca"
+msgstr ""
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
-msgstr "Navedena vrednost ne odgovara traženom obrascu: "
+msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr "Unesite lozinku"
+msgstr ""
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr "Unesite novu lozinku"
+msgstr ""
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr "Potvrdite lozinku"
+msgstr ""
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr "Potvrdite novu lozinku"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr "Stara lozinka"
+msgstr ""
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr "E-pošta (ponovo)"
+msgstr ""
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr "Potvrda adrese e-pošte"
+msgstr ""
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr "Svaki put morate upisati istu e-poštu."
+msgstr ""
 
 #: InvenTree/forms.py:253 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr "Navedena primarna adresa e-pošte nije važeća."
+msgstr ""
 
 #: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
-msgstr "Navedeni domen adrese e-pošte nije prihvaćen."
+msgstr ""
 
 #: InvenTree/forms.py:395
 msgid "Registration is disabled."
-msgstr "Registracija je onemogućena."
+msgstr ""
 
 #: InvenTree/helpers.py:525 order/models.py:541 order/models.py:743
 msgid "Invalid quantity provided"
-msgstr "Isporučena nevažeća količina"
+msgstr ""
 
 #: InvenTree/helpers.py:533
 msgid "Empty serial number string"
-msgstr "Serijski broj nije popunjen"
+msgstr ""
 
 #: InvenTree/helpers.py:562
 msgid "Duplicate serial"
-msgstr "Dupliciraj serijski broj"
+msgstr ""
 
 #: InvenTree/helpers.py:594 InvenTree/helpers.py:637
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr "Nevažeći raspon grupe: {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:625
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr "Raspon grupe {group} prelazi dozvoljenu količinu ({expected_quantity})"
+msgstr ""
 
 #: InvenTree/helpers.py:655 InvenTree/helpers.py:662 InvenTree/helpers.py:681
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr "Nevažeća sekvenca grupe: {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:691
 msgid "No serial numbers found"
-msgstr "Nisu pronađeni serijski brojevi"
+msgstr ""
 
 #: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "Broj jedinstvenih serijskih brojeva ({len(serials)}) mora odgovarati količini ({expected_quantity})"
+msgstr ""
 
 #: InvenTree/helpers.py:814
 msgid "Remove HTML tags from this value"
-msgstr "Uklonite HTML oznake iz ove vrednosti"
+msgstr ""
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr "Greška u povezivanju"
+msgstr ""
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
-msgstr "Server je odgovorio nevažećim statusnim kodom"
+msgstr ""
 
 #: InvenTree/helpers_model.py:158
 msgid "Exception occurred"
-msgstr "Došlo je do izuzetka"
+msgstr ""
 
 #: InvenTree/helpers_model.py:168
 msgid "Server responded with invalid Content-Length value"
-msgstr "Server je odgovorio nevažećom vrednošću dužina sadržaja"
+msgstr ""
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr "Veličina slike je prevelika"
+msgstr ""
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
-msgstr "Preuzimanje slike premašilo je maksimalnu veličinu"
+msgstr ""
 
 #: InvenTree/helpers_model.py:188
 msgid "Remote server returned empty response"
-msgstr "Udaljeni server vratio je prazan odgovor"
+msgstr ""
 
 #: InvenTree/helpers_model.py:196
 msgid "Supplied URL is not a valid image file"
-msgstr "Navedeni URL nije važeća slikovna datoteka"
+msgstr ""
 
 #: InvenTree/locales.py:18
 msgid "Bulgarian"
-msgstr "Bugarski"
+msgstr ""
 
 #: InvenTree/locales.py:19
 msgid "Czech"
-msgstr "Češki"
+msgstr ""
 
 #: InvenTree/locales.py:20
 msgid "Danish"
-msgstr "Danski"
+msgstr ""
 
 #: InvenTree/locales.py:21
 msgid "German"
-msgstr "Nemački"
+msgstr ""
 
 #: InvenTree/locales.py:22
 msgid "Greek"
-msgstr "Grčki"
+msgstr ""
 
 #: InvenTree/locales.py:23
 msgid "English"
-msgstr "Engleski"
+msgstr ""
 
 #: InvenTree/locales.py:24
 msgid "Spanish"
-msgstr "Španski"
+msgstr ""
 
 #: InvenTree/locales.py:25
 msgid "Spanish (Mexican)"
-msgstr "Španski (Meksiko)"
+msgstr ""
 
 #: InvenTree/locales.py:26
 msgid "Farsi / Persian"
-msgstr "Farsi / Persijski"
+msgstr ""
 
 #: InvenTree/locales.py:27
 msgid "Finnish"
-msgstr "Finski"
+msgstr ""
 
 #: InvenTree/locales.py:28
 msgid "French"
-msgstr "Francuski"
+msgstr ""
 
 #: InvenTree/locales.py:29
 msgid "Hebrew"
-msgstr "Jevrejski"
+msgstr ""
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr "Hindu"
+msgstr ""
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
-msgstr "Mađarski"
+msgstr ""
 
 #: InvenTree/locales.py:32
 msgid "Italian"
-msgstr "Italijanski"
+msgstr ""
 
 #: InvenTree/locales.py:33
 msgid "Japanese"
-msgstr "Japanski"
+msgstr ""
 
 #: InvenTree/locales.py:34
 msgid "Korean"
-msgstr "Korejski"
+msgstr ""
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
@@ -277,27 +277,27 @@ msgstr ""
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
-msgstr "Holandski"
+msgstr ""
 
 #: InvenTree/locales.py:37
 msgid "Norwegian"
-msgstr "Norveški"
+msgstr ""
 
 #: InvenTree/locales.py:38
 msgid "Polish"
-msgstr "Poljski"
+msgstr ""
 
 #: InvenTree/locales.py:39
 msgid "Portuguese"
-msgstr "Portugalski"
+msgstr ""
 
 #: InvenTree/locales.py:40
 msgid "Portuguese (Brazilian)"
-msgstr "Portugalski (Brazil)"
+msgstr ""
 
 #: InvenTree/locales.py:41
 msgid "Russian"
-msgstr "Ruski"
+msgstr ""
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
@@ -305,35 +305,35 @@ msgstr ""
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
-msgstr "Slovenski"
+msgstr ""
 
 #: InvenTree/locales.py:44
 msgid "Serbian"
-msgstr "Srpski"
+msgstr ""
 
 #: InvenTree/locales.py:45
 msgid "Swedish"
-msgstr "Švedski"
+msgstr ""
 
 #: InvenTree/locales.py:46
 msgid "Thai"
-msgstr "Tajlandski"
+msgstr ""
 
 #: InvenTree/locales.py:47
 msgid "Turkish"
-msgstr "Turski"
+msgstr ""
 
 #: InvenTree/locales.py:48
 msgid "Vietnamese"
-msgstr "Vijetnamski"
+msgstr ""
 
 #: InvenTree/locales.py:49
 msgid "Chinese (Simplified)"
-msgstr "Kineski (Uprošćeni)"
+msgstr ""
 
 #: InvenTree/locales.py:50
 msgid "Chinese (Traditional)"
-msgstr "Kineski (Tradicionalni)"
+msgstr ""
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
@@ -345,7 +345,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
 msgid "Email"
-msgstr "E-Pošta"
+msgstr ""
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
@@ -353,57 +353,57 @@ msgstr ""
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
-msgstr "Metapodaci moraju biti \"python dict\" objekat"
+msgstr ""
 
 #: InvenTree/models.py:168
 msgid "Plugin Metadata"
-msgstr "Metapodaci dodatka"
+msgstr ""
 
 #: InvenTree/models.py:169
 msgid "JSON metadata field, for use by external plugins"
-msgstr "Polje metapodataka JSON, za korištenje eksternih dodataka"
+msgstr ""
 
 #: InvenTree/models.py:399
 msgid "Improperly formatted pattern"
-msgstr "Neispravno formatiran obrazac"
+msgstr ""
 
 #: InvenTree/models.py:406
 msgid "Unknown format key specified"
-msgstr "Naveden je ključ nepoznatog formata"
+msgstr ""
 
 #: InvenTree/models.py:412
 msgid "Missing required format key"
-msgstr "Nedostaje potreban ključ formata"
+msgstr ""
 
 #: InvenTree/models.py:423
 msgid "Reference field cannot be empty"
-msgstr "Polje za reference ne može biti prazno"
+msgstr ""
 
 #: InvenTree/models.py:431
 msgid "Reference must match required pattern"
-msgstr "Referenca mora odgovarati traženom obrascu"
+msgstr ""
 
 #: InvenTree/models.py:463
 msgid "Reference number is too large"
-msgstr "Broj reference je predugačak"
+msgstr ""
 
 #: InvenTree/models.py:537
 msgid "Missing file"
-msgstr "Nedostaje datoteka"
+msgstr ""
 
 #: InvenTree/models.py:538
 msgid "Missing external link"
-msgstr "Nedostaje eksterni link"
+msgstr ""
 
 #: InvenTree/models.py:559 stock/models.py:2449
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
-msgstr "Prilog"
+msgstr ""
 
 #: InvenTree/models.py:560
 msgid "Select file to attach"
-msgstr "Izaberite datoteku za prilog"
+msgstr ""
 
 #: InvenTree/models.py:568 common/models.py:3021 company/models.py:145
 #: company/models.py:452 company/models.py:509 company/models.py:818
@@ -420,21 +420,21 @@ msgstr "Izaberite datoteku za prilog"
 #: templates/js/translated/sales_order.js:1056
 #: templates/js/translated/sales_order.js:1987
 msgid "Link"
-msgstr "Link"
+msgstr ""
 
 #: InvenTree/models.py:569 build/models.py:315 part/models.py:920
 #: stock/models.py:822
 msgid "Link to external URL"
-msgstr "Link za eksterni URL"
+msgstr ""
 
 #: InvenTree/models.py:575 templates/js/translated/attachment.js:120
 #: templates/js/translated/attachment.js:341
 msgid "Comment"
-msgstr "Komentar"
+msgstr ""
 
 #: InvenTree/models.py:576
 msgid "File comment"
-msgstr "Datoteka komentara"
+msgstr ""
 
 #: InvenTree/models.py:584 InvenTree/models.py:585 common/models.py:2497
 #: common/models.py:2498 common/models.py:2722 common/models.py:2723
@@ -444,44 +444,44 @@ msgstr "Datoteka komentara"
 #: report/templates/report/inventree_test_report_base.html:105
 #: templates/js/translated/stock.js:3036 users/models.py:100
 msgid "User"
-msgstr "Korisnik"
+msgstr ""
 
 #: InvenTree/models.py:589
 msgid "upload date"
-msgstr "dadajte datoteku"
+msgstr ""
 
 #: InvenTree/models.py:611
 msgid "Filename must not be empty"
-msgstr "Ime datoteke ne sme biti prazno"
+msgstr ""
 
 #: InvenTree/models.py:622
 msgid "Invalid attachment directory"
-msgstr "Direktorijum nevažećih datoteka"
+msgstr ""
 
 #: InvenTree/models.py:652
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr "Ime datoteke sadrži neprihvatljivi karakter '{c}'"
+msgstr ""
 
 #: InvenTree/models.py:655
 msgid "Filename missing extension"
-msgstr "Imenu datoteke nedostaje ekstenzija"
+msgstr ""
 
 #: InvenTree/models.py:664
 msgid "Attachment with this filename already exists"
-msgstr "Prilog s ovim nazivom datoteke već postoji"
+msgstr ""
 
 #: InvenTree/models.py:671
 msgid "Error renaming file"
-msgstr "Greška pri preimenovanju datoteke"
+msgstr ""
 
 #: InvenTree/models.py:847
 msgid "Duplicate names cannot exist under the same parent"
-msgstr "Dvostruka imena ne mogu postojati pod istom nadredjenom grupom"
+msgstr ""
 
 #: InvenTree/models.py:864
 msgid "Invalid choice"
-msgstr "Nevažeći izvor"
+msgstr ""
 
 #: InvenTree/models.py:894 common/models.py:2709 common/models.py:3107
 #: common/serializers.py:370 company/models.py:608 label/models.py:120
@@ -501,7 +501,7 @@ msgstr "Nevažeći izvor"
 #: templates/js/translated/part.js:1474 templates/js/translated/part.js:1610
 #: templates/js/translated/part.js:2749 templates/js/translated/stock.js:2716
 msgid "Name"
-msgstr "Ime"
+msgstr ""
 
 #: InvenTree/models.py:900 build/models.py:188
 #: build/templates/build/detail.html:24 common/models.py:136
@@ -538,75 +538,75 @@ msgstr "Ime"
 #: templates/js/translated/stock.js:1512 templates/js/translated/stock.js:2057
 #: templates/js/translated/stock.js:2748 templates/js/translated/stock.js:2831
 msgid "Description"
-msgstr "Opis"
+msgstr ""
 
 #: InvenTree/models.py:901 stock/models.py:83
 msgid "Description (optional)"
-msgstr "Opis (Opciono)"
+msgstr ""
 
 #: InvenTree/models.py:910
 msgid "parent"
-msgstr "nadređeni"
+msgstr ""
 
 #: InvenTree/models.py:916 templates/js/translated/part.js:2794
 #: templates/js/translated/stock.js:2757
 msgid "Path"
-msgstr "Putanja"
+msgstr ""
 
 #: InvenTree/models.py:1022
 msgid "Markdown notes (optional)"
-msgstr "Zabeleške (Opciono)"
+msgstr ""
 
 #: InvenTree/models.py:1051
 msgid "Barcode Data"
-msgstr "Podaci sa barkoda"
+msgstr ""
 
 #: InvenTree/models.py:1052
 msgid "Third party barcode data"
-msgstr "Podaci sa barkoda trećih lica"
+msgstr ""
 
 #: InvenTree/models.py:1058
 msgid "Barcode Hash"
-msgstr "Heš barkoda"
+msgstr ""
 
 #: InvenTree/models.py:1059
 msgid "Unique hash of barcode data"
-msgstr "Jedinstveni hash barkoda"
+msgstr ""
 
 #: InvenTree/models.py:1112
 msgid "Existing barcode found"
-msgstr "Postojeći barkod pronađen"
+msgstr ""
 
 #: InvenTree/models.py:1155
 msgid "Server Error"
-msgstr "Greška servera"
+msgstr ""
 
 #: InvenTree/models.py:1156
 msgid "An error has been logged by the server."
-msgstr "Server je zabležio grešku."
+msgstr ""
 
 #: InvenTree/serializers.py:62 part/models.py:4166
 msgid "Must be a valid number"
-msgstr "Mora biti važeći broj"
+msgstr ""
 
 #: InvenTree/serializers.py:99 company/models.py:178
 #: company/templates/company/company_base.html:106 part/models.py:2993
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr "Valuta"
+msgstr ""
 
 #: InvenTree/serializers.py:102
 msgid "Select currency from available options"
-msgstr "Odaberite valutu među dostupnim opcijama"
+msgstr ""
 
 #: InvenTree/serializers.py:441
 msgid "You do not have permission to change this user role."
-msgstr "Nemate dozvolu za promenu ove korisničke uloge."
+msgstr ""
 
 #: InvenTree/serializers.py:453
 msgid "Only superusers can create new users"
-msgstr "Samo superkorisnici mogu kreirati nove korisnike"
+msgstr ""
 
 #: InvenTree/serializers.py:472
 msgid "Your account has been created."
@@ -622,213 +622,213 @@ msgstr ""
 
 #: InvenTree/serializers.py:542
 msgid "Filename"
-msgstr "Ime datoteke"
+msgstr ""
 
 #: InvenTree/serializers.py:576
 msgid "Invalid value"
-msgstr "Nevažeća vrednost"
+msgstr ""
 
 #: InvenTree/serializers.py:596
 msgid "Data File"
-msgstr "Datoteka"
+msgstr ""
 
 #: InvenTree/serializers.py:597
 msgid "Select data file for upload"
-msgstr "Odaberite datoteku za učitavanje"
+msgstr ""
 
 #: InvenTree/serializers.py:614
 msgid "Unsupported file type"
-msgstr "Nije podržan tip datoteke"
+msgstr ""
 
 #: InvenTree/serializers.py:620
 msgid "File is too large"
-msgstr "Prevelika datoteka"
+msgstr ""
 
 #: InvenTree/serializers.py:641
 msgid "No columns found in file"
-msgstr "Nisu pronađene kolone podataka u datoteci"
+msgstr ""
 
 #: InvenTree/serializers.py:644
 msgid "No data rows found in file"
-msgstr "Nisu pronađeni redovi podataka u datoteci"
+msgstr ""
 
 #: InvenTree/serializers.py:757
 msgid "No data rows provided"
-msgstr "Nisu navedeni redovi podataka"
+msgstr ""
 
 #: InvenTree/serializers.py:760
 msgid "No data columns supplied"
-msgstr "Nisu obezbeđene kolone podataka"
+msgstr ""
 
 #: InvenTree/serializers.py:827
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr "Nedostaje potrebna kolona: '{name}'"
+msgstr ""
 
 #: InvenTree/serializers.py:836
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr "Duplicirana kolona: '{col}'"
+msgstr ""
 
 #: InvenTree/serializers.py:859
 msgid "Remote Image"
-msgstr "Udaljena slika"
+msgstr ""
 
 #: InvenTree/serializers.py:860
 msgid "URL of remote image file"
-msgstr "URL udaljene slike"
+msgstr ""
 
 #: InvenTree/serializers.py:878
 msgid "Downloading images from remote URL is not enabled"
-msgstr "Preuzimanje slika s udaljenog URL-a nije omogućeno"
+msgstr ""
 
 #: InvenTree/status.py:66 part/serializers.py:1156
 msgid "Background worker check failed"
-msgstr "Provera pozadinskog radnika nije uspjela"
+msgstr ""
 
 #: InvenTree/status.py:70
 msgid "Email backend not configured"
-msgstr "Pozadina e-pošte nije konfigurirana"
+msgstr ""
 
 #: InvenTree/status.py:73
 msgid "InvenTree system health checks failed"
-msgstr "Provere integriteta sistema InvenTree nije uspela"
+msgstr ""
 
 #: InvenTree/status_codes.py:12 InvenTree/status_codes.py:37
 #: InvenTree/status_codes.py:148 InvenTree/status_codes.py:164
 #: InvenTree/status_codes.py:182 generic/states/tests.py:17
 #: templates/js/translated/table_filters.js:598
 msgid "Pending"
-msgstr "Na čekanju"
+msgstr ""
 
 #: InvenTree/status_codes.py:13 generic/states/tests.py:18
 msgid "Placed"
-msgstr "Postavljen"
+msgstr ""
 
 #: InvenTree/status_codes.py:14 InvenTree/status_codes.py:151
 #: InvenTree/status_codes.py:169 generic/states/tests.py:19
 #: order/templates/order/order_base.html:158
 #: order/templates/order/sales_order_base.html:161
 msgid "Complete"
-msgstr "Gotovo"
+msgstr ""
 
 #: InvenTree/status_codes.py:15 InvenTree/status_codes.py:44
 #: InvenTree/status_codes.py:150 InvenTree/status_codes.py:170
 msgid "Cancelled"
-msgstr "Otkazano"
+msgstr ""
 
 #: InvenTree/status_codes.py:16 InvenTree/status_codes.py:45
 #: InvenTree/status_codes.py:67
 msgid "Lost"
-msgstr "Izgubljeno"
+msgstr ""
 
 #: InvenTree/status_codes.py:17 InvenTree/status_codes.py:46
 #: InvenTree/status_codes.py:73
 msgid "Returned"
-msgstr "Vraćeno"
+msgstr ""
 
 #: InvenTree/status_codes.py:40 InvenTree/status_codes.py:167
 msgid "In Progress"
-msgstr "U progresu"
+msgstr ""
 
 #: InvenTree/status_codes.py:43 order/models.py:1564
 #: templates/js/translated/sales_order.js:1523
 #: templates/js/translated/sales_order.js:1644
 #: templates/js/translated/sales_order.js:1957
 msgid "Shipped"
-msgstr "Poslato"
+msgstr ""
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "Uredu"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
-msgstr "Potrebna pažnja"
+msgstr ""
 
 #: InvenTree/status_codes.py:64
 msgid "Damaged"
-msgstr "Oštećeno"
+msgstr ""
 
 #: InvenTree/status_codes.py:65
 msgid "Destroyed"
-msgstr "Uništeno"
+msgstr ""
 
 #: InvenTree/status_codes.py:66
 msgid "Rejected"
-msgstr "Odbijeno"
+msgstr ""
 
 #: InvenTree/status_codes.py:70
 msgid "Quarantined"
-msgstr "U karantinu"
+msgstr ""
 
 #: InvenTree/status_codes.py:91
 msgid "Legacy stock tracking entry"
-msgstr "Nasleđeni unos za praćenje zaliha"
+msgstr ""
 
 #: InvenTree/status_codes.py:93 templates/js/translated/stock.js:544
 msgid "Stock item created"
-msgstr "Stavka na zalihi stvorena"
+msgstr ""
 
 #: InvenTree/status_codes.py:96
 msgid "Edited stock item"
-msgstr "Izmenjena stavka u zalihama"
+msgstr ""
 
 #: InvenTree/status_codes.py:97
 msgid "Assigned serial number"
-msgstr "Dodeljen serijski broj"
+msgstr ""
 
 #: InvenTree/status_codes.py:100
 msgid "Stock counted"
-msgstr "Zalihe prebrojane"
+msgstr ""
 
 #: InvenTree/status_codes.py:101
 msgid "Stock manually added"
-msgstr "Zalihe dodane ručno"
+msgstr ""
 
 #: InvenTree/status_codes.py:102
 msgid "Stock manually removed"
-msgstr "Zaliha ručno uklonjena"
+msgstr ""
 
 #: InvenTree/status_codes.py:105
 msgid "Location changed"
-msgstr "Lokacija promenjena"
+msgstr ""
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr "Zaliha obnovljena"
+msgstr ""
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
-msgstr "Instalisan u sklopu"
+msgstr ""
 
 #: InvenTree/status_codes.py:110
 msgid "Removed from assembly"
-msgstr "Skinuto sa sklopa"
+msgstr ""
 
 #: InvenTree/status_codes.py:112
 msgid "Installed component item"
-msgstr "Instalirana stavka komponente"
+msgstr ""
 
 #: InvenTree/status_codes.py:113
 msgid "Removed component item"
-msgstr "Uklonjena stavka komponente"
+msgstr ""
 
 #: InvenTree/status_codes.py:116
 msgid "Split from parent item"
-msgstr "Odvoj od nadređene stavke"
+msgstr ""
 
 #: InvenTree/status_codes.py:117
 msgid "Split child item"
-msgstr "Podeli podređenu stavku"
+msgstr ""
 
 #: InvenTree/status_codes.py:120 templates/js/translated/stock.js:1855
 msgid "Merged stock items"
-msgstr "Spojene stavke zaliha"
+msgstr ""
 
 #: InvenTree/status_codes.py:123
 msgid "Converted to variant"
-msgstr "Pretvoreno u varijaciju"
+msgstr ""
 
 #: InvenTree/status_codes.py:126
 msgid "Build order output created"
@@ -991,7 +991,7 @@ msgstr ""
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:972 templates/js/translated/stock.js:2892
 msgid "Build Order"
-msgstr "Nalog za izradu"
+msgstr ""
 
 #: build/models.py:75 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -1002,11 +1002,11 @@ msgstr "Nalog za izradu"
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:186 users/models.py:196
 msgid "Build Orders"
-msgstr "Nalozi za izradu"
+msgstr ""
 
 #: build/models.py:116
 msgid "Invalid choice for parent build"
-msgstr "Nevažeći izbor za nadređenu verziju"
+msgstr ""
 
 #: build/models.py:127 order/models.py:239
 msgid "Responsible user or group must be specified"
@@ -1014,11 +1014,11 @@ msgstr ""
 
 #: build/models.py:133
 msgid "Build order part cannot be changed"
-msgstr "Deo u nalogu za izradu ne može se izmeniti"
+msgstr ""
 
 #: build/models.py:179
 msgid "Build Order Reference"
-msgstr "Reference naloga za pravljenje"
+msgstr ""
 
 #: build/models.py:180 order/models.py:442 order/models.py:898
 #: order/models.py:1276 order/models.py:1996 part/admin.py:417
@@ -1034,11 +1034,11 @@ msgstr "Reference naloga za pravljenje"
 #: templates/js/translated/return_order.js:729
 #: templates/js/translated/sales_order.js:1818
 msgid "Reference"
-msgstr "Referenca"
+msgstr ""
 
 #: build/models.py:191
 msgid "Brief description of the build (optional)"
-msgstr "Kratak opis izrade (nije obavezno)"
+msgstr ""
 
 #: build/models.py:199 build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:87
@@ -14181,3 +14181,4 @@ msgstr ""
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr ""
+
