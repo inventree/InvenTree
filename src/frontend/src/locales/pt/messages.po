@@ -1134,7 +1134,7 @@ msgstr "Códigos de Projeto"
 
 #: src/components/render/ModelType.tsx:119
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:99
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:305
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:306
 msgid "Purchase Order"
 msgstr "Pedido de Compra"
 
@@ -1158,7 +1158,7 @@ msgstr "Linhas do Pedido de Compra"
 #: src/components/render/ModelType.tsx:132
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:108
 #: src/pages/build/BuildDetail.tsx:127
-#: src/pages/sales/SalesOrderDetail.tsx:251
+#: src/pages/sales/SalesOrderDetail.tsx:252
 #: src/pages/stock/StockDetail.tsx:205
 msgid "Sales Order"
 msgstr "Pedido de Venda"
@@ -1181,7 +1181,7 @@ msgstr "Envios do Pedido Venda"
 
 #: src/components/render/ModelType.tsx:147
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:117
-#: src/pages/sales/ReturnOrderDetail.tsx:227
+#: src/pages/sales/ReturnOrderDetail.tsx:228
 msgid "Return Order"
 msgstr "Pedido de Devolução"
 
@@ -1992,7 +1992,7 @@ msgstr "Painel de Controle"
 #: src/pages/company/ManufacturerPartDetail.tsx:217
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:262
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:308
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:309
 #: src/pages/purchasing/PurchasingIndex.tsx:52
 msgid "Purchasing"
 msgstr "Comprando"
@@ -2000,9 +2000,9 @@ msgstr "Comprando"
 #: src/defaults/links.tsx:32
 #: src/defaults/menuItems.tsx:53
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:230
+#: src/pages/sales/ReturnOrderDetail.tsx:231
 #: src/pages/sales/SalesIndex.tsx:45
-#: src/pages/sales/SalesOrderDetail.tsx:254
+#: src/pages/sales/SalesOrderDetail.tsx:255
 msgid "Sales"
 msgstr "Vendas"
 
@@ -3180,7 +3180,7 @@ msgstr "Balanço"
 #: src/pages/build/BuildDetail.tsx:359
 #: src/pages/build/BuildIndex.tsx:14
 #: src/pages/part/PartDetail.tsx:513
-#: src/pages/sales/SalesOrderDetail.tsx:211
+#: src/pages/sales/SalesOrderDetail.tsx:212
 msgid "Build Orders"
 msgstr "Ordens de Produções"
 
@@ -3299,9 +3299,9 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:145
 #: src/pages/part/PartDetail.tsx:316
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:188
-#: src/pages/sales/ReturnOrderDetail.tsx:154
-#: src/pages/sales/SalesOrderDetail.tsx:158
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:189
+#: src/pages/sales/ReturnOrderDetail.tsx:155
+#: src/pages/sales/SalesOrderDetail.tsx:159
 msgid "Responsible"
 msgstr "Responsável"
 
@@ -3374,9 +3374,9 @@ msgstr "Pedido de Produção Filhos"
 #: src/pages/company/CompanyDetail.tsx:244
 #: src/pages/company/ManufacturerPartDetail.tsx:169
 #: src/pages/part/PartDetail.tsx:598
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:244
-#: src/pages/sales/ReturnOrderDetail.tsx:197
-#: src/pages/sales/SalesOrderDetail.tsx:221
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:245
+#: src/pages/sales/ReturnOrderDetail.tsx:198
+#: src/pages/sales/SalesOrderDetail.tsx:222
 #: src/pages/stock/StockDetail.tsx:312
 msgid "Attachments"
 msgstr "Anexos"
@@ -3384,9 +3384,9 @@ msgstr "Anexos"
 #: src/pages/build/BuildDetail.tsx:270
 #: src/pages/company/CompanyDetail.tsx:256
 #: src/pages/part/PartDetail.tsx:610
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:256
-#: src/pages/sales/ReturnOrderDetail.tsx:209
-#: src/pages/sales/SalesOrderDetail.tsx:233
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:257
+#: src/pages/sales/ReturnOrderDetail.tsx:210
+#: src/pages/sales/SalesOrderDetail.tsx:234
 #: src/pages/stock/StockDetail.tsx:324
 msgid "Notes"
 msgstr "Anotações"
@@ -3574,7 +3574,7 @@ msgid "Supplier Part Details"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:203
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:232
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:233
 msgid "Received Stock"
 msgstr "Estoque Recebido"
 
@@ -3858,11 +3858,11 @@ msgid "Supplier Reference"
 msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:117
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:226
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:227
 #: src/pages/sales/ReturnOrderDetail.tsx:83
-#: src/pages/sales/ReturnOrderDetail.tsx:192
+#: src/pages/sales/ReturnOrderDetail.tsx:193
 #: src/pages/sales/SalesOrderDetail.tsx:87
-#: src/pages/sales/SalesOrderDetail.tsx:196
+#: src/pages/sales/SalesOrderDetail.tsx:197
 msgid "Line Items"
 msgstr "Itens de linha"
 
@@ -3875,7 +3875,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:132
 #: src/pages/sales/ReturnOrderDetail.tsx:98
 #: src/pages/sales/SalesOrderDetail.tsx:102
-#: src/pages/sales/SalesOrderDetail.tsx:206
+#: src/pages/sales/SalesOrderDetail.tsx:207
 msgid "Completed Shipments"
 msgstr "Envios Concluídos"
 
@@ -3891,26 +3891,26 @@ msgstr ""
 msgid "Total Cost"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:175
-#: src/pages/sales/ReturnOrderDetail.tsx:141
-#: src/pages/sales/SalesOrderDetail.tsx:145
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:176
+#: src/pages/sales/ReturnOrderDetail.tsx:142
+#: src/pages/sales/SalesOrderDetail.tsx:146
 msgid "Created On"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:181
-#: src/pages/sales/ReturnOrderDetail.tsx:147
-#: src/pages/sales/SalesOrderDetail.tsx:151
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:182
+#: src/pages/sales/ReturnOrderDetail.tsx:148
+#: src/pages/sales/SalesOrderDetail.tsx:152
 #: src/tables/ColumnRenderers.tsx:164
 msgid "Target Date"
 msgstr "Data Prevista"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:220
-#: src/pages/sales/ReturnOrderDetail.tsx:186
-#: src/pages/sales/SalesOrderDetail.tsx:190
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:221
+#: src/pages/sales/ReturnOrderDetail.tsx:187
+#: src/pages/sales/SalesOrderDetail.tsx:191
 msgid "Order Details"
 msgstr "Detalhes do pedido"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:285
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:286
 msgid "Order Actions"
 msgstr "Ações de Pedido"
 
@@ -3924,7 +3924,7 @@ msgstr "Referência do Cliente"
 msgid "Customers"
 msgstr "Clientes"
 
-#: src/pages/sales/SalesOrderDetail.tsx:201
+#: src/pages/sales/SalesOrderDetail.tsx:202
 msgid "Pending Shipments"
 msgstr "Envios Pendentes"
 
@@ -4710,8 +4710,8 @@ msgid "Parameter Template"
 msgstr ""
 
 #: src/tables/part/PartCategoryTemplateTable.tsx:93
-msgid "[{0}]"
-msgstr ""
+#~ msgid "[{0}]"
+#~ msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:106
 msgid "New Part Parameter"
@@ -5898,4 +5898,3 @@ msgstr "A interface de usuário da plataforma é otimizada para Tablets e Deskto
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr "Leia a documentação"
-

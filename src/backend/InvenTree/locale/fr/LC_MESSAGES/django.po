@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-02 01:15+0000\n"
+"POT-Creation-Date: 2024-04-03 01:39+0000\n"
 "PO-Revision-Date: 2024-03-20 12:27\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -1052,7 +1052,7 @@ msgstr "BuildOrder associé a cette fabrication"
 #: build/models.py:205 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:1044
 #: order/models.py:1401 order/models.py:1544 order/models.py:1545
-#: part/api.py:1535 part/api.py:1829 part/models.py:390 part/models.py:3004
+#: part/api.py:1537 part/api.py:1831 part/models.py:390 part/models.py:3004
 #: part/models.py:3148 part/models.py:3292 part/models.py:3315
 #: part/models.py:3336 part/models.py:3358 part/models.py:3468
 #: part/models.py:3764 part/models.py:3917 part/models.py:4010
@@ -6009,39 +6009,39 @@ msgstr ""
 msgid "Exclude sub-categories under the specified category"
 msgstr ""
 
-#: part/api.py:458
+#: part/api.py:460
 msgid "Has Results"
 msgstr ""
 
-#: part/api.py:625
+#: part/api.py:627
 msgid "Incoming Purchase Order"
 msgstr ""
 
-#: part/api.py:643
+#: part/api.py:645
 msgid "Outgoing Sales Order"
 msgstr ""
 
-#: part/api.py:659
+#: part/api.py:661
 msgid "Stock produced by Build Order"
 msgstr ""
 
-#: part/api.py:743
+#: part/api.py:745
 msgid "Stock required for Build Order"
 msgstr ""
 
-#: part/api.py:890
+#: part/api.py:892
 msgid "Valid"
 msgstr ""
 
-#: part/api.py:891
+#: part/api.py:893
 msgid "Validate entire Bill of Materials"
 msgstr ""
 
-#: part/api.py:897
+#: part/api.py:899
 msgid "This option must be selected"
 msgstr ""
 
-#: part/api.py:1549 part/models.py:896 part/models.py:3386 part/models.py:3863
+#: part/api.py:1551 part/models.py:896 part/models.py:3386 part/models.py:3863
 #: part/serializers.py:406 part/serializers.py:1112
 #: part/templates/part/part_base.html:260 stock/api.py:745
 #: templates/InvenTree/settings/settings_staff_js.html:300
@@ -6050,7 +6050,7 @@ msgstr ""
 msgid "Category"
 msgstr "Catégorie"
 
-#: part/api.py:1837
+#: part/api.py:1839
 msgid "Uses"
 msgstr ""
 
