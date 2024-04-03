@@ -374,7 +374,7 @@ class BuildTest(BuildAPITest):
         self.assertEqual(n_outputs, bo.output_count)
 
         # Now, create with *good* data
-        response = self.post(
+        self.post(
             create_url,
             {
                 'quantity': 5,
@@ -444,7 +444,7 @@ class BuildTest(BuildAPITest):
         self.assertEqual(1, bo.complete_count)
 
         # Let's delete 2 build outputs
-        response = self.post(
+        self.post(
             delete_url,
             {
                 'outputs': [
@@ -479,7 +479,7 @@ class BuildTest(BuildAPITest):
             output.refresh_from_db()
             self.assertTrue(output.is_building)
 
-        response = self.post(
+        self.post(
             complete_url,
             {
                 'outputs': [
@@ -837,7 +837,7 @@ class BuildAllocationTest(BuildAPITest):
         si.quantity = 100
         si.save()
 
-        response = self.post(
+        self.post(
             self.url,
             {
                 "items": [
@@ -860,7 +860,7 @@ class BuildAllocationTest(BuildAPITest):
             lft=0, rght=0
         )
 
-        response = self.post(
+        self.post(
             self.url,
             {
                 "items": [

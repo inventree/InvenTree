@@ -603,7 +603,7 @@ class DataFileUploadSerializer(serializers.Serializer):
         """Perform validation checks on the uploaded data file."""
         self.filename = data_file.name
 
-        name, ext = os.path.splitext(data_file.name)
+        _name, ext = os.path.splitext(data_file.name)
 
         # Remove the leading . from the extension
         ext = ext[1:]

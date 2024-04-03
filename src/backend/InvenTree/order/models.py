@@ -151,7 +151,7 @@ class TotalPriceMixin(models.Model):
                 total += line.quantity * convert_money(line.price, target_currency)
             except MissingRate:
                 # Record the error, try to press on
-                kind, info, data = sys.exc_info()
+                _1, _2, _3 = sys.exc_info()
 
                 log_error('order.calculate_total_price')
                 logger.exception("Missing exchange rate for '%s'", target_currency)

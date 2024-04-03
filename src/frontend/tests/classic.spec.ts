@@ -1,8 +1,10 @@
 import { expect, test } from '@playwright/test';
 
-test('Check classic index site', async ({ page }) => {
-  await page.goto('./api/');
-  await page.goto('./index/');
+import { classicUrl } from './baseFixtures';
+
+test('CUI - Index', async ({ page }) => {
+  await page.goto(`${classicUrl}/api/`);
+  await page.goto(`${classicUrl}/index/`);
   await expect(page).toHaveTitle('InvenTree Demo Server | Sign In');
   await expect(
     page.getByRole('heading', { name: 'InvenTree Demo Server' })
