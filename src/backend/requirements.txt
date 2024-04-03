@@ -46,7 +46,7 @@ deprecated==1.2.14
     #   opentelemetry-exporter-otlp-proto-http
 diff-match-patch==20230430
     # via django-import-export
-dj-rest-auth==5.0.2
+dj-rest-auth==5.1.0
 django==4.2.11
     # via
     #   dj-rest-auth
