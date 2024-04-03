@@ -58,7 +58,6 @@ def apps():
         'generic',
         'machine',
         'web',
-        'InvenTree.InvenTree',
     ]
 
 
