@@ -34,6 +34,7 @@ jobs:
       migrations: ${{ steps.filter.outputs.migrations }}
       frontend: ${{ steps.filter.outputs.frontend }}
       api: ${{ steps.filter.outputs.api }}
+      force: ${{ steps.force.outputs.force }}
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -52,6 +53,13 @@ jobs:
               - 'InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
+      - run: echo "::set-output name=force::true"
+        id: force
+        if: |
+          github.event_name == 'pull_request' && (
+            contains(github.event.issue.labels.*.name, 'dependency') ||
+            contains(github.event.issue.labels.*.name, 'full-run')
+          )
 
   javascript:
     name: Style - Classic UI [JS]
@@ -79,7 +87,7 @@ jobs:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -125,7 +133,7 @@ jobs:
     name: Tests - API Schema Documentation
     runs-on: ubuntu-20.04
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     env:
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
@@ -467,7 +475,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 60
     needs: [ 'pre-commit', 'paths-filter' ]
-    if: needs.paths-filter.outputs.frontend == 'true'
+    if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
@@ -544,7 +552,7 @@ jobs:
     name: Finish Coverage
     runs-on: ubuntu-20.04
     needs: ["platform_ui", "coverage", "paths-filter"]
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
       - name: Finish coverage reporting
