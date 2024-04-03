@@ -642,13 +642,10 @@ class StockItem(
 
         try:
             # Trackable parts must have integer values for quantity field!
-            if self.part.trackable:
-                if self.quantity != int(self.quantity):
-                    raise ValidationError({
-                        'quantity': _(
-                            'Quantity must be integer value for trackable parts'
-                        )
-                    })
+            if self.part.trackable and self.quantity != int(self.quantity):
+                raise ValidationError({
+                    'quantity': _('Quantity must be integer value for trackable parts')
+                })
 
             # Virtual parts cannot have stock items created against them
             if self.part.virtual:
@@ -2396,17 +2393,15 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
 
         for template in templates:
             if key == template.key:
-                if template.requires_value:
-                    if not self.value:
-                        raise ValidationError({
-                            'value': _('Value must be provided for this test')
-                        })
+                if template.requires_value and not self.value:
+                    raise ValidationError({
+                        'value': _('Value must be provided for this test')
+                    })
 
-                if template.requires_attachment:
-                    if not self.attachment:
-                        raise ValidationError({
-                            'attachment': _('Attachment must be uploaded for this test')
-                        })
+                if template.requires_attachment and not self.attachment:
+                    raise ValidationError({
+                        'attachment': _('Attachment must be uploaded for this test')
+                    })
 
                 break
 

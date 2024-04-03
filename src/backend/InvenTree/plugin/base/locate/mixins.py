@@ -58,7 +58,6 @@ class LocateMixin:
 
         except StockItem.DoesNotExist:  # pragma: no cover
             logger.warning('LocateMixin: StockItem pk={item_pk} not found')
-            pass
 
     def locate_stock_location(self, location_pk):
         """Attempt to location a particular StockLocation.

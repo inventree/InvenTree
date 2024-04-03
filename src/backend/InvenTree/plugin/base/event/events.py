@@ -104,7 +104,7 @@ def process_event(plugin_slug, event, *args, **kwargs):
         # Log the exception to the database
         InvenTree.exceptions.log_error(f'plugins.{plugin_slug}.process_event')
         # Re-throw the exception so that the background worker tries again
-        raise Exception
+        raise e
 
 
 def allow_table_event(table_name):
