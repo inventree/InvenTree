@@ -49,7 +49,7 @@ jobs:
               - '**/migrations/**'
               - '.github/workflows**'
             api:
-              - 'InvenTree/InvenTree/api_version.py'
+              - 'src/backend/InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
 
