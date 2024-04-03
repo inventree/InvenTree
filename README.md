@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="images/logo/inventree.png" alt="InvenTree logo" width="200" height="auto" />
+  <img src="assets/images/logo/inventree.png" alt="InvenTree logo" width="200" height="auto" />
   <h1>InvenTree</h1>
   <p>Open Source Inventory Management System </p>
 
