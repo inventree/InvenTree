@@ -14,6 +14,7 @@ class InvenTreeResource(ModelResource):
     """Custom subclass of the ModelResource class provided by django-import-export".
 
     Ensures that exported data are escaped to prevent malicious formula injection.
+
     Ref: https://owasp.org/www-community/attacks/CSV_Injection
     """
 
