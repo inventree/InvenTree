@@ -95,9 +95,8 @@ class PluginsRegistry:
 
         plg = self.plugins[slug]
 
-        if active is not None:
-            if active != plg.is_active():
-                return None
+        if active is not None and active != plg.is_active():
+            return None
 
         return plg
 
@@ -130,7 +129,7 @@ class PluginsRegistry:
             try:
                 cfg.name = name
                 cfg.save()
-            except Exception as e:
+            except Exception:
                 logger.exception('Failed to update plugin name')
 
         return cfg

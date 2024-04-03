@@ -188,7 +188,7 @@ class LabelTest(InvenTreeAPITestCase):
         self.assertGreaterEqual(n, 1)
 
         # Delete the last report
-        response = self.delete(
+        self.delete(
             reverse(self.detail_url, kwargs={'pk': labels[n - 1].pk}), expected_code=204
         )
 
@@ -208,10 +208,10 @@ class LabelTest(InvenTreeAPITestCase):
         url = reverse(self.print_url, kwargs={'pk': labels[0].pk})
 
         # Try to print without providing a valid item
-        response = self.get(url, expected_code=400)
+        self.get(url, expected_code=400)
 
         # Try to print with an invalid item
-        response = self.get(url, {self.print_itemname: 9999}, expected_code=400)
+        self.get(url, {self.print_itemname: 9999}, expected_code=400)
 
         # Now print with a valid item
         print(f'{self.print_itemmodel = }')

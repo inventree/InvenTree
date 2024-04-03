@@ -125,8 +125,8 @@ def generate_index_file(version: str):
         f.write(output)
 
 
-def extract_refs(data: dict, components: dict) -> list:
-    """Extract a list of refs from the provided paths dict.
+def extract_refs(data: dict, components: dict) -> dict:
+    """Extract a dict of refs from the provided paths dict.
 
     The refs are located like so:
     <path>:<method>:responses:<status>:content:application/json:schema:$ref

@@ -58,7 +58,7 @@ class LabelPrintingMixin:
         """
         try:
             return label.render(request)
-        except Exception as e:
+        except Exception:
             log_error('label.render_to_pdf')
             raise ValidationError(_('Error rendering label to PDF'))
 
@@ -71,7 +71,7 @@ class LabelPrintingMixin:
         """
         try:
             return label.render_as_string(request)
-        except Exception as e:
+        except Exception:
             log_error('label.render_to_html')
             raise ValidationError(_('Error rendering label to HTML'))
 
@@ -106,7 +106,7 @@ class LabelPrintingMixin:
         # Convert to png data
         try:
             return pdf2image.convert_from_bytes(pdf_data, **pdf2image_kwargs)[0]
-        except Exception as e:
+        except Exception:
             log_error('label.render_to_png')
             raise ValidationError(_('Error rendering label to PNG'))
 

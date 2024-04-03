@@ -1467,25 +1467,23 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
                     valid = self.bom_item.is_stock_item_valid(self.stock_item)
 
         # If the existing BomItem is *not* valid, try to find a match
-        if not valid:
+        if not valid and self.build and self.stock_item:
+            ancestors = self.stock_item.part.get_ancestors(include_self=True, ascending=True)
 
-            if self.build and self.stock_item:
-                ancestors = self.stock_item.part.get_ancestors(include_self=True, ascending=True)
+            for idx, ancestor in enumerate(ancestors):
 
-                for idx, ancestor in enumerate(ancestors):
+                build_line = BuildLine.objects.filter(
+                    build=self.build,
+                    bom_item__part=ancestor,
+                )
 
-                    build_line = BuildLine.objects.filter(
-                        build=self.build,
-                        bom_item__part=ancestor,
-                    )
+                if build_line.exists():
+                    line = build_line.first()
 
-                    if build_line.exists():
-                        line = build_line.first()
-
-                        if idx == 0 or line.bom_item.allow_variants:
-                            valid = True
-                            self.build_line = line
-                            break
+                    if idx == 0 or line.bom_item.allow_variants:
+                        valid = True
+                        self.build_line = line
+                        break
 
         # BomItem did not exist or could not be validated.
         # Search for a new one

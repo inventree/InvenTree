@@ -458,9 +458,8 @@ class ReferenceIndexingMixin(models.Model):
 
         reference_int = InvenTree.helpers.extract_int(reference)
 
-        if validate:
-            if reference_int > models.BigIntegerField.MAX_BIGINT:
-                raise ValidationError({'reference': _('Reference number is too large')})
+        if validate and reference_int > models.BigIntegerField.MAX_BIGINT:
+            raise ValidationError({'reference': _('Reference number is too large')})
 
         return reference_int
 
