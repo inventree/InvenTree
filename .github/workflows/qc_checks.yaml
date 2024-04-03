@@ -42,9 +42,9 @@ jobs:
         with:
           filters: |
             server:
-              - 'InvenTree/**'
-              - 'requirements.txt'
-              - 'requirements-dev.txt'
+              - 'src/backend/InvenTree/**'
+              - 'src/backend/requirements.txt'
+              - 'src/backend/requirements-dev.txt'
             migrations:
               - '**/migrations/**'
               - '.github/workflows**'
@@ -68,12 +68,12 @@ jobs:
           install: true
       - name: Check Templated JS Files
         run: |
-          cd ci
+          cd .github/scripts
           python3 check_js_templates.py
       - name: Lint Javascript Files
         run: |
-          python InvenTree/manage.py prerender
-          npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
+          python src/backend/InvenTree/manage.py prerender
+          npx eslint src/backend/InvenTree/InvenTree/static_i18n/i18n/*.js
 
   pre-commit:
     name: Style [pre-commit]
@@ -93,7 +93,7 @@ jobs:
       - name: Check Version
         run: |
           pip install requests==2.31.0
-          python3 ci/version_check.py
+          python3 .github/scripts/version_check.py
 
   mkdocs:
     name: Style [Documentation]
@@ -147,12 +147,12 @@ jobs:
           dev-install: true
           update: true
       - name: Export API Documentation
-        run: invoke schema --ignore-warnings --filename InvenTree/schema.yml
+        run: invoke schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
         uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
         with:
           name: schema.yml
-          path: InvenTree/schema.yml
+          path: src/backend/InvenTree/schema.yml
       - name: Download public schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
@@ -166,8 +166,8 @@ jobs:
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
-          diff --color -u InvenTree/schema.yml api.yaml
-          diff -u InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
+          diff --color -u src/backend/InvenTree/schema.yml api.yaml
+          diff -u src/backend/InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
         run: invoke schema
         continue-on-error: true
@@ -273,7 +273,7 @@ jobs:
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
-        run: python3 ci/check_migration_files.py
+        run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
         run: invoke test --coverage
       - name: Upload Coverage Report
@@ -530,9 +530,9 @@ jobs:
         run: cd src/frontend && npm run compile && npm run build
       - name: Zip frontend
         run: |
-          cd InvenTree/web/static
+          cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/
       - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
         with:
           name: frontend-build
-          path: InvenTree/web/static/web
+          path: src/backend/InvenTree/web/static/web
