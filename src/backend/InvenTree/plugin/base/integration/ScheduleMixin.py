@@ -69,11 +69,10 @@ class ScheduleMixin:
             'ENABLE_PLUGINS_SCHEDULE'
         ):
             for _key, plugin in plugins:
-                if plugin.mixin_enabled('schedule'):
-                    if plugin.is_active():
-                        # Only active tasks for plugins which are enabled
-                        plugin.register_tasks()
-                        task_keys += plugin.get_task_names()
+                if plugin.mixin_enabled('schedule') and plugin.is_active():
+                    # Only active tasks for plugins which are enabled
+                    plugin.register_tasks()
+                    task_keys += plugin.get_task_names()
 
         if len(task_keys) > 0:
             logger.info('Activated %s scheduled tasks', len(task_keys))

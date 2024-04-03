@@ -142,9 +142,8 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         """
         prefix = self.get_setting('BATCH_CODE_PREFIX')
 
-        if len(batch_code) > 0:
-            if prefix and not batch_code.startswith(prefix):
-                self.raise_error(f"Batch code must start with '{prefix}'")
+        if len(batch_code) > 0 and prefix and not batch_code.startswith(prefix):
+            self.raise_error(f"Batch code must start with '{prefix}'")
 
     def generate_batch_code(self):
         """Generate a new batch code."""
