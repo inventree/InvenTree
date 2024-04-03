@@ -92,7 +92,9 @@ def check_version_number(version_string, allow_duplicate=False):
 if __name__ == '__main__':
     if 'only_version' in sys.argv:
         here = Path(__file__).parent.absolute()
-        version_file = here.joinpath('..', 'InvenTree', 'InvenTree', 'api_version.py')
+        version_file = here.joinpath(
+            '..', '..', 'src', 'backend', 'InvenTree', 'InvenTree', 'api_version.py'
+        )
         text = version_file.read_text()
         results = re.findall(r"""INVENTREE_API_VERSION = (.*)""", text)
         print(results[0])
