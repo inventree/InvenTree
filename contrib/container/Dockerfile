@@ -27,7 +27,6 @@ ENV INVENTREE_DOCKER="true"
 
 # InvenTree paths
 ENV INVENTREE_HOME="/home/inventree"
-ENV INVENTREE_MNG_DIR="${INVENTREE_HOME}/InvenTree"
 ENV INVENTREE_DATA_DIR="${INVENTREE_HOME}/${data_dir}"
 ENV INVENTREE_STATIC_ROOT="${INVENTREE_DATA_DIR}/static"
 ENV INVENTREE_MEDIA_ROOT="${INVENTREE_DATA_DIR}/media"
@@ -75,9 +74,9 @@ EXPOSE 8000
 RUN mkdir -p ${INVENTREE_HOME}
 WORKDIR ${INVENTREE_HOME}
 
-COPY ./docker/requirements.txt base_requirements.txt
-COPY ./requirements.txt ./
-COPY ./docker/install_build_packages.sh .
+COPY contrib/container/requirements.txt base_requirements.txt
+COPY src/backend/requirements.txt ./
+COPY contrib/container/install_build_packages.sh .
 RUN chmod +x install_build_packages.sh
 
 # For ARMv7 architecture, add the piwheels repo (for cryptography library)
@@ -87,7 +86,7 @@ RUN if [ `apk --print-arch` = "armv7" ]; then \
     printf "[global]\nextra-index-url=https://www.piwheels.org/simple\n" > /etc/pip.conf ; \
     fi
 
-COPY tasks.py docker/gunicorn.conf.py docker/init.sh ./
+COPY tasks.py contrib/container/gunicorn.conf.py contrib/container/init.sh ./
 RUN chmod +x init.sh
 
 ENTRYPOINT ["/bin/ash", "./init.sh"]
@@ -104,10 +103,9 @@ FROM prebuild AS frontend
 
 RUN apk add --no-cache --update nodejs npm && npm install -g yarn@v1.22.22
 RUN yarn config set network-timeout 600000 -g
-COPY InvenTree ${INVENTREE_HOME}/InvenTree
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
-RUN cd ${INVENTREE_HOME}/InvenTree && inv frontend-compile
+RUN cd ${INVENTREE_HOME} && inv frontend-compile
 
 # InvenTree production image:
 # - Copies required files from local directory
@@ -124,14 +122,18 @@ ENV INVENTREE_COMMIT_DATE="${commit_date}"
 ENV PATH=/root/.local/bin:$PATH
 COPY --from=prebuild /root/.local /root/.local
 
+ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}"
+
 # Copy source code
-COPY InvenTree ./InvenTree
-COPY --from=frontend ${INVENTREE_HOME}/InvenTree/web/static/web ./InvenTree/web/static/web
+COPY src/backend/InvenTree ./InvenTree
+COPY --from=frontend ${INVENTREE_HOME}/src/backend/InvenTree/web/static/web ./src/backend/InvenTree/web/static/web
 
 # Launch the production server
 CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
 
 FROM inventree_base AS dev
+
+ENV INVENTREE_BACKEND_DIR="${INVENTREE_HOME}/src/backend"
 
 # Vite server (for local frontend development)
 EXPOSE 5173
@@ -158,7 +160,7 @@ ENV INVENTREE_PY_ENV="${INVENTREE_DATA_DIR}/env"
 WORKDIR ${INVENTREE_HOME}
 
 # Entrypoint ensures that we are running in the python virtual environment
-ENTRYPOINT ["/bin/ash", "./docker/init.sh"]
+ENTRYPOINT ["/bin/ash", "./contrib/container/init.sh"]
 
 # Launch the development server
 CMD ["invoke", "server", "-a", "${INVENTREE_WEB_ADDR}:${INVENTREE_WEB_PORT}"]

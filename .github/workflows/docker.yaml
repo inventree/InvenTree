@@ -78,26 +78,26 @@ jobs:
         run: |
           pip install requests==2.31.0
           pip install pyyaml==6.0.1
-          python3 ci/version_check.py
+          python3 .github/scripts/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
       - name: Test Docker Image
         id: test-docker
         run: |
-          docker build . --target production --tag inventree-test
+          docker build . --target production --tag inventree-test -f contrib/container/Dockerfile
           docker run --rm inventree-test invoke --version
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
           docker run --rm inventree-test pg_dump --version
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
-        run: docker-compose build --no-cache
+        run: docker compose --project-directory . -f contrib/container/dev-docker-compose.yml build --no-cache
       - name: Update Docker Image
         run: |
-          docker-compose run inventree-dev-server invoke update
-          docker-compose run inventree-dev-server invoke setup-dev
-          docker-compose up -d
-          docker-compose run inventree-dev-server invoke wait
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke update
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke setup-dev
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke wait
       - name: Check Data Directory
         # The following file structure should have been created by the docker image
         run: |
@@ -112,10 +112,10 @@ jobs:
           test -f data/secret_key.txt
       - name: Run Unit Tests
         run: |
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> docker.dev.env
-          docker-compose run inventree-dev-server invoke test --disable-pty
-          docker-compose run inventree-dev-server invoke test --migrations --disable-pty
-          docker-compose down
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> contrib/container/docker.dev.env
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke test --disable-pty
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke test --migrations --disable-pty
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml down
       - name: Clean up test folder
         run: |
           rm -rf InvenTree/_testfolder
