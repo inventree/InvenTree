@@ -53,13 +53,13 @@ jobs:
               - 'InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
-      - run: echo "::set-output name=force::true"
+      - name: Is CI being forced?
+        run: echo "::set-output name=force::true"
         id: force
         if: |
-          github.event_name == 'pull_request' && (
-            contains(github.event.issue.labels.*.name, 'dependency') ||
-            contains(github.event.issue.labels.*.name, 'full-run')
-          )
+          contains(github.event.pull_request.labels.*.name, 'dependency') ||
+          contains(github.event.pull_request.labels.*.name, 'full-run')
+
 
   javascript:
     name: Style - Classic UI [JS]
