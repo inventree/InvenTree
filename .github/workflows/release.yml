@@ -19,8 +19,8 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Version Check
         run: |
-          pip install requests
-          python3 ci/version_check.py
+          pip install requests==2.31.0
+          python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0
         if: env.stable_release == 'true'
@@ -43,12 +43,12 @@ jobs:
         run: cd src/frontend && npm run compile && npm run build
       - name: Zip frontend
         run: |
-          cd InvenTree/web/static/web
+          cd src/backend/InvenTree/web/static/web
           zip -r ../frontend-build.zip *
       - uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: InvenTree/web/static/frontend-build.zip
+          file: src/backend/InvenTree/web/static/frontend-build.zip
           asset_name: frontend-build.zip
           tag: ${{ github.ref }}
           overwrite: true

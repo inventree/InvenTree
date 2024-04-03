@@ -2,7 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import { Center, Container, Paper, Text } from '@mantine/core';
 import { useDisclosure, useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
@@ -32,6 +32,7 @@ export default function Login() {
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
   const [loginMode, setMode] = useDisclosure(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
   // Data manipulation functions
   function ChangeHost(newHost: string): void {
@@ -46,8 +47,7 @@ export default function Login() {
       ChangeHost(defaultHostKey);
     }
 
-    // check if user is logged in in PUI
-    checkLoginState(navigate, undefined, true);
+    checkLoginState(navigate, location?.state?.redirectFrom, true);
   }, []);
 
   // Fetch server data on mount if no server data is present

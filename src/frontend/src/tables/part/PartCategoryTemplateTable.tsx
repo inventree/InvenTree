@@ -90,7 +90,7 @@ export default function PartCategoryTemplateTable({}: {}) {
           let units = '';
 
           if (record?.parameter_template_detail?.units) {
-            units = t`[${record.parameter_template_detail.units}]`;
+            units = `[${record.parameter_template_detail.units}]`;
           }
 
           return (

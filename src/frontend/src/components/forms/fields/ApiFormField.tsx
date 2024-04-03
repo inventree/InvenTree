@@ -64,6 +64,7 @@ export type ApiFormFieldType = {
     | 'string'
     | 'boolean'
     | 'date'
+    | 'datetime'
     | 'integer'
     | 'decimal'
     | 'float'
@@ -215,6 +216,7 @@ export function ApiFormField({
           />
         );
       case 'date':
+      case 'datetime':
         return <DateField controller={controller} definition={definition} />;
       case 'integer':
       case 'decimal':

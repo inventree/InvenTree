@@ -150,7 +150,9 @@ export function checkLoginState(
   // Callback function when login fails
   const loginFailure = () => {
     useSessionState.getState().clearToken();
-    if (!no_redirect) navigate('/login');
+    if (!no_redirect) {
+      navigate('/login', { state: { redirectFrom: redirect } });
+    }
   };
 
   if (useSessionState.getState().hasToken()) {
