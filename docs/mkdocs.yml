@@ -273,7 +273,7 @@ markdown_extensions:
 
 # Global Variables
 extra:
-  static_folder_source: ./InvenTree/InvenTree/static/
+  static_folder_source: ./src/backend/InvenTree/InvenTree/static/
   static_folder_local_default: ./inventree_static/
 
   # Site Analytics
