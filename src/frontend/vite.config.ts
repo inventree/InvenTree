@@ -1,8 +1,10 @@
 import react from '@vitejs/plugin-react';
 import { platform, release } from 'node:os';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import istanbul from 'vite-plugin-istanbul';
 
 const IS_IN_WSL = platform().includes('WSL') || release().includes('WSL');
+const is_coverage = process.env.VITE_COVERAGE === 'true';
 
 if (IS_IN_WSL) {
   console.log('WSL detected: using polling for file system events');
@@ -16,11 +18,18 @@ export default defineConfig({
         plugins: ['macros']
       }
     }),
-    splitVendorChunkPlugin()
+    splitVendorChunkPlugin(),
+    istanbul({
+      include: 'src/*',
+      exclude: ['node_modules', 'test/'],
+      extension: ['.js', '.ts', '.tsx'],
+      requireEnv: true
+    })
   ],
   build: {
     manifest: true,
-    outDir: '../../InvenTree/web/static/web'
+    outDir: '../../src/backend/InvenTree/web/static/web',
+    sourcemap: is_coverage
   },
   server: {
     watch: {
