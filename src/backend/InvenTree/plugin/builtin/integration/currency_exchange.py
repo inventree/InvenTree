@@ -41,7 +41,7 @@ class InvenTreeCurrencyExchange(APICallMixin, CurrencyExchangeMixin, InvenTreePl
             self.api_url,
             response.status_code,
         )
-        return None
+        return {}
 
     @property
     def api_url(self):

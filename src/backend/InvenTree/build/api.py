@@ -1,5 +1,6 @@
 """JSON API for the Build app."""
 
+from __future__ import annotations
 from django.db.models import F, Q
 from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
@@ -363,7 +364,7 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
         'bom_item__reference',
     ]
 
-    def get_source_build(self) -> Build:
+    def get_source_build(self) -> Build | None:
         """Return the target build for the BuildLine queryset."""
 
         try:
@@ -379,7 +380,7 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
 class BuildLineDetail(BuildLineEndpoint, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a BuildLine object."""
 
-    def get_source_build(self) -> Build:
+    def get_source_build(self) -> Build | None:
         """Return the target source location for the BuildLine queryset."""
 
         return None

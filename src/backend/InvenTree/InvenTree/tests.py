@@ -670,39 +670,6 @@ class TestHelpers(TestCase):
             with self.assertRaises(django_exceptions.ValidationError):
                 InvenTree.helpers_model.download_image_from_url(url)
 
-        def dl_helper(url, expected_error, timeout=2.5, retries=3):
-            """Helper function for unit testing downloads.
-
-            As the httpstat.us service occasionally refuses a connection,
-            we will simply try multiple times
-            """
-            tries = 0
-
-            with self.assertRaises(expected_error):
-                while tries < retries:
-                    try:
-                        InvenTree.helpers_model.download_image_from_url(
-                            url, timeout=timeout
-                        )
-                        break
-                    except Exception as exc:
-                        if type(exc) is expected_error:
-                            # Re-throw this error
-                            raise exc
-                        else:
-                            print('Unexpected error:', type(exc), exc)
-
-                    tries += 1
-                    time.sleep(10 * tries)
-
-        # Attempt to download an image which throws a 404
-        # TODO: Re-implement this test when we are happier with the external service
-        # dl_helper("https://httpstat.us/404", requests.exceptions.HTTPError, timeout=10)
-
-        # Attempt to download, but timeout
-        # TODO: Re-implement this test when we are happier with the external service
-        # dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
-
         large_img = 'https://github.com/inventree/InvenTree/raw/master/src/backend/InvenTree/InvenTree/static/img/paper_splash_large.jpg'
 
         InvenTreeSetting.set_setting(
