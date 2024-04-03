@@ -2,3 +2,4 @@
 
 It provides a number of helper functions and generic classes which are used by InvenTree apps.
 """
+
