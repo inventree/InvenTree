@@ -20,7 +20,7 @@ export default defineConfig({
   ],
   build: {
     manifest: true,
-    outDir: '../../InvenTree/web/static/web'
+    outDir: '../../src/backend/InvenTree/web/static/web'
   },
   server: {
     watch: {
