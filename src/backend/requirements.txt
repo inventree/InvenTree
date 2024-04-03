@@ -96,7 +96,7 @@ django-js-asset==2.2.0
     # via django-mptt
 django-maintenance-mode==0.21.1
 django-markdownify==0.9.3
-django-money==3.4.1
+django-money==3.2.0
 django-mptt==0.16.0
 django-otp==1.3.0
     # via django-allauth-2fa
@@ -230,6 +230,9 @@ pillow==10.2.0
     #   qrcode
     #   weasyprint
 pint==0.21
+pip-licenses==4.3.4
+prettytable==3.10.0
+    # via pip-licenses
 protobuf==4.25.3
     # via
     #   googleapis-common-protos
@@ -329,6 +332,8 @@ urllib3==2.2.1
     #   dulwich
     #   requests
     #   sentry-sdk
+wcwidth==0.2.13
+    # via prettytable
 weasyprint==61.2
     # via django-weasyprint
 webencodings==0.5.1
