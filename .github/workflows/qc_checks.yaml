@@ -48,6 +48,7 @@ jobs:
             migrations:
               - '**/migrations/**'
               - '.github/workflows**'
+              - 'src/backend/requirements.txt'
             api:
               - 'src/backend/InvenTree/InvenTree/api_version.py'
             frontend:
