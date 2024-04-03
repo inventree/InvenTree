@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-03 01:39+0000\n"
-"PO-Revision-Date: 2024-03-23 14:58\n"
+"PO-Revision-Date: 2024-04-03 01:57\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -14,12 +14,12 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: th\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:198
 msgid "API endpoint not found"
-msgstr "ไม่พบ API endpoint"
+msgstr ""
 
 #: InvenTree/api.py:462
 msgid "User does not have permission to view this model"
@@ -54,7 +54,7 @@ msgstr ""
 
 #: InvenTree/fields.py:140
 msgid "Enter date"
-msgstr "ป้อนวันที่"
+msgstr ""
 
 #: InvenTree/fields.py:209 InvenTree/models.py:1022 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
@@ -77,7 +77,7 @@ msgstr "ป้อนวันที่"
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1533 templates/js/translated/stock.js:2427
 msgid "Notes"
-msgstr "หมายเหตุ"
+msgstr ""
 
 #: InvenTree/format.py:164
 #, python-brace-format
@@ -90,31 +90,31 @@ msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr "ป้อนรหัสผ่าน"
+msgstr ""
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr "ป้อนรหัสผ่านใหม่"
+msgstr ""
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr "ยืนยันรหัสผ่าน"
+msgstr ""
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr "ยืนยันรหัสผ่านใหม่"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr "รหัสผ่านเดิม"
+msgstr ""
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr "อีเมล (อีกครั้ง)"
+msgstr ""
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr "การยืนยันอีเมล"
+msgstr ""
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
@@ -134,7 +134,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:525 order/models.py:541 order/models.py:743
 msgid "Invalid quantity provided"
-msgstr "ปริมาณสินค้าไม่ถูกต้อง"
+msgstr ""
 
 #: InvenTree/helpers.py:533
 msgid "Empty serial number string"
@@ -142,7 +142,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:562
 msgid "Duplicate serial"
-msgstr "หมายเลขซีเรียลซ้ำกัน"
+msgstr ""
 
 #: InvenTree/helpers.py:594 InvenTree/helpers.py:637
 #, python-brace-format
@@ -161,7 +161,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:691
 msgid "No serial numbers found"
-msgstr "ไม่พบหมายเลขซีเรียล"
+msgstr ""
 
 #: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
@@ -173,7 +173,7 @@ msgstr ""
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr "การเชื่อมต่อขัดข้อง"
+msgstr ""
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
@@ -189,7 +189,7 @@ msgstr ""
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr "ไฟล์รูปภาพมีขนาดใหญ่เกินไป"
+msgstr ""
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
@@ -289,7 +289,7 @@ msgstr ""
 
 #: InvenTree/locales.py:39
 msgid "Portuguese"
-msgstr "ภาษาโปรตุเกส"
+msgstr ""
 
 #: InvenTree/locales.py:40
 msgid "Portuguese (Brazilian)"
@@ -297,7 +297,7 @@ msgstr ""
 
 #: InvenTree/locales.py:41
 msgid "Russian"
-msgstr "ภาษารัสเซีย"
+msgstr ""
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
@@ -313,11 +313,11 @@ msgstr ""
 
 #: InvenTree/locales.py:45
 msgid "Swedish"
-msgstr "ภาษาสวีเดน"
+msgstr ""
 
 #: InvenTree/locales.py:46
 msgid "Thai"
-msgstr "ภาษาไทย"
+msgstr ""
 
 #: InvenTree/locales.py:47
 msgid "Turkish"
@@ -325,7 +325,7 @@ msgstr ""
 
 #: InvenTree/locales.py:48
 msgid "Vietnamese"
-msgstr "ภาษาเวียดนาม"
+msgstr ""
 
 #: InvenTree/locales.py:49
 msgid "Chinese (Simplified)"
@@ -345,7 +345,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
 msgid "Email"
-msgstr "อีเมล"
+msgstr ""
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
@@ -357,7 +357,7 @@ msgstr ""
 
 #: InvenTree/models.py:168
 msgid "Plugin Metadata"
-msgstr "ข้อมูลเมตาของปลั๊กอิน"
+msgstr ""
 
 #: InvenTree/models.py:169
 msgid "JSON metadata field, for use by external plugins"
@@ -389,7 +389,7 @@ msgstr ""
 
 #: InvenTree/models.py:537
 msgid "Missing file"
-msgstr "ไม่พบไฟล์"
+msgstr ""
 
 #: InvenTree/models.py:538
 msgid "Missing external link"
@@ -399,11 +399,11 @@ msgstr ""
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
-msgstr "ไฟล์แนบ"
+msgstr ""
 
 #: InvenTree/models.py:560
 msgid "Select file to attach"
-msgstr "เลือกไฟล์ที่ต้องการแนบ"
+msgstr ""
 
 #: InvenTree/models.py:568 common/models.py:3021 company/models.py:145
 #: company/models.py:452 company/models.py:509 company/models.py:818
@@ -420,7 +420,7 @@ msgstr "เลือกไฟล์ที่ต้องการแนบ"
 #: templates/js/translated/sales_order.js:1056
 #: templates/js/translated/sales_order.js:1987
 msgid "Link"
-msgstr "ลิงก์"
+msgstr ""
 
 #: InvenTree/models.py:569 build/models.py:315 part/models.py:920
 #: stock/models.py:822
@@ -430,11 +430,11 @@ msgstr ""
 #: InvenTree/models.py:575 templates/js/translated/attachment.js:120
 #: templates/js/translated/attachment.js:341
 msgid "Comment"
-msgstr "ความคิดเห็น"
+msgstr ""
 
 #: InvenTree/models.py:576
 msgid "File comment"
-msgstr "ความเห็นของไฟล์"
+msgstr ""
 
 #: InvenTree/models.py:584 InvenTree/models.py:585 common/models.py:2497
 #: common/models.py:2498 common/models.py:2722 common/models.py:2723
@@ -444,15 +444,15 @@ msgstr "ความเห็นของไฟล์"
 #: report/templates/report/inventree_test_report_base.html:105
 #: templates/js/translated/stock.js:3036 users/models.py:100
 msgid "User"
-msgstr "ผู้ใช้งาน"
+msgstr ""
 
 #: InvenTree/models.py:589
 msgid "upload date"
-msgstr "วันที่อัปโหลด"
+msgstr ""
 
 #: InvenTree/models.py:611
 msgid "Filename must not be empty"
-msgstr "จำเป็นต้องใส่ชื่อไฟล์"
+msgstr ""
 
 #: InvenTree/models.py:622
 msgid "Invalid attachment directory"
@@ -461,11 +461,11 @@ msgstr ""
 #: InvenTree/models.py:652
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr "ชื่อไฟล์ห้ามมีตัวอักษรต้องห้าม '{c}'"
+msgstr ""
 
 #: InvenTree/models.py:655
 msgid "Filename missing extension"
-msgstr "ไม่พบนามสกุลของไฟล์"
+msgstr ""
 
 #: InvenTree/models.py:664
 msgid "Attachment with this filename already exists"
@@ -501,7 +501,7 @@ msgstr ""
 #: templates/js/translated/part.js:1474 templates/js/translated/part.js:1610
 #: templates/js/translated/part.js:2749 templates/js/translated/stock.js:2716
 msgid "Name"
-msgstr "ชื่อ"
+msgstr ""
 
 #: InvenTree/models.py:900 build/models.py:188
 #: build/templates/build/detail.html:24 common/models.py:136
@@ -538,7 +538,7 @@ msgstr "ชื่อ"
 #: templates/js/translated/stock.js:1512 templates/js/translated/stock.js:2057
 #: templates/js/translated/stock.js:2748 templates/js/translated/stock.js:2831
 msgid "Description"
-msgstr "คำอธิบาย"
+msgstr ""
 
 #: InvenTree/models.py:901 stock/models.py:83
 msgid "Description (optional)"
@@ -559,7 +559,7 @@ msgstr ""
 
 #: InvenTree/models.py:1051
 msgid "Barcode Data"
-msgstr "ข้อมูลบาร์โค้ด"
+msgstr ""
 
 #: InvenTree/models.py:1052
 msgid "Third party barcode data"
@@ -575,11 +575,11 @@ msgstr ""
 
 #: InvenTree/models.py:1112
 msgid "Existing barcode found"
-msgstr "บาร์โค้ดนี้มีในระบบแล้ว"
+msgstr ""
 
 #: InvenTree/models.py:1155
 msgid "Server Error"
-msgstr "เกิดข้อผิดพลาดที่เซิร์ฟเวอร์"
+msgstr ""
 
 #: InvenTree/models.py:1156
 msgid "An error has been logged by the server."
@@ -587,14 +587,14 @@ msgstr ""
 
 #: InvenTree/serializers.py:62 part/models.py:4166
 msgid "Must be a valid number"
-msgstr "ต้องเป็นตัวเลข"
+msgstr ""
 
 #: InvenTree/serializers.py:99 company/models.py:178
 #: company/templates/company/company_base.html:106 part/models.py:2993
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr "สกุลเงิน"
+msgstr ""
 
 #: InvenTree/serializers.py:102
 msgid "Select currency from available options"
@@ -618,11 +618,11 @@ msgstr ""
 
 #: InvenTree/serializers.py:481
 msgid "Welcome to InvenTree"
-msgstr "ยินดีต้อนรับเข้าสู่ Inventree"
+msgstr ""
 
 #: InvenTree/serializers.py:542
 msgid "Filename"
-msgstr "ชื่อไฟล์"
+msgstr ""
 
 #: InvenTree/serializers.py:576
 msgid "Invalid value"
@@ -630,11 +630,11 @@ msgstr ""
 
 #: InvenTree/serializers.py:596
 msgid "Data File"
-msgstr "ไฟล์ข้อมูล"
+msgstr ""
 
 #: InvenTree/serializers.py:597
 msgid "Select data file for upload"
-msgstr "เลือกไฟล์ข้อมูลที่จะอัปโหลด"
+msgstr ""
 
 #: InvenTree/serializers.py:614
 msgid "Unsupported file type"
@@ -642,7 +642,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:620
 msgid "File is too large"
-msgstr "ไฟล์มีขนาดใหญ่เกินไป"
+msgstr ""
 
 #: InvenTree/serializers.py:641
 msgid "No columns found in file"
@@ -699,7 +699,7 @@ msgstr ""
 #: InvenTree/status_codes.py:182 generic/states/tests.py:17
 #: templates/js/translated/table_filters.js:598
 msgid "Pending"
-msgstr "อยู่ระหว่างดำเนินการ"
+msgstr ""
 
 #: InvenTree/status_codes.py:13 generic/states/tests.py:18
 msgid "Placed"
@@ -710,22 +710,22 @@ msgstr ""
 #: order/templates/order/order_base.html:158
 #: order/templates/order/sales_order_base.html:161
 msgid "Complete"
-msgstr "สำเร็จแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:15 InvenTree/status_codes.py:44
 #: InvenTree/status_codes.py:150 InvenTree/status_codes.py:170
 msgid "Cancelled"
-msgstr "ยกเลิกแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:16 InvenTree/status_codes.py:45
 #: InvenTree/status_codes.py:67
 msgid "Lost"
-msgstr "สูญหาย"
+msgstr ""
 
 #: InvenTree/status_codes.py:17 InvenTree/status_codes.py:46
 #: InvenTree/status_codes.py:73
 msgid "Returned"
-msgstr "ส่งคืนแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:40 InvenTree/status_codes.py:167
 msgid "In Progress"
@@ -736,11 +736,11 @@ msgstr ""
 #: templates/js/translated/sales_order.js:1644
 #: templates/js/translated/sales_order.js:1957
 msgid "Shipped"
-msgstr "จัดส่งแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "ตกลง"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -748,15 +748,15 @@ msgstr ""
 
 #: InvenTree/status_codes.py:64
 msgid "Damaged"
-msgstr "ได้รับความเสียหาย"
+msgstr ""
 
 #: InvenTree/status_codes.py:65
 msgid "Destroyed"
-msgstr "ทำลายแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:66
 msgid "Rejected"
-msgstr "ถูกปฏิเสธ"
+msgstr ""
 
 #: InvenTree/status_codes.py:70
 msgid "Quarantined"
@@ -776,27 +776,27 @@ msgstr ""
 
 #: InvenTree/status_codes.py:97
 msgid "Assigned serial number"
-msgstr "กำหนดหมายเลขซีเรียลแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:100
 msgid "Stock counted"
-msgstr "นับสต็อกแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:101
 msgid "Stock manually added"
-msgstr "เพิ่มสต็อกแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:102
 msgid "Stock manually removed"
-msgstr "ลบสต็อกแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:105
 msgid "Location changed"
-msgstr "เปลี่ยนสถานที่แล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr "อัพเดทสต็อกแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
@@ -860,7 +860,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:141 templates/js/translated/table_filters.js:375
 msgid "Sent to customer"
-msgstr "จัดส่งให้ลูกค้าแล้ว"
+msgstr ""
 
 #: InvenTree/status_codes.py:142
 msgid "Returned from customer"
@@ -916,27 +916,27 @@ msgstr ""
 
 #: InvenTree/views.py:400 templates/InvenTree/settings/user.html:23
 msgid "Edit User Information"
-msgstr "แก้ไขข้อมูลสมาชิก"
+msgstr ""
 
 #: InvenTree/views.py:412 templates/InvenTree/settings/user.html:20
 msgid "Set Password"
-msgstr "ตั้งรหัสผ่าน"
+msgstr ""
 
 #: InvenTree/views.py:434
 msgid "Password fields must match"
-msgstr "รหัสผ่านต้องตรงกัน"
+msgstr ""
 
 #: InvenTree/views.py:442
 msgid "Wrong password provided"
-msgstr "ป้อนรหัสผ่านไม่ถูกต้อง"
+msgstr ""
 
 #: InvenTree/views.py:650 templates/navbar.html:160
 msgid "System Information"
-msgstr "ข้อมูลระบบ"
+msgstr ""
 
 #: InvenTree/views.py:657 templates/navbar.html:171
 msgid "About InvenTree"
-msgstr "เกี่ยวกับ Inventree"
+msgstr ""
 
 #: build/api.py:237
 msgid "Build must be cancelled before it can be deleted"
@@ -1190,7 +1190,7 @@ msgstr ""
 
 #: build/models.py:299 templates/js/translated/build.js:2205
 msgid "Issued by"
-msgstr "ออกโดย"
+msgstr ""
 
 #: build/models.py:300
 msgid "User who issued this build order"
@@ -1276,7 +1276,7 @@ msgstr ""
 #: order/serializers.py:572 part/serializers.py:1460 part/serializers.py:1835
 #: stock/models.py:665 stock/models.py:1477 stock/serializers.py:472
 msgid "Quantity must be greater than zero"
-msgstr "จำนวนต้องมีค่ามากกว่า 0"
+msgstr ""
 
 #: build/models.py:889 build/serializers.py:228
 msgid "Quantity cannot be greater than the output quantity"
@@ -1437,7 +1437,7 @@ msgstr ""
 #: stock/serializers.py:483 templates/js/translated/purchase_order.js:1153
 #: templates/js/translated/stock.js:367 templates/js/translated/stock.js:565
 msgid "Serial Numbers"
-msgstr "Serial Numbers"
+msgstr ""
 
 #: build/serializers.py:288
 msgid "Enter serial numbers for build outputs"
@@ -1477,7 +1477,7 @@ msgstr ""
 #: templates/js/translated/stock.js:1060 templates/js/translated/stock.js:2200
 #: templates/js/translated/stock.js:2871
 msgid "Location"
-msgstr "สถานที่"
+msgstr ""
 
 #: build/serializers.py:427
 msgid "Stock location for scrapped outputs"
@@ -1512,7 +1512,7 @@ msgstr ""
 #: templates/js/translated/stock.js:2175 templates/js/translated/stock.js:2995
 #: templates/js/translated/stock.js:3120
 msgid "Status"
-msgstr "สถานะ"
+msgstr ""
 
 #: build/serializers.py:511
 msgid "Accept Incomplete Allocation"
@@ -1952,7 +1952,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:202
 #: templates/js/translated/table_filters.js:689
 msgid "Completed"
-msgstr "สำเร็จแล้ว"
+msgstr ""
 
 #: build/templates/build/detail.html:153
 msgid "Build not complete"
@@ -5929,7 +5929,7 @@ msgstr ""
 #: templates/js/translated/part.js:2804 templates/js/translated/search.js:130
 #: templates/navbar.html:24 users/models.py:192
 msgid "Parts"
-msgstr "ชิ้นส่วน"
+msgstr ""
 
 #: part/admin.py:384
 msgid "BOM Level"
@@ -14181,3 +14181,4 @@ msgstr ""
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr ""
+
