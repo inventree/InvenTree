@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-03 01:39+0000\n"
-"PO-Revision-Date: 2024-03-19 11:51\n"
+"PO-Revision-Date: 2024-04-03 01:56\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -14,16 +14,16 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: bg\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:198
 msgid "API endpoint not found"
-msgstr "Не е намерена крайна точка на API"
+msgstr ""
 
 #: InvenTree/api.py:462
 msgid "User does not have permission to view this model"
-msgstr "Потребителя няма нужното разрешение, за да вижда този модел"
+msgstr ""
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
@@ -32,29 +32,29 @@ msgstr ""
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr "Не е зададена стойност"
+msgstr ""
 
 #: InvenTree/conversion.py:204
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr "Преобразуването на {original} в {unit} не беше успешно"
+msgstr ""
 
 #: InvenTree/conversion.py:206
 msgid "Invalid quantity supplied"
-msgstr "Зададено е недопустимо количество"
+msgstr ""
 
 #: InvenTree/conversion.py:220
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr "Зададено е недопустимо количество ({exc})"
+msgstr ""
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr "Подробности за грешката могат да се намерят в администраторския панел"
+msgstr ""
 
 #: InvenTree/fields.py:140
 msgid "Enter date"
-msgstr "Въведи дата"
+msgstr ""
 
 #: InvenTree/fields.py:209 InvenTree/models.py:1022 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
@@ -77,77 +77,77 @@ msgstr "Въведи дата"
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1533 templates/js/translated/stock.js:2427
 msgid "Notes"
-msgstr "Бележки"
+msgstr ""
 
 #: InvenTree/format.py:164
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "Значението '{name}' не отговаря на шаблона"
+msgstr ""
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
-msgstr "Въведеното значение не отговаря на задължителния шаблон: "
+msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr "Въведете парола"
+msgstr ""
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr "Въведи нова парола"
+msgstr ""
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr "Потвърди паролата"
+msgstr ""
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr "Потвърди нова парола"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr "Стара парола"
+msgstr ""
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr "Е-поща отново"
+msgstr ""
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr "Потвърждение на електронната поща"
+msgstr ""
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr "Трябва ла въведете една и съща електронна поща."
+msgstr ""
 
 #: InvenTree/forms.py:253 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr "Въведената основна електронна поща е невалидна."
+msgstr ""
 
 #: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
-msgstr "Въведеният домейн на електронната поща не е утвърден."
+msgstr ""
 
 #: InvenTree/forms.py:395
 msgid "Registration is disabled."
-msgstr "Регистрацията е деактивирана."
+msgstr ""
 
 #: InvenTree/helpers.py:525 order/models.py:541 order/models.py:743
 msgid "Invalid quantity provided"
-msgstr "Въведена е недопустима стойност"
+msgstr ""
 
 #: InvenTree/helpers.py:533
 msgid "Empty serial number string"
-msgstr "Липсва сериен номер"
+msgstr ""
 
 #: InvenTree/helpers.py:562
 msgid "Duplicate serial"
-msgstr "Повтарящ се сериен номер"
+msgstr ""
 
 #: InvenTree/helpers.py:594 InvenTree/helpers.py:637
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr "Невалиден диапазон от групи: {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:625
 #, python-brace-format
@@ -161,7 +161,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:691
 msgid "No serial numbers found"
-msgstr "Не са открити серийни номера"
+msgstr ""
 
 #: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
@@ -169,35 +169,35 @@ msgstr ""
 
 #: InvenTree/helpers.py:814
 msgid "Remove HTML tags from this value"
-msgstr "Премахнете HTML маркерите от тази стойност"
+msgstr ""
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr "Грешка при съединението"
+msgstr ""
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
-msgstr "Сървърът отговари с невалиден статусен код"
+msgstr ""
 
 #: InvenTree/helpers_model.py:158
 msgid "Exception occurred"
-msgstr "Възникна изключение"
+msgstr ""
 
 #: InvenTree/helpers_model.py:168
 msgid "Server responded with invalid Content-Length value"
-msgstr "Сървърът отговори с невалидна стойност за дължината на съдържанието (Content-Length)"
+msgstr ""
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr "Размерът на изображението е твърде голям"
+msgstr ""
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
-msgstr "Сваляното на изображение превиши максималния размер"
+msgstr ""
 
 #: InvenTree/helpers_model.py:188
 msgid "Remote server returned empty response"
-msgstr "Отдалеченият сървър върна празен отговор"
+msgstr ""
 
 #: InvenTree/helpers_model.py:196
 msgid "Supplied URL is not a valid image file"
@@ -253,23 +253,23 @@ msgstr ""
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr "Хинди"
+msgstr ""
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
-msgstr "Унгарски"
+msgstr ""
 
 #: InvenTree/locales.py:32
 msgid "Italian"
-msgstr "Италиански"
+msgstr ""
 
 #: InvenTree/locales.py:33
 msgid "Japanese"
-msgstr "Японски"
+msgstr ""
 
 #: InvenTree/locales.py:34
 msgid "Korean"
-msgstr "Корейски"
+msgstr ""
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
@@ -277,27 +277,27 @@ msgstr ""
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
-msgstr "Нидерландски"
+msgstr ""
 
 #: InvenTree/locales.py:37
 msgid "Norwegian"
-msgstr "Норвежки"
+msgstr ""
 
 #: InvenTree/locales.py:38
 msgid "Polish"
-msgstr "Полски"
+msgstr ""
 
 #: InvenTree/locales.py:39
 msgid "Portuguese"
-msgstr "Португалски"
+msgstr ""
 
 #: InvenTree/locales.py:40
 msgid "Portuguese (Brazilian)"
-msgstr "Португалски (Бразилия)"
+msgstr ""
 
 #: InvenTree/locales.py:41
 msgid "Russian"
-msgstr "Руски"
+msgstr ""
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
@@ -305,7 +305,7 @@ msgstr ""
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
-msgstr "Словенски"
+msgstr ""
 
 #: InvenTree/locales.py:44
 msgid "Serbian"
@@ -313,27 +313,27 @@ msgstr ""
 
 #: InvenTree/locales.py:45
 msgid "Swedish"
-msgstr "Шведски"
+msgstr ""
 
 #: InvenTree/locales.py:46
 msgid "Thai"
-msgstr "Тайландски"
+msgstr ""
 
 #: InvenTree/locales.py:47
 msgid "Turkish"
-msgstr "Турски"
+msgstr ""
 
 #: InvenTree/locales.py:48
 msgid "Vietnamese"
-msgstr "Виетнамски"
+msgstr ""
 
 #: InvenTree/locales.py:49
 msgid "Chinese (Simplified)"
-msgstr "Китайски (опростен)"
+msgstr ""
 
 #: InvenTree/locales.py:50
 msgid "Chinese (Traditional)"
-msgstr "Китайски (традиционен)"
+msgstr ""
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
@@ -444,7 +444,7 @@ msgstr ""
 #: report/templates/report/inventree_test_report_base.html:105
 #: templates/js/translated/stock.js:3036 users/models.py:100
 msgid "User"
-msgstr "Потребител"
+msgstr ""
 
 #: InvenTree/models.py:589
 msgid "upload date"
@@ -546,7 +546,7 @@ msgstr ""
 
 #: InvenTree/models.py:910
 msgid "parent"
-msgstr "родител"
+msgstr ""
 
 #: InvenTree/models.py:916 templates/js/translated/part.js:2794
 #: templates/js/translated/stock.js:2757
@@ -720,27 +720,27 @@ msgstr ""
 #: InvenTree/status_codes.py:16 InvenTree/status_codes.py:45
 #: InvenTree/status_codes.py:67
 msgid "Lost"
-msgstr "Изгубен"
+msgstr ""
 
 #: InvenTree/status_codes.py:17 InvenTree/status_codes.py:46
 #: InvenTree/status_codes.py:73
 msgid "Returned"
-msgstr "Върнат"
+msgstr ""
 
 #: InvenTree/status_codes.py:40 InvenTree/status_codes.py:167
 msgid "In Progress"
-msgstr "Изпълнява се"
+msgstr ""
 
 #: InvenTree/status_codes.py:43 order/models.py:1564
 #: templates/js/translated/sales_order.js:1523
 #: templates/js/translated/sales_order.js:1644
 #: templates/js/translated/sales_order.js:1957
 msgid "Shipped"
-msgstr "Изпратено"
+msgstr ""
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "Да"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -780,7 +780,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:100
 msgid "Stock counted"
-msgstr "Наличността е преброена"
+msgstr ""
 
 #: InvenTree/status_codes.py:101
 msgid "Stock manually added"
@@ -1098,7 +1098,7 @@ msgstr ""
 #: templates/js/translated/stock.js:2857 templates/js/translated/stock.js:3090
 #: templates/js/translated/stock.js:3236
 msgid "Part"
-msgstr "Част"
+msgstr ""
 
 #: build/models.py:213
 msgid "Select part to build"
@@ -6052,7 +6052,7 @@ msgstr ""
 #: part/bom.py:171 part/serializers.py:820
 #: templates/email/low_stock_notification.html:16
 msgid "Total Stock"
-msgstr "Цялостна наличност"
+msgstr ""
 
 #: part/forms.py:49
 msgid "Input quantity for price calculation"
@@ -7591,7 +7591,7 @@ msgstr ""
 #: templates/js/translated/part.js:2392 templates/js/translated/stock.js:1059
 #: templates/js/translated/stock.js:2069 templates/navbar.html:31
 msgid "Stock"
-msgstr "Наличност"
+msgstr ""
 
 #: part/templates/part/part_sidebar.html:30
 #: templates/InvenTree/settings/sidebar.html:39
@@ -7709,11 +7709,11 @@ msgstr ""
 #: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
 #: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
 msgid "No Stock"
-msgstr "Няма наличност"
+msgstr ""
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:120
 msgid "Low Stock"
-msgstr "Ниска наличност"
+msgstr ""
 
 #: part/templates/part/upload_bom.html:8
 msgid "Return to BOM"
@@ -8780,13 +8780,13 @@ msgstr ""
 #: stock/templates/stock/location.html:17
 #: stock/templates/stock/stock_app_base.html:8
 msgid "Stock Location"
-msgstr "Място в склада"
+msgstr ""
 
 #: stock/models.py:126 stock/templates/stock/location.html:179
 #: templates/InvenTree/search.html:166 templates/js/translated/search.js:178
 #: users/models.py:194
 msgid "Stock Locations"
-msgstr "Места в склада"
+msgstr ""
 
 #: stock/models.py:158 stock/models.py:935
 #: stock/templates/stock/item_base.html:247
@@ -14181,3 +14181,4 @@ msgstr ""
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr ""
+
