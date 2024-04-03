@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-03 01:39+0000\n"
-"PO-Revision-Date: 2024-03-19 11:51\n"
+"PO-Revision-Date: 2024-04-03 01:56\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -14,16 +14,16 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: cs\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:198
 msgid "API endpoint not found"
-msgstr "API endpoint nebyl nalezen"
+msgstr ""
 
 #: InvenTree/api.py:462
 msgid "User does not have permission to view this model"
-msgstr "Uživatel nemá právo zobrazit tento model"
+msgstr ""
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
@@ -32,29 +32,29 @@ msgstr ""
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr "Není k dispozici žádná hodnota"
+msgstr ""
 
 #: InvenTree/conversion.py:204
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr "Nelze převést {original} na {unit}"
+msgstr ""
 
 #: InvenTree/conversion.py:206
 msgid "Invalid quantity supplied"
-msgstr "Vyplněno neplatné množství"
+msgstr ""
 
 #: InvenTree/conversion.py:220
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr "Vyplněno neplatné množství ({exc})"
+msgstr ""
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr "Podrobnosti o chybě lze nalézt v panelu administrace"
+msgstr ""
 
 #: InvenTree/fields.py:140
 msgid "Enter date"
-msgstr "Zadejte datum"
+msgstr ""
 
 #: InvenTree/fields.py:209 InvenTree/models.py:1022 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
@@ -77,199 +77,199 @@ msgstr "Zadejte datum"
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1533 templates/js/translated/stock.js:2427
 msgid "Notes"
-msgstr "Poznámky"
+msgstr ""
 
 #: InvenTree/format.py:164
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "Hodnota '{name}' neodpovídá formátu vzoru"
+msgstr ""
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
-msgstr "Poskytnutá hodnota neodpovídá požadovanému vzoru: "
+msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr "Zadejte heslo"
+msgstr ""
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr "Zadejte nové heslo"
+msgstr ""
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr "Potvrďte heslo"
+msgstr ""
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr "Potvrďte nové heslo"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr "Původní heslo"
+msgstr ""
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr "Email (znovu)"
+msgstr ""
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr "Potvrzení emailové adresy"
+msgstr ""
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr "Pokaždé musíte zadat stejný email."
+msgstr ""
 
 #: InvenTree/forms.py:253 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr "Zadaná primární e-mailová adresa je neplatná."
+msgstr ""
 
 #: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
-msgstr "Zadaná e-mailová doména není povolena."
+msgstr ""
 
 #: InvenTree/forms.py:395
 msgid "Registration is disabled."
-msgstr "Registrace vypnuta."
+msgstr ""
 
 #: InvenTree/helpers.py:525 order/models.py:541 order/models.py:743
 msgid "Invalid quantity provided"
-msgstr "Vyplněno neplatné množství"
+msgstr ""
 
 #: InvenTree/helpers.py:533
 msgid "Empty serial number string"
-msgstr "Nevyplněné výrobní číslo"
+msgstr ""
 
 #: InvenTree/helpers.py:562
 msgid "Duplicate serial"
-msgstr "Duplicitní výrobní číslo"
+msgstr ""
 
 #: InvenTree/helpers.py:594 InvenTree/helpers.py:637
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr "Neplatný rozsah skupiny: {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:625
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr "Rozsah skupiny {group} překračuje povolené množství ({expected_quantity})"
+msgstr ""
 
 #: InvenTree/helpers.py:655 InvenTree/helpers.py:662 InvenTree/helpers.py:681
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr "Neplatná sekvence skupiny: {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:691
 msgid "No serial numbers found"
-msgstr "Nenalezena žádná výrobní čísla"
+msgstr ""
 
 #: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "Počet jedinečných sériových čísel ({len(serials)}) musí odpovídat množství ({expected_quantity})"
+msgstr ""
 
 #: InvenTree/helpers.py:814
 msgid "Remove HTML tags from this value"
-msgstr "Odstranit HTML tagy z této hodnoty"
+msgstr ""
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr "Chyba spojení"
+msgstr ""
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
-msgstr "Server odpověděl s neplatným stavovým kódem"
+msgstr ""
 
 #: InvenTree/helpers_model.py:158
 msgid "Exception occurred"
-msgstr "Došlo k výjimce"
+msgstr ""
 
 #: InvenTree/helpers_model.py:168
 msgid "Server responded with invalid Content-Length value"
-msgstr "Server odpověděl s neplatnou hodnotou Content-Length"
+msgstr ""
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr "Velikost obrázku je příliš velká"
+msgstr ""
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
-msgstr "Stahování obrázku překročilo maximální velikost"
+msgstr ""
 
 #: InvenTree/helpers_model.py:188
 msgid "Remote server returned empty response"
-msgstr "Vzdálený server vrátil prázdnou odpověď"
+msgstr ""
 
 #: InvenTree/helpers_model.py:196
 msgid "Supplied URL is not a valid image file"
-msgstr "Zadaná URL adresa není platný soubor obrázku"
+msgstr ""
 
 #: InvenTree/locales.py:18
 msgid "Bulgarian"
-msgstr "Bulharština"
+msgstr ""
 
 #: InvenTree/locales.py:19
 msgid "Czech"
-msgstr "Čeština"
+msgstr ""
 
 #: InvenTree/locales.py:20
 msgid "Danish"
-msgstr "Dánština"
+msgstr ""
 
 #: InvenTree/locales.py:21
 msgid "German"
-msgstr "Němčina"
+msgstr ""
 
 #: InvenTree/locales.py:22
 msgid "Greek"
-msgstr "Řečtina"
+msgstr ""
 
 #: InvenTree/locales.py:23
 msgid "English"
-msgstr "Angličtina"
+msgstr ""
 
 #: InvenTree/locales.py:24
 msgid "Spanish"
-msgstr "Španělština"
+msgstr ""
 
 #: InvenTree/locales.py:25
 msgid "Spanish (Mexican)"
-msgstr "Španělština (Mexiko)"
+msgstr ""
 
 #: InvenTree/locales.py:26
 msgid "Farsi / Persian"
-msgstr "Farsi / Perština"
+msgstr ""
 
 #: InvenTree/locales.py:27
 msgid "Finnish"
-msgstr "Finština"
+msgstr ""
 
 #: InvenTree/locales.py:28
 msgid "French"
-msgstr "Francouzština"
+msgstr ""
 
 #: InvenTree/locales.py:29
 msgid "Hebrew"
-msgstr "Hebrejština"
+msgstr ""
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr "Hindština"
+msgstr ""
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
-msgstr "Maďarština"
+msgstr ""
 
 #: InvenTree/locales.py:32
 msgid "Italian"
-msgstr "Italština"
+msgstr ""
 
 #: InvenTree/locales.py:33
 msgid "Japanese"
-msgstr "Japonština"
+msgstr ""
 
 #: InvenTree/locales.py:34
 msgid "Korean"
-msgstr "Korejština"
+msgstr ""
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
@@ -277,27 +277,27 @@ msgstr ""
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
-msgstr "Nizozemština"
+msgstr ""
 
 #: InvenTree/locales.py:37
 msgid "Norwegian"
-msgstr "Norština"
+msgstr ""
 
 #: InvenTree/locales.py:38
 msgid "Polish"
-msgstr "Polština"
+msgstr ""
 
 #: InvenTree/locales.py:39
 msgid "Portuguese"
-msgstr "Portugalština"
+msgstr ""
 
 #: InvenTree/locales.py:40
 msgid "Portuguese (Brazilian)"
-msgstr "Portugalština (Brazilská)"
+msgstr ""
 
 #: InvenTree/locales.py:41
 msgid "Russian"
-msgstr "Ruština"
+msgstr ""
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
@@ -305,47 +305,47 @@ msgstr ""
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
-msgstr "Slovinština"
+msgstr ""
 
 #: InvenTree/locales.py:44
 msgid "Serbian"
-msgstr "Srbština"
+msgstr ""
 
 #: InvenTree/locales.py:45
 msgid "Swedish"
-msgstr "Švédština"
+msgstr ""
 
 #: InvenTree/locales.py:46
 msgid "Thai"
-msgstr "Thajština"
+msgstr ""
 
 #: InvenTree/locales.py:47
 msgid "Turkish"
-msgstr "Turečtina"
+msgstr ""
 
 #: InvenTree/locales.py:48
 msgid "Vietnamese"
-msgstr "Vietnamština"
+msgstr ""
 
 #: InvenTree/locales.py:49
 msgid "Chinese (Simplified)"
-msgstr "Čínština (zjednodušená)"
+msgstr ""
 
 #: InvenTree/locales.py:50
 msgid "Chinese (Traditional)"
-msgstr "Čínština (tradiční)"
+msgstr ""
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr "[{site_name}] Přihlásit se do aplikace"
+msgstr ""
 
 #: InvenTree/magic_login.py:38 company/models.py:132
 #: company/templates/company/company_base.html:132
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
 msgid "Email"
-msgstr "E-mail"
+msgstr ""
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
@@ -353,57 +353,57 @@ msgstr ""
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
-msgstr "Metadata musí být objekt python dict"
+msgstr ""
 
 #: InvenTree/models.py:168
 msgid "Plugin Metadata"
-msgstr "Metadata pluginu"
+msgstr ""
 
 #: InvenTree/models.py:169
 msgid "JSON metadata field, for use by external plugins"
-msgstr "Pole metadat JSON pro použití externími pluginy"
+msgstr ""
 
 #: InvenTree/models.py:399
 msgid "Improperly formatted pattern"
-msgstr "Nesprávně naformátovaný vzor"
+msgstr ""
 
 #: InvenTree/models.py:406
 msgid "Unknown format key specified"
-msgstr "Neznámý formát klíče"
+msgstr ""
 
 #: InvenTree/models.py:412
 msgid "Missing required format key"
-msgstr "Chybí požadovaný klíč"
+msgstr ""
 
 #: InvenTree/models.py:423
 msgid "Reference field cannot be empty"
-msgstr "Referenční pole nemůže být prázdné"
+msgstr ""
 
 #: InvenTree/models.py:431
 msgid "Reference must match required pattern"
-msgstr "Referenční číslo musí odpovídat požadovanému vzoru"
+msgstr ""
 
 #: InvenTree/models.py:463
 msgid "Reference number is too large"
-msgstr "Referenční číslo je příliš velké"
+msgstr ""
 
 #: InvenTree/models.py:537
 msgid "Missing file"
-msgstr "Chybějící soubor"
+msgstr ""
 
 #: InvenTree/models.py:538
 msgid "Missing external link"
-msgstr "Chybějící externí odkaz"
+msgstr ""
 
 #: InvenTree/models.py:559 stock/models.py:2449
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
-msgstr "Příloha"
+msgstr ""
 
 #: InvenTree/models.py:560
 msgid "Select file to attach"
-msgstr "Vyberte soubor k přiložení"
+msgstr ""
 
 #: InvenTree/models.py:568 common/models.py:3021 company/models.py:145
 #: company/models.py:452 company/models.py:509 company/models.py:818
@@ -420,21 +420,21 @@ msgstr "Vyberte soubor k přiložení"
 #: templates/js/translated/sales_order.js:1056
 #: templates/js/translated/sales_order.js:1987
 msgid "Link"
-msgstr "Odkaz"
+msgstr ""
 
 #: InvenTree/models.py:569 build/models.py:315 part/models.py:920
 #: stock/models.py:822
 msgid "Link to external URL"
-msgstr "Odkaz na externí URL"
+msgstr ""
 
 #: InvenTree/models.py:575 templates/js/translated/attachment.js:120
 #: templates/js/translated/attachment.js:341
 msgid "Comment"
-msgstr "Komentář"
+msgstr ""
 
 #: InvenTree/models.py:576
 msgid "File comment"
-msgstr "Komentář k souboru"
+msgstr ""
 
 #: InvenTree/models.py:584 InvenTree/models.py:585 common/models.py:2497
 #: common/models.py:2498 common/models.py:2722 common/models.py:2723
@@ -444,44 +444,44 @@ msgstr "Komentář k souboru"
 #: report/templates/report/inventree_test_report_base.html:105
 #: templates/js/translated/stock.js:3036 users/models.py:100
 msgid "User"
-msgstr "Uživatel"
+msgstr ""
 
 #: InvenTree/models.py:589
 msgid "upload date"
-msgstr "datum přidání"
+msgstr ""
 
 #: InvenTree/models.py:611
 msgid "Filename must not be empty"
-msgstr "Název souboru nesmí být prázdný"
+msgstr ""
 
 #: InvenTree/models.py:622
 msgid "Invalid attachment directory"
-msgstr "Neplatný adresář přílohy"
+msgstr ""
 
 #: InvenTree/models.py:652
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr "Název souboru obsahuje nepovolený znak '{c}'"
+msgstr ""
 
 #: InvenTree/models.py:655
 msgid "Filename missing extension"
-msgstr "Chybějící přípona souboru"
+msgstr ""
 
 #: InvenTree/models.py:664
 msgid "Attachment with this filename already exists"
-msgstr "Příloha s tímto názvem již existuje"
+msgstr ""
 
 #: InvenTree/models.py:671
 msgid "Error renaming file"
-msgstr "Chyba při přejmenování souboru"
+msgstr ""
 
 #: InvenTree/models.py:847
 msgid "Duplicate names cannot exist under the same parent"
-msgstr "Duplicitní názvy nemohou existovat pod stejným nadřazeným názvem"
+msgstr ""
 
 #: InvenTree/models.py:864
 msgid "Invalid choice"
-msgstr "Neplatný výběr"
+msgstr ""
 
 #: InvenTree/models.py:894 common/models.py:2709 common/models.py:3107
 #: common/serializers.py:370 company/models.py:608 label/models.py:120
@@ -501,7 +501,7 @@ msgstr "Neplatný výběr"
 #: templates/js/translated/part.js:1474 templates/js/translated/part.js:1610
 #: templates/js/translated/part.js:2749 templates/js/translated/stock.js:2716
 msgid "Name"
-msgstr "Název"
+msgstr ""
 
 #: InvenTree/models.py:900 build/models.py:188
 #: build/templates/build/detail.html:24 common/models.py:136
@@ -538,416 +538,416 @@ msgstr "Název"
 #: templates/js/translated/stock.js:1512 templates/js/translated/stock.js:2057
 #: templates/js/translated/stock.js:2748 templates/js/translated/stock.js:2831
 msgid "Description"
-msgstr "Popis"
+msgstr ""
 
 #: InvenTree/models.py:901 stock/models.py:83
 msgid "Description (optional)"
-msgstr "Popis (volitelně)"
+msgstr ""
 
 #: InvenTree/models.py:910
 msgid "parent"
-msgstr "nadřazený"
+msgstr ""
 
 #: InvenTree/models.py:916 templates/js/translated/part.js:2794
 #: templates/js/translated/stock.js:2757
 msgid "Path"
-msgstr "Cesta"
+msgstr ""
 
 #: InvenTree/models.py:1022
 msgid "Markdown notes (optional)"
-msgstr "Poznámky (volitelné)"
+msgstr ""
 
 #: InvenTree/models.py:1051
 msgid "Barcode Data"
-msgstr "Data čárového kódu"
+msgstr ""
 
 #: InvenTree/models.py:1052
 msgid "Third party barcode data"
-msgstr "Data čárového kódu třetí strany"
+msgstr ""
 
 #: InvenTree/models.py:1058
 msgid "Barcode Hash"
-msgstr "Hash čárového kódu"
+msgstr ""
 
 #: InvenTree/models.py:1059
 msgid "Unique hash of barcode data"
-msgstr "Jedinečný hash dat čárového kódu"
+msgstr ""
 
 #: InvenTree/models.py:1112
 msgid "Existing barcode found"
-msgstr "Nalezen existující čárový kód"
+msgstr ""
 
 #: InvenTree/models.py:1155
 msgid "Server Error"
-msgstr "Chyba serveru"
+msgstr ""
 
 #: InvenTree/models.py:1156
 msgid "An error has been logged by the server."
-msgstr "Server zaznamenal chybu."
+msgstr ""
 
 #: InvenTree/serializers.py:62 part/models.py:4166
 msgid "Must be a valid number"
-msgstr "Musí být platné číslo"
+msgstr ""
 
 #: InvenTree/serializers.py:99 company/models.py:178
 #: company/templates/company/company_base.html:106 part/models.py:2993
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr "Měna"
+msgstr ""
 
 #: InvenTree/serializers.py:102
 msgid "Select currency from available options"
-msgstr "Vyberte měnu z dostupných možností"
+msgstr ""
 
 #: InvenTree/serializers.py:441
 msgid "You do not have permission to change this user role."
-msgstr "Nemáte oprávnění měnit tuto uživatelskou roli."
+msgstr ""
 
 #: InvenTree/serializers.py:453
 msgid "Only superusers can create new users"
-msgstr "Pouze superuživatelé mohou vytvářet nové uživatele"
+msgstr ""
 
 #: InvenTree/serializers.py:472
 msgid "Your account has been created."
-msgstr "Váš účet byl vytvořen."
+msgstr ""
 
 #: InvenTree/serializers.py:474
 msgid "Please use the password reset function to login"
-msgstr "Pro přihlášení použijte funkci obnovení hesla"
+msgstr ""
 
 #: InvenTree/serializers.py:481
 msgid "Welcome to InvenTree"
-msgstr "Vítejte v InvenTree"
+msgstr ""
 
 #: InvenTree/serializers.py:542
 msgid "Filename"
-msgstr "Název souboru"
+msgstr ""
 
 #: InvenTree/serializers.py:576
 msgid "Invalid value"
-msgstr "Neplatná hodnota"
+msgstr ""
 
 #: InvenTree/serializers.py:596
 msgid "Data File"
-msgstr "Datový soubor"
+msgstr ""
 
 #: InvenTree/serializers.py:597
 msgid "Select data file for upload"
-msgstr "Vyberte datový soubor k nahrání"
+msgstr ""
 
 #: InvenTree/serializers.py:614
 msgid "Unsupported file type"
-msgstr "Nepodporovaný typ souboru"
+msgstr ""
 
 #: InvenTree/serializers.py:620
 msgid "File is too large"
-msgstr "Soubor je příliš velký"
+msgstr ""
 
 #: InvenTree/serializers.py:641
 msgid "No columns found in file"
-msgstr "V souboru nebyly nalezeny žádné sloupce"
+msgstr ""
 
 #: InvenTree/serializers.py:644
 msgid "No data rows found in file"
-msgstr "V souboru nebyly nalezeny žádné řádky s daty"
+msgstr ""
 
 #: InvenTree/serializers.py:757
 msgid "No data rows provided"
-msgstr "Nebyly zadány žádné řádky s daty"
+msgstr ""
 
 #: InvenTree/serializers.py:760
 msgid "No data columns supplied"
-msgstr "Nebyly zadány žádné sloupce s daty"
+msgstr ""
 
 #: InvenTree/serializers.py:827
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr "Chybí povinný sloupec: '{name}'"
+msgstr ""
 
 #: InvenTree/serializers.py:836
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr "Duplicitní sloupec: '{col}'"
+msgstr ""
 
 #: InvenTree/serializers.py:859
 msgid "Remote Image"
-msgstr "Vzdálený obraz"
+msgstr ""
 
 #: InvenTree/serializers.py:860
 msgid "URL of remote image file"
-msgstr "URL souboru vzdáleného obrázku"
+msgstr ""
 
 #: InvenTree/serializers.py:878
 msgid "Downloading images from remote URL is not enabled"
-msgstr "Stahování obrázků ze vzdálené URL není povoleno"
+msgstr ""
 
 #: InvenTree/status.py:66 part/serializers.py:1156
 msgid "Background worker check failed"
-msgstr "Kontrola procesů na pozadí se nezdařila"
+msgstr ""
 
 #: InvenTree/status.py:70
 msgid "Email backend not configured"
-msgstr "Email backend není nakonfigurován"
+msgstr ""
 
 #: InvenTree/status.py:73
 msgid "InvenTree system health checks failed"
-msgstr "Kontroly zdraví systému InvenTree selhaly"
+msgstr ""
 
 #: InvenTree/status_codes.py:12 InvenTree/status_codes.py:37
 #: InvenTree/status_codes.py:148 InvenTree/status_codes.py:164
 #: InvenTree/status_codes.py:182 generic/states/tests.py:17
 #: templates/js/translated/table_filters.js:598
 msgid "Pending"
-msgstr "Nevyřízeno"
+msgstr ""
 
 #: InvenTree/status_codes.py:13 generic/states/tests.py:18
 msgid "Placed"
-msgstr "Umístěno"
+msgstr ""
 
 #: InvenTree/status_codes.py:14 InvenTree/status_codes.py:151
 #: InvenTree/status_codes.py:169 generic/states/tests.py:19
 #: order/templates/order/order_base.html:158
 #: order/templates/order/sales_order_base.html:161
 msgid "Complete"
-msgstr "Hotovo"
+msgstr ""
 
 #: InvenTree/status_codes.py:15 InvenTree/status_codes.py:44
 #: InvenTree/status_codes.py:150 InvenTree/status_codes.py:170
 msgid "Cancelled"
-msgstr "Zrušeno"
+msgstr ""
 
 #: InvenTree/status_codes.py:16 InvenTree/status_codes.py:45
 #: InvenTree/status_codes.py:67
 msgid "Lost"
-msgstr "Ztraceno"
+msgstr ""
 
 #: InvenTree/status_codes.py:17 InvenTree/status_codes.py:46
 #: InvenTree/status_codes.py:73
 msgid "Returned"
-msgstr "Vráceno"
+msgstr ""
 
 #: InvenTree/status_codes.py:40 InvenTree/status_codes.py:167
 msgid "In Progress"
-msgstr "Zpracovává se"
+msgstr ""
 
 #: InvenTree/status_codes.py:43 order/models.py:1564
 #: templates/js/translated/sales_order.js:1523
 #: templates/js/translated/sales_order.js:1644
 #: templates/js/translated/sales_order.js:1957
 msgid "Shipped"
-msgstr "Odesláno"
+msgstr ""
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
-msgstr "Vyžaduje pozornost"
+msgstr ""
 
 #: InvenTree/status_codes.py:64
 msgid "Damaged"
-msgstr "Poškozeno"
+msgstr ""
 
 #: InvenTree/status_codes.py:65
 msgid "Destroyed"
-msgstr "Zničeno"
+msgstr ""
 
 #: InvenTree/status_codes.py:66
 msgid "Rejected"
-msgstr "Odmítnuto"
+msgstr ""
 
 #: InvenTree/status_codes.py:70
 msgid "Quarantined"
-msgstr "V karanténě"
+msgstr ""
 
 #: InvenTree/status_codes.py:91
 msgid "Legacy stock tracking entry"
-msgstr "Původní položka sledování zásob"
+msgstr ""
 
 #: InvenTree/status_codes.py:93 templates/js/translated/stock.js:544
 msgid "Stock item created"
-msgstr "Položka zásob vytvořena"
+msgstr ""
 
 #: InvenTree/status_codes.py:96
 msgid "Edited stock item"
-msgstr "Položka zásob upravena"
+msgstr ""
 
 #: InvenTree/status_codes.py:97
 msgid "Assigned serial number"
-msgstr "Přiřazeno výrobní číslo"
+msgstr ""
 
 #: InvenTree/status_codes.py:100
 msgid "Stock counted"
-msgstr "Stav zásob sečten"
+msgstr ""
 
 #: InvenTree/status_codes.py:101
 msgid "Stock manually added"
-msgstr "Zásoba přidána ručně"
+msgstr ""
 
 #: InvenTree/status_codes.py:102
 msgid "Stock manually removed"
-msgstr "Zásoba odebrána ručně"
+msgstr ""
 
 #: InvenTree/status_codes.py:105
 msgid "Location changed"
-msgstr "Umístění změněno"
+msgstr ""
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr "Stav zásob byl aktualizován"
+msgstr ""
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
-msgstr "Nainstalováno do sestavy"
+msgstr ""
 
 #: InvenTree/status_codes.py:110
 msgid "Removed from assembly"
-msgstr "Odstraněno ze sestavy"
+msgstr ""
 
 #: InvenTree/status_codes.py:112
 msgid "Installed component item"
-msgstr "Instalovaná položka komponenty"
+msgstr ""
 
 #: InvenTree/status_codes.py:113
 msgid "Removed component item"
-msgstr "Odstraněná komponenta"
+msgstr ""
 
 #: InvenTree/status_codes.py:116
 msgid "Split from parent item"
-msgstr "Rozdělit od nadřazené položky"
+msgstr ""
 
 #: InvenTree/status_codes.py:117
 msgid "Split child item"
-msgstr "Rozdělit podřazený předmět"
+msgstr ""
 
 #: InvenTree/status_codes.py:120 templates/js/translated/stock.js:1855
 msgid "Merged stock items"
-msgstr "Sloučené položky zásob"
+msgstr ""
 
 #: InvenTree/status_codes.py:123
 msgid "Converted to variant"
-msgstr "Převedeno na variantu"
+msgstr ""
 
 #: InvenTree/status_codes.py:126
 msgid "Build order output created"
-msgstr "Výstup objednávky byl vytvořen"
+msgstr ""
 
 #: InvenTree/status_codes.py:127
 msgid "Build order output completed"
-msgstr "Výstup objednávky sestavení dokončen"
+msgstr ""
 
 #: InvenTree/status_codes.py:128
 msgid "Build order output rejected"
-msgstr "Výstup objednávky sestavení byl odmítnut"
+msgstr ""
 
 #: InvenTree/status_codes.py:129 templates/js/translated/stock.js:1761
 msgid "Consumed by build order"
-msgstr "Spotřebováno podle objednávky"
+msgstr ""
 
 #: InvenTree/status_codes.py:132
 msgid "Shipped against Sales Order"
-msgstr "Odesláno v souladu se zákaznickou objednávkou"
+msgstr ""
 
 #: InvenTree/status_codes.py:135
 msgid "Received against Purchase Order"
-msgstr "Přijato proti objednávce"
+msgstr ""
 
 #: InvenTree/status_codes.py:138
 msgid "Returned against Return Order"
-msgstr "Vráceno proti vratce"
+msgstr ""
 
 #: InvenTree/status_codes.py:141 templates/js/translated/table_filters.js:375
 msgid "Sent to customer"
-msgstr "Odesláno zákazníkovi"
+msgstr ""
 
 #: InvenTree/status_codes.py:142
 msgid "Returned from customer"
-msgstr "Vráceno od zákazníka"
+msgstr ""
 
 #: InvenTree/status_codes.py:149
 msgid "Production"
-msgstr "Výroba"
+msgstr ""
 
 #: InvenTree/status_codes.py:185
 msgid "Return"
-msgstr "Vrátit zpět"
+msgstr ""
 
 #: InvenTree/status_codes.py:188
 msgid "Repair"
-msgstr "Oprava"
+msgstr ""
 
 #: InvenTree/status_codes.py:191
 msgid "Replace"
-msgstr "Náhrada"
+msgstr ""
 
 #: InvenTree/status_codes.py:194
 msgid "Refund"
-msgstr "Vrácení peněz"
+msgstr ""
 
 #: InvenTree/status_codes.py:197
 msgid "Reject"
-msgstr "Odmítnout"
+msgstr ""
 
 #: InvenTree/templatetags/inventree_extras.py:183
 msgid "Unknown database"
-msgstr "Neznámá databáze"
+msgstr ""
 
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
-msgstr "Neplatná fyzikální jednotka"
+msgstr ""
 
 #: InvenTree/validators.py:39
 msgid "Not a valid currency code"
-msgstr "Neplatný kód měny"
+msgstr ""
 
 #: InvenTree/validators.py:121 InvenTree/validators.py:137
 msgid "Overage value must not be negative"
-msgstr "Přidaná hodnota nesmí být záporná"
+msgstr ""
 
 #: InvenTree/validators.py:139
 msgid "Overage must not exceed 100%"
-msgstr "Nesmí přesáhnout 100%"
+msgstr ""
 
 #: InvenTree/validators.py:145
 msgid "Invalid value for overage"
-msgstr "Neplatná hodnota překročení"
+msgstr ""
 
 #: InvenTree/views.py:400 templates/InvenTree/settings/user.html:23
 msgid "Edit User Information"
-msgstr "Upravit informace o uživateli"
+msgstr ""
 
 #: InvenTree/views.py:412 templates/InvenTree/settings/user.html:20
 msgid "Set Password"
-msgstr "Nastavit heslo"
+msgstr ""
 
 #: InvenTree/views.py:434
 msgid "Password fields must match"
-msgstr "Hesla se musí shodovat"
+msgstr ""
 
 #: InvenTree/views.py:442
 msgid "Wrong password provided"
-msgstr "Zadáno špatné heslo"
+msgstr ""
 
 #: InvenTree/views.py:650 templates/navbar.html:160
 msgid "System Information"
-msgstr "Informace o systému"
+msgstr ""
 
 #: InvenTree/views.py:657 templates/navbar.html:171
 msgid "About InvenTree"
-msgstr "O InvenTree"
+msgstr ""
 
 #: build/api.py:237
 msgid "Build must be cancelled before it can be deleted"
-msgstr "Sestavení musí být zrušeno před odstraněním"
+msgstr ""
 
 #: build/api.py:281 part/models.py:4044 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2521
 #: templates/js/translated/table_filters.js:190
 #: templates/js/translated/table_filters.js:583
 msgid "Consumable"
-msgstr "Spotřební materiál"
+msgstr ""
 
 #: build/api.py:282 part/models.py:4038 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:1001 templates/js/translated/bom.js:1028
@@ -956,19 +956,19 @@ msgstr "Spotřební materiál"
 #: templates/js/translated/table_filters.js:215
 #: templates/js/translated/table_filters.js:587
 msgid "Optional"
-msgstr "Volitelné"
+msgstr ""
 
 #: build/api.py:283 templates/js/translated/table_filters.js:408
 #: templates/js/translated/table_filters.js:579
 msgid "Tracked"
-msgstr "Sledováno"
+msgstr ""
 
 #: build/api.py:285 part/admin.py:144 templates/js/translated/build.js:1741
 #: templates/js/translated/build.js:2630
 #: templates/js/translated/sales_order.js:1929
 #: templates/js/translated/table_filters.js:571
 msgid "Allocated"
-msgstr "Přiděleno"
+msgstr ""
 
 #: build/api.py:293 company/models.py:890
 #: company/templates/company/supplier_part.html:114
@@ -982,7 +982,7 @@ msgstr "Přiděleno"
 #: templates/js/translated/table_filters.js:340
 #: templates/js/translated/table_filters.js:575
 msgid "Available"
-msgstr "Dostupné"
+msgstr ""
 
 #: build/models.py:74 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -991,7 +991,7 @@ msgstr "Dostupné"
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:972 templates/js/translated/stock.js:2892
 msgid "Build Order"
-msgstr "Vytvořit objednávku"
+msgstr ""
 
 #: build/models.py:75 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -1002,11 +1002,11 @@ msgstr "Vytvořit objednávku"
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:186 users/models.py:196
 msgid "Build Orders"
-msgstr "Vytvořené objednávky"
+msgstr ""
 
 #: build/models.py:116
 msgid "Invalid choice for parent build"
-msgstr "Neplatná volba nadřazeného sestavení"
+msgstr ""
 
 #: build/models.py:127 order/models.py:239
 msgid "Responsible user or group must be specified"
@@ -1014,11 +1014,11 @@ msgstr ""
 
 #: build/models.py:133
 msgid "Build order part cannot be changed"
-msgstr "Díly obědnávky sestavení nemohou být změněny"
+msgstr ""
 
 #: build/models.py:179
 msgid "Build Order Reference"
-msgstr "Referenční číslo objednávky"
+msgstr ""
 
 #: build/models.py:180 order/models.py:442 order/models.py:898
 #: order/models.py:1276 order/models.py:1996 part/admin.py:417
@@ -1034,20 +1034,20 @@ msgstr "Referenční číslo objednávky"
 #: templates/js/translated/return_order.js:729
 #: templates/js/translated/sales_order.js:1818
 msgid "Reference"
-msgstr "Reference"
+msgstr ""
 
 #: build/models.py:191
 msgid "Brief description of the build (optional)"
-msgstr "Stručný popis sestavení (nepovinné)"
+msgstr ""
 
 #: build/models.py:199 build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr "Nadřazená sestava"
+msgstr ""
 
 #: build/models.py:200
 msgid "BuildOrder to which this build is allocated"
-msgstr "Příkaz sestavení pro který je toto sestavení přiděleno"
+msgstr ""
 
 #: build/models.py:205 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:1044
@@ -1098,103 +1098,103 @@ msgstr "Příkaz sestavení pro který je toto sestavení přiděleno"
 #: templates/js/translated/stock.js:2857 templates/js/translated/stock.js:3090
 #: templates/js/translated/stock.js:3236
 msgid "Part"
-msgstr "Díl"
+msgstr ""
 
 #: build/models.py:213
 msgid "Select part to build"
-msgstr "Vyber téma, které chceš stavět"
+msgstr ""
 
 #: build/models.py:218
 msgid "Sales Order Reference"
-msgstr "Referenční číslo prodejní objednávky"
+msgstr ""
 
 #: build/models.py:222
 msgid "SalesOrder to which this build is allocated"
-msgstr "Prodejní příkaz, kterému je tato verze přidělena"
+msgstr ""
 
 #: build/models.py:227 build/serializers.py:964
 #: templates/js/translated/build.js:1728
 #: templates/js/translated/sales_order.js:1185
 msgid "Source Location"
-msgstr "Umístění lokace"
+msgstr ""
 
 #: build/models.py:231
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr "Vyberte lokaci, ze které chcete provést inventuru pro sestavu. (nechte prázdné, chcete-li provést inventuru z libovolné lokace)"
+msgstr ""
 
 #: build/models.py:236
 msgid "Destination Location"
-msgstr "Cílová lokace"
+msgstr ""
 
 #: build/models.py:240
 msgid "Select location where the completed items will be stored"
-msgstr "Vyberte lokaci, kde budou dokončené položky uloženy"
+msgstr ""
 
 #: build/models.py:244
 msgid "Build Quantity"
-msgstr "Množství sestav"
+msgstr ""
 
 #: build/models.py:247
 msgid "Number of stock items to build"
-msgstr "Počet skladových položek k sestavení"
+msgstr ""
 
 #: build/models.py:251
 msgid "Completed items"
-msgstr "Dokončené položky"
+msgstr ""
 
 #: build/models.py:253
 msgid "Number of stock items which have been completed"
-msgstr "Počet skladových položek, které byly dokončeny"
+msgstr ""
 
 #: build/models.py:257
 msgid "Build Status"
-msgstr "Stav sestavení"
+msgstr ""
 
 #: build/models.py:261
 msgid "Build status code"
-msgstr "Stavový kód sestavení"
+msgstr ""
 
 #: build/models.py:270 build/serializers.py:280 order/serializers.py:577
 #: stock/models.py:826 stock/serializers.py:1333
 #: templates/js/translated/purchase_order.js:1129
 msgid "Batch Code"
-msgstr "Kód dávky"
+msgstr ""
 
 #: build/models.py:274 build/serializers.py:281
 msgid "Batch code for this build output"
-msgstr "Dávkový kód pro tento výstup sestavení"
+msgstr ""
 
 #: build/models.py:277 order/models.py:304 part/models.py:1079
 #: part/templates/part/part_base.html:310
 #: templates/js/translated/return_order.js:339
 #: templates/js/translated/sales_order.js:827
 msgid "Creation Date"
-msgstr "Datum vytvoření"
+msgstr ""
 
 #: build/models.py:281
 msgid "Target completion date"
-msgstr "Cílové datum dokončení"
+msgstr ""
 
 #: build/models.py:282
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr "Cílové datum dokončení sestavení. Sestavení bude po tomto datu v prodlení."
+msgstr ""
 
 #: build/models.py:285 order/models.py:500 order/models.py:2041
 #: templates/js/translated/build.js:2245
 msgid "Completion Date"
-msgstr "Datum dokončení"
+msgstr ""
 
 #: build/models.py:291
 msgid "completed by"
-msgstr "dokončil"
+msgstr ""
 
 #: build/models.py:299 templates/js/translated/build.js:2205
 msgid "Issued by"
-msgstr "Vystavil"
+msgstr ""
 
 #: build/models.py:300
 msgid "User who issued this build order"
-msgstr "Uživatel, který vydal tento příkaz k sestavení"
+msgstr ""
 
 #: build/models.py:308 build/templates/build/build_base.html:204
 #: build/templates/build/detail.html:122 common/models.py:145
@@ -1209,11 +1209,11 @@ msgstr "Uživatel, který vydal tento příkaz k sestavení"
 #: templates/js/translated/return_order.js:359
 #: templates/js/translated/table_filters.js:531
 msgid "Responsible"
-msgstr "Odpovědný"
+msgstr ""
 
 #: build/models.py:309
 msgid "User or group responsible for this build order"
-msgstr "Uživatel nebo skupina odpovědná za tento příkaz k sestavení"
+msgstr ""
 
 #: build/models.py:314 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
@@ -1225,15 +1225,15 @@ msgstr "Uživatel nebo skupina odpovědná za tento příkaz k sestavení"
 #: stock/templates/stock/item_base.html:200
 #: templates/js/translated/company.js:1009
 msgid "External Link"
-msgstr "Externí odkaz"
+msgstr ""
 
 #: build/models.py:319
 msgid "Build Priority"
-msgstr "Priorita sestavení"
+msgstr ""
 
 #: build/models.py:322
 msgid "Priority of this build order"
-msgstr "Priorita tohoto příkazu k sestavení"
+msgstr ""
 
 #: build/models.py:329 common/models.py:129 order/admin.py:18
 #: order/models.py:286 templates/InvenTree/settings/settings_staff_js.html:146
@@ -1244,43 +1244,43 @@ msgstr "Priorita tohoto příkazu k sestavení"
 #: templates/js/translated/table_filters.js:48
 #: templates/project_code_data.html:6
 msgid "Project Code"
-msgstr "Kód projektu"
+msgstr ""
 
 #: build/models.py:330
 msgid "Project code for this build order"
-msgstr "Kód projektu pro objednávku sestavení"
+msgstr ""
 
 #: build/models.py:581
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr "Příkaz k sestavení {build} byl dokončen"
+msgstr ""
 
 #: build/models.py:587
 msgid "A build order has been completed"
-msgstr "Příkaz k sestavení byl dokončen"
+msgstr ""
 
 #: build/models.py:805 build/models.py:880
 msgid "No build output specified"
-msgstr "Nebyl specifikováno žádný výstup sestavení"
+msgstr ""
 
 #: build/models.py:808
 msgid "Build output is already completed"
-msgstr "Výstup sestavení je již dokončen"
+msgstr ""
 
 #: build/models.py:811
 msgid "Build output does not match Build Order"
-msgstr "Výstup sestavení neodpovídá příkazu sestavení"
+msgstr ""
 
 #: build/models.py:884 build/serializers.py:223 build/serializers.py:262
 #: build/serializers.py:831 order/models.py:538 order/serializers.py:429
 #: order/serializers.py:572 part/serializers.py:1460 part/serializers.py:1835
 #: stock/models.py:665 stock/models.py:1477 stock/serializers.py:472
 msgid "Quantity must be greater than zero"
-msgstr "Množství musí být vyšší než nula"
+msgstr ""
 
 #: build/models.py:889 build/serializers.py:228
 msgid "Quantity cannot be greater than the output quantity"
-msgstr "Množství nemůže být větší než výstupní množství"
+msgstr ""
 
 #: build/models.py:946 build/serializers.py:533
 #, python-brace-format
@@ -1289,7 +1289,7 @@ msgstr ""
 
 #: build/models.py:1308
 msgid "Build object"
-msgstr "Vytvořit objekt"
+msgstr ""
 
 #: build/models.py:1322 build/models.py:1580 build/serializers.py:210
 #: build/serializers.py:247 build/templates/build/build_base.html:102
@@ -1336,36 +1336,36 @@ msgstr "Vytvořit objekt"
 #: templates/js/translated/stock.js:873 templates/js/translated/stock.js:3021
 #: templates/js/translated/stock.js:3104
 msgid "Quantity"
-msgstr "Množství"
+msgstr ""
 
 #: build/models.py:1323
 msgid "Required quantity for build order"
-msgstr "Vyžadované množství pro objednávku"
+msgstr ""
 
 #: build/models.py:1403
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr "Položka sestavení musí specifikovat výstup sestavení, protože hlavní díl je označen jako sledovatelný"
+msgstr ""
 
 #: build/models.py:1412
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr "Zabrané množství ({q}) nesmí překročit dostupné skladové množství ({a})"
+msgstr ""
 
 #: build/models.py:1422 order/models.py:1867
 msgid "Stock item is over-allocated"
-msgstr "Skladová položka je nadměrně zabrána"
+msgstr ""
 
 #: build/models.py:1428 order/models.py:1870
 msgid "Allocation quantity must be greater than zero"
-msgstr "Zabrané množství musí být větší než nula"
+msgstr ""
 
 #: build/models.py:1434
 msgid "Quantity must be 1 for serialized stock"
-msgstr "Množství musí být 1 pro zřetězený sklad"
+msgstr ""
 
 #: build/models.py:1495
 msgid "Selected stock item does not match BOM line"
-msgstr "Vybraná položka zásob neodpovídá řádku BOM"
+msgstr ""
 
 #: build/models.py:1567 build/serializers.py:811 order/serializers.py:1179
 #: order/serializers.py:1200 stock/serializers.py:566 stock/serializers.py:1052
@@ -1382,19 +1382,19 @@ msgstr "Vybraná položka zásob neodpovídá řádku BOM"
 #: templates/js/translated/stock.js:677 templates/js/translated/stock.js:843
 #: templates/js/translated/stock.js:2977
 msgid "Stock Item"
-msgstr "Skladové položky"
+msgstr ""
 
 #: build/models.py:1568
 msgid "Source stock item"
-msgstr "Zdrojová skladová položka"
+msgstr ""
 
 #: build/models.py:1581
 msgid "Stock quantity to allocate to build"
-msgstr "Skladové množství pro sestavení"
+msgstr ""
 
 #: build/models.py:1589
 msgid "Install into"
-msgstr "Instalovat do"
+msgstr ""
 
 #: build/models.py:1590
 msgid "Destination stock item"
@@ -1403,11 +1403,11 @@ msgstr ""
 #: build/serializers.py:160 build/serializers.py:840
 #: templates/js/translated/build.js:1319
 msgid "Build Output"
-msgstr "Vytvořit výstup"
+msgstr ""
 
 #: build/serializers.py:172
 msgid "Build output does not match the parent build"
-msgstr "Vytvořený výstup neodpovídá nadřazenému sestavení"
+msgstr ""
 
 #: build/serializers.py:176
 msgid "Output part does not match BuildOrder part"
@@ -1437,7 +1437,7 @@ msgstr ""
 #: stock/serializers.py:483 templates/js/translated/purchase_order.js:1153
 #: templates/js/translated/stock.js:367 templates/js/translated/stock.js:565
 msgid "Serial Numbers"
-msgstr "Sériová čísla"
+msgstr ""
 
 #: build/serializers.py:288
 msgid "Enter serial numbers for build outputs"
@@ -1445,7 +1445,7 @@ msgstr ""
 
 #: build/serializers.py:301
 msgid "Auto Allocate Serial Numbers"
-msgstr "Automaticky zvolit sériová čísla"
+msgstr ""
 
 #: build/serializers.py:302
 msgid "Automatically allocate required items with matching serial numbers"
@@ -1477,11 +1477,11 @@ msgstr ""
 #: templates/js/translated/stock.js:1060 templates/js/translated/stock.js:2200
 #: templates/js/translated/stock.js:2871
 msgid "Location"
-msgstr "Lokace"
+msgstr ""
 
 #: build/serializers.py:427
 msgid "Stock location for scrapped outputs"
-msgstr "Umístění zásob pro seškrábnuté výstupy"
+msgstr ""
 
 #: build/serializers.py:433
 msgid "Discard Allocations"
@@ -1512,7 +1512,7 @@ msgstr ""
 #: templates/js/translated/stock.js:2175 templates/js/translated/stock.js:2995
 #: templates/js/translated/stock.js:3120
 msgid "Status"
-msgstr "Stav"
+msgstr ""
 
 #: build/serializers.py:511
 msgid "Accept Incomplete Allocation"
@@ -1637,7 +1637,7 @@ msgstr ""
 
 #: build/serializers.py:973
 msgid "Exclude Location"
-msgstr "Vynechat lokace"
+msgstr ""
 
 #: build/serializers.py:974
 msgid "Exclude stock items from this selected location"
@@ -1661,7 +1661,7 @@ msgstr ""
 
 #: build/serializers.py:991
 msgid "Optional Items"
-msgstr "Volitelné položky"
+msgstr ""
 
 #: build/serializers.py:992
 msgid "Allocate optional BOM items to build order"
@@ -1735,7 +1735,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:44
 #: stock/templates/stock/location.html:57 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr "Zobrazit QR kód"
+msgstr ""
 
 #: build/templates/build/build_base.html:45
 #: company/templates/company/supplier_part.html:41
@@ -1748,7 +1748,7 @@ msgstr "Zobrazit QR kód"
 #: templates/js/translated/barcode.js:496
 #: templates/js/translated/barcode.js:501
 msgid "Unlink Barcode"
-msgstr "Odstranit čárový kód"
+msgstr ""
 
 #: build/templates/build/build_base.html:47
 #: company/templates/company/supplier_part.html:43
@@ -1759,7 +1759,7 @@ msgstr "Odstranit čárový kód"
 #: stock/templates/stock/item_base.html:49
 #: stock/templates/stock/location.html:61
 msgid "Link Barcode"
-msgstr "Přiřadit čárový kód"
+msgstr ""
 
 #: build/templates/build/build_base.html:56
 #: order/templates/order/order_base.html:46
@@ -1835,7 +1835,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:835
 #: templates/js/translated/sales_order.js:1867
 msgid "Target Date"
-msgstr "Cílené datum"
+msgstr ""
 
 #: build/templates/build/build_base.html:165
 #, python-format
@@ -1885,7 +1885,7 @@ msgstr ""
 #: build/templates/build/build_base.html:211
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2154
 msgid "Priority"
-msgstr "Priorita"
+msgstr ""
 
 #: build/templates/build/build_base.html:273
 msgid "Delete Build Order"
@@ -1942,17 +1942,17 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:186
 #: templates/js/translated/build.js:2197
 msgid "Created"
-msgstr "Vytvořeno"
+msgstr ""
 
 #: build/templates/build/detail.html:144
 msgid "No target date set"
-msgstr "Nenastaveno cílené datum"
+msgstr ""
 
 #: build/templates/build/detail.html:149
 #: order/templates/order/sales_order_base.html:202
 #: templates/js/translated/table_filters.js:689
 msgid "Completed"
-msgstr "Dokončeno"
+msgstr ""
 
 #: build/templates/build/detail.html:153
 msgid "Build not complete"
@@ -2086,7 +2086,7 @@ msgstr ""
 
 #: common/forms.py:12
 msgid "File"
-msgstr "Soubor"
+msgstr ""
 
 #: common/forms.py:12
 msgid "Select file to upload"
@@ -2208,7 +2208,7 @@ msgstr ""
 
 #: common/models.py:1295 company/models.py:107 company/models.py:108
 msgid "Company name"
-msgstr "Jméno společnosti"
+msgstr ""
 
 #: common/models.py:1296
 msgid "Internal company name"
@@ -2224,7 +2224,7 @@ msgstr ""
 
 #: common/models.py:1307
 msgid "Default Currency"
-msgstr "Výchozí měna"
+msgstr ""
 
 #: common/models.py:1308
 msgid "Select base currency for pricing calculations"
@@ -2255,7 +2255,7 @@ msgstr ""
 
 #: common/models.py:1329
 msgid "Download from URL"
-msgstr "Stáhnout z URL"
+msgstr ""
 
 #: common/models.py:1331
 msgid "Allow download of remote images and files from external URL"
@@ -2470,46 +2470,46 @@ msgstr ""
 
 #: common/models.py:1501 part/admin.py:100 part/models.py:1034
 msgid "Purchaseable"
-msgstr "Možné zakoupit"
+msgstr ""
 
 #: common/models.py:1502
 msgid "Parts are purchaseable by default"
-msgstr "Díly jsou zakoupitelné ve výchozím nastavení"
+msgstr ""
 
 #: common/models.py:1507 part/admin.py:104 part/models.py:1040
 #: templates/js/translated/table_filters.js:755
 msgid "Salable"
-msgstr "Prodejné"
+msgstr ""
 
 #: common/models.py:1508
 msgid "Parts are salable by default"
-msgstr "Díly jsou prodejné ve výchozím nastavení"
+msgstr ""
 
 #: common/models.py:1513 part/admin.py:113 part/models.py:1028
 #: templates/js/translated/table_filters.js:147
 #: templates/js/translated/table_filters.js:223
 #: templates/js/translated/table_filters.js:771
 msgid "Trackable"
-msgstr "Sledovatelné"
+msgstr ""
 
 #: common/models.py:1514
 msgid "Parts are trackable by default"
-msgstr "Díly jsou sledovatelné ve výchozím nastavení"
+msgstr ""
 
 #: common/models.py:1519 part/admin.py:117 part/models.py:1050
 #: part/templates/part/part_base.html:154
 #: templates/js/translated/table_filters.js:143
 #: templates/js/translated/table_filters.js:775
 msgid "Virtual"
-msgstr "Nehmotné (virtuální)"
+msgstr ""
 
 #: common/models.py:1520
 msgid "Parts are virtual by default"
-msgstr "Díly jsou nehmotné (virtuální) ve výchozím nastavení"
+msgstr ""
 
 #: common/models.py:1525
 msgid "Show Import in Views"
-msgstr "Zobrazit Import v zobrazeních"
+msgstr ""
 
 #: common/models.py:1526
 msgid "Display the import wizard in some part views"
@@ -2517,43 +2517,43 @@ msgstr ""
 
 #: common/models.py:1531
 msgid "Show related parts"
-msgstr "Zobrazit související díly"
+msgstr ""
 
 #: common/models.py:1532
 msgid "Display related parts for a part"
-msgstr "Zobrazit související díly pro díl"
+msgstr ""
 
 #: common/models.py:1537
 msgid "Initial Stock Data"
-msgstr "Počáteční údaje zásob"
+msgstr ""
 
 #: common/models.py:1538
 msgid "Allow creation of initial stock when adding a new part"
-msgstr "Povolit vytvoření počátečního skladu při přidání nové části"
+msgstr ""
 
 #: common/models.py:1543 templates/js/translated/part.js:107
 msgid "Initial Supplier Data"
-msgstr "Počáteční údaje dodavatele"
+msgstr ""
 
 #: common/models.py:1545
 msgid "Allow creation of initial supplier data when adding a new part"
-msgstr "Povolit vytvoření počátečních dat dodavatele při přidávání nového dílu"
+msgstr ""
 
 #: common/models.py:1551
 msgid "Part Name Display Format"
-msgstr "Formát zobrazení jména dílu"
+msgstr ""
 
 #: common/models.py:1552
 msgid "Format to display the part name"
-msgstr "Formát pro zobrazení názvu dílu"
+msgstr ""
 
 #: common/models.py:1558
 msgid "Part Category Default Icon"
-msgstr "Výchozí ikona kategorie dílu"
+msgstr ""
 
 #: common/models.py:1559
 msgid "Part category default icon (empty means no icon)"
-msgstr "Výchozí ikona kategorie dílu (prázdné znamená bez ikony)"
+msgstr ""
 
 #: common/models.py:1563
 msgid "Enforce Parameter Units"
@@ -2565,23 +2565,23 @@ msgstr ""
 
 #: common/models.py:1571
 msgid "Minimum Pricing Decimal Places"
-msgstr "Minimální počet desetinných míst u cen"
+msgstr ""
 
 #: common/models.py:1573
 msgid "Minimum number of decimal places to display when rendering pricing data"
-msgstr "Minimální počet desetinných míst k zobrazení u cenových údajů"
+msgstr ""
 
 #: common/models.py:1579
 msgid "Maximum Pricing Decimal Places"
-msgstr "Maximální počet desetinných míst u cen"
+msgstr ""
 
 #: common/models.py:1581
 msgid "Maximum number of decimal places to display when rendering pricing data"
-msgstr "Maximální počet desetinných míst k zobrazení u cenových údajů"
+msgstr ""
 
 #: common/models.py:1587
 msgid "Use Supplier Pricing"
-msgstr "Použít ceny dodavatele"
+msgstr ""
 
 #: common/models.py:1589
 msgid "Include supplier price breaks in overall pricing calculations"
@@ -2589,7 +2589,7 @@ msgstr ""
 
 #: common/models.py:1595
 msgid "Purchase History Override"
-msgstr "Přepsání historie nákupu"
+msgstr ""
 
 #: common/models.py:1597
 msgid "Historical purchase order pricing overrides supplier price breaks"
@@ -2694,27 +2694,27 @@ msgstr ""
 #: common/models.py:1689 plugin/builtin/labels/label_sheet.py:28
 #: report/models.py:203
 msgid "Page Size"
-msgstr "Velikost stránky"
+msgstr ""
 
 #: common/models.py:1690
 msgid "Default page size for PDF reports"
-msgstr "Výchozí velikost stránky pro PDF reporty"
+msgstr ""
 
 #: common/models.py:1695
 msgid "Enable Test Reports"
-msgstr "Povolit testovací reporty"
+msgstr ""
 
 #: common/models.py:1696
 msgid "Enable generation of test reports"
-msgstr "Povolit generování zkušebních reportů"
+msgstr ""
 
 #: common/models.py:1701
 msgid "Attach Test Reports"
-msgstr "Připojit testovací reporty"
+msgstr ""
 
 #: common/models.py:1703
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
-msgstr "Při tisku testovacího reportu, připojte kopii reportu k přidružené skladové položce"
+msgstr ""
 
 #: common/models.py:1709
 msgid "Globally Unique Serials"
@@ -2722,25 +2722,23 @@ msgstr ""
 
 #: common/models.py:1710
 msgid "Serial numbers for stock items must be globally unique"
-msgstr "Sériová čísla pro skladové položky musí být globálně unikátní"
+msgstr ""
 
 #: common/models.py:1715
 msgid "Autofill Serial Numbers"
-msgstr "Automaticky vyplnit sériová čísla"
+msgstr ""
 
 #: common/models.py:1716
 msgid "Autofill serial numbers in forms"
-msgstr "Automaticky vyplnit sériová čísla ve formulářích"
+msgstr ""
 
 #: common/models.py:1721
 msgid "Delete Depleted Stock"
-msgstr "Odstranit vyčerpané zásoby"
+msgstr ""
 
 #: common/models.py:1723
-#, fuzzy
-#| msgid "Determines default behaviour when a stock item is depleted"
 msgid "Determines default behavior when a stock item is depleted"
-msgstr "Určuje výchozí chování, když je vyčerpána skladová položka"
+msgstr ""
 
 #: common/models.py:1729
 msgid "Batch Code Template"
@@ -2824,10 +2822,8 @@ msgstr ""
 
 #: common/models.py:1796 common/models.py:1824 common/models.py:1846
 #: common/models.py:1874
-#, fuzzy
-#| msgid "Responsible"
 msgid "Require Responsible Owner"
-msgstr "Odpovědný"
+msgstr ""
 
 #: common/models.py:1797 common/models.py:1825 common/models.py:1847
 #: common/models.py:1875
@@ -3472,7 +3468,7 @@ msgstr ""
 
 #: common/models.py:2404
 msgid "Date Format"
-msgstr "Formát data"
+msgstr ""
 
 #: common/models.py:2405
 msgid "Preferred format for displaying dates"
@@ -3560,7 +3556,7 @@ msgstr ""
 #: templates/js/translated/pricing.js:621
 #: templates/js/translated/return_order.js:741
 msgid "Price"
-msgstr "Cena"
+msgstr ""
 
 #: common/models.py:2528
 msgid "Unit price at specified quantity"
@@ -3654,7 +3650,7 @@ msgstr ""
 
 #: common/models.py:3017
 msgid "Id"
-msgstr "Id"
+msgstr ""
 
 #: common/models.py:3019 templates/js/translated/company.js:955
 #: templates/js/translated/news.js:44
@@ -3690,7 +3686,7 @@ msgstr ""
 #: templates/hover_image.html:7 templates/hover_image.html:9
 #: templates/modals.html:6
 msgid "Image"
-msgstr "Obrazek"
+msgstr ""
 
 #: common/models.py:3047
 msgid "Image file"
@@ -3864,34 +3860,34 @@ msgstr ""
 #: templates/InvenTree/settings/plugin_settings.html:54
 #: templates/js/translated/company.js:522
 msgid "Website"
-msgstr "Webová stránka"
+msgstr ""
 
 #: company/models.py:119
 msgid "Company website URL"
-msgstr "Webové stránky společnosti"
+msgstr ""
 
 #: company/models.py:124
 msgid "Phone number"
-msgstr "Telefonní číslo"
+msgstr ""
 
 #: company/models.py:126
 msgid "Contact phone number"
-msgstr "Kontaktní telefonní číslo"
+msgstr ""
 
 #: company/models.py:133
 msgid "Contact email address"
-msgstr "Kontaktní e-mailová adresa"
+msgstr ""
 
 #: company/models.py:138 company/templates/company/company_base.html:139
 #: order/models.py:331 order/templates/order/order_base.html:203
 #: order/templates/order/return_order_base.html:174
 #: order/templates/order/sales_order_base.html:214
 msgid "Contact"
-msgstr "Kontakt"
+msgstr ""
 
 #: company/models.py:140
 msgid "Point of contact"
-msgstr "Kontaktní místo"
+msgstr ""
 
 #: company/models.py:146
 msgid "Link to external company information"
@@ -3899,7 +3895,7 @@ msgstr ""
 
 #: company/models.py:160
 msgid "is customer"
-msgstr "je zákazník"
+msgstr ""
 
 #: company/models.py:161
 msgid "Do you sell items to this company?"
@@ -3930,7 +3926,7 @@ msgstr ""
 #: company/templates/company/company_base.html:12 stock/api.py:776
 #: templates/InvenTree/search.html:178 templates/js/translated/company.js:495
 msgid "Company"
-msgstr "Společnost"
+msgstr ""
 
 #: company/models.py:378
 msgid "Select company"
@@ -4023,11 +4019,11 @@ msgstr ""
 #: stock/serializers.py:266 stock/templates/stock/item_base.html:142
 #: templates/js/translated/bom.js:622
 msgid "Base Part"
-msgstr "Základní díl"
+msgstr ""
 
 #: company/models.py:486 company/models.py:787
 msgid "Select part"
-msgstr "Zvolte díl"
+msgstr ""
 
 #: company/models.py:495 company/templates/company/company_base.html:76
 #: company/templates/company/manufacturer_part.html:90
@@ -4039,11 +4035,11 @@ msgstr "Zvolte díl"
 #: templates/js/translated/company.js:1601
 #: templates/js/translated/table_filters.js:796
 msgid "Manufacturer"
-msgstr "Výrobce"
+msgstr ""
 
 #: company/models.py:496
 msgid "Select manufacturer"
-msgstr "Vyberte výrobce"
+msgstr ""
 
 #: company/models.py:502 company/templates/company/manufacturer_part.html:101
 #: company/templates/company/supplier_part.html:153 part/serializers.py:525
@@ -4058,7 +4054,7 @@ msgstr ""
 
 #: company/models.py:503
 msgid "Manufacturer Part Number"
-msgstr "Číslo dílu výrobce"
+msgstr ""
 
 #: company/models.py:510
 msgid "URL for external manufacturer part link"
@@ -4066,18 +4062,18 @@ msgstr ""
 
 #: company/models.py:518
 msgid "Manufacturer part description"
-msgstr "Popis dílu výrobce"
+msgstr ""
 
 #: company/models.py:575 company/models.py:602 company/models.py:811
 #: company/templates/company/manufacturer_part.html:7
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:217
 msgid "Manufacturer Part"
-msgstr "Výrobce dílu"
+msgstr ""
 
 #: company/models.py:609
 msgid "Parameter name"
-msgstr "Název parametru"
+msgstr ""
 
 #: company/models.py:615
 #: report/templates/report/inventree_test_report_base.html:104
@@ -4085,11 +4081,11 @@ msgstr "Název parametru"
 #: templates/js/translated/company.js:1409 templates/js/translated/part.js:1492
 #: templates/js/translated/stock.js:1519
 msgid "Value"
-msgstr "Hodnota"
+msgstr ""
 
 #: company/models.py:616
 msgid "Parameter value"
-msgstr "Hodnota parametru"
+msgstr ""
 
 #: company/models.py:623 company/templates/company/supplier_part.html:168
 #: part/admin.py:57 part/models.py:1009 part/models.py:3623
@@ -4097,7 +4093,7 @@ msgstr "Hodnota parametru"
 #: templates/js/translated/company.js:1415 templates/js/translated/part.js:1511
 #: templates/js/translated/part.js:1615 templates/js/translated/part.js:2370
 msgid "Units"
-msgstr "Jednotky"
+msgstr ""
 
 #: company/models.py:624
 msgid "Parameter units"
@@ -4231,21 +4227,21 @@ msgstr ""
 
 #: company/templates/company/company_base.html:32
 msgid "Edit company information"
-msgstr "Upravit údaje o společnosti"
+msgstr ""
 
 #: company/templates/company/company_base.html:33
 #: templates/js/translated/company.js:444
 msgid "Edit Company"
-msgstr "Upravit společnost"
+msgstr ""
 
 #: company/templates/company/company_base.html:37
 msgid "Delete company"
-msgstr "Odstranit společnost"
+msgstr ""
 
 #: company/templates/company/company_base.html:38
 #: company/templates/company/company_base.html:162
 msgid "Delete Company"
-msgstr "Odstranit společnost"
+msgstr ""
 
 #: company/templates/company/company_base.html:47
 #: company/templates/company/manufacturer_part.html:51
@@ -4262,17 +4258,17 @@ msgstr ""
 #: company/templates/company/company_base.html:55
 #: part/templates/part/part_thumb.html:12
 msgid "Upload new image"
-msgstr "Nahrát nový obrázek"
+msgstr ""
 
 #: company/templates/company/company_base.html:58
 #: part/templates/part/part_thumb.html:14
 msgid "Download image from URL"
-msgstr "Stáhnout obrázek z URL"
+msgstr ""
 
 #: company/templates/company/company_base.html:60
 #: part/templates/part/part_thumb.html:16
 msgid "Delete image"
-msgstr "Smazat obrázek"
+msgstr ""
 
 #: company/templates/company/company_base.html:86 order/models.py:910
 #: order/models.py:2008 order/templates/order/return_order_base.html:131
@@ -4286,7 +4282,7 @@ msgstr "Smazat obrázek"
 #: templates/js/translated/stock.js:2959
 #: templates/js/translated/table_filters.js:804
 msgid "Customer"
-msgstr "Zákazník"
+msgstr ""
 
 #: company/templates/company/company_base.html:111
 msgid "Uses default currency"
@@ -4297,11 +4293,11 @@ msgstr ""
 #: order/templates/order/return_order_base.html:181
 #: order/templates/order/sales_order_base.html:221
 msgid "Address"
-msgstr "Adresa"
+msgstr ""
 
 #: company/templates/company/company_base.html:125
 msgid "Phone"
-msgstr "Telefon"
+msgstr ""
 
 #: company/templates/company/company_base.html:205
 #: part/templates/part/part_base.html:528
@@ -4317,7 +4313,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:88
 #: templates/InvenTree/settings/user_sso.html:43
 msgid "Remove"
-msgstr "Odstranit"
+msgstr ""
 
 #: company/templates/company/company_base.html:237
 #: part/templates/part/part_base.html:560
@@ -4333,34 +4329,34 @@ msgstr ""
 #: company/templates/company/manufacturer_part_sidebar.html:7
 #: templates/InvenTree/search.html:120 templates/js/translated/search.js:147
 msgid "Supplier Parts"
-msgstr "Dodavatel dílů"
+msgstr ""
 
 #: company/templates/company/detail.html:19
 msgid "Create new supplier part"
-msgstr "Vytvořit nového dodavatele dílu"
+msgstr ""
 
 #: company/templates/company/detail.html:20
 #: company/templates/company/manufacturer_part.html:123
 #: part/templates/part/detail.html:356
 msgid "New Supplier Part"
-msgstr "Nová díl dodavatele"
+msgstr ""
 
 #: company/templates/company/detail.html:41 templates/InvenTree/search.html:105
 #: templates/js/translated/search.js:151
 msgid "Manufacturer Parts"
-msgstr "Výrobce dílů"
+msgstr ""
 
 #: company/templates/company/detail.html:45
 msgid "Create new manufacturer part"
-msgstr "Vytvořit nového výrobce dílu"
+msgstr ""
 
 #: company/templates/company/detail.html:46 part/templates/part/detail.html:376
 msgid "New Manufacturer Part"
-msgstr "Nový výrobce dílu"
+msgstr ""
 
 #: company/templates/company/detail.html:65
 msgid "Supplier Stock"
-msgstr "Dodavatelský sklad"
+msgstr ""
 
 #: company/templates/company/detail.html:75
 #: company/templates/company/sidebar.html:12
@@ -4374,7 +4370,7 @@ msgstr "Dodavatelský sklad"
 #: templates/js/translated/search.js:205 templates/navbar.html:50
 #: users/models.py:197
 msgid "Purchase Orders"
-msgstr "Zakoupené objednávky"
+msgstr ""
 
 #: company/templates/company/detail.html:79
 #: order/templates/order/purchase_orders.html:17
@@ -4436,7 +4432,7 @@ msgstr ""
 
 #: company/templates/company/detail.html:168
 msgid "Company Notes"
-msgstr "Poznámky ke společnosti"
+msgstr ""
 
 #: company/templates/company/detail.html:183
 msgid "Company Contacts"
@@ -7600,7 +7596,7 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:30
 #: templates/InvenTree/settings/sidebar.html:39
 msgid "Pricing"
-msgstr "Ceník"
+msgstr ""
 
 #: part/templates/part/part_sidebar.html:44
 msgid "Scheduling"
@@ -7795,20 +7791,20 @@ msgstr ""
 
 #: plugin/base/action/api.py:32
 msgid "No action specified"
-msgstr "Činnost nebyla specifikována"
+msgstr ""
 
 #: plugin/base/action/api.py:41
 msgid "No matching action found"
-msgstr "Nebyla nalezena odpovídající činnost"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:124 plugin/base/barcodes/api.py:328
 #: plugin/base/barcodes/api.py:503
 msgid "No match found for barcode data"
-msgstr "Pro data čárového kódu nebyla nalezena shoda"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:128
 msgid "Match found for barcode data"
-msgstr "Pro data čárového kódu byla nalezena shoda"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:154
 #: templates/js/translated/purchase_order.js:1406
@@ -9389,7 +9385,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:169 templates/InvenTree/search.html:139
 #: templates/js/translated/build.js:2121 templates/navbar.html:38
 msgid "Build"
-msgstr "Sestavení"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:193
 msgid "Parent Item"
@@ -9768,7 +9764,7 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:17
 #: templates/InvenTree/settings/sidebar.html:37 templates/notifications.html:5
 msgid "Notifications"
-msgstr "Oznámení"
+msgstr ""
 
 #: templates/InvenTree/notifications/notifications.html:38
 msgid "No unread notifications found"
@@ -9853,7 +9849,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -10099,7 +10095,7 @@ msgstr ""
 #: templates/js/translated/part.js:392 templates/js/translated/pricing.js:629
 #: templates/js/translated/stock.js:245 users/models.py:413
 msgid "Delete"
-msgstr "Odstranit"
+msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:95
 msgid "Edit Custom Unit"
@@ -10195,15 +10191,15 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:9
 msgid "Account"
-msgstr "Účet"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:11
 msgid "Display"
-msgstr "Zobrazení"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
-msgstr "Domovská stránka"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/js/translated/forms.js:2159 templates/js/translated/tables.js:543
@@ -10556,7 +10552,7 @@ msgstr ""
 
 #: templates/account/email_confirm.html:21 templates/js/translated/forms.js:774
 msgid "Confirm"
-msgstr "Potvrdit"
+msgstr ""
 
 #: templates/account/email_confirm.html:29
 #, python-format
@@ -14084,15 +14080,15 @@ msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
-msgstr "Ano"
+msgstr ""
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr "Ne"
+msgstr ""
 
 #: users/admin.py:104
 msgid "Users"
-msgstr "Uživatelé"
+msgstr ""
 
 #: users/admin.py:105
 msgid "Select which users are assigned to this group"
@@ -14104,11 +14100,11 @@ msgstr ""
 
 #: users/admin.py:283
 msgid "Personal info"
-msgstr "Osobní údaje"
+msgstr ""
 
 #: users/admin.py:285
 msgid "Permissions"
-msgstr "Oprávnění"
+msgstr ""
 
 #: users/admin.py:288
 msgid "Important dates"
@@ -14156,32 +14152,33 @@ msgstr ""
 
 #: users/models.py:386
 msgid "Permission set"
-msgstr "Nastavení oprávnění"
+msgstr ""
 
 #: users/models.py:395
 msgid "Group"
-msgstr "Skupina"
+msgstr ""
 
 #: users/models.py:399
 msgid "View"
-msgstr "Zobrazit"
+msgstr ""
 
 #: users/models.py:399
 msgid "Permission to view items"
-msgstr "Oprávnění k zobrazení položek"
+msgstr ""
 
 #: users/models.py:403
 msgid "Permission to add items"
-msgstr "Oprávnění přidat položky"
+msgstr ""
 
 #: users/models.py:407
 msgid "Change"
-msgstr "Změnit"
+msgstr ""
 
 #: users/models.py:409
 msgid "Permissions to edit items"
-msgstr "Oprávnění k úpravě položek"
+msgstr ""
 
 #: users/models.py:415
 msgid "Permission to delete items"
-msgstr "Oprávnění k odstranění položek"
+msgstr ""
+
