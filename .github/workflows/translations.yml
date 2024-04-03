@@ -7,12 +7,17 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 16
+  node_version: 18
+
+permissions:
+  contents: read
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

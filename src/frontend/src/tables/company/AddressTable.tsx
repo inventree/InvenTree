@@ -184,7 +184,7 @@ export function AddressTable({
       <AddItemButton
         tooltip={t`Add Address`}
         onClick={() => newAddress.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);

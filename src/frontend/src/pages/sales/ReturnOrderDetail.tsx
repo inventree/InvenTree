@@ -129,7 +129,8 @@ export default function ReturnOrderDetail() {
         name: 'contact',
         label: t`Contact`,
         icon: 'user',
-        copy: true
+        copy: true,
+        hidden: !order.contact
       }
       // TODO: Project code
     ];

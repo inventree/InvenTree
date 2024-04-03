@@ -130,7 +130,7 @@ export function ContactTable({
       <AddItemButton
         tooltip={t`Add contact`}
         onClick={() => newContact.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);

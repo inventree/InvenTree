@@ -84,6 +84,7 @@ nav:
     - Credits: credits.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
+    - Security: security.md
   - Install:
     - Introduction: start/intro.md
     - Configuration: start/config.md
@@ -245,7 +246,7 @@ plugins:
       handlers:
         python:
           paths:
-            - ../InvenTree
+            - ../src/backend/InvenTree
           options:
             show_symbol_type_heading: true
             show_symbol_type_toc: true
@@ -272,7 +273,7 @@ markdown_extensions:
 
 # Global Variables
 extra:
-  static_folder_source: ./InvenTree/InvenTree/static/
+  static_folder_source: ./src/backend/InvenTree/InvenTree/static/
   static_folder_local_default: ./inventree_static/
 
   # Site Analytics
