@@ -54,7 +54,7 @@ jobs:
             frontend:
               - 'src/frontend/**'
       - name: Is CI being forced?
-        run: echo "::set-output name=force::true"
+        run: echo "force=true" >> $GITHUB_OUTPUT
         id: force
         if: |
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
