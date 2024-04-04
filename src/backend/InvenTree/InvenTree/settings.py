@@ -268,6 +268,24 @@ MIDDLEWARE = CONFIG.get(
     ],
 )
 
+if DEBUG and get_boolean_setting(
+    'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
+):
+    MIDDLEWARE.append('querycount.middleware.QueryCountMiddleware')
+
+QUERYCOUNT = {
+    'THRESHOLDS': {
+        'MEDIUM': 50,
+        'HIGH': 200,
+        'MIN_TIME_TO_LOG': 0,
+        'MIN_QUERY_COUNT_TO_LOG': 0,
+    },
+    'IGNORE_REQUEST_PATTERNS': ['^(?!\/(api)?(plugin)?\/).*'],
+    'IGNORE_SQL_PATTERNS': [],
+    'DISPLAY_DUPLICATES': None,
+    'RESPONSE_HEADER': 'X-Django-Query-Count',
+}
+
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
     [
