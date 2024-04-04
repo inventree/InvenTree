@@ -71,6 +71,7 @@ line-ending = "auto"
 
 [tool.coverage.run]
 source = ["src/backend/InvenTree", "InvenTree"]
+relative_files = true
 
 [tool.djlint]
 ignore = "D018,H006,H008,H020,H021,H023,H025,H030,H031,T002"
