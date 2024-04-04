@@ -268,6 +268,8 @@ MIDDLEWARE = CONFIG.get(
     ],
 )
 
+# In DEBUG mode, add support for django-querycount
+# Ref: https://github.com/bradmontgomery/django-querycount
 if DEBUG and get_boolean_setting(
     'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
 ):
