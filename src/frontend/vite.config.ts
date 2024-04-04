@@ -1,5 +1,6 @@
 import react from '@vitejs/plugin-react';
 import { platform, release } from 'node:os';
+import license from 'rollup-plugin-license';
 import { defineConfig, splitVendorChunkPlugin } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 
@@ -19,6 +20,19 @@ export default defineConfig({
       }
     }),
     splitVendorChunkPlugin(),
+    license({
+      sourcemap: true,
+      thirdParty: {
+        includePrivate: true,
+        multipleVersions: true,
+        output: {
+          file: '../../InvenTree/web/static/web/.vite/dependencies.json',
+          template(dependencies) {
+            return JSON.stringify(dependencies);
+          }
+        }
+      }
+    }),
     istanbul({
       include: 'src/*',
       exclude: ['node_modules', 'test/'],
