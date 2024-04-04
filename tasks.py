@@ -870,7 +870,7 @@ def test(
     if coverage:
         # Run tests within coverage environment, and generate report
         c.run(
-            f'cd {managePyDir()} && coverage run {managePyPath()} {cmd} && cp {managePyDir().joinpath(".coverage")} {localDir()}'
+            f'cd {managePyDir()} && coverage run {managePyPath()} {cmd} && mv {managePyDir().joinpath(".coverage")} {localDir()}'
         )
         c.run('coverage html -i')
     else:
