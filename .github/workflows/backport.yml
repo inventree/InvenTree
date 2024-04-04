@@ -10,7 +10,7 @@ on:
     types: [ "labeled", "closed" ]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   backport:
