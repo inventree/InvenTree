@@ -290,7 +290,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: backend
-          parallel: true
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
 
@@ -511,7 +510,6 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: pui
-          parallel: true
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
 
@@ -551,6 +549,5 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           carryforward: "pui,backend"
-          parallel-finished: true
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
