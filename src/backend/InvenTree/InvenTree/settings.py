@@ -282,7 +282,7 @@ QUERYCOUNT = {
     },
     'IGNORE_REQUEST_PATTERNS': ['^(?!\/(api)?(plugin)?\/).*'],
     'IGNORE_SQL_PATTERNS': [],
-    'DISPLAY_DUPLICATES': None,
+    'DISPLAY_DUPLICATES': 3,
     'RESPONSE_HEADER': 'X-Django-Query-Count',
 }
 
