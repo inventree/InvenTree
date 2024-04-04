@@ -8,7 +8,7 @@ msgstr ""
 "Language: bg\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-03 01:56\n"
+"PO-Revision-Date: 2024-04-04 02:19\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -48,7 +48,7 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:70
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:164
-#: src/contexts/ThemeContext.tsx:64
+#: src/contexts/ThemeContext.tsx:65
 #: src/functions/forms.tsx:196
 #: src/hooks/UseForm.tsx:39
 #: src/tables/FilterSelectDrawer.tsx:218
@@ -71,7 +71,7 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:226
 #: src/components/forms/ApiForm.tsx:490
-#: src/contexts/ThemeContext.tsx:64
+#: src/contexts/ThemeContext.tsx:65
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
 msgstr ""
@@ -462,6 +462,7 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:284
+#: src/components/modals/LicenseModal.tsx:66
 #: src/components/nav/SearchDrawer.tsx:411
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -708,6 +709,22 @@ msgstr ""
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
+msgstr ""
+
+#: src/components/modals/LicenseModal.tsx:36
+msgid "No license text available"
+msgstr ""
+
+#: src/components/modals/LicenseModal.tsx:62
+msgid "Loading license information"
+msgstr ""
+
+#: src/components/modals/LicenseModal.tsx:68
+msgid "Failed to fetch license information"
+msgstr ""
+
+#: src/components/modals/LicenseModal.tsx:76
+msgid "{key} Packages"
 msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:72
@@ -2049,7 +2066,7 @@ msgstr ""
 #~ msgstr "Instance"
 
 #: src/defaults/links.tsx:79
-#: src/defaults/links.tsx:104
+#: src/defaults/links.tsx:115
 msgid "System Information"
 msgstr ""
 
@@ -2058,24 +2075,32 @@ msgstr ""
 #~ msgstr "InvenTree"
 
 #: src/defaults/links.tsx:92
-#: src/defaults/links.tsx:110
+#: src/defaults/links.tsx:121
 msgid "About InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:105
-msgid "About this Inventree instance"
-msgstr ""
-
-#: src/defaults/links.tsx:111
-msgid "About the InvenTree org"
+#: src/defaults/links.tsx:104
+msgid "License Information"
 msgstr ""
 
 #: src/defaults/links.tsx:116
-msgid "Licenses"
+msgid "About this Inventree instance"
 msgstr ""
 
 #: src/defaults/links.tsx:117
-msgid "Licenses for packages used by InvenTree"
+#~ msgid "Licenses for packages used by InvenTree"
+#~ msgstr "Licenses for packages used by InvenTree"
+
+#: src/defaults/links.tsx:122
+msgid "About the InvenTree org"
+msgstr ""
+
+#: src/defaults/links.tsx:127
+msgid "Licenses"
+msgstr ""
+
+#: src/defaults/links.tsx:128
+msgid "Licenses for dependencies of the service"
 msgstr ""
 
 #: src/defaults/menuItems.tsx:7
