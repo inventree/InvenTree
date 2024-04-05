@@ -415,7 +415,15 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test --migrations --report
+        run: invoke test --migrations --report --coverage
+      - name: Upload Coverage Report to Coveralls
+        if: always()
+        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: migrations
+          git-commit: ${{ github.sha }}
+          git-branch: ${{ github.ref }}
 
   migrations-checks:
     name: Tests - Full Migration [SQLite]
@@ -549,7 +557,7 @@ jobs:
         uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          carryforward: "pui,backend"
+          carryforward: "pui,backend,migrations"
           parallel-finished: true
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
