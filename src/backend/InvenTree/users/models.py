@@ -368,6 +368,10 @@ class RuleSet(models.Model):
             'django_q_task',
             'django_q_schedule',
             'django_q_success',
+            # Importing
+            'importer_dataimportsession',
+            'importer_dataimportcolumnmap',
+            'importer_dataimportrow',
         ]
 
     RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
