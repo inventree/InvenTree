@@ -287,6 +287,7 @@ jobs:
       - name: Coverage Tests
         run: invoke test --coverage
       - name: Upload Coverage Report to Coveralls
+        if: always()
         uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
