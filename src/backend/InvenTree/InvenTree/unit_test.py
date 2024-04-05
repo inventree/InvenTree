@@ -157,7 +157,9 @@ class UserMixin:
 
         if type(assign_all) is not bool:
             # Raise exception if common mistake is made!
-            raise TypeError('assignRole: assign_all must be a boolean value')  # pragma: no cover
+            raise TypeError(
+                'assignRole: assign_all must be a boolean value'
+            )  # pragma: no cover
 
         if not role and not assign_all:
             raise ValueError(
@@ -241,14 +243,18 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             yield  # your test will be run here
 
         if verbose:
-            msg = '\r\n%s' % json.dumps(context.captured_queries, indent=4)  # pragma: no cover
+            msg = '\r\n%s' % json.dumps(
+                context.captured_queries, indent=4
+            )  # pragma: no cover
         else:
             msg = None
 
         n = len(context.captured_queries)
 
         if debug:
-            print(f'Expected less than {value} queries, got {n} queries')  # pragma: no cover
+            print(
+                f'Expected less than {value} queries, got {n} queries'
+            )  # pragma: no cover
 
         self.assertLess(n, value, msg=msg)
 
