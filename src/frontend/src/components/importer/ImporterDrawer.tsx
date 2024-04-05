@@ -73,8 +73,6 @@ export default function ImporterDrawer({
       default:
         return <Text>Unknown status code: {session?.status}</Text>;
     }
-
-    return '-';
   }, [session]);
 
   const cancelImport = useCallback(() => {
