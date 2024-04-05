@@ -157,12 +157,14 @@ class UserMixin:
 
         if type(assign_all) is not bool:
             # Raise exception if common mistake is made!
-            raise TypeError('assignRole: assign_all must be a boolean value')
+            raise TypeError(
+                'assignRole: assign_all must be a boolean value'
+            )  # pragma: no cover
 
         if not role and not assign_all:
             raise ValueError(
                 'assignRole: either role must be provided, or assign_all must be set'
-            )
+            )  # pragma: no cover
 
         if not assign_all and role:
             rule, perm = role.split('.')
@@ -241,14 +243,18 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             yield  # your test will be run here
 
         if verbose:
-            msg = '\r\n%s' % json.dumps(context.captured_queries, indent=4)
+            msg = '\r\n%s' % json.dumps(
+                context.captured_queries, indent=4
+            )  # pragma: no cover
         else:
             msg = None
 
         n = len(context.captured_queries)
 
         if debug:
-            print(f'Expected less than {value} queries, got {n} queries')
+            print(
+                f'Expected less than {value} queries, got {n} queries'
+            )  # pragma: no cover
 
         self.assertLess(n, value, msg=msg)
 
@@ -258,7 +264,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         if expected_code is None:
             return
 
-        if expected_code != response.status_code:
+        if expected_code != response.status_code:  # pragma: no cover
             print(
                 f"Unexpected {method} response at '{url}': status_code = {response.status_code}"
             )
@@ -280,11 +286,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         response = self.client.options(url)
         self.assertEqual(response.status_code, 200)
 
-        actions = response.data.get('actions', None)
-
-        if not actions:
-            actions = {}
-
+        actions = response.data.get('actions', {})
         return actions
 
     def get(self, url, data=None, expected_code=200, format='json', **kwargs):
