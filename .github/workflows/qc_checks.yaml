@@ -542,7 +542,7 @@ jobs:
     name: Finish Coverage
     runs-on: ubuntu-20.04
     needs: ["platform_ui", "coverage", "paths-filter"]
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
+    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true') && (needs.platform_ui.result == 'success' || needs.coverage.result == 'success')
 
     steps:
       - name: Finish coverage reporting
