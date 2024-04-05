@@ -384,7 +384,7 @@ jobs:
     name: Tests - Migrations [PostgreSQL]
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') || needs.paths-filter.outputs.force == 'true'
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -429,7 +429,7 @@ jobs:
     name: Tests - Full Migration [SQLite]
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') || needs.paths-filter.outputs.force == 'true'
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
 
     env:
       INVENTREE_DB_ENGINE: sqlite3
