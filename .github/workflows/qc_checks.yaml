@@ -74,7 +74,7 @@ jobs:
       - name: Lint Javascript Files
         run: |
           python src/backend/InvenTree/manage.py prerender
-          npx eslint@8.57.0 src/backend/InvenTree/InvenTree/static_i18n/i18n/*.js
+          cd src/backend && npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
   pre-commit:
     name: Style [pre-commit]
