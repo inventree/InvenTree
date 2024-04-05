@@ -173,9 +173,7 @@ function StatusLabelPlayground() {
 function DataImportingPlayground() {
   const [opened, setOpened] = useState<boolean>(false);
 
-  const importSessionFields = dataImporterSessionFields({
-    model: 'partcategory'
-  });
+  const importSessionFields = dataImporterSessionFields();
 
   const [importSessionId, setImportSessionId] = useState<number>(0);
 
@@ -184,7 +182,8 @@ function DataImportingPlayground() {
     title: 'Create Import Session',
     fields: importSessionFields,
     initialData: {
-      parent: 1
+      parent: 1,
+      model: 'partcategory'
     },
     onFormSuccess: (response: any) => {
       setImportSessionId(response.pk);

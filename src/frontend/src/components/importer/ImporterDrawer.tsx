@@ -48,6 +48,7 @@ export default function ImporterDrawer({
     return status;
   }, [session]);
 
+  // TODO: This needs a lot of cleanup!!
   const widget = useMemo(() => {
     switch (statusText) {
       case 'INITIAL':
