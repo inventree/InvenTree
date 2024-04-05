@@ -64,11 +64,6 @@ class LabelTest(InvenTreeAPITestCase):
         response = self.get(url, {'enabled': False})
         self.assertEqual(len(response.data), 0)
 
-        # Disable each report
-        for label in labels:
-            label.enabled = False
-            label.save()
-
         # Filter by "enabled" status
         response = self.get(url, {'enabled': True})
         self.assertEqual(len(response.data), 0)
