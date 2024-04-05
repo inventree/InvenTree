@@ -11,6 +11,15 @@ from stock.models import StockItem, StockLocation
 class LocatePluginTests(InvenTreeAPITestCase):
     """Tests for LocateMixin."""
 
+    def setUp(self):
+        """Set up the test case."""
+        super().setUp()
+
+        # Activate plugin
+        config = registry.get_plugin('samplelocate').plugin_config()
+        config.active = True
+        config.save()
+
     fixtures = ['category', 'part', 'location', 'stock']
 
     def test_installed(self):

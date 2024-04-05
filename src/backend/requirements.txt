@@ -46,7 +46,7 @@ deprecated==1.2.14
     #   opentelemetry-exporter-otlp-proto-http
 diff-match-patch==20230430
     # via django-import-export
-dj-rest-auth==5.0.2
+dj-rest-auth==5.1.0
 django==4.2.11
     # via
     #   dj-rest-auth
@@ -230,6 +230,9 @@ pillow==10.2.0
     #   qrcode
     #   weasyprint
 pint==0.21
+pip-licenses==4.3.4
+prettytable==3.10.0
+    # via pip-licenses
 protobuf==4.25.3
     # via
     #   googleapis-common-protos
@@ -269,7 +272,7 @@ pyyaml==6.0.1
     #   tablib
 qrcode[pil]==7.4.2
     # via django-allauth-2fa
-rapidfuzz==3.6.2
+rapidfuzz==3.7.0
 redis==5.0.3
     # via django-redis
 referencing==0.34.0
@@ -329,6 +332,8 @@ urllib3==2.2.1
     #   dulwich
     #   requests
     #   sentry-sdk
+wcwidth==0.2.13
+    # via prettytable
 weasyprint==61.2
     # via django-weasyprint
 webencodings==0.5.1

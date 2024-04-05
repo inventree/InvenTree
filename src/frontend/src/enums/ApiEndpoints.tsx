@@ -40,6 +40,7 @@ export enum ApiEndpoints {
   news = 'news/',
   global_status = 'generic/status/',
   version = 'version/',
+  license = 'license/',
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',

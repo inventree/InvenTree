@@ -1,4 +1,5 @@
 import { setApiDefaults } from '../App';
+import { useServerApiState } from './ApiState';
 import { useSessionState } from './SessionState';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
@@ -131,6 +132,7 @@ export function fetchGlobalStates() {
 
   setApiDefaults();
 
+  useServerApiState.getState().fetchServerApiState();
   useUserState.getState().fetchUserState();
   useUserSettingsState.getState().fetchSettings();
   useGlobalSettingsState.getState().fetchSettings();
