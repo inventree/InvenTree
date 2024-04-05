@@ -6,10 +6,8 @@ from .transition import StateTransitionMixin, TransitionMethod, storage
 
 # Global variables to determine which transition classes raises an exception
 global raise_storage
-global raise_function
 
 raise_storage = False
-raise_function = False
 
 
 class MyPrivateError(NotImplementedError):
@@ -44,10 +42,8 @@ class TransitionTests(InvenTreeTestCase):
     def test_storage(self):
         """Ensure that the storage collection mechanism works."""
         global raise_storage
-        global raise_function
 
         raise_storage = True
-        raise_function = False
 
         class RaisingImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
@@ -73,10 +69,8 @@ class TransitionTests(InvenTreeTestCase):
     def test_function(self):
         """Ensure that a TransitionMethod's function is called."""
         global raise_storage
-        global raise_function
 
         raise_storage = False
-        raise_function = True
 
         # Setup
         class ValidImplementationNoEffect(TransitionMethod):
@@ -85,12 +79,7 @@ class TransitionTests(InvenTreeTestCase):
 
         class ValidImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
-                global raise_function
-
-                if raise_function:
-                    return 1234
-                else:
-                    return False
+                return 1234
 
         storage.collect()
         self.assertIn(ValidImplementationNoEffect, storage.list)
