@@ -541,7 +541,7 @@ class TestHelpers(TestCase):
         # TODO: Re-implement this test when we are happier with the external service
         # dl_helper("https://httpstat.us/200?sleep=5000", requests.exceptions.ReadTimeout, timeout=1)
 
-        large_img = 'https://github.com/inventree/InvenTree/raw/master/InvenTree/InvenTree/static/img/paper_splash_large.jpg'
+        large_img = 'https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/static/img/paper_splash_large.jpg'
 
         InvenTreeSetting.set_setting(
             'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE', 1, change_user=None
