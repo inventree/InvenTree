@@ -1092,10 +1092,10 @@ class CurrencyAPITests(InvenTreeAPITestCase):
                 # Exit early
                 return
 
-            # Delay and try again
-            time.sleep(10)
+            # Delay and try again - might have problems with exchange rate endpoint
+            time.sleep(10)  # pragma: no cover
 
-        raise TimeoutError('Could not refresh currency exchange data after 5 attempts')
+        raise TimeoutError('Could not refresh currency exchange data after 5 attempts')  # pragma: no cover
 
 
 class NotesImageTest(InvenTreeAPITestCase):
