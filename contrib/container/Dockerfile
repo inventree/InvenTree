@@ -126,11 +126,11 @@ COPY --from=prebuild /root/.local /root/.local
 
 
 # Copy source code
-COPY src/backend/InvenTree ${INVENTREE_HOME}/src/backend/InvenTree
-COPY --from=frontend ${INVENTREE_HOME}/src/backend/InvenTree/web/static/web ./src/backend/InvenTree/web/static/web
+COPY src/backend/InvenTree ${INVENTREE_BACKEND_DIR}/InvenTree
+COPY --from=frontend ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
 
 # Launch the production server
-CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ./InvenTree
+CMD gunicorn -c ./gunicorn.conf.py InvenTree.wsgi -b 0.0.0.0:8000 --chdir ${INVENTREE_BACKEND_DIR}/InvenTree
 
 FROM inventree_base AS dev
 
