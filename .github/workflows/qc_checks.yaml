@@ -288,6 +288,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: matmair/InvenTree
+          flags: backend
 
   postgres:
     name: Tests - DB [PostgreSQL]
@@ -526,6 +527,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: matmair/InvenTree
+          flags: pui
 
   platform_ui_build:
     name: Build - UI Platform
