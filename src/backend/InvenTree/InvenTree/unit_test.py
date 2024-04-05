@@ -280,11 +280,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         response = self.client.options(url)
         self.assertEqual(response.status_code, 200)
 
-        actions = response.data.get('actions', None)
-
-        if not actions:
-            actions = {}
-
+        actions = response.data.get('actions', {})
         return actions
 
     def get(self, url, data=None, expected_code=200, format='json', **kwargs):
