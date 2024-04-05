@@ -84,21 +84,47 @@ class InvenTreeResource(ModelResource):
 
         return [f for f in fields if f.column_name not in fields_to_exclude]
 
+    def before_import(self, dataset, using_transactions, dry_run, **kwargs):
+        """Run custom code before importing data.
+
+        - Determine the list of fields which need to be converted to empty strings
+        """
+        # Construct a map of field names
+        db_fields = {field.name: field for field in self.Meta.model._meta.fields}
+
+        for field_name, field in self.fields.items():
+            # Skip read-only fields (they cannot be imported)
+            if field.readonly:
+                continue
+
+            # Determine the name of the associated column in the dataset
+            column = getattr(field, 'column_name', field_name)
+
+            # Determine the attribute name of the associated database field
+            attribute = getattr(field, 'attribute', field_name)
+
+            # Check if the associated database field is a non-nullable string
+            if db_field := db_fields.get(attribute):
+                if (
+                    isinstance(db_field, CharField)
+                    and db_field.blank
+                    and not db_field.null
+                ):
+                    if column not in self.CONVERT_NULL_FIELDS:
+                        self.CONVERT_NULL_FIELDS.append(column)
+
+        return super().before_import(dataset, using_transactions, dry_run, **kwargs)
+
     def before_import_row(self, row, row_number=None, **kwargs):
         """Run custom code before importing each row.
 
         - Convert any null fields to empty strings, for fields which do not support null values
         """
-        # We can automatically determine which fields might need such a conversion
-        for field in self.Meta.model._meta.fields:
-            if isinstance(field, CharField):
-                if field.blank and not field.null:
-                    if field.name not in self.CONVERT_NULL_FIELDS:
-                        self.CONVERT_NULL_FIELDS.append(field.name)
-
         for field in self.CONVERT_NULL_FIELDS:
             if field in row and row[field] is None:
                 row[field] = ''
+
+        return super().before_import_row(row, row_number, **kwargs)
 
 
 class CustomRateAdmin(RateAdmin):
