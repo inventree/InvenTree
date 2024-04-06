@@ -1148,12 +1148,8 @@ class TestSettings(InvenTreeTestCase):
 
     superuser = True
 
-    def in_env_context(self, envs=None):
+    def in_env_context(self, envs):
         """Patch the env to include the given dict."""
-        # Set default - see B006
-        if envs is None:
-            envs = {}
-
         return mock.patch.dict(os.environ, envs)
 
     def run_reload(self, envs=None):
@@ -1588,15 +1584,15 @@ class ClassValidationMixinTest(TestCase):
 
         def test(self):
             """Test function."""
-            pass
+            ...
 
         def test1(self):
             """Test function."""
-            pass
+            ...
 
         def test2(self):
             """Test function."""
-            pass
+            ...
 
         required_attributes = ['NAME']
         required_overrides = [test, [test1, test2]]
@@ -1616,11 +1612,11 @@ class ClassValidationMixinTest(TestCase):
 
             def test(self):
                 """Test function."""
-                pass
+                ...
 
             def test2(self):
                 """Test function."""
-                pass
+                ...
 
         TestClass.validate()
 
@@ -1643,7 +1639,7 @@ class ClassValidationMixinTest(TestCase):
 
             def test2(self):
                 """Test function."""
-                pass
+                ...
 
         with self.assertRaisesRegex(
             NotImplementedError,
