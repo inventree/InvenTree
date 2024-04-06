@@ -16,7 +16,7 @@ Additionally the `add_label_context` method, allowing custom context data to be 
 
 ### Example
 
-A sample plugin which provides additional context data to the report templates can be found [in the InvenTree source code](https://github.com/inventree/InvenTree/blob/master/InvenTree/plugin/samples/integration/report_plugin_sample.py):
+A sample plugin which provides additional context data to the report templates can be found [in the InvenTree source code](https://github.com/inventree/InvenTree/blob/0.14.x/InvenTree/plugin/samples/integration/report_plugin_sample.py):
 
 ```python
 """Sample plugin for extending reporting functionality"""

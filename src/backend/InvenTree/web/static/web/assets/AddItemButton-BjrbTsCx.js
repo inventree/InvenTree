@@ -1,0 +1,1 @@
+import{j as o}from"./vendor-C5fHLTDD.js";import{A as r}from"./ActionButton-seel8ZoK.js";import{I as n}from"./IconPlus-QsNVBJ5N.js";function e(t){return o.jsx(r,{...t,color:"green",icon:o.jsx(n,{})})}export{e as A};
