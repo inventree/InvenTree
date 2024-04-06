@@ -1048,18 +1048,18 @@ class ColorThemeTest(TestCase):
         """Test that default choices are returned."""
         result = ColorTheme.get_color_themes_choices()
 
-        # skip
+        # skip due to directories not being set up
         if not result:
-            return
+            return  # pragma: no cover
         self.assertIn(('default', 'Default'), result)
 
     def test_valid_choice(self):
         """Check that is_valid_choice works correctly."""
         result = ColorTheme.get_color_themes_choices()
 
-        # skip
+        # skip due to directories not being set up
         if not result:
-            return
+            return  # pragma: no cover
 
         # check wrong reference
         self.assertFalse(ColorTheme.is_valid_choice('abcdd'))
@@ -1099,10 +1099,12 @@ class CurrencyAPITests(InvenTreeAPITestCase):
                 # Exit early
                 return
 
-            # Delay and try again
-            time.sleep(10)
+            # Delay and try again - might have problems with exchange rate endpoint
+            time.sleep(10)  # pragma: no cover
 
-        raise TimeoutError('Could not refresh currency exchange data after 5 attempts')
+        raise TimeoutError(
+            'Could not refresh currency exchange data after 5 attempts'
+        )  # pragma: no cover
 
 
 class NotesImageTest(InvenTreeAPITestCase):
