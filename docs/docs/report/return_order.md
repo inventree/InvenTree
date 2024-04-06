@@ -23,4 +23,4 @@ In addition to the default report context variables, the following context varia
 
 A default report template is provided out of the box, which can be used as a starting point for developing custom return order report templates.
 
-View the [source code](https://github.com/inventree/InvenTree/blob/master/InvenTree/report/templates/report/inventree_return_order_report_base.html) for the default return order report template.
+View the [source code](https://github.com/inventree/InvenTree/blob/0.14.x/InvenTree/report/templates/report/inventree_return_order_report_base.html) for the default return order report template.

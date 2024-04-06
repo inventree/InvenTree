@@ -27,13 +27,13 @@ The following guide provides a streamlined production InvenTree installation, wi
 
 ### Required Files
 
-The following files required for this setup are provided with the InvenTree source, located in the `./docker/` directory of the [InvenTree source code](https://github.com/inventree/InvenTree/tree/master/docker/):
+The following files required for this setup are provided with the InvenTree source, located in the `./docker/` directory of the [InvenTree source code](https://github.com/inventree/InvenTree/tree/0.14.x/docker/):
 
 | Filename | Description |
 | --- | --- |
-| [docker-compose.yml](https://github.com/inventree/InvenTree/blob/master/docker/docker-compose.yml) | The docker compose script |
-| [.env](https://github.com/inventree/InvenTree/blob/master/docker/.env) | Environment variables |
-| [Caddyfile](https://github.com/inventree/InvenTree/blob/master/docker/Caddyfile) | Caddy configuration file |
+| [docker-compose.yml](https://github.com/inventree/InvenTree/blob/0.14.x/docker/docker-compose.yml) | The docker compose script |
+| [.env](https://github.com/inventree/InvenTree/blob/0.14.x/docker/.env) | Environment variables |
+| [Caddyfile](https://github.com/inventree/InvenTree/blob/0.14.x/docker/Caddyfile) | Caddy configuration file |
 
 Download these files to a directory on your local machine.
 

@@ -13,4 +13,4 @@ You can use all content variables from the [StockLocation](./context_variables.m
 
 A default report template is provided out of the box, which can be used as a starting point for developing custom return order report templates.
 
-View the [source code](https://github.com/inventree/InvenTree/blob/master/InvenTree/report/templates/report/inventree_slr_report.html) for the default stock location report template.
+View the [source code](https://github.com/inventree/InvenTree/blob/0.14.x/InvenTree/report/templates/report/inventree_slr_report.html) for the default stock location report template.
