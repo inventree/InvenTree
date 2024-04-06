@@ -1,1 +1,0 @@
-import{j as t,a1 as s}from"./vendor-C5fHLTDD.js";import{I as m}from"./IconEdit-DwKL16RF.js";import{I as p}from"./IconDeviceFloppy-BZZPsgPR.js";function a({setEditing:i,editing:r,disabled:n,saveIcon:o}){return o=o||t.jsx(p,{}),t.jsx(s,{onClick:()=>i(),disabled:n,children:r?o:t.jsx(m,{})})}export{a as E};

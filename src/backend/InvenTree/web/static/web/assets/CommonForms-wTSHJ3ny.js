@@ -1,1 +1,0 @@
-import{j as o}from"./vendor-C5fHLTDD.js";import{I as s}from"./IconUsers-VfNlX2pM.js";function n(){return{code:{},description:{},responsible:{icon:o.jsx(s,{})}}}function r(){return{name:{},definition:{},symbol:{}}}export{r as c,n as p};
