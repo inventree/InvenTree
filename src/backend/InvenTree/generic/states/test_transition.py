@@ -5,8 +5,6 @@ from InvenTree.unit_test import InvenTreeTestCase
 from .transition import StateTransitionMixin, TransitionMethod, storage
 
 # Global variables to determine which transition classes raises an exception
-global raise_storage
-
 raise_storage = False
 
 
@@ -48,8 +46,6 @@ class TransitionTests(InvenTreeTestCase):
         class RaisingImplementation(TransitionMethod):
             def transition(self, *args, **kwargs):
                 """Custom transition method."""
-                global raise_storage
-
                 if raise_storage:
                     raise MyPrivateError('RaisingImplementation')
 
