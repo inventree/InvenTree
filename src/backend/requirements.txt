@@ -222,7 +222,7 @@ opentelemetry-util-http==0.44b0
 packaging==24.0
     # via gunicorn
 pdf2image==1.17.0
-pillow==10.2.0
+pillow==10.3.0
     # via
     #   django-stdimage
     #   pdf2image
