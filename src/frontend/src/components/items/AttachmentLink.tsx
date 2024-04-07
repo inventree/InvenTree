@@ -60,7 +60,7 @@ export function AttachmentLink({
 }): ReactNode {
   let text = external ? attachment : attachment.split('/').pop();
 
-  const { host } = useLocalState.getState();
+  const host = useLocalState((s) => s.host);
 
   const url = useMemo(() => {
     if (external) {
