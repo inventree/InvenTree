@@ -8,7 +8,9 @@ import {
   IconFileTypeXls,
   IconFileTypeZip
 } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
+
+import { useLocalState } from '../../states/LocalState';
 
 /**
  * Return an icon based on the provided filename
@@ -58,10 +60,20 @@ export function AttachmentLink({
 }): ReactNode {
   let text = external ? attachment : attachment.split('/').pop();
 
+  const { host } = useLocalState.getState();
+
+  const url = useMemo(() => {
+    if (external) {
+      return attachment;
+    }
+
+    return `${host}${attachment}`;
+  }, [host, attachment, external]);
+
   return (
     <Group position="left" spacing="sm">
       {external ? <IconLink /> : attachmentIcon(attachment)}
-      <Anchor href={attachment} target="_blank" rel="noopener noreferrer">
+      <Anchor href={url} target="_blank" rel="noopener noreferrer">
         {text}
       </Anchor>
     </Group>
