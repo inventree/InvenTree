@@ -8,6 +8,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { fetchGlobalStates } from '../states/states';
+import { showLoginNotification } from './notifications';
 
 /**
  * Attempt to login using username:password combination.
@@ -63,10 +64,10 @@ export const doLogout = async (navigate: any) => {
   await api.post(apiUrl(ApiEndpoints.user_logout)).finally(() => {
     clearCsrfCookie();
     navigate('/login');
-    notifications.show({
+
+    showLoginNotification({
       title: t`Logged Out`,
-      message: t`You have been logged out`,
-      color: 'green'
+      message: t`Successfully logged out`
     });
   });
 };
@@ -135,14 +136,11 @@ export function checkLoginState(
 
   // Callback function when login is successful
   const loginSuccess = () => {
-    notifications.hide('login');
-    notifications.show({
-      id: 'login',
+    showLoginNotification({
       title: t`Logged In`,
-      message: t`Found an existing login - welcome back!`,
-      color: 'green',
-      icon: <IconCheck size="1rem" />
+      message: t`Successfully logged in`
     });
+
     navigate(redirect ?? '/home');
   };
 
