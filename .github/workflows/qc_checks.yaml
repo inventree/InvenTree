@@ -531,11 +531,11 @@ jobs:
       - name: Install dependencies
         run: cd src/frontend && yarn install
       - name: Build frontend
-        run: cd src/frontend && npm run compile && npm run build
+        run: cd src/frontend && yarn run compile && yarn run build
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static
-          zip -r frontend-build.zip web/
+          zip -r frontend-build.zip web/ web/.vite
       - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
         with:
           name: frontend-build
