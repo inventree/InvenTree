@@ -1081,10 +1081,8 @@ if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
-CSRF_COOKIE_SAMESITE = None
+CSRF_COOKIE_SAMESITE = 'Lax'
 
-# Additional session cookie settings
-SESSION_COOKIE_SAMESITE = None
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
