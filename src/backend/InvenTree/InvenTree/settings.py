@@ -1083,7 +1083,6 @@ CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
 CSRF_COOKIE_SAMESITE = 'Lax'
 
-
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',
     config_key='use_x_forwarded_host',
@@ -1112,7 +1111,7 @@ CORS_ALLOW_CREDENTIALS = get_boolean_setting(
 )
 
 # Only allow CORS access to the following URL endpoints
-CORS_URLS_REGEX = r'^/(api|auth|media|static|accounts)/.*$'
+CORS_URLS_REGEX = r'^/(api|auth|media|static)/.*$'
 
 CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
