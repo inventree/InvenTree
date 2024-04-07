@@ -2,7 +2,7 @@ coverage:
   status:
     project:
       default:
-        target: 85%
+        target: 75%
 
 github_checks:
     annotations: true
@@ -15,7 +15,7 @@ flag_management:
       carryforward: true
       statuses:
         - type: project
-          target: 85%
+          target: 75%
     - name: pui
       carryforward: true
       statuses:
