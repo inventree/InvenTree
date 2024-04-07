@@ -4,67 +4,24 @@
  * Image caching is handled automagically by the browsers cache
  */
 import { Image, ImageProps, Skeleton, Stack } from '@mantine/core';
-import { useId } from '@mantine/hooks';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo } from 'react';
 
-import { api } from '../../App';
+import { useLocalState } from '../../states/LocalState';
 
 /**
  * Construct an image container which will load and display the image
  */
 export function ApiImage(props: ImageProps) {
-  const [image, setImage] = useState<string>('');
+  const { host } = useLocalState.getState();
 
-  const [authorized, setAuthorized] = useState<boolean>(true);
-
-  const queryKey = useId();
-
-  const _imgQuery = useQuery({
-    queryKey: ['image', queryKey, props.src],
-    enabled:
-      authorized &&
-      props.src != undefined &&
-      props.src != null &&
-      props.src != '',
-    queryFn: async () => {
-      if (!props.src) {
-        return null;
-      }
-      return api
-        .get(props.src, {
-          responseType: 'blob'
-        })
-        .then((response) => {
-          switch (response.status) {
-            case 200:
-              let img = new Blob([response.data], {
-                type: response.headers['content-type']
-              });
-              let url = URL.createObjectURL(img);
-              setImage(url);
-              break;
-            default:
-              // User is not authorized to view this image, or the image is not available
-              setImage('');
-              setAuthorized(false);
-              break;
-          }
-
-          return response;
-        })
-        .catch((_error) => {
-          return null;
-        });
-    },
-    refetchOnMount: true,
-    refetchOnWindowFocus: false
-  });
+  const imageUrl = useMemo(() => {
+    return `${host}${props.src}`;
+  }, [host, props.src]);
 
   return (
     <Stack>
-      {image && image.length > 0 ? (
-        <Image {...props} src={image} withPlaceholder fit="contain" />
+      {imageUrl ? (
+        <Image {...props} src={imageUrl} withPlaceholder fit="contain" />
       ) : (
         <Skeleton
           height={props?.height ?? props.width}
