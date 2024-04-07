@@ -1105,7 +1105,7 @@ CORS_ALLOW_CREDENTIALS = get_boolean_setting(
 )
 
 # Only allow CORS access to the following URL endpoints
-CORS_URLS_REGEX = r'^/(api|auth|media|static)/.*$'
+CORS_URLS_REGEX = r'^/(api|auth|media|static|accounts)/.*$'
 
 CORS_ALLOWED_ORIGINS = get_setting(
     'INVENTREE_CORS_ORIGIN_WHITELIST',
