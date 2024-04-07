@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 186
+INVENTREE_API_VERSION = 187
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v187 - 2024-04-07 : https://github.com/inventree/InvenTree/pull/6970
+    - Improvements for login / logout endpoints for better support of React web interface
 
 v186 - 2024-03-26 : https://github.com/inventree/InvenTree/pull/6855
     - Adds license information to the API
