@@ -1,6 +1,10 @@
 import { t } from '@lingui/macro';
 import {
+  ActionIcon,
   CloseButton,
+  Divider,
+  Group,
+  HoverCard,
   LoadingOverlay,
   Stack,
   Table,
@@ -8,7 +12,8 @@ import {
   Tooltip
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useCallback, useMemo } from 'react';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { ReactNode, useCallback, useMemo } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -29,8 +34,6 @@ function ImporterDataField({
     const fields = session?.available_fields ?? {};
 
     let definition: any = undefined;
-
-    console.log('row:', row);
 
     Object.keys(fields).forEach((key) => {
       if (key == field) {
@@ -73,6 +76,26 @@ function ImporterDataRow({
     return session?.column_mappings ?? [];
   }, [session]);
 
+  // Construct a rendering of the "original" row data
+  const rowData: ReactNode = useMemo(() => {
+    return (
+      <Stack spacing="xs">
+        <Text size="sm" weight={700}>{t`Original Data`}</Text>
+        <Divider />
+        {Object.keys(row.row_data).map((key) => {
+          return (
+            <Group spacing="xs">
+              <Text size="xs" weight={700}>
+                {key}
+              </Text>
+              <Text size="xs">{row.row_data[key]}</Text>
+            </Group>
+          );
+        })}
+      </Stack>
+    );
+  }, [row.row_data]);
+
   const removeRow = useCallback(() => {
     const url = apiUrl(ApiEndpoints.import_session_row_list, row.pk);
 
@@ -92,7 +115,21 @@ function ImporterDataRow({
 
   return (
     <tr>
-      <td>{row.row_index}</td>
+      <td>
+        <Group position="apart">
+          <Text>{row.row_index}</Text>
+          <HoverCard withinPortal={true}>
+            <HoverCard.Target>
+              <ActionIcon size="xs">
+                <IconInfoCircle />
+              </ActionIcon>
+            </HoverCard.Target>
+            <HoverCard.Dropdown>
+              <Text>{rowData}</Text>
+            </HoverCard.Dropdown>
+          </HoverCard>
+        </Group>
+      </td>
       {columns.map((column: any) => {
         return (
           <ImporterDataField field={column.field} row={row} session={session} />
@@ -136,7 +173,7 @@ export default function ImporterDataSelector({
   return (
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isFetching} />
-      <Table striped>
+      <Table striped style={{ fontSize: '20%' }}>
         <thead>
           <tr>
             <th>{t`Row`}</th>
