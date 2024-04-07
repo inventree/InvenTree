@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 
 import { ModelType } from '../../../enums/ModelType';
+import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { NestedObjectField } from './NestedObjectField';
@@ -220,7 +221,7 @@ export function ApiFormField({
             id={fieldId}
             radius="lg"
             size="sm"
-            checked={value ?? false}
+            checked={isTrue(reducedDefinition.value)}
             error={error?.message}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
