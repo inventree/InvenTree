@@ -12,7 +12,11 @@ import {
   Tooltip
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconInfoCircle } from '@tabler/icons-react';
+import {
+  IconColumnInsertLeft,
+  IconFileDatabase,
+  IconInfoCircle
+} from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo } from 'react';
 
 import { api } from '../../App';
@@ -65,22 +69,20 @@ function ImporterDataField({
 
 function ImporterDataRow({
   row,
+  columns,
   session,
   onRowDeleted
 }: {
   row: any;
+  columns: any[];
   session: any;
   onRowDeleted: () => void;
 }) {
-  const columns: any[] = useMemo(() => {
-    return session?.column_mappings ?? [];
-  }, [session]);
-
   // Construct a rendering of the "original" row data
   const rowData: ReactNode = useMemo(() => {
     return (
       <Stack spacing="xs">
-        <Text size="sm" weight={700}>{t`Original Data`}</Text>
+        <Text size="sm" weight={700}>{t`Row Data`}</Text>
         <Divider />
         {Object.keys(row.row_data).map((key) => {
           return (
@@ -116,12 +118,12 @@ function ImporterDataRow({
   return (
     <tr>
       <td>
-        <Group position="apart">
+        <Group position="left">
           <Text>{row.row_index}</Text>
           <HoverCard withinPortal={true}>
             <HoverCard.Target>
               <ActionIcon size="xs">
-                <IconInfoCircle />
+                <IconFileDatabase />
               </ActionIcon>
             </HoverCard.Target>
             <HoverCard.Dropdown>
@@ -166,8 +168,11 @@ export default function ImporterDataSelector({
     refetchOnMount: true
   });
 
+  // Select only the actively mapped columns
   const columns: any[] = useMemo(() => {
-    return session?.column_mappings ?? [];
+    return (session?.column_mappings ?? []).filter((column: any) => {
+      return !!column.field;
+    });
   }, [session]);
 
   return (
@@ -198,6 +203,7 @@ export default function ImporterDataSelector({
               return (
                 <ImporterDataRow
                   row={row}
+                  columns={columns}
                   session={session}
                   onRowDeleted={refreshInstance}
                 />
