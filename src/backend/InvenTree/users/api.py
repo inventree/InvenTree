@@ -8,7 +8,7 @@ from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
-from dj_rest_auth.views import LogoutView
+from dj_rest_auth.views import LoginView, LogoutView
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
 from rest_framework.response import Response

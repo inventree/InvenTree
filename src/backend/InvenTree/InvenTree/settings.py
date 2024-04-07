@@ -469,10 +469,18 @@ if DEBUG:
         'rest_framework.renderers.BrowsableAPIRenderer'
     )
 
-# dj-rest-auth
 # JWT switch
 USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
 REST_USE_JWT = USE_JWT
+
+# dj-rest-auth
+REST_AUTH = {
+    'SESSION_LOGIN': True,
+    'TOKEN_MODEL': 'users.models.ApiToken',
+    'TOKEN_CREATOR': 'users.models.default_create_token',
+    'USE_JWT': USE_JWT,
+}
+
 OLD_PASSWORD_FIELD_ENABLED = True
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'
@@ -486,6 +494,7 @@ if USE_JWT:
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
     )
     INSTALLED_APPS.append('rest_framework_simplejwt')
+
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
