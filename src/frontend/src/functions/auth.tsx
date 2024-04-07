@@ -27,19 +27,25 @@ export const doBasicLogin = async (username: string, password: string) => {
   const login_url = apiUrl(ApiEndpoints.user_login);
 
   // Attempt login with
-  await axios
-    .get(login_url, {
-      auth: { username, password },
-      baseURL: host,
-      timeout: 5000,
-      withCredentials: true,
-      xsrfCookieName: 'csrftoken'
-    })
+  await api
+    .post(
+      login_url,
+      {
+        username: username,
+        password: password
+      },
+      {
+        baseURL: host
+      }
+    )
     .then((response) => {
-      if (response.status == 200) {
-        fetchGlobalStates();
-      } else {
-        clearCsrfCookie();
+      switch (response.status) {
+        case 200:
+          fetchGlobalStates();
+          break;
+        default:
+          clearCsrfCookie();
+          break;
       }
     })
     .catch(() => {
@@ -57,6 +63,11 @@ export const doLogout = async (navigate: any) => {
   await api.post(apiUrl(ApiEndpoints.user_logout)).finally(() => {
     clearCsrfCookie();
     navigate('/login');
+    notifications.show({
+      title: t`Logged Out`,
+      message: t`You have been logged out`,
+      color: 'green'
+    });
   });
 };
 
