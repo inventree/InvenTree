@@ -24,14 +24,16 @@ export const doBasicLogin = async (username: string, password: string) => {
 
   clearCsrfCookie();
 
+  const login_url = apiUrl(ApiEndpoints.user_login);
+
   // Attempt login with
   await axios
-    .get(apiUrl(ApiEndpoints.user_login), {
+    .get(login_url, {
       auth: { username, password },
       baseURL: host,
-      timeout: 2000,
+      timeout: 5000,
       withCredentials: true,
-      xsrfCookieName: 'csrftoken,sessionid'
+      xsrfCookieName: 'csrftoken'
     })
     .then((response) => {
       if (response.status == 200) {
@@ -52,27 +54,10 @@ export const doBasicLogin = async (username: string, password: string) => {
  */
 export const doLogout = async (navigate: any) => {
   // Logout from the server session
-  await api.post(apiUrl(ApiEndpoints.user_logout)).catch(() => {
-    // If an error occurs here, we are likely already logged out
+  await api.post(apiUrl(ApiEndpoints.user_logout)).finally(() => {
     clearCsrfCookie();
     navigate('/login');
-    return;
   });
-
-  // Logout from this session
-  // Note that clearToken() then calls setApiDefaults()
-  clearCsrfCookie();
-
-  notifications.hide('login');
-  notifications.show({
-    id: 'login',
-    title: t`Logout successful`,
-    message: t`You have been logged out`,
-    color: 'green',
-    icon: <IconCheck size="1rem" />
-  });
-
-  navigate('/login');
 };
 
 export const doSimpleLogin = async (email: string) => {
@@ -133,6 +118,10 @@ export function checkLoginState(
 ) {
   setApiDefaults();
 
+  if (redirect == '/') {
+    redirect = '/home';
+  }
+
   // Callback function when login is successful
   const loginSuccess = () => {
     notifications.hide('login');
@@ -153,21 +142,23 @@ export function checkLoginState(
     }
   };
 
-  api
-    .get(apiUrl(ApiEndpoints.user_me), {
-      timeout: 2000
-    })
-    .then((val) => {
-      if (val.status === 200) {
-        // Success: we are logged in (and we already have a token)
-        loginSuccess();
-      } else {
+  // Check the 'user_me' endpoint to see if the user is logged in
+  if (isLoggedIn()) {
+    api
+      .get(apiUrl(ApiEndpoints.user_me))
+      .then((response) => {
+        if (response.status == 200) {
+          loginSuccess();
+        } else {
+          loginFailure();
+        }
+      })
+      .catch(() => {
         loginFailure();
-      }
-    })
-    .catch(() => {
-      loginFailure();
-    });
+      });
+  } else {
+    loginFailure();
+  }
 }
 
 /*
@@ -182,10 +173,16 @@ export function getCsrfCookie() {
   return cookieValue;
 }
 
-export function isLoggedIn() {
-  let cookie = getCsrfCookie();
-  console.log('isLoggedIn:', !!cookie, cookie);
+function getSessionCookie() {
+  const cookieValue = document.cookie
+    .split('; ')
+    .find((row) => row.startsWith('sessionid='))
+    ?.split('=')[1];
 
+  return cookieValue;
+}
+
+export function isLoggedIn() {
   return !!getCsrfCookie();
 }
 
@@ -193,9 +190,6 @@ export function isLoggedIn() {
  * Clear out the CSRF and session cookies (force session logout)
  */
 export function clearCsrfCookie() {
-  console.log('clearing cookies');
-
   document.cookie =
-    'sessionid=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-  ('csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;');
+    'csrftoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
 }
