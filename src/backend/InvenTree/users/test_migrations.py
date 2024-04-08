@@ -24,3 +24,38 @@ class TestForwardMigrations(MigratorTestCase):
         User = self.new_state.apps.get_model('auth', 'user')
 
         self.assertEqual(User.objects.count(), 2)
+
+
+class MFAMigrations(MigratorTestCase):
+    """Test entire schema migration sequence for the users app."""
+
+    migrate_from = ('users', '0011_auto_20240119_1659')
+    migrate_to = ('users', '0012_migrate_mfa_20240408_1659')
+
+    def prepare(self):
+        """Setup the initial state of the database before migrations."""
+        User = self.old_state.apps.get_model('auth', 'user')
+        TOTPDevice = self.old_state.apps.get_model('otp_totp', 'TOTPDevice')
+
+        abc = User.objects.create(
+            username='fred', email='fred@fred.com', password='password'
+        )
+        TOTPDevice.objects.create(
+            user=abc, confirmed=True, key='3132333435363738393031323334353637383930'
+        )
+        abc1 = User.objects.create(
+            username='brad', email='brad@fred.com', password='password'
+        )
+        TOTPDevice.objects.create(
+            user=abc1, confirmed=False, key='3132333435363738393031323334353637383930'
+        )
+
+    def test_users_exist(self):
+        """Test that users exist in the database."""
+        User = self.new_state.apps.get_model('auth', 'user')
+        Authenticator = self.new_state.apps.get_model('mfa', 'Authenticator')
+
+        self.assertEqual(User.objects.count(), 2)
+        # 2 Tokens - both for user 1
+        self.assertEqual(Authenticator.objects.count(), 2)
+        self.assertEqual([1, 1], [i.user_id for i in Authenticator.objects.all()])
