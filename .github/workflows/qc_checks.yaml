@@ -24,6 +24,7 @@ env:
 
 permissions:
   contents: read
+
 jobs:
   paths-filter:
     name: Filter
@@ -34,6 +35,7 @@ jobs:
       migrations: ${{ steps.filter.outputs.migrations }}
       frontend: ${{ steps.filter.outputs.frontend }}
       api: ${{ steps.filter.outputs.api }}
+      force: ${{ steps.force.outputs.force }}
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -48,10 +50,18 @@ jobs:
             migrations:
               - '**/migrations/**'
               - '.github/workflows**'
+              - 'src/backend/requirements.txt'
             api:
-              - 'InvenTree/InvenTree/api_version.py'
+              - 'src/backend/InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
+      - name: Is CI being forced?
+        run: echo "force=true" >> $GITHUB_OUTPUT
+        id: force
+        if: |
+          contains(github.event.pull_request.labels.*.name, 'dependency') ||
+          contains(github.event.pull_request.labels.*.name, 'full-run')
+
 
   javascript:
     name: Style - Classic UI [JS]
@@ -73,13 +83,13 @@ jobs:
       - name: Lint Javascript Files
         run: |
           python src/backend/InvenTree/manage.py prerender
-          npx eslint src/backend/InvenTree/InvenTree/static_i18n/i18n/*.js
+          cd src/backend && npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
   pre-commit:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -125,7 +135,7 @@ jobs:
     name: Tests - API Schema Documentation
     runs-on: ubuntu-20.04
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     env:
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
@@ -276,12 +286,21 @@ jobs:
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
         run: invoke test --coverage
-      - name: Upload Coverage Report
+      - name: Upload Coverage Report to Coveralls
+        if: always()
         uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: backend
+          git-commit: ${{ github.sha }}
+          git-branch: ${{ github.ref }}
           parallel: true
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: backend
 
   postgres:
     name: Tests - DB [PostgreSQL]
@@ -373,7 +392,7 @@ jobs:
     name: Tests - Migrations [PostgreSQL]
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -404,13 +423,27 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test --migrations --report
+        run: invoke test --migrations --report --coverage
+      - name: Upload Coverage Report to Coveralls
+        if: always()
+        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: migrations
+          git-commit: ${{ github.sha }}
+          git-branch: ${{ github.ref }}
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: migrations
 
   migrations-checks:
     name: Tests - Full Migration [SQLite]
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
 
     env:
       INVENTREE_DB_ENGINE: sqlite3
@@ -467,7 +500,7 @@ jobs:
     runs-on: ubuntu-20.04
     timeout-minutes: 60
     needs: [ 'pre-commit', 'paths-filter' ]
-    if: needs.paths-filter.outputs.frontend == 'true'
+    if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
@@ -491,30 +524,24 @@ jobs:
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
-        name: Upload playwright report
-        if: always()
-        with:
-          name: playwright-report
-          path: src/frontend/playwright-report/
-          retention-days: 30
       - name: Report coverage
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
-      - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
-        name: Upload coverage report
-        if: always()
-        with:
-          name: coverage
-          path: src/frontend/coverage/
-          retention-days: 30
-      - name: Upload Coverage Report
+      - name: Upload Coverage Report to Coveralls
         if: always()
         uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: pui
+          git-commit: ${{ github.sha }}
+          git-branch: ${{ github.ref }}
           parallel: true
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: pui
 
   platform_ui_build:
     name: Build - UI Platform
@@ -530,11 +557,11 @@ jobs:
       - name: Install dependencies
         run: cd src/frontend && yarn install
       - name: Build frontend
-        run: cd src/frontend && npm run compile && npm run build
+        run: cd src/frontend && yarn run compile && yarn run build
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static
-          zip -r frontend-build.zip web/
+          zip -r frontend-build.zip web/ web/.vite
       - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
         with:
           name: frontend-build
@@ -543,13 +570,15 @@ jobs:
   finish_coverage:
     name: Finish Coverage
     runs-on: ubuntu-20.04
-    needs: ["platform_ui", "coverage", "paths-filter"]
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
+    needs: ["platform_ui", "coverage", "migration-tests", "paths-filter"]
+    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true') && (needs.platform_ui.result == 'success' || needs.coverage.result == 'success' || needs.migration-tests.result == 'success')
 
     steps:
       - name: Finish coverage reporting
         uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          carryforward: "pui,backend"
+          carryforward: "pui,backend,migrations"
           parallel-finished: true
+          git-commit: ${{ github.sha }}
+          git-branch: ${{ github.ref }}

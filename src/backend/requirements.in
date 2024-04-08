@@ -17,7 +17,7 @@ django-maintenance-mode                 # Shut down application while reloading 
 django-markdownify                      # Markdown rendering
 django-mptt                             # Modified Preorder Tree Traversal
 django-markdownify                      # Markdown rendering
-django-money>=3.0.0,<3.5.0              # Django app for currency management # FIXED 2023-10-31 3.3.0 breaks due to https://github.com/django-money/django-money/issues/731
+django-money>=3.0.0,<3.3.0              # Django app for currency management # FIXED 2023-10-31 3.3.0 breaks due to https://github.com/django-money/django-money/issues/731
 django-mptt                             # Modified Preorder Tree Traversal
 django-redis>=5.0.0                     # Redis integration
 django-q2                               # Background task scheduling
@@ -41,6 +41,7 @@ gunicorn                                # Gunicorn web server
 pdf2image                               # PDF to image conversion
 pillow                                  # Image manipulation
 pint==0.21                              # Unit conversion  # FIXED 2023-05-30 breaks tests https://github.com/matmair/InvenTree/actions/runs/5095665936/jobs/9160852560
+pip-licenses                            # License information for installed packages
 python-barcode[images]                  # Barcode generator
 python-dotenv                           # Environment variable management
 pyyaml>=6.0.1                           # YAML parsing

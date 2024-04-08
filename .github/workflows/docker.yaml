@@ -89,6 +89,7 @@ jobs:
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
           docker run --rm inventree-test pg_dump --version
+          docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/manage.py
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: docker compose --project-directory . -f contrib/container/dev-docker-compose.yml build --no-cache
