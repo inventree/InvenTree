@@ -26,7 +26,7 @@ export default defineConfig({
         includePrivate: true,
         multipleVersions: true,
         output: {
-          file: '../../InvenTree/web/static/web/.vite/dependencies.json',
+          file: '../backend/InvenTree/web/static/web/.vite/dependencies.json',
           template(dependencies) {
             return JSON.stringify(dependencies);
           }
