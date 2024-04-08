@@ -16,6 +16,11 @@ flag_management:
       statuses:
         - type: project
           target: 85%
+    - name: migrations
+      carryforward: true
+      statuses:
+        - type: project
+          target: 50%
     - name: pui
       carryforward: true
       statuses:

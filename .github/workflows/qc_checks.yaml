@@ -433,6 +433,12 @@ jobs:
           flag-name: migrations
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: migrations
 
   migrations-checks:
     name: Tests - Full Migration [SQLite]
