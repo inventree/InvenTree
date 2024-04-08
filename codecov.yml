@@ -1,0 +1,23 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 75%
+
+github_checks:
+    annotations: true
+
+flag_management:
+  default_rules:
+    carryforward: true
+  individual_flags:
+    - name: backend
+      carryforward: true
+      statuses:
+        - type: project
+          target: 75%
+    - name: pui
+      carryforward: true
+      statuses:
+        - type: project
+          target: 45%
