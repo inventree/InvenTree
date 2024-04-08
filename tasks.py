@@ -869,9 +869,7 @@ def test(
 
     if coverage:
         # Run tests within coverage environment, and generate report
-        c.run(
-            f'cd {managePyDir()} && coverage run {managePyPath()} {cmd} && cp {managePyDir().joinpath(".coverage")} {localDir()}'
-        )
+        c.run(f'coverage run {managePyPath()} {cmd}')
         c.run('coverage xml -i')
     else:
         # Run simple test runner, without coverage
