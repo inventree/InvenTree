@@ -55,6 +55,9 @@ def apps():
         'users',
         'plugin',
         'InvenTree',
+        'generic',
+        'machine',
+        'web',
     ]
 
 
