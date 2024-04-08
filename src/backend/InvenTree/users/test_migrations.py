@@ -36,19 +36,17 @@ class MFAMigrations(MigratorTestCase):
         """Setup the initial state of the database before migrations."""
         User = self.old_state.apps.get_model('auth', 'user')
         TOTPDevice = self.old_state.apps.get_model('otp_totp', 'TOTPDevice')
+        StaticDevice = self.old_state.apps.get_model('otp_static', 'StaticDevice')
 
         abc = User.objects.create(
             username='fred', email='fred@fred.com', password='password'
         )
-        TOTPDevice.objects.create(
-            user=abc, confirmed=True, key='3132333435363738393031323334353637383930'
-        )
+        TOTPDevice.objects.create(user=abc, confirmed=True, key='1234')
         abc1 = User.objects.create(
             username='brad', email='brad@fred.com', password='password'
         )
-        TOTPDevice.objects.create(
-            user=abc1, confirmed=False, key='3132333435363738393031323334353637383930'
-        )
+        TOTPDevice.objects.create(user=abc1, confirmed=False, key='1234')
+        StaticDevice.objects.create(user=abc1, confirmed=True)
 
     def test_users_exist(self):
         """Test that users exist in the database."""
