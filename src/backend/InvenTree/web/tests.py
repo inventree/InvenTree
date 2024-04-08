@@ -29,7 +29,7 @@ class TemplateTagTest(InvenTreeTestCase):
         if not resp:
             # No Vite, no test
             # TODO: Add a test for the non-Vite case (docker)
-            return
+            return  # pragma: no cover
 
         shipped_js = resp.split('<script type="module" src="')[1:]
         self.assertTrue(len(shipped_js) > 0)

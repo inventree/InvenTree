@@ -87,7 +87,7 @@ class TransitionTests(InvenTreeTestCase):
                 if raise_function:
                     return 1234
                 else:
-                    return False
+                    return False  # pragma: no cover # Return false to keep other transitions working
 
         storage.collect()
         self.assertIn(ValidImplementationNoEffect, storage.list)
