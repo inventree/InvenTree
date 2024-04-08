@@ -2,7 +2,7 @@
 
 import base64
 
-from django.db import migrations
+from django.db import OperationalError, migrations
 
 from allauth.mfa.adapter import get_adapter
 from allauth.mfa.models import Authenticator
@@ -13,6 +13,13 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 def move_mfa(apps, schema_editor):
     """Data migration to switch to django-allauth's new built-in MFA."""
     adapter = get_adapter()
+    try:
+        TOTPDevice.objects.all().count()
+    except OperationalError:
+        # The table may not exist
+        print('Skipping totp migration as model does not exist')
+        return
+
     authenticators = []
     for totp in TOTPDevice.objects.filter(confirmed=True).iterator():
         recovery_codes = set()
