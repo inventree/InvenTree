@@ -45,7 +45,7 @@ def move_mfa(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-    dependencies = [('users', '0010_alter_apitoken_key')]
+    dependencies = [('users', '0010_alter_apitoken_key'), ('otp_static', '0002_throttling'), ('otp_totp', '0002_auto_20190420_0723')]
 
     operations = [
         migrations.RunPython(move_mfa, reverse_code=migrations.RunPython.noop)
