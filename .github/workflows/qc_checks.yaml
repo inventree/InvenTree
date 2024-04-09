@@ -300,6 +300,7 @@ jobs:
           parallel: true
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
+        if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
@@ -439,6 +440,7 @@ jobs:
           git-branch: ${{ github.ref }}
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
+        if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
@@ -543,6 +545,7 @@ jobs:
           parallel: true
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
+        if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
