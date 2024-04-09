@@ -37,7 +37,7 @@ InvenTree is built using the Django framework, which has a strong focus on secur
 
 ### Test coverage
 
-We run coverage tests on our codebase to ensure that we have a high level of test coverage above 90%. This is public and can be found [here](https://coveralls.io/github/inventree/InvenTree).
+We run coverage tests on our codebase to ensure that we have a high level of test coverage above 90%. This is public and can be found [here](https://codecov.io/gh/inventree/InvenTree).
 
 ### Pinning dependencies
 
