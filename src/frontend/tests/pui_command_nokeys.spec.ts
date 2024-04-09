@@ -28,8 +28,42 @@ test('PUI - Quick Command - no keys', async ({ page }) => {
     .getByRole('button', { name: 'Open Navigation Open the main' })
     .click();
   // assert the nav headers are visible
-  await page.getByRole('heading', { name: 'Navigation' }).click();
-  await page.getByRole('heading', { name: 'Pages' }).click();
-  await page.getByRole('heading', { name: 'Documentation' }).click();
-  await page.getByRole('heading', { name: 'About' }).click();
+  await page.getByRole('heading', { name: 'Navigation' }).waitFor();
+  await page.getByRole('heading', { name: 'Pages' }).waitFor();
+  await page.getByRole('heading', { name: 'Documentation' }).waitFor();
+  await page.getByRole('heading', { name: 'About' }).waitFor();
+
+  await page.keyboard.press('Escape');
+
+  // use server info
+  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page
+    .getByRole('button', {
+      name: 'Server Information About this Inventree instance'
+    })
+    .click();
+  await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
+  await page.getByRole('button', { name: 'Dismiss' }).click();
+
+  await page.waitForURL('**/platform');
+
+  // use license info
+  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page
+    .getByRole('button', {
+      name: 'License Information Licenses for dependencies of the service'
+    })
+    .click();
+
+  await page.goto('./platform/');
+
+  // use about
+  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page
+    .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
+    .click();
+  await page.getByText('This information is only').waitFor();
+
+  await page.waitForTimeout(500);
+  await page.keyboard.press('Escape');
 });

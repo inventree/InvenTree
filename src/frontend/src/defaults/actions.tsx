@@ -9,6 +9,7 @@ import {
 import { NavigateFunction } from 'react-router-dom';
 
 import { useLocalState } from '../states/LocalState';
+import { aboutInvenTree, licenseInfo, serverInfo } from './links';
 import { menuItems } from './menuItems';
 
 export function getActions(navigate: NavigateFunction) {
@@ -36,7 +37,19 @@ export function getActions(navigate: NavigateFunction) {
     {
       title: t`About InvenTree`,
       description: t`About the InvenTree org`,
-      onTrigger: () => navigate(menuItems.about.link),
+      onTrigger: () => aboutInvenTree(),
+      icon: <IconInfoCircle size="1.2rem" />
+    },
+    {
+      title: t`Server Information`,
+      description: t`About this Inventree instance`,
+      onTrigger: () => serverInfo(),
+      icon: <IconInfoCircle size="1.2rem" />
+    },
+    {
+      title: t`License Information`,
+      description: t`Licenses for dependencies of the service`,
+      onTrigger: () => licenseInfo(),
       icon: <IconInfoCircle size="1.2rem" />
     },
     {
