@@ -1,9 +1,11 @@
 import { t } from '@lingui/macro';
-import { Accordion, Stack, Text } from '@mantine/core';
+import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 
 import { StylishText } from '../../components/items/StylishText';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
+import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 
 function PricingOverview({
@@ -138,6 +140,17 @@ function PricingPanel({
 export default function PartPricingPanel({ part }: { part: any }) {
   const user = useUserState();
 
+  const {
+    instance: pricing,
+    refreshInstance,
+    instanceQuery
+  } = useInstance({
+    pk: part?.pk,
+    hasPrimaryKey: true,
+    endpoint: ApiEndpoints.part_pricing_get,
+    defaultValue: {}
+  });
+
   // TODO: Do we display internal price? This is a global setting
   const internalPricing = true;
 
@@ -150,55 +163,65 @@ export default function PartPricingPanel({ part }: { part: any }) {
   }, [user, part]);
 
   return (
-    <Accordion multiple defaultValue={['overview']}>
-      <PricingPanel
-        content={<PricingOverview part={part} pricing={part?.pricing} />}
-        label="overview"
-        title={t`Pricing Overview`}
-        visible={true}
-      />
-      <PricingPanel
-        content={<PurchaseHistory part={part} pricing={part?.pricing} />}
-        label="purchase"
-        title={t`Purchase History`}
-        visible={purchaseOrderPricing}
-      />
-      <PricingPanel
-        content={<SaleHistroy part={part} pricing={part?.pricing} />}
-        label="sale"
-        title={t`Sale History`}
-        visible={salesOrderPricing}
-      />
-      <PricingPanel
-        content={<InternalPricing part={part} pricing={part?.pricing} />}
-        label="internal"
-        title={t`Internal Pricing`}
-        visible={internalPricing}
-      />
-      <PricingPanel
-        content={<SalePricing part={part} pricing={part?.pricing} />}
-        label="sale"
-        title={t`Sale Pricing`}
-        visible={salesOrderPricing}
-      />
-      <PricingPanel
-        content={<SupplierPricing part={part} pricing={part?.pricing} />}
-        label="supplier"
-        title={t`Supplier Pricing`}
-        visible={purchaseOrderPricing}
-      />
-      <PricingPanel
-        content={<BomPricing part={part} pricing={part?.pricing} />}
-        label="bom"
-        title={t`BOM Pricing`}
-        visible={part?.assembly}
-      />
-      <PricingPanel
-        content={<VariantPricing part={part} pricing={part?.pricing} />}
-        label="variant"
-        title={t`Variant Pricing`}
-        visible={part?.is_template}
-      />
-    </Accordion>
+    <Stack spacing="xs">
+      <LoadingOverlay visible={instanceQuery.isLoading} />
+      {!pricing && !instanceQuery.isLoading && (
+        <Alert color="ref" title={t`Error`}>
+          <Text>{t`No pricing data found for this part.`}</Text>
+        </Alert>
+      )}
+      {pricing && (
+        <Accordion multiple defaultValue={['overview']}>
+          <PricingPanel
+            content={<PricingOverview part={part} pricing={pricing} />}
+            label="overview"
+            title={t`Pricing Overview`}
+            visible={true}
+          />
+          <PricingPanel
+            content={<PurchaseHistory part={part} pricing={pricing} />}
+            label="purchase"
+            title={t`Purchase History`}
+            visible={purchaseOrderPricing}
+          />
+          <PricingPanel
+            content={<SaleHistroy part={part} pricing={pricing} />}
+            label="sale"
+            title={t`Sale History`}
+            visible={salesOrderPricing}
+          />
+          <PricingPanel
+            content={<InternalPricing part={part} pricing={pricing} />}
+            label="internal"
+            title={t`Internal Pricing`}
+            visible={internalPricing}
+          />
+          <PricingPanel
+            content={<SalePricing part={part} pricing={pricing} />}
+            label="sale"
+            title={t`Sale Pricing`}
+            visible={salesOrderPricing}
+          />
+          <PricingPanel
+            content={<SupplierPricing part={part} pricing={pricing} />}
+            label="supplier"
+            title={t`Supplier Pricing`}
+            visible={purchaseOrderPricing}
+          />
+          <PricingPanel
+            content={<BomPricing part={part} pricing={pricing} />}
+            label="bom"
+            title={t`BOM Pricing`}
+            visible={part?.assembly}
+          />
+          <PricingPanel
+            content={<VariantPricing part={part} pricing={pricing} />}
+            label="variant"
+            title={t`Variant Pricing`}
+            visible={part?.is_template}
+          />
+        </Accordion>
+      )}
+    </Stack>
   );
 }
