@@ -54,8 +54,10 @@ test('PUI - Quick Command - no keys', async ({ page }) => {
       name: 'License Information Licenses for dependencies of the service'
     })
     .click();
+  await page.getByText('License Information').first().waitFor();
+  await page.getByRole('tab', { name: 'backend Packages' }).waitFor();
 
-  await page.goto('./platform/');
+  await page.getByLabel('License Information').getByRole('button').click();
 
   // use about
   await page.getByRole('button', { name: 'Open spotlight' }).click();
@@ -63,7 +65,4 @@ test('PUI - Quick Command - no keys', async ({ page }) => {
     .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
     .click();
   await page.getByText('This information is only').waitFor();
-
-  await page.waitForTimeout(500);
-  await page.keyboard.press('Escape');
 });
