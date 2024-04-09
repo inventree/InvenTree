@@ -18,7 +18,7 @@ test('PUI - Quick Command', async ({ page }) => {
   // Open Spotlight with Keyboard Shortcut
   await page.keyboard.press('Meta+K');
   await page
-    .getByRole('button', { name: 'Dashboard Go to the InvenTree' })
+    .getByRole('button', { name: 'Dashboard Go to the InvenTree dashboard' })
     .click();
   await page
     .locator('div')
