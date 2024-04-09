@@ -17,6 +17,10 @@ msgstr ""
 msgid "Title"
 msgstr "Title"
 
+#: src/components/buttons/SpotlightButton.tsx:11
+msgid "Open spotlight"
+msgstr "Open spotlight"
+
 #: src/components/details/Details.tsx:327
 msgid "Copied"
 msgstr "Copied"
@@ -43,7 +47,7 @@ msgstr "Remove"
 
 #: src/components/details/DetailsImage.tsx:70
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:164
-#: src/contexts/ThemeContext.tsx:64
+#: src/contexts/ThemeContext.tsx:65
 #: src/functions/forms.tsx:196
 #: src/hooks/UseForm.tsx:39
 #: src/tables/FilterSelectDrawer.tsx:218
@@ -66,7 +70,7 @@ msgstr "Clear"
 
 #: src/components/details/DetailsImage.tsx:226
 #: src/components/forms/ApiForm.tsx:490
-#: src/contexts/ThemeContext.tsx:64
+#: src/contexts/ThemeContext.tsx:65
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
 msgstr "Submit"
@@ -457,6 +461,7 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:284
+#: src/components/modals/LicenseModal.tsx:66
 #: src/components/nav/SearchDrawer.tsx:411
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -705,6 +710,22 @@ msgstr "Copy version information"
 msgid "Dismiss"
 msgstr "Dismiss"
 
+#: src/components/modals/LicenseModal.tsx:36
+msgid "No license text available"
+msgstr "No license text available"
+
+#: src/components/modals/LicenseModal.tsx:62
+msgid "Loading license information"
+msgstr "Loading license information"
+
+#: src/components/modals/LicenseModal.tsx:68
+msgid "Failed to fetch license information"
+msgstr "Failed to fetch license information"
+
+#: src/components/modals/LicenseModal.tsx:76
+msgid "{key} Packages"
+msgstr "{key} Packages"
+
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
 msgstr "Unknown response"
@@ -841,6 +862,15 @@ msgstr "Version"
 msgid "Server Version"
 msgstr "Server Version"
 
+#: src/components/nav/Layout.tsx:37
+#: src/tables/part/PartThumbTable.tsx:190
+msgid "Search..."
+msgstr "Search..."
+
+#: src/components/nav/Layout.tsx:39
+msgid "Nothing found..."
+msgstr "Nothing found..."
+
 #: src/components/nav/MainMenu.tsx:39
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
 msgid "Settings"
@@ -880,42 +910,43 @@ msgstr "Logout"
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
 
-#: src/components/nav/NavHoverMenu.tsx:61
+#: src/components/nav/NavHoverMenu.tsx:63
 msgid "Open Navigation"
 msgstr "Open Navigation"
 
-#: src/components/nav/NavHoverMenu.tsx:79
+#: src/components/nav/NavHoverMenu.tsx:81
 msgid "View all"
 msgstr "View all"
 
-#: src/components/nav/NavHoverMenu.tsx:93
-#: src/components/nav/NavHoverMenu.tsx:103
+#: src/components/nav/NavHoverMenu.tsx:95
+#: src/components/nav/NavHoverMenu.tsx:105
 msgid "Get started"
 msgstr "Get started"
 
-#: src/components/nav/NavHoverMenu.tsx:96
+#: src/components/nav/NavHoverMenu.tsx:98
 msgid "Overview over high-level objects, functions and possible usecases."
 msgstr "Overview over high-level objects, functions and possible usecases."
 
-#: src/components/nav/NavigationDrawer.tsx:59
+#: src/components/nav/NavigationDrawer.tsx:60
 msgid "Navigation"
 msgstr "Navigation"
 
-#: src/components/nav/NavigationDrawer.tsx:62
+#: src/components/nav/NavigationDrawer.tsx:63
 msgid "Pages"
 msgstr "Pages"
 
-#: src/components/nav/NavigationDrawer.tsx:67
+#: src/components/nav/NavigationDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:133
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
 msgstr "Plugins"
 
-#: src/components/nav/NavigationDrawer.tsx:77
+#: src/components/nav/NavigationDrawer.tsx:78
+#: src/defaults/actions.tsx:26
 msgid "Documentation"
 msgstr "Documentation"
 
-#: src/components/nav/NavigationDrawer.tsx:80
+#: src/components/nav/NavigationDrawer.tsx:81
 msgid "About"
 msgstr "About"
 
@@ -1129,7 +1160,7 @@ msgstr "Project Codes"
 
 #: src/components/render/ModelType.tsx:119
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:99
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:305
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:306
 msgid "Purchase Order"
 msgstr "Purchase Order"
 
@@ -1153,7 +1184,7 @@ msgstr "Purchase Order Lines"
 #: src/components/render/ModelType.tsx:132
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:108
 #: src/pages/build/BuildDetail.tsx:127
-#: src/pages/sales/SalesOrderDetail.tsx:251
+#: src/pages/sales/SalesOrderDetail.tsx:252
 #: src/pages/stock/StockDetail.tsx:205
 msgid "Sales Order"
 msgstr "Sales Order"
@@ -1176,7 +1207,7 @@ msgstr "Sales Order Shipments"
 
 #: src/components/render/ModelType.tsx:147
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:117
-#: src/pages/sales/ReturnOrderDetail.tsx:227
+#: src/pages/sales/ReturnOrderDetail.tsx:228
 msgid "Return Order"
 msgstr "Return Order"
 
@@ -1879,6 +1910,39 @@ msgstr "Chinese (Simplified)"
 msgid "Chinese (Traditional)"
 msgstr "Chinese (Traditional)"
 
+#: src/defaults/actions.tsx:14
+#: src/defaults/links.tsx:26
+#: src/defaults/menuItems.tsx:9
+msgid "Home"
+msgstr "Home"
+
+#: src/defaults/actions.tsx:20
+#: src/defaults/links.tsx:27
+#: src/defaults/menuItems.tsx:28
+#: src/pages/Index/Dashboard.tsx:19
+#: src/pages/Index/Settings/UserSettings.tsx:41
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: src/defaults/actions.tsx:21
+msgid "Go to the InvenTree dashboard"
+msgstr "Go to the InvenTree dashboard"
+
+#: src/defaults/actions.tsx:27
+msgid "Visit documentation to learn more about InvenTree"
+msgstr "Visit documentation to learn more about InvenTree"
+
+#: src/defaults/actions.tsx:32
+#: src/defaults/links.tsx:92
+#: src/defaults/links.tsx:121
+msgid "About InvenTree"
+msgstr "About InvenTree"
+
+#: src/defaults/actions.tsx:33
+#: src/defaults/links.tsx:122
+msgid "About the InvenTree org"
+msgstr "About the InvenTree org"
+
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
 msgstr "Subscribed Parts"
@@ -1969,25 +2033,13 @@ msgstr "GitHub"
 msgid "Demo"
 msgstr "Demo"
 
-#: src/defaults/links.tsx:26
-#: src/defaults/menuItems.tsx:9
-msgid "Home"
-msgstr "Home"
-
-#: src/defaults/links.tsx:27
-#: src/defaults/menuItems.tsx:28
-#: src/pages/Index/Dashboard.tsx:19
-#: src/pages/Index/Settings/UserSettings.tsx:41
-msgid "Dashboard"
-msgstr "Dashboard"
-
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
 #: src/pages/company/ManufacturerDetail.tsx:9
 #: src/pages/company/ManufacturerPartDetail.tsx:217
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:262
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:308
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:309
 #: src/pages/purchasing/PurchasingIndex.tsx:52
 msgid "Purchasing"
 msgstr "Purchasing"
@@ -1995,9 +2047,9 @@ msgstr "Purchasing"
 #: src/defaults/links.tsx:32
 #: src/defaults/menuItems.tsx:53
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:230
+#: src/pages/sales/ReturnOrderDetail.tsx:231
 #: src/pages/sales/SalesIndex.tsx:45
-#: src/pages/sales/SalesOrderDetail.tsx:254
+#: src/pages/sales/SalesOrderDetail.tsx:255
 msgid "Sales"
 msgstr "Sales"
 
@@ -2044,7 +2096,7 @@ msgstr "Frequently asked questions"
 #~ msgstr "Instance"
 
 #: src/defaults/links.tsx:79
-#: src/defaults/links.tsx:104
+#: src/defaults/links.tsx:115
 msgid "System Information"
 msgstr "System Information"
 
@@ -2052,26 +2104,25 @@ msgstr "System Information"
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
-#: src/defaults/links.tsx:92
-#: src/defaults/links.tsx:110
-msgid "About InvenTree"
-msgstr "About InvenTree"
+#: src/defaults/links.tsx:104
+msgid "License Information"
+msgstr "License Information"
 
-#: src/defaults/links.tsx:105
+#: src/defaults/links.tsx:116
 msgid "About this Inventree instance"
 msgstr "About this Inventree instance"
 
-#: src/defaults/links.tsx:111
-msgid "About the InvenTree org"
-msgstr "About the InvenTree org"
+#: src/defaults/links.tsx:117
+#~ msgid "Licenses for packages used by InvenTree"
+#~ msgstr "Licenses for packages used by InvenTree"
 
-#: src/defaults/links.tsx:116
+#: src/defaults/links.tsx:127
 msgid "Licenses"
 msgstr "Licenses"
 
-#: src/defaults/links.tsx:117
-msgid "Licenses for packages used by InvenTree"
-msgstr "Licenses for packages used by InvenTree"
+#: src/defaults/links.tsx:128
+msgid "Licenses for dependencies of the service"
+msgstr "Licenses for dependencies of the service"
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -3175,7 +3226,7 @@ msgstr "Stocktake"
 #: src/pages/build/BuildDetail.tsx:359
 #: src/pages/build/BuildIndex.tsx:14
 #: src/pages/part/PartDetail.tsx:513
-#: src/pages/sales/SalesOrderDetail.tsx:211
+#: src/pages/sales/SalesOrderDetail.tsx:212
 msgid "Build Orders"
 msgstr "Build Orders"
 
@@ -3294,9 +3345,9 @@ msgstr "Issued By"
 
 #: src/pages/build/BuildDetail.tsx:145
 #: src/pages/part/PartDetail.tsx:316
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:188
-#: src/pages/sales/ReturnOrderDetail.tsx:154
-#: src/pages/sales/SalesOrderDetail.tsx:158
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:189
+#: src/pages/sales/ReturnOrderDetail.tsx:155
+#: src/pages/sales/SalesOrderDetail.tsx:159
 msgid "Responsible"
 msgstr "Responsible"
 
@@ -3369,9 +3420,9 @@ msgstr "Child Build Orders"
 #: src/pages/company/CompanyDetail.tsx:244
 #: src/pages/company/ManufacturerPartDetail.tsx:169
 #: src/pages/part/PartDetail.tsx:598
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:244
-#: src/pages/sales/ReturnOrderDetail.tsx:197
-#: src/pages/sales/SalesOrderDetail.tsx:221
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:245
+#: src/pages/sales/ReturnOrderDetail.tsx:198
+#: src/pages/sales/SalesOrderDetail.tsx:222
 #: src/pages/stock/StockDetail.tsx:312
 msgid "Attachments"
 msgstr "Attachments"
@@ -3379,9 +3430,9 @@ msgstr "Attachments"
 #: src/pages/build/BuildDetail.tsx:270
 #: src/pages/company/CompanyDetail.tsx:256
 #: src/pages/part/PartDetail.tsx:610
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:256
-#: src/pages/sales/ReturnOrderDetail.tsx:209
-#: src/pages/sales/SalesOrderDetail.tsx:233
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:257
+#: src/pages/sales/ReturnOrderDetail.tsx:210
+#: src/pages/sales/SalesOrderDetail.tsx:234
 #: src/pages/stock/StockDetail.tsx:324
 msgid "Notes"
 msgstr "Notes"
@@ -3569,7 +3620,7 @@ msgid "Supplier Part Details"
 msgstr "Supplier Part Details"
 
 #: src/pages/company/SupplierPartDetail.tsx:203
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:232
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:233
 msgid "Received Stock"
 msgstr "Received Stock"
 
@@ -3853,11 +3904,11 @@ msgid "Supplier Reference"
 msgstr "Supplier Reference"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:117
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:226
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:227
 #: src/pages/sales/ReturnOrderDetail.tsx:83
-#: src/pages/sales/ReturnOrderDetail.tsx:192
+#: src/pages/sales/ReturnOrderDetail.tsx:193
 #: src/pages/sales/SalesOrderDetail.tsx:87
-#: src/pages/sales/SalesOrderDetail.tsx:196
+#: src/pages/sales/SalesOrderDetail.tsx:197
 msgid "Line Items"
 msgstr "Line Items"
 
@@ -3870,7 +3921,7 @@ msgstr "Completed Line Items"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:132
 #: src/pages/sales/ReturnOrderDetail.tsx:98
 #: src/pages/sales/SalesOrderDetail.tsx:102
-#: src/pages/sales/SalesOrderDetail.tsx:206
+#: src/pages/sales/SalesOrderDetail.tsx:207
 msgid "Completed Shipments"
 msgstr "Completed Shipments"
 
@@ -3886,26 +3937,26 @@ msgstr "Order Currency,"
 msgid "Total Cost"
 msgstr "Total Cost"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:175
-#: src/pages/sales/ReturnOrderDetail.tsx:141
-#: src/pages/sales/SalesOrderDetail.tsx:145
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:176
+#: src/pages/sales/ReturnOrderDetail.tsx:142
+#: src/pages/sales/SalesOrderDetail.tsx:146
 msgid "Created On"
 msgstr "Created On"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:181
-#: src/pages/sales/ReturnOrderDetail.tsx:147
-#: src/pages/sales/SalesOrderDetail.tsx:151
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:182
+#: src/pages/sales/ReturnOrderDetail.tsx:148
+#: src/pages/sales/SalesOrderDetail.tsx:152
 #: src/tables/ColumnRenderers.tsx:164
 msgid "Target Date"
 msgstr "Target Date"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:220
-#: src/pages/sales/ReturnOrderDetail.tsx:186
-#: src/pages/sales/SalesOrderDetail.tsx:190
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:221
+#: src/pages/sales/ReturnOrderDetail.tsx:187
+#: src/pages/sales/SalesOrderDetail.tsx:191
 msgid "Order Details"
 msgstr "Order Details"
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:285
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:286
 msgid "Order Actions"
 msgstr "Order Actions"
 
@@ -3919,7 +3970,7 @@ msgstr "Customer Reference"
 msgid "Customers"
 msgstr "Customers"
 
-#: src/pages/sales/SalesOrderDetail.tsx:201
+#: src/pages/sales/SalesOrderDetail.tsx:202
 msgid "Pending Shipments"
 msgstr "Pending Shipments"
 
@@ -4705,8 +4756,8 @@ msgid "Parameter Template"
 msgstr "Parameter Template"
 
 #: src/tables/part/PartCategoryTemplateTable.tsx:93
-msgid "[{0}]"
-msgstr "[{0}]"
+#~ msgid "[{0}]"
+#~ msgstr "[{0}]"
 
 #: src/tables/part/PartParameterTable.tsx:106
 msgid "New Part Parameter"
@@ -4925,10 +4976,6 @@ msgstr "This action cannot be reversed"
 #: src/tables/part/PartTestTemplateTable.tsx:147
 msgid "Any tests results associated with this template will be deleted"
 msgstr "Any tests results associated with this template will be deleted"
-
-#: src/tables/part/PartThumbTable.tsx:190
-msgid "Search..."
-msgstr "Search..."
 
 #: src/tables/part/PartVariantTable.tsx:16
 msgid "Show active variants"
