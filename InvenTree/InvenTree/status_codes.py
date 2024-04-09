@@ -15,13 +15,20 @@ class PurchaseOrderStatus(StatusCode):
     CANCELLED = 40, _('Cancelled'), 'danger'  # Order was cancelled
     LOST = 50, _('Lost'), 'warning'  # Order was lost
     RETURNED = 60, _('Returned'), 'warning'  # Order was returned
+    IN_APPROVAL = 70, _('Approval needed'), 'warning'  # Order waiting for approval
+    READY = 80, _('Ready'), 'primary'  # Order is ready to be issued
 
 
 class PurchaseOrderStatusGroups:
     """Groups for PurchaseOrderStatus codes."""
 
     # Open orders
-    OPEN = [PurchaseOrderStatus.PENDING.value, PurchaseOrderStatus.PLACED.value]
+    OPEN = [
+        PurchaseOrderStatus.PENDING.value,
+        PurchaseOrderStatus.PLACED.value,
+        PurchaseOrderStatus.IN_APPROVAL.value,
+        PurchaseOrderStatus.READY.value,
+    ]
 
     # Failed orders
     FAILED = [

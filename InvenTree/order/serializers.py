@@ -315,6 +315,70 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
         order.complete_order()
 
 
+class PurchaseOrderRequestApprovalSerializer(serializers.Serializer):
+    """Serializer for requesting approval of a purchase order by eligible users."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = []
+
+    def save(self):
+        """Save the serializer to 'approve' the order."""
+        order = self.context['order']
+        order.request_approval()
+
+
+class PurchaseOrderReadySerializer(serializers.Serializer):
+    """Serializer for approving a purchase order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = []
+
+    def save(self):
+        """Save the serializer to 'approve' the order."""
+        order = self.context['order']
+        request = self.context['request']
+        order.mark_order_ready(request.user)
+
+
+class PurchaseOrderRejectSerializer(serializers.Serializer):
+    """Serializer for rejecting a purchase order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['reject_reason']
+
+    reject_reason = serializers.CharField(
+        label=_('Reason for rejection'),
+        help_text=_('Message outlining the reason for rejecting the order'),
+        default='',
+        required=False,
+        allow_blank=True,
+    )
+
+    def save(self):
+        """Save the serializer to 'reject' the order."""
+        order = self.context['order']
+        reason = self.data['reject_reason']
+        order.mark_order_pending(reason)
+
+
+class PurchaseOrderPendingSerializer(serializers.Serializer):
+    """Serializer for rejecting a purchase order."""
+
+    class Meta:
+        """Metaclass options."""
+
+    def save(self):
+        """Save the serializer to 'reject' the order."""
+        order = self.context['order']
+        order.mark_order_pending()
+
+
 class PurchaseOrderIssueSerializer(serializers.Serializer):
     """Serializer for issuing (sending) a purchase order."""
 
@@ -326,7 +390,8 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to 'place' the order."""
         order = self.context['order']
-        order.place_order()
+        request = self.context['request']
+        order.place_order(request.user)
 
 
 class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):

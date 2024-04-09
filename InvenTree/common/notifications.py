@@ -340,6 +340,34 @@ class InvenTreeNotificationBodies:
         template='email/return_order_received.html',
     )
 
+    PruchaseOrderApprovalRequested = NotificationBody(
+        name=_('Approval requested'),
+        slug=_('purhcase_order.approval_request'),
+        message=_('You have been requested to approve a Purchase Order'),
+        template='email/new_order_assigned.html',
+    )
+
+    PurchaseOrderRejected = NotificationBody(
+        name=_('Purchase order was rejected'),
+        slug=_('purhcase_order.approval_rejected'),
+        message=_('Your approval request was rejected'),
+        template='email/new_order_assigned.html',
+    )
+
+    PurchaseOrderApproved = NotificationBody(
+        name=_('Purchase order was approved'),
+        slug=_('purhcase_order.approved'),
+        message=_('Your approval request was accepted'),
+        template='email/new_order_assigned.html',
+    )
+
+    PurchaseOrderReady = NotificationBody(
+        name=_('Purchase order is ready to issue'),
+        slug=_('purhcase_order.ready_to_issue'),
+        message=_('A Purchase order was just marked ready to issue.'),
+        template='email/new_order_assigned.html',
+    )
+
 
 def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     """Send out a notification."""

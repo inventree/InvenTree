@@ -13,6 +13,11 @@
         {% include "InvenTree/settings/setting.html" with key="PURCHASEORDER_REFERENCE_PATTERN" %}
         {% include "InvenTree/settings/setting.html" with key="PURCHASEORDER_EDIT_COMPLETED_ORDERS" icon='fa-edit' %}
         {% include "InvenTree/settings/setting.html" with key="PURCHASEORDER_AUTO_COMPLETE" icon='fa-check-circle' %}
+        <tr><td colspan='5'><b>Approvals</b></td></tr>
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PURCHASE_ORDER_APPROVAL" icon="fa-calendar-alt" %}
+        {% include "InvenTree/settings/setting.html" with key="PURCHASE_ORDER_APPROVE_ALL_GROUP" icon="fa-calendar-alt" %}
+        {% include "InvenTree/settings/setting.html" with key="ENABLE_PURCHASE_ORDER_READY_STATUS" icon="fa-calendar-alt" %}
+        {% include "InvenTree/settings/setting.html" with key="PURCHASE_ORDER_PURCHASER_GROUP" icon="fa-calendar-alt" %}
     </tbody>
 </table>
 {% endblock content %}

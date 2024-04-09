@@ -66,6 +66,15 @@
     supplier: 2
     status: 10  # Pending
 
+- model: order.purchaseorder
+  pk: 8
+  fields:
+    reference: 'PO-0008'
+    reference_int: 8
+    description: 'PO awaiting approval'
+    supplier: 2
+    status: 70 #In approval
+
 # Add some line items against PO 0001
 
 # 100 x ACME0001 (M2x4 LPHS)

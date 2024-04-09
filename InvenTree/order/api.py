@@ -391,6 +391,30 @@ class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
     serializer_class = serializers.PurchaseOrderCompleteSerializer
 
 
+class PurchaseOrderRequestApproval(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to 'issue' (place) a PurchaseOrder."""
+
+    serializer_class = serializers.PurchaseOrderRequestApprovalSerializer
+
+
+class PurchaseOrderReject(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to 'issue' (place) a PurchaseOrder."""
+
+    serializer_class = serializers.PurchaseOrderRejectSerializer
+
+
+class PurchaseOrderReady(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to 'issue' (place) a PurchaseOrder."""
+
+    serializer_class = serializers.PurchaseOrderReadySerializer
+
+
+class PurchaseOrderPending(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to 'issue' (place) a PurchaseOrder."""
+
+    serializer_class = serializers.PurchaseOrderRejectSerializer
+
+
 class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to 'issue' (place) a PurchaseOrder."""
 
@@ -1563,6 +1587,20 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
+                    path(
+                        'request_approval/',
+                        PurchaseOrderRequestApproval.as_view(),
+                        name='api-po-req-approval',
+                    ),
+                    path(
+                        'reject/', PurchaseOrderReject.as_view(), name='api-po-reject'
+                    ),
+                    path('ready/', PurchaseOrderReady.as_view(), name='api-po-ready'),
+                    path(
+                        'pending/',
+                        PurchaseOrderPending.as_view(),
+                        name='api-po-pending',
+                    ),
                     path(
                         'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
                     ),

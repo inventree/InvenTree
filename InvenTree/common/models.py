@@ -55,6 +55,13 @@ from plugin import registry
 logger = logging.getLogger('inventree')
 
 
+def all_groups():
+    """Make a choice set of all groups, including an empty string for 'no group'."""
+    groups = [(x.name, x.name) for x in Group.objects.all()]
+    groups.insert(0, ('', '(No group)'))
+    return groups
+
+
 class MetaMixin(models.Model):
     """A base class for InvenTree models to include shared meta fields.
 
@@ -2017,6 +2024,32 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Enable test station data collection for test results'),
             'default': False,
             'validator': bool,
+        },
+        'ENABLE_PURCHASE_ORDER_READY_STATUS': {
+            'name': _('Enable Ready Status'),
+            'description': _(
+                'Enable a "Ready" state, indicating an order is ready for issuing. This setting is implicitly active when approvals are active.'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'PURCHASE_ORDER_PURCHASER_GROUP': {
+            'name': _('Purchaser Group'),
+            'description': _(
+                'Limit issuing of orders to a purchaser group. If set, orders can only be issued by members of this group.'
+            ),
+            'choices': all_groups,
+        },
+        'ENABLE_PURCHASE_ORDER_APPROVAL': {
+            'name': _('Purchase Order Approvals'),
+            'description': _('Add a required approval step to purchase orders'),
+            'default': False,
+            'validator': bool,
+        },
+        'PURCHASE_ORDER_APPROVE_ALL_GROUP': {
+            'name': _('Master approval group'),
+            'description': _('Set a permission group that can approve ALL orders'),
+            'choices': all_groups,
         },
     }
 

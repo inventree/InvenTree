@@ -4,6 +4,7 @@ import base64
 import io
 from datetime import datetime, timedelta
 
+from django.contrib.auth.models import Group, User
 from django.core.exceptions import ValidationError
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
@@ -13,6 +14,7 @@ from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
 
+from common.models import InvenTreeSetting, ProjectCode
 from common.settings import currency_codes
 from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.status_codes import (
@@ -27,6 +29,7 @@ from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models
 from part.models import Part
 from stock.models import StockItem
+from users.models import Owner
 
 
 class OrderTest(InvenTreeAPITestCase):
@@ -454,72 +457,6 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po_dup.extra_lines.count(), po.extra_lines.count())
         self.assertEqual(po_dup.lines.count(), 0)
 
-    def test_po_cancel(self):
-        """Test the PurchaseOrderCancel API endpoint."""
-        po = models.PurchaseOrder.objects.get(pk=1)
-
-        self.assertEqual(po.status, PurchaseOrderStatus.PENDING)
-
-        url = reverse('api-po-cancel', kwargs={'pk': po.pk})
-
-        # Try to cancel the PO, but without required permissions
-        self.post(url, {}, expected_code=403)
-
-        self.assignRole('purchase_order.add')
-
-        self.post(url, {}, expected_code=201)
-
-        po.refresh_from_db()
-
-        self.assertEqual(po.status, PurchaseOrderStatus.CANCELLED)
-
-        # Try to cancel again (should fail)
-        self.post(url, {}, expected_code=400)
-
-    def test_po_complete(self):
-        """Test the PurchaseOrderComplete API endpoint."""
-        po = models.PurchaseOrder.objects.get(pk=3)
-
-        url = reverse('api-po-complete', kwargs={'pk': po.pk})
-
-        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
-
-        # Try to complete the PO, without required permissions
-        self.post(url, {}, expected_code=403)
-
-        self.assignRole('purchase_order.add')
-
-        # Should fail due to incomplete lines
-        response = self.post(url, {}, expected_code=400)
-
-        self.assertIn(
-            'Order has incomplete line items', str(response.data['accept_incomplete'])
-        )
-
-        # Post again, accepting incomplete line items
-        self.post(url, {'accept_incomplete': True}, expected_code=201)
-
-        po.refresh_from_db()
-
-        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE)
-
-    def test_po_issue(self):
-        """Test the PurchaseOrderIssue API endpoint."""
-        po = models.PurchaseOrder.objects.get(pk=2)
-
-        url = reverse('api-po-issue', kwargs={'pk': po.pk})
-
-        # Try to issue the PO, without required permissions
-        self.post(url, {}, expected_code=403)
-
-        self.assignRole('purchase_order.add')
-
-        self.post(url, {}, expected_code=201)
-
-        po.refresh_from_db()
-
-        self.assertEqual(po.status, PurchaseOrderStatus.PLACED)
-
     def test_po_calendar(self):
         """Test the calendar export endpoint."""
         # Create required purchase orders
@@ -637,6 +574,421 @@ class PurchaseOrderTest(OrderTest):
             headers={'authorization': f'basic {base64_token}'},
         )
         self.assertEqual(response.status_code, 200)
+
+
+class PurchaseOrderStateTests(OrderTest):
+    """Test Purchase Order state transitions that involve approvals or issuing."""
+
+    def tearDown(self) -> None:
+        """Reset any relevant settings changed during tests."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', False)
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_READY_STATUS', False)
+        InvenTreeSetting.set_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP', '')
+        InvenTreeSetting.set_setting('PURCHASE_ORDER_PURCHASER_GROUP', '')
+
+        super().tearDown()
+
+    def test_po_cancel(self):
+        """Test the PurchaseOrderCancel API endpoint."""
+        po = models.PurchaseOrder.objects.get(pk=1)
+
+        self.assertEqual(po.status, PurchaseOrderStatus.PENDING.value)
+
+        url = reverse('api-po-cancel', kwargs={'pk': po.pk})
+
+        # Try to cancel the PO, but without required permissions
+        self.post(url, {}, expected_code=403)
+
+        self.assignRole('purchase_order.add')
+
+        self.post(url, {}, expected_code=201)
+
+        po.refresh_from_db()
+
+        self.assertEqual(po.status, PurchaseOrderStatus.CANCELLED.value)
+
+        # Try to cancel again (should fail)
+        self.post(url, {}, expected_code=400)
+
+    def test_po_complete(self):
+        """Test the PurchaseOrderComplete API endpoint."""
+        po = models.PurchaseOrder.objects.get(pk=3)
+
+        url = reverse('api-po-complete', kwargs={'pk': po.pk})
+
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED.value)
+
+        # Try to complete the PO, without required permissions
+        self.post(url, {}, expected_code=403)
+
+        self.assignRole('purchase_order.add')
+
+        # Should fail due to incomplete lines
+        response = self.post(url, {}, expected_code=400)
+
+        self.assertIn(
+            'Order has incomplete line items', str(response.data['accept_incomplete'])
+        )
+
+        # Post again, accepting incomplete line items
+        self.post(url, {'accept_incomplete': True}, expected_code=201)
+
+        po.refresh_from_db()
+
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE.value)
+
+    def test_po_issue(self):
+        """Test the PurchaseOrderIssue API endpoint."""
+        po = models.PurchaseOrder.objects.get(pk=2)
+
+        url = reverse('api-po-issue', kwargs={'pk': po.pk})
+
+        # Try to issue the PO, without required permissions
+        self.post(url, {}, expected_code=403)
+        po.refresh_from_db()
+        self.assertIsNone(po.placed_by)
+
+        self.assignRole('purchase_order.add')
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED.value)
+        self.assertEqual(po.placed_by, self.user)
+        self.assertEqual(po.issue_date, datetime.now().date())
+
+    def test_po_request_approval_approvals_inactive(self):
+        """Test the PurchaseOrderRequestApproval API endpoint when approvals are inactive."""
+        po = models.PurchaseOrder.objects.get(pk=2)
+
+        url = reverse('api-po-req-approval', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=403)
+
+        self.assignRole('purchase_order.add')
+
+        self.post(url, {}, expected_code=400)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PENDING.value)
+
+    def test_po_request_approval_approvals_active(self):
+        """Test the PurchaseOrderRequestApproval API endpoint when approvals are active."""
+        po = models.PurchaseOrder.objects.get(pk=2)
+
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-req-approval', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.IN_APPROVAL.value)
+
+    def test_po_approve_master(self):
+        """Test the PurchaseOrderApprove API endpoint using Master approval groups."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        po = models.PurchaseOrder.objects.get(pk=8)
+
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+
+        # Attempt to approve without being in the master group
+        self.post(url, {}, expected_code=403)
+        po.refresh_from_db()
+        # Approval shouldn't go through
+        self.assertEqual(po.status, PurchaseOrderStatus.IN_APPROVAL.value)
+
+        InvenTreeSetting.set_setting(
+            'PURCHASE_ORDER_APPROVE_ALL_GROUP', self.user.groups.first().name
+        )
+        self.assertEqual(
+            InvenTreeSetting.get_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP'),
+            self.user.groups.first().name,
+        )
+
+        # Attempt to approve while in master group
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+
+        self.assertEqual(po.status, PurchaseOrderStatus.READY.value)
+        self.assertEqual(po.approved_by, self.user)
+        self.assertEqual(po.approved_date, datetime.now().date())
+
+    def test_po_approve_responsible_user(self):
+        """Test the PurchaseOrderApprove API endpoint using Project Responsible User."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        po = models.PurchaseOrder.objects.get(pk=8)
+
+        project = ProjectCode.objects.create(code='ABC')
+        po.project_code = project
+        po.save()
+
+        other_user = User.objects.create(
+            username='pm', first_name='Tom', last_name='Project Manager'
+        )
+        other_owner = Owner.create(other_user)
+        project.responsible = other_owner
+        project.save()
+
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+
+        # An unrelated user is responsible, expect forbidden
+        self.post(url, {}, expected_code=403)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.IN_APPROVAL.value)
+
+        user_owner = Owner.create(self.user)
+        project.responsible = user_owner
+        project.save()
+
+        # The test user is responsible, expect success
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.READY.value)
+        self.assertEqual(po.approved_by, self.user)
+        self.assertEqual(po.approved_date, datetime.now().date())
+
+    def test_po_approve_responsible_group(self):
+        """Test the PurchaseOrderApprove API endpoint using Project Responsible User."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        po = models.PurchaseOrder.objects.get(pk=8)
+        project = ProjectCode.objects.create(code='ABC')
+        po.project_code = project
+        po.save()
+
+        responsible_group = Group.objects.create(name='responsibleGroup')
+        group_owner = Owner.create(responsible_group)
+        project.responsible = group_owner
+        project.save()
+
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+
+        # The user isn't a member of the responsible group, expect no change
+        self.post(url, {}, expected_code=403)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.IN_APPROVAL.value)
+
+        user_group_owner = Owner.create(self.user.groups.first())
+        project.responsible = user_group_owner
+        project.save()
+
+        # The user is member of the responsible group, expect success
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.READY.value)
+        self.assertEqual(po.approved_by, self.user)
+        self.assertEqual(po.approved_date, datetime.now().date())
+
+    def test_po_approve_responsible_user_and_master(self):
+        """Test the PurchaseOrderApprove API endpoint when user is both master and responsible."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        po = models.PurchaseOrder.objects.get(pk=8)
+        project = ProjectCode.objects.create(code='ABC')
+        po.project_code = project
+        po.save()
+
+        user_owner = Owner.create(self.user)
+        project.responsible = user_owner
+        project.save()
+
+        InvenTreeSetting.set_setting(
+            'PURCHASE_ORDER_APPROVE_ALL_GROUP', self.user.groups.first().name
+        )
+        self.assertEqual(
+            InvenTreeSetting.get_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP'),
+            self.user.groups.first().name,
+        )
+
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.READY.value)
+        self.assertEqual(po.approved_by, self.user)
+        self.assertEqual(po.approved_date, datetime.now().date())
+
+    def test_po_approve_responsible_group_and_master(self):
+        """Test the PurchaseOrderApprove API endpoint when user is both master and responsible."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        po = models.PurchaseOrder.objects.get(pk=8)
+        project = ProjectCode.objects.create(code='ABC')
+        po.project_code = project
+        po.save()
+
+        user_group_owner = Owner.create(self.user.groups.first())
+        project.responsible = user_group_owner
+        project.save()
+
+        InvenTreeSetting.set_setting(
+            'PURCHASE_ORDER_APPROVE_ALL_GROUP', self.user.groups.first().name
+        )
+        self.assertEqual(
+            InvenTreeSetting.get_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP'),
+            self.user.groups.first().name,
+        )
+
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.READY.value)
+        self.assertEqual(po.approved_by, self.user)
+        self.assertEqual(po.approved_date, datetime.now().date())
+
+    def test_po_reject(self):
+        """Check that purchase orders can be rejected, sending them back to a pending state."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        po = models.PurchaseOrder.objects.get(pk=8)
+
+        self.assignRole('purchase_order.add')
+
+        user_group = self.user.groups.first()
+
+        InvenTreeSetting.set_setting(
+            'PURCHASE_ORDER_APPROVE_ALL_GROUP', user_group.name
+        )
+        self.assertEqual(
+            InvenTreeSetting.get_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP'),
+            user_group.name,
+        )
+
+        url = reverse('api-po-reject', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PENDING.value)
+
+    def test_po_approve_after_reject(self):
+        """Check that purchase orders can be approved after being rejected."""
+        po = models.PurchaseOrder.objects.get(pk=8)
+
+        user_group = self.user.groups.first()
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+        InvenTreeSetting.set_setting(
+            'PURCHASE_ORDER_APPROVE_ALL_GROUP', user_group.name
+        )
+        self.assertEqual(
+            InvenTreeSetting.get_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP'),
+            user_group.name,
+        )
+
+        self.assignRole('purchase_order.add')
+
+        url = reverse('api-po-reject', kwargs={'pk': po.pk})
+        self.post(url, {'reject_reason': 'Rejected'}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.reject_reason, 'Rejected')
+        url = reverse('api-po-req-approval', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+
+        po.refresh_from_db()
+
+        self.assertEqual(po.status, PurchaseOrderStatus.READY.value)
+        self.assertEqual(po.approved_by, self.user)
+        self.assertFalse(po.reject_reason)
+
+    def test_po_ready_status_inactive(self):
+        """Check that purchase orders don't transition to READY status when inactive."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_READY_STATUS', False)
+        self.assertFalse(
+            InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_READY_STATUS')
+        )
+        # Make sure approvals are turned off to only test the ready transition
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', False)
+        self.assertFalse(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        self.assignRole('purchase_order.add')
+
+        po = models.PurchaseOrder.objects.get(pk=2)
+
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=400)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PENDING.value)
+
+    def test_po_ready_status_active(self):
+        """Check that purchase orders transition to READY status when active."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_READY_STATUS', True)
+        self.assertTrue(
+            InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_READY_STATUS')
+        )
+        # Make sure approvals are turned off to only test the ready transition
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', False)
+        self.assertFalse(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        self.assignRole('purchase_order.add')
+
+        po = models.PurchaseOrder.objects.get(pk=2)
+
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.READY.value)
+
+    def test_po_purchaser_group(self):
+        """Check that issuing a purchase order is limited to permitted users when PURCHASE_ORDER_PURCHASER_GROUP is defined."""
+        self.assignRole('purchase_order.add')
+
+        po = models.PurchaseOrder.objects.get(pk=1)
+
+        url = reverse('api-po-issue', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED.value)
+        self.assertEqual(po.placed_by, self.user)
+
+        purchaser_group = Group.objects.create(name='purchasers')
+
+        print(23456)
+        InvenTreeSetting.set_setting(
+            'PURCHASE_ORDER_PURCHASER_GROUP', purchaser_group.name
+        )
+        self.assertEqual(
+            InvenTreeSetting.get_setting('PURCHASE_ORDER_PURCHASER_GROUP'), 'purchasers'
+        )
+
+        po = models.PurchaseOrder.objects.get(pk=2)
+        url = reverse('api-po-issue', kwargs={'pk': po.pk})
+
+        self.post(url, {}, expected_code=403)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PENDING.value)
+        self.assertIsNone(po.placed_by)
+        self.assertIsNone(po.issue_date)
+
+        user_group = self.user.groups.first()
+
+        InvenTreeSetting.set_setting('PURCHASE_ORDER_PURCHASER_GROUP', user_group.name)
+        self.assertEqual(
+            InvenTreeSetting.get_setting('PURCHASE_ORDER_PURCHASER_GROUP'),
+            user_group.name,
+        )
+
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED.value)
 
 
 class PurchaseOrderLineItemTest(OrderTest):

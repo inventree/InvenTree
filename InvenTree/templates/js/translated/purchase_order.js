@@ -506,6 +506,119 @@ function cancelPurchaseOrder(order_id, options={}) {
 
 
 /*
+ * Launches a modal form to mark a PurchaseOrder as "in approval"
+ */
+function requestPurchaseOrderApproval(order_id, options={}) {
+
+    let html = `
+    <div class='alert alert-block alert-warning'>
+    {% trans 'Submit the order for approval' %}
+    </div>`;
+
+    constructForm(`{% url "api-po-list" %}${order_id}/request_approval/`, {
+        method: 'POST',
+        title: '{% trans "Request order approval" %}',
+        confirm: true,
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Launches a modal form to mark a PurchaseOrder as "ready" via approval
+ */
+function approvePurchaseOrder(order_id, options={}) {
+
+    let html = `
+    <div class='alert alert-block alert-warning'>
+    {% trans 'Approve this purchase order' %}
+    </div>`;
+
+    constructForm(`{% url "api-po-list" %}${order_id}/ready/`, {
+        method: 'POST',
+        title: '{% trans "Approve order" %}',
+        confirm: true,
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Launches a modal form to mark a PurchaseOrder as "pending" by rejecting approval
+ */
+function rejectPurchaseOrder(order_id, options={}) {
+
+    let html = `
+    <div class='alert alert-block alert-warning'>
+    {% trans 'Reject this purchase order' %}
+    </div>`;
+
+    constructForm(`{% url "api-po-list" %}${order_id}/reject/`, {
+        method: 'POST',
+        title: '{% trans "Reject order" %}',
+        confirm: true,
+        fields: {
+            reject_reason: {}
+        },
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Launches a modal form to mark a PurchaseOrder as "pending"
+ */
+function pendingPurchaseOrder(order_id, options={}) {
+
+    let html = `
+    <div class='alert alert-block alert-warning'>
+    {% trans 'Mark order as pending' %}
+    </div>`;
+
+    constructForm(`{% url "api-po-list" %}${order_id}/pending/`, {
+        method: 'POST',
+        title: '{% trans "Mark order pending" %}',
+        confirm: true,
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
+ * Launches a modal form to mark a PurchaseOrder as "ready" for issuing
+ */
+function readyPurchaseOrder(order_id, options={}) {
+
+    let html = `
+    <div class='alert alert-block alert-warning'>
+    {% trans 'Mark order as ready to issue' %}
+    </div>`;
+
+    constructForm(`{% url "api-po-list" %}${order_id}/ready/`, {
+        method: 'POST',
+        title: '{% trans "Mark order ready" %}',
+        confirm: true,
+        preFormContent: html,
+        onSuccess: function(response) {
+            handleFormSuccess(response, options);
+        }
+    });
+}
+
+
+/*
  * Launches a modal form to mark a PurchaseOrder as "issued"
  */
 function issuePurchaseOrder(order_id, options={}) {
