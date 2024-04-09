@@ -1,6 +1,10 @@
+import { t } from '@lingui/macro';
 import { Container, Flex, Space } from '@mantine/core';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { SpotlightProvider } from '@mantine/spotlight';
+import { IconSearch } from '@tabler/icons-react';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
+import { getActions } from '../../defaults/actions';
 import { InvenTreeStyle } from '../../globalStyle';
 import { useSessionState } from '../../states/SessionState';
 import { Footer } from './Footer';
@@ -22,17 +26,27 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 
 export default function LayoutComponent() {
   const { classes } = InvenTreeStyle();
+  const navigate = useNavigate();
+  const actions = getActions(navigate);
 
   return (
     <ProtectedRoute>
-      <Flex direction="column" mih="100vh">
-        <Header />
-        <Container className={classes.layoutContent} size="100%">
-          <Outlet />
-        </Container>
-        <Space h="xl" />
-        <Footer />
-      </Flex>
+      <SpotlightProvider
+        actions={actions}
+        searchIcon={<IconSearch size="1.2rem" />}
+        searchPlaceholder={t`Search...`}
+        shortcut={['mod + K', '/']}
+        nothingFoundMessage={t`Nothing found...`}
+      >
+        <Flex direction="column" mih="100vh">
+          <Header />
+          <Container className={classes.layoutContent} size="100%">
+            <Outlet />
+          </Container>
+          <Space h="xl" />
+          <Footer />
+        </Flex>
+      </SpotlightProvider>
     </ProtectedRoute>
   );
 }

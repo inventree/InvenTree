@@ -10,6 +10,7 @@ import { navTabs as mainNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { InvenTreeStyle } from '../../globalStyle';
 import { apiUrl } from '../../states/ApiState';
+import { SpotlightButton } from '../buttons/SpotlightButton';
 import { ScanButton } from '../items/ScanButton';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
@@ -80,6 +81,7 @@ export function Header() {
             <ActionIcon onClick={openSearchDrawer}>
               <IconSearch />
             </ActionIcon>
+            <SpotlightButton />
             <ScanButton />
             <ActionIcon onClick={openNotificationDrawer}>
               <Indicator
