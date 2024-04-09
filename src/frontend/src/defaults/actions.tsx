@@ -30,7 +30,7 @@ export function getActions(navigate: NavigateFunction) {
     {
       title: t`Documentation`,
       description: t`Visit documentation to learn more about InvenTree`,
-      onTrigger: () => log('Documentatioconsole.n'),
+      onTrigger: () => console.log('Documentation'),
       icon: <IconFileText size="1.2rem" />
     },
     {
