@@ -292,6 +292,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: backend
+          file: coverage.xml
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
           parallel: true
