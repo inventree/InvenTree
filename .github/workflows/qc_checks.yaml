@@ -220,7 +220,8 @@ jobs:
     name: Tests - inventree-python
     runs-on: ubuntu-20.04
 
-    needs: pre-commit
+    needs: [ 'pre-commit', 'paths-filter' ]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       wrapper_name: inventree-python
@@ -261,7 +262,8 @@ jobs:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit' ]
+    needs: [ 'pre-commit', 'paths-filter' ]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
@@ -306,7 +308,8 @@ jobs:
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'pre-commit' ]
+    needs: [ 'pre-commit', 'paths-filter' ]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -350,7 +353,8 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit' ]
+    needs: [ 'pre-commit', 'paths-filter' ]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       # Database backend configuration
