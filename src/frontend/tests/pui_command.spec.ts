@@ -40,4 +40,14 @@ test('PUI - Quick Command', async ({ page }) => {
   await page.getByPlaceholder('Search...').press('Tab');
   await page.getByPlaceholder('Search...').press('Enter');
   await page.waitForURL('**/platform/dashboard');
+
+  // Use navigation menu
+  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page
+    .getByRole('button', { name: 'Open Navigation Open the main' })
+    .click();
+  // assert the nav headers are visible
+  await page.getByRole('heading', { name: 'Pages' }).click();
+  await page.getByRole('heading', { name: 'Documentation' }).click();
+  await page.getByRole('heading', { name: 'About' }).click();
 });
