@@ -17,9 +17,7 @@ test('PUI - Quick Command', async ({ page }) => {
 
   // Open Spotlight with Keyboard Shortcut
   await page.keyboard.press('Meta+K');
-  await page
-    .getByRole('button', { name: 'Dashboard Go to the InvenTree dashboard' })
-    .click();
+  await page.getByText('Go to the InvenTree dashboard').click();
   await page
     .locator('div')
     .filter({ hasText: /^Dashboard$/ })
@@ -28,7 +26,7 @@ test('PUI - Quick Command', async ({ page }) => {
 
   // Open Spotlight with Button
   await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByRole('button', { name: 'Home Go to the home page' }).click();
+  await page.getByText('Go to the home page').click();
   await page
     .getByRole('heading', { name: 'Welcome to your Dashboard,' })
     .click();
@@ -46,9 +44,7 @@ test('PUI - Quick Command', async ({ page }) => {
 
   // Use navigation menu
   await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page
-    .getByRole('button', { name: 'Open Navigation Open the main' })
-    .click();
+  await page.getByText('Open Navigation').click();
   // assert the nav headers are visible
   await page.getByRole('heading', { name: 'Navigation' }).click();
   await page.getByRole('heading', { name: 'Pages' }).click();
