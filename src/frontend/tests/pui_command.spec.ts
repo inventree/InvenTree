@@ -17,6 +17,7 @@ test('PUI - Quick Command', async ({ page }) => {
 
   // Open Spotlight with Keyboard Shortcut
   await page.keyboard.press(`${systemKey}+K`);
+  await page.waitForTimeout(200);
   await page
     .getByRole('button', { name: 'Dashboard Go to the InvenTree dashboard' })
     .click();
@@ -36,6 +37,7 @@ test('PUI - Quick Command', async ({ page }) => {
 
   // Open Spotlight with Keyboard Shortcut and Search
   await page.keyboard.press(`${systemKey}+K`);
+  await page.waitForTimeout(200);
   await page.getByPlaceholder('Search...').fill('Dashboard');
   await page.getByPlaceholder('Search...').press('Tab');
   await page.getByPlaceholder('Search...').press('Enter');
