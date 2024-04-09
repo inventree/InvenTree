@@ -53,6 +53,8 @@ export function LicenseModal() {
         .catch(() => {})
   });
 
+  const rspdata = !data ? [] : Object.keys(data ?? {});
+
   return (
     <Stack spacing="xs">
       <Divider />
@@ -69,16 +71,16 @@ export function LicenseModal() {
           </Text>
         </Alert>
       ) : (
-        <Tabs defaultValue={Object.keys(data)[0] ?? ''}>
+        <Tabs defaultValue={rspdata[0] ?? ''}>
           <Tabs.List>
-            {Object.keys(data ?? {}).map((key) => (
+            {rspdata.map((key) => (
               <Tabs.Tab key={key} value={key}>
                 <Trans>{key} Packages</Trans>
               </Tabs.Tab>
             ))}
           </Tabs.List>
 
-          {Object.keys(data ?? {}).map((key) => (
+          {rspdata.map((key) => (
             <Tabs.Panel key={key} value={key}>
               {LicenceView(data[key] ?? [])}
             </Tabs.Panel>
