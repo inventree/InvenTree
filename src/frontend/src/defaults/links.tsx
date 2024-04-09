@@ -96,8 +96,19 @@ function aboutInvenTree() {
     innerProps: {}
   });
 }
+function licenseInfo() {
+  return openContextModal({
+    modal: 'license',
+    title: (
+      <StylishText size="xl">
+        <Trans>License Information</Trans>
+      </StylishText>
+    ),
+    size: 'xl',
+    innerProps: {}
+  });
+}
 
-// TODO @matmair: Add the following pages and adjust the links
 export const aboutLinks: DocumentationLinkItem[] = [
   {
     id: 'instance',
@@ -114,8 +125,7 @@ export const aboutLinks: DocumentationLinkItem[] = [
   {
     id: 'licenses',
     title: <Trans>Licenses</Trans>,
-    description: <Trans>Licenses for packages used by InvenTree</Trans>,
-    link: '/licenses',
-    placeholder: true
+    description: <Trans>Licenses for dependencies of the service</Trans>,
+    action: licenseInfo
   }
 ];
