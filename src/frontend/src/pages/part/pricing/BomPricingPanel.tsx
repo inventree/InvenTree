@@ -61,7 +61,7 @@ export default function BomPricingPanel({
         accessor: 'unit_price',
         ordering: 'pricing_max',
         sortable: true,
-        switchable: false,
+        switchable: true,
         title: t`Unit Price`,
         render: (record: any) => {
           return formatPriceRange(record.pricing_min, record.pricing_max, {
@@ -72,14 +72,17 @@ export default function BomPricingPanel({
       {
         accessor: 'total_price',
         title: t`Total Price`,
-        ordering: 'pricing_max',
+        ordering: 'pricing_max_total',
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          return formatPriceRange(record.pricing_min, record.pricing_max, {
-            currency: pricing?.currency,
-            multiplier: record.quantity
-          });
+          return formatPriceRange(
+            record.pricing_min_total,
+            record.pricing_max_total,
+            {
+              currency: pricing?.currency
+            }
+          );
         }
       },
       DateColumn({
