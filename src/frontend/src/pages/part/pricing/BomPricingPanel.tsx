@@ -1,14 +1,18 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, SimpleGrid, Stack } from '@mantine/core';
-import { DataTable, DataTableColumn } from 'mantine-datatable';
+import { SimpleGrid, Stack } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import { formatCurrency, formatDecimal } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { ModelType } from '../../../enums/ModelType';
-import { getDetailUrl } from '../../../functions/urls';
-import { useInstance } from '../../../hooks/UseInstance';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
@@ -44,11 +48,7 @@ export default function BomPricingPanel({
         title: t`Component`,
         sortable: true,
         switchable: false,
-        render: (record: any) =>
-          PartColumn(
-            record.sub_part_detail,
-            getDetailUrl(ModelType.part, record.sub_part_detail.pk)
-          )
+        render: (record: any) => PartColumn(record.sub_part_detail)
       },
       {
         accessor: 'quantity',
@@ -92,8 +92,12 @@ export default function BomPricingPanel({
         entry: entry,
         quantity: entry.quantity,
         name: entry.sub_part_detail?.name,
-        pmin: parseFloat(entry.pricing_min ?? entry.pricing_max ?? 0),
-        pmax: parseFloat(entry.pricing_max ?? entry.pricing_min ?? 0)
+        pmin:
+          entry.quantity *
+          parseFloat(entry.pricing_min ?? entry.pricing_max ?? 0),
+        pmax:
+          entry.quantity *
+          parseFloat(entry.pricing_max ?? entry.pricing_min ?? 0)
       };
     });
 
@@ -120,42 +124,14 @@ export default function BomPricingPanel({
           }}
         />
         <ResponsiveContainer width="100%" height={500}>
-          <PieChart>
-            <Pie
-              data={bomPricingData}
-              labelLine={false}
-              dataKey="pmin"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={50}
-              fill="#8884d8"
-            >
-              {bomPricingData.map((entry, index) => (
-                <Cell
-                  key={entry.name}
-                  fill={BOM_COLORS[index % BOM_COLORS.length]}
-                />
-              ))}
-            </Pie>
-            <Pie
-              data={bomPricingData}
-              dataKey="pmax"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              innerRadius={80}
-              fill="#82ca9d"
-            >
-              {bomPricingData.map((entry, index) => (
-                <Cell
-                  key={entry.name}
-                  fill={BOM_COLORS[index % BOM_COLORS.length]}
-                />
-              ))}
-            </Pie>
+          <BarChart data={bomPricingData}>
+            <XAxis dataKey="name" />
+            <YAxis />
             <Tooltip />
-          </PieChart>
+            <Legend />
+            <Bar dataKey="pmin" fill="#8884d8" label={t`Minimum Price`} />
+            <Bar dataKey="pmax" fill="#82ca9d" label={t`Maximum Price`} />
+          </BarChart>
         </ResponsiveContainer>
       </SimpleGrid>
     </Stack>

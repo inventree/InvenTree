@@ -1959,7 +1959,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'sub_part': 'sub_part__name',
         'pricing_min': 'sub_part__pricing_data__overall_min',
         'pricing_max': 'sub_part__pricing_data__overall_max',
-        'pricing_updated': '',
+        'pricing_updated': 'sub_part__pricing_data__updated',
     }
 
 
