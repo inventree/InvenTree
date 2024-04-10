@@ -46,7 +46,7 @@ export default function BomPricingPanel({
       },
       {
         accessor: 'pricing_min',
-        sortable: false,
+        sortable: true,
         switchable: false,
         title: t`Minimum Price`,
         render: (record: any) =>
@@ -57,7 +57,7 @@ export default function BomPricingPanel({
       {
         accessor: 'pricing_max',
         title: t`Maximum Price`,
-        sortable: false,
+        sortable: true,
         switchable: false,
         render: (record: any) =>
           formatCurrency(record.quantity * record.pricing_max, {
