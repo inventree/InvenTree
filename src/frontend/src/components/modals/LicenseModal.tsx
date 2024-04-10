@@ -40,7 +40,7 @@ export function LicenceView(entries: Readonly<any[]>) {
         </Accordion>
       ) : (
         <Text>
-          <Trans>No Information provided - this likely a server issue</Trans>
+          <Trans>No Information provided - this is likely a server issue</Trans>
         </Text>
       )}
     </Stack>
