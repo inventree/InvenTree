@@ -1,5 +1,6 @@
 import { ModelInformationDict } from '../components/render/ModelType';
 import { ModelType } from '../enums/ModelType';
+import { base_url } from '../main';
 
 /**
  * Returns the detail view URL for a given model type
@@ -12,7 +13,14 @@ export function getDetailUrl(model: ModelType, pk: number | string): string {
   }
 
   if (!!pk && modelInfo && modelInfo.url_detail) {
-    return modelInfo.url_detail.replace(':pk', pk.toString());
+    let url = modelInfo.url_detail.replace(':pk', pk.toString());
+    let base = base_url;
+
+    if (base) {
+      return `/${base}${url}`;
+    } else {
+      return url;
+    }
   }
 
   console.error(`No detail URL found for model ${model} <${pk}>`);
