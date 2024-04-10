@@ -230,17 +230,10 @@ export function ApiFormField({
             id={fieldId}
             value={numericalValue}
             error={error?.message}
-            formatter={(value) => {
-              let v: any = parseFloat(value);
-
-              if (Number.isNaN(v) || !Number.isFinite(v)) {
-                return value;
-              }
-
-              return `${1 * v.toFixed()}`;
-            }}
             precision={definition.field_type == 'integer' ? 0 : 10}
             onChange={(value: number) => onChange(value)}
+            removeTrailingZeros
+            step={1}
           />
         );
       case 'choice':
