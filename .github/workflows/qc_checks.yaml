@@ -524,9 +524,10 @@ jobs:
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
+        id: tests
         run: cd src/frontend && npx nyc playwright test
       - uses: actions/upload-artifact@v4
-        if: ${{ !cancelled() }}
+        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
           path: src/frontend/playwright-report/
