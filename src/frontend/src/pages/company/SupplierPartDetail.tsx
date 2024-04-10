@@ -30,6 +30,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
+import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();
@@ -215,8 +216,13 @@ export default function SupplierPartDetail() {
       },
       {
         name: 'pricing',
-        label: t`Pricing`,
-        icon: <IconCurrencyDollar />
+        label: t`Supplier Pricing`,
+        icon: <IconCurrencyDollar />,
+        content: supplierPart?.pk ? (
+          <SupplierPriceBreakTable supplierPartId={supplierPart.pk} />
+        ) : (
+          <Skeleton />
+        )
       }
     ];
   }, [supplierPart]);
