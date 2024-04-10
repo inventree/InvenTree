@@ -1407,7 +1407,14 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         'category',
         'last_stocktake',
         'units',
+        'pricing_min',
+        'pricing_max',
     ]
+
+    ordering_field_aliases = {
+        'pricing_min': 'pricing_data__overall_min',
+        'pricing_max': 'pricing_data__overall_max',
+    }
 
     # Default ordering
     ordering = 'name'
