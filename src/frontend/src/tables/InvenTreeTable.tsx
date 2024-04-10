@@ -518,12 +518,12 @@ export function InvenTreeTable<T = any>({
         props.onRowClick(record, index, event);
       } else if (tableProps.modelType && record?.pk) {
         // If a model type is provided, navigate to the detail view for that model
-        let url = getDetailUrl(tableProps.modelType, record.pk);
+        const new_tab = event?.ctrlKey || event?.shiftKey;
 
-        // Should it be opened in a new tab?
-        if (event?.ctrlKey || event?.shiftKey) {
+        let url = getDetailUrl(tableProps.modelType, record.pk, new_tab);
+
+        if (new_tab) {
           // Open in a new tab
-          url = `/${base_url}${url}`;
           window.open(url, '_blank');
         } else {
           // Navigate internally

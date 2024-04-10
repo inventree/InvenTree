@@ -5,7 +5,11 @@ import { base_url } from '../main';
 /**
  * Returns the detail view URL for a given model type
  */
-export function getDetailUrl(model: ModelType, pk: number | string): string {
+export function getDetailUrl(
+  model: ModelType,
+  pk: number | string,
+  absolute?: boolean
+): string {
   const modelInfo = ModelInformationDict[model];
 
   if (pk === undefined || pk === null) {
@@ -16,7 +20,7 @@ export function getDetailUrl(model: ModelType, pk: number | string): string {
     let url = modelInfo.url_detail.replace(':pk', pk.toString());
     let base = base_url;
 
-    if (base) {
+    if (absolute && base) {
       return `/${base}${url}`;
     } else {
       return url;
