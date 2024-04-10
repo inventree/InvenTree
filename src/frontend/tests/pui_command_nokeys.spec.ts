@@ -65,4 +65,21 @@ test('PUI - Quick Command - no keys', async ({ page }) => {
     .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
     .click();
   await page.getByText('This information is only').waitFor();
+
+  await page.getByLabel('About InvenTree').getByRole('button').click();
+
+  // Test addition of new actions
+  await page.goto('./platform/playground');
+  await page
+    .locator('div')
+    .filter({ hasText: /^Playground$/ })
+    .waitFor();
+  await page.getByRole('button', { name: 'Spotlight actions' }).click();
+  await page.getByRole('button', { name: 'Register extra actions' }).click();
+  await page.getByPlaceholder('Search...').fill('secret');
+  await page.getByRole('button', { name: 'Secret action It was' }).click();
+  await page.getByRole('tab', { name: 'Home' }).click();
+  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByPlaceholder('Search...').fill('secret');
+  await page.getByText('Nothing found...').click();
 });
