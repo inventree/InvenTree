@@ -153,7 +153,7 @@ function VariantPricing({
     });
   }, [variants]);
 
-  const columns: DataTableColumn[] = useMemo(() => {
+  const columns: DataTableColumn<any>[] = useMemo(() => {
     return [
       {
         accessor: 'name',
