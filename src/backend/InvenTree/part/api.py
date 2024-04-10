@@ -386,9 +386,10 @@ class PartSalePriceList(ListCreateAPI):
     queryset = PartSellPriceBreak.objects.all()
     serializer_class = part_serializers.PartSalePriceSerializer
 
-    filter_backends = [DjangoFilterBackend]
-
+    filter_backends = SEARCH_ORDER_FILTER
     filterset_fields = ['part']
+    ordering_fields = ['quantity']
+    ordering = 'quantity'
 
 
 class PartInternalPriceDetail(RetrieveUpdateDestroyAPI):
@@ -405,9 +406,10 @@ class PartInternalPriceList(ListCreateAPI):
     serializer_class = part_serializers.PartInternalPriceSerializer
     permission_required = 'roles.sales_order.show'
 
-    filter_backends = [DjangoFilterBackend]
-
+    filter_backends = SEARCH_ORDER_FILTER
     filterset_fields = ['part']
+    ordering_fields = ['quantity']
+    ordering = 'quantity'
 
 
 class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
@@ -1409,11 +1411,13 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
         'units',
         'pricing_min',
         'pricing_max',
+        'pricing_updated',
     ]
 
     ordering_field_aliases = {
         'pricing_min': 'pricing_data__overall_min',
         'pricing_max': 'pricing_data__overall_max',
+        'pricing_updated': 'pricing_data__updated',
     }
 
     # Default ordering
@@ -1948,12 +1952,14 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'consumable',
         'pricing_min',
         'pricing_max',
+        'pricing_updated',
     ]
 
     ordering_field_aliases = {
         'sub_part': 'sub_part__name',
         'pricing_min': 'sub_part__pricing_data__overall_min',
         'pricing_max': 'sub_part__pricing_data__overall_max',
+        'pricing_updated': '',
     }
 
 

@@ -616,6 +616,7 @@ class PartSerializer(
             'virtual',
             'pricing_min',
             'pricing_max',
+            'pricing_updated',
             'responsible',
             # Annotated fields
             'allocated_to_build_orders',
@@ -678,6 +679,7 @@ class PartSerializer(
         if not pricing:
             self.fields.pop('pricing_min')
             self.fields.pop('pricing_max')
+            self.fields.pop('pricing_updated')
 
     def get_api_url(self):
         """Return the API url associated with this serializer."""
@@ -842,6 +844,9 @@ class PartSerializer(
     )
     pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
         source='pricing_data.overall_max', allow_null=True, read_only=True
+    )
+    pricing_updated = serializers.DateTimeField(
+        source='pricing_data.updated', allow_null=True, read_only=True
     )
 
     parameters = PartParameterSerializer(many=True, read_only=True)
@@ -1413,6 +1418,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'part_detail',
             'pricing_min',
             'pricing_max',
+            'pricing_updated',
             'quantity',
             'reference',
             'sub_part',
@@ -1485,6 +1491,10 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     )
     pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
         source='sub_part.pricing.overall_max', allow_null=True, read_only=True
+    )
+
+    pricing_updated = serializers.DateTimeField(
+        source='sub_part.pricing.updated', allow_null=True, read_only=True
     )
 
     # Annotated fields for available stock

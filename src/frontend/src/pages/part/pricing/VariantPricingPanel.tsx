@@ -18,7 +18,7 @@ import { getDetailUrl } from '../../../functions/urls';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
-import { PartColumn } from '../../../tables/ColumnRenderers';
+import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 
 export default function VariantPricingPanel({
@@ -55,7 +55,13 @@ export default function VariantPricingPanel({
         switchable: false,
         render: (record: any) =>
           formatCurrency(record.pricing_max, { currency: pricing?.currency })
-      }
+      },
+      DateColumn({
+        accessor: 'pricing_updated',
+        title: t`Updated`,
+        sortable: true,
+        switchable: true
+      })
     ];
   }, []);
 

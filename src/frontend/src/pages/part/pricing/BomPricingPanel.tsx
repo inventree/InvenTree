@@ -12,7 +12,7 @@ import { useInstance } from '../../../hooks/UseInstance';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
-import { PartColumn } from '../../../tables/ColumnRenderers';
+import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 
 const BOM_COLORS: string[] = [
@@ -76,7 +76,13 @@ export default function BomPricingPanel({
           formatCurrency(record.quantity * record.pricing_max, {
             currency: pricing?.currency
           })
-      }
+      },
+      DateColumn({
+        accessor: 'pricing_updated',
+        title: t`Updated`,
+        sortable: true,
+        switchable: true
+      })
     ];
   }, [part, pricing]);
 

@@ -7,6 +7,7 @@ import { UserRoles } from '../../enums/Roles';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import BomPricingPanel from './pricing/BomPricingPanel';
+import InternalPricingPanel from './pricing/InternalPricingPanel';
 import PricingOverviewPanel from './pricing/PricingOverviewPanel';
 import PricingPanel from './pricing/PricingPanel';
 import VariantPricingPanel from './pricing/VariantPricingPanel';
@@ -35,20 +36,6 @@ function SaleHistroy({
   return (
     <Stack spacing="xs">
       <Text>Sale History goes here?</Text>
-    </Stack>
-  );
-}
-
-function InternalPricing({
-  part,
-  pricing
-}: {
-  part: any;
-  pricing: any;
-}): ReactNode {
-  return (
-    <Stack spacing="xs">
-      <Text>Internal Pricing goes here?</Text>
     </Stack>
   );
 }
@@ -129,7 +116,7 @@ export default function PartPricingPanel({ part }: { part: any }) {
             visible={purchaseOrderPricing}
           />
           <PricingPanel
-            content={<InternalPricing part={part} pricing={pricing} />}
+            content={<InternalPricingPanel part={part} />}
             label="internal"
             title={t`Internal Pricing`}
             visible={internalPricing}
