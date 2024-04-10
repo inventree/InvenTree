@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { SimpleGrid } from '@mantine/core';
+import { Group, SimpleGrid, Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 import {
   Bar,
@@ -43,8 +43,9 @@ export default function PurchacseHistoryPanel({
       },
       {
         accessor: 'order_detail.complete_date',
+        ordering: 'complete_date',
         title: t`Date`,
-        sortable: false,
+        sortable: true,
         switchable: true,
         render: (record: any) => renderDate(record.order_detail.complete_date)
       },
@@ -53,10 +54,20 @@ export default function PurchacseHistoryPanel({
         title: t`Purchase Price`,
         sortable: true,
         switchable: true,
-        render: (record: any) =>
-          formatCurrency(record.purchase_price, {
+        render: (record: any) => {
+          let price = formatCurrency(record.purchase_price, {
             currency: record.purchase_price_currency
-          })
+          });
+
+          let units = record.supplier_part_detail?.pack_quantity;
+
+          return (
+            <Group position="apart" spacing="xs">
+              <Text>{price}</Text>
+              {units && <Text size="xs">[{units}]</Text>}
+            </Group>
+          );
+        }
       },
       {
         accessor: 'unit_price',
@@ -65,9 +76,18 @@ export default function PurchacseHistoryPanel({
         sortable: true,
         switchable: false,
         render: (record: any) => {
-          return formatCurrency(calculateUnitPrice(record), {
+          let price = formatCurrency(calculateUnitPrice(record), {
             currency: record.purchase_price_currency
           });
+
+          let units = record.part_detail?.units;
+
+          return (
+            <Group position="apart" spacing="xs">
+              <Text>{price}</Text>
+              {units && <Text size="xs">[{units}]</Text>}
+            </Group>
+          );
         }
       }
     ];
@@ -77,7 +97,8 @@ export default function PurchacseHistoryPanel({
     return table.records.map((record: any) => {
       return {
         quantity: record.quantity,
-        purchase_price: calculateUnitPrice(record),
+        purchase_price: record.purchase_price,
+        unit_price: calculateUnitPrice(record),
         name: record.order_detail.reference
       };
     });
@@ -100,14 +121,15 @@ export default function PurchacseHistoryPanel({
         }}
       />
       <ResponsiveContainer width="100%" height={500}>
-        <BarChart data={table.records}>
+        <BarChart data={purchaseHistoryData}>
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
           <Legend />
+          <Bar dataKey="unit_price" fill="#8884d8" label={t`Unit Price`} />
           <Bar
             dataKey="purchase_price"
-            fill="#8884d8"
+            fill="#82ca9d"
             label={t`Purchase Price`}
           />
         </BarChart>

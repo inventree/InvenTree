@@ -589,6 +589,8 @@ class PurchaseOrderLineItemList(
         'MPN': 'part__manufacturer_part__MPN',
         'SKU': 'part__SKU',
         'part_name': 'part__part__name',
+        'order': 'order__reference',
+        'complete_date': 'order__complete_date',
     }
 
     ordering_fields = [
@@ -601,6 +603,8 @@ class PurchaseOrderLineItemList(
         'SKU',
         'total_price',
         'target_date',
+        'order',
+        'complete_date',
     ]
 
     search_fields = [
