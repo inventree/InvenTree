@@ -1946,9 +1946,15 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'inherited',
         'optional',
         'consumable',
+        'pricing_min',
+        'pricing_max',
     ]
 
-    ordering_field_aliases = {'sub_part': 'sub_part__name'}
+    ordering_field_aliases = {
+        'sub_part': 'sub_part__name',
+        'pricing_min': 'sub_part__pricing_data__overall_min',
+        'pricing_max': 'sub_part__pricing_data__overall_max',
+    }
 
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
