@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { LoadingOverlay, SimpleGrid, Stack } from '@mantine/core';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
 import { ReactNode, useMemo } from 'react';
-import { Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 import { formatCurrency, formatDecimal } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
@@ -14,6 +14,19 @@ import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
 import { PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
+
+const BOM_COLORS: string[] = [
+  '#ffa8a8',
+  '#8ce99a',
+  '#74c0fc',
+  '#ffe066',
+  '#63e6be',
+  '#ffc078',
+  '#d8f5a2',
+  '#66d9e8',
+  '#e599f7',
+  '#dee2e6'
+];
 
 export default function BomPricingPanel({
   part,
@@ -68,24 +81,21 @@ export default function BomPricingPanel({
   }, [part, pricing]);
 
   const bomPricingData: any[] = useMemo(() => {
-    const pricing = table.records
-      .map((entry: any) => {
-        return {
-          entry: entry,
-          quantity: entry.quantity,
-          name: entry.sub_part_detail?.name,
-          pmin: parseFloat(entry.pricing_min ?? entry.pricing_max ?? 0),
-          pmax: parseFloat(entry.pricing_max ?? entry.pricing_min ?? 0)
-        };
-      })
-      .sort((a, b) => a.pmax - b.pmax);
+    const pricing = table.records.map((entry: any) => {
+      return {
+        entry: entry,
+        quantity: entry.quantity,
+        name: entry.sub_part_detail?.name,
+        pmin: parseFloat(entry.pricing_min ?? entry.pricing_max ?? 0),
+        pmax: parseFloat(entry.pricing_max ?? entry.pricing_min ?? 0)
+      };
+    });
 
     return pricing;
   }, [table.records]);
 
   // TODO: Enable record selection (toggle which items appear in BOM pricing wheel)
-  // TODO: Different colors for each element in the pie chart
-  // TODO: Display color next to each row in table
+  // TODO: Display BOM entry colors in table, using custom rowStyle prop
 
   return (
     <Stack spacing="xs">
@@ -99,20 +109,29 @@ export default function BomPricingPanel({
               part: part?.pk,
               sub_part_detail: true,
               has_pricing: true
-            }
+            },
+            enableSelection: false
           }}
         />
         <ResponsiveContainer width="100%" height={500}>
           <PieChart>
             <Pie
               data={bomPricingData}
+              labelLine={false}
               dataKey="pmin"
               nameKey="name"
               cx="50%"
               cy="50%"
               outerRadius={50}
               fill="#8884d8"
-            />
+            >
+              {bomPricingData.map((entry, index) => (
+                <Cell
+                  key={entry.name}
+                  fill={BOM_COLORS[index % BOM_COLORS.length]}
+                />
+              ))}
+            </Pie>
             <Pie
               data={bomPricingData}
               dataKey="pmax"
@@ -121,7 +140,14 @@ export default function BomPricingPanel({
               cy="50%"
               innerRadius={80}
               fill="#82ca9d"
-            />
+            >
+              {bomPricingData.map((entry, index) => (
+                <Cell
+                  key={entry.name}
+                  fill={BOM_COLORS[index % BOM_COLORS.length]}
+                />
+              ))}
+            </Pie>
             <Tooltip />
           </PieChart>
         </ResponsiveContainer>

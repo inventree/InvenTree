@@ -14,7 +14,7 @@ import { modals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { IconFilter, IconRefresh, IconTrash } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
-import { dataTagSymbol, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   DataTable,
   DataTableCellClickHandler,
@@ -91,6 +91,7 @@ export type InvenTreeTableProps<T = any> = {
   onRowClick?: (record: T, index: number, event: any) => void;
   onCellClick?: DataTableCellClickHandler<T>;
   modelType?: ModelType;
+  rowStyle?: (record: T, index: number) => any;
 };
 
 /**
@@ -650,6 +651,7 @@ export function InvenTreeTable<T = any>({
               tableProps.enableSelection ? onSelectedRecordsChange : undefined
             }
             rowExpansion={tableProps.rowExpansion}
+            rowStyle={tableProps.rowStyle}
             fetching={isFetching}
             noRecordsText={missingRecordsText}
             records={tableState.records}
