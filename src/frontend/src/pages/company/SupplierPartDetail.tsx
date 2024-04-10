@@ -31,6 +31,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
+import { StockItemTable } from '../../tables/stock/StockItemTable';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();
@@ -202,7 +203,16 @@ export default function SupplierPartDetail() {
       {
         name: 'stock',
         label: t`Received Stock`,
-        icon: <IconPackages />
+        icon: <IconPackages />,
+        content: supplierPart?.pk ? (
+          <StockItemTable
+            tableName="supplier-stock"
+            allowAdd={false}
+            params={{ supplier_part: supplierPart.pk }}
+          />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'purchaseorders',
