@@ -10,6 +10,7 @@ v187 - 2024-03-10 : https://github.com/inventree/InvenTree/pull/6985
     - Allow Part list endpoint to be sorted by pricing_min and pricing_max values
     - Allow BomItem list endpoint to be sorted by pricing_min and pricing_max values
     - Allow InternalPrice and SalePrice endpoints to be sorted by quantity
+    - Adds total pricing values to BomItem serializer
 
 v186 - 2024-03-26 : https://github.com/inventree/InvenTree/pull/6855
     - Adds license information to the API

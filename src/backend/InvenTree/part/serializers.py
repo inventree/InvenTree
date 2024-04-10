@@ -1418,6 +1418,8 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'part_detail',
             'pricing_min',
             'pricing_max',
+            'pricing_min_total',
+            'pricing_max_total',
             'pricing_updated',
             'quantity',
             'reference',
@@ -1457,6 +1459,9 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         if not pricing:
             self.fields.pop('pricing_min')
             self.fields.pop('pricing_max')
+            self.fields.pop('pricing_min_total')
+            self.fields.pop('pricing_max_total')
+            self.fields.pop('pricing_updated')
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 
@@ -1487,14 +1492,22 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     # Cached pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='sub_part.pricing.overall_min', allow_null=True, read_only=True
+        source='sub_part__pricing_data__overall_min', allow_null=True, read_only=True
     )
+
     pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='sub_part.pricing.overall_max', allow_null=True, read_only=True
+        source='sub_part__pricing_data__overall_max', allow_null=True, read_only=True
+    )
+
+    pricing_min_total = InvenTree.serializers.InvenTreeMoneySerializer(
+        allow_null=True, read_only=True
+    )
+    pricing_max_total = InvenTree.serializers.InvenTreeMoneySerializer(
+        allow_null=True, read_only=True
     )
 
     pricing_updated = serializers.DateTimeField(
-        source='sub_part.pricing.updated', allow_null=True, read_only=True
+        source='sub_part__pricing_data__updated', allow_null=True, read_only=True
     )
 
     # Annotated fields for available stock
@@ -1514,6 +1527,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         queryset = queryset.prefetch_related('sub_part')
         queryset = queryset.prefetch_related('sub_part__category')
+        queryset = queryset.prefetch_related('sub_part__pricing_data')
 
         queryset = queryset.prefetch_related(
             'sub_part__stock_items',
@@ -1540,6 +1554,18 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         Construct an "available stock" quantity:
         available_stock = total_stock - build_order_allocations - sales_order_allocations
         """
+
+        # Annotate with the 'total pricing' information based on unit pricing and quantity
+        queryset = queryset.annotate(
+            pricing_min_total=ExpressionWrapper(
+                F('quantity') * F('sub_part__pricing_data__overall_min'),
+                output_field=models.DecimalField(),
+            ),
+            pricing_max_total=ExpressionWrapper(
+                F('quantity') * F('sub_part__pricing_data__overall_max'),
+                output_field=models.DecimalField(),
+            ),
+        )
 
         ref = 'sub_part__'
 

@@ -38,7 +38,6 @@ from InvenTree.helpers import (
     is_ajax,
     isNull,
     str2bool,
-    str2int,
 )
 from InvenTree.mixins import (
     CreateAPI,
@@ -1952,6 +1951,8 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'consumable',
         'pricing_min',
         'pricing_max',
+        'pricing_min_total',
+        'pricing_max_total',
         'pricing_updated',
     ]
 
