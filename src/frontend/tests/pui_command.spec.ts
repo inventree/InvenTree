@@ -12,11 +12,13 @@ test('PUI - Quick Command', async ({ page }) => {
 
   await expect(page).toHaveTitle('InvenTree');
   await page.waitForURL('**/platform/');
-  // wait for the page to load - 0.5s
+  await page
+    .getByRole('heading', { name: 'Welcome to your Dashboard,' })
+    .click();
   await page.waitForTimeout(500);
 
   // Open Spotlight with Keyboard Shortcut
-  await page.keyboard.press(`${systemKey}+K`);
+  await page.locator('body').press(`${systemKey}+k`);
   await page.waitForTimeout(200);
   await page
     .getByRole('button', { name: 'Dashboard Go to the InvenTree dashboard' })
@@ -36,7 +38,7 @@ test('PUI - Quick Command', async ({ page }) => {
   await page.waitForURL('**/platform');
 
   // Open Spotlight with Keyboard Shortcut and Search
-  await page.keyboard.press(`${systemKey}+K`);
+  await page.locator('body').press(`${systemKey}+k`);
   await page.waitForTimeout(200);
   await page.getByPlaceholder('Search...').fill('Dashboard');
   await page.getByPlaceholder('Search...').press('Tab');
