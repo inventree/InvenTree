@@ -78,6 +78,13 @@ test('PUI - Quick Command - no keys', async ({ page }) => {
   await page.getByRole('button', { name: 'Register extra actions' }).click();
   await page.getByPlaceholder('Search...').fill('secret');
   await page.getByRole('button', { name: 'Secret action It was' }).click();
+  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page.getByPlaceholder('Search...').fill('Another secret action');
+  await page
+    .getByRole('button', {
+      name: 'Another secret action You can register multiple actions with just one command'
+    })
+    .click();
   await page.getByRole('tab', { name: 'Home' }).click();
   await page.getByRole('button', { name: 'Open spotlight' }).click();
   await page.getByPlaceholder('Search...').fill('secret');
