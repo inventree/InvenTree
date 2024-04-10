@@ -7,11 +7,11 @@ test('PUI - Quick Command', async ({ page }) => {
   await page.getByLabel('username').fill('allaccess');
   await page.getByLabel('password').fill('nolimits');
   await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform/');
+  await page.waitForURL('**/platform');
   await page.goto('./platform/');
 
   await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform');
+  await page.waitForURL('**/platform/');
   // wait for the page to load - 0.5s
   await page.waitForTimeout(500);
 
