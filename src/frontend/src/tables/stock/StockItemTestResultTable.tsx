@@ -12,9 +12,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { PassFailButton } from '../../components/items/YesNoButton';
 import { RenderUser } from '../../components/render/User';
 import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';

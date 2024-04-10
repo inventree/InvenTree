@@ -10,7 +10,7 @@ import { navTabs as mainNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { InvenTreeStyle } from '../../globalStyle';
 import { apiUrl } from '../../states/ApiState';
-import { ScanButton } from '../items/ScanButton';
+import { ScanButton } from '../buttons/ScanButton';
 import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
