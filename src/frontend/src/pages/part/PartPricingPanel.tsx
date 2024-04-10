@@ -1,12 +1,34 @@
 import { t } from '@lingui/macro';
-import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
+import {
+  Accordion,
+  Alert,
+  LoadingOverlay,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
+import { DataTable } from 'mantine-datatable';
 import { ReactNode, useMemo } from 'react';
+import {
+  Bar,
+  BarChart,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import { StylishText } from '../../components/items/StylishText';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { getDetailUrl } from '../../functions/urls';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
+import { TableColumn } from '../../tables/Column';
+import { PartColumn } from '../../tables/ColumnRenderers';
 
 function PricingOverview({
   part,
@@ -107,9 +129,70 @@ function VariantPricing({
   part: any;
   pricing: any;
 }): ReactNode {
+  const {
+    instance: variants,
+    refreshInstance,
+    instanceQuery
+  } = useInstance({
+    hasPrimaryKey: false,
+    endpoint: ApiEndpoints.part_list,
+    params: {
+      ancestor: part?.pk
+    },
+    defaultValue: []
+  });
+
+  // Calculate pricing data for the part variants
+  const variantPricingData: any[] = useMemo(() => {
+    return variants.map((variant: any) => {
+      return {
+        part: variant,
+        name: variant.full_name,
+        pmin: variant.pricing_min ?? variant.pricing_max ?? 0,
+        pmax: variant.pricing_max ?? variant.pricing_min ?? 0
+      };
+    });
+  }, [variants]);
+
+  const columns: TableColumn[] = useMemo(() => {
+    return [
+      {
+        accessor: 'name',
+        title: t`Variant Part`,
+        render: (record: any) =>
+          PartColumn(record.part, getDetailUrl(ModelType.part, record.part.pk))
+      },
+      {
+        accessor: 'pmin',
+        title: t`Minimum Price`,
+        render: (record: any) =>
+          formatCurrency(record.pmin, { currency: pricing?.currency })
+      },
+      {
+        accessor: 'pmax',
+        title: t`Maximum Price`,
+        render: (record: any) =>
+          formatCurrency(record.pmax, { currency: pricing?.currency })
+      }
+    ];
+  }, []);
+
   return (
     <Stack spacing="xs">
-      <Text>Variant Pricing goes here?</Text>
+      <LoadingOverlay visible={instanceQuery.isLoading} />
+      <SimpleGrid cols={2}>
+        <ResponsiveContainer width="100%" height={500}>
+          <BarChart data={variantPricingData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar dataKey="pmin" fill="#8884d8" label={t`Minimum Price`} />
+            <Bar dataKey="pmax" fill="#82ca9d" label={t`Maximum Price`} />
+          </BarChart>
+        </ResponsiveContainer>
+        <DataTable records={variantPricingData} columns={columns} />
+      </SimpleGrid>
     </Stack>
   );
 }
@@ -185,22 +268,10 @@ export default function PartPricingPanel({ part }: { part: any }) {
             visible={purchaseOrderPricing}
           />
           <PricingPanel
-            content={<SaleHistroy part={part} pricing={pricing} />}
-            label="sale"
-            title={t`Sale History`}
-            visible={salesOrderPricing}
-          />
-          <PricingPanel
             content={<InternalPricing part={part} pricing={pricing} />}
             label="internal"
             title={t`Internal Pricing`}
             visible={internalPricing}
-          />
-          <PricingPanel
-            content={<SalePricing part={part} pricing={pricing} />}
-            label="sale"
-            title={t`Sale Pricing`}
-            visible={salesOrderPricing}
           />
           <PricingPanel
             content={<SupplierPricing part={part} pricing={pricing} />}
@@ -219,6 +290,18 @@ export default function PartPricingPanel({ part }: { part: any }) {
             label="variant"
             title={t`Variant Pricing`}
             visible={part?.is_template}
+          />
+          <PricingPanel
+            content={<SalePricing part={part} pricing={pricing} />}
+            label="sale"
+            title={t`Sale Pricing`}
+            visible={salesOrderPricing}
+          />
+          <PricingPanel
+            content={<SaleHistroy part={part} pricing={pricing} />}
+            label="sale"
+            title={t`Sale History`}
+            visible={salesOrderPricing}
           />
         </Accordion>
       )}
