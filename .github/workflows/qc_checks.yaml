@@ -48,7 +48,7 @@ jobs:
               - 'src/backend/requirements.txt'
               - 'src/backend/requirements-dev.txt'
             migrations:
-              - '**test_migrations.py'
+              - '**/test_migrations.py'
               - '**/migrations/**'
               - '.github/workflows**'
               - 'src/backend/requirements.txt'
