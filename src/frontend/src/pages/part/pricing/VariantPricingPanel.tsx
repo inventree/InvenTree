@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, SimpleGrid, Stack } from '@mantine/core';
-import { DataTable, DataTableColumn } from 'mantine-datatable';
+import { SimpleGrid, Stack } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 import {
   Bar,
@@ -16,8 +15,11 @@ import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { getDetailUrl } from '../../../functions/urls';
-import { useInstance } from '../../../hooks/UseInstance';
+import { useTable } from '../../../hooks/UseTable';
+import { apiUrl } from '../../../states/ApiState';
+import { TableColumn } from '../../../tables/Column';
 import { PartColumn } from '../../../tables/ColumnRenderers';
+import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 
 export default function VariantPricingPanel({
   part,
@@ -26,22 +28,40 @@ export default function VariantPricingPanel({
   part: any;
   pricing: any;
 }): ReactNode {
-  const {
-    instance: variants,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
-    hasPrimaryKey: false,
-    endpoint: ApiEndpoints.part_list,
-    params: {
-      ancestor: part?.pk
-    },
-    defaultValue: []
-  });
+  const table = useTable('pricing-variants');
+
+  const columns: TableColumn[] = useMemo(() => {
+    return [
+      {
+        accessor: 'name',
+        title: t`Variant Part`,
+        sortable: true,
+        switchable: false,
+        render: (record: any) =>
+          PartColumn(record, getDetailUrl(ModelType.part, record.pk))
+      },
+      {
+        accessor: 'pricing_min',
+        title: t`Minimum Price`,
+        sortable: true,
+        switchable: false,
+        render: (record: any) =>
+          formatCurrency(record.pricing_min, { currency: pricing?.currency })
+      },
+      {
+        accessor: 'pricing_max',
+        title: t`Maximum Price`,
+        sortable: true,
+        switchable: false,
+        render: (record: any) =>
+          formatCurrency(record.pricing_max, { currency: pricing?.currency })
+      }
+    ];
+  }, []);
 
   // Calculate pricing data for the part variants
   const variantPricingData: any[] = useMemo(() => {
-    const pricing = variants.map((variant: any) => {
+    const pricing = table.records.map((variant: any) => {
       return {
         part: variant,
         name: variant.full_name,
@@ -51,36 +71,23 @@ export default function VariantPricingPanel({
     });
 
     return pricing;
-  }, [variants]);
-
-  const columns: DataTableColumn<any>[] = useMemo(() => {
-    return [
-      {
-        accessor: 'name',
-        title: t`Variant Part`,
-        render: (record: any) =>
-          PartColumn(record.part, getDetailUrl(ModelType.part, record.part.pk))
-      },
-      {
-        accessor: 'pmin',
-        title: t`Minimum Price`,
-        render: (record: any) =>
-          formatCurrency(record.pmin, { currency: pricing?.currency })
-      },
-      {
-        accessor: 'pmax',
-        title: t`Maximum Price`,
-        render: (record: any) =>
-          formatCurrency(record.pmax, { currency: pricing?.currency })
-      }
-    ];
-  }, []);
+  }, [table.records]);
 
   return (
     <Stack spacing="xs">
-      <LoadingOverlay visible={instanceQuery.isLoading} />
       <SimpleGrid cols={2}>
-        <DataTable records={variantPricingData} columns={columns} />
+        <InvenTreeTable
+          tableState={table}
+          url={apiUrl(ApiEndpoints.part_list)}
+          columns={columns}
+          props={{
+            params: {
+              ancestor: part?.pk,
+              has_pricing: true
+            },
+            enablePagination: false
+          }}
+        />
         <ResponsiveContainer width="100%" height={500}>
           <BarChart data={variantPricingData}>
             <XAxis dataKey="name" />
