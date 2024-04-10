@@ -16,6 +16,7 @@ interface formatCurrencyOptionsType {
   minDigits?: number;
   currency?: string;
   locale?: string;
+  multiplier?: number;
 }
 
 export function formatDecimal(
@@ -42,12 +43,20 @@ export function formatDecimal(
  * - digits: Maximum number of significant digits (default = 10)
  */
 export function formatCurrency(
-  value: number | null | undefined,
+  value: number | string | null | undefined,
   options: formatCurrencyOptionsType = {}
 ) {
   if (value == null || value == undefined) {
     return null;
   }
+
+  value = parseFloat(value.toString());
+
+  if (isNaN(value) || !isFinite(value)) {
+    return null;
+  }
+
+  value *= options.multiplier ?? 1;
 
   const global_settings = useGlobalSettingsState.getState().lookup;
 

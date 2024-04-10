@@ -11,7 +11,7 @@ import {
   YAxis
 } from 'recharts';
 
-import { formatCurrency, formatDecimal } from '../../../defaults/formatters';
+import { formatDecimal, formatPriceRange } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -58,24 +58,29 @@ export default function BomPricingPanel({
         render: (record: any) => formatDecimal(record.quantity)
       },
       {
-        accessor: 'pricing_min',
+        accessor: 'unit_price',
+        ordering: 'pricing_max',
         sortable: true,
         switchable: false,
-        title: t`Minimum Price`,
-        render: (record: any) =>
-          formatCurrency(record.quantity * record.pricing_min, {
+        title: t`Unit Price`,
+        render: (record: any) => {
+          return formatPriceRange(record.pricing_min, record.pricing_max, {
             currency: pricing?.currency
-          })
+          });
+        }
       },
       {
-        accessor: 'pricing_max',
-        title: t`Maximum Price`,
+        accessor: 'total_price',
+        title: t`Total Price`,
+        ordering: 'pricing_max',
         sortable: true,
         switchable: false,
-        render: (record: any) =>
-          formatCurrency(record.quantity * record.pricing_max, {
-            currency: pricing?.currency
-          })
+        render: (record: any) => {
+          return formatPriceRange(record.pricing_min, record.pricing_max, {
+            currency: pricing?.currency,
+            multiplier: record.quantity
+          });
+        }
       },
       DateColumn({
         accessor: 'pricing_updated',
