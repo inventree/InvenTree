@@ -154,11 +154,11 @@ class LineItemFilter(rest_filters.FilterSet):
 
     # Filter by order status
     order_status = rest_filters.NumberFilter(
-        label='order_status', field_name='order__status'
+        label=_('Order Status'), field_name='order__status'
     )
 
     has_pricing = rest_filters.BooleanFilter(
-        label='Has Pricing', method='filter_has_pricing'
+        label=_('Has Pricing'), method='filter_has_pricing'
     )
 
     def filter_has_pricing(self, queryset, name, value):
@@ -425,9 +425,27 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
 
         price_field = 'purchase_price'
         model = models.PurchaseOrderLineItem
-        fields = ['order', 'part']
+        fields = []
 
-    pending = rest_filters.BooleanFilter(label='pending', method='filter_pending')
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.PurchaseOrder.objects.all(),
+        field_name='order',
+        label=_('Order'),
+    )
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=SupplierPart.objects.all(), field_name='part', label=_('Supplier Part')
+    )
+
+    base_part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.filter(purchaseable=True),
+        field_name='part__part',
+        label=_('Internal Part'),
+    )
+
+    pending = rest_filters.BooleanFilter(
+        method='filter_pending', label=_('Order Pending')
+    )
 
     def filter_pending(self, queryset, name, value):
         """Filter by "pending" status (order status = pending)."""
@@ -435,7 +453,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
             return queryset.filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
         return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
-    received = rest_filters.BooleanFilter(label='received', method='filter_received')
+    received = rest_filters.BooleanFilter(
+        label=_('Items Received'), method='filter_received'
+    )
 
     def filter_received(self, queryset, name, value):
         """Filter by lines which are "received" (or "not" received).
@@ -541,25 +561,6 @@ class PurchaseOrderLineItemList(
         return Response(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
-
-    def filter_queryset(self, queryset):
-        """Additional filtering options."""
-        params = self.request.query_params
-
-        queryset = super().filter_queryset(queryset)
-
-        base_part = params.get('base_part', None)
-
-        if base_part:
-            try:
-                base_part = Part.objects.get(pk=base_part)
-
-                queryset = queryset.filter(part__part=base_part)
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        return queryset
 
     def download_queryset(self, queryset, export_format):
         """Download the requested queryset as a file."""
