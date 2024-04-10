@@ -42,10 +42,10 @@ export function formatDecimal(
  * - digits: Maximum number of significant digits (default = 10)
  */
 export function formatCurrency(
-  value: number | null,
+  value: number | null | undefined,
   options: formatCurrencyOptionsType = {}
 ) {
-  if (value == null) {
+  if (value == null || value == undefined) {
     return null;
   }
 
