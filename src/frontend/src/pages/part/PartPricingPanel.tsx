@@ -7,7 +7,7 @@ import {
   Stack,
   Text
 } from '@mantine/core';
-import { DataTable } from 'mantine-datatable';
+import { DataTable, DataTableColumn } from 'mantine-datatable';
 import { ReactNode, useMemo } from 'react';
 import {
   Bar,
@@ -27,7 +27,6 @@ import { UserRoles } from '../../enums/Roles';
 import { getDetailUrl } from '../../functions/urls';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
-import { TableColumn } from '../../tables/Column';
 import { PartColumn } from '../../tables/ColumnRenderers';
 
 function PricingOverview({
@@ -154,7 +153,7 @@ function VariantPricing({
     });
   }, [variants]);
 
-  const columns: TableColumn[] = useMemo(() => {
+  const columns: DataTableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'name',
