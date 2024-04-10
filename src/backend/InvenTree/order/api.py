@@ -433,6 +433,17 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         label=_('Order'),
     )
 
+    order_complete = rest_filters.BooleanFilter(
+        label=_('Order Complete'), method='filter_order_complete'
+    )
+
+    def filter_order_complete(self, queryset, name, value):
+        """Filter by whether the order is 'complete' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status=PurchaseOrderStatus.COMPLETE.value)
+
+        return queryset.exclude(order__status=PurchaseOrderStatus.COMPLETE.value)
+
     part = rest_filters.ModelChoiceFilter(
         queryset=SupplierPart.objects.all(), field_name='part', label=_('Supplier Part')
     )

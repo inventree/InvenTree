@@ -10,21 +10,8 @@ import BomPricingPanel from './pricing/BomPricingPanel';
 import InternalPricingPanel from './pricing/InternalPricingPanel';
 import PricingOverviewPanel from './pricing/PricingOverviewPanel';
 import PricingPanel from './pricing/PricingPanel';
+import PurchacseHistoryPanel from './pricing/PurchaseHistoryPanel';
 import VariantPricingPanel from './pricing/VariantPricingPanel';
-
-function PurchaseHistory({
-  part,
-  pricing
-}: {
-  part: any;
-  pricing: any;
-}): ReactNode {
-  return (
-    <Stack spacing="xs">
-      <Text>Purchase History goes here?</Text>
-    </Stack>
-  );
-}
 
 function SaleHistroy({
   part,
@@ -110,7 +97,7 @@ export default function PartPricingPanel({ part }: { part: any }) {
             visible={true}
           />
           <PricingPanel
-            content={<PurchaseHistory part={part} pricing={pricing} />}
+            content={<PurchacseHistoryPanel part={part} />}
             label="purchase"
             title={t`Purchase History`}
             visible={purchaseOrderPricing}
