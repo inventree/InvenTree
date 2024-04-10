@@ -4,7 +4,7 @@ import { useForm } from '@mantine/form';
 import { useToggle } from '@mantine/hooks';
 
 import { api } from '../../../../App';
-import { EditButton } from '../../../../components/items/EditButton';
+import { EditButton } from '../../../../components/buttons/EditButton';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { apiUrl } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
