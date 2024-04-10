@@ -68,6 +68,15 @@ test('PUI - Quick Command - no keys', async ({ page }) => {
 
   await page.getByLabel('About InvenTree').getByRole('button').click();
 
+  // use documentation
+  await page.getByRole('button', { name: 'Open spotlight' }).click();
+  await page
+    .getByRole('button', {
+      name: 'Documentation Visit the documentation to learn more about InvenTree'
+    })
+    .click();
+  await page.waitForURL('https://docs.inventree.org/**');
+
   // Test addition of new actions
   await page.goto('./platform/playground');
   await page

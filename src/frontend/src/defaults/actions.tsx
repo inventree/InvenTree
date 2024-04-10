@@ -4,7 +4,7 @@ import { IconHome, IconLink, IconPointer } from '@tabler/icons-react';
 import { NavigateFunction } from 'react-router-dom';
 
 import { useLocalState } from '../states/LocalState';
-import { aboutInvenTree, licenseInfo, serverInfo } from './links';
+import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 import { menuItems } from './menuItems';
 
 export function getActions(navigate: NavigateFunction) {
@@ -25,8 +25,8 @@ export function getActions(navigate: NavigateFunction) {
     },
     {
       title: t`Documentation`,
-      description: t`Visit documentation to learn more about InvenTree`,
-      onTrigger: () => console.log('Documentation'),
+      description: t`Visit the documentation to learn more about InvenTree`,
+      onTrigger: () => (window.location.href = docLinks.faq),
       icon: <IconLink size="1.2rem" />
     },
     {
