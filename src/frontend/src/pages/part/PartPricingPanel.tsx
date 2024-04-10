@@ -20,7 +20,7 @@ import {
 } from 'recharts';
 
 import { StylishText } from '../../components/items/StylishText';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -147,8 +147,8 @@ function VariantPricing({
       return {
         part: variant,
         name: variant.full_name,
-        pmin: variant.pricing_min ?? variant.pricing_max ?? 0,
-        pmax: variant.pricing_max ?? variant.pricing_min ?? 0
+        pmin: formatDecimal(variant.pricing_min ?? variant.pricing_max ?? 0),
+        pmax: formatDecimal(variant.pricing_max ?? variant.pricing_min ?? 0)
       };
     });
   }, [variants]);

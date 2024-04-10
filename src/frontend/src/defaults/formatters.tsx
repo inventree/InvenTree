@@ -5,11 +5,32 @@ import {
   useUserSettingsState
 } from '../states/SettingsState';
 
+interface formatDecmimalOptionsType {
+  digits?: number;
+  minDigits?: number;
+  locale?: string;
+}
+
 interface formatCurrencyOptionsType {
   digits?: number;
   minDigits?: number;
   currency?: string;
   locale?: string;
+}
+
+export function formatDecimal(
+  value: number | null | undefined,
+  options: formatDecmimalOptionsType = {}
+) {
+  let locale = options.locale || navigator.language || 'en-US';
+
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  let formatter = new Intl.NumberFormat(locale);
+
+  return formatter.format(value);
 }
 
 /*
