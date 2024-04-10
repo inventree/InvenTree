@@ -20,7 +20,7 @@ export function LicenceView(entries: Readonly<any[]>) {
   return (
     <Stack spacing="xs">
       <Divider />
-      {entries?.length > 0 && (
+      {entries?.length > 0 ? (
         <Accordion variant="contained" defaultValue="-">
           {entries?.map((entry: any, index: number) => (
             <Accordion.Item key={entry.name} value={`entry-${index}`}>
@@ -38,6 +38,10 @@ export function LicenceView(entries: Readonly<any[]>) {
             </Accordion.Item>
           ))}
         </Accordion>
+      ) : (
+        <Text>
+          <Trans>No Information provided - this is likely a server issue</Trans>
+        </Text>
       )}
     </Stack>
   );
