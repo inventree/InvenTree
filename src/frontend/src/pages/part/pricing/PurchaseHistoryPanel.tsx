@@ -18,7 +18,7 @@ import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 
-export default function PurchacseHistoryPanel({
+export default function PurchaseHistoryPanel({
   part
 }: {
   part: any;

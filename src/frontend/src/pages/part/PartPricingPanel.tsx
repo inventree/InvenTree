@@ -10,7 +10,8 @@ import BomPricingPanel from './pricing/BomPricingPanel';
 import InternalPricingPanel from './pricing/InternalPricingPanel';
 import PricingOverviewPanel from './pricing/PricingOverviewPanel';
 import PricingPanel from './pricing/PricingPanel';
-import PurchacseHistoryPanel from './pricing/PurchaseHistoryPanel';
+import PurchaseHistoryPanel from './pricing/PurchaseHistoryPanel';
+import SupplierPricingPanel from './pricing/SupplierPricingPanel';
 import VariantPricingPanel from './pricing/VariantPricingPanel';
 
 function SaleHistroy({
@@ -37,20 +38,6 @@ function SalePricing({
   return (
     <Stack spacing="xs">
       <Text>Sale Pricing goes here?</Text>
-    </Stack>
-  );
-}
-
-function SupplierPricing({
-  part,
-  pricing
-}: {
-  part: any;
-  pricing: any;
-}): ReactNode {
-  return (
-    <Stack spacing="xs">
-      <Text>Supplier Pricing goes here?</Text>
     </Stack>
   );
 }
@@ -97,7 +84,7 @@ export default function PartPricingPanel({ part }: { part: any }) {
             visible={true}
           />
           <PricingPanel
-            content={<PurchacseHistoryPanel part={part} />}
+            content={<PurchaseHistoryPanel part={part} />}
             label="purchase"
             title={t`Purchase History`}
             visible={purchaseOrderPricing}
@@ -109,7 +96,7 @@ export default function PartPricingPanel({ part }: { part: any }) {
             visible={internalPricing}
           />
           <PricingPanel
-            content={<SupplierPricing part={part} pricing={pricing} />}
+            content={<SupplierPricingPanel part={part} />}
             label="supplier"
             title={t`Supplier Pricing`}
             visible={purchaseOrderPricing}

@@ -76,6 +76,7 @@ export enum ApiEndpoints {
   address_list = 'company/address/',
   company_attachment_list = 'company/attachment/',
   supplier_part_list = 'company/part/',
+  supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
   manufacturer_part_attachment_list = 'company/part/manufacturer/attachment/',
   manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
