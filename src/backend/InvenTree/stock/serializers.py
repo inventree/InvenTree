@@ -55,7 +55,9 @@ class GenerateBatchCodeSerializer(serializers.Serializer):
             'build_order',
             'item',
             'location',
-            'part' 'purchase_order',
+            'part',
+            'purchase_order',
+            'quantity',
         ]
 
         read_only_fields = ['batch_code']
@@ -66,6 +68,7 @@ class GenerateBatchCodeSerializer(serializers.Serializer):
             'location',
             'part',
             'purchase_order',
+            'quantity',
         ]
 
     batch_code = serializers.CharField(
@@ -115,6 +118,13 @@ class GenerateBatchCodeSerializer(serializers.Serializer):
         allow_null=True,
         label=_('Purchase Order'),
         help_text=_('Select purchase order'),
+    )
+
+    quantity = serializers.FloatField(
+        required=False,
+        allow_null=True,
+        label=_('Quantity'),
+        help_text=_('Enter quantity for batch code'),
     )
 
 

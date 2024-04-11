@@ -41,16 +41,9 @@ export function useStockFields({
 
   const batchGenerator = useGenerator(
     ApiEndpoints.stock_generate_batch_code,
-    'batch_code'
+    'batch_code',
+    (value: any) => setBatchCode(value)
   );
-
-  useEffect(() => {
-    if (batchGenerator.result) {
-      setBatchCode(batchGenerator.result);
-    }
-  }, [batchGenerator.result]);
-
-  const form = useFormContext();
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
