@@ -1,5 +1,6 @@
 """JSON API for the Stock app."""
 
+import json
 from collections import OrderedDict
 from datetime import datetime, timedelta
 
@@ -13,7 +14,8 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import status
+from rest_framework import permissions, status
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -65,6 +67,7 @@ from order.serializers import (
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from stock.admin import LocationResource, StockItemResource
+from stock.batch_codes import generate_batch_code
 from stock.models import (
     StockItem,
     StockItemAttachment,
@@ -73,6 +76,24 @@ from stock.models import (
     StockLocation,
     StockLocationType,
 )
+
+
+class GenerateBatchCode(GenericAPIView):
+    """API endpoint for generating batch codes."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StockSerializers.GenerateBatchCodeSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Generate a new batch code."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        print('serializer data:', serializer.validated_data)
+
+        data = {'batch_code': generate_batch_code(**serializer.validated_data)}
+
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class StockDetail(RetrieveUpdateDestroyAPI):
@@ -1723,6 +1744,11 @@ stock_api_urls = [
         StatusView.as_view(),
         {StatusView.MODEL_REF: StockStatus},
         name='api-stock-status-codes',
+    ),
+    path(
+        'generate-batch-code/',
+        GenerateBatchCode.as_view(),
+        name='api-generate-batch-code',
     ),
     # Anything else
     path('', StockList.as_view(), name='api-stock-list'),

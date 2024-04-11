@@ -15,11 +15,13 @@ from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
+import build.models
 import common.models
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status_codes
+import order.models
 import part.filters as part_filters
 import part.models as part_models
 import stock.filters
@@ -37,6 +39,83 @@ from .models import (
 )
 
 logger = logging.getLogger('inventree')
+
+
+class GenerateBatchCodeSerializer(serializers.Serializer):
+    """Serializer for generating a batch code.
+
+    Any of the provided write-only fields can be used for additional context.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            'batch_code',
+            'build_order',
+            'item',
+            'location',
+            'part' 'purchase_order',
+        ]
+
+        read_only_fields = ['batch_code']
+
+        write_only_fields = [
+            'build_order',
+            'item',
+            'location',
+            'part',
+            'purchase_order',
+        ]
+
+    batch_code = serializers.CharField(
+        read_only=True, help_text=_('Generated batch code'), label=_('Batch Code')
+    )
+
+    build_order = serializers.PrimaryKeyRelatedField(
+        queryset=build.models.Build.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Build Order'),
+        help_text=_('Select build order'),
+    )
+
+    item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Stock Item'),
+        help_text=_('Select stock item to generate batch code for'),
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Select location to generate batch code for'),
+    )
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        many=False,
+        required=False,
+        allow_null=False,
+        label=_('Part'),
+        help_text=_('Select part to generate batch code for'),
+    )
+
+    purchase_order = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.PurchaseOrder.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Purchase Order'),
+        help_text=_('Select purchase order'),
+    )
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
