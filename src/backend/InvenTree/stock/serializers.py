@@ -103,7 +103,7 @@ class GenerateBatchCodeSerializer(serializers.Serializer):
         queryset=part_models.Part.objects.all(),
         many=False,
         required=False,
-        allow_null=False,
+        allow_null=True,
         label=_('Part'),
         help_text=_('Select part to generate batch code for'),
     )

@@ -148,14 +148,14 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
     def generate_batch_code(self, **kwargs):
         """Generate a new batch code."""
         now = datetime.now()
-        batch = f'BATCH-{now.year}:{now.month}:{now.day}'
+        batch = f'SAMPLE-BATCH-{now.year}:{now.month}:{now.day}'
 
         # If a Part instance is provided, prepend the part name to the batch code
         if part := kwargs.get('part', None):
             batch = f'{part.name}-{batch}'
 
         # If a Build instance is provided, prepend the build number to the batch code
-        if build := kwargs.get('build', None):
+        if build := kwargs.get('build_order', None):
             batch = f'{build.reference}-{batch}'
 
         return batch

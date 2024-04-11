@@ -89,8 +89,6 @@ class GenerateBatchCode(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        print('serializer data:', serializer.validated_data)
-
         data = {'batch_code': generate_batch_code(**serializer.validated_data)}
 
         return Response(data, status=status.HTTP_201_CREATED)

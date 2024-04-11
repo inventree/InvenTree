@@ -35,7 +35,7 @@ def generate_batch_code(**kwargs):
         if 'kwargs' in sig.parameters:
             # Pass the kwargs through to the plugin
             try:
-                batch = generate(kwargs=kwargs)
+                batch = generate(**kwargs)
             except Exception:
                 InvenTree.exceptions.log_error('plugin.generate_batch_code')
                 continue
