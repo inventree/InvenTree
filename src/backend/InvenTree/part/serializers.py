@@ -1492,11 +1492,11 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
     # Cached pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='sub_part__pricing_data__overall_min', allow_null=True, read_only=True
+        source='sub_part.pricing_data.overall_min', allow_null=True, read_only=True
     )
 
     pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
-        source='sub_part__pricing_data__overall_max', allow_null=True, read_only=True
+        source='sub_part.pricing_data.overall_max', allow_null=True, read_only=True
     )
 
     pricing_min_total = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1507,7 +1507,7 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     )
 
     pricing_updated = serializers.DateTimeField(
-        source='sub_part__pricing_data__updated', allow_null=True, read_only=True
+        source='sub_part.pricing_data.updated', allow_null=True, read_only=True
     )
 
     # Annotated fields for available stock
