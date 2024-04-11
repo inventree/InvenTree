@@ -20,7 +20,7 @@ import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
 
-from stock.batch_codes import generate_batch_code
+from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 

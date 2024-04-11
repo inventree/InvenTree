@@ -67,7 +67,7 @@ from order.serializers import (
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from stock.admin import LocationResource, StockItemResource
-from stock.batch_codes import generate_batch_code
+from stock.generators import generate_batch_code
 from stock.models import (
     StockItem,
     StockItemAttachment,

@@ -1,4 +1,4 @@
-"""Functions for generating batch codes."""
+"""Generator functions for the stock app."""
 
 from inspect import signature
 

@@ -42,7 +42,7 @@ from InvenTree.status_codes import (
 )
 from part import models as PartModels
 from plugin.events import trigger_event
-from stock.batch_codes import generate_batch_code
+from stock.generators import generate_batch_code
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
