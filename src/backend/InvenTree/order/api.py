@@ -900,6 +900,7 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     ordering_fields = [
+        'customer',
         'order',
         'part',
         'part__name',
@@ -909,7 +910,11 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
         'target_date',
     ]
 
-    ordering_field_aliases = {'part': 'part__name', 'order': 'order__reference'}
+    ordering_field_aliases = {
+        'customer': 'order__customer__name',
+        'part': 'part__name',
+        'order': 'order__reference',
+    }
 
     search_fields = ['part__name', 'quantity', 'reference']
 
