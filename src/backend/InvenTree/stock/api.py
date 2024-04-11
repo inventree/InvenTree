@@ -1744,9 +1744,14 @@ stock_api_urls = [
         name='api-stock-status-codes',
     ),
     path(
-        'generate-batch-code/',
-        GenerateBatchCode.as_view(),
-        name='api-generate-batch-code',
+        'generate',
+        include([
+            path(
+                'batch-code/',
+                GenerateBatchCode.as_view(),
+                name='api-generate-batch-code',
+            )
+        ]),
     ),
     # Anything else
     path('', StockList.as_view(), name='api-stock-list'),
