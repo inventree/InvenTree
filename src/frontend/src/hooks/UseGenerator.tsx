@@ -11,7 +11,11 @@ export type GeneratorState = {
   update: (params: Record<string, any>, overwrite?: boolean) => void;
 };
 
-/* Hook for managing generation of data via the InvenTree API */
+/* Hook for managing generation of data via the InvenTree API.
+ * We pass an endpoint, and start with an initially empty query.
+ * We can pass additional parameters to the query, and update the query as needed.
+ * Each update calls a new query to the API, and the result is stored in the state.
+ */
 export function useGenerator(
   endpoint: ApiEndpoints,
   key: string,
@@ -57,10 +61,6 @@ export function useGenerator(
       });
     }
   });
-
-  const refresh = useCallback(() => {
-    queryGenerator.refetch();
-  }, [queryGenerator]);
 
   return {
     query,
