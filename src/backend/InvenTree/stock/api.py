@@ -1744,7 +1744,7 @@ stock_api_urls = [
         name='api-stock-status-codes',
     ),
     path(
-        'generate',
+        'generate/',
         include([
             path(
                 'batch-code/',

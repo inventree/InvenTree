@@ -23,6 +23,19 @@ def generate_batch_code(**kwargs):
     # First, check if any plugins can generate batch codes
     from plugin.registry import registry
 
+    now = InvenTree.helpers.current_time()
+
+    context = {
+        'date': now,
+        'year': now.year,
+        'month': now.month,
+        'day': now.day,
+        'hour': now.hour,
+        'minute': now.minute,
+        'week': now.isocalendar()[1],
+        **kwargs,
+    }
+
     for plugin in registry.with_mixin('validation'):
         generate = getattr(plugin, 'generate_batch_code', None)
 
@@ -35,7 +48,7 @@ def generate_batch_code(**kwargs):
         if 'kwargs' in sig.parameters:
             # Pass the kwargs through to the plugin
             try:
-                batch = generate(**kwargs)
+                batch = generate(**context)
             except Exception:
                 InvenTree.exceptions.log_error('plugin.generate_batch_code')
                 continue
@@ -55,19 +68,5 @@ def generate_batch_code(**kwargs):
     batch_template = common.models.InvenTreeSetting.get_setting(
         'STOCK_BATCH_CODE_TEMPLATE', ''
     )
-
-    now = InvenTree.helpers.current_time()
-
-    # Pass context data through to the template rendering.
-    # The following context variables are available for custom batch code generation
-    context = {
-        'date': now,
-        'year': now.year,
-        'month': now.month,
-        'day': now.day,
-        'hour': now.hour,
-        'minute': now.minute,
-        'week': now.isocalendar()[1],
-    }
 
     return Template(batch_template).render(context)
