@@ -14,7 +14,8 @@ export type GeneratorState = {
 /* Hook for managing generation of data via the InvenTree API */
 export function useGenerator(
   endpoint: ApiEndpoints,
-  key: string
+  key: string,
+  onGenerate?: (value: any) => void
 ): GeneratorState {
   // Track the result
   const [result, setResult] = useState<any>(null);
@@ -33,6 +34,8 @@ export function useGenerator(
           ...params
         });
       }
+
+      queryGenerator.refetch();
     },
     [query]
   );
@@ -43,11 +46,21 @@ export function useGenerator(
     queryKey: ['generator', key, endpoint, query],
     queryFn: async () => {
       return api.post(apiUrl(endpoint), query).then((response) => {
-        setResult(response?.data[key]);
+        const value = response?.data[key];
+        setResult(value);
+
+        if (onGenerate) {
+          onGenerate(value);
+        }
+
         return response;
       });
     }
   });
+
+  const refresh = useCallback(() => {
+    queryGenerator.refetch();
+  }, [queryGenerator]);
 
   return {
     query,
