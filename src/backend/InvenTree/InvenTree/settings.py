@@ -299,10 +299,17 @@ if (
     and INVENTREE_ADMIN_ENABLED
     and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
 ):
-    INSTALLED_APPS.append('django_admin_shell')
-    ADMIN_SHELL_ENABLE = True
+    try:
+        import django_admin_shell
 
-    logger.warning('Admin shell is enabled')
+        INSTALLED_APPS.append('django_admin_shell')
+        ADMIN_SHELL_ENABLE = True
+
+        logger.warning('Admin shell is enabled')
+    except ModuleNotFoundError:
+        logger.warning(
+            'django-admin-shell is not installed - Admin shell is not enabled'
+        )
 
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
