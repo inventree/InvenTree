@@ -200,6 +200,17 @@ function LineItemFormRow({
     onClose: () => {
       input.changeFn(input.idx, 'batch_code', '');
       input.changeFn(input.idx, 'serial_numbers', '');
+    },
+    onOpen: () => {
+      // Generate a new batch code
+      api
+        .post(apiUrl(ApiEndpoints.stock_generate_batch_code), {
+          part: record?.supplier_part_detail?.part,
+          order: record?.order
+        })
+        .then((response) => {
+          setBatchCode(response.data?.batch_code ?? '');
+        });
     }
   });
 
