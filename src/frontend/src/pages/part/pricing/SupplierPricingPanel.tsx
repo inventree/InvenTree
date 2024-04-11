@@ -20,6 +20,7 @@ import {
   SupplierPriceBreakColumns,
   calculateSupplierPartUnitPrice
 } from '../../../tables/purchasing/SupplierPriceBreakTable';
+import { NoPricingData } from './PricingPanel';
 
 export default function SupplierPricingPanel({ part }: { part: any }) {
   const table = useTable('pricing-supplier');
@@ -53,23 +54,27 @@ export default function SupplierPricingPanel({ part }: { part: any }) {
           }
         }}
       />
-      <ResponsiveContainer width="100%" height={500}>
-        <BarChart data={supplierPricingData}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Bar
-            dataKey="unit_price"
-            fill={CHART_COLORS[0]}
-            label={t`Unit Price`}
-          />
-          <Bar
-            dataKey="supplier_price"
-            fill="#82ca9d"
-            label={t`Supplier Price`}
-          />
-        </BarChart>
-      </ResponsiveContainer>
+      {supplierPricingData.length > 0 ? (
+        <ResponsiveContainer width="100%" height={500}>
+          <BarChart data={supplierPricingData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Bar
+              dataKey="unit_price"
+              fill={CHART_COLORS[0]}
+              label={t`Unit Price`}
+            />
+            <Bar
+              dataKey="supplier_price"
+              fill="#82ca9d"
+              label={t`Supplier Price`}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <NoPricingData />
+      )}
     </SimpleGrid>
   );
 }

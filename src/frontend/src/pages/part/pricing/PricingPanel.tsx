@@ -1,4 +1,6 @@
-import { Accordion, Paper } from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Accordion, Alert, Paper, Space, Stack, Text } from '@mantine/core';
+import { IconExclamationCircle } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
 import { StylishText } from '../../../components/items/StylishText';
@@ -25,5 +27,16 @@ export default function PricingPanel({
         </Accordion.Panel>
       </Accordion.Item>
     )
+  );
+}
+
+export function NoPricingData() {
+  return (
+    <Stack spacing="xs">
+      <Alert icon={<IconExclamationCircle />} color="blue" title={t`No Data`}>
+        <Text>{t`No pricing data available`}</Text>
+      </Alert>
+      <Space />
+    </Stack>
   );
 }

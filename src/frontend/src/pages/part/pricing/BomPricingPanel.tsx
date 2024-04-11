@@ -19,6 +19,7 @@ import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
+import { NoPricingData } from './PricingPanel';
 
 export default function BomPricingPanel({
   part,
@@ -112,43 +113,51 @@ export default function BomPricingPanel({
             enableSelection: false
           }}
         />
-        <ResponsiveContainer width="100%" height={500}>
-          <BarChart data={bomPricingData}>
-            <XAxis dataKey="name" />
-            <YAxis yAxisId="left" orientation="left" stroke={CHART_COLORS[1]} />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              stroke={CHART_COLORS[3]}
-            />
-            <Tooltip />
-            <Legend />
-            <Bar
-              dataKey="unit_price_min"
-              yAxisId="left"
-              fill={CHART_COLORS[0]}
-              label={t`Minimum Unit Price`}
-            />
-            <Bar
-              dataKey="unit_price_max"
-              yAxisId="left"
-              fill={CHART_COLORS[1]}
-              label={t`Maximum Unit Price`}
-            />
-            <Bar
-              dataKey="total_price_min"
-              yAxisId="right"
-              fill={CHART_COLORS[2]}
-              label={t`Minimum Total Price`}
-            />
-            <Bar
-              dataKey="total_price_max"
-              yAxisId="right"
-              fill={CHART_COLORS[3]}
-              label={t`Maximum Total Price`}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        {bomPricingData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={500}>
+            <BarChart data={bomPricingData}>
+              <XAxis dataKey="name" />
+              <YAxis
+                yAxisId="left"
+                orientation="left"
+                stroke={CHART_COLORS[1]}
+              />
+              <YAxis
+                yAxisId="right"
+                orientation="right"
+                stroke={CHART_COLORS[3]}
+              />
+              <Tooltip />
+              <Legend />
+              <Bar
+                dataKey="unit_price_min"
+                yAxisId="left"
+                fill={CHART_COLORS[0]}
+                label={t`Minimum Unit Price`}
+              />
+              <Bar
+                dataKey="unit_price_max"
+                yAxisId="left"
+                fill={CHART_COLORS[1]}
+                label={t`Maximum Unit Price`}
+              />
+              <Bar
+                dataKey="total_price_min"
+                yAxisId="right"
+                fill={CHART_COLORS[2]}
+                label={t`Minimum Total Price`}
+              />
+              <Bar
+                dataKey="total_price_max"
+                yAxisId="right"
+                fill={CHART_COLORS[3]}
+                label={t`Maximum Total Price`}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <NoPricingData />
+        )}
       </SimpleGrid>
     </Stack>
   );

@@ -19,6 +19,7 @@ import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
+import { NoPricingData } from './PricingPanel';
 
 export default function VariantPricingPanel({
   part,
@@ -92,24 +93,28 @@ export default function VariantPricingPanel({
             enablePagination: false
           }}
         />
-        <ResponsiveContainer width="100%" height={500}>
-          <BarChart data={variantPricingData}>
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar
-              dataKey="pmin"
-              fill={CHART_COLORS[0]}
-              label={t`Minimum Price`}
-            />
-            <Bar
-              dataKey="pmax"
-              fill={CHART_COLORS[1]}
-              label={t`Maximum Price`}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        {variantPricingData.length > 0 ? (
+          <ResponsiveContainer width="100%" height={500}>
+            <BarChart data={variantPricingData}>
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar
+                dataKey="pmin"
+                fill={CHART_COLORS[0]}
+                label={t`Minimum Price`}
+              />
+              <Bar
+                dataKey="pmax"
+                fill={CHART_COLORS[1]}
+                label={t`Maximum Price`}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <NoPricingData />
+        )}
       </SimpleGrid>
     </Stack>
   );

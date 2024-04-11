@@ -18,6 +18,7 @@ import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
+import { NoPricingData } from './PricingPanel';
 
 export default function PurchaseHistoryPanel({
   part
@@ -121,24 +122,28 @@ export default function PurchaseHistoryPanel({
           }
         }}
       />
-      <ResponsiveContainer width="100%" height={500}>
-        <BarChart data={purchaseHistoryData}>
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar
-            dataKey="unit_price"
-            fill={CHART_COLORS[0]}
-            label={t`Unit Price`}
-          />
-          <Bar
-            dataKey="purchase_price"
-            fill="#82ca9d"
-            label={t`Purchase Price`}
-          />
-        </BarChart>
-      </ResponsiveContainer>
+      {purchaseHistoryData.length > 0 ? (
+        <ResponsiveContainer width="100%" height={500}>
+          <BarChart data={purchaseHistoryData}>
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Bar
+              dataKey="unit_price"
+              fill={CHART_COLORS[0]}
+              label={t`Unit Price`}
+            />
+            <Bar
+              dataKey="purchase_price"
+              fill="#82ca9d"
+              label={t`Purchase Price`}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      ) : (
+        <NoPricingData />
+      )}
     </SimpleGrid>
   );
 }

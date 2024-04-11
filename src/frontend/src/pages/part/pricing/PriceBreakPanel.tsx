@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { SimpleGrid } from '@mantine/core';
+import { Alert, SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import {
   Bar,
@@ -28,6 +28,7 @@ import { useUserState } from '../../../states/UserState';
 import { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../../tables/RowActions';
+import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({
   part,
@@ -161,19 +162,23 @@ export default function PriceBreakPanel({
             rowActions: rowActions
           }}
         />
-        <ResponsiveContainer width="100%" height={500}>
-          <BarChart data={table.records}>
-            <XAxis dataKey="quantity" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar
-              dataKey="price"
-              fill={CHART_COLORS[0]}
-              label={t`Price Break`}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        {table.records.length > 0 ? (
+          <ResponsiveContainer width="100%" height={500}>
+            <BarChart data={table.records}>
+              <XAxis dataKey="quantity" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar
+                dataKey="price"
+                fill={CHART_COLORS[0]}
+                label={t`Price Break`}
+              />
+            </BarChart>
+          </ResponsiveContainer>
+        ) : (
+          <NoPricingData />
+        )}
       </SimpleGrid>
     </>
   );
