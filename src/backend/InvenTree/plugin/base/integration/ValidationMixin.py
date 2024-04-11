@@ -112,8 +112,13 @@ class ValidationMixin:
         """
         return None
 
-    def generate_batch_code(self):
+    def generate_batch_code(self, **kwargs):
         """Generate a new batch code.
+
+        This method is called when a new batch code is required.
+
+        kwargs:
+            Any additional keyword arguments which are passed through to the plugin, based on the context of the caller
 
         Returns:
             A new batch code (string) or None

@@ -145,7 +145,17 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         if len(batch_code) > 0 and prefix and not batch_code.startswith(prefix):
             self.raise_error(f"Batch code must start with '{prefix}'")
 
-    def generate_batch_code(self):
+    def generate_batch_code(self, **kwargs):
         """Generate a new batch code."""
         now = datetime.now()
-        return f'BATCH-{now.year}:{now.month}:{now.day}'
+        batch = f'BATCH-{now.year}:{now.month}:{now.day}'
+
+        # If a Part instance is provided, prepend the part name to the batch code
+        if part := kwargs.get('part', None):
+            batch = f'{part.name}-{batch}'
+
+        # If a Build instance is provided, prepend the build number to the batch code
+        if build := kwargs.get('build', None):
+            batch = f'{build.reference}-{batch}'
+
+        return batch
