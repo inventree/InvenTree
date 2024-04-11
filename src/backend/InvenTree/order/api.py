@@ -807,7 +807,15 @@ class SalesOrderLineItemFilter(LineItemFilter):
 
         price_field = 'sale_price'
         model = models.SalesOrderLineItem
-        fields = ['order', 'part']
+        fields = []
+
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.SalesOrder.objects.all(), field_name='order', label=_('Order')
+    )
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), field_name='part', label=_('Part')
+    )
 
     completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
 
@@ -821,6 +829,17 @@ class SalesOrderLineItemFilter(LineItemFilter):
         if str2bool(value):
             return queryset.filter(q)
         return queryset.exclude(q)
+
+    order_complete = rest_filters.BooleanFilter(
+        label=_('Order Complete'), method='filter_order_complete'
+    )
+
+    def filter_order_complete(self, queryset, name, value):
+        """Filter by whether the order is 'complete' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=SalesOrderStatusGroups.COMPLETE)
+
+        return queryset.exclude(order__status__in=SalesOrderStatusGroups.COMPLETE)
 
 
 class SalesOrderLineItemMixin:
@@ -878,9 +897,19 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
 
         return DownloadFile(filedata, filename)
 
-    filter_backends = SEARCH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
-    ordering_fields = ['part__name', 'quantity', 'reference', 'target_date']
+    ordering_fields = [
+        'order',
+        'part',
+        'part__name',
+        'quantity',
+        'reference',
+        'sale_price',
+        'target_date',
+    ]
+
+    ordering_field_aliases = {'part': 'part__name', 'order': 'order__reference'}
 
     search_fields = ['part__name', 'quantity', 'reference']
 
