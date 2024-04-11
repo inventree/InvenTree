@@ -30,6 +30,9 @@ export default [
       "no-useless-escape": "off",
       "prefer-spread": "off",
       "indent": ["error", 4]
-    }
+    },
+    linterOptions: {
+      reportUnusedDisableDirectives: "off"
+  }
   }
 ];
