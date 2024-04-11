@@ -31,6 +31,8 @@ interface LocalStateProps {
   clearTableColumnNames: () => void;
   detailDrawerStack: number;
   addDetailDrawer: (value: number | false) => void;
+  navigationOpen: boolean;
+  setNavigationOpen: (value: boolean) => void;
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -87,6 +89,11 @@ export const useLocalState = create<LocalStateProps>()(
           detailDrawerStack:
             value === false ? 0 : get().detailDrawerStack + value
         });
+      },
+      // navigation
+      navigationOpen: false,
+      setNavigationOpen: (value) => {
+        set({ navigationOpen: value });
       }
     }),
     {
