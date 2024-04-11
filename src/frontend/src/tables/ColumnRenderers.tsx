@@ -4,9 +4,9 @@
 import { t } from '@lingui/macro';
 import { Anchor } from '@mantine/core';
 
+import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
-import { YesNoButton } from '../components/items/YesNoButton';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner } from '../components/render/User';
 import { formatCurrency, renderDate } from '../defaults/formatters';
