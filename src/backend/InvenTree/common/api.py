@@ -258,6 +258,13 @@ class UserSettingsList(SettingsList):
         common.models.InvenTreeUserSetting.build_default_values(user=request.user)
         return super().list(request, *args, **kwargs)
 
+    def get_queryset(self):
+        """Return prefetched queryset."""
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related('user')
+
+        return queryset
+
     def filter_queryset(self, queryset):
         """Only list settings which apply to the current user."""
         try:

@@ -285,6 +285,29 @@ QUERYCOUNT = {
     'RESPONSE_HEADER': 'X-Django-Query-Count',
 }
 
+ADMIN_SHELL_ENABLE = False
+ADMIN_SHELL_IMPORT_DJANGO = False
+ADMIN_SHELL_IMPORT_MODELS = False
+
+# In DEBUG mode, add support for django-admin-shell
+# Ref: https://github.com/djk2/django-admin-shell
+if (
+    DEBUG
+    and INVENTREE_ADMIN_ENABLED
+    and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
+):  # noqa
+    try:
+        import django_admin_shell
+
+        INSTALLED_APPS.append('django_admin_shell')
+        ADMIN_SHELL_ENABLE = True
+
+        logger.warning('Admin shell is enabled')
+    except ModuleNotFoundError:
+        logger.warning(
+            'django-admin-shell is not installed - Admin shell is not enabled'
+        )
+
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
     [

@@ -19,7 +19,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
-import { CopyButton } from '../items/CopyButton';
+import { CopyButton } from '../buttons/CopyButton';
 
 type AboutLookupRef = {
   ref: string;

@@ -48,6 +48,7 @@ jobs:
               - 'src/backend/requirements.txt'
               - 'src/backend/requirements-dev.txt'
             migrations:
+              - '**/test_migrations.py'
               - '**/migrations/**'
               - '.github/workflows**'
               - 'src/backend/requirements.txt'
@@ -220,7 +221,8 @@ jobs:
     name: Tests - inventree-python
     runs-on: ubuntu-20.04
 
-    needs: pre-commit
+    needs: [ 'pre-commit', 'paths-filter' ]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       wrapper_name: inventree-python
@@ -261,7 +263,8 @@ jobs:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit' ]
+    needs: [ 'pre-commit', 'paths-filter' ]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
@@ -292,11 +295,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: backend
+          file: coverage.xml
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
           parallel: true
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4.3.0
+        if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
@@ -305,7 +310,8 @@ jobs:
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'pre-commit' ]
+    needs: [ 'pre-commit', 'paths-filter' ]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -349,7 +355,8 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit' ]
+    needs: [ 'pre-commit', 'paths-filter' ]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       # Database backend configuration
@@ -433,7 +440,8 @@ jobs:
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4.3.0
+        if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
@@ -523,7 +531,14 @@ jobs:
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
+        id: tests
         run: cd src/frontend && npx nyc playwright test
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
+        with:
+          name: playwright-report
+          path: src/frontend/playwright-report/
+          retention-days: 14
       - name: Report coverage
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
@@ -537,7 +552,8 @@ jobs:
           git-branch: ${{ github.ref }}
           parallel: true
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4.3.0
+        if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           slug: inventree/InvenTree
