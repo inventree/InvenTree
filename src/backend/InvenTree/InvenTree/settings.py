@@ -298,7 +298,7 @@ if (
     DEBUG
     and INVENTREE_ADMIN_ENABLED
     and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
-):
+):  # noqa
     try:
         import django_admin_shell
 
