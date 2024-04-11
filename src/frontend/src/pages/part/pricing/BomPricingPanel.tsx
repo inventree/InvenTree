@@ -11,6 +11,7 @@ import {
   YAxis
 } from 'recharts';
 
+import { CHART_COLORS } from '../../../components/charts/colors';
 import { formatDecimal, formatPriceRange } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
@@ -18,19 +19,6 @@ import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
-
-const BOM_COLORS: string[] = [
-  '#ffa8a8',
-  '#8ce99a',
-  '#74c0fc',
-  '#ffe066',
-  '#63e6be',
-  '#ffc078',
-  '#d8f5a2',
-  '#66d9e8',
-  '#e599f7',
-  '#dee2e6'
-];
 
 export default function BomPricingPanel({
   part,
@@ -97,23 +85,16 @@ export default function BomPricingPanel({
   const bomPricingData: any[] = useMemo(() => {
     const pricing = table.records.map((entry: any) => {
       return {
-        entry: entry,
-        quantity: entry.quantity,
         name: entry.sub_part_detail?.name,
-        pmin:
-          entry.quantity *
-          parseFloat(entry.pricing_min ?? entry.pricing_max ?? 0),
-        pmax:
-          entry.quantity *
-          parseFloat(entry.pricing_max ?? entry.pricing_min ?? 0)
+        unit_price_min: parseFloat(entry.pricing_min ?? 0),
+        unit_price_max: parseFloat(entry.pricing_max ?? 0),
+        total_price_min: parseFloat(entry.pricing_min_total ?? 0),
+        total_price_max: parseFloat(entry.pricing_max_total ?? 0)
       };
     });
 
     return pricing;
   }, [table.records]);
-
-  // TODO: Enable record selection (toggle which items appear in BOM pricing wheel)
-  // TODO: Display BOM entry colors in table, using custom rowStyle prop
 
   return (
     <Stack spacing="xs">
@@ -134,11 +115,38 @@ export default function BomPricingPanel({
         <ResponsiveContainer width="100%" height={500}>
           <BarChart data={bomPricingData}>
             <XAxis dataKey="name" />
-            <YAxis />
+            <YAxis yAxisId="left" orientation="left" stroke={CHART_COLORS[1]} />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              stroke={CHART_COLORS[3]}
+            />
             <Tooltip />
             <Legend />
-            <Bar dataKey="pmin" fill="#8884d8" label={t`Minimum Price`} />
-            <Bar dataKey="pmax" fill="#82ca9d" label={t`Maximum Price`} />
+            <Bar
+              dataKey="unit_price_min"
+              yAxisId="left"
+              fill={CHART_COLORS[0]}
+              label={t`Minimum Unit Price`}
+            />
+            <Bar
+              dataKey="unit_price_max"
+              yAxisId="left"
+              fill={CHART_COLORS[1]}
+              label={t`Maximum Unit Price`}
+            />
+            <Bar
+              dataKey="total_price_min"
+              yAxisId="right"
+              fill={CHART_COLORS[2]}
+              label={t`Minimum Total Price`}
+            />
+            <Bar
+              dataKey="total_price_max"
+              yAxisId="right"
+              fill={CHART_COLORS[3]}
+              label={t`Maximum Total Price`}
+            />
           </BarChart>
         </ResponsiveContainer>
       </SimpleGrid>

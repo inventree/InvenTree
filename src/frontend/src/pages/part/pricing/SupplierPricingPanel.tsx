@@ -10,6 +10,7 @@ import {
   YAxis
 } from 'recharts';
 
+import { CHART_COLORS } from '../../../components/charts/colors';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -57,7 +58,11 @@ export default function SupplierPricingPanel({ part }: { part: any }) {
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip />
-          <Bar dataKey="unit_price" fill="#8884d8" label={t`Unit Price`} />
+          <Bar
+            dataKey="unit_price"
+            fill={CHART_COLORS[0]}
+            label={t`Unit Price`}
+          />
           <Bar
             dataKey="supplier_price"
             fill="#82ca9d"

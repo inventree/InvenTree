@@ -25,6 +25,7 @@ import {
 } from 'recharts';
 
 import { api } from '../../../App';
+import { CHART_COLORS } from '../../../components/charts/colors';
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { cancelEvent } from '../../../functions/events';
@@ -167,8 +168,16 @@ export default function PricingOverviewPanel({
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="min_value" fill="#8884d8" label={t`Minimum Price`} />
-            <Bar dataKey="max_value" fill="#82ca9d" label={t`Maximum Price`} />
+            <Bar
+              dataKey="min_value"
+              fill={CHART_COLORS[0]}
+              label={t`Minimum Price`}
+            />
+            <Bar
+              dataKey="max_value"
+              fill={CHART_COLORS[1]}
+              label={t`Maximum Price`}
+            />
           </BarChart>
         </ResponsiveContainer>
       </SimpleGrid>

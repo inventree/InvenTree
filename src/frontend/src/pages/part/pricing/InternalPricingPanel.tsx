@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 
 import { AddItemButton } from '../../../components/buttons/AddItemButton';
+import { CHART_COLORS } from '../../../components/charts/colors';
 import { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
@@ -156,7 +157,11 @@ export default function InternalPricingPanel({ part }: { part: any }) {
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="price" fill="#8884d8" label={t`Price Break`} />
+            <Bar
+              dataKey="price"
+              fill={CHART_COLORS[0]}
+              label={t`Price Break`}
+            />
           </BarChart>
         </ResponsiveContainer>
       </SimpleGrid>

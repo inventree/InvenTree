@@ -152,6 +152,7 @@ export function InvenTreeTable<T = any>({
     queryKey: ['options', url, tableState.tableKey],
     retry: 3,
     refetchOnMount: true,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       return api
         .options(url, {
