@@ -22,6 +22,32 @@ msgstr ""
 msgid "Title"
 msgstr "Naslov"
 
+#: src/components/buttons/CopyButton.tsx:18
+msgid "Copy to clipboard"
+msgstr "Kopiraj na tablu"
+
+#: src/components/buttons/ScanButton.tsx:15
+msgid "Scan QR code"
+msgstr "Skeniraj QR kod"
+
+#: src/components/buttons/YesNoButton.tsx:16
+msgid "Pass"
+msgstr ""
+
+#: src/components/buttons/YesNoButton.tsx:17
+msgid "Fail"
+msgstr ""
+
+#: src/components/buttons/YesNoButton.tsx:32
+#: src/tables/Filter.tsx:51
+msgid "Yes"
+msgstr "Da"
+
+#: src/components/buttons/YesNoButton.tsx:32
+#: src/tables/Filter.tsx:52
+msgid "No"
+msgstr "Ne"
+
 #: src/components/details/Details.tsx:327
 msgid "Copied"
 msgstr ""
@@ -48,7 +74,7 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:70
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:164
-#: src/contexts/ThemeContext.tsx:64
+#: src/contexts/ThemeContext.tsx:65
 #: src/functions/forms.tsx:196
 #: src/hooks/UseForm.tsx:39
 #: src/tables/FilterSelectDrawer.tsx:218
@@ -71,7 +97,7 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:226
 #: src/components/forms/ApiForm.tsx:490
-#: src/contexts/ThemeContext.tsx:64
+#: src/contexts/ThemeContext.tsx:65
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
 msgstr "Podnesi"
@@ -462,6 +488,7 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr "Status: <0>worker</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/fields/ApiFormField.tsx:284
+#: src/components/modals/LicenseModal.tsx:72
 #: src/components/nav/SearchDrawer.tsx:411
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -560,10 +587,6 @@ msgstr "Dupliciraj"
 msgid "Duplicate item"
 msgstr "Dupliciraj stavku"
 
-#: src/components/items/CopyButton.tsx:18
-msgid "Copy to clipboard"
-msgstr "Kopiraj na tablu"
-
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
 msgstr "Saznaj više"
@@ -605,28 +628,6 @@ msgstr "PLH"
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
 msgstr "Ovaj panel je rezervisan."
-
-#: src/components/items/ScanButton.tsx:15
-msgid "Scan QR code"
-msgstr "Skeniraj QR kod"
-
-#: src/components/items/YesNoButton.tsx:16
-msgid "Pass"
-msgstr ""
-
-#: src/components/items/YesNoButton.tsx:17
-msgid "Fail"
-msgstr ""
-
-#: src/components/items/YesNoButton.tsx:32
-#: src/tables/Filter.tsx:51
-msgid "Yes"
-msgstr "Da"
-
-#: src/components/items/YesNoButton.tsx:32
-#: src/tables/Filter.tsx:52
-msgid "No"
-msgstr "Ne"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Version Information"
@@ -708,6 +709,26 @@ msgstr ""
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
+msgstr ""
+
+#: src/components/modals/LicenseModal.tsx:36
+msgid "No license text available"
+msgstr ""
+
+#: src/components/modals/LicenseModal.tsx:43
+msgid "No Information provided - this is likely a server issue"
+msgstr ""
+
+#: src/components/modals/LicenseModal.tsx:68
+msgid "Loading license information"
+msgstr ""
+
+#: src/components/modals/LicenseModal.tsx:74
+msgid "Failed to fetch license information"
+msgstr ""
+
+#: src/components/modals/LicenseModal.tsx:82
+msgid "{key} Packages"
 msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:72
@@ -1134,7 +1155,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:119
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:99
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:305
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:306
 msgid "Purchase Order"
 msgstr ""
 
@@ -1158,7 +1179,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:132
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:108
 #: src/pages/build/BuildDetail.tsx:127
-#: src/pages/sales/SalesOrderDetail.tsx:251
+#: src/pages/sales/SalesOrderDetail.tsx:252
 #: src/pages/stock/StockDetail.tsx:205
 msgid "Sales Order"
 msgstr ""
@@ -1181,7 +1202,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:147
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:117
-#: src/pages/sales/ReturnOrderDetail.tsx:227
+#: src/pages/sales/ReturnOrderDetail.tsx:228
 msgid "Return Order"
 msgstr ""
 
@@ -1992,7 +2013,7 @@ msgstr ""
 #: src/pages/company/ManufacturerPartDetail.tsx:217
 #: src/pages/company/SupplierDetail.tsx:9
 #: src/pages/company/SupplierPartDetail.tsx:262
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:308
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:309
 #: src/pages/purchasing/PurchasingIndex.tsx:52
 msgid "Purchasing"
 msgstr ""
@@ -2000,9 +2021,9 @@ msgstr ""
 #: src/defaults/links.tsx:32
 #: src/defaults/menuItems.tsx:53
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:230
+#: src/pages/sales/ReturnOrderDetail.tsx:231
 #: src/pages/sales/SalesIndex.tsx:45
-#: src/pages/sales/SalesOrderDetail.tsx:254
+#: src/pages/sales/SalesOrderDetail.tsx:255
 msgid "Sales"
 msgstr ""
 
@@ -2049,7 +2070,7 @@ msgstr ""
 #~ msgstr "Instance"
 
 #: src/defaults/links.tsx:79
-#: src/defaults/links.tsx:104
+#: src/defaults/links.tsx:115
 msgid "System Information"
 msgstr ""
 
@@ -2058,24 +2079,32 @@ msgstr ""
 #~ msgstr "InvenTree"
 
 #: src/defaults/links.tsx:92
-#: src/defaults/links.tsx:110
+#: src/defaults/links.tsx:121
 msgid "About InvenTree"
 msgstr ""
 
-#: src/defaults/links.tsx:105
-msgid "About this Inventree instance"
-msgstr ""
-
-#: src/defaults/links.tsx:111
-msgid "About the InvenTree org"
+#: src/defaults/links.tsx:104
+msgid "License Information"
 msgstr ""
 
 #: src/defaults/links.tsx:116
-msgid "Licenses"
+msgid "About this Inventree instance"
 msgstr ""
 
 #: src/defaults/links.tsx:117
-msgid "Licenses for packages used by InvenTree"
+#~ msgid "Licenses for packages used by InvenTree"
+#~ msgstr ""
+
+#: src/defaults/links.tsx:122
+msgid "About the InvenTree org"
+msgstr ""
+
+#: src/defaults/links.tsx:127
+msgid "Licenses"
+msgstr ""
+
+#: src/defaults/links.tsx:128
+msgid "Licenses for dependencies of the service"
 msgstr ""
 
 #: src/defaults/menuItems.tsx:7
@@ -3180,7 +3209,7 @@ msgstr ""
 #: src/pages/build/BuildDetail.tsx:359
 #: src/pages/build/BuildIndex.tsx:14
 #: src/pages/part/PartDetail.tsx:513
-#: src/pages/sales/SalesOrderDetail.tsx:211
+#: src/pages/sales/SalesOrderDetail.tsx:212
 msgid "Build Orders"
 msgstr ""
 
@@ -3299,9 +3328,9 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:145
 #: src/pages/part/PartDetail.tsx:316
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:188
-#: src/pages/sales/ReturnOrderDetail.tsx:154
-#: src/pages/sales/SalesOrderDetail.tsx:158
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:189
+#: src/pages/sales/ReturnOrderDetail.tsx:155
+#: src/pages/sales/SalesOrderDetail.tsx:159
 msgid "Responsible"
 msgstr ""
 
@@ -3374,9 +3403,9 @@ msgstr ""
 #: src/pages/company/CompanyDetail.tsx:244
 #: src/pages/company/ManufacturerPartDetail.tsx:169
 #: src/pages/part/PartDetail.tsx:598
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:244
-#: src/pages/sales/ReturnOrderDetail.tsx:197
-#: src/pages/sales/SalesOrderDetail.tsx:221
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:245
+#: src/pages/sales/ReturnOrderDetail.tsx:198
+#: src/pages/sales/SalesOrderDetail.tsx:222
 #: src/pages/stock/StockDetail.tsx:312
 msgid "Attachments"
 msgstr ""
@@ -3384,9 +3413,9 @@ msgstr ""
 #: src/pages/build/BuildDetail.tsx:270
 #: src/pages/company/CompanyDetail.tsx:256
 #: src/pages/part/PartDetail.tsx:610
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:256
-#: src/pages/sales/ReturnOrderDetail.tsx:209
-#: src/pages/sales/SalesOrderDetail.tsx:233
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:257
+#: src/pages/sales/ReturnOrderDetail.tsx:210
+#: src/pages/sales/SalesOrderDetail.tsx:234
 #: src/pages/stock/StockDetail.tsx:324
 msgid "Notes"
 msgstr ""
@@ -3574,7 +3603,7 @@ msgid "Supplier Part Details"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:203
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:232
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:233
 msgid "Received Stock"
 msgstr ""
 
@@ -3858,11 +3887,11 @@ msgid "Supplier Reference"
 msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:117
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:226
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:227
 #: src/pages/sales/ReturnOrderDetail.tsx:83
-#: src/pages/sales/ReturnOrderDetail.tsx:192
+#: src/pages/sales/ReturnOrderDetail.tsx:193
 #: src/pages/sales/SalesOrderDetail.tsx:87
-#: src/pages/sales/SalesOrderDetail.tsx:196
+#: src/pages/sales/SalesOrderDetail.tsx:197
 msgid "Line Items"
 msgstr ""
 
@@ -3875,7 +3904,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:132
 #: src/pages/sales/ReturnOrderDetail.tsx:98
 #: src/pages/sales/SalesOrderDetail.tsx:102
-#: src/pages/sales/SalesOrderDetail.tsx:206
+#: src/pages/sales/SalesOrderDetail.tsx:207
 msgid "Completed Shipments"
 msgstr ""
 
@@ -3891,26 +3920,26 @@ msgstr ""
 msgid "Total Cost"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:175
-#: src/pages/sales/ReturnOrderDetail.tsx:141
-#: src/pages/sales/SalesOrderDetail.tsx:145
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:176
+#: src/pages/sales/ReturnOrderDetail.tsx:142
+#: src/pages/sales/SalesOrderDetail.tsx:146
 msgid "Created On"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:181
-#: src/pages/sales/ReturnOrderDetail.tsx:147
-#: src/pages/sales/SalesOrderDetail.tsx:151
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:182
+#: src/pages/sales/ReturnOrderDetail.tsx:148
+#: src/pages/sales/SalesOrderDetail.tsx:152
 #: src/tables/ColumnRenderers.tsx:164
 msgid "Target Date"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:220
-#: src/pages/sales/ReturnOrderDetail.tsx:186
-#: src/pages/sales/SalesOrderDetail.tsx:190
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:221
+#: src/pages/sales/ReturnOrderDetail.tsx:187
+#: src/pages/sales/SalesOrderDetail.tsx:191
 msgid "Order Details"
 msgstr ""
 
-#: src/pages/purchasing/PurchaseOrderDetail.tsx:285
+#: src/pages/purchasing/PurchaseOrderDetail.tsx:286
 msgid "Order Actions"
 msgstr ""
 
@@ -3924,7 +3953,7 @@ msgstr ""
 msgid "Customers"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:201
+#: src/pages/sales/SalesOrderDetail.tsx:202
 msgid "Pending Shipments"
 msgstr ""
 
@@ -4710,8 +4739,8 @@ msgid "Parameter Template"
 msgstr ""
 
 #: src/tables/part/PartCategoryTemplateTable.tsx:93
-msgid "[{0}]"
-msgstr ""
+#~ msgid "[{0}]"
+#~ msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:106
 msgid "New Part Parameter"
@@ -5898,4 +5927,3 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
-
