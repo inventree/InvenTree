@@ -387,7 +387,7 @@ class PartSalePriceList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_fields = ['part']
-    ordering_fields = ['quantity']
+    ordering_fields = ['quantity', 'price']
     ordering = 'quantity'
 
 
@@ -407,7 +407,7 @@ class PartInternalPriceList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_fields = ['part']
-    ordering_fields = ['quantity']
+    ordering_fields = ['quantity', 'price']
     ordering = 'quantity'
 
 
