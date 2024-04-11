@@ -1,19 +1,16 @@
 import { t } from '@lingui/macro';
 import { Alert, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
 import {
   IconBuildingWarehouse,
-  IconCalendar,
   IconChartDonut,
   IconExclamationCircle,
   IconList,
   IconReportAnalytics,
-  IconShape,
   IconShoppingCart,
   IconTriangleSquareCircle
 } from '@tabler/icons-react';
 import { DataTable, DataTableColumn } from 'mantine-datatable';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import {
   Bar,
   BarChart,
@@ -24,12 +21,8 @@ import {
   YAxis
 } from 'recharts';
 
-import { api } from '../../../App';
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
-import { ApiEndpoints } from '../../../enums/ApiEndpoints';
-import { cancelEvent } from '../../../functions/events';
-import { apiUrl } from '../../../states/ApiState';
 
 interface PricingOverviewEntry {
   icon: ReactNode;
