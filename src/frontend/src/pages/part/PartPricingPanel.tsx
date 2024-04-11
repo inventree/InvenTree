@@ -7,7 +7,7 @@ import { UserRoles } from '../../enums/Roles';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import BomPricingPanel from './pricing/BomPricingPanel';
-import InternalPricingPanel from './pricing/InternalPricingPanel';
+import PriceBreakPanel from './pricing/PriceBreakPanel';
 import PricingOverviewPanel from './pricing/PricingOverviewPanel';
 import PricingPanel from './pricing/PricingPanel';
 import PurchaseHistoryPanel from './pricing/PurchaseHistoryPanel';
@@ -24,20 +24,6 @@ function SaleHistroy({
   return (
     <Stack spacing="xs">
       <Text>Sale History goes here?</Text>
-    </Stack>
-  );
-}
-
-function SalePricing({
-  part,
-  pricing
-}: {
-  part: any;
-  pricing: any;
-}): ReactNode {
-  return (
-    <Stack spacing="xs">
-      <Text>Sale Pricing goes here?</Text>
     </Stack>
   );
 }
@@ -90,7 +76,12 @@ export default function PartPricingPanel({ part }: { part: any }) {
             visible={purchaseOrderPricing}
           />
           <PricingPanel
-            content={<InternalPricingPanel part={part} />}
+            content={
+              <PriceBreakPanel
+                part={part}
+                endpoint={ApiEndpoints.part_pricing_internal}
+              />
+            }
             label="internal"
             title={t`Internal Pricing`}
             visible={internalPricing}
@@ -114,7 +105,12 @@ export default function PartPricingPanel({ part }: { part: any }) {
             visible={part?.is_template}
           />
           <PricingPanel
-            content={<SalePricing part={part} pricing={pricing} />}
+            content={
+              <PriceBreakPanel
+                part={part}
+                endpoint={ApiEndpoints.part_pricing_sale}
+              />
+            }
             label="sale"
             title={t`Sale Pricing`}
             visible={salesOrderPricing}

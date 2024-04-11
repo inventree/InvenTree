@@ -1,4 +1,4 @@
-import { Accordion } from '@mantine/core';
+import { Accordion, Paper } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { StylishText } from '../../../components/items/StylishText';
@@ -20,7 +20,9 @@ export default function PricingPanel({
         <Accordion.Control>
           <StylishText size="lg">{title}</StylishText>
         </Accordion.Control>
-        <Accordion.Panel>{content}</Accordion.Panel>
+        <Accordion.Panel>
+          <Paper p="sm">{content}</Paper>
+        </Accordion.Panel>
       </Accordion.Item>
     )
   );

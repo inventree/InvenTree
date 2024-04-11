@@ -29,14 +29,20 @@ import { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../../tables/RowActions';
 
-export default function InternalPricingPanel({ part }: { part: any }) {
+export default function PriceBreakPanel({
+  part,
+  endpoint
+}: {
+  part: any;
+  endpoint: ApiEndpoints;
+}) {
   const user = useUserState();
   const table = useTable('pricing-internal');
 
   const priceBreakFields: ApiFormFieldSet = useMemo(() => {
     return {
       part: {
-        hidden: true
+        disabled: true
       },
       quantity: {},
       price: {},
@@ -44,10 +50,14 @@ export default function InternalPricingPanel({ part }: { part: any }) {
     };
   }, []);
 
+  const tableUrl = useMemo(() => {
+    return apiUrl(endpoint);
+  }, [endpoint]);
+
   const [selectedPriceBreak, setSelectedPriceBreak] = useState<number>(0);
 
   const newPriceBreak = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.part_pricing_internal),
+    url: tableUrl,
     title: t`Add Price Break`,
     fields: priceBreakFields,
     initialData: {
@@ -59,7 +69,7 @@ export default function InternalPricingPanel({ part }: { part: any }) {
   });
 
   const editPriceBreak = useEditApiFormModal({
-    url: apiUrl(ApiEndpoints.part_pricing_internal),
+    url: tableUrl,
     pk: selectedPriceBreak,
     title: t`Edit Price Break`,
     fields: priceBreakFields,
@@ -69,7 +79,7 @@ export default function InternalPricingPanel({ part }: { part: any }) {
   });
 
   const deletePriceBreak = useDeleteApiFormModal({
-    url: apiUrl(ApiEndpoints.part_pricing_internal),
+    url: tableUrl,
     pk: selectedPriceBreak,
     title: t`Delete Price Break`,
     onFormSuccess: () => {
@@ -88,7 +98,7 @@ export default function InternalPricingPanel({ part }: { part: any }) {
       {
         accessor: 'price',
         title: t`Price Break`,
-        sortable: false,
+        sortable: true,
         switchable: false,
         render: (record: any) => {
           return formatCurrency(record.price, {
@@ -141,7 +151,7 @@ export default function InternalPricingPanel({ part }: { part: any }) {
       <SimpleGrid cols={2}>
         <InvenTreeTable
           tableState={table}
-          url={apiUrl(ApiEndpoints.part_pricing_internal)}
+          url={tableUrl}
           columns={columns}
           props={{
             params: {
