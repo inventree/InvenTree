@@ -8,7 +8,7 @@ msgstr ""
 "Language: pl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-02 02:00\n"
+"PO-Revision-Date: 2024-04-11 01:50\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
@@ -2093,7 +2093,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:117
 #~ msgid "Licenses for packages used by InvenTree"
-#~ msgstr ""
+#~ msgstr "Licenses for packages used by InvenTree"
 
 #: src/defaults/links.tsx:122
 msgid "About the InvenTree org"
@@ -4740,7 +4740,7 @@ msgstr ""
 
 #: src/tables/part/PartCategoryTemplateTable.tsx:93
 #~ msgid "[{0}]"
-#~ msgstr ""
+#~ msgstr "[{0}]"
 
 #: src/tables/part/PartParameterTable.tsx:106
 msgid "New Part Parameter"
@@ -5927,3 +5927,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:23
 msgid "Read the docs"
 msgstr ""
+
