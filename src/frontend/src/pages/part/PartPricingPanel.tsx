@@ -11,22 +11,9 @@ import PriceBreakPanel from './pricing/PriceBreakPanel';
 import PricingOverviewPanel from './pricing/PricingOverviewPanel';
 import PricingPanel from './pricing/PricingPanel';
 import PurchaseHistoryPanel from './pricing/PurchaseHistoryPanel';
+import SaleHistoryPanel from './pricing/SaleHistoryPanel';
 import SupplierPricingPanel from './pricing/SupplierPricingPanel';
 import VariantPricingPanel from './pricing/VariantPricingPanel';
-
-function SaleHistroy({
-  part,
-  pricing
-}: {
-  part: any;
-  pricing: any;
-}): ReactNode {
-  return (
-    <Stack spacing="xs">
-      <Text>Sale History goes here?</Text>
-    </Stack>
-  );
-}
 
 export default function PartPricingPanel({ part }: { part: any }) {
   const user = useUserState();
@@ -111,13 +98,13 @@ export default function PartPricingPanel({ part }: { part: any }) {
                 endpoint={ApiEndpoints.part_pricing_sale}
               />
             }
-            label="sale"
+            label="sale-pricing"
             title={t`Sale Pricing`}
             visible={salesOrderPricing}
           />
           <PricingPanel
-            content={<SaleHistroy part={part} pricing={pricing} />}
-            label="sale"
+            content={<SaleHistoryPanel part={part} />}
+            label="sale-history"
             title={t`Sale History`}
             visible={salesOrderPricing}
           />

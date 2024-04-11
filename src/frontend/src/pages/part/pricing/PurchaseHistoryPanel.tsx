@@ -55,7 +55,7 @@ export default function PurchaseHistoryPanel({
         accessor: 'purchase_price',
         title: t`Purchase Price`,
         sortable: true,
-        switchable: true,
+        switchable: false,
         render: (record: any) => {
           let price = formatCurrency(record.purchase_price, {
             currency: record.purchase_price_currency
@@ -136,7 +136,7 @@ export default function PurchaseHistoryPanel({
             />
             <Bar
               dataKey="purchase_price"
-              fill="#82ca9d"
+              fill={CHART_COLORS[1]}
               label={t`Purchase Price`}
             />
           </BarChart>

@@ -104,9 +104,12 @@ export enum ApiEndpoints {
   purchase_order_line_list = 'order/po-line/',
   purchase_order_attachment_list = 'order/po/attachment/',
   purchase_order_receive = 'order/po/:id/receive/',
+
   sales_order_list = 'order/so/',
+  sales_order_line_list = 'order/so-line/',
   sales_order_attachment_list = 'order/so/attachment/',
   sales_order_shipment_list = 'order/so/shipment/',
+
   return_order_list = 'order/ro/',
   return_order_attachment_list = 'order/ro/attachment/',
 
