@@ -15,14 +15,14 @@ name: Docker
 
 on:
   release:
-    types: [ published ]
+    types: [published]
 
   push:
     branches:
-      - 'master'
+      - "master"
   pull_request:
     branches:
-      - 'master'
+      - "master"
 
 env:
   requests_version: 2.31.0
@@ -33,8 +33,8 @@ permissions:
 jobs:
   paths-filter:
     permissions:
-      contents: read  # for dorny/paths-filter to fetch a list of changed files
-      pull-requests: read  # for dorny/paths-filter to read pull requests
+      contents: read # for dorny/paths-filter to fetch a list of changed files
+      pull-requests: read # for dorny/paths-filter to read pull requests
     name: Filter
     runs-on: ubuntu-latest
 
@@ -68,7 +68,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       python_version: "3.11"
-    runs-on: ubuntu-latest  # in the future we can try to use alternative runners here
+    runs-on: ubuntu-latest # in the future we can try to use alternative runners here
 
     steps:
       - name: Check out repo

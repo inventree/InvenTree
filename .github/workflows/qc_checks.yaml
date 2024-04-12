@@ -4,9 +4,9 @@ name: QC
 
 on:
   push:
-    branches-ignore: [ 'l10*' ]
+    branches-ignore: ["l10*"]
   pull_request:
-    branches-ignore: [ 'l10*' ]
+    branches-ignore: ["l10*"]
 
 env:
   python_version: 3.9
@@ -64,12 +64,11 @@ jobs:
           contains(github.event.pull_request.labels.*.name, 'dependency') ||
           contains(github.event.pull_request.labels.*.name, 'full-run')
 
-
   javascript:
     name: Style - Classic UI [JS]
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit' ]
+    needs: ["pre-commit"]
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -99,7 +98,7 @@ jobs:
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
+          cache: "pip"
       - name: Run pre-commit Checks
         uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
       - name: Check Version
@@ -131,8 +130,8 @@ jobs:
         with:
           folder-path: docs
           config-file: docs/mlc_config.json
-          check-modified-files-only: 'yes'
-          use-quiet-mode: 'yes'
+          check-modified-files-only: "yes"
+          use-quiet-mode: "yes"
 
   schema:
     name: Tests - API Schema Documentation
@@ -194,36 +193,36 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
   schema-push:
-            name: Push new schema
-            runs-on: ubuntu-20.04
-            needs: [paths-filter, schema]
-            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
-            env:
-              version: ${{ needs.schema.outputs.version }}
+    name: Push new schema
+    runs-on: ubuntu-20.04
+    needs: [paths-filter, schema]
+    if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
+    env:
+      version: ${{ needs.schema.outputs.version }}
 
-            steps:
-              - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-                with:
-                    repository: inventree/schema
-                    token: ${{ secrets.SCHEMA_PAT }}
-              - name: Download schema artifact
-                uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
-                with:
-                  name: schema.yml
-              - name: Move schema to correct location
-                run: |
-                  echo "Version: $version"
-                  mkdir export/${version}
-                  mv schema.yml export/${version}/api.yaml
-              - uses: stefanzweifel/git-auto-commit-action@8756aa072ef5b4a080af5dc8fef36c5d586e521d # v5.0.0
-                with:
-                  commit_message: "Update API schema for ${version}"
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          repository: inventree/schema
+          token: ${{ secrets.SCHEMA_PAT }}
+      - name: Download schema artifact
+        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
+        with:
+          name: schema.yml
+      - name: Move schema to correct location
+        run: |
+          echo "Version: $version"
+          mkdir export/${version}
+          mv schema.yml export/${version}/api.yaml
+      - uses: stefanzweifel/git-auto-commit-action@8756aa072ef5b4a080af5dc8fef36c5d586e521d # v5.0.0
+        with:
+          commit_message: "Update API schema for ${version}"
 
   python:
     name: Tests - inventree-python
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit', 'paths-filter' ]
+    needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
@@ -265,7 +264,7 @@ jobs:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit', 'paths-filter' ]
+    needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
@@ -312,14 +311,14 @@ jobs:
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'pre-commit', 'paths-filter' ]
+    needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
       INVENTREE_DB_USER: inventree
       INVENTREE_DB_PASSWORD: password
-      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
       INVENTREE_DEBUG: info
       INVENTREE_CACHE_HOST: localhost
@@ -357,7 +356,7 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit', 'paths-filter' ]
+    needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
@@ -365,7 +364,7 @@ jobs:
       INVENTREE_DB_ENGINE: django.db.backends.mysql
       INVENTREE_DB_USER: root
       INVENTREE_DB_PASSWORD: password
-      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 3306
       INVENTREE_DEBUG: info
       INVENTREE_PLUGINS_ENABLED: true
@@ -408,7 +407,7 @@ jobs:
       INVENTREE_DB_NAME: inventree
       INVENTREE_DB_USER: inventree
       INVENTREE_DB_PASSWORD: password
-      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
       INVENTREE_DEBUG: info
       INVENTREE_PLUGINS_ENABLED: false
@@ -509,7 +508,7 @@ jobs:
     name: Tests - Platform UI
     runs-on: ubuntu-20.04
     timeout-minutes: 60
-    needs: [ 'pre-commit', 'paths-filter' ]
+    needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     env:
       INVENTREE_DB_ENGINE: sqlite3

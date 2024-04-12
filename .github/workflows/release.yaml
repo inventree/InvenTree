@@ -3,7 +3,7 @@
 name: Publish release notes
 on:
   release:
-    types: [ published ]
+    types: [published]
 
 env:
   requests_version: 2.31.0
@@ -12,7 +12,6 @@ permissions:
   contents: read
 
 jobs:
-
   stable:
     runs-on: ubuntu-latest
     env:
