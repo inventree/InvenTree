@@ -652,9 +652,14 @@ export default function PartDetail() {
         visible={part.in_stock == 0}
       />,
       <DetailsBadge
-        label={t`Inactive`}
-        color="red"
-        visible={part.active == false}
+        label={t`On Order` + `: ${part.ordering}`}
+        color="blue"
+        visible={part.on_order > 0}
+      />,
+      <DetailsBadge
+        label={t`In Production` + `: ${part.building}`}
+        color="blue"
+        visible={part.building > 0}
       />
     ];
   }, [part, instanceQuery]);
