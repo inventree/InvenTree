@@ -868,8 +868,11 @@ def test(
         cmd += ' --exclude-tag=cui'
 
     if coverage:
+        cov_arg = 'coverage run'
+        if not migrations:
+            cov_arg += ' --omit "*/migrations/*","**/test_migrations.py'
         # Run tests within coverage environment, and generate report
-        c.run(f'coverage run {managePyPath()} {cmd}')
+        c.run(f'{cov_arg} {managePyPath()} {cmd}')
         c.run('coverage xml -i')
     else:
         # Run simple test runner, without coverage
