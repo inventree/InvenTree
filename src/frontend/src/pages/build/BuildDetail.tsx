@@ -334,16 +334,17 @@ export default function BuildDetail() {
     ];
   }, [id, build, user]);
 
-  const buildDetail = useMemo(() => {
-    return build?.status ? (
-      StatusRenderer({
-        status: build.status,
-        type: ModelType.build
-      })
-    ) : (
-      <Skeleton />
-    );
-  }, [build, id]);
+  const buildBadges = useMemo(() => {
+    return instanceQuery.isFetching
+      ? []
+      : [
+          <StatusRenderer
+            status={build.status}
+            type={ModelType.build}
+            options={{ size: 'lg' }}
+          />
+        ];
+  }, [build, instanceQuery]);
 
   return (
     <>
@@ -353,7 +354,7 @@ export default function BuildDetail() {
         <PageDetail
           title={build.reference}
           subtitle={build.title}
-          detail={buildDetail}
+          badges={buildBadges}
           imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
           breadcrumbs={[
             { name: t`Build Orders`, url: '/build' },

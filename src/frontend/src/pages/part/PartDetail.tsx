@@ -31,11 +31,14 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
+import DetailsBadge, {
+  DetailsBadgeProps
+} from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PartIcons } from '../../components/details/PartIcons';
@@ -632,24 +635,29 @@ export default function PartDetail() {
     [part]
   );
 
-  const partDetail = useMemo(() => {
-    return (
-      <Group spacing="xs" position="right" noWrap={true}>
-        {part.in_stock > 0 ? (
-          <Badge color="green" variant="filled" size="lg">
-            {t`Stock` + `: ${part.in_stock}`}
-          </Badge>
-        ) : (
-          <Badge color="orange" variant="filled" size="lg">
-            {t`No Stock`}
-          </Badge>
-        )}
-        {!part.active && (
-          <Badge color="red" variant="filled" size="lg">{t`Inactive`}</Badge>
-        )}
-      </Group>
-    );
-  }, [part, id]);
+  const badges: ReactNode[] = useMemo(() => {
+    if (instanceQuery.isLoading || instanceQuery.isFetching) {
+      return [];
+    }
+
+    return [
+      <DetailsBadge
+        label={t`In Stock` + `: ${part.in_stock}`}
+        color={part.in_stock >= part.minimum_stock ? 'green' : 'orange'}
+        visible={part.in_stock > 0}
+      />,
+      <DetailsBadge
+        label={t`No Stock`}
+        color="red"
+        visible={part.in_stock == 0}
+      />,
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={part.active == false}
+      />
+    ];
+  }, [part, instanceQuery]);
 
   const partFields = usePartFields({ create: false });
 
@@ -750,7 +758,7 @@ export default function PartDetail() {
           title={t`Part` + ': ' + part.full_name}
           subtitle={part.description}
           imageUrl={part.image}
-          detail={partDetail}
+          badges={badges}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {
             setTreeOpen(true);
