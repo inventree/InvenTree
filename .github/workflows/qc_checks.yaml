@@ -302,7 +302,7 @@ jobs:
           git-branch: ${{ github.ref }}
           parallel: true
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.3.0
+        uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -442,7 +442,7 @@ jobs:
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.3.0
+        uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -535,7 +535,7 @@ jobs:
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -554,7 +554,7 @@ jobs:
           git-branch: ${{ github.ref }}
           parallel: true
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.3.0
+        uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
