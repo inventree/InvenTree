@@ -66,6 +66,7 @@ export interface ApiFormProps {
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   fields?: ApiFormFieldSet;
+  focus?: string;
   initialData?: FieldValues;
   submitText?: string;
   submitColor?: string;
@@ -278,6 +279,10 @@ export function ApiForm({
 
   // Fetch initial data on form load
   useEffect(() => {
+    if (props.focus) {
+      form.setFocus(props.focus);
+    }
+
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
       queryClient.removeQueries({
