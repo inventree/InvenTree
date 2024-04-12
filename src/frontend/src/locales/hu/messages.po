@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-11 01:50\n"
+"PO-Revision-Date: 2024-04-12 01:57\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -30,13 +30,17 @@ msgstr "Vágólapra másolás"
 msgid "Scan QR code"
 msgstr "QR kód beolvasása"
 
+#: src/components/buttons/SpotlightButton.tsx:11
+msgid "Open spotlight"
+msgstr ""
+
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
-msgstr ""
+msgstr "Sikeres"
 
 #: src/components/buttons/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Megbukott"
 
 #: src/components/buttons/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:51
@@ -50,7 +54,7 @@ msgstr "Nem"
 
 #: src/components/details/Details.tsx:327
 msgid "Copied"
-msgstr ""
+msgstr "Másolva"
 
 #: src/components/details/Details.tsx:327
 msgid "Copy"
@@ -116,7 +120,7 @@ msgstr ""
 
 #: src/components/details/DetailsImage.tsx:293
 msgid "Upload Image"
-msgstr ""
+msgstr "Kép feltöltése"
 
 #: src/components/details/DetailsImage.tsx:306
 msgid "Delete image"
@@ -867,6 +871,15 @@ msgstr "Verzió"
 msgid "Server Version"
 msgstr "Szerver verziója"
 
+#: src/components/nav/Layout.tsx:54
+#: src/tables/part/PartThumbTable.tsx:190
+msgid "Search..."
+msgstr ""
+
+#: src/components/nav/Layout.tsx:56
+msgid "Nothing found..."
+msgstr ""
+
 #: src/components/nav/MainMenu.tsx:39
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
 msgid "Settings"
@@ -906,42 +919,44 @@ msgstr "Kijelentkezés"
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
 
-#: src/components/nav/NavHoverMenu.tsx:61
+#: src/components/nav/NavHoverMenu.tsx:63
+#: src/defaults/actions.tsx:51
 msgid "Open Navigation"
 msgstr "Navigáció megnyitása"
 
-#: src/components/nav/NavHoverMenu.tsx:79
+#: src/components/nav/NavHoverMenu.tsx:81
 msgid "View all"
 msgstr "Összes megtekintése"
 
-#: src/components/nav/NavHoverMenu.tsx:93
-#: src/components/nav/NavHoverMenu.tsx:103
+#: src/components/nav/NavHoverMenu.tsx:95
+#: src/components/nav/NavHoverMenu.tsx:105
 msgid "Get started"
 msgstr "Kezdés"
 
-#: src/components/nav/NavHoverMenu.tsx:96
+#: src/components/nav/NavHoverMenu.tsx:98
 msgid "Overview over high-level objects, functions and possible usecases."
 msgstr "Magas szintű objektumok, funkciók és lehetséges használati esetek áttekintése."
 
-#: src/components/nav/NavigationDrawer.tsx:59
+#: src/components/nav/NavigationDrawer.tsx:60
 msgid "Navigation"
 msgstr "Navigáció"
 
-#: src/components/nav/NavigationDrawer.tsx:62
+#: src/components/nav/NavigationDrawer.tsx:63
 msgid "Pages"
 msgstr "Oldalak"
 
-#: src/components/nav/NavigationDrawer.tsx:67
+#: src/components/nav/NavigationDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:133
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
 msgstr "Pluginok"
 
-#: src/components/nav/NavigationDrawer.tsx:77
+#: src/components/nav/NavigationDrawer.tsx:78
+#: src/defaults/actions.tsx:27
 msgid "Documentation"
 msgstr "Dokumentáció"
 
-#: src/components/nav/NavigationDrawer.tsx:80
+#: src/components/nav/NavigationDrawer.tsx:81
 msgid "About"
 msgstr "Névjegy"
 
@@ -1905,6 +1920,62 @@ msgstr "Kínai (egyszerűsített)"
 msgid "Chinese (Traditional)"
 msgstr "Kínai (Hagyományos)"
 
+#: src/defaults/actions.tsx:15
+#: src/defaults/links.tsx:26
+#: src/defaults/menuItems.tsx:9
+msgid "Home"
+msgstr "Főoldal"
+
+#: src/defaults/actions.tsx:21
+#: src/defaults/links.tsx:27
+#: src/defaults/menuItems.tsx:28
+#: src/pages/Index/Dashboard.tsx:19
+#: src/pages/Index/Settings/UserSettings.tsx:41
+msgid "Dashboard"
+msgstr "Irányítópult"
+
+#: src/defaults/actions.tsx:22
+msgid "Go to the InvenTree dashboard"
+msgstr ""
+
+#: src/defaults/actions.tsx:28
+msgid "Visit the documentation to learn more about InvenTree"
+msgstr ""
+
+#: src/defaults/actions.tsx:33
+#: src/defaults/links.tsx:92
+#: src/defaults/links.tsx:122
+msgid "About InvenTree"
+msgstr "InvenTree névjegy"
+
+#: src/defaults/actions.tsx:34
+#: src/defaults/links.tsx:123
+msgid "About the InvenTree org"
+msgstr "Az inventree.org-ról"
+
+#: src/defaults/actions.tsx:39
+msgid "Server Information"
+msgstr ""
+
+#: src/defaults/actions.tsx:40
+#: src/defaults/links.tsx:117
+msgid "About this Inventree instance"
+msgstr "InvenTree példány névjegye"
+
+#: src/defaults/actions.tsx:45
+#: src/defaults/links.tsx:105
+msgid "License Information"
+msgstr ""
+
+#: src/defaults/actions.tsx:46
+#: src/defaults/links.tsx:129
+msgid "Licenses for dependencies of the service"
+msgstr ""
+
+#: src/defaults/actions.tsx:52
+msgid "Open the main navigation menu"
+msgstr ""
+
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
 msgstr "Értesítésre beállított alkatrészek"
@@ -1995,18 +2066,6 @@ msgstr "GitHub"
 msgid "Demo"
 msgstr "Demó"
 
-#: src/defaults/links.tsx:26
-#: src/defaults/menuItems.tsx:9
-msgid "Home"
-msgstr "Főoldal"
-
-#: src/defaults/links.tsx:27
-#: src/defaults/menuItems.tsx:28
-#: src/pages/Index/Dashboard.tsx:19
-#: src/pages/Index/Settings/UserSettings.tsx:41
-msgid "Dashboard"
-msgstr "Irányítópult"
-
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
 #: src/pages/company/ManufacturerDetail.tsx:9
@@ -2029,7 +2088,7 @@ msgstr "Eladás"
 
 #: src/defaults/links.tsx:35
 #: src/defaults/menuItems.tsx:71
-#: src/pages/Index/Playground.tsx:195
+#: src/pages/Index/Playground.tsx:229
 msgid "Playground"
 msgstr "Játszótér"
 
@@ -2070,7 +2129,7 @@ msgstr "Gyakran ismételt kérdések"
 #~ msgstr "Instance"
 
 #: src/defaults/links.tsx:79
-#: src/defaults/links.tsx:115
+#: src/defaults/links.tsx:116
 msgid "System Information"
 msgstr "Rendszerinformáció"
 
@@ -2078,34 +2137,13 @@ msgstr "Rendszerinformáció"
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
-#: src/defaults/links.tsx:92
-#: src/defaults/links.tsx:121
-msgid "About InvenTree"
-msgstr "InvenTree névjegy"
-
-#: src/defaults/links.tsx:104
-msgid "License Information"
-msgstr ""
-
-#: src/defaults/links.tsx:116
-msgid "About this Inventree instance"
-msgstr "InvenTree példány névjegye"
-
 #: src/defaults/links.tsx:117
 #~ msgid "Licenses for packages used by InvenTree"
 #~ msgstr "Licenses for packages used by InvenTree"
 
-#: src/defaults/links.tsx:122
-msgid "About the InvenTree org"
-msgstr "Az inventree.org-ról"
-
-#: src/defaults/links.tsx:127
+#: src/defaults/links.tsx:128
 msgid "Licenses"
 msgstr "Licencek"
-
-#: src/defaults/links.tsx:128
-msgid "Licenses for dependencies of the service"
-msgstr ""
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -2343,7 +2381,7 @@ msgstr "Add meg az új készlet tételhez tartozó sorozatszámokat (vagy hagyd 
 #: src/tables/stock/StockItemTable.tsx:366
 #: src/tables/stock/StockItemTable.tsx:486
 msgid "Add Stock Item"
-msgstr ""
+msgstr "Új készlet tétel"
 
 #: src/forms/StockForms.tsx:157
 msgid "Edit Stock Item"
@@ -2608,7 +2646,7 @@ msgstr "Ez az oldal helyettesíti a régi kezdőoldalt, ugyanazokkal az informá
 msgid "Welcome to your Dashboard{0}"
 msgstr "Irányítópult: {0}"
 
-#: src/pages/Index/Playground.tsx:200
+#: src/pages/Index/Playground.tsx:234
 msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr "Ez az oldal a Platform UI lehetőségeit mutatja be."
 
@@ -4958,10 +4996,6 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:147
 msgid "Any tests results associated with this template will be deleted"
-msgstr ""
-
-#: src/tables/part/PartThumbTable.tsx:190
-msgid "Search..."
 msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:16
