@@ -85,6 +85,7 @@ env/
 
 # Locale stats file
 src/backend/InvenTree/InvenTree/locale_stats.json
+src/backend/InvenTree/InvenTree/licenses.txt
 
 # node.js
 node_modules/
