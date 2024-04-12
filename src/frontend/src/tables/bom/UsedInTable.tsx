@@ -83,7 +83,8 @@ export function UsedInTable({
           sub_part_detail: true
         },
         tableFilters: tableFilters,
-        modelType: ModelType.part
+        modelType: ModelType.part,
+        modelField: 'part'
       }}
     />
   );
