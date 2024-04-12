@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-11 01:49\n"
+"PO-Revision-Date: 2024-04-12 01:57\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -20,49 +20,53 @@ msgstr ""
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
-msgstr ""
+msgstr "Titulek"
 
 #: src/components/buttons/CopyButton.tsx:18
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Zkopírovat do schránky"
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
+msgstr "Naskenovat QR kód"
+
+#: src/components/buttons/SpotlightButton.tsx:11
+msgid "Open spotlight"
 msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
-msgstr ""
+msgstr "V pořádku"
 
 #: src/components/buttons/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Selhání"
 
 #: src/components/buttons/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:51
 msgid "Yes"
-msgstr ""
+msgstr "Ano"
 
 #: src/components/buttons/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:52
 msgid "No"
-msgstr ""
+msgstr "Ne"
 
 #: src/components/details/Details.tsx:327
 msgid "Copied"
-msgstr ""
+msgstr "Zkopírováno"
 
 #: src/components/details/Details.tsx:327
 msgid "Copy"
-msgstr ""
+msgstr "Kopírovat"
 
 #: src/components/details/DetailsImage.tsx:64
 msgid "Remove Image"
-msgstr ""
+msgstr "Odstranit obrázek"
 
 #: src/components/details/DetailsImage.tsx:67
 msgid "Remove the associated image from this item?"
-msgstr ""
+msgstr "Odstranit přidružený obrázek z této položky?"
 
 #: src/components/details/DetailsImage.tsx:70
 #: src/forms/StockForms.tsx:450
@@ -70,7 +74,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 #: src/pages/stock/StockDetail.tsx:403
 msgid "Remove"
-msgstr ""
+msgstr "Odstranit"
 
 #: src/components/details/DetailsImage.tsx:70
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:164
@@ -81,54 +85,54 @@ msgstr ""
 #: src/tables/InvenTreeTable.tsx:471
 #: src/tables/plugin/PluginListTable.tsx:361
 msgid "Cancel"
-msgstr ""
+msgstr "Zrušit"
 
 #: src/components/details/DetailsImage.tsx:98
 msgid "Drag and drop to upload"
-msgstr ""
+msgstr "Nahrajte přetažením"
 
 #: src/components/details/DetailsImage.tsx:101
 msgid "Click to select file(s)"
-msgstr ""
+msgstr "Klepnutím vyberte soubor(y)"
 
 #: src/components/details/DetailsImage.tsx:223
 msgid "Clear"
-msgstr ""
+msgstr "Vymazat"
 
 #: src/components/details/DetailsImage.tsx:226
 #: src/components/forms/ApiForm.tsx:490
 #: src/contexts/ThemeContext.tsx:65
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
-msgstr ""
+msgstr "Odeslat"
 
 #: src/components/details/DetailsImage.tsx:266
 msgid "Select from existing images"
-msgstr ""
+msgstr "Vybrat z existujících obrázků"
 
 #: src/components/details/DetailsImage.tsx:274
 msgid "Select Image"
-msgstr ""
+msgstr "Vybrat obrázek"
 
 #: src/components/details/DetailsImage.tsx:286
 msgid "Upload new image"
-msgstr ""
+msgstr "Nahrát nový obrázek"
 
 #: src/components/details/DetailsImage.tsx:293
 msgid "Upload Image"
-msgstr ""
+msgstr "Nahrát obrázek"
 
 #: src/components/details/DetailsImage.tsx:306
 msgid "Delete image"
-msgstr ""
+msgstr "Smazat obrázek"
 
 #: src/components/details/PartIcons.tsx:28
 msgid "Part is not active"
-msgstr ""
+msgstr "Součást není aktivní"
 
 #: src/components/details/PartIcons.tsx:34
 msgid "Inactive"
-msgstr ""
+msgstr "Neaktivní"
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
@@ -148,54 +152,54 @@ msgstr ""
 
 #: src/components/details/PartIcons.tsx:65
 msgid "Part can be purchased from external suppliers"
-msgstr ""
+msgstr "Část může být zakoupena od externích dodavatelů"
 
 #: src/components/details/PartIcons.tsx:71
 msgid "Part can be sold to customers"
-msgstr ""
+msgstr "Část může být prodána zákazníkům"
 
 #: src/components/details/PartIcons.tsx:76
 msgid "Part is virtual (not a physical part)"
-msgstr ""
+msgstr "Část je virtuální (nikoli fyzická část)"
 
 #: src/components/details/PartIcons.tsx:82
 #: src/tables/part/PartTable.tsx:242
 #: src/tables/part/PartTable.tsx:246
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
-msgstr ""
+msgstr "Virtuální"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
-msgstr ""
+msgstr "Kód"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:44
 msgid "Failed to parse error response from server."
-msgstr ""
+msgstr "Chyba při zpracování odpovědi ze serveru."
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:82
 msgid "Preview not available, click \"Reload Preview\"."
-msgstr ""
+msgstr "Náhled není k dispozici, klikněte na \"Znovu načíst náhled\"."
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr ""
+msgstr "Náhled PDF"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:114
 msgid "Error loading template"
-msgstr ""
+msgstr "Chyba při načítání šablony"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:126
 msgid "Error saving template"
-msgstr ""
+msgstr "Chyba při ukládání šablony"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:152
 msgid "Save & Reload preview?"
-msgstr ""
+msgstr "Uložit a znovu načíst náhled?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 msgid "Are you sure you want to Save & Reload the preview?"
-msgstr ""
+msgstr "Opravdu chcete uložit a znovu načíst náhled?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:159
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
@@ -203,7 +207,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:163
 msgid "Save & Reload"
-msgstr ""
+msgstr "Uložit a znovu načíst"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:192
 msgid "Preview updated"
@@ -232,7 +236,7 @@ msgstr ""
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:323
 #: src/tables/part/PartThumbTable.tsx:199
 msgid "Select"
-msgstr ""
+msgstr "Vybrat"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:323
 msgid "to preview"
@@ -692,36 +696,36 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:170
 msgid "Credits"
-msgstr ""
+msgstr "Poděkování"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Mobile App"
-msgstr ""
+msgstr "Mobilní aplikace"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:172
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "Odeslat hlášení o chybě"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:183
 msgid "Copy version information"
-msgstr ""
+msgstr "Kopírovat informace o verzi"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
-msgstr ""
+msgstr "Zavřít"
 
 #: src/components/modals/LicenseModal.tsx:36
 msgid "No license text available"
-msgstr ""
+msgstr "Není k dispozici žádná licence"
 
 #: src/components/modals/LicenseModal.tsx:43
 msgid "No Information provided - this is likely a server issue"
-msgstr ""
+msgstr "Nebyly poskytnuty žádné informace - toto je pravděpodobně problém se serverem"
 
 #: src/components/modals/LicenseModal.tsx:68
 msgid "Loading license information"
-msgstr ""
+msgstr "Načítání licenčních informací"
 
 #: src/components/modals/LicenseModal.tsx:74
 msgid "Failed to fetch license information"
@@ -729,11 +733,11 @@ msgstr ""
 
 #: src/components/modals/LicenseModal.tsx:82
 msgid "{key} Packages"
-msgstr ""
+msgstr "{key} balíčky"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
-msgstr ""
+msgstr "Neznámá odpověď"
 
 #: src/components/modals/QrCodeModal.tsx:102
 #: src/pages/Index/Scan.tsx:618
@@ -743,7 +747,7 @@ msgstr ""
 #: src/components/modals/QrCodeModal.tsx:125
 #: src/pages/Index/Scan.tsx:641
 msgid "Error while scanning"
-msgstr ""
+msgstr "Chyba při skenování"
 
 #: src/components/modals/QrCodeModal.tsx:139
 #: src/pages/Index/Scan.tsx:655
@@ -754,12 +758,12 @@ msgstr ""
 #: src/defaults/menuItems.tsx:21
 #: src/pages/Index/Scan.tsx:724
 msgid "Scanning"
-msgstr ""
+msgstr "Skenování"
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/pages/Index/Scan.tsx:724
 msgid "Not scanning"
-msgstr ""
+msgstr "Není skenováno"
 
 #: src/components/modals/QrCodeModal.tsx:159
 #: src/pages/Index/Scan.tsx:730
@@ -769,12 +773,12 @@ msgstr ""
 #: src/components/modals/QrCodeModal.tsx:169
 #: src/pages/Index/Scan.tsx:716
 msgid "Start scanning"
-msgstr ""
+msgstr "Začít skenovat"
 
 #: src/components/modals/QrCodeModal.tsx:176
 #: src/pages/Index/Scan.tsx:710
 msgid "Stop scanning"
-msgstr ""
+msgstr "Zastavit skenování"
 
 #: src/components/modals/QrCodeModal.tsx:181
 msgid "No scans yet!"
@@ -787,15 +791,15 @@ msgstr ""
 #: src/components/modals/ServerInfoModal.tsx:26
 #: src/pages/Index/Settings/SystemSettings.tsx:36
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: src/components/modals/ServerInfoModal.tsx:32
 msgid "Instance Name"
-msgstr ""
+msgstr "Název instance"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 msgid "Database"
-msgstr ""
+msgstr "Databáze"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 #~ msgid "Bebug Mode"
@@ -803,43 +807,43 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:47
 msgid "Debug Mode"
-msgstr ""
+msgstr "Režim ladění"
 
 #: src/components/modals/ServerInfoModal.tsx:50
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Server běží v režimu ladění"
 
 #: src/components/modals/ServerInfoModal.tsx:57
 msgid "Docker Mode"
-msgstr ""
+msgstr "Režim Dockeru"
 
 #: src/components/modals/ServerInfoModal.tsx:60
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Server je nasazen pomocí dockeru"
 
 #: src/components/modals/ServerInfoModal.tsx:66
 msgid "Plugin Support"
-msgstr ""
+msgstr "Podpora pluginů"
 
 #: src/components/modals/ServerInfoModal.tsx:71
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Podpora zásuvných modulů povolena"
 
 #: src/components/modals/ServerInfoModal.tsx:73
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Podpora zásuvných modulů zakázána"
 
 #: src/components/modals/ServerInfoModal.tsx:80
 msgid "Server status"
-msgstr ""
+msgstr "Stav serveru"
 
 #: src/components/modals/ServerInfoModal.tsx:86
 msgid "Healthy"
-msgstr ""
+msgstr "Zdravý"
 
 #: src/components/modals/ServerInfoModal.tsx:88
 msgid "Issues detected"
-msgstr ""
+msgstr "Zjištěn problém"
 
 #: src/components/modals/ServerInfoModal.tsx:97
 msgid "Background Worker"
@@ -851,26 +855,35 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:109
 msgid "Email Settings"
-msgstr ""
+msgstr "Nastavení e-mailu"
 
 #: src/components/modals/ServerInfoModal.tsx:113
 msgid "Email settings not configured"
-msgstr ""
+msgstr "Email není nakonfigurován"
 
 #: src/components/modals/ServerInfoModal.tsx:121
 #: src/tables/plugin/PluginListTable.tsx:187
 #: src/tables/plugin/PluginListTable.tsx:315
 msgid "Version"
-msgstr ""
+msgstr "Verze"
 
 #: src/components/modals/ServerInfoModal.tsx:127
 msgid "Server Version"
+msgstr "Verze serveru"
+
+#: src/components/nav/Layout.tsx:54
+#: src/tables/part/PartThumbTable.tsx:190
+msgid "Search..."
+msgstr ""
+
+#: src/components/nav/Layout.tsx:56
+msgid "Nothing found..."
 msgstr ""
 
 #: src/components/nav/MainMenu.tsx:39
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
 msgid "Settings"
-msgstr ""
+msgstr "Nastavení"
 
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
@@ -880,19 +893,19 @@ msgstr ""
 #: src/components/nav/MainMenu.tsx:42
 #: src/defaults/menuItems.tsx:15
 msgid "Account settings"
-msgstr ""
+msgstr "Nastavení účtu"
 
 #: src/components/nav/MainMenu.tsx:50
 #: src/defaults/menuItems.tsx:58
 #: src/pages/Index/Settings/SystemSettings.tsx:293
 msgid "System Settings"
-msgstr ""
+msgstr "Nastavení systému"
 
 #: src/components/nav/MainMenu.tsx:60
 #: src/defaults/menuItems.tsx:63
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:172
 msgid "Admin Center"
-msgstr ""
+msgstr "Centrum správce"
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
@@ -900,48 +913,50 @@ msgstr ""
 
 #: src/components/nav/MainMenu.tsx:70
 msgid "Logout"
-msgstr ""
+msgstr "Odhlásit"
 
 #: src/components/nav/MainMenu.tsx:71
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
 
-#: src/components/nav/NavHoverMenu.tsx:61
+#: src/components/nav/NavHoverMenu.tsx:63
+#: src/defaults/actions.tsx:51
 msgid "Open Navigation"
-msgstr ""
+msgstr "Otevřít navigaci"
 
-#: src/components/nav/NavHoverMenu.tsx:79
+#: src/components/nav/NavHoverMenu.tsx:81
 msgid "View all"
-msgstr ""
+msgstr "Zobrazit vše"
 
-#: src/components/nav/NavHoverMenu.tsx:93
-#: src/components/nav/NavHoverMenu.tsx:103
+#: src/components/nav/NavHoverMenu.tsx:95
+#: src/components/nav/NavHoverMenu.tsx:105
 msgid "Get started"
-msgstr ""
+msgstr "Začínáme"
 
-#: src/components/nav/NavHoverMenu.tsx:96
+#: src/components/nav/NavHoverMenu.tsx:98
 msgid "Overview over high-level objects, functions and possible usecases."
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:59
+#: src/components/nav/NavigationDrawer.tsx:60
 msgid "Navigation"
-msgstr ""
+msgstr "Navigace"
 
-#: src/components/nav/NavigationDrawer.tsx:62
+#: src/components/nav/NavigationDrawer.tsx:63
 msgid "Pages"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:67
+#: src/components/nav/NavigationDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:133
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:77
+#: src/components/nav/NavigationDrawer.tsx:78
+#: src/defaults/actions.tsx:27
 msgid "Documentation"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:80
+#: src/components/nav/NavigationDrawer.tsx:81
 msgid "About"
 msgstr ""
 
@@ -1146,12 +1161,12 @@ msgstr ""
 #: src/components/render/ModelType.tsx:112
 #: src/tables/TableHoverCard.tsx:58
 msgid "Project Code"
-msgstr ""
+msgstr "Kód projektu"
 
 #: src/components/render/ModelType.tsx:113
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:97
 msgid "Project Codes"
-msgstr ""
+msgstr "Kódy projektu"
 
 #: src/components/render/ModelType.tsx:119
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:99
@@ -1216,42 +1231,42 @@ msgstr ""
 #: src/components/render/ModelType.tsx:155
 #: src/tables/company/AddressTable.tsx:47
 msgid "Address"
-msgstr ""
+msgstr "Adresa"
 
 #: src/components/render/ModelType.tsx:156
 #: src/pages/company/CompanyDetail.tsx:238
 msgid "Addresses"
-msgstr ""
+msgstr "Adresy"
 
 #: src/components/render/ModelType.tsx:162
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:164
 #: src/pages/sales/ReturnOrderDetail.tsx:130
 #: src/pages/sales/SalesOrderDetail.tsx:134
 msgid "Contact"
-msgstr ""
+msgstr "Kontakt"
 
 #: src/components/render/ModelType.tsx:163
 #: src/pages/company/CompanyDetail.tsx:232
 msgid "Contacts"
-msgstr ""
+msgstr "Kontakty"
 
 #: src/components/render/ModelType.tsx:169
 msgid "Owner"
-msgstr ""
+msgstr "Správce"
 
 #: src/components/render/ModelType.tsx:170
 msgid "Owners"
-msgstr ""
+msgstr "Správci"
 
 #: src/components/render/ModelType.tsx:176
 msgid "User"
-msgstr ""
+msgstr "Uživatel"
 
 #: src/components/render/ModelType.tsx:177
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:73
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
-msgstr ""
+msgstr "Uživatelé"
 
 #: src/components/render/Order.tsx:85
 msgid "Shipment"
@@ -1266,37 +1281,37 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:339
 #: src/tables/stock/StockItemTable.tsx:57
 msgid "Stock"
-msgstr ""
+msgstr "Zásoby"
 
 #: src/components/render/Stock.tsx:26
 #: src/pages/stock/StockDetail.tsx:140
 msgid "Serial Number"
-msgstr ""
+msgstr "Sériové číslo"
 
 #: src/components/render/Stock.tsx:28
 #: src/pages/stock/StockDetail.tsx:135
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:92
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:120
 msgid "Quantity"
-msgstr ""
+msgstr "Množství"
 
 #: src/components/settings/SettingItem.tsx:45
 #: src/components/settings/SettingItem.tsx:98
 msgid "Setting updated"
-msgstr ""
+msgstr "Nastavení aktualizováno"
 
 #: src/components/settings/SettingItem.tsx:46
 #: src/components/settings/SettingItem.tsx:99
 msgid "{0} updated successfully"
-msgstr ""
+msgstr "{0} úspěšně aktualizováno"
 
 #: src/components/settings/SettingItem.tsx:54
 msgid "Error editing setting"
-msgstr ""
+msgstr "Při úpravě nastavení došlo k chybě"
 
 #: src/components/settings/SettingItem.tsx:91
 msgid "Edit Setting"
-msgstr ""
+msgstr "Upravit nastavení"
 
 #: src/components/settings/SettingList.tsx:63
 msgid "No settings specified"
@@ -1713,17 +1728,17 @@ msgstr ""
 #: src/components/widgets/DisplayWidget.tsx:11
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:17
 msgid "Display Settings"
-msgstr ""
+msgstr "Nastavení zobrazení"
 
 #: src/components/widgets/DisplayWidget.tsx:15
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:23
 msgid "Color Mode"
-msgstr ""
+msgstr "Barevný režim"
 
 #: src/components/widgets/DisplayWidget.tsx:21
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:33
 msgid "Language"
-msgstr ""
+msgstr "Jazyk"
 
 #: src/components/widgets/FeedbackWidget.tsx:18
 msgid "Something is new: Platform UI"
@@ -1731,47 +1746,47 @@ msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:20
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr ""
+msgstr "Vytváříme nové uživatelské rozhraní s moderním zásobníkem. To, co v současné době vidíte, není opraveno a bude přepracováno, ale ukáže možnosti UI/UX, které budeme mít."
 
 #: src/components/widgets/FeedbackWidget.tsx:31
 msgid "Provide Feedback"
-msgstr ""
+msgstr "Odeslat zpětnou vazbu"
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
-msgstr ""
+msgstr "Začínáme"
 
 #: src/components/widgets/MarkdownEditor.tsx:109
 msgid "Failed to upload image"
-msgstr ""
+msgstr "Nepodařilo se nahrát obrázek"
 
 #: src/components/widgets/MarkdownEditor.tsx:147
 msgid "Notes saved"
-msgstr ""
+msgstr "Poznámky uloženy"
 
 #: src/components/widgets/MarkdownEditor.tsx:155
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Nepodařilo se uložit poznámky"
 
 #: src/components/widgets/WidgetLayout.tsx:180
 msgid "Layout"
-msgstr ""
+msgstr "Rozvržení"
 
 #: src/components/widgets/WidgetLayout.tsx:186
 msgid "Reset Layout"
-msgstr ""
+msgstr "Resetovat rozložení"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Stop Edit"
-msgstr ""
+msgstr "Zastavit úpravy"
 
 #: src/components/widgets/WidgetLayout.tsx:199
 msgid "Edit Layout"
-msgstr ""
+msgstr "Upravit rozvržení"
 
 #: src/components/widgets/WidgetLayout.tsx:205
 msgid "Appearance"
-msgstr ""
+msgstr "Vzhled"
 
 #: src/components/widgets/WidgetLayout.tsx:217
 msgid "Show Boxes"
@@ -1779,23 +1794,23 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulharština"
 
 #: src/contexts/LanguageContext.tsx:21
 msgid "Czech"
-msgstr ""
+msgstr "Čeština"
 
 #: src/contexts/LanguageContext.tsx:22
 msgid "Danish"
-msgstr ""
+msgstr "Dánština"
 
 #: src/contexts/LanguageContext.tsx:23
 msgid "German"
-msgstr ""
+msgstr "Němčina"
 
 #: src/contexts/LanguageContext.tsx:24
 msgid "Greek"
-msgstr ""
+msgstr "Řečtina"
 
 #: src/contexts/LanguageContext.tsx:25
 msgid "English"
@@ -1905,6 +1920,62 @@ msgstr ""
 msgid "Chinese (Traditional)"
 msgstr ""
 
+#: src/defaults/actions.tsx:15
+#: src/defaults/links.tsx:26
+#: src/defaults/menuItems.tsx:9
+msgid "Home"
+msgstr "Domů"
+
+#: src/defaults/actions.tsx:21
+#: src/defaults/links.tsx:27
+#: src/defaults/menuItems.tsx:28
+#: src/pages/Index/Dashboard.tsx:19
+#: src/pages/Index/Settings/UserSettings.tsx:41
+msgid "Dashboard"
+msgstr "Přehled"
+
+#: src/defaults/actions.tsx:22
+msgid "Go to the InvenTree dashboard"
+msgstr ""
+
+#: src/defaults/actions.tsx:28
+msgid "Visit the documentation to learn more about InvenTree"
+msgstr ""
+
+#: src/defaults/actions.tsx:33
+#: src/defaults/links.tsx:92
+#: src/defaults/links.tsx:122
+msgid "About InvenTree"
+msgstr "O InvenTree"
+
+#: src/defaults/actions.tsx:34
+#: src/defaults/links.tsx:123
+msgid "About the InvenTree org"
+msgstr ""
+
+#: src/defaults/actions.tsx:39
+msgid "Server Information"
+msgstr ""
+
+#: src/defaults/actions.tsx:40
+#: src/defaults/links.tsx:117
+msgid "About this Inventree instance"
+msgstr ""
+
+#: src/defaults/actions.tsx:45
+#: src/defaults/links.tsx:105
+msgid "License Information"
+msgstr "Informace o licenci"
+
+#: src/defaults/actions.tsx:46
+#: src/defaults/links.tsx:129
+msgid "Licenses for dependencies of the service"
+msgstr ""
+
+#: src/defaults/actions.tsx:52
+msgid "Open the main navigation menu"
+msgstr ""
+
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
 msgstr ""
@@ -1985,27 +2056,15 @@ msgstr ""
 #: src/defaults/links.tsx:11
 #: src/pages/company/CompanyDetail.tsx:89
 msgid "Website"
-msgstr ""
+msgstr "Webová stránka"
 
 #: src/defaults/links.tsx:16
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: src/defaults/links.tsx:21
 msgid "Demo"
-msgstr ""
-
-#: src/defaults/links.tsx:26
-#: src/defaults/menuItems.tsx:9
-msgid "Home"
-msgstr ""
-
-#: src/defaults/links.tsx:27
-#: src/defaults/menuItems.tsx:28
-#: src/pages/Index/Dashboard.tsx:19
-#: src/pages/Index/Settings/UserSettings.tsx:41
-msgid "Dashboard"
-msgstr ""
+msgstr "Demo"
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
@@ -2016,7 +2075,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:309
 #: src/pages/purchasing/PurchasingIndex.tsx:52
 msgid "Purchasing"
-msgstr ""
+msgstr "Nákup"
 
 #: src/defaults/links.tsx:32
 #: src/defaults/menuItems.tsx:53
@@ -2025,87 +2084,66 @@ msgstr ""
 #: src/pages/sales/SalesIndex.tsx:45
 #: src/pages/sales/SalesOrderDetail.tsx:255
 msgid "Sales"
-msgstr ""
+msgstr "Prodej"
 
 #: src/defaults/links.tsx:35
 #: src/defaults/menuItems.tsx:71
-#: src/pages/Index/Playground.tsx:195
+#: src/pages/Index/Playground.tsx:229
 msgid "Playground"
-msgstr ""
+msgstr "Playground"
 
 #: src/defaults/links.tsx:49
 msgid "Getting Started"
-msgstr ""
+msgstr "Začínáme"
 
 #: src/defaults/links.tsx:50
 msgid "Getting started with InvenTree"
-msgstr ""
+msgstr "Začínáme s InvenTree"
 
 #: src/defaults/links.tsx:56
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/defaults/links.tsx:57
 msgid "InvenTree API documentation"
-msgstr ""
+msgstr "Dokumentace InvenTree API"
 
 #: src/defaults/links.tsx:62
 msgid "Developer Manual"
-msgstr ""
+msgstr "Příručka vývojáře"
 
 #: src/defaults/links.tsx:63
 msgid "InvenTree developer manual"
-msgstr ""
+msgstr "Příručka pro vývojáře InvenTree"
 
 #: src/defaults/links.tsx:68
 msgid "FAQ"
-msgstr ""
+msgstr "Často kladené dotazy"
 
 #: src/defaults/links.tsx:69
 msgid "Frequently asked questions"
-msgstr ""
+msgstr "Často kladené dotazy"
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
 #~ msgstr "Instance"
 
 #: src/defaults/links.tsx:79
-#: src/defaults/links.tsx:115
+#: src/defaults/links.tsx:116
 msgid "System Information"
-msgstr ""
+msgstr "Systémové Informace"
 
 #: src/defaults/links.tsx:83
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
-#: src/defaults/links.tsx:92
-#: src/defaults/links.tsx:121
-msgid "About InvenTree"
-msgstr ""
-
-#: src/defaults/links.tsx:104
-msgid "License Information"
-msgstr ""
-
-#: src/defaults/links.tsx:116
-msgid "About this Inventree instance"
-msgstr ""
-
 #: src/defaults/links.tsx:117
 #~ msgid "Licenses for packages used by InvenTree"
 #~ msgstr "Licenses for packages used by InvenTree"
 
-#: src/defaults/links.tsx:122
-msgid "About the InvenTree org"
-msgstr ""
-
-#: src/defaults/links.tsx:127
-msgid "Licenses"
-msgstr ""
-
 #: src/defaults/links.tsx:128
-msgid "Licenses for dependencies of the service"
-msgstr ""
+msgid "Licenses"
+msgstr "Licence"
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -2185,47 +2223,47 @@ msgstr ""
 
 #: src/forms/AttachmentForms.tsx:57
 msgid "Add File"
-msgstr ""
+msgstr "Přidat soubor"
 
 #: src/forms/AttachmentForms.tsx:57
 msgid "Add Link"
-msgstr ""
+msgstr "Přidat odkaz"
 
 #: src/forms/AttachmentForms.tsx:58
 msgid "File added"
-msgstr ""
+msgstr "Soubor přidán"
 
 #: src/forms/AttachmentForms.tsx:58
 msgid "Link added"
-msgstr ""
+msgstr "Odkaz přidán"
 
 #: src/forms/AttachmentForms.tsx:99
 msgid "Edit File"
-msgstr ""
+msgstr "Upravit soubor"
 
 #: src/forms/AttachmentForms.tsx:99
 msgid "Edit Link"
-msgstr ""
+msgstr "Upravit odkaz"
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "File updated"
-msgstr ""
+msgstr "Soubor nahrán"
 
 #: src/forms/AttachmentForms.tsx:100
 msgid "Link updated"
-msgstr ""
+msgstr "Odkaz Aktualizován"
 
 #: src/forms/AttachmentForms.tsx:124
 msgid "Delete Attachment"
-msgstr ""
+msgstr "Smazat přílohu"
 
 #: src/forms/AttachmentForms.tsx:125
 msgid "Attachment deleted"
-msgstr ""
+msgstr "Příloha byla smazána"
 
 #: src/forms/AttachmentForms.tsx:128
 msgid "Are you sure you want to delete this attachment?"
-msgstr ""
+msgstr "Opravdu chcete tuto přílohu smazat?"
 
 #: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
@@ -2233,7 +2271,7 @@ msgstr ""
 
 #: src/forms/PartForms.tsx:100
 msgid "Parent part category"
-msgstr ""
+msgstr "Nadřazená kategorie"
 
 #: src/forms/PartForms.tsx:106
 #~ msgid "Create Part"
@@ -2249,11 +2287,11 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:246
 msgid "Choose Location"
-msgstr ""
+msgstr "Zvolte umístění"
 
 #: src/forms/PurchaseOrderForms.tsx:254
 msgid "Item Destination selected"
-msgstr ""
+msgstr "Cíl položky byl vybrán"
 
 #: src/forms/PurchaseOrderForms.tsx:263
 msgid "Part category default location selected"
@@ -2608,7 +2646,7 @@ msgstr ""
 msgid "Welcome to your Dashboard{0}"
 msgstr ""
 
-#: src/pages/Index/Playground.tsx:200
+#: src/pages/Index/Playground.tsx:234
 msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr ""
 
@@ -4958,10 +4996,6 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:147
 msgid "Any tests results associated with this template will be deleted"
-msgstr ""
-
-#: src/tables/part/PartThumbTable.tsx:190
-msgid "Search..."
 msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:16
