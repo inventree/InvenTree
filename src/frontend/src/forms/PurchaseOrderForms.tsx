@@ -197,7 +197,11 @@ function LineItemFormRow({
   const batchCodeGenerator = useGenerator(
     ApiEndpoints.stock_generate_batch_code,
     'batch_code',
-    (value: any) => setBatchCode(value)
+    (value: any) => {
+      if (!batchCode) {
+        setBatchCode(value);
+      }
+    }
   );
 
   // State for serializing

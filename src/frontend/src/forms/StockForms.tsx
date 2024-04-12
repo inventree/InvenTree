@@ -42,7 +42,11 @@ export function useStockFields({
   const batchGenerator = useGenerator(
     ApiEndpoints.stock_generate_batch_code,
     'batch_code',
-    (value: any) => setBatchCode(value)
+    (value: any) => {
+      if (!batchCode) {
+        setBatchCode(value);
+      }
+    }
   );
 
   return useMemo(() => {
