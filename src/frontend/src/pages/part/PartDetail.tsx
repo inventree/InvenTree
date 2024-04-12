@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import {
+  Badge,
   Grid,
   Group,
   LoadingOverlay,
@@ -633,10 +634,19 @@ export default function PartDetail() {
 
   const partDetail = useMemo(() => {
     return (
-      <Group spacing="xs" noWrap={true}>
-        <Stack spacing="xs">
-          <Text>Stock: {part.in_stock}</Text>
-        </Stack>
+      <Group spacing="xs" position="right" noWrap={true}>
+        {part.in_stock > 0 ? (
+          <Badge color="green" variant="filled" size="lg">
+            {t`Stock` + `: ${part.in_stock}`}
+          </Badge>
+        ) : (
+          <Badge color="orange" variant="filled" size="lg">
+            {t`No Stock`}
+          </Badge>
+        )}
+        {!part.active && (
+          <Badge color="red" variant="filled" size="lg">{t`Inactive`}</Badge>
+        )}
       </Group>
     );
   }, [part, id]);
