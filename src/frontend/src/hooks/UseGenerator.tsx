@@ -30,18 +30,18 @@ export function useGenerator(
   // Callback to update the generator query
   const update = useCallback(
     (params: Record<string, any>, overwrite?: boolean) => {
-      if (overwrite ?? false) {
+      if (overwrite) {
         setQuery(params);
       } else {
-        setQuery({
+        setQuery((query) => ({
           ...query,
           ...params
-        });
+        }));
       }
 
       queryGenerator.refetch();
     },
-    [query]
+    []
   );
 
   // API query handler
