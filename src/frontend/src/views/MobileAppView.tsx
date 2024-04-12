@@ -3,6 +3,7 @@ import { Anchor, Center, Container, Stack, Text, Title } from '@mantine/core';
 
 import { BaseContext } from '../contexts/BaseContext';
 import { docLinks } from '../defaults/links';
+import { IS_DEV } from '../main';
 import { useLocalState } from '../states/LocalState';
 
 export default function MobileAppView() {
@@ -29,9 +30,11 @@ export default function MobileAppView() {
             <Anchor href={docLinks.app}>
               <Trans>Read the docs</Trans>
             </Anchor>
-            <Text onClick={ignore}>
-              <Trans>Ignore and continue to Desktop view</Trans>
-            </Text>
+            {IS_DEV && (
+              <Text onClick={ignore}>
+                <Trans>Ignore and continue to Desktop view</Trans>
+              </Text>
+            )}
           </Stack>
         </Container>
       </Center>
