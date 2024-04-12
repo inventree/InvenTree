@@ -1,7 +1,9 @@
 import { t } from '@lingui/macro';
 import {
   Alert,
+  Badge,
   Grid,
+  Group,
   LoadingOverlay,
   Skeleton,
   Stack,
@@ -20,10 +22,11 @@ import {
   IconPaperclip,
   IconSitemap
 } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -38,6 +41,7 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -437,6 +441,33 @@ export default function StockDetail() {
     [id, stockitem, user]
   );
 
+  const stockBadges: ReactNode[] = useMemo(() => {
+    return instanceQuery.isLoading
+      ? []
+      : [
+          <DetailsBadge
+            color="blue"
+            label={t`Serial Number` + `: ${stockitem.serial}`}
+            visible={!!stockitem.serial}
+          />,
+          <DetailsBadge
+            color="blue"
+            label={t`Quantity` + `: ${stockitem.quantity}`}
+            visible={!stockitem.serial}
+          />,
+          <DetailsBadge
+            color="blue"
+            label={t`Batch Code` + `: ${stockitem.batch}`}
+            visible={!!stockitem.batch}
+          />,
+          <StatusRenderer
+            status={stockitem.status}
+            type={ModelType.stockitem}
+            options={{ size: 'lg' }}
+          />
+        ];
+  }, [stockitem, instanceQuery]);
+
   return (
     <Stack>
       <LoadingOverlay visible={instanceQuery.isFetching} />
@@ -449,11 +480,7 @@ export default function StockDetail() {
         title={t`Stock Item`}
         subtitle={stockitem.part_detail?.full_name}
         imageUrl={stockitem.part_detail?.thumbnail}
-        detail={
-          <Alert color="teal" title="Stock Item">
-            <Text>Quantity: {stockitem.quantity ?? 'idk'}</Text>
-          </Alert>
-        }
+        badges={stockBadges}
         breadcrumbs={breadcrumbs}
         breadcrumbAction={() => {
           setTreeOpen(true);
