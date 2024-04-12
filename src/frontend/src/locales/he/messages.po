@@ -8,7 +8,7 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-11 01:50\n"
+"PO-Revision-Date: 2024-04-12 01:57\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -28,6 +28,10 @@ msgstr ""
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
+msgstr ""
+
+#: src/components/buttons/SpotlightButton.tsx:11
+msgid "Open spotlight"
 msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:16
@@ -867,6 +871,15 @@ msgstr ""
 msgid "Server Version"
 msgstr ""
 
+#: src/components/nav/Layout.tsx:54
+#: src/tables/part/PartThumbTable.tsx:190
+msgid "Search..."
+msgstr ""
+
+#: src/components/nav/Layout.tsx:56
+msgid "Nothing found..."
+msgstr ""
+
 #: src/components/nav/MainMenu.tsx:39
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
 msgid "Settings"
@@ -906,42 +919,44 @@ msgstr ""
 #~ msgid "Switch to pseudo language"
 #~ msgstr "Switch to pseudo language"
 
-#: src/components/nav/NavHoverMenu.tsx:61
+#: src/components/nav/NavHoverMenu.tsx:63
+#: src/defaults/actions.tsx:51
 msgid "Open Navigation"
 msgstr ""
 
-#: src/components/nav/NavHoverMenu.tsx:79
+#: src/components/nav/NavHoverMenu.tsx:81
 msgid "View all"
 msgstr ""
 
-#: src/components/nav/NavHoverMenu.tsx:93
-#: src/components/nav/NavHoverMenu.tsx:103
+#: src/components/nav/NavHoverMenu.tsx:95
+#: src/components/nav/NavHoverMenu.tsx:105
 msgid "Get started"
 msgstr ""
 
-#: src/components/nav/NavHoverMenu.tsx:96
+#: src/components/nav/NavHoverMenu.tsx:98
 msgid "Overview over high-level objects, functions and possible usecases."
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:59
+#: src/components/nav/NavigationDrawer.tsx:60
 msgid "Navigation"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:62
+#: src/components/nav/NavigationDrawer.tsx:63
 msgid "Pages"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:67
+#: src/components/nav/NavigationDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:133
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:77
+#: src/components/nav/NavigationDrawer.tsx:78
+#: src/defaults/actions.tsx:27
 msgid "Documentation"
 msgstr ""
 
-#: src/components/nav/NavigationDrawer.tsx:80
+#: src/components/nav/NavigationDrawer.tsx:81
 msgid "About"
 msgstr ""
 
@@ -1905,6 +1920,62 @@ msgstr ""
 msgid "Chinese (Traditional)"
 msgstr ""
 
+#: src/defaults/actions.tsx:15
+#: src/defaults/links.tsx:26
+#: src/defaults/menuItems.tsx:9
+msgid "Home"
+msgstr ""
+
+#: src/defaults/actions.tsx:21
+#: src/defaults/links.tsx:27
+#: src/defaults/menuItems.tsx:28
+#: src/pages/Index/Dashboard.tsx:19
+#: src/pages/Index/Settings/UserSettings.tsx:41
+msgid "Dashboard"
+msgstr ""
+
+#: src/defaults/actions.tsx:22
+msgid "Go to the InvenTree dashboard"
+msgstr ""
+
+#: src/defaults/actions.tsx:28
+msgid "Visit the documentation to learn more about InvenTree"
+msgstr ""
+
+#: src/defaults/actions.tsx:33
+#: src/defaults/links.tsx:92
+#: src/defaults/links.tsx:122
+msgid "About InvenTree"
+msgstr ""
+
+#: src/defaults/actions.tsx:34
+#: src/defaults/links.tsx:123
+msgid "About the InvenTree org"
+msgstr ""
+
+#: src/defaults/actions.tsx:39
+msgid "Server Information"
+msgstr ""
+
+#: src/defaults/actions.tsx:40
+#: src/defaults/links.tsx:117
+msgid "About this Inventree instance"
+msgstr ""
+
+#: src/defaults/actions.tsx:45
+#: src/defaults/links.tsx:105
+msgid "License Information"
+msgstr ""
+
+#: src/defaults/actions.tsx:46
+#: src/defaults/links.tsx:129
+msgid "Licenses for dependencies of the service"
+msgstr ""
+
+#: src/defaults/actions.tsx:52
+msgid "Open the main navigation menu"
+msgstr ""
+
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
 msgstr ""
@@ -1995,18 +2066,6 @@ msgstr ""
 msgid "Demo"
 msgstr ""
 
-#: src/defaults/links.tsx:26
-#: src/defaults/menuItems.tsx:9
-msgid "Home"
-msgstr ""
-
-#: src/defaults/links.tsx:27
-#: src/defaults/menuItems.tsx:28
-#: src/pages/Index/Dashboard.tsx:19
-#: src/pages/Index/Settings/UserSettings.tsx:41
-msgid "Dashboard"
-msgstr ""
-
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
 #: src/pages/company/ManufacturerDetail.tsx:9
@@ -2029,7 +2088,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:35
 #: src/defaults/menuItems.tsx:71
-#: src/pages/Index/Playground.tsx:195
+#: src/pages/Index/Playground.tsx:229
 msgid "Playground"
 msgstr ""
 
@@ -2070,7 +2129,7 @@ msgstr ""
 #~ msgstr "Instance"
 
 #: src/defaults/links.tsx:79
-#: src/defaults/links.tsx:115
+#: src/defaults/links.tsx:116
 msgid "System Information"
 msgstr ""
 
@@ -2078,33 +2137,12 @@ msgstr ""
 #~ msgid "InvenTree"
 #~ msgstr "InvenTree"
 
-#: src/defaults/links.tsx:92
-#: src/defaults/links.tsx:121
-msgid "About InvenTree"
-msgstr ""
-
-#: src/defaults/links.tsx:104
-msgid "License Information"
-msgstr ""
-
-#: src/defaults/links.tsx:116
-msgid "About this Inventree instance"
-msgstr ""
-
 #: src/defaults/links.tsx:117
 #~ msgid "Licenses for packages used by InvenTree"
 #~ msgstr "Licenses for packages used by InvenTree"
 
-#: src/defaults/links.tsx:122
-msgid "About the InvenTree org"
-msgstr ""
-
-#: src/defaults/links.tsx:127
-msgid "Licenses"
-msgstr ""
-
 #: src/defaults/links.tsx:128
-msgid "Licenses for dependencies of the service"
+msgid "Licenses"
 msgstr ""
 
 #: src/defaults/menuItems.tsx:7
@@ -2608,7 +2646,7 @@ msgstr ""
 msgid "Welcome to your Dashboard{0}"
 msgstr ""
 
-#: src/pages/Index/Playground.tsx:200
+#: src/pages/Index/Playground.tsx:234
 msgid "This page is a showcase for the possibilities of Platform UI."
 msgstr ""
 
@@ -4958,10 +4996,6 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:147
 msgid "Any tests results associated with this template will be deleted"
-msgstr ""
-
-#: src/tables/part/PartThumbTable.tsx:190
-msgid "Search..."
 msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:16
