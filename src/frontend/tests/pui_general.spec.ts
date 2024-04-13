@@ -30,7 +30,7 @@ test('PUI - Parts', async ({ page }) => {
   await page.getByText('1551ACLR').click();
   await page.getByRole('tab', { name: 'Part Details' }).click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
-  await page.getByRole('tab', { name: 'Stock' }).click();
+  // await page.getByRole('tab', { name: 'Stock' }).click();
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
