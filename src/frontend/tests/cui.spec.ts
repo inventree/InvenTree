@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { classicUrl } from './defaults';
+import { classicUrl, user } from './defaults';
 
 test('CUI - Index', async ({ page }) => {
   await page.goto(`${classicUrl}/api/`);
@@ -10,14 +10,14 @@ test('CUI - Index', async ({ page }) => {
     page.getByRole('heading', { name: 'InvenTree Demo Server' })
   ).toBeVisible();
 
-  await page.getByLabel('username').fill('allaccess');
-  await page.getByLabel('password').fill('nolimits');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
   await page.click('button', { text: 'Sign In' });
   await page.waitForURL('**/index/');
 
   await page.waitForLoadState('networkidle');
   await expect(page).toHaveTitle('InvenTree Demo Server | Index');
-  await expect(page.getByRole('button', { name: 'allaccess' })).toBeVisible();
+  await expect(page.getByRole('button', { name: user.username })).toBeVisible();
   await expect(
     page.getByRole('link', { name: 'Parts', exact: true })
   ).toBeVisible();
