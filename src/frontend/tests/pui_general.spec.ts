@@ -83,9 +83,17 @@ test('PUI - Sales', async ({ page }) => {
   await page.getByRole('cell', { name: 'Dorathy Gross' }).click();
   await page
     .getByRole('row', { name: 'Dorathy Gross 	dorathy.gross@customer.com' })
-    .getByRole('button')
-    .click();
-  await page.waitForTimeout(200);
+    .waitFor();
+});
+
+test('PUI - Scanning', async ({ page }) => {
+  await page.goto('./platform/');
+  await expect(page).toHaveTitle('InvenTree');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform');
 
   await page.getByLabel('Homenav').click();
   await page.getByRole('button', { name: 'System Information' }).click();
