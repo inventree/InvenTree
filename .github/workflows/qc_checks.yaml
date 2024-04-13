@@ -526,6 +526,8 @@ jobs:
           update: true
       - name: Set up test data
         run: invoke setup-test -i
+      - name: Rebuild thumbnails
+        run: invoke rebuild-thumbnails
       - name: Install dependencies
         run: inv frontend-compile
       - name: Install Playwright Browsers
