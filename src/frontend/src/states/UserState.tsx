@@ -57,7 +57,6 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         set({ user: user });
       })
       .catch((error) => {
-        // If we cannot fetch the user state, that likely means our session is
         console.error('Error fetching user data');
       });
 
