@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
 
-test.skip('PUI - Pages 1', async ({ page }) => {
+test('PUI - Pages 1', async ({ page }) => {
   await page.goto('./platform/');
   await expect(page).toHaveTitle('InvenTree');
   await page.waitForURL('**/platform/');
