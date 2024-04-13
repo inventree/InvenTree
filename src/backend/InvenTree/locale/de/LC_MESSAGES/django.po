@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-11 00:12+0000\n"
+"POT-Creation-Date: 2024-04-13 13:21+0000\n"
 "PO-Revision-Date: 2024-03-22 14:07\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -7720,8 +7720,10 @@ msgstr "Verkaufspreisstaffel hinzufügen"
 msgid "Update Pricing"
 msgstr "Preise aktualisieren"
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
-#: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
+#: part/templates/part/stock_count.html:7
+#: templates/js/translated/model_renderers.js:221
+#: templates/js/translated/part.js:704 templates/js/translated/part.js:2140
+#: templates/js/translated/part.js:2142
 msgid "No Stock"
 msgstr "Kein Bestand"
 
@@ -12702,6 +12704,7 @@ msgid "No matching purchase orders"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
+#: templates/js/translated/return_order.js:491
 msgid "Select Line Items"
 msgstr "Positionen auswählen"
 
