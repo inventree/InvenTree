@@ -21,6 +21,17 @@ test('PUI - Stock', async ({ page }) => {
   await page.getByRole('tab', { name: 'Stock Locations' }).click();
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('tab', { name: 'Location Details' }).click();
+});
+
+test('PUI - Build', async ({ page }) => {
+  await page.goto('./platform/');
+  await expect(page).toHaveTitle('InvenTree');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform');
+
   await page.getByRole('tab', { name: 'Build' }).click();
   await page.getByText('Widget Assembly Variant').click();
   await page.getByRole('tab', { name: 'Allocate Stock' }).click();
@@ -30,6 +41,17 @@ test('PUI - Stock', async ({ page }) => {
   await page.getByRole('tab', { name: 'Child Build Orders' }).click();
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByRole('tab', { name: 'Notes' }).click();
+});
+
+test('PUI - Purchasing', async ({ page }) => {
+  await page.goto('./platform/');
+  await expect(page).toHaveTitle('InvenTree');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform');
+
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.getByRole('cell', { name: 'PO0012' }).click();
   await page.waitForTimeout(200);
