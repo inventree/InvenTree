@@ -16,22 +16,12 @@ jobs:
   backport:
     name: Backport PR
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    if: |
-      github.event.pull_request.merged == true
-      && contains(github.event.pull_request.labels.*.name, 'backport')
-      && (
-        (github.event.action == 'labeled' && github.event.label.name == 'backport')
-        || (github.event.action == 'closed')
-      )
     steps:
       - name: Backport Action
-        uses: sqren/backport-github-action@f54e19901f2a57f8b82360f2490d47ee82ec82c6 # pin@v9.2.2
+        uses: sqren/backport-github-action@848927304bbe2d5d1baa6e14383c12d85caf381e # pin@v9.3.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           auto_backport_label_prefix: backport-to-
-          add_original_reviewers: true
 
       - name: Info log
         if: ${{ success() }}
