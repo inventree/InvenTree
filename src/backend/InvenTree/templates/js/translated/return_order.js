@@ -488,7 +488,7 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
 
     if (line_items.length == 0) {
         showAlertDialog(
-            '{% trans "Select Line Items"% }',
+            '{% trans "Select Line Items" %}',
             '{% trans "At least one line item must be selected" %}'
         );
         return;

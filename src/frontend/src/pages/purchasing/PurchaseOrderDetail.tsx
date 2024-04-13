@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Group, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -8,7 +8,7 @@ import {
   IconPackages,
   IconPaperclip
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -25,6 +25,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -297,6 +298,18 @@ export default function PurchaseOrderDetail() {
     ];
   }, [id, order, user]);
 
+  const orderBadges: ReactNode[] = useMemo(() => {
+    return instanceQuery.isLoading
+      ? []
+      : [
+          <StatusRenderer
+            status={order.status}
+            type={ModelType.purchaseorder}
+            options={{ size: 'lg' }}
+          />
+        ];
+  }, [order, instanceQuery]);
+
   return (
     <>
       {editPurchaseOrder.modal}
@@ -308,6 +321,7 @@ export default function PurchaseOrderDetail() {
           imageUrl={order.supplier_detail?.image}
           breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
           actions={poActions}
+          badges={orderBadges}
         />
         <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
       </Stack>

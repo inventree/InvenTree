@@ -91,6 +91,7 @@ export type InvenTreeTableProps<T = any> = {
   onRowClick?: (record: T, index: number, event: any) => void;
   onCellClick?: DataTableCellClickHandler<T>;
   modelType?: ModelType;
+  modelField?: string;
 };
 
 /**
@@ -515,18 +516,22 @@ export function InvenTreeTable<T = any>({
       if (props.onRowClick) {
         // If a custom row click handler is provided, use that
         props.onRowClick(record, index, event);
-      } else if (tableProps.modelType && record?.pk) {
-        // If a model type is provided, navigate to the detail view for that model
-        let url = getDetailUrl(tableProps.modelType, record.pk);
+      } else if (tableProps.modelType) {
+        const pk = record?.[tableProps.modelField ?? 'pk'];
 
-        // Should it be opened in a new tab?
-        if (event?.ctrlKey || event?.shiftKey) {
-          // Open in a new tab
-          url = `/${base_url}${url}`;
-          window.open(url, '_blank');
-        } else {
-          // Navigate internally
-          navigate(url);
+        if (pk) {
+          // If a model type is provided, navigate to the detail view for that model
+          let url = getDetailUrl(tableProps.modelType, pk);
+
+          // Should it be opened in a new tab?
+          if (event?.ctrlKey || event?.shiftKey) {
+            // Open in a new tab
+            url = `/${base_url}${url}`;
+            window.open(url, '_blank');
+          } else {
+            // Navigate internally
+            navigate(url);
+          }
         }
       }
     },
