@@ -1,11 +1,12 @@
 import { expect, test } from './baseFixtures.js';
+import { user } from './defaults.js';
 
-test('PUI - Pages 1', async ({ page }) => {
+test('PUI - Parts', async ({ page }) => {
   await page.goto('./platform/');
   await expect(page).toHaveTitle('InvenTree');
   await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill('admin');
-  await page.getByLabel('password').fill('inventree');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
   await page.getByRole('button', { name: 'Log in' }).click();
   await page.waitForURL('**/platform');
   await page.goto('./platform/home');
@@ -30,6 +31,17 @@ test('PUI - Pages 1', async ({ page }) => {
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
+});
+
+test('PUI - Stock', async ({ page }) => {
+  await page.goto('./platform/');
+  await expect(page).toHaveTitle('InvenTree');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform');
+  await page.goto('./platform/home');
   await page.goto('./platform/stock');
   await page.waitForURL('**/platform/stock/location/index/details');
   await page.waitForTimeout(200);
@@ -89,12 +101,12 @@ test('PUI - Pages 1', async ({ page }) => {
   await page.getByRole('tab', { name: 'Details' }).click();
 });
 
-test('PUI - Pages 2', async ({ page }) => {
+test('PUI - Sales', async ({ page }) => {
   await page.goto('./platform/');
   await expect(page).toHaveTitle('InvenTree');
   await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill('admin');
-  await page.getByLabel('password').fill('inventree');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
   await page.getByRole('button', { name: 'Log in' }).click();
   await page.waitForURL('**/platform');
 
@@ -139,7 +151,7 @@ test('PUI - Pages 2', async ({ page }) => {
   await page.getByRole('option', { name: 'Manual input' }).click();
 });
 
-test('PUI - Pages 3', async ({ page }) => {
+test('PUI - Admin', async ({ page }) => {
   await page.goto('./platform/');
   await expect(page).toHaveTitle('InvenTree');
   await page.waitForURL('**/platform/*');
