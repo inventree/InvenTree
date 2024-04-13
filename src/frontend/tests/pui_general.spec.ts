@@ -36,20 +36,39 @@ test('PUI - Parts', async ({ page }) => {
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
+});
 
-  // Manufacturer Parts
+test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
+  await page.goto('./platform/');
+  await expect(page).toHaveTitle('InvenTree');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform');
+
+  await page.goto('./platform/part/84/manufacturers');
   await page.getByRole('tab', { name: 'Manufacturers' }).click();
   await page.getByText('Hammond Manufacturing').click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByText('1551ACLR - 1551ACLR').waitFor();
+});
 
-  // Supplier Parts
+test('PUI - Parts - Supplier Parts', async ({ page }) => {
+  await page.goto('./platform/');
+  await expect(page).toHaveTitle('InvenTree');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform');
+
   await page.goto('./platform/part/15/suppliers');
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByRole('cell', { name: 'DIG-84670-SJI' }).click();
-  await page.getByRole('tab', { name: 'Received Stock' }).click();
+  await page.getByRole('tab', { name: 'Received Stock' }).click(); //
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
   await page.getByText('DIG-84670-SJI - R_550R_0805_1%').waitFor();
