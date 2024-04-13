@@ -1,4 +1,4 @@
-import { classicUrl } from './baseFixtures';
+import { classicUrl } from './baseFixtures.js';
 import { expect, test } from './baseFixtures.js';
 
 test('PUI - Basic test via django', async ({ page }) => {
