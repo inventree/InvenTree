@@ -61,8 +61,8 @@ test('PUI - Stock', async ({ page }) => {
     .getByRole('button')
     .click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await page.getByLabel('Address title *').click();
+  await page.getByLabel('Address title *').waitFor();
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
-  await page.getByRole('tab', { name: 'Details' }).click();
+  await page.getByRole('tab', { name: 'Details' }).waitFor();
 });
