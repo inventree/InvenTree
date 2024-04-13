@@ -48,6 +48,7 @@ jobs:
               - 'src/backend/requirements.txt'
               - 'src/backend/requirements-dev.txt'
             migrations:
+              - '**/test_migrations.py'
               - '**/migrations/**'
               - '.github/workflows**'
               - 'src/backend/requirements.txt'
@@ -299,7 +300,7 @@ jobs:
           git-branch: ${{ github.ref }}
           parallel: true
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4.3.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -439,7 +440,7 @@ jobs:
           git-commit: ${{ github.sha }}
           git-branch: ${{ github.ref }}
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4.3.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -551,7 +552,7 @@ jobs:
           git-branch: ${{ github.ref }}
           parallel: true
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4.0.1
+        uses: codecov/codecov-action@v4.3.0
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

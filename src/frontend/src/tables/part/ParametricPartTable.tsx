@@ -234,6 +234,10 @@ export default function ParametricPartTable({
       {
         accessor: 'IPN',
         sortable: true
+      },
+      {
+        accessor: 'total_in_stock',
+        sortable: true
       }
     ];
 

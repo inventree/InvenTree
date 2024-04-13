@@ -27,6 +27,7 @@
         "@mantine/hooks": "<7",
         "@mantine/modals": "<7",
         "@mantine/notifications": "<7",
+        "@mantine/spotlight": "<7",
         "@naisutech/react-tree": "^3.1.0",
         "@sentry/react": "^7.109.0",
         "@tabler/icons-react": "^3.1.0",
