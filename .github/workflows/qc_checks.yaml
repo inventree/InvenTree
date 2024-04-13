@@ -124,7 +124,7 @@ jobs:
         run: |
           pip install uv==${{ env.uv_version }}
           uv pip install pyyaml==6.0.1
-          uv pip install -r docs/requirements.txt --system
+          uv pip install --system -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
