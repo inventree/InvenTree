@@ -9,11 +9,9 @@ test('PUI - Stock', async ({ page }) => {
   await page.getByLabel('password').fill(user.password);
   await page.getByRole('button', { name: 'Log in' }).click();
   await page.waitForURL('**/platform');
-  await page.goto('./platform/home');
+
   await page.goto('./platform/stock');
   await page.waitForURL('**/platform/stock/location/index/details');
-  await page.waitForTimeout(200);
-
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('cell', { name: '1551ABK' }).click();
   await page.getByRole('tab', { name: 'Stock', exact: true }).click();
