@@ -1,5 +1,5 @@
-import { classicUrl } from './baseFixtures.js';
 import { expect, test } from './baseFixtures.js';
+import { classicUrl } from './defaults.js';
 
 test('PUI - Basic test via django', async ({ page }) => {
   await page.goto(`${classicUrl}/platform/`);

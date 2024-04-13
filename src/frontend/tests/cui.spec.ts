@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-import { classicUrl } from './baseFixtures';
+import { classicUrl } from './defaults';
 
 test('CUI - Index', async ({ page }) => {
   await page.goto(`${classicUrl}/api/`);
