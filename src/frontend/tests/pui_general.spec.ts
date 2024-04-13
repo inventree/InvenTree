@@ -27,6 +27,8 @@ test('PUI - Parts', async ({ page }) => {
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByRole('tab', { name: 'Notes' }).click();
   await page.getByRole('tab', { name: 'Related Parts' }).click();
+
+  // Related Parts
   await page.getByText('1551ACLR').click();
   await page.getByRole('tab', { name: 'Part Details' }).click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
@@ -34,6 +36,23 @@ test('PUI - Parts', async ({ page }) => {
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
+
+  // Manufacturer Parts
+  await page.getByRole('tab', { name: 'Manufacturers' }).click();
+  await page.getByText('Hammond Manufacturing').click();
+  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByText('1551ACLR - 1551ACLR').waitFor();
+
+  // Supplier Parts
+  await page.goto('./platform/part/15/suppliers');
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await page.getByRole('cell', { name: 'DIG-84670-SJI' }).click();
+  await page.getByRole('tab', { name: 'Received Stock' }).click();
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await page.getByRole('tab', { name: 'Pricing' }).click();
+  await page.getByText('DIG-84670-SJI - R_550R_0805_1%').waitFor();
 });
 
 test('PUI - Sales', async ({ page }) => {
