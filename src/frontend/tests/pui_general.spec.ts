@@ -152,3 +152,34 @@ test('PUI - Admin', async ({ page }) => {
   await page.getByRole('tab', { name: 'Dashboard' }).click();
   await page.waitForURL('**/platform/dashboard');
 });
+
+test('PUI - Company', async ({ page }) => {
+  await page.goto('./platform/');
+  await expect(page).toHaveTitle('InvenTree');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform');
+
+  await page.goto('./platform/company/1/details');
+  await page
+    .locator('div')
+    .filter({ hasText: /^DigiKey Electronics$/ })
+    .waitFor();
+  await page.getByRole('cell', { name: 'https://www.digikey.com/' }).waitFor();
+  await page.getByRole('tab', { name: 'Supplied Parts' }).click();
+  await page
+    .getByRole('cell', { name: 'RR05P100KDTR-ND', exact: true })
+    .waitFor();
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await page.getByRole('cell', { name: 'Molex connectors' }).first().waitFor();
+  await page.getByRole('tab', { name: 'Stock Items' }).click();
+  await page.getByRole('cell', { name: 'Blue plastic enclosure' }).waitFor();
+  await page.getByRole('tab', { name: 'Contacts' }).click();
+  await page.getByRole('cell', { name: 'jimmy.mcleod@digikey.com' }).waitFor();
+  await page.getByRole('tab', { name: 'Addresses' }).click();
+  await page.getByRole('cell', { name: 'Carla Tunnel' }).waitFor();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByRole('tab', { name: 'Notes' }).click();
+});
