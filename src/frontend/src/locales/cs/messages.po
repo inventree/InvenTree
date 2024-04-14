@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-13 01:52\n"
+"PO-Revision-Date: 2024-04-14 02:01\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -32,7 +32,7 @@ msgstr "Naskenovat QR kód"
 
 #: src/components/buttons/SpotlightButton.tsx:11
 msgid "Open spotlight"
-msgstr ""
+msgstr "Otevřít spotlight"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
@@ -219,7 +219,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:256
 msgid "Reload preview"
-msgstr ""
+msgstr "Aktualizovat náhled"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:257
 msgid "Use the currently stored template from the server"
@@ -227,11 +227,11 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:264
 msgid "Save & Reload preview"
-msgstr ""
+msgstr "Uložit a znovu načíst náhled"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:265
 msgid "Save the current template and reload the preview"
-msgstr ""
+msgstr "Uložit aktuální šablonu a znovu načíst náhled"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:323
 #: src/tables/part/PartThumbTable.tsx:199
@@ -240,7 +240,7 @@ msgstr "Vybrat"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:323
 msgid "to preview"
-msgstr ""
+msgstr "náhled"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:367
 msgid "Error rendering template"
@@ -249,21 +249,21 @@ msgstr ""
 #: src/components/forms/ApiForm.tsx:130
 #: src/functions/forms.tsx:259
 msgid "Form Error"
-msgstr ""
+msgstr "Chyba formuláře"
 
 #: src/components/forms/ApiForm.tsx:336
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr ""
+msgstr "Dokončeno"
 
 #: src/components/forms/ApiForm.tsx:427
 msgid "Form Errors Exist"
-msgstr ""
+msgstr "Došlo k chybám formuláře"
 
 #: src/components/forms/ApiForm.tsx:527
 #: src/tables/plugin/PluginListTable.tsx:441
 msgid "Update"
-msgstr ""
+msgstr "Aktualizovat"
 
 #: src/components/forms/ApiForm.tsx:547
 #: src/components/items/ActionDropdown.tsx:199
@@ -278,7 +278,7 @@ msgstr ""
 #: src/tables/settings/TemplateTable.tsx:154
 #: src/tables/settings/TemplateTable.tsx:236
 msgid "Delete"
-msgstr ""
+msgstr "Odstranit"
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -288,11 +288,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Login successful"
-msgstr ""
+msgstr "Přihlášení úspěšné"
 
 #: src/components/forms/AuthenticationForm.tsx:52
 msgid "Welcome back!"
-msgstr ""
+msgstr "Vítejte zpět!"
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
@@ -300,7 +300,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:59
 msgid "Login failed"
-msgstr ""
+msgstr "Přihlášení se nezdařilo"
 
 #: src/components/forms/AuthenticationForm.tsx:60
 #: src/components/forms/AuthenticationForm.tsx:80
@@ -335,28 +335,28 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:110
 #: src/components/forms/AuthenticationForm.tsx:234
 msgid "Username"
-msgstr ""
+msgstr "Uživatelské jméno"
 
 #: src/components/forms/AuthenticationForm.tsx:111
 #: src/components/forms/AuthenticationForm.tsx:235
 msgid "Your username"
-msgstr ""
+msgstr "Vaše uživatelské jméno"
 
 #: src/components/forms/AuthenticationForm.tsx:116
 #: src/components/forms/AuthenticationForm.tsx:247
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr ""
+msgstr "Heslo"
 
 #: src/components/forms/AuthenticationForm.tsx:117
 #: src/components/forms/AuthenticationForm.tsx:248
 msgid "Your password"
-msgstr ""
+msgstr "Vaše heslo"
 
 #: src/components/forms/AuthenticationForm.tsx:129
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "Obnovit heslo"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -371,13 +371,13 @@ msgstr ""
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
-msgstr ""
+msgstr "E-mail"
 
 #: src/components/forms/AuthenticationForm.tsx:139
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr ""
+msgstr "Zašleme vám přihlašovací odkaz - pokud jste registrováni"
 
 #: src/components/forms/AuthenticationForm.tsx:155
 msgid "Send me an email"
@@ -389,19 +389,19 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:166
 msgid "Log In"
-msgstr ""
+msgstr "Přihlásit se"
 
 #: src/components/forms/AuthenticationForm.tsx:168
 msgid "Send Email"
-msgstr ""
+msgstr "Odeslat e-mail"
 
 #: src/components/forms/AuthenticationForm.tsx:197
 msgid "Registration successful"
-msgstr ""
+msgstr "Registrace proběhla úspěšně"
 
 #: src/components/forms/AuthenticationForm.tsx:198
 msgid "Please confirm your email address to complete the registration"
-msgstr ""
+msgstr "Potvrďte, prosím, svou e-mailovou adresu pro dokončení registrace"
 
 #: src/components/forms/AuthenticationForm.tsx:241
 msgid "This will be used for a confirmation"
@@ -409,33 +409,33 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:253
 msgid "Password repeat"
-msgstr ""
+msgstr "Opakujte heslo"
 
 #: src/components/forms/AuthenticationForm.tsx:254
 msgid "Repeat password"
-msgstr ""
+msgstr "Zadejte heslo znova"
 
 #: src/components/forms/AuthenticationForm.tsx:266
 #: src/components/forms/AuthenticationForm.tsx:311
 msgid "Register"
-msgstr ""
+msgstr "Registrovat"
 
 #: src/components/forms/AuthenticationForm.tsx:272
 msgid "Or use SSO"
-msgstr ""
+msgstr "Nebo použijte SSO"
 
 #: src/components/forms/AuthenticationForm.tsx:303
 msgid "Don't have an account?"
-msgstr ""
+msgstr "Nemáte účet?"
 
 #: src/components/forms/AuthenticationForm.tsx:322
 msgid "Go back to login"
-msgstr ""
+msgstr "Zpět na přihlášení"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:66
 msgid "Host"
-msgstr ""
+msgstr "Server"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:69
@@ -452,7 +452,7 @@ msgstr ""
 #: src/tables/settings/GroupTable.tsx:103
 #: src/tables/settings/PendingTasksTable.tsx:26
 msgid "Name"
-msgstr ""
+msgstr "Jméno"
 
 #: src/components/forms/HostOptionsForm.tsx:74
 msgid "No one here..."
@@ -460,16 +460,16 @@ msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:85
 msgid "Add Host"
-msgstr ""
+msgstr "Přidat server"
 
 #: src/components/forms/HostOptionsForm.tsx:89
 #: src/components/widgets/MarkdownEditor.tsx:73
 msgid "Save"
-msgstr ""
+msgstr "Uložit"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr ""
+msgstr "Vyberte cílovou instanci"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
@@ -477,15 +477,15 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "Verze: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr ""
+msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr ""
+msgstr "Název: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
@@ -503,24 +503,24 @@ msgstr ""
 #: src/tables/plugin/PluginListTable.tsx:398
 #: src/tables/stock/StockItemTestResultTable.tsx:321
 msgid "Error"
-msgstr ""
+msgstr "Chyba"
 
 #: src/components/forms/fields/RelatedModelField.tsx:296
 #: src/pages/Index/Settings/UserSettings.tsx:64
 #: src/tables/Search.tsx:23
 msgid "Search"
-msgstr ""
+msgstr "Hledat"
 
 #: src/components/forms/fields/RelatedModelField.tsx:297
 #: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:134
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
-msgstr ""
+msgstr "Načítání"
 
 #: src/components/forms/fields/RelatedModelField.tsx:299
 msgid "No results found"
-msgstr ""
+msgstr "Nebyly nalezeny žádné výsledky"
 
 #: src/components/forms/fields/TableField.tsx:49
 msgid "modelRenderer entry required for tables"
@@ -528,7 +528,7 @@ msgstr ""
 
 #: src/components/forms/fields/TableField.tsx:72
 msgid "No entries available"
-msgstr ""
+msgstr "Nejsou žádné záznamy"
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -537,37 +537,37 @@ msgstr ""
 #: src/components/images/Thumbnail.tsx:14
 #: src/components/images/Thumbnail.tsx:51
 msgid "Thumbnail"
-msgstr ""
+msgstr "Náhled"
 
 #: src/components/items/ActionDropdown.tsx:110
 #: src/pages/build/BuildDetail.tsx:298
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Akce čárového kódu"
 
 #: src/components/items/ActionDropdown.tsx:127
 msgid "View"
-msgstr ""
+msgstr "Zobrazit"
 
 #: src/components/items/ActionDropdown.tsx:128
 msgid "View barcode"
-msgstr ""
+msgstr "Zobrazit čárový kód"
 
 #: src/components/items/ActionDropdown.tsx:144
 msgid "Link Barcode"
-msgstr ""
+msgstr "Přiřadit čárový kód"
 
 #: src/components/items/ActionDropdown.tsx:145
 msgid "Link custom barcode"
-msgstr ""
+msgstr "Přiřadit vlatní čárový kód"
 
 #: src/components/items/ActionDropdown.tsx:161
 #: src/forms/PurchaseOrderForms.tsx:356
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Odstranit čárový kód"
 
 #: src/components/items/ActionDropdown.tsx:162
 msgid "Unlink custom barcode"
-msgstr ""
+msgstr "Odstranit vlastní čárový kód"
 
 #: src/components/items/ActionDropdown.tsx:180
 #: src/tables/RowActions.tsx:52
@@ -575,51 +575,51 @@ msgstr ""
 #: src/tables/settings/TemplateTable.tsx:150
 #: src/tables/settings/TemplateTable.tsx:287
 msgid "Edit"
-msgstr ""
+msgstr "Upravit"
 
 #: src/components/items/ActionDropdown.tsx:200
 msgid "Delete item"
-msgstr ""
+msgstr "Smazat položku"
 
 #: src/components/items/ActionDropdown.tsx:218
 #: src/pages/stock/StockDetail.tsx:432
 #: src/tables/RowActions.tsx:32
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplikovat"
 
 #: src/components/items/ActionDropdown.tsx:219
 msgid "Duplicate item"
-msgstr ""
+msgstr "Duplikovat produkt"
 
 #: src/components/items/DocTooltip.tsx:94
 msgid "Read More"
-msgstr ""
+msgstr "Zjistit více"
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/tables/InvenTreeTable.tsx:420
 msgid "Unknown error"
-msgstr ""
+msgstr "Neznámá chyba"
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr ""
+msgstr "Vyskytla se chyba:"
 
 #: src/components/items/GettingStartedCarousel.tsx:64
 msgid "Read more"
-msgstr ""
+msgstr "Zobrazit více"
 
 #: src/components/items/InfoItem.tsx:27
 msgid "None"
-msgstr ""
+msgstr "Žádné"
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
-msgstr ""
+msgstr "Logo InvenTree"
 
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:44
 msgid "This information is only available for staff users"
-msgstr ""
+msgstr "Tyto informace jsou dostupné pouze pro uživatele"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -627,7 +627,7 @@ msgstr ""
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr ""
+msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
@@ -647,52 +647,52 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:111
 msgid "Up to Date"
-msgstr ""
+msgstr "Aktuální"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:115
 msgid "Update Available"
-msgstr ""
+msgstr "Dostupné aktualizace"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:125
 msgid "InvenTree Version"
-msgstr ""
+msgstr "Verze InvenTree"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:131
 msgid "Commit Hash"
-msgstr ""
+msgstr "Hash revize"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:136
 msgid "Commit Date"
-msgstr ""
+msgstr "Datum revize"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:141
 msgid "Commit Branch"
-msgstr ""
+msgstr "Větev revize"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:146
 #: src/components/modals/ServerInfoModal.tsx:133
 msgid "API Version"
-msgstr ""
+msgstr "Verze rozhraní API"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Python Version"
-msgstr ""
+msgstr "Python verze"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:152
 msgid "Django Version"
-msgstr ""
+msgstr "Django verze"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:162
 msgid "Links"
-msgstr ""
+msgstr "Odkazy"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "Dokumentace InvenTree"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "Zobrazit kód na GitHub"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:170
 msgid "Credits"
@@ -874,11 +874,11 @@ msgstr "Verze serveru"
 #: src/components/nav/Layout.tsx:54
 #: src/tables/part/PartThumbTable.tsx:190
 msgid "Search..."
-msgstr ""
+msgstr "Hledat..."
 
 #: src/components/nav/Layout.tsx:56
 msgid "Nothing found..."
-msgstr ""
+msgstr "Nic nenalezeno..."
 
 #: src/components/nav/MainMenu.tsx:39
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
@@ -943,22 +943,22 @@ msgstr "Navigace"
 
 #: src/components/nav/NavigationDrawer.tsx:63
 msgid "Pages"
-msgstr ""
+msgstr "Stránky"
 
 #: src/components/nav/NavigationDrawer.tsx:68
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:133
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
-msgstr ""
+msgstr "Pluginy"
 
 #: src/components/nav/NavigationDrawer.tsx:78
 #: src/defaults/actions.tsx:27
 msgid "Documentation"
-msgstr ""
+msgstr "Dokumentace"
 
 #: src/components/nav/NavigationDrawer.tsx:81
 msgid "About"
-msgstr ""
+msgstr "O aplikaci"
 
 #: src/components/nav/NotificationDrawer.tsx:70
 #: src/pages/Index/Settings/SystemSettings.tsx:101
@@ -966,22 +966,22 @@ msgstr ""
 #: src/pages/Notifications.tsx:65
 #: src/pages/Notifications.tsx:152
 msgid "Notifications"
-msgstr ""
+msgstr "Notifikace"
 
 #: src/components/nav/NotificationDrawer.tsx:87
 msgid "You have no unread notifications."
-msgstr ""
+msgstr "Nemáš žádné nové notifikace."
 
 #: src/components/nav/NotificationDrawer.tsx:102
 #: src/components/nav/NotificationDrawer.tsx:108
 #: src/tables/notifications/NotificationsTable.tsx:36
 msgid "Notification"
-msgstr ""
+msgstr "Notifikace"
 
 #: src/components/nav/NotificationDrawer.tsx:131
 #: src/pages/Notifications.tsx:73
 msgid "Mark as read"
-msgstr ""
+msgstr "Označit jako přečtené"
 
 #: src/components/nav/PartCategoryTree.tsx:153
 #: src/components/render/ModelType.tsx:60
@@ -992,15 +992,15 @@ msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:76
 msgid "results"
-msgstr ""
+msgstr "výsledky"
 
 #: src/components/nav/SearchDrawer.tsx:336
 msgid "Enter search text"
-msgstr ""
+msgstr "Zadejte hledaný text"
 
 #: src/components/nav/SearchDrawer.tsx:363
 msgid "Search Options"
-msgstr ""
+msgstr "Možnosti hledání"
 
 #: src/components/nav/SearchDrawer.tsx:366
 msgid "Regex search"
@@ -1047,7 +1047,7 @@ msgstr ""
 #: src/tables/part/RelatedPartTable.tsx:45
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:70
 msgid "Part"
-msgstr ""
+msgstr "Díl"
 
 #: src/components/render/ModelType.tsx:22
 #: src/defaults/links.tsx:28
@@ -1058,11 +1058,11 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:213
 #: src/pages/part/PartDetail.tsx:629
 msgid "Parts"
-msgstr ""
+msgstr "Díly"
 
 #: src/components/render/ModelType.tsx:29
 msgid "Part Parameter Template"
-msgstr ""
+msgstr "Šablona parametru dílu"
 
 #: src/components/render/ModelType.tsx:30
 msgid "Part Parameter Templates"
@@ -1082,7 +1082,7 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:161
 #: src/tables/purchasing/SupplierPartTable.tsx:63
 msgid "Supplier Part"
-msgstr ""
+msgstr "Dodavatel dílu"
 
 #: src/components/render/ModelType.tsx:44
 msgid "Supplier Parts"
@@ -1106,7 +1106,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:67
 #: src/pages/stock/StockDetail.tsx:480
 msgid "Stock Item"
-msgstr ""
+msgstr "Skladová položka"
 
 #: src/components/render/ModelType.tsx:68
 #: src/pages/company/CompanyDetail.tsx:196
@@ -1114,20 +1114,20 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:156
 #: src/pages/stock/LocationDetail.tsx:309
 msgid "Stock Items"
-msgstr ""
+msgstr "Skladové položky"
 
 #: src/components/render/ModelType.tsx:75
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:154
 msgid "Stock Location"
-msgstr ""
+msgstr "Umístění skladu"
 
 #: src/components/render/ModelType.tsx:83
 msgid "Stock History"
-msgstr ""
+msgstr "Historie skladu"
 
 #: src/components/render/ModelType.tsx:84
 msgid "Stock Histories"
-msgstr ""
+msgstr "Historie skladů"
 
 #: src/components/render/ModelType.tsx:88
 #: src/defaults/links.tsx:30
@@ -1152,11 +1152,11 @@ msgstr ""
 #: src/components/render/ModelType.tsx:104
 #: src/pages/company/CompanyDetail.tsx:302
 msgid "Company"
-msgstr ""
+msgstr "Firma"
 
 #: src/components/render/ModelType.tsx:105
 msgid "Companies"
-msgstr ""
+msgstr "Firmy"
 
 #: src/components/render/ModelType.tsx:112
 #: src/tables/TableHoverCard.tsx:58
@@ -1816,103 +1816,103 @@ msgstr "Řečtina"
 
 #: src/contexts/LanguageContext.tsx:25
 msgid "English"
-msgstr ""
+msgstr "Angličtina"
 
 #: src/contexts/LanguageContext.tsx:26
 msgid "Spanish"
-msgstr ""
+msgstr "Španělština"
 
 #: src/contexts/LanguageContext.tsx:27
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Španělština (Mexiko)"
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Perština"
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Finnish"
-msgstr ""
+msgstr "Finština"
 
 #: src/contexts/LanguageContext.tsx:30
 msgid "French"
-msgstr ""
+msgstr "Francouzština"
 
 #: src/contexts/LanguageContext.tsx:31
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebrejština"
 
 #: src/contexts/LanguageContext.tsx:32
 msgid "Hindi"
-msgstr ""
+msgstr "Hindština"
 
 #: src/contexts/LanguageContext.tsx:33
 msgid "Hungarian"
-msgstr ""
+msgstr "Maďarština"
 
 #: src/contexts/LanguageContext.tsx:34
 msgid "Italian"
-msgstr ""
+msgstr "Italština"
 
 #: src/contexts/LanguageContext.tsx:35
 msgid "Japanese"
-msgstr ""
+msgstr "Japonština"
 
 #: src/contexts/LanguageContext.tsx:36
 msgid "Korean"
-msgstr ""
+msgstr "Korejština"
 
 #: src/contexts/LanguageContext.tsx:37
 msgid "Latvian"
-msgstr ""
+msgstr "Lotyština"
 
 #: src/contexts/LanguageContext.tsx:38
 msgid "Dutch"
-msgstr ""
+msgstr "Holandština"
 
 #: src/contexts/LanguageContext.tsx:39
 msgid "Norwegian"
-msgstr ""
+msgstr "Norština"
 
 #: src/contexts/LanguageContext.tsx:40
 msgid "Polish"
-msgstr ""
+msgstr "Polština"
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugalština"
 
 #: src/contexts/LanguageContext.tsx:42
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugalština (Brazilská)"
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Russian"
-msgstr ""
+msgstr "Ruština"
 
 #: src/contexts/LanguageContext.tsx:44
 msgid "Slovak"
-msgstr ""
+msgstr "Slovenština"
 
 #: src/contexts/LanguageContext.tsx:45
 msgid "Slovenian"
-msgstr ""
+msgstr "Slovinština"
 
 #: src/contexts/LanguageContext.tsx:46
 msgid "Swedish"
-msgstr ""
+msgstr "Švédština"
 
 #: src/contexts/LanguageContext.tsx:47
 msgid "Thai"
-msgstr ""
+msgstr "Thajština"
 
 #: src/contexts/LanguageContext.tsx:48
 msgid "Turkish"
-msgstr ""
+msgstr "Turečtina"
 
 #: src/contexts/LanguageContext.tsx:49
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamština"
 
 #: src/contexts/LanguageContext.tsx:50
 msgid "Chinese (Simplified)"
@@ -2314,7 +2314,7 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:333
 msgid "Set Location"
-msgstr ""
+msgstr "Nastavit umístění"
 
 #: src/forms/PurchaseOrderForms.tsx:340
 msgid "Assign Batch Code{0}"
@@ -2341,7 +2341,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:58
 #: src/pages/stock/StockDetail.tsx:169
 msgid "Location"
-msgstr ""
+msgstr "Lokace"
 
 #: src/forms/PurchaseOrderForms.tsx:415
 msgid "Store at default location"
@@ -2409,11 +2409,11 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:645
 #: src/tables/stock/StockItemTable.tsx:283
 msgid "In Stock"
-msgstr ""
+msgstr "Na skladě"
 
 #: src/forms/StockForms.tsx:416
 msgid "Move"
-msgstr ""
+msgstr "Přesunout"
 
 #: src/forms/StockForms.tsx:416
 #: src/forms/StockForms.tsx:450
@@ -2425,20 +2425,20 @@ msgstr ""
 #: src/forms/StockForms.tsx:651
 #: src/tables/RowActions.tsx:148
 msgid "Actions"
-msgstr ""
+msgstr "Akce"
 
 #: src/forms/StockForms.tsx:479
 #: src/pages/stock/StockDetail.tsx:399
 #: src/tables/settings/TemplateTable.tsx:266
 #: src/tables/stock/StockItemTestResultTable.tsx:350
 msgid "Add"
-msgstr ""
+msgstr "Přidat"
 
 #: src/forms/StockForms.tsx:507
 #: src/pages/Index/Scan.tsx:262
 #: src/pages/stock/StockDetail.tsx:389
 msgid "Count"
-msgstr ""
+msgstr "Počet"
 
 #: src/forms/StockForms.tsx:740
 msgid "Add Stock"
@@ -2509,7 +2509,7 @@ msgstr ""
 
 #: src/functions/auth.tsx:142
 msgid "Logged In"
-msgstr ""
+msgstr "Přihlášen"
 
 #: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
@@ -2561,15 +2561,15 @@ msgstr ""
 
 #: src/hooks/UseForm.tsx:87
 msgid "Item Created"
-msgstr ""
+msgstr "Položka vytvořena"
 
 #: src/hooks/UseForm.tsx:104
 msgid "Item Updated"
-msgstr ""
+msgstr "Položka aktualizována"
 
 #: src/hooks/UseForm.tsx:123
 msgid "Item Deleted"
-msgstr ""
+msgstr "Položka odstraněna"
 
 #: src/hooks/UseForm.tsx:127
 msgid "Are you sure you want to delete this item?"
@@ -2582,7 +2582,7 @@ msgstr ""
 #: src/pages/Auth/Login.tsx:31
 #: src/pages/Index/Scan.tsx:318
 msgid "No selection"
-msgstr ""
+msgstr "Nic nevybráno"
 
 #: src/pages/Auth/Login.tsx:75
 msgid "Welcome, log in below"
@@ -2639,7 +2639,7 @@ msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
-msgstr ""
+msgstr "Automaticka aktualizace"
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
@@ -2823,7 +2823,7 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:296
 msgid "Input"
-msgstr ""
+msgstr "Vstup"
 
 #: src/pages/Index/Scan.tsx:303
 msgid "Select input method"
@@ -2868,23 +2868,23 @@ msgstr ""
 #: src/pages/Index/Scan.tsx:364
 #: src/pages/Notifications.tsx:100
 msgid "History"
-msgstr ""
+msgstr "Historie"
 
 #: src/pages/Index/Scan.tsx:430
 msgid "No history"
-msgstr ""
+msgstr "Žádná historie"
 
 #: src/pages/Index/Scan.tsx:449
 msgid "Item"
-msgstr ""
+msgstr "Položka"
 
 #: src/pages/Index/Scan.tsx:452
 msgid "Type"
-msgstr ""
+msgstr "Typ"
 
 #: src/pages/Index/Scan.tsx:455
 msgid "Source"
-msgstr ""
+msgstr "Zdroj"
 
 #: src/pages/Index/Scan.tsx:458
 msgid "Scanned at"
@@ -2904,15 +2904,15 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:41
 msgid "First name"
-msgstr ""
+msgstr "Jméno"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 msgid "Last name"
-msgstr ""
+msgstr "Příjmení"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 msgid "First name:"
-msgstr ""
+msgstr "Jméno:"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
@@ -2924,7 +2924,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:62
 msgid "Last name:"
-msgstr ""
+msgstr "Příjmení:"
 
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:41
 msgid "Use pseudo language"
@@ -2957,31 +2957,31 @@ msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:144
 msgid "Primary"
-msgstr ""
+msgstr "Primární"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:149
 msgid "Verified"
-msgstr ""
+msgstr "Ověřeno"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:153
 msgid "Unverified"
-msgstr ""
+msgstr "Neověřeno"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:166
 msgid "Add Email Address"
-msgstr ""
+msgstr "Přidat e-mailovou adresu"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:169
 msgid "E-Mail"
-msgstr ""
+msgstr "E-mail"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:170
 msgid "E-Mail address"
-msgstr ""
+msgstr "E-mailová adresa"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:182
 msgid "Make Primary"
-msgstr ""
+msgstr "Nastavit jako výchozí"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:187
 msgid "Re-send Verification"
@@ -3065,37 +3065,37 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:109
 msgid "Custom Units"
-msgstr ""
+msgstr "Vlastní jednotky"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:115
 #: src/pages/part/CategoryDetail.tsx:203
 msgid "Part Parameters"
-msgstr ""
+msgstr "Parametry dílu"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:121
 msgid "Category Parameters"
-msgstr ""
+msgstr "Parametry kategorie"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 msgid "Templates"
-msgstr ""
+msgstr "Šablony"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:139
 #: src/tables/machine/MachineTypeTable.tsx:281
 msgid "Machines"
-msgstr ""
+msgstr "Stroje"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:149
 msgid "Quick Actions"
-msgstr ""
+msgstr "Rychlá volba"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:154
 msgid "Add a new user"
-msgstr ""
+msgstr "Přidat nového uživatele"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:173
 msgid "Advanced Options"
-msgstr ""
+msgstr "Pokročilá nastavení"
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:43
 msgid "Machine types"
@@ -3112,7 +3112,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:28
 #: src/tables/settings/UserTable.tsx:116
 msgid "Info"
-msgstr ""
+msgstr "Info"
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
 msgid "External plugins are not enabled for this InvenTree installation."
@@ -3153,11 +3153,11 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:140
 msgid "Labels"
-msgstr ""
+msgstr "Štítky"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:39
 msgid "Label"
-msgstr ""
+msgstr "Štítek"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:67
 #~ msgid "Stock item"
@@ -3169,12 +3169,12 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:88
 msgid "Reports"
-msgstr ""
+msgstr "Hlášení"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:89
 #: src/pages/build/BuildDetail.tsx:317
 msgid "Report"
-msgstr ""
+msgstr "Hlášení"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:99
 #~ msgid "Purchase order"
@@ -3195,7 +3195,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:145
 msgid "Tests"
-msgstr ""
+msgstr "Testy"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:154
 #~ msgid "Stock location"
@@ -3204,7 +3204,7 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:18
 #: src/tables/settings/UserTable.tsx:135
 msgid "Groups"
-msgstr ""
+msgstr "Skupiny"
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:30
 msgid "Select settings relevant for user lifecycle. More available in"
@@ -3216,17 +3216,17 @@ msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:65
 msgid "Login"
-msgstr ""
+msgstr "Přihlášení"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:87
 msgid "Barcodes"
-msgstr ""
+msgstr "Čárové kódy"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:106
 #: src/pages/company/SupplierPartDetail.tsx:218
 #: src/pages/part/PartDetail.tsx:531
 msgid "Pricing"
-msgstr ""
+msgstr "Ceník"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:118
 #~ msgid "Physical Units"
@@ -3260,7 +3260,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:29
 msgid "Account"
-msgstr ""
+msgstr "Účet"
 
 #: src/pages/Index/Settings/UserSettings.tsx:35
 msgid "Security"
@@ -3288,7 +3288,7 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr ""
+msgstr "Nenalezeno"
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
@@ -3296,15 +3296,15 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
-msgstr ""
+msgstr "Přejít na úvodní stránku"
 
 #: src/pages/Notifications.tsx:43
 msgid "Delete Notifications"
-msgstr ""
+msgstr "Smazat notifikaci"
 
 #: src/pages/Notifications.tsx:108
 msgid "Mark as unread"
-msgstr ""
+msgstr "Označit jako nepřečtenou"
 
 #: src/pages/build/BuildDetail.tsx:80
 #~ msgid "Build Status"
@@ -3320,14 +3320,14 @@ msgstr ""
 #: src/tables/sales/SalesOrderTable.tsx:52
 #: src/tables/stock/StockItemTable.tsx:252
 msgid "Status"
-msgstr ""
+msgstr "Stav"
 
 #: src/pages/build/BuildDetail.tsx:91
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:82
 #: src/pages/sales/ReturnOrderDetail.tsx:49
 #: src/pages/sales/SalesOrderDetail.tsx:53
 msgid "Reference"
-msgstr ""
+msgstr "Reference"
 
 #: src/pages/build/BuildDetail.tsx:96
 #: src/pages/company/CompanyDetail.tsx:84
@@ -3348,7 +3348,7 @@ msgstr ""
 #: src/tables/plugin/PluginListTable.tsx:172
 #: src/tables/plugin/PluginListTable.tsx:302
 msgid "Description"
-msgstr ""
+msgstr "Popis"
 
 #: src/pages/build/BuildDetail.tsx:103
 msgid "Parent Build"
@@ -3551,7 +3551,7 @@ msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:272
 msgid "Edit Company"
-msgstr ""
+msgstr "Upravit společnost"
 
 #: src/pages/company/CompanyDetail.tsx:281
 msgid "Company Actions"
@@ -5978,3 +5978,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
