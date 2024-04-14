@@ -1,4 +1,4 @@
-import { expect, test } from './baseFixtures.js';
+import { test } from './baseFixtures.js';
 import { user } from './defaults.js';
 
 test('PUI - Stock', async ({ page }) => {
