@@ -13,6 +13,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework.exceptions import ValidationError as DRFValidationError
 
 import importer.operations
+import importer.registry
 import importer.tasks
 import importer.validators
 import InvenTree.helpers

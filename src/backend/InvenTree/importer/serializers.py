@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 import importer.models
+import importer.registry
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
@@ -49,6 +50,12 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         read_only_fields = ['pk', 'user', 'status', 'columns']
 
     data_file = InvenTreeAttachmentSerializerField()
+
+    model_type = serializers.ChoiceField(
+        required=True,
+        allow_blank=False,
+        choices=importer.registry.supported_model_options(),
+    )
 
     available_fields = serializers.JSONField(read_only=True)
 

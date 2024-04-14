@@ -48,6 +48,16 @@ def supported_models():
     return data
 
 
+def supported_model_options():
+    """Return a list of supported model options for importing data."""
+    options = []
+
+    for model_name, serializer in supported_models().items():
+        options.append((model_name, serializer.Meta.model._meta.verbose_name))
+
+    return options
+
+
 def register_importer():
     """Decorator function to register a serializer with the importer registry."""
 
