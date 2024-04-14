@@ -6,20 +6,17 @@ import {
   Group,
   LoadingOverlay,
   Paper,
-  Progress,
   ScrollArea,
   Stack,
   Text
 } from '@mantine/core';
 import { useCallback, useMemo } from 'react';
 
-import { api } from '../../App';
-import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
-import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
+import {
+  ImportSessionStatus,
+  useImportSession
+} from '../../hooks/UseImportSession';
 import { StylishText } from '../items/StylishText';
-import { getStatusCodeName } from '../render/StatusRenderer';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
 
@@ -32,44 +29,23 @@ export default function ImporterDrawer({
   opened: boolean;
   onClose: () => void;
 }) {
-  const {
-    instance: session,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
-    endpoint: ApiEndpoints.import_session_list,
-    pk: sessionId,
-    refetchOnMount: true
-  });
+  const session = useImportSession({ sessionId: sessionId });
 
-  const statusText = useMemo(() => {
-    const status = getStatusCodeName(ModelType.importsession, session?.status);
+  const title: any = useMemo(() => {
+    return session.sessionData?.statusText ?? t`Importing Data`;
+  }, [session.sessionData]);
 
-    return status;
-  }, [session]);
-
-  // TODO: This needs a lot of cleanup!!
   const widget = useMemo(() => {
-    switch (statusText) {
-      case 'INITIAL':
-        return <Text>Initial</Text>;
-      case 'MAPPING':
-        return (
-          <ImporterColumnSelector
-            session={session}
-            onComplete={refreshInstance}
-          />
-        );
-      case 'IMPORTING':
+    switch (session.status) {
+      case ImportSessionStatus.INITIAL:
+        return <Text>Initial : TODO</Text>;
+      case ImportSessionStatus.MAPPING:
+        return <ImporterColumnSelector session={session} />;
+      case ImportSessionStatus.IMPORTING:
         return <Text>Importing...</Text>;
-      case 'PROCESSING':
-        return (
-          <ImporterDataSelector
-            session={session}
-            onComplete={refreshInstance}
-          />
-        );
-      case 'COMPLETE':
+      case ImportSessionStatus.PROCESSING:
+        return <ImporterDataSelector session={session} />;
+      case ImportSessionStatus.COMPLETE:
         return <Text>Complete!</Text>;
       default:
         return <Text>Unknown status code: {session?.status}</Text>;
@@ -78,7 +54,7 @@ export default function ImporterDrawer({
 
   const cancelImport = useCallback(() => {
     // Cancel import session by deleting on the server
-    api.delete(apiUrl(ApiEndpoints.import_session_list, sessionId));
+    session.cancelSession();
 
     // Close the modal
     onClose();
@@ -97,12 +73,7 @@ export default function ImporterDrawer({
       <Stack spacing="xs">
         <Group position="apart" grow>
           <StylishText size="xl">{t`Importing Data`}</StylishText>
-          <Progress
-            value={20}
-            label={t`Mapping Columns`}
-            size="20px"
-            radius="md"
-          />
+          <StylishText size="lg">{title}</StylishText>
           <Group position="right">
             <Button color="red" variant="filled" onClick={cancelImport}>
               {t`Cancel Import`}
@@ -112,9 +83,9 @@ export default function ImporterDrawer({
         <Divider />
         <ScrollArea>
           <Stack spacing="xs">
-            <LoadingOverlay visible={instanceQuery.isFetching} />
+            <LoadingOverlay visible={session.sessionQuery.isFetching} />
             {/* TODO: Fix the header, while the content scrolls! */}
-            <Paper p="md">{instanceQuery.isFetching || widget}</Paper>
+            <Paper p="md">{session.sessionQuery.isFetching || widget}</Paper>
           </Stack>
         </ScrollArea>
       </Stack>

@@ -1,44 +1,53 @@
 import { t } from '@lingui/macro';
-import { Alert, Button, Group, Select, Stack, Text } from '@mantine/core';
+import {
+  Alert,
+  Button,
+  Divider,
+  Group,
+  Select,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ImportSessionState } from '../../hooks/UseImportSession';
 import { apiUrl } from '../../states/ApiState';
 
-function ImporterColumn({ column, options }: { column: any; options: any }) {
+function ImporterColumn({ column, options }: { column: any; options: any[] }) {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const [selectedField, setSelectedField] = useState<string>(
-    column.field ?? ''
+  const [selectedColumn, setSelectedColumn] = useState<string>(
+    column.column ?? ''
   );
 
   useEffect(() => {
-    setSelectedField(column.field ?? '');
-  }, [column.field]);
+    console.log('selected column:', selectedColumn);
+  }, [selectedColumn]);
+
+  useEffect(() => {
+    setSelectedColumn(column.column ?? '');
+  }, [column.column]);
 
   const onChange = useCallback(
     (value: any) => {
-      // Ignore unchanged value
-      if (value == selectedField) {
-        return;
-      }
-
       api
         .patch(
           apiUrl(ApiEndpoints.import_session_column_mapping_list, column.pk),
           {
-            field: value || ''
+            column: value || ''
           }
         )
         .then((response) => {
-          setSelectedField(response.data?.field ?? value);
+          setSelectedColumn(response.data?.column ?? value);
           setErrorMessage('');
         })
         .catch((error) => {
           const data = error.response.data;
           setErrorMessage(
-            data.field ?? data.non_field_errors ?? t`An error occurred`
+            data.column ?? data.non_field_errors ?? t`An error occurred`
           );
         });
     },
@@ -49,10 +58,10 @@ function ImporterColumn({ column, options }: { column: any; options: any }) {
     <Select
       error={errorMessage}
       clearable
-      placeholder={t`Select database field, or leave empty to ignore this column`}
+      placeholder={t`Select column, or leave blank to ignore this field.`}
       label={column.column}
       data={options}
-      value={selectedField}
+      value={selectedColumn}
       onChange={onChange}
       withinPortal
     />
@@ -60,45 +69,39 @@ function ImporterColumn({ column, options }: { column: any; options: any }) {
 }
 
 export default function ImporterColumnSelector({
-  session,
-  onComplete
+  session
 }: {
-  session: any;
-  onComplete: () => void;
+  session: ImportSessionState;
 }) {
-  // Available fields
-  const fields = useMemo(() => {
-    const available_fields = session?.available_fields ?? {};
-    let options = [];
-
-    for (const key in available_fields) {
-      let field = available_fields[key];
-
-      if (!field.read_only) {
-        options.push({
-          value: key,
-          label: field.label ?? key
-        });
-      }
-    }
-
-    return options;
-  }, [session]);
-
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const acceptMapping = useCallback(() => {
-    const url = apiUrl(ApiEndpoints.import_session_accept_fields, session.pk);
+    const url = apiUrl(
+      ApiEndpoints.import_session_accept_fields,
+      session.sessionId
+    );
 
     api
       .post(url)
-      .then((response) => {
-        onComplete();
+      .then(() => {
+        session.refreshSession();
       })
       .catch((error) => {
         setErrorMessage(error.response?.data?.error ?? t`An error occurred`);
       });
-  }, [session]);
+  }, [session.sessionId]);
+
+  const columnOptions: any[] = useMemo(() => {
+    return [
+      { value: '', label: t`Ignore this field` },
+      ...session.columnMappings.map((column: any) => {
+        return {
+          value: column.column,
+          label: column.column
+        };
+      })
+    ];
+  }, [session.columnMappings]);
 
   return (
     <Stack spacing="xs">
@@ -115,9 +118,23 @@ export default function ImporterColumnSelector({
           <Text>{errorMessage}</Text>
         </Alert>
       )}
-      {session?.column_mappings?.map((column: any) => {
-        return <ImporterColumn column={column} options={fields} />;
-      })}
+      <SimpleGrid cols={2} spacing="xs">
+        <Text weight={700}>{t`Database Field`}</Text>
+        <Text weight={700}>{t`Imported Column Name`}</Text>
+        <Divider />
+        <Divider />
+        {session.columnMappings.map((column: any) => {
+          return [
+            <Stack spacing="xs">
+              <Text>{column.label ?? column.field}</Text>
+              <Text size="sm" italic>
+                {column.description}
+              </Text>
+            </Stack>,
+            <ImporterColumn column={column} options={columnOptions} />
+          ];
+        })}
+      </SimpleGrid>
     </Stack>
   );
 }

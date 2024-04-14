@@ -330,10 +330,14 @@ class DataImportColumnMap(models.Model):
             self.column not in ['', None]
             and columns.filter(column=self.column).exists()
         ):
-            raise DjangoValidationError({'column': _('Column is already mapped')})
+            raise DjangoValidationError({
+                'column': _('Column is already mapped to a database field')
+            })
 
         if columns.filter(field=self.field).exists():
-            raise DjangoValidationError({'field': _('Field is already mapped')})
+            raise DjangoValidationError({
+                'field': _('Field is already mapped to a data column')
+            })
 
     def clean(self):
         """Validate the column mapping."""

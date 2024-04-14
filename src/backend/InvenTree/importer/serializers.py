@@ -20,7 +20,7 @@ class DataImportColumnMapSerializer(InvenTreeModelSerializer):
 
         model = importer.models.DataImportColumnMap
         fields = ['pk', 'session', 'column', 'field', 'label', 'description']
-        read_only_fields = ['column', 'session']
+        read_only_fields = ['field', 'session']
 
     label = serializers.CharField(read_only=True)
     description = serializers.CharField(read_only=True)
