@@ -2,13 +2,10 @@ import { expect, test } from './baseFixtures.js';
 import { user } from './defaults.js';
 
 test('PUI - Stock', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
 
   await page.goto('./platform/stock');
   await page.waitForURL('**/platform/stock/location/index/details');
@@ -24,13 +21,11 @@ test('PUI - Stock', async ({ page }) => {
 });
 
 test('PUI - Build', async ({ page }) => {
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
   await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
 
   await page.getByRole('tab', { name: 'Build' }).click();
   await page.getByText('Widget Assembly Variant').click();
@@ -44,13 +39,11 @@ test('PUI - Build', async ({ page }) => {
 });
 
 test('PUI - Purchasing', async ({ page }) => {
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
   await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.getByRole('cell', { name: 'PO0012' }).click();
