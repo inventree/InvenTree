@@ -366,45 +366,6 @@ class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
     ...
 
 
-class APIDownloadMixin:
-    """Mixin for enabling a LIST endpoint to be downloaded a file.
-
-    TODO: This mixin class is deprecated and will be removed!
-    Ref: https://github.com/inventree/InvenTree/pull/6911
-
-    To download the data, add the ?export=<fmt> to the query string.
-
-    The implementing class must provided a download_queryset method,
-    e.g.
-
-    def download_queryset(self, queryset, export_format):
-        dataset = StockItemResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-
-        filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
-            date=datetime.now().strftime("%d-%b-%Y"),
-            fmt=export_format
-        )
-
-        return DownloadFile(filedata, filename)
-    """
-
-    def get(self, request, *args, **kwargs):
-        """Generic handler for a download request."""
-        export_format = request.query_params.get('export', None)
-
-        if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
-            queryset = self.filter_queryset(self.get_queryset())
-            return self.download_queryset(queryset, export_format)
-        # Default to the parent class implementation
-        return super().get(request, *args, **kwargs)
-
-    def download_queryset(self, queryset, export_format):
-        """This function must be implemented to provide a downloadFile request."""
-        raise NotImplementedError('download_queryset method not implemented!')
-
-
 class AttachmentMixin:
     """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
 

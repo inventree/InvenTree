@@ -27,12 +27,7 @@ from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
 from generic.states.api import StatusView
 from importer.mixins import DataExportMixin
-from InvenTree.api import (
-    APIDownloadMixin,
-    AttachmentMixin,
-    ListCreateDestroyAPIView,
-    MetadataView,
-)
+from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     SEARCH_ORDER_FILTER,
@@ -356,7 +351,7 @@ class StockLocationFilter(rest_filters.FilterSet):
         return queryset
 
 
-class StockLocationList(DataExportMixin, APIDownloadMixin, ListCreateAPI):
+class StockLocationList(DataExportMixin, ListCreateAPI):
     """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects
@@ -366,14 +361,6 @@ class StockLocationList(DataExportMixin, APIDownloadMixin, ListCreateAPI):
     queryset = StockLocation.objects.all().prefetch_related('tags')
     serializer_class = StockSerializers.LocationSerializer
     filterset_class = StockLocationFilter
-
-    def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file."""
-        dataset = LocationResource().export(queryset=queryset)
-        filedata = dataset.export(export_format)
-        filename = f'InvenTree_Locations.{export_format}'
-
-        return DownloadFile(filedata, filename)
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationList endpoint."""
@@ -825,7 +812,7 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.exclude(stale_filter)
 
 
-class StockList(DataExportMixin, APIDownloadMixin, ListCreateDestroyAPIView):
+class StockList(DataExportMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Stock objects.
 
     - GET: Return a list of all StockItem objects (with optional query filters)
@@ -1042,19 +1029,6 @@ class StockList(DataExportMixin, APIDownloadMixin, ListCreateDestroyAPIView):
                 status=status.HTTP_201_CREATED,
                 headers=self.get_success_headers(serializer.data),
             )
-
-    def download_queryset(self, queryset, export_format):
-        """Download this queryset as a file.
-
-        Uses the APIDownloadMixin mixin class
-        """
-        dataset = StockItemResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-
-        filename = f'InvenTree_StockItems_{InvenTree.helpers.current_date().strftime("%d-%b-%Y")}.{export_format}'
-
-        return DownloadFile(filedata, filename)
 
     def list(self, request, *args, **kwargs):
         """Override the 'list' method, as the StockLocation objects are very expensive to serialize.

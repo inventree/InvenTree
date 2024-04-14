@@ -11,7 +11,7 @@ class DataExportMixin:
     We achieve this by overriding the 'get' method, and checking for the presence of the required query parameter.
     """
 
-    EXPORT_QUERY_PARAMETER = 'export2'
+    EXPORT_QUERY_PARAMETER = 'export'
 
     def get_exported_filename(self, serializer, export_format):
         """Return the filename for the exported data file.

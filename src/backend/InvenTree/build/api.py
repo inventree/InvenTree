@@ -13,7 +13,7 @@ from django_filters import rest_framework as rest_filters
 
 from importer.mixins import DataExportMixin
 
-from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from generic.states.api import StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
 from InvenTree.status_codes import BuildStatus, BuildStatusGroups
@@ -105,7 +105,7 @@ class BuildFilter(rest_filters.FilterSet):
         return queryset.filter(project_code=None)
 
 
-class BuildList(DataExportMixin, APIDownloadMixin, ListCreateAPI):
+class BuildList(DataExportMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
@@ -157,15 +157,6 @@ class BuildList(DataExportMixin, APIDownloadMixin, ListCreateAPI):
         queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
 
         return queryset
-
-    def download_queryset(self, queryset, export_format):
-        """Download the queryset data as a file."""
-        dataset = build.admin.BuildResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-        filename = f"InvenTree_BuildOrders.{export_format}"
-
-        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
         """Custom query filtering for the BuildList endpoint."""

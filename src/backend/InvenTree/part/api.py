@@ -20,12 +20,7 @@ import order.models
 import part.filters
 from build.models import Build, BuildItem
 from importer.mixins import DataExportMixin
-from InvenTree.api import (
-    APIDownloadMixin,
-    AttachmentMixin,
-    ListCreateDestroyAPIView,
-    MetadataView,
-)
+from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     SEARCH_ORDER_FILTER,
@@ -228,7 +223,7 @@ class CategoryFilter(rest_filters.FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, DataExportMixin, APIDownloadMixin, ListCreateAPI):
+class CategoryList(CategoryMixin, DataExportMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -236,14 +231,6 @@ class CategoryList(CategoryMixin, DataExportMixin, APIDownloadMixin, ListCreateA
     """
 
     filterset_class = CategoryFilter
-
-    def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file."""
-        dataset = PartCategoryResource().export(queryset=queryset)
-        filedata = dataset.export(export_format)
-        filename = f'InvenTree_Categories.{export_format}'
-
-        return DownloadFile(filedata, filename)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -1200,20 +1187,11 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, DataExportMixin, APIDownloadMixin, ListCreateAPI):
+class PartList(PartMixin, DataExportMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     filterset_class = PartFilter
     is_create = True
-
-    def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file."""
-        dataset = PartResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-        filename = f'InvenTree_Parts.{export_format}'
-
-        return DownloadFile(filedata, filename)
 
     def list(self, request, *args, **kwargs):
         """Override the 'list' method, as the PartCategory objects are very expensive to serialize!
