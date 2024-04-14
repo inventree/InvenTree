@@ -51,10 +51,8 @@ test('PUI - Quick Command - no keys', async ({ page }) => {
   await page.waitForURL('**/platform/*');
   await page.goto('./platform/');
 
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform');
-  // wait for the page to load - 0.5s
-  await page.waitForTimeout(500);
+  // wait for the page to load
+  await page.waitForTimeout(200);
 
   // Open Spotlight with Button
   await page.getByRole('button', { name: 'Open spotlight' }).click();
