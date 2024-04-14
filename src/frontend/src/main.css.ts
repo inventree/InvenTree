@@ -5,10 +5,11 @@ import { vars } from './theme';
 
 export const layoutHeader = style({
   paddingTop: vars.spacing.sm,
-  backgroundColor:
-    theme.colorScheme === 'dark' ? vars.colors.dark[6] : vars.colors.gray[0],
+  backgroundColor: vars.colors.gray[0],
+  //theme.colorScheme === 'dark' ? vars.colors.dark[6] : vars.colors.gray[0],
   borderBottom: `1px solid ${
-    theme.colorScheme === 'dark' ? 'transparent' : vars.colors.gray[2]
+    //theme.colorScheme === 'dark' ? 'transparent' : vars.colors.gray[2]
+    vars.colors.gray[2]
   }`,
   marginBottom: 10
 });
@@ -16,7 +17,8 @@ export const layoutHeader = style({
 export const layoutFooter = style({
   marginTop: 10,
   borderTop: `1px solid ${
-    theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[2]
+    //theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[2]
+    vars.colors.gray[2]
   }`
 });
 
@@ -25,7 +27,9 @@ export const layoutHeaderSection = style({
 });
 
 export const layoutHeaderUser = style({
-  color: theme.colorScheme === 'dark' ? vars.colors.dark[0] : vars.black,
+  color:
+    //theme.colorScheme === 'dark' ? vars.colors.dark[0] : vars.black,
+    vars.colors.black,
   padding: `${vars.spacing.xs}px ${vars.spacing.sm}px`,
   borderRadius: vars.defaultRadius,
   transition: 'background-color 100ms ease',
@@ -37,13 +41,15 @@ export const layoutHeaderUser = style({
 
 export const headerDropdownFooter = style({
   backgroundColor:
-    theme.colorScheme === 'dark' ? vars.colors.dark[7] : vars.colors.gray[0],
+    //theme.colorScheme === 'dark' ? vars.colors.dark[7] : vars.colors.gray[0],
+    vars.colors.gray[0],
   margin: `calc(${vars.spacing.md} * -1)`,
   marginTop: vars.spacing.sm,
   padding: `${vars.spacing.md} calc(${vars.spacing.md} * 2)`,
   paddingBottom: vars.spacing.xl,
   borderTop: `${rem(1)} solid ${
-    theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
+    //theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
+    vars.colors.gray[1]
   }`
 });
 
@@ -54,7 +60,9 @@ export const link = style({
   paddingLeft: vars.spacing.md,
   paddingRight: vars.spacing.md,
   textDecoration: 'none',
-  color: light - dark(vars.white, vars.black),
+  color:
+    //theme.colorScheme === 'dark' ? vars.white: vars.black,
+    vars.colors.black,
   fontWeight: 500,
   fontSize: vars.fontSizes.sm,
 
@@ -139,7 +147,8 @@ export const tab = style({
 
   '&:hover': {
     backgroundColor:
-      theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
+      //theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
+      vars.colors.gray[1]
   }
 });
 
@@ -165,12 +174,14 @@ export const dashboardItemTitle = style({
 
 export const card = style({
   backgroundColor:
-    theme.colorScheme === 'dark' ? vars.colors.dark[7] : vars.white
+    //theme.colorScheme === 'dark' ? vars.colors.dark[7] : vars.white
+    vars.colors.white
 });
 
 export const itemTopBorder = style({
   borderTop: `1px solid ${
-    theme.colorScheme === 'dark' ? vars.colors.dark[4] : vars.colors.gray[2]
+    //theme.colorScheme === 'dark' ? vars.colors.dark[4] : vars.colors.gray[2]
+    vars.colors.gray[2]
   }`
 });
 

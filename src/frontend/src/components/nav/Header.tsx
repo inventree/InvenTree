@@ -8,7 +8,7 @@ import { useMatch, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { InvenTreeStyle } from '../../globalStyle';
+import * as classes from '../../main.css';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { ScanButton } from '../buttons/ScanButton';
@@ -20,7 +20,6 @@ import { NotificationDrawer } from './NotificationDrawer';
 import { SearchDrawer } from './SearchDrawer';
 
 export function Header() {
-  const { classes } = InvenTreeStyle();
   const [setNavigationOpen, navigationOpen] = useLocalState((state) => [
     state.setNavigationOpen,
     state.navigationOpen
@@ -120,7 +119,6 @@ export function Header() {
 }
 
 function NavTabs() {
-  const { classes } = InvenTreeStyle();
   const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;

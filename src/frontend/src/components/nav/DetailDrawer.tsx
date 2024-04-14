@@ -5,8 +5,7 @@ import {
   Group,
   MantineNumberSize,
   Stack,
-  Text,
-  createStyles
+  Text
 } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
@@ -14,6 +13,7 @@ import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import type { To } from 'react-router-dom';
 
 import { useLocalState } from '../../states/LocalState';
+import * as classes from './DetailDrawer.css';
 
 /**
  * @param title - drawer title
@@ -30,13 +30,6 @@ export interface DrawerProps {
   closeOnEscape?: boolean;
 }
 
-const useStyles = createStyles(() => ({
-  flex: {
-    display: 'flex',
-    flex: 1
-  }
-}));
-
 function DetailDrawerComponent({
   title,
   position = 'right',
@@ -46,7 +39,6 @@ function DetailDrawerComponent({
 }: DrawerProps) {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { classes } = useStyles();
 
   const content = renderContent(id);
   const opened = useMemo(() => !!id && !!content, [id, content]);

@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { getActions } from '../../defaults/actions';
-import { InvenTreeStyle } from '../../globalStyle';
+import * as classes from '../../main.css';
 import { useSessionState } from '../../states/SessionState';
 import { Footer } from './Footer';
 import { Header } from './Header';
@@ -26,7 +26,6 @@ export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 export default function LayoutComponent() {
-  const { classes } = InvenTreeStyle();
   const navigate = useNavigate();
   const location = useLocation();
 

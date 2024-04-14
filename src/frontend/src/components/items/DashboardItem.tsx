@@ -1,6 +1,6 @@
 import { Group, LoadingOverlay, Paper, Text } from '@mantine/core';
 
-import { InvenTreeStyle } from '../../globalStyle';
+import * as classes from '../../main.css';
 
 export interface StatisticItemProps {
   title: string;
@@ -16,8 +16,6 @@ export function StatisticItem({
   data: StatisticItemProps;
   isLoading: boolean;
 }) {
-  const { classes } = InvenTreeStyle();
-
   return (
     <Paper withBorder p="xs" key={id} pos="relative">
       <LoadingOverlay visible={isLoading} overlayBlur={2} />

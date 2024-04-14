@@ -1,11 +1,5 @@
 import { Trans } from '@lingui/macro';
-import {
-  ActionIcon,
-  Container,
-  Group,
-  Indicator,
-  createStyles
-} from '@mantine/core';
+import { ActionIcon, Container, Group, Indicator } from '@mantine/core';
 import { Menu, Text } from '@mantine/core';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import {
@@ -18,6 +12,8 @@ import {
 import { useEffect, useState } from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
+import * as classes from './WidgetLayout.css';
+
 const ReactGridLayout = WidthProvider(Responsive);
 
 interface LayoutStorage {
@@ -25,21 +21,6 @@ interface LayoutStorage {
 }
 
 const compactType = 'vertical';
-
-const useItemStyle = createStyles((theme) => ({
-  backgroundItem: {
-    backgroundColor:
-      theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.white,
-    maxWidth: '100%',
-    padding: '8px',
-    boxShadow: theme.shadows.md
-  },
-
-  baseItem: {
-    maxWidth: '100%',
-    padding: '8px'
-  }
-}));
 
 export interface LayoutItemType {
   i: number;
@@ -65,7 +46,6 @@ export function WidgetLayout({
   const [layouts, setLayouts] = useState({});
   const [editable, setEditable] = useDisclosure(false);
   const [boxShown, setBoxShown] = useDisclosure(true);
-  const { classes } = useItemStyle();
 
   useEffect(() => {
     let layout = getFromLS('layouts') || [];

@@ -14,9 +14,10 @@ import { IconLayoutSidebar } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
 import { menuItems } from '../../defaults/menuItems';
-import { InvenTreeStyle } from '../../globalStyle';
+import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { theme } from '../../theme';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { MenuLinks } from '../items/MenuLinks';
 
@@ -27,7 +28,6 @@ export function NavHoverMenu({
 }: {
   openDrawer: () => void;
 }) {
-  const { classes, theme } = InvenTreeStyle();
   const [hostKey, hostList] = useLocalState((state) => [
     state.hostKey,
     state.hostList

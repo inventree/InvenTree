@@ -10,12 +10,12 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 
 import { doLogout } from '../../functions/auth';
-import { InvenTreeStyle } from '../../globalStyle';
+import * as classes from '../../main.css';
 import { useUserState } from '../../states/UserState';
+import { theme } from '../../theme';
 
 export function MainMenu() {
   const navigate = useNavigate();
-  const { classes, theme } = InvenTreeStyle();
   const userState = useUserState();
 
   return (
