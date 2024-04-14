@@ -165,7 +165,7 @@ def export_data_to_file(serializer_class, queryset, file_format):
 
     data = serializer_class(queryset, many=True).data
 
-    for row in data:
-        dataset.append([row[field] for field in field_names])
+    for _idx, row in enumerate(data):
+        dataset.append([row.get(field, None) for field in field_names])
 
     return dataset.export(file_format)
