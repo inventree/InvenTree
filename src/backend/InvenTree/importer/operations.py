@@ -85,11 +85,14 @@ def extract_rows(data_file) -> list:
     return rows
 
 
-def get_fields(serializer_class, read_only=None, required=None):
+def get_fields(serializer_class, write_only=None, read_only=None, required=None):
     """Extract the field names from a serializer class.
 
-    - Returns a dict of (writeable) field names.
-    - Read-Only fields are explicitly ignored
+    Arguments:
+        serializer_class: Serializer
+        write_only: Filter fields based on write_only attribute
+        read_only: Filter fields based on read_only attribute
+        required: Filter fields based on required attribute
     """
     if not serializer_class:
         return {}
@@ -102,9 +105,67 @@ def get_fields(serializer_class, read_only=None, required=None):
         if read_only is not None and getattr(field, 'read_only', None) != read_only:
             continue
 
+        if write_only is not None and getattr(field, 'write_only', None) != write_only:
+            continue
+
         if required is not None and getattr(field, 'required', None) != required:
             continue
 
         fields[field_name] = field
 
     return fields
+
+
+def get_field_label(serializer_class, field_name):
+    """Return the label for a field in a serializer class.
+
+    Check for labels in the following order of descending priority:
+
+    - The serializer class has a 'label' specified for the field
+    - The underlying model has a 'verbose_name' specified
+    - The field name is used as the label
+
+    Args:
+        serializer_class: Serializer
+    """
+    if not serializer_class:
+        return field_name
+
+    field = serializer_class().fields.get(field_name, None)
+
+    if field:
+        if label := getattr(field, 'label', None):
+            return label
+
+    # TODO: Check if the field is a model field
+
+    return field_name
+
+
+def export_data_to_file(serializer_class, queryset, file_format):
+    """Export queryset data to a file.
+
+    Args:
+        serializer_class: Serializer class to use for data export
+        queryset: Queryset of data to export
+        file_format: File format to export data to
+
+    Returns:
+        File object containing the exported data
+    """
+    # Extract all readable fields
+    fields = get_fields(serializer_class, write_only=False)
+
+    data = serializer_class(queryset, many=True).data
+
+    field_names = list(fields.keys())
+    headers = [
+        get_field_label(serializer_class, field_name) for field_name in field_names
+    ]
+
+    dataset = tablib.Dataset(headers=headers)
+
+    for row in data:
+        dataset.append([row[field] for field in headers])
+
+    return dataset.export(file_format)

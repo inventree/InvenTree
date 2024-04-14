@@ -43,6 +43,7 @@ from InvenTree.helpers import (
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
+    DataExportMixin,
     ListAPI,
     ListCreateAPI,
     RetrieveAPI,
@@ -1200,7 +1201,7 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
+class PartList(PartMixin, DataExportMixin, APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     filterset_class = PartFilter
