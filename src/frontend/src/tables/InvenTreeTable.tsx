@@ -57,6 +57,7 @@ const defaultPageSize: number = 25;
  * @param enableSearch : boolean - Enable search actions
  * @param enablePagination : boolean - Enable pagination
  * @param enableRefresh : boolean - Enable refresh actions
+ * @param enableColumnSwitching : boolean - Enable column switching
  * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
@@ -79,6 +80,7 @@ export type InvenTreeTableProps<T = any> = {
   enableSearch?: boolean;
   enablePagination?: boolean;
   enableRefresh?: boolean;
+  enableColumnSwitching?: boolean;
   pageSize?: number;
   barcodeActions?: any[];
   tableFilters?: TableFilter[];
@@ -209,9 +211,13 @@ export function InvenTreeTable<T = any>({
   }, [props]);
 
   // Check if any columns are switchable (can be hidden)
-  const hasSwitchableColumns = columns.some(
-    (col: TableColumn) => col.switchable ?? true
-  );
+  const hasSwitchableColumns: boolean = useMemo(() => {
+    if (props.enableColumnSwitching == false) {
+      return false;
+    } else {
+      return columns.some((col: TableColumn) => col.switchable ?? true);
+    }
+  }, [columns, props.enableColumnSwitching]);
 
   const onSelectedRecordsChange = useCallback((records: any[]) => {
     tableState.setSelectedRecords(records);

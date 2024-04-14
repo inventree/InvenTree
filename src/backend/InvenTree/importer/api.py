@@ -100,7 +100,7 @@ class DataImportRowList(ListAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['session']
+    filterset_fields = ['session', 'valid', 'complete']
 
     ordering_fields = ['pk', 'row_index']
 

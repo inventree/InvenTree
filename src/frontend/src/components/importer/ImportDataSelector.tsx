@@ -22,7 +22,11 @@ import { ReactNode, useCallback, useMemo } from 'react';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useInstance } from '../../hooks/UseInstance';
+import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { TableColumn } from '../../tables/Column';
+import { TableFilter } from '../../tables/Filter';
+import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { StandaloneField } from '../forms/StandaloneField';
 
 function ImporterDataField({
@@ -153,64 +157,71 @@ export default function ImporterDataSelector({
   session: any;
   onComplete: () => void;
 }) {
-  const {
-    instance: rows,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
-    endpoint: ApiEndpoints.import_session_row_list,
-    params: {
-      session: session.pk,
-      ordering: 'row_index'
-    },
-    hasPrimaryKey: false,
-    defaultValue: [],
-    refetchOnMount: true
-  });
+  const table = useTable('data-importer');
 
-  // Select only the actively mapped columns
-  const columns: any[] = useMemo(() => {
-    return (session?.column_mappings ?? []).filter((column: any) => {
-      return !!column.field;
-    });
+  const columns: TableColumn[] = useMemo(() => {
+    let columns: TableColumn[] = [
+      {
+        accessor: 'row_index',
+        title: t`Row`,
+        sortable: true,
+        switchable: false
+      },
+      ...session?.column_mappings
+        ?.filter((column: any) => !!column.field)
+        .map((column: any) => {
+          return {
+            accessor: column.field,
+            title: column.column ?? column.title,
+            sortable: false,
+            switchable: true,
+            render: (row: any) => {
+              return (
+                <ImporterDataField
+                  field={column.field}
+                  row={row}
+                  session={session}
+                />
+              );
+            }
+          };
+        })
+    ];
+
+    return columns;
   }, [session]);
+
+  const filters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'valid',
+        label: t`Valid`,
+        description: t`Filter by row validation status`,
+        type: 'boolean'
+      },
+      {
+        name: 'complete',
+        label: t`Complete`,
+        description: t`Filter by row completion status`,
+        type: 'boolean'
+      }
+    ];
+  }, []);
 
   return (
     <Stack spacing="xs">
-      <LoadingOverlay visible={instanceQuery.isFetching} />
-      <Table striped style={{ fontSize: '20%' }}>
-        <thead>
-          <tr>
-            <th>{t`Row`}</th>
-            {columns.map((column: any) => {
-              return (
-                <th>
-                  <Tooltip
-                    label={column.description}
-                    hidden={!column.description}
-                  >
-                    <Text weight={700}>{column?.label || column?.column}</Text>
-                  </Tooltip>
-                </th>
-              );
-            })}
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows &&
-            rows.map((row: any) => {
-              return (
-                <ImporterDataRow
-                  row={row}
-                  columns={columns}
-                  session={session}
-                  onRowDeleted={refreshInstance}
-                />
-              );
-            })}
-        </tbody>
-      </Table>
+      <InvenTreeTable
+        tableState={table}
+        columns={columns}
+        url={apiUrl(ApiEndpoints.import_session_row_list)}
+        props={{
+          params: {
+            session: session.pk
+          },
+          tableFilters: filters,
+          enableColumnSwitching: true
+        }}
+      />
     </Stack>
   );
 }
