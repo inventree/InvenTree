@@ -1,11 +1,10 @@
 import { t } from '@lingui/macro';
 import {
-  ColorScheme,
-  ColorSchemeProvider,
   MantineProvider,
-  MantineThemeOverride
+  createTheme,
+  localStorageColorSchemeManager
 } from '@mantine/core';
-import { useColorScheme, useLocalStorage } from '@mantine/hooks';
+import { useColorScheme } from '@mantine/hooks';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 
@@ -28,22 +27,16 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
 
   // Color Scheme
   const preferredColorScheme = useColorScheme();
-  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
-    key: 'scheme',
-    defaultValue: preferredColorScheme
+  const colorSchemeManager = localStorageColorSchemeManager({
+    key: 'scheme'
   });
-  const toggleColorScheme = (value?: ColorScheme) => {
-    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'));
-    myTheme.colorScheme = colorScheme;
-  };
 
   // Theme
-  const myTheme: MantineThemeOverride = {
-    colorScheme: colorScheme,
+  const myTheme = createTheme({
     primaryColor: primaryColor,
     white: whiteColor,
     black: blackColor,
-    loader: loader,
+    //loader: loader,
     defaultRadius: radius,
     breakpoints: {
       xs: '30em',
@@ -52,27 +45,26 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
       lg: '74em',
       xl: '90em'
     }
-  };
+  });
 
   return (
-    <ColorSchemeProvider
-      colorScheme={colorScheme}
-      toggleColorScheme={toggleColorScheme}
+    <MantineProvider
+      theme={myTheme}
+      defaultColorScheme={preferredColorScheme}
+      colorSchemeManager={colorSchemeManager}
     >
-      <MantineProvider theme={myTheme} withGlobalStyles withNormalizeCSS>
-        <Notifications />
-        <ModalsProvider
-          labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
-          modals={{
-            qr: QrCodeModal,
-            info: ServerInfoModal,
-            about: AboutInvenTreeModal,
-            license: LicenseModal
-          }}
-        >
-          {children}
-        </ModalsProvider>
-      </MantineProvider>
-    </ColorSchemeProvider>
+      <Notifications />
+      <ModalsProvider
+        labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
+        modals={{
+          qr: QrCodeModal,
+          info: ServerInfoModal,
+          about: AboutInvenTreeModal,
+          license: LicenseModal
+        }}
+      >
+        {children}
+      </ModalsProvider>
+    </MantineProvider>
   );
 }
