@@ -102,7 +102,7 @@ class DataImportRowList(ListAPI):
 
     filterset_fields = ['session', 'valid', 'complete']
 
-    ordering_fields = ['pk', 'row_index']
+    ordering_fields = ['pk', 'row_index', 'valid']
 
     ordering = 'row_index'
 

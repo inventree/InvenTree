@@ -1,6 +1,10 @@
 import { t } from '@lingui/macro';
 import { ActionIcon, Group, Stack, Text, Tooltip } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
+import {
+  IconCircleCheck,
+  IconEdit,
+  IconExclamationCircle
+} from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -35,20 +39,29 @@ function ImporterDataCell({
     [onEdit]
   );
 
+  const cellErrors: string[] = useMemo(() => {
+    return row?.errors[column.field] ?? [];
+  }, [row.errors, column.field]);
+
   return (
     <Group grow position="apart">
       <Group grow style={{ flex: 1 }}>
-        <Text>{row.data[column.field]}</Text>
+        <Stack spacing="xs">
+          <Text>{row.data[column.field]}</Text>
+          {cellErrors.map((error: string) => (
+            <Text size="xs" color="red">
+              {error}
+            </Text>
+          ))}
+        </Stack>
       </Group>
-      {true && (
-        <div style={{ flex: 0 }}>
-          <Tooltip label={t`Edit cell`}>
-            <ActionIcon size="xs" onClick={onRowEdit}>
-              <IconEdit />
-            </ActionIcon>
-          </Tooltip>
-        </div>
-      )}
+      <div style={{ flex: 0 }}>
+        <Tooltip label={t`Edit cell`}>
+          <ActionIcon size="xs" onClick={onRowEdit}>
+            <IconEdit />
+          </ActionIcon>
+        </Tooltip>
+      </div>
     </Group>
   );
 }
@@ -100,7 +113,19 @@ export default function ImporterDataSelector({
         accessor: 'row_index',
         title: t`Row`,
         sortable: true,
-        switchable: false
+        switchable: false,
+        render: (row: any) => {
+          return (
+            <Group position="left" spacing="xs">
+              <Text size="sm">{row.row_index}</Text>
+              {row.valid ? (
+                <IconCircleCheck color="green" size={12} />
+              ) : (
+                <IconExclamationCircle color="red" size={12} />
+              )}
+            </Group>
+          );
+        }
       },
       ...session.sessionData?.column_mappings
         ?.filter((column: any) => !!column.field)
