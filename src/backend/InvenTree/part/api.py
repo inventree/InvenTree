@@ -19,6 +19,7 @@ from rest_framework.response import Response
 import order.models
 import part.filters
 from build.models import Build, BuildItem
+from importer.mixins import DataExportMixin
 from InvenTree.api import (
     APIDownloadMixin,
     AttachmentMixin,
@@ -38,12 +39,10 @@ from InvenTree.helpers import (
     is_ajax,
     isNull,
     str2bool,
-    str2int,
 )
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
-    DataExportMixin,
     ListAPI,
     ListCreateAPI,
     RetrieveAPI,
