@@ -85,6 +85,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'icon',
             'parent_default_location',
         ]
+        read_only_fields = ['pathstring']
 
     def __init__(self, *args, **kwargs):
         """Optionally add or remove extra fields."""
