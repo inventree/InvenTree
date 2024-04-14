@@ -369,6 +369,9 @@ class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
 class APIDownloadMixin:
     """Mixin for enabling a LIST endpoint to be downloaded a file.
 
+    TODO: This mixin class is deprecated and will be removed!
+    Ref: https://github.com/inventree/InvenTree/pull/6911
+
     To download the data, add the ?export=<fmt> to the query string.
 
     The implementing class must provided a download_queryset method,

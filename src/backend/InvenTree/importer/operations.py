@@ -156,8 +156,6 @@ def export_data_to_file(serializer_class, queryset, file_format):
     # Extract all readable fields
     fields = get_fields(serializer_class, write_only=False)
 
-    data = serializer_class(queryset, many=True).data
-
     field_names = list(fields.keys())
     headers = [
         get_field_label(serializer_class, field_name) for field_name in field_names
@@ -165,7 +163,9 @@ def export_data_to_file(serializer_class, queryset, file_format):
 
     dataset = tablib.Dataset(headers=headers)
 
+    data = serializer_class(queryset, many=True).data
+
     for row in data:
-        dataset.append([row[field] for field in headers])
+        dataset.append([row[field] for field in field_names])
 
     return dataset.export(file_format)

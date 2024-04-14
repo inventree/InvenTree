@@ -228,7 +228,7 @@ class CategoryFilter(rest_filters.FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
+class CategoryList(CategoryMixin, DataExportMixin, APIDownloadMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects

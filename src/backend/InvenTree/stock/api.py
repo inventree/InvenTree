@@ -1,7 +1,7 @@
 """JSON API for the Stock app."""
 
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
@@ -26,6 +26,7 @@ from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
 from generic.states.api import StatusView
+from importer.mixins import DataExportMixin
 from InvenTree.api import (
     APIDownloadMixin,
     AttachmentMixin,
@@ -355,7 +356,7 @@ class StockLocationFilter(rest_filters.FilterSet):
         return queryset
 
 
-class StockLocationList(APIDownloadMixin, ListCreateAPI):
+class StockLocationList(DataExportMixin, APIDownloadMixin, ListCreateAPI):
     """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects
@@ -824,7 +825,7 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.exclude(stale_filter)
 
 
-class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
+class StockList(DataExportMixin, APIDownloadMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Stock objects.
 
     - GET: Return a list of all StockItem objects (with optional query filters)
