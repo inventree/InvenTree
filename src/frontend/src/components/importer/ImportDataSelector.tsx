@@ -1,163 +1,98 @@
 import { t } from '@lingui/macro';
-import {
-  ActionIcon,
-  CloseButton,
-  Divider,
-  Group,
-  HoverCard,
-  LoadingOverlay,
-  Stack,
-  Table,
-  Text,
-  Tooltip
-} from '@mantine/core';
-import { notifications } from '@mantine/notifications';
-import {
-  IconColumnInsertLeft,
-  IconFileDatabase,
-  IconInfoCircle
-} from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ActionIcon, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { IconEdit } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { useInstance } from '../../hooks/UseInstance';
+import { cancelEvent } from '../../functions/events';
+import {
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
+import { ImportSessionState } from '../../hooks/UseImportSession';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../../tables/Column';
 import { TableFilter } from '../../tables/Filter';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import { StandaloneField } from '../forms/StandaloneField';
+import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
+import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 
-function ImporterDataField({
-  field,
+function ImporterDataCell({
+  column,
   row,
-  session
+  onEdit
 }: {
-  field: string;
+  column: any;
   row: any;
-  session: any;
+  onEdit?: () => void;
 }) {
-  const fieldDefinition = useMemo(() => {
-    const fields = session?.available_fields ?? {};
-
-    let definition: any = undefined;
-
-    Object.keys(fields).forEach((key) => {
-      if (key == field) {
-        definition = fields[key];
-
-        definition = {
-          ...definition,
-          field_type: definition.type,
-          description: definition.help_text,
-          value: row?.data[field] ?? definition.default,
-          disabled: definition.read_only ?? false
-        };
-      }
-    });
-
-    return definition ?? {};
-  }, [session, field]);
-
-  return (
-    <td>
-      {field ? (
-        <StandaloneField fieldDefinition={fieldDefinition} hideLabels />
-      ) : (
-        <Text>field value</Text>
-      )}
-    </td>
+  const onRowEdit = useCallback(
+    (event: any) => {
+      cancelEvent(event);
+      onEdit?.();
+    },
+    [onEdit]
   );
-}
-
-function ImporterDataRow({
-  row,
-  columns,
-  session,
-  onRowDeleted
-}: {
-  row: any;
-  columns: any[];
-  session: any;
-  onRowDeleted: () => void;
-}) {
-  // Construct a rendering of the "original" row data
-  const rowData: ReactNode = useMemo(() => {
-    return (
-      <Stack spacing="xs">
-        <Text size="sm" weight={700}>{t`Row Data`}</Text>
-        <Divider />
-        {Object.keys(row.row_data).map((key) => {
-          return (
-            <Group spacing="xs">
-              <Text size="xs" weight={700}>
-                {key}
-              </Text>
-              <Text size="xs">{row.row_data[key]}</Text>
-            </Group>
-          );
-        })}
-      </Stack>
-    );
-  }, [row.row_data]);
-
-  const removeRow = useCallback(() => {
-    const url = apiUrl(ApiEndpoints.import_session_row_list, row.pk);
-
-    api
-      .delete(url)
-      .then(() => {
-        onRowDeleted();
-      })
-      .catch(() => {
-        notifications.show({
-          title: t`Error`,
-          message: t`Could not delete row`,
-          color: 'red'
-        });
-      });
-  }, [row]);
 
   return (
-    <tr>
-      <td>
-        <Group position="left">
-          <Text>{row.row_index}</Text>
-          <HoverCard withinPortal={true}>
-            <HoverCard.Target>
-              <ActionIcon size="xs">
-                <IconFileDatabase />
-              </ActionIcon>
-            </HoverCard.Target>
-            <HoverCard.Dropdown>
-              <Text>{rowData}</Text>
-            </HoverCard.Dropdown>
-          </HoverCard>
-        </Group>
-      </td>
-      {columns.map((column: any) => {
-        return (
-          <ImporterDataField field={column.field} row={row} session={session} />
-        );
-      })}
-      <td>
-        <Tooltip label={t`Remove this row`} position="left">
-          <CloseButton color="red" onClick={removeRow} />
-        </Tooltip>
-      </td>
-    </tr>
+    <Group grow position="apart">
+      <Group grow style={{ flex: 1 }}>
+        <Text>{row.data[column.field]}</Text>
+      </Group>
+      {true && (
+        <div style={{ flex: 0 }}>
+          <Tooltip label={t`Edit cell`}>
+            <ActionIcon size="xs" onClick={onRowEdit}>
+              <IconEdit />
+            </ActionIcon>
+          </Tooltip>
+        </div>
+      )}
+    </Group>
   );
 }
 
 export default function ImporterDataSelector({
-  session,
-  onComplete
+  session
 }: {
-  session: any;
-  onComplete: () => void;
+  session: ImportSessionState;
 }) {
   const table = useTable('data-importer');
+
+  const rowEditFields: ApiFormFieldSet = useMemo(() => {
+    // TODO: Construct a set of fields based on the provided session information
+    return {};
+  }, [session]);
+
+  const [selectedFields, setSelectedFields] = useState<ApiFormFieldSet>({});
+
+  const [selectedRow, setSelectedRow] = useState<number>(0);
+
+  const editRow = useEditApiFormModal({
+    url: ApiEndpoints.import_session_row_list,
+    pk: selectedRow,
+    title: t`Edit Data`,
+    fields: selectedFields,
+    onFormSuccess: (row: any) => table.updateRecord(row)
+  });
+
+  const deleteRow = useDeleteApiFormModal({
+    url: ApiEndpoints.import_session_row_list,
+    pk: selectedRow,
+    title: t`Delete Row`,
+    onFormSuccess: () => table.refreshTable()
+  });
+
+  const editCell = useCallback(
+    (row: any, col: any) => {
+      setSelectedRow(row.pk);
+      // TODO: Set selected fields only for the selected column
+      setSelectedFields({});
+      editRow.open();
+    },
+    [session]
+  );
 
   const columns: TableColumn[] = useMemo(() => {
     let columns: TableColumn[] = [
@@ -167,7 +102,7 @@ export default function ImporterDataSelector({
         sortable: true,
         switchable: false
       },
-      ...session?.column_mappings
+      ...session.sessionData?.column_mappings
         ?.filter((column: any) => !!column.field)
         .map((column: any) => {
           return {
@@ -177,10 +112,10 @@ export default function ImporterDataSelector({
             switchable: true,
             render: (row: any) => {
               return (
-                <ImporterDataField
-                  field={column.field}
+                <ImporterDataCell
+                  column={column}
                   row={row}
-                  session={session}
+                  onEdit={() => editCell(row, column)}
                 />
               );
             }
@@ -190,6 +125,26 @@ export default function ImporterDataSelector({
 
     return columns;
   }, [session]);
+
+  const rowActions = useCallback(
+    (record: any) => {
+      return [
+        RowEditAction({
+          onClick: () => {
+            setSelectedRow(record.pk);
+            editRow.open();
+          }
+        }),
+        RowDeleteAction({
+          onClick: () => {
+            setSelectedRow(record.pk);
+            deleteRow.open();
+          }
+        })
+      ];
+    },
+    [session]
+  );
 
   const filters: TableFilter[] = useMemo(() => {
     return [
@@ -209,19 +164,24 @@ export default function ImporterDataSelector({
   }, []);
 
   return (
-    <Stack spacing="xs">
-      <InvenTreeTable
-        tableState={table}
-        columns={columns}
-        url={apiUrl(ApiEndpoints.import_session_row_list)}
-        props={{
-          params: {
-            session: session.pk
-          },
-          tableFilters: filters,
-          enableColumnSwitching: true
-        }}
-      />
-    </Stack>
+    <>
+      {editRow.modal}
+      {deleteRow.modal}
+      <Stack spacing="xs">
+        <InvenTreeTable
+          tableState={table}
+          columns={columns}
+          url={apiUrl(ApiEndpoints.import_session_row_list)}
+          props={{
+            params: {
+              session: session.sessionId
+            },
+            rowActions: rowActions,
+            tableFilters: filters,
+            enableColumnSwitching: true
+          }}
+        />
+      </Stack>
+    </>
   );
 }
