@@ -1,9 +1,12 @@
+import { MantineProvider } from '@mantine/core';
+import '@mantine/core/styles.css';
 import { useViewportSize } from '@mantine/hooks';
 import { lazy, useEffect } from 'react';
 
 import { setApiDefaults } from '../App';
 import { Loadable } from '../functions/loading';
 import { useLocalState } from '../states/LocalState';
+import { theme } from '../theme';
 
 function checkMobile() {
   const { height, width } = useViewportSize();
@@ -25,9 +28,17 @@ export default function MainView() {
 
   // Check if mobile
   if (!allowMobile && checkMobile()) {
-    return <MobileAppView />;
+    return (
+      <MantineProvider theme={theme}>
+        <MobileAppView />
+      </MantineProvider>
+    );
   }
 
   // Main App component
-  return <DesktopAppView />;
+  return (
+    <MantineProvider theme={theme}>
+      <DesktopAppView />
+    </MantineProvider>
+  );
 }
