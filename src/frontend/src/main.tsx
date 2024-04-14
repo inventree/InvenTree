@@ -1,4 +1,5 @@
 import '@mantine/core/styles.css';
+import '@mantine/spotlight/styles.css';
 import * as Sentry from '@sentry/react';
 import React from 'react';
 import ReactDOM from 'react-dom/client';

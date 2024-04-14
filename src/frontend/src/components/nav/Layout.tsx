@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Container, Flex, Space } from '@mantine/core';
-import { SpotlightProvider } from '@mantine/spotlight';
+import { Spotlight } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -46,23 +46,22 @@ export default function LayoutComponent() {
 
   return (
     <ProtectedRoute>
-      <SpotlightProvider
-        actions={actions}
-        onActionsChange={actionsAreChanging}
-        searchIcon={<IconSearch size="1.2rem" />}
-        searchPlaceholder={t`Search...`}
-        shortcut={['mod + K', '/']}
-        nothingFoundMessage={t`Nothing found...`}
-      >
-        <Flex direction="column" mih="100vh">
-          <Header />
-          <Container className={classes.layoutContent} size="100%">
-            <Outlet />
-          </Container>
-          <Space h="xl" />
-          <Footer />
-        </Flex>
-      </SpotlightProvider>
+      <Flex direction="column" mih="100vh">
+        <Header />
+        <Container className={classes.layoutContent} size="100%">
+          <Outlet />
+        </Container>
+        <Space h="xl" />
+        <Footer />
+        <Spotlight
+          actions={actions}
+          //onActionsChange={actionsAreChanging}
+          //searchIcon={<IconSearch size="1.2rem" />}
+          //searchPlaceholder={t`Search...`}
+          shortcut={['mod + K', '/']}
+          //nothingFoundMessage={t`Nothing found...`}
+        />
+      </Flex>
     </ProtectedRoute>
   );
 }
