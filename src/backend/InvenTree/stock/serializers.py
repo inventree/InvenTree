@@ -924,7 +924,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'tags',
         ]
 
-        read_only_fields = ['barcode_hash', 'icon', 'pathstring']
+        read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']
 
     def __init__(self, *args, **kwargs):
         """Optionally add or remove extra fields."""

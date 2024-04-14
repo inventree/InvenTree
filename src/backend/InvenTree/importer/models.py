@@ -284,9 +284,16 @@ class DataImportSession(models.Model):
 
         metadata = InvenTreeMetadata()
         if serializer := self.serializer:
-            return metadata.get_serializer_info(serializer(data={}))
+            fields = metadata.get_serializer_info(serializer(data={}))
         else:
-            return {}
+            fields = {}
+
+        # Remove any read-only fields (they are of no use here)
+        for key in list(fields.keys()):
+            if fields[key].get('read_only', False):
+                del fields[key]
+
+        return fields
 
 
 class DataImportColumnMap(models.Model):
