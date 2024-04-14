@@ -52,7 +52,7 @@ class DataImportSession(models.Model):
             # New object - run initial setup
             self.status = DataImportStatusCode.INITIAL.value
             self.progress = 0
-            self.create_columns()
+            self.extract_columns()
 
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name=_('Timestamp'))
 
@@ -67,6 +67,8 @@ class DataImportSession(models.Model):
             importer.validators.validate_data_file,
         ],
     )
+
+    columns = models.JSONField(blank=True, null=True, verbose_name=_('Columns'))
 
     model_type = models.CharField(
         blank=False,
@@ -99,9 +101,8 @@ class DataImportSession(models.Model):
         """
         mapping = {}
 
-        if self.column_mappings.exists():
-            for map in self.column_mappings.all():
-                mapping[map.field] = map.column
+        for map in self.column_mappings.all():
+            mapping[map.field] = map.column
 
         return mapping
 
@@ -112,7 +113,7 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
-    def serializer_fields(self, required=None, read_only=False):
+    def serializer_fields(self, required=None, read_only=False, write_only=None):
         """Return the writeable serializers fields for this importer.
 
         Arguments:
@@ -120,54 +121,57 @@ class DataImportSession(models.Model):
         """
         from importer.operations import get_fields
 
-        return get_fields(self.serializer, required=required, read_only=read_only)
+        return get_fields(
+            self.serializer,
+            required=required,
+            read_only=read_only,
+            write_only=write_only,
+        )
 
-    @property
-    def columns(self) -> list:
-        """Returns a list of the columns available for this data import session."""
-        return [m.column for m in self.column_mappings.all()]
+    def extract_columns(self):
+        """Run initial column extraction and mapping.
 
-    def create_columns(self):
-        """Generate column mappings based on the serializer fields.
+        This method is called when the import session is first created.
 
-        This method is called once, when the file is first imported.
+        - Extract column names from the data file
+        - Create a default mapping for each field in the serializer
         """
         # Extract list of column names from the file
-        columns = importer.operations.extract_column_names(self.data_file)
+        self.columns = importer.operations.extract_column_names(self.data_file)
 
         serializer_fields = self.serializer_fields(read_only=False)
 
         # Remove any existing mappings
         self.column_mappings.all().delete()
 
-        matched_fields = set()
-
         column_mappings = []
 
-        # Create a default mapping for each column in the dataset
-        for column in columns:
-            field_name = ''
+        matched_columns = set()
 
-            # Check each field for a direct match
-            for field, field_def in serializer_fields.items():
-                # Ignore if this field has already been matched to a column
-                if field in matched_fields:
+        # Create a default mapping for each available field in the database
+        for field, field_def in serializer_fields.items():
+            # Generate a list of possible column names for this field
+            field_options = [field, getattr(field_def, 'label', field)]
+
+            column_name = ''
+
+            for column in self.columns:
+                # Ignore if we have already matched this column to a field
+                if column in matched_columns:
                     continue
 
-                field_options = [field, getattr(field_def, 'label', field)]
-
+                # Try direct match
                 if column in field_options:
-                    field_name = field
-                    matched_fields.add(field)
+                    column_name = column
                     break
 
+                # Try lower case match
                 if column.lower() in [f.lower() for f in field_options]:
-                    field_name = field
-                    matched_fields.add(field)
+                    column_name = column
                     break
 
             column_mappings.append(
-                DataImportColumnMap(session=self, column=column, field=field_name)
+                DataImportColumnMap(session=self, column=column_name, field=field)
             )
 
         # Create the column mappings
@@ -322,10 +326,13 @@ class DataImportColumnMap(models.Model):
 
         columns = self.session.column_mappings.exclude(pk=self.pk)
 
-        if columns.filter(column=self.column).exists():
+        if (
+            self.column not in ['', None]
+            and columns.filter(column=self.column).exists()
+        ):
             raise DjangoValidationError({'column': _('Column is already mapped')})
 
-        if self.field not in ['', None] and columns.filter(field=self.field).exists():
+        if columns.filter(field=self.field).exists():
             raise DjangoValidationError({'field': _('Field is already mapped')})
 
     def clean(self):
@@ -337,14 +344,10 @@ class DataImportColumnMap(models.Model):
                 'session': _('Column mapping must be linked to a valid import session')
             })
 
-        if self.column not in self.session.columns:
+        if self.column and self.column not in self.session.columns:
             raise DjangoValidationError({
                 'column': _('Column does not exist in the data file')
             })
-
-        # Field is allowed to be empty
-        if self.field in ['', None]:
-            return
 
         field_def = self.field_definition
 
@@ -356,12 +359,6 @@ class DataImportColumnMap(models.Model):
         if field_def.read_only:
             raise DjangoValidationError({'field': _('Selected field is read-only')})
 
-    @property
-    def field_definition(self):
-        """Return the field definition associated with this column mapping."""
-        fields = self.session.serializer_fields(read_only=None)
-        return fields.get(self.field, None)
-
     session = models.ForeignKey(
         DataImportSession,
         on_delete=models.CASCADE,
@@ -369,9 +366,15 @@ class DataImportColumnMap(models.Model):
         related_name='column_mappings',
     )
 
-    column = models.CharField(max_length=100, verbose_name=_('Column'))
+    field = models.CharField(max_length=100, verbose_name=_('Field'))
 
-    field = models.CharField(blank=True, max_length=100, verbose_name=_('Field'))
+    column = models.CharField(blank=True, max_length=100, verbose_name=_('Column'))
+
+    @property
+    def field_definition(self):
+        """Return the field definition associated with this column mapping."""
+        fields = self.session.serializer_fields(read_only=None)
+        return fields.get(self.field, None)
 
     @property
     def label(self):
