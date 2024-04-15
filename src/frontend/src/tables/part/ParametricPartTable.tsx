@@ -132,6 +132,7 @@ export default function ParametricPartTable({
     url: ApiEndpoints.part_parameter_list,
     title: t`Add Part Parameter`,
     fields: partParameterFields,
+    focus: 'data',
     onFormSuccess: (parameter: any) => {
       updateParameterRecord(selectedPart, parameter);
     },
@@ -146,6 +147,7 @@ export default function ParametricPartTable({
     title: t`Edit Part Parameter`,
     pk: selectedParameter,
     fields: partParameterFields,
+    focus: 'data',
     onFormSuccess: (parameter: any) => {
       updateParameterRecord(selectedPart, parameter);
     }
@@ -233,6 +235,10 @@ export default function ParametricPartTable({
       DescriptionColumn({}),
       {
         accessor: 'IPN',
+        sortable: true
+      },
+      {
+        accessor: 'total_in_stock',
         sortable: true
       }
     ];

@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import {
+  Badge,
   Grid,
   Group,
   LoadingOverlay,
@@ -30,11 +31,14 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
+import DetailsBadge, {
+  DetailsBadgeProps
+} from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PartIcons } from '../../components/details/PartIcons';
@@ -450,7 +454,9 @@ export default function PartDetail() {
           </Grid.Col>
           <Grid.Col span={8}>
             <Stack spacing="xs">
-              <PartIcons part={part} />
+              <table>
+                <PartIcons part={part} />
+              </table>
               <DetailsTable fields={tl} item={part} />
             </Stack>
           </Grid.Col>
@@ -633,15 +639,34 @@ export default function PartDetail() {
     [part]
   );
 
-  const partDetail = useMemo(() => {
-    return (
-      <Group spacing="xs" noWrap={true}>
-        <Stack spacing="xs">
-          <Text>Stock: {part.in_stock}</Text>
-        </Stack>
-      </Group>
-    );
-  }, [part, id]);
+  const badges: ReactNode[] = useMemo(() => {
+    if (instanceQuery.isLoading || instanceQuery.isFetching) {
+      return [];
+    }
+
+    return [
+      <DetailsBadge
+        label={t`In Stock` + `: ${part.in_stock}`}
+        color={part.in_stock >= part.minimum_stock ? 'green' : 'orange'}
+        visible={part.in_stock > 0}
+      />,
+      <DetailsBadge
+        label={t`No Stock`}
+        color="red"
+        visible={part.in_stock == 0}
+      />,
+      <DetailsBadge
+        label={t`On Order` + `: ${part.ordering}`}
+        color="blue"
+        visible={part.on_order > 0}
+      />,
+      <DetailsBadge
+        label={t`In Production` + `: ${part.building}`}
+        color="blue"
+        visible={part.building > 0}
+      />
+    ];
+  }, [part, instanceQuery]);
 
   const partFields = usePartFields({ create: false });
 
@@ -742,7 +767,7 @@ export default function PartDetail() {
           title={t`Part` + ': ' + part.full_name}
           subtitle={part.description}
           imageUrl={part.image}
-          detail={partDetail}
+          badges={badges}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {
             setTreeOpen(true);
