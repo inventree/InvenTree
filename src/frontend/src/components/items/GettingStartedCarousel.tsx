@@ -44,9 +44,8 @@ export function GettingStartedCarousel({
 
   return (
     <Carousel
-      slideSize="50%"
-      breakpoints={[{ maxWidth: 'sm', slideSize: '100%', slideGap: rem(2) }]}
-      slideGap="xl"
+      slideSize={{ base: '50%', sm: '100%' }}
+      slideGap={{ base: 'xl', sm: rem(2) }}
       align="start"
     >
       {slides}

@@ -633,10 +633,10 @@ export function InvenTreeTable<T = any>({
           />
 
           <DataTable
-            withBorder
+            withTableBorder
             striped
             highlightOnHover
-            loaderVariant="dots"
+            loaderType="dots"
             pinLastColumn={tableProps.rowActions != undefined}
             idAccessor={tableProps.idAccessor}
             minHeight={300}
@@ -663,11 +663,11 @@ export function InvenTreeTable<T = any>({
             onCellClick={tableProps.onCellClick}
             defaultColumnProps={{
               noWrap: true,
-              textAlignment: 'left',
-              cellsStyle: {
+              textAlign: 'left',
+              cellsStyle: () => (theme) => ({
                 // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
                 overflow: 'hidden'
-              }
+              })
             }}
           />
         </Box>

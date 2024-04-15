@@ -406,7 +406,6 @@ function HistoryTable({
           <Checkbox
             checked={selection.includes(item.id)}
             onChange={() => toggleRow(item.id)}
-            transitionDuration={0}
           />
         </td>
         <td>
@@ -442,7 +441,6 @@ function HistoryTable({
                 indeterminate={
                   selection.length > 0 && selection.length !== data.length
                 }
-                transitionDuration={0}
               />
             </th>
             <th>

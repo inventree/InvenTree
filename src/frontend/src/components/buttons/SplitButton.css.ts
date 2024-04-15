@@ -6,7 +6,8 @@ import { vars } from '../../theme';
 export const button = style({
   borderTopRightRadius: 0,
   borderBottomRightRadius: 0,
-  '&::before': {
+
+  ':before': {
     borderRadius: '0 !important'
   }
 });

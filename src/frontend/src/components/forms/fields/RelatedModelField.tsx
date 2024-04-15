@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Input, useMantineTheme } from '@mantine/core';
+import { Input, darken, useMantineTheme } from '@mantine/core';
 import { useColorScheme, useDebouncedValue } from '@mantine/hooks';
 import { useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
@@ -245,16 +245,16 @@ export function RelatedModelField({
     } else {
       colors = {
         neutral0: vars.colors.white,
-        neutral5: theme.fn.darken(theme.white, 0.05),
-        neutral10: theme.fn.darken(theme.white, 0.1),
-        neutral20: theme.fn.darken(theme.white, 0.2),
-        neutral30: theme.fn.darken(theme.white, 0.3),
-        neutral40: theme.fn.darken(theme.white, 0.4),
-        neutral50: theme.fn.darken(theme.white, 0.5),
-        neutral60: theme.fn.darken(theme.white, 0.6),
-        neutral70: theme.fn.darken(theme.white, 0.7),
-        neutral80: theme.fn.darken(theme.white, 0.8),
-        neutral90: theme.fn.darken(theme.white, 0.9),
+        neutral5: darken(vars.colors.white, 0.05),
+        neutral10: darken(vars.colors.white, 0.1),
+        neutral20: darken(vars.colors.white, 0.2),
+        neutral30: darken(vars.colors.white, 0.3),
+        neutral40: darken(vars.colors.white, 0.4),
+        neutral50: darken(vars.colors.white, 0.5),
+        neutral60: darken(vars.colors.white, 0.6),
+        neutral70: darken(vars.colors.white, 0.7),
+        neutral80: darken(vars.colors.white, 0.8),
+        neutral90: darken(vars.colors.white, 0.9),
         primary: vars.colors.primaryColors[7],
         primary25: vars.colors.primaryColors[4],
         primary50: vars.colors.primaryColors[5],

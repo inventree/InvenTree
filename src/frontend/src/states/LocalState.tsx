@@ -20,6 +20,7 @@ interface LocalStateProps {
   blackColor: string;
   radius: MantineSize | (string & {}) | number;
   loader: string;
+  setLoader: (value: string) => void;
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
   tableColumnNames: Record<string, Record<string, string>>;
@@ -56,6 +57,9 @@ export const useLocalState = create<LocalStateProps>()(
       blackColor: '#000',
       radius: 'xs',
       loader: 'oval',
+      setLoader(value) {
+        set({ loader: value });
+      },
       // panels
       lastUsedPanels: {},
       setLastUsedPanel: (panelKey) => (value) => {

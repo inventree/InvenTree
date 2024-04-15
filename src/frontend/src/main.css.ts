@@ -93,7 +93,7 @@ export const subLink = style({
   //       : vars.colors.gray[0]
   // })
 
-  '&:active': vars.activeStyles
+  ':active': vars.activeStyles
 });
 
 export const docHover = style({
@@ -145,7 +145,7 @@ export const tab = style({
   height: 38,
   backgroundColor: 'transparent',
 
-  '&:hover': {
+  ':hover': {
     backgroundColor:
       //theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
       vars.colors.gray[1]

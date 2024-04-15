@@ -230,16 +230,16 @@ export function ApiFormField({
             id={fieldId}
             value={numericalValue}
             error={error?.message}
-            formatter={(value) => {
-              let v: any = parseFloat(value);
+            /*formatter={(props: any) => {
+              let v: any = parseFloat(props.value);
 
               if (Number.isNaN(v) || !Number.isFinite(v)) {
-                return value;
+                return props.value;
               }
 
               return `${1 * v.toFixed()}`;
-            }}
-            precision={definition.field_type == 'integer' ? 0 : 10}
+            }}*/
+            decimalScale={definition.field_type == 'integer' ? 0 : 10}
             onChange={(value) => onChange(value)}
           />
         );

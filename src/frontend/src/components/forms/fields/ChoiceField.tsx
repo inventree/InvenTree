@@ -64,7 +64,7 @@ export function ChoiceField({
       required={definition.required}
       disabled={definition.disabled}
       leftSection={definition.icon}
-      withinPortal={true}
+      comboboxProps={{ withinPortal: true }}
     />
   );
 }

@@ -120,7 +120,7 @@ function UploadModal({
       >
         <Image
           src={imageUrl}
-          imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+          onLoad={() => URL.revokeObjectURL(imageUrl)}
           radius="sm"
           height={75}
           fit="contain"

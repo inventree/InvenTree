@@ -66,11 +66,13 @@ export function UserTheme({ height }: { height: number }) {
     { value: 'oval', label: t`oval` },
     { value: 'dots', label: t`dots` }
   ];
-  const [loader, setLoader] = useState<string>(theme.loader);
+  const [themeLoader, setThemeLoader] = useLocalState((state) => [
+    state.loader,
+    state.setLoader
+  ]);
   function changeLoader(value: string | null) {
     if (value === null) return;
-    setLoader(value);
-    useLocalState.setState({ loader: value });
+    setThemeLoader(value);
   }
 
   return (
@@ -133,10 +135,10 @@ export function UserTheme({ height }: { height: number }) {
               <Group align="center">
                 <Select
                   data={loaderDate}
-                  value={loader}
+                  value={themeLoader}
                   onChange={changeLoader}
                 />
-                <Loader type={loader} mah={18} />
+                <Loader type={themeLoader} mah={18} />
               </Group>
             </td>
           </tr>

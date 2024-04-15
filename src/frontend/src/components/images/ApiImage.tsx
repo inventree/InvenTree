@@ -11,10 +11,14 @@ import { useState } from 'react';
 
 import { api } from '../../App';
 
+interface ApiImageProps extends ImageProps {
+  onClick?: (event: any) => void;
+}
+
 /**
  * Construct an image container which will load and display the image
  */
-export function ApiImage(props: ImageProps) {
+export function ApiImage(props: ApiImageProps) {
   const [image, setImage] = useState<string>('');
 
   const [authorized, setAuthorized] = useState<boolean>(true);
