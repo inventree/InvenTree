@@ -262,10 +262,7 @@ test('PUI - Company', async ({ page }) => {
   await page.waitForURL('**/platform');
 
   await page.goto('./platform/company/1/details');
-  await page
-    .locator('div')
-    .filter({ hasText: /^DigiKey Electronics$/ })
-    .waitFor();
+  await page.getByLabel('Details').getByText('DigiKey Electronics').waitFor();
   await page.getByRole('cell', { name: 'https://www.digikey.com/' }).waitFor();
   await page.getByRole('tab', { name: 'Supplied Parts' }).click();
   await page
