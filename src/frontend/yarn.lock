@@ -1048,7 +1048,16 @@
     jiti "^1.17.1"
     lodash.get "^4.4.2"
 
-"@lingui/core@4.8.0", "@lingui/core@^4.7.1":
+"@lingui/core@4.10.0", "@lingui/core@^4.7.1":
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/@lingui/core/-/core-4.10.0.tgz#7944cd49e3f6778f7a7be98f7ab64ccb0ec53b5f"
+  integrity sha512-KfwkghuCVFt3AxZlAIotTvIcopIpHj4prwG9v6iyrksLXoxKPQMBXutYGl/EIZE1KYQZdR6rjAaoilMl0pSGKA==
+  dependencies:
+    "@babel/runtime" "^7.20.13"
+    "@lingui/message-utils" "4.10.0"
+    unraw "^3.0.0"
+
+"@lingui/core@4.8.0":
   version "4.8.0"
   resolved "https://registry.yarnpkg.com/@lingui/core/-/core-4.8.0.tgz#9d94857e50e82b118d75074cbed41c1358c76ae0"
   integrity sha512-csETD7Vi2SSvH1F+gASGPf9TISoQFxA3YTB7MbRthtqK73TtWbEAmNtztIYPjPtNQemd7GwFztT/X6OANbjYhA==
@@ -1078,6 +1087,14 @@
     "@lingui/core" "4.8.0"
     "@lingui/message-utils" "4.8.0"
 
+"@lingui/message-utils@4.10.0":
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/@lingui/message-utils/-/message-utils-4.10.0.tgz#2d575c5f2808b275c56495343b78c0b47d4443e6"
+  integrity sha512-p9Z4L4//ef1jpwqUR0hnILPbbqhVOXkLktY/EsZ7LMmvn18yhq4FjCtGsrorclTcTdtl0l7bqW4iEpEqGW91Gw==
+  dependencies:
+    "@messageformat/parser" "^5.0.0"
+    js-sha256 "^0.10.1"
+
 "@lingui/message-utils@4.8.0":
   version "4.8.0"
   resolved "https://registry.yarnpkg.com/@lingui/message-utils/-/message-utils-4.8.0.tgz#2d2004e8b78d37f7f59d1d6184d0c1f25f708a8f"
@@ -1086,13 +1103,13 @@
     "@messageformat/parser" "^5.0.0"
     js-sha256 "^0.10.1"
 
-"@lingui/react@^4.7.2":
-  version "4.8.0"
-  resolved "https://registry.yarnpkg.com/@lingui/react/-/react-4.8.0.tgz#7d9d24f465f6fdbf76cff622f4f8538a65d71546"
-  integrity sha512-GVoGDYZAN9wHrEvQWljxS1CZqZ80yLtK0LS8Y907RLlmD3GXLwNvT63iJUHwRu4710HNdgD7qM7XNOgPZZNu7A==
+"@lingui/react@^4.10.0":
+  version "4.10.0"
+  resolved "https://registry.yarnpkg.com/@lingui/react/-/react-4.10.0.tgz#56dce040659c94c1125640f8e399f68164b44ade"
+  integrity sha512-QBbgKnIEePbt2ktq/6AVi9q91TRbwvcdrruOMu3qqXBqcF4KMu7rf05M9tvk/cClTjImuOF+FI3k+MX6LGnnYQ==
   dependencies:
     "@babel/runtime" "^7.20.13"
-    "@lingui/core" "4.8.0"
+    "@lingui/core" "4.10.0"
 
 "@mantine/carousel@<7":
   version "6.0.21"
