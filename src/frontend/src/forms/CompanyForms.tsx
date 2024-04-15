@@ -125,6 +125,7 @@ export function companyFields(): ApiFormFieldSet {
     },
     is_supplier: {},
     is_manufacturer: {},
-    is_customer: {}
+    is_customer: {},
+    active: {}
   };
 }
