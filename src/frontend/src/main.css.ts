@@ -5,21 +5,22 @@ import { vars } from './theme';
 
 export const layoutHeader = style({
   paddingTop: vars.spacing.sm,
-  backgroundColor: vars.colors.gray[0],
-  //theme.colorScheme === 'dark' ? vars.colors.dark[6] : vars.colors.gray[0],
-  borderBottom: `1px solid ${
-    //theme.colorScheme === 'dark' ? 'transparent' : vars.colors.gray[2]
-    vars.colors.gray[2]
-  }`,
-  marginBottom: 10
+  marginBottom: 10,
+
+  [vars.lightSelector]: {
+    backgroundColor: vars.colors.gray[0],
+    borderBottom: `${rem(1)} solid ${vars.colors.gray[2]}`
+  },
+  [vars.darkSelector]: {
+    backgroundColor: vars.colors.dark[6],
+    borderBottom: `${rem(1)} solid transparent`
+  }
 });
 
 export const layoutFooter = style({
   marginTop: 10,
-  borderTop: `1px solid ${
-    //theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[2]
-    vars.colors.gray[2]
-  }`
+  [vars.lightSelector]: { borderTop: `1px solid ${vars.colors.gray[2]}` },
+  [vars.darkSelector]: { borderTop: `1px solid ${vars.colors.dark[5]}` }
 });
 
 export const layoutHeaderSection = style({
@@ -27,12 +28,12 @@ export const layoutHeaderSection = style({
 });
 
 export const layoutHeaderUser = style({
-  color:
-    //theme.colorScheme === 'dark' ? vars.colors.dark[0] : vars.black,
-    vars.colors.black,
   padding: `${vars.spacing.xs}px ${vars.spacing.sm}px`,
   borderRadius: vars.radiusDefault,
   transition: 'background-color 100ms ease',
+
+  [vars.lightSelector]: { color: vars.colors.black },
+  [vars.darkSelector]: { color: vars.colors.dark[0] },
 
   [vars.smallerThan('xs')]: {
     display: 'none'
@@ -40,17 +41,19 @@ export const layoutHeaderUser = style({
 });
 
 export const headerDropdownFooter = style({
-  backgroundColor:
-    //theme.colorScheme === 'dark' ? vars.colors.dark[7] : vars.colors.gray[0],
-    vars.colors.gray[0],
   margin: `calc(${vars.spacing.md} * -1)`,
   marginTop: vars.spacing.sm,
   padding: `${vars.spacing.md} calc(${vars.spacing.md} * 2)`,
   paddingBottom: vars.spacing.xl,
-  borderTop: `${rem(1)} solid ${
-    //theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
-    vars.colors.gray[1]
-  }`
+
+  [vars.lightSelector]: {
+    backgroundColor: vars.colors.gray[0],
+    borderTop: `${rem(1)} solid ${vars.colors.gray[1]}`
+  },
+  [vars.darkSelector]: {
+    backgroundColor: vars.colors.dark[7],
+    borderTop: `${rem(1)} solid ${vars.colors.dark[5]}`
+  }
 });
 
 export const link = style({
@@ -60,25 +63,23 @@ export const link = style({
   paddingLeft: vars.spacing.md,
   paddingRight: vars.spacing.md,
   textDecoration: 'none',
-  color:
-    //theme.colorScheme === 'dark' ? vars.white: vars.black,
-    vars.colors.black,
   fontWeight: 500,
   fontSize: vars.fontSizes.sm,
+
+  [vars.lightSelector]: { color: vars.colors.black },
+  [vars.darkSelector]: { color: vars.colors.white },
 
   [vars.smallerThan('sm')]: {
     height: rem(42),
     display: 'flex',
     alignItems: 'center',
     width: '100%'
-  }
+  },
 
-  // ...theme.fn.hover({
-  //   backgroundColor:
-  //     theme.colorScheme === 'dark'
-  //       ? vars.colors.dark[6]
-  //       : vars.colors.gray[0]
-  // })
+  ':hover': {
+    [vars.lightSelector]: { backgroundColor: vars.colors.gray[0] },
+    [vars.darkSelector]: { backgroundColor: vars.colors.dark[6] }
+  }
 });
 
 export const subLink = style({
@@ -86,12 +87,10 @@ export const subLink = style({
   padding: `${vars.spacing.xs} ${vars.spacing.md}`,
   borderRadius: vars.radiusDefault,
 
-  // ...theme.fn.hover({
-  //   backgroundColor:
-  //     theme.colorScheme === 'dark'
-  //       ? vars.colors.dark[7]
-  //       : vars.colors.gray[0]
-  // })
+  ':hover': {
+    [vars.lightSelector]: { backgroundColor: vars.colors.gray[0] },
+    [vars.darkSelector]: { backgroundColor: vars.colors.dark[7] }
+  },
 
   ':active': {
     color: vars.colors.defaultHover
@@ -141,9 +140,8 @@ export const tab = style({
   backgroundColor: 'transparent',
 
   ':hover': {
-    backgroundColor:
-      //theme.colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
-      vars.colors.gray[1]
+    [vars.lightSelector]: { backgroundColor: vars.colors.gray[1] },
+    [vars.darkSelector]: { backgroundColor: vars.colors.dark[5] }
   }
 });
 
@@ -168,16 +166,13 @@ export const dashboardItemTitle = style({
 });
 
 export const card = style({
-  backgroundColor:
-    //theme.colorScheme === 'dark' ? vars.colors.dark[7] : vars.white
-    vars.colors.white
+  [vars.lightSelector]: { backgroundColor: vars.colors.white },
+  [vars.darkSelector]: { backgroundColor: vars.colors.dark[7] }
 });
 
 export const itemTopBorder = style({
-  borderTop: `1px solid ${
-    //theme.colorScheme === 'dark' ? vars.colors.dark[4] : vars.colors.gray[2]
-    vars.colors.gray[2]
-  }`
+  [vars.lightSelector]: { borderTop: `1px solid ${vars.colors.gray[2]}` },
+  [vars.darkSelector]: { borderTop: `1px solid ${vars.colors.dark[4]}` }
 });
 
 export const navigationDrawer = style({
