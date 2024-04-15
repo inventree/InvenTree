@@ -71,7 +71,7 @@ function QueryResultGroup({
         <Group justify="apart" wrap="nowrap">
           <Group justify="left" gap={5} wrap="nowrap">
             <Text size="lg">{model.label_multiple}</Text>
-            <Text size="sm" italic>
+            <Text size="sm" style={{ fontStyle: 'italic' }}>
               {' '}
               - {query.results.count} <Trans>results</Trans>
             </Text>

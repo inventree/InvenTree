@@ -85,7 +85,7 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
       </Group>
 
       {!machineType && (
-        <Text italic>
+        <Text style={{ fontStyle: 'italic' }}>
           <Trans>Machine type not found.</Trans>
         </Text>
       )}
@@ -192,7 +192,7 @@ function MachineDriverDrawer({
       </Group>
 
       {!machineDriver && (
-        <Text italic>
+        <Text style={{ fontStyle: 'italic' }}>
           <Trans>Machine driver not found.</Trans>
         </Text>
       )}

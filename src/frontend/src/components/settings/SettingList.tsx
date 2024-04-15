@@ -51,7 +51,7 @@ export function SettingList({
                   onChange={onChange}
                 />
               ) : (
-                <Text size="sm" italic color="red">
+                <Text size="sm" style={{ fontStyle: 'italic' }} color="red">
                   Setting {key} not found
                 </Text>
               )}
@@ -59,7 +59,7 @@ export function SettingList({
           );
         })}
         {(keys || allKeys).length === 0 && (
-          <Text italic>
+          <Text style={{ fontStyle: 'italic' }}>
             <Trans>No settings specified</Trans>
           </Text>
         )}

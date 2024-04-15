@@ -109,7 +109,10 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
           available > 0 ? (
             available
           ) : (
-            <Text c="red" italic>{t`No stock available`}</Text>
+            <Text
+              c="red"
+              style={{ fontStyle: 'italic' }}
+            >{t`No stock available`}</Text>
           )
         }
         title={t`Available Stock`}
@@ -176,7 +179,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         switchable: false,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
-            <Text italic>{t`Consumable item`}</Text>
+            <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}

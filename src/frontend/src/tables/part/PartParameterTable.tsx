@@ -49,7 +49,11 @@ export function PartParameterTable({ partId }: { partId: any }) {
         render: (record) => {
           let variant = String(partId) != String(record.part);
 
-          return <Text italic={variant}>{record.template_detail?.name}</Text>;
+          return (
+            <Text style={{ fontStyle: variant ? 'italic' : 'inherit' }}>
+              {record.template_detail?.name}
+            </Text>
+          );
         }
       },
       DescriptionColumn({

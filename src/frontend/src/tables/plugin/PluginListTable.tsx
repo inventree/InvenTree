@@ -306,7 +306,11 @@ export default function PluginListTable() {
           if (record.active) {
             return record.meta.description;
           } else {
-            return <Text italic>{t`Description not available`}</Text>;
+            return (
+              <Text
+                style={{ fontStyle: 'italic' }}
+              >{t`Description not available`}</Text>
+            );
           }
         }
       },
@@ -351,7 +355,7 @@ export default function PluginListTable() {
                   : t`The following plugin will be deactivated`}
                 :
               </Text>
-              <Text size="lg" italic>
+              <Text size="lg" style={{ fontStyle: 'italic' }}>
                 {plugin_name}
               </Text>
             </Stack>

@@ -149,7 +149,7 @@ export function BomTable({
 
           let text =
             available_stock <= 0 ? (
-              <Text c="red" italic>{t`No stock`}</Text>
+              <Text c="red" style={{ fontStyle: 'italic' }}>{t`No stock`}</Text>
             ) : (
               available_stock
             );
@@ -210,7 +210,9 @@ export function BomTable({
         sortable: false, // TODO: Custom sorting via API
         render: (record: any) => {
           if (record.consumable) {
-            return <Text italic>{t`Consumable item`}</Text>;
+            return (
+              <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
+            );
           }
 
           let can_build = availableStockQuantity(record) / record.quantity;
