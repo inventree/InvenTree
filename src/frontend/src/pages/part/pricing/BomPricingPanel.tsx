@@ -1,10 +1,19 @@
 import { t } from '@lingui/macro';
-import { SimpleGrid, Stack } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
+import {
+  Group,
+  SegmentedControl,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import {
   Bar,
   BarChart,
+  Cell,
   Legend,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -20,6 +29,69 @@ import { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
+
+// Display BOM data as a pie chart
+function BomPieChart({ data }: { data: any[] }) {
+  return (
+    <ResponsiveContainer width="100%" height={500}>
+      <PieChart>
+        <Pie
+          data={data}
+          dataKey="total_price_min"
+          nameKey="name"
+          innerRadius={20}
+          outerRadius={100}
+        >
+          {data.map((_entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={CHART_COLORS[index % CHART_COLORS.length]}
+            />
+          ))}
+        </Pie>
+        <Pie
+          data={data}
+          dataKey="total_price_max"
+          nameKey="name"
+          innerRadius={120}
+          outerRadius={240}
+        >
+          {data.map((_entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={CHART_COLORS[index % CHART_COLORS.length]}
+            />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
+  );
+}
+
+// Display BOM data as a bar chart
+function BomBarChart({ data }: { data: any[] }) {
+  return (
+    <ResponsiveContainer width="100%" height={500}>
+      <BarChart data={data}>
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar
+          dataKey="total_price_min"
+          fill={CHART_COLORS[0]}
+          label={t`Minimum Total Price`}
+        />
+        <Bar
+          dataKey="total_price_max"
+          fill={CHART_COLORS[1]}
+          label={t`Maximum Total Price`}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+}
 
 export default function BomPricingPanel({
   part,
@@ -97,6 +169,8 @@ export default function BomPricingPanel({
     return pricing;
   }, [table.records]);
 
+  const [chartType, setChartType] = useState<string>('pie');
+
   return (
     <Stack spacing="xs">
       <SimpleGrid cols={2}>
@@ -114,47 +188,18 @@ export default function BomPricingPanel({
           }}
         />
         {bomPricingData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={500}>
-            <BarChart data={bomPricingData}>
-              <XAxis dataKey="name" />
-              <YAxis
-                yAxisId="left"
-                orientation="left"
-                stroke={CHART_COLORS[1]}
-              />
-              <YAxis
-                yAxisId="right"
-                orientation="right"
-                stroke={CHART_COLORS[3]}
-              />
-              <Tooltip />
-              <Legend />
-              <Bar
-                dataKey="unit_price_min"
-                yAxisId="left"
-                fill={CHART_COLORS[0]}
-                label={t`Minimum Unit Price`}
-              />
-              <Bar
-                dataKey="unit_price_max"
-                yAxisId="left"
-                fill={CHART_COLORS[1]}
-                label={t`Maximum Unit Price`}
-              />
-              <Bar
-                dataKey="total_price_min"
-                yAxisId="right"
-                fill={CHART_COLORS[2]}
-                label={t`Minimum Total Price`}
-              />
-              <Bar
-                dataKey="total_price_max"
-                yAxisId="right"
-                fill={CHART_COLORS[3]}
-                label={t`Maximum Total Price`}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <Stack spacing="xs">
+            {chartType == 'bar' && <BomBarChart data={bomPricingData} />}
+            {chartType == 'pie' && <BomPieChart data={bomPricingData} />}
+            <SegmentedControl
+              value={chartType}
+              onChange={setChartType}
+              data={[
+                { value: 'pie', label: t`Pie Chart` },
+                { value: 'bar', label: t`Bar Chart` }
+              ]}
+            />
+          </Stack>
         ) : (
           <NoPricingData />
         )}
