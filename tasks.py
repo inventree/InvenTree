@@ -912,6 +912,7 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     src = Path(path).joinpath('media').resolve()
     dst = get_media_dir()
 
+    print(f'Copying media files - "{src}" to "{dst}"')
     shutil.copytree(src, dst, dirs_exist_ok=True)
 
     print('Done setting up test environment...')
