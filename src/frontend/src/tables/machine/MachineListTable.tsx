@@ -66,12 +66,12 @@ interface MachineI {
 }
 
 function MachineStatusIndicator({ machine }: { machine: MachineI }) {
-  const sx = { marginLeft: '4px' };
+  const style = { marginLeft: '4px' };
 
   // machine is not active, show a gray dot
   if (!machine.active) {
     return (
-      <Indicator sx={sx} color="gray">
+      <Indicator style={style} color="gray">
         <Box></Box>
       </Indicator>
     );
@@ -90,7 +90,7 @@ function MachineStatusIndicator({ machine }: { machine: MachineI }) {
     machine.initialized && machine.status > 0 && machine.status < 300;
 
   return (
-    <Indicator processing={processing} sx={sx} color={color}>
+    <Indicator processing={processing} style={style} color={color}>
       <Box></Box>
     </Indicator>
   );

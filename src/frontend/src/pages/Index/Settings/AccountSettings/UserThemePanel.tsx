@@ -67,7 +67,8 @@ export function UserTheme({ height }: { height: number }) {
     { value: 'dots', label: t`dots` }
   ];
   const [loader, setLoader] = useState<string>(theme.loader);
-  function changeLoader(value: string) {
+  function changeLoader(value: string | null) {
+    if (value === null) return;
     setLoader(value);
     useLocalState.setState({ loader: value });
   }
