@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Divider, MantineNumberSize, Stack } from '@mantine/core';
+import { Alert, Divider, MantineSize, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
@@ -20,7 +20,7 @@ export interface ApiFormModalProps extends ApiFormProps {
   onClose?: () => void;
   onOpen?: () => void;
   closeOnClickOutside?: boolean;
-  size?: MantineNumberSize;
+  size?: MantineSize | (string & {}) | number;
 }
 
 /**

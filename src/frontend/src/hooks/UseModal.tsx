@@ -1,4 +1,4 @@
-import { MantineNumberSize, Modal } from '@mantine/core';
+import { MantineSize, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import React, { useCallback } from 'react';
 
@@ -7,7 +7,7 @@ import { StylishText } from '../components/items/StylishText';
 export interface UseModalProps {
   title: string;
   children: React.ReactElement;
-  size?: MantineNumberSize;
+  size?: MantineSize | (string & {}) | number;
   onOpen?: () => void;
   onClose?: () => void;
   closeOnClickOutside?: boolean;

@@ -1,5 +1,4 @@
-import { ActionIcon, Group, Tooltip } from '@mantine/core';
-import { FloatingPosition } from '@mantine/core/lib/Floating';
+import { ActionIcon, FloatingPosition, Group, Tooltip } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';

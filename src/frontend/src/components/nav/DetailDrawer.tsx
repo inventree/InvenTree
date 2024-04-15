@@ -3,7 +3,7 @@ import {
   Divider,
   Drawer,
   Group,
-  MantineNumberSize,
+  MantineSize,
   Stack,
   Text
 } from '@mantine/core';
@@ -26,7 +26,7 @@ export interface DrawerProps {
   position?: 'right' | 'left';
   renderContent: (id?: string) => React.ReactNode;
   urlPrefix?: string;
-  size?: MantineNumberSize;
+  size?: MantineSize | (string & {}) | number;
   closeOnEscape?: boolean;
 }
 

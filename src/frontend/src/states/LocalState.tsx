@@ -1,5 +1,4 @@
-import { MantineNumberSize } from '@mantine/core';
-import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
+import { MantineSize } from '@mantine/core';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -19,8 +18,8 @@ interface LocalStateProps {
   primaryColor: string;
   whiteColor: string;
   blackColor: string;
-  radius: MantineNumberSize;
-  loader: LoaderType;
+  radius: MantineSize | (string & {}) | number;
+  loader: string;
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
   tableColumnNames: Record<string, Record<string, string>>;

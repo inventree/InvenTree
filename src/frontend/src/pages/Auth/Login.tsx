@@ -35,7 +35,7 @@ export default function Login() {
   const location = useLocation();
 
   // Data manipulation functions
-  function ChangeHost(newHost: string): void {
+  function ChangeHost(newHost: string | null): void {
     setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
     fetchServerApiState();
