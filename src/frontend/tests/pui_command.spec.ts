@@ -51,7 +51,7 @@ test('PUI - Quick Command - no keys', async ({ page }) => {
   await page.getByLabel('username').fill(user.username);
   await page.getByLabel('password').fill(user.password);
   await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.waitForURL('**/platform/*');
 
   await expect(page).toHaveTitle('InvenTree');
   await page.waitForURL('**/platform');
