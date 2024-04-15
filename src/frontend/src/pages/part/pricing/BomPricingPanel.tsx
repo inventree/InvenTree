@@ -17,6 +17,7 @@ import {
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { formatDecimal, formatPriceRange } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
@@ -178,7 +179,9 @@ export default function BomPricingPanel({
               sub_part_detail: true,
               has_pricing: true
             },
-            enableSelection: false
+            enableSelection: false,
+            modelType: ModelType.part,
+            modelField: 'sub_part'
           }}
         />
         {bomPricingData.length > 0 ? (
