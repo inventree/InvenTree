@@ -304,7 +304,7 @@ export default function PluginListTable() {
 
         render: function (record: any) {
           if (record.active) {
-            return record.meta.description;
+            return record?.meta.description;
           } else {
             return (
               <Text
