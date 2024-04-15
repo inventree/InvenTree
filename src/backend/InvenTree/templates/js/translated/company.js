@@ -519,6 +519,15 @@ function loadCompanyTable(table, url, options={}) {
             title: '{% trans "Description" %}',
         },
         {
+            field: 'active',
+            title: '{% trans "Active" %}',
+            sortable: true,
+            switchable: true,
+            formatter: function(value) {
+                return yesNoLabel(value);
+            }
+        },
+        {
             field: 'website',
             title: '{% trans "Website" %}',
             formatter: function(value) {
