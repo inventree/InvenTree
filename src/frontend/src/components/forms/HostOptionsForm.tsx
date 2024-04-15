@@ -49,6 +49,7 @@ export function HostOptionsForm({
             onClick={() => {
               deleteItem(key);
             }}
+            variant="default"
           >
             <IconTrash />
           </ActionIcon>

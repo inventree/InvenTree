@@ -73,6 +73,7 @@ export function NotificationDrawer({
               onClose();
               navigate('/notifications/unread');
             }}
+            variant="default"
           >
             <IconBellPlus />
           </ActionIcon>

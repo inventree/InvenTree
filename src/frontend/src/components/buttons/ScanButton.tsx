@@ -16,6 +16,7 @@ export function ScanButton() {
           innerProps: {}
         })
       }
+      variant="default"
     >
       <IconQrcode />
     </ActionIcon>

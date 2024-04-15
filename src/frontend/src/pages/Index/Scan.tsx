@@ -258,7 +258,11 @@ export default function Scan() {
           <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
         </Text>
         <Group>
-          <ActionIcon onClick={notYetImplemented} title={t`Count`}>
+          <ActionIcon
+            onClick={notYetImplemented}
+            title={t`Count`}
+            variant="default"
+          >
             <IconNumber />
           </ActionIcon>
         </Group>
@@ -329,6 +333,7 @@ export default function Scan() {
                       color="red"
                       onClick={btnDeleteHistory}
                       title={t`Delete`}
+                      variant="default"
                     >
                       <IconTrash />
                     </ActionIcon>
@@ -336,6 +341,7 @@ export default function Scan() {
                       onClick={btnRunSelectedBarcode}
                       disabled={selection.length > 1}
                       title={t`Lookup part`}
+                      variant="default"
                     >
                       <IconSearch />
                     </ActionIcon>
@@ -343,6 +349,7 @@ export default function Scan() {
                       onClick={btnOpenSelectedLink}
                       disabled={!selectionLinked}
                       title={t`Open Link`}
+                      variant="default"
                     >
                       <IconLink />
                     </ActionIcon>
@@ -362,7 +369,11 @@ export default function Scan() {
             >
               <Trans>History</Trans>
             </TitleWithDoc>
-            <ActionIcon color="red" onClick={btnDeleteFullHistory}>
+            <ActionIcon
+              color="red"
+              onClick={btnDeleteFullHistory}
+              variant="default"
+            >
               <IconTrash />
             </ActionIcon>
           </Group>
@@ -509,7 +520,7 @@ function InputManual({ action }: inputProps) {
           onChange={(event) => setValue(event.currentTarget.value)}
           onKeyDown={getHotkeyHandler([['Enter', btnAddItem]])}
         />
-        <ActionIcon onClick={btnAddItem} w={16}>
+        <ActionIcon onClick={btnAddItem} w={16} variant="default">
           <IconPlus />
         </ActionIcon>
       </Group>
@@ -704,7 +715,11 @@ function InputImageBarcode({ action }: inputProps) {
           size="sm"
         />
         {ScanningEnabled ? (
-          <ActionIcon onClick={btnStopScanning} title={t`Stop scanning`}>
+          <ActionIcon
+            onClick={btnStopScanning}
+            title={t`Stop scanning`}
+            variant="default"
+          >
             <IconPlayerStopFilled />
           </ActionIcon>
         ) : (
@@ -712,6 +727,7 @@ function InputImageBarcode({ action }: inputProps) {
             onClick={btnStartScanning}
             title={t`Start scanning`}
             disabled={!camId}
+            variant="default"
           >
             <IconPlayerPlayFilled />
           </ActionIcon>

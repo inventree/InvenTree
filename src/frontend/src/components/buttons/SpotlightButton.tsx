@@ -9,7 +9,11 @@ import { firstSpotlight } from '../nav/Layout';
  */
 export function SpotlightButton() {
   return (
-    <ActionIcon onClick={() => firstSpotlight.open()} title={t`Open spotlight`}>
+    <ActionIcon
+      onClick={() => firstSpotlight.open()}
+      title={t`Open spotlight`}
+      variant="default"
+    >
       <IconCommand />
     </ActionIcon>
   );

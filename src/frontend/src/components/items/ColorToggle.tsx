@@ -15,6 +15,7 @@ export function ColorToggle() {
           color:
             colorScheme === 'dark' ? vars.colors.yellow[4] : vars.colors.blue[6]
         }}
+        variant="default"
       >
         {colorScheme === 'dark' ? <IconSun /> : <IconMoonStars />}
       </ActionIcon>

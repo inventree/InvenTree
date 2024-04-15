@@ -13,7 +13,7 @@ export function TableColumnSelect({
   return (
     <Menu shadow="xs" closeOnItemClick={false}>
       <Menu.Target>
-        <ActionIcon>
+        <ActionIcon variant="default">
           <Tooltip label={t`Select Columns`}>
             <IconAdjustments />
           </Tooltip>

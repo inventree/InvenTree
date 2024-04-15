@@ -63,6 +63,7 @@ export function NavHoverMenu({
             onClick={openDrawer}
             onMouseOver={openDrawer}
             title={t`Open Navigation`}
+            variant="default"
           >
             <IconLayoutSidebar />
           </ActionIcon>

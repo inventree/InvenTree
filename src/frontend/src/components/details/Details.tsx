@@ -325,7 +325,11 @@ function CopyField({ value }: { value: string }) {
     <CopyButton value={value}>
       {({ copied, copy }) => (
         <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
-          <ActionIcon color={copied ? 'teal' : 'gray'} onClick={copy}>
+          <ActionIcon
+            color={copied ? 'teal' : 'gray'}
+            onClick={copy}
+            variant="default"
+          >
             {copied ? (
               <InvenTreeIcon icon="check" />
             ) : (

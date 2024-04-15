@@ -18,7 +18,7 @@ export function DownloadAction({
     <>
       <Menu>
         <Menu.Target>
-          <ActionIcon>
+          <ActionIcon variant="default">
             <Tooltip label={t`Download selected data`}>
               <IconDownload />
             </Tooltip>

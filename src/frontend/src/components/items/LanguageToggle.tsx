@@ -16,7 +16,7 @@ export function LanguageToggle() {
         padding: open === true ? 8 : 0
       }}
     >
-      <ActionIcon onClick={() => toggle.toggle()} size="lg">
+      <ActionIcon onClick={() => toggle.toggle()} size="lg" variant="default">
         <IconLanguage />
       </ActionIcon>
       {open && (
