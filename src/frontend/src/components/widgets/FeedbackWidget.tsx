@@ -2,7 +2,6 @@ import { Trans } from '@lingui/macro';
 import { Button, Stack, Title } from '@mantine/core';
 import { useColorScheme } from '@mantine/hooks';
 import { IconExternalLink } from '@tabler/icons-react';
-import { useCodeMirror } from '@uiw/react-codemirror';
 
 import { vars } from '../../theme';
 

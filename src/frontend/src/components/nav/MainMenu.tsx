@@ -12,7 +12,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
 import { useUserState } from '../../states/UserState';
-import { theme, vars } from '../../theme';
+import { vars } from '../../theme';
 
 export function MainMenu() {
   const navigate = useNavigate();

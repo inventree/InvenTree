@@ -18,7 +18,7 @@ import { menuItems } from '../../defaults/menuItems';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { theme, vars } from '../../theme';
+import { vars } from '../../theme';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { MenuLinks } from '../items/MenuLinks';
 

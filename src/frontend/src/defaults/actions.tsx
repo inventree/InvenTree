@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import type { SpotlightAction, SpotlightActionData } from '@mantine/spotlight';
+import type { SpotlightActionData } from '@mantine/spotlight';
 import { IconHome, IconLink, IconPointer } from '@tabler/icons-react';
 import { NavigateFunction } from 'react-router-dom';
 
