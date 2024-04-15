@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Divider, MantineSize, Stack } from '@mantine/core';
+import { Alert, Divider, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
