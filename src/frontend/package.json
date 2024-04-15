@@ -59,7 +59,7 @@
         "@babel/preset-typescript": "^7.23.3",
         "@lingui/cli": "^4.7.2",
         "@lingui/macro": "^4.7.2",
-        "@playwright/test": "^1.41.2",
+        "@playwright/test": "^1.43.1",
         "@types/node": "^20.12.3",
         "@types/react": "^18.2.74",
         "@types/react-dom": "^18.2.23",
