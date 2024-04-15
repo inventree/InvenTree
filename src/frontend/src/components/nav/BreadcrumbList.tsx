@@ -42,7 +42,7 @@ export function BreadcrumbList({
 
   return (
     <Paper p="3" radius="xs">
-      <Group spacing="xs">
+      <Group gap="xs">
         {navCallback && (
           <ActionIcon key="nav-action" onClick={navCallback}>
             <IconMenu2 />

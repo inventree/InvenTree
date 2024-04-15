@@ -142,7 +142,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         ordering: 'unit_quantity',
         render: (record: any) => {
           return (
-            <Group position="apart">
+            <Group justify="apart">
               <Text>{record.bom_item_detail?.quantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>
@@ -156,7 +156,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         sortable: true,
         render: (record: any) => {
           return (
-            <Group position="apart">
+            <Group justify="apart">
               <Text>{record.quantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>

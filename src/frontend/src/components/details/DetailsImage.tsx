@@ -174,7 +174,7 @@ function UploadModal({
       >
         <Group
           position="center"
-          spacing="xl"
+          gap="xl"
           style={{ minHeight: rem(140), pointerEvents: 'none' }}
         >
           <Dropzone.Accept>
@@ -252,7 +252,7 @@ function ImageActionButtons({
     <>
       {visible && (
         <Group
-          spacing="xs"
+          gap="xs"
           style={{ zIndex: 2, position: 'absolute', top: '10px', left: '10px' }}
         >
           {actions.selectExisting && (

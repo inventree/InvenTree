@@ -235,7 +235,7 @@ export default function ReturnOrderDetail() {
 
   return (
     <>
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Return Order` + `: ${order.reference}`}

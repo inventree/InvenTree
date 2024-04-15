@@ -79,7 +79,7 @@ function DetailDrawerComponent({
         </Group>
       }
     >
-      <Stack spacing={'xs'} className={classes.flex}>
+      <Stack gap={'xs'} className={classes.flex}>
         <Divider />
         {content}
       </Stack>

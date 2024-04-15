@@ -130,11 +130,11 @@ export function TemplateDrawer({
   }
 
   return (
-    <Stack spacing="xs" style={{ display: 'flex', flex: '1' }}>
+    <Stack gap="xs" style={{ display: 'flex', flex: '1' }}>
       {editTemplate.modal}
       {deleteTemplate.modal}
 
-      <Group position="apart">
+      <Group justify="apart">
         <Box></Box>
 
         <Group>

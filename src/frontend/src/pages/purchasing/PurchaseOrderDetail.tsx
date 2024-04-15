@@ -313,7 +313,7 @@ export default function PurchaseOrderDetail() {
   return (
     <>
       {editPurchaseOrder.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Purchase Order` + `: ${order.reference}`}

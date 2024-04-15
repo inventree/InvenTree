@@ -62,7 +62,7 @@ export function useApiFormModal(props: ApiFormModalProps) {
     closeOnClickOutside: formProps.closeOnClickOutside,
     size: props.size ?? 'xl',
     children: (
-      <Stack spacing={'xs'}>
+      <Stack gap={'xs'}>
         <Divider />
         <OptionsApiForm props={formProps} id={id} />
       </Stack>

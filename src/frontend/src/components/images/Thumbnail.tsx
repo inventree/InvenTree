@@ -25,7 +25,7 @@ export function Thumbnail({
   const backup_image = '/static/img/blank_image.png';
 
   return (
-    <Group align={align ?? 'left'} spacing="xs" noWrap={true}>
+    <Group align={align ?? 'left'} gap="xs" wrap="nowrap">
       <ApiImage
         src={src || backup_image}
         alt={alt}
@@ -59,7 +59,7 @@ export function ThumbnailHoverCard({
 }) {
   const card = useMemo(() => {
     return (
-      <Group position="left" spacing={10} noWrap={true}>
+      <Group justify="left" gap={10} wrap="nowrap">
         <Thumbnail src={src} alt={alt} size={size} />
         <Text>{text}</Text>
       </Group>

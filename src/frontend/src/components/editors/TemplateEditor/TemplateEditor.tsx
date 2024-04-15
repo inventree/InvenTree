@@ -246,7 +246,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
               </Tabs.Tab>
             ))}
 
-            <Group position="right" style={{ flex: '1' }} noWrap>
+            <Group justify="right" style={{ flex: '1' }} wrap="nowrap">
               <SplitButton
                 loading={isPreviewLoading}
                 defaultSelected="preview_save"

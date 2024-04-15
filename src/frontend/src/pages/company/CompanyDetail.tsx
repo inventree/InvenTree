@@ -296,7 +296,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
   return (
     <>
       {editCompany.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Company` + `: ${company.name}`}

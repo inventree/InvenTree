@@ -240,14 +240,14 @@ export default function Scan() {
 
     if (uniqueObjectTypes.length === 0) {
       return (
-        <Group spacing={0}>
+        <Group gap={0}>
           <IconQuestionMark color="orange" />
           <Trans>Selected elements are not known</Trans>
         </Group>
       );
     } else if (uniqueObjectTypes.length > 1) {
       return (
-        <Group spacing={0}>
+        <Group gap={0}>
           <IconAlertCircle color="orange" />
           <Trans>Multiple object types selected</Trans>
         </Group>
@@ -270,8 +270,8 @@ export default function Scan() {
   // rendering
   return (
     <>
-      <Group position="apart">
-        <Group position="left">
+      <Group justify="apart">
+        <Group justify="left">
           <StylishText>
             <Trans>Scan Page</Trans>
           </StylishText>
@@ -287,8 +287,8 @@ export default function Scan() {
       <Grid maw={'100%'}>
         <Col span={4}>
           <Stack>
-            <Stack spacing="xs">
-              <Group position="apart">
+            <Stack gap="xs">
+              <Group justify="apart">
                 <TitleWithDoc
                   order={3}
                   text={t`Select the input method you want to use to scan items.`}
@@ -306,7 +306,7 @@ export default function Scan() {
               </Group>
               {inp}
             </Stack>
-            <Stack spacing={0}>
+            <Stack gap={0}>
               <TitleWithDoc
                 order={3}
                 text={t`Depending on the selected parts actions will be shown here. Not all barcode types are supported currently.`}
@@ -355,7 +355,7 @@ export default function Scan() {
           </Stack>
         </Col>
         <Col span={8}>
-          <Group position="apart">
+          <Group justify="apart">
             <TitleWithDoc
               order={3}
               text={t`History is locally kept in this browser.`}
@@ -696,8 +696,8 @@ function InputImageBarcode({ action }: inputProps) {
   }, [cameraValue]);
 
   return (
-    <Stack spacing="xs">
-      <Group spacing="xs">
+    <Stack gap="xs">
+      <Group gap="xs">
         <Select
           value={cameraValue}
           onChange={setCameraValue}

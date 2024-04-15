@@ -35,7 +35,7 @@ export function SettingList({
 
   return (
     <>
-      <Stack spacing="xs">
+      <Stack gap="xs">
         {(keys || allKeys).map((key, i) => {
           const setting = settingsState?.settings?.find(
             (s: any) => s.key === key

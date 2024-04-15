@@ -43,7 +43,7 @@ export function InfoItem({
   }
 
   return (
-    <Group position="apart">
+    <Group justify="apart">
       <Text fz="sm" fw={700}>
         {name}:
       </Text>

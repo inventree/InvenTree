@@ -31,7 +31,7 @@ export default function ScheduledTasksTable() {
           }
 
           return (
-            <Group position="apart">
+            <Group justify="apart">
               <Text>{record.last_run}</Text>
               {record.success ? (
                 <IconCircleCheck color="green" />

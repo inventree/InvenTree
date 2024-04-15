@@ -78,7 +78,7 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
 
   return (
     <Stack>
-      <Group position="center">
+      <Group justify="center">
         <Title order={4}>
           {machineType ? machineType.name : machineTypeSlug}
         </Title>
@@ -91,8 +91,8 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
       )}
 
       <Card withBorder>
-        <Stack spacing="md">
-          <Group position="apart">
+        <Stack gap="md">
+          <Group justify="apart">
             <Title order={4}>
               <Trans>Machine type information</Trans>
             </Title>
@@ -101,7 +101,7 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
             </ActionIcon>
           </Group>
 
-          <Stack pos="relative" spacing="xs">
+          <Stack pos="relative" gap="xs">
             <LoadingOverlay visible={isFetching} overlayOpacity={0} />
             <InfoItem name={t`Name`} value={machineType?.name} type="text" />
             <InfoItem name={t`Slug`} value={machineType?.slug} type="text" />
@@ -138,7 +138,7 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
       </Card>
 
       <Card withBorder>
-        <Stack spacing="md">
+        <Stack gap="md">
           <Title order={4}>
             <Trans>Available drivers</Trans>
           </Title>
@@ -182,7 +182,7 @@ function MachineDriverDrawer({
 
   return (
     <Stack>
-      <Group position="center">
+      <Group justify="center">
         <Title order={4}>
           {machineDriver ? machineDriver.name : machineDriverSlug}
         </Title>
@@ -195,8 +195,8 @@ function MachineDriverDrawer({
       )}
 
       <Card withBorder>
-        <Stack spacing="md">
-          <Group position="apart">
+        <Stack gap="md">
+          <Group justify="apart">
             <Title order={4}>
               <Trans>Machine driver information</Trans>
             </Title>
@@ -205,7 +205,7 @@ function MachineDriverDrawer({
             </ActionIcon>
           </Group>
 
-          <Stack pos="relative" spacing="xs">
+          <Stack pos="relative" gap="xs">
             <LoadingOverlay visible={isFetching} overlayOpacity={0} />
             <InfoItem name={t`Name`} value={machineDriver?.name} type="text" />
             <InfoItem name={t`Slug`} value={machineDriver?.slug} type="text" />
@@ -250,7 +250,7 @@ function MachineDriverDrawer({
               value={machineDriver?.is_builtin}
               type="boolean"
             />
-            <Group position="apart" spacing="xs">
+            <Group justify="apart" gap="xs">
               <Text fz="sm" fw={700}>
                 <Trans>Errors</Trans>:
               </Text>
@@ -276,7 +276,7 @@ function MachineDriverDrawer({
       </Card>
 
       <Card withBorder>
-        <Stack spacing="md">
+        <Stack gap="md">
           <Title order={4}>
             <Trans>Machines</Trans>
           </Title>

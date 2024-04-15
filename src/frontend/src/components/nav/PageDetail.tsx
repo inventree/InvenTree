@@ -32,7 +32,7 @@ export function PageDetail({
   actions?: ReactNode[];
 }) {
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Paper p="xs" radius="xs" shadow="xs">
           <BreadcrumbList
@@ -42,13 +42,13 @@ export function PageDetail({
         </Paper>
       )}
       <Paper p="xs" radius="xs" shadow="xs">
-        <Stack spacing="xs">
-          <Group position="apart" noWrap={true}>
-            <Group position="left" noWrap={true}>
+        <Stack gap="xs">
+          <Group justify="apart" wrap="nowrap">
+            <Group justify="left" wrap="nowrap">
               {imageUrl && (
                 <ApiImage src={imageUrl} radius="sm" height={64} width={64} />
               )}
-              <Stack spacing="xs">
+              <Stack gap="xs">
                 {title && <StylishText size="lg">{title}</StylishText>}
                 {subtitle && (
                   <Text size="md" truncate>
@@ -59,12 +59,12 @@ export function PageDetail({
             </Group>
             <Space />
             {detail}
-            <Group position="right" spacing="xs" noWrap>
+            <Group justify="right" gap="xs" wrap="nowrap">
               {badges}
             </Group>
             <Space />
             {actions && (
-              <Group spacing={5} position="right">
+              <Group gap={5} justify="right">
                 {actions.map((action, idx) => (
                   <Fragment key={idx}>{action}</Fragment>
                 ))}

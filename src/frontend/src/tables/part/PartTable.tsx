@@ -140,7 +140,7 @@ function partTableColumns(): TableColumn[] {
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left" noWrap>
+              <Group gap="xs" justify="left" wrap="nowrap">
                 <Text color={color}>{text}</Text>
                 {record.units && (
                   <Text size="xs" color={color}>

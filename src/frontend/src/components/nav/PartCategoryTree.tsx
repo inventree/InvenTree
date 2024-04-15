@@ -61,7 +61,7 @@ export function PartCategoryTree({
       <Group
         position="apart"
         key={node.id}
-        noWrap={true}
+        wrap="nowrap"
         onClick={() => {
           onClose();
           navigate(`/part/category/${node.id}`);
@@ -148,13 +148,13 @@ export function PartCategoryTree({
         }
       }}
       title={
-        <Group position="left" p="ms" spacing="md" noWrap={true}>
+        <Group justify="left" p="ms" gap="md" wrap="nowrap">
           <IconSitemap />
           <StylishText size="lg">{t`Part Categories`}</StylishText>
         </Group>
       }
     >
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={treeQuery.isFetching} />
         <ReactTree
           nodes={treeQuery.data ?? []}

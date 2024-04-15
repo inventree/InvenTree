@@ -59,7 +59,7 @@ export function AttachmentLink({
   let text = external ? attachment : attachment.split('/').pop();
 
   return (
-    <Group position="left" spacing="sm">
+    <Group justify="left" gap="sm">
       {external ? <IconLink /> : attachmentIcon(attachment)}
       <Anchor href={attachment} target="_blank" rel="noopener noreferrer">
         {text}

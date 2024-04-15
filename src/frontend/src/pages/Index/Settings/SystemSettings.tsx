@@ -288,7 +288,7 @@ export default function SystemSettings() {
 
   return (
     <>
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <SettingsHeader
           title={t`System Settings`}
           subtitle={server.instance || ''}

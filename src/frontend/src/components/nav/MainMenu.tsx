@@ -22,7 +22,7 @@ export function MainMenu() {
     <Menu width={260} position="bottom-end">
       <Menu.Target>
         <UnstyledButton className={classes.layoutHeaderUser}>
-          <Group spacing={7}>
+          <Group gap={7}>
             <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
               {userState.username() ? (
                 userState.username()

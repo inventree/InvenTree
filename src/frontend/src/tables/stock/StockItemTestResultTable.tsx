@@ -132,7 +132,7 @@ export default function StockItemTestResultTable({
             record.stock_item != undefined && record.stock_item != itemId;
 
           return (
-            <Group position="apart">
+            <Group justify="apart">
               <Text
                 italic={installed}
                 fw={required && 700}
@@ -141,7 +141,7 @@ export default function StockItemTestResultTable({
                 {!record.templateId && '- '}
                 {record.test_name ?? record.template_detail?.test_name}
               </Text>
-              <Group position="right">
+              <Group justify="right">
                 {record.results && record.results.length > 1 && (
                   <Tooltip label={t`Test Results`}>
                     <Badge color="lightblue" variant="filled">
@@ -194,7 +194,7 @@ export default function StockItemTestResultTable({
         title: t`Date`,
         render: (record: any) => {
           return (
-            <Group position="apart">
+            <Group justify="apart">
               {renderDate(record.date)}
               {record.user_detail && (
                 <RenderUser instance={record.user_detail} />
@@ -214,7 +214,7 @@ export default function StockItemTestResultTable({
         title: t`Started`,
         render: (record: any) => {
           return (
-            <Group position="apart">
+            <Group justify="apart">
               {renderDate(record.started_datetime, {
                 showTime: true,
                 showSeconds: true
@@ -229,7 +229,7 @@ export default function StockItemTestResultTable({
         title: t`Finished`,
         render: (record: any) => {
           return (
-            <Group position="apart">
+            <Group justify="apart">
               {renderDate(record.finished_datetime, {
                 showTime: true,
                 showSeconds: true

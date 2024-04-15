@@ -161,7 +161,7 @@ function BasePanelGroup({
                   width: '100%'
                 }}
               >
-                <Stack spacing="md">
+                <Stack gap="md">
                   {panel.showHeadline !== false && (
                     <>
                       <StylishText size="xl">{panel.label}</StylishText>

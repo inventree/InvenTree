@@ -548,9 +548,9 @@ export function InvenTreeTable<T = any>({
           onClose={() => setFiltersVisible(false)}
         />
       )}
-      <Stack spacing="sm">
-        <Group position="apart">
-          <Group position="left" key="custom-actions" spacing={5}>
+      <Stack gap="sm">
+        <Group justify="apart">
+          <Group justify="left" key="custom-actions" gap={5}>
             {tableProps.tableActions?.map((group, idx) => (
               <Fragment key={idx}>{group}</Fragment>
             ))}
@@ -583,7 +583,7 @@ export function InvenTreeTable<T = any>({
             )}
           </Group>
           <Space />
-          <Group position="right" spacing={5}>
+          <Group justify="right" gap={5}>
             {tableProps.enableSearch && (
               <TableSearchInput
                 searchCallback={(term: string) =>

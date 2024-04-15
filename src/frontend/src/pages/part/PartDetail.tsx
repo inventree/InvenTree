@@ -452,7 +452,7 @@ export default function PartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <Stack spacing="xs">
+            <Stack gap="xs">
               <table>
                 <PartIcons part={part} />
               </table>
@@ -752,7 +752,7 @@ export default function PartDetail() {
   return (
     <>
       {editPart.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PartCategoryTree
           opened={treeOpen}

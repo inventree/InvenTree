@@ -104,7 +104,7 @@ export function AuthenticationForm() {
       ) : null}
       <form onSubmit={classicForm.onSubmit(() => {})}>
         {classicLoginMode ? (
-          <Stack spacing={0}>
+          <Stack gap={0}>
             <TextInput
               required
               label={t`Username`}
@@ -118,7 +118,7 @@ export function AuthenticationForm() {
               {...classicForm.getInputProps('password')}
             />
             {auth_settings?.password_forgotten_enabled === true && (
-              <Group position="apart" mt="0">
+              <Group justify="apart" mt="0">
                 <Anchor
                   component="button"
                   type="button"
@@ -143,7 +143,7 @@ export function AuthenticationForm() {
           </Stack>
         )}
 
-        <Group position="apart" mt="xl">
+        <Group justify="apart" mt="xl">
           <Anchor
             component="button"
             type="button"
@@ -228,7 +228,7 @@ export function RegistrationForm() {
     <>
       {auth_settings?.registration_enabled && (
         <form onSubmit={registrationForm.onSubmit(() => {})}>
-          <Stack spacing={0}>
+          <Stack gap={0}>
             <TextInput
               required
               label={t`Username`}
@@ -256,7 +256,7 @@ export function RegistrationForm() {
             />
           </Stack>
 
-          <Group position="apart" mt="xl">
+          <Group justify="apart" mt="xl">
             <Button
               type="submit"
               disabled={isRegistering}

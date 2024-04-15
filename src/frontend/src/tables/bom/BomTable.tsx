@@ -149,7 +149,7 @@ export function BomTable({
 
           let text =
             available_stock <= 0 ? (
-              <Text color="red" italic>{t`No stock`}</Text>
+              <Text c="red" italic>{t`No stock`}</Text>
             ) : (
               available_stock
             );

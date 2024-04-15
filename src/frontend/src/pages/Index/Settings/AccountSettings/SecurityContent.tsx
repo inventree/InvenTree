@@ -137,7 +137,7 @@ function EmailContent({}: {}) {
                 key={link.id}
                 value={String(link.id)}
                 label={
-                  <Group position="apart">
+                  <Group justify="apart">
                     {link.email}
                     {link.primary && (
                       <Badge color="blue">
@@ -251,7 +251,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
         variant="outline"
         disabled={!provider.configured}
       >
-        <Group position="apart">
+        <Group justify="apart">
           {provider.display_name}
           {provider.configured == false && <IconAlertCircle />}
         </Group>
@@ -308,7 +308,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
             {currentProviders === undefined ? (
               <Trans>Loading</Trans>
             ) : (
-              <Stack spacing="xs">
+              <Stack gap="xs">
                 {currentProviders.map((provider: any) => (
                   <ProviderButton key={provider.id} provider={provider} />
                 ))}

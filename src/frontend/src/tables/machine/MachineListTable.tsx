@@ -206,8 +206,8 @@ function MachineDrawer({
   );
 
   return (
-    <Stack spacing="xs">
-      <Group position="apart">
+    <Stack gap="xs">
+      <Group justify="apart">
         <Box></Box>
 
         <Group>
@@ -277,8 +277,8 @@ function MachineDrawer({
       </Group>
 
       <Card withBorder>
-        <Stack spacing="md">
-          <Group position="apart">
+        <Stack gap="md">
+          <Group justify="apart">
             <Title order={4}>
               <Trans>Machine information</Trans>
             </Title>
@@ -286,10 +286,10 @@ function MachineDrawer({
               <IconRefresh />
             </ActionIcon>
           </Group>
-          <Stack pos="relative" spacing="xs">
+          <Stack pos="relative" gap="xs">
             <LoadingOverlay visible={isFetching} overlayOpacity={0} />
             <InfoItem name={t`Machine Type`}>
-              <Group spacing="xs">
+              <Group gap="xs">
                 {machineType ? (
                   <DetailDrawerLink
                     to={`../type-${machine?.machine_type}`}
@@ -302,7 +302,7 @@ function MachineDrawer({
               </Group>
             </InfoItem>
             <InfoItem name={t`Machine Driver`}>
-              <Group spacing="xs">
+              <Group gap="xs">
                 {machineDriver ? (
                   <DetailDrawerLink
                     to={`../driver-${machine?.driver}`}
@@ -333,7 +333,7 @@ function MachineDrawer({
                 <Text fz="sm">{machine?.status_text}</Text>
               </Flex>
             </InfoItem>
-            <Group position="apart" spacing="xs">
+            <Group justify="apart" gap="xs">
               <Text fz="sm" fw={700}>
                 <Trans>Errors</Trans>:
               </Text>
@@ -412,7 +412,7 @@ export function MachineListTable({
         sortable: true,
         render: function (record) {
           return (
-            <Group position="left" noWrap>
+            <Group justify="left" wrap="nowrap">
               <MachineStatusIndicator machine={record} />
               <Text>{record.name}</Text>
               {record.restart_required && (
@@ -432,7 +432,7 @@ export function MachineListTable({
             (m) => m.slug === record.machine_type
           );
           return (
-            <Group spacing="xs">
+            <Group gap="xs">
               <Text>
                 {machineType ? machineType.name : record.machine_type}
               </Text>
@@ -447,7 +447,7 @@ export function MachineListTable({
         render: (record) => {
           const driver = machineDrivers?.find((d) => d.slug === record.driver);
           return (
-            <Group spacing="xs">
+            <Group gap="xs">
               <Text>{driver ? driver.name : record.driver}</Text>
               {!record.is_driver_available && <UnavailableIndicator />}
             </Group>

@@ -134,7 +134,7 @@ function WidgetControlBar({
   useHotkeys([['mod+E', () => editFnc()]]);
 
   return (
-    <Group position="right">
+    <Group justify="right">
       <Menu
         shadow="md"
         width={200}

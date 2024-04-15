@@ -349,7 +349,7 @@ export default function BuildDetail() {
   return (
     <>
       {editBuild.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={build.reference}

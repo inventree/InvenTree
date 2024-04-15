@@ -19,13 +19,13 @@ export function StatisticItem({
   return (
     <Paper withBorder p="xs" key={id} pos="relative">
       <LoadingOverlay visible={isLoading} overlayBlur={2} />
-      <Group position="apart">
+      <Group justify="apart">
         <Text size="xs" color="dimmed" className={classes.dashboardItemTitle}>
           {data.title}
         </Text>
       </Group>
 
-      <Group align="flex-end" spacing="xs" mt={25}>
+      <Group align="flex-end" gap="xs" mt={25}>
         <Text className={classes.dashboardItemValue}>{data.value}</Text>
       </Group>
     </Paper>

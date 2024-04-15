@@ -38,7 +38,7 @@ export default function MachineManagementPanel() {
 
       <Space h="10px" />
 
-      <Stack spacing={'xs'}>
+      <Stack gap={'xs'}>
         <Title order={5}>
           <Trans>Machine types</Trans>
         </Title>
@@ -47,7 +47,7 @@ export default function MachineManagementPanel() {
 
       <Space h="10px" />
 
-      <Stack spacing={'xs'}>
+      <Stack gap={'xs'}>
         <Group>
           <Title order={5}>
             <Trans>Machine Error Stack</Trans>

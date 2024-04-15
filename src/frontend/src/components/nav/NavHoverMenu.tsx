@@ -56,7 +56,7 @@ export function NavHoverMenu({
       </HoverCard.Target>
 
       <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
-        <Group position="apart" px="md">
+        <Group justify="apart" px="md">
           <ActionIcon
             onClick={openDrawer}
             onMouseOver={openDrawer}
@@ -64,7 +64,7 @@ export function NavHoverMenu({
           >
             <IconLayoutSidebar />
           </ActionIcon>
-          <Group spacing={'xs'}>
+          <Group gap={'xs'}>
             {instanceName ? (
               instanceName
             ) : (
@@ -89,7 +89,7 @@ export function NavHoverMenu({
         />
         <MenuLinks links={onlyItems} highlighted={true} />
         <div className={classes.headerDropdownFooter}>
-          <Group position="apart">
+          <Group justify="apart">
             <div>
               <Text fw={500} fz="sm">
                 <Trans>Get started</Trans>

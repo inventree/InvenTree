@@ -55,7 +55,7 @@ export function SplitButton({
   const theme = useMantineTheme();
 
   return (
-    <Group noWrap style={{ gap: 0 }}>
+    <Group wrap="nowrap" style={{ gap: 0 }}>
       <Button
         onClick={currentOption?.onClick}
         disabled={loading ? false : currentOption?.disabled}

@@ -119,11 +119,11 @@ export function PluginDrawer({
   }
 
   return (
-    <Stack spacing={'xs'}>
-      <Group position="apart">
+    <Stack gap={'xs'}>
+      <Group justify="apart">
         <Box></Box>
 
-        <Group spacing={'xs'}>
+        <Group gap={'xs'}>
           {plugin && PluginIcon(plugin)}
           <Title order={4}>
             {plugin?.meta?.human_name ?? plugin?.name ?? '-'}
@@ -161,11 +161,11 @@ export function PluginDrawer({
       <LoadingOverlay visible={isFetching} overlayOpacity={0} />
 
       <Card withBorder>
-        <Stack spacing="md">
+        <Stack gap="md">
           <Title order={4}>
             <Trans>Plugin information</Trans>
           </Title>
-          <Stack pos="relative" spacing="xs">
+          <Stack pos="relative" gap="xs">
             <InfoItem type="text" name={t`Name`} value={plugin?.name} />
             <InfoItem
               type="text"
@@ -193,11 +193,11 @@ export function PluginDrawer({
       </Card>
 
       <Card withBorder>
-        <Stack spacing="md">
+        <Stack gap="md">
           <Title order={4}>
             <Trans>Package information</Trans>
           </Title>
-          <Stack pos="relative" spacing="xs">
+          <Stack pos="relative" gap="xs">
             {plugin?.is_package && (
               <InfoItem
                 type="text"
@@ -226,7 +226,7 @@ export function PluginDrawer({
 
       {plugin && plugin.active && (
         <Card withBorder>
-          <Stack spacing="md">
+          <Stack gap="md">
             <Title order={4}>
               <Trans>Plugin settings</Trans>
             </Title>
@@ -290,7 +290,7 @@ export default function PluginListTable() {
           // TODO: Add link to plugin detail page
           // TODO: Add custom badges
           return (
-            <Group position="left">
+            <Group justify="left">
               <PluginIcon {...record} />
               <Text>{record.name}</Text>
             </Group>
@@ -344,7 +344,7 @@ export default function PluginListTable() {
                 : t`Confirm plugin deactivation`
             }
           >
-            <Stack spacing="xs">
+            <Stack gap="xs">
               <Text>
                 {active
                   ? t`The following plugin will be activated`
@@ -532,7 +532,7 @@ export default function PluginListTable() {
         icon={<IconInfoCircle />}
         title={t`Confirm plugin uninstall`}
       >
-        <Stack spacing="xs">
+        <Stack gap="xs">
           <Text>{t`The selected plugin will be uninstalled.`}</Text>
           <Text>{t`This action cannot be undone.`}</Text>
         </Stack>

@@ -53,7 +53,7 @@ export function StockLocationTree({
       <Group
         position="apart"
         key={node.id}
-        noWrap={true}
+        wrap="nowrap"
         onClick={() => {
           onClose();
           navigate(`/stock/location/${node.id}`);
@@ -88,13 +88,13 @@ export function StockLocationTree({
         }
       }}
       title={
-        <Group position="left" noWrap={true} spacing="md" p="md">
+        <Group justify="left" wrap="nowrap" gap="md" p="md">
           <IconSitemap />
           <StylishText size="lg">{t`Stock Locations`}</StylishText>
         </Group>
       }
     >
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={treeQuery.isFetching} />
         <ReactTree
           nodes={treeQuery.data ?? []}

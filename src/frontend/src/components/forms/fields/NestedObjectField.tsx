@@ -20,7 +20,7 @@ export function NestedObjectField({
         </Accordion.Control>
         <Accordion.Panel>
           <Divider sx={{ marginTop: '-10px', marginBottom: '10px' }} />
-          <Stack spacing="xs">
+          <Stack gap="xs">
             {Object.entries(definition.children ?? {}).map(
               ([childFieldName, field]) => (
                 <ApiFormField

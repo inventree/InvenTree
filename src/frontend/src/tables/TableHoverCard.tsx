@@ -29,14 +29,14 @@ export function TableHoverCard({
   return (
     <HoverCard withinPortal={true}>
       <HoverCard.Target>
-        <Group spacing="xs" position="apart" noWrap={true}>
+        <Group gap="xs" justify="apart" wrap="nowrap">
           {value}
           <IconInfoCircle size="16" color="blue" />
         </Group>
       </HoverCard.Target>
       <HoverCard.Dropdown>
-        <Stack spacing="xs">
-          <Group spacing="xs" position="left">
+        <Stack gap="xs">
+          <Group gap="xs" justify="left">
             <IconInfoCircle size="16" color="blue" />
             <Text weight="bold">{title}</Text>
           </Group>

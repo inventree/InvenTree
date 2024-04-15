@@ -399,7 +399,7 @@ export function DetailsTable({
 }) {
   return (
     <Paper p="xs" withBorder radius="xs">
-      <Stack spacing="xs">
+      <Stack gap="xs">
         {title && <StylishText size="lg">{title}</StylishText>}
         <Table striped>
           <tbody>

@@ -137,7 +137,7 @@ function SettingValue({
       );
     default:
       return valueText ? (
-        <Group spacing="xs" position="right">
+        <Group gap="xs" justify="right">
           <Space />
           <Button variant="subtle" onClick={onEditButton}>
             {valueText}
@@ -177,8 +177,8 @@ export function SettingItem({
 
   return (
     <Paper style={style}>
-      <Group position="apart" p="3">
-        <Stack spacing="2" p="4px">
+      <Group justify="apart" p="3">
+        <Stack gap="2" p="4px">
           <Text>
             {setting.name}
             {setting.required ? ' *' : ''}
