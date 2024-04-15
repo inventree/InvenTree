@@ -1,13 +1,17 @@
-import { Center, Loader, Stack } from '@mantine/core';
+import { Center, Loader, MantineProvider, Stack } from '@mantine/core';
 import { Suspense } from 'react';
+
+import { theme } from '../theme';
 
 function LoadingFallback() {
   return (
-    <Stack>
-      <Center>
-        <Loader />
-      </Center>
-    </Stack>
+    <MantineProvider theme={theme}>
+      <Stack>
+        <Center>
+          <Loader />
+        </Center>
+      </Stack>
+    </MantineProvider>
   );
 }
 
