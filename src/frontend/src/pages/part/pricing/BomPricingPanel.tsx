@@ -166,7 +166,7 @@ export default function BomPricingPanel({
   const [chartType, setChartType] = useState<string>('pie');
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SimpleGrid cols={2}>
         <InvenTreeTable
           tableState={table}
@@ -182,7 +182,7 @@ export default function BomPricingPanel({
           }}
         />
         {bomPricingData.length > 0 ? (
-          <Stack spacing="xs">
+          <Stack gap="xs">
             {chartType == 'bar' && <BomBarChart data={bomPricingData} />}
             {chartType == 'pie' && <BomPieChart data={bomPricingData} />}
             <SegmentedControl

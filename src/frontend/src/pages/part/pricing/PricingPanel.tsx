@@ -30,7 +30,7 @@ export default function PricingPanel({
 
 export function NoPricingData() {
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <Alert icon={<IconExclamationCircle />} color="blue" title={t`No Data`}>
         <Text>{t`No pricing data available`}</Text>
       </Alert>

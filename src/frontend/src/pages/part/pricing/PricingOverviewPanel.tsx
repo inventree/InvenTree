@@ -48,9 +48,9 @@ export default function PricingOverviewPanel({
         title: t`Pricing Category`,
         render: (record: PricingOverviewEntry) => {
           return (
-            <Group position="left" spacing="xs">
+            <Group justify="left" gap="xs">
               {record.icon}
-              <Text weight={700}>{record.title}</Text>
+              <Text fw={700}>{record.title}</Text>
             </Group>
           );
         }
@@ -143,9 +143,9 @@ export default function PricingOverviewPanel({
   // TODO: Add "update now" button
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SimpleGrid cols={2}>
-        <Stack spacing="xs">
+        <Stack gap="xs">
           {pricing?.updated && (
             <Paper p="xs">
               <Alert color="blue" title={t`Last Updated`}>

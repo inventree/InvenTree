@@ -196,8 +196,8 @@ export function AttachmentTable({
                 attachmentType: 'file',
                 callback: table.refreshTable
               });
-              variant = 'default';
             }}
+            variant="default"
           >
             <IconFileUpload />
           </ActionIcon>
@@ -216,8 +216,8 @@ export function AttachmentTable({
                 attachmentType: 'link',
                 callback: table.refreshTable
               });
-              variant = 'default';
             }}
+            variant="default"
           >
             <IconExternalLink />
           </ActionIcon>
