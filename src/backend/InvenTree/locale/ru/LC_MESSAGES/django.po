@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-11 00:12+0000\n"
-"PO-Revision-Date: 2024-03-19 11:52\n"
+"POT-Creation-Date: 2024-04-14 10:31+0000\n"
+"PO-Revision-Date: 2024-04-15 02:35\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: ru\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:255
 msgid "API endpoint not found"
@@ -2737,10 +2737,8 @@ msgid "Delete Depleted Stock"
 msgstr ""
 
 #: common/models.py:1720
-#, fuzzy
-#| msgid "Determines default behaviour when a stock item is depleted"
 msgid "Determines default behavior when a stock item is depleted"
-msgstr "Определяет поведение по умолчанию, когда складская позиция заканчивается"
+msgstr ""
 
 #: common/models.py:1726
 msgid "Batch Code Template"
@@ -2824,10 +2822,8 @@ msgstr "Поле требуемого паттерна для создания �
 
 #: common/models.py:1793 common/models.py:1821 common/models.py:1843
 #: common/models.py:1871
-#, fuzzy
-#| msgid "Responsible"
 msgid "Require Responsible Owner"
-msgstr "Ответственный"
+msgstr ""
 
 #: common/models.py:1794 common/models.py:1822 common/models.py:1844
 #: common/models.py:1872
@@ -3151,10 +3147,8 @@ msgid "Show latest parts on the homepage"
 msgstr "Показывать последние детали на главной странице"
 
 #: common/models.py:2145
-#, fuzzy
-#| msgid "Show unvalidated BOMs"
 msgid "Show invalid BOMs"
-msgstr "Показывать непроверенные BOMы"
+msgstr ""
 
 #: common/models.py:2146
 msgid "Show BOMs that await validation on the homepage"
@@ -3529,16 +3523,12 @@ msgid "The stock location label template to be automatically selected"
 msgstr ""
 
 #: common/models.py:2459
-#, fuzzy
-#| msgid "Default stock item template"
 msgid "Default build line label template"
-msgstr "Шаблон складской позиции по умолчанию"
+msgstr ""
 
 #: common/models.py:2461
-#, fuzzy
-#| msgid "The stock item label template to be automatically selected"
 msgid "The build line label template to be automatically selected"
-msgstr "Шаблон метки складской позиции для автоматического выбора"
+msgstr ""
 
 #: common/models.py:2467
 msgid "Receive error reports"
@@ -7716,8 +7706,10 @@ msgstr ""
 msgid "Update Pricing"
 msgstr "Обновить цены"
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
-#: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
+#: part/templates/part/stock_count.html:7
+#: templates/js/translated/model_renderers.js:221
+#: templates/js/translated/part.js:704 templates/js/translated/part.js:2140
+#: templates/js/translated/part.js:2142
 msgid "No Stock"
 msgstr "Нет запасов"
 
@@ -9005,7 +8997,7 @@ msgstr ""
 
 #: stock/models.py:1636 stock/serializers.py:1240
 msgid "Duplicate stock items"
-msgstr "Дублировать складские позици"
+msgstr ""
 
 #: stock/models.py:1640
 msgid "Stock items must refer to the same part"
@@ -9493,7 +9485,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:507
 #: templates/js/translated/stock.js:1951
 msgid "stock item"
-msgstr "складская позиция"
+msgstr ""
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
@@ -9529,7 +9521,7 @@ msgstr "Вернуть на склад"
 
 #: stock/templates/stock/item_serialize.html:5
 msgid "Create serialized items from this stock item."
-msgstr "Создать сериализированные позиции из этой складской позиции"
+msgstr ""
 
 #: stock/templates/stock/item_serialize.html:7
 msgid "Select quantity to serialize, and unique serial numbers."
@@ -10991,7 +10983,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:687
 msgid "Stock Item already scanned"
-msgstr "Складская позиция уже просканирована"
+msgstr ""
 
 #: templates/js/translated/barcode.js:691
 msgid "Stock Item already in this location"
@@ -12698,6 +12690,7 @@ msgid "No matching purchase orders"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
+#: templates/js/translated/return_order.js:491
 msgid "Select Line Items"
 msgstr ""
 
@@ -13194,11 +13187,11 @@ msgstr ""
 
 #: templates/js/translated/stock.js:555
 msgid "Created new stock item"
-msgstr "Создана новая складская позиция"
+msgstr ""
 
 #: templates/js/translated/stock.js:568
 msgid "Created multiple stock items"
-msgstr "Создано несколько складских позиций"
+msgstr ""
 
 #: templates/js/translated/stock.js:593
 msgid "Find Serial Number"
@@ -14130,7 +14123,7 @@ msgstr ""
 
 #: users/models.py:70
 msgid "API Token"
-msgstr "API Token"
+msgstr ""
 
 #: users/models.py:71
 msgid "API Tokens"
@@ -14191,3 +14184,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+

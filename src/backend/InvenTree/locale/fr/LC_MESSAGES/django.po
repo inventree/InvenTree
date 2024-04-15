@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-11 00:12+0000\n"
-"PO-Revision-Date: 2024-03-20 12:27\n"
+"POT-Creation-Date: 2024-04-14 10:31+0000\n"
+"PO-Revision-Date: 2024-04-15 02:34\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: fr\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:255
 msgid "API endpoint not found"
@@ -77,7 +77,7 @@ msgstr "Entrer la date"
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1533 templates/js/translated/stock.js:2427
 msgid "Notes"
-msgstr "Notes"
+msgstr ""
 
 #: InvenTree/format.py:164
 #, python-brace-format
@@ -253,7 +253,7 @@ msgstr "Hébreu"
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr "Hindi"
+msgstr ""
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
@@ -538,7 +538,7 @@ msgstr "Nom"
 #: templates/js/translated/stock.js:1512 templates/js/translated/stock.js:2057
 #: templates/js/translated/stock.js:2748 templates/js/translated/stock.js:2831
 msgid "Description"
-msgstr "Description"
+msgstr ""
 
 #: InvenTree/models.py:900 stock/models.py:83
 msgid "Description (optional)"
@@ -546,7 +546,7 @@ msgstr "Description (facultative)"
 
 #: InvenTree/models.py:909
 msgid "parent"
-msgstr "parent"
+msgstr ""
 
 #: InvenTree/models.py:915 templates/js/translated/part.js:2794
 #: templates/js/translated/stock.js:2757
@@ -740,7 +740,7 @@ msgstr "Expédié"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -1010,7 +1010,7 @@ msgstr "Choix invalide pour la fabrication parente"
 
 #: build/models.py:127 order/models.py:239
 msgid "Responsible user or group must be specified"
-msgstr ""
+msgstr "Un utilisateur ou un groupe responsable doit être spécifié"
 
 #: build/models.py:133
 msgid "Build order part cannot be changed"
@@ -1914,7 +1914,7 @@ msgstr "Le stock peut être pris à partir de n'importe quel endroit disponible.
 #: build/templates/build/detail.html:49 order/models.py:1430
 #: templates/js/translated/purchase_order.js:2190
 msgid "Destination"
-msgstr "Destination"
+msgstr ""
 
 #: build/templates/build/detail.html:56
 msgid "Destination location not specified"
@@ -2565,11 +2565,11 @@ msgstr "Si des unités sont fournies, les valeurs de paramètre doivent correspo
 
 #: common/models.py:1568
 msgid "Minimum Pricing Decimal Places"
-msgstr ""
+msgstr "Nombre minimal de décimales"
 
 #: common/models.py:1570
 msgid "Minimum number of decimal places to display when rendering pricing data"
-msgstr ""
+msgstr "Nombre minimum de décimales à afficher lors de l'affichage des prix"
 
 #: common/models.py:1576
 msgid "Maximum Pricing Decimal Places"
@@ -2737,10 +2737,8 @@ msgid "Delete Depleted Stock"
 msgstr "Supprimer le stock épuisé"
 
 #: common/models.py:1720
-#, fuzzy
-#| msgid "Determines default behaviour when a stock item is depleted"
 msgid "Determines default behavior when a stock item is depleted"
-msgstr "Détermine le comportement par défaut lorsqu'un article de stock est épuisé"
+msgstr ""
 
 #: common/models.py:1726
 msgid "Batch Code Template"
@@ -2824,17 +2822,13 @@ msgstr "Modèle requis pour générer le champ de référence de l'ordre de cons
 
 #: common/models.py:1793 common/models.py:1821 common/models.py:1843
 #: common/models.py:1871
-#, fuzzy
-#| msgid "Responsible"
 msgid "Require Responsible Owner"
-msgstr "Responsable"
+msgstr ""
 
 #: common/models.py:1794 common/models.py:1822 common/models.py:1844
 #: common/models.py:1872
-#, fuzzy
-#| msgid "Only salable parts can be assigned to a sales order"
 msgid "A responsible owner must be assigned to each order"
-msgstr "Seules les pièces vendues peuvent être attribuées à une commande"
+msgstr ""
 
 #: common/models.py:1799
 msgid "Block Until Tests Pass"
@@ -3153,10 +3147,8 @@ msgid "Show latest parts on the homepage"
 msgstr "Afficher les derniers composants sur la page d'accueil"
 
 #: common/models.py:2145
-#, fuzzy
-#| msgid "Show unvalidated BOMs"
 msgid "Show invalid BOMs"
-msgstr "Afficher les listes de matériaux non validées"
+msgstr ""
 
 #: common/models.py:2146
 msgid "Show BOMs that await validation on the homepage"
@@ -3531,10 +3523,8 @@ msgid "The stock location label template to be automatically selected"
 msgstr ""
 
 #: common/models.py:2459
-#, fuzzy
-#| msgid "Default label printer"
 msgid "Default build line label template"
-msgstr "Imprimante d'étiquettes par défaut"
+msgstr ""
 
 #: common/models.py:2461
 msgid "The build line label template to be automatically selected"
@@ -3660,7 +3650,7 @@ msgstr "Le travail sur ce message est-il terminé ?"
 
 #: common/models.py:3014
 msgid "Id"
-msgstr "Id"
+msgstr ""
 
 #: common/models.py:3016 templates/js/translated/company.js:955
 #: templates/js/translated/news.js:44
@@ -3696,7 +3686,7 @@ msgstr "Cette nouvelle a-t-elle été lue ?"
 #: templates/hover_image.html:7 templates/hover_image.html:9
 #: templates/modals.html:6
 msgid "Image"
-msgstr "Image"
+msgstr ""
 
 #: common/models.py:3044
 msgid "Image file"
@@ -3893,7 +3883,7 @@ msgstr "Adresse e-mail de contact"
 #: order/templates/order/return_order_base.html:174
 #: order/templates/order/sales_order_base.html:214
 msgid "Contact"
-msgstr "Contact"
+msgstr ""
 
 #: company/models.py:140
 msgid "Point of contact"
@@ -4166,7 +4156,7 @@ msgstr "Description de la pièce du fournisseur"
 #: report/templates/report/inventree_so_report_base.html:32
 #: stock/serializers.py:579
 msgid "Note"
-msgstr "Note"
+msgstr ""
 
 #: company/models.py:843 part/models.py:1967
 msgid "base cost"
@@ -4537,7 +4527,7 @@ msgstr "Articles en stock assignés"
 
 #: company/templates/company/sidebar.html:33
 msgid "Contacts"
-msgstr "Contacts"
+msgstr ""
 
 #: company/templates/company/sidebar.html:35
 msgid "Addresses"
@@ -4600,7 +4590,7 @@ msgstr "Aucune information de fournisseur disponible"
 #: templates/js/translated/purchase_order.js:1851
 #: templates/js/translated/purchase_order.js:2029
 msgid "SKU"
-msgstr "SKU"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:206
 msgid "Supplier Part Stock"
@@ -4757,13 +4747,13 @@ msgstr "Filtres"
 #: label/templates/label/stocklocation/qr.html:20
 #: templates/allauth_2fa/setup.html:18
 msgid "QR Code"
-msgstr "QR Code"
+msgstr ""
 
 #: label/templates/label/part/part_label_code128.html:31
 #: label/templates/label/stocklocation/qr_and_text.html:31
 #: templates/qr_code.html:7
 msgid "QR code"
-msgstr "QR code"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:217
 msgid "Copies"
@@ -5850,7 +5840,7 @@ msgstr ""
 #: templates/js/translated/part.js:1226 templates/js/translated/part.js:2341
 #: templates/js/translated/stock.js:2035
 msgid "IPN"
-msgstr "IPN"
+msgstr ""
 
 #: part/admin.py:50 part/models.py:913 part/templates/part/part_base.html:277
 #: report/models.py:195 templates/js/translated/part.js:1231
@@ -6434,7 +6424,7 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:1732
 #: templates/js/translated/stock.js:2821
 msgid "Date"
-msgstr "Date"
+msgstr ""
 
 #: part/models.py:3168
 msgid "Date stocktake was performed"
@@ -7601,7 +7591,7 @@ msgstr ""
 #: templates/js/translated/part.js:2392 templates/js/translated/stock.js:1059
 #: templates/js/translated/stock.js:2069 templates/navbar.html:31
 msgid "Stock"
-msgstr "Stock"
+msgstr ""
 
 #: part/templates/part/part_sidebar.html:30
 #: templates/InvenTree/settings/sidebar.html:39
@@ -7716,8 +7706,10 @@ msgstr ""
 msgid "Update Pricing"
 msgstr ""
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
-#: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
+#: part/templates/part/stock_count.html:7
+#: templates/js/translated/model_renderers.js:221
+#: templates/js/translated/part.js:704 templates/js/translated/part.js:2140
+#: templates/js/translated/part.js:2142
 msgid "No Stock"
 msgstr ""
 
@@ -9859,7 +9851,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -12698,6 +12690,7 @@ msgid "No matching purchase orders"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
+#: templates/js/translated/return_order.js:491
 msgid "Select Line Items"
 msgstr ""
 
@@ -14191,3 +14184,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+

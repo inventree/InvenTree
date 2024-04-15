@@ -273,6 +273,7 @@ export function RelatedModelField({
       <Select
         id={fieldId}
         value={currentValue}
+        ref={field.ref}
         options={data}
         filterOption={null}
         onInputChange={(value: any) => {

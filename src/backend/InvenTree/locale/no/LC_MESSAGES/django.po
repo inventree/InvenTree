@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-11 00:12+0000\n"
-"PO-Revision-Date: 2024-03-19 11:51\n"
+"POT-Creation-Date: 2024-04-14 10:31+0000\n"
+"PO-Revision-Date: 2024-04-15 02:35\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: no\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:255
 msgid "API endpoint not found"
@@ -253,7 +253,7 @@ msgstr "Hebraisk"
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr "Hindi"
+msgstr ""
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
@@ -740,7 +740,7 @@ msgstr "Sendt"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -1009,10 +1009,8 @@ msgid "Invalid choice for parent build"
 msgstr "Ugyldig valg for overordnet produksjon"
 
 #: build/models.py:127 order/models.py:239
-#, fuzzy
-#| msgid "Purchase order must be specified"
 msgid "Responsible user or group must be specified"
-msgstr "Innkjøpsordre må angis"
+msgstr ""
 
 #: build/models.py:133
 msgid "Build order part cannot be changed"
@@ -1514,7 +1512,7 @@ msgstr "Plassering for ferdige produksjonsartikler"
 #: templates/js/translated/stock.js:2175 templates/js/translated/stock.js:2995
 #: templates/js/translated/stock.js:3120
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: build/serializers.py:511
 msgid "Accept Incomplete Allocation"
@@ -1936,7 +1934,7 @@ msgstr "Tildelte deler"
 #: templates/js/translated/table_filters.js:313
 #: templates/js/translated/table_filters.js:404
 msgid "Batch"
-msgstr "Batch"
+msgstr ""
 
 #: build/templates/build/detail.html:133
 #: order/templates/order/order_base.html:173
@@ -2739,10 +2737,8 @@ msgid "Delete Depleted Stock"
 msgstr "Slett oppbrukt lagerbeholdning"
 
 #: common/models.py:1720
-#, fuzzy
-#| msgid "Determines default behaviour when a stock item is depleted"
 msgid "Determines default behavior when a stock item is depleted"
-msgstr "Bestemmer standard oppførsel når en lagervare er oppbrukt"
+msgstr ""
 
 #: common/models.py:1726
 msgid "Batch Code Template"
@@ -2826,17 +2822,13 @@ msgstr "Nødvendig mønster for å generere Produksjonsordre-referansefeltet"
 
 #: common/models.py:1793 common/models.py:1821 common/models.py:1843
 #: common/models.py:1871
-#, fuzzy
-#| msgid "Responsible"
 msgid "Require Responsible Owner"
-msgstr "Ansvarlig"
+msgstr ""
 
 #: common/models.py:1794 common/models.py:1822 common/models.py:1844
 #: common/models.py:1872
-#, fuzzy
-#| msgid "Only salable parts can be assigned to a sales order"
 msgid "A responsible owner must be assigned to each order"
-msgstr "Kun salgbare deler kan tildeles en salgsordre"
+msgstr ""
 
 #: common/models.py:1799
 msgid "Block Until Tests Pass"
@@ -3155,10 +3147,8 @@ msgid "Show latest parts on the homepage"
 msgstr "Vis nyeste deler på startsiden"
 
 #: common/models.py:2145
-#, fuzzy
-#| msgid "Show unvalidated BOMs"
 msgid "Show invalid BOMs"
-msgstr "Vis uvaliderte stykklister"
+msgstr ""
 
 #: common/models.py:2146
 msgid "Show BOMs that await validation on the homepage"
@@ -3533,16 +3523,12 @@ msgid "The stock location label template to be automatically selected"
 msgstr "Etikettmalen for lagerplassering som velges automatisk"
 
 #: common/models.py:2459
-#, fuzzy
-#| msgid "Default stock location label template"
 msgid "Default build line label template"
-msgstr "Standard etikettmal for lagerplassering"
+msgstr ""
 
 #: common/models.py:2461
-#, fuzzy
-#| msgid "The stock item label template to be automatically selected"
 msgid "The build line label template to be automatically selected"
-msgstr "Etikettmalen for lagervare som velges automatisk"
+msgstr ""
 
 #: common/models.py:2467
 msgid "Receive error reports"
@@ -3664,7 +3650,7 @@ msgstr "Var arbeidet med denne meldingen ferdig?"
 
 #: common/models.py:3014
 msgid "Id"
-msgstr "Id"
+msgstr ""
 
 #: common/models.py:3016 templates/js/translated/company.js:955
 #: templates/js/translated/news.js:44
@@ -3716,7 +3702,7 @@ msgstr "Enhetsnavn"
 
 #: common/models.py:3112 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
-msgstr "Symbol"
+msgstr ""
 
 #: common/models.py:3113
 msgid "Optional unit symbol"
@@ -4064,7 +4050,7 @@ msgstr "Velg produsent"
 #: templates/js/translated/purchase_order.js:1852
 #: templates/js/translated/purchase_order.js:2054
 msgid "MPN"
-msgstr "MPN"
+msgstr ""
 
 #: company/models.py:503
 msgid "Manufacturer Part Number"
@@ -5854,7 +5840,7 @@ msgstr "Delbeskrivelse"
 #: templates/js/translated/part.js:1226 templates/js/translated/part.js:2341
 #: templates/js/translated/stock.js:2035
 msgid "IPN"
-msgstr "IPN"
+msgstr ""
 
 #: part/admin.py:50 part/models.py:913 part/templates/part/part_base.html:277
 #: report/models.py:195 templates/js/translated/part.js:1231
@@ -6613,7 +6599,7 @@ msgstr "Parametermal"
 
 #: part/models.py:3778
 msgid "Data"
-msgstr "Data"
+msgstr ""
 
 #: part/models.py:3779
 msgid "Parameter Value"
@@ -7219,7 +7205,7 @@ msgstr "Den nye delen kan være et duplikat av disse eksisterende delene"
 #: part/templates/part/create_part.html:17
 #, python-format
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
-msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
+msgstr ""
 
 #: part/templates/part/detail.html:20
 msgid "Part Stock"
@@ -7384,7 +7370,7 @@ msgstr "Last ned importmal for del"
 #: templates/js/translated/bom.js:309 templates/js/translated/bom.js:343
 #: templates/js/translated/order.js:129 templates/js/translated/tables.js:189
 msgid "Format"
-msgstr "Format"
+msgstr ""
 
 #: part/templates/part/import_wizard/part_upload.html:93
 #: templates/js/translated/bom.js:310 templates/js/translated/bom.js:344
@@ -7659,7 +7645,7 @@ msgstr "Priskategori"
 
 #: part/templates/part/prices.html:38 part/templates/part/prices.html:128
 msgid "Minimum"
-msgstr "Minimum"
+msgstr ""
 
 #: part/templates/part/prices.html:39 part/templates/part/prices.html:129
 msgid "Maximum"
@@ -7720,8 +7706,10 @@ msgstr "Legg til salgsprisbrudd"
 msgid "Update Pricing"
 msgstr ""
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
-#: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
+#: part/templates/part/stock_count.html:7
+#: templates/js/translated/model_renderers.js:221
+#: templates/js/translated/part.js:704 templates/js/translated/part.js:2140
+#: templates/js/translated/part.js:2142
 msgid "No Stock"
 msgstr "Ingen lagerbeholdning"
 
@@ -8416,19 +8404,19 @@ msgstr "Testrapport"
 
 #: report/helpers.py:15
 msgid "A4"
-msgstr "A4"
+msgstr ""
 
 #: report/helpers.py:16
 msgid "A3"
-msgstr "A3"
+msgstr ""
 
 #: report/helpers.py:17
 msgid "Legal"
-msgstr "Legal"
+msgstr ""
 
 #: report/helpers.py:18
 msgid "Letter"
-msgstr "Letter"
+msgstr ""
 
 #: report/models.py:177
 msgid "Template name"
@@ -8571,7 +8559,7 @@ msgstr "Ekstra linjeelementer"
 #: templates/js/translated/purchase_order.js:2018
 #: templates/js/translated/sales_order.js:1806
 msgid "Total"
-msgstr "Total"
+msgstr ""
 
 #: report/templates/report/inventree_return_order_report_base.html:25
 #: report/templates/report/inventree_test_report_base.html:88
@@ -8603,7 +8591,7 @@ msgstr "Testresultater"
 #: report/templates/report/inventree_test_report_base.html:102
 #: templates/js/translated/stock.js:1492
 msgid "Test"
-msgstr "Test"
+msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:103
 #: stock/models.py:2430
@@ -9845,7 +9833,7 @@ msgstr "Registrering"
 
 #: templates/InvenTree/settings/login.html:34
 msgid "Single Sign On"
-msgstr "Single Sign On"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:147
@@ -9863,7 +9851,7 @@ msgstr "Basis-URLen for denne utvidelsen er <a href=\"/%(base)s\" target=\"_blan
 
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -10233,7 +10221,7 @@ msgstr "Globale innstillinger"
 
 #: templates/InvenTree/settings/sidebar.html:27 templates/stats.html:9
 msgid "Server"
-msgstr "Server"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:41
 msgid "Labels"
@@ -10328,7 +10316,7 @@ msgstr "Du har disse faktorene tilgjengelig:"
 
 #: templates/InvenTree/settings/user.html:135
 msgid "TOTP"
-msgstr "TOTP"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:141
 msgid "Static"
@@ -10507,7 +10495,7 @@ msgstr "Oppdatering er tilgjengelig"
 
 #: templates/about.html:43
 msgid "Commit Branch"
-msgstr "Commit Branch"
+msgstr ""
 
 #: templates/about.html:49
 msgid "InvenTree Documentation"
@@ -12702,6 +12690,7 @@ msgid "No matching purchase orders"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
+#: templates/js/translated/return_order.js:491
 msgid "Select Line Items"
 msgstr ""
 
@@ -14038,7 +14027,7 @@ msgstr "Instansnavn"
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr "Database"
+msgstr ""
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
@@ -14195,3 +14184,4 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
+

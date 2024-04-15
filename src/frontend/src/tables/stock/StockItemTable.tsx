@@ -342,11 +342,19 @@ function stockItemTableFilters(): TableFilter[] {
 /*
  * Load a table of stock items
  */
-export function StockItemTable({ params = {} }: { params?: any }) {
+export function StockItemTable({
+  params = {},
+  allowAdd = true,
+  tableName = 'stockitems'
+}: {
+  params?: any;
+  allowAdd?: boolean;
+  tableName?: string;
+}) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
-  const table = useTable('stockitems');
+  const table = useTable(tableName);
   const user = useUserState();
 
   const navigate = useNavigate();
@@ -482,7 +490,7 @@ export function StockItemTable({ params = {} }: { params?: any }) {
         ]}
       />,
       <AddItemButton
-        hidden={!user.hasAddRole(UserRoles.stock)}
+        hidden={!allowAdd || !user.hasAddRole(UserRoles.stock)}
         tooltip={t`Add Stock Item`}
         onClick={() => newStockItem.open()}
       />

@@ -52,7 +52,8 @@
         "react-select": "^5.8.0",
         "react-simplemde-editor": "^5.2.0",
         "styled-components": "^6.1.8",
-        "zustand": "^4.5.2"
+        "zustand": "^4.5.2",
+        "recharts": "^2.12.4"
     },
     "devDependencies": {
         "@babel/core": "^7.24.4",

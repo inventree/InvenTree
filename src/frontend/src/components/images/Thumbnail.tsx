@@ -13,6 +13,7 @@ export function Thumbnail({
   src,
   alt = t`Thumbnail`,
   size = 20,
+  link,
   text,
   align
 }: {
@@ -21,8 +22,21 @@ export function Thumbnail({
   size?: number;
   text?: ReactNode;
   align?: string;
+  link?: string;
 }) {
   const backup_image = '/static/img/blank_image.png';
+
+  const inner = useMemo(() => {
+    if (link) {
+      return (
+        <Anchor href={link} target="_blank">
+          {text}
+        </Anchor>
+      );
+    } else {
+      return text;
+    }
+  }, [link, text]);
 
   return (
     <Group align={align ?? 'left'} gap="xs" wrap="nowrap">
@@ -35,7 +49,7 @@ export function Thumbnail({
         //fallbackSrc="https://placehold.co/600x400?text=Placeholder"
         style={{ maxHeight: size }}
       />
-      {text}
+      {inner}
     </Group>
   );
 }

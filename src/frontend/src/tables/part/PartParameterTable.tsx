@@ -99,7 +99,9 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
   const partParameterFields: ApiFormFieldSet = useMemo(() => {
     return {
-      part: {},
+      part: {
+        disabled: true
+      },
       template: {},
       data: {}
     };
@@ -109,6 +111,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
     url: ApiEndpoints.part_parameter_list,
     title: t`New Part Parameter`,
     fields: partParameterFields,
+    focus: 'template',
     initialData: {
       part: partId
     },
