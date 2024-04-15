@@ -31,6 +31,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
     return [
       {
         name: 'allocated',
+        label: t`Allocated`,
         description: t`Show allocated lines`
       },
       {

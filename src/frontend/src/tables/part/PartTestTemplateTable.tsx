@@ -76,18 +76,22 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     return [
       {
         name: 'required',
+        label: t`Required`,
         description: t`Show required tests`
       },
       {
         name: 'enabled',
+        label: t`Enabled`,
         description: t`Show enabled tests`
       },
       {
         name: 'requires_value',
+        label: t`Requires Value`,
         description: t`Show tests that require a value`
       },
       {
         name: 'requires_attachment',
+        label: t`Requires Attachment`,
         description: t`Show tests that require an attachment`
       },
       {

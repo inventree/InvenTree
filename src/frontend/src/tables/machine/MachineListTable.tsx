@@ -582,10 +582,12 @@ export function MachineListTable({
           tableFilters: [
             {
               name: 'active',
+              label: t`Active`,
               type: 'boolean'
             },
             {
               name: 'machine_type',
+              label: t`Machine Type`,
               type: 'choice',
               choiceFunction: () =>
                 machineTypes
@@ -594,6 +596,7 @@ export function MachineListTable({
             },
             {
               name: 'driver',
+              label: t`Driver`,
               type: 'choice',
               choiceFunction: () =>
                 machineDrivers

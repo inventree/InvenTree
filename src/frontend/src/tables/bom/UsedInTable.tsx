@@ -51,10 +51,12 @@ export function UsedInTable({
     return [
       {
         name: 'inherited',
+        label: t`Inherited`,
         description: t`Show inherited items`
       },
       {
         name: 'optional',
+        label: t`Optional`,
         description: t`Show optional items`
       },
       {
