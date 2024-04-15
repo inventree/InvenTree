@@ -3,7 +3,6 @@ import {
   ActionIcon,
   Button,
   Checkbox,
-  Col,
   Grid,
   Group,
   ScrollArea,
@@ -285,7 +284,7 @@ export default function Scan() {
       </Group>
       <Space h={'md'} />
       <Grid maw={'100%'}>
-        <Col span={4}>
+        <Grid.Col span={4}>
           <Stack>
             <Stack gap="xs">
               <Group justify="apart">
@@ -353,8 +352,8 @@ export default function Scan() {
               )}
             </Stack>
           </Stack>
-        </Col>
-        <Col span={8}>
+        </Grid.Col>
+        <Grid.Col span={8}>
           <Group justify="apart">
             <TitleWithDoc
               order={3}
@@ -372,7 +371,7 @@ export default function Scan() {
             selection={selection}
             setSelection={setSelection}
           />
-        </Col>
+        </Grid.Col>
       </Grid>
     </>
   );

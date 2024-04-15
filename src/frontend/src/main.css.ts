@@ -130,14 +130,7 @@ export const tabs = style({
 });
 
 export const tabsList = style({
-  borderBottom: '0 !important',
-  '& > button:first-of-type': {
-    paddingLeft: '0 !important'
-  },
-
-  '& > button:last-of-type': {
-    paddingRight: '0 !important'
-  }
+  borderBottom: '0 !important'
 });
 
 export const tab = style({

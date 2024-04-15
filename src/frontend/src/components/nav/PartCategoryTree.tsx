@@ -157,7 +157,7 @@ export function PartCategoryTree({
           RenderIcon={renderIcon}
           defaultSelectedNodes={selectedCategory ? [selectedCategory] : []}
           showEmptyItems={false}
-          theme={theme.colorScheme}
+          theme={prefferedColorScheme}
           themes={themes}
         />
       </Stack>

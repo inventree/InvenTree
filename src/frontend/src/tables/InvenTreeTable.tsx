@@ -512,7 +512,7 @@ export function InvenTreeTable<T = any>({
 
   // Callback when a row is clicked
   const handleRowClick = useCallback(
-    (record: any, index: number, event: any) => {
+    ({ event, record, index }: { event: any; record: any; index: number }) => {
       if (props.onRowClick) {
         // If a custom row click handler is provided, use that
         props.onRowClick(record, index, event);
