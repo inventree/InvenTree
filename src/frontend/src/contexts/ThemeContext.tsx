@@ -8,6 +8,7 @@ import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrCodeModal } from '../components/modals/QrCodeModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
+import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
 
 export function ThemeContext({ children }: { children: JSX.Element }) {
@@ -37,18 +38,20 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
 
   return (
     <MantineProvider theme={myTheme} colorSchemeManager={colorSchema}>
-      <Notifications />
-      <ModalsProvider
-        labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
-        modals={{
-          qr: QrCodeModal,
-          info: ServerInfoModal,
-          about: AboutInvenTreeModal,
-          license: LicenseModal
-        }}
-      >
-        {children}
-      </ModalsProvider>
+      <LanguageContext>
+        <ModalsProvider
+          labels={{ confirm: t`Submit`, cancel: t`Cancel` }}
+          modals={{
+            qr: QrCodeModal,
+            info: ServerInfoModal,
+            about: AboutInvenTreeModal,
+            license: LicenseModal
+          }}
+        >
+          <Notifications />
+          {children}
+        </ModalsProvider>
+      </LanguageContext>
     </MantineProvider>
   );
 }
