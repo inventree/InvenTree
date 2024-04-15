@@ -1,17 +1,10 @@
-import {
-  ActionIcon,
-  Divider,
-  Drawer,
-  Group,
-  MantineSize,
-  Stack,
-  Text
-} from '@mantine/core';
+import { ActionIcon, Divider, Drawer, Group, Stack, Text } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import type { To } from 'react-router-dom';
 
+import { UiSizeType } from '../../defaults/formatters';
 import { useLocalState } from '../../states/LocalState';
 import * as classes from './DetailDrawer.css';
 
@@ -26,7 +19,7 @@ export interface DrawerProps {
   position?: 'right' | 'left';
   renderContent: (id?: string) => React.ReactNode;
   urlPrefix?: string;
-  size?: MantineSize | (string & {}) | number;
+  size?: UiSizeType;
   closeOnEscape?: boolean;
 }
 

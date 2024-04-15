@@ -1,3 +1,4 @@
+import { MantineSize } from '@mantine/core';
 import dayjs from 'dayjs';
 
 import {
@@ -151,3 +152,5 @@ export function renderDate(date: string, options: renderDateOptionsType = {}) {
     return date;
   }
 }
+
+export type UiSizeType = MantineSize | (string & {}) | number;

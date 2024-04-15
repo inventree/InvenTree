@@ -1,7 +1,7 @@
-import { MantineSize } from '@mantine/core';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { UiSizeType } from '../defaults/formatters';
 import { HostList } from './states';
 
 interface LocalStateProps {
@@ -18,7 +18,7 @@ interface LocalStateProps {
   primaryColor: string;
   whiteColor: string;
   blackColor: string;
-  radius: MantineSize | (string & {}) | number;
+  radius: UiSizeType;
   loader: string;
   setLoader: (value: string) => void;
   lastUsedPanels: Record<string, string>;

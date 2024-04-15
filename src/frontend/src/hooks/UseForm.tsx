@@ -4,6 +4,7 @@ import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
 import { ApiFormProps, OptionsApiForm } from '../components/forms/ApiForm';
+import { UiSizeType } from '../defaults/formatters';
 import { useModal } from './UseModal';
 
 /**
@@ -20,7 +21,7 @@ export interface ApiFormModalProps extends ApiFormProps {
   onClose?: () => void;
   onOpen?: () => void;
   closeOnClickOutside?: boolean;
-  size?: MantineSize | (string & {}) | number;
+  size?: UiSizeType;
 }
 
 /**
