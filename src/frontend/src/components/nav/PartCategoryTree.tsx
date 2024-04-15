@@ -86,7 +86,8 @@ export function PartCategoryTree({
     return {
       dark: {
         text: {
-          ...vars.fontStyles()
+          fontFamily: vars.fontFamily,
+          fontSize: vars.fontSizes.md
         },
         nodes: {
           height: '2.5rem',
@@ -106,7 +107,8 @@ export function PartCategoryTree({
       },
       light: {
         text: {
-          ...theme.fn.fontStyles()
+          fontFamily: vars.fontFamily,
+          fontSize: vars.fontSizes.md
         },
         nodes: {
           height: '2.5rem',

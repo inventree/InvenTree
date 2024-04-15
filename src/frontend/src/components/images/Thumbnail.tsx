@@ -28,16 +28,12 @@ export function Thumbnail({
     <Group align={align ?? 'left'} gap="xs" wrap="nowrap">
       <ApiImage
         src={src || backup_image}
-        alt={alt}
-        width={size}
+        aria-label={alt}
+        w={size}
         fit="contain"
         radius="xs"
-        withPlaceholder
-        imageProps={{
-          style: {
-            maxHeight: size
-          }
-        }}
+        //fallbackSrc="https://placehold.co/600x400?text=Placeholder"
+        style={{ maxHeight: size }}
       />
       {text}
     </Group>
