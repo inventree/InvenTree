@@ -261,7 +261,7 @@ function MachineDriverDrawer({
                 <Trans>Errors</Trans>:
               </Text>
               {machineDriver && machineDriver?.driver_errors.length > 0 ? (
-                <Badge color="red" sx={{ marginLeft: '10px' }}>
+                <Badge color="red" style={{ marginLeft: '10px' }}>
                   {machineDriver.driver_errors.length}
                 </Badge>
               ) : (

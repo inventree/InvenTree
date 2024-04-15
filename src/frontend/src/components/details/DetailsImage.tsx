@@ -165,7 +165,7 @@ function UploadModal({
   const redColor = vars.colors.red[preferredColorScheme === 'dark' ? 4 : 6];
 
   return (
-    <Paper sx={{ height: '220px' }}>
+    <Paper style={{ height: '220px' }}>
       <Dropzone
         onDrop={(files) => setFile(files[0])}
         maxFiles={1}

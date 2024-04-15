@@ -341,7 +341,7 @@ function MachineDrawer({
                 <Trans>Errors</Trans>:
               </Text>
               {machine && machine?.machine_errors.length > 0 ? (
-                <Badge color="red" sx={{ marginLeft: '10px' }}>
+                <Badge color="red" style={{ marginLeft: '10px' }}>
                   {machine?.machine_errors.length}
                 </Badge>
               ) : (

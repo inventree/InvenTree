@@ -23,7 +23,7 @@ export function MainMenu() {
       <Menu.Target>
         <UnstyledButton className={classes.layoutHeaderUser}>
           <Group gap={7}>
-            <Text fw={500} size="sm" sx={{ lineHeight: 1 }} mr={3}>
+            <Text fw={500} size="sm" style={{ lineHeight: 1 }} mr={3}>
               {userState.username() ? (
                 userState.username()
               ) : (

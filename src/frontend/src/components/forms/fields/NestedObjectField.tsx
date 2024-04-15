@@ -19,7 +19,7 @@ export function NestedObjectField({
           <Text>{definition.label}</Text>
         </Accordion.Control>
         <Accordion.Panel>
-          <Divider sx={{ marginTop: '-10px', marginBottom: '10px' }} />
+          <Divider style={{ marginTop: '-10px', marginBottom: '10px' }} />
           <Stack gap="xs">
             {Object.entries(definition.children ?? {}).map(
               ([childFieldName, field]) => (

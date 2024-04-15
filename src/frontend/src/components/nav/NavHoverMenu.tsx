@@ -55,7 +55,7 @@ export function NavHoverMenu({
         </UnstyledButton>
       </HoverCard.Target>
 
-      <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
+      <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
         <Group justify="apart" px="md">
           <ActionIcon
             onClick={openDrawer}

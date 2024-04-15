@@ -129,7 +129,7 @@ function ApiFormsPlayground() {
         <Button onClick={() => openCreatePart()}>Create Part new Modal</Button>
         {createPartModal}
       </Group>
-      <Card sx={{ padding: '30px' }}>
+      <Card style={{ padding: '30px' }}>
         <OptionsApiForm
           props={{
             url: ApiEndpoints.part_list,

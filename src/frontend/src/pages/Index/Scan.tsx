@@ -719,7 +719,7 @@ function InputImageBarcode({ action }: inputProps) {
             <IconPlayerPlayFilled />
           </ActionIcon>
         )}
-        <Space sx={{ flex: 1 }} />
+        <Space style={{ flex: 1 }} />
         <Badge color={ScanningEnabled ? 'green' : 'orange'}>
           {ScanningEnabled ? t`Scanning` : t`Not scanning`}
         </Badge>
