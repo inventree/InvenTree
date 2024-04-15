@@ -93,7 +93,9 @@ export const subLink = style({
   //       : vars.colors.gray[0]
   // })
 
-  ':active': vars.activeStyles
+  ':active': {
+    color: vars.colors.defaultHover
+  }
 });
 
 export const docHover = style({
