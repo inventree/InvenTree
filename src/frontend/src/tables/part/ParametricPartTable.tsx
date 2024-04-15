@@ -67,7 +67,7 @@ function ParameterCell({
 
   return (
     <div>
-      <Group grow ref={ref} justify="apart">
+      <Group grow ref={ref} justify="space-between">
         <Group grow style={{ flex: 1 }}>
           <TableHoverCard
             value={value ?? '-'}

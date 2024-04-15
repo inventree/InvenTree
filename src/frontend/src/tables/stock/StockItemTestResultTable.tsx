@@ -132,7 +132,7 @@ export default function StockItemTestResultTable({
             record.stock_item != undefined && record.stock_item != itemId;
 
           return (
-            <Group justify="apart">
+            <Group justify="space-between">
               <Text
                 style={{ fontStyle: installed ? 'italic' : undefined }}
                 fw={required && 700}
@@ -194,7 +194,7 @@ export default function StockItemTestResultTable({
         title: t`Date`,
         render: (record: any) => {
           return (
-            <Group justify="apart">
+            <Group justify="space-between">
               {renderDate(record.date)}
               {record.user_detail && (
                 <RenderUser instance={record.user_detail} />
@@ -214,7 +214,7 @@ export default function StockItemTestResultTable({
         title: t`Started`,
         render: (record: any) => {
           return (
-            <Group justify="apart">
+            <Group justify="space-between">
               {renderDate(record.started_datetime, {
                 showTime: true,
                 showSeconds: true
@@ -229,7 +229,7 @@ export default function StockItemTestResultTable({
         title: t`Finished`,
         render: (record: any) => {
           return (
-            <Group justify="apart">
+            <Group justify="space-between">
               {renderDate(record.finished_datetime, {
                 showTime: true,
                 showSeconds: true

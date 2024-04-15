@@ -137,7 +137,7 @@ function EmailContent({}: {}) {
                 key={link.id}
                 value={String(link.id)}
                 label={
-                  <Group justify="apart">
+                  <Group justify="space-between">
                     {link.email}
                     {link.primary && (
                       <Badge color="blue">
@@ -251,7 +251,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
         variant="outline"
         disabled={!provider.configured}
       >
-        <Group justify="apart">
+        <Group justify="space-between">
           {provider.display_name}
           {provider.configured == false && <IconAlertCircle />}
         </Group>

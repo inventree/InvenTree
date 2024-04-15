@@ -43,7 +43,7 @@ export function PageDetail({
       )}
       <Paper p="xs" radius="xs" shadow="xs">
         <Stack gap="xs">
-          <Group justify="apart" wrap="nowrap">
+          <Group justify="space-between" wrap="nowrap">
             <Group justify="left" wrap="nowrap">
               {imageUrl && (
                 <ApiImage src={imageUrl} radius="sm" h={64} w={64} />

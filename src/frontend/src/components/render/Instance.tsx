@@ -113,7 +113,7 @@ export function RenderInlineModel({
   // TODO: Handle URL
 
   return (
-    <Group gap="xs" justify="apart" wrap="nowrap">
+    <Group gap="xs" justify="space-between" wrap="nowrap">
       <Group gap="xs" justify="left" wrap="nowrap">
         {image && Thumbnail({ src: image, size: 18 })}
         <Text size="sm">{primary}</Text>

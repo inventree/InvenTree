@@ -58,7 +58,7 @@ export function NavHoverMenu({
       </HoverCard.Target>
 
       <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
-        <Group justify="apart" px="md">
+        <Group justify="space-between" px="md">
           <ActionIcon
             onClick={openDrawer}
             onMouseOver={openDrawer}
@@ -96,7 +96,7 @@ export function NavHoverMenu({
         />
         <MenuLinks links={onlyItems} highlighted={true} />
         <div className={classes.headerDropdownFooter}>
-          <Group justify="apart">
+          <Group justify="space-between">
             <div>
               <Text fw={500} fz="sm">
                 <Trans>Get started</Trans>

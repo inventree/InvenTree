@@ -120,7 +120,7 @@ export function PluginDrawer({
 
   return (
     <Stack gap={'xs'}>
-      <Group justify="apart">
+      <Group justify="space-between">
         <Box></Box>
 
         <Group gap={'xs'}>

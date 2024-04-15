@@ -207,7 +207,7 @@ function MachineDrawer({
 
   return (
     <Stack gap="xs">
-      <Group justify="apart">
+      <Group justify="space-between">
         <Box></Box>
 
         <Group>
@@ -278,7 +278,7 @@ function MachineDrawer({
 
       <Card withBorder>
         <Stack gap="md">
-          <Group justify="apart">
+          <Group justify="space-between">
             <Title order={4}>
               <Trans>Machine information</Trans>
             </Title>
@@ -336,7 +336,7 @@ function MachineDrawer({
                 <Text fz="sm">{machine?.status_text}</Text>
               </Flex>
             </InfoItem>
-            <Group justify="apart" gap="xs">
+            <Group justify="space-between" gap="xs">
               <Text fz="sm" fw={700}>
                 <Trans>Errors</Trans>:
               </Text>

@@ -92,7 +92,7 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
 
       <Card withBorder>
         <Stack gap="md">
-          <Group justify="apart">
+          <Group justify="space-between">
             <Title order={4}>
               <Trans>Machine type information</Trans>
             </Title>
@@ -199,7 +199,7 @@ function MachineDriverDrawer({
 
       <Card withBorder>
         <Stack gap="md">
-          <Group justify="apart">
+          <Group justify="space-between">
             <Title order={4}>
               <Trans>Machine driver information</Trans>
             </Title>
@@ -256,7 +256,7 @@ function MachineDriverDrawer({
               value={machineDriver?.is_builtin}
               type="boolean"
             />
-            <Group justify="apart" gap="xs">
+            <Group justify="space-between" gap="xs">
               <Text fz="sm" fw={700}>
                 <Trans>Errors</Trans>:
               </Text>

@@ -185,7 +185,7 @@ export function PartThumbTable({
 
       <Divider />
       <Paper p="sm">
-        <Group justify="apart">
+        <Group justify="space-between">
           <TextInput
             placeholder={t`Search...`}
             onChange={(event) => {

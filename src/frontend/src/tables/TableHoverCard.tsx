@@ -29,7 +29,7 @@ export function TableHoverCard({
   return (
     <HoverCard withinPortal={true}>
       <HoverCard.Target>
-        <Group gap="xs" justify="apart" wrap="nowrap">
+        <Group gap="xs" justify="space-between" wrap="nowrap">
           {value}
           <IconInfoCircle size="16" color="blue" />
         </Group>

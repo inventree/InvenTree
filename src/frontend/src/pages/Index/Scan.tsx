@@ -273,7 +273,7 @@ export default function Scan() {
   // rendering
   return (
     <>
-      <Group justify="apart">
+      <Group justify="space-between">
         <Group justify="left">
           <StylishText>
             <Trans>Scan Page</Trans>
@@ -291,7 +291,7 @@ export default function Scan() {
         <Grid.Col span={4}>
           <Stack>
             <Stack gap="xs">
-              <Group justify="apart">
+              <Group justify="space-between">
                 <TitleWithDoc
                   order={3}
                   text={t`Select the input method you want to use to scan items.`}
@@ -361,7 +361,7 @@ export default function Scan() {
           </Stack>
         </Grid.Col>
         <Grid.Col span={8}>
-          <Group justify="apart">
+          <Group justify="space-between">
             <TitleWithDoc
               order={3}
               text={t`History is locally kept in this browser.`}

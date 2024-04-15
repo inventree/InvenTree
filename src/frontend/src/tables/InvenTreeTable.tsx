@@ -551,7 +551,7 @@ export function InvenTreeTable<T = any>({
         />
       )}
       <Stack gap="sm">
-        <Group justify="apart">
+        <Group justify="space-between">
           <Group justify="left" key="custom-actions" gap={5}>
             {tableProps.tableActions?.map((group, idx) => (
               <Fragment key={idx}>{group}</Fragment>

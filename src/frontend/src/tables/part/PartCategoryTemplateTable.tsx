@@ -94,7 +94,7 @@ export default function PartCategoryTemplateTable({}: {}) {
           }
 
           return (
-            <Group justify="apart" grow>
+            <Group justify="space-between" grow>
               <Text>{record.default_value}</Text>
               {units && <Text size="xs">{units}</Text>}
             </Group>

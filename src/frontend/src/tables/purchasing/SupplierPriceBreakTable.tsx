@@ -96,7 +96,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
         });
 
         return (
-          <Group justify="apart" gap="xs" grow>
+          <Group justify="space-between" gap="xs" grow>
             <Text>{price}</Text>
             {units && <Text size="xs">[{units}]</Text>}
           </Group>

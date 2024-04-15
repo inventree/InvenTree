@@ -41,7 +41,7 @@ function FilterItem({
 
   return (
     <Paper p="sm" shadow="sm" radius="xs">
-      <Group justify="apart" key={flt.name}>
+      <Group justify="space-between" key={flt.name}>
         <Stack gap="xs">
           <Text size="sm">{flt.label}</Text>
           <Text size="xs">{flt.description}</Text>

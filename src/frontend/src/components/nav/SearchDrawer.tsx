@@ -68,7 +68,7 @@ function QueryResultGroup({
   return (
     <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
       <Stack key={`stack-${query.model}`}>
-        <Group justify="apart" wrap="nowrap">
+        <Group justify="space-between" wrap="nowrap">
           <Group justify="left" gap={5} wrap="nowrap">
             <Text size="lg">{model.label_multiple}</Text>
             <Text size="sm" style={{ fontStyle: 'italic' }}>
@@ -331,7 +331,7 @@ export function SearchDrawer({
       withCloseButton={false}
       styles={{ header: { width: '100%' }, title: { width: '100%' } }}
       title={
-        <Group justify="apart" gap={1} wrap="nowrap">
+        <Group justify="space-between" gap={1} wrap="nowrap">
           <TextInput
             placeholder={t`Enter search text`}
             radius="xs"

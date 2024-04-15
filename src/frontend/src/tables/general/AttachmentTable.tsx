@@ -54,7 +54,7 @@ function attachmentTableColumns(): TableColumn[] {
 
       render: function (record: any) {
         return (
-          <Group justify="apart">
+          <Group justify="space-between">
             <Text>{record.upload_date}</Text>
             {record.user_detail && (
               <Badge size="xs">{record.user_detail.username}</Badge>

@@ -66,7 +66,7 @@ export function NotificationDrawer({
         }
       }}
       title={
-        <Group justify="apart" wrap="nowrap">
+        <Group justify="space-between" wrap="nowrap">
           <StylishText size="lg">{t`Notifications`}</StylishText>
           <ActionIcon
             onClick={() => {
@@ -89,7 +89,7 @@ export function NotificationDrawer({
           </Alert>
         )}
         {notificationQuery.data?.results?.map((notification: any) => (
-          <Group justify="apart" key={notification.pk}>
+          <Group justify="space-between" key={notification.pk}>
             <Stack gap="3">
               {notification?.target?.link ? (
                 <Text

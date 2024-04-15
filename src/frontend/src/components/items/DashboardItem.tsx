@@ -19,7 +19,7 @@ export function StatisticItem({
   return (
     <Paper withBorder p="xs" key={id} pos="relative">
       <LoadingOverlay visible={isLoading} overlayProps={{ blur: 2 }} />
-      <Group justify="apart">
+      <Group justify="space-between">
         <Text size="xs" color="dimmed" className={classes.dashboardItemTitle}>
           {data.title}
         </Text>

@@ -134,7 +134,7 @@ export function TemplateDrawer({
       {editTemplate.modal}
       {deleteTemplate.modal}
 
-      <Group justify="apart">
+      <Group justify="space-between">
         <Box></Box>
 
         <Group>

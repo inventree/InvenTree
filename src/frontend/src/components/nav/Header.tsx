@@ -88,7 +88,7 @@ export function Header() {
         }}
       />
       <Container className={classes.layoutHeaderSection} size="100%">
-        <Group justify="apart">
+        <Group justify="space-between">
           <Group>
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />

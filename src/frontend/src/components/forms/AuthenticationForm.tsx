@@ -118,7 +118,7 @@ export function AuthenticationForm() {
               {...classicForm.getInputProps('password')}
             />
             {auth_settings?.password_forgotten_enabled === true && (
-              <Group justify="apart" mt="0">
+              <Group justify="space-between" mt="0">
                 <Anchor
                   component="button"
                   type="button"
@@ -143,7 +143,7 @@ export function AuthenticationForm() {
           </Stack>
         )}
 
-        <Group justify="apart" mt="xl">
+        <Group justify="space-between" mt="xl">
           <Anchor
             component="button"
             type="button"
@@ -256,7 +256,7 @@ export function RegistrationForm() {
             />
           </Stack>
 
-          <Group justify="apart" mt="xl">
+          <Group justify="space-between" mt="xl">
             <Button
               type="submit"
               disabled={isRegistering}
