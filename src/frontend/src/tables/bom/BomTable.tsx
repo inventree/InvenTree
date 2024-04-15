@@ -132,8 +132,9 @@ export function BomTable({
       {
         accessor: 'price_range',
         title: t`Price Range`,
-
-        sortable: false,
+        ordering: 'pricing_max',
+        sortable: true,
+        switchable: true,
         render: (record: any) =>
           formatPriceRange(record.pricing_min, record.pricing_max)
       },
