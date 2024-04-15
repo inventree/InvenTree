@@ -11,7 +11,14 @@
         "compile": "lingui compile --typescript"
     },
     "dependencies": {
+        "@codemirror/autocomplete": ">=6.0.0",
         "@codemirror/lang-liquid": "^6.2.1",
+        "@codemirror/language": ">=6.0.0",
+        "@codemirror/lint": ">=6.0.0",
+        "@codemirror/search": ">=6.0.0",
+        "@codemirror/state": "^6.0.0",
+        "@codemirror/theme-one-dark": ">=6.0.0",
+        "@codemirror/view": ">=6.0.0",
         "@emotion/react": "^11.11.4",
         "@fortawesome/fontawesome-svg-core": "^6.5.2",
         "@fortawesome/free-regular-svg-icons": "^6.5.2",
@@ -38,6 +45,8 @@
         "@uiw/react-split": "^5.9.3",
         "@vanilla-extract/css": "^1.14.2",
         "axios": "^1.6.8",
+        "clsx": "^2.1.0",
+        "codemirror": ">=6.0.0",
         "dayjs": "^1.11.10",
         "easymde": "^2.18.0",
         "embla-carousel-react": "^8.0.2",
@@ -52,7 +61,7 @@
         "react-select": "^5.8.0",
         "react-simplemde-editor": "^5.2.0",
         "recharts": "^2.12.4",
-        "styled-components": "^6.1.8",
+        "styled-components": "^5.3.6",
         "zustand": "^4.5.2"
     },
     "devDependencies": {
