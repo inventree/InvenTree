@@ -160,13 +160,13 @@ function WidgetControlBar({
             <Trans>Layout</Trans>
           </Menu.Label>
           <Menu.Item
-            icon={<IconArrowBackUpDouble size={14} />}
+            leftSection={<IconArrowBackUpDouble size={14} />}
             onClick={resetLayout}
           >
             <Trans>Reset Layout</Trans>
           </Menu.Item>
           <Menu.Item
-            icon={
+            leftSection={
               <IconLayout2 size={14} color={editable ? 'red' : undefined} />
             }
             onClick={editFnc}
@@ -185,7 +185,7 @@ function WidgetControlBar({
             <Trans>Appearance</Trans>
           </Menu.Label>
           <Menu.Item
-            icon={
+            leftSection={
               boxShown ? (
                 <IconSquareCheck size={14} />
               ) : (

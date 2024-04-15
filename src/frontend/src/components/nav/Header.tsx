@@ -128,11 +128,11 @@ function NavTabs() {
       defaultValue="home"
       classNames={{
         root: classes.tabs,
-        tabsList: classes.tabsList,
+        list: classes.tabsList,
         tab: classes.tab
       }}
       value={tabValue}
-      onTabChange={(value) =>
+      onChange={(value) =>
         value == '/' ? navigate('/') : navigate(`/${value}`)
       }
     >

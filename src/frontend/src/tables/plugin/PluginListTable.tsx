@@ -158,7 +158,7 @@ export function PluginDrawer({
         />
       </Group>
 
-      <LoadingOverlay visible={isFetching} overlayOpacity={0} />
+      <LoadingOverlay visible={isFetching} overlayProps={{ opacity: 0 }} />
 
       <Card withBorder>
         <Stack gap="md">

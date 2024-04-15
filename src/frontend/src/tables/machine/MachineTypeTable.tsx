@@ -102,7 +102,10 @@ function MachineTypeDrawer({ machineTypeSlug }: { machineTypeSlug: string }) {
           </Group>
 
           <Stack pos="relative" gap="xs">
-            <LoadingOverlay visible={isFetching} overlayOpacity={0} />
+            <LoadingOverlay
+              visible={isFetching}
+              overlayProps={{ opacity: 0 }}
+            />
             <InfoItem name={t`Name`} value={machineType?.name} type="text" />
             <InfoItem name={t`Slug`} value={machineType?.slug} type="text" />
             <InfoItem
@@ -206,7 +209,10 @@ function MachineDriverDrawer({
           </Group>
 
           <Stack pos="relative" gap="xs">
-            <LoadingOverlay visible={isFetching} overlayOpacity={0} />
+            <LoadingOverlay
+              visible={isFetching}
+              overlayProps={{ opacity: 0 }}
+            />
             <InfoItem name={t`Name`} value={machineDriver?.name} type="text" />
             <InfoItem name={t`Slug`} value={machineDriver?.slug} type="text" />
             <InfoItem

@@ -89,7 +89,7 @@ export function SplitButton({
                 option.onClick();
               }}
               disabled={option.disabled}
-              icon={<option.icon />}
+              leftSection={<option.icon />}
             >
               <Tooltip label={option.tooltip} position="right">
                 <Text>{option.name}</Text>

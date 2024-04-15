@@ -61,7 +61,7 @@ export default function DateField({
       label={definition.label}
       description={definition.description}
       placeholder={definition.placeholder}
-      icon={definition.icon}
+      leftSection={definition.icon}
     />
   );
 }

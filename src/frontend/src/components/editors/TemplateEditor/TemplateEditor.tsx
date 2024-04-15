@@ -223,7 +223,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
       <Split style={{ gap: '10px' }}>
         <Tabs
           value={editorValue}
-          onTabChange={async (v) => {
+          onChange={async (v) => {
             codeRef.current = await getCodeFromEditor();
             setEditorValue(v);
           }}
@@ -240,7 +240,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
               <Tabs.Tab
                 key={Editor.key}
                 value={Editor.key}
-                icon={<Editor.icon size="0.8rem" />}
+                leftSection={<Editor.icon size="0.8rem" />}
               >
                 {Editor.name}
               </Tabs.Tab>
@@ -289,7 +289,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
 
         <Tabs
           value={previewValue}
-          onTabChange={setPreviewValue}
+          onChange={setPreviewValue}
           style={{
             minWidth: '200px',
             display: 'flex',
@@ -301,7 +301,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
               <Tabs.Tab
                 key={PreviewArea.key}
                 value={PreviewArea.key}
-                icon={<PreviewArea.icon size="0.8rem" />}
+                leftSection={<PreviewArea.icon size="0.8rem" />}
               >
                 {PreviewArea.name}
               </Tabs.Tab>

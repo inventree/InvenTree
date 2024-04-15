@@ -11,7 +11,6 @@ import {
   Table,
   Title
 } from '@mantine/core';
-import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { useState } from 'react';
 
 import { SizeMarks } from '../../../../defaults/defaults';
@@ -67,8 +66,8 @@ export function UserTheme({ height }: { height: number }) {
     { value: 'oval', label: t`oval` },
     { value: 'dots', label: t`dots` }
   ];
-  const [loader, setLoader] = useState<LoaderType>(theme.loader);
-  function changeLoader(value: LoaderType) {
+  const [loader, setLoader] = useState<string>(theme.loader);
+  function changeLoader(value: string) {
     setLoader(value);
     useLocalState.setState({ loader: value });
   }

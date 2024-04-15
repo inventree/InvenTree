@@ -179,7 +179,7 @@ function stockItemTableColumns(): TableColumn[] {
           <TableHoverCard
             value={
               <Group gap="xs" justify="left" wrap="nowrap">
-                <Text color={color}>{text}</Text>
+                <Text c={color}>{text}</Text>
                 {part.units && (
                   <Text size="xs" color={color}>
                     [{part.units}]

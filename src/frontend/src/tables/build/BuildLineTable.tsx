@@ -109,7 +109,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
           available > 0 ? (
             available
           ) : (
-            <Text color="red" italic>{t`No stock available`}</Text>
+            <Text c="red" italic>{t`No stock available`}</Text>
           )
         }
         title={t`Available Stock`}

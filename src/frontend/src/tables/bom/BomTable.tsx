@@ -217,7 +217,7 @@ export function BomTable({
           can_build = Math.trunc(can_build);
 
           return (
-            <Text color={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
+            <Text c={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
           );
         }
       },

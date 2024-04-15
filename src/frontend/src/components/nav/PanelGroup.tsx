@@ -108,7 +108,7 @@ function BasePanelGroup({
       <Tabs
         value={panel}
         orientation="vertical"
-        onTabChange={handlePanelChange}
+        onChange={handlePanelChange}
         keepMounted={false}
       >
         <Tabs.List position="left">
@@ -124,7 +124,7 @@ function BasePanelGroup({
                     p="xs"
                     value={panel.name}
                     //                    icon={(<InvenTreeIcon icon={panel.name}/>)}  // Enable when implementing Icon manager everywhere
-                    icon={panel.icon}
+                    leftSection={panel.icon}
                     hidden={panel.hidden}
                     disabled={panel.disabled}
                     style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}

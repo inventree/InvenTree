@@ -337,7 +337,7 @@ export function SearchDrawer({
             radius="xs"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
-            icon={<IconSearch size="0.8rem" />}
+            leftSection={<IconSearch size="0.8rem" />}
             rightSection={
               value && (
                 <IconBackspace color="red" onClick={() => setValue('')} />

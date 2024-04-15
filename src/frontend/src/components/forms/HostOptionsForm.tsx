@@ -70,7 +70,7 @@ export function HostOptionsForm({
             </Text>
           </Group>
         ) : (
-          <Text color="dimmed" align="center">
+          <Text c="dimmed" align="center">
             <Trans>No one here...</Trans>
           </Text>
         )}

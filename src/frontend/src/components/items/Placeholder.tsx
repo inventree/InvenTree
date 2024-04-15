@@ -31,7 +31,7 @@ export function PlaceholderPanel() {
         title={t`This panel is a placeholder.`}
         icon={<IconInfoCircle />}
       >
-        <Text color="gray">This panel has not yet been implemented</Text>
+        <Text c="gray">This panel has not yet been implemented</Text>
       </Alert>
     </Stack>
   );

@@ -177,7 +177,7 @@ export function QrCodeModal({
             </Button>
           </Group>
           {values.length == 0 ? (
-            <Text color={'grey'}>
+            <Text c={'grey'}>
               <Trans>No scans yet!</Trans>
             </Text>
           ) : (

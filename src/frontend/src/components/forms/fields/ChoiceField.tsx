@@ -63,7 +63,7 @@ export function ChoiceField({
       placeholder={definition.placeholder}
       required={definition.required}
       disabled={definition.disabled}
-      icon={definition.icon}
+      leftSection={definition.icon}
       withinPortal={true}
     />
   );

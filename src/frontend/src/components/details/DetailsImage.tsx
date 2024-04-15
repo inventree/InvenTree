@@ -7,11 +7,10 @@ import {
   Overlay,
   Paper,
   Text,
-  rem,
-  useMantineTheme
+  rem
 } from '@mantine/core';
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { useHover } from '@mantine/hooks';
+import { useColorScheme, useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
@@ -21,6 +20,7 @@ import { cancelEvent } from '../../functions/events';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useUserState } from '../../states/UserState';
 import { PartThumbTable } from '../../tables/part/PartThumbTable';
+import { vars } from '../../theme';
 import { ActionButton } from '../buttons/ActionButton';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
@@ -86,8 +86,6 @@ function UploadModal({
 }) {
   const [file1, setFile] = useState<FileWithPath | null>(null);
   let uploading = false;
-
-  const theme = useMantineTheme();
 
   // Components to show in the Dropzone when no file is selected
   const noFileIdle = (
@@ -160,9 +158,11 @@ function UploadModal({
     }
   };
 
+  const preferredColorScheme = useColorScheme();
+
   const primaryColor =
-    theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 4 : 6];
-  const redColor = theme.colors.red[theme.colorScheme === 'dark' ? 4 : 6];
+    vars.colors.primaryColors[preferredColorScheme === 'dark' ? 4 : 6];
+  const redColor = vars.colors.red[preferredColorScheme === 'dark' ? 4 : 6];
 
   return (
     <Paper sx={{ height: '220px' }}>
@@ -173,7 +173,7 @@ function UploadModal({
         loading={uploading}
       >
         <Group
-          position="center"
+          justify="center"
           gap="xl"
           style={{ minHeight: rem(140), pointerEvents: 'none' }}
         >

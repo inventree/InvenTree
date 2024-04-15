@@ -240,7 +240,7 @@ export function ApiFormField({
               return `${1 * v.toFixed()}`;
             }}
             precision={definition.field_type == 'integer' ? 0 : 10}
-            onChange={(value: number) => onChange(value)}
+            onChange={(value) => onChange(value)}
           />
         );
       case 'choice':

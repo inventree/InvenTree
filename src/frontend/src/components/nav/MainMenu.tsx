@@ -38,12 +38,16 @@ export function MainMenu() {
         <Menu.Label>
           <Trans>Settings</Trans>
         </Menu.Label>
-        <Menu.Item icon={<IconUserCog />} component={Link} to="/settings/user">
+        <Menu.Item
+          leftSection={<IconUserCog />}
+          component={Link}
+          to="/settings/user"
+        >
           <Trans>Account settings</Trans>
         </Menu.Item>
         {userState.user?.is_staff && (
           <Menu.Item
-            icon={<IconSettings />}
+            leftSection={<IconSettings />}
             component={Link}
             to="/settings/system"
           >
@@ -53,7 +57,7 @@ export function MainMenu() {
         {userState.user?.is_staff && <Menu.Divider />}
         {userState.user?.is_staff && (
           <Menu.Item
-            icon={<IconUserBolt />}
+            leftSection={<IconUserBolt />}
             component={Link}
             to="/settings/admin"
           >
@@ -62,7 +66,7 @@ export function MainMenu() {
         )}
         <Menu.Divider />
         <Menu.Item
-          icon={<IconLogout />}
+          leftSection={<IconLogout />}
           onClick={() => {
             doLogout(navigate);
           }}
