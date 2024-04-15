@@ -36,6 +36,7 @@ export default function Login() {
 
   // Data manipulation functions
   function ChangeHost(newHost: string | null): void {
+    if (newHost === null) return;
     setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
     fetchServerApiState();

@@ -301,7 +301,7 @@ export default function Scan() {
                   data={inputOptions}
                   searchable
                   placeholder={t`Select input method`}
-                  nothingFound={t`Nothing found`}
+                  nothingFoundMessage={t`Nothing found`}
                 />
               </Group>
               {inp}

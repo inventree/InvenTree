@@ -59,7 +59,7 @@ export default function LayoutComponent() {
           //searchIcon={<IconSearch size="1.2rem" />}
           //searchPlaceholder={t`Search...`}
           shortcut={['mod + K', '/']}
-          //nothingFoundMessage={t`Nothing found...`}
+          nothingFound={t`Nothing found...`}
         />
       </Flex>
     </ProtectedRoute>

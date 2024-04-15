@@ -10,6 +10,7 @@ import {
   Text,
   UnstyledButton
 } from '@mantine/core';
+import { useColorScheme } from '@mantine/hooks';
 import { IconLayoutSidebar } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
@@ -17,7 +18,7 @@ import { menuItems } from '../../defaults/menuItems';
 import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { theme } from '../../theme';
+import { theme, vars } from '../../theme';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { MenuLinks } from '../items/MenuLinks';
 
@@ -34,6 +35,7 @@ export function NavHoverMenu({
   ]);
   const [servername] = useServerApiState((state) => [state.server.instance]);
   const [instanceName, setInstanceName] = useState<string>();
+  const [preferredColorScheme] = useColorScheme();
 
   useEffect(() => {
     if (hostKey && hostList[hostKey]) {
@@ -68,13 +70,13 @@ export function NavHoverMenu({
             {instanceName ? (
               instanceName
             ) : (
-              <Skeleton height={20} width={40} radius={theme.defaultRadius} />
+              <Skeleton height={20} width={40} radius={vars.radiusDefault} />
             )}{' '}
             |{' '}
             {servername ? (
               servername
             ) : (
-              <Skeleton height={20} width={40} radius={theme.defaultRadius} />
+              <Skeleton height={20} width={40} radius={vars.radiusDefault} />
             )}
           </Group>
           <Anchor href="#" fz="xs" onClick={openDrawer}>
@@ -85,7 +87,11 @@ export function NavHoverMenu({
         <Divider
           my="sm"
           mx="-md"
-          color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
+          color={
+            preferredColorScheme === 'dark'
+              ? vars.colors.dark[5]
+              : vars.colors.gray[1]
+          }
         />
         <MenuLinks links={onlyItems} highlighted={true} />
         <div className={classes.headerDropdownFooter}>

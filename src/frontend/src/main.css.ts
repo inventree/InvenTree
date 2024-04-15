@@ -31,7 +31,7 @@ export const layoutHeaderUser = style({
     //theme.colorScheme === 'dark' ? vars.colors.dark[0] : vars.black,
     vars.colors.black,
   padding: `${vars.spacing.xs}px ${vars.spacing.sm}px`,
-  borderRadius: vars.defaultRadius,
+  borderRadius: vars.radiusDefault,
   transition: 'background-color 100ms ease',
 
   [vars.smallerThan('xs')]: {
@@ -84,7 +84,7 @@ export const link = style({
 export const subLink = style({
   width: '100%',
   padding: `${vars.spacing.xs} ${vars.spacing.md}`,
-  borderRadius: vars.defaultRadius,
+  borderRadius: vars.radiusDefault,
 
   // ...theme.fn.hover({
   //   backgroundColor:

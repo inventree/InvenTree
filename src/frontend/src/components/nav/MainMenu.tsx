@@ -12,7 +12,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { doLogout } from '../../functions/auth';
 import * as classes from '../../main.css';
 import { useUserState } from '../../states/UserState';
-import { theme } from '../../theme';
+import { theme, vars } from '../../theme';
 
 export function MainMenu() {
   const navigate = useNavigate();
@@ -27,7 +27,7 @@ export function MainMenu() {
               {userState.username() ? (
                 userState.username()
               ) : (
-                <Skeleton height={20} width={40} radius={theme.defaultRadius} />
+                <Skeleton height={20} width={40} radius={vars.radiusDefault} />
               )}
             </Text>
             <IconChevronDown />

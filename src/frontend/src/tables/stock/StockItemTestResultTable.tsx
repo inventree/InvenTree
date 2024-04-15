@@ -134,9 +134,9 @@ export default function StockItemTestResultTable({
           return (
             <Group justify="apart">
               <Text
-                italic={installed}
+                style={{ fontStyle: installed ? 'italic' : undefined }}
                 fw={required && 700}
-                color={enabled ? undefined : 'red'}
+                c={enabled ? undefined : 'red'}
               >
                 {!record.templateId && '- '}
                 {record.test_name ?? record.template_detail?.test_name}
