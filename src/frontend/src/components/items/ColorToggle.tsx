@@ -5,9 +5,6 @@ import { vars } from '../../theme';
 
 export function ColorToggle() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  //const computedColorScheme = useComputedColorScheme('light', {
-  //  getInitialValueInEffect: true
-  //});
 
   return (
     <Group justify="center">
