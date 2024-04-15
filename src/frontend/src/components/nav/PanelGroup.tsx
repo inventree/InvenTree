@@ -72,7 +72,7 @@ function BasePanelGroup({
   }, [setLastUsedPanel]);
 
   // Callback when the active panel changes
-  function handlePanelChange(panel: string) {
+  function handlePanelChange(panel: string | null) {
     if (activePanels.findIndex((p) => p.name === panel) === -1) {
       setLastUsedPanel('');
       return navigate('../');
@@ -81,7 +81,7 @@ function BasePanelGroup({
     navigate(`../${panel}`);
 
     // Optionally call external callback hook
-    if (onPanelChange) {
+    if (panel && onPanelChange) {
       onPanelChange(panel);
     }
   }
@@ -111,7 +111,7 @@ function BasePanelGroup({
         onChange={handlePanelChange}
         keepMounted={false}
       >
-        <Tabs.List position="left">
+        <Tabs.List justify="left">
           {panels.map(
             (panel) =>
               !panel.hidden && (

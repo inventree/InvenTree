@@ -62,15 +62,15 @@ export function HostOptionsForm({
       <Box sx={{ maxWidth: 500 }} mx="auto">
         {fields.length > 0 ? (
           <Group mb="xs">
-            <Text weight={500} size="sm" sx={{ flex: 1 }}>
+            <Text fw={500} size="sm" sx={{ flex: 1 }}>
               <Trans>Host</Trans>
             </Text>
-            <Text weight={500} size="sm" sx={{ flex: 1 }}>
+            <Text fw={500} size="sm" sx={{ flex: 1 }}>
               <Trans>Name</Trans>
             </Text>
           </Group>
         ) : (
-          <Text c="dimmed" align="center">
+          <Text c="dimmed" ta="center">
             <Trans>No one here...</Trans>
           </Text>
         )}

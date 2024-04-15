@@ -168,7 +168,7 @@ function EmailContent({}: {}) {
           <TextInput
             label={t`E-Mail`}
             placeholder={t`E-Mail address`}
-            icon={<IconAt />}
+            leftSection={<IconAt />}
             value={newEmailValue}
             onChange={(event) => setNewEmailValue(event.currentTarget.value)}
           />

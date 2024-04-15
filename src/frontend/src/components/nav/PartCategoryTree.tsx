@@ -1,12 +1,6 @@
 import { t } from '@lingui/macro';
-import {
-  Drawer,
-  Group,
-  LoadingOverlay,
-  Stack,
-  Text,
-  useMantineTheme
-} from '@mantine/core';
+import { Drawer, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
+import { useColorScheme } from '@mantine/hooks';
 import { ReactTree, ThemeSettings } from '@naisutech/react-tree';
 import {
   IconChevronDown,
@@ -20,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
+import { theme, vars } from '../../theme';
 import { StylishText } from '../items/StylishText';
 
 export function PartCategoryTree({
@@ -80,57 +75,57 @@ export function PartCategoryTree({
     return open ? <IconChevronDown /> : <IconChevronRight />;
   }
 
-  const mantineTheme = useMantineTheme();
+  const [prefferedColorScheme] = useColorScheme();
 
   const themes: ThemeSettings = useMemo(() => {
     const currentTheme =
-      mantineTheme.colorScheme === 'dark'
-        ? mantineTheme.colorScheme
-        : mantineTheme.primaryColor;
+      prefferedColorScheme === 'dark'
+        ? vars.colors.defaultColor
+        : vars.colors.primaryColors;
 
     return {
       dark: {
         text: {
-          ...mantineTheme.fn.fontStyles()
+          ...vars.fontStyles()
         },
         nodes: {
           height: '2.5rem',
           folder: {
-            selectedBgColor: mantineTheme.colors[currentTheme][4],
-            hoverBgColor: mantineTheme.colors[currentTheme][6]
+            selectedBgColor: currentTheme[4],
+            hoverBgColor: currentTheme[6]
           },
           leaf: {
-            selectedBgColor: mantineTheme.colors[currentTheme][4],
-            hoverBgColor: mantineTheme.colors[currentTheme][6]
+            selectedBgColor: currentTheme[4],
+            hoverBgColor: currentTheme[6]
           },
           icons: {
-            folderColor: mantineTheme.colors[currentTheme][3],
-            leafColor: mantineTheme.colors[currentTheme][3]
+            folderColor: currentTheme[3],
+            leafColor: currentTheme[3]
           }
         }
       },
       light: {
         text: {
-          ...mantineTheme.fn.fontStyles()
+          ...theme.fn.fontStyles()
         },
         nodes: {
           height: '2.5rem',
           folder: {
-            selectedBgColor: mantineTheme.colors[currentTheme][4],
-            hoverBgColor: mantineTheme.colors[currentTheme][2]
+            selectedBgColor: currentTheme[4],
+            hoverBgColor: currentTheme[2]
           },
           leaf: {
-            selectedBgColor: mantineTheme.colors[currentTheme][4],
-            hoverBgColor: mantineTheme.colors[currentTheme][2]
+            selectedBgColor: currentTheme[4],
+            hoverBgColor: currentTheme[2]
           },
           icons: {
-            folderColor: mantineTheme.colors[currentTheme][8],
-            leafColor: mantineTheme.colors[currentTheme][6]
+            folderColor: currentTheme[8],
+            leafColor: currentTheme[6]
           }
         }
       }
     };
-  }, [mantineTheme]);
+  }, [theme]);
 
   return (
     <Drawer
@@ -162,7 +157,7 @@ export function PartCategoryTree({
           RenderIcon={renderIcon}
           defaultSelectedNodes={selectedCategory ? [selectedCategory] : []}
           showEmptyItems={false}
-          theme={mantineTheme.colorScheme}
+          theme={theme.colorScheme}
           themes={themes}
         />
       </Stack>

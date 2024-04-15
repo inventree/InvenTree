@@ -9,7 +9,7 @@ export function PlaceholderPill() {
   return (
     <Tooltip
       multiline
-      width={220}
+      w={220}
       withArrow
       label={t`This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing.`}
     >

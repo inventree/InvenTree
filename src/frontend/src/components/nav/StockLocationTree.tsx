@@ -51,7 +51,7 @@ export function StockLocationTree({
   function renderNode({ node }: { node: any }) {
     return (
       <Group
-        position="apart"
+        justify="apart"
         key={node.id}
         wrap="nowrap"
         onClick={() => {

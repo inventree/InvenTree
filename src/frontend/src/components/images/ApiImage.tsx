@@ -67,10 +67,7 @@ export function ApiImage(props: ImageProps) {
       {image && image.length > 0 ? (
         <Image {...props} src={image} withPlaceholder fit="contain" />
       ) : (
-        <Skeleton
-          height={props?.height ?? props.width}
-          width={props?.width ?? props.height}
-        />
+        <Skeleton h={props?.h ?? props.w} w={props?.w ?? props.h} />
       )}
     </Stack>
   );

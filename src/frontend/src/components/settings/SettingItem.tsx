@@ -6,9 +6,9 @@ import {
   Space,
   Stack,
   Switch,
-  Text,
-  useMantineTheme
+  Text
 } from '@mantine/core';
+import { useColorScheme } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconEdit } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -19,6 +19,7 @@ import { openModalApiForm } from '../../functions/forms';
 import { apiUrl } from '../../states/ApiState';
 import { SettingsStateProps } from '../../states/SettingsState';
 import { Setting, SettingType } from '../../states/states';
+import { vars } from '../../theme';
 import { ApiFormFieldType } from '../forms/fields/ApiFormField';
 
 /**
@@ -165,14 +166,14 @@ export function SettingItem({
   shaded: boolean;
   onChange?: () => void;
 }) {
-  const theme = useMantineTheme();
+  const [prefferedColorScheme] = useColorScheme();
 
   const style: Record<string, string> = { paddingLeft: '8px' };
   if (shaded) {
     style['backgroundColor'] =
-      theme.colorScheme === 'light'
-        ? theme.colors.gray[1]
-        : theme.colors.gray[9];
+      prefferedColorScheme === 'light'
+        ? vars.colors.gray[1]
+        : vars.colors.gray[9];
   }
 
   return (

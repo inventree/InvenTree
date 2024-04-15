@@ -26,7 +26,7 @@ export default function FeedbackWidget() {
         component="a"
         href="https://github.com/inventree/InvenTree/discussions/5328"
         variant="outline"
-        leftIcon={<IconExternalLink size="0.9rem" />}
+        leftSection={<IconExternalLink size="0.9rem" />}
       >
         <Trans>Provide Feedback</Trans>
       </Button>

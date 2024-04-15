@@ -38,7 +38,7 @@ export function TableHoverCard({
         <Stack gap="xs">
           <Group gap="xs" justify="left">
             <IconInfoCircle size="16" color="blue" />
-            <Text weight="bold">{title}</Text>
+            <Text fw="bold">{title}</Text>
           </Group>
           <Divider />
           {extra}

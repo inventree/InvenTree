@@ -37,7 +37,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         render: (record: any) => {
           return (
             <Text
-              weight={record.required && 700}
+              fw={record.required && 700}
               c={record.enabled ? undefined : 'red'}
             >
               {record.test_name}

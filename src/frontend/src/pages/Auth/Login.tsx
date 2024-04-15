@@ -70,7 +70,7 @@ export default function Login() {
         ) : (
           <>
             <Paper radius="md" p="xl" withBorder>
-              <Text size="lg" weight={500}>
+              <Text size="lg" fw={500}>
                 {loginMode ? (
                   <Trans>Welcome, log in below</Trans>
                 ) : (

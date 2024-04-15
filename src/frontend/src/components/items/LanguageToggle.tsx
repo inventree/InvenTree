@@ -9,7 +9,7 @@ export function LanguageToggle() {
 
   return (
     <Group
-      position="center"
+      justify="center"
       style={{
         border: open === true ? `1px dashed ` : ``,
         margin: open === true ? 2 : 12,
