@@ -42,7 +42,7 @@ class DataImportSessionAdmin(admin.ModelAdmin):
 
     def get_readonly_fields(self, request, obj=None):
         """Update the readonly fields for the admin interface."""
-        fields = ['columns', 'status']
+        fields = ['columns', 'status', 'timestamp']
 
         # Prevent data file from being edited after upload!
         if obj:
