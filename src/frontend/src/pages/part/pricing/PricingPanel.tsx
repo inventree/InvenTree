@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Accordion, Alert, Paper, Space, Stack, Text } from '@mantine/core';
+import { Accordion, Alert, Space, Stack, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
@@ -22,9 +22,7 @@ export default function PricingPanel({
         <Accordion.Control>
           <StylishText size="lg">{title}</StylishText>
         </Accordion.Control>
-        <Accordion.Panel>
-          <Paper p="sm">{content}</Paper>
-        </Accordion.Panel>
+        <Accordion.Panel>{content}</Accordion.Panel>
       </Accordion.Item>
     )
   );

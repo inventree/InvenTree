@@ -1,12 +1,6 @@
 import { t } from '@lingui/macro';
-import {
-  Group,
-  SegmentedControl,
-  SimpleGrid,
-  Stack,
-  Text
-} from '@mantine/core';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { SegmentedControl, SimpleGrid, Stack } from '@mantine/core';
+import { ReactNode, useMemo, useState } from 'react';
 import {
   Bar,
   BarChart,
