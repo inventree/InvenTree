@@ -487,9 +487,13 @@ class SupplierPriceBreakList(ListCreateAPI):
 
         return self.serializer_class(*args, **kwargs)
 
-    filter_backends = ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
-    ordering_fields = ['quantity']
+    ordering_fields = ['quantity', 'supplier', 'SKU', 'price']
+
+    search_fields = ['part__SKU', 'part__supplier__name']
+
+    ordering_field_aliases = {'supplier': 'part__supplier__name', 'SKU': 'part__SKU'}
 
     ordering = 'quantity'
 

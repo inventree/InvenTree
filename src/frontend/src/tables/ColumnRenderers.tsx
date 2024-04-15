@@ -148,12 +148,23 @@ export function ResponsibleColumn(): TableColumn {
   };
 }
 
-export function DateColumn(): TableColumn {
+export function DateColumn({
+  accessor,
+  sortable,
+  switchable,
+  title
+}: {
+  accessor?: string;
+  sortable?: boolean;
+  switchable?: boolean;
+  title?: string;
+}): TableColumn {
   return {
-    accessor: 'date',
-    sortable: true,
-    title: t`Date`,
-    render: (record: any) => renderDate(record.date)
+    accessor: accessor ?? 'date',
+    sortable: sortable ?? true,
+    title: title ?? t`Date`,
+    switchable: switchable,
+    render: (record: any) => renderDate(record[accessor ?? 'date'])
   };
 }
 
