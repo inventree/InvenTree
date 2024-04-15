@@ -42,9 +42,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = Company
-        fields = ['pk', 'url', 'name', 'description', 'image', 'thumbnail']
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
+        fields = ['pk', 'active', 'name', 'description', 'image', 'thumbnail']
 
     image = InvenTreeImageSerializerField(read_only=True)
 

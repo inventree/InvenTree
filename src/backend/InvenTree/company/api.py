@@ -2,6 +2,7 @@
 
 from django.db.models import Q
 from django.urls import include, path, re_path
+from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 
@@ -159,7 +160,13 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
         fields = ['manufacturer', 'MPN', 'part', 'tags__name', 'tags__slug']
 
     # Filter by 'active' status of linked part
-    active = rest_filters.BooleanFilter(field_name='part__active')
+    active = rest_filters.BooleanFilter(
+        field_name='part__active', label=_('Part is Active')
+    )
+
+    manufacturer_active = rest_filters.BooleanFilter(
+        field_name='manufacturer__active', label=_('Manufacturer is Active')
+    )
 
 
 class ManufacturerPartList(ListCreateDestroyAPIView):
@@ -308,7 +315,13 @@ class SupplierPartFilter(rest_filters.FilterSet):
         ]
 
     # Filter by 'active' status of linked part
-    active = rest_filters.BooleanFilter(field_name='part__active')
+    active = rest_filters.BooleanFilter(
+        field_name='part__active', label=_('Part is Active')
+    )
+
+    supplier_active = rest_filters.BooleanFilter(
+        field_name='supplier__active', label=_('Supplier is Active')
+    )
 
     # Filter by the 'MPN' of linked manufacturer part
     MPN = rest_filters.CharFilter(
