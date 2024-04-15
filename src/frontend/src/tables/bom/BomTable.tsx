@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconCircleCheck,
@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import { formatPriceRange } from '../../defaults/formatters';
+import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -98,9 +98,19 @@ export function BomTable({
       {
         accessor: 'quantity',
         switchable: false,
-        sortable: true
-        // TODO: Custom quantity renderer
-        // TODO: see bom.js for existing implementation
+        sortable: true,
+        render: (record: any) => {
+          let quantity = formatDecimal(record.quantity);
+          let units = record.sub_part_detail?.units;
+
+          return (
+            <Group position="apart" grow>
+              <Text>{quantity}</Text>
+              {record.overage && <Text size="xs">+{record.overage}</Text>}
+              {units && <Text size="xs">{units}</Text>}
+            </Group>
+          );
+        }
       },
       {
         accessor: 'substitutes',

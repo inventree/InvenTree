@@ -1,5 +1,11 @@
 import { t } from '@lingui/macro';
-import { SegmentedControl, SimpleGrid, Stack } from '@mantine/core';
+import {
+  Group,
+  SegmentedControl,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
 import { ReactNode, useMemo, useState } from 'react';
 import {
   Bar,
@@ -111,7 +117,17 @@ export default function BomPricingPanel({
         title: t`Quantity`,
         sortable: true,
         switchable: false,
-        render: (record: any) => formatDecimal(record.quantity)
+        render: (record: any) => {
+          let quantity = formatDecimal(record.quantity);
+          let units = record.sub_part_detail?.units;
+
+          return (
+            <Group spacing="apart" grow>
+              <Text>{quantity}</Text>
+              {units && <Text size="xs">[{units}]</Text>}
+            </Group>
+          );
+        }
       },
       {
         accessor: 'unit_price',
