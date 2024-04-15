@@ -52,7 +52,6 @@ export default function Login() {
 
     // check if we got login params (login and password)
     if (searchParams.has('login') && searchParams.has('password')) {
-      console.log('got login params');
       doBasicLogin(
         searchParams.get('login') ?? '',
         searchParams.get('password') ?? ''
