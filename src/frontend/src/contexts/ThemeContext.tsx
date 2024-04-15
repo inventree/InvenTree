@@ -1,10 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  MantineProvider,
-  createTheme,
-  localStorageColorSchemeManager
-} from '@mantine/core';
-import { useColorScheme } from '@mantine/hooks';
+import { MantineProvider, createTheme } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 
@@ -13,6 +8,7 @@ import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrCodeModal } from '../components/modals/QrCodeModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
+import { colorSchema } from './colorSchema';
 
 export function ThemeContext({ children }: { children: JSX.Element }) {
   const [primaryColor, whiteColor, blackColor, radius] = useLocalState(
@@ -23,12 +19,6 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
       state.radius
     ]
   );
-
-  // Color Scheme
-  const preferredColorScheme = useColorScheme();
-  const colorSchemeManager = localStorageColorSchemeManager({
-    key: 'scheme'
-  });
 
   // Theme
   const myTheme = createTheme({
@@ -46,11 +36,7 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
   });
 
   return (
-    <MantineProvider
-      theme={myTheme}
-      defaultColorScheme={preferredColorScheme}
-      colorSchemeManager={colorSchemeManager}
-    >
+    <MantineProvider theme={myTheme} colorSchemeManager={colorSchema}>
       <Notifications />
       <ModalsProvider
         labels={{ confirm: t`Submit`, cancel: t`Cancel` }}

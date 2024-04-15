@@ -1,11 +1,12 @@
 import { Center, Loader, MantineProvider, Stack } from '@mantine/core';
 import { Suspense } from 'react';
 
+import { colorSchema } from '../contexts/colorSchema';
 import { theme } from '../theme';
 
 function LoadingFallback() {
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider theme={theme} colorSchemeManager={colorSchema}>
       <Stack>
         <Center>
           <Loader />
