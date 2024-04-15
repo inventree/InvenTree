@@ -426,7 +426,8 @@ function companyFormFields() {
         },
         is_supplier: {},
         is_manufacturer: {},
-        is_customer: {}
+        is_customer: {},
+        active: {},
     };
 }
 

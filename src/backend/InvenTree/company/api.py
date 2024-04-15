@@ -58,7 +58,13 @@ class CompanyList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['is_customer', 'is_manufacturer', 'is_supplier', 'name']
+    filterset_fields = [
+        'is_customer',
+        'is_manufacturer',
+        'is_supplier',
+        'name',
+        'active',
+    ]
 
     search_fields = ['name', 'description', 'website']
 

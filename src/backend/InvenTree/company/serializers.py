@@ -116,6 +116,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'contact',
             'link',
             'image',
+            'active',
             'is_customer',
             'is_manufacturer',
             'is_supplier',
