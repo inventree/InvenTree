@@ -279,10 +279,6 @@ export function ApiForm({
 
   // Fetch initial data on form load
   useEffect(() => {
-    if (props.focus) {
-      form.setFocus(props.focus);
-    }
-
     // Fetch initial data if the fetchInitialData property is set
     if (props.fetchInitialData) {
       queryClient.removeQueries({
@@ -297,7 +293,48 @@ export function ApiForm({
       });
       initialDataQuery.refetch();
     }
-  }, []);
+  }, [props.fetchInitialData]);
+
+  const isLoading = useMemo(
+    () =>
+      isFormLoading ||
+      initialDataQuery.isFetching ||
+      optionsLoading ||
+      isSubmitting ||
+      !props.fields,
+    [
+      isFormLoading,
+      initialDataQuery.isFetching,
+      isSubmitting,
+      props.fields,
+      optionsLoading
+    ]
+  );
+
+  const [initialFocus, setInitialFocus] = useState<string>('');
+
+  // Update field focus when the form is loaded
+  useEffect(() => {
+    let focusField = props.focus ?? '';
+
+    if (!focusField) {
+      // If a focus field is not specified, then focus on the first available field
+      Object.entries(props.fields ?? {}).forEach(([fieldName, field]) => {
+        if (focusField || field.read_only || field.disabled || field.hidden) {
+          return;
+        }
+
+        focusField = fieldName;
+      });
+    }
+
+    if (isLoading || initialFocus == focusField) {
+      return;
+    }
+
+    form.setFocus(focusField);
+    setInitialFocus(focusField);
+  }, [props.focus, form.setFocus, isLoading, initialFocus]);
 
   const submitForm: SubmitHandler<FieldValues> = async (data) => {
     setNonFieldErrors([]);
@@ -396,22 +433,6 @@ export function ApiForm({
         return error;
       });
   };
-
-  const isLoading = useMemo(
-    () =>
-      isFormLoading ||
-      initialDataQuery.isFetching ||
-      optionsLoading ||
-      isSubmitting ||
-      !props.fields,
-    [
-      isFormLoading,
-      initialDataQuery.isFetching,
-      isSubmitting,
-      props.fields,
-      optionsLoading
-    ]
-  );
 
   const onFormError = useCallback<SubmitErrorHandler<FieldValues>>(() => {
     props.onFormError?.();
