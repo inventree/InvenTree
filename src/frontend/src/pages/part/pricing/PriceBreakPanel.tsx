@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, SimpleGrid } from '@mantine/core';
+import { SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import {
   Bar,

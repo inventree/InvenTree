@@ -1,14 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Badge,
-  Grid,
-  Group,
-  LoadingOverlay,
-  Skeleton,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,

@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';

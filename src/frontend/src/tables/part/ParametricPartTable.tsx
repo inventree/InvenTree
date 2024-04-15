@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Tooltip } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';

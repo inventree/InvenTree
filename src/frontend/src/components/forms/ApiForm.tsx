@@ -1,17 +1,19 @@
 import { t } from '@lingui/macro';
 import {
   Alert,
+  Button,
   DefaultMantineColor,
+  Divider,
+  Group,
   LoadingOverlay,
   Paper,
+  Stack,
   Text
 } from '@mantine/core';
-import { Button, Divider, Group, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FieldValues,
   FormProvider,

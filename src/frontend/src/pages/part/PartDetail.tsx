@@ -1,13 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Badge,
-  Grid,
-  Group,
-  LoadingOverlay,
-  Skeleton,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -36,9 +28,7 @@ import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
-import DetailsBadge, {
-  DetailsBadgeProps
-} from '../../components/details/DetailsBadge';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PartIcons } from '../../components/details/PartIcons';

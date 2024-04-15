@@ -10,8 +10,7 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import {
   Navigate,
   Route,

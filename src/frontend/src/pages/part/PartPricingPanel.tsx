@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';

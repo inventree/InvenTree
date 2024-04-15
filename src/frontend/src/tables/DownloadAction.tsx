@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Menu } from '@mantine/core';
-import { Tooltip } from '@mantine/core';
+import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import { IconDownload } from '@tabler/icons-react';
 
 export function DownloadAction({

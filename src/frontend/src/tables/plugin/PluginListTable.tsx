@@ -15,12 +15,12 @@ import { notifications, showNotification } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconCircleX,
+  IconDots,
   IconHelpCircle,
   IconInfoCircle,
   IconPlaylistAdd,
   IconRefresh
 } from '@tabler/icons-react';
-import { IconDots } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

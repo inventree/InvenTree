@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Space } from '@mantine/core';
-import { Group, Text } from '@mantine/core';
+import { Alert, Group, Space, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
