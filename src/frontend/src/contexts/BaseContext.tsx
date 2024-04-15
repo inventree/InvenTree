@@ -7,9 +7,9 @@ import { ThemeContext } from './ThemeContext';
 export const BaseContext = ({ children }: { children: any }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <LanguageContext>
-        <ThemeContext>{children}</ThemeContext>
-      </LanguageContext>
+      <ThemeContext>
+        <LanguageContext>{children}</LanguageContext>
+      </ThemeContext>
     </QueryClientProvider>
   );
 };
