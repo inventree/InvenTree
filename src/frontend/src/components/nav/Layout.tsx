@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Container, Flex, Space } from '@mantine/core';
 import { Spotlight, createSpotlight } from '@mantine/spotlight';
 import { IconSearch } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { getActions } from '../../defaults/actions';
@@ -28,7 +29,26 @@ export const [firstStore, firstSpotlight] = createSpotlight();
 
 export default function LayoutComponent() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const defaultactions = getActions(navigate);
+  const [actions, setActions] = useState(defaultactions);
+  const [customActions, setCustomActions] = useState<boolean>(false);
+
+  function actionsAreChanging(change: any) {
+    if (change.registeredActions.length > defaultactions.length)
+      setCustomActions(true);
+    setActions(change);
+  }
+  // firstStore.subscribe(actionsAreChanging);
+
+  // clear additional actions on location change
+  useEffect(() => {
+    if (customActions) {
+      setActions(defaultactions);
+      setCustomActions(false);
+    }
+  }, [location]);
 
   return (
     <ProtectedRoute>
@@ -40,9 +60,8 @@ export default function LayoutComponent() {
         <Space h="xl" />
         <Footer />
         <Spotlight
-          actions={defaultactions}
+          actions={actions}
           store={firstStore}
-          //onActionsChange={actionsAreChanging}
           highlightQuery
           searchProps={{
             leftSection: <IconSearch size="1.2rem" />,

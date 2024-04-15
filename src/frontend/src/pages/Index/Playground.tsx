@@ -2,6 +2,7 @@ import { Trans } from '@lingui/macro';
 import { Button, Card, Stack, TextInput } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { Accordion } from '@mantine/core';
+import { SpotlightActionData } from '@mantine/spotlight';
 import { IconAlien } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
@@ -18,7 +19,6 @@ import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
-import { useSpotlightState } from '../../states/SpotlightState';
 
 // Generate some example forms using the modal API forms interface
 const fields = partCategoryFields({});
@@ -176,8 +176,9 @@ function SpotlighPlayground() {
     <Button
       variant="outline"
       onClick={() => {
-        const setAdditionalActions =
-          useSpotlightState.getState().setAdditionalActions;
+        const setAdditionalActions = (value: SpotlightActionData[]) => {
+          console.log('would add', value);
+        };
         setAdditionalActions([
           {
             id: 'secret-action-1',
