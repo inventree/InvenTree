@@ -9,7 +9,7 @@ import {
   IconShoppingCart,
   IconTriangleSquareCircle
 } from '@tabler/icons-react';
-import { DataTable, DataTableColumn } from 'mantine-datatable';
+import { DataTable } from 'mantine-datatable';
 import { ReactNode, useMemo } from 'react';
 import {
   Bar,
@@ -41,7 +41,7 @@ export default function PricingOverviewPanel({
   part: any;
   pricing: any;
 }): ReactNode {
-  const columns: DataTableColumn<any>[] = useMemo(() => {
+  const columns: any[] = useMemo(() => {
     return [
       {
         accessor: 'title',
