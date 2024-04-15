@@ -16,8 +16,13 @@ import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
-export function PartColumn(part: any) {
-  return <Thumbnail src={part?.thumbnail ?? part.image} text={part.name} />;
+export function PartColumn(part: any, full_name?: boolean) {
+  return (
+    <Thumbnail
+      src={part?.thumbnail ?? part.image}
+      text={full_name ? part.full_name : part.name}
+    />
+  );
 }
 
 export function BooleanColumn({
