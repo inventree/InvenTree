@@ -157,7 +157,7 @@ class Company(
     )
 
     active = models.BooleanField(
-        default=False, verbose_name=_('Active'), help_text=_('Is this company active?')
+        default=True, verbose_name=_('Active'), help_text=_('Is this company active?')
     )
 
     is_customer = models.BooleanField(
