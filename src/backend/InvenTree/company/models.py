@@ -81,6 +81,7 @@ class Company(
         link: Secondary URL e.g. for link to internal Wiki page
         image: Company image / logo
         notes: Extra notes about the company
+        active: boolean value, is this company active
         is_customer: boolean value, is this company a customer
         is_supplier: boolean value, is this company a supplier
         is_manufacturer: boolean value, is this company a manufacturer
@@ -153,6 +154,10 @@ class Company(
         variations={'thumbnail': (128, 128), 'preview': (256, 256)},
         delete_orphans=True,
         verbose_name=_('Image'),
+    )
+
+    active = models.BooleanField(
+        default=False, verbose_name=_('Active'), help_text=_('Is this company active?')
     )
 
     is_customer = models.BooleanField(
