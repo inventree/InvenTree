@@ -24,10 +24,6 @@ function ImporterColumn({ column, options }: { column: any; options: any[] }) {
   );
 
   useEffect(() => {
-    console.log('selected column:', selectedColumn);
-  }, [selectedColumn]);
-
-  useEffect(() => {
     setSelectedColumn(column.column ?? '');
   }, [column.column]);
 

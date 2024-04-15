@@ -24,7 +24,7 @@ export type ImportSessionState = {
   refreshSession: () => void;
   sessionQuery: any;
   status: ImportSessionStatus;
-  availableFields: any[];
+  availableFields: Record<string, any>;
   mappedFields: any[];
   columnMappings: any[];
 };
@@ -64,10 +64,10 @@ export function useImportSession({
     return sessionData?.column_mappings ?? [];
   }, [sessionData]);
 
-  // List of fields which have been mapped to columns
+  // List of field which have been mapped to columns
   const mappedFields: any[] = useMemo(() => {
     return (
-      sessionData?.column_mappings?.filter((column: any) => !!column.field) ??
+      sessionData?.column_mappings?.filter((column: any) => !!column.column) ??
       []
     );
   }, [sessionData]);

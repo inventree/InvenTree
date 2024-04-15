@@ -40,6 +40,9 @@ function ImporterDataCell({
   );
 
   const cellErrors: string[] = useMemo(() => {
+    if (!row.errors) {
+      return [];
+    }
     return row?.errors[column.field] ?? [];
   }, [row.errors, column.field]);
 
@@ -73,39 +76,52 @@ export default function ImporterDataSelector({
 }) {
   const table = useTable('data-importer');
 
-  const rowEditFields: ApiFormFieldSet = useMemo(() => {
-    // TODO: Construct a set of fields based on the provided session information
-    return {};
-  }, [session]);
+  const [selectedFieldNames, setSelectedFieldNames] = useState<string[]>([]);
 
-  const [selectedFields, setSelectedFields] = useState<ApiFormFieldSet>({});
+  const selectedFields: ApiFormFieldSet = useMemo(() => {
+    let fields: ApiFormFieldSet = {};
 
-  const [selectedRow, setSelectedRow] = useState<number>(0);
+    for (let field of selectedFieldNames) {
+      // Find the field definition in session.availableFields
+      let fieldDef = session.availableFields[field];
+      if (fieldDef) {
+        fields[field] = {
+          ...fieldDef,
+          field_type: fieldDef.type,
+          description: fieldDef.help_text
+        };
+      }
+    }
+
+    return fields;
+  }, [selectedFieldNames, session.availableFields]);
+
+  const [selectedRow, setSelectedRow] = useState<any>({});
+
+  const editCell = useCallback(
+    (row: any, col: any) => {
+      setSelectedRow(row);
+      setSelectedFieldNames([col.field]);
+      editRow.open();
+    },
+    [session]
+  );
 
   const editRow = useEditApiFormModal({
     url: ApiEndpoints.import_session_row_list,
-    pk: selectedRow,
+    pk: selectedRow.pk,
     title: t`Edit Data`,
     fields: selectedFields,
+    initialData: selectedRow.data,
     onFormSuccess: (row: any) => table.updateRecord(row)
   });
 
   const deleteRow = useDeleteApiFormModal({
     url: ApiEndpoints.import_session_row_list,
-    pk: selectedRow,
+    pk: selectedRow.pk,
     title: t`Delete Row`,
     onFormSuccess: () => table.refreshTable()
   });
-
-  const editCell = useCallback(
-    (row: any, col: any) => {
-      setSelectedRow(row.pk);
-      // TODO: Set selected fields only for the selected column
-      setSelectedFields({});
-      editRow.open();
-    },
-    [session]
-  );
 
   const columns: TableColumn[] = useMemo(() => {
     let columns: TableColumn[] = [
@@ -127,25 +143,23 @@ export default function ImporterDataSelector({
           );
         }
       },
-      ...session.sessionData?.column_mappings
-        ?.filter((column: any) => !!column.field)
-        .map((column: any) => {
-          return {
-            accessor: column.field,
-            title: column.column ?? column.title,
-            sortable: false,
-            switchable: true,
-            render: (row: any) => {
-              return (
-                <ImporterDataCell
-                  column={column}
-                  row={row}
-                  onEdit={() => editCell(row, column)}
-                />
-              );
-            }
-          };
-        })
+      ...session.mappedFields.map((column: any) => {
+        return {
+          accessor: column.field,
+          title: column.column ?? column.title,
+          sortable: false,
+          switchable: true,
+          render: (row: any) => {
+            return (
+              <ImporterDataCell
+                column={column}
+                row={row}
+                onEdit={() => editCell(row, column)}
+              />
+            );
+          }
+        };
+      })
     ];
 
     return columns;
@@ -156,13 +170,16 @@ export default function ImporterDataSelector({
       return [
         RowEditAction({
           onClick: () => {
-            setSelectedRow(record.pk);
+            setSelectedRow(record);
+            setSelectedFieldNames(
+              session.mappedFields.map((f: any) => f.field)
+            );
             editRow.open();
           }
         }),
         RowDeleteAction({
           onClick: () => {
-            setSelectedRow(record.pk);
+            setSelectedRow(record);
             deleteRow.open();
           }
         })
