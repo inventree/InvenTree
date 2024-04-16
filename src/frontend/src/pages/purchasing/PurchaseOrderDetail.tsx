@@ -229,7 +229,12 @@ export default function PurchaseOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <PurchaseOrderLineItemTable orderId={Number(id)} />
+        content: (
+          <PurchaseOrderLineItemTable
+            orderId={Number(id)}
+            supplierId={Number(order.supplier)}
+          />
+        )
       },
       {
         name: 'received-stock',

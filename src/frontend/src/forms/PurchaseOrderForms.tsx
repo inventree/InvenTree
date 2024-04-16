@@ -37,8 +37,12 @@ import { apiUrl } from '../states/ApiState';
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
 export function usePurchaseOrderLineItemFields({
+  supplierId,
+  orderId,
   create
 }: {
+  supplierId?: number;
+  orderId?: number;
   create?: boolean;
 }) {
   const [purchasePrice, setPurchasePrice] = useState<string>('');
@@ -60,16 +64,20 @@ export function usePurchaseOrderLineItemFields({
         filters: {
           supplier_detail: true
         },
-        hidden: true
+        disabled: true
       },
       part: {
         filters: {
           part_detail: true,
-          supplier_detail: true
+          supplier_detail: true,
+          active: true,
+          part_active: true
         },
-        adjustFilters: (value: ApiFormAdjustFilterType) => {
-          // TODO: Adjust part based on the supplier associated with the supplier
-          return value.filters;
+        adjustFilters: (adjust: ApiFormAdjustFilterType) => {
+          return {
+            ...adjust.filters,
+            supplier: supplierId
+          };
         }
       },
       quantity: {},
@@ -105,7 +113,7 @@ export function usePurchaseOrderLineItemFields({
     }
 
     return fields;
-  }, [create, autoPricing, purchasePrice]);
+  }, [create, orderId, supplierId, autoPricing, purchasePrice]);
 
   return fields;
 }
