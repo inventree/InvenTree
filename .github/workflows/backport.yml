@@ -9,19 +9,18 @@ on:
   pull_request_target:
     types: [ "labeled", "closed" ]
 
-permissions:
-  contents: write
-
 jobs:
   backport:
     name: Backport PR
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pull-requests: write
+    if: github.event.pull_request.merged
     steps:
       - name: Backport Action
         uses: korthout/backport-action@ef20d86abccbac3ee3a73cb2efbdc06344c390e5  # Pinned at v2.5.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           copy_labels_pattern: '*'
-          label_pattern: 'backport-to-([^ ]+)$'
+          label_pattern: '^backport-to-(.+)$'
