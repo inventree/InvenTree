@@ -16,11 +16,24 @@ jobs:
     permissions:
       contents: write
       pull-requests: write
-    if: github.event.pull_request.merged
+    if: |
+      github.event.pull_request.merged == true
+      && contains(github.event.pull_request.labels.*.name, 'backport')
+      && (
+        (github.event.action == 'labeled' && github.event.label.name == 'backport')
+        || (github.event.action == 'closed')
+      )
     steps:
       - name: Backport Action
-        uses: korthout/backport-action@ef20d86abccbac3ee3a73cb2efbdc06344c390e5  # Pinned at v2.5.0
+        uses: sqren/backport-github-action@f54e19901f2a57f8b82360f2490d47ee82ec82c6 # pin@v9.2.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          copy_labels_pattern: '.+'
-          label_pattern: '^backport-to-(.+)$'
+          auto_backport_label_prefix: backport-to-
+
+      - name: Info log
+        if: ${{ success() }}
+        run: cat ~/.backport/backport.info.log
+
+      - name: Debug log
+        if: ${{ failure() }}
+        run: cat ~/.backport/backport.debug.log
