@@ -159,6 +159,7 @@ export function BuildOrderTable({
         hidden={!user.hasAddRole(UserRoles.build)}
         tooltip={t`Add Build Order`}
         onClick={() => newBuild.open()}
+        key="add-build-order"
       />
     ];
   }, [user]);

@@ -253,23 +253,22 @@ export default function SalesOrderDetail() {
             status={order.status}
             type={ModelType.salesorder}
             options={{ size: 'lg' }}
+            key={order.pk}
           />
         ];
   }, [order, instanceQuery]);
 
   return (
-    <>
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Sales Order` + `: ${order.reference}`}
-          subtitle={order.description}
-          imageUrl={order.customer_detail?.image}
-          badges={orderBadges}
-          breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
-        />
-        <PanelGroup pageKey="salesorder" panels={orderPanels} />
-      </Stack>
-    </>
+    <Stack gap="xs">
+      <LoadingOverlay visible={instanceQuery.isFetching} />
+      <PageDetail
+        title={t`Sales Order` + `: ${order.reference}`}
+        subtitle={order.description}
+        imageUrl={order.customer_detail?.image}
+        badges={orderBadges}
+        breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+      />
+      <PanelGroup pageKey="salesorder" panels={orderPanels} />
+    </Stack>
   );
 }

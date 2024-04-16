@@ -699,6 +699,7 @@ export default function PartDetail() {
             hidden: !part?.barcode_hash
           })
         ]}
+        key="action_dropdown"
       />,
       <ActionDropdown
         key="stock"
