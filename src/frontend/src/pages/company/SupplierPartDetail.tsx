@@ -7,10 +7,11 @@ import {
   IconPackages,
   IconShoppingCart
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -260,8 +261,7 @@ export default function SupplierPartDetail() {
   }, [user]);
 
   const editSupplierPartFields = useSupplierPartFields({
-    hidePart: true,
-    partPk: supplierPart?.pk
+    create: false
   });
 
   const editSuppliertPart = useEditApiFormModal({
@@ -285,6 +285,16 @@ export default function SupplierPartDetail() {
     ];
   }, [supplierPart]);
 
+  const badges: ReactNode[] = useMemo(() => {
+    return [
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={!supplierPart.active}
+      />
+    ];
+  }, [supplierPart]);
+
   return (
     <>
       {editSuppliertPart.modal}
@@ -294,6 +304,7 @@ export default function SupplierPartDetail() {
           title={t`Supplier Part`}
           subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
           breadcrumbs={breadcrumbs}
+          badges={badges}
           actions={supplierPartActions}
           imageUrl={supplierPart?.part_detail?.thumbnail}
         />

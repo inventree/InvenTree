@@ -369,8 +369,9 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
             self.fields.pop('pretty_name')
 
     # Annotated field showing total in-stock quantity
-    in_stock = serializers.FloatField(read_only=True)
-    available = serializers.FloatField(required=False)
+    in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))
+
+    available = serializers.FloatField(required=False, label=_('Available'))
 
     pack_quantity_native = serializers.FloatField(read_only=True)
 

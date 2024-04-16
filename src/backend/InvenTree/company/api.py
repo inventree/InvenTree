@@ -160,7 +160,7 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
         fields = ['manufacturer', 'MPN', 'part', 'tags__name', 'tags__slug']
 
     # Filter by 'active' status of linked part
-    active = rest_filters.BooleanFilter(
+    part_active = rest_filters.BooleanFilter(
         field_name='part__active', label=_('Part is Active')
     )
 
@@ -314,9 +314,11 @@ class SupplierPartFilter(rest_filters.FilterSet):
             'tags__slug',
         ]
 
+    active = rest_filters.BooleanFilter(label=_('Supplier Part is Active'))
+
     # Filter by 'active' status of linked part
-    active = rest_filters.BooleanFilter(
-        field_name='part__active', label=_('Part is Active')
+    part_active = rest_filters.BooleanFilter(
+        field_name='part__active', label=_('Internal Part is Active')
     )
 
     supplier_active = rest_filters.BooleanFilter(
@@ -397,6 +399,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'part',
         'supplier',
         'manufacturer',
+        'active',
         'MPN',
         'packaging',
         'pack_quantity',
