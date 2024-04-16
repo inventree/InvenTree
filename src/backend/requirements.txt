@@ -294,7 +294,7 @@ rpds-py==0.18.0
     #   referencing
 sentry-sdk==1.44.1
     # via django-q-sentry
-setuptools==69.2.0
+setuptools==69.5.1
     # via
     #   django-money
     #   opentelemetry-instrumentation
