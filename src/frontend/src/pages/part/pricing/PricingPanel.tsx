@@ -42,7 +42,7 @@ export default function PricingPanel({
   label: string;
   title: string;
   visible: boolean;
-  disabled: boolean | undefined;
+  disabled?: boolean | undefined;
 }): ReactNode {
   const is_disabled = disabled === undefined ? false : disabled;
   return (
