@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-11 00:12+0000\n"
-"PO-Revision-Date: 2024-03-19 11:52\n"
+"POT-Creation-Date: 2024-04-14 10:31+0000\n"
+"PO-Revision-Date: 2024-04-15 02:35\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: pl\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:255
 msgid "API endpoint not found"
@@ -740,7 +740,7 @@ msgstr "Wysłane"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -1009,10 +1009,8 @@ msgid "Invalid choice for parent build"
 msgstr "Nieprawidłowy wybór kompilacji nadrzędnej"
 
 #: build/models.py:127 order/models.py:239
-#, fuzzy
-#| msgid "Purchase order must be specified"
 msgid "Responsible user or group must be specified"
-msgstr "Zlecenie zakupu musi być określone"
+msgstr ""
 
 #: build/models.py:133
 msgid "Build order part cannot be changed"
@@ -1514,7 +1512,7 @@ msgstr ""
 #: templates/js/translated/stock.js:2175 templates/js/translated/stock.js:2995
 #: templates/js/translated/stock.js:3120
 msgid "Status"
-msgstr "Status"
+msgstr ""
 
 #: build/serializers.py:511
 msgid "Accept Incomplete Allocation"
@@ -2824,10 +2822,8 @@ msgstr ""
 
 #: common/models.py:1793 common/models.py:1821 common/models.py:1843
 #: common/models.py:1871
-#, fuzzy
-#| msgid "Responsible"
 msgid "Require Responsible Owner"
-msgstr "Odpowiedzialny"
+msgstr ""
 
 #: common/models.py:1794 common/models.py:1822 common/models.py:1844
 #: common/models.py:1872
@@ -7710,8 +7706,10 @@ msgstr ""
 msgid "Update Pricing"
 msgstr ""
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
-#: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
+#: part/templates/part/stock_count.html:7
+#: templates/js/translated/model_renderers.js:221
+#: templates/js/translated/part.js:704 templates/js/translated/part.js:2140
+#: templates/js/translated/part.js:2142
 msgid "No Stock"
 msgstr "Brak w magazynie"
 
@@ -8406,11 +8404,11 @@ msgstr "Raporty z testów"
 
 #: report/helpers.py:15
 msgid "A4"
-msgstr "A4"
+msgstr ""
 
 #: report/helpers.py:16
 msgid "A3"
-msgstr "A3"
+msgstr ""
 
 #: report/helpers.py:17
 msgid "Legal"
@@ -9853,7 +9851,7 @@ msgstr "Podstawowy adres URL dla tej wtyczki to <a href=\"/%(base)s\" target=\"_
 
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -12692,6 +12690,7 @@ msgid "No matching purchase orders"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
+#: templates/js/translated/return_order.js:491
 msgid "Select Line Items"
 msgstr ""
 
@@ -14185,3 +14184,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+

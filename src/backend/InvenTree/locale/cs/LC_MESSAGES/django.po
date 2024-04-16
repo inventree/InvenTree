@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-11 00:12+0000\n"
-"PO-Revision-Date: 2024-03-19 11:51\n"
+"POT-Creation-Date: 2024-04-14 10:31+0000\n"
+"PO-Revision-Date: 2024-04-15 02:34\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: cs\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:255
 msgid "API endpoint not found"
@@ -28,7 +28,7 @@ msgstr "Uživatel nemá právo zobrazit tento model"
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Zadaná neplatná jednotka ({unit})"
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
@@ -273,7 +273,7 @@ msgstr "Korejština"
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr ""
+msgstr "Lotyština"
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
@@ -301,7 +301,7 @@ msgstr "Ruština"
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
-msgstr ""
+msgstr "Slovenština"
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
@@ -349,7 +349,7 @@ msgstr "E-mail"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Chyba při ověření pluginu"
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
@@ -740,7 +740,7 @@ msgstr "Odesláno"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -1010,7 +1010,7 @@ msgstr "Neplatná volba nadřazeného sestavení"
 
 #: build/models.py:127 order/models.py:239
 msgid "Responsible user or group must be specified"
-msgstr ""
+msgstr "Musí být specifikován odpovědný uživatel nebo skupina"
 
 #: build/models.py:133
 msgid "Build order part cannot be changed"
@@ -1034,7 +1034,7 @@ msgstr "Referenční číslo objednávky"
 #: templates/js/translated/return_order.js:729
 #: templates/js/translated/sales_order.js:1818
 msgid "Reference"
-msgstr "Reference"
+msgstr ""
 
 #: build/models.py:191
 msgid "Brief description of the build (optional)"
@@ -1285,7 +1285,7 @@ msgstr "Množství nemůže být větší než výstupní množství"
 #: build/models.py:946 build/serializers.py:533
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr ""
+msgstr "Výstup sestavy {serial} neprošel všemi požadavky"
 
 #: build/models.py:1308
 msgid "Build object"
@@ -1398,7 +1398,7 @@ msgstr "Instalovat do"
 
 #: build/models.py:1588
 msgid "Destination stock item"
-msgstr ""
+msgstr "Cílová skladová položka"
 
 #: build/serializers.py:160 build/serializers.py:840
 #: templates/js/translated/build.js:1319
@@ -2737,10 +2737,8 @@ msgid "Delete Depleted Stock"
 msgstr "Odstranit vyčerpané zásoby"
 
 #: common/models.py:1720
-#, fuzzy
-#| msgid "Determines default behaviour when a stock item is depleted"
 msgid "Determines default behavior when a stock item is depleted"
-msgstr "Určuje výchozí chování, když je vyčerpána skladová položka"
+msgstr ""
 
 #: common/models.py:1726
 msgid "Batch Code Template"
@@ -2824,10 +2822,8 @@ msgstr ""
 
 #: common/models.py:1793 common/models.py:1821 common/models.py:1843
 #: common/models.py:1871
-#, fuzzy
-#| msgid "Responsible"
 msgid "Require Responsible Owner"
-msgstr "Odpovědný"
+msgstr ""
 
 #: common/models.py:1794 common/models.py:1822 common/models.py:1844
 #: common/models.py:1872
@@ -3654,7 +3650,7 @@ msgstr ""
 
 #: common/models.py:3014
 msgid "Id"
-msgstr "Id"
+msgstr ""
 
 #: common/models.py:3016 templates/js/translated/company.js:955
 #: templates/js/translated/news.js:44
@@ -4465,7 +4461,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:227
 #: part/templates/part/detail.html:109 part/templates/part/part_base.html:83
 msgid "Order part"
-msgstr ""
+msgstr "Objednávka dílů"
 
 #: company/templates/company/manufacturer_part.html:39
 #: templates/js/translated/company.js:1333
@@ -4556,7 +4552,7 @@ msgstr ""
 #: company/templates/company/supplier_part.html:228
 #: part/templates/part/detail.html:110
 msgid "Order Part"
-msgstr ""
+msgstr "Objednávka dílů"
 
 #: company/templates/company/supplier_part.html:60
 #: company/templates/company/supplier_part.html:61
@@ -4567,21 +4563,21 @@ msgstr ""
 #: company/templates/company/supplier_part.html:64
 #: templates/js/translated/company.js:294
 msgid "Edit Supplier Part"
-msgstr ""
+msgstr "Upravit dodavatele dílu"
 
 #: company/templates/company/supplier_part.html:68
 #: company/templates/company/supplier_part.html:69
 #: templates/js/translated/company.js:269
 msgid "Duplicate Supplier Part"
-msgstr ""
+msgstr "Duplikovat dodavatele dílu"
 
 #: company/templates/company/supplier_part.html:73
 msgid "Delete Supplier Part"
-msgstr ""
+msgstr "Vymazat dodavatele dílu"
 
 #: company/templates/company/supplier_part.html:74
 msgid "Delete Supplier  Part"
-msgstr ""
+msgstr "Vymazat dodavatele dílu"
 
 #: company/templates/company/supplier_part.html:133
 msgid "No supplier information available"
@@ -4598,7 +4594,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:206
 msgid "Supplier Part Stock"
-msgstr ""
+msgstr "Sklad dílu dodavatele"
 
 #: company/templates/company/supplier_part.html:209
 #: part/templates/part/detail.html:24 stock/templates/stock/location.html:199
@@ -5828,16 +5824,16 @@ msgstr ""
 #: part/admin.py:39 part/admin.py:404 part/models.py:3921 part/stocktake.py:218
 #: stock/admin.py:153
 msgid "Part ID"
-msgstr ""
+msgstr "ID dílu"
 
 #: part/admin.py:41 part/admin.py:411 part/models.py:3922 part/stocktake.py:219
 #: stock/admin.py:157
 msgid "Part Name"
-msgstr ""
+msgstr "Název dílu"
 
 #: part/admin.py:45 part/stocktake.py:220
 msgid "Part Description"
-msgstr ""
+msgstr "Popis dílu"
 
 #: part/admin.py:48 part/models.py:904 part/templates/part/part_base.html:269
 #: report/templates/report/inventree_slr_report.html:103
@@ -5933,7 +5929,7 @@ msgstr ""
 #: templates/js/translated/part.js:2804 templates/js/translated/search.js:130
 #: templates/navbar.html:24 users/models.py:192
 msgid "Parts"
-msgstr ""
+msgstr "Díly"
 
 #: part/admin.py:384
 msgid "BOM Level"
@@ -5949,7 +5945,7 @@ msgstr ""
 
 #: part/admin.py:408 part/models.py:3923
 msgid "Part IPN"
-msgstr ""
+msgstr "IPN dílu"
 
 #: part/admin.py:421 part/serializers.py:1256
 #: templates/js/translated/pricing.js:358
@@ -6065,17 +6061,17 @@ msgstr ""
 #: part/models.py:82 part/models.py:3867 part/templates/part/category.html:16
 #: part/templates/part/part_app_base.html:10
 msgid "Part Category"
-msgstr ""
+msgstr "Kategorie dílu"
 
 #: part/models.py:83 part/templates/part/category.html:136
 #: templates/InvenTree/search.html:97 templates/js/translated/search.js:158
 #: users/models.py:191
 msgid "Part Categories"
-msgstr ""
+msgstr "Kategorie dílů"
 
 #: part/models.py:102
 msgid "Default location for parts in this category"
-msgstr ""
+msgstr "Výchozí umístění dílů v této kategorii"
 
 #: part/models.py:107 stock/models.py:165 templates/js/translated/part.js:2810
 #: templates/js/translated/stock.js:2772
@@ -6086,7 +6082,7 @@ msgstr ""
 
 #: part/models.py:109
 msgid "Parts may not be directly assigned to a structural category, but may be assigned to child categories."
-msgstr ""
+msgstr "Díly nesmějí být přímo zařazeny do strukturované kategorie, ale mohou být zařazeny jako podkategorie."
 
 #: part/models.py:118
 msgid "Default keywords"
@@ -6094,7 +6090,7 @@ msgstr ""
 
 #: part/models.py:119
 msgid "Default keywords for parts in this category"
-msgstr ""
+msgstr "Výchozí klíčová slova pro díly v této kategorii"
 
 #: part/models.py:125 stock/models.py:89 stock/models.py:148
 #: templates/InvenTree/settings/settings_staff_js.html:456
@@ -6146,7 +6142,7 @@ msgstr ""
 
 #: part/models.py:855 part/models.py:3922
 msgid "Part name"
-msgstr ""
+msgstr "Název dílu"
 
 #: part/models.py:860
 msgid "Is Template"
@@ -6170,11 +6166,11 @@ msgstr ""
 
 #: part/models.py:897
 msgid "Part category"
-msgstr ""
+msgstr "Kategorie dílu"
 
 #: part/models.py:905
 msgid "Internal Part Number"
-msgstr ""
+msgstr "Interní číslo dílu"
 
 #: part/models.py:912
 msgid "Part revision or version number"
@@ -6619,15 +6615,15 @@ msgstr ""
 
 #: part/models.py:3920
 msgid "Part ID or part name"
-msgstr ""
+msgstr "ID dílu nebo název dílu"
 
 #: part/models.py:3921
 msgid "Unique part ID value"
-msgstr ""
+msgstr "Jedinečná hodnota ID dílu"
 
 #: part/models.py:3923
 msgid "Part IPN value"
-msgstr ""
+msgstr "Hodnota IPN dílu"
 
 #: part/models.py:3924
 msgid "Level"
@@ -6639,7 +6635,7 @@ msgstr ""
 
 #: part/models.py:4014
 msgid "Select parent part"
-msgstr ""
+msgstr "Vyberte nadřazený díl"
 
 #: part/models.py:4024
 msgid "Sub part"
@@ -6958,7 +6954,7 @@ msgstr ""
 
 #: part/serializers.py:1142
 msgid "Update Parts"
-msgstr ""
+msgstr "Aktualizovat díly"
 
 #: part/serializers.py:1143
 msgid "Update specified parts with calculated stocktake data"
@@ -6990,7 +6986,7 @@ msgstr ""
 
 #: part/serializers.py:1309
 msgid "Update pricing for this part"
-msgstr ""
+msgstr "Aktualizovat cenu pro díl"
 
 #: part/serializers.py:1332
 #, python-brace-format
@@ -7710,8 +7706,10 @@ msgstr ""
 msgid "Update Pricing"
 msgstr ""
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
-#: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
+#: part/templates/part/stock_count.html:7
+#: templates/js/translated/model_renderers.js:221
+#: templates/js/translated/part.js:704 templates/js/translated/part.js:2140
+#: templates/js/translated/part.js:2142
 msgid "No Stock"
 msgstr ""
 
@@ -9853,7 +9851,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -12692,6 +12690,7 @@ msgid "No matching purchase orders"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
+#: templates/js/translated/return_order.js:491
 msgid "Select Line Items"
 msgstr ""
 
@@ -14185,3 +14184,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
