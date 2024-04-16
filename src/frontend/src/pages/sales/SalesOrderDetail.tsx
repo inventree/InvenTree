@@ -286,7 +286,7 @@ export default function SalesOrderDetail() {
             }
           }),
           DeleteItemAction({
-            hidden: !user.hasChangeRole(UserRoles.sales_order)
+            hidden: !user.hasDeleteRole(UserRoles.sales_order)
             // TODO: Delete?
           })
         ]}
