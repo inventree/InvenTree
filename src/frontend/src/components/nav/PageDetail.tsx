@@ -59,7 +59,10 @@ export function PageDetail({
             <Space />
             {detail}
             <Group justify="right" gap="xs" wrap="nowrap">
-              {badges}
+              {badges &&
+                badges.map((badge, idx) => (
+                  <Fragment key={idx}>{badge}</Fragment>
+                ))}
             </Group>
             <Space />
             {actions && (
