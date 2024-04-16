@@ -3,7 +3,7 @@ import { classicUrl, user } from './defaults.js';
 
 test('PUI - Basic test via django', async ({ page }) => {
   await page.goto(`${classicUrl}/platform/logout/`);
-  await page.goto(`${classicUrl}/platform/`);
+  await page.goto(`${classicUrl}/platform/login/`);
   await expect(page).toHaveTitle('InvenTree Demo Server');
   await page.waitForURL('**/platform/');
   await page.getByLabel('username').fill(user.username);
@@ -16,8 +16,8 @@ test('PUI - Basic test via django', async ({ page }) => {
 });
 
 test('PUI - Basic test', async ({ page }) => {
-  await page.goto('./platform/logout');
-  await page.goto('./platform/');
+  await page.goto('./platform/logout/');
+  await page.goto('./platform/login/');
   await expect(page).toHaveTitle('InvenTree');
   await page.waitForURL('**/platform/');
   await page.getByLabel('username').fill(user.username);
