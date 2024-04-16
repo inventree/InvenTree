@@ -186,15 +186,17 @@ export function ApiForm({
       return field.value ?? field.default ?? undefined;
     });
 
-    // If the user has specified initial data, use that instead
+    // If the user has specified initial data, that overrides default values
+    // But, *only* for the fields we have specified
     if (props.initialData) {
-      defaultValuesMap = {
-        ...defaultValuesMap,
-        ...props.initialData
-      };
+      Object.keys(props.initialData).map((key) => {
+        if (key in defaultValuesMap) {
+          defaultValuesMap[key] =
+            props?.initialData?.[key] ?? defaultValuesMap[key];
+        } else {
+        }
+      });
     }
-
-    // Update the form values, but only for the fields specified for this form
 
     return defaultValuesMap;
   }, [props.fields, props.initialData]);
