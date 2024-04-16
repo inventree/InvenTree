@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
@@ -73,7 +74,9 @@ export default function SupplierPricingPanel({ part }: { part: any }) {
                 })?.toString() ?? ''
               }
             />
-            <Tooltip />
+            <Tooltip
+              formatter={(label, payload) => tooltipFormatter(label, currency)}
+            />
             <Bar
               dataKey="unit_price"
               fill={CHART_COLORS[0]}

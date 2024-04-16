@@ -13,6 +13,7 @@ import {
 
 import { AddItemButton } from '../../../components/buttons/AddItemButton';
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
@@ -180,7 +181,11 @@ export default function PriceBreakPanel({
                   })?.toString() ?? ''
                 }
               />
-              <Tooltip />
+              <Tooltip
+                formatter={(label, payload) =>
+                  tooltipFormatter(label, currency)
+                }
+              />
               <Legend />
               <Bar
                 dataKey="price"

@@ -30,6 +30,7 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { panelOptions } from '../PartPricingPanel';
 
@@ -197,7 +198,11 @@ export default function PricingOverviewPanel({
                 })?.toString() ?? ''
               }
             />
-            <Tooltip />
+            <Tooltip
+              formatter={(label, payload) =>
+                tooltipFormatter(label, pricing?.currency)
+              }
+            />
             <Legend />
             <Bar
               dataKey="min_value"

@@ -21,6 +21,7 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {
   formatCurrency,
   formatDecimal,
@@ -68,7 +69,9 @@ function BomPieChart({ data, currency }: { data: any[]; currency: string }) {
             />
           ))}
         </Pie>
-        <Tooltip />
+        <Tooltip
+          formatter={(label, payload) => tooltipFormatter(label, currency)}
+        />
       </PieChart>
     </ResponsiveContainer>
   );
@@ -87,7 +90,9 @@ function BomBarChart({ data, currency }: { data: any[]; currency: string }) {
             })?.toString() ?? ''
           }
         />
-        <Tooltip />
+        <Tooltip
+          formatter={(label, payload) => tooltipFormatter(label, currency)}
+        />
         <Legend />
         <Bar
           dataKey="total_price_min"

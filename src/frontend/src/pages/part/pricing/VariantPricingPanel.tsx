@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
@@ -106,7 +107,11 @@ export default function VariantPricingPanel({
                   })?.toString() ?? ''
                 }
               />
-              <Tooltip />
+              <Tooltip
+                formatter={(label, payload) =>
+                  tooltipFormatter(label, pricing?.currency)
+                }
+              />
               <Legend />
               <Bar
                 dataKey="pmin"

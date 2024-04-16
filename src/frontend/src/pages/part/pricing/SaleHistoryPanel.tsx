@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
@@ -104,7 +105,9 @@ export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
                 })?.toString() ?? ''
               }
             />
-            <Tooltip />
+            <Tooltip
+              formatter={(label, payload) => tooltipFormatter(label, currency)}
+            />
             <Legend />
             <Bar
               dataKey="sale_price"
