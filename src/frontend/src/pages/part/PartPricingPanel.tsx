@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Accordion, Alert, LoadingOverlay, Stack, Text } from '@mantine/core';
-import { ReactNode, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
@@ -53,6 +53,17 @@ export default function PartPricingPanel({ part }: { part: any }) {
     return user.hasViewRole(UserRoles.sales_order) && part?.salable;
   }, [user, part]);
 
+  const [value, setValue] = useState<string[]>([panelOptions.overview]);
+  function doNavigation(panel: panelOptions) {
+    if (!value.includes(panel)) {
+      setValue([...value, panel]);
+    }
+    const element = document.getElementById(panel);
+    if (element) {
+      element.scrollIntoView();
+    }
+  }
+
   return (
     <Stack spacing="xs">
       <LoadingOverlay visible={instanceQuery.isLoading} />
@@ -62,9 +73,15 @@ export default function PartPricingPanel({ part }: { part: any }) {
         </Alert>
       )}
       {pricing && (
-        <Accordion multiple defaultValue={['overview']}>
+        <Accordion multiple value={value} onChange={setValue}>
           <PricingPanel
-            content={<PricingOverviewPanel part={part} pricing={pricing} />}
+            content={
+              <PricingOverviewPanel
+                part={part}
+                pricing={pricing}
+                doNavigation={doNavigation}
+              />
+            }
             label={panelOptions.overview}
             title={t`Pricing Overview`}
             visible={true}

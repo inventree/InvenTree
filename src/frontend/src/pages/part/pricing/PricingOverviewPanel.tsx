@@ -1,13 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Anchor,
-  Group,
-  Paper,
-  SimpleGrid,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Alert, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconChartDonut,
@@ -45,10 +37,12 @@ interface PricingOverviewEntry {
 
 export default function PricingOverviewPanel({
   part,
-  pricing
+  pricing,
+  doNavigation
 }: {
   part: any;
   pricing: any;
+  doNavigation: (panel: panelOptions) => void;
 }): ReactNode {
   const columns: DataTableColumn<any>[] = useMemo(() => {
     return [
@@ -59,14 +53,9 @@ export default function PricingOverviewPanel({
           return (
             <Group position="left" spacing="xs">
               {record.icon}
-              {record.name !== panelOptions.overall &&
-              record.name !== panelOptions.override ? (
-                <Anchor href={`#${record.name}`} weight={700}>
-                  {record.title}
-                </Anchor>
-              ) : (
-                <Text weight={700}>{record.title}</Text>
-              )}
+              <Text weight={700} onClick={() => doNavigation(record.name)}>
+                {record.title}
+              </Text>
             </Group>
           );
         }
