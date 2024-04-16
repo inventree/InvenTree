@@ -18,7 +18,7 @@ import {
 /**
  * Field set for SupplierPart instance
  */
-export function useSupplierPartFields({ create }: { create?: boolean }) {
+export function useSupplierPartFields() {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {

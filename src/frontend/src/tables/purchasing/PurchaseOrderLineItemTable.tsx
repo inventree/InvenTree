@@ -201,9 +201,7 @@ export function PurchaseOrderLineItemTable({
     onFormSuccess: table.refreshTable
   });
 
-  const [selectedLine, setSelectedLine] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedLine, setSelectedLine] = useState<number>(0);
 
   const editPurchaseOrderFields = usePurchaseOrderLineItemFields({
     create: false,

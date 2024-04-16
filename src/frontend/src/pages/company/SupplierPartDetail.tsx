@@ -8,7 +8,7 @@ import {
   IconShoppingCart
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
@@ -26,7 +26,11 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import { getDetailUrl } from '../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -38,6 +42,8 @@ export default function SupplierPartDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const navigate = useNavigate();
 
   const {
     instance: supplierPart,
@@ -246,7 +252,8 @@ export default function SupplierPartDetail() {
         icon={<IconDots />}
         actions={[
           DuplicateItemAction({
-            hidden: !user.hasAddRole(UserRoles.purchase_order)
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
+            onClick: () => duplicateSupplierPart.open()
           }),
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
@@ -260,16 +267,28 @@ export default function SupplierPartDetail() {
     ];
   }, [user]);
 
-  const editSupplierPartFields = useSupplierPartFields({
-    create: false
-  });
+  const supplierPartFields = useSupplierPartFields();
 
   const editSuppliertPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: supplierPart?.pk,
     title: t`Edit Supplier Part`,
-    fields: editSupplierPartFields,
+    fields: supplierPartFields,
     onFormSuccess: refreshInstance
+  });
+
+  const duplicateSupplierPart = useCreateApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    title: t`Add Supplier Part`,
+    fields: supplierPartFields,
+    initialData: {
+      ...supplierPart
+    },
+    onFormSuccess: (response: any) => {
+      if (response.pk) {
+        navigate(getDetailUrl(ModelType.supplierpart, response.pk));
+      }
+    }
   });
 
   const breadcrumbs = useMemo(() => {
@@ -298,6 +317,7 @@ export default function SupplierPartDetail() {
   return (
     <>
       {editSuppliertPart.modal}
+      {duplicateSupplierPart.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
