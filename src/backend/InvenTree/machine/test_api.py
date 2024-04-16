@@ -143,7 +143,7 @@ class MachineAPITest(TestMachineRegistryMixin, InvenTreeAPITestCase):
             for error in errors_msgs:
                 if re.match(pattern, error):
                     break
-            else:
+            else:  # pragma: no cover
                 errors_str = '\n'.join([f'- {e}' for e in errors_msgs])
                 self.fail(
                     f"""Error message matching pattern '{pattern}' not found in machine registry errors:\n{errors_str}"""

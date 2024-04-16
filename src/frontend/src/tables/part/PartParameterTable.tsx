@@ -3,8 +3,8 @@ import { Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { YesNoButton } from '../../components/items/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
@@ -95,7 +95,9 @@ export function PartParameterTable({ partId }: { partId: any }) {
 
   const partParameterFields: ApiFormFieldSet = useMemo(() => {
     return {
-      part: {},
+      part: {
+        disabled: true
+      },
       template: {},
       data: {}
     };
@@ -105,6 +107,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
     url: ApiEndpoints.part_parameter_list,
     title: t`New Part Parameter`,
     fields: partParameterFields,
+    focus: 'template',
     initialData: {
       part: partId
     },

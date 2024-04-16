@@ -4,9 +4,9 @@
 import { t } from '@lingui/macro';
 import { Anchor } from '@mantine/core';
 
+import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
-import { YesNoButton } from '../components/items/YesNoButton';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner } from '../components/render/User';
 import { formatCurrency, renderDate } from '../defaults/formatters';
@@ -16,8 +16,13 @@ import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
-export function PartColumn(part: any) {
-  return <Thumbnail src={part?.thumbnail ?? part.image} text={part.name} />;
+export function PartColumn(part: any, full_name?: boolean) {
+  return (
+    <Thumbnail
+      src={part?.thumbnail ?? part.image}
+      text={full_name ? part.full_name : part.name}
+    />
+  );
 }
 
 export function BooleanColumn({
@@ -148,12 +153,23 @@ export function ResponsibleColumn(): TableColumn {
   };
 }
 
-export function DateColumn(): TableColumn {
+export function DateColumn({
+  accessor,
+  sortable,
+  switchable,
+  title
+}: {
+  accessor?: string;
+  sortable?: boolean;
+  switchable?: boolean;
+  title?: string;
+}): TableColumn {
   return {
-    accessor: 'date',
-    sortable: true,
-    title: t`Date`,
-    render: (record: any) => renderDate(record.date)
+    accessor: accessor ?? 'date',
+    sortable: sortable ?? true,
+    title: title ?? t`Date`,
+    switchable: switchable,
+    render: (record: any) => renderDate(record[accessor ?? 'date'])
   };
 }
 

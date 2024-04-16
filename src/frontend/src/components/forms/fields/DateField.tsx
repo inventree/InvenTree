@@ -52,6 +52,7 @@ export default function DateField({
     <DateInput
       id={fieldId}
       radius="sm"
+      ref={field.ref}
       type={undefined}
       error={error?.message}
       value={dateValue}
