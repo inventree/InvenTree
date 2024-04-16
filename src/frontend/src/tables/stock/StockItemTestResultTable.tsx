@@ -263,9 +263,7 @@ export default function StockItemTestResultTable({
     };
   }, [partId, itemId]);
 
-  const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
 
   const newTestModal = useCreateApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
@@ -279,9 +277,7 @@ export default function StockItemTestResultTable({
     successMessage: t`Test result added`
   });
 
-  const [selectedTest, setSelectedTest] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedTest, setSelectedTest] = useState<number>(0);
 
   const editTestModal = useEditApiFormModal({
     url: ApiEndpoints.stock_test_result_list,

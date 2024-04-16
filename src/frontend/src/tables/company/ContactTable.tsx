@@ -63,9 +63,7 @@ export function ContactTable({
     };
   }, []);
 
-  const [selectedContact, setSelectedContact] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedContact, setSelectedContact] = useState<number>(0);
 
   const editContact = useEditApiFormModal({
     url: ApiEndpoints.contact_list,
