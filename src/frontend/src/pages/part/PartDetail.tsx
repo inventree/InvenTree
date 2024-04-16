@@ -84,6 +84,7 @@ import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartT
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import PartPricingPanel from './PartPricingPanel';
 
 /**
  * Detail view for a single Part instance
@@ -453,7 +454,9 @@ export default function PartDetail() {
           </Grid.Col>
           <Grid.Col span={8}>
             <Stack spacing="xs">
-              <PartIcons part={part} />
+              <table>
+                <PartIcons part={part} />
+              </table>
               <DetailsTable fields={tl} item={part} />
             </Stack>
           </Grid.Col>
@@ -528,8 +531,9 @@ export default function PartDetail() {
       },
       {
         name: 'pricing',
-        label: t`Pricing`,
-        icon: <IconCurrencyDollar />
+        label: t`Part Pricing`,
+        icon: <IconCurrencyDollar />,
+        content: part ? <PartPricingPanel part={part} /> : <Skeleton />
       },
       {
         name: 'manufacturers',

@@ -188,7 +188,7 @@ export function ApiFormField({
         return (
           <TextInput
             {...reducedDefinition}
-            ref={ref}
+            ref={field.ref}
             id={fieldId}
             type={definition.field_type}
             value={value || ''}
@@ -226,21 +226,14 @@ export function ApiFormField({
           <NumberInput
             {...reducedDefinition}
             radius="sm"
-            ref={ref}
+            ref={field.ref}
             id={fieldId}
             value={numericalValue}
             error={error?.message}
-            formatter={(value) => {
-              let v: any = parseFloat(value);
-
-              if (Number.isNaN(v) || !Number.isFinite(v)) {
-                return value;
-              }
-
-              return `${1 * v.toFixed()}`;
-            }}
             precision={definition.field_type == 'integer' ? 0 : 10}
             onChange={(value: number) => onChange(value)}
+            removeTrailingZeros
+            step={1}
           />
         );
       case 'choice':
@@ -256,7 +249,7 @@ export function ApiFormField({
           <FileInput
             {...reducedDefinition}
             id={fieldId}
-            ref={ref}
+            ref={field.ref}
             radius="sm"
             value={value}
             error={error?.message}
