@@ -2,7 +2,7 @@ import { expect, test } from './baseFixtures.js';
 import { classicUrl, user } from './defaults.js';
 
 test('PUI - Basic test via django', async ({ page }) => {
-  await page.goto(`${classicUrl}/platform/`);
+  await page.goto(`${classicUrl}/platform/logout/`);
   await expect(page).toHaveTitle('InvenTree Demo Server');
   await page.waitForURL('**/platform/');
   await page.getByLabel('username').fill(user.username);
@@ -15,7 +15,7 @@ test('PUI - Basic test via django', async ({ page }) => {
 });
 
 test('PUI - Basic test', async ({ page }) => {
-  await page.goto('./platform/');
+  await page.goto('./platform/logout');
   await expect(page).toHaveTitle('InvenTree');
   await page.waitForURL('**/platform/');
   await page.getByLabel('username').fill(user.username);
