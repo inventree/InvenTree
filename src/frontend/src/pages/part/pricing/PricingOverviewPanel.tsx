@@ -135,7 +135,7 @@ export default function PricingOverviewPanel({
         max_value: pricing?.overall_max
       }
     ].filter((entry) => {
-      return entry.min_value !== null || entry.max_value !== null;
+      return !(entry.min_value == null || entry.max_value == null);
     });
   }, [part, pricing]);
 
