@@ -5,9 +5,10 @@ import {
   IconCircleCheck,
   IconSwitch3
 } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
@@ -15,7 +16,11 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
-import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -289,6 +294,36 @@ export function BomTable({
     ];
   }, [partId, params]);
 
+  const [selectedBomItem, setSelectedBomItem] = useState<number>(0);
+
+  const newBomItem = useCreateApiFormModal({
+    url: ApiEndpoints.bom_list,
+    title: t`Create BOM Item`,
+    fields: bomItemFields(),
+    initialData: {
+      part: partId
+    },
+    successMessage: t`BOM item created`,
+    onFormSuccess: table.refreshTable
+  });
+
+  const editBomItem = useEditApiFormModal({
+    url: ApiEndpoints.bom_list,
+    pk: selectedBomItem,
+    title: t`Edit BOM Item`,
+    fields: bomItemFields(),
+    successMessage: t`BOM item updated`,
+    onFormSuccess: table.refreshTable
+  });
+
+  const deleteBomItem = useDeleteApiFormModal({
+    url: ApiEndpoints.bom_list,
+    pk: selectedBomItem,
+    title: t`Delete BOM Item`,
+    successMessage: t`BOM item deleted`,
+    onFormSuccess: table.refreshTable
+  });
+
   const rowActions = useCallback(
     (record: any) => {
       // If this BOM item is defined for a *different* parent, then it cannot be edited
@@ -325,14 +360,8 @@ export function BomTable({
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
-            openEditApiForm({
-              url: ApiEndpoints.bom_list,
-              pk: record.pk,
-              title: t`Edit Bom Item`,
-              fields: bomItemFields(),
-              successMessage: t`Bom item updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedBomItem(record.pk);
+            editBomItem.open();
           }
         })
       );
@@ -342,14 +371,8 @@ export function BomTable({
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiEndpoints.bom_list,
-              pk: record.pk,
-              title: t`Delete Bom Item`,
-              successMessage: t`Bom item deleted`,
-              onFormSuccess: table.refreshTable,
-              preFormWarning: t`Are you sure you want to remove this BOM item?`
-            });
+            setSelectedBomItem(record.pk);
+            deleteBomItem.open();
           }
         })
       );
@@ -359,22 +382,38 @@ export function BomTable({
     [partId, user]
   );
 
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        hidden={!user.hasAddRole(UserRoles.part)}
+        tooltip={t`Add BOM Item`}
+        onClick={() => newBomItem.open()}
+      />
+    ];
+  }, [user]);
+
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.bom_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          part: partId,
-          part_detail: true,
-          sub_part_detail: true
-        },
-        tableFilters: tableFilters,
-        modelType: ModelType.part,
-        rowActions: rowActions
-      }}
-    />
+    <>
+      {newBomItem.modal}
+      {editBomItem.modal}
+      {deleteBomItem.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.bom_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            part: partId,
+            part_detail: true,
+            sub_part_detail: true
+          },
+          tableActions: tableActions,
+          tableFilters: tableFilters,
+          modelType: ModelType.part,
+          rowActions: rowActions
+        }}
+      />
+    </>
   );
 }
