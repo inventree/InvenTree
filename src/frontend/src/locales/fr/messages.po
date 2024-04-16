@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-15 02:34\n"
+"PO-Revision-Date: 2024-04-16 03:10\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -4104,7 +4104,7 @@ msgstr ""
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:56
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:140
 msgid "Purchase Price"
-msgstr "Purchase Price"
+msgstr ""
 
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:30
 msgid "Sale Order"
@@ -6143,3 +6143,4 @@ msgstr "Lire la documentation"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
