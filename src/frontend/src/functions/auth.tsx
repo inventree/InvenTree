@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
-import { IconCheck } from '@tabler/icons-react';
 import axios from 'axios';
 
 import { api, setApiDefaults } from '../App';
@@ -177,15 +176,6 @@ export function getCsrfCookie() {
   const cookieValue = document.cookie
     .split('; ')
     .find((row) => row.startsWith('csrftoken='))
-    ?.split('=')[1];
-
-  return cookieValue;
-}
-
-function getSessionCookie() {
-  const cookieValue = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('sessionid='))
     ?.split('=')[1];
 
   return cookieValue;
