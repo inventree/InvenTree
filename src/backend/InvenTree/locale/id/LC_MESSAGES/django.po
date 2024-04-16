@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-15 23:58+0000\n"
-"PO-Revision-Date: 2024-04-15 02:35\n"
+"POT-Creation-Date: 2024-04-15 15:06+0000\n"
+"PO-Revision-Date: 2024-04-16 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -4888,10 +4888,8 @@ msgid "Order"
 msgstr ""
 
 #: order/api.py:437 order/api.py:834
-#, fuzzy
-#| msgid "Complete"
 msgid "Order Complete"
-msgstr "Selesai"
+msgstr ""
 
 #: order/api.py:458
 msgid "Order Pending"
@@ -14195,3 +14193,4 @@ msgstr ""
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr ""
+
