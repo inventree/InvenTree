@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-11 00:12+0000\n"
-"PO-Revision-Date: 2024-03-19 11:51\n"
+"POT-Creation-Date: 2024-04-14 10:31+0000\n"
+"PO-Revision-Date: 2024-04-15 02:35\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: it\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:255
 msgid "API endpoint not found"
@@ -253,7 +253,7 @@ msgstr "Ebraico"
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr "Hindi"
+msgstr ""
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
@@ -345,7 +345,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
 msgid "Email"
-msgstr "Email"
+msgstr ""
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
@@ -740,7 +740,7 @@ msgstr "Spedito"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -1009,10 +1009,8 @@ msgid "Invalid choice for parent build"
 msgstr "Scelta non valida per la produzione genitore"
 
 #: build/models.py:127 order/models.py:239
-#, fuzzy
-#| msgid "Purchase order must be specified"
 msgid "Responsible user or group must be specified"
-msgstr "L'ordine di acquisto deve essere specificato"
+msgstr ""
 
 #: build/models.py:133
 msgid "Build order part cannot be changed"
@@ -2088,7 +2086,7 @@ msgstr "Errore di lettura del file (i dati potrebbero essere danneggiati)"
 
 #: common/forms.py:12
 msgid "File"
-msgstr "File"
+msgstr ""
 
 #: common/forms.py:12
 msgid "Select file to upload"
@@ -2096,7 +2094,7 @@ msgstr "Seleziona file da caricare"
 
 #: common/forms.py:25
 msgid "{name.title()} File"
-msgstr "{name.title()} File"
+msgstr ""
 
 #: common/forms.py:26
 #, python-brace-format
@@ -2385,7 +2383,7 @@ msgstr "Abilita il campo revisione per l'articolo"
 
 #: common/models.py:1440
 msgid "IPN Regex"
-msgstr "IPN Regex"
+msgstr ""
 
 #: common/models.py:1441
 msgid "Regular expression pattern for matching Part IPN"
@@ -2739,10 +2737,8 @@ msgid "Delete Depleted Stock"
 msgstr "Elimina scorte esaurite"
 
 #: common/models.py:1720
-#, fuzzy
-#| msgid "Determines default behaviour when a stock item is depleted"
 msgid "Determines default behavior when a stock item is depleted"
-msgstr "Determina il comportamento predefinito quando un elemento stock è esaurito"
+msgstr ""
 
 #: common/models.py:1726
 msgid "Batch Code Template"
@@ -2826,17 +2822,13 @@ msgstr "Modello richiesto per generare il campo di riferimento ordine di produzi
 
 #: common/models.py:1793 common/models.py:1821 common/models.py:1843
 #: common/models.py:1871
-#, fuzzy
-#| msgid "Responsible"
 msgid "Require Responsible Owner"
-msgstr "Responsabile"
+msgstr ""
 
 #: common/models.py:1794 common/models.py:1822 common/models.py:1844
 #: common/models.py:1872
-#, fuzzy
-#| msgid "Only salable parts can be assigned to a sales order"
 msgid "A responsible owner must be assigned to each order"
-msgstr "Solo gli articoli vendibili possono essere assegnati a un ordine di vendita"
+msgstr ""
 
 #: common/models.py:1799
 msgid "Block Until Tests Pass"
@@ -3155,10 +3147,8 @@ msgid "Show latest parts on the homepage"
 msgstr "Mostra gli ultimi articoli sulla homepage"
 
 #: common/models.py:2145
-#, fuzzy
-#| msgid "Show unvalidated BOMs"
 msgid "Show invalid BOMs"
-msgstr "Mostra distinta base non convalidata"
+msgstr ""
 
 #: common/models.py:2146
 msgid "Show BOMs that await validation on the homepage"
@@ -3533,10 +3523,8 @@ msgid "The stock location label template to be automatically selected"
 msgstr ""
 
 #: common/models.py:2459
-#, fuzzy
-#| msgid "Default label printer"
 msgid "Default build line label template"
-msgstr "Stampante per etichette predefinita"
+msgstr ""
 
 #: common/models.py:2461
 msgid "The build line label template to be automatically selected"
@@ -3602,7 +3590,7 @@ msgstr "È questa notifica attiva"
 
 #: common/models.py:2727 users/models.py:148
 msgid "Token"
-msgstr "Token"
+msgstr ""
 
 #: common/models.py:2728
 msgid "Token for access"
@@ -3626,7 +3614,7 @@ msgstr "Identificatore unico per questo messaggio"
 
 #: common/models.py:2854
 msgid "Host"
-msgstr "Host"
+msgstr ""
 
 #: common/models.py:2855
 msgid "Host from which this message was received"
@@ -3662,7 +3650,7 @@ msgstr "Il lavoro su questo messaggio è terminato?"
 
 #: common/models.py:3014
 msgid "Id"
-msgstr "Id"
+msgstr ""
 
 #: common/models.py:3016 templates/js/translated/company.js:955
 #: templates/js/translated/news.js:44
@@ -4602,7 +4590,7 @@ msgstr "Nessuna informazione sul fornitore disponibile"
 #: templates/js/translated/purchase_order.js:1851
 #: templates/js/translated/purchase_order.js:2029
 msgid "SKU"
-msgstr "SKU"
+msgstr ""
 
 #: company/templates/company/supplier_part.html:206
 msgid "Supplier Part Stock"
@@ -6468,7 +6456,7 @@ msgstr "Costo massimo stimato di magazzino a disposizione"
 
 #: part/models.py:3256 templates/InvenTree/settings/settings_staff_js.html:529
 msgid "Report"
-msgstr "Report"
+msgstr ""
 
 #: part/models.py:3257
 msgid "Stocktake report file (generated internally)"
@@ -7217,7 +7205,7 @@ msgstr "Il nuovo articolo potrebbe essere un duplicato di questi articoli esiste
 #: part/templates/part/create_part.html:17
 #, python-format
 msgid "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
-msgstr "%(full_name)s - <em>%(desc)s</em> (%(match_per)s%% match)"
+msgstr ""
 
 #: part/templates/part/detail.html:20
 msgid "Part Stock"
@@ -7718,8 +7706,10 @@ msgstr "Aggiungi Prezzo Ribassato di Vendita"
 msgid "Update Pricing"
 msgstr ""
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
-#: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
+#: part/templates/part/stock_count.html:7
+#: templates/js/translated/model_renderers.js:221
+#: templates/js/translated/part.js:704 templates/js/translated/part.js:2140
+#: templates/js/translated/part.js:2142
 msgid "No Stock"
 msgstr "Nessuna giacenza"
 
@@ -8214,7 +8204,7 @@ msgstr "Configurazioni Plugin"
 
 #: plugin/models.py:34 users/models.py:89
 msgid "Key"
-msgstr "Key"
+msgstr ""
 
 #: plugin/models.py:34
 msgid "Key of plugin"
@@ -8256,7 +8246,7 @@ msgstr ""
 #: plugin/models.py:196 templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
 msgid "Plugin"
-msgstr "Plugin"
+msgstr ""
 
 #: plugin/models.py:243
 msgid "Method"
@@ -8291,7 +8281,7 @@ msgstr "Abilita funzionalità PO nell'interfaccia InvenTree"
 
 #: plugin/samples/integration/sample.py:58
 msgid "API Key"
-msgstr "API Key"
+msgstr ""
 
 #: plugin/samples/integration/sample.py:59
 msgid "Key required for accessing external API"
@@ -8506,7 +8496,7 @@ msgstr ""
 
 #: report/models.py:648
 msgid "Snippet"
-msgstr "Snippet"
+msgstr ""
 
 #: report/models.py:649
 msgid "Report snippet file"
@@ -8601,7 +8591,7 @@ msgstr "Risultati Test"
 #: report/templates/report/inventree_test_report_base.html:102
 #: templates/js/translated/stock.js:1492
 msgid "Test"
-msgstr "Test"
+msgstr ""
 
 #: report/templates/report/inventree_test_report_base.html:103
 #: stock/models.py:2430
@@ -9861,7 +9851,7 @@ msgstr "L'URL di base per questo plugin è <a href=\"/%(base)s\" target=\"_blank
 
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "URL"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -9874,7 +9864,7 @@ msgstr "Impostazioni Notifiche"
 
 #: templates/InvenTree/settings/notifications.html:18
 msgid "Slug"
-msgstr "Slug"
+msgstr ""
 
 #: templates/InvenTree/settings/part.html:7
 msgid "Part Settings"
@@ -9945,7 +9935,7 @@ msgstr "Plugin Errore Stack"
 
 #: templates/InvenTree/settings/plugin.html:80
 msgid "Stage"
-msgstr "Stage"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin.html:82
 #: templates/js/translated/notification.js:76
@@ -10020,7 +10010,7 @@ msgstr "Data d'impegno"
 #: templates/InvenTree/settings/plugin_settings.html:121
 #: templates/about.html:29
 msgid "Commit Hash"
-msgstr "Commit Hash"
+msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:125
 msgid "Commit Message"
@@ -10211,7 +10201,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
-msgstr "Home Page"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:15
 #: templates/js/translated/forms.js:2159 templates/js/translated/tables.js:543
@@ -10231,7 +10221,7 @@ msgstr "Impostazioni Globali"
 
 #: templates/InvenTree/settings/sidebar.html:27 templates/stats.html:9
 msgid "Server"
-msgstr "Server"
+msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:41
 msgid "Labels"
@@ -10326,7 +10316,7 @@ msgstr "Sono disponibili questi fattori:"
 
 #: templates/InvenTree/settings/user.html:135
 msgid "TOTP"
-msgstr "TOTP"
+msgstr ""
 
 #: templates/InvenTree/settings/user.html:141
 msgid "Static"
@@ -12700,6 +12690,7 @@ msgid "No matching purchase orders"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
+#: templates/js/translated/return_order.js:491
 msgid "Select Line Items"
 msgstr ""
 
@@ -14036,7 +14027,7 @@ msgstr "Nome istanza"
 
 #: templates/stats.html:18
 msgid "Database"
-msgstr "Database"
+msgstr ""
 
 #: templates/stats.html:26
 msgid "Server is running in debug mode"
@@ -14096,7 +14087,7 @@ msgstr "Si"
 
 #: templates/yesnolabel.html:6
 msgid "No"
-msgstr "No"
+msgstr ""
 
 #: users/admin.py:104
 msgid "Users"
@@ -14193,3 +14184,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
