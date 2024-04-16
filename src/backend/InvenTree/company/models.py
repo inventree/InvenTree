@@ -659,6 +659,7 @@ class SupplierPart(
         part: Link to the master Part (Obsolete)
         source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
+        active: Boolean value, is this supplier part active
         SKU: Stock keeping unit (supplier part number)
         link: Link to external website for this supplier part
         description: Descriptive notes field
@@ -805,6 +806,12 @@ class SupplierPart(
         max_length=100,
         verbose_name=__('SKU = Stock Keeping Unit (supplier part number)', 'SKU'),
         help_text=_('Supplier stock keeping unit'),
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this supplier part active?'),
     )
 
     manufacturer_part = models.ForeignKey(

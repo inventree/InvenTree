@@ -305,6 +305,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
             'description',
             'in_stock',
             'link',
+            'active',
             'manufacturer',
             'manufacturer_detail',
             'manufacturer_part',
