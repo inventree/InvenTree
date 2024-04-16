@@ -30,7 +30,7 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { purchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -60,11 +60,13 @@ export default function PurchaseOrderDetail() {
     refetchOnMount: true
   });
 
+  const purchaseOrderFields = usePurchaseOrderFields({ create: false });
+
   const editPurchaseOrder = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     pk: id,
     title: t`Edit Purchase Order`,
-    fields: purchaseOrderFields(),
+    fields: purchaseOrderFields,
     onFormSuccess: () => {
       refreshInstance();
     }

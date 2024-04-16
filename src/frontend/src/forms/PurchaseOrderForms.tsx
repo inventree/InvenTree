@@ -113,50 +113,56 @@ export function usePurchaseOrderLineItemFields({
 /**
  * Construct a set of fields for creating / editing a PurchaseOrder instance
  */
-export function purchaseOrderFields(): ApiFormFieldSet {
-  return {
-    reference: {
-      icon: <IconHash />
-    },
-    description: {},
-    supplier: {
-      filters: {
-        is_supplier: true
+export function usePurchaseOrderFields({
+  create
+}: {
+  create: boolean;
+}): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      reference: {
+        icon: <IconHash />
+      },
+      description: {},
+      supplier: {
+        filters: {
+          is_supplier: true
+        }
+      },
+      supplier_reference: {},
+      project_code: {
+        icon: <IconList />
+      },
+      order_currency: {
+        icon: <IconCoins />
+      },
+      target_date: {
+        icon: <IconCalendar />
+      },
+      link: {},
+      contact: {
+        icon: <IconUser />,
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          return {
+            ...value.filters,
+            company: value.data.supplier
+          };
+        }
+      },
+      address: {
+        icon: <IconAddressBook />,
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          return {
+            ...value.filters,
+            company: value.data.supplier
+          };
+        }
+      },
+      responsible: {
+        icon: <IconUsers />
       }
-    },
-    supplier_reference: {},
-    project_code: {
-      icon: <IconList />
-    },
-    order_currency: {
-      icon: <IconCoins />
-    },
-    target_date: {
-      icon: <IconCalendar />
-    },
-    link: {},
-    contact: {
-      icon: <IconUser />,
-      adjustFilters: (value: ApiFormAdjustFilterType) => {
-        return {
-          ...value.filters,
-          company: value.data.supplier
-        };
-      }
-    },
-    address: {
-      icon: <IconAddressBook />,
-      adjustFilters: (value: ApiFormAdjustFilterType) => {
-        return {
-          ...value.filters,
-          company: value.data.supplier
-        };
-      }
-    },
-    responsible: {
-      icon: <IconUsers />
-    }
-  };
+    };
+  }, [create]);
 }
 
 /**
