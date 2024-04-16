@@ -200,7 +200,7 @@ export default function SalesOrderDetail() {
     );
   }, [order, instanceQuery]);
 
-  const salesOrderFields = useSalesOrderFields({ create: false });
+  const salesOrderFields = useSalesOrderFields();
 
   const editSalesOrder = useEditApiFormModal({
     url: ApiEndpoints.sales_order_list,

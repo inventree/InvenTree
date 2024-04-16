@@ -6,11 +6,7 @@ import {
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
 
-export function useSalesOrderFields({
-  create
-}: {
-  create: boolean;
-}): ApiFormFieldSet {
+export function useSalesOrderFields(): ApiFormFieldSet {
   return useMemo(() => {
     return {
       reference: {},
@@ -18,7 +14,7 @@ export function useSalesOrderFields({
       customer: {
         filters: {
           is_customer: true,
-          active: create ? true : undefined
+          active: true
         }
       },
       customer_reference: {},
@@ -48,14 +44,10 @@ export function useSalesOrderFields({
         icon: <IconUsers />
       }
     };
-  }, [create]);
+  }, []);
 }
 
-export function useReturnOrderFields({
-  create
-}: {
-  create: boolean;
-}): ApiFormFieldSet {
+export function useReturnOrderFields(): ApiFormFieldSet {
   return useMemo(() => {
     return {
       reference: {},
@@ -63,7 +55,7 @@ export function useReturnOrderFields({
       customer: {
         filters: {
           is_customer: true,
-          active: create ? true : undefined
+          active: true
         }
       },
       customer_reference: {},
@@ -93,5 +85,5 @@ export function useReturnOrderFields({
         icon: <IconUsers />
       }
     };
-  }, [create]);
+  }, []);
 }

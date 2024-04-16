@@ -248,7 +248,7 @@ export default function ReturnOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
-  const returnOrderFields = useReturnOrderFields({ create: false });
+  const returnOrderFields = useReturnOrderFields();
 
   const editReturnOrder = useEditApiFormModal({
     url: ApiEndpoints.return_order_list,

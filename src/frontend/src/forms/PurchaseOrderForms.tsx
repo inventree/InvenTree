@@ -113,11 +113,7 @@ export function usePurchaseOrderLineItemFields({
 /**
  * Construct a set of fields for creating / editing a PurchaseOrder instance
  */
-export function usePurchaseOrderFields({
-  create
-}: {
-  create: boolean;
-}): ApiFormFieldSet {
+export function usePurchaseOrderFields(): ApiFormFieldSet {
   return useMemo(() => {
     return {
       reference: {
@@ -127,7 +123,7 @@ export function usePurchaseOrderFields({
       supplier: {
         filters: {
           is_supplier: true,
-          active: create ? true : undefined
+          active: true
         }
       },
       supplier_reference: {},
@@ -163,7 +159,7 @@ export function usePurchaseOrderFields({
         icon: <IconUsers />
       }
     };
-  }, [create]);
+  }, []);
 }
 
 /**

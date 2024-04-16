@@ -24,7 +24,7 @@ export function useSupplierPartFields({ create }: { create?: boolean }) {
       part: {
         filters: {
           purchaseable: true,
-          active: create ? true : undefined
+          active: true
         }
       },
       manufacturer_part: {
@@ -41,7 +41,7 @@ export function useSupplierPartFields({ create }: { create?: boolean }) {
       },
       supplier: {
         filters: {
-          active: create ? true : undefined
+          active: true
         }
       },
       SKU: {

@@ -60,7 +60,7 @@ export default function PurchaseOrderDetail() {
     refetchOnMount: true
   });
 
-  const purchaseOrderFields = usePurchaseOrderFields({ create: false });
+  const purchaseOrderFields = usePurchaseOrderFields();
 
   const editPurchaseOrder = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_list,

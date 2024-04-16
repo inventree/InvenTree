@@ -61,7 +61,7 @@ export function SalesOrderTable({
     ];
   }, []);
 
-  const salesOrderFields = useSalesOrderFields({ create: true });
+  const salesOrderFields = useSalesOrderFields();
 
   const newSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
