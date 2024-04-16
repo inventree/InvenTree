@@ -51,7 +51,6 @@ import {
   StockOperationProps,
   useAddStockItem,
   useCountStockItem,
-  useEditStockItem,
   useRemoveStockItem,
   useStockFields,
   useTransferStockItem
