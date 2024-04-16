@@ -158,7 +158,8 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'price_range',
       title: t`Price Range`,
-      sortable: false,
+      sortable: true,
+      ordering: 'pricing_max',
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
