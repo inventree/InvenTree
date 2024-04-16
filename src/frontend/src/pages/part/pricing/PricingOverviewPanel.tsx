@@ -63,11 +63,7 @@ export default function PricingOverviewPanel({
             <Group position="left" spacing="xs">
               {record.icon}
               {is_link ? (
-                <Anchor
-                  weight={700}
-                  onClick={() => doNavigation(record.name)}
-                  component={Text}
-                >
+                <Anchor weight={700} onClick={() => doNavigation(record.name)}>
                   {record.title}
                 </Anchor>
               ) : (
