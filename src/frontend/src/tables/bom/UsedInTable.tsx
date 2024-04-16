@@ -45,7 +45,7 @@ export function UsedInTable({
           let units = record.sub_part_detail?.units;
 
           return (
-            <Group position="apart" grow>
+            <Group justify="space-between" grow>
               <Text>{quantity}</Text>
               {units && <Text size="xs">{units}</Text>}
             </Group>
