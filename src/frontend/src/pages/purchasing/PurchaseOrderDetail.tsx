@@ -271,7 +271,6 @@ export default function PurchaseOrderDetail() {
   }, [order, id]);
 
   const poActions = useMemo(() => {
-    // TODO: Disable certain actions based on user permissions
     return [
       <BarcodeActionDropdown
         actions={[
@@ -290,11 +289,14 @@ export default function PurchaseOrderDetail() {
         icon={<IconDots />}
         actions={[
           EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => {
               editPurchaseOrder.open();
             }
           }),
-          DeleteItemAction({})
+          DeleteItemAction({
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+          })
         ]}
       />
     ];
