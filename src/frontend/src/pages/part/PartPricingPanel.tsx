@@ -15,6 +15,19 @@ import SaleHistoryPanel from './pricing/SaleHistoryPanel';
 import SupplierPricingPanel from './pricing/SupplierPricingPanel';
 import VariantPricingPanel from './pricing/VariantPricingPanel';
 
+export enum panelOptions {
+  overview = 'overview',
+  purchase = 'purchase',
+  internal = 'internal',
+  supplier = 'supplier',
+  bom = 'bom',
+  variant = 'variant',
+  sale_pricing = 'sale-pricing',
+  sale_history = 'sale-history',
+  override = 'override',
+  overall = 'overall'
+}
+
 export default function PartPricingPanel({ part }: { part: any }) {
   const user = useUserState();
 
@@ -52,13 +65,13 @@ export default function PartPricingPanel({ part }: { part: any }) {
         <Accordion multiple defaultValue={['overview']}>
           <PricingPanel
             content={<PricingOverviewPanel part={part} pricing={pricing} />}
-            label="overview"
+            label={panelOptions.overview}
             title={t`Pricing Overview`}
             visible={true}
           />
           <PricingPanel
             content={<PurchaseHistoryPanel part={part} />}
-            label="purchase"
+            label={panelOptions.purchase}
             title={t`Purchase History`}
             visible={purchaseOrderPricing}
             disabled={
@@ -72,7 +85,7 @@ export default function PartPricingPanel({ part }: { part: any }) {
                 endpoint={ApiEndpoints.part_pricing_internal}
               />
             }
-            label="internal"
+            label={panelOptions.internal}
             title={t`Internal Pricing`}
             visible={internalPricing}
             disabled={
@@ -81,7 +94,7 @@ export default function PartPricingPanel({ part }: { part: any }) {
           />
           <PricingPanel
             content={<SupplierPricingPanel part={part} />}
-            label="supplier"
+            label={panelOptions.supplier}
             title={t`Supplier Pricing`}
             visible={purchaseOrderPricing}
             disabled={
@@ -90,14 +103,14 @@ export default function PartPricingPanel({ part }: { part: any }) {
           />
           <PricingPanel
             content={<BomPricingPanel part={part} pricing={pricing} />}
-            label="bom"
+            label={panelOptions.bom}
             title={t`BOM Pricing`}
             visible={part?.assembly}
             disabled={!pricing?.bom_cost_min || !pricing?.bom_cost_max}
           />
           <PricingPanel
             content={<VariantPricingPanel part={part} pricing={pricing} />}
-            label="variant"
+            label={panelOptions.variant}
             title={t`Variant Pricing`}
             visible={part?.is_template}
             disabled={!pricing?.variant_cost_min || !pricing?.variant_cost_max}
@@ -109,14 +122,14 @@ export default function PartPricingPanel({ part }: { part: any }) {
                 endpoint={ApiEndpoints.part_pricing_sale}
               />
             }
-            label="sale-pricing"
+            label={panelOptions.sale_pricing}
             title={t`Sale Pricing`}
             visible={salesOrderPricing}
             disabled={!pricing?.sale_price_min || !pricing?.sale_price_max}
           />
           <PricingPanel
             content={<SaleHistoryPanel part={part} />}
-            label="sale-history"
+            label={panelOptions.sale_history}
             title={t`Sale History`}
             visible={salesOrderPricing}
             disabled={!pricing?.sale_history_min || !pricing?.sale_history_max}

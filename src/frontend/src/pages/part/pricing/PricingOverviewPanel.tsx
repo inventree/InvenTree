@@ -23,10 +23,11 @@ import {
 
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
+import { panelOptions } from '../PartPricingPanel';
 
 interface PricingOverviewEntry {
   icon: ReactNode;
-  name: string;
+  name: panelOptions;
   title: string;
   min_value: number | null | undefined;
   max_value: number | null | undefined;
@@ -86,63 +87,63 @@ export default function PricingOverviewPanel({
   const overviewData: PricingOverviewEntry[] = useMemo(() => {
     return [
       {
-        name: 'internal',
+        name: panelOptions.internal,
         title: t`Internal Pricing`,
         icon: <IconList />,
         min_value: pricing?.internal_cost_min,
         max_value: pricing?.internal_cost_max
       },
       {
-        name: 'bom',
+        name: panelOptions.bom,
         title: t`BOM Pricing`,
         icon: <IconChartDonut />,
         min_value: pricing?.bom_cost_min,
         max_value: pricing?.bom_cost_max
       },
       {
-        name: 'purchase',
+        name: panelOptions.purchase,
         title: t`Purchase Pricing`,
         icon: <IconShoppingCart />,
         min_value: pricing?.purchase_cost_min,
         max_value: pricing?.purchase_cost_max
       },
       {
-        name: 'supplier',
+        name: panelOptions.supplier,
         title: t`Supplier Pricing`,
         icon: <IconBuildingWarehouse />,
         min_value: pricing?.supplier_price_min,
         max_value: pricing?.supplier_price_max
       },
       {
-        name: 'variants',
+        name: panelOptions.variant,
         title: t`Variant Pricing`,
         icon: <IconTriangleSquareCircle />,
         min_value: pricing?.variant_cost_min,
         max_value: pricing?.variant_cost_max
       },
       {
-        name: 'sale',
+        name: panelOptions.sale_pricing,
         title: t`Sale Pricing`,
         icon: <IconTriangleSquareCircle />,
         min_value: pricing?.sale_price_min,
         max_value: pricing?.sale_price_max
       },
       {
-        name: 'sale-history',
+        name: panelOptions.sale_history,
         title: t`Sale History`,
         icon: <IconTriangleSquareCircle />,
         min_value: pricing?.sale_history_min,
         max_value: pricing?.sale_history_max
       },
       {
-        name: 'override',
+        name: panelOptions.override,
         title: t`Override Pricing`,
         icon: <IconExclamationCircle />,
         min_value: pricing?.override_min,
         max_value: pricing?.override_max
       },
       {
-        name: 'overall',
+        name: panelOptions.overall,
         title: t`Overall Pricing`,
         icon: <IconReportAnalytics />,
         min_value: pricing?.overall_min,

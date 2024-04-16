@@ -13,6 +13,7 @@ import { IconAlertCircle, IconExclamationCircle } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
 import { StylishText } from '../../../components/items/StylishText';
+import { panelOptions } from '../PartPricingPanel';
 
 function AccordionControl(props: AccordionControlProps) {
   return (
@@ -39,7 +40,7 @@ export default function PricingPanel({
   disabled = undefined
 }: {
   content: ReactNode;
-  label: string;
+  label: panelOptions;
   title: string;
   visible: boolean;
   disabled?: boolean | undefined;
