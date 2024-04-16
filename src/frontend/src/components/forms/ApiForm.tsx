@@ -193,7 +193,6 @@ export function ApiForm({
         if (key in defaultValuesMap) {
           defaultValuesMap[key] =
             props?.initialData?.[key] ?? defaultValuesMap[key];
-        } else {
         }
       });
     }
