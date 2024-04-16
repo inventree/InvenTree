@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, SimpleGrid } from '@mantine/core';
+import { SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import {
   Bar,
@@ -144,6 +144,13 @@ export default function PriceBreakPanel({
     [user]
   );
 
+  const currency: string = useMemo(() => {
+    if (table.records.length === 0) {
+      return '';
+    }
+    return table.records[0].currency;
+  }, [table.records]);
+
   return (
     <>
       {newPriceBreak.modal}
@@ -166,7 +173,13 @@ export default function PriceBreakPanel({
           <ResponsiveContainer width="100%" height={500}>
             <BarChart data={table.records}>
               <XAxis dataKey="quantity" />
-              <YAxis />
+              <YAxis
+                tickFormatter={(value, index) =>
+                  formatCurrency(value, {
+                    currency: currency
+                  })?.toString() ?? ''
+                }
+              />
               <Tooltip />
               <Legend />
               <Bar

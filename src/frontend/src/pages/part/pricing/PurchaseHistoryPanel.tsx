@@ -95,6 +95,13 @@ export default function PurchaseHistoryPanel({
     ];
   }, []);
 
+  const currency: string = useMemo(() => {
+    if (table.records.length === 0) {
+      return '';
+    }
+    return table.records[0].purchase_price_currency;
+  }, [table.records]);
+
   const purchaseHistoryData = useMemo(() => {
     return table.records.map((record: any) => {
       return {
@@ -126,7 +133,13 @@ export default function PurchaseHistoryPanel({
         <ResponsiveContainer width="100%" height={500}>
           <BarChart data={purchaseHistoryData}>
             <XAxis dataKey="name" />
-            <YAxis />
+            <YAxis
+              tickFormatter={(value, index) =>
+                formatCurrency(value, {
+                  currency: currency
+                })?.toString() ?? ''
+              }
+            />
             <Tooltip />
             <Legend />
             <Bar

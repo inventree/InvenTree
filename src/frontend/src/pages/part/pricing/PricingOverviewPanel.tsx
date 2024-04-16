@@ -190,7 +190,13 @@ export default function PricingOverviewPanel({
         <ResponsiveContainer width="100%" height={500}>
           <BarChart data={overviewData}>
             <XAxis dataKey="title" />
-            <YAxis />
+            <YAxis
+              tickFormatter={(value, index) =>
+                formatCurrency(value, {
+                  currency: pricing?.currency
+                })?.toString() ?? ''
+              }
+            />
             <Tooltip />
             <Legend />
             <Bar

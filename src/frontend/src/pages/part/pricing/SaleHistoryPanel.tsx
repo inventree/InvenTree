@@ -60,6 +60,13 @@ export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
     ];
   }, []);
 
+  const currency: string = useMemo(() => {
+    if (table.records.length === 0) {
+      return '';
+    }
+    return table.records[0].sale_price_currency;
+  }, [table.records]);
+
   const saleHistoryData = useMemo(() => {
     return table.records.map((record: any) => {
       return {
@@ -90,7 +97,13 @@ export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
         <ResponsiveContainer width="100%" height={500}>
           <BarChart data={saleHistoryData}>
             <XAxis dataKey="name" />
-            <YAxis />
+            <YAxis
+              tickFormatter={(value, index) =>
+                formatCurrency(value, {
+                  currency: currency
+                })?.toString() ?? ''
+              }
+            />
             <Tooltip />
             <Legend />
             <Bar

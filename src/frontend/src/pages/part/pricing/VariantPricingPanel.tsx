@@ -99,7 +99,13 @@ export default function VariantPricingPanel({
           <ResponsiveContainer width="100%" height={500}>
             <BarChart data={variantPricingData}>
               <XAxis dataKey="name" />
-              <YAxis />
+              <YAxis
+                tickFormatter={(value, index) =>
+                  formatCurrency(value, {
+                    currency: pricing?.currency
+                  })?.toString() ?? ''
+                }
+              />
               <Tooltip />
               <Legend />
               <Bar
