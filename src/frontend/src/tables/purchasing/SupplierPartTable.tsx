@@ -201,9 +201,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     ];
   }, []);
 
-  const editSupplierPartFields = useSupplierPartFields({
-    create: false
-  });
+  const editSupplierPartFields = useSupplierPartFields();
 
   const [selectedSupplierPart, setSelectedSupplierPart] = useState<number>(0);
 
