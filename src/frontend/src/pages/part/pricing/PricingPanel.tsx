@@ -15,7 +15,6 @@ import { ReactNode } from 'react';
 import { StylishText } from '../../../components/items/StylishText';
 
 function AccordionControl(props: AccordionControlProps) {
-  console.log(props);
   return (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
       {props.disabled && (
