@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-15 23:58+0000\n"
-"PO-Revision-Date: 2024-04-15 02:35\n"
+"POT-Creation-Date: 2024-04-15 15:06+0000\n"
+"PO-Revision-Date: 2024-04-16 03:11\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1520,8 +1520,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:512
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:592
@@ -4890,16 +4889,12 @@ msgid "Order"
 msgstr "Rendelés"
 
 #: order/api.py:437 order/api.py:834
-#, fuzzy
-#| msgid "Order Code"
 msgid "Order Complete"
-msgstr "Rendelési kód"
+msgstr ""
 
 #: order/api.py:458
-#, fuzzy
-#| msgid "Pending"
 msgid "Order Pending"
-msgstr "Függőben"
+msgstr ""
 
 #: order/api.py:1505 order/models.py:1383 order/models.py:1490
 #: order/templates/order/order_base.html:9
@@ -14199,3 +14194,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
