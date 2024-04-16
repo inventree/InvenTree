@@ -20,6 +20,8 @@ import { useLocalState } from '../../states/LocalState';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { MenuLinks } from '../items/MenuLinks';
 
+const onlyItems = Object.values(menuItems);
+
 export function NavHoverMenu({
   openDrawer: openDrawer
 }: {
@@ -85,7 +87,7 @@ export function NavHoverMenu({
           mx="-md"
           color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
         />
-        <MenuLinks links={menuItems} highlighted={true} />
+        <MenuLinks links={onlyItems} highlighted={true} />
         <div className={classes.headerDropdownFooter}>
           <Group position="apart">
             <div>

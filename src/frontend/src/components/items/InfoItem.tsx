@@ -2,8 +2,8 @@ import { Trans } from '@lingui/macro';
 import { Code, Flex, Group, Text } from '@mantine/core';
 import { Link, To } from 'react-router-dom';
 
+import { YesNoButton } from '../buttons/YesNoButton';
 import { DetailDrawerLink } from '../nav/DetailDrawer';
-import { YesNoButton } from './YesNoButton';
 
 export function InfoItem({
   name,

@@ -1,8 +1,0 @@
-{
-  "repoOwner": "Oliver Walters",
-  "repoName": "InvenTree",
-  "targetBranchChoices": [],
-  "branchLabelMapping": {
-    "^backport-to-(.+)$": "$1"
-  }
-}

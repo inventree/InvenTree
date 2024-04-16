@@ -18,6 +18,7 @@ import { MenuLinkItem, MenuLinks } from '../items/MenuLinks';
 
 // TODO @matmair #1: implement plugin loading and menu item generation see #5269
 const plugins: MenuLinkItem[] = [];
+const onlyItems = Object.values(menuItems);
 
 export function NavigationDrawer({
   opened,
@@ -60,7 +61,7 @@ function DrawerContent() {
       <Container className={classes.layoutContent} p={0}>
         <ScrollArea h={scrollHeight} type="always" offsetScrollbars>
           <Title order={5}>{t`Pages`}</Title>
-          <MenuLinks links={menuItems} />
+          <MenuLinks links={onlyItems} />
           <Space h="md" />
           {plugins.length > 0 ? (
             <>

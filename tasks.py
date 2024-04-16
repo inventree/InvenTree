@@ -55,6 +55,9 @@ def apps():
         'users',
         'plugin',
         'InvenTree',
+        'generic',
+        'machine',
+        'web',
     ]
 
 
@@ -310,7 +313,9 @@ def remove_mfa(c, mail=''):
 def static(c, frontend=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, 'prerender')
+
     if frontend and node_available():
+        frontend_trans(c)
         frontend_build(c)
 
     print('Collecting static files...')
@@ -867,7 +872,7 @@ def test(
     if coverage:
         # Run tests within coverage environment, and generate report
         c.run(f'coverage run {managePyPath()} {cmd}')
-        c.run('coverage html -i')
+        c.run('coverage xml -i')
     else:
         # Run simple test runner, without coverage
         manage(c, cmd, pty=pty)
@@ -904,6 +909,7 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     src = Path(path).joinpath('media').resolve()
     dst = get_media_dir()
 
+    print(f'Copying media files - "{src}" to "{dst}"')
     shutil.copytree(src, dst, dirs_exist_ok=True)
 
     print('Done setting up test environment...')

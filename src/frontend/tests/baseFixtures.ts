@@ -1,10 +1,19 @@
 import { test as baseTest } from '@playwright/test';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
+import os from 'os';
 import * as path from 'path';
 
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
-export const classicUrl = 'http://127.0.0.1:8000';
+let platform = os.platform();
+let systemKeyVar;
+if (platform === 'darwin') {
+  systemKeyVar = 'Meta';
+} else {
+  systemKeyVar = 'Control';
+}
+/* metaKey is the local action key (used for spotlight for example) */
+export const systemKey = systemKeyVar;
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString('hex');
