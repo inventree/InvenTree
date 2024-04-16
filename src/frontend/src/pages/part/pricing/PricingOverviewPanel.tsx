@@ -1,5 +1,13 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
+import {
+  Alert,
+  Anchor,
+  Group,
+  Paper,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconChartDonut,
@@ -51,7 +59,14 @@ export default function PricingOverviewPanel({
           return (
             <Group position="left" spacing="xs">
               {record.icon}
-              <Text weight={700}>{record.title}</Text>
+              {record.name !== panelOptions.overall &&
+              record.name !== panelOptions.override ? (
+                <Anchor href={`#${record.name}`} weight={700}>
+                  {record.title}
+                </Anchor>
+              ) : (
+                <Text weight={700}>{record.title}</Text>
+              )}
             </Group>
           );
         }

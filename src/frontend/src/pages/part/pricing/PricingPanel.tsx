@@ -48,7 +48,7 @@ export default function PricingPanel({
   const is_disabled = disabled === undefined ? false : disabled;
   return (
     visible && (
-      <Accordion.Item value={label}>
+      <Accordion.Item value={label} id={label}>
         <AccordionControl disabled={is_disabled}>
           <StylishText size="lg">{title}</StylishText>
         </AccordionControl>
