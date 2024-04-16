@@ -121,6 +121,20 @@ export default function PricingOverviewPanel({
         max_value: pricing?.variant_cost_max
       },
       {
+        name: 'sale',
+        title: t`Sale Pricing`,
+        icon: <IconTriangleSquareCircle />,
+        min_value: pricing?.sale_price_min,
+        max_value: pricing?.sale_price_max
+      },
+      {
+        name: 'sale-history',
+        title: t`Sale History`,
+        icon: <IconTriangleSquareCircle />,
+        min_value: pricing?.sale_history_min,
+        max_value: pricing?.sale_history_max
+      },
+      {
         name: 'override',
         title: t`Override Pricing`,
         icon: <IconExclamationCircle />,
