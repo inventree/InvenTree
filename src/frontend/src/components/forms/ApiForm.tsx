@@ -65,7 +65,7 @@ export interface ApiFormProps {
   pk?: number | string | undefined;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  fields?: ApiFormFieldSet;
+  fields: ApiFormFieldSet;
   focus?: string;
   initialData?: FieldValues;
   submitText?: string;
@@ -107,6 +107,8 @@ export function OptionsApiForm({
 
   const optionsQuery = useQuery({
     enabled: true,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     queryKey: [
       'form-options-data',
       id,
@@ -238,6 +240,9 @@ export function ApiForm({
         // Await API call
         let response = await api.get(url);
 
+        console.log('initial data query returned:');
+        console.log(response.data);
+
         // Define function to process API response
         const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
           const res: NestedDict = {};
@@ -268,6 +273,17 @@ export function ApiForm({
 
         // Update form values, but only for the fields specified for this form
         form.reset(initialData);
+
+        // Update the field references, too
+        Object.keys(props.fields ?? {}).forEach((fieldName) => {
+          if (fieldName in initialData) {
+            let field = props.fields[fieldName] ?? {};
+            props.fields[fieldName] = {
+              ...field,
+              value: initialData[fieldName]
+            };
+          }
+        });
 
         return response;
       } catch (error) {
