@@ -154,11 +154,11 @@ class LineItemFilter(rest_filters.FilterSet):
 
     # Filter by order status
     order_status = rest_filters.NumberFilter(
-        label='order_status', field_name='order__status'
+        label=_('Order Status'), field_name='order__status'
     )
 
     has_pricing = rest_filters.BooleanFilter(
-        label='Has Pricing', method='filter_has_pricing'
+        label=_('Has Pricing'), method='filter_has_pricing'
     )
 
     def filter_has_pricing(self, queryset, name, value):
@@ -425,9 +425,38 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
 
         price_field = 'purchase_price'
         model = models.PurchaseOrderLineItem
-        fields = ['order', 'part']
+        fields = []
 
-    pending = rest_filters.BooleanFilter(label='pending', method='filter_pending')
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.PurchaseOrder.objects.all(),
+        field_name='order',
+        label=_('Order'),
+    )
+
+    order_complete = rest_filters.BooleanFilter(
+        label=_('Order Complete'), method='filter_order_complete'
+    )
+
+    def filter_order_complete(self, queryset, name, value):
+        """Filter by whether the order is 'complete' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status=PurchaseOrderStatus.COMPLETE.value)
+
+        return queryset.exclude(order__status=PurchaseOrderStatus.COMPLETE.value)
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=SupplierPart.objects.all(), field_name='part', label=_('Supplier Part')
+    )
+
+    base_part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.filter(purchaseable=True),
+        field_name='part__part',
+        label=_('Internal Part'),
+    )
+
+    pending = rest_filters.BooleanFilter(
+        method='filter_pending', label=_('Order Pending')
+    )
 
     def filter_pending(self, queryset, name, value):
         """Filter by "pending" status (order status = pending)."""
@@ -435,7 +464,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
             return queryset.filter(order__status__in=PurchaseOrderStatusGroups.OPEN)
         return queryset.exclude(order__status__in=PurchaseOrderStatusGroups.OPEN)
 
-    received = rest_filters.BooleanFilter(label='received', method='filter_received')
+    received = rest_filters.BooleanFilter(
+        label=_('Items Received'), method='filter_received'
+    )
 
     def filter_received(self, queryset, name, value):
         """Filter by lines which are "received" (or "not" received).
@@ -542,25 +573,6 @@ class PurchaseOrderLineItemList(
             serializer.data, status=status.HTTP_201_CREATED, headers=headers
         )
 
-    def filter_queryset(self, queryset):
-        """Additional filtering options."""
-        params = self.request.query_params
-
-        queryset = super().filter_queryset(queryset)
-
-        base_part = params.get('base_part', None)
-
-        if base_part:
-            try:
-                base_part = Part.objects.get(pk=base_part)
-
-                queryset = queryset.filter(part__part=base_part)
-
-            except (ValueError, Part.DoesNotExist):
-                pass
-
-        return queryset
-
     def download_queryset(self, queryset, export_format):
         """Download the requested queryset as a file."""
         dataset = PurchaseOrderLineItemResource().export(queryset=queryset)
@@ -577,6 +589,8 @@ class PurchaseOrderLineItemList(
         'MPN': 'part__manufacturer_part__MPN',
         'SKU': 'part__SKU',
         'part_name': 'part__part__name',
+        'order': 'order__reference',
+        'complete_date': 'order__complete_date',
     }
 
     ordering_fields = [
@@ -589,6 +603,8 @@ class PurchaseOrderLineItemList(
         'SKU',
         'total_price',
         'target_date',
+        'order',
+        'complete_date',
     ]
 
     search_fields = [
@@ -791,7 +807,15 @@ class SalesOrderLineItemFilter(LineItemFilter):
 
         price_field = 'sale_price'
         model = models.SalesOrderLineItem
-        fields = ['order', 'part']
+        fields = []
+
+    order = rest_filters.ModelChoiceFilter(
+        queryset=models.SalesOrder.objects.all(), field_name='order', label=_('Order')
+    )
+
+    part = rest_filters.ModelChoiceFilter(
+        queryset=Part.objects.all(), field_name='part', label=_('Part')
+    )
 
     completed = rest_filters.BooleanFilter(label='completed', method='filter_completed')
 
@@ -805,6 +829,17 @@ class SalesOrderLineItemFilter(LineItemFilter):
         if str2bool(value):
             return queryset.filter(q)
         return queryset.exclude(q)
+
+    order_complete = rest_filters.BooleanFilter(
+        label=_('Order Complete'), method='filter_order_complete'
+    )
+
+    def filter_order_complete(self, queryset, name, value):
+        """Filter by whether the order is 'complete' or not."""
+        if str2bool(value):
+            return queryset.filter(order__status__in=SalesOrderStatusGroups.COMPLETE)
+
+        return queryset.exclude(order__status__in=SalesOrderStatusGroups.COMPLETE)
 
 
 class SalesOrderLineItemMixin:
@@ -862,9 +897,24 @@ class SalesOrderLineItemList(SalesOrderLineItemMixin, APIDownloadMixin, ListCrea
 
         return DownloadFile(filedata, filename)
 
-    filter_backends = SEARCH_ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
-    ordering_fields = ['part__name', 'quantity', 'reference', 'target_date']
+    ordering_fields = [
+        'customer',
+        'order',
+        'part',
+        'part__name',
+        'quantity',
+        'reference',
+        'sale_price',
+        'target_date',
+    ]
+
+    ordering_field_aliases = {
+        'customer': 'order__customer__name',
+        'part': 'part__name',
+        'order': 'order__reference',
+    }
 
     search_fields = ['part__name', 'quantity', 'reference']
 

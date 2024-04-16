@@ -46,7 +46,7 @@ class NewsFeedTests(TestCase):
         """Tests that news feed is updated when accessing a valid URL."""
         try:
             common_tasks.update_news_feed()
-        except Exception as ex:
+        except Exception as ex:  # pragma: no cover
             self.fail(f'News feed raised exceptions: {ex}')
 
         self.assertNotEqual(NewsFeedEntry.objects.all().count(), 0)

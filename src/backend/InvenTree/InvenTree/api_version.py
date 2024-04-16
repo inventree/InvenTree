@@ -1,10 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 185
+INVENTREE_API_VERSION = 187
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v187 - 2024-03-10 : https://github.com/inventree/InvenTree/pull/6985
+    - Allow Part list endpoint to be sorted by pricing_min and pricing_max values
+    - Allow BomItem list endpoint to be sorted by pricing_min and pricing_max values
+    - Allow InternalPrice and SalePrice endpoints to be sorted by quantity
+    - Adds total pricing values to BomItem serializer
+
+v186 - 2024-03-26 : https://github.com/inventree/InvenTree/pull/6855
+    - Adds license information to the API
 
 v185 - 2024-03-24 : https://github.com/inventree/InvenTree/pull/6836
     - Remove /plugin/activate endpoint

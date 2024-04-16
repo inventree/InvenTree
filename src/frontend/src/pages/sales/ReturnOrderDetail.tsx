@@ -6,7 +6,7 @@ import {
   IconNotes,
   IconPaperclip
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -14,6 +14,7 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -220,6 +221,18 @@ export default function ReturnOrderDetail() {
     ];
   }, [order, id]);
 
+  const orderBadges: ReactNode[] = useMemo(() => {
+    return instanceQuery.isLoading
+      ? []
+      : [
+          <StatusRenderer
+            status={order.status}
+            type={ModelType.returnorder}
+            options={{ size: 'lg' }}
+          />
+        ];
+  }, [order, instanceQuery]);
+
   return (
     <>
       <Stack spacing="xs">
@@ -228,6 +241,7 @@ export default function ReturnOrderDetail() {
           title={t`Return Order` + `: ${order.reference}`}
           subtitle={order.description}
           imageUrl={order.customer_detail?.image}
+          badges={orderBadges}
           breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
         />
         <PanelGroup pageKey="returnorder" panels={orderPanels} />

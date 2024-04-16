@@ -16,6 +16,10 @@ export interface MenuLinkItem {
   docchildren?: React.ReactNode;
 }
 
+export type menuItemsCollection = {
+  [key: string]: MenuLinkItem;
+};
+
 function ConditionalDocTooltip({
   item,
   children
