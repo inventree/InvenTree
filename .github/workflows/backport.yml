@@ -22,5 +22,5 @@ jobs:
         uses: korthout/backport-action@ef20d86abccbac3ee3a73cb2efbdc06344c390e5  # Pinned at v2.5.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          copy_labels_pattern: '*'
+          copy_labels_pattern: '.+'
           label_pattern: '^backport-to-(.+)$'
