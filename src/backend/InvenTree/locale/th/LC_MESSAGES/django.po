@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-15 23:58+0000\n"
-"PO-Revision-Date: 2024-04-15 02:35\n"
+"POT-Creation-Date: 2024-04-15 15:06+0000\n"
+"PO-Revision-Date: 2024-04-16 03:12\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -4888,16 +4888,12 @@ msgid "Order"
 msgstr ""
 
 #: order/api.py:437 order/api.py:834
-#, fuzzy
-#| msgid "Complete"
 msgid "Order Complete"
-msgstr "สำเร็จแล้ว"
+msgstr ""
 
 #: order/api.py:458
-#, fuzzy
-#| msgid "Pending"
 msgid "Order Pending"
-msgstr "อยู่ระหว่างดำเนินการ"
+msgstr ""
 
 #: order/api.py:1505 order/models.py:1383 order/models.py:1490
 #: order/templates/order/order_base.html:9
@@ -14197,3 +14193,4 @@ msgstr ""
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr ""
+
