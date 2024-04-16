@@ -39,7 +39,14 @@ from stock.urls import stock_urls
 from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
 
-from .api import APISearchView, InfoView, NotFoundView, VersionTextView, VersionView
+from .api import (
+    APISearchView,
+    InfoView,
+    LicenseView,
+    NotFoundView,
+    VersionTextView,
+    VersionView,
+)
 from .magic_login import GetSimpleLoginView
 from .social_auth_urls import (
     EmailListView,
@@ -99,6 +106,7 @@ apipatterns = [
         name='schema',
     ),
     # InvenTree information endpoints
+    path('license/', LicenseView.as_view(), name='api-license'),  # license info
     path(
         'version-text', VersionTextView.as_view(), name='api-version-text'
     ),  # version text
@@ -377,6 +385,7 @@ if settings.ENABLE_CLASSIC_FRONTEND:
 
 classic_frontendpatterns = [
     # Apps
+    #
     path('build/', include(build_urls)),
     path('common/', include(common_urls)),
     path('company/', include(company_urls)),
@@ -426,7 +435,11 @@ classic_frontendpatterns = [
 urlpatterns = []
 
 if settings.INVENTREE_ADMIN_ENABLED:
-    admin_url = (settings.INVENTREE_ADMIN_URL,)
+    admin_url = settings.INVENTREE_ADMIN_URL
+
+    if settings.ADMIN_SHELL_ENABLE:  # noqa
+        urlpatterns += [path(f'{admin_url}/shell/', include('django_admin_shell.urls'))]
+
     urlpatterns += [
         path(f'{admin_url}/error_log/', include('error_report.urls')),
         path(f'{admin_url}/', admin.site.urls, name='inventree-admin'),

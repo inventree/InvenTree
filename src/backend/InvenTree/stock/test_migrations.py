@@ -64,6 +64,7 @@ class TestSerialNumberMigration(MigratorTestCase):
             big_ref_item.serial,
             '9999999999999999999999999999999999999999999999999999999999999',
         )
+
         self.assertEqual(big_ref_item.serial_int, 0x7FFFFFFF)
 
 

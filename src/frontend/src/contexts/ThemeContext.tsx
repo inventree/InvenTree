@@ -10,6 +10,7 @@ import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 
 import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
+import { LicenseModal } from '../components/modals/LicenseModal';
 import { QrCodeModal } from '../components/modals/QrCodeModal';
 import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
@@ -65,7 +66,8 @@ export function ThemeContext({ children }: { children: JSX.Element }) {
           modals={{
             qr: QrCodeModal,
             info: ServerInfoModal,
-            about: AboutInvenTreeModal
+            about: AboutInvenTreeModal,
+            license: LicenseModal
           }}
         >
           {children}

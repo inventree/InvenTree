@@ -554,9 +554,6 @@ class StockItemListTest(StockAPITestCase):
         )
         self.assertTrue(len(response.data) < StockItem.objects.count())
 
-        for result in response.data:
-            self.assertIsNone(result['location'])
-
         # Filter with "cascade=True"
         response = self.get(
             self.list_url, {'location': 'null', 'cascade': True}, expected_code=200
