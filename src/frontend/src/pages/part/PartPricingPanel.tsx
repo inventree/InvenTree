@@ -61,6 +61,9 @@ export default function PartPricingPanel({ part }: { part: any }) {
             label="purchase"
             title={t`Purchase History`}
             visible={purchaseOrderPricing}
+            disabled={
+              !pricing?.purchase_cost_min || !pricing?.purchase_cost_max
+            }
           />
           <PricingPanel
             content={
@@ -72,24 +75,32 @@ export default function PartPricingPanel({ part }: { part: any }) {
             label="internal"
             title={t`Internal Pricing`}
             visible={internalPricing}
+            disabled={
+              !pricing?.internal_cost_min || !pricing?.internal_cost_max
+            }
           />
           <PricingPanel
             content={<SupplierPricingPanel part={part} />}
             label="supplier"
             title={t`Supplier Pricing`}
             visible={purchaseOrderPricing}
+            disabled={
+              !pricing?.supplier_price_min || !pricing?.supplier_price_max
+            }
           />
           <PricingPanel
             content={<BomPricingPanel part={part} pricing={pricing} />}
             label="bom"
             title={t`BOM Pricing`}
             visible={part?.assembly}
+            disabled={!pricing?.bom_cost_min || !pricing?.bom_cost_max}
           />
           <PricingPanel
             content={<VariantPricingPanel part={part} pricing={pricing} />}
             label="variant"
             title={t`Variant Pricing`}
             visible={part?.is_template}
+            disabled={!pricing?.variant_cost_min || !pricing?.variant_cost_max}
           />
           <PricingPanel
             content={
@@ -101,12 +112,14 @@ export default function PartPricingPanel({ part }: { part: any }) {
             label="sale-pricing"
             title={t`Sale Pricing`}
             visible={salesOrderPricing}
+            disabled={!pricing?.sale_price_min || !pricing?.sale_price_max}
           />
           <PricingPanel
             content={<SaleHistoryPanel part={part} />}
             label="sale-history"
             title={t`Sale History`}
             visible={salesOrderPricing}
+            disabled={!pricing?.sale_history_min || !pricing?.sale_history_max}
           />
         </Accordion>
       )}
