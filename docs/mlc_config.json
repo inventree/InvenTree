@@ -8,6 +8,12 @@
         },
         {
             "pattern": "http://127.0.0.1"
+        },
+        {
+            "pattern": "https://twitter.com"
+        },
+        {
+            "pattern": "https://www.reddit.com"
         }
     ]
 }
