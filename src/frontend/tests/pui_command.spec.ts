@@ -10,7 +10,6 @@ test('PUI - Quick Command', async ({ page }) => {
   await page.waitForTimeout(200);
   await page
     .getByRole('button', { name: 'Go to the InvenTree dashboard' })
-    .click()
     .click();
   await page.locator('p').filter({ hasText: 'Dashboard' }).waitFor();
   await page.waitForURL('**/platform/dashboard');
