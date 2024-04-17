@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-15 15:06+0000\n"
-"PO-Revision-Date: 2024-04-16 03:11\n"
+"PO-Revision-Date: 2024-04-17 03:36\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -740,7 +740,7 @@ msgstr "Odesláno"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -1034,7 +1034,7 @@ msgstr "Referenční číslo objednávky"
 #: templates/js/translated/return_order.js:729
 #: templates/js/translated/sales_order.js:1818
 msgid "Reference"
-msgstr ""
+msgstr "Reference"
 
 #: build/models.py:191
 msgid "Brief description of the build (optional)"
@@ -1411,27 +1411,27 @@ msgstr "Vytvořený výstup neodpovídá nadřazenému sestavení"
 
 #: build/serializers.py:176
 msgid "Output part does not match BuildOrder part"
-msgstr ""
+msgstr "Výstupní část se neshoduje s částí příkazu sestavení"
 
 #: build/serializers.py:180
 msgid "This build output has already been completed"
-msgstr ""
+msgstr "Výstup sestavení je již dokončen"
 
 #: build/serializers.py:191
 msgid "This build output is not fully allocated"
-msgstr ""
+msgstr "Tento stavební výstup není plně přiřazen"
 
 #: build/serializers.py:211 build/serializers.py:248
 msgid "Enter quantity for build output"
-msgstr ""
+msgstr "Zadejte množství pro výstup sestavení"
 
 #: build/serializers.py:269
 msgid "Integer quantity required for trackable parts"
-msgstr ""
+msgstr "Celé množství požadované pro sledovatelné díly"
 
 #: build/serializers.py:272
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr ""
+msgstr "Je vyžadována celočíselná hodnota množství, protože kusovník obsahuje sledovatelné díly"
 
 #: build/serializers.py:287 order/serializers.py:585 order/serializers.py:1339
 #: stock/serializers.py:483 templates/js/translated/purchase_order.js:1153
@@ -4125,7 +4125,7 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:1690
 #: templates/js/translated/table_filters.js:800
 msgid "Supplier"
-msgstr ""
+msgstr "Dodavatel"
 
 #: company/models.py:796
 msgid "Select supplier"
@@ -4156,7 +4156,7 @@ msgstr ""
 #: report/templates/report/inventree_so_report_base.html:32
 #: stock/serializers.py:579
 msgid "Note"
-msgstr ""
+msgstr "Poznámka"
 
 #: company/models.py:843 part/models.py:1967
 msgid "base cost"
@@ -7288,7 +7288,7 @@ msgstr ""
 #: part/templates/part/detail.html:255 part/templates/part/part_sidebar.html:17
 #: report/templates/report/inventree_bill_of_materials_report.html:100
 msgid "Bill of Materials"
-msgstr ""
+msgstr "Kusovník"
 
 #: part/templates/part/detail.html:260
 msgid "Export actions"
