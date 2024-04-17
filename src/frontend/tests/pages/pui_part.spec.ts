@@ -41,5 +41,14 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await graph.getByText('Overall Pricing').waitFor();
   await graph.locator('path').nth(1).hover();
   //await graph.screenshot({ path: 'pui_part_pricing_overview_hover.png' });
-  //await page.getByText('min_value:  $43*').waitFor();
+  await page.getByText('min_value : $43').waitFor();
+
+  // BOM Pricing
+  await page.getByLabel('Pricing Overview').locator('a').click();
+  await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
+  await page.getByText('Bar Chart').click();
+  await page.getByText('total_price_min').waitFor();
+  await page.getByText('Pie Chart').click();
+  await page.getByRole('button', { name: 'Quantity Not sorted' }).waitFor();
+  await page.getByRole('button', { name: 'Unit Price Not sorted' }).waitFor();
 });
