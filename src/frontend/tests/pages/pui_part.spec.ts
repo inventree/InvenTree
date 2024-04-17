@@ -41,7 +41,6 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await page.getByText('min_value : $50').waitFor();
 
   // BOM Pricing
-  await page.getByLabel('Pricing Overview').locator('a').click();
   await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
   await page.getByText('Bar Chart').click();
   await page.getByText('total_price_min').waitFor();
