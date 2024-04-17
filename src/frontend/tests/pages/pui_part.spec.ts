@@ -1,8 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-import { user } from './defaults';
+import { user } from '../defaults';
 
-test('test', async ({ page }) => {
+test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await page.goto('./platform/');
   await expect(page).toHaveTitle('InvenTree');
   await page.waitForURL('**/platform/');
