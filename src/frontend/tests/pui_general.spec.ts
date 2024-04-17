@@ -1,14 +1,11 @@
-import { expect, test } from './baseFixtures.js';
-import { user } from './defaults.js';
+import { test } from './baseFixtures.js';
+import { adminuser, user } from './defaults.js';
 
 test('PUI - Parts', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
   await page.goto('./platform/home');
 
   await page.getByRole('tab', { name: 'Parts' }).click();
@@ -39,13 +36,10 @@ test('PUI - Parts', async ({ page }) => {
 });
 
 test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
 
   await page.goto('./platform/part/84/manufacturers');
   await page.getByRole('tab', { name: 'Manufacturers' }).click();
@@ -57,13 +51,10 @@ test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
 });
 
 test('PUI - Parts - Supplier Parts', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
 
   await page.goto('./platform/part/15/suppliers');
   await page.getByRole('tab', { name: 'Suppliers' }).click();
@@ -75,13 +66,10 @@ test('PUI - Parts - Supplier Parts', async ({ page }) => {
 });
 
 test('PUI - Sales', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
 
   await page.goto('./platform/sales/');
   await page.waitForURL('**/platform/sales/**');
@@ -131,13 +119,11 @@ test('PUI - Sales', async ({ page }) => {
 });
 
 test('PUI - Scanning', async ({ page }) => {
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
   await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
 
   await page.getByLabel('Homenav').click();
   await page.getByRole('button', { name: 'System Information' }).click();
@@ -158,13 +144,11 @@ test('PUI - Scanning', async ({ page }) => {
 });
 
 test('PUI - Admin', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
+  await page.goto(
+    `./platform/login/?login=${adminuser.username}&password=${adminuser.password}`
+  );
   await page.waitForURL('**/platform/*');
-  await page.getByLabel('username').fill('admin');
-  await page.getByLabel('password').fill('inventree');
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.goto('./platform/');
 
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
@@ -213,13 +197,11 @@ test('PUI - Admin', async ({ page }) => {
 });
 
 test('PUI - Language / Color', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
   await page.waitForURL('**/platform/*');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.goto('./platform/');
 
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
@@ -253,13 +235,10 @@ test('PUI - Language / Color', async ({ page }) => {
 });
 
 test('PUI - Company', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
 
   await page.goto('./platform/company/1/details');
   await page
