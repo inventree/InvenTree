@@ -173,7 +173,7 @@ const icons = {
   customer: IconUser,
   quantity: IconNumbers,
   progress: IconProgressCheck,
-  total_cost: IconBusinessPlan,
+  total_cost: IconBusinessplan,
   reference: IconHash,
   serial: IconHash,
   website: IconWorld,
