@@ -8,7 +8,9 @@ test('PUI - Quick Command', async ({ page }) => {
   // Open Spotlight with Keyboard Shortcut
   await page.locator('body').press(`${systemKey}+k`);
   await page.waitForTimeout(200);
-  await page.getByRole('tab', { name: 'Dashboard' }).click();
+  await page
+    .getByRole('button', { name: 'Dashboard Go to the InvenTree dashboard' })
+    .click();
   await page
     .locator('div')
     .filter({ hasText: /^Dashboard$/ })
