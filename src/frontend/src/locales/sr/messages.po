@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-16 03:11\n"
+"PO-Revision-Date: 2024-04-17 03:36\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -498,7 +498,7 @@ msgstr "Status: <0>worker</0> ({0}), <1>plugins</1>{1}"
 #: src/components/widgets/MarkdownEditor.tsx:154
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
-#: src/pages/part/PartPricingPanel.tsx:47
+#: src/pages/part/PartPricingPanel.tsx:71
 #: src/tables/InvenTreeTable.tsx:430
 #: src/tables/InvenTreeTable.tsx:506
 #: src/tables/plugin/PluginListTable.tsx:398
@@ -1171,7 +1171,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:119
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:99
-#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:41
+#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:42
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:319
 msgid "Purchase Order"
 msgstr ""
@@ -1292,8 +1292,8 @@ msgid "Serial Number"
 msgstr ""
 
 #: src/components/render/Stock.tsx:28
-#: src/pages/part/pricing/BomPricingPanel.tsx:117
-#: src/pages/part/pricing/PriceBreakPanel.tsx:95
+#: src/pages/part/pricing/BomPricingPanel.tsx:132
+#: src/pages/part/pricing/PriceBreakPanel.tsx:96
 #: src/pages/stock/StockDetail.tsx:139
 #: src/pages/stock/StockDetail.tsx:455
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:92
@@ -3517,7 +3517,7 @@ msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:131
 #: src/pages/company/CustomerDetail.tsx:8
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:37
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:38
 #: src/pages/sales/ReturnOrderDetail.tsx:63
 #: src/pages/sales/SalesOrderDetail.tsx:67
 #: src/pages/stock/StockDetail.tsx:218
@@ -3651,8 +3651,8 @@ msgid "Received Stock"
 msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:229
-#: src/pages/part/PartPricingPanel.tsx:79
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:111
+#: src/pages/part/PartPricingPanel.tsx:115
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:130
 msgid "Supplier Pricing"
 msgstr ""
 
@@ -3764,7 +3764,7 @@ msgid "Minimum Stock"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:220
-#: src/tables/bom/BomTable.tsx:205
+#: src/tables/bom/BomTable.tsx:210
 #: src/tables/build/BuildLineTable.tsx:92
 msgid "On order"
 msgstr ""
@@ -3778,12 +3778,12 @@ msgid "Allocated to Sales Orders"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:250
-#: src/tables/bom/BomTable.tsx:229
+#: src/tables/bom/BomTable.tsx:234
 msgid "Can Build"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:257
-#: src/tables/bom/BomTable.tsx:213
+#: src/tables/bom/BomTable.tsx:218
 #: src/tables/part/PartTable.tsx:91
 msgid "Building"
 msgstr ""
@@ -3805,7 +3805,7 @@ msgid "Template Part"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:276
-#: src/tables/bom/BomTable.tsx:257
+#: src/tables/bom/BomTable.tsx:262
 msgid "Assembled Part"
 msgstr ""
 
@@ -3814,7 +3814,7 @@ msgid "Component Part"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:286
-#: src/tables/bom/BomTable.tsx:252
+#: src/tables/bom/BomTable.tsx:257
 msgid "Trackable Part"
 msgstr ""
 
@@ -3944,183 +3944,189 @@ msgstr ""
 #~ msgid "Categories"
 #~ msgstr "Categories"
 
-#: src/pages/part/PartPricingPanel.tsx:48
+#: src/pages/part/PartPricingPanel.tsx:72
 msgid "No pricing data found for this part."
 msgstr ""
 
-#: src/pages/part/PartPricingPanel.tsx:56
+#: src/pages/part/PartPricingPanel.tsx:86
 msgid "Pricing Overview"
 msgstr ""
 
-#: src/pages/part/PartPricingPanel.tsx:62
+#: src/pages/part/PartPricingPanel.tsx:92
 msgid "Purchase History"
 msgstr ""
 
-#: src/pages/part/PartPricingPanel.tsx:73
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:90
+#: src/pages/part/PartPricingPanel.tsx:106
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:109
 msgid "Internal Pricing"
 msgstr ""
 
-#: src/pages/part/PartPricingPanel.tsx:85
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:97
+#: src/pages/part/PartPricingPanel.tsx:124
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:116
 msgid "BOM Pricing"
 msgstr ""
 
-#: src/pages/part/PartPricingPanel.tsx:91
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:118
+#: src/pages/part/PartPricingPanel.tsx:131
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:137
 msgid "Variant Pricing"
 msgstr ""
 
-#: src/pages/part/PartPricingPanel.tsx:102
+#: src/pages/part/PartPricingPanel.tsx:143
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:144
 msgid "Sale Pricing"
 msgstr ""
 
-#: src/pages/part/PartPricingPanel.tsx:108
+#: src/pages/part/PartPricingPanel.tsx:150
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:151
 msgid "Sale History"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:85
+#: src/pages/part/pricing/BomPricingPanel.tsx:100
 msgid "Minimum Total Price"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:90
+#: src/pages/part/pricing/BomPricingPanel.tsx:105
 msgid "Maximum Total Price"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:110
+#: src/pages/part/pricing/BomPricingPanel.tsx:125
 #: src/tables/part/PartTable.tsx:195
 msgid "Component"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:137
-#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:76
-#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:135
-#: src/pages/part/pricing/SupplierPricingPanel.tsx:66
-#: src/tables/bom/BomTable.tsx:144
+#: src/pages/part/pricing/BomPricingPanel.tsx:152
+#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:77
+#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:151
+#: src/pages/part/pricing/SupplierPricingPanel.tsx:83
+#: src/tables/bom/BomTable.tsx:149
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:168
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:88
 msgid "Unit Price"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:146
+#: src/pages/part/pricing/BomPricingPanel.tsx:161
 #: src/tables/ColumnRenderers.tsx:231
-#: src/tables/bom/BomTable.tsx:153
+#: src/tables/bom/BomTable.tsx:158
 msgid "Total Price"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:162
-#: src/pages/part/pricing/VariantPricingPanel.tsx:61
+#: src/pages/part/pricing/BomPricingPanel.tsx:177
+#: src/pages/part/pricing/VariantPricingPanel.tsx:62
 #: src/tables/purchasing/SupplierPartTable.tsx:137
 msgid "Updated"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:211
+#: src/pages/part/pricing/BomPricingPanel.tsx:230
 msgid "Pie Chart"
 msgstr ""
 
-#: src/pages/part/pricing/BomPricingPanel.tsx:212
+#: src/pages/part/pricing/BomPricingPanel.tsx:231
 msgid "Bar Chart"
 msgstr ""
 
-#: src/pages/part/pricing/PriceBreakPanel.tsx:62
-#: src/pages/part/pricing/PriceBreakPanel.tsx:116
+#: src/pages/part/pricing/PriceBreakPanel.tsx:63
+#: src/pages/part/pricing/PriceBreakPanel.tsx:117
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:138
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:170
 msgid "Add Price Break"
 msgstr ""
 
-#: src/pages/part/pricing/PriceBreakPanel.tsx:75
+#: src/pages/part/pricing/PriceBreakPanel.tsx:76
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:151
 msgid "Edit Price Break"
 msgstr ""
 
-#: src/pages/part/pricing/PriceBreakPanel.tsx:85
+#: src/pages/part/pricing/PriceBreakPanel.tsx:86
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:161
 msgid "Delete Price Break"
 msgstr ""
 
-#: src/pages/part/pricing/PriceBreakPanel.tsx:101
-#: src/pages/part/pricing/PriceBreakPanel.tsx:175
+#: src/pages/part/pricing/PriceBreakPanel.tsx:102
+#: src/pages/part/pricing/PriceBreakPanel.tsx:193
 msgid "Price Break"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:48
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:60
 msgid "Pricing Category"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:60
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:79
 msgid "Minimum"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:72
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:91
 msgid "Maximum"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:104
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:123
 msgid "Purchase Pricing"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:125
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:158
 msgid "Override Pricing"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:132
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:165
 msgid "Overall Pricing"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:151
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:184
 #: src/pages/stock/StockDetail.tsx:123
 msgid "Last Updated"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:167
-#: src/pages/part/pricing/VariantPricingPanel.tsx:45
-#: src/pages/part/pricing/VariantPricingPanel.tsx:108
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:210
+#: src/pages/part/pricing/VariantPricingPanel.tsx:46
+#: src/pages/part/pricing/VariantPricingPanel.tsx:119
 msgid "Minimum Price"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:172
-#: src/pages/part/pricing/VariantPricingPanel.tsx:53
-#: src/pages/part/pricing/VariantPricingPanel.tsx:113
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:215
+#: src/pages/part/pricing/VariantPricingPanel.tsx:54
+#: src/pages/part/pricing/VariantPricingPanel.tsx:124
 msgid "Maximum Price"
 msgstr ""
 
-#: src/pages/part/pricing/PricingPanel.tsx:34
+#: src/pages/part/pricing/PricingPanel.tsx:23
+msgid "No data available"
+msgstr ""
+
+#: src/pages/part/pricing/PricingPanel.tsx:64
 msgid "No Data"
 msgstr ""
 
-#: src/pages/part/pricing/PricingPanel.tsx:35
+#: src/pages/part/pricing/PricingPanel.tsx:65
 msgid "No pricing data available"
 msgstr ""
 
-#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:49
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:44
+#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:50
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:45
 #: src/tables/ColumnRenderers.tsx:170
 #: src/tables/plugin/PluginListTable.tsx:182
 #: src/tables/stock/StockItemTestResultTable.tsx:194
 msgid "Date"
 msgstr ""
 
-#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:56
-#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:140
+#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:57
+#: src/pages/part/pricing/PurchaseHistoryPanel.tsx:156
 msgid "Purchase Price"
 msgstr ""
 
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:30
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:31
 msgid "Sale Order"
 msgstr ""
 
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:51
-#: src/pages/part/pricing/SaleHistoryPanel.tsx:99
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:52
+#: src/pages/part/pricing/SaleHistoryPanel.tsx:115
 msgid "Sale Price"
 msgstr ""
 
-#: src/pages/part/pricing/SupplierPricingPanel.tsx:71
+#: src/pages/part/pricing/SupplierPricingPanel.tsx:88
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:79
 msgid "Supplier Price"
 msgstr ""
 
-#: src/pages/part/pricing/VariantPricingPanel.tsx:38
+#: src/pages/part/pricing/VariantPricingPanel.tsx:39
 msgid "Variant Part"
 msgstr ""
 
@@ -4491,118 +4497,146 @@ msgstr ""
 msgid "Table filters"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:73
+#: src/tables/bom/BomTable.tsx:78
 msgid "This BOM item is defined for a different parent"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:88
+#: src/tables/bom/BomTable.tsx:93
 msgid "Part Information"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:172
+#: src/tables/bom/BomTable.tsx:177
 #: src/tables/part/PartTable.tsx:133
 msgid "No stock"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:180
+#: src/tables/bom/BomTable.tsx:185
 #: src/tables/build/BuildLineTable.tsx:101
 #: src/tables/part/PartTable.tsx:124
 msgid "External stock"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:188
+#: src/tables/bom/BomTable.tsx:193
 #: src/tables/build/BuildLineTable.tsx:64
 msgid "Includes substitute stock"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:197
+#: src/tables/bom/BomTable.tsx:202
 #: src/tables/build/BuildLineTable.tsx:74
 msgid "Includes variant stock"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:222
+#: src/tables/bom/BomTable.tsx:227
 #: src/tables/part/PartTable.tsx:152
 #: src/tables/stock/StockItemTable.tsx:190
 msgid "Stock Information"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:233
+#: src/tables/bom/BomTable.tsx:238
 #: src/tables/build/BuildLineTable.tsx:179
 msgid "Consumable item"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:253
+#: src/tables/bom/BomTable.tsx:258
 msgid "Show trackable items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:258
+#: src/tables/bom/BomTable.tsx:263
 msgid "Show asssmbled items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:262
+#: src/tables/bom/BomTable.tsx:267
 msgid "Show items with available stock"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:266
+#: src/tables/bom/BomTable.tsx:271
 msgid "Show items on order"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:270
+#: src/tables/bom/BomTable.tsx:275
 msgid "Show validated items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:274
+#: src/tables/bom/BomTable.tsx:279
 #: src/tables/bom/UsedInTable.tsx:63
 msgid "Show inherited items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:278
+#: src/tables/bom/BomTable.tsx:283
 #: src/tables/bom/UsedInTable.tsx:67
 msgid "Show optional items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:282
+#: src/tables/bom/BomTable.tsx:287
 msgid "Show consumable items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:286
+#: src/tables/bom/BomTable.tsx:291
 msgid "Has Pricing"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:287
+#: src/tables/bom/BomTable.tsx:292
 msgid "Show items with pricing"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:298
+#: src/tables/bom/BomTable.tsx:301
+msgid "Create BOM Item"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:306
+msgid "BOM item created"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:311
+#~ msgid "Edit Bom Item"
+#~ msgstr "Edit Bom Item"
+
+#: src/tables/bom/BomTable.tsx:313
+msgid "Edit BOM Item"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:313
+#~ msgid "Bom item updated"
+#~ msgstr "Bom item updated"
+
+#: src/tables/bom/BomTable.tsx:315
+msgid "BOM item updated"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:322
+msgid "Delete BOM Item"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:323
+msgid "BOM item deleted"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:328
+#~ msgid "Delete Bom Item"
+#~ msgstr "Delete Bom Item"
+
+#: src/tables/bom/BomTable.tsx:329
+#~ msgid "Bom item deleted"
+#~ msgstr "Bom item deleted"
+
+#: src/tables/bom/BomTable.tsx:331
+#~ msgid "Are you sure you want to remove this BOM item?"
+#~ msgstr "Are you sure you want to remove this BOM item?"
+
+#: src/tables/bom/BomTable.tsx:333
 msgid "View BOM"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:309
+#: src/tables/bom/BomTable.tsx:344
 msgid "Validate BOM line"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:317
+#: src/tables/bom/BomTable.tsx:352
 msgid "Edit Substitutes"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:331
-msgid "Edit Bom Item"
-msgstr ""
-
-#: src/tables/bom/BomTable.tsx:333
-msgid "Bom item updated"
-msgstr ""
-
-#: src/tables/bom/BomTable.tsx:348
-msgid "Delete Bom Item"
-msgstr ""
-
-#: src/tables/bom/BomTable.tsx:349
-msgid "Bom item deleted"
-msgstr ""
-
-#: src/tables/bom/BomTable.tsx:351
-msgid "Are you sure you want to remove this BOM item?"
+#: src/tables/bom/BomTable.tsx:389
+msgid "Add BOM Item"
 msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:72
