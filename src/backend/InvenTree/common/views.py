@@ -269,7 +269,7 @@ class FileManagementFormView(MultiStepFormView):
                 for idx, item in row_data.items():
                     column_data = {
                         'name': self.column_names[idx],
-                        'guess': self.column_selections[idx],
+                        'guess': self.column_selections.get(idx, ''),
                     }
 
                     cell_data = {'cell': item, 'idx': idx, 'column': column_data}
