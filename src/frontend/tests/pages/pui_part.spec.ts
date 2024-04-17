@@ -78,6 +78,34 @@ test('PUI - Pages - Part - Pricing (Supplier)', async ({ page }) => {
   await page.waitForURL('**/purchasing/supplier-part/697/');
 });
 
+test('PUI - Pages - Part - Pricing (Variant)', async ({ page }) => {
+  await doQuickLogin(page);
+
+  // Part
+  await page.goto(`${baseUrl}/part/106/pricing`);
+  await page.getByText('Part: Chair').waitFor();
+  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
+  await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
+  await page.getByText('Last Updated').waitFor();
+  await page.getByRole('button', { name: 'Internal Pricing' }).isDisabled();
+  await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
+  await page.getByRole('button', { name: 'Variant Pricing' }).isEnabled();
+  await page.getByRole('button', { name: 'Sale Pricing' }).isDisabled();
+  await page.getByRole('button', { name: 'Sale History' }).isDisabled();
+
+  // Variant Pricing
+  await page.getByRole('button', { name: 'Variant Pricing' }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole('button', { name: 'Variant Part Not sorted' }).click();
+
+  // Variant Pricing - linkjumping
+  let target = page.getByText('Green Chair').first();
+  await target.waitFor();
+  await target.click();
+  await page.waitForURL('**/part/109/pricing');
+});
+
 test('PUI - Pages - Part - Pricing (Internal)', async ({ page }) => {
   await doQuickLogin(page);
 
