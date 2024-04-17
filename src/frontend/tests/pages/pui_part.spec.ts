@@ -34,11 +34,13 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   // Overview Graph
   let graph = page.locator('#pricing-overview-chart');
   await graph.waitFor();
-  await graph.getByText('$45').waitFor();
+  await graph.getByText('$60').waitFor();
   await graph.getByText('BOM Pricing').waitFor();
   await graph.getByText('Overall Pricing').waitFor();
   await graph.locator('path').nth(1).hover();
-  await page.getByText('min_value : $43').waitFor();
+  await page.getByText('min_value : $50').waitFor();
+  await graph.locator('path').nth(2).hover();
+  await page.getByText('max_value : $52.88').waitFor();
 
   // BOM Pricing
   await page.getByLabel('Pricing Overview').locator('a').click();
