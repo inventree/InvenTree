@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, SimpleGrid } from '@mantine/core';
+import { SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import {
   Bar,
@@ -13,6 +13,7 @@ import {
 
 import { AddItemButton } from '../../../components/buttons/AddItemButton';
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
@@ -144,6 +145,13 @@ export default function PriceBreakPanel({
     [user]
   );
 
+  const currency: string = useMemo(() => {
+    if (table.records.length === 0) {
+      return '';
+    }
+    return table.records[0].currency;
+  }, [table.records]);
+
   return (
     <>
       {newPriceBreak.modal}
@@ -166,8 +174,18 @@ export default function PriceBreakPanel({
           <ResponsiveContainer width="100%" height={500}>
             <BarChart data={table.records}>
               <XAxis dataKey="quantity" />
-              <YAxis />
-              <Tooltip />
+              <YAxis
+                tickFormatter={(value, index) =>
+                  formatCurrency(value, {
+                    currency: currency
+                  })?.toString() ?? ''
+                }
+              />
+              <Tooltip
+                formatter={(label, payload) =>
+                  tooltipFormatter(label, currency)
+                }
+              />
               <Legend />
               <Bar
                 dataKey="price"

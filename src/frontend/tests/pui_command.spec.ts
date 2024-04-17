@@ -1,17 +1,9 @@
 import { expect, systemKey, test } from './baseFixtures.js';
 import { homeUrl, loginUrl, logoutUrl, user } from './defaults.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Quick Command', async ({ page }) => {
-  await page.goto(logoutUrl);
-  await page.goto(loginUrl);
-  await expect(page).toHaveTitle(RegExp('^InvenTree.*$'));
-  await page.waitForURL('**/platform/login');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform/home');
-
-  await page.waitForTimeout(1000);
+  await doQuickLogin(page);
 
   // Open Spotlight with Keyboard Shortcut
   await page.locator('body').press(`${systemKey}+k`);
@@ -43,16 +35,7 @@ test('PUI - Quick Command', async ({ page }) => {
 });
 
 test('PUI - Quick Command - No Keys', async ({ page }) => {
-  await page.goto(logoutUrl);
-  await page.goto(loginUrl);
-  await expect(page).toHaveTitle(RegExp('^InvenTree.*$'));
-  await page.waitForURL('**/platform/login');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform/home');
-
-  await page.waitForTimeout(1000);
+  await doQuickLogin(page);
 
   // Open Spotlight with Button
   await page.getByRole('button', { name: 'Open spotlight' }).click();

@@ -10,3 +10,8 @@ export const user = {
   username: 'allaccess',
   password: 'nolimits'
 };
+
+export const adminuser = {
+  username: 'admin',
+  password: 'inventree'
+};

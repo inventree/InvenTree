@@ -1,9 +1,9 @@
 import { expect, test } from './baseFixtures.js';
 import { baseUrl, user } from './defaults.js';
-import { doLogin } from './login.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Stock', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/stock`);
   await page.waitForURL('**/platform/stock/location/index/details');
@@ -19,7 +19,7 @@ test('PUI - Stock', async ({ page }) => {
 });
 
 test('PUI - Build', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Build' }).click();
   await page.getByText('Widget Assembly Variant').click();
@@ -33,7 +33,7 @@ test('PUI - Build', async ({ page }) => {
 });
 
 test('PUI - Purchasing', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.getByRole('cell', { name: 'PO0012' }).click();

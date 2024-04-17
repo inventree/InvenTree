@@ -1,10 +1,11 @@
 import { expect, test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
-import { doLogin } from './login.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Parts', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
+  await page.goto(`${baseUrl}/home`);
   await page.getByRole('tab', { name: 'Parts' }).click();
 
   await page.waitForURL('**/platform/part/category/index/details');
@@ -33,7 +34,7 @@ test('PUI - Parts', async ({ page }) => {
 });
 
 test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/84/manufacturers`);
 
@@ -46,7 +47,7 @@ test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
 });
 
 test('PUI - Parts - Supplier Parts', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/15/suppliers`);
 
@@ -59,7 +60,7 @@ test('PUI - Parts - Supplier Parts', async ({ page }) => {
 });
 
 test('PUI - Sales', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/sales/`);
 
@@ -110,7 +111,7 @@ test('PUI - Sales', async ({ page }) => {
 });
 
 test('PUI - Scanning', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   await page.getByLabel('Homenav').click();
   await page.getByRole('button', { name: 'System Information' }).click();
@@ -131,7 +132,7 @@ test('PUI - Scanning', async ({ page }) => {
 });
 
 test('PUI - Admin', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
@@ -180,7 +181,7 @@ test('PUI - Admin', async ({ page }) => {
 });
 
 test('PUI - Language / Color', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
@@ -214,7 +215,7 @@ test('PUI - Language / Color', async ({ page }) => {
 });
 
 test('PUI - Company', async ({ page }) => {
-  await doLogin(page);
+  await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/company/1/details`);
   await page
