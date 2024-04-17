@@ -1,22 +1,17 @@
 import { expect, systemKey, test } from './baseFixtures.js';
-import { user } from './defaults.js';
+import { homeUrl, loginUrl, logoutUrl, user } from './defaults.js';
 
 test('PUI - Quick Command', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
+  await page.goto(logoutUrl);
+  await page.goto(loginUrl);
+  await expect(page).toHaveTitle(RegExp('^InvenTree.*$'));
+  await page.waitForURL('**/platform/login');
   await page.getByLabel('username').fill(user.username);
   await page.getByLabel('password').fill(user.password);
   await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
-  await page.goto('./platform/');
+  await page.waitForURL('**/platform/home');
 
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page
-    .getByRole('heading', { name: 'Welcome to your Dashboard,' })
-    .click();
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(1000);
 
   // Open Spotlight with Keyboard Shortcut
   await page.locator('body').press(`${systemKey}+k`);
@@ -47,19 +42,17 @@ test('PUI - Quick Command', async ({ page }) => {
   await page.waitForURL('**/platform/dashboard');
 });
 
-test('PUI - Quick Command - no keys', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
+test('PUI - Quick Command - No Keys', async ({ page }) => {
+  await page.goto(logoutUrl);
+  await page.goto(loginUrl);
+  await expect(page).toHaveTitle(RegExp('^InvenTree.*$'));
+  await page.waitForURL('**/platform/login');
   await page.getByLabel('username').fill(user.username);
   await page.getByLabel('password').fill(user.password);
   await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.waitForURL('**/platform/home');
 
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform');
-  // wait for the page to load - 0.5s
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(1000);
 
   // Open Spotlight with Button
   await page.getByRole('button', { name: 'Open spotlight' }).click();
