@@ -129,6 +129,7 @@ test('PUI - Pages - Part - Pricing (Internal)', async ({ page }) => {
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await page.getByText('Part *M2x4 SHCSSocket head').click();
   await page.getByText('Part *M2x4 SHCSSocket head').click();
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
 });
 
