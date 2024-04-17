@@ -492,10 +492,18 @@ if DEBUG:
         'rest_framework.renderers.BrowsableAPIRenderer'
     )
 
-# dj-rest-auth
 # JWT switch
 USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
 REST_USE_JWT = USE_JWT
+
+# dj-rest-auth
+REST_AUTH = {
+    'SESSION_LOGIN': True,
+    'TOKEN_MODEL': 'users.models.ApiToken',
+    'TOKEN_CREATOR': 'users.models.default_create_token',
+    'USE_JWT': USE_JWT,
+}
+
 OLD_PASSWORD_FIELD_ENABLED = True
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'
@@ -509,6 +517,7 @@ if USE_JWT:
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
     )
     INSTALLED_APPS.append('rest_framework_simplejwt')
+
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
@@ -1091,6 +1100,13 @@ if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
             'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
         )
         sys.exit(-1)
+
+# Additional CSRF settings
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = 'Lax'
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',

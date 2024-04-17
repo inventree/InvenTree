@@ -1,13 +1,11 @@
-import { test } from './baseFixtures.js';
-import { user } from './defaults.js';
+import { expect, test } from './baseFixtures.js';
+import { baseUrl, user } from './defaults.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Stock', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
+  await doQuickLogin(page);
 
-  await page.goto('./platform/stock');
+  await page.goto(`${baseUrl}/stock`);
   await page.waitForURL('**/platform/stock/location/index/details');
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('cell', { name: '1551ABK' }).click();
@@ -21,11 +19,7 @@ test('PUI - Stock', async ({ page }) => {
 });
 
 test('PUI - Build', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
-  await page.goto('./platform/');
+  await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Build' }).click();
   await page.getByText('Widget Assembly Variant').click();
@@ -39,11 +33,7 @@ test('PUI - Build', async ({ page }) => {
 });
 
 test('PUI - Purchasing', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
-  await page.goto('./platform/');
+  await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.getByRole('cell', { name: 'PO0012' }).click();
