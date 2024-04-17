@@ -6,8 +6,14 @@ INVENTREE_API_VERSION = 188
 
 INVENTREE_API_TEXT = """
 
-v188 - 2024-04-05 : https://github.com/inventree/InvenTree/pull/6911
+v188 - 2024-04-17 : https://github.com/inventree/InvenTree/pull/6911
     - Adds API endpoints for managing data import
+
+v187 - 2024-04-10 : https://github.com/inventree/InvenTree/pull/6985
+    - Allow Part list endpoint to be sorted by pricing_min and pricing_max values
+    - Allow BomItem list endpoint to be sorted by pricing_min and pricing_max values
+    - Allow InternalPrice and SalePrice endpoints to be sorted by quantity
+    - Adds total pricing values to BomItem serializer
 
 v186 - 2024-03-26 : https://github.com/inventree/InvenTree/pull/6855
     - Adds license information to the API
