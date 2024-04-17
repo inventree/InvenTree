@@ -1,8 +1,9 @@
 import { expect, test } from './baseFixtures.js';
-import { baseUrl, classicUrl, user } from './defaults.js';
+import { baseUrl, classicUrl, logoutUrl, user } from './defaults.js';
 import { doLogin, doQuickLogin } from './login.js';
 
 test('PUI - Basic login test via django', async ({ page }) => {
+  await page.goto(logoutUrl);
   await page.goto(`${classicUrl}/platform/`);
   await expect(page).toHaveTitle('InvenTree Demo Server');
   await page.waitForURL('**/platform/');
