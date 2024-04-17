@@ -2,59 +2,59 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-12 21:27+0000\n"
-"PO-Revision-Date: 2024-04-13 01:53\n"
+"POT-Creation-Date: 2024-04-14 10:31+0000\n"
+"PO-Revision-Date: 2024-04-15 02:35\n"
 "Last-Translator: \n"
-"Language-Team: Chinese Simplified\n"
-"Language: zh_CN\n"
+"Language-Team: Chinese Traditional\n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-Language: zh-TW\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:255
 msgid "API endpoint not found"
-msgstr "未找到 API 端点"
+msgstr ""
 
 #: InvenTree/api.py:519
 msgid "User does not have permission to view this model"
-msgstr "用户没有权限查阅当前模型。"
+msgstr ""
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr "提供了无效的单位 ({unit})"
+msgstr ""
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr "没有提供数值"
+msgstr ""
 
 #: InvenTree/conversion.py:204
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr "不能将 {original} 转换到 {unit}"
+msgstr ""
 
 #: InvenTree/conversion.py:206
 msgid "Invalid quantity supplied"
-msgstr "提供的数量无效"
+msgstr ""
 
 #: InvenTree/conversion.py:220
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr "提供的数量无效 ({exc})"
+msgstr ""
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr "在管理面板中可以找到错误详细信息"
+msgstr ""
 
 #: InvenTree/fields.py:139
 msgid "Enter date"
-msgstr "输入日期"
+msgstr ""
 
 #: InvenTree/fields.py:208 InvenTree/models.py:1021 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
@@ -77,64 +77,64 @@ msgstr "输入日期"
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1533 templates/js/translated/stock.js:2427
 msgid "Notes"
-msgstr "备注"
+msgstr ""
 
 #: InvenTree/format.py:164
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "值' {name}' 未出现在模式格式中"
+msgstr ""
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
-msgstr "提供的值与所需模式不匹配："
+msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr "输入密码"
+msgstr ""
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr "输入新密码"
+msgstr ""
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr "确认密码"
+msgstr ""
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr "确认新密码"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr "旧密码"
+msgstr ""
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr "电子邮件 (重复)"
+msgstr ""
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr "邮箱地址已确认"
+msgstr ""
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr "您必须每次输入相同的电子邮件。"
+msgstr ""
 
 #: InvenTree/forms.py:253 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr "提供的主电子邮件地址无效。"
+msgstr ""
 
 #: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
-msgstr "提供的邮箱域名未被批准。"
+msgstr ""
 
 #: InvenTree/forms.py:395
 msgid "Registration is disabled."
-msgstr "注册已禁用。"
+msgstr ""
 
 #: InvenTree/helpers.py:525 order/models.py:541 order/models.py:743
 msgid "Invalid quantity provided"
-msgstr "提供的数量无效"
+msgstr ""
 
 #: InvenTree/helpers.py:533
 msgid "Empty serial number string"
@@ -142,210 +142,210 @@ msgstr ""
 
 #: InvenTree/helpers.py:562
 msgid "Duplicate serial"
-msgstr "复制序列号"
+msgstr ""
 
 #: InvenTree/helpers.py:594 InvenTree/helpers.py:637
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr "无效的组范围: {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:625
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr "组范围 {group} 超出了允许的数量 ({expected_quantity})"
+msgstr ""
 
 #: InvenTree/helpers.py:655 InvenTree/helpers.py:662 InvenTree/helpers.py:681
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr "无效的组序列: {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:691
 msgid "No serial numbers found"
-msgstr "未找到序列号"
+msgstr ""
 
 #: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "唯一序列号的数量 ({len(serials)}) 必须与数量匹配 ({expected_quantity})"
+msgstr ""
 
 #: InvenTree/helpers.py:814
 msgid "Remove HTML tags from this value"
-msgstr "从这个值中删除 HTML 标签"
+msgstr ""
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr "连接错误"
+msgstr ""
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
-msgstr "服务器响应状态码无效"
+msgstr ""
 
 #: InvenTree/helpers_model.py:158
 msgid "Exception occurred"
-msgstr "发生异常"
+msgstr ""
 
 #: InvenTree/helpers_model.py:168
 msgid "Server responded with invalid Content-Length value"
-msgstr "服务器响应的内容长度值无效"
+msgstr ""
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr "图片尺寸过大"
+msgstr ""
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
-msgstr "图片下载超出最大尺寸"
+msgstr ""
 
 #: InvenTree/helpers_model.py:188
 msgid "Remote server returned empty response"
-msgstr "远程服务器返回了空响应"
+msgstr ""
 
 #: InvenTree/helpers_model.py:196
 msgid "Supplied URL is not a valid image file"
-msgstr "提供的 URL 不是一个有效的图片文件"
+msgstr ""
 
 #: InvenTree/locales.py:18
 msgid "Bulgarian"
-msgstr "Bulgarian"
+msgstr ""
 
 #: InvenTree/locales.py:19
 msgid "Czech"
-msgstr "Czech"
+msgstr ""
 
 #: InvenTree/locales.py:20
 msgid "Danish"
-msgstr "Danish"
+msgstr ""
 
 #: InvenTree/locales.py:21
 msgid "German"
-msgstr "German"
+msgstr ""
 
 #: InvenTree/locales.py:22
 msgid "Greek"
-msgstr "Greek"
+msgstr ""
 
 #: InvenTree/locales.py:23
 msgid "English"
-msgstr "English"
+msgstr ""
 
 #: InvenTree/locales.py:24
 msgid "Spanish"
-msgstr "Spanish"
+msgstr ""
 
 #: InvenTree/locales.py:25
 msgid "Spanish (Mexican)"
-msgstr "Spanish (Mexican)"
+msgstr ""
 
 #: InvenTree/locales.py:26
 msgid "Farsi / Persian"
-msgstr "Farsi / Persian"
+msgstr ""
 
 #: InvenTree/locales.py:27
 msgid "Finnish"
-msgstr "Finnish"
+msgstr ""
 
 #: InvenTree/locales.py:28
 msgid "French"
-msgstr "French"
+msgstr ""
 
 #: InvenTree/locales.py:29
 msgid "Hebrew"
-msgstr "Hebrew"
+msgstr ""
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr "Hindi"
+msgstr ""
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
-msgstr "Hungarian"
+msgstr ""
 
 #: InvenTree/locales.py:32
 msgid "Italian"
-msgstr "Italian"
+msgstr ""
 
 #: InvenTree/locales.py:33
 msgid "Japanese"
-msgstr "Japanese"
+msgstr ""
 
 #: InvenTree/locales.py:34
 msgid "Korean"
-msgstr "Korean"
+msgstr ""
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr "Latvian"
+msgstr ""
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
-msgstr "Dutch"
+msgstr ""
 
 #: InvenTree/locales.py:37
 msgid "Norwegian"
-msgstr "Norwegian"
+msgstr ""
 
 #: InvenTree/locales.py:38
 msgid "Polish"
-msgstr "Polish"
+msgstr ""
 
 #: InvenTree/locales.py:39
 msgid "Portuguese"
-msgstr "Portuguese"
+msgstr ""
 
 #: InvenTree/locales.py:40
 msgid "Portuguese (Brazilian)"
-msgstr "Portuguese (Brazilian)"
+msgstr ""
 
 #: InvenTree/locales.py:41
 msgid "Russian"
-msgstr "Russian"
+msgstr ""
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
-msgstr "Slovak"
+msgstr ""
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
-msgstr "Slovenian"
+msgstr ""
 
 #: InvenTree/locales.py:44
 msgid "Serbian"
-msgstr "Serbian"
+msgstr ""
 
 #: InvenTree/locales.py:45
 msgid "Swedish"
-msgstr "Swedish"
+msgstr ""
 
 #: InvenTree/locales.py:46
 msgid "Thai"
-msgstr "Thai"
+msgstr ""
 
 #: InvenTree/locales.py:47
 msgid "Turkish"
-msgstr "Turkish"
+msgstr ""
 
 #: InvenTree/locales.py:48
 msgid "Vietnamese"
-msgstr "Vietnamese"
+msgstr ""
 
 #: InvenTree/locales.py:49
 msgid "Chinese (Simplified)"
-msgstr "中文 (简体)"
+msgstr ""
 
 #: InvenTree/locales.py:50
 msgid "Chinese (Traditional)"
-msgstr "中文 (繁体)"
+msgstr ""
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr "[{site_name}] 登录到应用程序"
+msgstr ""
 
 #: InvenTree/magic_login.py:38 company/models.py:132
 #: company/templates/company/company_base.html:132
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
 msgid "Email"
-msgstr "电子邮件"
+msgstr ""
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
@@ -626,217 +626,217 @@ msgstr ""
 
 #: InvenTree/serializers.py:576
 msgid "Invalid value"
-msgstr "无效值"
+msgstr ""
 
 #: InvenTree/serializers.py:596
 msgid "Data File"
-msgstr "数据文件"
+msgstr ""
 
 #: InvenTree/serializers.py:597
 msgid "Select data file for upload"
-msgstr "选择要上传的数据文件"
+msgstr ""
 
 #: InvenTree/serializers.py:614
 msgid "Unsupported file type"
-msgstr "不支持的文件类型"
+msgstr ""
 
 #: InvenTree/serializers.py:620
 msgid "File is too large"
-msgstr "文件过大"
+msgstr ""
 
 #: InvenTree/serializers.py:641
 msgid "No columns found in file"
-msgstr "在文件中没有找到列"
+msgstr ""
 
 #: InvenTree/serializers.py:644
 msgid "No data rows found in file"
-msgstr "在文件中没有找到数据行"
+msgstr ""
 
 #: InvenTree/serializers.py:757
 msgid "No data rows provided"
-msgstr "没有提供数据行"
+msgstr ""
 
 #: InvenTree/serializers.py:760
 msgid "No data columns supplied"
-msgstr "没有提供数据列"
+msgstr ""
 
 #: InvenTree/serializers.py:827
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr "缺少必需的列：'{name}'"
+msgstr ""
 
 #: InvenTree/serializers.py:836
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr "重复列: '{col}'"
+msgstr ""
 
 #: InvenTree/serializers.py:859
 msgid "Remote Image"
-msgstr "远程图片"
+msgstr ""
 
 #: InvenTree/serializers.py:860
 msgid "URL of remote image file"
-msgstr "远程图片文件的 URL"
+msgstr ""
 
 #: InvenTree/serializers.py:878
 msgid "Downloading images from remote URL is not enabled"
-msgstr "未启用从远程 URL下载图片"
+msgstr ""
 
 #: InvenTree/status.py:66 part/serializers.py:1156
 msgid "Background worker check failed"
-msgstr "后台执行器检查失败"
+msgstr ""
 
 #: InvenTree/status.py:70
 msgid "Email backend not configured"
-msgstr "未配置电子邮件后端"
+msgstr ""
 
 #: InvenTree/status.py:73
 msgid "InvenTree system health checks failed"
-msgstr "InventTree 系统健康检查失败"
+msgstr ""
 
 #: InvenTree/status_codes.py:12 InvenTree/status_codes.py:37
 #: InvenTree/status_codes.py:148 InvenTree/status_codes.py:164
 #: InvenTree/status_codes.py:182 generic/states/tests.py:17
 #: templates/js/translated/table_filters.js:598
 msgid "Pending"
-msgstr "待定"
+msgstr ""
 
 #: InvenTree/status_codes.py:13 generic/states/tests.py:18
 msgid "Placed"
-msgstr "放置"
+msgstr ""
 
 #: InvenTree/status_codes.py:14 InvenTree/status_codes.py:151
 #: InvenTree/status_codes.py:169 generic/states/tests.py:19
 #: order/templates/order/order_base.html:158
 #: order/templates/order/sales_order_base.html:161
 msgid "Complete"
-msgstr "完成"
+msgstr ""
 
 #: InvenTree/status_codes.py:15 InvenTree/status_codes.py:44
 #: InvenTree/status_codes.py:150 InvenTree/status_codes.py:170
 msgid "Cancelled"
-msgstr "已取消"
+msgstr ""
 
 #: InvenTree/status_codes.py:16 InvenTree/status_codes.py:45
 #: InvenTree/status_codes.py:67
 msgid "Lost"
-msgstr "丢失"
+msgstr ""
 
 #: InvenTree/status_codes.py:17 InvenTree/status_codes.py:46
 #: InvenTree/status_codes.py:73
 msgid "Returned"
-msgstr "已退回"
+msgstr ""
 
 #: InvenTree/status_codes.py:40 InvenTree/status_codes.py:167
 msgid "In Progress"
-msgstr "正在进行"
+msgstr ""
 
 #: InvenTree/status_codes.py:43 order/models.py:1564
 #: templates/js/translated/sales_order.js:1523
 #: templates/js/translated/sales_order.js:1644
 #: templates/js/translated/sales_order.js:1957
 msgid "Shipped"
-msgstr "已配送"
+msgstr ""
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
-msgstr "需要关注"
+msgstr ""
 
 #: InvenTree/status_codes.py:64
 msgid "Damaged"
-msgstr "破损"
+msgstr ""
 
 #: InvenTree/status_codes.py:65
 msgid "Destroyed"
-msgstr "销毁"
+msgstr ""
 
 #: InvenTree/status_codes.py:66
 msgid "Rejected"
-msgstr "拒绝"
+msgstr ""
 
 #: InvenTree/status_codes.py:70
 msgid "Quarantined"
-msgstr "隔离"
+msgstr ""
 
 #: InvenTree/status_codes.py:91
 msgid "Legacy stock tracking entry"
-msgstr "旧库存跟踪条目"
+msgstr ""
 
 #: InvenTree/status_codes.py:93 templates/js/translated/stock.js:544
 msgid "Stock item created"
-msgstr "库存项已创建"
+msgstr ""
 
 #: InvenTree/status_codes.py:96
 msgid "Edited stock item"
-msgstr "已编辑库存项"
+msgstr ""
 
 #: InvenTree/status_codes.py:97
 msgid "Assigned serial number"
-msgstr "已分配序列号"
+msgstr ""
 
 #: InvenTree/status_codes.py:100
 msgid "Stock counted"
-msgstr "库存计数"
+msgstr ""
 
 #: InvenTree/status_codes.py:101
 msgid "Stock manually added"
-msgstr "已手动添加库存"
+msgstr ""
 
 #: InvenTree/status_codes.py:102
 msgid "Stock manually removed"
-msgstr "已手动删除库存"
+msgstr ""
 
 #: InvenTree/status_codes.py:105
 msgid "Location changed"
-msgstr "地点已更改"
+msgstr ""
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr "库存已更新"
+msgstr ""
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
-msgstr "已安装到装配中"
+msgstr ""
 
 #: InvenTree/status_codes.py:110
 msgid "Removed from assembly"
-msgstr "已从装配中删除"
+msgstr ""
 
 #: InvenTree/status_codes.py:112
 msgid "Installed component item"
-msgstr "已安装组件项"
+msgstr ""
 
 #: InvenTree/status_codes.py:113
 msgid "Removed component item"
-msgstr "已删除组件项"
+msgstr ""
 
 #: InvenTree/status_codes.py:116
 msgid "Split from parent item"
-msgstr "从上级项拆分"
+msgstr ""
 
 #: InvenTree/status_codes.py:117
 msgid "Split child item"
-msgstr "拆分子项"
+msgstr ""
 
 #: InvenTree/status_codes.py:120 templates/js/translated/stock.js:1855
 msgid "Merged stock items"
-msgstr "合并的库存项"
+msgstr ""
 
 #: InvenTree/status_codes.py:123
 msgid "Converted to variant"
-msgstr "转换为变体"
+msgstr ""
 
 #: InvenTree/status_codes.py:126
 msgid "Build order output created"
-msgstr "已创建生产订单输出"
+msgstr ""
 
 #: InvenTree/status_codes.py:127
 msgid "Build order output completed"
-msgstr "生产订单输出已完成"
+msgstr ""
 
 #: InvenTree/status_codes.py:128
 msgid "Build order output rejected"
@@ -1128,19 +1128,19 @@ msgstr ""
 
 #: build/models.py:240
 msgid "Select location where the completed items will be stored"
-msgstr "选择已完成项目库存地点"
+msgstr ""
 
 #: build/models.py:244
 msgid "Build Quantity"
-msgstr "生产数量"
+msgstr ""
 
 #: build/models.py:247
 msgid "Number of stock items to build"
-msgstr "要生产的项目数量"
+msgstr ""
 
 #: build/models.py:251
 msgid "Completed items"
-msgstr "已完成项目"
+msgstr ""
 
 #: build/models.py:253
 msgid "Number of stock items which have been completed"

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-11 00:12+0000\n"
-"PO-Revision-Date: 2024-03-19 11:52\n"
+"POT-Creation-Date: 2024-04-14 10:31+0000\n"
+"PO-Revision-Date: 2024-04-15 02:35\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -14,8 +14,8 @@ msgstr ""
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
 "X-Crowdin-Language: sl\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 154\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:255
 msgid "API endpoint not found"
@@ -28,7 +28,7 @@ msgstr "Uporabnik nima dovoljenja pogleda tega modela"
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Vnesena napačna enota ({unit})"
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
@@ -205,7 +205,7 @@ msgstr "Podani URL ni veljavna slikovna datoteka"
 
 #: InvenTree/locales.py:18
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bolgarščina"
 
 #: InvenTree/locales.py:19
 msgid "Czech"
@@ -241,7 +241,7 @@ msgstr "Farsi / Perzijsko"
 
 #: InvenTree/locales.py:27
 msgid "Finnish"
-msgstr ""
+msgstr "Finščina"
 
 #: InvenTree/locales.py:28
 msgid "French"
@@ -253,7 +253,7 @@ msgstr "Hebrejščina"
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr ""
+msgstr "Hindujščina"
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
@@ -273,7 +273,7 @@ msgstr "Korejščina"
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr ""
+msgstr "Latvijščina"
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
@@ -301,7 +301,7 @@ msgstr "Ruščina"
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
-msgstr ""
+msgstr "Slovaščina"
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
@@ -309,7 +309,7 @@ msgstr "Slovenščina"
 
 #: InvenTree/locales.py:44
 msgid "Serbian"
-msgstr ""
+msgstr "Srbščina"
 
 #: InvenTree/locales.py:45
 msgid "Swedish"
@@ -329,11 +329,11 @@ msgstr "Vietnamščina"
 
 #: InvenTree/locales.py:49
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Kitajščina (poenostavljena)"
 
 #: InvenTree/locales.py:50
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Kitajščina (tradicionalno)"
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
@@ -740,7 +740,7 @@ msgstr "Poslano"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -2822,10 +2822,8 @@ msgstr ""
 
 #: common/models.py:1793 common/models.py:1821 common/models.py:1843
 #: common/models.py:1871
-#, fuzzy
-#| msgid "Responsible"
 msgid "Require Responsible Owner"
-msgstr "Odgovoren"
+msgstr ""
 
 #: common/models.py:1794 common/models.py:1822 common/models.py:1844
 #: common/models.py:1872
@@ -7708,8 +7706,10 @@ msgstr ""
 msgid "Update Pricing"
 msgstr ""
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
-#: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
+#: part/templates/part/stock_count.html:7
+#: templates/js/translated/model_renderers.js:221
+#: templates/js/translated/part.js:704 templates/js/translated/part.js:2140
+#: templates/js/translated/part.js:2142
 msgid "No Stock"
 msgstr ""
 
@@ -12690,6 +12690,7 @@ msgid "No matching purchase orders"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
+#: templates/js/translated/return_order.js:491
 msgid "Select Line Items"
 msgstr ""
 
@@ -14183,3 +14184,4 @@ msgstr ""
 #: users/models.py:415
 msgid "Permission to delete items"
 msgstr ""
+

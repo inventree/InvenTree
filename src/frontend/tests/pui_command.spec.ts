@@ -2,13 +2,10 @@ import { expect, systemKey, test } from './baseFixtures.js';
 import { user } from './defaults.js';
 
 test('PUI - Quick Command', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
   await page.goto('./platform/');
 
   await expect(page).toHaveTitle('InvenTree');
@@ -48,18 +45,14 @@ test('PUI - Quick Command', async ({ page }) => {
 });
 
 test('PUI - Quick Command - no keys', async ({ page }) => {
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
+  await page.waitForURL('**/platform/*');
   await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
 
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform');
-  // wait for the page to load - 0.5s
-  await page.waitForTimeout(500);
+  // wait for the page to load
+  await page.waitForTimeout(200);
 
   // Open Spotlight with Button
   await page.getByRole('button', { name: 'Open spotlight' }).click();

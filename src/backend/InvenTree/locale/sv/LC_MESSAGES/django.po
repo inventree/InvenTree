@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 23:33+0000\n"
-"PO-Revision-Date: 2024-04-11 01:50\n"
+"POT-Creation-Date: 2024-04-14 10:31+0000\n"
+"PO-Revision-Date: 2024-04-15 02:35\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: InvenTree/api.py:255
 msgid "API endpoint not found"
-msgstr ""
+msgstr "API-slutpunkt hittades inte"
 
 #: InvenTree/api.py:519
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "Användaren har inte behörighet att se denna modell"
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
@@ -32,29 +32,29 @@ msgstr ""
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr ""
+msgstr "Inget värde angivet"
 
 #: InvenTree/conversion.py:204
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "Kunde inte konvertera {original} till {unit}"
 
 #: InvenTree/conversion.py:206
 msgid "Invalid quantity supplied"
-msgstr ""
+msgstr "Ogiltigt antal angivet"
 
 #: InvenTree/conversion.py:220
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr ""
+msgstr "Ogiltigt antal angivet ({exc})"
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "Information om felet finns under Error i adminpanelen"
 
 #: InvenTree/fields.py:139
 msgid "Enter date"
-msgstr ""
+msgstr "Ange datum"
 
 #: InvenTree/fields.py:208 InvenTree/models.py:1021 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
@@ -77,16 +77,16 @@ msgstr ""
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1533 templates/js/translated/stock.js:2427
 msgid "Notes"
-msgstr ""
+msgstr "Anteckningar"
 
 #: InvenTree/format.py:164
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "Värdet '{name}' visas inte i mönsterformat"
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "Det angivna värdet matchar inte det obligatoriska mönstret: "
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
@@ -94,7 +94,7 @@ msgstr "Ange lösenord"
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr ""
+msgstr "Ange nytt lösenord"
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
@@ -102,47 +102,47 @@ msgstr "Bekräfta lösenord"
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr ""
+msgstr "Bekräfta nytt lösenord"
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr ""
+msgstr "Tidigare lösenord"
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr ""
+msgstr "E-post (igen)"
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Bekräfta e-postadress"
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Du måste ange samma e-post varje gång."
 
 #: InvenTree/forms.py:253 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "Den angivna primära e-postadressen är inte giltig."
 
 #: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "Den angivna e-postdomänen är inte godkänd."
 
 #: InvenTree/forms.py:395
 msgid "Registration is disabled."
-msgstr ""
+msgstr "Registrering är stängd."
 
 #: InvenTree/helpers.py:525 order/models.py:541 order/models.py:743
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Ogiltigt antal angivet"
 
 #: InvenTree/helpers.py:533
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Tom serienummersträng"
 
 #: InvenTree/helpers.py:562
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Serienummret finns redan"
 
 #: InvenTree/helpers.py:594 InvenTree/helpers.py:637
 #, python-brace-format
@@ -161,7 +161,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:691
 msgid "No serial numbers found"
-msgstr ""
+msgstr "Inga serienummer hittades"
 
 #: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
@@ -169,7 +169,7 @@ msgstr ""
 
 #: InvenTree/helpers.py:814
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Ta bort HTML-taggar från detta värde"
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
@@ -177,31 +177,31 @@ msgstr "Anslutningsfel"
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "Servern svarade med ogiltig statuskod"
 
 #: InvenTree/helpers_model.py:158
 msgid "Exception occurred"
-msgstr ""
+msgstr "Undantag inträffade"
 
 #: InvenTree/helpers_model.py:168
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "Servern svarade med ogiltigt innehållslängdsvärde"
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr ""
+msgstr "Bilden är för stor"
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "Nedladdning av bilder överskred maximal storlek"
 
 #: InvenTree/helpers_model.py:188
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "Fjärrservern returnerade tomt svar"
 
 #: InvenTree/helpers_model.py:196
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "Angiven URL är inte en giltig bildfil"
 
 #: InvenTree/locales.py:18
 msgid "Bulgarian"
@@ -233,11 +233,11 @@ msgstr "Spanska"
 
 #: InvenTree/locales.py:25
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spanska (Mexikanska)"
 
 #: InvenTree/locales.py:26
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persiska"
 
 #: InvenTree/locales.py:27
 msgid "Finnish"
@@ -273,11 +273,11 @@ msgstr "Koreanska"
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr ""
+msgstr "Lettiska"
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
-msgstr ""
+msgstr "Nederländska"
 
 #: InvenTree/locales.py:37
 msgid "Norwegian"
@@ -289,11 +289,11 @@ msgstr "Polska"
 
 #: InvenTree/locales.py:39
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugisiska"
 
 #: InvenTree/locales.py:40
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugisiska (brasiliansk)"
 
 #: InvenTree/locales.py:41
 msgid "Russian"
@@ -301,11 +301,11 @@ msgstr "Ryska"
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
-msgstr ""
+msgstr "Slovakiska"
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
-msgstr ""
+msgstr "Slovenska"
 
 #: InvenTree/locales.py:44
 msgid "Serbian"
@@ -317,7 +317,7 @@ msgstr "Svenska"
 
 #: InvenTree/locales.py:46
 msgid "Thai"
-msgstr ""
+msgstr "Thailändska"
 
 #: InvenTree/locales.py:47
 msgid "Turkish"
@@ -325,15 +325,15 @@ msgstr "Turkiska"
 
 #: InvenTree/locales.py:48
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamesiska"
 
 #: InvenTree/locales.py:49
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Kinesiska (Förenklad)"
 
 #: InvenTree/locales.py:50
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Kinesiska (Traditionell)"
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
@@ -345,7 +345,7 @@ msgstr ""
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:667
 msgid "Email"
-msgstr ""
+msgstr "E-postadress"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
@@ -365,45 +365,45 @@ msgstr ""
 
 #: InvenTree/models.py:399
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Felaktigt formaterat mönster"
 
 #: InvenTree/models.py:406
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Okänd formatnyckel angiven"
 
 #: InvenTree/models.py:412
 msgid "Missing required format key"
-msgstr ""
+msgstr "Obligatorisk formatnyckel saknas"
 
 #: InvenTree/models.py:423
 msgid "Reference field cannot be empty"
-msgstr ""
+msgstr "Textfältet kan inte lämnas tomt"
 
 #: InvenTree/models.py:431
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "Referensen måste matcha obligatoriskt mönster"
 
 #: InvenTree/models.py:462
 msgid "Reference number is too large"
-msgstr ""
+msgstr "Referensnumret är för stort"
 
 #: InvenTree/models.py:536
 msgid "Missing file"
-msgstr ""
+msgstr "Saknad fil"
 
 #: InvenTree/models.py:537
 msgid "Missing external link"
-msgstr ""
+msgstr "Extern länk saknas"
 
 #: InvenTree/models.py:558 stock/models.py:2444
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
-msgstr ""
+msgstr "Bilaga"
 
 #: InvenTree/models.py:559
 msgid "Select file to attach"
-msgstr ""
+msgstr "Välj fil att bifoga"
 
 #: InvenTree/models.py:567 common/models.py:3018 company/models.py:145
 #: company/models.py:452 company/models.py:509 company/models.py:818
@@ -420,21 +420,21 @@ msgstr ""
 #: templates/js/translated/sales_order.js:1056
 #: templates/js/translated/sales_order.js:1987
 msgid "Link"
-msgstr ""
+msgstr "Länk"
 
 #: InvenTree/models.py:568 build/models.py:315 part/models.py:920
 #: stock/models.py:819
 msgid "Link to external URL"
-msgstr ""
+msgstr "Länk till extern URL"
 
 #: InvenTree/models.py:574 templates/js/translated/attachment.js:120
 #: templates/js/translated/attachment.js:341
 msgid "Comment"
-msgstr ""
+msgstr "Kommentar"
 
 #: InvenTree/models.py:575
 msgid "File comment"
-msgstr ""
+msgstr "Fil kommentar"
 
 #: InvenTree/models.py:583 InvenTree/models.py:584 common/models.py:2494
 #: common/models.py:2495 common/models.py:2719 common/models.py:2720
@@ -448,32 +448,32 @@ msgstr "Användare"
 
 #: InvenTree/models.py:588
 msgid "upload date"
-msgstr ""
+msgstr "uppladdningsdatum"
 
 #: InvenTree/models.py:610
 msgid "Filename must not be empty"
-msgstr ""
+msgstr "Filnamnet får inte vara tomt"
 
 #: InvenTree/models.py:621
 msgid "Invalid attachment directory"
-msgstr ""
+msgstr "Ogiltig katalog för bilaga"
 
 #: InvenTree/models.py:651
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr ""
+msgstr "Filnamnet innehåller ogiltiga tecken '{c}'"
 
 #: InvenTree/models.py:654
 msgid "Filename missing extension"
-msgstr ""
+msgstr "Filnamn saknar ändelse"
 
 #: InvenTree/models.py:663
 msgid "Attachment with this filename already exists"
-msgstr ""
+msgstr "Det finns redan en bilaga med detta filnamn"
 
 #: InvenTree/models.py:670
 msgid "Error renaming file"
-msgstr ""
+msgstr "Fel vid namnbyte av fil"
 
 #: InvenTree/models.py:846
 msgid "Duplicate names cannot exist under the same parent"
@@ -481,7 +481,7 @@ msgstr ""
 
 #: InvenTree/models.py:863
 msgid "Invalid choice"
-msgstr ""
+msgstr "Ogiltigt val"
 
 #: InvenTree/models.py:893 common/models.py:2706 common/models.py:3104
 #: common/serializers.py:370 company/models.py:608 label/models.py:120
@@ -542,16 +542,16 @@ msgstr "Beskrivning"
 
 #: InvenTree/models.py:900 stock/models.py:83
 msgid "Description (optional)"
-msgstr ""
+msgstr "Beskrivning (valfritt)"
 
 #: InvenTree/models.py:909
 msgid "parent"
-msgstr ""
+msgstr "överordnad"
 
 #: InvenTree/models.py:915 templates/js/translated/part.js:2794
 #: templates/js/translated/stock.js:2757
 msgid "Path"
-msgstr ""
+msgstr "Sökväg"
 
 #: InvenTree/models.py:1021
 msgid "Markdown notes (optional)"
@@ -559,7 +559,7 @@ msgstr ""
 
 #: InvenTree/models.py:1050
 msgid "Barcode Data"
-msgstr ""
+msgstr "Streckkodsdata"
 
 #: InvenTree/models.py:1051
 msgid "Third party barcode data"
@@ -575,7 +575,7 @@ msgstr ""
 
 #: InvenTree/models.py:1111
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Befintlig streckkod hittades"
 
 #: InvenTree/models.py:1154
 msgid "Server Error"
@@ -583,11 +583,11 @@ msgstr "Serverfel"
 
 #: InvenTree/models.py:1155
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Ett fel har loggats av servern."
 
 #: InvenTree/serializers.py:62 part/models.py:4169
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Måste vara ett giltigt nummer"
 
 #: InvenTree/serializers.py:99 company/models.py:178
 #: company/templates/company/company_base.html:106 part/models.py:2993
@@ -598,7 +598,7 @@ msgstr "Valuta"
 
 #: InvenTree/serializers.py:102
 msgid "Select currency from available options"
-msgstr ""
+msgstr "Välj valuta från tillgängliga alternativ"
 
 #: InvenTree/serializers.py:441
 msgid "You do not have permission to change this user role."
@@ -610,7 +610,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:472
 msgid "Your account has been created."
-msgstr ""
+msgstr "Ditt konto har skapats."
 
 #: InvenTree/serializers.py:474
 msgid "Please use the password reset function to login"
@@ -618,57 +618,57 @@ msgstr ""
 
 #: InvenTree/serializers.py:481
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Välkommen till InvenTree"
 
 #: InvenTree/serializers.py:542
 msgid "Filename"
-msgstr ""
+msgstr "Filnamn"
 
 #: InvenTree/serializers.py:576
 msgid "Invalid value"
-msgstr ""
+msgstr "Ogiltigt värde"
 
 #: InvenTree/serializers.py:596
 msgid "Data File"
-msgstr ""
+msgstr "Datafil"
 
 #: InvenTree/serializers.py:597
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Välj fil för uppladdning"
 
 #: InvenTree/serializers.py:614
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Filtypen stöds inte"
 
 #: InvenTree/serializers.py:620
 msgid "File is too large"
-msgstr ""
+msgstr "Filen är för stor"
 
 #: InvenTree/serializers.py:641
 msgid "No columns found in file"
-msgstr ""
+msgstr "Inga kolumner hittades i filen"
 
 #: InvenTree/serializers.py:644
 msgid "No data rows found in file"
-msgstr ""
+msgstr "Inga rader hittades i filen"
 
 #: InvenTree/serializers.py:757
 msgid "No data rows provided"
-msgstr ""
+msgstr "Inga rader angivna"
 
 #: InvenTree/serializers.py:760
 msgid "No data columns supplied"
-msgstr ""
+msgstr "Inga datakolumner har angetts"
 
 #: InvenTree/serializers.py:827
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Saknar obligatorisk kolumn: '{name}'"
 
 #: InvenTree/serializers.py:836
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Duplicerad kolumn: '{col}'"
 
 #: InvenTree/serializers.py:859
 msgid "Remote Image"
@@ -676,67 +676,67 @@ msgstr ""
 
 #: InvenTree/serializers.py:860
 msgid "URL of remote image file"
-msgstr ""
+msgstr "URL för fjärrbildsfil"
 
 #: InvenTree/serializers.py:878
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "Nedladdning av bilder från fjärr-URL är inte aktiverad"
 
 #: InvenTree/status.py:66 part/serializers.py:1156
 msgid "Background worker check failed"
-msgstr ""
+msgstr "Kontroll av bakgrundsarbetare misslyckades"
 
 #: InvenTree/status.py:70
 msgid "Email backend not configured"
-msgstr ""
+msgstr "Backend för e-post är inte konfigurerad"
 
 #: InvenTree/status.py:73
 msgid "InvenTree system health checks failed"
-msgstr ""
+msgstr "InvenTree systemhälsokontroll misslyckades"
 
 #: InvenTree/status_codes.py:12 InvenTree/status_codes.py:37
 #: InvenTree/status_codes.py:148 InvenTree/status_codes.py:164
 #: InvenTree/status_codes.py:182 generic/states/tests.py:17
 #: templates/js/translated/table_filters.js:598
 msgid "Pending"
-msgstr ""
+msgstr "Väntar"
 
 #: InvenTree/status_codes.py:13 generic/states/tests.py:18
 msgid "Placed"
-msgstr ""
+msgstr "Placerad"
 
 #: InvenTree/status_codes.py:14 InvenTree/status_codes.py:151
 #: InvenTree/status_codes.py:169 generic/states/tests.py:19
 #: order/templates/order/order_base.html:158
 #: order/templates/order/sales_order_base.html:161
 msgid "Complete"
-msgstr ""
+msgstr "Slutför"
 
 #: InvenTree/status_codes.py:15 InvenTree/status_codes.py:44
 #: InvenTree/status_codes.py:150 InvenTree/status_codes.py:170
 msgid "Cancelled"
-msgstr ""
+msgstr "Avbruten"
 
 #: InvenTree/status_codes.py:16 InvenTree/status_codes.py:45
 #: InvenTree/status_codes.py:67
 msgid "Lost"
-msgstr ""
+msgstr "Förlorad"
 
 #: InvenTree/status_codes.py:17 InvenTree/status_codes.py:46
 #: InvenTree/status_codes.py:73
 msgid "Returned"
-msgstr ""
+msgstr "Återlämnad"
 
 #: InvenTree/status_codes.py:40 InvenTree/status_codes.py:167
 msgid "In Progress"
-msgstr ""
+msgstr "Pågående"
 
 #: InvenTree/status_codes.py:43 order/models.py:1564
 #: templates/js/translated/sales_order.js:1523
 #: templates/js/translated/sales_order.js:1644
 #: templates/js/translated/sales_order.js:1957
 msgid "Shipped"
-msgstr ""
+msgstr "Skickad"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
@@ -744,55 +744,55 @@ msgstr "OK"
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
-msgstr ""
+msgstr "OBS!"
 
 #: InvenTree/status_codes.py:64
 msgid "Damaged"
-msgstr ""
+msgstr "Skadad"
 
 #: InvenTree/status_codes.py:65
 msgid "Destroyed"
-msgstr ""
+msgstr "Förstörd"
 
 #: InvenTree/status_codes.py:66
 msgid "Rejected"
-msgstr ""
+msgstr "Avvisad"
 
 #: InvenTree/status_codes.py:70
 msgid "Quarantined"
-msgstr ""
+msgstr "I karantän"
 
 #: InvenTree/status_codes.py:91
 msgid "Legacy stock tracking entry"
-msgstr ""
+msgstr "Spårningspost för äldre lager"
 
 #: InvenTree/status_codes.py:93 templates/js/translated/stock.js:544
 msgid "Stock item created"
-msgstr ""
+msgstr "Lagerpost skapad"
 
 #: InvenTree/status_codes.py:96
 msgid "Edited stock item"
-msgstr ""
+msgstr "Redigerade lagerpost"
 
 #: InvenTree/status_codes.py:97
 msgid "Assigned serial number"
-msgstr ""
+msgstr "Tilldelade serienummer"
 
 #: InvenTree/status_codes.py:100
 msgid "Stock counted"
-msgstr ""
+msgstr "Lagersaldo beräknat"
 
 #: InvenTree/status_codes.py:101
 msgid "Stock manually added"
-msgstr ""
+msgstr "Lagerpost manuellt tillagd"
 
 #: InvenTree/status_codes.py:102
 msgid "Stock manually removed"
-msgstr ""
+msgstr "Lagerpost manuellt borttagen"
 
 #: InvenTree/status_codes.py:105
 msgid "Location changed"
-msgstr ""
+msgstr "Platsen har ändrats"
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
@@ -800,43 +800,43 @@ msgstr ""
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
-msgstr ""
+msgstr "Installerad i montering"
 
 #: InvenTree/status_codes.py:110
 msgid "Removed from assembly"
-msgstr ""
+msgstr "Borttagen från montering"
 
 #: InvenTree/status_codes.py:112
 msgid "Installed component item"
-msgstr ""
+msgstr "Installerat komponentobjekt"
 
 #: InvenTree/status_codes.py:113
 msgid "Removed component item"
-msgstr ""
+msgstr "Tog bort komponentobjekt"
 
 #: InvenTree/status_codes.py:116
 msgid "Split from parent item"
-msgstr ""
+msgstr "Dela från överordnat objekt"
 
 #: InvenTree/status_codes.py:117
 msgid "Split child item"
-msgstr ""
+msgstr "Dela underordnat objekt"
 
 #: InvenTree/status_codes.py:120 templates/js/translated/stock.js:1855
 msgid "Merged stock items"
-msgstr ""
+msgstr "Sammanfogade lagerposter"
 
 #: InvenTree/status_codes.py:123
 msgid "Converted to variant"
-msgstr ""
+msgstr "Konverterad till variant"
 
 #: InvenTree/status_codes.py:126
 msgid "Build order output created"
-msgstr ""
+msgstr "Bygg orderutgång skapad"
 
 #: InvenTree/status_codes.py:127
 msgid "Build order output completed"
-msgstr ""
+msgstr "Bygg orderutgång slutförd"
 
 #: InvenTree/status_codes.py:128
 msgid "Build order output rejected"
@@ -844,7 +844,7 @@ msgstr ""
 
 #: InvenTree/status_codes.py:129 templates/js/translated/stock.js:1761
 msgid "Consumed by build order"
-msgstr ""
+msgstr "Konsumeras av byggorder"
 
 #: InvenTree/status_codes.py:132
 msgid "Shipped against Sales Order"
@@ -860,15 +860,15 @@ msgstr ""
 
 #: InvenTree/status_codes.py:141 templates/js/translated/table_filters.js:375
 msgid "Sent to customer"
-msgstr ""
+msgstr "Skickat till kund"
 
 #: InvenTree/status_codes.py:142
 msgid "Returned from customer"
-msgstr ""
+msgstr "Returnerad från kund"
 
 #: InvenTree/status_codes.py:149
 msgid "Production"
-msgstr ""
+msgstr "Produktion"
 
 #: InvenTree/status_codes.py:185
 msgid "Return"
@@ -876,23 +876,23 @@ msgstr ""
 
 #: InvenTree/status_codes.py:188
 msgid "Repair"
-msgstr ""
+msgstr "Reparera"
 
 #: InvenTree/status_codes.py:191
 msgid "Replace"
-msgstr ""
+msgstr "Ersätt"
 
 #: InvenTree/status_codes.py:194
 msgid "Refund"
-msgstr ""
+msgstr "Återbetala"
 
 #: InvenTree/status_codes.py:197
 msgid "Reject"
-msgstr ""
+msgstr "Avvisa"
 
 #: InvenTree/templatetags/inventree_extras.py:183
 msgid "Unknown database"
-msgstr ""
+msgstr "Okänd databas"
 
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
@@ -900,39 +900,39 @@ msgstr ""
 
 #: InvenTree/validators.py:39
 msgid "Not a valid currency code"
-msgstr ""
+msgstr "Inte en giltig valutakod"
 
 #: InvenTree/validators.py:121 InvenTree/validators.py:137
 msgid "Overage value must not be negative"
-msgstr ""
+msgstr "Överskott värde får inte vara negativt"
 
 #: InvenTree/validators.py:139
 msgid "Overage must not exceed 100%"
-msgstr ""
+msgstr "Överskott får inte överstiga 100%"
 
 #: InvenTree/validators.py:145
 msgid "Invalid value for overage"
-msgstr ""
+msgstr "Ogiltigt värde för överskott"
 
 #: InvenTree/views.py:400 templates/InvenTree/settings/user.html:23
 msgid "Edit User Information"
-msgstr ""
+msgstr "Redigera användarinformation"
 
 #: InvenTree/views.py:412 templates/InvenTree/settings/user.html:20
 msgid "Set Password"
-msgstr ""
+msgstr "Ställ in lösenord"
 
 #: InvenTree/views.py:434
 msgid "Password fields must match"
-msgstr ""
+msgstr "Lösenorden måste matcha"
 
 #: InvenTree/views.py:442
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Felaktigt lösenord angivet"
 
 #: InvenTree/views.py:650 templates/navbar.html:160
 msgid "System Information"
-msgstr ""
+msgstr "Systeminformation"
 
 #: InvenTree/views.py:657 templates/navbar.html:171
 msgid "About InvenTree"
@@ -940,7 +940,7 @@ msgstr "Om InvenTree"
 
 #: build/api.py:238
 msgid "Build must be cancelled before it can be deleted"
-msgstr ""
+msgstr "Byggnationen måste avbrytas innan den kan tas bort"
 
 #: build/api.py:282 part/models.py:4047 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2521
@@ -991,7 +991,7 @@ msgstr ""
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:972 templates/js/translated/stock.js:2892
 msgid "Build Order"
-msgstr ""
+msgstr "Byggorder"
 
 #: build/models.py:75 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -1002,11 +1002,11 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:186 users/models.py:196
 msgid "Build Orders"
-msgstr ""
+msgstr "Byggordrar"
 
 #: build/models.py:116
 msgid "Invalid choice for parent build"
-msgstr ""
+msgstr "Ogiltigt val för överordnad bygge"
 
 #: build/models.py:127 order/models.py:239
 msgid "Responsible user or group must be specified"
@@ -1018,7 +1018,7 @@ msgstr ""
 
 #: build/models.py:179
 msgid "Build Order Reference"
-msgstr ""
+msgstr "Byggorderreferens"
 
 #: build/models.py:180 order/models.py:442 order/models.py:898
 #: order/models.py:1276 order/models.py:1996 part/admin.py:417
@@ -1034,7 +1034,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:729
 #: templates/js/translated/sales_order.js:1818
 msgid "Reference"
-msgstr ""
+msgstr "Referens"
 
 #: build/models.py:191
 msgid "Brief description of the build (optional)"
@@ -1043,11 +1043,11 @@ msgstr ""
 #: build/models.py:199 build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr ""
+msgstr "Överordnat Bygge"
 
 #: build/models.py:200
 msgid "BuildOrder to which this build is allocated"
-msgstr ""
+msgstr "Byggorder till vilken detta bygge är tilldelad"
 
 #: build/models.py:205 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:1044
@@ -1098,103 +1098,103 @@ msgstr ""
 #: templates/js/translated/stock.js:2857 templates/js/translated/stock.js:3090
 #: templates/js/translated/stock.js:3236
 msgid "Part"
-msgstr ""
+msgstr "Del"
 
 #: build/models.py:213
 msgid "Select part to build"
-msgstr ""
+msgstr "Välj del att bygga"
 
 #: build/models.py:218
 msgid "Sales Order Reference"
-msgstr ""
+msgstr "Försäljningsorderreferens"
 
 #: build/models.py:222
 msgid "SalesOrder to which this build is allocated"
-msgstr ""
+msgstr "Försäljningsorder till vilken detta bygge allokeras"
 
 #: build/models.py:227 build/serializers.py:964
 #: templates/js/translated/build.js:1728
 #: templates/js/translated/sales_order.js:1185
 msgid "Source Location"
-msgstr ""
+msgstr "Källa Plats"
 
 #: build/models.py:231
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr ""
+msgstr "Välj plats att ta lager från för detta bygge (lämna tomt för att ta från någon lagerplats)"
 
 #: build/models.py:236
 msgid "Destination Location"
-msgstr ""
+msgstr "Destinationsplats"
 
 #: build/models.py:240
 msgid "Select location where the completed items will be stored"
-msgstr ""
+msgstr "Välj plats där de färdiga objekten kommer att lagras"
 
 #: build/models.py:244
 msgid "Build Quantity"
-msgstr ""
+msgstr "Bygg kvantitet"
 
 #: build/models.py:247
 msgid "Number of stock items to build"
-msgstr ""
+msgstr "Antal lagerobjekt att bygga"
 
 #: build/models.py:251
 msgid "Completed items"
-msgstr ""
+msgstr "Slutförda objekt"
 
 #: build/models.py:253
 msgid "Number of stock items which have been completed"
-msgstr ""
+msgstr "Antal lagerposter som har slutförts"
 
 #: build/models.py:257
 msgid "Build Status"
-msgstr ""
+msgstr "Byggstatus"
 
 #: build/models.py:261
 msgid "Build status code"
-msgstr ""
+msgstr "Bygg statuskod"
 
 #: build/models.py:270 build/serializers.py:280 order/serializers.py:577
 #: stock/models.py:823 stock/serializers.py:1333
 #: templates/js/translated/purchase_order.js:1129
 msgid "Batch Code"
-msgstr ""
+msgstr "Batchkod"
 
 #: build/models.py:274 build/serializers.py:281
 msgid "Batch code for this build output"
-msgstr ""
+msgstr "Batch-kod för denna byggutdata"
 
 #: build/models.py:277 order/models.py:304 part/models.py:1079
 #: part/templates/part/part_base.html:310
 #: templates/js/translated/return_order.js:339
 #: templates/js/translated/sales_order.js:827
 msgid "Creation Date"
-msgstr ""
+msgstr "Skapad"
 
 #: build/models.py:281
 msgid "Target completion date"
-msgstr ""
+msgstr "Datum för slutförande"
 
 #: build/models.py:282
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr ""
+msgstr "Måldatum för färdigställande. Byggandet kommer att förfallas efter detta datum."
 
 #: build/models.py:285 order/models.py:500 order/models.py:2041
 #: templates/js/translated/build.js:2245
 msgid "Completion Date"
-msgstr ""
+msgstr "Slutförandedatum"
 
 #: build/models.py:291
 msgid "completed by"
-msgstr ""
+msgstr "slutfört av"
 
 #: build/models.py:299 templates/js/translated/build.js:2205
 msgid "Issued by"
-msgstr ""
+msgstr "Utfärdad av"
 
 #: build/models.py:300
 msgid "User who issued this build order"
-msgstr ""
+msgstr "Användare som utfärdade denna byggorder"
 
 #: build/models.py:308 build/templates/build/build_base.html:204
 #: build/templates/build/detail.html:122 common/models.py:145
@@ -1209,7 +1209,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:359
 #: templates/js/translated/table_filters.js:531
 msgid "Responsible"
-msgstr ""
+msgstr "Ansvarig"
 
 #: build/models.py:309
 msgid "User or group responsible for this build order"
@@ -1225,7 +1225,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:200
 #: templates/js/translated/company.js:1009
 msgid "External Link"
-msgstr ""
+msgstr "Extern länk"
 
 #: build/models.py:319
 msgid "Build Priority"
@@ -1253,23 +1253,23 @@ msgstr ""
 #: build/models.py:581
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr ""
+msgstr "Byggorder {build} har slutförts"
 
 #: build/models.py:587
 msgid "A build order has been completed"
-msgstr ""
+msgstr "En byggorder har slutförts"
 
 #: build/models.py:805 build/models.py:880
 msgid "No build output specified"
-msgstr ""
+msgstr "Ingen byggutgång angiven"
 
 #: build/models.py:808
 msgid "Build output is already completed"
-msgstr ""
+msgstr "Byggutgång är redan slutförd"
 
 #: build/models.py:811
 msgid "Build output does not match Build Order"
-msgstr ""
+msgstr "Byggutgång matchar inte bygg order"
 
 #: build/models.py:884 build/serializers.py:223 build/serializers.py:262
 #: build/serializers.py:831 order/models.py:538 order/serializers.py:429
@@ -1336,7 +1336,7 @@ msgstr ""
 #: templates/js/translated/stock.js:873 templates/js/translated/stock.js:3021
 #: templates/js/translated/stock.js:3104
 msgid "Quantity"
-msgstr ""
+msgstr "Antal"
 
 #: build/models.py:1323
 msgid "Required quantity for build order"
@@ -1344,24 +1344,24 @@ msgstr ""
 
 #: build/models.py:1403
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr ""
+msgstr "Byggobjekt måste ange en byggutgång, eftersom huvuddelen är markerad som spårbar"
 
 #: build/models.py:1412
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr ""
+msgstr "Tilldelad kvantitet ({q}) får inte överstiga tillgängligt lagersaldo ({a})"
 
 #: build/models.py:1422 order/models.py:1867
 msgid "Stock item is over-allocated"
-msgstr ""
+msgstr "Lagerposten är överallokerad"
 
 #: build/models.py:1428 order/models.py:1870
 msgid "Allocation quantity must be greater than zero"
-msgstr ""
+msgstr "Allokeringsmängden måste vara större än noll"
 
 #: build/models.py:1434
 msgid "Quantity must be 1 for serialized stock"
-msgstr ""
+msgstr "Antal måste vara 1 för serialiserat lager"
 
 #: build/models.py:1493
 msgid "Selected stock item does not match BOM line"
@@ -1382,32 +1382,32 @@ msgstr ""
 #: templates/js/translated/stock.js:677 templates/js/translated/stock.js:843
 #: templates/js/translated/stock.js:2977
 msgid "Stock Item"
-msgstr ""
+msgstr "Artikel i lager"
 
 #: build/models.py:1566
 msgid "Source stock item"
-msgstr ""
+msgstr "Källa lagervara"
 
 #: build/models.py:1579
 msgid "Stock quantity to allocate to build"
-msgstr ""
+msgstr "Lagersaldo att allokera för att bygga"
 
 #: build/models.py:1587
 msgid "Install into"
-msgstr ""
+msgstr "Installera till"
 
 #: build/models.py:1588
 msgid "Destination stock item"
-msgstr ""
+msgstr "Destination lagervara"
 
 #: build/serializers.py:160 build/serializers.py:840
 #: templates/js/translated/build.js:1319
 msgid "Build Output"
-msgstr ""
+msgstr "Bygg utdata"
 
 #: build/serializers.py:172
 msgid "Build output does not match the parent build"
-msgstr ""
+msgstr "Byggutdata matchar inte överordnad version"
 
 #: build/serializers.py:176
 msgid "Output part does not match BuildOrder part"
@@ -1477,7 +1477,7 @@ msgstr ""
 #: templates/js/translated/stock.js:1060 templates/js/translated/stock.js:2200
 #: templates/js/translated/stock.js:2871
 msgid "Location"
-msgstr ""
+msgstr "Plats"
 
 #: build/serializers.py:427
 msgid "Stock location for scrapped outputs"
@@ -1576,7 +1576,7 @@ msgstr ""
 
 #: build/serializers.py:684 order/serializers.py:297 order/serializers.py:1242
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "Acceptera ofullständig"
 
 #: build/serializers.py:685
 msgid "Accept that the required number of build outputs have not been completed"
@@ -1778,11 +1778,11 @@ msgstr ""
 
 #: build/templates/build/build_base.html:71
 msgid "Edit Build"
-msgstr ""
+msgstr "Redigera bygge"
 
 #: build/templates/build/build_base.html:73
 msgid "Cancel Build"
-msgstr ""
+msgstr "Avbryt bygge"
 
 #: build/templates/build/build_base.html:76
 msgid "Duplicate Build"
@@ -1790,16 +1790,16 @@ msgstr ""
 
 #: build/templates/build/build_base.html:79
 msgid "Delete Build"
-msgstr ""
+msgstr "Ta bort bygge"
 
 #: build/templates/build/build_base.html:84
 #: build/templates/build/build_base.html:85
 msgid "Complete Build"
-msgstr ""
+msgstr "Färdigställ bygget"
 
 #: build/templates/build/build_base.html:107
 msgid "Build Description"
-msgstr ""
+msgstr "Byggbeskrivning"
 
 #: build/templates/build/build_base.html:117
 msgid "No build outputs have been created for this build order"
@@ -1835,7 +1835,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:835
 #: templates/js/translated/sales_order.js:1867
 msgid "Target Date"
-msgstr ""
+msgstr "Måldatum"
 
 #: build/templates/build/build_base.html:165
 #, python-format
@@ -1852,7 +1852,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:626
 #: templates/js/translated/table_filters.js:667
 msgid "Overdue"
-msgstr ""
+msgstr "Försenad"
 
 #: build/templates/build/build_base.html:177
 #: build/templates/build/detail.html:67 build/templates/build/sidebar.html:13
@@ -1873,14 +1873,14 @@ msgstr ""
 #: templates/js/translated/sales_order.js:992
 #: templates/js/translated/stock.js:2924
 msgid "Sales Order"
-msgstr ""
+msgstr "Försäljningsorder"
 
 #: build/templates/build/build_base.html:197
 #: build/templates/build/detail.html:115
 #: report/templates/report/inventree_build_order_base.html:152
 #: templates/js/translated/table_filters.js:24
 msgid "Issued By"
-msgstr ""
+msgstr "Utfärdad av"
 
 #: build/templates/build/build_base.html:211
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2154
@@ -1914,7 +1914,7 @@ msgstr ""
 #: build/templates/build/detail.html:49 order/models.py:1430
 #: templates/js/translated/purchase_order.js:2190
 msgid "Destination"
-msgstr ""
+msgstr "Mål"
 
 #: build/templates/build/detail.html:56
 msgid "Destination location not specified"
@@ -1942,7 +1942,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:186
 #: templates/js/translated/build.js:2197
 msgid "Created"
-msgstr ""
+msgstr "Skapad"
 
 #: build/templates/build/detail.html:144
 msgid "No target date set"
@@ -1952,7 +1952,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:202
 #: templates/js/translated/table_filters.js:689
 msgid "Completed"
-msgstr ""
+msgstr "Slutförd"
 
 #: build/templates/build/detail.html:153
 msgid "Build not complete"
@@ -1992,12 +1992,12 @@ msgstr ""
 
 #: build/templates/build/detail.html:191
 msgid "Order required parts"
-msgstr ""
+msgstr "Beställ obligatoriska delar"
 
 #: build/templates/build/detail.html:192
 #: templates/js/translated/purchase_order.js:795
 msgid "Order Parts"
-msgstr ""
+msgstr "Beställ delar"
 
 #: build/templates/build/detail.html:205
 msgid "Available stock has been filtered based on specified source location for this build order"
@@ -2037,11 +2037,11 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:61 stock/templates/stock/item.html:110
 #: stock/templates/stock/stock_sidebar.html:23
 msgid "Attachments"
-msgstr ""
+msgstr "Bilagor"
 
 #: build/templates/build/detail.html:276
 msgid "Build Notes"
-msgstr ""
+msgstr "Bygganteckningar"
 
 #: build/templates/build/detail.html:434
 msgid "Allocation Complete"
@@ -2053,7 +2053,7 @@ msgstr ""
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
-msgstr ""
+msgstr "Ny byggorder"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
@@ -2070,31 +2070,31 @@ msgstr ""
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
-msgstr ""
+msgstr "Fel vid läsning av fil (ogiltig kodning)"
 
 #: common/files.py:70
 msgid "Error reading file (invalid format)"
-msgstr ""
+msgstr "Fel vid läsning av filen (ogiltigt format)"
 
 #: common/files.py:72
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "Fel vid läsning av filen (felaktig dimension)"
 
 #: common/files.py:74
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "Fel vid läsning av fil (data kan vara skadat)"
 
 #: common/forms.py:12
 msgid "File"
-msgstr ""
+msgstr "Fil"
 
 #: common/forms.py:12
 msgid "Select file to upload"
-msgstr ""
+msgstr "Välj en fil att ladda upp"
 
 #: common/forms.py:25
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} Fil"
 
 #: common/forms.py:26
 #, python-brace-format
@@ -2115,7 +2115,7 @@ msgstr ""
 
 #: common/models.py:130
 msgid "Unique project code"
-msgstr ""
+msgstr "Unik projektkod"
 
 #: common/models.py:137
 msgid "Project description"
@@ -2168,7 +2168,7 @@ msgstr ""
 
 #: common/models.py:1259
 msgid "Restart required"
-msgstr ""
+msgstr "Omstart krävs"
 
 #: common/models.py:1261
 msgid "A setting has been changed which requires a server restart"
@@ -2184,7 +2184,7 @@ msgstr ""
 
 #: common/models.py:1274
 msgid "Server Instance Name"
-msgstr ""
+msgstr "Serverinstans (Namn)"
 
 #: common/models.py:1276
 msgid "String descriptor for the server instance"
@@ -2208,23 +2208,23 @@ msgstr ""
 
 #: common/models.py:1292 company/models.py:107 company/models.py:108
 msgid "Company name"
-msgstr ""
+msgstr "Företagsnamn"
 
 #: common/models.py:1293
 msgid "Internal company name"
-msgstr ""
+msgstr "Internt företagsnamn"
 
 #: common/models.py:1297
 msgid "Base URL"
-msgstr ""
+msgstr "Bas-URL"
 
 #: common/models.py:1298
 msgid "Base URL for server instance"
-msgstr ""
+msgstr "Bas-URL för serverinstans"
 
 #: common/models.py:1304
 msgid "Default Currency"
-msgstr ""
+msgstr "Standardvaluta"
 
 #: common/models.py:1305
 msgid "Select base currency for pricing calculations"
@@ -2259,7 +2259,7 @@ msgstr "Ladda ner från URL"
 
 #: common/models.py:1328
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Tillåt nedladdning av bilder och filer från extern URL"
 
 #: common/models.py:1334
 msgid "Download Size Limit"
@@ -2287,11 +2287,11 @@ msgstr ""
 
 #: common/models.py:1354
 msgid "Require confirm"
-msgstr ""
+msgstr "Kräv bekräftelse"
 
 #: common/models.py:1355
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "Kräv uttrycklig användarbekräftelse för vissa åtgärder."
 
 #: common/models.py:1360
 msgid "Tree Depth"
@@ -2351,7 +2351,7 @@ msgstr ""
 
 #: common/models.py:1415 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Stöd för streckkoder"
 
 #: common/models.py:1416
 msgid "Enable barcode scanner support in the web interface"
@@ -2501,27 +2501,27 @@ msgstr ""
 #: templates/js/translated/table_filters.js:143
 #: templates/js/translated/table_filters.js:775
 msgid "Virtual"
-msgstr ""
+msgstr "Virtuell"
 
 #: common/models.py:1517
 msgid "Parts are virtual by default"
-msgstr ""
+msgstr "Delar är virtuella som standard"
 
 #: common/models.py:1522
 msgid "Show Import in Views"
-msgstr ""
+msgstr "Visa import i vyer"
 
 #: common/models.py:1523
 msgid "Display the import wizard in some part views"
-msgstr ""
+msgstr "Visa importguiden i vissa delvyer"
 
 #: common/models.py:1528
 msgid "Show related parts"
-msgstr ""
+msgstr "Visa relaterade delar"
 
 #: common/models.py:1529
 msgid "Display related parts for a part"
-msgstr ""
+msgstr "Visa relaterade delar för en del"
 
 #: common/models.py:1534
 msgid "Initial Stock Data"
@@ -2541,11 +2541,11 @@ msgstr ""
 
 #: common/models.py:1548
 msgid "Part Name Display Format"
-msgstr ""
+msgstr "Visningsformat för delnamn"
 
 #: common/models.py:1549
 msgid "Format to display the part name"
-msgstr ""
+msgstr "Formatera för att visa artikelnamnet"
 
 #: common/models.py:1555
 msgid "Part Category Default Icon"
@@ -2637,7 +2637,7 @@ msgstr ""
 
 #: common/models.py:1640
 msgid "Internal Prices"
-msgstr ""
+msgstr "Interna priser"
 
 #: common/models.py:1641
 msgid "Enable internal prices for parts"
@@ -2653,15 +2653,15 @@ msgstr ""
 
 #: common/models.py:1654
 msgid "Enable label printing"
-msgstr ""
+msgstr "Aktivera etikettutskrift"
 
 #: common/models.py:1655
 msgid "Enable label printing from the web interface"
-msgstr ""
+msgstr "Aktivera etikettutskrift från webbgränssnittet"
 
 #: common/models.py:1660
 msgid "Label Image DPI"
-msgstr ""
+msgstr "Etikettbild DPI"
 
 #: common/models.py:1662
 msgid "DPI resolution when generating image files to supply to label printing plugins"
@@ -2669,15 +2669,15 @@ msgstr ""
 
 #: common/models.py:1668
 msgid "Enable Reports"
-msgstr ""
+msgstr "Aktivera rapporter"
 
 #: common/models.py:1669
 msgid "Enable generation of reports"
-msgstr ""
+msgstr "Aktivera generering av rapporter"
 
 #: common/models.py:1674 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "Debugläge"
 
 #: common/models.py:1675
 msgid "Generate reports in debug mode (HTML output)"
@@ -2694,15 +2694,15 @@ msgstr ""
 #: common/models.py:1686 plugin/builtin/labels/label_sheet.py:28
 #: report/models.py:203
 msgid "Page Size"
-msgstr ""
+msgstr "Sidstorlek"
 
 #: common/models.py:1687
 msgid "Default page size for PDF reports"
-msgstr ""
+msgstr "Standard sidstorlek för PDF-rapporter"
 
 #: common/models.py:1692
 msgid "Enable Test Reports"
-msgstr ""
+msgstr "Aktivera testrapporter"
 
 #: common/models.py:1693
 msgid "Enable generation of test reports"
@@ -2976,7 +2976,7 @@ msgstr ""
 
 #: common/models.py:1946
 msgid "Allowed domains"
-msgstr ""
+msgstr "Tillåtna domäner"
 
 #: common/models.py:1948
 msgid "Restrict signup to certain domains (comma-separated, starting with @)"
@@ -3056,7 +3056,7 @@ msgstr ""
 
 #: common/models.py:2018
 msgid "Enable project codes"
-msgstr ""
+msgstr "Aktivera projektkoder"
 
 #: common/models.py:2019
 msgid "Enable project codes for tracking projects"
@@ -3292,7 +3292,7 @@ msgstr ""
 
 #: common/models.py:2259
 msgid "Search Parts"
-msgstr ""
+msgstr "Sök efter artiklar"
 
 #: common/models.py:2260
 msgid "Display parts in search preview window"
@@ -3300,7 +3300,7 @@ msgstr ""
 
 #: common/models.py:2265
 msgid "Search Supplier Parts"
-msgstr ""
+msgstr "Sök efter leverantörsartikel"
 
 #: common/models.py:2266
 msgid "Display supplier parts in search preview window"
@@ -3308,7 +3308,7 @@ msgstr ""
 
 #: common/models.py:2271
 msgid "Search Manufacturer Parts"
-msgstr ""
+msgstr "Sök efter tillverkarartikel"
 
 #: common/models.py:2272
 msgid "Display manufacturer parts in search preview window"
@@ -3760,7 +3760,7 @@ msgstr ""
 
 #: common/serializers.py:345
 msgid "Scheduled Tasks"
-msgstr ""
+msgstr "Schemalagda uppgifter"
 
 #: common/serializers.py:351
 msgid "Failed Tasks"
@@ -3895,7 +3895,7 @@ msgstr ""
 
 #: company/models.py:160
 msgid "is customer"
-msgstr ""
+msgstr "är kund"
 
 #: company/models.py:161
 msgid "Do you sell items to this company?"
@@ -3930,7 +3930,7 @@ msgstr "Företag"
 
 #: company/models.py:378
 msgid "Select company"
-msgstr ""
+msgstr "Välj företag"
 
 #: company/models.py:383
 msgid "Address title"
@@ -4125,11 +4125,11 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:1690
 #: templates/js/translated/table_filters.js:800
 msgid "Supplier"
-msgstr ""
+msgstr "Leverantör"
 
 #: company/models.py:796
 msgid "Select supplier"
-msgstr ""
+msgstr "Välj leverantör"
 
 #: company/models.py:802 part/serializers.py:510
 msgid "Supplier stock keeping unit"
@@ -4241,7 +4241,7 @@ msgstr "Radera företag"
 #: company/templates/company/company_base.html:38
 #: company/templates/company/company_base.html:162
 msgid "Delete Company"
-msgstr ""
+msgstr "Radera företag"
 
 #: company/templates/company/company_base.html:47
 #: company/templates/company/manufacturer_part.html:51
@@ -4293,11 +4293,11 @@ msgstr ""
 #: order/templates/order/return_order_base.html:181
 #: order/templates/order/sales_order_base.html:221
 msgid "Address"
-msgstr ""
+msgstr "Adress"
 
 #: company/templates/company/company_base.html:125
 msgid "Phone"
-msgstr ""
+msgstr "Telefon"
 
 #: company/templates/company/company_base.html:205
 #: part/templates/part/part_base.html:528
@@ -4455,7 +4455,7 @@ msgstr "Lägg till adress"
 #: company/templates/company/manufacturer_part.html:15 company/views.py:37
 #: templates/InvenTree/search.html:180 templates/navbar.html:49
 msgid "Manufacturers"
-msgstr ""
+msgstr "Tillverkare"
 
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:227
@@ -4488,14 +4488,14 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:33 templates/InvenTree/search.html:190
 #: templates/navbar.html:48
 msgid "Suppliers"
-msgstr ""
+msgstr "Leverantörer"
 
 #: company/templates/company/manufacturer_part.html:156
 #: company/templates/company/manufacturer_part_sidebar.html:5
 #: part/templates/part/category_sidebar.html:20
 #: part/templates/part/detail.html:195 part/templates/part/part_sidebar.html:8
 msgid "Parameters"
-msgstr ""
+msgstr "Parametrar"
 
 #: company/templates/company/manufacturer_part.html:160
 #: part/templates/part/detail.html:200
@@ -4527,11 +4527,11 @@ msgstr ""
 
 #: company/templates/company/sidebar.html:33
 msgid "Contacts"
-msgstr ""
+msgstr "Kontakter"
 
 #: company/templates/company/sidebar.html:35
 msgid "Addresses"
-msgstr ""
+msgstr "Adresser"
 
 #: company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 stock/models.py:762
@@ -4654,7 +4654,7 @@ msgstr ""
 
 #: company/views.py:32
 msgid "New Supplier"
-msgstr ""
+msgstr "Ny leverantör"
 
 #: company/views.py:38
 msgid "New Manufacturer"
@@ -5128,7 +5128,7 @@ msgstr ""
 
 #: order/models.py:1663 templates/js/translated/sales_order.js:1036
 msgid "Delivery Date"
-msgstr ""
+msgstr "Leveransdatum"
 
 #: order/models.py:1664
 msgid "Date of delivery of shipment"
@@ -5511,7 +5511,7 @@ msgstr ""
 #: order/templates/order/return_order_base.html:113
 #: order/templates/order/sales_order_base.html:118
 msgid "Order Status"
-msgstr ""
+msgstr "Orderstatus"
 
 #: order/templates/order/order_base.html:141
 msgid "No suppplier information available"
@@ -5851,7 +5851,7 @@ msgstr ""
 #: part/admin.py:53 part/admin.py:317 part/models.py:886
 #: part/templates/part/category.html:94 part/templates/part/part_base.html:298
 msgid "Keywords"
-msgstr ""
+msgstr "Nyckelord"
 
 #: part/admin.py:60
 msgid "Part Image"
@@ -5885,7 +5885,7 @@ msgstr ""
 #: templates/js/translated/company.js:1679
 #: templates/js/translated/table_filters.js:355
 msgid "In Stock"
-msgstr ""
+msgstr "I lager"
 
 #: part/admin.py:138 part/templates/part/part_sidebar.html:27
 msgid "Used In"
@@ -5929,7 +5929,7 @@ msgstr ""
 #: templates/js/translated/part.js:2804 templates/js/translated/search.js:130
 #: templates/navbar.html:24 users/models.py:192
 msgid "Parts"
-msgstr ""
+msgstr "Artiklar"
 
 #: part/admin.py:384
 msgid "BOM Level"
@@ -6099,7 +6099,7 @@ msgstr "Ikon"
 
 #: part/models.py:126 stock/models.py:149
 msgid "Icon (optional)"
-msgstr ""
+msgstr "Ikon (valfritt)"
 
 #: part/models.py:148
 msgid "You cannot make this part category structural because some parts are already assigned to it!"
@@ -6182,7 +6182,7 @@ msgstr ""
 
 #: part/models.py:983 part/templates/part/part_base.html:376
 msgid "Default Supplier"
-msgstr ""
+msgstr "Standardleverantör"
 
 #: part/models.py:984
 msgid "Default supplier part"
@@ -6757,7 +6757,7 @@ msgstr ""
 #: part/templates/part/category.html:122 part/templates/part/category.html:207
 #: part/templates/part/category_sidebar.html:7
 msgid "Subcategories"
-msgstr ""
+msgstr "Underkategorier"
 
 #: part/serializers.py:185
 msgid "Results"
@@ -6781,7 +6781,7 @@ msgstr ""
 
 #: part/serializers.py:407
 msgid "Select category"
-msgstr ""
+msgstr "Välj kategori"
 
 #: part/serializers.py:437
 msgid "Original Part"
@@ -6946,7 +6946,7 @@ msgstr ""
 
 #: part/serializers.py:1136
 msgid "Generate Report"
-msgstr ""
+msgstr "Generera rapport"
 
 #: part/serializers.py:1137
 msgid "Generate report file containing calculated stocktake data"
@@ -7376,7 +7376,7 @@ msgstr ""
 #: templates/js/translated/bom.js:310 templates/js/translated/bom.js:344
 #: templates/js/translated/order.js:130
 msgid "Select file format"
-msgstr ""
+msgstr "Välj filformat"
 
 #: part/templates/part/part_app_base.html:12
 msgid "Part List"
@@ -7637,7 +7637,7 @@ msgstr "Redigera"
 #: templates/js/translated/company.js:1703
 #: templates/js/translated/stock.js:2245
 msgid "Last Updated"
-msgstr ""
+msgstr "Senast uppdaterad"
 
 #: part/templates/part/prices.html:37 part/templates/part/prices.html:127
 msgid "Price Category"
@@ -7706,8 +7706,10 @@ msgstr ""
 msgid "Update Pricing"
 msgstr ""
 
-#: part/templates/part/stock_count.html:7 templates/js/translated/part.js:704
-#: templates/js/translated/part.js:2140 templates/js/translated/part.js:2142
+#: part/templates/part/stock_count.html:7
+#: templates/js/translated/model_renderers.js:221
+#: templates/js/translated/part.js:704 templates/js/translated/part.js:2140
+#: templates/js/translated/part.js:2142
 msgid "No Stock"
 msgstr ""
 
@@ -7791,11 +7793,11 @@ msgstr ""
 
 #: plugin/base/action/api.py:32
 msgid "No action specified"
-msgstr ""
+msgstr "Ingen åtgärd specificerad"
 
 #: plugin/base/action/api.py:41
 msgid "No matching action found"
-msgstr ""
+msgstr "Ingen matchande åtgärd hittades"
 
 #: plugin/base/barcodes/api.py:124 plugin/base/barcodes/api.py:328
 #: plugin/base/barcodes/api.py:503
@@ -8658,7 +8660,7 @@ msgstr ""
 
 #: stock/admin.py:168
 msgid "Status Code"
-msgstr ""
+msgstr "Statuskod"
 
 #: stock/admin.py:180
 msgid "Supplier Part ID"
@@ -8670,7 +8672,7 @@ msgstr ""
 
 #: stock/admin.py:191
 msgid "Supplier Name"
-msgstr ""
+msgstr "Leverantörsnamn"
 
 #: stock/admin.py:196
 msgid "Customer ID"
@@ -9385,7 +9387,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:169 templates/InvenTree/search.html:139
 #: templates/js/translated/build.js:2121 templates/navbar.html:38
 msgid "Build"
-msgstr ""
+msgstr "Bygg"
 
 #: stock/templates/stock/item_base.html:193
 msgid "Parent Item"
@@ -9487,7 +9489,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:532
 msgid "Edit Stock Status"
-msgstr ""
+msgstr "Redigera lagerstatus"
 
 #: stock/templates/stock/item_base.html:541
 msgid "Stock Item QR Code"
@@ -9503,7 +9505,7 @@ msgstr ""
 
 #: stock/templates/stock/item_base.html:619
 msgid "Warning"
-msgstr ""
+msgstr "Varning"
 
 #: stock/templates/stock/item_base.html:620
 msgid "This action cannot be easily undone"
@@ -9604,7 +9606,7 @@ msgstr ""
 
 #: stock/templates/stock/stock_app_base.html:16
 msgid "Loading..."
-msgstr ""
+msgstr "Laddar..."
 
 #: stock/templates/stock/stock_sidebar.html:5
 msgid "Stock Tracking"
@@ -10111,7 +10113,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:140
 msgid "No project codes found"
-msgstr ""
+msgstr "Inga projektkoder hittades"
 
 #: templates/InvenTree/settings/settings_staff_js.html:158
 #: templates/js/translated/build.js:2226
@@ -10187,7 +10189,7 @@ msgstr ""
 #: templates/InvenTree/settings/sidebar.html:6
 #: templates/InvenTree/settings/user_settings.html:9
 msgid "User Settings"
-msgstr ""
+msgstr "Användarinställningar"
 
 #: templates/InvenTree/settings/sidebar.html:9
 msgid "Account"
@@ -10206,7 +10208,7 @@ msgstr ""
 #: templates/navbar.html:107 templates/search.html:8
 #: templates/search_form.html:6 templates/search_form.html:7
 msgid "Search"
-msgstr ""
+msgstr "Sök"
 
 #: templates/InvenTree/settings/sidebar.html:19
 #: templates/InvenTree/settings/sidebar.html:43
@@ -10290,7 +10292,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:96
 msgid "Warning:"
-msgstr ""
+msgstr "Varning:"
 
 #: templates/InvenTree/settings/user.html:97
 msgid "You currently do not have any email address set up. You should really add an email address so you can receive notifications, reset your password, etc."
@@ -10338,7 +10340,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:168
 msgid "Active Sessions"
-msgstr ""
+msgstr "Aktiva sessioner"
 
 #: templates/InvenTree/settings/user.html:174
 msgid "Log out active sessions (except this one)"
@@ -10346,7 +10348,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:175
 msgid "Log Out Active Sessions"
-msgstr ""
+msgstr "Logga ut aktiva sessioner"
 
 #: templates/InvenTree/settings/user.html:184
 msgid "<em>unknown on unknown</em>"
@@ -10366,7 +10368,7 @@ msgstr "Enhet"
 
 #: templates/InvenTree/settings/user.html:191
 msgid "Last Activity"
-msgstr ""
+msgstr "Senaste aktivitet"
 
 #: templates/InvenTree/settings/user.html:204
 #, python-format
@@ -10392,7 +10394,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:39
 msgid "Select theme"
-msgstr ""
+msgstr "Välj tema"
 
 #: templates/InvenTree/settings/user_display.html:50
 msgid "Set Theme"
@@ -10404,7 +10406,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user_display.html:67
 msgid "Select language"
-msgstr ""
+msgstr "Välj språk"
 
 #: templates/InvenTree/settings/user_display.html:83
 #, python-format
@@ -10664,7 +10666,7 @@ msgstr "Tvåfaktorsautentisering"
 
 #: templates/allauth_2fa/authenticate.html:13
 msgid "Authenticate"
-msgstr ""
+msgstr "Autentisera"
 
 #: templates/allauth_2fa/backup_tokens.html:6
 msgid "Two-Factor Authentication Backup Tokens"
@@ -10688,7 +10690,7 @@ msgstr "Inaktivera tvåfaktorsautentisering"
 
 #: templates/allauth_2fa/remove.html:9
 msgid "Are you sure?"
-msgstr ""
+msgstr "Är du säker?"
 
 #: templates/allauth_2fa/remove.html:17
 msgid "Disable 2FA"
@@ -10867,7 +10869,7 @@ msgstr ""
 
 #: templates/js/translated/api.js:266
 msgid "Error code"
-msgstr ""
+msgstr "Felkod"
 
 #: templates/js/translated/attachment.js:114
 msgid "All selected attachments will be deleted"
@@ -10875,11 +10877,11 @@ msgstr ""
 
 #: templates/js/translated/attachment.js:129
 msgid "Delete Attachments"
-msgstr ""
+msgstr "Radera bilagor"
 
 #: templates/js/translated/attachment.js:205
 msgid "Delete attachments"
-msgstr ""
+msgstr "Radera bilagor"
 
 #: templates/js/translated/attachment.js:253
 msgid "Attachment actions"
@@ -10887,11 +10889,11 @@ msgstr ""
 
 #: templates/js/translated/attachment.js:275
 msgid "No attachments found"
-msgstr ""
+msgstr "Inga bilagor hittades"
 
 #: templates/js/translated/attachment.js:315
 msgid "Edit Attachment"
-msgstr ""
+msgstr "Redigera bilaga"
 
 #: templates/js/translated/attachment.js:346
 msgid "Upload Date"
@@ -10899,11 +10901,11 @@ msgstr ""
 
 #: templates/js/translated/attachment.js:366
 msgid "Edit attachment"
-msgstr ""
+msgstr "Redigera bilaga"
 
 #: templates/js/translated/attachment.js:374
 msgid "Delete attachment"
-msgstr ""
+msgstr "Radera bilaga"
 
 #: templates/js/translated/barcode.js:43
 msgid "Scan barcode data here using barcode scanner"
@@ -10927,7 +10929,7 @@ msgstr ""
 
 #: templates/js/translated/barcode.js:188
 msgid "Server error"
-msgstr ""
+msgstr "Serverfel"
 
 #: templates/js/translated/barcode.js:217
 msgid "Unknown response from server"
@@ -11138,7 +11140,7 @@ msgstr ""
 
 #: templates/js/translated/bom.js:826
 msgid "Delete items"
-msgstr ""
+msgstr "Radera objekt"
 
 #: templates/js/translated/bom.js:936
 msgid "Load BOM for subassembly"
@@ -11629,7 +11631,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:465
 msgid "Add new Company"
-msgstr ""
+msgstr "Lägg till nytt företag"
 
 #: templates/js/translated/company.js:536
 msgid "Parts Supplied"
@@ -11645,12 +11647,12 @@ msgstr ""
 
 #: templates/js/translated/company.js:609
 msgid "Create New Contact"
-msgstr ""
+msgstr "Skapa ny kontakt"
 
 #: templates/js/translated/company.js:625
 #: templates/js/translated/company.js:748
 msgid "Edit Contact"
-msgstr ""
+msgstr "Redigera kontakt"
 
 #: templates/js/translated/company.js:662
 msgid "All selected contacts will be deleted"
@@ -11696,7 +11698,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:913
 msgid "Delete Addresses"
-msgstr ""
+msgstr "Radera adresser"
 
 #: templates/js/translated/company.js:940
 msgid "No addresses found"
@@ -11720,7 +11722,7 @@ msgstr ""
 
 #: templates/js/translated/company.js:1029
 msgid "Delete Address"
-msgstr ""
+msgstr "Radera adress"
 
 #: templates/js/translated/company.js:1102
 msgid "All selected manufacturer parts will be deleted"
@@ -11853,7 +11855,7 @@ msgstr ""
 
 #: templates/js/translated/filters.js:437
 msgid "Print Labels"
-msgstr ""
+msgstr "Skriv ut etiketter"
 
 #: templates/js/translated/filters.js:441
 msgid "Print Reports"
@@ -11869,11 +11871,11 @@ msgstr ""
 
 #: templates/js/translated/filters.js:469
 msgid "Add new filter"
-msgstr ""
+msgstr "Lägg till nytt filter"
 
 #: templates/js/translated/filters.js:477
 msgid "Clear all filters"
-msgstr ""
+msgstr "Rensa alla filter"
 
 #: templates/js/translated/filters.js:582
 msgid "Create filter"
@@ -11915,11 +11917,11 @@ msgstr ""
 
 #: templates/js/translated/forms.js:1971
 msgid "No results found"
-msgstr ""
+msgstr "Inga resultat hittades"
 
 #: templates/js/translated/forms.js:2275 templates/js/translated/search.js:239
 msgid "Searching"
-msgstr ""
+msgstr "Söker"
 
 #: templates/js/translated/forms.js:2489
 msgid "Clear input"
@@ -11939,11 +11941,11 @@ msgstr ""
 
 #: templates/js/translated/helpers.js:77
 msgid "YES"
-msgstr ""
+msgstr "JA"
 
 #: templates/js/translated/helpers.js:80
 msgid "NO"
-msgstr ""
+msgstr "NEJ"
 
 #: templates/js/translated/helpers.js:93
 msgid "True"
@@ -11967,7 +11969,7 @@ msgstr ""
 
 #: templates/js/translated/label.js:72
 msgid "No Labels Found"
-msgstr ""
+msgstr "Inga etiketter hittades"
 
 #: templates/js/translated/label.js:73
 msgid "No label templates found which match the selected items"
@@ -11983,15 +11985,15 @@ msgstr ""
 
 #: templates/js/translated/label.js:148
 msgid "Print label"
-msgstr ""
+msgstr "Skriv ut etikett"
 
 #: templates/js/translated/label.js:148
 msgid "Print labels"
-msgstr ""
+msgstr "Skriv ut etiketter"
 
 #: templates/js/translated/label.js:149
 msgid "Print"
-msgstr ""
+msgstr "Skriv ut"
 
 #: templates/js/translated/label.js:155
 msgid "Select label template"
@@ -12084,11 +12086,11 @@ msgstr ""
 
 #: templates/js/translated/notification.js:224
 msgid "Mark as unread"
-msgstr ""
+msgstr "Markera som oläst"
 
 #: templates/js/translated/notification.js:228
 msgid "Mark as read"
-msgstr ""
+msgstr "Markera som läst"
 
 #: templates/js/translated/notification.js:254
 msgid "No unread notifications"
@@ -12420,7 +12422,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:2645
 msgid "No subcategories found"
-msgstr ""
+msgstr "Inga underkategorier hittades"
 
 #: templates/js/translated/part.js:2681 templates/js/translated/stock.js:2689
 msgid "Display as tree"
@@ -12440,7 +12442,7 @@ msgstr ""
 
 #: templates/js/translated/part.js:2886 templates/js/translated/search.js:342
 msgid "results"
-msgstr ""
+msgstr "resultat"
 
 #: templates/js/translated/part.js:2936 templates/js/translated/stock.js:1453
 msgid "Edit test result"
@@ -12533,11 +12535,11 @@ msgstr ""
 
 #: templates/js/translated/plugin.js:189
 msgid "Enable"
-msgstr ""
+msgstr "Aktivera"
 
 #: templates/js/translated/plugin.js:189
 msgid "Disable"
-msgstr ""
+msgstr "Inaktivera"
 
 #: templates/js/translated/plugin.js:203
 msgid "Plugin updated"
@@ -12688,6 +12690,7 @@ msgid "No matching purchase orders"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1073
+#: templates/js/translated/return_order.js:491
 msgid "Select Line Items"
 msgstr ""
 
@@ -12706,7 +12709,7 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1191
 msgid "Stock Status"
-msgstr ""
+msgstr "Lagerstatus"
 
 #: templates/js/translated/purchase_order.js:1205
 msgid "Add barcode"
@@ -12832,7 +12835,7 @@ msgstr ""
 
 #: templates/js/translated/report.js:140
 msgid "No Reports Found"
-msgstr ""
+msgstr "Inga rapporter hittades"
 
 #: templates/js/translated/report.js:141
 msgid "No report templates found which match the selected items"
@@ -12874,7 +12877,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:300
 #: templates/js/translated/sales_order.js:788
 msgid "Invalid Customer"
-msgstr ""
+msgstr "Ogiltig kund"
 
 #: templates/js/translated/return_order.js:562
 msgid "Receive Return Order Items"
@@ -12996,7 +12999,7 @@ msgstr ""
 
 #: templates/js/translated/sales_order.js:1052
 msgid "Invoice"
-msgstr ""
+msgstr "Faktura"
 
 #: templates/js/translated/sales_order.js:1219
 msgid "Add Shipment"
@@ -13076,7 +13079,7 @@ msgstr ""
 
 #: templates/js/translated/search.js:342
 msgid "result"
-msgstr ""
+msgstr "resultat"
 
 #: templates/js/translated/search.js:352
 msgid "Minimize results"
@@ -13272,7 +13275,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1042 users/models.py:403
 msgid "Add"
-msgstr ""
+msgstr "Lägg till"
 
 #: templates/js/translated/stock.js:1046
 msgid "Delete Stock"
@@ -13565,7 +13568,7 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:74
 msgid "Has project code"
-msgstr ""
+msgstr "Har projektkod"
 
 #: templates/js/translated/table_filters.js:89
 #: templates/js/translated/table_filters.js:605
@@ -13730,7 +13733,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:396
 #: templates/js/translated/table_filters.js:397
 msgid "Stock status"
-msgstr ""
+msgstr "Lagerstatus"
 
 #: templates/js/translated/table_filters.js:400
 msgid "Has batch code"
@@ -13855,15 +13858,15 @@ msgstr ""
 
 #: templates/js/translated/tables.js:532
 msgid "rows per page"
-msgstr ""
+msgstr "rader per sida"
 
 #: templates/js/translated/tables.js:537
 msgid "Showing all rows"
-msgstr ""
+msgstr "Visar alla rader"
 
 #: templates/js/translated/tables.js:539
 msgid "Showing"
-msgstr ""
+msgstr "Visar"
 
 #: templates/js/translated/tables.js:539
 msgid "to"
@@ -13875,7 +13878,7 @@ msgstr "av"
 
 #: templates/js/translated/tables.js:539
 msgid "rows"
-msgstr ""
+msgstr "rader"
 
 #: templates/js/translated/tables.js:546
 msgid "No matching results"
@@ -13895,7 +13898,7 @@ msgstr "Kolumner"
 
 #: templates/js/translated/tables.js:561
 msgid "All"
-msgstr ""
+msgstr "Alla"
 
 #: templates/navbar.html:45
 msgid "Buy"

@@ -134,7 +134,7 @@ googleapis-common-protos==1.63.0
     #   opentelemetry-exporter-otlp-proto-http
 grpcio==1.62.1
     # via opentelemetry-exporter-otlp-proto-grpc
-gunicorn==21.2.0
+gunicorn==22.0.0
 html5lib==1.1
     # via weasyprint
 icalendar==5.0.12
@@ -292,9 +292,9 @@ rpds-py==0.18.0
     # via
     #   jsonschema
     #   referencing
-sentry-sdk==1.44.1
+sentry-sdk==1.45.0
     # via django-q-sentry
-setuptools==69.2.0
+setuptools==69.5.1
     # via
     #   django-money
     #   opentelemetry-instrumentation

@@ -93,6 +93,7 @@ export type InvenTreeTableProps<T = any> = {
   onRowClick?: (record: T, index: number, event: any) => void;
   onCellClick?: DataTableCellClickHandler<T>;
   modelType?: ModelType;
+  rowStyle?: (record: T, index: number) => any;
   modelField?: string;
 };
 
@@ -154,6 +155,7 @@ export function InvenTreeTable<T = any>({
     queryKey: ['options', url, tableState.tableKey],
     retry: 3,
     refetchOnMount: true,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       return api
         .options(url, {
@@ -661,6 +663,7 @@ export function InvenTreeTable<T = any>({
               tableProps.enableSelection ? onSelectedRecordsChange : undefined
             }
             rowExpansion={tableProps.rowExpansion}
+            rowStyle={tableProps.rowStyle}
             fetching={isFetching}
             noRecordsText={missingRecordsText}
             records={tableState.records}

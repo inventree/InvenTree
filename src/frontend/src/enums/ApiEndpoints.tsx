@@ -67,6 +67,8 @@ export enum ApiEndpoints {
   part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing_get = 'part/:id/pricing/',
+  part_pricing_internal = 'part/internal-price/',
+  part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
@@ -81,6 +83,7 @@ export enum ApiEndpoints {
   address_list = 'company/address/',
   company_attachment_list = 'company/attachment/',
   supplier_part_list = 'company/part/',
+  supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
   manufacturer_part_attachment_list = 'company/part/manufacturer/attachment/',
   manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
@@ -107,9 +110,12 @@ export enum ApiEndpoints {
   purchase_order_line_list = 'order/po-line/',
   purchase_order_attachment_list = 'order/po/attachment/',
   purchase_order_receive = 'order/po/:id/receive/',
+
   sales_order_list = 'order/so/',
+  sales_order_line_list = 'order/so-line/',
   sales_order_attachment_list = 'order/so/attachment/',
   sales_order_shipment_list = 'order/so/shipment/',
+
   return_order_list = 'order/ro/',
   return_order_attachment_list = 'order/ro/attachment/',
 
