@@ -15,4 +15,9 @@ class Migration(migrations.Migration):
             name='active',
             field=models.BooleanField(default=True, help_text='Is this company active?', verbose_name='Active'),
         ),
+        migrations.AddField(
+            model_name='supplierpart',
+            name='active',
+            field=models.BooleanField(default=True, help_text='Is this supplier part active?', verbose_name='Active'),
+        ),
     ]
