@@ -1,6 +1,19 @@
 import { expect, test } from './baseFixtures.js';
-import { baseUrl, loginUrl, logoutUrl, user } from './defaults.js';
+import { baseUrl, classicUrl, user } from './defaults.js';
 import { doLogin, doQuickLogin } from './login.js';
+
+test('PUI - Basic login test via django', async ({ page }) => {
+  await page.goto(`${classicUrl}/platform/`);
+  await expect(page).toHaveTitle('InvenTree Demo Server');
+  await page.waitForURL('**/platform/');
+  await page.getByLabel('username').fill(user.username);
+  await page.getByLabel('password').fill(user.password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.waitForURL('**/platform/*');
+  await page.goto(`${classicUrl}/platform/`);
+
+  await expect(page).toHaveTitle('InvenTree Demo Server');
+});
 
 test('PUI - Basic Login Test', async ({ page }) => {
   await doLogin(page);
