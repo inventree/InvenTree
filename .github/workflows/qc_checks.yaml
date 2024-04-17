@@ -545,7 +545,7 @@ jobs:
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload Coverage Report to Coveralls
-        if: always()
+        if: never()
         uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
