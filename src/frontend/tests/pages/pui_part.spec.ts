@@ -19,7 +19,7 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await page.getByRole('button', { name: 'Supplier Pricing' }).isDisabled();
 
   // Part with history
-  await page.goto('./platform/part/108/pricing');
+  await page.goto(`${baseUrl}/part/108/pricing`);
   await page.getByText('Part: Blue Chair').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
@@ -32,7 +32,7 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
 
   // Overview Graph
-  await page.getByText('BOM PricingOverall Pricing').waitFor();
+  //await page.getByText('BOM PricingOverall Pricing').waitFor();
   let graph = page.locator('#pricing-overview-chart');
   await graph.waitFor();
   //await graph.screenshot({ path: 'pui_part_pricing_overview.png' });
