@@ -213,7 +213,7 @@ jobs:
                   echo "Version: $version"
                   mkdir export/${version}
                   mv schema.yml export/${version}/api.yaml
-              - uses: stefanzweifel/git-auto-commit-action@8756aa072ef5b4a080af5dc8fef36c5d586e521d # v5.0.0
+              - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
                 with:
                   commit_message: "Update API schema for ${version}"
 
@@ -544,15 +544,6 @@ jobs:
       - name: Report coverage
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
-      - name: Upload Coverage Report to Coveralls
-        if: always()
-        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: pui
-          git-commit: ${{ github.sha }}
-          git-branch: ${{ github.ref }}
-          parallel: true
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.3.0
         if: always()

@@ -1,5 +1,11 @@
 import { t } from '@lingui/macro';
-import { SegmentedControl, SimpleGrid, Stack } from '@mantine/core';
+import {
+  Group,
+  SegmentedControl,
+  SimpleGrid,
+  Stack,
+  Text
+} from '@mantine/core';
 import { ReactNode, useMemo, useState } from 'react';
 import {
   Bar,
@@ -15,8 +21,14 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
-import { formatDecimal, formatPriceRange } from '../../../defaults/formatters';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
+import {
+  formatCurrency,
+  formatDecimal,
+  formatPriceRange
+} from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
@@ -25,7 +37,7 @@ import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 // Display BOM data as a pie chart
-function BomPieChart({ data }: { data: any[] }) {
+function BomPieChart({ data, currency }: { data: any[]; currency: string }) {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <PieChart>
@@ -57,20 +69,30 @@ function BomPieChart({ data }: { data: any[] }) {
             />
           ))}
         </Pie>
-        <Tooltip />
+        <Tooltip
+          formatter={(label, payload) => tooltipFormatter(label, currency)}
+        />
       </PieChart>
     </ResponsiveContainer>
   );
 }
 
 // Display BOM data as a bar chart
-function BomBarChart({ data }: { data: any[] }) {
+function BomBarChart({ data, currency }: { data: any[]; currency: string }) {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <BarChart data={data}>
         <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
+        <YAxis
+          tickFormatter={(value, index) =>
+            formatCurrency(value, {
+              currency: currency
+            })?.toString() ?? ''
+          }
+        />
+        <Tooltip
+          formatter={(label, payload) => tooltipFormatter(label, currency)}
+        />
         <Legend />
         <Bar
           dataKey="total_price_min"
@@ -110,7 +132,17 @@ export default function BomPricingPanel({
         title: t`Quantity`,
         sortable: true,
         switchable: false,
-        render: (record: any) => formatDecimal(record.quantity)
+        render: (record: any) => {
+          let quantity = formatDecimal(record.quantity);
+          let units = record.sub_part_detail?.units;
+
+          return (
+            <Group spacing="apart" grow>
+              <Text>{quantity}</Text>
+              {units && <Text size="xs">[{units}]</Text>}
+            </Group>
+          );
+        }
       },
       {
         accessor: 'unit_price',
@@ -178,13 +210,19 @@ export default function BomPricingPanel({
               sub_part_detail: true,
               has_pricing: true
             },
-            enableSelection: false
+            enableSelection: false,
+            modelType: ModelType.part,
+            modelField: 'sub_part'
           }}
         />
         {bomPricingData.length > 0 ? (
           <Stack spacing="xs">
-            {chartType == 'bar' && <BomBarChart data={bomPricingData} />}
-            {chartType == 'pie' && <BomPieChart data={bomPricingData} />}
+            {chartType == 'bar' && (
+              <BomBarChart data={bomPricingData} currency={pricing?.currency} />
+            )}
+            {chartType == 'pie' && (
+              <BomPieChart data={bomPricingData} currency={pricing?.currency} />
+            )}
             <SegmentedControl
               value={chartType}
               onChange={setChartType}

@@ -1,29 +1,14 @@
-import { expect, systemKey, test } from './baseFixtures.js';
-import { user } from './defaults.js';
+import { systemKey, test } from './baseFixtures.js';
+import { baseUrl } from './defaults.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Quick Command', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
-  await page.goto('./platform/');
-
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page
-    .getByRole('heading', { name: 'Welcome to your Dashboard,' })
-    .click();
-  await page.waitForTimeout(500);
+  await doQuickLogin(page);
 
   // Open Spotlight with Keyboard Shortcut
   await page.locator('body').press(`${systemKey}+k`);
   await page.waitForTimeout(200);
-  await page
-    .getByRole('button', { name: 'Dashboard Go to the InvenTree dashboard' })
-    .click();
+  await page.getByRole('tab', { name: 'Dashboard' }).click();
   await page
     .locator('div')
     .filter({ hasText: /^Dashboard$/ })
@@ -47,19 +32,8 @@ test('PUI - Quick Command', async ({ page }) => {
   await page.waitForURL('**/platform/dashboard');
 });
 
-test('PUI - Quick Command - no keys', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
-
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform');
-  // wait for the page to load - 0.5s
-  await page.waitForTimeout(500);
+test('PUI - Quick Command - No Keys', async ({ page }) => {
+  await doQuickLogin(page);
 
   // Open Spotlight with Button
   await page.getByRole('button', { name: 'Open spotlight' }).click();
@@ -125,7 +99,7 @@ test('PUI - Quick Command - no keys', async ({ page }) => {
   await page.waitForURL('https://docs.inventree.org/**');
 
   // Test addition of new actions
-  await page.goto('./platform/playground');
+  await page.goto(`${baseUrl}/playground`);
   await page
     .locator('div')
     .filter({ hasText: /^Playground$/ })

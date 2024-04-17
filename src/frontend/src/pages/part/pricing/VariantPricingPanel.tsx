@@ -12,8 +12,10 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
+import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
@@ -37,7 +39,7 @@ export default function VariantPricingPanel({
         title: t`Variant Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => PartColumn(record)
+        render: (record: any) => PartColumn(record, true)
       },
       {
         accessor: 'pricing_min',
@@ -90,15 +92,26 @@ export default function VariantPricingPanel({
               ancestor: part?.pk,
               has_pricing: true
             },
-            enablePagination: false
+            enablePagination: true,
+            modelType: ModelType.part
           }}
         />
         {variantPricingData.length > 0 ? (
           <ResponsiveContainer width="100%" height={500}>
             <BarChart data={variantPricingData}>
               <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
+              <YAxis
+                tickFormatter={(value, index) =>
+                  formatCurrency(value, {
+                    currency: pricing?.currency
+                  })?.toString() ?? ''
+                }
+              />
+              <Tooltip
+                formatter={(label, payload) =>
+                  tooltipFormatter(label, pricing?.currency)
+                }
+              />
               <Legend />
               <Bar
                 dataKey="pmin"

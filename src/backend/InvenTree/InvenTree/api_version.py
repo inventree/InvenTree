@@ -1,16 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 188
+INVENTREE_API_VERSION = 189
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v188 - 2024-04-16 : https://github.com/inventree/InvenTree/pull/7024
+v189 - 2024-04-18 : https://github.com/inventree/InvenTree/pull/7024
     - Adds "active" field to the Company API endpoints
     - Allow company list to be filtered by "active" status
 
-v187 - 2024-03-10 : https://github.com/inventree/InvenTree/pull/6985
+v188 - 2024-04-16 : https://github.com/inventree/InvenTree/pull/6970
+    - Adds session authentication support for the API
+    - Improvements for login / logout endpoints for better support of React web interface
+
+v187 - 2024-04-10 : https://github.com/inventree/InvenTree/pull/6985
     - Allow Part list endpoint to be sorted by pricing_min and pricing_max values
     - Allow BomItem list endpoint to be sorted by pricing_min and pricing_max values
     - Allow InternalPrice and SalePrice endpoints to be sorted by quantity

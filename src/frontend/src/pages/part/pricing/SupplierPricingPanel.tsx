@@ -11,6 +11,8 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
+import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -28,6 +30,13 @@ export default function SupplierPricingPanel({ part }: { part: any }) {
   const columns: TableColumn[] = useMemo(() => {
     return SupplierPriceBreakColumns();
   }, []);
+
+  const currency: string = useMemo(() => {
+    if (table.records.length === 0) {
+      return '';
+    }
+    return table.records[0].currency;
+  }, [table.records]);
 
   const supplierPricingData = useMemo(() => {
     return table.records.map((record: any) => {
@@ -58,8 +67,16 @@ export default function SupplierPricingPanel({ part }: { part: any }) {
         <ResponsiveContainer width="100%" height={500}>
           <BarChart data={supplierPricingData}>
             <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
+            <YAxis
+              tickFormatter={(value, index) =>
+                formatCurrency(value, {
+                  currency: currency
+                })?.toString() ?? ''
+              }
+            />
+            <Tooltip
+              formatter={(label, payload) => tooltipFormatter(label, currency)}
+            />
             <Bar
               dataKey="unit_price"
               fill={CHART_COLORS[0]}
