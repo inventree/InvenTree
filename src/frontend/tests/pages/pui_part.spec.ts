@@ -51,4 +51,9 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await page.getByText('Pie Chart').click();
   await page.getByRole('button', { name: 'Quantity Not sorted' }).waitFor();
   await page.getByRole('button', { name: 'Unit Price Not sorted' }).waitFor();
+
+  // BOM Pricing - linkjumping
+  await page.getByText('Wood Screw').waitFor();
+  await page.getByText('Wood Screw').click();
+  await page.waitForURL('**/part/98/pricing');
 });
