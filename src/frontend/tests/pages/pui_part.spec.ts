@@ -131,3 +131,25 @@ test('PUI - Pages - Part - Pricing (Internal)', async ({ page }) => {
   await page.getByText('Part *M2x4 SHCSSocket head').click();
   await page.getByRole('button', { name: 'Submit' }).click();
 });
+
+test('PUI - Pages - Part - Pricing (Purchase)', async ({ page }) => {
+  await doQuickLogin(page);
+
+  // Part
+  await page.goto(`${baseUrl}/part/69/pricing`);
+  await page.getByText('Part: 530470210').waitFor();
+  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
+  await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
+  await page.getByText('Last Updated').waitFor();
+  await page.getByRole('button', { name: 'Purchase History' }).isEnabled();
+  await page.getByRole('button', { name: 'Internal Pricing' }).isDisabled();
+  await page.getByRole('button', { name: 'Supplier Pricing' }).isDisabled();
+
+  // Purchase History
+  await page.getByRole('button', { name: 'Purchase History' }).click();
+  await page
+    .getByRole('button', { name: 'Purchase Order Not sorted' })
+    .waitFor();
+  await page.getByText('	2022-04-29').waitFor();
+});
