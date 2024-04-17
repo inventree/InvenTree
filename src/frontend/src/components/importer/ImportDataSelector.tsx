@@ -52,7 +52,7 @@ function ImporterDataCell({
         <Stack spacing="xs">
           <Text>{row.data[column.field]}</Text>
           {cellErrors.map((error: string) => (
-            <Text size="xs" color="red">
+            <Text size="xs" color="red" key={error}>
               {error}
             </Text>
           ))}
