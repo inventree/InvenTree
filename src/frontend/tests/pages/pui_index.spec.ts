@@ -36,11 +36,13 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
     .click();
 
   // Create Stock Item
-  // await page.getByRole('button', { name: 'Create Stock Item' }).click();
-  // await page.locator('#mantine-n0gx2wdet div').filter({ hasText: 'Search...' }).nth(1).click();
-  // await page.locator('#react-select-25-input').fill(newPartName);
-  // await page.getByText('R_1K_0402_1%').click();
-  // await page.getByLabel('Add Stock Item').getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('button', { name: 'Create Stock Item' }).click();
+  await page.locator('#react-select-25-input').fill('R_1K_0402_1');
+  await page.getByText('R_1K_0402_1%').click();
+  await page
+    .getByLabel('Add Stock Item')
+    .getByRole('button', { name: 'Submit' })
+    .click();
 
   // EditCategory
   await page.getByRole('button', { name: 'Edit Category' }).click();
