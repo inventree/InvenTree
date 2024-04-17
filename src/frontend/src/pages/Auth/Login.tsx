@@ -2,7 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import { Center, Container, Paper, Text } from '@mantine/core';
 import { useDisclosure, useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
@@ -13,7 +13,7 @@ import {
 } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import { defaultHostKey } from '../../defaults/defaultHostList';
-import { checkLoginState } from '../../functions/auth';
+import { checkLoginState, doBasicLogin } from '../../functions/auth';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
@@ -33,6 +33,7 @@ export default function Login() {
   const [loginMode, setMode] = useDisclosure(true);
   const navigate = useNavigate();
   const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   // Data manipulation functions
   function ChangeHost(newHost: string | null): void {
@@ -49,6 +50,16 @@ export default function Login() {
     }
 
     checkLoginState(navigate, location?.state?.redirectFrom, true);
+
+    // check if we got login params (login and password)
+    if (searchParams.has('login') && searchParams.has('password')) {
+      doBasicLogin(
+        searchParams.get('login') ?? '',
+        searchParams.get('password') ?? ''
+      ).then(() => {
+        navigate(location?.state?.redirectFrom ?? '/home');
+      });
+    }
   }, []);
 
   // Fetch server data on mount if no server data is present

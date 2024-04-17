@@ -15,14 +15,15 @@ export enum ApiEndpoints {
   user_roles = 'user/roles/',
   user_token = 'user/token/',
   user_simple_login = 'email/generate/',
-  user_reset = 'auth/password/reset/', // Note leading prefix here
-  user_reset_set = 'auth/password/reset/confirm/', // Note leading prefix here
+  user_reset = 'auth/password/reset/',
+  user_reset_set = 'auth/password/reset/confirm/',
   user_sso = 'auth/social/',
   user_sso_remove = 'auth/social/:id/disconnect/',
   user_emails = 'auth/emails/',
   user_email_remove = 'auth/emails/:id/remove/',
   user_email_verify = 'auth/emails/:id/verify/',
   user_email_primary = 'auth/emails/:id/primary/',
+  user_login = 'auth/login/',
   user_logout = 'auth/logout/',
   user_register = 'auth/registration/',
 

@@ -12,6 +12,7 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
@@ -99,8 +100,18 @@ export default function VariantPricingPanel({
           <ResponsiveContainer width="100%" height={500}>
             <BarChart data={variantPricingData}>
               <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
+              <YAxis
+                tickFormatter={(value, index) =>
+                  formatCurrency(value, {
+                    currency: pricing?.currency
+                  })?.toString() ?? ''
+                }
+              />
+              <Tooltip
+                formatter={(label, payload) =>
+                  tooltipFormatter(label, pricing?.currency)
+                }
+              />
               <Legend />
               <Bar
                 dataKey="pmin"
