@@ -77,3 +77,29 @@ test('PUI - Pages - Part - Pricing (Supplier)', async ({ page }) => {
   await target.click();
   await page.waitForURL('**/purchasing/supplier-part/697/');
 });
+
+test('PUI - Pages - Part - Pricing (Internal)', async ({ page }) => {
+  await doQuickLogin(page);
+
+  // Part
+  await page.goto(`${baseUrl}/part/65/pricing`);
+  await page.getByText('Part: M2x4 SHCS').waitFor();
+  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
+  await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
+  await page.getByText('Last Updated').waitFor();
+  await page.getByRole('button', { name: 'Purchase History' }).isDisabled();
+  await page.getByRole('button', { name: 'Internal Pricing' }).isEnabled();
+  await page.getByRole('button', { name: 'Supplier Pricing' }).isDisabled();
+
+  // Internal Pricing
+  await page.getByRole('button', { name: 'Internal Pricing' }).click();
+  await page.getByRole('button', { name: 'Price Break Not sorted' }).waitFor();
+
+  // Internal Pricing - editing
+  await page.getByRole('row', { name: '1 NZ$' }).getByRole('button').click();
+  await page.getByRole('menuitem', { name: 'Edit' }).click();
+  await page.getByText('Part *M2x4 SHCSSocket head').click();
+  await page.getByText('Part *M2x4 SHCSSocket head').click();
+  await page.getByRole('button', { name: 'Submit' }).click();
+});
