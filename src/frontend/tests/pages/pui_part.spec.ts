@@ -3,7 +3,7 @@ import { test } from '@playwright/test';
 import { baseUrl } from '../defaults';
 import { doQuickLogin } from '../login';
 
-test('PUI - Pages - Part - Pricing', async ({ page }) => {
+test('PUI - Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
   await doQuickLogin(page);
 
   // Part with no history
@@ -11,7 +11,6 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await page.getByText('1551ABK').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
-  await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
   await page.getByRole('button', { name: 'Purchase History' }).isDisabled();
@@ -23,7 +22,6 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await page.getByText('Part: Blue Chair').waitFor();
   await page.getByRole('tab', { name: 'Part Pricing' }).click();
   await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
-  await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
   await page.getByText('Last Updated').waitFor();
   await page.getByRole('button', { name: 'Internal Pricing' }).isDisabled();
@@ -52,4 +50,30 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await page.getByText('Wood Screw').waitFor();
   await page.getByText('Wood Screw').click();
   await page.waitForURL('**/part/98/pricing');
+});
+
+test('PUI - Pages - Part - Pricing (Supplier)', async ({ page }) => {
+  await doQuickLogin(page);
+
+  // Part
+  await page.goto(`${baseUrl}/part/55/pricing`);
+  await page.getByText('Part: C_100nF_0603').waitFor();
+  await page.getByRole('tab', { name: 'Part Pricing' }).click();
+  await page.getByLabel('Part Pricing').getByText('Part Pricing').waitFor();
+  await page.getByRole('button', { name: 'Pricing Overview' }).waitFor();
+  await page.getByText('Last Updated').waitFor();
+  await page.getByRole('button', { name: 'Purchase History' }).isEnabled();
+  await page.getByRole('button', { name: 'Internal Pricing' }).isDisabled();
+  await page.getByRole('button', { name: 'Supplier Pricing' }).isEnabled();
+
+  // Supplier Pricing
+  await page.getByRole('button', { name: 'Supplier Pricing' }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole('button', { name: 'SKU Not sorted' }).waitFor();
+
+  // Supplier Pricing - linkjumping
+  let target = page.getByText('ARR-26041-LPC').first();
+  await target.waitFor();
+  await target.click();
+  await page.waitForURL('**/purchasing/supplier-part/697/');
 });
