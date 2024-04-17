@@ -9,17 +9,14 @@ test('PUI - Quick Command', async ({ page }) => {
   await page.locator('body').press(`${systemKey}+k`);
   await page.waitForTimeout(200);
   await page
-    .getByRole('button', { name: 'Dashboard Go to the InvenTree dashboard' })
+    .getByRole('button', { name: 'Go to the InvenTree dashboard' })
     .click();
-  await page
-    .locator('div')
-    .filter({ hasText: /^Dashboard$/ })
-    .click();
+  await page.locator('p').filter({ hasText: 'Dashboard' }).waitFor();
   await page.waitForURL('**/platform/dashboard');
 
   // Open Spotlight with Button
   await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByRole('button', { name: 'Home Go to the home page' }).click();
+  await page.getByRole('button', { name: 'Go to the home page' }).click();
   await page
     .getByRole('heading', { name: 'Welcome to your Dashboard,' })
     .click();
