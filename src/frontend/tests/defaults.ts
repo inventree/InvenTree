@@ -6,6 +6,7 @@ export const logoutUrl = `${baseUrl}/logout`;
 export const homeUrl = `${baseUrl}/home`;
 
 export const user = {
+  name: 'Ally Access',
   username: 'allaccess',
   password: 'nolimits'
 };
