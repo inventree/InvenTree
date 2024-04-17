@@ -134,7 +134,7 @@ googleapis-common-protos==1.63.0
     #   opentelemetry-exporter-otlp-proto-http
 grpcio==1.62.1
     # via opentelemetry-exporter-otlp-proto-grpc
-gunicorn==21.2.0
+gunicorn==22.0.0
 html5lib==1.1
     # via weasyprint
 icalendar==5.0.12
