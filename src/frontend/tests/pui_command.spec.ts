@@ -1,5 +1,5 @@
-import { expect, systemKey, test } from './baseFixtures.js';
-import { homeUrl, loginUrl, logoutUrl, user } from './defaults.js';
+import { systemKey, test } from './baseFixtures.js';
+import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
 test('PUI - Quick Command', async ({ page }) => {
@@ -8,9 +8,7 @@ test('PUI - Quick Command', async ({ page }) => {
   // Open Spotlight with Keyboard Shortcut
   await page.locator('body').press(`${systemKey}+k`);
   await page.waitForTimeout(200);
-  await page
-    .getByRole('button', { name: 'Dashboard Go to the InvenTree dashboard' })
-    .click();
+  await page.getByRole('tab', { name: 'Dashboard' }).click();
   await page
     .locator('div')
     .filter({ hasText: /^Dashboard$/ })
@@ -101,7 +99,7 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
   await page.waitForURL('https://docs.inventree.org/**');
 
   // Test addition of new actions
-  await page.goto('./platform/playground');
+  await page.goto(`${baseUrl}/playground`);
   await page
     .locator('div')
     .filter({ hasText: /^Playground$/ })

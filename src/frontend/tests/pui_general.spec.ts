@@ -132,7 +132,8 @@ test('PUI - Scanning', async ({ page }) => {
 });
 
 test('PUI - Admin', async ({ page }) => {
-  await doQuickLogin(page);
+  // Note here we login with admin access
+  await doQuickLogin(page, 'admin', 'inventree');
 
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
