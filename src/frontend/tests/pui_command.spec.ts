@@ -4,6 +4,9 @@ import { doQuickLogin } from './login.js';
 
 test('PUI - Quick Command', async ({ page }) => {
   await doQuickLogin(page);
+  await page
+    .getByRole('heading', { name: 'Welcome to your Dashboard,' })
+    .waitFor();
 
   // Open Spotlight with Keyboard Shortcut
   await page.locator('body').press(`${systemKey}+k`);
