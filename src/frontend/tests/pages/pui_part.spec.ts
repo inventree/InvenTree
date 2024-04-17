@@ -1,6 +1,6 @@
-import { expect, test } from '@playwright/test';
+import { test } from '@playwright/test';
 
-import { baseUrl, user } from '../defaults';
+import { baseUrl } from '../defaults';
 import { doQuickLogin } from '../login';
 
 test('PUI - Pages - Part - Pricing', async ({ page }) => {
@@ -32,15 +32,12 @@ test('PUI - Pages - Part - Pricing', async ({ page }) => {
   await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
 
   // Overview Graph
-  //await page.getByText('BOM PricingOverall Pricing').waitFor();
   let graph = page.locator('#pricing-overview-chart');
   await graph.waitFor();
-  //await graph.screenshot({ path: 'pui_part_pricing_overview.png' });
   await graph.getByText('$45').waitFor();
   await graph.getByText('BOM Pricing').waitFor();
   await graph.getByText('Overall Pricing').waitFor();
   await graph.locator('path').nth(1).hover();
-  //await graph.screenshot({ path: 'pui_part_pricing_overview_hover.png' });
   await page.getByText('min_value : $43').waitFor();
 
   // BOM Pricing
