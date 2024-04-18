@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-17 03:36\n"
+"PO-Revision-Date: 2024-04-18 03:35\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -286,26 +286,30 @@ msgstr "Xóa"
 #~ msgid "Check your your input and try again."
 #~ msgstr "Check your your input and try again."
 
-#: src/components/forms/AuthenticationForm.tsx:51
+#: src/components/forms/AuthenticationForm.tsx:49
 msgid "Login successful"
 msgstr "Đăng nhập thành công"
 
+#: src/components/forms/AuthenticationForm.tsx:50
+msgid "Logged in successfully"
+msgstr ""
+
 #: src/components/forms/AuthenticationForm.tsx:52
-msgid "Welcome back!"
-msgstr "Chào mừng bạn đã trở lại!"
+#~ msgid "Welcome back!"
+#~ msgstr "Welcome back!"
 
 #: src/components/forms/AuthenticationForm.tsx:53
 #~ msgid "Login successfull"
 #~ msgstr "Login successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:59
+#: src/components/forms/AuthenticationForm.tsx:56
 msgid "Login failed"
 msgstr "Đăng nhập thất bại"
 
-#: src/components/forms/AuthenticationForm.tsx:60
-#: src/components/forms/AuthenticationForm.tsx:80
-#: src/components/forms/AuthenticationForm.tsx:217
-#: src/functions/auth.tsx:116
+#: src/components/forms/AuthenticationForm.tsx:57
+#: src/components/forms/AuthenticationForm.tsx:74
+#: src/components/forms/AuthenticationForm.tsx:209
+#: src/functions/auth.tsx:111
 msgid "Check your input and try again."
 msgstr "Kiểm tra đầu vào của bạn và thử lại."
 
@@ -314,46 +318,45 @@ msgstr "Kiểm tra đầu vào của bạn và thử lại."
 #~ msgid "Mail delivery successfull"
 #~ msgstr "Mail delivery successfull"
 
-#: src/components/forms/AuthenticationForm.tsx:71
-#: src/functions/auth.tsx:107
+#: src/components/forms/AuthenticationForm.tsx:68
+#: src/functions/auth.tsx:102
 msgid "Mail delivery successful"
 msgstr "Thư đã được gửi đi thành công"
 
-#: src/components/forms/AuthenticationForm.tsx:72
+#: src/components/forms/AuthenticationForm.tsx:69
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
 msgstr "Kiểm tra hộp thư để nhận liên kết đăng nhập. Nếu bạn đã có tài khoản, bạn sẽ nhận một liên kết đăng nhập. Kiểm tra đồng thời thư mục spam."
 
-#: src/components/forms/AuthenticationForm.tsx:79
-#: src/components/forms/AuthenticationForm.tsx:216
-msgid "Input error"
-msgstr "Lỗi đầu vào"
+#: src/components/forms/AuthenticationForm.tsx:73
+msgid "Mail delivery failed"
+msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:99
+#: src/components/forms/AuthenticationForm.tsx:93
 msgid "Or continue with other methods"
 msgstr "Hoặc tiếp tục với phương thức khác"
 
-#: src/components/forms/AuthenticationForm.tsx:110
-#: src/components/forms/AuthenticationForm.tsx:234
+#: src/components/forms/AuthenticationForm.tsx:104
+#: src/components/forms/AuthenticationForm.tsx:225
 msgid "Username"
 msgstr "Tên người dùng"
 
-#: src/components/forms/AuthenticationForm.tsx:111
-#: src/components/forms/AuthenticationForm.tsx:235
+#: src/components/forms/AuthenticationForm.tsx:105
+#: src/components/forms/AuthenticationForm.tsx:226
 msgid "Your username"
 msgstr "Tên người dùng của bạn"
 
-#: src/components/forms/AuthenticationForm.tsx:116
-#: src/components/forms/AuthenticationForm.tsx:247
+#: src/components/forms/AuthenticationForm.tsx:110
+#: src/components/forms/AuthenticationForm.tsx:238
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
 msgstr "Mật khẩu"
 
-#: src/components/forms/AuthenticationForm.tsx:117
-#: src/components/forms/AuthenticationForm.tsx:248
+#: src/components/forms/AuthenticationForm.tsx:111
+#: src/components/forms/AuthenticationForm.tsx:239
 msgid "Your password"
 msgstr "Mật khẩu của bạn"
 
-#: src/components/forms/AuthenticationForm.tsx:129
+#: src/components/forms/AuthenticationForm.tsx:123
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
 msgstr "Đặt lại mật khẩu"
@@ -362,73 +365,77 @@ msgstr "Đặt lại mật khẩu"
 #~ msgid "Log in"
 #~ msgstr "Log in"
 
-#: src/components/forms/AuthenticationForm.tsx:136
-#~ msgid "I will use username and password"
-#~ msgstr "I will use username and password"
-
-#: src/components/forms/AuthenticationForm.tsx:138
-#: src/components/forms/AuthenticationForm.tsx:240
+#: src/components/forms/AuthenticationForm.tsx:132
+#: src/components/forms/AuthenticationForm.tsx:231
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
 msgstr "Địa chỉ email"
 
-#: src/components/forms/AuthenticationForm.tsx:139
+#: src/components/forms/AuthenticationForm.tsx:133
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
 msgstr "Chúng tôi sẽ gửi bạn 1 liên kết để đăng nhập - nếu bạn đã đăng ký"
 
-#: src/components/forms/AuthenticationForm.tsx:155
+#: src/components/forms/AuthenticationForm.tsx:136
+#~ msgid "I will use username and password"
+#~ msgstr "I will use username and password"
+
+#: src/components/forms/AuthenticationForm.tsx:149
 msgid "Send me an email"
 msgstr "Gửi email cho chúng tôi"
 
-#: src/components/forms/AuthenticationForm.tsx:157
+#: src/components/forms/AuthenticationForm.tsx:151
 msgid "Use username and password"
 msgstr "Dùng tên đăng nhập và mật khẩu"
 
-#: src/components/forms/AuthenticationForm.tsx:166
+#: src/components/forms/AuthenticationForm.tsx:160
 msgid "Log In"
 msgstr "Đăng nhập"
 
-#: src/components/forms/AuthenticationForm.tsx:168
+#: src/components/forms/AuthenticationForm.tsx:162
 msgid "Send Email"
 msgstr "Gửi email"
 
-#: src/components/forms/AuthenticationForm.tsx:197
+#: src/components/forms/AuthenticationForm.tsx:191
 msgid "Registration successful"
 msgstr "Đăng kí thành công"
 
-#: src/components/forms/AuthenticationForm.tsx:198
+#: src/components/forms/AuthenticationForm.tsx:192
 msgid "Please confirm your email address to complete the registration"
 msgstr "Vui xác nhận địa chỉ email của bạn để hoàn thành việc đăng ký"
 
-#: src/components/forms/AuthenticationForm.tsx:241
+#: src/components/forms/AuthenticationForm.tsx:208
+msgid "Input error"
+msgstr "Lỗi đầu vào"
+
+#: src/components/forms/AuthenticationForm.tsx:232
 msgid "This will be used for a confirmation"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:253
+#: src/components/forms/AuthenticationForm.tsx:244
 msgid "Password repeat"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:254
+#: src/components/forms/AuthenticationForm.tsx:245
 msgid "Repeat password"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:266
-#: src/components/forms/AuthenticationForm.tsx:311
+#: src/components/forms/AuthenticationForm.tsx:257
+#: src/components/forms/AuthenticationForm.tsx:302
 msgid "Register"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:272
+#: src/components/forms/AuthenticationForm.tsx:263
 msgid "Or use SSO"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:303
+#: src/components/forms/AuthenticationForm.tsx:294
 msgid "Don't have an account?"
 msgstr ""
 
-#: src/components/forms/AuthenticationForm.tsx:322
+#: src/components/forms/AuthenticationForm.tsx:313
 msgid "Go back to login"
 msgstr ""
 
@@ -872,12 +879,12 @@ msgstr "Phiên bản"
 msgid "Server Version"
 msgstr "Phiên bản máy chủ"
 
-#: src/components/nav/Layout.tsx:54
+#: src/components/nav/Layout.tsx:52
 #: src/tables/part/PartThumbTable.tsx:190
 msgid "Search..."
 msgstr ""
 
-#: src/components/nav/Layout.tsx:56
+#: src/components/nav/Layout.tsx:54
 msgid "Nothing found..."
 msgstr ""
 
@@ -2487,38 +2494,50 @@ msgstr ""
 #~ msgid "See you soon."
 #~ msgstr "See you soon."
 
-#: src/functions/auth.tsx:70
-msgid "Logout successful"
-msgstr "Đăng xuất thành công"
-
-#: src/functions/auth.tsx:71
-msgid "You have been logged out"
+#: src/functions/auth.tsx:68
+msgid "Logged Out"
 msgstr ""
 
-#: src/functions/auth.tsx:108
+#: src/functions/auth.tsx:69
+msgid "Successfully logged out"
+msgstr ""
+
+#: src/functions/auth.tsx:70
+#~ msgid "Logout successful"
+#~ msgstr "Logout successful"
+
+#: src/functions/auth.tsx:71
+#~ msgid "You have been logged out"
+#~ msgstr "You have been logged out"
+
+#: src/functions/auth.tsx:103
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
 msgstr "Kiểm tra hộp thư để lấy liên kết đặt lại. Việc này chỉ có tác dụng khi bạn có tài khoản. Cần kiểm tra thư mục Spam/Junk."
 
-#: src/functions/auth.tsx:115
+#: src/functions/auth.tsx:110
 #: src/pages/Auth/Set-Password.tsx:39
 msgid "Reset failed"
 msgstr "Thiết lập lại thất bại"
+
+#: src/functions/auth.tsx:139
+msgid "Logged In"
+msgstr ""
+
+#: src/functions/auth.tsx:140
+msgid "Successfully logged in"
+msgstr ""
 
 #: src/functions/auth.tsx:141
 #~ msgid "Already logged in"
 #~ msgstr "Already logged in"
 
 #: src/functions/auth.tsx:142
-msgid "Logged In"
-msgstr ""
-
-#: src/functions/auth.tsx:142
 #~ msgid "Found an existing login - using it to log you in."
 #~ msgstr "Found an existing login - using it to log you in."
 
 #: src/functions/auth.tsx:143
-msgid "Found an existing login - welcome back!"
-msgstr ""
+#~ msgid "Found an existing login - welcome back!"
+#~ msgstr "Found an existing login - welcome back!"
 
 #: src/functions/forms.tsx:50
 #~ msgid "Form method not provided"
@@ -2536,27 +2555,27 @@ msgstr "Mẫu không hợp lệ"
 msgid "method parameter not supplied"
 msgstr "tham số phương thức không được cung cấp"
 
-#: src/functions/notifications.tsx:9
+#: src/functions/notifications.tsx:10
 msgid "Not implemented"
 msgstr "Chưa triển khai"
 
-#: src/functions/notifications.tsx:10
+#: src/functions/notifications.tsx:11
 msgid "This feature is not yet implemented"
 msgstr "Tính năng này vẫn chưa được triển khai"
 
-#: src/functions/notifications.tsx:20
+#: src/functions/notifications.tsx:21
 msgid "Permission denied"
 msgstr "Quyền truy cập bị từ chối"
 
-#: src/functions/notifications.tsx:21
+#: src/functions/notifications.tsx:22
 msgid "You do not have permission to perform this action"
 msgstr "Bạn không có quyền thực hiện hành động này"
 
-#: src/functions/notifications.tsx:32
+#: src/functions/notifications.tsx:33
 msgid "Invalid Return Code"
 msgstr "Mã trả hàng không hợp lệ"
 
-#: src/functions/notifications.tsx:33
+#: src/functions/notifications.tsx:34
 msgid "Server returned status {returnCode}"
 msgstr "Mã phản hồi của máy chủ {returnCode}"
 
@@ -2585,17 +2604,21 @@ msgstr "Đang kiểm tra trạng thái đăng nhập của bạn"
 msgid "No selection"
 msgstr "Không có lựa chọn"
 
-#: src/pages/Auth/Login.tsx:75
+#: src/pages/Auth/Login.tsx:86
 msgid "Welcome, log in below"
 msgstr "Chào bạn, đăng nhập bên dưới"
 
-#: src/pages/Auth/Login.tsx:77
+#: src/pages/Auth/Login.tsx:88
 msgid "Register below"
 msgstr ""
 
 #: src/pages/Auth/Login.tsx:121
 #~ msgid "Edit host options"
 #~ msgstr "Edit host options"
+
+#: src/pages/Auth/Logout.tsx:23
+msgid "Logging out"
+msgstr ""
 
 #: src/pages/Auth/Reset.tsx:41
 #: src/pages/Auth/Set-Password.tsx:112
