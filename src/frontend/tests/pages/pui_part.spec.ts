@@ -150,5 +150,5 @@ test('PUI - Pages - Part - Pricing (Purchase)', async ({ page }) => {
   await page
     .getByRole('button', { name: 'Purchase Order Not sorted' })
     .waitFor();
-  await page.getByText('	2022-04-29').waitFor();
+  await page.getByText('2022-04-29').waitFor();
 });
