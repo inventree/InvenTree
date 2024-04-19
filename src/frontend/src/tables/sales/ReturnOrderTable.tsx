@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -22,8 +23,7 @@ import {
   ReferenceColumn,
   ResponsibleColumn,
   StatusColumn,
-  TargetDateColumn,
-  TotalPriceColumn
+  TargetDateColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -82,7 +82,16 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       CreationDateColumn(),
       TargetDateColumn(),
       ResponsibleColumn(),
-      TotalPriceColumn()
+      {
+        accessor: 'total_price',
+        title: t`Total Price`,
+        sortable: true,
+        render: (record: any) => {
+          return formatCurrency(record.total_price, {
+            currency: record.order_currency ?? record.customer_detail?.currency
+          });
+        }
+      }
     ];
   }, []);
 
