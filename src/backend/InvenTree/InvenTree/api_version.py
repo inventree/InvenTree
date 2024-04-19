@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 188
+INVENTREE_API_VERSION = 189
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v189 - 2024-04-19 : https://github.com/inventree/InvenTree/pull/7066
+    - Adds "currency" field to CompanyBriefSerializer class
 
 v188 - 2024-04-16 : https://github.com/inventree/InvenTree/pull/6970
     - Adds session authentication support for the API
