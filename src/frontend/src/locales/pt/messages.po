@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-18 03:35\n"
+"PO-Revision-Date: 2024-04-19 03:57\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -32,7 +32,7 @@ msgstr "Escanear código QR"
 
 #: src/components/buttons/SpotlightButton.tsx:11
 msgid "Open spotlight"
-msgstr ""
+msgstr "Abrir spotlight"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
@@ -112,7 +112,7 @@ msgstr "Selecionar de imagens existentes"
 
 #: src/components/details/DetailsImage.tsx:274
 msgid "Select Image"
-msgstr ""
+msgstr "Selecionar Imagem"
 
 #: src/components/details/DetailsImage.tsx:286
 msgid "Upload new image"
@@ -171,35 +171,35 @@ msgstr "Virtual"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
-msgstr ""
+msgstr "Código"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:44
 msgid "Failed to parse error response from server."
-msgstr ""
+msgstr "Falha ao processar a resposta do servidor."
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:82
 msgid "Preview not available, click \"Reload Preview\"."
-msgstr ""
+msgstr "Pré-visualização indisponível, clique em \"Recarregar Pré-visualização\"."
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr ""
+msgstr "Visualizar PDF"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:114
 msgid "Error loading template"
-msgstr ""
+msgstr "Erro ao carregar template"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:126
 msgid "Error saving template"
-msgstr ""
+msgstr "Erro ao salvar o template"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:152
 msgid "Save & Reload preview?"
-msgstr ""
+msgstr "Salvar e recarregar visualização?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 msgid "Are you sure you want to Save & Reload the preview?"
-msgstr ""
+msgstr "Tem certeza de que deseja salvar e recarregar a visualização?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:159
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
@@ -2297,7 +2297,7 @@ msgstr "Categoria de peça parental"
 
 #: src/forms/PurchaseOrderForms.tsx:246
 msgid "Choose Location"
-msgstr ""
+msgstr "Escolher local"
 
 #: src/forms/PurchaseOrderForms.tsx:254
 msgid "Item Destination selected"
