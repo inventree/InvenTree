@@ -53,8 +53,6 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
         ]
         read_only_fields = ['currency']
 
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
-
     image = InvenTreeImageSerializerField(read_only=True)
 
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
