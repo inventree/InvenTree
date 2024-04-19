@@ -244,9 +244,6 @@ export function ApiForm({
         // Await API call
         let response = await api.get(url);
 
-        console.log('initial data query returned:');
-        console.log(response.data);
-
         // Define function to process API response
         const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
           const res: NestedDict = {};
