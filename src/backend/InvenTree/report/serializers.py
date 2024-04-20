@@ -1,7 +1,10 @@
 """API serializers for the reporting models."""
 
+from django.utils.translation import gettext_lazy as _
+
 from rest_framework import serializers
 
+import report.helpers
 import report.models
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
@@ -37,6 +40,10 @@ class ReportSerializer(ReportSerializerBase):
 
         model = report.models.ReportTemplate
         fields = [*ReportSerializerBase.report_fields(), 'model_type']
+
+    model_type = serializers.ChoiceField(
+        label=_('Model Type'), choices=report.helpers.report_model_options()
+    )
 
 
 class TestReportSerializer(ReportSerializerBase):

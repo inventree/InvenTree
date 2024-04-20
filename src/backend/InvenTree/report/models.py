@@ -23,6 +23,7 @@ import InvenTree.models
 import order.models
 import part.models
 import report.helpers
+import report.validators
 import stock.models
 from InvenTree.helpers import validateFilterString
 from InvenTree.helpers_model import get_base_url
@@ -329,9 +330,13 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
 class ReportTemplate(ReportTemplateBase):
     """Model class for report templates which are rendered against other model instances."""
 
-    model_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, related_name='report_templates'
+    model_type = models.CharField(
+        max_length=100, validators=[report.validators.validate_report_model_type]
     )
+
+    def get_model(self):
+        """Return the database model class associated with this report template."""
+        ...
 
     filters = models.CharField(
         blank=True,
