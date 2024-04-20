@@ -354,6 +354,7 @@ def default_delete_on_deplete():
 class StockItem(
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
     common.models.MetaMixin,

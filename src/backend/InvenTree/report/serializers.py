@@ -31,6 +31,12 @@ class ReportSerializerBase(InvenTreeModelSerializer):
             'enabled',
         ]
 
+    page_size = serializers.ChoiceField(
+        required=False,
+        default=report.helpers.report_page_size_default(),
+        choices=report.helpers.report_page_size_options(),
+    )
+
 
 class ReportSerializer(ReportSerializerBase):
     """Serializer class for the ReportSerializer model."""
