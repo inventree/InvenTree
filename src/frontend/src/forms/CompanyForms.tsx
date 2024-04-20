@@ -10,34 +10,21 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import {
+  ApiFormAdjustFilterType,
+  ApiFormFieldSet
+} from '../components/forms/fields/ApiFormField';
 
 /**
  * Field set for SupplierPart instance
  */
-export function useSupplierPartFields({
-  partPk,
-  supplierPk,
-  hidePart
-}: {
-  partPk?: number;
-  supplierPk?: number;
-  hidePart?: boolean;
-}) {
-  const [part, setPart] = useState<number | undefined>(partPk);
-
-  useEffect(() => {
-    setPart(partPk);
-  }, [partPk]);
-
+export function useSupplierPartFields() {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
-        hidden: hidePart,
-        value: part,
-        onValueChange: setPart,
         filters: {
-          purchaseable: true
+          purchaseable: true,
+          active: true
         }
       },
       manufacturer_part: {
@@ -45,15 +32,18 @@ export function useSupplierPartFields({
           part_detail: true,
           manufacturer_detail: true
         },
-        adjustFilters: (filters: any) => {
-          if (part) {
-            filters.part = part;
-          }
-
-          return filters;
+        adjustFilters: (adjust: ApiFormAdjustFilterType) => {
+          return {
+            ...adjust.filters,
+            part: adjust.data.part
+          };
         }
       },
-      supplier: {},
+      supplier: {
+        filters: {
+          active: true
+        }
+      },
       SKU: {
         icon: <IconHash />
       },
@@ -67,15 +57,12 @@ export function useSupplierPartFields({
       pack_quantity: {},
       packaging: {
         icon: <IconPackage />
-      }
+      },
+      active: {}
     };
 
-    if (supplierPk !== undefined) {
-      fields.supplier.value = supplierPk;
-    }
-
     return fields;
-  }, [part]);
+  }, []);
 }
 
 export function useManufacturerPartFields() {
@@ -125,6 +112,7 @@ export function companyFields(): ApiFormFieldSet {
     },
     is_supplier: {},
     is_manufacturer: {},
-    is_customer: {}
+    is_customer: {},
+    active: {}
   };
 }

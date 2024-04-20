@@ -10,7 +10,7 @@ import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { buildOrderFields } from '../../forms/BuildForms';
+import { useBuildOrderFields } from '../../forms/BuildForms';
 import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -135,10 +135,12 @@ export function BuildOrderTable({
 
   const table = useTable('buildorder');
 
+  const buildOrderFields = useBuildOrderFields({ create: true });
+
   const newBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
-    fields: buildOrderFields(),
+    fields: buildOrderFields,
     initialData: {
       part: partId,
       sales_order: salesOrderId,

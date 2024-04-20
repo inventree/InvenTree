@@ -42,11 +42,16 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = Company
-        fields = ['pk', 'url', 'name', 'description', 'image', 'thumbnail', 'currency']
-
+        fields = [
+            'pk',
+            'active',
+            'name',
+            'description',
+            'image',
+            'thumbnail',
+            'currency',
+        ]
         read_only_fields = ['currency']
-
-    url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     image = InvenTreeImageSerializerField(read_only=True)
 
@@ -118,6 +123,7 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
             'contact',
             'link',
             'image',
+            'active',
             'is_customer',
             'is_manufacturer',
             'is_supplier',
@@ -308,6 +314,7 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
             'description',
             'in_stock',
             'link',
+            'active',
             'manufacturer',
             'manufacturer_detail',
             'manufacturer_part',
@@ -371,8 +378,9 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
             self.fields.pop('pretty_name')
 
     # Annotated field showing total in-stock quantity
-    in_stock = serializers.FloatField(read_only=True)
-    available = serializers.FloatField(required=False)
+    in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))
+
+    available = serializers.FloatField(required=False, label=_('Available'))
 
     pack_quantity_native = serializers.FloatField(read_only=True)
 
