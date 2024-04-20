@@ -8,11 +8,19 @@ from .models import (
     PurchaseOrderReport,
     ReportAsset,
     ReportSnippet,
+    ReportTemplate,
     ReturnOrderReport,
     SalesOrderReport,
     StockLocationReport,
     TestReport,
 )
+
+
+@admin.register(ReportTemplate)
+class ReportAdmin(admin.ModelAdmin):
+    """Admin class for the ReportTemplate model."""
+
+    list_display = ('name', 'description', 'model_type', 'enabled')
 
 
 @admin.register(

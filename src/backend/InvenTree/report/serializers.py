@@ -29,6 +29,16 @@ class ReportSerializerBase(InvenTreeModelSerializer):
         ]
 
 
+class ReportSerializer(ReportSerializerBase):
+    """Serializer class for the ReportSerializer model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = report.models.ReportTemplate
+        fields = [*ReportSerializerBase.report_fields(), 'model_type']
+
+
 class TestReportSerializer(ReportSerializerBase):
     """Serializer class for the TestReport model."""
 

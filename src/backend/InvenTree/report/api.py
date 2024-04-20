@@ -270,6 +270,13 @@ class ReportPrintMixin:
         return self.print(request, items)
 
 
+class ReportTemplateList(ReportListView):
+    """API endpoint for viewing list of ReportTemplate objects."""
+
+    queryset = report.models.ReportTemplate.objects.all()
+    serializer_class = report.serializers.ReportSerializer
+
+
 class StockItemTestReportMixin(ReportFilterMixin):
     """Mixin for StockItemTestReport report template."""
 
@@ -528,6 +535,13 @@ class ReportAssetDetail(RetrieveUpdateDestroyAPI):
 
 
 report_api_urls = [
+    # Report templates
+    path(
+        'template/',
+        include([
+            path('', ReportTemplateList.as_view(), name='api-report-template-list')
+        ]),
+    ),
     # Report assets
     path(
         'asset/',

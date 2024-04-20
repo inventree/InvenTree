@@ -1022,6 +1022,15 @@ class InvenTreeNotesMixin(models.Model):
     )
 
 
+class InvenTreeReportMixin(models.Model):
+    """A mixin class for adding report generation functionality to a model class."""
+
+    class Meta:
+        """Metaclass options for this mixin."""
+
+        abstract = True
+
+
 class InvenTreeBarcodeMixin(models.Model):
     """A mixin class for adding barcode functionality to a model class.
 
