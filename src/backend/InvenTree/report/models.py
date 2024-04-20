@@ -1,11 +1,11 @@
 """Report template model definitions."""
 
-import datetime
 import logging
 import os
 import sys
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
@@ -127,7 +127,7 @@ class ReportBase(InvenTree.models.InvenTreeModel):
     @classmethod
     def getSubdir(cls):
         """Return the subdirectory where template files for this report model will be located."""
-        return ''
+        return 'report'
 
     def rename_file(self, filename):
         """Function for renaming uploaded file."""
@@ -323,6 +323,21 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
         default=True,
         verbose_name=_('Enabled'),
         help_text=_('Report template is enabled'),
+    )
+
+
+class ReportTemplate(ReportTemplateBase):
+    """Model class for report templates which are rendered against other model instances."""
+
+    model_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, related_name='report_templates'
+    )
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_('Report query filters (comma separated list of key=value pairs)'),
     )
 
 
