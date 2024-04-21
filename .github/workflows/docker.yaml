@@ -24,10 +24,6 @@ on:
     branches:
       - "master"
 
-env:
-  requests_version: 2.31.0
-  pyyaml_version: 6.0.1
-
 permissions:
   contents: read
 
@@ -80,8 +76,7 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Version Check
         run: |
-          pip install requests==${{ env.requests_version }}
-          pip install pyyaml==${{ env.pyyaml_version }}
+          pip install .github/requirements.txt
           python3 .github/scripts/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
