@@ -6,7 +6,7 @@ import sys
 
 from django.conf import settings
 from django.core.cache import cache
-from django.core.exceptions import FieldError, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template import Context, Template
@@ -328,6 +328,13 @@ class ReportTemplateBase(MetadataMixin, ReportBase):
 
 class ReportTemplate(ReportTemplateBase):
     """Model class for report templates which are rendered against other model instances."""
+
+    template = models.FileField(
+        upload_to='report_template/',
+        verbose_name=_('Template'),
+        help_text=_('Report template file'),
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+    )
 
     model_type = models.CharField(
         max_length=100, validators=[report.validators.validate_report_model_type]
