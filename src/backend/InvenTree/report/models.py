@@ -5,9 +5,8 @@ import os
 import sys
 
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
-from django.core.exceptions import ValidationError
+from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.template import Context, Template
@@ -334,15 +333,30 @@ class ReportTemplate(ReportTemplateBase):
         max_length=100, validators=[report.validators.validate_report_model_type]
     )
 
+    def clean(self):
+        """Clean model instance, and ensure validity."""
+        super().clean()
+
+        model = self.get_model()
+        filters = self.filters
+
+        if model and filters:
+            report.validators.validate_filters(filters, model=model)
+
     def get_model(self):
         """Return the database model class associated with this report template."""
-        ...
+        for model in report.helpers.report_model_types():
+            if model.__name__.lower() == self.model_type:
+                return model
 
     filters = models.CharField(
         blank=True,
         max_length=250,
         verbose_name=_('Filters'),
-        help_text=_('Report query filters (comma separated list of key=value pairs)'),
+        help_text=_(
+            'Report template query filters (comma-separated list of key=value pairs)'
+        ),
+        validators=[report.validators.validate_filters],
     )
 
 

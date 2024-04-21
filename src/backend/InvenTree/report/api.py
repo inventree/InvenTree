@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
+from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.response import Response
 
@@ -17,6 +18,7 @@ import common.models
 import InvenTree.helpers
 import order.models
 import part.models
+import report.helpers
 import report.models
 import report.serializers
 from InvenTree.api import MetadataView
@@ -26,14 +28,29 @@ from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAP
 from stock.models import StockItem, StockItemAttachment, StockLocation
 
 
+class ReportFilter(rest_filters.FilterSet):
+    """Filter class for report template list."""
+
+    class Meta:
+        """Filter options."""
+
+        model = report.models.ReportTemplate
+        fields = ['enabled', 'landscape']
+
+    model_type = rest_filters.ChoiceFilter(
+        choices=report.helpers.report_model_options(), label=_('Model Type')
+    )
+
+
 class ReportListView(ListCreateAPI):
     """Generic API class for report templates."""
 
     filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
-
-    filterset_fields = ['enabled']
+    filterset_class = ReportFilter
 
     search_fields = ['name', 'description']
+
+    ordering_fields = ['name', 'enabled']
 
 
 class ReportFilterMixin:
@@ -272,6 +289,13 @@ class ReportPrintMixin:
 
 class ReportTemplateList(ReportListView):
     """API endpoint for viewing list of ReportTemplate objects."""
+
+    queryset = report.models.ReportTemplate.objects.all()
+    serializer_class = report.serializers.ReportSerializer
+
+
+class ReportTemplateDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for report template model."""
 
     queryset = report.models.ReportTemplate.objects.all()
     serializer_class = report.serializers.ReportSerializer
@@ -539,7 +563,12 @@ report_api_urls = [
     path(
         'template/',
         include([
-            path('', ReportTemplateList.as_view(), name='api-report-template-list')
+            path(
+                '<int:pk>/',
+                ReportTemplateDetail.as_view(),
+                name='api-report-template-detail',
+            ),
+            path('', ReportTemplateList.as_view(), name='api-report-template-list'),
         ]),
     ),
     # Report assets

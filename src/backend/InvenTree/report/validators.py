@@ -11,3 +11,10 @@ def validate_report_model_type(value):
 
     if value not in model_options:
         raise ValidationError('Not a valid model type')
+
+
+def validate_filters(value, model=None):
+    """Validate that the provided model filters are valid."""
+    from InvenTree.helpers import validateFilterString
+
+    validateFilterString(value, model=model)
