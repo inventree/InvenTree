@@ -24,7 +24,7 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
   await page.getByLabel('Initial Stock Quantity *').fill('1');
   await page
     .getByLabel('Create Part')
-    .getByRole('button', { name: 'Submit' })
+    .getByRole('button', { name: 'Cancel' })
     .click();
 
   // Edit Part
@@ -33,7 +33,7 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
   await page.getByLabel('IPN').fill(newPartName);
   await page
     .getByLabel('Edit Part')
-    .getByRole('button', { name: 'Submit' })
+    .getByRole('button', { name: 'Cancel' })
     .click();
 
   // Create Stock Item
@@ -42,7 +42,7 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
   await page.getByText('R_1K_0402_1%').click();
   await page
     .getByLabel('Add Stock Item')
-    .getByRole('button', { name: 'Submit' })
+    .getByRole('button', { name: 'Cancel' })
     .click();
 
   // EditCategory
@@ -51,7 +51,7 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
   await page.getByText('Category 0').click();
   await page
     .getByLabel('Edit Category')
-    .getByRole('button', { name: 'Submit' })
+    .getByRole('button', { name: 'Cancel' })
     .click();
 
   // Create Attachment
@@ -66,7 +66,7 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
   await page.getByText('Category 0').click();
   await page
     .getByLabel('Create part')
-    .getByRole('button', { name: 'Submit' })
+    .getByRole('button', { name: 'Cancel' })
     .click();
 
   // Status Label
