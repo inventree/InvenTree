@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('metadata', models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata')),
-                ('name', models.CharField(help_text='Template name', max_length=100, verbose_name='Name')),
+                ('name', models.CharField(help_text='Template name', unique=True, max_length=100, verbose_name='Name')),
                 ('template', models.FileField(help_text='Report template file', upload_to='report_template/', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Template')),
                 ('description', models.CharField(help_text='Report template description', max_length=250, verbose_name='Description')),
                 ('revision', models.PositiveIntegerField(default=1, editable=False, help_text='Report revision number (auto-increments)', verbose_name='Revision')),

@@ -20,7 +20,6 @@ import InvenTree.helpers
 import InvenTree.models
 import report.helpers
 import report.validators
-from InvenTree.helpers import validateFilterString
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin.registry import registry
@@ -49,13 +48,8 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-class ReportBase(InvenTree.models.InvenTreeModel):
-    """Base class for uploading html templates."""
-
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
-
-        abstract = True
+class ReportTemplate(MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Class representing a report template."""
 
     def __init__(self, *args, **kwargs):
         """Initialize the particular report instance."""
@@ -102,6 +96,7 @@ class ReportBase(InvenTree.models.InvenTreeModel):
         max_length=100,
         verbose_name=_('Name'),
         help_text=_('Template name'),
+        unique=True,
     )
 
     description = models.CharField(
@@ -129,13 +124,6 @@ class ReportBase(InvenTree.models.InvenTreeModel):
         verbose_name=_('Landscape'),
         help_text=_('Render report in landscape orientation'),
     )
-
-
-class ReportTemplate(MetadataMixin, ReportBase):
-    """Reporting template model.
-
-    Able to be passed context data
-    """
 
     def get_report_size(self):
         """Return the printable page size for this report."""

@@ -47,8 +47,16 @@ def forward(apps, schema_editor):
             filename = os.path.basename(filename)
             filedata = template.template.open('r').read()
 
+            name = template.name
+            offset = 1
+
+            # Prevent duplicate names during migration
+            while ReportTemplate.objects.filter(name=name).exists():
+                name = template.name + f"_{offset}"
+                offset += 1
+
             ReportTemplate.objects.create(
-                name=template.name,
+                name=name,
                 template=ContentFile(filedata, filename),
                 model_type=key,
                 description=template.description,

@@ -17,7 +17,11 @@ logger = logging.getLogger('inventree')
 
 
 class TemplatingMixin:
-    """Mixin that contains shared templating code."""
+    """Mixin that contains shared templating code.
+
+    TODO: 2024-04-22 - Remove this entire class once the label printing refactoring is complete.
+    TODO: Ref - https://github.com/inventree/InvenTree/pull/7074
+    """
 
     name: str = ''
     db: str = ''
