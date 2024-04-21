@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
+  IconDots,
   IconInfoCircle,
   IconList,
   IconNotes,
@@ -12,6 +13,11 @@ import { useParams } from 'react-router-dom';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import {
+  ActionDropdown,
+  DeleteItemAction,
+  EditItemAction
+} from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -19,8 +25,11 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 
 /**
@@ -29,7 +38,13 @@ import { AttachmentTable } from '../../tables/general/AttachmentTable';
 export default function ReturnOrderDetail() {
   const { id } = useParams();
 
-  const { instance: order, instanceQuery } = useInstance({
+  const user = useUserState();
+
+  const {
+    instance: order,
+    instanceQuery,
+    refreshInstance
+  } = useInstance({
     endpoint: ApiEndpoints.return_order_list,
     pk: id,
     params: {
@@ -233,6 +248,40 @@ export default function ReturnOrderDetail() {
         ];
   }, [order, instanceQuery]);
 
+  const returnOrderFields = useReturnOrderFields();
+
+  const editReturnOrder = useEditApiFormModal({
+    url: ApiEndpoints.return_order_list,
+    pk: order.pk,
+    title: t`Edit Return Order`,
+    fields: returnOrderFields,
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
+
+  const orderActions = useMemo(() => {
+    return [
+      <ActionDropdown
+        key="order-actions"
+        tooltip={t`Order Actions`}
+        icon={<IconDots />}
+        actions={[
+          EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.return_order),
+            onClick: () => {
+              editReturnOrder.open();
+            }
+          }),
+          DeleteItemAction({
+            hidden: !user.hasDeleteRole(UserRoles.return_order)
+            // TODO: Delete?
+          })
+        ]}
+      />
+    ];
+  }, [user]);
+
   return (
     <>
       <Stack gap="xs">
@@ -242,6 +291,7 @@ export default function ReturnOrderDetail() {
           subtitle={order.description}
           imageUrl={order.customer_detail?.image}
           badges={orderBadges}
+          actions={orderActions}
           breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
         />
         <PanelGroup pageKey="returnorder" panels={orderPanels} />

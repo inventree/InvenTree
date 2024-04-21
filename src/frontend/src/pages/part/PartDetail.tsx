@@ -24,7 +24,7 @@ import {
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ReactNode, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -58,7 +58,10 @@ import {
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -83,6 +86,7 @@ export default function PartDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const navigate = useNavigate();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -662,6 +666,12 @@ export default function PartDetail() {
         color="blue"
         visible={part.building > 0}
         key="in_production"
+      />,
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={!part.active}
+        key="inactive"
       />
     ];
   }, [part, instanceQuery]);
@@ -674,6 +684,20 @@ export default function PartDetail() {
     title: t`Edit Part`,
     fields: partFields,
     onFormSuccess: refreshInstance
+  });
+
+  const duplicatePart = useCreateApiFormModal({
+    url: ApiEndpoints.part_list,
+    title: t`Add Part`,
+    fields: partFields,
+    initialData: {
+      ...part
+    },
+    onFormSuccess: (response: any) => {
+      if (response.pk) {
+        navigate(getDetailUrl(ModelType.part, response.pk));
+      }
+    }
   });
 
   const stockActionProps: StockOperationProps = useMemo(() => {
@@ -693,10 +717,10 @@ export default function PartDetail() {
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            hidden: part?.barcode_hash
+            hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
           }),
           UnlinkBarcodeAction({
-            hidden: !part?.barcode_hash
+            hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
           })
         ]}
         key="action_dropdown"
@@ -736,7 +760,8 @@ export default function PartDetail() {
         icon={<IconDots />}
         actions={[
           DuplicateItemAction({
-            hidden: !user.hasAddRole(UserRoles.part)
+            hidden: !user.hasAddRole(UserRoles.part),
+            onClick: () => duplicatePart.open()
           }),
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.part),
@@ -752,6 +777,7 @@ export default function PartDetail() {
 
   return (
     <>
+      {duplicatePart.modal}
       {editPart.modal}
       <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />

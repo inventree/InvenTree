@@ -67,6 +67,11 @@ test('PUI - Purchasing', async ({ page }) => {
     .click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await page.getByLabel('Address title *').waitFor();
+
+  // Read the current value of the cell, to ensure we always *change* it!
+  const value = await page.getByLabel('Line 2').inputValue();
+  await page.getByLabel('Line 2').fill(value == 'old' ? 'new' : 'old');
+
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
 
   await page.getByRole('button', { name: 'Submit' }).click();

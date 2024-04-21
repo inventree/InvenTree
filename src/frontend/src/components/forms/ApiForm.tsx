@@ -109,6 +109,8 @@ export function OptionsApiForm({
 
   const optionsQuery = useQuery({
     enabled: true,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     queryKey: [
       'form-options-data',
       id,
@@ -183,20 +185,25 @@ export function ApiForm({
   props: ApiFormProps;
   optionsLoading: boolean;
 }) {
+  const fields: ApiFormFieldSet = useMemo(() => {
+    return props.fields ?? {};
+  }, [props.fields]);
+
   const defaultValues: FieldValues = useMemo(() => {
-    let defaultValuesMap = mapFields(props.fields ?? {}, (_path, field) => {
+    let defaultValuesMap = mapFields(fields ?? {}, (_path, field) => {
       return field.value ?? field.default ?? undefined;
     });
 
-    // If the user has specified initial data, use that instead
+    // If the user has specified initial data, that overrides default values
+    // But, *only* for the fields we have specified
     if (props.initialData) {
-      defaultValuesMap = {
-        ...defaultValuesMap,
-        ...props.initialData
-      };
+      Object.keys(props.initialData).map((key) => {
+        if (key in defaultValuesMap) {
+          defaultValuesMap[key] =
+            props?.initialData?.[key] ?? defaultValuesMap[key];
+        }
+      });
     }
-
-    // Update the form values, but only for the fields specified for this form
 
     return defaultValuesMap;
   }, [props.fields, props.initialData]);
@@ -262,13 +269,21 @@ export function ApiForm({
         };
 
         // Process API response
-        const initialData: any = processFields(
-          props.fields ?? {},
-          response.data
-        );
+        const initialData: any = processFields(fields, response.data);
 
         // Update form values, but only for the fields specified for this form
         form.reset(initialData);
+
+        // Update the field references, too
+        Object.keys(fields).forEach((fieldName) => {
+          if (fieldName in initialData) {
+            let field = fields[fieldName] ?? {};
+            fields[fieldName] = {
+              ...field,
+              value: initialData[fieldName]
+            };
+          }
+        });
 
         return response;
       } catch (error) {
@@ -303,12 +318,12 @@ export function ApiForm({
       initialDataQuery.isFetching ||
       optionsLoading ||
       isSubmitting ||
-      !props.fields,
+      !fields,
     [
       isFormLoading,
       initialDataQuery.isFetching,
       isSubmitting,
-      props.fields,
+      fields,
       optionsLoading
     ]
   );
@@ -321,7 +336,7 @@ export function ApiForm({
 
     if (!focusField) {
       // If a focus field is not specified, then focus on the first available field
-      Object.entries(props.fields ?? {}).forEach(([fieldName, field]) => {
+      Object.entries(fields).forEach(([fieldName, field]) => {
         if (focusField || field.read_only || field.disabled || field.hidden) {
           return;
         }
@@ -336,7 +351,7 @@ export function ApiForm({
 
     form.setFocus(focusField);
     setInitialFocus(focusField);
-  }, [props.focus, props.fields, form.setFocus, isLoading, initialFocus]);
+  }, [props.focus, fields, form.setFocus, isLoading, initialFocus]);
 
   const submitForm: SubmitHandler<FieldValues> = async (data) => {
     setNonFieldErrors([]);
@@ -344,7 +359,7 @@ export function ApiForm({
     let method = props.method?.toLowerCase() ?? 'get';
 
     let hasFiles = false;
-    mapFields(props.fields ?? {}, (_path, field) => {
+    mapFields(fields, (_path, field) => {
       if (field.field_type === 'file upload') {
         hasFiles = true;
       }
@@ -476,16 +491,14 @@ export function ApiForm({
             <FormProvider {...form}>
               <Stack gap="xs">
                 {!optionsLoading &&
-                  Object.entries(props.fields ?? {}).map(
-                    ([fieldName, field]) => (
-                      <ApiFormField
-                        key={fieldName}
-                        fieldName={fieldName}
-                        definition={field}
-                        control={form.control}
-                      />
-                    )
-                  )}
+                  Object.entries(fields).map(([fieldName, field]) => (
+                    <ApiFormField
+                      key={fieldName}
+                      fieldName={fieldName}
+                      definition={field}
+                      control={form.control}
+                    />
+                  ))}
               </Stack>
             </FormProvider>
             {props.postFormContent}

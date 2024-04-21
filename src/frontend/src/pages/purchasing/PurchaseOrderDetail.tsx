@@ -30,7 +30,7 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { purchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -60,11 +60,13 @@ export default function PurchaseOrderDetail() {
     refetchOnMount: true
   });
 
+  const purchaseOrderFields = usePurchaseOrderFields();
+
   const editPurchaseOrder = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     pk: id,
     title: t`Edit Purchase Order`,
-    fields: purchaseOrderFields(),
+    fields: purchaseOrderFields,
     onFormSuccess: () => {
       refreshInstance();
     }
@@ -227,7 +229,12 @@ export default function PurchaseOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <PurchaseOrderLineItemTable orderId={Number(id)} />
+        content: (
+          <PurchaseOrderLineItemTable
+            orderId={Number(id)}
+            supplierId={Number(order.supplier)}
+          />
+        )
       },
       {
         name: 'received-stock',
@@ -269,7 +276,6 @@ export default function PurchaseOrderDetail() {
   }, [order, id]);
 
   const poActions = useMemo(() => {
-    // TODO: Disable certain actions based on user permissions
     return [
       <BarcodeActionDropdown
         actions={[
@@ -288,11 +294,14 @@ export default function PurchaseOrderDetail() {
         icon={<IconDots />}
         actions={[
           EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => {
               editPurchaseOrder.open();
             }
           }),
-          DeleteItemAction({})
+          DeleteItemAction({
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+          })
         ]}
       />
     ];

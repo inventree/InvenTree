@@ -15,10 +15,11 @@ import {
   IconTruckReturn,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -292,6 +293,12 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     ];
   }, [id, company, user]);
 
+  const badges: ReactNode[] = useMemo(() => {
+    return [
+      <DetailsBadge label={t`Inactive`} color="red" visible={!company.active} />
+    ];
+  }, [company]);
+
   return (
     <>
       {editCompany.modal}
@@ -303,6 +310,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
           actions={companyActions}
           imageUrl={company.image}
           breadcrumbs={props.breadcrumbs}
+          badges={badges}
         />
         <PanelGroup pageKey="company" panels={companyPanels} />
       </Stack>

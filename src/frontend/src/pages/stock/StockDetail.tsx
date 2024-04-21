@@ -14,7 +14,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
@@ -24,6 +24,7 @@ import {
   ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
+  DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
@@ -41,12 +42,16 @@ import {
   StockOperationProps,
   useAddStockItem,
   useCountStockItem,
-  useEditStockItem,
   useRemoveStockItem,
+  useStockFields,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -59,6 +64,8 @@ export default function StockDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const navigate = useNavigate();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -340,9 +347,30 @@ export default function StockDetail() {
     [stockitem]
   );
 
-  const editStockItem = useEditStockItem({
-    item_id: stockitem.pk,
-    callback: () => refreshInstance()
+  const editStockItemFields = useStockFields({ create: false });
+
+  const editStockItem = useEditApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    pk: stockitem.pk,
+    title: t`Edit Stock Item`,
+    fields: editStockItemFields,
+    onFormSuccess: refreshInstance
+  });
+
+  const duplicateStockItemFields = useStockFields({ create: true });
+
+  const duplicateStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    title: t`Add Stock Item`,
+    fields: duplicateStockItemFields,
+    initialData: {
+      ...stockitem
+    },
+    onFormSuccess: (response: any) => {
+      if (response.pk) {
+        navigate(getDetailUrl(ModelType.stockitem, response.pk));
+      }
+    }
   });
 
   const stockActionProps: StockOperationProps = useMemo(() => {
@@ -359,15 +387,17 @@ export default function StockDetail() {
   const transferStockItem = useTransferStockItem(stockActionProps);
 
   const stockActions = useMemo(
-    () => /* TODO: Disable actions based on user permissions*/ [
+    () => [
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            hidden: stockitem?.barcode_hash
+            hidden:
+              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
           }),
           UnlinkBarcodeAction({
-            hidden: !stockitem?.barcode_hash
+            hidden:
+              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
           })
         ]}
       />,
@@ -416,16 +446,20 @@ export default function StockDetail() {
       />,
       <ActionDropdown
         key="stock"
-        // tooltip={t`Stock Actions`}
+        tooltip={t`Stock Item Actions`}
         icon={<IconDots />}
         actions={[
-          {
-            name: t`Duplicate`,
-            tooltip: t`Duplicate stock item`,
-            icon: <IconCopy />
-          },
-          EditItemAction({}),
-          DeleteItemAction({})
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.stock),
+            onClick: () => duplicateStockItem.open()
+          }),
+          EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.stock),
+            onClick: () => editStockItem.open()
+          }),
+          DeleteItemAction({
+            hidden: !user.hasDeleteRole(UserRoles.stock)
+          })
         ]}
       />
     ],
@@ -484,6 +518,7 @@ export default function StockDetail() {
       />
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
       {editStockItem.modal}
+      {duplicateStockItem.modal}
       {countStockItem.modal}
       {addStockItem.modal}
       {removeStockItem.modal}
