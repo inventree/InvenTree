@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(help_text='Template name', max_length=100, unique=True)),
-                ('template', models.FileField(help_text='Report template file', upload_to=report.models.rename_template, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])])),
+                ('template', models.FileField(help_text='Report template file', upload_to='report', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])])),
                 ('description', models.CharField(help_text='Report template description', max_length=250)),
             ],
             options={
@@ -38,9 +38,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(help_text='Template name', max_length=100, unique=True)),
-                ('template', models.FileField(help_text='Report template file', upload_to=report.models.rename_template, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])])),
+                ('template', models.FileField(help_text='Report template file', upload_to='report', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])])),
                 ('description', models.CharField(help_text='Report template description', max_length=250)),
-                ('part_filters', models.CharField(blank=True, help_text='Part query filters (comma-separated list of key=value pairs)', max_length=250, validators=[report.models.validateFilterString])),
+                ('part_filters', models.CharField(blank=True, help_text='Part query filters (comma-separated list of key=value pairs)', max_length=250)),
             ],
             options={
                 'abstract': False,
