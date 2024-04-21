@@ -376,7 +376,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def report_context(self):
         """Return report context data for this PurchaseOrder."""
-        return {**super.report_context(), 'supplier': self.supplier}
+        return {**super().report_context(), 'supplier': self.supplier}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -838,7 +838,7 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def report_context(self):
         """Generate report context data for this SalesOrder."""
-        return {**super.report_context(), 'customer': self.customer}
+        return {**super().report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -1982,7 +1982,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def report_context(self):
         """Generate report context data for this ReturnOrder."""
-        return {**super.report_context(), 'customer': self.customer}
+        return {**super().report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
