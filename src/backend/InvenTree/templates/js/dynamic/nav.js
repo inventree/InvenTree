@@ -21,12 +21,15 @@ function activatePanel(label, panel_name, options={}) {
     $('.panel-visible').hide();
     $('.panel-visible').removeClass('panel-visible');
 
+    // Remove illegal chars
+    panel_name = panel_name.replace('/', '');
+
     // Find the target panel
     var panel = `#panel-${panel_name}`;
     var select = `#select-${panel_name}`;
 
     // Check that the selected panel (and select) exist
-    if ($(panel).length && $(select).length) {
+    if ($(panel).exists() && $(panel).length && $(select).length) {
         // Yep, both are displayed
     } else {
         // Either the select or the panel are not displayed!

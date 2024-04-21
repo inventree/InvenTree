@@ -39,7 +39,7 @@ export function useStockFields({
     const fields: ApiFormFieldSet = {
       part: {
         value: part,
-        hidden: !create,
+        disabled: !create,
         onValueChange: (change) => {
           setPart(change);
           // TODO: implement remaining functionality from old stock.py
@@ -57,12 +57,12 @@ export function useStockFields({
           supplier_detail: true,
           ...(part ? { part } : {})
         },
-        adjustFilters: (value: ApiFormAdjustFilterType) => {
-          if (value.data.part) {
-            value.filters['part'] = value.data.part;
+        adjustFilters: (adjust: ApiFormAdjustFilterType) => {
+          if (adjust.data.part) {
+            adjust.filters['part'] = adjust.data.part;
           }
 
-          return value.filters;
+          return adjust.filters;
         }
       },
       use_pack_size: {
@@ -134,29 +134,6 @@ export function useCreateStockItem() {
     url: ApiEndpoints.stock_item_list,
     fields: fields,
     title: t`Add Stock Item`
-  });
-}
-
-/**
- * Launch a form to edit an existing StockItem instance
- * @param item : primary key of the StockItem to edit
- */
-export function useEditStockItem({
-  item_id,
-  callback
-}: {
-  item_id: number;
-  callback?: () => void;
-}) {
-  const fields = useStockFields({ create: false });
-
-  return useEditApiFormModal({
-    url: ApiEndpoints.stock_item_list,
-    pk: item_id,
-    fields: fields,
-    title: t`Edit Stock Item`,
-    successMessage: t`Stock item updated`,
-    onFormSuccess: callback
   });
 }
 
