@@ -21,6 +21,7 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
     .first()
     .click();
   await page.getByLabel('Name *').fill(newPartName);
+  await page.getByLabel('Initial Stock Quantity *').fill('1');
   await page
     .getByLabel('Create Part')
     .getByRole('button', { name: 'Submit' })
