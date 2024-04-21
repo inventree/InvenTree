@@ -27,7 +27,7 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.1.29
+    rev: 0.1.35
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
@@ -37,6 +37,10 @@ repos:
         name: pip-compile requirements.txt
         args: [src/backend/requirements.in, -o, src/backend/requirements.txt,--python-version=3.9, --no-strip-extras]
         files: src/backend/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [.github/requirements.in, -o, .github/requirements.txt,--python-version=3.9, --no-strip-extras]
+        files: .github/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.1
     hooks:

@@ -13,8 +13,6 @@ env:
   node_version: 18
   # The OS version must be set per job
   server_start_sleep: 60
-  requests_version: 2.31.0
-  pyyaml_version: 6.0.1
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
@@ -104,7 +102,7 @@ jobs:
         uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
       - name: Check Version
         run: |
-          pip install requests==${{ env.requests_version }}
+          pip install -r .github/requirements.txt
           python3 .github/scripts/version_check.py
 
   mkdocs:
@@ -122,8 +120,8 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Check Config
         run: |
-          pip install pyyaml==${{ env.pyyaml_version }}
-          pip install --system -r docs/requirements.txt
+          pip install -r .github/requirements.txt
+          pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
@@ -168,7 +166,7 @@ jobs:
       - name: Download public schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
-          pip install requests==${{ env.requests_version }} >/dev/null 2>&1
+          pip install -r .github/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
@@ -187,7 +185,7 @@ jobs:
         id: version
         if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
         run: |
-          pip install requests==${{ env.requests_version }} >/dev/null 2>&1
+          pip install -r .github/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
