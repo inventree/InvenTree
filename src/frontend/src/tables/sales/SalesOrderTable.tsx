@@ -8,7 +8,7 @@ import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { salesOrderFields } from '../../forms/SalesOrderForms';
+import { useSalesOrderFields } from '../../forms/SalesOrderForms';
 import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -61,10 +61,12 @@ export function SalesOrderTable({
     ];
   }, []);
 
+  const salesOrderFields = useSalesOrderFields();
+
   const newSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
     title: t`Add Sales Order`,
-    fields: salesOrderFields(),
+    fields: salesOrderFields,
     initialData: {
       customer: customerId
     },

@@ -8,7 +8,7 @@ import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { purchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -106,10 +106,12 @@ export function PurchaseOrderTable({
     ];
   }, []);
 
+  const purchaseOrderFields = usePurchaseOrderFields();
+
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     title: t`Add Purchase Order`,
-    fields: purchaseOrderFields(),
+    fields: purchaseOrderFields,
     initialData: {
       supplier: supplierId
     },

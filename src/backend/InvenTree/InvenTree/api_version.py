@@ -1,15 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 190
+INVENTREE_API_VERSION = 191
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v190 - 2024-04-22 : https://github.com/inventree/InvenTree/pull/7074
+v191 - 2024-04-22 : https://github.com/inventree/InvenTree/pull/7074
     - Major refactor of the report template / report printing interface
     - This is a *breaking change* to the report template API
     - All report printing has now been simplified to a single set of API endpoints
+
+v190 - 2024-04-19 : https://github.com/inventree/InvenTree/pull/7024
+    - Adds "active" field to the Company API endpoints
+    - Allow company list to be filtered by "active" status
 
 v189 - 2024-04-19 : https://github.com/inventree/InvenTree/pull/7066
     - Adds "currency" field to CompanyBriefSerializer class

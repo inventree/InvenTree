@@ -44,9 +44,11 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 export function PurchaseOrderLineItemTable({
   orderId,
+  supplierId,
   params
 }: {
   orderId: number;
+  supplierId?: number;
   params?: any;
 }) {
   const table = useTable('purchase-order-line-item');
@@ -67,7 +69,7 @@ export function PurchaseOrderLineItemTable({
     return [
       {
         accessor: 'part',
-        title: t`Part`,
+        title: t`Internal Part`,
         sortable: true,
         switchable: false,
         render: (record: any) => {
@@ -183,25 +185,35 @@ export function PurchaseOrderLineItemTable({
     ];
   }, [orderId, user]);
 
+  const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
+    create: true,
+    orderId: orderId,
+    supplierId: supplierId
+  });
+
+  const [initialData, setInitialData] = useState({});
+
   const newLine = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     title: t`Add Line Item`,
-    fields: usePurchaseOrderLineItemFields({ create: true }),
-    initialData: {
-      order: orderId
-    },
+    fields: addPurchaseOrderFields,
+    initialData: initialData,
     onFormSuccess: table.refreshTable
   });
 
-  const [selectedLine, setSelectedLine] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedLine, setSelectedLine] = useState<number>(0);
+
+  const editPurchaseOrderFields = usePurchaseOrderLineItemFields({
+    create: false,
+    orderId: orderId,
+    supplierId: supplierId
+  });
 
   const editLine = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Edit Line Item`,
-    fields: usePurchaseOrderLineItemFields({}),
+    fields: editPurchaseOrderFields,
     onFormSuccess: table.refreshTable
   });
 
@@ -235,7 +247,11 @@ export function PurchaseOrderLineItemTable({
           }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(UserRoles.purchase_order)
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
+          onClick: () => {
+            setInitialData({ ...record });
+            newLine.open();
+          }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
@@ -254,7 +270,12 @@ export function PurchaseOrderLineItemTable({
     return [
       <AddItemButton
         tooltip={t`Add line item`}
-        onClick={() => newLine.open()}
+        onClick={() => {
+          setInitialData({
+            order: orderId
+          });
+          newLine.open();
+        }}
         hidden={!user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton

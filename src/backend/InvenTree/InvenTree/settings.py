@@ -1087,14 +1087,17 @@ CSRF_TRUSTED_ORIGINS = get_setting(
 if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
 
-if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
-    if DEBUG:
-        logger.warning(
-            'No CSRF_TRUSTED_ORIGINS specified. Defaulting to http://* for debug mode. This is not recommended for production use'
-        )
-        CSRF_TRUSTED_ORIGINS = ['http://*']
+if DEBUG:
+    for origin in [
+        'http://localhost',
+        'http://*.localhost' 'http://*localhost:8000',
+        'http://*localhost:5173',
+    ]:
+        if origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(origin)
 
-    elif isInMainThread():
+if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
+    if isInMainThread():
         # Server thread cannot run without CSRF_TRUSTED_ORIGINS
         logger.error(
             'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'

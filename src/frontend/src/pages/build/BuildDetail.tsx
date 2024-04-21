@@ -35,8 +35,7 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { buildOrderFields } from '../../forms/BuildForms';
-import { partCategoryFields } from '../../forms/PartForms';
+import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -280,11 +279,13 @@ export default function BuildDetail() {
     ];
   }, [build, id]);
 
+  const buildOrderFields = useBuildOrderFields({ create: false });
+
   const editBuild = useEditApiFormModal({
     url: ApiEndpoints.build_order_list,
     pk: build.pk,
     title: t`Edit Build Order`,
-    fields: buildOrderFields(),
+    fields: buildOrderFields,
     onFormSuccess: () => {
       refreshInstance();
     }
