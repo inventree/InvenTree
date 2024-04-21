@@ -3,13 +3,15 @@
 name: Publish release notes
 on:
   release:
-    types: [ published ]
+    types: [published]
+
+env:
+  requests_version: 2.31.0
 
 permissions:
   contents: read
 
 jobs:
-
   stable:
     runs-on: ubuntu-latest
     env:
@@ -19,7 +21,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Version Check
         run: |
-          pip install requests==2.31.0
+          pip install requests==${{ env.requests_version }}
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0

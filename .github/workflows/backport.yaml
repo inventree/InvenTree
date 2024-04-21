@@ -7,7 +7,7 @@ name: Backport
 
 on:
   pull_request_target:
-    types: [ "labeled", "closed" ]
+    types: ["labeled", "closed"]
 
 jobs:
   backport:
