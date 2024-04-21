@@ -153,15 +153,11 @@ class ReportTemplate(MetadataMixin, ReportBase):
 
         return page_size
 
-    def generate_filename(self, request, **kwargs):
+    def generate_filename(self, context, **kwargs):
         """Generate a filename for this report."""
         template_string = Template(self.filename_pattern)
 
-        ctx = self.context(request)
-
-        context = Context(ctx)
-
-        return template_string.render(context)
+        return template_string.render(Context(context))
 
     def render_as_string(self, instance, request, **kwargs):
         """Render the report to a HTML string.
@@ -185,7 +181,7 @@ class ReportTemplate(MetadataMixin, ReportBase):
             self.template_name,
             base_url=request.build_absolute_uri('/'),
             presentational_hints=True,
-            filename=self.generate_filename(request),
+            filename=self.generate_filename(context),
             **kwargs,
         )
 
@@ -260,8 +256,8 @@ class ReportTemplate(MetadataMixin, ReportBase):
             'report_description': self.description,
             'report_name': self.name,
             'report_revision': self.revision,
-            'request': self.request,
-            'user': self.request.user,
+            'request': request,
+            'user': request.user,
         }
 
         # Add in an context information provided by the model instance itself

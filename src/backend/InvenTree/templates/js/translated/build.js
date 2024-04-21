@@ -2004,7 +2004,6 @@ function loadBuildTable(table, options) {
     setupFilterList('build', table, filterTarget, {
         download: true,
         report: {
-            url: '{% url "api-build-report-list" %}',
             key: 'build',
         }
     });

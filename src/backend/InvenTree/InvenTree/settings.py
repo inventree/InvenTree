@@ -437,7 +437,7 @@ TEMPLATES = [
         'DIRS': [
             BASE_DIR.joinpath('templates'),
             # Allow templates in the reporting directory to be accessed
-            MEDIA_ROOT.joinpath('report'),
+            MEDIA_ROOT.joinpath('report_template'),
             MEDIA_ROOT.joinpath('label'),
         ],
         'OPTIONS': {

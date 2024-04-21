@@ -1,7 +1,6 @@
 """API functionality for the 'report' app."""
 
-from django.core.exceptions import FieldError, ValidationError
-from django.core.files.base import ContentFile
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.template.exceptions import TemplateDoesNotExist
 from django.urls import include, path, re_path
@@ -40,18 +39,21 @@ class ReportFilter(rest_filters.FilterSet):
     )
 
     items = rest_filters.CharFilter(method='filter_items', label=_('Items'))
+    # items = rest_filters.AllValuesMultipleFilter(method='filter_items', label=_('Items'))
 
-    def filter_items(self, queryset, name, value):
+    def filter_items(self, queryset, name, values):
         """Filter against a comma-separated list of provided items.
 
         Note: This filter is only applied if the 'model_type' is also provided.
         """
-        item_ids = str(value).strip().split(',')
-
         model_type = self.data.get('model_type', None)
+        values = self.request.query_params.getlist('items', [])
+
+        if not model_type or len(values) == 0:
+            return queryset
 
         if model_class := report.helpers.report_model_from_name(model_type):
-            model_items = model_class.objects.filter(pk__in=item_ids)
+            model_items = model_class.objects.filter(pk__in=values)
 
             # Ensure that we have already filtered by model_type
             queryset = queryset.filter(model_type=model_type)
@@ -74,6 +76,8 @@ class ReportFilter(rest_filters.FilterSet):
 @method_decorator(cache_page(5), name='dispatch')
 class ReportTemplatePrint(RetrieveAPI):
     """API endpoint for printing reports against a single template."""
+
+    queryset = report.models.ReportTemplate.objects.all()
 
     @method_decorator(never_cache)
     def dispatch(self, *args, **kwargs):
@@ -201,7 +205,13 @@ class ReportTemplatePrint(RetrieveAPI):
 
         Note that it expects the class has defined a get_items() method
         """
-        items = self.get_items()
+        # Extract a list of items to print from the queryset
+        item_ids = request.query_params.get('items', '').split(',')
+
+        template = self.get_object()
+
+        items = template.get_model().objects.filter(pk__in=item_ids)
+
         return self.print(request, items)
 
 

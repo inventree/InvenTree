@@ -526,11 +526,7 @@ function setupFilterList(tableKey, table, target, options={}) {
                 items.push(row.pk);
             });
 
-            printReports({
-                items: items,
-                url: options.report.url,
-                key: options.report.key
-            });
+            printReports(options.report.key, items);
         });
     }
 

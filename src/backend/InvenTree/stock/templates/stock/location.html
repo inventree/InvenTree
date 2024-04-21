@@ -294,11 +294,7 @@
     {% if report_enabled %}
     $('#print-location-report').click(function() {
 
-        printReports({
-            items: [{{ location.pk }}],
-            key: 'location',
-            url: '{% url "api-stocklocation-report-list" %}',
-        });
+        printReports('stocklocation', [{{ location.pk }}]);
     });
     {% endif %}
 

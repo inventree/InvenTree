@@ -112,28 +112,27 @@ function selectReport(reports, items, options={}) {
  * - Request printed document
  *
  * Required options:
- * - url: The list URL for the particular template type
+ * - model_type: The "type" of report template to print against
  * - items: The list of objects to print
- * - key: The key to use in the query parameters
  */
-function printReports(options) {
+function printReports(model_type, items) {
 
-    if (!options.items || options.items.length == 0) {
+    if (!items || items.length == 0) {
         showAlertDialog(
             '{% trans "Select Items" %}',
-            '{% trans "No items selected for printing" }',
+            '{% trans "No items selected for printing" %}',
         );
         return;
     }
 
     let params = {
         enabled: true,
+        model_type: model_type,
+        items: items.join(','),
     };
 
-    params[options.key] = options.items;
-
     // Request a list of available report templates
-    inventreeGet(options.url, params, {
+    inventreeGet('{% url "api-report-template-list" %}', params, {
         success: function(response) {
             if (response.length == 0) {
                 showAlertDialog(
@@ -144,13 +143,9 @@ function printReports(options) {
             }
 
             // Select report template for printing
-            selectReport(response, options.items, {
+            selectReport(response, items, {
                 success: function(pk) {
-                    let href = `${options.url}${pk}/print/?`;
-
-                    options.items.forEach(function(item) {
-                        href += `${options.key}=${item}&`;
-                    });
+                    let href = `{% url "api-report-template-list" %}${pk}/print/?items=${items.join(',')}`;
 
                     window.open(href);
                 }
