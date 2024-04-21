@@ -41,12 +41,42 @@ class ReportFilter(rest_filters.FilterSet):
         choices=report.helpers.report_model_options(), label=_('Model Type')
     )
 
+    items = rest_filters.CharFilter(method='filter_items', label=_('Items'))
+
+    def filter_items(self, queryset, name, value):
+        """Filter against a comma-separated list of provided items.
+
+        Note: This filter is only applied if the 'model_type' is also provided.
+        """
+        item_ids = str(value).strip().split(',')
+
+        model_type = self.data.get('model_type', None)
+
+        if model_class := report.helpers.report_model_from_name(model_type):
+            model_items = model_class.objects.filter(pk__in=item_ids)
+
+            # Ensure that we have already filtered by model_type
+            queryset = queryset.filter(model_type=model_type)
+
+            # Construct a list of templates which match the list of provided IDs
+            matching_template_ids = []
+
+            for template in queryset.all():
+                filters = template.get_filters()
+                results = model_items.filter(**filters)
+                # If the resulting queryset is *shorter* than the provided items, then this template does not match
+                if results.count() == model_items.count():
+                    matching_template_ids.append(template.pk)
+
+            queryset = queryset.filter(pk__in=matching_template_ids)
+
+        return queryset
+
 
 class ReportListView(ListCreateAPI):
     """Generic API class for report templates."""
 
     filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
-    filterset_class = ReportFilter
 
     search_fields = ['name', 'description']
 
@@ -292,6 +322,7 @@ class ReportTemplateList(ReportListView):
 
     queryset = report.models.ReportTemplate.objects.all()
     serializer_class = report.serializers.ReportSerializer
+    filterset_class = ReportFilter
 
 
 class ReportTemplateDetail(RetrieveUpdateDestroyAPI):

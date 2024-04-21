@@ -345,9 +345,7 @@ class ReportTemplate(ReportTemplateBase):
 
     def get_model(self):
         """Return the database model class associated with this report template."""
-        for model in report.helpers.report_model_types():
-            if model.__name__.lower() == self.model_type:
-                return model
+        return report.helpers.report_model_from_name(self.model_type)
 
     filters = models.CharField(
         blank=True,
@@ -358,6 +356,10 @@ class ReportTemplate(ReportTemplateBase):
         ),
         validators=[report.validators.validate_filters],
     )
+
+    def get_filters(self):
+        """Return a filter dict which can be applied to the target model."""
+        return report.validators.validate_filters(self.filters, model=self.get_model())
 
 
 class TestReport(ReportTemplateBase):

@@ -17,6 +17,16 @@ def report_model_types():
     return list(getModelsWithMixin(InvenTreeReportMixin))
 
 
+def report_model_from_name(model_name: str):
+    """Returns the internal model class from the provided name."""
+    if not model_name:
+        return None
+
+    for model in report_model_types():
+        if model.__name__.lower() == model_name:
+            return model
+
+
 def report_model_options():
     """Return a list of options for models which support report printing."""
     return [

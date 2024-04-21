@@ -17,4 +17,4 @@ def validate_filters(value, model=None):
     """Validate that the provided model filters are valid."""
     from InvenTree.helpers import validateFilterString
 
-    validateFilterString(value, model=model)
+    return validateFilterString(value, model=model)
