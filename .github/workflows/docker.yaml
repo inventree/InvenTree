@@ -26,6 +26,7 @@ on:
 
 env:
   requests_version: 2.31.0
+  pyyaml_version: 6.0.1
 
 permissions:
   contents: read
@@ -80,7 +81,7 @@ jobs:
       - name: Version Check
         run: |
           pip install requests==${{ env.requests_version }}
-          pip install pyyaml==6.0.1
+          pip install pyyaml==${{ env.pyyaml_version }}
           python3 .github/scripts/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV

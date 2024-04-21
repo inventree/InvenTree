@@ -13,8 +13,8 @@ env:
   node_version: 18
   # The OS version must be set per job
   server_start_sleep: 60
-  uv_version: 0.1.31
   requests_version: 2.31.0
+  pyyaml_version: 6.0.1
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
@@ -122,9 +122,8 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Check Config
         run: |
-          pip install uv==${{ env.uv_version }}
-          uv pip install pyyaml==6.0.1
-          uv pip install --system -r docs/requirements.txt
+          pip install pyyaml==${{ env.pyyaml_version }}
+          pip install --system -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
