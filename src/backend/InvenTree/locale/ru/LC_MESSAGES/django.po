@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-20 13:19+0000\n"
-"PO-Revision-Date: 2024-04-16 03:11\n"
+"PO-Revision-Date: 2024-04-21 04:19\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -3851,34 +3851,24 @@ msgid "Previous Step"
 msgstr "Предыдущий шаг"
 
 #: company/api.py:164
-#, fuzzy
-#| msgid "Part List"
 msgid "Part is Active"
-msgstr "Список деталей"
+msgstr ""
 
 #: company/api.py:168
-#, fuzzy
-#| msgid "Manufacturers"
 msgid "Manufacturer is Active"
-msgstr "Производители"
+msgstr ""
 
 #: company/api.py:317
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplier Part is Active"
-msgstr "Детали поставщика"
+msgstr ""
 
 #: company/api.py:321
-#, fuzzy
-#| msgid "Internal Price"
 msgid "Internal Part is Active"
-msgstr "Внутренняя цена"
+msgstr ""
 
 #: company/api.py:325
-#, fuzzy
-#| msgid "Supplier Pricing"
 msgid "Supplier is Active"
-msgstr "Цены поставщика"
+msgstr ""
 
 #: company/models.py:114
 msgid "Company description"
@@ -3926,10 +3916,8 @@ msgid "Link to external company information"
 msgstr "Ссылка на описание компании"
 
 #: company/models.py:160
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this company active?"
-msgstr "Эта деталь активна?"
+msgstr ""
 
 #: company/models.py:165
 msgid "is customer"
@@ -4174,10 +4162,8 @@ msgid "Supplier stock keeping unit"
 msgstr "Код поставщика"
 
 #: company/models.py:814
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this supplier part active?"
-msgstr "Эта деталь активна?"
+msgstr ""
 
 #: company/models.py:824
 msgid "Select manufacturer part"
@@ -14239,3 +14225,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
