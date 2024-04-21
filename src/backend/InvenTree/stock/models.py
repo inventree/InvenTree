@@ -107,7 +107,9 @@ class StockLocationManager(TreeManager):
 
 
 class StockLocation(
-    InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeTree
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeTree,
 ):
     """Organization tree for StockItem objects.
 

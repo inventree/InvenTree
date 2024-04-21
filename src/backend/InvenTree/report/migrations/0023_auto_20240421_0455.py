@@ -11,6 +11,7 @@ def report_model_map():
 
     return {
         'stockitem': 'testreport',
+        'stocklocation': 'stocklocationreport',
         'build': 'buildreport',
         'part': 'billofmaterialsreport',
         'purchaseorder': 'purchaseorderreport',
