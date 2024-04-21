@@ -37,7 +37,13 @@ def forward(apps, schema_editor):
         for template in model.objects.all():
             # Construct a new ReportTemplate instance
 
-            filename = os.path.basename(template.template.path)
+            filename = template.template.path
+
+            if '/report/inventree/' in filename:
+                # Do not migrate internal report templates
+                continue
+        
+            filename = os.path.basename(filename)
             filedata = template.template.open('r').read()
 
             ReportTemplate.objects.create(
