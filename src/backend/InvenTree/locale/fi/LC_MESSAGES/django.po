@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-20 13:19+0000\n"
-"PO-Revision-Date: 2024-04-16 03:11\n"
+"PO-Revision-Date: 2024-04-21 04:19\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -3851,32 +3851,24 @@ msgid "Previous Step"
 msgstr "Edellinen vaihe"
 
 #: company/api.py:164
-#, fuzzy
-#| msgid "Active"
 msgid "Part is Active"
-msgstr "Aktiivinen"
+msgstr ""
 
 #: company/api.py:168
-#, fuzzy
-#| msgid "Manufacturer"
 msgid "Manufacturer is Active"
-msgstr "Valmistaja"
+msgstr ""
 
 #: company/api.py:317
 msgid "Supplier Part is Active"
 msgstr ""
 
 #: company/api.py:321
-#, fuzzy
-#| msgid "Internal Prices"
 msgid "Internal Part is Active"
-msgstr "Sisäiset hinnat"
+msgstr ""
 
 #: company/api.py:325
-#, fuzzy
-#| msgid "Supplier"
 msgid "Supplier is Active"
-msgstr "Toimittaja"
+msgstr ""
 
 #: company/models.py:114
 msgid "Company description"
@@ -14233,3 +14225,4 @@ msgstr "Oikeus muokata kohteita"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
+
