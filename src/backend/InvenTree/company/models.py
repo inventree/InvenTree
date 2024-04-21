@@ -81,6 +81,7 @@ class Company(
         link: Secondary URL e.g. for link to internal Wiki page
         image: Company image / logo
         notes: Extra notes about the company
+        active: boolean value, is this company active
         is_customer: boolean value, is this company a customer
         is_supplier: boolean value, is this company a supplier
         is_manufacturer: boolean value, is this company a manufacturer
@@ -153,6 +154,10 @@ class Company(
         variations={'thumbnail': (128, 128), 'preview': (256, 256)},
         delete_orphans=True,
         verbose_name=_('Image'),
+    )
+
+    active = models.BooleanField(
+        default=True, verbose_name=_('Active'), help_text=_('Is this company active?')
     )
 
     is_customer = models.BooleanField(
@@ -654,6 +659,7 @@ class SupplierPart(
         part: Link to the master Part (Obsolete)
         source_item: The sourcing item linked to this SupplierPart instance
         supplier: Company that supplies this SupplierPart object
+        active: Boolean value, is this supplier part active
         SKU: Stock keeping unit (supplier part number)
         link: Link to external website for this supplier part
         description: Descriptive notes field
@@ -800,6 +806,12 @@ class SupplierPart(
         max_length=100,
         verbose_name=__('SKU = Stock Keeping Unit (supplier part number)', 'SKU'),
         help_text=_('Supplier stock keeping unit'),
+    )
+
+    active = models.BooleanField(
+        default=True,
+        verbose_name=_('Active'),
+        help_text=_('Is this supplier part active?'),
     )
 
     manufacturer_part = models.ForeignKey(

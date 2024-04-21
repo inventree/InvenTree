@@ -10,6 +10,12 @@
 
 {% block heading %}
 {% trans "Company" %}: {{ company.name }}
+{% if not company.active %}
+&ensp;
+<div class='badge rounded-pill bg-danger'>
+    {% trans 'Inactive' %}
+</div>
+{% endif %}
 {% endblock heading %}
 
 {% block actions %}
