@@ -140,6 +140,21 @@ class Build(
                 'part': _('Build order part cannot be changed')
             })
 
+    def report_context(self) -> dict:
+        """Generate custom report context data."""
+
+        return {
+            'build': self,
+            'part': self.part,
+            'build_outputs': self.build_outputs.all(),
+            'line_items': self.build_lines.all(),
+            'bom_items': self.part.get_bom_items(),
+            'reference': self.reference,
+            'quantity': self.quantity,
+            'title': str(self)
+        }
+
+
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
         """Filter by 'minimum and maximum date range'.

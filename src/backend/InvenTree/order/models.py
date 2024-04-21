@@ -247,6 +247,17 @@ class Order(
                     'contact': _('Contact does not match selected company')
                 })
 
+    def report_context(self):
+        """Generate context data for the reporting interface."""
+        return {
+            'order': self,
+            'description': self.description,
+            'reference': self.reference,
+            'lines': self.lines,
+            'extra_lines': self.extra_lines,
+            'title': str(self),
+        }
+
     @classmethod
     def overdue_filter(cls):
         """A generic implementation of an 'overdue' filter for the Model class.
@@ -362,6 +373,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+
+    def report_context(self):
+        """Return report context data for this PurchaseOrder."""
+        return {**super.report_context(), 'supplier': self.supplier}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -820,6 +835,10 @@ class SalesOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
+
+    def report_context(self):
+        """Generate report context data for this SalesOrder."""
+        return {**super.report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -1960,6 +1979,10 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
+
+    def report_context(self):
+        """Generate report context data for this ReturnOrder."""
+        return {**super.report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""

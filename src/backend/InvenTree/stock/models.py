@@ -144,6 +144,41 @@ class StockLocation(
         """Return API url."""
         return reverse('api-location-list')
 
+    def get_test_keys(self):
+        """Construct a flattened list of test 'keys' for this StockItem."""
+        keys = []
+
+        for test in self.part.getTestTemplates(required=True):
+            if test.key not in keys:
+                keys.append(test.key)
+
+        for test in self.part.getTestTemplates(required=False):
+            if test.key not in keys:
+                keys.append(test.key)
+
+        for result in self.testResultList(include_installed=self.include_installed):
+            if result.key not in keys:
+                keys.append(result.key)
+
+        return list(keys)
+
+    def report_context(self):
+        """Generate custom report context data for this StockItem."""
+        return {
+            'stock_item': self,
+            'serial': self.serial,
+            'part': self.part,
+            'parameters': self.part.parameters_map(),
+            'test_keys': self.get_test_keys(),
+            'test_template_list': self.part.getTestTemplates(),
+            'test_template_map': self.part.getTestTemplateMap(),
+            'results': self.testResultMap(include_installed=self.include_installed),
+            'result_list': self.testResultList(
+                include_installed=self.include_installed
+            ),
+            'installed_items': self.get_installed_items(cascade=True),
+        }
+
     custom_icon = models.CharField(
         blank=True,
         max_length=100,
@@ -397,6 +432,10 @@ class StockItem(
     def api_instance_filters(self):
         """Custom API instance filters."""
         return {'parent': {'exclude_tree': self.pk}}
+
+    def report_context(self):
+        """Return report context data for this StockLocation."""
+        return {'stock_location': self, 'stock_items': self.get_stock_items()}
 
     tags = TaggableManager(blank=True)
 

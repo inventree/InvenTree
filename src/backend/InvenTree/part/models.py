@@ -410,8 +410,19 @@ class Part(
         """Return API query filters for limiting field results against this instance."""
         return {'variant_of': {'exclude_tree': self.pk}}
 
+    def report_context(self):
+        """Return custom report context information."""
+        return {
+            'part': self,
+            'category': self.category,
+            'bom_items': self.get_bom_items(),
+        }
+
     def get_context_data(self, request, **kwargs):
-        """Return some useful context data about this part for template rendering."""
+        """Return some useful context data about this part for template rendering.
+
+        TODO: 2024-04-21 - Remove this method once the legacy UI code is removed
+        """
         context = {}
 
         context['disabled'] = not self.active
