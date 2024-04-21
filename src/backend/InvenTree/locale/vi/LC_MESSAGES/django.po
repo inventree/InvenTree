@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-20 13:19+0000\n"
-"PO-Revision-Date: 2024-04-16 03:12\n"
+"PO-Revision-Date: 2024-04-21 04:19\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -3851,34 +3851,24 @@ msgid "Previous Step"
 msgstr "Bước trước"
 
 #: company/api.py:164
-#, fuzzy
-#| msgid "Part is not active"
 msgid "Part is Active"
-msgstr "Sản phẩm bị tắt"
+msgstr ""
 
 #: company/api.py:168
-#, fuzzy
-#| msgid "Manufacturers"
 msgid "Manufacturer is Active"
-msgstr "Nhà sản xuất"
+msgstr ""
 
 #: company/api.py:317
-#, fuzzy
-#| msgid "Supplier Part Pricing"
 msgid "Supplier Part is Active"
-msgstr "Giá sản phẩm nhà cung cấp"
+msgstr ""
 
 #: company/api.py:321
-#, fuzzy
-#| msgid "Internal Price"
 msgid "Internal Part is Active"
-msgstr "Giá nội bộ"
+msgstr ""
 
 #: company/api.py:325
-#, fuzzy
-#| msgid "Supplier Pricing"
 msgid "Supplier is Active"
-msgstr "Giá bán nhà cung cấp"
+msgstr ""
 
 #: company/models.py:114
 msgid "Company description"
@@ -3926,10 +3916,8 @@ msgid "Link to external company information"
 msgstr "Liên kết đến thông tin công ty ngoài"
 
 #: company/models.py:160
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this company active?"
-msgstr "Sản phẩm này đang hoạt động?"
+msgstr ""
 
 #: company/models.py:165
 msgid "is customer"
@@ -4174,10 +4162,8 @@ msgid "Supplier stock keeping unit"
 msgstr "Đơn vị quản lý kho nhà cung cấp"
 
 #: company/models.py:814
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this supplier part active?"
-msgstr "Sản phẩm này đang hoạt động?"
+msgstr ""
 
 #: company/models.py:824
 msgid "Select manufacturer part"
@@ -14239,3 +14225,4 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
+
