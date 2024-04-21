@@ -125,10 +125,13 @@ function printReports(model_type, items) {
         return;
     }
 
+    // Join the items with a 'query safe' comma character
+    const item_string = items.join(',');
+
     let params = {
         enabled: true,
         model_type: model_type,
-        items: items.join(','),
+        items: item_string,
     };
 
     // Request a list of available report templates
@@ -145,7 +148,7 @@ function printReports(model_type, items) {
             // Select report template for printing
             selectReport(response, items, {
                 success: function(pk) {
-                    let href = `{% url "api-report-template-list" %}${pk}/print/?items=${items.join(',')}`;
+                    let href = `{% url "api-report-template-list" %}${pk}/print/?items=${item_string}`;
 
                     window.open(href);
                 }

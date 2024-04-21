@@ -47,10 +47,7 @@ class ReportFilter(rest_filters.FilterSet):
         Note: This filter is only applied if the 'model_type' is also provided.
         """
         model_type = self.data.get('model_type', None)
-        values = self.request.query_params.getlist('items', [])
-
-        if not model_type or len(values) == 0:
-            return queryset
+        values = values.strip().split(',')
 
         if model_class := report.helpers.report_model_from_name(model_type):
             model_items = model_class.objects.filter(pk__in=values)
