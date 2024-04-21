@@ -1941,8 +1941,7 @@ function loadStockTable(table, options) {
         setupFilterList(filterKey, table, filterTarget, {
             download: true,
             report: {
-                url: '{% url "api-stockitem-testreport-list" %}',
-                key: 'item',
+                key: 'stockitem',
             },
             labels: {
                 url: '{% url "api-stockitem-label-list" %}',
