@@ -123,7 +123,7 @@ jobs:
       - name: Check Config
         run: |
           pip install pyyaml==${{ env.pyyaml_version }}
-          pip install --system -r docs/requirements.txt
+          pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
         uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
