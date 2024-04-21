@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-20 13:19+0000\n"
-"PO-Revision-Date: 2024-04-18 03:36\n"
+"PO-Revision-Date: 2024-04-21 04:19\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -3855,28 +3855,20 @@ msgid "Part is Active"
 msgstr ""
 
 #: company/api.py:168
-#, fuzzy
-#| msgid "Manufacturers"
 msgid "Manufacturer is Active"
-msgstr "Tillverkare"
+msgstr ""
 
 #: company/api.py:317
-#, fuzzy
-#| msgid "Search Supplier Parts"
 msgid "Supplier Part is Active"
-msgstr "Sök efter leverantörsartikel"
+msgstr ""
 
 #: company/api.py:321
-#, fuzzy
-#| msgid "Internal Prices"
 msgid "Internal Part is Active"
-msgstr "Interna priser"
+msgstr ""
 
 #: company/api.py:325
-#, fuzzy
-#| msgid "Suppliers"
 msgid "Supplier is Active"
-msgstr "Leverantörer"
+msgstr ""
 
 #: company/models.py:114
 msgid "Company description"
@@ -14233,3 +14225,4 @@ msgstr ""
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr ""
+
