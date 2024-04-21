@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-20 13:19+0000\n"
-"PO-Revision-Date: 2024-04-17 03:36\n"
+"PO-Revision-Date: 2024-04-21 04:19\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -3851,34 +3851,24 @@ msgid "Previous Step"
 msgstr ""
 
 #: company/api.py:164
-#, fuzzy
-#| msgid "Part Description"
 msgid "Part is Active"
-msgstr "Popis dílu"
+msgstr ""
 
 #: company/api.py:168
-#, fuzzy
-#| msgid "Manufacturer Part"
 msgid "Manufacturer is Active"
-msgstr "Výrobce dílu"
+msgstr ""
 
 #: company/api.py:317
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplier Part is Active"
-msgstr "Dodavatel dílů"
+msgstr ""
 
 #: company/api.py:321
-#, fuzzy
-#| msgid "Internal Part Number"
 msgid "Internal Part is Active"
-msgstr "Interní číslo dílu"
+msgstr ""
 
 #: company/api.py:325
-#, fuzzy
-#| msgid "Use Supplier Pricing"
 msgid "Supplier is Active"
-msgstr "Použít ceny dodavatele"
+msgstr ""
 
 #: company/models.py:114
 msgid "Company description"
@@ -4172,10 +4162,8 @@ msgid "Supplier stock keeping unit"
 msgstr ""
 
 #: company/models.py:814
-#, fuzzy
-#| msgid "Initial Supplier Data"
 msgid "Is this supplier part active?"
-msgstr "Počáteční údaje dodavatele"
+msgstr ""
 
 #: company/models.py:824
 msgid "Select manufacturer part"
@@ -14237,3 +14225,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
