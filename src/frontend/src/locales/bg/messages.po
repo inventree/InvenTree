@@ -8,7 +8,7 @@ msgstr ""
 "Language: bg\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-18 03:35\n"
+"PO-Revision-Date: 2024-04-21 04:18\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2397,7 +2397,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:158
 #~ msgid "Stock item updated"
-#~ msgstr ""
+#~ msgstr "Stock item updated"
 
 #: src/forms/StockForms.tsx:325
 msgid "Move to default location"
@@ -4379,7 +4379,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:433
 #~ msgid "Duplicate stock item"
-#~ msgstr ""
+#~ msgstr "Duplicate stock item"
 
 #: src/pages/stock/StockDetail.tsx:438
 #: src/tables/stock/StockItemTable.tsx:418
@@ -4648,17 +4648,9 @@ msgstr ""
 msgid "BOM item created"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:311
-#~ msgid "Edit Bom Item"
-#~ msgstr "Edit Bom Item"
-
 #: src/tables/bom/BomTable.tsx:313
 msgid "Edit BOM Item"
 msgstr ""
-
-#: src/tables/bom/BomTable.tsx:313
-#~ msgid "Bom item updated"
-#~ msgstr "Bom item updated"
 
 #: src/tables/bom/BomTable.tsx:315
 msgid "BOM item updated"
@@ -4672,25 +4664,33 @@ msgstr ""
 msgid "BOM item deleted"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:328
-#~ msgid "Delete Bom Item"
-#~ msgstr "Delete Bom Item"
-
-#: src/tables/bom/BomTable.tsx:329
-#~ msgid "Bom item deleted"
-#~ msgstr "Bom item deleted"
-
 #: src/tables/bom/BomTable.tsx:331
-#~ msgid "Are you sure you want to remove this BOM item?"
-#~ msgstr "Are you sure you want to remove this BOM item?"
+#~ msgid "Edit Bom Item"
+#~ msgstr "Edit Bom Item"
 
 #: src/tables/bom/BomTable.tsx:333
 msgid "View BOM"
 msgstr ""
 
+#: src/tables/bom/BomTable.tsx:333
+#~ msgid "Bom item updated"
+#~ msgstr "Bom item updated"
+
 #: src/tables/bom/BomTable.tsx:344
 msgid "Validate BOM line"
 msgstr ""
+
+#: src/tables/bom/BomTable.tsx:348
+#~ msgid "Delete Bom Item"
+#~ msgstr "Delete Bom Item"
+
+#: src/tables/bom/BomTable.tsx:349
+#~ msgid "Bom item deleted"
+#~ msgstr "Bom item deleted"
+
+#: src/tables/bom/BomTable.tsx:351
+#~ msgid "Are you sure you want to remove this BOM item?"
+#~ msgstr "Are you sure you want to remove this BOM item?"
 
 #: src/tables/bom/BomTable.tsx:352
 msgid "Edit Substitutes"
@@ -5664,7 +5664,7 @@ msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:193
 #~ msgid "Supplier part updated"
-#~ msgstr ""
+#~ msgstr "Supplier part updated"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:194
 msgid "Show active internal parts"
@@ -5680,11 +5680,11 @@ msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:205
 #~ msgid "Supplier part deleted"
-#~ msgstr ""
+#~ msgstr "Supplier part deleted"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:207
 #~ msgid "Are you sure you want to remove this supplier part?"
-#~ msgstr ""
+#~ msgstr "Are you sure you want to remove this supplier part?"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:219
 msgid "Delete Supplier Part"
@@ -6266,3 +6266,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
