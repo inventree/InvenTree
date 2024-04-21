@@ -1,18 +1,25 @@
 """Config options for the report app."""
 
 import logging
+import os
 from pathlib import Path
 
 from django.apps import AppConfig
+from django.core.exceptions import AppRegistryNotReady
+from django.core.files.base import ContentFile
+from django.db.utils import IntegrityError, OperationalError, ProgrammingError
 
-from generic.templating.apps import TemplatingMixin
+from maintenance_mode.core import maintenance_mode_on, set_maintenance_mode
+
+import InvenTree.ready
+
+logger = logging.getLogger('inventree')
 
 
-class ReportConfig(TemplatingMixin, AppConfig):
+class ReportConfig(AppConfig):
     """Configuration class for the "report" app."""
 
     name = 'report'
-    db = 'template'
 
     def ready(self):
         """This function is called whenever the app is loaded."""
@@ -22,7 +29,32 @@ class ReportConfig(TemplatingMixin, AppConfig):
 
         super().ready()
 
-    def create_defaults(self):
+        # skip loading if plugin registry is not loaded or we run in a background thread
+        if (
+            not InvenTree.ready.isPluginRegistryLoaded()
+            or not InvenTree.ready.isInMainThread()
+        ):
+            return
+
+        if not InvenTree.ready.canAppAccessDatabase(allow_test=False):
+            return  # pragma: no cover
+
+        with maintenance_mode_on():
+            try:
+                self.create_default_reports()
+            except (
+                AppRegistryNotReady,
+                IntegrityError,
+                OperationalError,
+                ProgrammingError,
+            ):
+                logger.warning(
+                    'Database not ready for creating default report templates'
+                )
+
+        set_maintenance_mode(False)
+
+    def create_default_reports(self):
         """Create all default templates."""
         # Test if models are ready
         try:
@@ -30,95 +62,79 @@ class ReportConfig(TemplatingMixin, AppConfig):
         except Exception:  # pragma: no cover
             # Database is not ready yet
             return
-        assert bool(report.models.TestReport is not None)
 
-        # Create the categories
-        self.create_template_dir(
-            report.models.TestReport,
-            [
-                {
-                    'file': 'inventree_test_report.html',
-                    'name': 'InvenTree Test Report',
-                    'description': 'Stock item test report',
-                }
-            ],
-        )
+        assert bool(report.models.ReportTemplate is not None)
 
-        self.create_template_dir(
-            report.models.BuildReport,
-            [
-                {
-                    'file': 'inventree_build_order.html',
-                    'name': 'InvenTree Build Order',
-                    'description': 'Build Order job sheet',
-                }
-            ],
-        )
+        # Construct a set of default ReportTemplate instances
+        report_templates = [
+            {
+                'file': 'inventree_bill_of_materials_report.html',
+                'name': 'InvenTree Bill of Materials',
+                'description': 'Sample bill of materials report',
+                'model_type': 'part',
+            },
+            {
+                'file': 'inventree_build_order_base.html',
+                'name': 'InvenTree Build Order',
+                'description': 'Sample build order report',
+                'model_type': 'build',
+            },
+            {
+                'file': 'inventree_po_report_base.html',
+                'name': 'InvenTree Purchase Order',
+                'description': 'Sample purchase order report',
+                'model_type': 'purchaseorder',
+            },
+            {
+                'file': 'inventree_so_report_base.html',
+                'name': 'InvenTree Sales Order',
+                'description': 'Sample sales order report',
+                'model_type': 'salesorder',
+            },
+            {
+                'file': 'inventree_return_order_report_base.html',
+                'name': 'InvenTree Return Order',
+                'description': 'Sample return order report',
+                'model_type': 'returnorder',
+            },
+            {
+                'file': 'inventree_test_report_base.html',
+                'name': 'InvenTree Test Report',
+                'description': 'Sample stock item test report',
+                'model_type': 'stockitem',
+            },
+            {
+                'file': 'inventree_slr_report.html',
+                'name': 'InvenTree Stock Location Report',
+                'description': 'Sample stock location report',
+                'model_type': 'stocklocation',
+            },
+        ]
 
-        self.create_template_dir(
-            report.models.BillOfMaterialsReport,
-            [
-                {
-                    'file': 'inventree_bill_of_materials_report.html',
-                    'name': 'Bill of Materials',
-                    'description': 'Bill of Materials report',
-                }
-            ],
-        )
+        for template in report_templates:
+            # Ignore matching templates which are already in the database
+            if report.models.ReportTemplate.objects.filter(
+                name=template['name']
+            ).exists():
+                continue
 
-        self.create_template_dir(
-            report.models.PurchaseOrderReport,
-            [
-                {
-                    'file': 'inventree_po_report.html',
-                    'name': 'InvenTree Purchase Order',
-                    'description': 'Purchase Order example report',
-                }
-            ],
-        )
+            template_file = Path(__file__).parent.joinpath(
+                'templates', 'report', template['file']
+            )
 
-        self.create_template_dir(
-            report.models.SalesOrderReport,
-            [
-                {
-                    'file': 'inventree_so_report.html',
-                    'name': 'InvenTree Sales Order',
-                    'description': 'Sales Order example report',
-                }
-            ],
-        )
+            if not template_file.exists():
+                logger.warning("Missing template file: '%s'", template['name'])
+                continue
 
-        self.create_template_dir(
-            report.models.ReturnOrderReport,
-            [
-                {
-                    'file': 'inventree_return_order_report.html',
-                    'name': 'InvenTree Return Order',
-                    'description': 'Return Order example report',
-                }
-            ],
-        )
+            # Read the existing template file
+            data = template_file.open('r').read()
 
-        self.create_template_dir(
-            report.models.StockLocationReport,
-            [
-                {
-                    'file': 'inventree_slr_report.html',
-                    'name': 'InvenTree Stock Location',
-                    'description': 'Stock Location example report',
-                }
-            ],
-        )
+            logger.info("Creating new report template: '%s'", template['name'])
 
-    def get_src_dir(self, ref_name):
-        """Get the source directory."""
-        return Path(__file__).parent.joinpath('templates', self.name)
-
-    def get_new_obj_data(self, data, filename):
-        """Get the data for a new template db object."""
-        return {
-            'name': data['name'],
-            'description': data['description'],
-            'template': filename,
-            'enabled': True,
-        }
+            # Create a new entry
+            report.models.ReportTemplate.objects.create(
+                name=template['name'],
+                description=template['description'],
+                model_type=template['model_type'],
+                template=ContentFile(data, os.path.basename(template['file'])),
+            )
