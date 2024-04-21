@@ -78,7 +78,7 @@ function ParameterCell({
         {hovered && canEdit && (
           <div style={{ flex: 0 }}>
             <Tooltip label={t`Edit parameter`}>
-              <ActionIcon size="xs" onClick={handleClick} variant="default">
+              <ActionIcon size="xs" onClick={handleClick} variant="transparent">
                 <IconEdit />
               </ActionIcon>
             </Tooltip>

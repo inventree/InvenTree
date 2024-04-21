@@ -16,7 +16,7 @@ export function ScanButton() {
           innerProps: {}
         })
       }
-      variant="default"
+      variant="transparent"
     >
       <IconQrcode />
     </ActionIcon>

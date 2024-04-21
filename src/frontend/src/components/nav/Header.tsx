@@ -94,12 +94,12 @@ export function Header() {
             <NavTabs />
           </Group>
           <Group>
-            <ActionIcon onClick={openSearchDrawer} variant="default">
+            <ActionIcon onClick={openSearchDrawer} variant="transparent">
               <IconSearch />
             </ActionIcon>
             <SpotlightButton />
             <ScanButton />
-            <ActionIcon onClick={openNotificationDrawer} variant="default">
+            <ActionIcon onClick={openNotificationDrawer} variant="transparent">
               <Indicator
                 radius="lg"
                 size="18"

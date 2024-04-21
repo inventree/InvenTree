@@ -44,7 +44,11 @@ export function BreadcrumbList({
     <Paper p="3" radius="xs">
       <Group gap="xs">
         {navCallback && (
-          <ActionIcon key="nav-action" onClick={navCallback} variant="default">
+          <ActionIcon
+            key="nav-action"
+            onClick={navCallback}
+            variant="transparent"
+          >
             <IconMenu2 />
           </ActionIcon>
         )}

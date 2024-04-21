@@ -196,7 +196,7 @@ export function AttachmentTable({
                 callback: table.refreshTable
               });
             }}
-            variant="default"
+            variant="transparent"
           >
             <IconFileUpload />
           </ActionIcon>
@@ -216,7 +216,7 @@ export function AttachmentTable({
                 callback: table.refreshTable
               });
             }}
-            variant="default"
+            variant="transparent"
           >
             <IconExternalLink />
           </ActionIcon>
