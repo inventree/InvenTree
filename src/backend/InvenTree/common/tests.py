@@ -1379,7 +1379,7 @@ class ContentTypeAPITest(InvenTreeAPITestCase):
         )
 
         # PK should not work on model name endpoint
-        response = self.get(
+        self.get(
             reverse('api-contenttype-detail-modelname', kwargs={'model': None}),
             expected_code=404,
         )
