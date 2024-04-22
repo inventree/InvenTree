@@ -74,3 +74,10 @@ To see all available options for restore, run:
 ```
 invoke restore --help
 ```
+
+## Advanced Usage
+
+Not all functionality of the db-backup library is exposed by default. For advanced usage (not covered by the documentation above), refer to the [django-dbbackup commands documentation](https://django-dbbackup.readthedocs.io/en/master/commands.html).
+
+!!! warning "Advanced Users Only"
+    Any advanced usage assumes some underlying knowledge of django, and is not documented here.
