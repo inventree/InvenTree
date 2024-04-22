@@ -48,12 +48,6 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-def rename_template(instance, filename):
-    """Upload the template to the desired directory."""
-    filename = os.path.basename(filename)
-    return os.path.join(instance.UPLOAD_DIR, filename)
-
-
 class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     """Base class for reports, labels."""
 
@@ -107,13 +101,6 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         max_length=250,
         verbose_name=_('Description'),
         help_text=_('Template description'),
-    )
-
-    template = models.FileField(
-        upload_to=rename_template,
-        verbose_name=_('Template'),
-        help_text=_('Template file'),
-        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
     )
 
     revision = models.PositiveIntegerField(
@@ -227,8 +214,6 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
 class ReportTemplate(ReportTemplateBase):
     """Class representing the ReportTemplate database model."""
 
-    UPLOAD_DIR = 'report_template'
-
     def __init__(self, *args, **kwargs):
         """Initialize the particular report instance."""
         super().__init__(*args, **kwargs)
@@ -236,6 +221,13 @@ class ReportTemplate(ReportTemplateBase):
         self._meta.get_field(
             'page_size'
         ).choices = report.helpers.report_page_size_options()
+
+    template = models.FileField(
+        upload_to='report_template',
+        verbose_name=_('Template'),
+        help_text=_('Template file'),
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+    )
 
     page_size = models.CharField(
         max_length=20,
@@ -289,7 +281,12 @@ class ReportTemplate(ReportTemplateBase):
 class LabelTemplate(ReportTemplateBase):
     """Class representing the LabelTemplate database model."""
 
-    UPLOAD_DIR = 'label_template'
+    template = models.FileField(
+        upload_to='label_template',
+        verbose_name=_('Template'),
+        help_text=_('Template file'),
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
+    )
 
     width = models.FloatField(
         default=50,

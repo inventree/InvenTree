@@ -31,7 +31,7 @@ def forward(apps, schema_editor):
 
     count = 0
 
-    for key, report_model in report_model_map().items():
+    for model_type, report_model in report_model_map().items():
 
         model = apps.get_model('report', report_model)
 
@@ -51,21 +51,21 @@ def forward(apps, schema_editor):
             offset = 1
 
             # Prevent duplicate names during migration
-            while ReportTemplate.objects.filter(name=name).exists():
+            while ReportTemplate.objects.filter(name=name, model_type=model_type).exists():
                 name = template.name + f"_{offset}"
                 offset += 1
 
             ReportTemplate.objects.create(
                 name=name,
                 template=ContentFile(filedata, filename),
-                model_type=key,
+                model_type=model_type,
                 description=template.description,
                 revision=template.revision,
-                page_size=template.page_size,
-                landscape=template.landscape,
                 filters=template.filters,
                 filename_pattern=template.filename_pattern,
-                enabled=template.enabled
+                enabled=template.enabled,
+                page_size=template.page_size,
+                landscape=template.landscape,
             )
 
             count += 1
