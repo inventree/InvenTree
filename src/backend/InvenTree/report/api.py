@@ -25,14 +25,10 @@ from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAP
 from plugin.registry import registry
 
 
-class ReportFilter(rest_filters.FilterSet):
-    """Filter class for report template list."""
+class ReportFilterBase(rest_filters.FilterSet):
+    """Base filter class for label and report templates."""
 
-    class Meta:
-        """Filter options."""
-
-        model = report.models.ReportTemplate
-        fields = ['enabled', 'landscape']
+    enabled = rest_filters.BooleanFilter()
 
     model_type = rest_filters.ChoiceFilter(
         choices=report.helpers.report_model_options(), label=_('Model Type')
@@ -68,6 +64,44 @@ class ReportFilter(rest_filters.FilterSet):
             queryset = queryset.filter(pk__in=matching_template_ids)
 
         return queryset
+
+
+class ReportFilter(ReportFilterBase):
+    """Filter class for report template list."""
+
+    class Meta:
+        """Filter options."""
+
+        model = report.models.ReportTemplate
+        fields = ['landscape']
+
+
+class LabelFilter(ReportFilterBase):
+    """Filter class for label template list."""
+
+    class Meta:
+        """Filter options."""
+
+        model = report.models.LabelTemplate
+        fields = []
+
+
+class LabelTemplateList(ListCreateAPI):
+    """API endpoint for viewing list of LabelTemplate objects."""
+
+    queryset = report.models.LabelTemplate.objects.all()
+    serializer_class = report.serializers.LabelTemplateSerializer
+    filterset_class = LabelFilter
+    filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
+    search_fields = ['name', 'description']
+    ordering_fields = ['name', 'enabled']
+
+
+class LabelTemplateDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for label template model."""
+
+    queryset = report.models.LabelTemplate.objects.all()
+    serializer_class = report.serializers.ReportTemplateSerializer
 
 
 @method_decorator(cache_page(5), name='dispatch')
@@ -216,12 +250,10 @@ class ReportTemplateList(ListCreateAPI):
     """API endpoint for viewing list of ReportTemplate objects."""
 
     queryset = report.models.ReportTemplate.objects.all()
-    serializer_class = report.serializers.ReportSerializer
+    serializer_class = report.serializers.ReportTemplateSerializer
     filterset_class = ReportFilter
     filter_backends = [DjangoFilterBackend, InvenTreeSearchFilter]
-
     search_fields = ['name', 'description']
-
     ordering_fields = ['name', 'enabled']
 
 
@@ -229,7 +261,7 @@ class ReportTemplateDetail(RetrieveUpdateDestroyAPI):
     """Detail API endpoint for report template model."""
 
     queryset = report.models.ReportTemplate.objects.all()
-    serializer_class = report.serializers.ReportSerializer
+    serializer_class = report.serializers.ReportTemplateSerializer
 
 
 class ReportSnippetList(ListCreateAPI):
@@ -261,6 +293,29 @@ class ReportAssetDetail(RetrieveUpdateDestroyAPI):
 
 
 report_api_urls = [
+    # Label templates
+    path(
+        'label/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': report.models.LabelTemplate},
+                        name='api-label-template-metadata',
+                    ),
+                    path(
+                        '',
+                        LabelTemplateDetail.as_view(),
+                        name='api-label-template-detail',
+                    ),
+                ]),
+            ),
+            path('', LabelTemplateList.as_view(), name='api-label-template-list'),
+        ]),
+    ),
     # Report templates
     path(
         'template/',

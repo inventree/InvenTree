@@ -12,26 +12,40 @@ from InvenTree.serializers import (
 )
 
 
-class ReportSerializer(InvenTreeModelSerializer):
-    """Serializer class for report template model."""
+class ReportSerializerBase(InvenTreeModelSerializer):
+    """Base serializer class for report and label templates."""
 
-    class Meta:
-        """Metaclass options."""
-
-        model = report.models.ReportTemplate
-        fields = [
+    @staticmethod
+    def base_fields():
+        """Base serializer field set."""
+        return [
             'pk',
             'name',
             'description',
             'model_type',
             'template',
             'filters',
-            'page_size',
-            'landscape',
             'enabled',
+            'revision',
         ]
 
     template = InvenTreeAttachmentSerializerField(required=True)
+
+    revision = serializers.IntegerField(read_only=True)
+
+    model_type = serializers.ChoiceField(
+        label=_('Model Type'), choices=report.helpers.report_model_options()
+    )
+
+
+class ReportTemplateSerializer(ReportSerializerBase):
+    """Serializer class for report template model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = report.models.ReportTemplate
+        fields = [*ReportSerializerBase.base_fields(), 'page_size', 'landscape']
 
     page_size = serializers.ChoiceField(
         required=False,
@@ -39,9 +53,15 @@ class ReportSerializer(InvenTreeModelSerializer):
         choices=report.helpers.report_page_size_options(),
     )
 
-    model_type = serializers.ChoiceField(
-        label=_('Model Type'), choices=report.helpers.report_model_options()
-    )
+
+class LabelTemplateSerializer(ReportSerializerBase):
+    """Serializer class for label template model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = report.models.LabelTemplate
+        fields = [*ReportSerializerBase().base_fields(), 'width', 'height']
 
 
 class ReportSnippetSerializer(InvenTreeModelSerializer):
