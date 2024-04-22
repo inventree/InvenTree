@@ -78,7 +78,6 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
 
 test('PUI - Pages - Index - Dashboard', async ({ page }) => {
   await doQuickLogin(page);
-  await page.goto(`${baseUrl}/`);
 
   // Dashboard auto update
   await page.getByRole('tab', { name: 'Dashboard' }).click();

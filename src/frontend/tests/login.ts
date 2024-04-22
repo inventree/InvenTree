@@ -22,16 +22,11 @@ export const doLogin = async (page, username?: string, password?: string) => {
 /*
  * Perform a quick login based on passing URL parameters
  */
-export const doQuickLogin = async (
-  page,
-  username?: string,
-  password?: string
-) => {
-  username = username ?? user.username;
-  password = password ?? user.password;
-
+export const doQuickLogin = async (page) => {
   // await page.goto(logoutUrl);
-  await page.goto(`${baseUrl}/login/?login=${username}&password=${password}`);
+  await page.goto(
+    `./platform/login/?login=${user.username}&password=${user.password}`
+  );
   await page.waitForURL('**/platform/home');
   await page.waitForTimeout(250);
 };

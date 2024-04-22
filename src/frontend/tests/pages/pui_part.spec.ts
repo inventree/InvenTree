@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 
 import { doQuickLogin } from '../login';
 
-const baseUrl = './platform/';
+const baseUrl = './platform';
 
 test('PUI - Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
   await doQuickLogin(page);
