@@ -7,7 +7,7 @@ import sys
 from django.conf import settings
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
-from django.core.validators import FileExtensionValidator
+from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
 from django.template.loader import render_to_string
@@ -48,8 +48,20 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'report.pdf')
 
 
-class ReportTemplate(MetadataMixin, InvenTree.models.InvenTreeModel):
-    """Class representing a report template."""
+def rename_template(instance, filename):
+    """Upload the template to the desired directory."""
+    filename = os.path.basename(filename)
+    return os.path.join(instance.UPLOAD_DIR, filename)
+
+
+class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Base class for reports, labels."""
+
+    class Meta:
+        """Metaclass options."""
+
+        abstract = True
+        unique_together = ('name', 'model_type')
 
     def __init__(self, *args, **kwargs):
         """Initialize the particular report instance."""
@@ -102,15 +114,128 @@ class ReportTemplate(MetadataMixin, InvenTree.models.InvenTreeModel):
     description = models.CharField(
         max_length=250,
         verbose_name=_('Description'),
-        help_text=_('Report template description'),
+        help_text=_('Template description'),
+    )
+
+    template = models.FileField(
+        upload_to=rename_template,
+        verbose_name=_('Template'),
+        help_text=_('Template file'),
+        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
     )
 
     revision = models.PositiveIntegerField(
         default=1,
         verbose_name=_('Revision'),
-        help_text=_('Report revision number (auto-increments)'),
+        help_text=_('Revision number (auto-increments)'),
         editable=False,
     )
+
+    def generate_filename(self, context, **kwargs):
+        """Generate a filename for this report."""
+        template_string = Template(self.filename_pattern)
+
+        return template_string.render(Context(context))
+
+    def render_as_string(self, instance, request, **kwargs):
+        """Render the report to a HTML string.
+
+        Useful for debug mode (viewing generated code)
+        """
+        context = self.get_context(instance, request, **kwargs)
+
+        return render_to_string(self.template_name, context, request)
+
+    def render(self, instance, request, **kwargs):
+        """Render the template to a PDF file.
+
+        Uses django-weasyprint plugin to render HTML template against Weasyprint
+        """
+        context = self.get_context(instance, request)
+
+        # Render HTML template to PDF
+        wp = WeasyprintReportMixin(
+            request,
+            self.template_name,
+            base_url=request.build_absolute_uri('/'),
+            presentational_hints=True,
+            filename=self.generate_filename(context),
+            **kwargs,
+        )
+
+        return wp.render_to_response(context, **kwargs)
+
+    filename_pattern = models.CharField(
+        default='report.pdf',
+        verbose_name=_('Filename Pattern'),
+        help_text=_('Pattern for generating filenames'),
+        max_length=100,
+    )
+
+    enabled = models.BooleanField(
+        default=True, verbose_name=_('Enabled'), help_text=_('Template is enabled')
+    )
+
+    model_type = models.CharField(
+        max_length=100, validators=[report.validators.validate_report_model_type]
+    )
+
+    def clean(self):
+        """Clean model instance, and ensure validity."""
+        super().clean()
+
+        model = self.get_model()
+        filters = self.filters
+
+        if model and filters:
+            report.validators.validate_filters(filters, model=model)
+
+    def get_model(self):
+        """Return the database model class associated with this report template."""
+        return report.helpers.report_model_from_name(self.model_type)
+
+    filters = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Filters'),
+        help_text=_('Template query filters (comma-separated list of key=value pairs)'),
+        validators=[report.validators.validate_filters],
+    )
+
+    def get_filters(self):
+        """Return a filter dict which can be applied to the target model."""
+        return report.validators.validate_filters(self.filters, model=self.get_model())
+
+    def get_context(self, instance, request, **kwargs):
+        """Supply context data to the generic template for rendering.
+
+        Arguments:
+            instance: The model instance we are printing against
+            request: The request object
+        """
+        # Provide base context information to all templates
+        base_context = {
+            'base_url': get_base_url(request=request),
+            'date': InvenTree.helpers.current_date(),
+            'datetime': InvenTree.helpers.current_time(),
+            'template': self,
+            'template_description': self.description,
+            'template_name': self.name,
+            'template_revision': self.revision,
+            'request': request,
+            'user': request.user,
+        }
+
+        # Add in an context information provided by the model instance itself
+        context = {**base_context, **instance.report_context()}
+
+        return context
+
+
+class ReportTemplate(ReportTemplateBase):
+    """Class representing the ReportTemplate database model."""
+
+    UPLOAD_DIR = 'report_template'
 
     page_size = models.CharField(
         max_length=20,
@@ -141,115 +266,13 @@ class ReportTemplate(MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return page_size
 
-    def generate_filename(self, context, **kwargs):
-        """Generate a filename for this report."""
-        template_string = Template(self.filename_pattern)
-
-        return template_string.render(Context(context))
-
-    def render_as_string(self, instance, request, **kwargs):
-        """Render the report to a HTML string.
-
-        Useful for debug mode (viewing generated code)
-        """
-        context = self.get_context(instance, request)
-
-        return render_to_string(self.template_name, context, request)
-
-    def render(self, instance, request, **kwargs):
-        """Render the template to a PDF file.
-
-        Uses django-weasyprint plugin to render HTML template against Weasyprint
-        """
-        context = self.get_context(instance, request)
-
-        # Render HTML template to PDF
-        wp = WeasyprintReportMixin(
-            request,
-            self.template_name,
-            base_url=request.build_absolute_uri('/'),
-            presentational_hints=True,
-            filename=self.generate_filename(context),
-            **kwargs,
-        )
-
-        return wp.render_to_response(context, **kwargs)
-
-    filename_pattern = models.CharField(
-        default='report.pdf',
-        verbose_name=_('Filename Pattern'),
-        help_text=_('Pattern for generating report filenames'),
-        max_length=100,
-    )
-
-    enabled = models.BooleanField(
-        default=True,
-        verbose_name=_('Enabled'),
-        help_text=_('Report template is enabled'),
-    )
-
-    template = models.FileField(
-        upload_to='report_template/',
-        verbose_name=_('Template'),
-        help_text=_('Report template file'),
-        validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
-    )
-
-    model_type = models.CharField(
-        max_length=100, validators=[report.validators.validate_report_model_type]
-    )
-
-    def clean(self):
-        """Clean model instance, and ensure validity."""
-        super().clean()
-
-        model = self.get_model()
-        filters = self.filters
-
-        if model and filters:
-            report.validators.validate_filters(filters, model=model)
-
-    def get_model(self):
-        """Return the database model class associated with this report template."""
-        return report.helpers.report_model_from_name(self.model_type)
-
-    filters = models.CharField(
-        blank=True,
-        max_length=250,
-        verbose_name=_('Filters'),
-        help_text=_(
-            'Report template query filters (comma-separated list of key=value pairs)'
-        ),
-        validators=[report.validators.validate_filters],
-    )
-
-    def get_filters(self):
-        """Return a filter dict which can be applied to the target model."""
-        return report.validators.validate_filters(self.filters, model=self.get_model())
-
-    def get_context(self, instance, request):
-        """Supply context data to the report template for rendering.
-
-        Arguments:
-            instance: The model instance we are printing against
-            request: The request object
-        """
-        # Provide base context information to all report templates
-        base_context = {
-            'base_url': get_base_url(request=request),
-            'date': InvenTree.helpers.current_date(),
-            'datetime': InvenTree.helpers.current_time(),
+    def get_context(self, instance, request, **kwargs):
+        """Supply context data to the report template for rendering."""
+        context = {
+            **super().get_context(instance, request),
             'page_size': self.get_report_size(),
-            'report_template': self,
-            'report_description': self.description,
-            'report_name': self.name,
-            'report_revision': self.revision,
-            'request': request,
-            'user': request.user,
+            'landscape': self.landscape,
         }
-
-        # Add in an context information provided by the model instance itself
-        context = {**base_context, **instance.report_context()}
 
         # Pass the context through to the plugin registry for any additional information
         for plugin in registry.with_mixin('report'):
@@ -259,6 +282,64 @@ class ReportTemplate(MetadataMixin, InvenTree.models.InvenTreeModel):
                 InvenTree.exceptions.log_error(
                     f'plugins.{plugin.slug}.add_report_context'
                 )
+
+        return context
+
+
+class LabelTemplate(ReportTemplateBase):
+    """Class representing the LabelTemplate database model."""
+
+    UPLOAD_DIR = 'label_template'
+
+    width = models.FloatField(
+        default=50,
+        verbose_name=_('Width [mm]'),
+        help_text=_('Label width, specified in mm'),
+        validators=[MinValueValidator(2)],
+    )
+
+    height = models.FloatField(
+        default=20,
+        verbose_name=_('Height [mm]'),
+        help_text=_('Label height, specified in mm'),
+        validators=[MinValueValidator(2)],
+    )
+
+    def generate_page_style(self, **kwargs):
+        """Generate @page style for the label template.
+
+        This is inserted at the top of the style block for a given label
+        """
+        width = kwargs.get('width', self.width)
+        height = kwargs.get('height', self.height)
+        margin = kwargs.get('margin', 0)
+
+        return f"""
+        @page {{
+            {{% localize off %}}
+            size: {width}mm {height}mm;
+            margin: {margin}mm;
+            {{% endlocalize %}}
+        }}
+        """
+
+    def get_context(self, instance, request, **kwargs):
+        """Supply context data to the label template for rendering."""
+        context = {
+            **super().get_context(instance, request, **kwargs),
+            'width': self.width,
+            'height': self.height,
+        }
+
+        if kwargs.pop('insert_page_style', True):
+            context['page_style'] = self.generate_page_style()
+
+        # Pass the context through to any registered plugins
+        plugins = registry.with_mixin('report')
+
+        for plugin in plugins:
+            # Let each plugin add its own context data
+            plugin.add_label_context(self, self.object_to_print, request, context)
 
         return context
 
