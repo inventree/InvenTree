@@ -8,6 +8,7 @@ from http import HTTPStatus
 from unittest import mock
 
 from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -1339,3 +1340,46 @@ class CustomUnitAPITest(InvenTreeAPITestCase):
 
         for name in invalid_name_values:
             self.patch(url, {'name': name}, expected_code=400)
+
+
+class ContentTypeAPITest(InvenTreeAPITestCase):
+    """Unit tests for the ContentType API."""
+
+    def test_list(self):
+        """Test API list functionality."""
+        response = self.get(reverse('api-contenttype-list'), expected_code=200)
+        self.assertEqual(len(response.data), ContentType.objects.count())
+
+    def test_detail(self):
+        """Test API detail functionality."""
+        ct = ContentType.objects.first()
+        assert ct
+
+        response = self.get(
+            reverse('api-contenttype-detail', kwargs={'pk': ct.pk}), expected_code=200
+        )
+
+        self.assertEqual(response.data['app_label'], ct.app_label)
+        self.assertEqual(response.data['model'], ct.model)
+
+        # Test with model name
+        response = self.get(
+            reverse('api-contenttype-detail-modelname', kwargs={'model': ct.model}),
+            expected_code=200,
+        )
+        self.assertEqual(response.data['app_label'], ct.app_label)
+        self.assertEqual(response.data['model'], ct.model)
+
+        # Test non-existent model
+        self.get(
+            reverse(
+                'api-contenttype-detail-modelname', kwargs={'model': 'nonexistent'}
+            ),
+            expected_code=404,
+        )
+
+        # PK should not work on model name endpoint
+        response = self.get(
+            reverse('api-contenttype-detail-modelname', kwargs={'model': None}),
+            expected_code=404,
+        )

@@ -649,8 +649,7 @@ class ContentTypeModelDetail(ContentTypeDetail):
                 return qs.get(model=model_ref)
             except ContentType.DoesNotExist:
                 raise NotFound()
-
-        return super().get_object()
+        raise NotFound()
 
 
 settings_api_urls = [
