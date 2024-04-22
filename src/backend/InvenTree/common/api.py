@@ -635,6 +635,11 @@ class ContentTypeDetail(RetrieveAPI):
     serializer_class = common.serializers.ContentTypeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+
+@extend_schema(operation_id='contenttype_retrieve_model')
+class ContentTypeModelDetail(ContentTypeDetail):
+    """Detail view for a ContentType model."""
+
     def get_object(self):
         """Attempt to find a ContentType object with the provided key."""
         model_ref = self.kwargs.get('model', None)
@@ -837,7 +842,7 @@ common_api_urls = [
             ),
             path(
                 '<str:model>/',
-                ContentTypeDetail.as_view(),
+                ContentTypeModelDetail.as_view(),
                 name='api-contenttype-detail-modelname',
             ),
             path('', ContentTypeList.as_view(), name='api-contenttype-list'),
