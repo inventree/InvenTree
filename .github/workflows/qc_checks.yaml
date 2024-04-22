@@ -104,7 +104,7 @@ jobs:
         uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
       - name: Check Version
         run: |
-          pip install -r .github/requirements.txt
+          pip install --require-hashes -r .github/requirements.txt
           python3 .github/scripts/version_check.py
 
   mkdocs:
@@ -122,7 +122,7 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Check Config
         run: |
-          pip install -r .github/requirements.txt
+          pip install --require-hashes -r .github/requirements.txt
           pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
@@ -168,7 +168,7 @@ jobs:
       - name: Download public schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
-          pip install -r .github/requirements.txt >/dev/null 2>&1
+          pip install --require-hashes -r .github/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
@@ -187,7 +187,7 @@ jobs:
         id: version
         if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
         run: |
-          pip install -r .github/requirements.txt >/dev/null 2>&1
+          pip install --require-hashes -r .github/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
