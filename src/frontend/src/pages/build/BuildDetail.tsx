@@ -35,8 +35,7 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { buildOrderFields } from '../../forms/BuildForms';
-import { partCategoryFields } from '../../forms/PartForms';
+import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
@@ -280,11 +279,13 @@ export default function BuildDetail() {
     ];
   }, [build, id]);
 
+  const buildOrderFields = useBuildOrderFields({ create: false });
+
   const editBuild = useEditApiFormModal({
     url: ApiEndpoints.build_order_list,
     pk: build.pk,
     title: t`Edit Build Order`,
-    fields: buildOrderFields(),
+    fields: buildOrderFields,
     onFormSuccess: () => {
       refreshInstance();
     }
@@ -334,16 +335,17 @@ export default function BuildDetail() {
     ];
   }, [id, build, user]);
 
-  const buildDetail = useMemo(() => {
-    return build?.status ? (
-      StatusRenderer({
-        status: build.status,
-        type: ModelType.build
-      })
-    ) : (
-      <Skeleton />
-    );
-  }, [build, id]);
+  const buildBadges = useMemo(() => {
+    return instanceQuery.isFetching
+      ? []
+      : [
+          <StatusRenderer
+            status={build.status}
+            type={ModelType.build}
+            options={{ size: 'lg' }}
+          />
+        ];
+  }, [build, instanceQuery]);
 
   return (
     <>
@@ -353,7 +355,7 @@ export default function BuildDetail() {
         <PageDetail
           title={build.reference}
           subtitle={build.title}
-          detail={buildDetail}
+          badges={buildBadges}
           imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
           breadcrumbs={[
             { name: t`Build Orders`, url: '/build' },

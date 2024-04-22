@@ -3,6 +3,7 @@ import { lazy, useEffect } from 'react';
 
 import { setApiDefaults } from '../App';
 import { Loadable } from '../functions/loading';
+import { useLocalState } from '../states/LocalState';
 
 function checkMobile() {
   const { height, width } = useViewportSize();
@@ -15,6 +16,7 @@ const DesktopAppView = Loadable(lazy(() => import('./DesktopAppView')));
 
 // Main App
 export default function MainView() {
+  const [allowMobile] = useLocalState((state) => [state.allowMobile]);
   // Set initial login status
   useEffect(() => {
     // Local state initialization
@@ -22,7 +24,7 @@ export default function MainView() {
   }, []);
 
   // Check if mobile
-  if (checkMobile()) {
+  if (!allowMobile && checkMobile()) {
     return <MobileAppView />;
   }
 

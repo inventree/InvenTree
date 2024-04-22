@@ -2,6 +2,7 @@
 
 from django.db.models import Q
 from django.urls import include, path, re_path
+from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 
@@ -58,11 +59,17 @@ class CompanyList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['is_customer', 'is_manufacturer', 'is_supplier', 'name']
+    filterset_fields = [
+        'is_customer',
+        'is_manufacturer',
+        'is_supplier',
+        'name',
+        'active',
+    ]
 
     search_fields = ['name', 'description', 'website']
 
-    ordering_fields = ['name', 'parts_supplied', 'parts_manufactured']
+    ordering_fields = ['active', 'name', 'parts_supplied', 'parts_manufactured']
 
     ordering = 'name'
 
@@ -153,7 +160,13 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
         fields = ['manufacturer', 'MPN', 'part', 'tags__name', 'tags__slug']
 
     # Filter by 'active' status of linked part
-    active = rest_filters.BooleanFilter(field_name='part__active')
+    part_active = rest_filters.BooleanFilter(
+        field_name='part__active', label=_('Part is Active')
+    )
+
+    manufacturer_active = rest_filters.BooleanFilter(
+        field_name='manufacturer__active', label=_('Manufacturer is Active')
+    )
 
 
 class ManufacturerPartList(ListCreateDestroyAPIView):
@@ -301,8 +314,16 @@ class SupplierPartFilter(rest_filters.FilterSet):
             'tags__slug',
         ]
 
+    active = rest_filters.BooleanFilter(label=_('Supplier Part is Active'))
+
     # Filter by 'active' status of linked part
-    active = rest_filters.BooleanFilter(field_name='part__active')
+    part_active = rest_filters.BooleanFilter(
+        field_name='part__active', label=_('Internal Part is Active')
+    )
+
+    supplier_active = rest_filters.BooleanFilter(
+        field_name='supplier__active', label=_('Supplier is Active')
+    )
 
     # Filter by the 'MPN' of linked manufacturer part
     MPN = rest_filters.CharFilter(
@@ -378,6 +399,7 @@ class SupplierPartList(ListCreateDestroyAPIView):
         'part',
         'supplier',
         'manufacturer',
+        'active',
         'MPN',
         'packaging',
         'pack_quantity',
@@ -468,9 +490,13 @@ class SupplierPriceBreakList(ListCreateAPI):
 
         return self.serializer_class(*args, **kwargs)
 
-    filter_backends = ORDER_FILTER
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
-    ordering_fields = ['quantity']
+    ordering_fields = ['quantity', 'supplier', 'SKU', 'price']
+
+    search_fields = ['part__SKU', 'part__supplier__name']
+
+    ordering_field_aliases = {'supplier': 'part__supplier__name', 'SKU': 'part__SKU'}
 
     ordering = 'quantity'
 

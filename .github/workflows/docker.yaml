@@ -15,14 +15,18 @@ name: Docker
 
 on:
   release:
-    types: [ published ]
+    types: [published]
 
   push:
     branches:
-      - 'master'
+      - "master"
   pull_request:
     branches:
-      - 'master'
+      - "master"
+
+env:
+  requests_version: 2.31.0
+  pyyaml_version: 6.0.1
 
 permissions:
   contents: read
@@ -30,8 +34,8 @@ permissions:
 jobs:
   paths-filter:
     permissions:
-      contents: read  # for dorny/paths-filter to fetch a list of changed files
-      pull-requests: read  # for dorny/paths-filter to read pull requests
+      contents: read # for dorny/paths-filter to fetch a list of changed files
+      pull-requests: read # for dorny/paths-filter to read pull requests
     name: Filter
     runs-on: ubuntu-latest
 
@@ -65,7 +69,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       python_version: "3.11"
-    runs-on: ubuntu-latest  # in the future we can try to use alternative runners here
+    runs-on: ubuntu-latest # in the future we can try to use alternative runners here
 
     steps:
       - name: Check out repo
@@ -76,8 +80,8 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Version Check
         run: |
-          pip install requests==2.31.0
-          pip install pyyaml==6.0.1
+          pip install requests==${{ env.requests_version }}
+          pip install pyyaml==${{ env.pyyaml_version }}
           python3 .github/scripts/version_check.py
           echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
           echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
@@ -128,7 +132,7 @@ jobs:
         uses: docker/setup-buildx-action@2b51285047da1547ffb1b2203d8be4c0af6b1f20 # pin@v3.2.0
       - name: Set up cosign
         if: github.event_name != 'pull_request'
-        uses: sigstore/cosign-installer@e1523de7571e31dbe865fd2e80c5c7c23ae71eb4 # pin@v3.4.0
+        uses: sigstore/cosign-installer@59acb6260d9c0ba8f4a2f9d9b48431a222b68e20 # pin@v3.5.0
       - name: Check if Dockerhub login is required
         id: docker_login
         run: |

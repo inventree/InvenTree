@@ -71,7 +71,7 @@ export const navDocLinks: DocumentationLinkItem[] = [
   }
 ];
 
-function serverInfo() {
+export function serverInfo() {
   return openContextModal({
     modal: 'info',
     title: (
@@ -84,7 +84,7 @@ function serverInfo() {
   });
 }
 
-function aboutInvenTree() {
+export function aboutInvenTree() {
   return openContextModal({
     modal: 'about',
     title: (
@@ -96,7 +96,8 @@ function aboutInvenTree() {
     innerProps: {}
   });
 }
-function licenseInfo() {
+
+export function licenseInfo() {
   return openContextModal({
     modal: 'license',
     title: (
