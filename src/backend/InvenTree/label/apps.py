@@ -23,6 +23,8 @@ class LabelConfig(TemplatingMixin, AppConfig):
             return
         assert bool(label.models.StockLocationLabel is not None)
 
+        return
+
         # Create the categories
         self.create_template_dir(
             label.models.StockItemLabel,
