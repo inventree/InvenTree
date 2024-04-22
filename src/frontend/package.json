@@ -49,7 +49,7 @@
         "react-router-dom": "^6.22.1",
         "react-select": "^5.8.0",
         "react-simplemde-editor": "^5.2.0",
-        "recharts": "^2.12.4",
+        "recharts": "^2.12.6",
         "styled-components": "^5.3.6",
         "zustand": "^4.5.1"
     },
