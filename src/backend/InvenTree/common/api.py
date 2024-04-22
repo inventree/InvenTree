@@ -635,6 +635,18 @@ class ContentTypeDetail(RetrieveAPI):
     serializer_class = common.serializers.ContentTypeSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_object(self):
+        """Attempt to find a ContentType object with the provided key."""
+        model_ref = self.kwargs.get('model', None)
+        if model_ref:
+            qs = self.filter_queryset(self.get_queryset())
+            try:
+                return qs.get(model=model_ref)
+            except ContentType.DoesNotExist:
+                raise NotFound()
+
+        return super().get_object()
+
 
 settings_api_urls = [
     # User settings
@@ -822,6 +834,11 @@ common_api_urls = [
         include([
             path(
                 '<int:pk>/', ContentTypeDetail.as_view(), name='api-contenttype-detail'
+            ),
+            path(
+                '<str:model>/',
+                ContentTypeDetail.as_view(),
+                name='api-contenttype-detail-modelname',
             ),
             path('', ContentTypeList.as_view(), name='api-contenttype-list'),
         ]),
