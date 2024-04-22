@@ -43,7 +43,7 @@ jobs:
       docker: ${{ steps.filter.outputs.docker }}
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # pin@v4.1.3
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -73,7 +73,7 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+        uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # pin@v4.1.3
       - name: Set Up Python ${{ env.python_version }}
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
         with:
