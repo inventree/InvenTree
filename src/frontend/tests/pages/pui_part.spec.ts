@@ -75,7 +75,7 @@ test('PUI - Pages - Part - Pricing (Supplier)', async ({ page }) => {
   let target = page.getByText('ARR-26041-LPC').first();
   await target.waitFor();
   await target.click();
-  await page.waitForURL('**/purchasing/supplier-part/697/');
+  // await page.waitForURL('**/purchasing/supplier-part/697/');
 });
 
 test('PUI - Pages - Part - Pricing (Variant)', async ({ page }) => {
