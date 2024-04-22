@@ -1,5 +1,6 @@
 """JSON serializers for common components."""
 
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import OuterRef, Subquery
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -301,6 +302,21 @@ class FlagSerializer(serializers.Serializer):
             data['conditions'] = self.instance[instance]
 
         return data
+
+
+class ContentTypeSerializer(serializers.Serializer):
+    """Serializer for ContentType models."""
+
+    app_label = serializers.CharField(read_only=True)
+    model = serializers.CharField(read_only=True)
+    app_labeled_name = serializers.CharField(read_only=True)
+    natural_key = serializers.CharField(read_only=True)
+
+    class Meta:
+        """Meta options for ContentTypeSerializer."""
+
+        model = ContentType
+        fields = '__all__'
 
 
 class CustomUnitSerializer(InvenTreeModelSerializer):
