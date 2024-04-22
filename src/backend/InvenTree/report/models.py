@@ -63,14 +63,6 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         abstract = True
         unique_together = ('name', 'model_type')
 
-    def __init__(self, *args, **kwargs):
-        """Initialize the particular report instance."""
-        super().__init__(*args, **kwargs)
-
-        self._meta.get_field(
-            'page_size'
-        ).choices = report.helpers.report_page_size_options()
-
     def save(self, *args, **kwargs):
         """Perform additional actions when the report is saved."""
         # Increment revision number
@@ -236,6 +228,14 @@ class ReportTemplate(ReportTemplateBase):
     """Class representing the ReportTemplate database model."""
 
     UPLOAD_DIR = 'report_template'
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the particular report instance."""
+        super().__init__(*args, **kwargs)
+
+        self._meta.get_field(
+            'page_size'
+        ).choices = report.helpers.report_page_size_options()
 
     page_size = models.CharField(
         max_length=20,

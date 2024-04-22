@@ -3,12 +3,13 @@
 from django.contrib import admin
 
 from .helpers import report_model_options
-from .models import ReportAsset, ReportSnippet, ReportTemplate
+from .models import LabelTemplate, ReportAsset, ReportSnippet, ReportTemplate
 
 
+@admin.register(LabelTemplate)
 @admin.register(ReportTemplate)
 class ReportAdmin(admin.ModelAdmin):
-    """Admin class for the ReportTemplate model."""
+    """Admin class for the LabelTemplate and ReportTemplate models."""
 
     list_display = ('name', 'description', 'model_type', 'enabled')
 
