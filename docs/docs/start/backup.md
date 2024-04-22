@@ -8,6 +8,9 @@ Backup functionality is provided natively using the [django-dbbackup library](ht
 
 Note that a *backup* operation is not the same as [migrating data](./migrate.md). While data *migration* exports data into a database-agnostic JSON file, *backup* exports a native database file and media file archive.
 
+!!! warning "Database Version"
+    When performing backup and restore operations, it is *imperative* that you are running from the same installed version of InvenTree. Different InvenTree versions may have different database schemas, which render backup / restore operations incompatible.
+
 ## Configuration
 
 The following configuration options are available for backup:
@@ -22,21 +25,30 @@ The following configuration options are available for backup:
 
 If you want to use an external storage provider, extra configuration is required. As a starting point, refer to the [django-dbbackup documentation](https://django-dbbackup.readthedocs.io/en/master/storage.html).
 
-Specific storage configuration options are specified using the `backup_options` dict (in the [configuration file](./config.md)).
+Specific storage configuration options are specified using the `backup_options` dict (in the [configuration file](./config.md#backup-file-storage)).
 
 ## Perform Backup
 
 #### Manual Backup
 
-To perform a manual backup operation, run the following command from the shell:
+To perform a basic manual backup operation, run the following command from the shell:
 
 ```
 invoke backup
 ```
 
+This will perform backup operation with the default parameters. To see all available backup options, run:
+
+```
+invoke backup --help
+```
+
 ### Backup During Update
 
 When performing an update of your InvenTree installation - via either [docker](./docker.md) or [bare metal](./install.md) - a backup operation is automatically performed.
+
+!!! info "Skip Backup Step"
+    You can opt to skip the backup step during the update process by adding the `--skip-backup` option.
 
 ### Daily Backup
 
@@ -55,4 +67,10 @@ To restore from a previous backup, run the following command from the shell (wit
 
 ```
 invoke restore
+```
+
+To see all available options for restore, run:
+
+```
+invoke restore --help
 ```
