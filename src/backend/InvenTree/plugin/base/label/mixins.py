@@ -15,13 +15,11 @@ from build.models import BuildLine
 from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
-from label.models import LabelTemplate
 from part.models import Part
 from plugin.base.label import label as plugin_label
 from plugin.helpers import MixinNotImplementedError
+from report.models import LabelTemplate
 from stock.models import StockItem, StockLocation
-
-LabelItemType = Union[StockItem, StockLocation, Part, BuildLine]
 
 
 class LabelPrintingMixin:
@@ -49,37 +47,40 @@ class LabelPrintingMixin:
         super().__init__()
         self.add_mixin('labels', True, __class__)
 
-    def render_to_pdf(self, label: LabelTemplate, request, **kwargs):
+    def render_to_pdf(self, label: LabelTemplate, instance, request, **kwargs):
         """Render this label to PDF format.
 
         Arguments:
-            label: The LabelTemplate object to render
+            label: The LabelTemplate object to render against
+            instance: The model instance to render
             request: The HTTP request object which triggered this print job
         """
         try:
-            return label.render(request)
+            return label.render(instance, request)
         except Exception:
             log_error('label.render_to_pdf')
             raise ValidationError(_('Error rendering label to PDF'))
 
-    def render_to_html(self, label: LabelTemplate, request, **kwargs):
+    def render_to_html(self, label: LabelTemplate, instance, request, **kwargs):
         """Render this label to HTML format.
 
         Arguments:
-            label: The LabelTemplate object to render
+            label: The LabelTemplate object to render against
+            instance: The model instance to render
             request: The HTTP request object which triggered this print job
         """
         try:
-            return label.render_as_string(request)
+            return label.render_as_string(instance, request)
         except Exception:
             log_error('label.render_to_html')
             raise ValidationError(_('Error rendering label to HTML'))
 
-    def render_to_png(self, label: LabelTemplate, request=None, **kwargs):
+    def render_to_png(self, label: LabelTemplate, instance, request=None, **kwargs):
         """Render this label to PNG format.
 
         Arguments:
-            label: The LabelTemplate object to render
+            label: The LabelTemplate object to render against
+            item: The model instance to render
             request: The HTTP request object which triggered this print job
         Keyword Arguments:
             pdf_data: The raw PDF data of the rendered label (if already rendered)
@@ -94,7 +95,9 @@ class LabelPrintingMixin:
 
         if not pdf_data:
             pdf_data = (
-                self.render_to_pdf(label, request, **kwargs).get_document().write_pdf()
+                self.render_to_pdf(label, instance, request, **kwargs)
+                .get_document()
+                .write_pdf()
             )
 
         pdf2image_kwargs = {
@@ -110,13 +113,7 @@ class LabelPrintingMixin:
             log_error('label.render_to_png')
             raise ValidationError(_('Error rendering label to PNG'))
 
-    def print_labels(
-        self,
-        label: LabelTemplate,
-        items: QuerySet[LabelItemType],
-        request: Request,
-        **kwargs,
-    ):
+    def print_labels(self, label: LabelTemplate, items, request: Request, **kwargs):
         """Print one or more labels with the provided template and items.
 
         Arguments:
@@ -140,11 +137,12 @@ class LabelPrintingMixin:
 
         # Generate a label output for each provided item
         for item in items:
-            label.object_to_print = item
             filename = label.generate_filename(request)
-            pdf_file = self.render_to_pdf(label, request, **kwargs)
+            pdf_file = self.render_to_pdf(label, item, request, **kwargs)
             pdf_data = pdf_file.get_document().write_pdf()
-            png_file = self.render_to_png(label, request, pdf_data=pdf_data, **kwargs)
+            png_file = self.render_to_png(
+                label, item, request, pdf_data=pdf_data, **kwargs
+            )
 
             print_args = {
                 'pdf_file': pdf_file,

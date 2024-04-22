@@ -1,15 +1,18 @@
 """API functionality for the 'report' app."""
 
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.template.exceptions import TemplateDoesNotExist
-from django.urls import include, path, re_path
+from django.urls import include, path
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import serializers
+from rest_framework.exceptions import NotFound
+from rest_framework.request import clone_request
 from rest_framework.response import Response
 
 import common.models
@@ -22,7 +25,54 @@ from InvenTree.api import MetadataView
 from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
+from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
+
+
+@method_decorator(cache_page(5), name='dispatch')
+class TemplatePrintBase(RetrieveAPI):
+    """Base class for printing against templates."""
+
+    @method_decorator(never_cache)
+    def dispatch(self, *args, **kwargs):
+        """Prevent caching when printing report templates."""
+        return super().dispatch(*args, **kwargs)
+
+    def check_permissions(self, request):
+        """Override request method to GET so that also non superusers can print using a post request."""
+        if request.method == 'POST':
+            request = clone_request(request, 'GET')
+        return super().check_permissions(request)
+
+    def post(self, request, *args, **kwargs):
+        """Respond as if a POST request was provided."""
+        return self.get(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        """GET action for a template printing endpoint.
+
+        - Items are expected to be passed as a list of valid IDs
+        """
+        # Extract a list of items to print from the queryset
+        item_ids = []
+
+        for value in request.query_params.get('items', '').split(','):
+            try:
+                item_ids.append(int(value))
+            except Exception:
+                pass
+
+        template = self.get_object()
+
+        items = template.get_model().objects.filter(pk__in=item_ids)
+
+        if len(items) == 0:
+            # At least one item must be provided
+            return Response(
+                {'error': _('No valid objects provided to template')}, status=400
+            )
+
+        return self.print(request, items)
 
 
 class ReportFilterBase(rest_filters.FilterSet):
@@ -86,6 +136,96 @@ class LabelFilter(ReportFilterBase):
         fields = []
 
 
+class LabelTemplatePrint(TemplatePrintBase):
+    """API endpoint for printing labels against a specified template."""
+
+    queryset = report.models.LabelTemplate.objects.all()
+
+    def get_serializer(self, *args, **kwargs):
+        """Define a get_serializer method to be discoverable by the OPTIONS request."""
+        # Check the request to determine if the user has selected a label printing plugin
+        plugin = self.get_plugin(self.request)
+
+        kwargs.setdefault('context', self.get_serializer_context())
+        serializer = plugin.get_printing_options_serializer(
+            self.request, *args, **kwargs
+        )
+
+        # if no serializer is defined, return an empty serializer
+        if not serializer:
+            return serializers.Serializer()
+
+        return serializer
+
+    def get_plugin(self, request):
+        """Return the label printing plugin associated with this request.
+
+        This is provided in the URL, e.g. ?plugin=myprinter
+        """
+        plugin_key = request.query_params.get(
+            'plugin', InvenTreeLabelPlugin.NAME.lower()
+        )
+        plugin = registry.get_plugin(plugin_key)
+
+        if not plugin:
+            raise NotFound(f"Plugin '{plugin_key}' not found")
+
+        if not plugin.is_active():
+            raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
+
+        if not plugin.mixin_enabled('labels'):
+            raise ValidationError(
+                f"Plugin '{plugin_key}' is not a label printing plugin"
+            )
+
+        # Only return the plugin if it is enabled and has the label printing mixin
+        return plugin
+
+    def print(self, request, items_to_print):
+        """Print this label template against a number of provided items."""
+        plugin = self.get_plugin(request)
+        label = self.get_object()
+
+        # Check the label dimensions
+        if label.width <= 0 or label.height <= 0:
+            raise ValidationError('Label has invalid dimensions')
+
+        if serializer := plugin.get_printing_options_serializer(
+            request, data=request.data, context=self.get_serializer_context()
+        ):
+            serializer.is_valid(raise_exception=True)
+
+        # At this point, we offload the label(s) to the selected plugin.
+        # The plugin is responsible for handling the request and returning a response.
+
+        try:
+            response = plugin.print_labels(
+                label,
+                items_to_print,
+                request,
+                printing_options=(serializer.data if serializer else {}),
+            )
+        except ValidationError as e:
+            raise (e)
+        except Exception as e:
+            InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
+            raise ValidationError([_('Error printing label'), str(e)])
+
+        valid_responses = [JsonResponse, HttpResponse, StreamingHttpResponse]
+
+        valid = any((isinstance(response, x) for x in valid_responses))
+
+        if not valid:
+            raise ValidationError(
+                f"Plugin '{plugin.plugin_slug()}' returned invalid response type: '{type(response)}'"
+            )
+
+        if isinstance(response, JsonResponse):
+            response['plugin'] = plugin.plugin_slug()
+
+        return response
+
+
 class LabelTemplateList(ListCreateAPI):
     """API endpoint for viewing list of LabelTemplate objects."""
 
@@ -104,25 +244,18 @@ class LabelTemplateDetail(RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.ReportTemplateSerializer
 
 
-@method_decorator(cache_page(5), name='dispatch')
-class ReportTemplatePrint(RetrieveAPI):
-    """API endpoint for printing reports against a single template."""
+class ReportTemplatePrint(TemplatePrintBase):
+    """API endpoint for printing reports against a specified template."""
 
     queryset = report.models.ReportTemplate.objects.all()
 
-    @method_decorator(never_cache)
-    def dispatch(self, *args, **kwargs):
-        """Prevent caching when printing report templates."""
-        return super().dispatch(*args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        """Serializer for printing."""
+        return serializers.Serializer()
 
     def print(self, request, items_to_print):
-        """Print this report template against a number of pre-validated items."""
-        if len(items_to_print) == 0:
-            # No valid items provided, return an error message
-            data = {'error': _('No valid objects provided to template')}
-
-            return Response(data, status=400)
-
+        """Print this report template against a number of provided items."""
+        report = self.get_object()
         outputs = []
 
         # In debug mode, generate single HTML output, rather than PDF
@@ -136,8 +269,6 @@ class ReportTemplatePrint(RetrieveAPI):
         try:
             # Merge one or more PDF files into a single download
             for instance in items_to_print:
-                report = self.get_object()
-
                 report_name = report.generate_filename(request)
 
                 output = report.render(instance, request)
@@ -231,20 +362,6 @@ class ReportTemplatePrint(RetrieveAPI):
                 'path': request.path,
             })
 
-    def get(self, request, *args, **kwargs):
-        """Default implementation of GET for a print endpoint.
-
-        Note that it expects the class has defined a get_items() method
-        """
-        # Extract a list of items to print from the queryset
-        item_ids = request.query_params.get('items', '').split(',')
-
-        template = self.get_object()
-
-        items = template.get_model().objects.filter(pk__in=item_ids)
-
-        return self.print(request, items)
-
 
 class ReportTemplateList(ListCreateAPI):
     """API endpoint for viewing list of ReportTemplate objects."""
@@ -305,6 +422,11 @@ report_api_urls = [
                         MetadataView.as_view(),
                         {'model': report.models.LabelTemplate},
                         name='api-label-template-metadata',
+                    ),
+                    path(
+                        'print/',
+                        LabelTemplatePrint.as_view(),
+                        name='api-label-template-print',
                     ),
                     path(
                         '',

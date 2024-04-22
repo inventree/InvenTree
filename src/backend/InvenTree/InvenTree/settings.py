@@ -434,12 +434,7 @@ ROOT_URLCONF = 'InvenTree.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR.joinpath('templates'),
-            # Allow templates in the reporting directory to be accessed
-            MEDIA_ROOT.joinpath('report_template'),
-            MEDIA_ROOT.joinpath('label'),
-        ],
+        'DIRS': [BASE_DIR.joinpath('templates'), MEDIA_ROOT.joinpath('report')],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',

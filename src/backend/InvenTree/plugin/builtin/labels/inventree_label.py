@@ -1,12 +1,11 @@
 """Default label printing plugin (supports PDF generation)."""
 
-from django.core.files.base import ContentFile
-from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
-from label.models import LabelOutput, LabelTemplate
+from InvenTree.helpers import DownloadFile
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
+from report.models import LabelTemplate
 
 
 class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
@@ -44,40 +43,34 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         outputs = []
         output_file = None
 
-        for item in items:
-            label.object_to_print = item
+        # TODO: Generate filename based on the first label
+        filename = 'labels.pdf'
 
-            outputs.append(self.print_label(label, request, debug=debug, **kwargs))
+        for item in items:
+            outputs.append(
+                self.print_label(label, item, request, debug=debug, **kwargs)
+            )
 
         if self.get_setting('DEBUG'):
-            html = '\n'.join(outputs)
-
-            output_file = ContentFile(html, 'labels.html')
+            data = '\n'.join(outputs)
+            filename = 'labels.html'
         else:
             pages = []
 
             # Following process is required to stitch labels together into a single PDF
             for output in outputs:
+                print('output:', output)
+                print('template:', label.template)
                 doc = output.get_document()
 
                 for page in doc.pages:
                     pages.append(page)
 
-            pdf = outputs[0].get_document().copy(pages).write_pdf()
+            data = outputs[0].get_document().copy(pages).write_pdf()
 
-            # Create label output file
-            output_file = ContentFile(pdf, 'labels.pdf')
+        return DownloadFile(data, filename)
 
-        # Save the generated file to the database
-        output = LabelOutput.objects.create(label=output_file, user=request.user)
-
-        return JsonResponse({
-            'file': output.label.url,
-            'success': True,
-            'message': f'{len(items)} labels generated',
-        })
-
-    def print_label(self, label: LabelTemplate, request, **kwargs):
+    def print_label(self, label: LabelTemplate, instance, request, **kwargs):
         """Handle printing of a single label.
 
         Returns either a PDF or HTML output, depending on the DEBUG setting.
@@ -85,6 +78,6 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         debug = kwargs.get('debug', self.get_setting('DEBUG'))
 
         if debug:
-            return self.render_to_html(label, request, **kwargs)
+            return self.render_to_html(label, instance, request, **kwargs)
 
-        return self.render_to_pdf(label, request, **kwargs)
+        return self.render_to_pdf(label, instance, request, **kwargs)
