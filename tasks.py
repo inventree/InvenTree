@@ -401,11 +401,16 @@ def restore(
     ignore_database=False,
 ):
     """Restore the database and media files."""
+    base_cmd = '--no-input --uncompress -v 2'
+
+    if path:
+        base_cmd += f' -I {path}'
+
     if ignore_database:
         print('Skipping database archive...')
     else:
         print('Restoring InvenTree database')
-        cmd = 'dbrestore --noinput --uncompress -v 2'
+        cmd = f'dbrestore {base_cmd}'
 
         if db_file:
             cmd += f' -i {db_file}'
@@ -416,7 +421,7 @@ def restore(
         print('Skipping media restore...')
     else:
         print('Restoring InvenTree media files')
-        cmd = 'mediarestore --noinput --uncompress -v 2'
+        cmd = f'mediarestore {base_cmd}'
 
         if media_file:
             cmd += f' -i {media_file}'
