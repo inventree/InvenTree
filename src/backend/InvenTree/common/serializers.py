@@ -17,6 +17,7 @@ from InvenTree.serializers import (
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
 )
+from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer
 
 
@@ -307,16 +308,21 @@ class FlagSerializer(serializers.Serializer):
 class ContentTypeSerializer(serializers.Serializer):
     """Serializer for ContentType models."""
 
+    pk = serializers.IntegerField(read_only=True)
     app_label = serializers.CharField(read_only=True)
     model = serializers.CharField(read_only=True)
     app_labeled_name = serializers.CharField(read_only=True)
-    natural_key = serializers.CharField(read_only=True)
+    is_plugin = serializers.SerializerMethodField('get_is_plugin', read_only=True)
 
     class Meta:
         """Meta options for ContentTypeSerializer."""
 
         model = ContentType
-        fields = '__all__'
+        fields = ['pk', 'app_label', 'model', 'app_labeled_name', 'is_plugin']
+
+    def get_is_plugin(self, obj) -> bool:
+        """Return True if the model is a plugin model."""
+        return obj.app_label in plugin_registry.installed_apps
 
 
 class CustomUnitSerializer(InvenTreeModelSerializer):

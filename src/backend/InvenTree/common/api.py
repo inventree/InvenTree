@@ -818,7 +818,7 @@ common_api_urls = [
     ),
     # Contenttype
     path(
-        'contenttype',
+        'contenttype/',
         include([
             path(
                 '<int:pk>/', ContentTypeDetail.as_view(), name='api-contenttype-detail'
