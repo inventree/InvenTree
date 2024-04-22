@@ -30,7 +30,7 @@ export const doQuickLogin = async (
 ) => {
   username = username ?? user.username;
   password = password ?? user.password;
-  url = url ?? './platform';
+  url = url ?? baseUrl;
 
   // await page.goto(logoutUrl);
   await page.goto(`${url}/login/?login=${username}&password=${password}`);
