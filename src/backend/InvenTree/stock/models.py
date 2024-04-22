@@ -146,7 +146,11 @@ class StockLocation(
 
     def report_context(self):
         """Return report context data for this StockLocation."""
-        return {'stock_location': self, 'stock_items': self.get_stock_items()}
+        return {
+            'stock_location': self,
+            'stock_items': self.get_stock_items(),
+            'qr_data': self.format_barcode(brief=True),
+        }
 
     custom_icon = models.CharField(
         blank=True,
@@ -423,10 +427,19 @@ class StockItem(
     def report_context(self):
         """Generate custom report context data for this StockItem."""
         return {
+            'item': self,
             'stock_item': self,
             'serial': self.serial,
+            'quantity': InvenTree.helpers.normalize(self.quantity),
+            'barcode_data': self.barcode_data,
+            'barcode_hash': self.barcode_hash,
+            'qr_data': self.format_barcode(brief=True),
+            'qr_url': self.get_absolute_url(),
             'part': self.part,
+            'name': self.part.full_name,
+            'ipn': self.part.IPN,
             'parameters': self.part.parameters_map(),
+            'tests': self.testResultMap(),
             'test_keys': self.get_test_keys(),
             'test_template_list': self.part.getTestTemplates(),
             'test_template_map': self.part.getTestTemplateMap(),

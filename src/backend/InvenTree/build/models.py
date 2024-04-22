@@ -1298,7 +1298,7 @@ class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildLine(InvenTree.models.InvenTreeModel):
+class BuildLine(InvenTree.models.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
@@ -1324,6 +1324,19 @@ class BuildLine(InvenTree.models.InvenTreeModel):
     def get_api_url():
         """Return the API URL used to access this model"""
         return reverse('api-build-line-list')
+
+    def report_context(self):
+        """Generate custom report context for this BuildLine object."""
+
+        return {
+            'build_line': self,
+            'build': self.build,
+            'bom_item': self.bom_item,
+            'part': self.bom_item.sub_part,
+            'quantity': self.quantity,
+            'allocated_quantity': self.allocated_quantity,
+            'allocations': self.allocations,
+        }
 
     build = models.ForeignKey(
         Build, on_delete=models.CASCADE,

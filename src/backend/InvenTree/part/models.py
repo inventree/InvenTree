@@ -416,6 +416,13 @@ class Part(
             'part': self,
             'category': self.category,
             'bom_items': self.get_bom_items(),
+            'name': self.name,
+            'description': self.description,
+            'IPN': self.IPN,
+            'revision': self.revision,
+            'qr_data': self.format_barcode(brief=True),
+            'qr_url': self.get_absolute_url(),
+            'parameters': self.parameters_map(),
         }
 
     def get_context_data(self, request, **kwargs):
