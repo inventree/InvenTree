@@ -223,7 +223,7 @@ class ReportTemplate(ReportTemplateBase):
         ).choices = report.helpers.report_page_size_options()
 
     template = models.FileField(
-        upload_to='report_template',
+        upload_to='report/report',
         verbose_name=_('Template'),
         help_text=_('Template file'),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
@@ -282,7 +282,7 @@ class LabelTemplate(ReportTemplateBase):
     """Class representing the LabelTemplate database model."""
 
     template = models.FileField(
-        upload_to='label_template',
+        upload_to='report/label',
         verbose_name=_('Template'),
         help_text=_('Template file'),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],

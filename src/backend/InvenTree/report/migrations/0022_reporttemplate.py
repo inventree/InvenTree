@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('metadata', models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata')),
                 ('name', models.CharField(help_text='Template name', unique=True, max_length=100, verbose_name='Name')),
-                ('template', models.FileField(help_text='Template file', upload_to='report_template', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Template')),
+                ('template', models.FileField(help_text='Template file', upload_to='report/report', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Template')),
                 ('description', models.CharField(help_text='Template description', max_length=250, verbose_name='Description')),
                 ('revision', models.PositiveIntegerField(default=1, editable=False, help_text='Revision number (auto-increments)', verbose_name='Revision')),
                 ('page_size', models.CharField(default=report.helpers.report_page_size_default, help_text='Page size for PDF reports', max_length=20, verbose_name='Page Size')),

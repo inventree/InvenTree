@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('metadata', models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata')),
                 ('name', models.CharField(help_text='Template name', max_length=100, unique=True, verbose_name='Name')),
                 ('description', models.CharField(help_text='Template description', max_length=250, verbose_name='Description')),
-                ('template', models.FileField(help_text='Template file', upload_to='label_template', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Template')),
+                ('template', models.FileField(help_text='Template file', upload_to='report/label', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Template')),
                 ('revision', models.PositiveIntegerField(default=1, editable=False, help_text='Revision number (auto-increments)', verbose_name='Revision')),
                 ('filename_pattern', models.CharField(default='report.pdf', help_text='Pattern for generating filenames', max_length=100, verbose_name='Filename Pattern')),
                 ('enabled', models.BooleanField(default=True, help_text='Template is enabled', verbose_name='Enabled')),
