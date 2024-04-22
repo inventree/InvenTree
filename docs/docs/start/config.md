@@ -324,6 +324,7 @@ The logo and custom messages can be changed/set:
 | INVENTREE_CUSTOM_SPLASH | customize.splash | Path to custom splash screen in the static files directory | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
+| INVENTREE_CUSTOMIZE | customize.hide_pui_intrestial | Disable PUI intrestial | False |
 
 If you want to remove the InvenTree branding as far as possible from your end-user also check the [global server settings](../settings/global.md#server-settings).
 
