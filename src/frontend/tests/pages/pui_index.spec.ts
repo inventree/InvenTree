@@ -7,7 +7,7 @@ const newPartName = 'UITESTIN123';
 test('PUI - Pages - Index - Playground', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/`);
+  await page.goto('./');
   // Playground
   await page.getByRole('tab', { name: 'Playground' }).click();
   await page.getByRole('button', { name: 'API Forms' }).click();
