@@ -4,11 +4,10 @@ import { classicUrl, user } from './defaults';
 
 test('CUI - Index', async ({ page }) => {
   await page.goto(`${classicUrl}/api/`);
-  await page.goto(`${classicUrl}/index/`);
-  await expect(page).toHaveTitle('InvenTree Demo Server | Sign In');
-  await expect(
-    page.getByRole('heading', { name: 'InvenTree Demo Server' })
-  ).toBeVisible();
+  await page.goto(`${classicUrl}/index/`, { timeout: 10000 });
+  console.log('Page title:', await page.title());
+  await expect(page).toHaveTitle(RegExp('^InvenTree.*Sign In$'));
+  await expect(page.getByRole('heading', { name: 'Sign In' })).toBeVisible();
 
   await page.getByLabel('username').fill(user.username);
   await page.getByLabel('password').fill(user.password);

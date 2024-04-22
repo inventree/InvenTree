@@ -74,13 +74,7 @@ export const StatusRenderer = ({
 }) => {
   const statusCodeList = useGlobalStatusState.getState().status;
 
-  if (status === undefined) {
-    console.log('StatusRenderer: status is undefined');
-    return null;
-  }
-
-  if (statusCodeList === undefined) {
-    console.log('StatusRenderer: statusCodeList is undefined');
+  if (status === undefined || statusCodeList === undefined) {
     return null;
   }
 

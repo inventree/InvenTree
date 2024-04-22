@@ -13,6 +13,8 @@ env:
   node_version: 18
   # The OS version must be set per job
   server_start_sleep: 60
+  requests_version: 2.31.0
+  pyyaml_version: 6.0.1
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
@@ -543,15 +545,6 @@ jobs:
       - name: Report coverage
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
-      - name: Upload Coverage Report to Coveralls
-        if: always()
-        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: pui
-          git-commit: ${{ github.sha }}
-          git-branch: ${{ github.ref }}
-          parallel: true
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
         if: always()
