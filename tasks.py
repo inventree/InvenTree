@@ -237,12 +237,12 @@ def install(c, uv=False):
         c.run('pip3 install --upgrade pip')
         c.run('pip3 install --upgrade setuptools')
         c.run(
-            'pip3 install --no-cache-dir --disable-pip-version-check -U -r src/backend/requirements.txt'
+            'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r src/backend/requirements.txt'
         )
     else:
         c.run('pip3 install --upgrade uv')
         c.run('uv pip install --upgrade setuptools')
-        c.run('uv pip install -U -r src/backend/requirements.txt')
+        c.run('uv pip install -U --require-hashes  -r src/backend/requirements.txt')
 
     # Run plugins install
     plugins(c, uv=uv)
@@ -260,7 +260,7 @@ def setup_dev(c, tests=False):
     print("Installing required python packages from 'src/backend/requirements-dev.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install -U -r src/backend/requirements-dev.txt')
+    c.run('pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
 
     # Install pre-commit hook
     print('Installing pre-commit for checks before git commits...')
