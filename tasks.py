@@ -360,22 +360,73 @@ def translate(c, ignore_static=False, no_frontend=False):
         static(c)
 
 
-@task
-def backup(c):
+@task(
+    help={
+        'clean': 'Clean up old backup files',
+        'path': 'Specify path for generated backup files (leave blank for default path)',
+    }
+)
+def backup(c, clean=False, path=None):
     """Backup the database and media files."""
     print('Backing up InvenTree database...')
-    manage(c, 'dbbackup --noinput --clean --compress')
+
+    cmd = '--noinput --compress -v 2'
+
+    if path:
+        cmd += f' -O {path}'
+
+    if clean:
+        cmd += ' --clean'
+
+    manage(c, f'dbbackup {cmd}')
     print('Backing up InvenTree media files...')
-    manage(c, 'mediabackup --noinput --clean --compress')
+    manage(c, f'mediabackup {cmd}')
 
 
-@task
-def restore(c):
+@task(
+    help={
+        'path': 'Specify path to locate backup files (leave blank for default path)',
+        'db_file': 'Specify filename of compressed database archive (leave blank to use most recent backup)',
+        'media_file': 'Specify filename of compressed media archive (leave blank to use most recent backup)',
+        'ignore_media': 'Do not import media archive (database restore only)',
+        'ignore_database': 'Do not import database archive (media restore only)',
+    }
+)
+def restore(
+    c,
+    path=None,
+    db_file=None,
+    media_file=None,
+    ignore_media=False,
+    ignore_database=False,
+):
     """Restore the database and media files."""
-    print('Restoring InvenTree database...')
-    manage(c, 'dbrestore --noinput --uncompress')
-    print('Restoring InvenTree media files...')
-    manage(c, 'mediarestore --noinput --uncompress')
+    base_cmd = '--no-input --uncompress -v 2'
+
+    if path:
+        base_cmd += f' -I {path}'
+
+    if ignore_database:
+        print('Skipping database archive...')
+    else:
+        print('Restoring InvenTree database')
+        cmd = f'dbrestore {base_cmd}'
+
+        if db_file:
+            cmd += f' -i {db_file}'
+
+        manage(c, cmd)
+
+    if ignore_media:
+        print('Skipping media restore...')
+    else:
+        print('Restoring InvenTree media files')
+        cmd = f'mediarestore {base_cmd}'
+
+        if media_file:
+            cmd += f' -i {media_file}'
+
+        manage(c, cmd)
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])

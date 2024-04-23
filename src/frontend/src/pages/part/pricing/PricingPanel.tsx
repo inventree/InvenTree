@@ -43,9 +43,9 @@ export default function PricingPanel({
   label: panelOptions;
   title: string;
   visible: boolean;
-  disabled?: boolean | undefined;
+  disabled?: boolean;
 }): ReactNode {
-  const is_disabled = disabled === undefined ? false : disabled;
+  const is_disabled = disabled ?? false;
   return (
     visible && (
       <Accordion.Item value={label} id={label}>

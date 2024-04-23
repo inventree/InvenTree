@@ -203,8 +203,7 @@ export default function BuildDetail() {
         content: build?.pk ? (
           <BuildLineTable
             params={{
-              build: id,
-              tracked: false
+              build: id
             }}
           />
         ) : (
