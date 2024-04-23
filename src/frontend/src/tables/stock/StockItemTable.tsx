@@ -55,7 +55,7 @@ function stockItemTableColumns(): TableColumn[] {
       ordering: 'stock',
       sortable: true,
       title: t`Stock`,
-      render: (record) => {
+      render: (record: any) => {
         // TODO: Push this out into a custom renderer
         let quantity = record?.quantity ?? 0;
         let allocated = record?.allocated ?? 0;
