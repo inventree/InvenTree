@@ -31,16 +31,19 @@ export function BooleanColumn({
   accessor,
   title,
   sortable,
-  switchable
+  switchable,
+  ordering
 }: {
   accessor: string;
   title?: string;
+  ordering?: string;
   sortable?: boolean;
   switchable?: boolean;
 }): TableColumn {
   return {
     accessor: accessor,
     title: title,
+    ordering: ordering,
     sortable: sortable ?? true,
     switchable: switchable ?? true,
     render: (record: any) => (
