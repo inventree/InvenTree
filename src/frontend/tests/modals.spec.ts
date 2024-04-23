@@ -1,13 +1,8 @@
-import { expect, test } from './baseFixtures.js';
+import { test } from './baseFixtures.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Modals as admin', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill('admin');
-  await page.getByLabel('password').fill('inventree');
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await doQuickLogin(page);
 
   // use server info
   await page.getByRole('button', { name: 'Open spotlight' }).click();
