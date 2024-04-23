@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-23 01:51+0000\n"
-"PO-Revision-Date: 2024-04-21 04:19\n"
+"PO-Revision-Date: 2024-04-23 05:25\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -11627,10 +11627,8 @@ msgid "Tracked item"
 msgstr "Отслеживаемый элемент"
 
 #: templates/js/translated/build.js:2653
-#, fuzzy
-#| msgid "Allocate stock items to this build output"
 msgid "Allocate tracked items against individual build outputs"
-msgstr "Зарезервировать складские позиции для этой продукции"
+msgstr ""
 
 #: templates/js/translated/build.js:2661
 #: templates/js/translated/sales_order.js:2016
@@ -14231,3 +14229,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
