@@ -21,7 +21,12 @@ import {
 } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
-import { formatDecimal, formatPriceRange } from '../../../defaults/formatters';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
+import {
+  formatCurrency,
+  formatDecimal,
+  formatPriceRange
+} from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
 import { useTable } from '../../../hooks/UseTable';
@@ -32,7 +37,13 @@ import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 // Display BOM data as a pie chart
-function BomPieChart({ data }: { data: any[] }) {
+function BomPieChart({
+  data,
+  currency
+}: {
+  readonly data: any[];
+  readonly currency: string;
+}) {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <PieChart>
@@ -64,20 +75,36 @@ function BomPieChart({ data }: { data: any[] }) {
             />
           ))}
         </Pie>
-        <Tooltip />
+        <Tooltip
+          formatter={(label, payload) => tooltipFormatter(label, currency)}
+        />
       </PieChart>
     </ResponsiveContainer>
   );
 }
 
 // Display BOM data as a bar chart
-function BomBarChart({ data }: { data: any[] }) {
+function BomBarChart({
+  data,
+  currency
+}: {
+  readonly data: any[];
+  readonly currency: string;
+}) {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <BarChart data={data}>
         <XAxis dataKey="name" />
-        <YAxis />
-        <Tooltip />
+        <YAxis
+          tickFormatter={(value, index) =>
+            formatCurrency(value, {
+              currency: currency
+            })?.toString() ?? ''
+          }
+        />
+        <Tooltip
+          formatter={(label, payload) => tooltipFormatter(label, currency)}
+        />
         <Legend />
         <Bar
           dataKey="total_price_min"
@@ -98,8 +125,8 @@ export default function BomPricingPanel({
   part,
   pricing
 }: {
-  part: any;
-  pricing: any;
+  readonly part: any;
+  readonly pricing: any;
 }): ReactNode {
   const table = useTable('pricing-bom');
 
@@ -202,8 +229,12 @@ export default function BomPricingPanel({
         />
         {bomPricingData.length > 0 ? (
           <Stack spacing="xs">
-            {chartType == 'bar' && <BomBarChart data={bomPricingData} />}
-            {chartType == 'pie' && <BomPieChart data={bomPricingData} />}
+            {chartType == 'bar' && (
+              <BomBarChart data={bomPricingData} currency={pricing?.currency} />
+            )}
+            {chartType == 'pie' && (
+              <BomPieChart data={bomPricingData} currency={pricing?.currency} />
+            )}
             <SegmentedControl
               value={chartType}
               onChange={setChartType}

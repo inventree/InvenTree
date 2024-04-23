@@ -350,6 +350,7 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
         'optional',
         'unit_quantity',
         'available_stock',
+        'trackable',
     ]
 
     ordering_field_aliases = {
@@ -358,6 +359,7 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
         'unit_quantity': 'bom_item__quantity',
         'consumable': 'bom_item__consumable',
         'optional': 'bom_item__optional',
+        'trackable': 'bom_item__sub_part__trackable',
     }
 
     search_fields = [

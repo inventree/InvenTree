@@ -8,9 +8,11 @@ from django.contrib.auth.models import Group
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
-from dj_rest_auth.views import LogoutView
+from dj_rest_auth.views import LoginView, LogoutView
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.decorators import authentication_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -204,6 +206,18 @@ class GroupList(ListCreateAPI):
     search_fields = ['name']
 
     ordering_fields = ['name']
+
+
+@authentication_classes([BasicAuthentication])
+@extend_schema_view(
+    post=extend_schema(
+        responses={200: OpenApiResponse(description='User successfully logged in')}
+    )
+)
+class Login(LoginView):
+    """API view for logging in via API."""
+
+    ...
 
 
 @extend_schema_view(
