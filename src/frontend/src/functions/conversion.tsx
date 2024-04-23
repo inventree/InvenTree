@@ -19,3 +19,16 @@ export function isTrue(value: any): boolean {
 
   return ['true', 'yes', '1', 'on', 't', 'y'].includes(s);
 }
+
+/*
+ * Resolve a nested item in an object.
+ * Returns the resolved item, if it exists.
+ *
+ * e.g. resolveItem(data, "sub.key.accessor")
+ *
+ * Allows for retrieval of nested items in an object.
+ */
+export function resolveItem(obj: any, path: string): any {
+  let properties = path.split('.');
+  return properties.reduce((prev, curr) => prev?.[curr], obj);
+}
