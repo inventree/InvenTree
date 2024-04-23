@@ -300,7 +300,7 @@ remote_login_header: HTTP_REMOTE_USER
 #   hide_password_reset: true
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
-#   hide_pui_intrestial: true
+#   hide_pui_banner: true
 
 # Set enabled frontends
 # Use the environment variable INVENTREE_CLASSIC_FRONTEND
