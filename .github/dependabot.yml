@@ -4,6 +4,10 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    groups:
+      dependencies:
+        patterns:
+          - "*" # Include all dependencies
 
   - package-ecosystem: docker
     directory: /contrib/container
@@ -24,13 +28,25 @@ updates:
     directory: /src/backend
     schedule:
       interval: weekly
+    groups:
+      dependencies:
+        patterns:
+          - "*" # Include all dependencies
 
   - package-ecosystem: pip
     directory: /src/backend
     schedule:
       interval: weekly
+    groups:
+      dependencies:
+        patterns:
+          - "*" # Include all dependencies
 
   - package-ecosystem: npm
     directory: /src/frontend
     schedule:
       interval: weekly
+    groups:
+      dependencies:
+        patterns:
+          - "*" # Include all dependencies
