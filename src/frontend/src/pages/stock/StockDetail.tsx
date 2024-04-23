@@ -483,21 +483,25 @@ export default function StockDetail() {
             color="blue"
             label={t`Serial Number` + `: ${stockitem.serial}`}
             visible={!!stockitem.serial}
+            key="serial"
           />,
           <DetailsBadge
             color="blue"
             label={t`Quantity` + `: ${stockitem.quantity}`}
             visible={!stockitem.serial}
+            key="quantity"
           />,
           <DetailsBadge
             color="blue"
             label={t`Batch Code` + `: ${stockitem.batch}`}
             visible={!!stockitem.batch}
+            key="batch"
           />,
           <StatusRenderer
             status={stockitem.status}
             type={ModelType.stockitem}
             options={{ size: 'lg' }}
+            key="status"
           />
         ];
   }, [stockitem, instanceQuery]);

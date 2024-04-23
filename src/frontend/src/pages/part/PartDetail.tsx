@@ -643,23 +643,32 @@ export default function PartDetail() {
         label={t`In Stock` + `: ${part.in_stock}`}
         color={part.in_stock >= part.minimum_stock ? 'green' : 'orange'}
         visible={part.in_stock > 0}
+        key="in_stock"
       />,
       <DetailsBadge
         label={t`No Stock`}
         color="red"
         visible={part.in_stock == 0}
+        key="no_stock"
       />,
       <DetailsBadge
         label={t`On Order` + `: ${part.ordering}`}
         color="blue"
         visible={part.on_order > 0}
+        key="on_order"
       />,
       <DetailsBadge
         label={t`In Production` + `: ${part.building}`}
         color="blue"
         visible={part.building > 0}
+        key="in_production"
       />,
-      <DetailsBadge label={t`Inactive`} color="red" visible={!part.active} />
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={!part.active}
+        key="inactive"
+      />
     ];
   }, [part, instanceQuery]);
 
@@ -710,6 +719,7 @@ export default function PartDetail() {
             hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
           })
         ]}
+        key="action_dropdown"
       />,
       <ActionDropdown
         key="stock"
