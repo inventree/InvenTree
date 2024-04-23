@@ -47,6 +47,11 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         name: 'optional',
         label: t`Optional`,
         description: t`Show optional lines`
+      },
+      {
+        name: 'tracked',
+        label: t`Tracked`,
+        description: t`Show tracked lines`
       }
     ];
   }, []);
@@ -135,6 +140,9 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
       BooleanColumn({
         accessor: 'bom_item_detail.optional'
       }),
+      BooleanColumn({
+        accessor: 'part_detail.trackable'
+      }),
       {
         accessor: 'bom_item_detail.quantity',
         sortable: true,
@@ -198,6 +206,11 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         return [];
       }
 
+      // Tracked items must be allocated to a particular output
+      if (record?.part_detail?.trackable) {
+        return [];
+      }
+
       return [
         {
           icon: <IconArrowRight />,
@@ -234,11 +247,8 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         },
         tableFilters: tableFilters,
         rowActions: rowActions,
-        onRowClick: (row: any) => {
-          if (row?.part_detail?.pk) {
-            navigate(getDetailUrl(ModelType.part, row.part_detail.pk));
-          }
-        }
+        modelType: ModelType.part,
+        modelField: 'part_detail.pk'
       }}
     />
   );
