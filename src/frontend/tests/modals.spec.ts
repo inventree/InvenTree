@@ -24,9 +24,14 @@ test('PUI - Modals as admin', async ({ page }) => {
     })
     .click();
   await page.getByText('License Information').first().waitFor();
-  await page.getByRole('tab', { name: 'backend Packages' }).waitFor();
+  await page.getByRole('tab', { name: 'backend Packages' }).click();
+  await page.getByRole('button', { name: 'Babel BSD License' }).click();
 
-  await page.getByLabel('License Information').getByRole('button').click();
+  await page
+    .getByLabel('License Information')
+    .getByRole('button')
+    .first()
+    .click();
 
   // use about
   await page.getByRole('button', { name: 'Open spotlight' }).click();
