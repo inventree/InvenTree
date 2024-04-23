@@ -54,4 +54,21 @@ test('PUI - Modals as admin', async ({ page }) => {
   await page.getByRole('cell', { name: 'InvenTree Version' }).click();
 
   await page.goto('./platform/');
+
+  // qr code modal
+  await page.getByRole('button', { name: 'Open QR code scanner' }).click();
+  await page
+    .locator('div')
+    .filter({ hasText: /^Scan QR code$/ })
+    .getByRole('button')
+    .click();
+  await page.getByRole('button', { name: 'Open QR code scanner' }).click();
+  await page.getByRole('button', { name: 'Close modal' }).click();
+  await page.getByRole('button', { name: 'Open QR code scanner' }).click();
+  await page.waitForTimeout(500);
+  await page
+    .locator('div')
+    .filter({ hasText: /^Scan QR code$/ })
+    .getByRole('button')
+    .click();
 });
