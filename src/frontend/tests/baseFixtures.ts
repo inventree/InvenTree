@@ -5,7 +5,6 @@ import os from 'os';
 import * as path from 'path';
 
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
-export const classicUrl = 'http://127.0.0.1:8000';
 
 let platform = os.platform();
 let systemKeyVar;

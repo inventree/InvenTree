@@ -12,7 +12,7 @@ mysqlclient>=2.2.0
 mariadb>=1.1.8
 
 # gunicorn web server
-gunicorn>=21.2.0
+gunicorn>=22.0.0
 
 # LDAP required packages
 django-auth-ldap                # Django integration for ldap auth

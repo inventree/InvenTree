@@ -2436,11 +2436,9 @@ function loadBuildLineTable(table, build_id, options={}) {
     params.build = build_id;
 
     if (output) {
+        params.tracked = true;
         params.output = output;
         name += `-${output}`;
-    } else {
-        // Default to untracked parts for the build
-        params.tracked = false;
     }
 
     let filters = loadTableFilters('buildlines', params);
@@ -2649,7 +2647,11 @@ function loadBuildLineTable(table, build_id, options={}) {
 
                     if (row.part_detail.trackable && !options.output) {
                         // Tracked parts must be allocated to a specific build output
-                        return `<em>{% trans "Tracked item" %}</em>`;
+                        return `
+                        <div>
+                            <em>{% trans "Tracked item" %}</em>
+                            <span title='{% trans "Allocate tracked items against individual build outputs" %}' class='fas fa-info-circle icon-blue' />
+                        </div>`;
                     }
 
                     if (row.allocated < row.quantity) {
