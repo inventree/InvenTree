@@ -449,7 +449,11 @@ export default function PartDetail() {
           <Grid.Col span={8}>
             <Stack spacing="xs">
               <table>
-                <PartIcons part={part} />
+                <tbody>
+                  <tr>
+                    <PartIcons part={part} />
+                  </tr>
+                </tbody>
               </table>
               <DetailsTable fields={tl} item={part} />
             </Stack>
