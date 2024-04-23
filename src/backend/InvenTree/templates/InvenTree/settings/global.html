@@ -10,6 +10,8 @@
 
 {% block content %}
 
+{% include "pui_banner.html" with mode='admin' %}
+
 <table class='table table-striped table-condensed'>
     <tbody>
         {% include "InvenTree/settings/setting.html" with key="INVENTREE_COMPANY_NAME" icon="fa-building" %}
