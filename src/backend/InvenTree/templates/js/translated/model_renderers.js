@@ -218,7 +218,7 @@ function renderStockItem(data, parameters={}) {
     }
 
     if (data.quantity == 0) {
-        stock_detail = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock"% }</span>`;
+        stock_detail = `<span class='badge rounded-pill bg-danger'>{% trans "No Stock" %}</span>`;
     } else {
         if (data.serial && data.quantity == 1) {
             stock_detail = `{% trans "Serial Number" %}: ${data.serial}`;

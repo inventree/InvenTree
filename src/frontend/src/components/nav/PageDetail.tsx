@@ -1,6 +1,7 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { Fragment, ReactNode } from 'react';
 
+import DetailsBadge, { DetailsBadgeProps } from '../details/DetailsBadge';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 import { Breadcrumb, BreadcrumbList } from './BreadcrumbList';
@@ -15,6 +16,7 @@ export function PageDetail({
   title,
   subtitle,
   detail,
+  badges,
   imageUrl,
   breadcrumbs,
   breadcrumbAction,
@@ -24,6 +26,7 @@ export function PageDetail({
   subtitle?: string;
   imageUrl?: string;
   detail?: ReactNode;
+  badges?: ReactNode[];
   breadcrumbs?: Breadcrumb[];
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
@@ -56,6 +59,9 @@ export function PageDetail({
             </Group>
             <Space />
             {detail}
+            <Group position="right" spacing="xs" noWrap>
+              {badges}
+            </Group>
             <Space />
             {actions && (
               <Group spacing={5} position="right">
