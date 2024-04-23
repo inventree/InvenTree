@@ -26,6 +26,14 @@ test('PUI - Modals as admin', async ({ page }) => {
   await page.getByText('License Information').first().waitFor();
   await page.getByRole('tab', { name: 'backend Packages' }).click();
   await page.getByRole('button', { name: 'Babel BSD License' }).click();
+  await page.getByText('Copyright (c) 2013-2023 by').waitFor();
+
+  await page.getByRole('tab', { name: 'frontend Packages' }).click();
+  await page.getByRole('button', { name: '@sentry/utils MIT' }).click();
+  await page
+    .getByLabel('@sentry/utilsMIT7.109.0')
+    .getByText('Copyright (c) 2019 Sentry (')
+    .waitFor();
 
   await page
     .getByLabel('License Information')
