@@ -5,6 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 
 from InvenTree.unit_test import InvenTreeAPITestCase
+from part.models import Part
 
 from .models import Address, Company, Contact, ManufacturerPart, SupplierPart
 
@@ -130,6 +131,32 @@ class CompanyTest(InvenTreeAPITestCase):
         )
 
         self.assertTrue('currency' in response.data)
+
+    def test_company_active(self):
+        """Test that the 'active' value and filter works."""
+        Company.objects.filter(active=False).update(active=True)
+        n = Company.objects.count()
+
+        url = reverse('api-company-list')
+
+        self.assertEqual(
+            len(self.get(url, data={'active': True}, expected_code=200).data), n
+        )
+        self.assertEqual(
+            len(self.get(url, data={'active': False}, expected_code=200).data), 0
+        )
+
+        # Set one company to inactive
+        c = Company.objects.first()
+        c.active = False
+        c.save()
+
+        self.assertEqual(
+            len(self.get(url, data={'active': True}, expected_code=200).data), n - 1
+        )
+        self.assertEqual(
+            len(self.get(url, data={'active': False}, expected_code=200).data), 1
+        )
 
 
 class ContactTest(InvenTreeAPITestCase):
@@ -527,6 +554,50 @@ class SupplierPartTest(InvenTreeAPITestCase):
         sp = SupplierPart.objects.get(pk=response.data['pk'])
         self.assertEqual(sp.available, 999)
         self.assertIsNotNone(sp.availability_updated)
+
+    def test_active(self):
+        """Test that 'active' status filtering works correctly."""
+        url = reverse('api-supplier-part-list')
+
+        # Create a new company, which is inactive
+        company = Company.objects.create(
+            name='Inactive Company', is_supplier=True, active=False
+        )
+
+        part = Part.objects.filter(purchaseable=True).first()
+
+        # Create some new supplier part objects, *some* of which are inactive
+        for idx in range(10):
+            SupplierPart.objects.create(
+                part=part,
+                supplier=company,
+                SKU=f'CMP-{company.pk}-SKU-{idx}',
+                active=(idx % 2 == 0),
+            )
+
+        n = SupplierPart.objects.count()
+
+        # List *all* supplier parts
+        self.assertEqual(len(self.get(url, data={}, expected_code=200).data), n)
+
+        # List only active supplier parts (all except 5 from the new supplier)
+        self.assertEqual(
+            len(self.get(url, data={'active': True}, expected_code=200).data), n - 5
+        )
+
+        # List only from 'active' suppliers (all except this new supplier)
+        self.assertEqual(
+            len(self.get(url, data={'supplier_active': True}, expected_code=200).data),
+            n - 10,
+        )
+
+        # List active parts from inactive suppliers (only 5 from the new supplier)
+        response = self.get(
+            url, data={'supplier_active': False, 'active': True}, expected_code=200
+        )
+        self.assertEqual(len(response.data), 5)
+        for result in response.data:
+            self.assertEqual(result['supplier'], company.pk)
 
 
 class CompanyMetadataAPITest(InvenTreeAPITestCase):
