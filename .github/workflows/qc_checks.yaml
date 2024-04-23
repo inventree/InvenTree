@@ -104,7 +104,7 @@ jobs:
         uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
       - name: Check Version
         run: |
-          pip install requests==${{ env.requests_version }}
+          pip install --require-hashes -r .github/requirements.txt
           python3 .github/scripts/version_check.py
 
   mkdocs:
@@ -122,7 +122,7 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Check Config
         run: |
-          pip install pyyaml==${{ env.pyyaml_version }}
+          pip install --require-hashes -r .github/requirements.txt
           pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
@@ -168,7 +168,7 @@ jobs:
       - name: Download public schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
-          pip install requests==${{ env.requests_version }} >/dev/null 2>&1
+          pip install --require-hashes -r .github/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
@@ -187,7 +187,7 @@ jobs:
         id: version
         if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
         run: |
-          pip install requests==${{ env.requests_version }} >/dev/null 2>&1
+          pip install --require-hashes -r .github/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
@@ -290,16 +290,6 @@ jobs:
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
         run: invoke test --coverage
-      - name: Upload Coverage Report to Coveralls
-        if: always()
-        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: backend
-          file: coverage.xml
-          git-commit: ${{ github.sha }}
-          git-branch: ${{ github.ref }}
-          parallel: true
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
         if: always()
@@ -432,14 +422,6 @@ jobs:
           update: true
       - name: Run Tests
         run: invoke test --migrations --report --coverage
-      - name: Upload Coverage Report to Coveralls
-        if: always()
-        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: migrations
-          git-commit: ${{ github.sha }}
-          git-branch: ${{ github.ref }}
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
         if: always()
@@ -576,19 +558,3 @@ jobs:
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
-
-  finish_coverage:
-    name: Finish Coverage
-    runs-on: ubuntu-20.04
-    needs: ["platform_ui", "coverage", "migration-tests", "paths-filter"]
-    if: (needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true') && (needs.platform_ui.result == 'success' || needs.coverage.result == 'success' || needs.migration-tests.result == 'success')
-
-    steps:
-      - name: Finish coverage reporting
-        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          carryforward: "pui,backend,migrations"
-          parallel-finished: true
-          git-commit: ${{ github.sha }}
-          git-branch: ${{ github.ref }}

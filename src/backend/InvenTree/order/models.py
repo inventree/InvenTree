@@ -1459,9 +1459,11 @@ class PurchaseOrderLineItem(OrderLineItem):
     def update_pricing(self):
         """Update pricing information based on the supplier part data."""
         if self.part:
-            price = self.part.get_price(self.quantity)
+            price = self.part.get_price(
+                self.quantity, currency=self.purchase_price_currency
+            )
 
-            if price is None:
+            if price is None or self.quantity == 0:
                 return
 
             self.purchase_price = Decimal(price) / Decimal(self.quantity)
