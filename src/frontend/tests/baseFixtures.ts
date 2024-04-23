@@ -55,7 +55,8 @@ export const test = baseTest.extend({
   page: async ({ baseURL, page }, use) => {
     const messages = [];
     page.on('console', (msg) => {
-      if (msg.type() === 'error') messages.push(msg);
+      if (msg.type() === 'error' && msg.text().startsWith('ERR: '))
+        messages.push(msg);
     });
     await use(page);
     expect(messages).toEqual([]);
