@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 191
+INVENTREE_API_VERSION = 192
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v192 - 2024-04-23 : https://github.com/inventree/InvenTree/pull/7106
+    - Adds 'trackable' ordering option to BuildLineLabel API endpoint
 
 v191 - 2024-04-22 : https://github.com/inventree/InvenTree/pull/7079
     - Adds API endpoints for Contenttype model
