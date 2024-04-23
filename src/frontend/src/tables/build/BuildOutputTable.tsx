@@ -27,8 +27,9 @@ export default function BuildOutputTable({
       },
       {
         accessor: 'quantity',
-        ordering: 'stokc',
+        ordering: 'stock',
         sortable: true,
+        switchable: false,
         title: t`Build Output`,
         render: (record: any) => {
           // TODO: Implement this!
@@ -38,6 +39,7 @@ export default function BuildOutputTable({
       {
         accessor: 'allocations',
         sortable: false,
+        switchable: false,
         title: t`Allocated Items`,
         render: (record: any) => {
           // TODO: Implement this!
@@ -47,6 +49,7 @@ export default function BuildOutputTable({
       {
         accessor: 'tests',
         sortable: false,
+        switchable: false,
         title: t`Required Tests`,
         render: (record: any) => {
           // TODO: Implement this!
