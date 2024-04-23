@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-04-23 01:51+0000\n"
-"PO-Revision-Date: 2024-04-21 04:19\n"
+"PO-Revision-Date: 2024-04-23 05:25\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -2160,7 +2160,7 @@ msgstr ""
 #: common/models.py:1159
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
-msgstr ""
+msgstr "Ogiltigt domännamn: {domain}"
 
 #: common/models.py:1171
 msgid "No plugin"
@@ -3968,7 +3968,7 @@ msgstr ""
 
 #: company/models.py:395
 msgid "Primary address"
-msgstr ""
+msgstr "Primär adress"
 
 #: company/models.py:396
 msgid "Set as primary address"
@@ -3981,7 +3981,7 @@ msgstr ""
 
 #: company/models.py:402
 msgid "Address line 1"
-msgstr ""
+msgstr "Adressrad 1"
 
 #: company/models.py:408 templates/js/translated/company.js:915
 #: templates/js/translated/company.js:977
@@ -3990,7 +3990,7 @@ msgstr ""
 
 #: company/models.py:409
 msgid "Address line 2"
-msgstr ""
+msgstr "Adressrad 2"
 
 #: company/models.py:415 company/models.py:416
 #: templates/js/translated/company.js:983
@@ -4061,7 +4061,7 @@ msgstr ""
 #: templates/js/translated/company.js:1611
 #: templates/js/translated/table_filters.js:800
 msgid "Manufacturer"
-msgstr ""
+msgstr "Tillverkare"
 
 #: company/models.py:501
 msgid "Select manufacturer"
@@ -4721,7 +4721,7 @@ msgstr "Företag"
 
 #: company/views.py:52
 msgid "New Company"
-msgstr ""
+msgstr "Nytt företag"
 
 #: label/api.py:247
 msgid "Error printing label"
@@ -4733,7 +4733,7 @@ msgstr "Etikettnamn"
 
 #: label/models.py:128
 msgid "Label description"
-msgstr ""
+msgstr "Etikettbeskrivning"
 
 #: label/models.py:136
 msgid "Label"
@@ -6478,7 +6478,7 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:1732
 #: templates/js/translated/stock.js:2821
 msgid "Date"
-msgstr ""
+msgstr "Datum"
 
 #: part/models.py:3168
 msgid "Date stocktake was performed"
@@ -6847,7 +6847,7 @@ msgstr ""
 
 #: part/serializers.py:443
 msgid "Copy Image"
-msgstr ""
+msgstr "Kopiera bild"
 
 #: part/serializers.py:444
 msgid "Copy image from original part"
@@ -9857,7 +9857,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/global.html:8
 msgid "Server Settings"
-msgstr ""
+msgstr "Serverinställningar"
 
 #: templates/InvenTree/settings/label.html:8
 #: templates/InvenTree/settings/user_labels.html:9
@@ -9986,7 +9986,7 @@ msgstr ""
 #: templates/InvenTree/settings/plugin.html:82
 #: templates/js/translated/notification.js:76
 msgid "Message"
-msgstr ""
+msgstr "Meddelande"
 
 #: templates/InvenTree/settings/plugin_settings.html:16
 msgid "Plugin information"
@@ -10267,7 +10267,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:27 templates/stats.html:9
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: templates/InvenTree/settings/sidebar.html:41
 msgid "Labels"
@@ -13249,7 +13249,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:597 templates/js/translated/stock.js:598
 msgid "Enter serial number"
-msgstr ""
+msgstr "Ange serienummer"
 
 #: templates/js/translated/stock.js:614
 msgid "Enter a serial number"
@@ -14229,3 +14229,4 @@ msgstr ""
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr ""
+
