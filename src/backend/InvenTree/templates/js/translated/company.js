@@ -426,7 +426,8 @@ function companyFormFields() {
         },
         is_supplier: {},
         is_manufacturer: {},
-        is_customer: {}
+        is_customer: {},
+        active: {},
     };
 }
 
@@ -516,6 +517,15 @@ function loadCompanyTable(table, url, options={}) {
         {
             field: 'description',
             title: '{% trans "Description" %}',
+        },
+        {
+            field: 'active',
+            title: '{% trans "Active" %}',
+            sortable: true,
+            switchable: true,
+            formatter: function(value) {
+                return yesNoLabel(value);
+            }
         },
         {
             field: 'website',

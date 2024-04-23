@@ -1,16 +1,11 @@
 import { expect, test } from './baseFixtures.js';
-import { user } from './defaults.js';
+import { baseUrl, user } from './defaults.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Stock', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await doQuickLogin(page);
 
-  await page.goto('./platform/stock');
+  await page.goto(`${baseUrl}/stock`);
   await page.waitForURL('**/platform/stock/location/index/details');
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('cell', { name: '1551ABK' }).click();
@@ -24,13 +19,7 @@ test('PUI - Stock', async ({ page }) => {
 });
 
 test('PUI - Build', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Build' }).click();
   await page.getByText('Widget Assembly Variant').click();
@@ -44,13 +33,7 @@ test('PUI - Build', async ({ page }) => {
 });
 
 test('PUI - Purchasing', async ({ page }) => {
-  await page.goto('./platform/');
-  await expect(page).toHaveTitle('InvenTree');
-  await page.waitForURL('**/platform/');
-  await page.getByLabel('username').fill(user.username);
-  await page.getByLabel('password').fill(user.password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.waitForURL('**/platform');
+  await doQuickLogin(page);
 
   await page.getByRole('tab', { name: 'Purchasing' }).click();
   await page.getByRole('cell', { name: 'PO0012' }).click();
@@ -84,6 +67,11 @@ test('PUI - Purchasing', async ({ page }) => {
     .click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
   await page.getByLabel('Address title *').waitFor();
+
+  // Read the current value of the cell, to ensure we always *change* it!
+  const value = await page.getByLabel('Line 2').inputValue();
+  await page.getByLabel('Line 2').fill(value == 'old' ? 'new' : 'old');
+
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('tab', { name: 'Details' }).waitFor();

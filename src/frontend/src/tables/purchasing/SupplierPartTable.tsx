@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -9,17 +9,23 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
 import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
+  BooleanColumn,
   DescriptionColumn,
   LinkColumn,
   NoteColumn,
   PartColumn
 } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -88,6 +94,12 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         title: t`MPN`,
         render: (record: any) => record?.manufacturer_part_detail?.MPN
       },
+      BooleanColumn({
+        accessor: 'active',
+        title: t`Active`,
+        sortable: true,
+        switchable: true
+      }),
       {
         accessor: 'in_stock',
         sortable: true
@@ -145,35 +157,67 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     ];
   }, [params]);
 
-  const addSupplierPartFields = useSupplierPartFields({
-    partPk: params?.part,
-    supplierPk: params?.supplier,
-    hidePart: true
+  const supplierPartFields = useSupplierPartFields();
+
+  const addSupplierPart = useCreateApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    title: t`Add Supplier Part`,
+    fields: supplierPartFields,
+    initialData: {
+      part: params?.part,
+      supplier: params?.supplier
+    },
+    onFormSuccess: table.refreshTable,
+    successMessage: t`Supplier part created`
   });
-  const { modal: addSupplierPartModal, open: openAddSupplierPartForm } =
-    useCreateApiFormModal({
-      url: ApiEndpoints.supplier_part_list,
-      title: t`Add Supplier Part`,
-      fields: addSupplierPartFields,
-      onFormSuccess: table.refreshTable,
-      successMessage: t`Supplier part created`
-    });
 
-  // Table actions
   const tableActions = useMemo(() => {
-    // TODO: Hide actions based on user permissions
-
     return [
       <AddItemButton
         tooltip={t`Add supplier part`}
-        onClick={openAddSupplierPartForm}
+        onClick={() => addSupplierPart.open()}
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
       />
     ];
   }, [user]);
 
-  const editSupplierPartFields = useSupplierPartFields({
-    hidePart: true,
-    partPk: params?.part
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'active',
+        label: t`Active`,
+        description: t`Show active supplier parts`
+      },
+      {
+        name: 'part_active',
+        label: t`Active Part`,
+        description: t`Show active internal parts`
+      },
+      {
+        name: 'supplier_active',
+        label: t`Active Supplier`,
+        description: t`Show active suppliers`
+      }
+    ];
+  }, []);
+
+  const editSupplierPartFields = useSupplierPartFields();
+
+  const [selectedSupplierPart, setSelectedSupplierPart] = useState<number>(0);
+
+  const editSupplierPart = useEditApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    pk: selectedSupplierPart,
+    title: t`Edit Supplier Part`,
+    fields: editSupplierPartFields,
+    onFormSuccess: () => table.refreshTable()
+  });
+
+  const deleteSupplierPart = useDeleteApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    pk: selectedSupplierPart,
+    title: t`Delete Supplier Part`,
+    onFormSuccess: () => table.refreshTable()
   });
 
   // Row action callback
@@ -183,29 +227,15 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
-            record.pk &&
-              openEditApiForm({
-                url: ApiEndpoints.supplier_part_list,
-                pk: record.pk,
-                title: t`Edit Supplier Part`,
-                fields: editSupplierPartFields,
-                onFormSuccess: table.refreshTable,
-                successMessage: t`Supplier part updated`
-              });
+            setSelectedSupplierPart(record.pk);
+            editSupplierPart.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
-            record.pk &&
-              openDeleteApiForm({
-                url: ApiEndpoints.supplier_part_list,
-                pk: record.pk,
-                title: t`Delete Supplier Part`,
-                successMessage: t`Supplier part deleted`,
-                onFormSuccess: table.refreshTable,
-                preFormWarning: t`Are you sure you want to remove this supplier part?`
-              });
+            setSelectedSupplierPart(record.pk);
+            deleteSupplierPart.open();
           }
         })
       ];
@@ -215,7 +245,9 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
 
   return (
     <>
-      {addSupplierPartModal}
+      {addSupplierPart.modal}
+      {editSupplierPart.modal}
+      {deleteSupplierPart.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.supplier_part_list)}
         tableState={table}
@@ -229,6 +261,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
           },
           rowActions: rowActions,
           tableActions: tableActions,
+          tableFilters: tableFilters,
           modelType: ModelType.supplierpart
         }}
       />

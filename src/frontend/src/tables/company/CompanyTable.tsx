@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
+import { access } from 'fs';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -13,7 +14,8 @@ import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
-import { DescriptionColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 /**
@@ -51,6 +53,12 @@ export function CompanyTable({
         }
       },
       DescriptionColumn({}),
+      BooleanColumn({
+        accessor: 'active',
+        title: t`Active`,
+        sortable: true,
+        switchable: true
+      }),
       {
         accessor: 'website',
         sortable: false
@@ -72,6 +80,31 @@ export function CompanyTable({
       }
     }
   });
+
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'active',
+        label: t`Active`,
+        description: t`Show active companies`
+      },
+      {
+        name: 'is_supplier',
+        label: t`Supplier`,
+        description: t`Show companies which are suppliers`
+      },
+      {
+        name: 'is_manufacturer',
+        label: t`Manufacturer`,
+        description: t`Show companies which are manufacturers`
+      },
+      {
+        name: 'is_customer',
+        label: t`Customer`,
+        description: t`Show companies which are customers`
+      }
+    ];
+  }, []);
 
   const tableActions = useMemo(() => {
     const can_add =
@@ -98,6 +131,7 @@ export function CompanyTable({
           params: {
             ...params
           },
+          tableFilters: tableFilters,
           tableActions: tableActions,
           onRowClick: (row: any) => {
             if (row.pk) {

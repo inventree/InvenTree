@@ -791,6 +791,10 @@ function getContactFilters() {
 // Return a dictionary of filters for the "company" table
 function getCompanyFilters() {
     return {
+        active: {
+            type: 'bool',
+            title: '{% trans "Active" %}'
+        },
         is_manufacturer: {
             type: 'bool',
             title: '{% trans "Manufacturer" %}',
