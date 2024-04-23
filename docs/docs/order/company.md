@@ -11,7 +11,7 @@ External companies are represented by the *Company* database model. Each company
 - [Manufacturer](#manufacturers)
 
 !!! tip Multi Purpose
-    A company may be allocated to multiple categories
+    A company may be allocated to multiple categories, for example, a company may be both a supplier and a customer.
 
 ### Edit Company
 
@@ -19,6 +19,20 @@ To edit a company, click on the <span class='fas fa-edit'>Edit Company</span> ic
 
 !!! warning "Permission Required"
     The edit button will not be available to users who do not have the required permissions to edit the company
+
+### Disable Company
+
+Rather than deleting a company, it is possible to disable it. This will prevent the company from being used in new orders, but will not remove it from the database. Additionally, any existing orders associated with the company (and other linked items such as supplier parts, for a supplier) will remain intact. Unless the company is re-enabled, it will not be available for selection in new orders.
+
+It is recommended to disable a company rather than deleting it, as this will preserve the integrity of historical data.
+
+To disable a company, simply edit the company details and set the `active` attribute to `False`:
+
+{% with id="company_disable", url="order/company_disable.png", description="Disable Company" %}
+{% include "img.html" %}
+{% endwith %}
+
+To re-enable a company, simply follow the same process and set the `active` attribute to `True`.
 
 ### Delete Company
 
@@ -192,6 +206,24 @@ To edit a supplier part, first access the supplier part detail page with one of 
 0. navigate to a Manufacturer detail page, click on the <span class="badge inventree nav side"><span class='fas fa-building'></span> Supplied Parts</span> tab then click on the corresponding _Supplier Part_ link.
 
 After the supplier part details are loaded, click on the <span class='fas fa-edit'></span> icon next to the supplier part image. Edit the supplier part information then click on <span class="badge inventree confirm">Submit</span>
+
+#### Disable Supplier Part
+
+Supplier parts can be individually disabled - for example, if a supplier part is no longer available for purchase. By disabling the part in the InvenTree system, it will no longer be available for selection in new purchase orders. However, any existing purchase orders which reference the supplier part will remain intact.
+
+The "active" status of a supplier part is clearly visible within the user interface:
+
+{% with id="supplier_part_disable", url="order/disable_supplier_part.png", description="Disable Supplier Part" %}
+{% include "img.html" %}
+{% endwith %}
+
+To change the "active" status of a supplier part, simply edit the supplier part details and set the `active` attribute:
+
+{% with id="supplier_part_disable_edit", url="order/disable_supplier_part_edit.png", description="Disable Supplier Part" %}
+{% include "img.html" %}
+{% endwith %}
+
+It is recommended to disable a supplier part rather than deleting it, as this will preserve the integrity of historical data.
 
 #### Delete Supplier Part
 

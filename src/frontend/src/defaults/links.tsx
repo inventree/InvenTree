@@ -71,7 +71,7 @@ export const navDocLinks: DocumentationLinkItem[] = [
   }
 ];
 
-function serverInfo() {
+export function serverInfo() {
   return openContextModal({
     modal: 'info',
     title: (
@@ -84,7 +84,7 @@ function serverInfo() {
   });
 }
 
-function aboutInvenTree() {
+export function aboutInvenTree() {
   return openContextModal({
     modal: 'about',
     title: (
@@ -97,7 +97,19 @@ function aboutInvenTree() {
   });
 }
 
-// TODO @matmair: Add the following pages and adjust the links
+export function licenseInfo() {
+  return openContextModal({
+    modal: 'license',
+    title: (
+      <StylishText size="xl">
+        <Trans>License Information</Trans>
+      </StylishText>
+    ),
+    size: 'xl',
+    innerProps: {}
+  });
+}
+
 export const aboutLinks: DocumentationLinkItem[] = [
   {
     id: 'instance',
@@ -114,8 +126,7 @@ export const aboutLinks: DocumentationLinkItem[] = [
   {
     id: 'licenses',
     title: <Trans>Licenses</Trans>,
-    description: <Trans>Licenses for packages used by InvenTree</Trans>,
-    link: '/licenses',
-    placeholder: true
+    description: <Trans>Licenses for dependencies of the service</Trans>,
+    action: licenseInfo
   }
 ];

@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "eslint": "^9.0.0",
+    "eslint-config-google": "^0.14.0"
+  },
+  "type": "module"
+}

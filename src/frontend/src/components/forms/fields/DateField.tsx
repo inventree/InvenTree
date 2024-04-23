@@ -1,8 +1,12 @@
 import { DateInput } from '@mantine/dates';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useCallback, useId, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { ApiFormFieldType } from './ApiFormField';
+
+dayjs.extend(customParseFormat);
 
 export default function DateField({
   controller,
@@ -18,13 +22,16 @@ export default function DateField({
     fieldState: { error }
   } = controller;
 
+  const valueFormat =
+    definition.field_type == 'date' ? 'YYYY-MM-DD' : 'YYYY-MM-DD HH:mm:ss';
+
   const onChange = useCallback(
     (value: any) => {
       // Convert the returned date object to a string
       if (value) {
         value = value.toString();
         let date = new Date(value);
-        value = date.toISOString().split('T')[0];
+        value = dayjs(value).format(valueFormat);
       }
 
       field.onChange(value);
@@ -45,12 +52,13 @@ export default function DateField({
     <DateInput
       id={fieldId}
       radius="sm"
+      ref={field.ref}
       type={undefined}
       error={error?.message}
       value={dateValue}
       clearable={!definition.required}
       onChange={onChange}
-      valueFormat="YYYY-MM-DD"
+      valueFormat={valueFormat}
       label={definition.label}
       description={definition.description}
       placeholder={definition.placeholder}

@@ -4,15 +4,17 @@ name: QC
 
 on:
   push:
-    branches-ignore: [ 'l10*' ]
+    branches-ignore: ["l10*"]
   pull_request:
-    branches-ignore: [ 'l10*' ]
+    branches-ignore: ["l10*"]
 
 env:
   python_version: 3.9
   node_version: 18
   # The OS version must be set per job
   server_start_sleep: 60
+  requests_version: 2.31.0
+  pyyaml_version: 6.0.1
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   INVENTREE_DB_ENGINE: sqlite3
@@ -24,6 +26,7 @@ env:
 
 permissions:
   contents: read
+
 jobs:
   paths-filter:
     name: Filter
@@ -34,6 +37,7 @@ jobs:
       migrations: ${{ steps.filter.outputs.migrations }}
       frontend: ${{ steps.filter.outputs.frontend }}
       api: ${{ steps.filter.outputs.api }}
+      force: ${{ steps.force.outputs.force }}
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -42,22 +46,30 @@ jobs:
         with:
           filters: |
             server:
-              - 'InvenTree/**'
-              - 'requirements.txt'
-              - 'requirements-dev.txt'
+              - 'src/backend/InvenTree/**'
+              - 'src/backend/requirements.txt'
+              - 'src/backend/requirements-dev.txt'
             migrations:
+              - '**/test_migrations.py'
               - '**/migrations/**'
               - '.github/workflows**'
+              - 'src/backend/requirements.txt'
             api:
-              - 'InvenTree/InvenTree/api_version.py'
+              - 'src/backend/InvenTree/InvenTree/api_version.py'
             frontend:
               - 'src/frontend/**'
+      - name: Is CI being forced?
+        run: echo "force=true" >> $GITHUB_OUTPUT
+        id: force
+        if: |
+          contains(github.event.pull_request.labels.*.name, 'dependency') ||
+          contains(github.event.pull_request.labels.*.name, 'full-run')
 
   javascript:
     name: Style - Classic UI [JS]
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit' ]
+    needs: ["pre-commit"]
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -68,18 +80,18 @@ jobs:
           install: true
       - name: Check Templated JS Files
         run: |
-          cd ci
+          cd .github/scripts
           python3 check_js_templates.py
       - name: Lint Javascript Files
         run: |
-          python InvenTree/manage.py prerender
-          npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
+          python src/backend/InvenTree/manage.py prerender
+          cd src/backend && npx eslint InvenTree/InvenTree/static_i18n/i18n/*.js
 
   pre-commit:
     name: Style [pre-commit]
     runs-on: ubuntu-20.04
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -87,13 +99,13 @@ jobs:
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
         with:
           python-version: ${{ env.python_version }}
-          cache: 'pip'
+          cache: "pip"
       - name: Run pre-commit Checks
         uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # pin@v3.0.1
       - name: Check Version
         run: |
-          pip install requests
-          python3 ci/version_check.py
+          pip install --require-hashes -r .github/requirements.txt
+          python3 .github/scripts/version_check.py
 
   mkdocs:
     name: Style [Documentation]
@@ -110,7 +122,7 @@ jobs:
           python-version: ${{ env.python_version }}
       - name: Check Config
         run: |
-          pip install pyyaml
+          pip install --require-hashes -r .github/requirements.txt
           pip install -r docs/requirements.txt
           python docs/ci/check_mkdocs_config.py
       - name: Check Links
@@ -118,14 +130,14 @@ jobs:
         with:
           folder-path: docs
           config-file: docs/mlc_config.json
-          check-modified-files-only: 'yes'
-          use-quiet-mode: 'yes'
+          check-modified-files-only: "yes"
+          use-quiet-mode: "yes"
 
   schema:
     name: Tests - API Schema Documentation
     runs-on: ubuntu-20.04
     needs: paths-filter
-    if: needs.paths-filter.outputs.server == 'true'
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     env:
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DB_NAME: ../inventree_unit_test_db.sqlite3
@@ -147,17 +159,17 @@ jobs:
           dev-install: true
           update: true
       - name: Export API Documentation
-        run: invoke schema --ignore-warnings --filename InvenTree/schema.yml
+        run: invoke schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
         uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
         with:
           name: schema.yml
-          path: InvenTree/schema.yml
+          path: src/backend/InvenTree/schema.yml
       - name: Download public schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
-          pip install requests >/dev/null 2>&1
-          version="$(python3 ci/version_check.py only_version 2>&1)"
+          pip install --require-hashes -r .github/requirements.txt >/dev/null 2>&1
+          version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
@@ -166,8 +178,8 @@ jobs:
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
-          diff --color -u InvenTree/schema.yml api.yaml
-          diff -u InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
+          diff --color -u src/backend/InvenTree/schema.yml api.yaml
+          diff -u src/backend/InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
         run: invoke schema
         continue-on-error: true
@@ -175,42 +187,43 @@ jobs:
         id: version
         if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
         run: |
-          pip install requests >/dev/null 2>&1
-          version="$(python3 ci/version_check.py only_version 2>&1)"
+          pip install --require-hashes -r .github/requirements.txt >/dev/null 2>&1
+          version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
   schema-push:
-            name: Push new schema
-            runs-on: ubuntu-20.04
-            needs: [paths-filter, schema]
-            if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
-            env:
-              version: ${{ needs.schema.outputs.version }}
+    name: Push new schema
+    runs-on: ubuntu-20.04
+    needs: [paths-filter, schema]
+    if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
+    env:
+      version: ${{ needs.schema.outputs.version }}
 
-            steps:
-              - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-                with:
-                    repository: inventree/schema
-                    token: ${{ secrets.SCHEMA_PAT }}
-              - name: Download schema artifact
-                uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
-                with:
-                  name: schema.yml
-              - name: Move schema to correct location
-                run: |
-                  echo "Version: $version"
-                  mkdir export/${version}
-                  mv schema.yml export/${version}/api.yaml
-              - uses: stefanzweifel/git-auto-commit-action@8756aa072ef5b4a080af5dc8fef36c5d586e521d # v5.0.0
-                with:
-                  commit_message: "Update API schema for ${version}"
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+        with:
+          repository: inventree/schema
+          token: ${{ secrets.SCHEMA_PAT }}
+      - name: Download schema artifact
+        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
+        with:
+          name: schema.yml
+      - name: Move schema to correct location
+        run: |
+          echo "Version: $version"
+          mkdir export/${version}
+          mv schema.yml export/${version}/api.yaml
+      - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
+        with:
+          commit_message: "Update API schema for ${version}"
 
   python:
     name: Tests - inventree-python
     runs-on: ubuntu-20.04
 
-    needs: pre-commit
+    needs: ["pre-commit", "paths-filter"]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       wrapper_name: inventree-python
@@ -251,7 +264,8 @@ jobs:
     name: Tests - DB [SQLite] + Coverage
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit' ]
+    needs: ["pre-commit", "paths-filter"]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     continue-on-error: true # continue if a step fails so that coverage gets pushed
 
     env:
@@ -273,24 +287,28 @@ jobs:
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
-        run: python3 ci/check_migration_files.py
+        run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
         run: invoke test --coverage
-      - name: Upload Coverage Report
-        uses: coverallsapp/github-action@3dfc5567390f6fa9267c0ee9c251e4c8c3f18949 # pin@v2.2.3
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
+        if: always()
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: backend
 
   postgres:
     name: Tests - DB [PostgreSQL]
     runs-on: ubuntu-20.04
-    needs: [ 'pre-commit' ]
+    needs: ["pre-commit", "paths-filter"]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
       INVENTREE_DB_USER: inventree
       INVENTREE_DB_PASSWORD: password
-      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
       INVENTREE_DEBUG: info
       INVENTREE_CACHE_HOST: localhost
@@ -328,14 +346,15 @@ jobs:
     name: Tests - DB [MySQL]
     runs-on: ubuntu-20.04
 
-    needs: [ 'pre-commit' ]
+    needs: ["pre-commit", "paths-filter"]
+    if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
 
     env:
       # Database backend configuration
       INVENTREE_DB_ENGINE: django.db.backends.mysql
       INVENTREE_DB_USER: root
       INVENTREE_DB_PASSWORD: password
-      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 3306
       INVENTREE_DEBUG: info
       INVENTREE_PLUGINS_ENABLED: true
@@ -371,14 +390,14 @@ jobs:
     name: Tests - Migrations [PostgreSQL]
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
       INVENTREE_DB_NAME: inventree
       INVENTREE_DB_USER: inventree
       INVENTREE_DB_PASSWORD: password
-      INVENTREE_DB_HOST: '127.0.0.1'
+      INVENTREE_DB_HOST: "127.0.0.1"
       INVENTREE_DB_PORT: 5432
       INVENTREE_DEBUG: info
       INVENTREE_PLUGINS_ENABLED: false
@@ -402,13 +421,20 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test --migrations --report
+        run: invoke test --migrations --report --coverage
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: migrations
 
   migrations-checks:
     name: Tests - Full Migration [SQLite]
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true'
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
 
     env:
       INVENTREE_DB_ENGINE: sqlite3
@@ -464,13 +490,14 @@ jobs:
     name: Tests - Platform UI
     runs-on: ubuntu-20.04
     timeout-minutes: 60
-    needs: [ 'pre-commit', 'paths-filter' ]
-    if: needs.paths-filter.outputs.frontend == 'true'
+    needs: ["pre-commit", "paths-filter"]
+    if: needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
     env:
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_DB_NAME: /home/runner/work/InvenTree/db.sqlite3
       INVENTREE_DEBUG: True
       INVENTREE_PLUGINS_ENABLED: false
+      VITE_COVERAGE: true
 
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
@@ -482,18 +509,31 @@ jobs:
           update: true
       - name: Set up test data
         run: invoke setup-test -i
+      - name: Rebuild thumbnails
+        run: invoke rebuild-thumbnails
       - name: Install dependencies
         run: inv frontend-compile
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
-        run: cd src/frontend &&  npx playwright test
-      - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
-        if: always()
+        id: tests
+        run: cd src/frontend && npx nyc playwright test
+      - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4
+        if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
           path: src/frontend/playwright-report/
-          retention-days: 30
+          retention-days: 14
+      - name: Report coverage
+        if: always()
+        run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: inventree/InvenTree
+          flags: pui
 
   platform_ui_build:
     name: Build - UI Platform
@@ -509,12 +549,12 @@ jobs:
       - name: Install dependencies
         run: cd src/frontend && yarn install
       - name: Build frontend
-        run: cd src/frontend && npm run compile && npm run build
+        run: cd src/frontend && yarn run compile && yarn run build
       - name: Zip frontend
         run: |
-          cd InvenTree/web/static
-          zip -r frontend-build.zip web/
+          cd src/backend/InvenTree/web/static
+          zip -r frontend-build.zip web/ web/.vite
       - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
         with:
           name: frontend-build
-          path: InvenTree/web/static/web
+          path: src/backend/InvenTree/web/static/web

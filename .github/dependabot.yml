@@ -3,34 +3,50 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
-      interval: daily
+      interval: weekly
+    groups:
+      dependencies:
+        patterns:
+          - "*" # Include all dependencies
 
   - package-ecosystem: docker
-    directory: /
+    directory: /contrib/container
     schedule:
-      interval: daily
+      interval: weekly
 
   - package-ecosystem: pip
-    directory: /docker
+    directory: /contrib/container
     schedule:
-      interval: daily
+      interval: weekly
 
   - package-ecosystem: pip
     directory: /docs
     schedule:
-      interval: daily
+      interval: weekly
 
   - package-ecosystem: npm
-    directory: /
+    directory: /src/backend
     schedule:
-      interval: daily
+      interval: weekly
+    groups:
+      dependencies:
+        patterns:
+          - "*" # Include all dependencies
 
   - package-ecosystem: pip
-    directory: /
+    directory: /src/backend
     schedule:
-      interval: daily
+      interval: weekly
+    groups:
+      dependencies:
+        patterns:
+          - "*" # Include all dependencies
 
   - package-ecosystem: npm
     directory: /src/frontend
     schedule:
-      interval: daily
+      interval: weekly
+    groups:
+      dependencies:
+        patterns:
+          - "*" # Include all dependencies

@@ -1,7 +1,9 @@
 import { t } from '@lingui/macro';
+import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
 import { PartHoverCard } from '../../components/images/Thumbnail';
+import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
@@ -39,8 +41,15 @@ export function UsedInTable({
       {
         accessor: 'quantity',
         render: (record: any) => {
-          // TODO: render units if appropriate
-          return record.quantity;
+          let quantity = formatDecimal(record.quantity);
+          let units = record.sub_part_detail?.units;
+
+          return (
+            <Group position="apart" grow>
+              <Text>{quantity}</Text>
+              {units && <Text size="xs">{units}</Text>}
+            </Group>
+          );
         }
       },
       ReferenceColumn()
@@ -83,7 +92,8 @@ export function UsedInTable({
           sub_part_detail: true
         },
         tableFilters: tableFilters,
-        modelType: ModelType.part
+        modelType: ModelType.part,
+        modelField: 'part'
       }}
     />
   );

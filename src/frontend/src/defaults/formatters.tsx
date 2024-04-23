@@ -5,11 +5,33 @@ import {
   useUserSettingsState
 } from '../states/SettingsState';
 
+interface formatDecmimalOptionsType {
+  digits?: number;
+  minDigits?: number;
+  locale?: string;
+}
+
 interface formatCurrencyOptionsType {
   digits?: number;
   minDigits?: number;
   currency?: string;
   locale?: string;
+  multiplier?: number;
+}
+
+export function formatDecimal(
+  value: number | null | undefined,
+  options: formatDecmimalOptionsType = {}
+) {
+  let locale = options.locale || navigator.language || 'en-US';
+
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  let formatter = new Intl.NumberFormat(locale);
+
+  return formatter.format(value);
 }
 
 /*
@@ -21,12 +43,20 @@ interface formatCurrencyOptionsType {
  * - digits: Maximum number of significant digits (default = 10)
  */
 export function formatCurrency(
-  value: number | null,
+  value: number | string | null | undefined,
   options: formatCurrencyOptionsType = {}
 ) {
-  if (value == null) {
+  if (value == null || value == undefined) {
     return null;
   }
+
+  value = parseFloat(value.toString());
+
+  if (isNaN(value) || !isFinite(value)) {
+    return null;
+  }
+
+  value *= options.multiplier ?? 1;
 
   const global_settings = useGlobalSettingsState.getState().lookup;
 
@@ -88,6 +118,7 @@ export function formatPriceRange(
 
 interface renderDateOptionsType {
   showTime?: boolean;
+  showSeconds?: boolean;
 }
 
 /*
@@ -106,6 +137,9 @@ export function renderDate(date: string, options: renderDateOptionsType = {}) {
 
   if (options.showTime) {
     fmt += ' HH:mm';
+    if (options.showSeconds) {
+      fmt += ':ss';
+    }
   }
 
   const m = dayjs(date);

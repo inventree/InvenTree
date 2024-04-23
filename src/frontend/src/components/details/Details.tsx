@@ -23,9 +23,9 @@ import { getDetailUrl } from '../../functions/urls';
 import { base_url } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
+import { YesNoButton } from '../buttons/YesNoButton';
 import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
-import { YesNoButton } from '../items/YesNoButton';
 import { getModelInfo } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 

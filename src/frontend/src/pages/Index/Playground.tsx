@@ -2,6 +2,8 @@ import { Trans } from '@lingui/macro';
 import { Button, Card, Stack, TextInput } from '@mantine/core';
 import { Group, Text } from '@mantine/core';
 import { Accordion } from '@mantine/core';
+import { spotlight } from '@mantine/spotlight';
+import { IconAlien } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
 import { OptionsApiForm } from '../../components/forms/ApiForm';
@@ -167,6 +169,38 @@ function StatusLabelPlayground() {
   );
 }
 
+// Sample for spotlight actions
+function SpotlighPlayground() {
+  return (
+    <Button
+      variant="outline"
+      onClick={() => {
+        spotlight.registerActions([
+          {
+            id: 'secret-action-1',
+            title: 'Secret action',
+            description: 'It was registered with a button click',
+            icon: <IconAlien size="1.2rem" />,
+            onTrigger: () => console.log('Secret')
+          },
+          {
+            id: 'secret-action-2',
+            title: 'Another secret action',
+            description:
+              'You can register multiple actions with just one command',
+            icon: <IconAlien size="1.2rem" />,
+            onTrigger: () => console.log('Secret')
+          }
+        ]);
+        console.log('registed');
+        spotlight.open();
+      }}
+    >
+      Register extra actions
+    </Button>
+  );
+}
+
 /** Construct a simple accordion group with title and content */
 function PlaygroundArea({
   title,
@@ -206,6 +240,10 @@ export default function Playground() {
         <PlaygroundArea
           title="Status labels"
           content={<StatusLabelPlayground />}
+        />
+        <PlaygroundArea
+          title="Spotlight actions"
+          content={<SpotlighPlayground />}
         />
       </Accordion>
     </>

@@ -2,23 +2,22 @@
 # See https://pre-commit.com/hooks.html for more hooks
 exclude: |
     (?x)^(
-        InvenTree/InvenTree/static/.*|
-        InvenTree/locale/.*|
-        src/frontend/src/locales/.*|
+        src/backend/InvenTree/InvenTree/static/.*|
+        src/backend/InvenTree/locale/.*|
+        src/frontend/src/locales/.* |
         .*/migrations/.* |
-        src/frontend/yarn.lock |
-        yarn.lock
+        src/frontend/yarn.lock
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.4
+    rev: v0.4.1
     hooks:
     - id: ruff-format
       args: [--preview]
@@ -28,16 +27,20 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: v0.1.24
+    rev: 0.1.35
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [requirements-dev.in, -o, requirements-dev.txt, --python-version=3.9, --no-strip-extras]
-        files: ^requirements-dev\.(in|txt)$
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, --python-version=3.9, --no-strip-extras, --generate-hashes]
+        files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [requirements.in, -o, requirements.txt,--python-version=3.9, --no-strip-extras]
-        files: ^requirements\.(in|txt)$
+        args: [src/backend/requirements.in, -o, src/backend/requirements.txt,--python-version=3.9, --no-strip-extras,--generate-hashes]
+        files: src/backend/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [.github/requirements.in, -o, .github/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
+        files: .github/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.1
     hooks:
@@ -62,7 +65,7 @@ repos:
       - "prettier@^2.4.1"
       - "@trivago/prettier-plugin-sort-imports"
 - repo: https://github.com/pre-commit/mirrors-eslint
-  rev: "v9.0.0-rc.0"
+  rev: "v9.1.0"
   hooks:
   - id: eslint
     additional_dependencies:

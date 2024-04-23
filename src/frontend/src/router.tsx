@@ -103,6 +103,7 @@ export const AdminCenter = Loadable(
 
 export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
+export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));
 export const Reset = Loadable(lazy(() => import('./pages/Auth/Reset')));
 export const Set_Password = Loadable(
@@ -163,6 +164,7 @@ export const routes = (
     </Route>
     <Route path="/" errorElement={<ErrorPage />}>
       <Route path="/login" element={<Login />} />,
+      <Route path="/logout" element={<Logout />} />,
       <Route path="/logged-in" element={<Logged_In />} />
       <Route path="/reset-password" element={<Reset />} />
       <Route path="/set-password" element={<Set_Password />} />

@@ -65,10 +65,11 @@ runs:
         with:
           node-version: ${{ env.node_version }}
           cache: 'npm'
+          cache-dependency-path: src/backend/package-lock.json
       - name: Install npm packages
         if: ${{ inputs.npm == 'true' }}
         shell: bash
-        run: npm install
+        run: cd src/backend && npm install
 
       # OS installs
       - name: Install OS Dependencies
@@ -77,12 +78,13 @@ runs:
         run: |
           sudo apt-get update
           sudo apt-get install ${{ inputs.apt-dependency }}
+          sudo apt-get install ${{ inputs.apt-dependency }}
 
       # Invoke commands
       - name: Install dev requirements
         if: ${{ inputs.dev-install == 'true' ||inputs.install == 'true' }}
         shell: bash
-        run: uv pip install -r requirements-dev.txt
+        run: uv pip install --require-hashes -r src/backend/requirements-dev.txt
       - name: Run invoke install
         if: ${{ inputs.install == 'true' }}
         shell: bash

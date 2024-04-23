@@ -14,7 +14,7 @@ import { modals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
 import { IconFilter, IconRefresh, IconTrash } from '@tabler/icons-react';
 import { IconBarcode, IconPrinter } from '@tabler/icons-react';
-import { dataTagSymbol, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   DataTable,
   DataTableCellClickHandler,
@@ -28,6 +28,7 @@ import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ModelType } from '../enums/ModelType';
+import { resolveItem } from '../functions/conversion';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { getDetailUrl } from '../functions/urls';
 import { TableState } from '../hooks/UseTable';
@@ -91,6 +92,8 @@ export type InvenTreeTableProps<T = any> = {
   onRowClick?: (record: T, index: number, event: any) => void;
   onCellClick?: DataTableCellClickHandler<T>;
   modelType?: ModelType;
+  rowStyle?: (record: T, index: number) => any;
+  modelField?: string;
 };
 
 /**
@@ -151,6 +154,7 @@ export function InvenTreeTable<T = any>({
     queryKey: ['options', url, tableState.tableKey],
     retry: 3,
     refetchOnMount: true,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       return api
         .options(url, {
@@ -515,18 +519,23 @@ export function InvenTreeTable<T = any>({
       if (props.onRowClick) {
         // If a custom row click handler is provided, use that
         props.onRowClick(record, index, event);
-      } else if (tableProps.modelType && record?.pk) {
-        // If a model type is provided, navigate to the detail view for that model
-        let url = getDetailUrl(tableProps.modelType, record.pk);
+      } else if (tableProps.modelType) {
+        const accessor = tableProps.modelField ?? 'pk';
+        const pk = resolveItem(record, accessor);
 
-        // Should it be opened in a new tab?
-        if (event?.ctrlKey || event?.shiftKey) {
-          // Open in a new tab
-          url = `/${base_url}${url}`;
-          window.open(url, '_blank');
-        } else {
-          // Navigate internally
-          navigate(url);
+        if (pk) {
+          // If a model type is provided, navigate to the detail view for that model
+          let url = getDetailUrl(tableProps.modelType, pk);
+
+          // Should it be opened in a new tab?
+          if (event?.ctrlKey || event?.shiftKey) {
+            // Open in a new tab
+            url = `/${base_url}${url}`;
+            window.open(url, '_blank');
+          } else {
+            // Navigate internally
+            navigate(url);
+          }
         }
       }
     },
@@ -650,6 +659,7 @@ export function InvenTreeTable<T = any>({
               tableProps.enableSelection ? onSelectedRecordsChange : undefined
             }
             rowExpansion={tableProps.rowExpansion}
+            rowStyle={tableProps.rowStyle}
             fetching={isFetching}
             noRecordsText={missingRecordsText}
             records={tableState.records}

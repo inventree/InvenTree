@@ -1,0 +1,27 @@
+# Marks all issues that do not receive activity stale starting 2022
+name: Mark stale issues and pull requests
+
+on:
+  schedule:
+    - cron: "24 11 * * *"
+
+permissions:
+  contents: read
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: actions/stale@28ca1036281a5e5922ead5184a1bbf96e5fc984e # pin@v9.0.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          stale-issue-message: "This issue seems stale. Please react to show this is still important."
+          stale-pr-message: "This PR seems stale. Please react to show this is still important."
+          stale-issue-label: "inactive"
+          stale-pr-label: "inactive"
+          start-date: "2022-01-01"
+          exempt-all-milestones: true

@@ -15,18 +15,18 @@ permissions:
   contents: read
 
 jobs:
-
   check:
     runs-on: ubuntu-latest
 
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      INVENTREE_DB_NAME: './test_db.sqlite'
+      INVENTREE_DB_NAME: "./test_db.sqlite"
       INVENTREE_DB_ENGINE: django.db.backends.sqlite3
       INVENTREE_DEBUG: info
       INVENTREE_MEDIA_ROOT: ./media
       INVENTREE_STATIC_ROOT: ./static
       INVENTREE_BACKUP_DIR: ./backup
+      INVENTREE_SITE_URL: http://localhost:8000
 
     steps:
       - name: Checkout Code
@@ -39,4 +39,4 @@ jobs:
       - name: Test Translations
         run: invoke translate
       - name: Check Migration Files
-        run: python3 ci/check_migration_files.py
+        run: python3 .github/scripts/check_migration_files.py
