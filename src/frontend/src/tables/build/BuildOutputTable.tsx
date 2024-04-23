@@ -1,6 +1,9 @@
 import { t } from '@lingui/macro';
+import { Group, Text } from '@mantine/core';
+import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
@@ -18,6 +21,37 @@ export default function BuildOutputTable({
 }) {
   const table = useTable('build-outputs');
 
+  // Fetch the test templates associated with the partId
+  const { data: testTemplates } = useQuery({
+    queryKey: ['buildoutputtests', partId],
+    queryFn: async () => {
+      if (!partId) {
+        return [];
+      }
+
+      return api
+        .get(apiUrl(ApiEndpoints.part_test_template_list), {
+          params: {
+            part: partId,
+            include_inherited: true,
+            enabled: true,
+            required: true
+          }
+        })
+        .then((response) => response.data)
+        .catch(() => []);
+    }
+  });
+
+  const hasRequiredTests: boolean = useMemo(() => {
+    return (testTemplates?.length ?? 0) > 0;
+  }, [testTemplates]);
+
+  // TODO: Button to create new build output
+  // TODO: Button to complete output(s)
+  // TODO: Button to cancel output(s)
+  // TODO: Button to scrap output(s)
+
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
@@ -32,8 +66,22 @@ export default function BuildOutputTable({
         switchable: false,
         title: t`Build Output`,
         render: (record: any) => {
-          // TODO: Implement this!
-          return '-';
+          let text = record.quantity;
+
+          if (record.serial) {
+            text = `# ${record.serial}`;
+          }
+
+          return (
+            <Group position="left" noWrap>
+              <Text>{text}</Text>
+              {record.batch && (
+                <Text italic size="sm">
+                  {t`Batch`}: {record.batch}
+                </Text>
+              )}
+            </Group>
+          );
         }
       },
       {
@@ -51,6 +99,7 @@ export default function BuildOutputTable({
         sortable: false,
         switchable: false,
         title: t`Required Tests`,
+        hidden: !hasRequiredTests,
         render: (record: any) => {
           // TODO: Implement this!
           return '-';
