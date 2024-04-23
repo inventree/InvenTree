@@ -50,6 +50,15 @@ export const test = baseTest.extend({
         )
       );
     }
+  },
+  // Ensure no errors are thrown in the console
+  page: async ({ baseURL, page }, use) => {
+    const messages = [];
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') messages.push(msg);
+    });
+    await use(page);
+    expect(messages).toEqual([]);
   }
 });
 
