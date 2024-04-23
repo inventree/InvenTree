@@ -4,6 +4,11 @@ import { doQuickLogin } from './login.js';
 test('PUI - Modals as admin', async ({ page }) => {
   await doQuickLogin(page, 'admin', 'inventree');
 
+  // Fail on console error
+  await page.on('console', (msg) => {
+    if (msg.type() === 'error') test.fail();
+  });
+
   // use server info
   await page.getByRole('button', { name: 'Open spotlight' }).click();
   await page
