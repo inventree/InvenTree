@@ -5,9 +5,6 @@ on:
   release:
     types: [published]
 
-env:
-  requests_version: 2.31.0
-
 permissions:
   contents: read
 
@@ -21,7 +18,7 @@ jobs:
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Version Check
         run: |
-          pip install requests==${{ env.requests_version }}
+          pip install --require-hashes -r .github/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0

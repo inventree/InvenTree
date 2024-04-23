@@ -39,7 +39,6 @@ InvenTree relies on the following Python libraries:
 | [flake8](https://pypi.org/project/flake8/) | MIT | style checking |
 | [pep8-naming](https://pypi.org/project/pep8-naming/) | Expat | name checking |
 | [coverage](https://pypi.org/project/coverage/) | Apache-2.0 | coverage checking |
-| [coveralls](https://pypi.org/project/coveralls/) | MIT | coverage uploader |
 | [django-formtools](https://pypi.org/project/django-formtools/) | MIT | better forms / wizards |
 | [django-allauth](https://pypi.org/project/django-allauth/) | MIT | SSO for django |
 | [pint](https://pint.readthedocs.io/en/stable/) | [licence](https://github.com/hgrecco/pint/blob/master/LICENSE) | Physical unit conversion |

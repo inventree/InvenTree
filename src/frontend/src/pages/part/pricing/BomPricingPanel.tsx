@@ -37,7 +37,13 @@ import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
 // Display BOM data as a pie chart
-function BomPieChart({ data, currency }: { data: any[]; currency: string }) {
+function BomPieChart({
+  data,
+  currency
+}: {
+  readonly data: any[];
+  readonly currency: string;
+}) {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <PieChart>
@@ -78,7 +84,13 @@ function BomPieChart({ data, currency }: { data: any[]; currency: string }) {
 }
 
 // Display BOM data as a bar chart
-function BomBarChart({ data, currency }: { data: any[]; currency: string }) {
+function BomBarChart({
+  data,
+  currency
+}: {
+  readonly data: any[];
+  readonly currency: string;
+}) {
   return (
     <ResponsiveContainer width="100%" height={500}>
       <BarChart data={data}>
@@ -113,8 +125,8 @@ export default function BomPricingPanel({
   part,
   pricing
 }: {
-  part: any;
-  pricing: any;
+  readonly part: any;
+  readonly pricing: any;
 }): ReactNode {
   const table = useTable('pricing-bom');
 

@@ -33,6 +33,7 @@ import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ModelType } from '../enums/ModelType';
+import { resolveItem } from '../functions/conversion';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { getDetailUrl } from '../functions/urls';
 import { TableState } from '../hooks/UseTable';
@@ -524,7 +525,8 @@ export function InvenTreeTable<T = any>({
         // If a custom row click handler is provided, use that
         props.onRowClick(record, index, event);
       } else if (tableProps.modelType) {
-        const pk = record?.[tableProps.modelField ?? 'pk'];
+        const accessor = tableProps.modelField ?? 'pk';
+        const pk = resolveItem(record, accessor);
 
         if (pk) {
           // If a model type is provided, navigate to the detail view for that model
