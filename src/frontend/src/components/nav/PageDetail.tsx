@@ -60,6 +60,10 @@ export function PageDetail({
             <Space />
             {detail}
             <Group position="right" spacing="xs" noWrap>
+              {badges &&
+                badges.map((badge, idx) => (
+                  <Fragment key={idx}>{badge}</Fragment>
+                ))}
               {badges}
             </Group>
             <Space />
