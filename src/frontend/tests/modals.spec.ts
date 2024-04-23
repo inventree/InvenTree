@@ -2,7 +2,7 @@ import { test } from './baseFixtures.js';
 import { doQuickLogin } from './login.js';
 
 test('PUI - Modals as admin', async ({ page }) => {
-  await doQuickLogin(page);
+  await doQuickLogin(page, 'admin', 'inventree');
 
   // use server info
   await page.getByRole('button', { name: 'Open spotlight' }).click();
@@ -14,7 +14,7 @@ test('PUI - Modals as admin', async ({ page }) => {
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
   await page.getByRole('button', { name: 'Dismiss' }).click();
 
-  await page.waitForURL('**/platform');
+  await page.waitForURL('**/platform/home');
 
   // use license info
   await page.getByRole('button', { name: 'Open spotlight' }).click();
