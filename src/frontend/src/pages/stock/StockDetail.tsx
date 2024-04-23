@@ -480,6 +480,11 @@ export default function StockDetail() {
       ? []
       : [
           <DetailsBadge
+            color="yellow"
+            label={t`In Production`}
+            visible={stockitem.is_building}
+          />,
+          <DetailsBadge
             color="blue"
             label={t`Serial Number` + `: ${stockitem.serial}`}
             visible={!!stockitem.serial}

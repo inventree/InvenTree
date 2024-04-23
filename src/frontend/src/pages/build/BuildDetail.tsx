@@ -42,6 +42,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import BuildOutputTable from '../../tables/build/BuildOutputTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -213,7 +214,12 @@ export default function BuildDetail() {
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
-        icon: <IconClipboardList />
+        icon: <IconClipboardList />,
+        content: build.pk ? (
+          <BuildOutputTable buildId={build.pk} partId={build.part} />
+        ) : (
+          <Skeleton />
+        )
         // TODO: Hide if build is complete
       },
       {
