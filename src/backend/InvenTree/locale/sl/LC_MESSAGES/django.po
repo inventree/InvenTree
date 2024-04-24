@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-23 01:51+0000\n"
-"PO-Revision-Date: 2024-04-23 05:25\n"
+"POT-Creation-Date: 2024-04-23 11:06+0000\n"
+"PO-Revision-Date: 2024-04-24 05:27\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -50,7 +50,7 @@ msgstr "Vnesena napačna količina ({exc})"
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr "Napaka, podrobnosti vidne v pogledu administratorja"
+msgstr "Podrobnosti napake so vidne v pogledu administratorja"
 
 #: InvenTree/fields.py:139
 msgid "Enter date"
@@ -338,7 +338,7 @@ msgstr "Kitajščina (tradicionalno)"
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr ""
+msgstr "[{site_name}] Prijavite se v aplikacijo"
 
 #: InvenTree/magic_login.py:38 company/models.py:133
 #: company/templates/company/company_base.html:138
@@ -349,19 +349,19 @@ msgstr "E-pošta"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Napaka pri izvajanju preverjanja vtičnika"
 
 #: InvenTree/models.py:162
 msgid "Metadata must be a python dict object"
-msgstr ""
+msgstr "Metapodatki morajo biti objekt tipa python dict"
 
 #: InvenTree/models.py:168
 msgid "Plugin Metadata"
-msgstr ""
+msgstr "Metapodatki vtičnika"
 
 #: InvenTree/models.py:169
 msgid "JSON metadata field, for use by external plugins"
-msgstr ""
+msgstr "Polje metapodatkov JSON za uporabo pri zunanjih vtičnikih"
 
 #: InvenTree/models.py:399
 msgid "Improperly formatted pattern"
@@ -477,7 +477,7 @@ msgstr "Napaka pri preimenovanju datoteke"
 
 #: InvenTree/models.py:846
 msgid "Duplicate names cannot exist under the same parent"
-msgstr ""
+msgstr "Podvojena imena ne morejo obstajati pod istim nadrejenim elementom"
 
 #: InvenTree/models.py:863
 msgid "Invalid choice"
@@ -489,7 +489,7 @@ msgstr "Nedovoljena izbira"
 #: plugin/models.py:41 report/models.py:176 stock/models.py:76
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
-#: templates/InvenTree/settings/plugin.html:81
+#: templates/InvenTree/settings/plugin.html:83
 #: templates/InvenTree/settings/plugin_settings.html:22
 #: templates/InvenTree/settings/settings_staff_js.html:67
 #: templates/InvenTree/settings/settings_staff_js.html:446
@@ -555,7 +555,7 @@ msgstr "Pot"
 
 #: InvenTree/models.py:1021
 msgid "Markdown notes (optional)"
-msgstr ""
+msgstr "Markdown opombe (neobvezno)"
 
 #: InvenTree/models.py:1050
 msgid "Barcode Data"
@@ -594,31 +594,31 @@ msgstr "Mora biti veljavna številka"
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr ""
+msgstr "Valuta"
 
 #: InvenTree/serializers.py:102
 msgid "Select currency from available options"
-msgstr ""
+msgstr "Izberite valuto med razpoložljivimi možnostmi"
 
 #: InvenTree/serializers.py:441
 msgid "You do not have permission to change this user role."
-msgstr ""
+msgstr "Nimate dovoljenja za spreminjanje vloge tega uporabnika."
 
 #: InvenTree/serializers.py:453
 msgid "Only superusers can create new users"
-msgstr ""
+msgstr "Samo superuporabniki lahko ustvarijo nove uporabnike"
 
 #: InvenTree/serializers.py:472
 msgid "Your account has been created."
-msgstr ""
+msgstr "Vaš račun je bil ustvarjen."
 
 #: InvenTree/serializers.py:474
 msgid "Please use the password reset function to login"
-msgstr ""
+msgstr "Za prijavo uporabite funkcijo ponastavitve gesla"
 
 #: InvenTree/serializers.py:481
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Dobrodošli v InvenTree"
 
 #: InvenTree/serializers.py:542
 msgid "Filename"
@@ -672,7 +672,7 @@ msgstr "Dvojni stolpec: '{col}'"
 
 #: InvenTree/serializers.py:859
 msgid "Remote Image"
-msgstr ""
+msgstr "Oddaljena slika"
 
 #: InvenTree/serializers.py:860
 msgid "URL of remote image file"
@@ -729,7 +729,7 @@ msgstr "Vrnjeno"
 
 #: InvenTree/status_codes.py:40 InvenTree/status_codes.py:167
 msgid "In Progress"
-msgstr ""
+msgstr "V teku"
 
 #: InvenTree/status_codes.py:43 order/models.py:1566
 #: templates/js/translated/sales_order.js:1523
@@ -740,7 +740,7 @@ msgstr "Poslano"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -796,7 +796,7 @@ msgstr "Lokacija spremenjena"
 
 #: InvenTree/status_codes.py:106
 msgid "Stock updated"
-msgstr ""
+msgstr "Zaloga posodobljena"
 
 #: InvenTree/status_codes.py:109
 msgid "Installed into assembly"
@@ -840,7 +840,7 @@ msgstr "Nalog za izgradnjo končan"
 
 #: InvenTree/status_codes.py:128
 msgid "Build order output rejected"
-msgstr ""
+msgstr "Nalog za izgradnjo zavrnjen"
 
 #: InvenTree/status_codes.py:129 templates/js/translated/stock.js:1761
 msgid "Consumed by build order"
@@ -848,15 +848,15 @@ msgstr "Porabljeno v nalogu za izgradnjo"
 
 #: InvenTree/status_codes.py:132
 msgid "Shipped against Sales Order"
-msgstr ""
+msgstr "Poslano preko prodajnega naročila"
 
 #: InvenTree/status_codes.py:135
 msgid "Received against Purchase Order"
-msgstr ""
+msgstr "Prejeto preko nabavnega naročila"
 
 #: InvenTree/status_codes.py:138
 msgid "Returned against Return Order"
-msgstr ""
+msgstr "Vrnjeno preko naročila za vračilo"
 
 #: InvenTree/status_codes.py:141 templates/js/translated/table_filters.js:375
 msgid "Sent to customer"
@@ -9872,12 +9872,12 @@ msgstr ""
 msgid "Outgoing email has not been configured. Some login and sign-up features may not work correctly!"
 msgstr ""
 
-#: templates/InvenTree/settings/login.html:25 templates/account/signup.html:5
+#: templates/InvenTree/settings/login.html:27 templates/account/signup.html:5
 #: templates/socialaccount/signup.html:5
 msgid "Signup"
 msgstr ""
 
-#: templates/InvenTree/settings/login.html:34
+#: templates/InvenTree/settings/login.html:36
 msgid "Single Sign On"
 msgstr ""
 
@@ -9954,36 +9954,36 @@ msgstr ""
 msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:36
+#: templates/InvenTree/settings/plugin.html:38
 #: templates/InvenTree/settings/sidebar.html:66
 msgid "Plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:42
-#: templates/InvenTree/settings/plugin.html:43
+#: templates/InvenTree/settings/plugin.html:44
+#: templates/InvenTree/settings/plugin.html:45
 #: templates/js/translated/plugin.js:151
 msgid "Install Plugin"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:45
-#: templates/InvenTree/settings/plugin.html:46
+#: templates/InvenTree/settings/plugin.html:47
+#: templates/InvenTree/settings/plugin.html:48
 #: templates/js/translated/plugin.js:224
 msgid "Reload Plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:56
+#: templates/InvenTree/settings/plugin.html:58
 msgid "External plugins are not enabled for this InvenTree installation"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:71
+#: templates/InvenTree/settings/plugin.html:73
 msgid "Plugin Error Stack"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:80
+#: templates/InvenTree/settings/plugin.html:82
 msgid "Stage"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:82
+#: templates/InvenTree/settings/plugin.html:84
 #: templates/js/translated/notification.js:76
 msgid "Message"
 msgstr ""
@@ -10607,26 +10607,26 @@ msgstr ""
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr ""
 
-#: templates/account/login.html:6 templates/account/login.html:17
-#: templates/account/login.html:38 templates/socialaccount/login.html:5
+#: templates/account/login.html:6 templates/account/login.html:19
+#: templates/account/login.html:40 templates/socialaccount/login.html:5
 msgid "Sign In"
 msgstr ""
 
-#: templates/account/login.html:21
+#: templates/account/login.html:23
 msgid "Not a member?"
 msgstr ""
 
-#: templates/account/login.html:23 templates/account/signup.html:11
+#: templates/account/login.html:25 templates/account/signup.html:11
 #: templates/account/signup.html:22 templates/socialaccount/signup.html:8
 #: templates/socialaccount/signup.html:23
 msgid "Sign Up"
 msgstr ""
 
-#: templates/account/login.html:45
+#: templates/account/login.html:47
 msgid "Forgot Password?"
 msgstr ""
 
-#: templates/account/login.html:53
+#: templates/account/login.html:55
 msgid "or log in with"
 msgstr ""
 
@@ -11711,7 +11711,7 @@ msgstr ""
 #: templates/js/translated/company.js:678
 #: templates/js/translated/company.js:742
 msgid "Role"
-msgstr ""
+msgstr "Vloga"
 
 #: templates/js/translated/company.js:686
 msgid "Delete Contacts"
@@ -13975,6 +13975,22 @@ msgstr ""
 
 #: templates/notifications.html:9
 msgid "Show all notifications and history"
+msgstr ""
+
+#: templates/pui_banner.html:9
+msgid "Platform UI - the new UI for InvenTree - provides more modern administration options."
+msgstr ""
+
+#: templates/pui_banner.html:12
+msgid "Platform UI - the new UI for InvenTree - is ready to be tested."
+msgstr ""
+
+#: templates/pui_banner.html:15
+msgid "Try it out now"
+msgstr ""
+
+#: templates/pui_banner.html:15
+msgid "here"
 msgstr ""
 
 #: templates/qr_code.html:11
