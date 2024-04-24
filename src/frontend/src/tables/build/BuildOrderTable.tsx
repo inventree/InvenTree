@@ -151,7 +151,7 @@ export function BuildOrderTable({
     return [
       <AddItemButton
         hidden={!user.hasAddRole(UserRoles.build)}
-        tooltip={t`Create Build Order`}
+        tooltip={t`Add Build Order`}
         onClick={() => newBuild.open()}
       />
     ];

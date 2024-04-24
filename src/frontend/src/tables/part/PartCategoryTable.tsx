@@ -103,7 +103,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
 
     return [
       <AddItemButton
-        tooltip={t`Create Part Category`}
+        tooltip={t`Add Part Category`}
         onClick={() => newCategory.open()}
         hidden={!can_add}
       />
