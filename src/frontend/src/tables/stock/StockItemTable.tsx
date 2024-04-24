@@ -29,7 +29,9 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
+  DateColumn,
   DescriptionColumn,
+  LocationColumn,
   PartColumn,
   StatusColumn
 } from '../ColumnRenderers';
@@ -198,16 +200,14 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'batch',
       sortable: true
     },
-    {
-      accessor: 'location',
-      sortable: true,
-      render: function (record: any) {
-        // TODO: Custom renderer for location
-        // TODO: Note, if not "In stock" we don't want to display the actual location here
-        return record?.location_detail?.pathstring ?? record.location ?? '-';
-      }
-    },
-    // TODO: stocktake column
+    LocationColumn({
+      accessor: 'location_detail'
+    }),
+    DateColumn({
+      accessor: 'stocktake_date',
+      title: t`Stocktake`,
+      sortable: true
+    }),
     {
       accessor: 'expiry_date',
       sortable: true,

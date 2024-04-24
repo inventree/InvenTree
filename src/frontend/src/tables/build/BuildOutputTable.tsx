@@ -20,7 +20,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { PartColumn } from '../ColumnRenderers';
+import { LocationColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
@@ -205,15 +205,9 @@ export default function BuildOutputTable({
           );
         }
       },
-      {
-        accessor: 'location',
-        sortable: true,
-        render: function (record: any) {
-          // TODO: Custom renderer for location
-          // TODO: Note, if not "In stock" we don't want to display the actual location here
-          return record?.location_detail?.pathstring ?? record.location ?? '-';
-        }
-      },
+      LocationColumn({
+        accessor: 'location_detail'
+      }),
       {
         accessor: 'allocations',
         sortable: false,
