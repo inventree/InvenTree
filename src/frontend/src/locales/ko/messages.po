@@ -8,7 +8,7 @@ msgstr ""
 "Language: ko\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-23 05:24\n"
+"PO-Revision-Date: 2024-04-24 05:26\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -28,6 +28,10 @@ msgstr ""
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
+msgstr ""
+
+#: src/components/buttons/ScanButton.tsx:19
+msgid "Open QR code scanner"
 msgstr ""
 
 #: src/components/buttons/SpotlightButton.tsx:11
@@ -502,7 +506,7 @@ msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
 msgstr ""
 
 #: src/components/forms/fields/ApiFormField.tsx:278
-#: src/components/modals/LicenseModal.tsx:72
+#: src/components/modals/LicenseModal.tsx:75
 #: src/components/nav/SearchDrawer.tsx:411
 #: src/components/widgets/MarkdownEditor.tsx:108
 #: src/components/widgets/MarkdownEditor.tsx:154
@@ -725,23 +729,23 @@ msgstr ""
 msgid "Dismiss"
 msgstr ""
 
-#: src/components/modals/LicenseModal.tsx:36
+#: src/components/modals/LicenseModal.tsx:39
 msgid "No license text available"
 msgstr ""
 
-#: src/components/modals/LicenseModal.tsx:43
+#: src/components/modals/LicenseModal.tsx:46
 msgid "No Information provided - this is likely a server issue"
 msgstr ""
 
-#: src/components/modals/LicenseModal.tsx:68
+#: src/components/modals/LicenseModal.tsx:71
 msgid "Loading license information"
 msgstr ""
 
-#: src/components/modals/LicenseModal.tsx:74
+#: src/components/modals/LicenseModal.tsx:77
 msgid "Failed to fetch license information"
 msgstr ""
 
-#: src/components/modals/LicenseModal.tsx:82
+#: src/components/modals/LicenseModal.tsx:85
 msgid "{key} Packages"
 msgstr ""
 
