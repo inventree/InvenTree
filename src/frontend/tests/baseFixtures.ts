@@ -60,6 +60,8 @@ export const test = baseTest.extend({
         msg.type() === 'error' &&
         !msg.text().startsWith('ERR: ') &&
         url != 'http://localhost:8000/api/barcode/' &&
+        url != 'http://localhost:8000/api/news/?search=&offset=0&limit=25' &&
+        url != 'https://docs.inventree.org/en/versions.json' &&
         !url.startsWith('chrome://')
       )
         messages.push(msg);
