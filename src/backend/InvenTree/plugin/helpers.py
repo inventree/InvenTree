@@ -13,7 +13,7 @@ from importlib.metadata import entry_points
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import IntegrityError, OperationalError, ProgrammingError
+from django.db.utils import IntegrityError
 
 logger = logging.getLogger('inventree')
 
@@ -111,7 +111,7 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 def get_entrypoints():
     """Returns list for entrypoints for InvenTree plugins."""
-    # on python before 3.8, we need to use importlib_metadata
+    # on python before 3.12, we need to use importlib_metadata
     if sys.version_info < (3, 12):
         return entry_points().get('inventree_plugins', [])
     return entry_points(group='inventree_plugins')
