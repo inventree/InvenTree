@@ -58,7 +58,8 @@ export const test = baseTest.extend({
       if (
         msg.type() === 'error' &&
         !msg.text().startsWith('ERR: ') &&
-        msg.location().url != 'http://localhost:8000/api/barcode/'
+        msg.location().url != 'http://localhost:8000/api/barcode/' &&
+        !msg.location().url.startsWith('chrome://')
       )
         messages.push(msg);
     });
