@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-23 01:51+0000\n"
-"PO-Revision-Date: 2024-04-23 05:25\n"
+"POT-Creation-Date: 2024-04-23 11:06+0000\n"
+"PO-Revision-Date: 2024-04-24 05:27\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -489,7 +489,7 @@ msgstr "Lựa chọn sai"
 #: plugin/models.py:41 report/models.py:176 stock/models.py:76
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
-#: templates/InvenTree/settings/plugin.html:81
+#: templates/InvenTree/settings/plugin.html:83
 #: templates/InvenTree/settings/plugin_settings.html:22
 #: templates/InvenTree/settings/settings_staff_js.html:67
 #: templates/InvenTree/settings/settings_staff_js.html:446
@@ -9872,12 +9872,12 @@ msgstr "Cài đặt đăng nhập"
 msgid "Outgoing email has not been configured. Some login and sign-up features may not work correctly!"
 msgstr "Chưa cấu hình email gửi đi. Một số tính năng đăng nhập và đăng ký sẽ không hoạt động được!"
 
-#: templates/InvenTree/settings/login.html:25 templates/account/signup.html:5
+#: templates/InvenTree/settings/login.html:27 templates/account/signup.html:5
 #: templates/socialaccount/signup.html:5
 msgid "Signup"
 msgstr "Đăng ký"
 
-#: templates/InvenTree/settings/login.html:34
+#: templates/InvenTree/settings/login.html:36
 msgid "Single Sign On"
 msgstr "Đăng nhập một lần"
 
@@ -9954,36 +9954,36 @@ msgstr "Thiết lập phần bổ sung"
 msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 msgstr "Đổi thiết lập bên dưới yêu cầu bạn cần khởi động máy chủ ngay lập tức. Đừng thay đổi điều này trong khi đang sử dụng phần mềm."
 
-#: templates/InvenTree/settings/plugin.html:36
+#: templates/InvenTree/settings/plugin.html:38
 #: templates/InvenTree/settings/sidebar.html:66
 msgid "Plugins"
 msgstr "Phần bổ sung"
 
-#: templates/InvenTree/settings/plugin.html:42
-#: templates/InvenTree/settings/plugin.html:43
+#: templates/InvenTree/settings/plugin.html:44
+#: templates/InvenTree/settings/plugin.html:45
 #: templates/js/translated/plugin.js:151
 msgid "Install Plugin"
 msgstr "Cài đặt phần bổ sung"
 
-#: templates/InvenTree/settings/plugin.html:45
-#: templates/InvenTree/settings/plugin.html:46
+#: templates/InvenTree/settings/plugin.html:47
+#: templates/InvenTree/settings/plugin.html:48
 #: templates/js/translated/plugin.js:224
 msgid "Reload Plugins"
 msgstr "Tải lại plugin"
 
-#: templates/InvenTree/settings/plugin.html:56
+#: templates/InvenTree/settings/plugin.html:58
 msgid "External plugins are not enabled for this InvenTree installation"
 msgstr "Phần bổ sung bên ngoài chưa được bật cho cài đặt InvenTree này"
 
-#: templates/InvenTree/settings/plugin.html:71
+#: templates/InvenTree/settings/plugin.html:73
 msgid "Plugin Error Stack"
 msgstr "Ngăn Xếp Lỗi Phần Bổ Sung"
 
-#: templates/InvenTree/settings/plugin.html:80
+#: templates/InvenTree/settings/plugin.html:82
 msgid "Stage"
 msgstr "Giai đoạn"
 
-#: templates/InvenTree/settings/plugin.html:82
+#: templates/InvenTree/settings/plugin.html:84
 #: templates/js/translated/notification.js:76
 msgid "Message"
 msgstr "Tin nhắn"
@@ -10607,26 +10607,26 @@ msgstr "Xác nhận"
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr "Liên kết xác nhận email đã hết hạn hoặc không hợp lệ. Xin hãy <a href=\"%(email_url)s\">tạo yêu cầu xác nhận email mới</a>."
 
-#: templates/account/login.html:6 templates/account/login.html:17
-#: templates/account/login.html:38 templates/socialaccount/login.html:5
+#: templates/account/login.html:6 templates/account/login.html:19
+#: templates/account/login.html:40 templates/socialaccount/login.html:5
 msgid "Sign In"
 msgstr "Đăng nhập"
 
-#: templates/account/login.html:21
+#: templates/account/login.html:23
 msgid "Not a member?"
 msgstr "Chưa có tài khoản?"
 
-#: templates/account/login.html:23 templates/account/signup.html:11
+#: templates/account/login.html:25 templates/account/signup.html:11
 #: templates/account/signup.html:22 templates/socialaccount/signup.html:8
 #: templates/socialaccount/signup.html:23
 msgid "Sign Up"
 msgstr "Đăng ký"
 
-#: templates/account/login.html:45
+#: templates/account/login.html:47
 msgid "Forgot Password?"
 msgstr "Quân mật khẩu?"
 
-#: templates/account/login.html:53
+#: templates/account/login.html:55
 msgid "or log in with"
 msgstr "hoặc đăng nhập bằng"
 
@@ -13976,6 +13976,22 @@ msgstr "Lưu lại"
 #: templates/notifications.html:9
 msgid "Show all notifications and history"
 msgstr "Hiện toàn bộ thông báo và lịch sử"
+
+#: templates/pui_banner.html:9
+msgid "Platform UI - the new UI for InvenTree - provides more modern administration options."
+msgstr ""
+
+#: templates/pui_banner.html:12
+msgid "Platform UI - the new UI for InvenTree - is ready to be tested."
+msgstr ""
+
+#: templates/pui_banner.html:15
+msgid "Try it out now"
+msgstr ""
+
+#: templates/pui_banner.html:15
+msgid "here"
+msgstr ""
 
 #: templates/qr_code.html:11
 msgid "QR data not provided"
