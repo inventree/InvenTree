@@ -15,7 +15,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -37,7 +37,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -58,7 +57,6 @@ export default function BuildDetail() {
   const { id } = useParams();
 
   const user = useUserState();
-  const navigate = useNavigate();
 
   const {
     instance: build,
@@ -310,11 +308,8 @@ export default function BuildDetail() {
       ...build,
       reference: undefined
     },
-    onFormSuccess: (response: any) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.build, response.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.build
   });
 
   const buildActions = useMemo(() => {
@@ -356,7 +351,7 @@ export default function BuildDetail() {
             hidden: !user.hasChangeRole(UserRoles.build)
           }),
           CancelItemAction({
-            tooltip: t`Cancel build order`
+            tooltip: t`Cancel order`
           }),
           DuplicateItemAction({
             onClick: () => duplicateBuild.open(),

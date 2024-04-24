@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
@@ -22,7 +21,6 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -357,8 +355,6 @@ export function StockItemTable({
   const table = useTable(tableName);
   const user = useUserState();
 
-  const navigate = useNavigate();
-
   const tableActionParams: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
@@ -377,11 +373,8 @@ export function StockItemTable({
       part: params.part,
       location: params.location
     },
-    onFormSuccess: (data: any) => {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.stockitem, data.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.stockitem
   });
 
   const transferStock = useTransferStockItem(tableActionParams);

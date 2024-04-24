@@ -11,14 +11,16 @@ import {
   IconTruckLoading
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
+  CancelItemAction,
   DeleteItemAction,
+  DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -29,7 +31,11 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import { getDetailUrl } from '../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -43,6 +49,7 @@ export default function SalesOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const navigate = useNavigate();
 
   const {
     instance: order,
@@ -212,6 +219,18 @@ export default function SalesOrderDetail() {
     }
   });
 
+  const duplicateSalesOrder = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_list,
+    title: t`Create Sales Order`,
+    fields: salesOrderFields,
+    initialData: {
+      ...order,
+      reference: undefined
+    },
+    follow: true,
+    modelType: ModelType.salesorder
+  });
+
   const orderPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -281,13 +300,14 @@ export default function SalesOrderDetail() {
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.sales_order),
-            onClick: () => {
-              editSalesOrder.open();
-            }
+            onClick: () => editSalesOrder.open()
           }),
-          DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.sales_order)
-            // TODO: Delete?
+          CancelItemAction({
+            tooltip: t`Cancel order`
+          }),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.sales_order),
+            onClick: () => duplicateSalesOrder.open()
           })
         ]}
       />
@@ -309,6 +329,7 @@ export default function SalesOrderDetail() {
   return (
     <>
       {editSalesOrder.modal}
+      {duplicateSalesOrder.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail

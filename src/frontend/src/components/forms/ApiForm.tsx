@@ -19,9 +19,11 @@ import {
   SubmitHandler,
   useForm
 } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 import { api, queryClient } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   NestedDict,
   constructField,
@@ -30,6 +32,7 @@ import {
   mapFields
 } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
+import { getDetailUrl } from '../../functions/urls';
 import { PathParams } from '../../states/ApiState';
 import {
   ApiFormField,
@@ -59,6 +62,8 @@ export interface ApiFormAction {
  * @param successMessage : Optional message to display on successful form submission
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
+ * @param modelType : Define a model type for this form
+ * @param follow : Boolean, follow the result of the form (if possible)
  */
 export interface ApiFormProps {
   url: ApiEndpoints | string;
@@ -79,6 +84,8 @@ export interface ApiFormProps {
   successMessage?: string;
   onFormSuccess?: (data: any) => void;
   onFormError?: () => void;
+  modelType?: ModelType;
+  follow?: boolean;
   actions?: ApiFormAction[];
   timeout?: number;
 }
@@ -183,6 +190,8 @@ export function ApiForm({
   props: ApiFormProps;
   optionsLoading: boolean;
 }) {
+  const navigate = useNavigate();
+
   const fields: ApiFormFieldSet = useMemo(() => {
     return props.fields ?? {};
   }, [props.fields]);
@@ -382,6 +391,12 @@ export function ApiForm({
             // Optionally call the onFormSuccess callback
             if (props.onFormSuccess) {
               props.onFormSuccess(response.data);
+            }
+
+            if (props.follow) {
+              if (props.modelType && response.data?.pk) {
+                navigate(getDetailUrl(props.modelType, response.data?.pk));
+              }
             }
 
             // Optionally show a success message

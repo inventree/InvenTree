@@ -9,7 +9,7 @@ import {
   IconPaperclip
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -17,7 +17,8 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
-  DeleteItemAction,
+  CancelItemAction,
+  DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
@@ -31,7 +32,11 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import { getDetailUrl } from '../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -46,6 +51,7 @@ export default function PurchaseOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const navigate = useNavigate();
 
   const {
     instance: order,
@@ -70,6 +76,18 @@ export default function PurchaseOrderDetail() {
     onFormSuccess: () => {
       refreshInstance();
     }
+  });
+
+  const duplicatePurchaseOrder = useCreateApiFormModal({
+    url: ApiEndpoints.purchase_order_list,
+    title: t`Create Purchase Order`,
+    fields: purchaseOrderFields,
+    initialData: {
+      ...order,
+      reference: undefined
+    },
+    follow: true,
+    modelType: ModelType.purchaseorder
   });
 
   const detailsPanel = useMemo(() => {
@@ -299,8 +317,12 @@ export default function PurchaseOrderDetail() {
               editPurchaseOrder.open();
             }
           }),
-          DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+          CancelItemAction({
+            tooltip: t`Cancel order`
+          }),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
+            onClick: () => duplicatePurchaseOrder.open()
           })
         ]}
       />
@@ -322,6 +344,7 @@ export default function PurchaseOrderDetail() {
   return (
     <>
       {editPurchaseOrder.modal}
+      {duplicatePurchaseOrder.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail

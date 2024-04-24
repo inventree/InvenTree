@@ -278,11 +278,8 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
     initialData: {
       ...(props.params ?? {})
     },
-    onFormSuccess: (data: any) => {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.part, data.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.part
   });
 
   const tableActions = useMemo(() => {
