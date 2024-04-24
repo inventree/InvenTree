@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-23 01:51+0000\n"
-"PO-Revision-Date: 2024-04-23 05:25\n"
+"POT-Creation-Date: 2024-04-23 11:06+0000\n"
+"PO-Revision-Date: 2024-04-24 05:27\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -489,7 +489,7 @@ msgstr "Neplatný výběr"
 #: plugin/models.py:41 report/models.py:176 stock/models.py:76
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
-#: templates/InvenTree/settings/plugin.html:81
+#: templates/InvenTree/settings/plugin.html:83
 #: templates/InvenTree/settings/plugin_settings.html:22
 #: templates/InvenTree/settings/settings_staff_js.html:67
 #: templates/InvenTree/settings/settings_staff_js.html:446
@@ -9872,12 +9872,12 @@ msgstr ""
 msgid "Outgoing email has not been configured. Some login and sign-up features may not work correctly!"
 msgstr ""
 
-#: templates/InvenTree/settings/login.html:25 templates/account/signup.html:5
+#: templates/InvenTree/settings/login.html:27 templates/account/signup.html:5
 #: templates/socialaccount/signup.html:5
 msgid "Signup"
 msgstr ""
 
-#: templates/InvenTree/settings/login.html:34
+#: templates/InvenTree/settings/login.html:36
 msgid "Single Sign On"
 msgstr ""
 
@@ -9954,36 +9954,36 @@ msgstr ""
 msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:36
+#: templates/InvenTree/settings/plugin.html:38
 #: templates/InvenTree/settings/sidebar.html:66
 msgid "Plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:42
-#: templates/InvenTree/settings/plugin.html:43
+#: templates/InvenTree/settings/plugin.html:44
+#: templates/InvenTree/settings/plugin.html:45
 #: templates/js/translated/plugin.js:151
 msgid "Install Plugin"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:45
-#: templates/InvenTree/settings/plugin.html:46
+#: templates/InvenTree/settings/plugin.html:47
+#: templates/InvenTree/settings/plugin.html:48
 #: templates/js/translated/plugin.js:224
 msgid "Reload Plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:56
+#: templates/InvenTree/settings/plugin.html:58
 msgid "External plugins are not enabled for this InvenTree installation"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:71
+#: templates/InvenTree/settings/plugin.html:73
 msgid "Plugin Error Stack"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:80
+#: templates/InvenTree/settings/plugin.html:82
 msgid "Stage"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:82
+#: templates/InvenTree/settings/plugin.html:84
 #: templates/js/translated/notification.js:76
 msgid "Message"
 msgstr ""
@@ -10607,26 +10607,26 @@ msgstr "Potvrdit"
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr ""
 
-#: templates/account/login.html:6 templates/account/login.html:17
-#: templates/account/login.html:38 templates/socialaccount/login.html:5
+#: templates/account/login.html:6 templates/account/login.html:19
+#: templates/account/login.html:40 templates/socialaccount/login.html:5
 msgid "Sign In"
 msgstr ""
 
-#: templates/account/login.html:21
+#: templates/account/login.html:23
 msgid "Not a member?"
 msgstr ""
 
-#: templates/account/login.html:23 templates/account/signup.html:11
+#: templates/account/login.html:25 templates/account/signup.html:11
 #: templates/account/signup.html:22 templates/socialaccount/signup.html:8
 #: templates/socialaccount/signup.html:23
 msgid "Sign Up"
 msgstr ""
 
-#: templates/account/login.html:45
+#: templates/account/login.html:47
 msgid "Forgot Password?"
 msgstr ""
 
-#: templates/account/login.html:53
+#: templates/account/login.html:55
 msgid "or log in with"
 msgstr ""
 
@@ -13975,6 +13975,22 @@ msgstr ""
 
 #: templates/notifications.html:9
 msgid "Show all notifications and history"
+msgstr ""
+
+#: templates/pui_banner.html:9
+msgid "Platform UI - the new UI for InvenTree - provides more modern administration options."
+msgstr ""
+
+#: templates/pui_banner.html:12
+msgid "Platform UI - the new UI for InvenTree - is ready to be tested."
+msgstr ""
+
+#: templates/pui_banner.html:15
+msgid "Try it out now"
+msgstr ""
+
+#: templates/pui_banner.html:15
+msgid "here"
 msgstr ""
 
 #: templates/qr_code.html:11
