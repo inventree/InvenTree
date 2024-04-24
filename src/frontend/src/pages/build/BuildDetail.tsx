@@ -15,7 +15,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -36,7 +36,11 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import { getDetailUrl } from '../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -53,6 +57,7 @@ export default function BuildDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const navigate = useNavigate();
 
   const {
     instance: build,
@@ -296,6 +301,21 @@ export default function BuildDetail() {
     }
   });
 
+  const duplicateBuild = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Create Build Order`,
+    fields: buildOrderFields,
+    initialData: {
+      ...build,
+      reference: undefined
+    },
+    onFormSuccess: (response: any) => {
+      if (response.pk) {
+        navigate(getDetailUrl(ModelType.build, response.pk));
+      }
+    }
+  });
+
   const buildActions = useMemo(() => {
     // TODO: Disable certain actions based on user permissions
     return [
@@ -334,7 +354,10 @@ export default function BuildDetail() {
             onClick: () => editBuild.open(),
             hidden: !user.hasChangeRole(UserRoles.build)
           }),
-          DuplicateItemAction({})
+          DuplicateItemAction({
+            onClick: () => duplicateBuild.open(),
+            hidden: !user.hasAddRole(UserRoles.build)
+          })
         ]}
       />
     ];
@@ -355,6 +378,7 @@ export default function BuildDetail() {
   return (
     <>
       {editBuild.modal}
+      {duplicateBuild.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail

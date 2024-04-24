@@ -139,7 +139,7 @@ export function BuildOrderTable({
 
   const newBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
-    title: t`Add Build Order`,
+    title: t`Create Build Order`,
     fields: buildOrderFields,
     initialData: {
       part: partId,
@@ -157,7 +157,7 @@ export function BuildOrderTable({
     return [
       <AddItemButton
         hidden={!user.hasAddRole(UserRoles.build)}
-        tooltip={t`Add Build Order`}
+        tooltip={t`Create Build Order`}
         onClick={() => newBuild.open()}
       />
     ];
