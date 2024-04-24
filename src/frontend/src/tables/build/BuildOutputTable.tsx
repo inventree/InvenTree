@@ -20,6 +20,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 type TestResultOverview = {
@@ -115,7 +116,9 @@ export default function BuildOutputTable({
   const rowActions = useCallback(
     (record: any) => {
       // TODO: Add row actions
-      return [];
+      let actions: RowAction[] = [];
+
+      return actions;
     },
     [user, partId, buildId]
   );
