@@ -183,7 +183,10 @@ def get_modules(pkg, path=None):
 
     for finder, name, _ in pkgutil.walk_packages(path):
         try:
-            module = module_from_spec(finder.find_spec(name))
+            if sys.version_info < (3, 12):
+                module = module_from_spec(finder.find_spec(name))
+            else:
+                module = finder.find_module(name).load_module(name)
             pkg_names = getattr(module, '__all__', None)
             for k, v in vars(module).items():
                 if not k.startswith('_') and (pkg_names is None or k in pkg_names):
