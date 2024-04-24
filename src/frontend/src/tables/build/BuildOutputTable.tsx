@@ -9,11 +9,14 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
 import { api } from '../../App';
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -31,6 +34,7 @@ export default function BuildOutputTable({
   buildId: number;
   partId: number;
 }) {
+  const user = useUserState();
   const table = useTable('build-outputs');
 
   // Fetch the test templates associated with the partId
@@ -95,10 +99,26 @@ export default function BuildOutputTable({
     [partId, testTemplates]
   );
 
-  // TODO: Button to create new build output
-  // TODO: Button to complete output(s)
-  // TODO: Button to cancel output(s)
-  // TODO: Button to scrap output(s)
+  const tableActions = useMemo(() => {
+    // TODO: Button to create new build output
+    // TODO: Button to complete output(s)
+    // TODO: Button to cancel output(s)
+    // TODO: Button to scrap output(s)
+    return [
+      <AddItemButton
+        tooltip={t`Add Build Output`}
+        hidden={!user.hasAddRole(UserRoles.build)}
+      />
+    ];
+  }, [user, partId, buildId]);
+
+  const rowActions = useCallback(
+    (record: any) => {
+      // TODO: Add row actions
+      return [];
+    },
+    [user, partId, buildId]
+  );
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -206,7 +226,9 @@ export default function BuildOutputTable({
             build: buildId
           },
           modelType: ModelType.stockitem,
-          dataFormatter: formatRecords
+          dataFormatter: formatRecords,
+          tableActions: tableActions,
+          rowActions: rowActions
         }}
       />
     </>
