@@ -9,11 +9,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
 import { api } from '../../App';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -109,14 +111,62 @@ export default function BuildOutputTable({
       <AddItemButton
         tooltip={t`Add Build Output`}
         hidden={!user.hasAddRole(UserRoles.build)}
+      />,
+      <ActionButton
+        tooltip={t`Complete selected outputs`}
+        icon={<InvenTreeIcon icon="success" />}
+        color="green"
+        disabled={!table.hasSelectedRecords}
+      />,
+      <ActionButton
+        tooltip={t`Scrap selected outputs`}
+        icon={<InvenTreeIcon icon="cancel" />}
+        color="red"
+        disabled={!table.hasSelectedRecords}
+      />,
+      <ActionButton
+        tooltip={t`Cancel selected outputs`}
+        icon={<InvenTreeIcon icon="delete" />}
+        color="red"
+        disabled={!table.hasSelectedRecords}
       />
     ];
-  }, [user, partId, buildId]);
+  }, [user, partId, buildId, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any) => {
-      // TODO: Add row actions
-      let actions: RowAction[] = [];
+      let actions: RowAction[] = [
+        {
+          title: t`Allocate`,
+          tooltip: t`Allocate stock to build output`,
+          color: 'blue',
+          icon: <InvenTreeIcon icon="plus" />
+        },
+        {
+          title: t`Deallocate`,
+          tooltip: t`Deallocate stock from build output`,
+          color: 'red',
+          icon: <InvenTreeIcon icon="minus" />
+        },
+        {
+          title: t`Complete`,
+          tooltip: t`Complete build output`,
+          color: 'green',
+          icon: <InvenTreeIcon icon="success" />
+        },
+        {
+          title: t`Scrap`,
+          tooltip: t`Scrap build output`,
+          color: 'red',
+          icon: <InvenTreeIcon icon="cancel" />
+        },
+        {
+          title: t`Delete`,
+          tooltip: t`Delete build output`,
+          color: 'red',
+          icon: <InvenTreeIcon icon="delete" />
+        }
+      ];
 
       return actions;
     },
@@ -231,7 +281,8 @@ export default function BuildOutputTable({
           modelType: ModelType.stockitem,
           dataFormatter: formatRecords,
           tableActions: tableActions,
-          rowActions: rowActions
+          rowActions: rowActions,
+          enableSelection: true
         }}
       />
     </>
