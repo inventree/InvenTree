@@ -5,14 +5,19 @@ import logging
 import os
 import pathlib
 import pkgutil
+import sys
 import sysconfig
 import traceback
-from importlib.metadata import entry_points
 
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
+
+if sys.version_info < (3, 12):
+    from importlib_metadata import entry_points
+else:
+    from importlib.metadata import entry_points
 
 logger = logging.getLogger('inventree')
 
@@ -110,6 +115,9 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 def get_entrypoints():
     """Returns list for entrypoints for InvenTree plugins."""
+    # on python before 3.8, we need to use importlib_metadata
+    if sys.version_info < (3, 12):
+        return entry_points().get('inventree_plugins', [])
     return entry_points(group='inventree_plugins')
 
 
