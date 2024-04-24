@@ -22,6 +22,7 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
+  CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
@@ -353,6 +354,9 @@ export default function BuildDetail() {
           EditItemAction({
             onClick: () => editBuild.open(),
             hidden: !user.hasChangeRole(UserRoles.build)
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel build order`
           }),
           DuplicateItemAction({
             onClick: () => duplicateBuild.open(),
