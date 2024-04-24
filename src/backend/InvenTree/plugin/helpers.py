@@ -8,16 +8,12 @@ import pkgutil
 import sys
 import sysconfig
 import traceback
+from importlib.metadata import entry_points
 
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
 from django.db.utils import IntegrityError, OperationalError, ProgrammingError
-
-if sys.version_info < (3, 12):
-    from importlib_metadata import entry_points
-else:
-    from importlib.metadata import entry_points
 
 logger = logging.getLogger('inventree')
 
