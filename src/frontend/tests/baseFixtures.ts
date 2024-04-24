@@ -55,11 +55,12 @@ export const test = baseTest.extend({
   page: async ({ baseURL, page }, use) => {
     const messages = [];
     page.on('console', (msg) => {
+      const url = msg.location().url;
       if (
         msg.type() === 'error' &&
         !msg.text().startsWith('ERR: ') &&
-        msg.location().url != 'http://localhost:8000/api/barcode/' &&
-        !msg.location().url.startsWith('chrome://')
+        url != 'http://localhost:8000/api/barcode/' &&
+        !url.startsWith('chrome://')
       )
         messages.push(msg);
     });
