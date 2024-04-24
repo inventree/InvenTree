@@ -221,7 +221,7 @@ export default function SalesOrderDetail() {
 
   const duplicateSalesOrder = useCreateApiFormModal({
     url: ApiEndpoints.sales_order_list,
-    title: t`Create Sales Order`,
+    title: t`Add Sales Order`,
     fields: salesOrderFields,
     initialData: {
       ...order,

@@ -194,7 +194,7 @@ export default function ManufacturerPartDetail() {
 
   const duplicateManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
-    title: t`Create Manufacturer Part`,
+    title: t`Add Manufacturer Part`,
     fields: editManufacturerPartFields,
     initialData: {
       ...manufacturerPart

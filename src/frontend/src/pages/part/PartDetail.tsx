@@ -674,7 +674,7 @@ export default function PartDetail() {
 
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
-    title: t`Create Part`,
+    title: t`Add Part`,
     fields: partFields,
     initialData: {
       ...part

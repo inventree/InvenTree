@@ -72,7 +72,7 @@ export function CompanyTable({
 
   const newCompany = useCreateApiFormModal({
     url: ApiEndpoints.company_list,
-    title: t`Create Company`,
+    title: t`Add Company`,
     fields: companyFields(),
     initialData: params,
     follow: true,

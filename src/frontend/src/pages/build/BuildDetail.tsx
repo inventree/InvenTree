@@ -302,7 +302,7 @@ export default function BuildDetail() {
 
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
-    title: t`Create Build Order`,
+    title: t`Add Build Order`,
     fields: buildOrderFields,
     initialData: {
       ...build,

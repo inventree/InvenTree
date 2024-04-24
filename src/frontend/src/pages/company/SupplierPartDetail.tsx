@@ -276,7 +276,7 @@ export default function SupplierPartDetail() {
 
   const duplicateSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    title: t`Create Supplier Part`,
+    title: t`Add Supplier Part`,
     fields: supplierPartFields,
     initialData: {
       ...supplierPart

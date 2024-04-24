@@ -161,7 +161,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
 
   const addSupplierPart = useCreateApiFormModal({
     url: ApiEndpoints.supplier_part_list,
-    title: t`Create Supplier Part`,
+    title: t`Add Supplier Part`,
     fields: supplierPartFields,
     initialData: {
       part: params?.part,

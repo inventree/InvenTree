@@ -80,7 +80,7 @@ export default function PurchaseOrderDetail() {
 
   const duplicatePurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
-    title: t`Create Purchase Order`,
+    title: t`Add Purchase Order`,
     fields: purchaseOrderFields,
     initialData: {
       ...order,

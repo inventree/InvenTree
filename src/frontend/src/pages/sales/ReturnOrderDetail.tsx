@@ -268,7 +268,7 @@ export default function ReturnOrderDetail() {
 
   const duplicateReturnOrder = useCreateApiFormModal({
     url: ApiEndpoints.return_order_list,
-    title: t`Create Return Order`,
+    title: t`Add Return Order`,
     fields: returnOrderFields,
     initialData: {
       ...order,
