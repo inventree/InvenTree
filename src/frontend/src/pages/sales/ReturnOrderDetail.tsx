@@ -16,7 +16,6 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   CancelItemAction,
-  DeleteItemAction,
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';

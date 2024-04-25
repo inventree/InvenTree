@@ -1,10 +1,9 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import {
   ActionIcon,
   Anchor,
   Badge,
   CopyButton,
-  Group,
   Paper,
   Skeleton,
   Stack,

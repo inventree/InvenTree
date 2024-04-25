@@ -15,7 +15,6 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
-  DeleteItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,

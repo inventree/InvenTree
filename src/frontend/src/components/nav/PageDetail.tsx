@@ -1,7 +1,6 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { Fragment, ReactNode } from 'react';
 
-import DetailsBadge, { DetailsBadgeProps } from '../details/DetailsBadge';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 import { Breadcrumb, BreadcrumbList } from './BreadcrumbList';

@@ -19,8 +19,7 @@ import { InvenTreeIcon } from '../functions/icons';
 import {
   ApiFormModalProps,
   useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
+  useDeleteApiFormModal
 } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
 
