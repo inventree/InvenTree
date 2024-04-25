@@ -81,9 +81,14 @@ def reverse(apps, schema_editor):
     """
     ReportTemplate = apps.get_model('report', 'reporttemplate')
 
-    for item in ReportTemplate.objects.all():
-        item.template.delete()
-        item.delete()
+    n = ReportTemplate.objects.count()
+
+    if n > 0:
+        for item in ReportTemplate.objects.all():
+            item.template.delete()
+            item.delete()
+        
+        print(f"Deleted {n} ReportTemplate objects and templates")
 
 
 class Migration(migrations.Migration):

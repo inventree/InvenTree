@@ -76,10 +76,14 @@ def reverse(apps, schema_editor):
 
     LabelTemplate = apps.get_model('report', 'labeltemplate')
 
-    for item in LabelTemplate.objects.all():
-        item.template.delete()
-        item.delete()
+    n = LabelTemplate.objects.count()
 
+    if n > 0:
+        for item in LabelTemplate.objects.all():
+            item.template.delete()
+            item.delete()
+
+        print(f"Deleted {n} LabelTemplate objects and templates")
 
 class Migration(migrations.Migration):
 
