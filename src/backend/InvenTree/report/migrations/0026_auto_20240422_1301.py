@@ -28,7 +28,11 @@ def forward(apps, schema_editor):
     count = 0
 
     for template_class, model_type in label_model_map().items():
-        model = apps.get_model('label', template_class)
+        try:
+            model = apps.get_model('label', template_class)
+        except LookupError:
+            # Note that the 'label' app may have been deleted already
+            continue
 
         for template in model.objects.all():
             # Construct a new LabelTemplate instance
@@ -80,6 +84,7 @@ def reverse(apps, schema_editor):
 
     if n > 0:
         for item in LabelTemplate.objects.all():
+
             item.template.delete()
             item.delete()
 
