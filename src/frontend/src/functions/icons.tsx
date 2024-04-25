@@ -12,8 +12,10 @@ import {
   IconCalendarStats,
   IconCategory,
   IconCheck,
+  IconCircleCheck,
   IconCircleMinus,
   IconCirclePlus,
+  IconCircleX,
   IconClipboardList,
   IconClipboardText,
   IconCopy,
@@ -59,6 +61,7 @@ import {
   IconTool,
   IconTools,
   IconTransfer,
+  IconTransitionRight,
   IconTrash,
   IconTruck,
   IconTruckDelivery,
@@ -130,6 +133,10 @@ const icons = {
   delete: IconTrash,
   packaging: IconPackage,
   packages: IconPackages,
+  install: IconTransitionRight,
+  plus: IconCirclePlus,
+  minus: IconCircleMinus,
+  cancel: IconCircleX,
 
   // Part Icons
   active: IconCheck,
@@ -186,7 +193,8 @@ const icons = {
   batch_code: IconClipboardText,
   destination: IconFlag,
   repeat_destination: IconFlagShare,
-  unlink: IconUnlink
+  unlink: IconUnlink,
+  success: IconCircleCheck
 };
 
 export type InvenTreeIconType = keyof typeof icons;

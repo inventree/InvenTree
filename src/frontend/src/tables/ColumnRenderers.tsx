@@ -2,7 +2,7 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/macro';
-import { Anchor } from '@mantine/core';
+import { Anchor, Text } from '@mantine/core';
 
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -11,6 +11,7 @@ import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner } from '../components/render/User';
 import { formatCurrency, renderDate } from '../defaults/formatters';
 import { ModelType } from '../enums/ModelType';
+import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
 import { TableColumn } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
@@ -25,23 +26,56 @@ export function PartColumn(part: any, full_name?: boolean) {
   );
 }
 
+export function LocationColumn({
+  accessor,
+  title,
+  sortable,
+  ordering
+}: {
+  accessor: string;
+  title?: string;
+  sortable?: boolean;
+  ordering?: string;
+}): TableColumn {
+  return {
+    accessor: accessor,
+    title: title ?? t`Location`,
+    sortable: sortable ?? true,
+    ordering: ordering ?? 'location',
+    render: (record: any) => {
+      let location = resolveItem(record, accessor);
+
+      if (!location) {
+        return <Text italic>{t`No location set`}</Text>;
+      }
+
+      return <Text>{location.name}</Text>;
+    }
+  };
+}
+
 export function BooleanColumn({
   accessor,
   title,
   sortable,
-  switchable
+  switchable,
+  ordering
 }: {
   accessor: string;
   title?: string;
+  ordering?: string;
   sortable?: boolean;
   switchable?: boolean;
 }): TableColumn {
   return {
     accessor: accessor,
     title: title,
+    ordering: ordering,
     sortable: sortable ?? true,
     switchable: switchable ?? true,
-    render: (record: any) => <YesNoButton value={record[accessor]} />
+    render: (record: any) => (
+      <YesNoButton value={resolveItem(record, accessor)} />
+    )
   };
 }
 
@@ -71,7 +105,7 @@ export function LinkColumn({
     accessor: accessor,
     sortable: false,
     render: (record: any) => {
-      let url = record[accessor];
+      let url = resolveItem(record, accessor);
 
       if (!url) {
         return '-';

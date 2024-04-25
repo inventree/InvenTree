@@ -22,6 +22,7 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
+  CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
@@ -36,12 +37,16 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import BuildOutputTable from '../../tables/build/BuildOutputTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -203,8 +208,7 @@ export default function BuildDetail() {
         content: build?.pk ? (
           <BuildLineTable
             params={{
-              build: id,
-              tracked: false
+              build: id
             }}
           />
         ) : (
@@ -214,7 +218,12 @@ export default function BuildDetail() {
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
-        icon: <IconClipboardList />
+        icon: <IconClipboardList />,
+        content: build.pk ? (
+          <BuildOutputTable buildId={build.pk} partId={build.part} />
+        ) : (
+          <Skeleton />
+        )
         // TODO: Hide if build is complete
       },
       {
@@ -291,6 +300,18 @@ export default function BuildDetail() {
     }
   });
 
+  const duplicateBuild = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Add Build Order`,
+    fields: buildOrderFields,
+    initialData: {
+      ...build,
+      reference: undefined
+    },
+    follow: true,
+    modelType: ModelType.build
+  });
+
   const buildActions = useMemo(() => {
     // TODO: Disable certain actions based on user permissions
     return [
@@ -329,7 +350,13 @@ export default function BuildDetail() {
             onClick: () => editBuild.open(),
             hidden: !user.hasChangeRole(UserRoles.build)
           }),
-          DuplicateItemAction({})
+          CancelItemAction({
+            tooltip: t`Cancel order`
+          }),
+          DuplicateItemAction({
+            onClick: () => duplicateBuild.open(),
+            hidden: !user.hasAddRole(UserRoles.build)
+          })
         ]}
       />
     ];
@@ -350,6 +377,7 @@ export default function BuildDetail() {
   return (
     <>
       {editBuild.modal}
+      {duplicateBuild.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
