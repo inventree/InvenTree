@@ -513,6 +513,7 @@ class ManufacturerPart(
         null=True,
         verbose_name=_('Link'),
         help_text=_('URL for external manufacturer part link'),
+        max_length=2000,
     )
 
     description = models.CharField(
@@ -829,6 +830,7 @@ class SupplierPart(
         null=True,
         verbose_name=_('Link'),
         help_text=_('URL for external supplier part link'),
+        max_length=2000,
     )
 
     description = models.CharField(
