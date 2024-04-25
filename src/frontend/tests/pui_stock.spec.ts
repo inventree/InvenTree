@@ -16,6 +16,14 @@ test('PUI - Stock', async ({ page }) => {
   await page.getByRole('tab', { name: 'Stock Locations' }).click();
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('tab', { name: 'Location Details' }).click();
+
+  await page.goto(`${baseUrl}/stock/item/1194/details`);
+  await page.getByText('D.123 | Doohickey').waitFor();
+  await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
+  await page.getByRole('tab', { name: 'Stock Tracking' }).click();
+  await page.getByRole('tab', { name: 'Test Data' }).click();
+  await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
+  await page.getByRole('tab', { name: 'Installed Items' }).click();
 });
 
 test('PUI - Build', async ({ page }) => {
