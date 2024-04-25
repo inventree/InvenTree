@@ -322,6 +322,7 @@ export default function SalesOrderDetail() {
             status={order.status}
             type={ModelType.salesorder}
             options={{ size: 'lg' }}
+            key={order.pk}
           />
         ];
   }, [order, instanceQuery]);
