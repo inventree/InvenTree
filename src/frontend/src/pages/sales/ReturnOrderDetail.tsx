@@ -43,7 +43,6 @@ export default function ReturnOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
-  const navigate = useNavigate();
 
   const {
     instance: order,

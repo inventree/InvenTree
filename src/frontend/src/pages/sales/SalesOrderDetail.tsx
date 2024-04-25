@@ -47,7 +47,6 @@ export default function SalesOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
-  const navigate = useNavigate();
 
   const {
     instance: order,

@@ -268,7 +268,6 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
 
   const table = useTable('part-list');
   const user = useUserState();
-  const navigate = useNavigate();
 
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
