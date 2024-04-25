@@ -14,8 +14,10 @@ import {
   IconTrash,
   IconUnlink
 } from '@tabler/icons-react';
+import { color } from '@uiw/react-codemirror';
 import { ReactNode, useMemo } from 'react';
 
+import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 
 export type ActionDropdownItem = {
@@ -198,6 +200,24 @@ export function DeleteItemAction({
     icon: <IconTrash color="red" />,
     name: t`Delete`,
     tooltip: tooltip ?? t`Delete item`,
+    onClick: onClick,
+    hidden: hidden
+  };
+}
+
+export function CancelItemAction({
+  hidden = false,
+  tooltip,
+  onClick
+}: {
+  hidden?: boolean;
+  tooltip?: string;
+  onClick?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <InvenTreeIcon icon="cancel" iconProps={{ color: 'red' }} />,
+    name: t`Cancel`,
+    tooltip: tooltip ?? t`Cancel`,
     onClick: onClick,
     hidden: hidden
   };

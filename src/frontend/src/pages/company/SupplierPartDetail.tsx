@@ -8,7 +8,7 @@ import {
   IconShoppingCart
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
@@ -26,7 +26,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -42,8 +41,6 @@ export default function SupplierPartDetail() {
   const { id } = useParams();
 
   const user = useUserState();
-
-  const navigate = useNavigate();
 
   const {
     instance: supplierPart,
@@ -284,11 +281,8 @@ export default function SupplierPartDetail() {
     initialData: {
       ...supplierPart
     },
-    onFormSuccess: (response: any) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.supplierpart, response.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.supplierpart
   });
 
   const breadcrumbs = useMemo(() => {

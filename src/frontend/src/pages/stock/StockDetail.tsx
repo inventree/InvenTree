@@ -1,19 +1,9 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Badge,
-  Grid,
-  Group,
-  LoadingOverlay,
-  Skeleton,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconCopy,
   IconDots,
   IconHistory,
   IconInfoCircle,
@@ -23,7 +13,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
@@ -73,8 +63,6 @@ export default function StockDetail() {
   const { id } = useParams();
 
   const user = useUserState();
-
-  const navigate = useNavigate();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -375,11 +363,8 @@ export default function StockDetail() {
     initialData: {
       ...stockitem
     },
-    onFormSuccess: (response: any) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.stockitem, response.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.stockitem
   });
 
   const stockActionProps: StockOperationProps = useMemo(() => {
@@ -479,6 +464,11 @@ export default function StockDetail() {
     return instanceQuery.isLoading
       ? []
       : [
+          <DetailsBadge
+            color="yellow"
+            label={t`In Production`}
+            visible={stockitem.is_building}
+          />,
           <DetailsBadge
             color="blue"
             label={t`Serial Number` + `: ${stockitem.serial}`}

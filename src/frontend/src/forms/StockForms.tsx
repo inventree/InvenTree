@@ -268,8 +268,6 @@ function StockOperationsRow({
 }) {
   const item = input.item;
 
-  console.log('rec', record);
-
   const [value, setValue] = useState<StockItemQuantity>(
     add ? 0 : item.quantity ?? 0
   );
