@@ -40,7 +40,7 @@ jobs:
       force: ${{ steps.force.outputs.force }}
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -72,7 +72,7 @@ jobs:
     needs: ["pre-commit"]
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -94,7 +94,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
         with:
@@ -125,7 +125,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -135,7 +135,7 @@ jobs:
       - name: Export API Documentation
         run: invoke schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4.3.3
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
@@ -186,7 +186,7 @@ jobs:
       INVENTREE_SITE_URL: http://127.0.0.1:12345
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -223,7 +223,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -277,7 +277,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -321,7 +321,7 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -360,7 +360,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -391,7 +391,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
         name: Checkout Code
       - name: Environment Setup
         uses: ./.github/actions/setup
@@ -448,7 +448,7 @@ jobs:
       VITE_COVERAGE: true
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -466,7 +466,7 @@ jobs:
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -489,7 +489,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -502,7 +502,7 @@ jobs:
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@5d5d22a31266ced268874388b861e4b58bb5c2f3 # pin@v4.3.1
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4.3.3
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web
