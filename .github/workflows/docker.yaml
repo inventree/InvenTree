@@ -19,10 +19,10 @@ on:
 
   push:
     branches:
-      - "master"
+      - "main"
   pull_request:
     branches:
-      - "master"
+      - "main"
 
 permissions:
   contents: read
@@ -157,7 +157,6 @@ jobs:
         uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # pin@v5.5.1
         with:
           images: |
-            inventree/inventree
             ghcr.io/${{ github.repository }}
 
       - name: Push Docker Images

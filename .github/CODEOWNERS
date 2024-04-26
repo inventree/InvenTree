@@ -1,13 +1,1 @@
-# General owner is the maintainers team
-*       @SchrodingersGat
-
-# plugins are co-owned
-/src/backend/InvenTree/plugin/      @SchrodingersGat @matmair
-/src/backend/InvenTree/plugins/     @SchrodingersGat @matmair
-
-# Installer functions
-.pkgr.yml               @matmair
-Procfile                @matmair
-runtime.txt             @matmair
-/contrib/installer      @matmair
-/contrib/packager.io    @matmair
+* @matmair

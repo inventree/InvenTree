@@ -107,32 +107,6 @@ jobs:
           pip install --require-hashes -r .github/requirements.txt
           python3 .github/scripts/version_check.py
 
-  mkdocs:
-    name: Style [Documentation]
-    runs-on: ubuntu-20.04
-
-    needs: paths-filter
-
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
-      - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
-        with:
-          python-version: ${{ env.python_version }}
-      - name: Check Config
-        run: |
-          pip install --require-hashes -r .github/requirements.txt
-          pip install -r docs/requirements.txt
-          python docs/ci/check_mkdocs_config.py
-      - name: Check Links
-        uses: gaurav-nelson/github-action-markdown-link-check@5c5dfc0ac2e225883c0e5f03a85311ec2830d368 # v1
-        with:
-          folder-path: docs
-          config-file: docs/mlc_config.json
-          check-modified-files-only: "yes"
-          use-quiet-mode: "yes"
-
   schema:
     name: Tests - API Schema Documentation
     runs-on: ubuntu-20.04
@@ -185,38 +159,12 @@ jobs:
         continue-on-error: true
       - name: Extract version for publishing
         id: version
-        if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+        if: github.ref == 'refs/heads/main' && needs.paths-filter.outputs.api == 'true'
         run: |
           pip install --require-hashes -r .github/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
           echo "version=$version" >> "$GITHUB_OUTPUT"
-
-  schema-push:
-    name: Push new schema
-    runs-on: ubuntu-20.04
-    needs: [paths-filter, schema]
-    if: needs.schema.result == 'success' && github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true' && github.repository_owner == 'inventree'
-    env:
-      version: ${{ needs.schema.outputs.version }}
-
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-        with:
-          repository: inventree/schema
-          token: ${{ secrets.SCHEMA_PAT }}
-      - name: Download schema artifact
-        uses: actions/download-artifact@c850b930e6ba138125429b7e5c93fc707a7f8427 # v4.1.4
-        with:
-          name: schema.yml
-      - name: Move schema to correct location
-        run: |
-          echo "Version: $version"
-          mkdir export/${version}
-          mv schema.yml export/${version}/api.yaml
-      - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
-        with:
-          commit_message: "Update API schema for ${version}"
 
   python:
     name: Tests - inventree-python
@@ -390,7 +338,7 @@ jobs:
     name: Tests - Migrations [PostgreSQL]
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/main' && needs.paths-filter.outputs.migrations == 'true') }}
 
     env:
       INVENTREE_DB_ENGINE: django.db.backends.postgresql
@@ -434,7 +382,7 @@ jobs:
     name: Tests - Full Migration [SQLite]
     runs-on: ubuntu-latest
     needs: paths-filter
-    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/master' && needs.paths-filter.outputs.migrations == 'true') }}
+    if: ${{ (needs.paths-filter.outputs.force == 'true') || (github.ref == 'refs/heads/main' && needs.paths-filter.outputs.migrations == 'true') }}
 
     env:
       INVENTREE_DB_ENGINE: sqlite3
