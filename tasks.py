@@ -234,12 +234,16 @@ def install(c, uv=False):
 
     # Install required Python packages with PIP
     if not uv:
-        c.run('pip3 install --upgrade pip setuptools')
+        c.run(
+            'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools'
+        )
         c.run(
             'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r src/backend/requirements.txt'
         )
     else:
-        c.run('pip3 install --upgrade uv setuptools')
+        c.run(
+            'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools'
+        )
         c.run('uv pip install -U --require-hashes  -r src/backend/requirements.txt')
 
     # Run plugins install
