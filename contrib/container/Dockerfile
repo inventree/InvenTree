@@ -16,6 +16,7 @@ FROM ${base_image} AS inventree_base
 ARG commit_tag=""
 ARG commit_hash=""
 ARG commit_date=""
+ARG SOURCE_DATE_EPOCH
 
 ARG data_dir="data"
 
@@ -97,14 +98,14 @@ FROM inventree_base AS prebuild
 
 ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
-    pip install --user -r base_requirements.txt --no-cache && \
+    pip install --user --require-hashes -r base_requirements.txt --no-cache && \
     pip install --user --require-hashes -r requirements.txt --no-cache && \
     apk --purge del .build-deps
 
 # Frontend builder image:
 FROM prebuild AS frontend
 
-RUN apk add --no-cache --update nodejs npm && npm install -g yarn@v1.22.22 --ignore-scripts
+RUN apk add --no-cache --update nodejs npm yarn
 RUN yarn config set network-timeout 600000 -g
 COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
@@ -141,11 +142,11 @@ EXPOSE 5173
 # Install packages required for building python packages
 RUN ./install_build_packages.sh
 
-RUN pip install uv==0.1.26 --no-cache-dir && pip install -r base_requirements.txt --no-cache
+RUN pip install --require-hashes -r base_requirements.txt --no-cache
 
 # Install nodejs / npm / yarn
 
-RUN apk add --no-cache --update nodejs npm && npm install -g yarn@v1.22.22 --ignore-scripts
+RUN apk add --no-cache --update nodejs npm yarn
 RUN yarn config set network-timeout 600000 -g
 
 # The development image requires the source code to be mounted to /home/inventree/

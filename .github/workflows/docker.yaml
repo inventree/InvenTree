@@ -158,6 +158,9 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository }}
+      - name: Set SOURCE_DATE_EPOCH
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
+        shell: bash
 
       - name: Push Docker Images
         id: push-docker
@@ -169,9 +172,10 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           sbom: true
-          provenance: false
+          provenance: mode=max
           target: production
           tags: ${{ env.docker_tags }}
           build-args: |
             commit_hash=${{ env.git_commit_hash }}
             commit_date=${{ env.git_commit_date }}
+            SOURCE_DATE_EPOCH=${{ env.SOURCE_DATE_EPOCH }}
