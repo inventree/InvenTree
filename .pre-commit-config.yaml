@@ -45,6 +45,10 @@ repos:
         name: pip-compile requirements.txt
         args: [docs/requirements.in, -o, docs/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
         files: docs/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
+        files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.1
     hooks:
