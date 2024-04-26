@@ -98,7 +98,7 @@ FROM inventree_base AS prebuild
 ENV PATH=/root/.local/bin:$PATH
 RUN ./install_build_packages.sh --no-cache --virtual .build-deps && \
     pip install --user -r base_requirements.txt --no-cache && \
-    pip install --user --require-hashes -r requirements.txt --no-cache && \
+    uv pip install --user --require-hashes -r requirements.txt --no-cache && \
     apk --purge del .build-deps
 
 # Frontend builder image:
