@@ -46,12 +46,9 @@ jobs:
           filters: |
             docker:
               - .github/workflows/docker.yaml
-              - docker/**
-              - docker-compose.yml
-              - docker.dev.env
-              - Dockerfile
-              - InvenTree/settings.py
-              - requirements.txt
+              - contrib/container/**
+              - src/backend/InvenTree/InvenTree/settings.py
+              - src/backend/requirements.txt
               - tasks.py
 
   # Build the docker image
