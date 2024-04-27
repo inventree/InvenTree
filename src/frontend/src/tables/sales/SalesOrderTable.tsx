@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -9,7 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -43,8 +41,6 @@ export function SalesOrderTable({
   const table = useTable('sales-order');
   const user = useUserState();
 
-  const navigate = useNavigate();
-
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -70,13 +66,8 @@ export function SalesOrderTable({
     initialData: {
       customer: customerId
     },
-    onFormSuccess: (response) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.salesorder, response.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.salesorder
   });
 
   const tableActions = useMemo(() => {

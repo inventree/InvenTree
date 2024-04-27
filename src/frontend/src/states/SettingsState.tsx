@@ -42,7 +42,7 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
           });
         })
         .catch((_error) => {
-          console.error('Error fetching global settings');
+          console.error('ERR: Error fetching global settings');
         });
     },
     getSetting: (key: string, default_value?: string) => {
@@ -76,7 +76,7 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
         });
       })
       .catch((_error) => {
-        console.error('Error fetching user settings');
+        console.error('ERR: Error fetching user settings');
       });
   },
   getSetting: (key: string, default_value?: string) => {
