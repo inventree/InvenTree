@@ -27,6 +27,9 @@ on:
 permissions:
   contents: read
 
+env:
+  platforms: linux/amd64
+
 jobs:
   paths-filter:
     permissions:
@@ -75,11 +78,12 @@ jobs:
         with:
           python-version: ${{ env.python_version }}
       - name: Version Check
+        id: version
         run: |
           pip install --require-hashes -r .github/requirements.txt
           python3 .github/scripts/version_check.py
-          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_ENV
+          echo "git_commit_hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "git_commit_date=$(git show -s --format=%ci)" >> $GITHUB_OUTPUT
       - name: Test Docker Image
         id: test-docker
         run: |
@@ -144,9 +148,11 @@ jobs:
         with:
           images: |
             ghcr.io/${{ github.repository }}
+
       - name: Set SOURCE_DATE_EPOCH
-        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
+        run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_OUTPUT
         shell: bash
+        id: epoch
 
       - name: Push Docker Images
         id: push-docker
@@ -155,13 +161,14 @@ jobs:
         with:
           context: .
           file: ./contrib/container/Dockerfile
-          platforms: linux/amd64,linux/arm64
+          platforms: ${{ env.platforms }}
           push: true
           sbom: true
           provenance: mode=max
           target: production
-          tags: ${{ env.docker_tags }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            commit_hash=${{ env.git_commit_hash }}
-            commit_date=${{ env.git_commit_date }}
-            SOURCE_DATE_EPOCH=${{ env.SOURCE_DATE_EPOCH }}
+            commit_hash=${{ steps.epoch.outputs.git_commit_hash }}
+            commit_date=${{ steps.epoch.outputs.git_commit_date }}
+            SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.SOURCE_DATE_EPOCH }}

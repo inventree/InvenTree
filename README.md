@@ -8,5 +8,6 @@ This project is a stripped downs version of the [InvenTree project](https://gith
 Changes from upstream are listed here:
 - Cleanup of repo initial setup - [#2](https://github.com/invenhost/InvenTree/pull/2)
 - Set epoch - [#1](https://github.com/invenhost/InvenTree/pull/1)
+- Fix up CI tagging - [#3](https://github.com/invenhost/InvenTree/pull/7)
 
 Please always report security issues upstream and If you can to sec@mjmair.com
