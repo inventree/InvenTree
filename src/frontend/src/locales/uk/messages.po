@@ -5,7 +5,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: ukr\n"
+"Language: uk\n"
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
