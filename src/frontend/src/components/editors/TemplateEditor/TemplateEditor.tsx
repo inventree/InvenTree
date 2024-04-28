@@ -14,7 +14,6 @@ import {
   IconAlertTriangle,
   IconDeviceFloppy,
   IconExclamationCircle,
-  IconProps,
   IconRefresh
 } from '@tabler/icons-react';
 import Split from '@uiw/react-split';

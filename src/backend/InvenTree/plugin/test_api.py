@@ -196,8 +196,9 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         mixin_dict = plg.mixins()
         self.assertIn('base', mixin_dict)
-        self.assertDictContainsSubset(
-            {'base': {'key': 'base', 'human_name': 'base'}}, mixin_dict
+        self.assertEqual(
+            mixin_dict,
+            {**mixin_dict, **{'base': {'key': 'base', 'human_name': 'base'}}},
         )
 
         # check reload on save

@@ -1,10 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import {
-  IconCircleCheck,
-  IconCircleX,
-  IconExclamationCircle
-} from '@tabler/icons-react';
+import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useMemo } from 'react';
 
