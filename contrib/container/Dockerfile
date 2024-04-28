@@ -132,9 +132,9 @@ COPY src/backend/InvenTree ${INVENTREE_BACKEND_DIR}/InvenTree
 
 # Clean up python caches, default config, old frontend compiles
 RUN find . | grep -E "(/__pycache__$|\.pyc$|\.pyo$)" | xargs rm -rf && \
-    rm ${INVENTREE_BACKEND_DIR}/InvenTree/plugins.txt && \
-    rm ${INVENTREE_BACKEND_DIR}/InvenTree/secret_key.txt && \
-    rm ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
+    rm -f ${INVENTREE_BACKEND_DIR}/InvenTree/plugins.txt && \
+    rm -f ${INVENTREE_BACKEND_DIR}/InvenTree/secret_key.txt && \
+    rm -f ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
 
 # Copy frontend source code
 COPY --from=frontend ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
