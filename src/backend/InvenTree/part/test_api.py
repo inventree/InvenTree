@@ -463,12 +463,12 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         response = self.get(url, {'path_detail': False}, expected_code=200)
 
         # Check that the path detail information is not included
-        self.assertFalse('path' in response.data.keys())
+        self.assertNotIn('path', response.data.keys())
 
         # Now, request *with* path detail
         response = self.get(url, {'path_detail': True}, expected_code=200)
 
-        self.assertTrue('path' in response.data.keys())
+        self.assertIn('path', response.data.keys())
 
         path = response.data['path']
 
@@ -520,7 +520,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
 
         # Check that a bunch o' fields are contained
         for f in ['assembly', 'component', 'description', 'image', 'IPN']:
-            self.assertTrue(f in actions.keys())
+            self.assertIn(f, actions.keys())
 
         # Active is a 'boolean' field
         active = actions['active']
@@ -553,7 +553,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         actions = self.getActions(reverse('api-part-category-list'))
 
         # actions should *not* contain 'POST' as we do not have the correct role
-        self.assertFalse('POST' in actions)
+        self.assertNotIn('POST', actions)
 
         self.assignRole('part_category.add')
 
@@ -1055,8 +1055,8 @@ class PartAPITest(PartAPITestBase):
         # Filter by creation date
         response = self.get(url, {'created_before': '2019-01-01'}, expected_code=200)
 
-        self.assertTrue(len(response.data) < n)
-        self.assertTrue(len(response.data) > 0)
+        self.assertLess(len(response.data), n)
+        self.assertGreater(len(response.data), 0)
 
         for item in response.data:
             self.assertIsNotNone(item['creation_date'])
@@ -1066,8 +1066,8 @@ class PartAPITest(PartAPITestBase):
 
         response = self.get(url, {'created_after': '2019-01-01'}, expected_code=200)
 
-        self.assertTrue(len(response.data) < n)
-        self.assertTrue(len(response.data) > 0)
+        self.assertLess(len(response.data), n)
+        self.assertGreater(len(response.data), 0)
 
         for item in response.data:
             self.assertIsNotNone(item['creation_date'])
@@ -2153,7 +2153,7 @@ class BomItemTest(InvenTreeAPITestCase):
         response = self.get(url, data={'validated': False}, expected_code=200)
 
         # There should be at least one non-validated item
-        self.assertTrue(len(response.data) > 0)
+        self.assertGreater(len(response.data), 0)
 
         # Now, let's validate an item
         bom_item = BomItem.objects.first()
@@ -2169,7 +2169,7 @@ class BomItemTest(InvenTreeAPITestCase):
         # Each item in response should contain expected keys
         for el in response.data:
             for key in ['available_stock', 'available_substitute_stock']:
-                self.assertTrue(key in el)
+                self.assertIn(key, el)
 
     def test_bom_list_search(self):
         """Test that we can search the BOM list API endpoint."""
@@ -2208,7 +2208,7 @@ class BomItemTest(InvenTreeAPITestCase):
         q1 = response.data[0]['quantity']
         q2 = response.data[-1]['quantity']
 
-        self.assertTrue(q1 < q2)
+        self.assertLess(q1, q2)
 
         # Order by decreasing quantity
         response = self.get(f'{url}?ordering=-quantity', expected_code=200)
@@ -2255,7 +2255,7 @@ class BomItemTest(InvenTreeAPITestCase):
         ]
 
         for key in expected_values:
-            self.assertTrue(key in response.data)
+            self.assertIn(key, response.data)
 
         self.assertEqual(int(float(response.data['quantity'])), 25)
 
