@@ -196,7 +196,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         options = self.options(
             self.do_url(parts, plugin_ref, label), expected_code=200
         ).json()
-        self.assertTrue('amount' in options['actions']['POST'])
+        self.assertIn('amount', options['actions']['POST'])
 
         plg = registry.get_plugin(plugin_ref)
         with mock.patch.object(plg, 'print_label') as print_label:
@@ -206,7 +206,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
                 data={'amount': '-no-valid-int-'},
                 expected_code=400,
             ).json()
-            self.assertTrue('amount' in res)
+            self.assertIn('amount', res)
             print_label.assert_not_called()
 
             # correct value type

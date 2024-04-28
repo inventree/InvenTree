@@ -117,7 +117,7 @@ class CategoryTest(TestCase):
             child.pathstring,
             'Cat/AAAAAAAAAA/BBBBBBBBBB/CCCCCCCCCC/DDDDDDDDDD/EEEEEEEEEE/FFFFFFFFFF/GGGGGGGGGG/HHHHHHHHHH/IIIIIIIIII/JJJJJJJJJJ/KKKKKKKKK...OO/PPPPPPPPPP/QQQQQQQQQQ/RRRRRRRRRR/SSSSSSSSSS/TTTTTTTTTT/UUUUUUUUUU/VVVVVVVVVV/WWWWWWWWWW/XXXXXXXXXX/YYYYYYYYYY/ZZZZZZZZZZ',
         )
-        self.assertTrue(len(child.pathstring) <= 250)
+        self.assertLessEqual(len(child.pathstring), 250)
 
         # Attempt an invalid move
         with self.assertRaises(ValidationError):
@@ -325,7 +325,7 @@ class CategoryTest(TestCase):
         self.assertEqual(descendants.count(), 3)
 
         for loc in [C11, C12, C13]:
-            self.assertTrue(loc in descendants)
+            self.assertIn(loc, descendants)
 
         # Check category C1x, should be B1 -> C1x
         for loc in [C11, C12, C13]:

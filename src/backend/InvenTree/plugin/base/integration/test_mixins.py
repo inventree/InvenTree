@@ -351,7 +351,7 @@ class PanelMixinTests(InvenTreeTestCase):
         """Test that the sample panel plugin is installed."""
         plugins = registry.with_mixin('panel')
 
-        self.assertTrue(len(plugins) == 0)
+        self.assertEqual(len(plugins), 0)
 
         # Now enable the plugin
         registry.set_plugin_state('samplepanel', True)
