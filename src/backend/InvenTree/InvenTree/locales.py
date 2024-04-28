@@ -45,6 +45,7 @@ LOCALES = [
     ('sv', _('Swedish')),
     ('th', _('Thai')),
     ('tr', _('Turkish')),
+    ('ukr', _('Ukrainian')),
     ('vi', _('Vietnamese')),
     ('zh-hans', _('Chinese (Simplified)')),
     ('zh-hant', _('Chinese (Traditional)')),
