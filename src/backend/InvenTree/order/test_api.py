@@ -1772,7 +1772,7 @@ class SalesOrderAllocateTest(OrderTest):
         # At least one item should be allocated, and all should be variants
         self.assertGreater(self.order.stock_allocations.count(), 0)
         for allocation in self.order.stock_allocations.all():
-            self.assertNotEquals(allocation.item.part.pk, allocation.line.part.pk)
+            self.assertNotEqual(allocation.item.part.pk, allocation.line.part.pk)
 
     def test_shipment_complete(self):
         """Test that we can complete a shipment via the API."""
