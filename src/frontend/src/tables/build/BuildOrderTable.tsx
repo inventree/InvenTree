@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { PartHoverCard } from '../../components/images/Thumbnail';
@@ -11,7 +10,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -130,7 +128,6 @@ export function BuildOrderTable({
     ];
   }, []);
 
-  const navigate = useNavigate();
   const user = useUserState();
 
   const table = useTable('buildorder');
@@ -146,11 +143,8 @@ export function BuildOrderTable({
       sales_order: salesOrderId,
       parent: parentBuildId
     },
-    onFormSuccess: (data: any) => {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.build, data.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.build
   });
 
   const tableActions = useMemo(() => {
@@ -159,6 +153,7 @@ export function BuildOrderTable({
         hidden={!user.hasAddRole(UserRoles.build)}
         tooltip={t`Add Build Order`}
         onClick={() => newBuild.open()}
+        key="add-build-order"
       />
     ];
   }, [user]);

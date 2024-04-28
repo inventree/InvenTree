@@ -397,7 +397,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     ):
         """Helper function to process and validate a downloaded csv file."""
         # Check that the correct object type has been passed
-        self.assertTrue(isinstance(file_object, io.StringIO))
+        self.assertIsInstance(file_object, io.StringIO)
 
         file_object.seek(0)
 

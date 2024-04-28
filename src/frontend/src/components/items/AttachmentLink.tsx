@@ -1,12 +1,13 @@
-import { Anchor, Group, Text } from '@mantine/core';
-import { IconLink, IconPhoto } from '@tabler/icons-react';
+import { Anchor, Group } from '@mantine/core';
 import {
   IconFile,
   IconFileTypeCsv,
   IconFileTypeDoc,
   IconFileTypePdf,
   IconFileTypeXls,
-  IconFileTypeZip
+  IconFileTypeZip,
+  IconLink,
+  IconPhoto
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 

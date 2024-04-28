@@ -27,7 +27,7 @@ export function TableHoverCard({
   }
 
   return (
-    <HoverCard withinPortal={true}>
+    <HoverCard withinPortal={true} closeDelay={20} openDelay={250}>
       <HoverCard.Target>
         <Group spacing="xs" position="apart" noWrap={true}>
           {value}

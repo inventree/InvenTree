@@ -130,7 +130,7 @@ class CompanyTest(InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertTrue('currency' in response.data)
+        self.assertIn('currency', response.data)
 
     def test_company_active(self):
         """Test that the 'active' value and filter works."""

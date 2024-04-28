@@ -39,7 +39,7 @@ export const useGlobalStatusState = create<ServerStateProps>()(
             set({ status: newStatusLookup });
           })
           .catch(() => {
-            console.error('Error fetching global status information');
+            console.error('ERR: Error fetching global status information');
           });
       }
     }),

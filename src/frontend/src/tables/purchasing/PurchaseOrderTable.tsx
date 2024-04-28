@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -9,7 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -43,8 +41,6 @@ export function PurchaseOrderTable({
   supplierId?: number;
   supplierPartId?: number;
 }) {
-  const navigate = useNavigate();
-
   const table = useTable('purchase-order');
   const user = useUserState();
 
@@ -115,13 +111,8 @@ export function PurchaseOrderTable({
     initialData: {
       supplier: supplierId
     },
-    onFormSuccess: (response) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.purchaseorder, response.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.purchaseorder
   });
 
   const tableActions = useMemo(() => {

@@ -1,5 +1,7 @@
 import {
+  Icon,
   Icon123,
+  IconArrowBigDownLineFilled,
   IconArrowMerge,
   IconBinaryTree2,
   IconBookmarks,
@@ -10,10 +12,12 @@ import {
   IconBusinessplan,
   IconCalendar,
   IconCalendarStats,
-  IconCategory,
+  IconCalendarTime,
   IconCheck,
+  IconCircleCheck,
   IconCircleMinus,
   IconCirclePlus,
+  IconCircleX,
   IconClipboardList,
   IconClipboardText,
   IconCopy,
@@ -21,13 +25,14 @@ import {
   IconCornerUpRightDouble,
   IconCurrencyDollar,
   IconDots,
-  IconDotsCircleHorizontal,
   IconExternalLink,
   IconFileUpload,
+  IconFlag,
   IconFlagShare,
   IconGitBranch,
   IconGridDots,
   IconHash,
+  IconInfoCircle,
   IconLayersLinked,
   IconLink,
   IconList,
@@ -46,12 +51,15 @@ import {
   IconPhoto,
   IconPrinter,
   IconProgressCheck,
+  IconProps,
   IconQrcode,
   IconQuestionMark,
   IconRulerMeasure,
   IconShoppingCart,
   IconShoppingCartHeart,
+  IconShoppingCartPlus,
   IconSitemap,
+  IconSquareXFilled,
   IconStack2,
   IconStatusChange,
   IconTag,
@@ -59,9 +67,11 @@ import {
   IconTool,
   IconTools,
   IconTransfer,
+  IconTransitionRight,
   IconTrash,
   IconTruck,
   IconTruckDelivery,
+  IconTruckReturn,
   IconUnlink,
   IconUser,
   IconUserStar,
@@ -71,14 +81,6 @@ import {
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
-import { IconFlag } from '@tabler/icons-react';
-import { IconSquareXFilled } from '@tabler/icons-react';
-import { IconShoppingCartPlus } from '@tabler/icons-react';
-import { IconArrowBigDownLineFilled } from '@tabler/icons-react';
-import { IconTruckReturn } from '@tabler/icons-react';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { IconCalendarTime } from '@tabler/icons-react';
-import { Icon, IconProps } from '@tabler/icons-react';
 import React from 'react';
 
 const icons = {
@@ -130,6 +132,10 @@ const icons = {
   delete: IconTrash,
   packaging: IconPackage,
   packages: IconPackages,
+  install: IconTransitionRight,
+  plus: IconCirclePlus,
+  minus: IconCircleMinus,
+  cancel: IconCircleX,
 
   // Part Icons
   active: IconCheck,
@@ -186,7 +192,8 @@ const icons = {
   batch_code: IconClipboardText,
   destination: IconFlag,
   repeat_destination: IconFlagShare,
-  unlink: IconUnlink
+  unlink: IconUnlink,
+  success: IconCircleCheck
 };
 
 export type InvenTreeIconType = keyof typeof icons;
