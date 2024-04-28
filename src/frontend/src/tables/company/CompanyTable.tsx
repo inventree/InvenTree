@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { access } from 'fs';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 

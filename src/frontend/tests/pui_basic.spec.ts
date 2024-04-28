@@ -1,5 +1,5 @@
 import { expect, test } from './baseFixtures.js';
-import { baseUrl, loginUrl, logoutUrl, user } from './defaults.js';
+import { baseUrl, user } from './defaults.js';
 import { doLogin, doQuickLogin } from './login.js';
 
 test('PUI - Basic Login Test', async ({ page }) => {
