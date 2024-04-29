@@ -252,7 +252,7 @@ class LabelTemplateDetail(RetrieveUpdateDestroyAPI):
     """Detail API endpoint for label template model."""
 
     queryset = report.models.LabelTemplate.objects.all()
-    serializer_class = report.serializers.ReportTemplateSerializer
+    serializer_class = report.serializers.LabelTemplateSerializer
 
 
 class ReportTemplatePrint(TemplatePrintBase):
