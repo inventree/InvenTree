@@ -435,3 +435,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             data.append(entry)
 
         return data
+
+    def assertDictContainsSubset(self, a, b):
+        """Assert that dictionary 'a' is a subset of dictionary 'b'."""
+        self.assertEqual(b, b | a)
