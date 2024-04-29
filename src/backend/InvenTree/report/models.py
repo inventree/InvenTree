@@ -87,7 +87,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
 
         template = settings.MEDIA_ROOT.joinpath(template)
 
-        return template
+        return str(template)
 
     name = models.CharField(
         blank=False,
@@ -131,6 +131,8 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         Uses django-weasyprint plugin to render HTML template against Weasyprint
         """
         context = self.get_context(instance, request)
+
+        print('rendering template:', self.template.name, '->', self.template_name)
 
         # Render HTML template to PDF
         wp = WeasyprintReportMixin(
