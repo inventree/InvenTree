@@ -131,9 +131,13 @@ export function TemplateEditor(props: TemplateEditorProps) {
   useEffect(() => {
     if (!url) return;
 
-    api.get(url).then((res) => {
-      codeRef.current = res.data;
-      loadCodeToEditor(res.data);
+    api.get(url).then((response: any) => {
+      if (response.data?.template) {
+        api.get(response.data.template).then((res) => {
+          codeRef.current = res.data;
+          loadCodeToEditor(res.data);
+        });
+      }
     });
   }, [url]);
 

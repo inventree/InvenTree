@@ -26,7 +26,7 @@ export function useInstance<T = any>({
   throwError = false
 }: {
   endpoint: ApiEndpoints;
-  pk?: string | undefined;
+  pk?: string | number | undefined;
   hasPrimaryKey?: boolean;
   params?: any;
   pathParams?: PathParams;
@@ -41,7 +41,12 @@ export function useInstance<T = any>({
     queryKey: ['instance', endpoint, pk, params],
     queryFn: async () => {
       if (hasPrimaryKey) {
-        if (pk == null || pk == undefined || pk.length == 0 || pk == '-1') {
+        if (
+          pk == null ||
+          pk == undefined ||
+          pk.toString().length == 0 ||
+          pk == '-1'
+        ) {
           setInstance(defaultValue);
           return null;
         }

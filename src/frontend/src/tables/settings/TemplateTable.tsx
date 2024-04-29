@@ -45,7 +45,9 @@ export type TemplateI = {
   name: string;
   description: string;
   filters: string;
+  filename_pattern: string;
   enabled: boolean;
+  template: string;
 };
 
 export interface TemplateProps {
@@ -59,18 +61,20 @@ export function TemplateDrawer({
   refreshTable,
   templateProps
 }: {
-  id: string;
+  id: string | number;
   refreshTable: () => void;
   templateProps: TemplateProps;
 }) {
   const { apiEndpoint, templateType, additionalFormFields } = templateProps;
   const navigate = useNavigate();
+
   const {
     instance: template,
     refreshInstance,
     instanceQuery: { isFetching, error }
   } = useInstance<TemplateI>({
     endpoint: apiEndpoint,
+    hasPrimaryKey: true,
     pk: id,
     throwError: true
   });
@@ -118,12 +122,10 @@ export function TemplateDrawer({
     );
   }
 
-  const previewProps: TemplatePreviewProps = useMemo(() => {
-    return {
-      itemKey: 'item',
-      model: ModelType.stockitem
-    };
-  }, []);
+  const previewProps: TemplatePreviewProps = {
+    itemKey: 'item',
+    model: ModelType.stockitem
+  };
 
   return (
     <Stack spacing="xs" style={{ display: 'flex', flex: '1' }}>
