@@ -125,7 +125,7 @@ function printReports(model_type, items) {
         return;
     }
 
-    // Join the items with a 'query safe' comma character
+    // Join the items with a comma character
     const item_string = items.join(',');
 
     let params = {

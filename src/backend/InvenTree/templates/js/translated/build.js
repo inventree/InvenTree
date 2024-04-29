@@ -1109,8 +1109,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems', {
         labels: {
-            url: '{% url "api-stockitem-label-list" %}',
-            key: 'item',
+            model_type: 'stockitem',
         },
         singular_name: '{% trans "build output" %}',
         plural_name: '{% trans "build outputs" %}',
@@ -2447,8 +2446,7 @@ function loadBuildLineTable(table, build_id, options={}) {
     if (!options.data) {
         setupFilterList('buildlines', $(table), filterTarget, {
             labels: {
-                url: '{% url "api-buildline-label-list" %}',
-                key: 'line',
+                modeltype: 'buildline',
             },
             singular_name: '{% trans "build line" %}',
             plural_name: '{% trans "build lines" %}',

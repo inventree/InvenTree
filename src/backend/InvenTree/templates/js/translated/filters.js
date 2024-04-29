@@ -544,8 +544,7 @@ function setupFilterList(tableKey, table, target, options={}) {
                 items: items,
                 singular_name: options.singular_name,
                 plural_name: options.plural_name,
-                url: options.labels.url,
-                key: options.labels.key,
+                model_type: options.labels?.model_type ?? options.model_type,
             });
         });
     }

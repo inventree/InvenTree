@@ -284,9 +284,8 @@
 
         printLabels({
             items: locs,
+            model_type: 'stocklocation',
             singular_name: '{% trans "stock location" escape %}',
-            key: 'location',
-            url: '{% url "api-stocklocation-label-list" %}',
         });
     });
     {% endif %}

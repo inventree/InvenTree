@@ -500,9 +500,8 @@ $("#stock-test-report").click(function() {
 $("#print-label").click(function() {
     printLabels({
         items: [{{ item.pk }}],
+        model_type: 'stockitem',
         singular_name: '{% trans "stock item" escape %}',
-        url: '{% url "api-stockitem-label-list" %}',
-        key: 'item',
     });
 });
 

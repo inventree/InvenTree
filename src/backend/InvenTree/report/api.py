@@ -409,24 +409,24 @@ class ReportAssetDetail(RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.ReportAssetSerializer
 
 
-report_api_urls = [
+label_api_urls = [
     # Label templates
     path(
-        'label/',
+        'template/',
         include([
             path(
                 '<int:pk>/',
                 include([
                     path(
+                        'print/',
+                        LabelTemplatePrint.as_view(),
+                        name='api-label-template-print',
+                    ),
+                    path(
                         'metadata/',
                         MetadataView.as_view(),
                         {'model': report.models.LabelTemplate},
                         name='api-label-template-metadata',
-                    ),
-                    path(
-                        'print/',
-                        LabelTemplatePrint.as_view(),
-                        name='api-label-template-print',
                     ),
                     path(
                         '',
@@ -437,7 +437,10 @@ report_api_urls = [
             ),
             path('', LabelTemplateList.as_view(), name='api-label-template-list'),
         ]),
-    ),
+    )
+]
+
+report_api_urls = [
     # Report templates
     path(
         'template/',
