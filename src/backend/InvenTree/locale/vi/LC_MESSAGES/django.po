@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-23 11:06+0000\n"
+"POT-Creation-Date: 2024-04-29 12:55+0000\n"
 "PO-Revision-Date: 2024-04-24 05:27\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -58,7 +58,7 @@ msgstr "Nhập ngày"
 
 #: InvenTree/fields.py:208 InvenTree/models.py:1021 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
-#: company/models.py:847 company/templates/company/sidebar.html:37
+#: company/models.py:849 company/templates/company/sidebar.html:37
 #: order/models.py:1283 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:59
@@ -324,14 +324,18 @@ msgid "Turkish"
 msgstr "Tiếng Thổ Nhĩ Kỳ"
 
 #: InvenTree/locales.py:48
+msgid "Ukrainian"
+msgstr ""
+
+#: InvenTree/locales.py:49
 msgid "Vietnamese"
 msgstr "Tiếng Việt"
 
-#: InvenTree/locales.py:49
+#: InvenTree/locales.py:50
 msgid "Chinese (Simplified)"
 msgstr "Tiếng Trung (Giản thể)"
 
-#: InvenTree/locales.py:50
+#: InvenTree/locales.py:51
 msgid "Chinese (Traditional)"
 msgstr "Tiếng Trung (Phồn thể)"
 
@@ -406,7 +410,7 @@ msgid "Select file to attach"
 msgstr "Chọn file đính kèm"
 
 #: InvenTree/models.py:567 common/models.py:3018 company/models.py:146
-#: company/models.py:457 company/models.py:514 company/models.py:830
+#: company/models.py:457 company/models.py:514 company/models.py:831
 #: order/models.py:291 order/models.py:1288 order/models.py:1704
 #: part/admin.py:55 part/models.py:919
 #: part/templates/part/part_scheduling.html:11
@@ -484,7 +488,7 @@ msgid "Invalid choice"
 msgstr "Lựa chọn sai"
 
 #: InvenTree/models.py:893 common/models.py:2706 common/models.py:3104
-#: common/serializers.py:392 company/models.py:613 label/models.py:120
+#: common/serializers.py:392 company/models.py:614 label/models.py:120
 #: machine/models.py:24 part/models.py:855 part/models.py:3616
 #: plugin/models.py:41 report/models.py:176 stock/models.py:76
 #: templates/InvenTree/settings/mixins/urls.html:13
@@ -505,7 +509,7 @@ msgstr "Tên"
 
 #: InvenTree/models.py:899 build/models.py:188
 #: build/templates/build/detail.html:24 common/models.py:136
-#: company/models.py:522 company/models.py:838
+#: company/models.py:523 company/models.py:840
 #: company/templates/company/company_base.html:77
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:107 label/models.py:127
@@ -970,7 +974,7 @@ msgstr "Đã theo dõi"
 msgid "Allocated"
 msgstr "Đã cấp phát"
 
-#: build/api.py:294 company/models.py:902 company/serializers.py:383
+#: build/api.py:294 company/models.py:904 company/serializers.py:383
 #: company/templates/company/supplier_part.html:114
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
@@ -1050,7 +1054,7 @@ msgid "BuildOrder to which this build is allocated"
 msgstr "Đơn đặt bản dựng với bản dựng này đã được phân bổ"
 
 #: build/models.py:205 build/templates/build/build_base.html:97
-#: build/templates/build/detail.html:29 company/models.py:1056 order/api.py:817
+#: build/templates/build/detail.html:29 company/models.py:1058 order/api.py:817
 #: order/models.py:1401 order/models.py:1546 order/models.py:1547
 #: part/api.py:1547 part/api.py:1841 part/models.py:390 part/models.py:3004
 #: part/models.py:3148 part/models.py:3292 part/models.py:3315
@@ -3574,7 +3578,7 @@ msgstr "Đầu mối tại điểm webhook được nhận"
 msgid "Name for this webhook"
 msgstr "Tên của webhook này"
 
-#: common/models.py:2711 company/models.py:160 company/models.py:813
+#: common/models.py:2711 company/models.py:160 company/models.py:814
 #: machine/models.py:39 part/admin.py:88 part/models.py:1045
 #: plugin/models.py:56 templates/js/translated/company.js:523
 #: templates/js/translated/table_filters.js:135
@@ -4041,13 +4045,13 @@ msgstr "Ghi chú nội bộ sử dụng cho chuyển phát nhanh"
 msgid "Link to address information (external)"
 msgstr "Liên kết thông tin địa chỉ (bên ngoài)"
 
-#: company/models.py:489 company/models.py:791 stock/models.py:751
+#: company/models.py:489 company/models.py:792 stock/models.py:751
 #: stock/serializers.py:266 stock/templates/stock/item_base.html:142
 #: templates/js/translated/bom.js:622
 msgid "Base Part"
 msgstr "Sản phẩm cơ bản"
 
-#: company/models.py:491 company/models.py:793
+#: company/models.py:491 company/models.py:794
 msgid "Select part"
 msgstr "Chọn sản phẩm"
 
@@ -4086,22 +4090,22 @@ msgstr "Mã số nhà sản xuất"
 msgid "URL for external manufacturer part link"
 msgstr "URL cho liên kết sản phẩm của nhà sản xuất bên ngoài"
 
-#: company/models.py:523
+#: company/models.py:524
 msgid "Manufacturer part description"
 msgstr "Mô tả sản phẩm của nhà sản xuất"
 
-#: company/models.py:580 company/models.py:607 company/models.py:823
+#: company/models.py:581 company/models.py:608 company/models.py:824
 #: company/templates/company/manufacturer_part.html:7
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:217
 msgid "Manufacturer Part"
 msgstr "Sản phẩm nhà sản xuất"
 
-#: company/models.py:614
+#: company/models.py:615
 msgid "Parameter name"
 msgstr "Tên tham số"
 
-#: company/models.py:620
+#: company/models.py:621
 #: report/templates/report/inventree_test_report_base.html:104
 #: stock/models.py:2436 templates/js/translated/company.js:1166
 #: templates/js/translated/company.js:1419 templates/js/translated/part.js:1492
@@ -4109,11 +4113,11 @@ msgstr "Tên tham số"
 msgid "Value"
 msgstr "Giá trị"
 
-#: company/models.py:621
+#: company/models.py:622
 msgid "Parameter value"
 msgstr "Giá trị tham số"
 
-#: company/models.py:628 company/templates/company/supplier_part.html:168
+#: company/models.py:629 company/templates/company/supplier_part.html:168
 #: part/admin.py:57 part/models.py:1009 part/models.py:3623
 #: part/templates/part/part_base.html:284
 #: templates/js/translated/company.js:1425 templates/js/translated/part.js:1511
@@ -4121,23 +4125,23 @@ msgstr "Giá trị tham số"
 msgid "Units"
 msgstr "Đơn vị"
 
-#: company/models.py:629
+#: company/models.py:630
 msgid "Parameter units"
 msgstr "Đơn vị tham số"
 
-#: company/models.py:731
+#: company/models.py:732
 msgid "Pack units must be compatible with the base part units"
 msgstr "Đơn vị đóng gói phải tương thích với đơn vị sản phẩm cơ bản"
 
-#: company/models.py:738
+#: company/models.py:739
 msgid "Pack units must be greater than zero"
 msgstr "Đơn vị đóng gói phải lớn hơn không"
 
-#: company/models.py:752
+#: company/models.py:753
 msgid "Linked manufacturer part must reference the same base part"
 msgstr "Sản phẩm nhà sản xuất đã liên kết phải tham chiếu với sản phẩm cơ bản tương tự"
 
-#: company/models.py:801 company/templates/company/company_base.html:87
+#: company/models.py:802 company/templates/company/company_base.html:87
 #: company/templates/company/supplier_part.html:129 order/models.py:465
 #: order/templates/order/order_base.html:136 part/bom.py:272 part/bom.py:310
 #: part/serializers.py:499 plugin/builtin/suppliers/digikey.py:25
@@ -4153,31 +4157,31 @@ msgstr "Sản phẩm nhà sản xuất đã liên kết phải tham chiếu vớ
 msgid "Supplier"
 msgstr "Nhà cung cấp"
 
-#: company/models.py:802
+#: company/models.py:803
 msgid "Select supplier"
 msgstr "Chọn nhà cung cấp"
 
-#: company/models.py:808 part/serializers.py:510
+#: company/models.py:809 part/serializers.py:510
 msgid "Supplier stock keeping unit"
 msgstr "Đơn vị quản lý kho nhà cung cấp"
 
-#: company/models.py:814
+#: company/models.py:815
 msgid "Is this supplier part active?"
 msgstr ""
 
-#: company/models.py:824
+#: company/models.py:825
 msgid "Select manufacturer part"
 msgstr "Chọn sản phẩm của nhà sản xuất"
 
-#: company/models.py:831
+#: company/models.py:832
 msgid "URL for external supplier part link"
 msgstr "URL cho liên kết sản phẩm của nhà cung cấp bên ngoài"
 
-#: company/models.py:839
+#: company/models.py:841
 msgid "Supplier part description"
 msgstr "Mô tả sản phẩm nhà cung cấp"
 
-#: company/models.py:846 company/templates/company/supplier_part.html:187
+#: company/models.py:848 company/templates/company/supplier_part.html:187
 #: part/admin.py:418 part/models.py:4070 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
@@ -4188,15 +4192,15 @@ msgstr "Mô tả sản phẩm nhà cung cấp"
 msgid "Note"
 msgstr "Ghi chú"
 
-#: company/models.py:855 part/models.py:1967
+#: company/models.py:857 part/models.py:1967
 msgid "base cost"
 msgstr "chi phí cơ sở"
 
-#: company/models.py:856 part/models.py:1968
+#: company/models.py:858 part/models.py:1968
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr "Thu phí tối thiểu (vd: phí kho bãi)"
 
-#: company/models.py:863 company/templates/company/supplier_part.html:160
+#: company/models.py:865 company/templates/company/supplier_part.html:160
 #: stock/admin.py:224 stock/models.py:782 stock/serializers.py:1350
 #: stock/templates/stock/item_base.html:240
 #: templates/js/translated/company.js:1646
@@ -4204,11 +4208,11 @@ msgstr "Thu phí tối thiểu (vd: phí kho bãi)"
 msgid "Packaging"
 msgstr "Đóng gói"
 
-#: company/models.py:864
+#: company/models.py:866
 msgid "Part packaging"
 msgstr "Đóng gói sản phẩm"
 
-#: company/models.py:869 templates/js/translated/company.js:1651
+#: company/models.py:871 templates/js/translated/company.js:1651
 #: templates/js/translated/part.js:1821 templates/js/translated/part.js:1877
 #: templates/js/translated/purchase_order.js:311
 #: templates/js/translated/purchase_order.js:841
@@ -4218,27 +4222,27 @@ msgstr "Đóng gói sản phẩm"
 msgid "Pack Quantity"
 msgstr "Số lượng gói"
 
-#: company/models.py:871
+#: company/models.py:873
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr "Tổng số lượng được cung cấp trong một gói đơn. Để trống cho các hàng hóa riêng lẻ."
 
-#: company/models.py:890 part/models.py:1974
+#: company/models.py:892 part/models.py:1974
 msgid "multiple"
 msgstr "nhiều"
 
-#: company/models.py:891
+#: company/models.py:893
 msgid "Order multiple"
 msgstr "Đặt hàng nhiều"
 
-#: company/models.py:903
+#: company/models.py:905
 msgid "Quantity available from supplier"
 msgstr "Số lượng có sẵn từ nhà cung cấp"
 
-#: company/models.py:909
+#: company/models.py:911
 msgid "Availability Updated"
 msgstr "Sẵn hàng đã được cập nhật"
 
-#: company/models.py:910
+#: company/models.py:912
 msgid "Date of last update of availability data"
 msgstr "Ngày cập nhật cuối thông tin tồn kho"
 
@@ -8302,17 +8306,17 @@ msgstr "Phương thức"
 msgid "No author found"
 msgstr "Không tìm thấy tác giả"
 
-#: plugin/registry.py:588
+#: plugin/registry.py:597
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "Phần bổ sung '{p}' không tương thích với phiên bản InvenTree hiện tại {v}"
 
-#: plugin/registry.py:591
+#: plugin/registry.py:600
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Phần bổ sung yêu cầu ít nhất phiên bản {v}"
 
-#: plugin/registry.py:593
+#: plugin/registry.py:602
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Phần bổ sung yêu cầu tối đa phiên bản {v}"
@@ -14245,4 +14249,3 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
-
