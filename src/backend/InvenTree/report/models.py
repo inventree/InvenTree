@@ -345,7 +345,7 @@ class LabelTemplate(ReportTemplateBase):
 
 
 class TemplateOutput(models.Model):
-    """Class representing a generated file from a template.
+    """Base class representing a generated file from a template.
 
     As reports (or labels) may take a long time to render,
     this process is offloaded to the background worker process.
@@ -354,9 +354,16 @@ class TemplateOutput(models.Model):
     or a message indicating that the output is handled externally.
     """
 
+    class Meta:
+        """Metaclass options."""
+
+        abstract = True
+
     created = models.DateField(auto_now_add=True, editable=False)
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, blank=True, null=True, related_name='+'
+    )
 
     complete = models.BooleanField(
         default=False,
@@ -376,13 +383,13 @@ class TemplateOutput(models.Model):
         help_text=_('Generated output file'),
     )
 
-    template_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, null=True, blank=True
+
+class LabelOutput(TemplateOutput):
+    """Class representing a generated label output file."""
+
+    template = models.ForeignKey(
+        LabelTemplate, on_delete=models.CASCADE, verbose_name=_('Label Template')
     )
-
-    template_id = models.PositiveIntegerField(null=True, blank=True)
-
-    template = GenericForeignKey('template_type', 'template_id')
 
 
 def rename_snippet(instance, filename):

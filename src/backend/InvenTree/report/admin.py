@@ -4,11 +4,11 @@ from django.contrib import admin
 
 from .helpers import report_model_options
 from .models import (
+    LabelOutput,
     LabelTemplate,
     ReportAsset,
     ReportSnippet,
     ReportTemplate,
-    TemplateOutput,
 )
 
 
@@ -41,7 +41,7 @@ class ReportAssetAdmin(admin.ModelAdmin):
     list_display = ('id', 'asset', 'description')
 
 
-@admin.register(TemplateOutput)
+@admin.register(LabelOutput)
 class TemplateOutputAdmin(admin.ModelAdmin):
     """Admin class for the TemplateOutput model."""
 

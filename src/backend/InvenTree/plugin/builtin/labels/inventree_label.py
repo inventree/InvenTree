@@ -1,8 +1,9 @@
 """Default label printing plugin (supports PDF generation)."""
 
+from django.core.files.base import ContentFile
 from django.utils.translation import gettext_lazy as _
 
-from InvenTree.helpers import DownloadFile
+from InvenTree.helpers import str2bool
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
 from report.models import LabelTemplate
@@ -32,52 +33,45 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         }
     }
 
-    def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
-        """Handle printing of multiple labels.
+    # Keep track of individual label outputs
+    # These will be stitched together at the end of printing
+    outputs = []
+    debug = None
 
-        - Label outputs are concatenated together, and we return a single PDF file.
-        - If DEBUG mode is enabled, we return a single HTML file.
-        """
-        debug = self.get_setting('DEBUG')
+    def print_label(self, label, item, request, **kwargs):
+        """Print a single label."""
+        if self.debug is None:
+            self.debug = str2bool(kwargs.get('debug', self.get_setting('DEBUG')))
 
-        outputs = []
-        output_file = None
+        if self.debug:
+            # In debug mode, return raw HTML output
+            output = self.render_to_html(label, item, request, **kwargs)
+        else:
+            # Output is already provided
+            output = kwargs['pdf_file']
 
-        # TODO: Generate filename based on the first label
-        filename = 'labels.pdf'
+        self.outputs.append(output)
 
-        for item in items:
-            outputs.append(
-                self.print_label(label, item, request, debug=debug, **kwargs)
-            )
+    def get_generated_file(self, **kwargs):
+        """Return the generated file, by stitching together the individual label outputs."""
+        if len(self.outputs) == 0:
+            return None
 
-        if self.get_setting('DEBUG'):
-            data = '\n'.join(outputs)
+        if self.debug:
+            # Simple HTML output
+            data = '\n'.join(self.outputs)
             filename = 'labels.html'
         else:
+            # Stitch together the PDF outputs
             pages = []
 
-            # Following process is required to stitch labels together into a single PDF
-            for output in outputs:
-                print('output:', output)
-                print('template:', label.template)
+            for output in self.outputs:
                 doc = output.get_document()
 
                 for page in doc.pages:
                     pages.append(page)
 
-            data = outputs[0].get_document().copy(pages).write_pdf()
+            data = self.outputs[0].get_document().copy(pages).write_pdf()
+            filename = kwargs.get('filename', 'labels.pdf')
 
-        return DownloadFile(data, filename)
-
-    def print_label(self, label: LabelTemplate, instance, request, **kwargs):
-        """Handle printing of a single label.
-
-        Returns either a PDF or HTML output, depending on the DEBUG setting.
-        """
-        debug = kwargs.get('debug', self.get_setting('DEBUG'))
-
-        if debug:
-            return self.render_to_html(label, instance, request, **kwargs)
-
-        return self.render_to_pdf(label, instance, request, **kwargs)
+        return ContentFile(data, name=filename)

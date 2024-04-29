@@ -11,15 +11,12 @@ import pdf2image
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from build.models import BuildLine
 from common.models import InvenTreeSetting
 from InvenTree.exceptions import log_error
 from InvenTree.tasks import offload_task
-from part.models import Part
 from plugin.base.label import label as plugin_label
 from plugin.helpers import MixinNotImplementedError
-from report.models import LabelTemplate
-from stock.models import StockItem, StockLocation
+from report.models import LabelTemplate, TemplateOutput
 
 
 class LabelPrintingMixin:
@@ -32,11 +29,6 @@ class LabelPrintingMixin:
     Note that the print_labels() function can also be overridden to provide custom behavior.
     """
 
-    # If True, the print_label() method will block until the label is printed
-    # If False, the offload_label() method will be called instead
-    # By default, this is False, which means that labels will be printed in the background
-    BLOCKING_PRINT = False
-
     class MixinMeta:
         """Meta options for this mixin."""
 
@@ -46,6 +38,9 @@ class LabelPrintingMixin:
         """Register mixin."""
         super().__init__()
         self.add_mixin('labels', True, __class__)
+
+    # A list of generated outputs
+    outputs = []
 
     def render_to_pdf(self, label: LabelTemplate, instance, request, **kwargs):
         """Render this label to PDF format.
@@ -113,11 +108,19 @@ class LabelPrintingMixin:
             log_error('label.render_to_png')
             raise ValidationError(_('Error rendering label to PNG'))
 
-    def print_labels(self, label: LabelTemplate, items, request: Request, **kwargs):
+    def print_labels(
+        self,
+        label: LabelTemplate,
+        output: TemplateOutput,
+        items,
+        request: Request,
+        **kwargs,
+    ) -> None:
         """Print one or more labels with the provided template and items.
 
         Arguments:
             label: The LabelTemplate object to use for printing
+            output: The TemplateOutput object used to store the results
             items: The list of database items to print (e.g. StockItem instances)
             request: The HTTP request object which triggered this print job
 
@@ -125,7 +128,10 @@ class LabelPrintingMixin:
             printing_options: The printing options set for this print job defined in the PrintingOptionsSerializer
 
         Returns:
-            A JSONResponse object which indicates outcome to the user
+            None. Output data should be stored in the provided TemplateOutput object
+
+        Raises:
+            ValidationError if there is an error during the print process
 
         The default implementation simply calls print_label() for each label, producing multiple single label output "jobs"
         but this can be overridden by the particular plugin.
@@ -134,6 +140,13 @@ class LabelPrintingMixin:
             user = request.user
         except AttributeError:
             user = None
+
+        # Initial state for the output print job
+        output.progress = 0
+        output.complete = False
+        output.save()
+
+        N = len(items)
 
         # Generate a label output for each provided item
         for item in items:
@@ -157,20 +170,27 @@ class LabelPrintingMixin:
                 'printing_options': kwargs['printing_options'],
             }
 
-            if self.BLOCKING_PRINT:
-                # Blocking print job
-                self.print_label(**print_args)
-            else:
-                # Non-blocking print job
+            self.print_label(label, item, request, **print_args)
 
-                # Offload the print job to a background worker
-                self.offload_label(**print_args)
+            # Update the progress of the print job
+            output.progress += int(100 / N)
+            output.save()
 
-        # Return a JSON response to the user
-        return JsonResponse({
-            'success': True,
-            'message': f'{len(items)} labels printed',
-        })
+        # Mark the output as complete
+        output.complete = True
+        output.progress = 100
+
+        # Add in the generated file (if applicable)
+        output.output = self.get_generated_file(**print_args)
+
+        output.save()
+
+    def get_generated_file(self, **kwargs):
+        """Return the generated file for download (or None, if this plugin does not generate a file output).
+
+        The default implementation returns None, but this can be overridden by the particular plugin.
+        """
+        return None
 
     def print_label(self, **kwargs):
         """Print a single label (blocking).
@@ -192,19 +212,6 @@ class LabelPrintingMixin:
         raise MixinNotImplementedError(
             'This Plugin must implement a `print_label` method'
         )
-
-    def offload_label(self, **kwargs):
-        """Offload a single label (non-blocking).
-
-        Instead of immediately printing the label (which is a blocking process),
-        this method should offload the label to a background worker process.
-
-        Offloads a call to the 'print_label' method (of this plugin) to a background worker.
-        """
-        # Exclude the 'pdf_file' object - cannot be pickled
-        kwargs.pop('pdf_file', None)
-
-        offload_task(plugin_label.print_label, self.plugin_slug(), **kwargs)
 
     def get_printing_options_serializer(
         self, request: Request, *args, **kwargs

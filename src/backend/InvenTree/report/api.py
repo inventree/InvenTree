@@ -202,10 +202,14 @@ class LabelTemplatePrint(TemplatePrintBase):
 
         # At this point, we offload the label(s) to the selected plugin.
         # The plugin is responsible for handling the request and returning a response.
+        output = report.models.LabelOutput.objects.create(
+            user=request.user, template=label, progress=0, complete=False
+        )
 
         try:
             response = plugin.print_labels(
                 label,
+                output,
                 items_to_print,
                 request,
                 printing_options=(serializer.data if serializer else {}),
@@ -414,18 +418,18 @@ class ReportAssetDetail(RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.ReportAssetSerializer
 
 
-class TemplateOutputList(ListAPI):
-    """List endpoint for ReportOutput objects."""
+class LabelOutputList(ListAPI):
+    """List endpoint for LabelOutput objects."""
 
-    queryset = report.models.TemplateOutput.objects.all()
-    serializer_class = report.serializers.TemplateOutputSerializer
+    queryset = report.models.LabelOutput.objects.all()
+    serializer_class = report.serializers.LabelOutputSerializer
 
 
-class TemplateOutputDetail(RetrieveAPI):
-    """Detail endpoint for a single TemplateOutput object."""
+class LabelOutputDetail(RetrieveAPI):
+    """Detail endpoint for a single LabelOutput object."""
 
-    queryset = report.models.TemplateOutput.objects.all()
-    serializer_class = report.serializers.TemplateOutputSerializer
+    queryset = report.models.LabelOutput.objects.all()
+    serializer_class = report.serializers.LabelOutputSerializer
 
 
 label_api_urls = [
@@ -456,7 +460,17 @@ label_api_urls = [
             ),
             path('', LabelTemplateList.as_view(), name='api-label-template-list'),
         ]),
-    )
+    ),
+    # Label outputs
+    path(
+        'output/',
+        include([
+            path(
+                '<int:pk>/', LabelOutputDetail.as_view(), name='api-label-output-detail'
+            ),
+            path('', LabelOutputList.as_view(), name='api-label-output-list'),
+        ]),
+    ),
 ]
 
 report_api_urls = [
@@ -508,18 +522,6 @@ report_api_urls = [
                 name='api-report-snippet-detail',
             ),
             path('', ReportSnippetList.as_view(), name='api-report-snippet-list'),
-        ]),
-    ),
-    # Report outputs
-    path(
-        'output/',
-        include([
-            path(
-                '<int:pk>/',
-                TemplateOutputDetail.as_view(),
-                name='api-template-output-detail',
-            ),
-            path('', TemplateOutputList.as_view(), name='api-template-output-list'),
         ]),
     ),
 ]
