@@ -111,7 +111,7 @@ class LabelPrintingMixin:
         self,
         label: LabelTemplate,
         output: TemplateOutput,
-        items,
+        items: list,
         request: Request,
         **kwargs,
     ) -> None:

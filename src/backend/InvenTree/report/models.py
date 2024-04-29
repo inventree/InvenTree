@@ -116,7 +116,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return template_string.render(Context(context))
 
-    def render_as_string(self, instance, request, **kwargs):
+    def render_as_string(self, instance, request=None, **kwargs):
         """Render the report to a HTML string.
 
         Useful for debug mode (viewing generated code)
@@ -125,7 +125,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
 
         return render_to_string(self.template_name, context, request)
 
-    def render(self, instance, request, **kwargs):
+    def render(self, instance, request=None, **kwargs):
         """Render the template to a PDF file.
 
         Uses django-weasyprint plugin to render HTML template against Weasyprint
@@ -185,12 +185,12 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         """Return a filter dict which can be applied to the target model."""
         return report.validators.validate_filters(self.filters, model=self.get_model())
 
-    def get_context(self, instance, request, **kwargs):
+    def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the generic template for rendering.
 
         Arguments:
             instance: The model instance we are printing against
-            request: The request object
+            request: The request object (optional)
         """
         # Provide base context information to all templates
         base_context = {
@@ -201,9 +201,10 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
             'template_description': self.description,
             'template_name': self.name,
             'template_revision': self.revision,
-            'request': request,
-            'user': request.user,
         }
+
+        if request is not None:
+            base_context['user'] = request.user
 
         # Add in an context information provided by the model instance itself
         context = {**base_context, **instance.report_context()}
@@ -258,7 +259,7 @@ class ReportTemplate(ReportTemplateBase):
 
         return page_size
 
-    def get_context(self, instance, request, **kwargs):
+    def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the report template for rendering."""
         context = {
             **super().get_context(instance, request),
@@ -318,7 +319,7 @@ class LabelTemplate(ReportTemplateBase):
         }}
         """
 
-    def get_context(self, instance, request, **kwargs):
+    def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the label template for rendering."""
         context = {
             **super().get_context(instance, request, **kwargs),
