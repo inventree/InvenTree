@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-29 12:55+0000\n"
-"PO-Revision-Date: 2024-04-24 05:27\n"
+"POT-Creation-Date: 2024-04-29 11:00+0000\n"
+"PO-Revision-Date: 2024-04-29 19:56\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1524,8 +1524,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:512
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:592
@@ -14251,3 +14250,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
