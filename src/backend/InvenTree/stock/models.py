@@ -146,6 +146,7 @@ class StockLocation(
     def report_context(self):
         """Return report context data for this StockLocation."""
         return {
+            'location': self,
             'stock_location': self,
             'stock_items': self.get_stock_items(),
             'qr_data': self.format_barcode(brief=True),
