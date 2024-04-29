@@ -1,7 +1,6 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { Fragment, ReactNode } from 'react';
 
-import DetailsBadge, { DetailsBadgeProps } from '../details/DetailsBadge';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 import { Breadcrumb, BreadcrumbList } from './BreadcrumbList';
@@ -60,7 +59,9 @@ export function PageDetail({
             <Space />
             {detail}
             <Group position="right" spacing="xs" noWrap>
-              {badges}
+              {badges?.map((badge, idx) => (
+                <Fragment key={idx}>{badge}</Fragment>
+              ))}
             </Group>
             <Space />
             {actions && (

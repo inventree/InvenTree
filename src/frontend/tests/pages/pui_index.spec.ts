@@ -1,5 +1,4 @@
 import { test } from '../baseFixtures.js';
-import { baseUrl } from '../defaults.js';
 import { doQuickLogin } from '../login.js';
 
 const newPartName = 'UITESTIN123';

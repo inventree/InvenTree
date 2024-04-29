@@ -1085,19 +1085,21 @@ if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
 if DEBUG:
     for origin in [
         'http://localhost',
-        'http://*.localhost' 'http://*localhost:8000',
+        'http://*.localhost',
+        'http://*localhost:8000',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
             CSRF_TRUSTED_ORIGINS.append(origin)
 
-if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
-    if isInMainThread():
-        # Server thread cannot run without CSRF_TRUSTED_ORIGINS
-        logger.error(
-            'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
-        )
-        sys.exit(-1)
+if (
+    not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0 and isInMainThread()
+):  # pragma: no cover
+    # Server thread cannot run without CSRF_TRUSTED_ORIGINS
+    logger.error(
+        'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+    )
+    sys.exit(-1)
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'

@@ -19,7 +19,6 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   CancelItemAction,
-  DeleteItemAction,
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
@@ -31,7 +30,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -49,7 +47,6 @@ export default function SalesOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
-  const navigate = useNavigate();
 
   const {
     instance: order,
@@ -322,6 +319,7 @@ export default function SalesOrderDetail() {
             status={order.status}
             type={ModelType.salesorder}
             options={{ size: 'lg' }}
+            key={order.pk}
           />
         ];
   }, [order, instanceQuery]);

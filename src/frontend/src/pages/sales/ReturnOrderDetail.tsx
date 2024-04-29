@@ -16,7 +16,6 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   CancelItemAction,
-  DeleteItemAction,
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
@@ -44,7 +43,6 @@ export default function ReturnOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
-  const navigate = useNavigate();
 
   const {
     instance: order,

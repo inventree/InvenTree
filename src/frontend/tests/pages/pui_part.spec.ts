@@ -1,5 +1,4 @@
-import { test } from '@playwright/test';
-
+import { test } from '../baseFixtures';
 import { baseUrl } from '../defaults';
 import { doQuickLogin } from '../login';
 
