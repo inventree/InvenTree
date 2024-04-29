@@ -470,11 +470,11 @@ enum InputMethod {
   ImageBarcode = 'imageBarcode'
 }
 
-interface inputProps {
+interface ScanInputInterface {
   action: (items: ScanItem[]) => void;
 }
 
-function InputManual({ action }: inputProps) {
+function InputManual({ action }: ScanInputInterface) {
   const [value, setValue] = useState<string>('');
 
   function btnAddItem() {
@@ -526,7 +526,7 @@ function InputManual({ action }: inputProps) {
 }
 
 /* Input that uses QR code detection from images */
-function InputImageBarcode({ action }: inputProps) {
+function InputImageBarcode({ action }: ScanInputInterface) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
     key: 'camId',
