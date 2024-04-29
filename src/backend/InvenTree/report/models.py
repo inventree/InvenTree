@@ -156,7 +156,9 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     )
 
     model_type = models.CharField(
-        max_length=100, validators=[report.validators.validate_report_model_type]
+        max_length=100,
+        validators=[report.validators.validate_report_model_type],
+        help_text=_('Target model type for template'),
     )
 
     def clean(self):

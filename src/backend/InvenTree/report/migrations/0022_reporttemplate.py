@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('landscape', models.BooleanField(default=False, help_text='Render report in landscape orientation', verbose_name='Landscape')),
                 ('filename_pattern', models.CharField(default='output.pdf', help_text='Pattern for generating filenames', max_length=100, verbose_name='Filename Pattern')),
                 ('enabled', models.BooleanField(default=True, help_text='Template is enabled', verbose_name='Enabled')),
-                ('model_type', models.CharField(max_length=100, validators=[report.validators.validate_report_model_type])),
+                ('model_type', models.CharField(max_length=100, help_text='Target model type for template', validators=[report.validators.validate_report_model_type])),
                 ('filters', models.CharField(blank=True, help_text='Template query filters (comma-separated list of key=value pairs)', max_length=250, validators=[report.validators.validate_filters], verbose_name='Filters')),
             ],
             options={

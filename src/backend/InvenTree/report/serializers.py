@@ -25,6 +25,7 @@ class ReportSerializerBase(InvenTreeModelSerializer):
             'model_type',
             'template',
             'filters',
+            'filename_pattern',
             'enabled',
             'revision',
         ]
