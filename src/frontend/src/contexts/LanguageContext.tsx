@@ -46,6 +46,7 @@ export const getSupportedLanguages = (): Record<string, string> => {
     sv: t`Swedish`,
     th: t`Thai`,
     tr: t`Turkish`,
+    uk: t`Ukrainian`,
     vi: t`Vietnamese`,
     'zh-hans': t`Chinese (Simplified)`,
     'zh-hant': t`Chinese (Traditional)`

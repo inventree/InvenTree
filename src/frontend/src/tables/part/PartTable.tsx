@@ -10,7 +10,6 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
 import { shortenString } from '../../functions/tables';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -269,7 +268,6 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
 
   const table = useTable('part-list');
   const user = useUserState();
-  const navigate = useNavigate();
 
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
@@ -278,11 +276,8 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
     initialData: {
       ...(props.params ?? {})
     },
-    onFormSuccess: (data: any) => {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.part, data.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.part
   });
 
   const tableActions = useMemo(() => {

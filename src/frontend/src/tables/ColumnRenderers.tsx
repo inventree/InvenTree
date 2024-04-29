@@ -2,8 +2,7 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/macro';
-import { Anchor } from '@mantine/core';
-import { access } from 'fs';
+import { Anchor, Text } from '@mantine/core';
 
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -25,6 +24,34 @@ export function PartColumn(part: any, full_name?: boolean) {
       text={full_name ? part.full_name : part.name}
     />
   );
+}
+
+export function LocationColumn({
+  accessor,
+  title,
+  sortable,
+  ordering
+}: {
+  accessor: string;
+  title?: string;
+  sortable?: boolean;
+  ordering?: string;
+}): TableColumn {
+  return {
+    accessor: accessor,
+    title: title ?? t`Location`,
+    sortable: sortable ?? true,
+    ordering: ordering ?? 'location',
+    render: (record: any) => {
+      let location = resolveItem(record, accessor);
+
+      if (!location) {
+        return <Text italic>{t`No location set`}</Text>;
+      }
+
+      return <Text>{location.name}</Text>;
+    }
+  };
 }
 
 export function BooleanColumn({
@@ -164,9 +191,11 @@ export function DateColumn({
   accessor,
   sortable,
   switchable,
+  ordering,
   title
 }: {
   accessor?: string;
+  ordering?: string;
   sortable?: boolean;
   switchable?: boolean;
   title?: string;
@@ -174,9 +203,10 @@ export function DateColumn({
   return {
     accessor: accessor ?? 'date',
     sortable: sortable ?? true,
+    ordering: ordering,
     title: title ?? t`Date`,
     switchable: switchable,
-    render: (record: any) => renderDate(record[accessor ?? 'date'])
+    render: (record: any) => renderDate(resolveItem(record, accessor ?? 'date'))
   };
 }
 

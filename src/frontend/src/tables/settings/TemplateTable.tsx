@@ -240,7 +240,7 @@ export function TemplateTable({
   const newTemplate = useCreateApiFormModal({
     url: apiEndpoint,
     pathParams: { variant },
-    title: t`Create new` + ' ' + templateTypeTranslation,
+    title: t`Add new` + ' ' + templateTypeTranslation,
     fields: {
       name: {},
       description: {},

@@ -246,35 +246,6 @@ export default function ParametricPartTable({
     return [...partColumns, ...parameterColumns];
   }, [parameterColumns]);
 
-  // Callback when a parameter cell is clicked - either edit or add a new parameter
-  const handleCellClick = useCallback(
-    (record: any, column: any) => {
-      let template_id = column?.extra?.template;
-
-      if (!template_id) {
-        return;
-      }
-
-      setSelectedPart(record.pk);
-      setSelectedTemplate(template_id);
-
-      // Find the associated parameter
-      let parameter = record?.parameters?.find(
-        (p: any) => p.template == template_id
-      );
-
-      if (parameter) {
-        // Parameter exists - open edit dialog
-        setSelectedParameter(parameter.pk);
-        editParameter.open();
-      } else {
-        // Parameter does not exist - create it!
-        addParameter.open();
-      }
-    },
-    [user]
-  );
-
   return (
     <>
       {addParameter.modal}

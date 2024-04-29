@@ -8,14 +8,15 @@ import {
   IconPaperclip
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
-  DeleteItemAction,
+  CancelItemAction,
+  DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -26,7 +27,10 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/SalesOrderForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -260,6 +264,18 @@ export default function ReturnOrderDetail() {
     }
   });
 
+  const duplicateReturnOrder = useCreateApiFormModal({
+    url: ApiEndpoints.return_order_list,
+    title: t`Add Return Order`,
+    fields: returnOrderFields,
+    initialData: {
+      ...order,
+      reference: undefined
+    },
+    modelType: ModelType.returnorder,
+    follow: true
+  });
+
   const orderActions = useMemo(() => {
     return [
       <ActionDropdown
@@ -273,9 +289,12 @@ export default function ReturnOrderDetail() {
               editReturnOrder.open();
             }
           }),
-          DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.return_order)
-            // TODO: Delete?
+          CancelItemAction({
+            tooltip: t`Cancel order`
+          }),
+          DuplicateItemAction({
+            hidden: !user.hasChangeRole(UserRoles.return_order),
+            onClick: () => duplicateReturnOrder.open()
           })
         ]}
       />
@@ -284,6 +303,8 @@ export default function ReturnOrderDetail() {
 
   return (
     <>
+      {editReturnOrder.modal}
+      {duplicateReturnOrder.modal}
       <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail

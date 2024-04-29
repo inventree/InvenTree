@@ -24,7 +24,7 @@ import {
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ReactNode, useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -86,7 +86,6 @@ export default function PartDetail() {
   const { id } = useParams();
 
   const user = useUserState();
-  const navigate = useNavigate();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -693,11 +692,8 @@ export default function PartDetail() {
     initialData: {
       ...part
     },
-    onFormSuccess: (response: any) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.part, response.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.part
   });
 
   const stockActionProps: StockOperationProps = useMemo(() => {

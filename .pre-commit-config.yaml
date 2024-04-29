@@ -41,6 +41,14 @@ repos:
         name: pip-compile requirements.txt
         args: [.github/requirements.in, -o, .github/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
         files: .github/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [docs/requirements.in, -o, docs/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
+        files: docs/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt,--python-version=3.11, --no-strip-extras, --generate-hashes]
+        files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.1
     hooks:
@@ -84,3 +92,7 @@ repos:
 #    rev: 3.0.0
 #    hooks:
 #    -   id: shellcheck
+-   repo: https://github.com/isidentical/teyit
+    rev: 0.4.3
+    hooks:
+    -   id: teyit

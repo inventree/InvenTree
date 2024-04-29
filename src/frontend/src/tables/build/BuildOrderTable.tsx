@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { PartHoverCard } from '../../components/images/Thumbnail';
@@ -11,7 +10,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -19,6 +17,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
   CreationDateColumn,
+  DateColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -64,11 +63,10 @@ function buildOrderTableColumns(): TableColumn[] {
     },
     CreationDateColumn(),
     TargetDateColumn(),
-    {
+    DateColumn({
       accessor: 'completion_date',
-      sortable: true,
-      render: (record: any) => renderDate(record.completion_date)
-    },
+      sortable: true
+    }),
     {
       accessor: 'issued_by',
       sortable: true,
@@ -132,7 +130,6 @@ export function BuildOrderTable({
     ];
   }, []);
 
-  const navigate = useNavigate();
   const user = useUserState();
 
   const table = useTable('buildorder');
@@ -148,11 +145,8 @@ export function BuildOrderTable({
       sales_order: salesOrderId,
       parent: parentBuildId
     },
-    onFormSuccess: (data: any) => {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.build, data.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.build
   });
 
   const tableActions = useMemo(() => {

@@ -19,8 +19,7 @@ import { InvenTreeIcon } from '../functions/icons';
 import {
   ApiFormModalProps,
   useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
+  useDeleteApiFormModal
 } from '../hooks/UseForm';
 import { apiUrl } from '../states/ApiState';
 
@@ -267,8 +266,6 @@ function StockOperationsRow({
   record?: any;
 }) {
   const item = input.item;
-
-  console.log('rec', record);
 
   const [value, setValue] = useState<StockItemQuantity>(
     add ? 0 : item.quantity ?? 0

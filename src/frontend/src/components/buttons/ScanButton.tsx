@@ -17,6 +17,7 @@ export function ScanButton() {
         })
       }
       variant="transparent"
+      title={t`Open QR code scanner`}
     >
       <IconQrcode />
     </ActionIcon>

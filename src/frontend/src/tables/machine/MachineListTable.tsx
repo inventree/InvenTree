@@ -494,7 +494,7 @@ export function MachineListTable({
   }, [machineDrivers, createFormMachineType]);
 
   const createMachineForm = useCreateApiFormModal({
-    title: t`Create machine`,
+    title: t`Add machine`,
     url: ApiEndpoints.machine_list,
     fields: {
       name: {},

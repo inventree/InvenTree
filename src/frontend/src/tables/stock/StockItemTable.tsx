@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
@@ -22,14 +21,15 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
+  DateColumn,
   DescriptionColumn,
+  LocationColumn,
   PartColumn,
   StatusColumn
 } from '../ColumnRenderers';
@@ -55,7 +55,7 @@ function stockItemTableColumns(): TableColumn[] {
       ordering: 'stock',
       sortable: true,
       title: t`Stock`,
-      render: (record) => {
+      render: (record: any) => {
         // TODO: Push this out into a custom renderer
         let quantity = record?.quantity ?? 0;
         let allocated = record?.allocated ?? 0;
@@ -198,28 +198,20 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'batch',
       sortable: true
     },
-    {
-      accessor: 'location',
-      sortable: true,
-      render: function (record: any) {
-        // TODO: Custom renderer for location
-        // TODO: Note, if not "In stock" we don't want to display the actual location here
-        return record?.location_detail?.pathstring ?? record.location ?? '-';
-      }
-    },
-    // TODO: stocktake column
-    {
-      accessor: 'expiry_date',
-      sortable: true,
-      switchable: true,
-      render: (record: any) => renderDate(record.expiry_date)
-    },
-    {
-      accessor: 'updated',
-      sortable: true,
-      switchable: true,
-      render: (record: any) => renderDate(record.updated)
-    },
+    LocationColumn({
+      accessor: 'location_detail'
+    }),
+    DateColumn({
+      accessor: 'stocktake_date',
+      title: t`Stocktake`,
+      sortable: true
+    }),
+    DateColumn({
+      accessor: 'expiry_date'
+    }),
+    DateColumn({
+      accessor: 'updated'
+    }),
     // TODO: purchase order
     // TODO: Supplier part
     {
@@ -357,8 +349,6 @@ export function StockItemTable({
   const table = useTable(tableName);
   const user = useUserState();
 
-  const navigate = useNavigate();
-
   const tableActionParams: StockOperationProps = useMemo(() => {
     return {
       items: table.selectedRecords,
@@ -377,11 +367,8 @@ export function StockItemTable({
       part: params.part,
       location: params.location
     },
-    onFormSuccess: (data: any) => {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.stockitem, data.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.stockitem
   });
 
   const transferStock = useTransferStockItem(tableActionParams);

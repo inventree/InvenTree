@@ -306,7 +306,7 @@ export function BomTable({
 
   const newBomItem = useCreateApiFormModal({
     url: ApiEndpoints.bom_list,
-    title: t`Create BOM Item`,
+    title: t`Add BOM Item`,
     fields: bomItemFields(),
     initialData: {
       part: partId

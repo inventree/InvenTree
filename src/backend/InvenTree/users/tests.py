@@ -182,13 +182,13 @@ class OwnerModelTest(InvenTreeTestCase):
 
         # Get related owners (user + group)
         related_owners = group_as_owner.get_related_owners(include_group=True)
-        self.assertTrue(user_as_owner in related_owners)
-        self.assertTrue(group_as_owner in related_owners)
+        self.assertIn(user_as_owner, related_owners)
+        self.assertIn(group_as_owner, related_owners)
 
         # Get related owners (only user)
         related_owners = group_as_owner.get_related_owners(include_group=False)
-        self.assertTrue(user_as_owner in related_owners)
-        self.assertFalse(group_as_owner in related_owners)
+        self.assertIn(user_as_owner, related_owners)
+        self.assertNotIn(group_as_owner, related_owners)
 
         # Get related owners on user
         related_owners = user_as_owner.get_related_owners()
