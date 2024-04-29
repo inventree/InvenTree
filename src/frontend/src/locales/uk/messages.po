@@ -5,22 +5,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: el\n"
+"Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-25 05:24\n"
+"PO-Revision-Date: 2024-04-28 19:48\n"
 "Last-Translator: \n"
-"Language-Team: Greek\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Team: Ukrainian\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: el\n"
+"X-Crowdin-Language: uk\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
-msgstr "Τίτλος"
+msgstr ""
 
 #: src/components/buttons/CopyButton.tsx:18
 msgid "Copy to clipboard"
@@ -58,19 +58,19 @@ msgstr ""
 
 #: src/components/details/Details.tsx:327
 msgid "Copied"
-msgstr "Αντιγράφηκε"
+msgstr ""
 
 #: src/components/details/Details.tsx:327
 msgid "Copy"
-msgstr "Αντιγραφή"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:64
 msgid "Remove Image"
-msgstr "Αφαίρεση εικόνας"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:67
 msgid "Remove the associated image from this item?"
-msgstr "Αφαίρεση της σχετικής εικόνας από αυτό το στοιχείο;"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:70
 #: src/forms/StockForms.tsx:425
@@ -78,7 +78,7 @@ msgstr "Αφαίρεση της σχετικής εικόνας από αυτό 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 #: src/pages/stock/StockDetail.tsx:422
 msgid "Remove"
-msgstr "Αφαίρεση"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:70
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:164
@@ -91,96 +91,96 @@ msgstr "Αφαίρεση"
 #: src/tables/InvenTreeTable.tsx:475
 #: src/tables/plugin/PluginListTable.tsx:361
 msgid "Cancel"
-msgstr "Ακύρωση"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:98
 msgid "Drag and drop to upload"
-msgstr "Σύρετε και αποθέστε για μεταφόρτωση"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:101
 msgid "Click to select file(s)"
-msgstr "Κάντε κλικ για να επιλέξετε αρχείο(α)"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:223
 msgid "Clear"
-msgstr "Εκκαθάριση"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:226
 #: src/components/forms/ApiForm.tsx:544
 #: src/contexts/ThemeContext.tsx:65
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Submit"
-msgstr "Υποβολή"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:266
 msgid "Select from existing images"
-msgstr "Επιλέξτε από υπάρχουσες εικόνες"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:274
 msgid "Select Image"
-msgstr "Επιλέξτε εικόνα"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:286
 msgid "Upload new image"
-msgstr "Μεταφόρτωση νέας εικόνας"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:293
 msgid "Upload Image"
-msgstr "Μεταφόρτωση εικόνας"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:306
 msgid "Delete image"
-msgstr "Διαγραφή εικόνας"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:28
 msgid "Part is not active"
-msgstr "Το εξάρτημα είναι ανενεργό"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:34
 #: src/pages/company/CompanyDetail.tsx:299
 #: src/pages/company/SupplierPartDetail.tsx:304
-#: src/pages/part/PartDetail.tsx:661
+#: src/pages/part/PartDetail.tsx:670
 msgid "Inactive"
-msgstr "Ανενεργό"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
-msgstr "Το εξάρτημα είναι πρότυπο (μπορούν να γίνουν παραλλαγές από αυτό το εξάρτημα)"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:47
 msgid "Part can be assembled from other parts"
-msgstr "Το εξάρτημα μπορεί να συναρμολογηθεί από άλλα εξαρτήματα"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:53
 msgid "Part can be used in assemblies"
-msgstr "Το εξάρτημα αυτό μπορεί να χρησιμοποιηθεί σε συναρμολόγηση"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:59
 msgid "Part stock is tracked by serial number"
-msgstr "Το απόθεμα του εξαρτήματος παρακολουθείται από σειριακό αριθμό"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:65
 msgid "Part can be purchased from external suppliers"
-msgstr "Το εξάρτημα μπορεί να αγοραστεί από εξωτερικούς προμηθευτές"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:71
 msgid "Part can be sold to customers"
-msgstr "Το εξάρτημα μπορεί να πωληθεί σε πελάτες"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:76
 msgid "Part is virtual (not a physical part)"
-msgstr "Το εξάρτημα είναι εικονικό (μη φυσικό εξάρτημα)"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:82
 #: src/tables/part/PartTable.tsx:243
 #: src/tables/part/PartTable.tsx:247
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
-msgstr "Εικονικό"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
-msgstr "Κωδικός"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:44
 msgid "Failed to parse error response from server."
@@ -188,91 +188,91 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:82
 msgid "Preview not available, click \"Reload Preview\"."
-msgstr "Η προεπισκόπηση δεν είναι διαθέσιμη, πατήστε \"Επαναφόρτωση προεπισκόπησης\"."
+msgstr ""
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr "Προεπισκόπηση PDF"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:114
 msgid "Error loading template"
-msgstr "Σφάλμα φόρτωσης προτύπου"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:126
 msgid "Error saving template"
-msgstr "Σφάλμα αποθήκευσης προτύπου"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:152
 msgid "Save & Reload preview?"
-msgstr "Αποθήκευση & Επαναφόρτωση προεπισκόπησης;"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 msgid "Are you sure you want to Save & Reload the preview?"
-msgstr "Είστε σίγουρος ότι θέλετε να αποθηκεύσετε και να επαναφορτώσετε την προεπισκόπηση;"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:159
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
-msgstr "Για να εμφανίσετε την προεπισκόπηση το τρέχον πρότυπο πρέπει να αντικατασταθεί στο διακομιστή με τις τροποποιήσεις σας, οι οποίες μπορεί να αλλοιώσουν την ετικέτα αν είναι σε χρήση. Θέλετε να προχωρήσετε;"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:163
 msgid "Save & Reload"
-msgstr "Αποθήκευση και Επαναφόρτωση"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:192
 msgid "Preview updated"
-msgstr "Προεπισκόπηση ενημερώθηκε"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:193
 msgid "The preview has been updated successfully."
-msgstr "Η προεπισκόπηση ενημερώθηκε με επιτυχία."
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:256
 msgid "Reload preview"
-msgstr "Επαναφόρτωση προεπισκόπησης"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:257
 msgid "Use the currently stored template from the server"
-msgstr "Χρήση του αποθηκευμένου προτύπου από το διακομιστή"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:264
 msgid "Save & Reload preview"
-msgstr "Αποθήκευση & Επαναφόρτωση προεπισκόπησης"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:265
 msgid "Save the current template and reload the preview"
-msgstr "Αποθήκευση του τρέχοντος προτύπου και επαναφόρτωση της προεπισκόπησης"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:323
 #: src/tables/part/PartThumbTable.tsx:199
 msgid "Select"
-msgstr "Επιλέξτε"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:323
 msgid "to preview"
-msgstr "προς προεπισκόπηση"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:367
 msgid "Error rendering template"
-msgstr "Σφάλμα αποτύπωσης προτύπου"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:140
 #: src/functions/forms.tsx:259
 msgid "Form Error"
-msgstr "Σφάλμα Φόρμας"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:408
 #: src/components/widgets/MarkdownEditor.tsx:146
 msgid "Success"
-msgstr "Επιτυχία"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:483
 msgid "Form Errors Exist"
-msgstr "Υπάρχουν Σφάλματα Φόρμας"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:581
 #: src/tables/plugin/PluginListTable.tsx:441
 msgid "Update"
-msgstr "Ενημέρωση"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:601
 #: src/components/items/ActionDropdown.tsx:201
@@ -288,7 +288,7 @@ msgstr "Ενημέρωση"
 #: src/tables/settings/TemplateTable.tsx:154
 #: src/tables/settings/TemplateTable.tsx:236
 msgid "Delete"
-msgstr "Διαγραφή"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -298,7 +298,7 @@ msgstr "Διαγραφή"
 
 #: src/components/forms/AuthenticationForm.tsx:49
 msgid "Login successful"
-msgstr "Επιτυχής σύνδεση"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:50
 msgid "Logged in successfully"
@@ -1060,7 +1060,7 @@ msgstr ""
 #: src/forms/StockForms.tsx:626
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:49
 #: src/pages/build/BuildDetail.tsx:83
-#: src/pages/part/PartDetail.tsx:774
+#: src/pages/part/PartDetail.tsx:788
 #: src/tables/part/RelatedPartTable.tsx:45
 msgid "Part"
 msgstr ""
@@ -1072,7 +1072,7 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:104
 #: src/pages/part/CategoryDetail.tsx:183
 #: src/pages/part/CategoryDetail.tsx:213
-#: src/pages/part/PartDetail.tsx:626
+#: src/pages/part/PartDetail.tsx:630
 msgid "Parts"
 msgstr ""
 
@@ -1120,7 +1120,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:67
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:67
-#: src/pages/stock/StockDetail.tsx:504
+#: src/pages/stock/StockDetail.tsx:508
 msgid "Stock Item"
 msgstr ""
 
@@ -1195,7 +1195,7 @@ msgstr ""
 #: src/pages/Index/Settings/SystemSettings.tsx:242
 #: src/pages/company/CompanyDetail.tsx:190
 #: src/pages/company/SupplierPartDetail.tsx:223
-#: src/pages/part/PartDetail.tsx:559
+#: src/pages/part/PartDetail.tsx:563
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
 msgstr ""
@@ -1211,7 +1211,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:132
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:108
 #: src/pages/build/BuildDetail.tsx:131
-#: src/pages/sales/SalesOrderDetail.tsx:336
+#: src/pages/sales/SalesOrderDetail.tsx:337
 #: src/pages/stock/StockDetail.tsx:204
 msgid "Sales Order"
 msgstr ""
@@ -1219,7 +1219,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:133
 #: src/pages/Index/Settings/SystemSettings.tsx:257
 #: src/pages/company/CompanyDetail.tsx:206
-#: src/pages/part/PartDetail.tsx:565
+#: src/pages/part/PartDetail.tsx:569
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
 msgstr ""
@@ -1293,7 +1293,7 @@ msgstr ""
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:199
-#: src/pages/part/PartDetail.tsx:481
+#: src/pages/part/PartDetail.tsx:485
 #: src/pages/stock/LocationDetail.tsx:289
 #: src/pages/stock/StockDetail.tsx:338
 #: src/tables/stock/StockItemTable.tsx:57
@@ -1310,7 +1310,7 @@ msgstr ""
 #: src/pages/part/pricing/BomPricingPanel.tsx:144
 #: src/pages/part/pricing/PriceBreakPanel.tsx:96
 #: src/pages/stock/StockDetail.tsx:134
-#: src/pages/stock/StockDetail.tsx:479
+#: src/pages/stock/StockDetail.tsx:480
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:94
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:122
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:73
@@ -2096,7 +2096,7 @@ msgstr ""
 #: src/pages/company/CustomerDetail.tsx:9
 #: src/pages/sales/ReturnOrderDetail.tsx:318
 #: src/pages/sales/SalesIndex.tsx:45
-#: src/pages/sales/SalesOrderDetail.tsx:341
+#: src/pages/sales/SalesOrderDetail.tsx:342
 msgid "Sales"
 msgstr ""
 
@@ -2416,7 +2416,7 @@ msgstr ""
 #: src/forms/StockForms.tsx:590
 #: src/forms/StockForms.tsx:626
 #: src/pages/part/PartDetail.tsx:201
-#: src/pages/part/PartDetail.tsx:642
+#: src/pages/part/PartDetail.tsx:646
 #: src/tables/stock/StockItemTable.tsx:281
 msgid "In Stock"
 msgstr ""
@@ -2459,12 +2459,12 @@ msgid "Remove Stock"
 msgstr ""
 
 #: src/forms/StockForms.tsx:733
-#: src/pages/part/PartDetail.tsx:730
+#: src/pages/part/PartDetail.tsx:744
 msgid "Transfer Stock"
 msgstr ""
 
 #: src/forms/StockForms.tsx:742
-#: src/pages/part/PartDetail.tsx:719
+#: src/pages/part/PartDetail.tsx:733
 msgid "Count Stock"
 msgstr ""
 
@@ -3215,7 +3215,7 @@ msgstr ""
 #~ msgstr "Return order"
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:135
-#: src/pages/part/PartDetail.tsx:506
+#: src/pages/part/PartDetail.tsx:510
 msgid "Bill of Materials"
 msgstr ""
 
@@ -3266,7 +3266,7 @@ msgid "Reporting"
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:223
-#: src/pages/part/PartDetail.tsx:577
+#: src/pages/part/PartDetail.tsx:581
 #: src/tables/stock/StockItemTable.tsx:206
 msgid "Stocktake"
 msgstr ""
@@ -3274,7 +3274,7 @@ msgstr ""
 #: src/pages/Index/Settings/SystemSettings.tsx:228
 #: src/pages/build/BuildDetail.tsx:389
 #: src/pages/build/BuildIndex.tsx:14
-#: src/pages/part/PartDetail.tsx:513
+#: src/pages/part/PartDetail.tsx:517
 #: src/pages/sales/SalesOrderDetail.tsx:259
 msgid "Build Orders"
 msgstr ""
@@ -3469,7 +3469,7 @@ msgstr ""
 #: src/pages/build/BuildDetail.tsx:266
 #: src/pages/company/CompanyDetail.tsx:245
 #: src/pages/company/ManufacturerPartDetail.tsx:172
-#: src/pages/part/PartDetail.tsx:599
+#: src/pages/part/PartDetail.tsx:603
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:271
 #: src/pages/sales/ReturnOrderDetail.tsx:220
 #: src/pages/sales/SalesOrderDetail.tsx:269
@@ -3479,7 +3479,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:278
 #: src/pages/company/CompanyDetail.tsx:257
-#: src/pages/part/PartDetail.tsx:611
+#: src/pages/part/PartDetail.tsx:615
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:283
 #: src/pages/sales/ReturnOrderDetail.tsx:232
 #: src/pages/sales/SalesOrderDetail.tsx:281
@@ -3628,12 +3628,12 @@ msgid "Manufacturer Part Details"
 msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:146
-#: src/pages/part/PartDetail.tsx:475
+#: src/pages/part/PartDetail.tsx:479
 msgid "Parameters"
 msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:158
-#: src/pages/part/PartDetail.tsx:546
+#: src/pages/part/PartDetail.tsx:550
 #: src/pages/purchasing/PurchasingIndex.tsx:26
 msgid "Suppliers"
 msgstr ""
@@ -3928,82 +3928,82 @@ msgstr ""
 msgid "Stocktake By"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:469
+#: src/pages/part/PartDetail.tsx:473
 msgid "Part Details"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:493
+#: src/pages/part/PartDetail.tsx:497
 msgid "Variants"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:500
+#: src/pages/part/PartDetail.tsx:504
 #: src/pages/stock/StockDetail.tsx:272
 msgid "Allocations"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:520
+#: src/pages/part/PartDetail.tsx:524
 msgid "Used In"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:527
+#: src/pages/part/PartDetail.tsx:531
 msgid "Part Pricing"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:533
+#: src/pages/part/PartDetail.tsx:537
 #: src/pages/purchasing/PurchasingIndex.tsx:37
 msgid "Manufacturers"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:572
+#: src/pages/part/PartDetail.tsx:576
 msgid "Scheduling"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:582
+#: src/pages/part/PartDetail.tsx:586
 msgid "Test Templates"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:593
+#: src/pages/part/PartDetail.tsx:597
 msgid "Related Parts"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:647
+#: src/pages/part/PartDetail.tsx:652
 msgid "No Stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:652
+#: src/pages/part/PartDetail.tsx:658
 #: src/tables/part/PartTable.tsx:85
 msgid "On Order"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:657
+#: src/pages/part/PartDetail.tsx:664
 #: src/pages/stock/StockDetail.tsx:469
 #: src/tables/stock/StockItemTable.tsx:286
 msgid "In Production"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:670
+#: src/pages/part/PartDetail.tsx:683
 msgid "Edit Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:677
+#: src/pages/part/PartDetail.tsx:690
 #: src/tables/part/PartTable.tsx:276
 #: src/tables/part/PartTable.tsx:289
 msgid "Add Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:712
+#: src/pages/part/PartDetail.tsx:726
 msgid "Stock Actions"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:720
+#: src/pages/part/PartDetail.tsx:734
 msgid "Count part stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:731
+#: src/pages/part/PartDetail.tsx:745
 msgid "Transfer part stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:741
+#: src/pages/part/PartDetail.tsx:755
 msgid "Part Actions"
 msgstr ""
 
@@ -4145,13 +4145,13 @@ msgstr ""
 msgid "Last Updated"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:210
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:214
 #: src/pages/part/pricing/VariantPricingPanel.tsx:46
 #: src/pages/part/pricing/VariantPricingPanel.tsx:119
 msgid "Minimum Price"
 msgstr ""
 
-#: src/pages/part/pricing/PricingOverviewPanel.tsx:215
+#: src/pages/part/pricing/PricingOverviewPanel.tsx:219
 #: src/pages/part/pricing/VariantPricingPanel.tsx:54
 #: src/pages/part/pricing/VariantPricingPanel.tsx:124
 msgid "Maximum Price"
@@ -4444,7 +4444,7 @@ msgstr ""
 msgid "Stock Item Actions"
 msgstr ""
 
-#: src/pages/stock/StockDetail.tsx:484
+#: src/pages/stock/StockDetail.tsx:486
 msgid "Batch Code"
 msgstr ""
 
