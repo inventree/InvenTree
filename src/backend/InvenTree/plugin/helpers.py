@@ -5,14 +5,16 @@ import logging
 import os
 import pathlib
 import pkgutil
+import sys
 import sysconfig
 import traceback
 from importlib.metadata import entry_points
+from importlib.util import module_from_spec
 
 from django import template
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
-from django.db.utils import IntegrityError, OperationalError, ProgrammingError
+from django.db.utils import IntegrityError
 
 logger = logging.getLogger('inventree')
 
@@ -110,7 +112,10 @@ def handle_error(error, do_raise: bool = True, do_log: bool = True, log_name: st
 
 def get_entrypoints():
     """Returns list for entrypoints for InvenTree plugins."""
-    return entry_points().get('inventree_plugins', [])
+    # on python before 3.12, we need to use importlib_metadata
+    if sys.version_info < (3, 12):
+        return entry_points().get('inventree_plugins', [])
+    return entry_points(group='inventree_plugins')
 
 
 # endregion
@@ -121,7 +126,8 @@ def get_git_log(path):
     """Get dict with info of the last commit to file named in path."""
     import datetime
 
-    from dulwich.repo import NotGitRepository, Repo
+    from dulwich.errors import NotGitRepository
+    from dulwich.repo import Repo
 
     from InvenTree.ready import isInTestMode
 
@@ -175,9 +181,15 @@ def get_modules(pkg, path=None):
     elif type(path) is not list:
         path = [path]
 
-    for loader, name, _ in pkgutil.walk_packages(path):
+    for finder, name, _ in pkgutil.walk_packages(path):
         try:
-            module = loader.find_module(name).load_module(name)
+            if sys.version_info < (3, 12):
+                module = finder.find_module(name).load_module(name)
+            else:
+                spec = finder.find_spec(name)
+                module = module_from_spec(spec)
+                sys.modules[name] = module
+                spec.loader.exec_module(module)
             pkg_names = getattr(module, '__all__', None)
             for k, v in vars(module).items():
                 if not k.startswith('_') and (pkg_names is None or k in pkg_names):
