@@ -86,10 +86,10 @@ class ReportConfig(AppConfig):
                 'model_type': 'stockitem',
             },
             {
-                'file': 'stockitem_qr_and_text.html',
-                'name': 'InvenTree Stock Item Label (QR + Text)',
+                'file': 'stocklocation_qr_and_text.html',
+                'name': 'InvenTree Stock Location Label (QR + Text)',
                 'description': 'Sample stock item label with QR code and text',
-                'model_type': 'stockitem',
+                'model_type': 'stocklocation',
             },
             {
                 'file': 'stocklocation_qr.html',
