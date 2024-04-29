@@ -100,6 +100,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | False |
 | INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | False |
 | INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | True |
+| INVENTREE_SESSION_COOKIE_SECURE | session_cookie_secure | Enforce secure session cookies | False |
 
 ### Proxy Settings
 
