@@ -77,9 +77,7 @@ export type TemplatePreviewProps = {
 };
 
 type TemplateEditorProps = {
-  downloadUrl: string;
-  uploadUrl: string;
-  uploadKey: string;
+  url: string;
   preview: TemplatePreviewProps;
   templateType: 'label' | 'report';
   editors: Editor[];
@@ -88,7 +86,7 @@ type TemplateEditorProps = {
 };
 
 export function TemplateEditor(props: TemplateEditorProps) {
-  const { downloadUrl, editors, previewAreas, preview } = props;
+  const { url, editors, previewAreas, preview } = props;
   const editorRef = useRef<EditorRef>();
   const previewRef = useRef<PreviewAreaRef>();
 
@@ -131,13 +129,13 @@ export function TemplateEditor(props: TemplateEditorProps) {
   }, []);
 
   useEffect(() => {
-    if (!downloadUrl) return;
+    if (!url) return;
 
-    api.get(downloadUrl).then((res) => {
+    api.get(url).then((res) => {
       codeRef.current = res.data;
       loadCodeToEditor(res.data);
     });
-  }, [downloadUrl]);
+  }, [url]);
 
   useEffect(() => {
     if (codeRef.current === undefined) return;

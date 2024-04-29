@@ -8,8 +8,10 @@ import {
   IconList,
   IconListDetails,
   IconPlugConnected,
+  IconReport,
   IconScale,
   IconSitemap,
+  IconTags,
   IconTemplate,
   IconUsersGroup
 } from '@tabler/icons-react';
@@ -19,7 +21,9 @@ import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
+import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { Loadable } from '../../../../functions/loading';
+import { TemplateTable } from '../../../../tables/settings/TemplateTable';
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
@@ -59,10 +63,6 @@ const PartCategoryTemplateTable = Loadable(
 
 const CurrencyTable = Loadable(
   lazy(() => import('../../../../tables/settings/CurrencyTable'))
-);
-
-const TemplateManagementPanel = Loadable(
-  lazy(() => import('./TemplateManagementPanel'))
 );
 
 export default function AdminCenter() {
@@ -123,10 +123,38 @@ export default function AdminCenter() {
         content: <PartCategoryTemplateTable />
       },
       {
-        name: 'templates',
-        label: t`Templates`,
-        icon: <IconTemplate />,
-        content: <TemplateManagementPanel />
+        name: 'labels',
+        label: t`Label Templates`,
+        icon: <IconTags />,
+        content: (
+          <TemplateTable
+            templateProps={{
+              apiEndpoint: ApiEndpoints.label_list,
+              templateType: 'label',
+              additionalFormFields: {
+                width: {},
+                height: {}
+              }
+            }}
+          />
+        )
+      },
+      {
+        name: 'reports',
+        label: t`Report Templates`,
+        icon: <IconReport />,
+        content: (
+          <TemplateTable
+            templateProps={{
+              apiEndpoint: ApiEndpoints.report_list,
+              templateType: 'report',
+              additionalFormFields: {
+                page_size: {},
+                landscape: {}
+              }
+            }}
+          />
+        )
       },
       {
         name: 'plugin',

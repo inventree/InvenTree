@@ -19,6 +19,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -44,12 +45,7 @@ export type TemplateI = {
 export interface TemplateProps {
   apiEndpoint: ApiEndpoints;
   templateType: 'label' | 'report';
-  templateTypeTranslation: string;
-  variant: string;
-  templateKey: string;
   additionalFormFields?: ApiFormFieldSet;
-  preview: TemplatePreviewProps;
-  defaultTemplate: string;
 }
 
 export function TemplateDrawer({
@@ -61,13 +57,7 @@ export function TemplateDrawer({
   refreshTable: () => void;
   templateProps: TemplateProps;
 }) {
-  const {
-    apiEndpoint,
-    templateType,
-    templateTypeTranslation,
-    variant,
-    additionalFormFields
-  } = templateProps;
+  const { apiEndpoint, templateType, additionalFormFields } = templateProps;
   const navigate = useNavigate();
   const {
     instance: template,
@@ -75,16 +65,14 @@ export function TemplateDrawer({
     instanceQuery: { isFetching, error }
   } = useInstance<TemplateI>({
     endpoint: apiEndpoint,
-    pathParams: { variant },
     pk: id,
     throwError: true
   });
 
   const editTemplate = useEditApiFormModal({
     url: apiEndpoint,
-    pathParams: { variant },
     pk: id,
-    title: t`Edit` + ' ' + templateTypeTranslation,
+    title: t`Edit Template`,
     fields: {
       name: {},
       description: {},
@@ -100,9 +88,8 @@ export function TemplateDrawer({
 
   const deleteTemplate = useDeleteApiFormModal({
     url: apiEndpoint,
-    pathParams: { variant },
     pk: id,
-    title: t`Delete` + ' ' + templateTypeTranslation,
+    title: t`Delete Template`,
     onFormSuccess: () => {
       refreshTable();
       navigate('../');
@@ -117,17 +104,20 @@ export function TemplateDrawer({
     return (
       <Text>
         {(error as any)?.response?.status === 404 ? (
-          <Trans>
-            {templateTypeTranslation} with id {id} not found
-          </Trans>
+          <Trans>Template not found</Trans>
         ) : (
-          <Trans>
-            An error occurred while fetching {templateTypeTranslation} details
-          </Trans>
+          <Trans>An error occurred while fetching template details</Trans>
         )}
       </Text>
     );
   }
+
+  const previewProps: TemplatePreviewProps = useMemo(() => {
+    return {
+      itemKey: 'item',
+      model: ModelType.stockitem
+    };
+  }, []);
 
   return (
     <Stack spacing="xs" style={{ display: 'flex', flex: '1' }}>
@@ -143,15 +133,15 @@ export function TemplateDrawer({
 
         <Group>
           <ActionDropdown
-            tooltip={templateTypeTranslation + ' ' + t`actions`}
+            tooltip={t`Template actions`}
             icon={<IconDots />}
             actions={[
               EditItemAction({
-                tooltip: t`Edit` + ' ' + templateTypeTranslation,
+                tooltip: t`Edit template`,
                 onClick: editTemplate.open
               }),
               DeleteItemAction({
-                tooltip: t`Delete` + ' ' + templateTypeTranslation,
+                tooltip: t`Delete template`,
                 onClick: deleteTemplate.open
               })
             ]}
@@ -160,10 +150,8 @@ export function TemplateDrawer({
       </Group>
 
       <TemplateEditor
-        downloadUrl={(template as any)[templateProps.templateKey]}
-        uploadUrl={apiUrl(apiEndpoint, id, { variant })}
-        uploadKey={templateProps.templateKey}
-        preview={templateProps.preview}
+        url={apiUrl(apiEndpoint, id)}
+        preview={previewProps}
         templateType={templateType}
         template={template}
         editors={[CodeEditor]}
@@ -178,16 +166,9 @@ export function TemplateTable({
 }: {
   templateProps: TemplateProps;
 }) {
-  const {
-    apiEndpoint,
-    templateType,
-    templateTypeTranslation,
-    variant,
-    templateKey,
-    additionalFormFields,
-    defaultTemplate
-  } = templateProps;
-  const table = useTable(`${templateType}-${variant}`);
+  const { apiEndpoint, templateType, additionalFormFields } = templateProps;
+
+  const table = useTable(`${templateType}-template`);
   const navigate = useNavigate();
 
   const openDetailDrawer = useCallback((pk: number) => navigate(`${pk}/`), []);
@@ -196,15 +177,18 @@ export function TemplateTable({
     return [
       {
         accessor: 'name',
-        sortable: true
+        sortable: true,
+        switchable: false
       },
       {
         accessor: 'description',
-        sortable: false
+        sortable: false,
+        switchable: true
       },
       {
         accessor: 'filters',
-        sortable: false
+        sortable: false,
+        switchable: true
       },
       ...Object.entries(additionalFormFields || {})?.map(([key, field]) => ({
         accessor: key,
@@ -212,7 +196,7 @@ export function TemplateTable({
       })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
     ];
-  }, []);
+  }, [additionalFormFields]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(-1);
 
@@ -231,25 +215,22 @@ export function TemplateTable({
 
   const deleteTemplate = useDeleteApiFormModal({
     url: apiEndpoint,
-    pathParams: { variant },
     pk: selectedTemplate,
-    title: t`Delete` + ' ' + templateTypeTranslation,
+    title: t`Delete template`,
     onFormSuccess: table.refreshTable
   });
 
   const newTemplate = useCreateApiFormModal({
     url: apiEndpoint,
-    pathParams: { variant },
-    title: t`Add new` + ' ' + templateTypeTranslation,
+    title: t`Add Template`,
     fields: {
       name: {},
       description: {},
+      model_type: {},
+      template: {},
       filters: {},
+      filename_pattern: {},
       enabled: {},
-      [templateKey]: {
-        hidden: true,
-        value: new File([defaultTemplate], 'template.html')
-      },
       ...additionalFormFields
     },
     onFormSuccess: (data) => {
@@ -263,7 +244,7 @@ export function TemplateTable({
       <AddItemButton
         key={`add-${templateType}`}
         onClick={() => newTemplate.open()}
-        tooltip={t`Add` + ' ' + templateTypeTranslation}
+        tooltip={t`Add template`}
       />
     ];
   }, []);
@@ -284,7 +265,7 @@ export function TemplateTable({
       {newTemplate.modal}
       {deleteTemplate.modal}
       <DetailDrawer
-        title={t`Edit` + ' ' + templateTypeTranslation}
+        title={t`Edit Template`}
         size={'90%'}
         closeOnEscape={false}
         renderContent={(id) => {
@@ -298,7 +279,7 @@ export function TemplateTable({
         }}
       />
       <InvenTreeTable
-        url={apiUrl(apiEndpoint, undefined, { variant })}
+        url={apiUrl(apiEndpoint)}
         tableState={table}
         columns={columns}
         props={{
