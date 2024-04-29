@@ -474,7 +474,7 @@ interface ScanInputInterface {
   action: (items: ScanItem[]) => void;
 }
 
-function InputManual({ action }: ScanInputInterface) {
+function InputManual({ action }: Readonly<ScanInputInterface>) {
   const [value, setValue] = useState<string>('');
 
   function btnAddItem() {
@@ -526,7 +526,7 @@ function InputManual({ action }: ScanInputInterface) {
 }
 
 /* Input that uses QR code detection from images */
-function InputImageBarcode({ action }: ScanInputInterface) {
+function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
     key: 'camId',

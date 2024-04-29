@@ -180,7 +180,7 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
  * If owner is defined, only renders a badge
  * If user is defined, a badge is rendered in addition to main value
  */
-function TableStringValue(props: FieldProps) {
+function TableStringValue(props: Readonly<FieldProps>) {
   let value = props?.field_value;
 
   if (value === undefined) {
@@ -217,11 +217,11 @@ function TableStringValue(props: FieldProps) {
   );
 }
 
-function BooleanValue(props: FieldProps) {
+function BooleanValue(props: Readonly<FieldProps>) {
   return <YesNoButton value={props.field_value} />;
 }
 
-function TableAnchorValue(props: FieldProps) {
+function TableAnchorValue(props: Readonly<FieldProps>) {
   if (props.field_data.external) {
     return (
       <Anchor
@@ -303,7 +303,7 @@ function TableAnchorValue(props: FieldProps) {
   );
 }
 
-function ProgressBarValue(props: FieldProps) {
+function ProgressBarValue(props: Readonly<FieldProps>) {
   return (
     <ProgressBar
       value={props.field_data.progress}
@@ -313,7 +313,7 @@ function ProgressBarValue(props: FieldProps) {
   );
 }
 
-function StatusValue(props: FieldProps) {
+function StatusValue(props: Readonly<FieldProps>) {
   return (
     <StatusRenderer type={props.field_data.model} status={props.field_value} />
   );
