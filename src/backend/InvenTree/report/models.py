@@ -387,6 +387,13 @@ class TemplateOutput(models.Model):
 class LabelOutput(TemplateOutput):
     """Class representing a generated label output file."""
 
+    plugin = models.CharField(
+        max_length=100,
+        blank=True,
+        verbose_name=_('Plugin'),
+        help_text=_('Label output plugin'),
+    )
+
     template = models.ForeignKey(
         LabelTemplate, on_delete=models.CASCADE, verbose_name=_('Label Template')
     )
