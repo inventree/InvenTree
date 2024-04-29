@@ -80,7 +80,7 @@ export const StatusRenderer = ({
 
   const statusCodes = statusCodeList[type];
   if (statusCodes === undefined) {
-    console.log('StatusRenderer: statusCodes is undefined');
+    console.warn('StatusRenderer: statusCodes is undefined');
     return null;
   }
 

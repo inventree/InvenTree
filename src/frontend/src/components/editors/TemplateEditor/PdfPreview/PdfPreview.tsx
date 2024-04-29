@@ -52,17 +52,16 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           throw new Error(preview.data);
         }
 
-        console.log('Response:', templateType, preview.data);
-
-        if (templateType === 'label') {
+        if (templateType === 'label' && preview?.data?.output) {
           preview = await api.get(preview.data.output, {
             responseType: 'blob'
           });
         }
-        // ----
+
         let pdf = new Blob([preview.data], {
           type: preview.headers['content-type']
         });
+
         let srcUrl = URL.createObjectURL(pdf);
 
         setPdfUrl(srcUrl + '#view=fitH');

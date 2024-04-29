@@ -143,7 +143,6 @@ function StockItemDefaultMove({
   stockItem: any;
   value: any;
 }) {
-  console.log('item', stockItem);
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',

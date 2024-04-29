@@ -665,7 +665,6 @@ function InputImageBarcode({ action }: inputProps) {
   useEffect(() => {
     if (cameraValue === null) return;
     if (cameraValue === camId?.id) {
-      console.log('matching value and id');
       return;
     }
 
