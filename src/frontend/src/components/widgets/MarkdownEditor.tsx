@@ -2,8 +2,7 @@ import { t } from '@lingui/macro';
 import { showNotification } from '@mantine/notifications';
 import EasyMDE from 'easymde';
 import 'easymde/dist/easymde.min.css';
-import { ReactNode, useCallback, useMemo } from 'react';
-import { useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import SimpleMDE from 'react-simplemde-editor';
 
 import { api } from '../../App';
