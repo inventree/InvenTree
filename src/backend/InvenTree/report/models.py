@@ -5,13 +5,15 @@ import os
 import sys
 
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
 from django.template.loader import render_to_string
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import common.models
@@ -28,6 +30,7 @@ try:
     from django_weasyprint import WeasyTemplateResponseMixin
 except OSError as err:  # pragma: no cover
     print(f'OSError: {err}')
+    print("Unable to import 'django_weasyprint' module.")
     print('You may require some further system packages to be installed.')
     sys.exit(1)
 
@@ -339,6 +342,47 @@ class LabelTemplate(ReportTemplateBase):
             plugin.add_label_context(self, self.object_to_print, request, context)
 
         return context
+
+
+class TemplateOutput(models.Model):
+    """Class representing a generated file from a template.
+
+    As reports (or labels) may take a long time to render,
+    this process is offloaded to the background worker process.
+
+    The result is either a file made available for download,
+    or a message indicating that the output is handled externally.
+    """
+
+    created = models.DateField(auto_now_add=True, editable=False)
+
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+
+    complete = models.BooleanField(
+        default=False,
+        verbose_name=_('Complete'),
+        help_text=_('Report generation is complete'),
+    )
+
+    progress = models.PositiveIntegerField(
+        default=0, verbose_name=_('Progress'), help_text=_('Report generation progress')
+    )
+
+    output = models.FileField(
+        upload_to='report/output',
+        blank=True,
+        null=True,
+        verbose_name=_('Output File'),
+        help_text=_('Generated output file'),
+    )
+
+    template_type = models.ForeignKey(
+        ContentType, on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    template_id = models.PositiveIntegerField(null=True, blank=True)
+
+    template = GenericForeignKey('template_type', 'template_id')
 
 
 def rename_snippet(instance, filename):

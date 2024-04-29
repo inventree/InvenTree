@@ -24,7 +24,12 @@ import report.serializers
 from InvenTree.api import MetadataView
 from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
-from InvenTree.mixins import ListCreateAPI, RetrieveAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (
+    ListAPI,
+    ListCreateAPI,
+    RetrieveAPI,
+    RetrieveUpdateDestroyAPI,
+)
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
 
@@ -409,6 +414,20 @@ class ReportAssetDetail(RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.ReportAssetSerializer
 
 
+class TemplateOutputList(ListAPI):
+    """List endpoint for ReportOutput objects."""
+
+    queryset = report.models.TemplateOutput.objects.all()
+    serializer_class = report.serializers.TemplateOutputSerializer
+
+
+class TemplateOutputDetail(RetrieveAPI):
+    """Detail endpoint for a single TemplateOutput object."""
+
+    queryset = report.models.TemplateOutput.objects.all()
+    serializer_class = report.serializers.TemplateOutputSerializer
+
+
 label_api_urls = [
     # Label templates
     path(
@@ -489,6 +508,18 @@ report_api_urls = [
                 name='api-report-snippet-detail',
             ),
             path('', ReportSnippetList.as_view(), name='api-report-snippet-list'),
+        ]),
+    ),
+    # Report outputs
+    path(
+        'output/',
+        include([
+            path(
+                '<int:pk>/',
+                TemplateOutputDetail.as_view(),
+                name='api-template-output-detail',
+            ),
+            path('', TemplateOutputList.as_view(), name='api-template-output-list'),
         ]),
     ),
 ]

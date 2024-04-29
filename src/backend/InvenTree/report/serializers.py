@@ -64,6 +64,26 @@ class LabelTemplateSerializer(ReportSerializerBase):
         fields = [*ReportSerializerBase().base_fields(), 'width', 'height']
 
 
+class TemplateOutputSerializer(InvenTreeModelSerializer):
+    """Serializer class for the TemplateOutput model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = report.models.TemplateOutput
+        fields = [
+            'pk',
+            'created',
+            'user',
+            'complete',
+            'progress',
+            'output',
+            'template_type',
+            'template_id',
+            'template',
+        ]
+
+
 class ReportSnippetSerializer(InvenTreeModelSerializer):
     """Serializer class for the ReportSnippet model."""
 
