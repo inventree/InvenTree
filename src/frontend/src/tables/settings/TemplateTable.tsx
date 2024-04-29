@@ -44,6 +44,7 @@ export type TemplateI = {
   pk: number;
   name: string;
   description: string;
+  model_type: ModelType;
   filters: string;
   filename_pattern: string;
   enabled: boolean;

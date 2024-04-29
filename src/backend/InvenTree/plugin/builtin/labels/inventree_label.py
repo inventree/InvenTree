@@ -37,6 +37,11 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     outputs = []
     debug = None
 
+    def before_printing(self):
+        """Reset the list of label outputs."""
+        self.outputs = []
+        self.debug = None
+
     def in_debug_mode(self):
         """Check if the plugin is printing in debug mode."""
         if self.debug is None:

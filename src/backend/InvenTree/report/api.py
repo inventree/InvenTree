@@ -215,6 +215,7 @@ class LabelTemplatePrint(TemplatePrintBase):
         )
 
         try:
+            plugin.before_printing()
             plugin.print_labels(
                 label,
                 output,
@@ -222,6 +223,7 @@ class LabelTemplatePrint(TemplatePrintBase):
                 request,
                 printing_options=(serializer.data if serializer else {}),
             )
+            plugin.after_printing()
         except ValidationError as e:
             raise (e)
         except Exception as e:

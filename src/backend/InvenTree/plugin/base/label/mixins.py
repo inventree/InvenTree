@@ -242,3 +242,11 @@ class LabelPrintingMixin:
             return None
 
         return serializer(*args, **kwargs)
+
+    def before_printing(self):
+        """Hook method called before printing labels."""
+        pass
+
+    def after_printing(self):
+        """Hook method called after printing labels."""
+        pass

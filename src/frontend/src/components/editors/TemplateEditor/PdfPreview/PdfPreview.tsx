@@ -13,13 +13,13 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         code,
         previewItem,
         saveTemplate,
-        { uploadKey, uploadUrl, preview: { itemKey }, templateType }
+        { url, template, templateType }
       ) => {
         if (saveTemplate) {
           const formData = new FormData();
-          formData.append(uploadKey, new File([code], 'template.html'));
+          formData.append('template', new File([code], 'template.html'));
 
-          const res = await api.patch(uploadUrl, formData);
+          const res = await api.patch(url, formData);
           if (res.status !== 200) {
             throw new Error(res.data);
           }
@@ -27,7 +27,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
 
         // ---- TODO: Fix this when implementing the new API ----
         let preview = await api.get(
-          uploadUrl + `print/?plugin=inventreelabel&${itemKey}=${previewItem}`,
+          url + `print/?plugin=inventreelabel&items=${previewItem}`,
           {
             responseType: templateType === 'label' ? 'json' : 'blob',
             timeout: 30000,
@@ -35,7 +35,7 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           }
         );
 
-        if (preview.status !== 200) {
+        if (preview.status !== 200 && preview.status !== 201) {
           if (templateType === 'report') {
             let data;
             try {
@@ -52,8 +52,10 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
           throw new Error(preview.data);
         }
 
+        console.log('Response:', templateType, preview.data);
+
         if (templateType === 'label') {
-          preview = await api.get(preview.data.file, {
+          preview = await api.get(preview.data.output, {
             responseType: 'blob'
           });
         }

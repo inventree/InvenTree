@@ -70,15 +70,8 @@ export type PreviewArea = {
   component: PreviewAreaComponent;
 };
 
-export type TemplatePreviewProps = {
-  itemKey: string;
-  model: ModelType;
-  filters?: Record<string, any>;
-};
-
 type TemplateEditorProps = {
   url: string;
-  preview: TemplatePreviewProps;
   templateType: 'label' | 'report';
   editors: Editor[];
   previewAreas: PreviewArea[];
@@ -86,7 +79,7 @@ type TemplateEditorProps = {
 };
 
 export function TemplateEditor(props: TemplateEditorProps) {
-  const { url, editors, previewAreas, preview } = props;
+  const { url, editors, previewAreas, template, templateType } = props;
   const editorRef = useRef<EditorRef>();
   const previewRef = useRef<PreviewAreaRef>();
 
@@ -150,7 +143,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
     async (confirmed: boolean, saveTemplate: boolean = true) => {
       if (!confirmed) {
         openConfirmModal({
-          title: t`Save & Reload preview?`,
+          title: t`Save & Reload Preview`,
           children: (
             <Alert
               color="yellow"
@@ -206,18 +199,25 @@ export function TemplateEditor(props: TemplateEditorProps) {
   );
 
   const previewApiUrl = useMemo(
-    () => ModelInformationDict[preview.model].api_endpoint,
-    [preview.model]
+    () =>
+      ModelInformationDict[template.model_type ?? ModelType.stockitem]
+        .api_endpoint,
+    [template]
   );
+
+  const templateFilters: Record<string, string> = useMemo(() => {
+    // TODO: Extract custom filters from template
+    return {};
+  }, [template]);
 
   useEffect(() => {
     api
-      .get(apiUrl(previewApiUrl), { params: { limit: 1, ...preview.filters } })
+      .get(apiUrl(previewApiUrl), { params: { limit: 1, ...templateFilters } })
       .then((res) => {
         if (res.data.results.length === 0) return;
         setPreviewItem(res.data.results[0].pk);
       });
-  }, [previewApiUrl, preview.filters]);
+  }, [previewApiUrl, templateFilters]);
 
   return (
     <Stack style={{ height: '100%', flex: '1' }}>
@@ -262,7 +262,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
                   },
                   {
                     key: 'preview_save',
-                    name: t`Save & Reload preview`,
+                    name: t`Save & Reload Preview`,
                     tooltip: t`Save the current template and reload the preview`,
                     icon: IconDeviceFloppy,
                     onClick: () => updatePreview(hasSaveConfirmed),
@@ -321,10 +321,10 @@ export function TemplateEditor(props: TemplateEditorProps) {
                 field_type: 'related field',
                 api_url: apiUrl(previewApiUrl),
                 description: '',
-                label: t`Select` + ' ' + preview.model + ' ' + t`to preview`,
-                model: preview.model,
+                label: t`Select instance to preview`,
+                model: template.model_type,
                 value: previewItem,
-                filters: preview.filters,
+                filters: templateFilters,
                 onValueChange: (value) => setPreviewItem(value)
               }}
             />
