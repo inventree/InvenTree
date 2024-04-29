@@ -10,7 +10,6 @@ from django.urls import reverse
 from rest_framework import serializers
 
 from InvenTree.unit_test import InvenTreeAPITestCase
-from label.models import PartLabel
 from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
 from machine.machine_types.label_printer import LabelPrinterBaseDriver
 from machine.models import MachineConfig
