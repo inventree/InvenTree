@@ -207,7 +207,7 @@ class LabelTemplatePrint(TemplatePrintBase):
         )
 
         try:
-            response = plugin.print_labels(
+            plugin.print_labels(
                 label,
                 output,
                 items_to_print,
@@ -219,6 +219,17 @@ class LabelTemplatePrint(TemplatePrintBase):
         except Exception as e:
             InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
             raise ValidationError([_('Error printing label'), str(e)])
+
+        # TODO: Refactor response into a proper serializer class
+        return Response(
+            data={
+                'output': output.pk,
+                'progress': output.progress,
+                'plugin': plugin.plugin_slug(),
+                'template': label.pk,
+            },
+            status=201,
+        )
 
         valid_responses = [JsonResponse, HttpResponse, StreamingHttpResponse]
 

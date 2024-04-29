@@ -38,12 +38,16 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     outputs = []
     debug = None
 
+    def in_debug_mode(self):
+        """Check if the plugin is printing in debug mode."""
+        if self.debug is None:
+            self.debug = str2bool(self.get_setting('DEBUG'))
+
+        return self.debug
+
     def print_label(self, label, item, request, **kwargs):
         """Print a single label."""
-        if self.debug is None:
-            self.debug = str2bool(kwargs.get('debug', self.get_setting('DEBUG')))
-
-        if self.debug:
+        if self.in_debug_mode():
             # In debug mode, return raw HTML output
             output = self.render_to_html(label, item, request, **kwargs)
         else:
@@ -57,7 +61,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
         if len(self.outputs) == 0:
             return None
 
-        if self.debug:
+        if self.in_debug_mode():
             # Simple HTML output
             data = '\n'.join(self.outputs)
             filename = 'labels.html'

@@ -316,10 +316,8 @@ class LabelTemplate(ReportTemplateBase):
 
         return f"""
         @page {{
-            {{% localize off %}}
             size: {width}mm {height}mm;
             margin: {margin}mm;
-            {{% endlocalize %}}
         }}
         """
 
