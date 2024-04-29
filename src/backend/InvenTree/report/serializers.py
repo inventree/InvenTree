@@ -71,9 +71,21 @@ class LabelOutputSerializer(InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = report.models.LabelOutput
-        fields = ['pk', 'created', 'user', 'complete', 'progress', 'output', 'template']
+        fields = [
+            'pk',
+            'created',
+            'user',
+            'model_type',
+            'items',
+            'complete',
+            'progress',
+            'output',
+            'template',
+        ]
 
     output = InvenTreeAttachmentSerializerField()
+
+    model_type = serializers.CharField(source='template.model_type', read_only=True)
 
 
 class ReportSnippetSerializer(InvenTreeModelSerializer):

@@ -149,7 +149,8 @@ class LabelPrintingMixin:
 
         # Generate a label output for each provided item
         for item in items:
-            filename = label.generate_filename(request)
+            context = label.get_context(item, request)
+            filename = label.generate_filename(context)
             pdf_file = self.render_to_pdf(label, item, request, **kwargs)
             pdf_data = pdf_file.get_document().write_pdf()
             png_file = self.render_to_png(
@@ -161,6 +162,7 @@ class LabelPrintingMixin:
                 'pdf_data': pdf_data,
                 'png_file': png_file,
                 'filename': filename,
+                'context': context,
                 'output': output,
                 'label_instance': label,
                 'item_instance': item,

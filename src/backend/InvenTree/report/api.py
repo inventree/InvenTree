@@ -206,7 +206,12 @@ class LabelTemplatePrint(TemplatePrintBase):
         # At this point, we offload the label(s) to the selected plugin.
         # The plugin is responsible for handling the request and returning a response.
         output = report.models.LabelOutput.objects.create(
-            user=request.user, template=label, progress=0, complete=False
+            template=label,
+            items=len(items_to_print),
+            plugin=plugin.slug,
+            user=request.user,
+            progress=0,
+            complete=False,
         )
 
         try:

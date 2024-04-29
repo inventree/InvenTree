@@ -360,6 +360,10 @@ class TemplateOutput(models.Model):
         User, on_delete=models.SET_NULL, blank=True, null=True, related_name='+'
     )
 
+    items = models.PositiveIntegerField(
+        default=0, verbose_name=_('Items'), help_text=_('Number of items to process')
+    )
+
     complete = models.BooleanField(
         default=False,
         verbose_name=_('Complete'),
