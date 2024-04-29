@@ -10,10 +10,10 @@ from PIL.Image import Image
 from rest_framework import serializers
 from rest_framework.request import Request
 
-from label.models import LabelTemplate
 from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
 from plugin import registry as plg_registry
 from plugin.base.label.mixins import LabelItemType, LabelPrintingMixin
+from report.models import LabelTemplate
 from stock.models import StockLocation
 
 

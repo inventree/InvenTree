@@ -12,7 +12,6 @@ from PIL import Image
 
 from InvenTree.settings import BASE_DIR
 from InvenTree.unit_test import InvenTreeAPITestCase
-from label.models import PartLabel, StockItemLabel, StockLocationLabel
 from part.models import Part
 from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.helpers import MixinNotImplementedError

@@ -12,9 +12,9 @@ import weasyprint
 from rest_framework import serializers
 
 import report.helpers
-from label.models import LabelOutput, LabelTemplate
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
+from report.models import LabelOutput, LabelTemplate
 
 logger = logging.getLogger('inventree')
 
