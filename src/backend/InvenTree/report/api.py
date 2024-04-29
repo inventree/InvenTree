@@ -278,7 +278,8 @@ class ReportTemplatePrint(TemplatePrintBase):
         try:
             # Merge one or more PDF files into a single download
             for instance in items_to_print:
-                report_name = report.generate_filename(request)
+                context = report.get_context(instance, request)
+                report_name = report.generate_filename(context)
 
                 output = report.render(instance, request)
 
