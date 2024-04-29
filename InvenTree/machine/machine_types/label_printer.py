@@ -2,9 +2,9 @@
 
 from typing import Union, cast
 
-from django.db.models.query import QuerySet
-from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.models import AnonymousUser
+from django.db.models.query import QuerySet
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 from PIL.Image import Image
@@ -187,15 +187,15 @@ class LabelPrinterBaseDriver(BaseDriver):
         png = self.machine_plugin.render_to_png(label, request, **kwargs)
         label.object_to_print = None
         return png
-    
+
     def _get_dummy_request(self):
         """Return a dummy request object to it work with legacy code.
-        
+
         Note: this is a private method and can be removed at anytime
         """
         r = HttpRequest()
-        r.META["SERVER_PORT"] = "80"
-        r.META["SERVER_NAME"] = "localhost"
+        r.META['SERVER_PORT'] = '80'
+        r.META['SERVER_NAME'] = 'localhost'
         r.user = AnonymousUser()
 
         return r
