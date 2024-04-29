@@ -1,14 +1,13 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { purchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import { getDetailUrl } from '../../functions/urls';
+import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -21,8 +20,7 @@ import {
   ReferenceColumn,
   ResponsibleColumn,
   StatusColumn,
-  TargetDateColumn,
-  TotalPriceColumn
+  TargetDateColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -43,8 +41,6 @@ export function PurchaseOrderTable({
   supplierId?: number;
   supplierPartId?: number;
 }) {
-  const navigate = useNavigate();
-
   const table = useTable('purchase-order');
   const user = useUserState();
 
@@ -92,25 +88,31 @@ export function PurchaseOrderTable({
       ProjectCodeColumn(),
       CreationDateColumn(),
       TargetDateColumn(),
-      TotalPriceColumn(),
+      {
+        accessor: 'total_price',
+        title: t`Total Price`,
+        sortable: true,
+        render: (record: any) => {
+          return formatCurrency(record.total_price, {
+            currency: record.order_currency ?? record.supplier_detail?.currency
+          });
+        }
+      },
       ResponsibleColumn()
     ];
   }, []);
 
+  const purchaseOrderFields = usePurchaseOrderFields();
+
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     title: t`Add Purchase Order`,
-    fields: purchaseOrderFields(),
+    fields: purchaseOrderFields,
     initialData: {
       supplier: supplierId
     },
-    onFormSuccess: (response) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.purchaseorder, response.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.purchaseorder
   });
 
   const tableActions = useMemo(() => {

@@ -788,7 +788,7 @@ function loadSalesOrderTable(table, options) {
                         return '{% trans "Invalid Customer" %}';
                     }
 
-                    return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/sales-orders/`);
+                    return imageHoverIcon(row.customer_detail.image) + renderLink(row.customer_detail.name, `/company/${row.customer}/?display=sales-orders/`);
                 }
             },
             {
@@ -857,7 +857,7 @@ function loadSalesOrderTable(table, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     return formatCurrency(value, {
-                        currency: row.order_currency,
+                        currency: row.order_currency ?? row.customer_detail?.currency,
                     });
                 }
             }

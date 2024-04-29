@@ -119,7 +119,7 @@ export const StatusRenderer = ({
   const statusCodes = getStatusCodes(type);
 
   if (statusCodes === undefined || statusCodes === null) {
-    console.log('StatusRenderer: statusCodes is undefined');
+    console.warn('StatusRenderer: statusCodes is undefined');
     return null;
   }
 

@@ -1,19 +1,9 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Badge,
-  Grid,
-  Group,
-  LoadingOverlay,
-  Skeleton,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconCopy,
   IconDots,
   IconHistory,
   IconInfoCircle,
@@ -33,6 +23,7 @@ import {
   ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
+  DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
@@ -50,12 +41,16 @@ import {
   StockOperationProps,
   useAddStockItem,
   useCountStockItem,
-  useEditStockItem,
   useRemoveStockItem,
+  useStockFields,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -349,9 +344,27 @@ export default function StockDetail() {
     [stockitem]
   );
 
-  const editStockItem = useEditStockItem({
-    item_id: stockitem.pk,
-    callback: () => refreshInstance()
+  const editStockItemFields = useStockFields({ create: false });
+
+  const editStockItem = useEditApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    pk: stockitem.pk,
+    title: t`Edit Stock Item`,
+    fields: editStockItemFields,
+    onFormSuccess: refreshInstance
+  });
+
+  const duplicateStockItemFields = useStockFields({ create: true });
+
+  const duplicateStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    title: t`Add Stock Item`,
+    fields: duplicateStockItemFields,
+    initialData: {
+      ...stockitem
+    },
+    follow: true,
+    modelType: ModelType.stockitem
   });
 
   const stockActionProps: StockOperationProps = useMemo(() => {
@@ -368,15 +381,17 @@ export default function StockDetail() {
   const transferStockItem = useTransferStockItem(stockActionProps);
 
   const stockActions = useMemo(
-    () => /* TODO: Disable actions based on user permissions*/ [
+    () => [
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            hidden: stockitem?.barcode_hash
+            hidden:
+              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
           }),
           UnlinkBarcodeAction({
-            hidden: !stockitem?.barcode_hash
+            hidden:
+              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
           })
         ]}
       />,
@@ -425,16 +440,20 @@ export default function StockDetail() {
       />,
       <ActionDropdown
         key="stock"
-        // tooltip={t`Stock Actions`}
+        tooltip={t`Stock Item Actions`}
         icon={<IconDots />}
         actions={[
-          {
-            name: t`Duplicate`,
-            tooltip: t`Duplicate stock item`,
-            icon: <IconCopy />
-          },
-          EditItemAction({}),
-          DeleteItemAction({})
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.stock),
+            onClick: () => duplicateStockItem.open()
+          }),
+          EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.stock),
+            onClick: () => editStockItem.open()
+          }),
+          DeleteItemAction({
+            hidden: !user.hasDeleteRole(UserRoles.stock)
+          })
         ]}
       />
     ],
@@ -446,24 +465,33 @@ export default function StockDetail() {
       ? []
       : [
           <DetailsBadge
+            color="yellow"
+            label={t`In Production`}
+            visible={stockitem.is_building}
+          />,
+          <DetailsBadge
             color="blue"
             label={t`Serial Number` + `: ${stockitem.serial}`}
             visible={!!stockitem.serial}
+            key="serial"
           />,
           <DetailsBadge
             color="blue"
             label={t`Quantity` + `: ${stockitem.quantity}`}
             visible={!stockitem.serial}
+            key="quantity"
           />,
           <DetailsBadge
             color="blue"
             label={t`Batch Code` + `: ${stockitem.batch}`}
             visible={!!stockitem.batch}
+            key="batch"
           />,
           <StatusRenderer
             status={stockitem.status}
             type={ModelType.stockitem}
             options={{ size: 'lg' }}
+            key="status"
           />
         ];
   }, [stockitem, instanceQuery]);
@@ -489,6 +517,7 @@ export default function StockDetail() {
       />
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
       {editStockItem.modal}
+      {duplicateStockItem.modal}
       {countStockItem.modal}
       {addStockItem.modal}
       {removeStockItem.modal}

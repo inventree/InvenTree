@@ -1,17 +1,15 @@
 import { test } from './baseFixtures.js';
-import { adminuser, user } from './defaults.js';
+import { baseUrl } from './defaults.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Parts', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
-  await page.goto('./platform/home');
+  await doQuickLogin(page);
 
+  await page.goto(`${baseUrl}/home`);
   await page.getByRole('tab', { name: 'Parts' }).click();
-  await page.goto('./platform/part/');
+
   await page.waitForURL('**/platform/part/category/index/details');
-  await page.goto('./platform/part/category/index/parts');
+  await page.goto(`${baseUrl}/part/category/index/parts`);
   await page.getByText('1551ABK').click();
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
@@ -36,12 +34,10 @@ test('PUI - Parts', async ({ page }) => {
 });
 
 test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
+  await doQuickLogin(page);
 
-  await page.goto('./platform/part/84/manufacturers');
+  await page.goto(`${baseUrl}/part/84/manufacturers`);
+
   await page.getByRole('tab', { name: 'Manufacturers' }).click();
   await page.getByText('Hammond Manufacturing').click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
@@ -51,12 +47,10 @@ test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
 });
 
 test('PUI - Parts - Supplier Parts', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
+  await doQuickLogin(page);
 
-  await page.goto('./platform/part/15/suppliers');
+  await page.goto(`${baseUrl}/part/15/suppliers`);
+
   await page.getByRole('tab', { name: 'Suppliers' }).click();
   await page.getByRole('cell', { name: 'DIG-84670-SJI' }).click();
   await page.getByRole('tab', { name: 'Received Stock' }).click(); //
@@ -66,12 +60,10 @@ test('PUI - Parts - Supplier Parts', async ({ page }) => {
 });
 
 test('PUI - Sales', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
+  await doQuickLogin(page);
 
-  await page.goto('./platform/sales/');
+  await page.goto(`${baseUrl}/sales/`);
+
   await page.waitForURL('**/platform/sales/**');
   await page.waitForURL('**/platform/sales/index/salesorders');
   await page.getByRole('tab', { name: 'Return Orders' }).click();
@@ -119,11 +111,7 @@ test('PUI - Sales', async ({ page }) => {
 });
 
 test('PUI - Scanning', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
-  await page.goto('./platform/');
+  await doQuickLogin(page);
 
   await page.getByLabel('Homenav').click();
   await page.getByRole('button', { name: 'System Information' }).click();
@@ -144,11 +132,8 @@ test('PUI - Scanning', async ({ page }) => {
 });
 
 test('PUI - Admin', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${adminuser.username}&password=${adminuser.password}`
-  );
-  await page.waitForURL('**/platform/*');
-  await page.goto('./platform/');
+  // Note here we login with admin access
+  await doQuickLogin(page, 'admin', 'inventree');
 
   // User settings
   await page.getByRole('button', { name: 'admin' }).click();
@@ -197,11 +182,7 @@ test('PUI - Admin', async ({ page }) => {
 });
 
 test('PUI - Language / Color', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
-  await page.goto('./platform/');
+  await doQuickLogin(page);
 
   await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
@@ -235,12 +216,9 @@ test('PUI - Language / Color', async ({ page }) => {
 });
 
 test('PUI - Company', async ({ page }) => {
-  await page.goto(
-    `./platform/login/?login=${user.username}&password=${user.password}`
-  );
-  await page.waitForURL('**/platform/*');
+  await doQuickLogin(page);
 
-  await page.goto('./platform/company/1/details');
+  await page.goto(`${baseUrl}/company/1/details`);
   await page
     .locator('div')
     .filter({ hasText: /^DigiKey Electronics$/ })

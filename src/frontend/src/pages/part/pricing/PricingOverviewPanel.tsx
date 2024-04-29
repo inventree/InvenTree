@@ -186,10 +186,14 @@ export default function PricingOverviewPanel({
               </Alert>
             </Paper>
           )}
-          <DataTable records={overviewData} columns={columns} />
+          <DataTable
+            idAccessor="name"
+            records={overviewData}
+            columns={columns}
+          />
         </Stack>
         <ResponsiveContainer width="100%" height={500}>
-          <BarChart data={overviewData}>
+          <BarChart data={overviewData} id="pricing-overview-chart">
             <XAxis dataKey="title" />
             <YAxis
               tickFormatter={(value, index) =>

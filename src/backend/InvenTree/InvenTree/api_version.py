@@ -1,13 +1,30 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 188
+INVENTREE_API_VERSION = 193
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v188 - 2024-04-17 : https://github.com/inventree/InvenTree/pull/6911
+v193 - 2024-05-01 : https://github.com/inventree/InvenTree/pull/6911
     - Adds API endpoints for managing data import
+
+v192 - 2024-04-23 : https://github.com/inventree/InvenTree/pull/7106
+    - Adds 'trackable' ordering option to BuildLineLabel API endpoint
+
+v191 - 2024-04-22 : https://github.com/inventree/InvenTree/pull/7079
+    - Adds API endpoints for Contenttype model
+
+v190 - 2024-04-19 : https://github.com/inventree/InvenTree/pull/7024
+    - Adds "active" field to the Company API endpoints
+    - Allow company list to be filtered by "active" status
+
+v189 - 2024-04-19 : https://github.com/inventree/InvenTree/pull/7066
+    - Adds "currency" field to CompanyBriefSerializer class
+
+v188 - 2024-04-16 : https://github.com/inventree/InvenTree/pull/6970
+    - Adds session authentication support for the API
+    - Improvements for login / logout endpoints for better support of React web interface
 
 v187 - 2024-04-10 : https://github.com/inventree/InvenTree/pull/6985
     - Allow Part list endpoint to be sorted by pricing_min and pricing_max values
