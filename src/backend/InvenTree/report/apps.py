@@ -41,6 +41,7 @@ class ReportConfig(AppConfig):
 
         with maintenance_mode_on():
             try:
+                self.create_default_labels()
                 self.create_default_reports()
             except (
                 AppRegistryNotReady,
@@ -54,8 +55,86 @@ class ReportConfig(AppConfig):
 
         set_maintenance_mode(False)
 
+    def create_default_labels(self):
+        """Create default label templates."""
+        # Test if models are ready
+        try:
+            import report.models
+        except Exception:  # pragma: no cover
+            # Database is not ready yet
+            return
+
+        assert bool(report.models.LabelTemplate is not None)
+
+        label_templates = [
+            {
+                'file': 'part_label.html',
+                'name': 'InvenTree Part Label',
+                'description': 'Sample part label',
+                'model_type': 'part',
+            },
+            {
+                'file': 'part_label_code128.html',
+                'name': 'InvenTree Part Label (Code128)',
+                'description': 'Sample part label with Code128 barcode',
+                'model_type': 'part',
+            },
+            {
+                'file': 'stockitem_qr.html',
+                'name': 'InvenTree Stock Item Label (QR)',
+                'description': 'Sample stock item label with QR code',
+                'model_type': 'stockitem',
+            },
+            {
+                'file': 'stockitem_qr_and_text.html',
+                'name': 'InvenTree Stock Item Label (QR + Text)',
+                'description': 'Sample stock item label with QR code and text',
+                'model_type': 'stockitem',
+            },
+            {
+                'file': 'stocklocation_qr.html',
+                'name': 'InvenTree Stock Location Label (QR)',
+                'description': 'Sample stock location label with QR code',
+                'model_type': 'stocklocation',
+            },
+            {
+                'file': 'buildline_label.html',
+                'name': 'InvenTree Build Line Label',
+                'description': 'Sample build line label',
+                'model_type': 'buildline',
+            },
+        ]
+
+        for template in label_templates:
+            # Ignore matching templates which are already in the database
+            if report.models.LabelTemplate.objects.filter(
+                name=template['name']
+            ).exists():
+                continue
+
+            template_file = Path(__file__).parent.joinpath(
+                'templates', 'label', template['file']
+            )
+
+            if not template_file.exists():
+                logger.warning("Missing template file: '%s'", template['name'])
+                continue
+
+            # Read the existing template file
+            data = template_file.open('r').read()
+
+            logger.info("Creating new label template: '%s'", template['name'])
+
+            # Create a new entry
+            report.models.LabelTemplate.objects.create(
+                name=template['name'],
+                description=template['description'],
+                model_type=template['model_type'],
+                template=ContentFile(data, os.path.basename(template['file'])),
+            )
+
     def create_default_reports(self):
-        """Create all default templates."""
+        """Create default report templates."""
         # Test if models are ready
         try:
             import report.models

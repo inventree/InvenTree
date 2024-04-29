@@ -21,7 +21,6 @@ from sesame.views import LoginView
 import build.api
 import common.api
 import company.api
-import label.api
 import machine.api
 import order.api
 import part.api
