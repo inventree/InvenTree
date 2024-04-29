@@ -191,9 +191,11 @@ export function DateColumn({
   accessor,
   sortable,
   switchable,
+  ordering,
   title
 }: {
   accessor?: string;
+  ordering?: string;
   sortable?: boolean;
   switchable?: boolean;
   title?: string;
@@ -201,9 +203,10 @@ export function DateColumn({
   return {
     accessor: accessor ?? 'date',
     sortable: sortable ?? true,
+    ordering: ordering,
     title: title ?? t`Date`,
     switchable: switchable,
-    render: (record: any) => renderDate(record[accessor ?? 'date'])
+    render: (record: any) => renderDate(resolveItem(record, accessor ?? 'date'))
   };
 }
 

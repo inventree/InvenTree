@@ -206,18 +206,12 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Stocktake`,
       sortable: true
     }),
-    {
-      accessor: 'expiry_date',
-      sortable: true,
-      switchable: true,
-      render: (record: any) => renderDate(record.expiry_date)
-    },
-    {
-      accessor: 'updated',
-      sortable: true,
-      switchable: true,
-      render: (record: any) => renderDate(record.updated)
-    },
+    DateColumn({
+      accessor: 'expiry_date'
+    }),
+    DateColumn({
+      accessor: 'updated'
+    }),
     // TODO: purchase order
     // TODO: Supplier part
     {

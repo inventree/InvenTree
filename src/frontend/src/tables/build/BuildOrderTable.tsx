@@ -17,6 +17,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
   CreationDateColumn,
+  DateColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -62,11 +63,10 @@ function buildOrderTableColumns(): TableColumn[] {
     },
     CreationDateColumn(),
     TargetDateColumn(),
-    {
+    DateColumn({
       accessor: 'completion_date',
-      sortable: true,
-      render: (record: any) => renderDate(record.completion_date)
-    },
+      sortable: true
+    }),
     {
       accessor: 'issued_by',
       sortable: true,
