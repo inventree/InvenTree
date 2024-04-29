@@ -247,7 +247,7 @@ class BuildTest(BuildAPITest):
             expected_code=400
         )
 
-        self.assertTrue('accept_unallocated' in response.data)
+        self.assertIn('accept_unallocated', response.data)
 
         # Accept unallocated stock
         self.post(
@@ -934,7 +934,7 @@ class BuildOverallocationTest(BuildAPITest):
             {},
             expected_code=400
         )
-        self.assertTrue('accept_overallocated' in response.data)
+        self.assertIn('accept_overallocated', response.data)
 
         # Check stock items have not reduced at all
         for si, oq, _ in self.state.values():

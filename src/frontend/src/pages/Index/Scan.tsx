@@ -399,7 +399,6 @@ function HistoryTable({
     );
 
   const rows = data.map((item) => {
-    const selected = selection.includes(item.id);
     return (
       <tr key={item.id}>
         <td>
