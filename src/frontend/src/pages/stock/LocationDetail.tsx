@@ -15,7 +15,6 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
-  DeleteItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
@@ -34,6 +33,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { getDetailUrl } from '../../functions/urls';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
@@ -288,7 +288,7 @@ export default function Stock() {
       { name: t`Stock`, url: '/stock' },
       ...(location.path ?? []).map((l: any) => ({
         name: l.name,
-        url: `/stock/location/${l.pk}`
+        url: getDetailUrl(ModelType.stocklocation, l.pk)
       }))
     ],
     [location]

@@ -3,8 +3,8 @@ import { create } from 'zustand';
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { UserPermissions, UserRoles } from '../enums/Roles';
+import { isLoggedIn } from '../functions/auth';
 import { apiUrl } from './ApiState';
-import { useSessionState } from './SessionState';
 import { UserProps } from './states';
 
 interface UserStateProps {
@@ -37,7 +37,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
   fetchUserState: async () => {
-    if (!useSessionState.getState().hasToken()) {
+    if (!isLoggedIn()) {
       return;
     }
 
@@ -56,8 +56,8 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         };
         set({ user: user });
       })
-      .catch((_error) => {
-        console.error('Error fetching user data');
+      .catch((error) => {
+        console.error('ERR: Error fetching user data');
       });
 
     // Fetch role data
@@ -75,7 +75,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         }
       })
       .catch((_error) => {
-        console.error('Error fetching user roles');
+        console.error('ERR: Error fetching user roles');
       });
   },
   checkUserRole: (role: UserRoles, permission: UserPermissions) => {

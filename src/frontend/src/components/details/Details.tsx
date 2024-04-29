@@ -1,10 +1,9 @@
-import { Trans, t } from '@lingui/macro';
+import { t } from '@lingui/macro';
 import {
   ActionIcon,
   Anchor,
   Badge,
   CopyButton,
-  Group,
   Paper,
   Skeleton,
   Stack,
@@ -23,9 +22,9 @@ import { getDetailUrl } from '../../functions/urls';
 import { base_url } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
+import { YesNoButton } from '../buttons/YesNoButton';
 import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
-import { YesNoButton } from '../items/YesNoButton';
 import { getModelInfo } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 
@@ -53,7 +52,7 @@ export type DetailsField =
       | StringDetailField
       | BooleanField
       | LinkDetailField
-      | ProgressBarfield
+      | ProgressBarField
       | StatusField
     );
 
@@ -85,7 +84,7 @@ type ExternalLinkField = {
   external: true;
 };
 
-type ProgressBarfield = {
+type ProgressBarField = {
   type: 'progressbar';
   progress: number;
   total: number;
@@ -95,8 +94,6 @@ type StatusField = {
   type: 'status';
   model: ModelType;
 };
-
-type FieldValueType = string | number | undefined;
 
 type FieldProps = {
   field_data: any;

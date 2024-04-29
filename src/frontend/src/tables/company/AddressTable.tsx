@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { YesNoButton } from '../../components/items/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
@@ -184,7 +184,7 @@ export function AddressTable({
       <AddItemButton
         tooltip={t`Add Address`}
         onClick={() => newAddress.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);

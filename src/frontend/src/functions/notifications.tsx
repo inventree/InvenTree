@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
+import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 
 /**
  * Show a notification that the feature is not yet implemented
@@ -32,5 +33,30 @@ export function invalidResponse(returnCode: number) {
     title: t`Invalid Return Code`,
     message: t`Server returned status ${returnCode}`,
     color: 'red'
+  });
+}
+
+/*
+ * Display a login / logout notification message.
+ * Any existing login notification(s) will be hidden.
+ */
+export function showLoginNotification({
+  title,
+  message,
+  success = true
+}: {
+  title: string;
+  message: string;
+  success?: boolean;
+}) {
+  notifications.hide('login');
+
+  notifications.show({
+    title: title,
+    message: message,
+    color: success ? 'green' : 'red',
+    icon: success ? <IconCircleCheck /> : <IconExclamationCircle />,
+    id: 'login',
+    autoClose: 5000
   });
 }

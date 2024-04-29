@@ -183,4 +183,4 @@ Finally added a `{% raw %}|floatformat:0{% endraw %}` to the quantity that remov
 
 A default *BOM Report* template is provided out of the box, which is useful for generating simple test reports. Furthermore, it may be used as a starting point for developing custom BOM reports:
 
-View the [source code](https://github.com/inventree/InvenTree/blob/master/InvenTree/report/templates/report/inventree_bill_of_materials_report.html) for the default test report template.
+View the [source code](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/report/templates/report/inventree_bill_of_materials_report.html) for the default test report template.

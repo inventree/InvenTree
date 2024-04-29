@@ -15,6 +15,7 @@ export function PageDetail({
   title,
   subtitle,
   detail,
+  badges,
   imageUrl,
   breadcrumbs,
   breadcrumbAction,
@@ -24,6 +25,7 @@ export function PageDetail({
   subtitle?: string;
   imageUrl?: string;
   detail?: ReactNode;
+  badges?: ReactNode[];
   breadcrumbs?: Breadcrumb[];
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
@@ -56,6 +58,11 @@ export function PageDetail({
             </Group>
             <Space />
             {detail}
+            <Group position="right" spacing="xs" noWrap>
+              {badges?.map((badge, idx) => (
+                <Fragment key={idx}>{badge}</Fragment>
+              ))}
+            </Group>
             <Space />
             {actions && (
               <Group spacing={5} position="right">

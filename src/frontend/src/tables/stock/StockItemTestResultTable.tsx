@@ -12,9 +12,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { PassFailButton } from '../../components/items/YesNoButton';
 import { RenderUser } from '../../components/render/User';
 import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -202,6 +202,41 @@ export default function StockItemTestResultTable({
             </Group>
           );
         }
+      },
+      {
+        accessor: 'test_station',
+        sortable: true,
+        title: t`Test station`
+      },
+      {
+        accessor: 'started_datetime',
+        sortable: true,
+        title: t`Started`,
+        render: (record: any) => {
+          return (
+            <Group position="apart">
+              {renderDate(record.started_datetime, {
+                showTime: true,
+                showSeconds: true
+              })}
+            </Group>
+          );
+        }
+      },
+      {
+        accessor: 'finished_datetime',
+        sortable: true,
+        title: t`Finished`,
+        render: (record: any) => {
+          return (
+            <Group position="apart">
+              {renderDate(record.finished_datetime, {
+                showTime: true,
+                showSeconds: true
+              })}
+            </Group>
+          );
+        }
       }
     ];
   }, [itemId]);
@@ -218,6 +253,9 @@ export default function StockItemTestResultTable({
       value: {},
       attachment: {},
       notes: {},
+      test_station: {},
+      started_datetime: {},
+      finished_datetime: {},
       stock_item: {
         value: itemId,
         hidden: true
@@ -241,9 +279,7 @@ export default function StockItemTestResultTable({
     successMessage: t`Test result added`
   });
 
-  const [selectedTest, setSelectedTest] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedTest, setSelectedTest] = useState<number>(0);
 
   const editTestModal = useEditApiFormModal({
     url: ApiEndpoints.stock_test_result_list,

@@ -55,6 +55,9 @@ def apps():
         'users',
         'plugin',
         'InvenTree',
+        'generic',
+        'machine',
+        'web',
     ]
 
 
@@ -119,7 +122,7 @@ def localDir() -> Path:
 
 def managePyDir():
     """Returns the directory of the manage.py file."""
-    return localDir().joinpath('InvenTree')
+    return localDir().joinpath('src', 'backend', 'InvenTree')
 
 
 def managePyPath():
@@ -149,7 +152,7 @@ def yarn(c, cmd, pty: bool = False):
         cmd: Yarn command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
     """
-    path = managePyDir().parent.joinpath('src').joinpath('frontend')
+    path = localDir().joinpath('src').joinpath('frontend')
     c.run(f'cd "{path}" && {cmd}', pty=pty)
 
 
@@ -210,7 +213,7 @@ def check_file_existance(filename: str, overwrite: bool = False):
 @task(help={'uv': 'Use UV (experimental package manager)'})
 def plugins(c, uv=False):
     """Installs all plugins as specified in 'plugins.txt'."""
-    from InvenTree.InvenTree.config import get_plugin_file
+    from src.backend.InvenTree.InvenTree.config import get_plugin_file
 
     plugin_file = get_plugin_file()
 
@@ -227,31 +230,39 @@ def plugins(c, uv=False):
 @task(help={'uv': 'Use UV package manager (experimental)'})
 def install(c, uv=False):
     """Installs required python packages."""
-    print("Installing required python packages from 'requirements.txt'")
+    print("Installing required python packages from 'src/backend/requirements.txt'")
 
     # Install required Python packages with PIP
     if not uv:
-        c.run('pip3 install --upgrade pip')
-        c.run('pip3 install --upgrade setuptools')
         c.run(
-            'pip3 install --no-cache-dir --disable-pip-version-check -U -r requirements.txt'
+            'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools'
+        )
+        c.run(
+            'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r src/backend/requirements.txt'
         )
     else:
-        c.run('pip3 install --upgrade uv')
-        c.run('uv pip install --upgrade setuptools')
-        c.run('uv pip install -U -r requirements.txt')
+        c.run(
+            'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools'
+        )
+        c.run('uv pip install -U --require-hashes  -r src/backend/requirements.txt')
 
     # Run plugins install
     plugins(c, uv=uv)
+
+    # Compile license information
+    lic_path = managePyDir().joinpath('InvenTree', 'licenses.txt')
+    c.run(
+        f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}'
+    )
 
 
 @task(help={'tests': 'Set up test dataset at the end'})
 def setup_dev(c, tests=False):
     """Sets up everything needed for the dev environment."""
-    print("Installing required python packages from 'requirements-dev.txt'")
+    print("Installing required python packages from 'src/backend/requirements-dev.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install -U -r requirements-dev.txt')
+    c.run('pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
 
     # Install pre-commit hook
     print('Installing pre-commit for checks before git commits...')
@@ -304,7 +315,9 @@ def remove_mfa(c, mail=''):
 def static(c, frontend=False):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, 'prerender')
+
     if frontend and node_available():
+        frontend_trans(c)
         frontend_build(c)
 
     print('Collecting static files...')
@@ -324,7 +337,7 @@ def translate_stats(c):
     except Exception:
         print('WARNING: Translation files could not be compiled:')
 
-    path = Path('InvenTree', 'script', 'translation_stats.py')
+    path = Path('src', 'backend', 'InvenTree', 'script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
 
@@ -349,22 +362,73 @@ def translate(c, ignore_static=False, no_frontend=False):
         static(c)
 
 
-@task
-def backup(c):
+@task(
+    help={
+        'clean': 'Clean up old backup files',
+        'path': 'Specify path for generated backup files (leave blank for default path)',
+    }
+)
+def backup(c, clean=False, path=None):
     """Backup the database and media files."""
     print('Backing up InvenTree database...')
-    manage(c, 'dbbackup --noinput --clean --compress')
+
+    cmd = '--noinput --compress -v 2'
+
+    if path:
+        cmd += f' -O {path}'
+
+    if clean:
+        cmd += ' --clean'
+
+    manage(c, f'dbbackup {cmd}')
     print('Backing up InvenTree media files...')
-    manage(c, 'mediabackup --noinput --clean --compress')
+    manage(c, f'mediabackup {cmd}')
 
 
-@task
-def restore(c):
+@task(
+    help={
+        'path': 'Specify path to locate backup files (leave blank for default path)',
+        'db_file': 'Specify filename of compressed database archive (leave blank to use most recent backup)',
+        'media_file': 'Specify filename of compressed media archive (leave blank to use most recent backup)',
+        'ignore_media': 'Do not import media archive (database restore only)',
+        'ignore_database': 'Do not import database archive (media restore only)',
+    }
+)
+def restore(
+    c,
+    path=None,
+    db_file=None,
+    media_file=None,
+    ignore_media=False,
+    ignore_database=False,
+):
     """Restore the database and media files."""
-    print('Restoring InvenTree database...')
-    manage(c, 'dbrestore --noinput --uncompress')
-    print('Restoring InvenTree media files...')
-    manage(c, 'mediarestore --noinput --uncompress')
+    base_cmd = '--no-input --uncompress -v 2'
+
+    if path:
+        base_cmd += f' -I {path}'
+
+    if ignore_database:
+        print('Skipping database archive...')
+    else:
+        print('Restoring InvenTree database')
+        cmd = f'dbrestore {base_cmd}'
+
+        if db_file:
+            cmd += f' -i {db_file}'
+
+        manage(c, cmd)
+
+    if ignore_media:
+        print('Skipping media restore...')
+    else:
+        print('Restoring InvenTree media files')
+        cmd = f'mediarestore {base_cmd}'
+
+        if media_file:
+            cmd += f' -i {media_file}'
+
+        manage(c, cmd)
 
 
 @task(post=[rebuild_models, rebuild_thumbnails])
@@ -861,7 +925,7 @@ def test(
     if coverage:
         # Run tests within coverage environment, and generate report
         c.run(f'coverage run {managePyPath()} {cmd}')
-        c.run('coverage html -i')
+        c.run('coverage xml -i')
     else:
         # Run simple test runner, without coverage
         manage(c, cmd, pty=pty)
@@ -870,7 +934,7 @@ def test(
 @task(help={'dev': 'Set up development environment at the end'})
 def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset'):
     """Setup a testing environment."""
-    from InvenTree.InvenTree.config import get_media_dir
+    from src.backend.InvenTree.InvenTree.config import get_media_dir
 
     if not ignore_update:
         update(c)
@@ -898,6 +962,7 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     src = Path(path).joinpath('media').resolve()
     dst = get_media_dir()
 
+    print(f'Copying media files - "{src}" to "{dst}"')
     shutil.copytree(src, dst, dirs_exist_ok=True)
 
     print('Done setting up test environment...')
@@ -937,8 +1002,8 @@ def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
-    import InvenTree.InvenTree.version as InvenTreeVersion
-    from InvenTree.InvenTree.config import (
+    import src.backend.InvenTree.InvenTree.version as InvenTreeVersion
+    from src.backend.InvenTree.InvenTree.config import (
         get_config_file,
         get_media_dir,
         get_static_dir,
@@ -1101,7 +1166,7 @@ def frontend_download(
         if not extract:
             return
 
-        dest_path = Path(__file__).parent / 'InvenTree/web/static/web'
+        dest_path = Path(__file__).parent / 'src/backend' / 'InvenTree/web/static/web'
 
         # if clean, delete static/web directory
         if clean:

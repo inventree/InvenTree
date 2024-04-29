@@ -1,12 +1,14 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { notYetImplemented } from '../../functions/notifications';
+import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -18,8 +20,7 @@ import {
   ReferenceColumn,
   ResponsibleColumn,
   StatusColumn,
-  TargetDateColumn,
-  TotalPriceColumn
+  TargetDateColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -47,10 +48,6 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       AssignedToMeFilter()
     ];
   }, []);
-
-  // TODO: Row actions
-
-  // TODO: Table actions (e.g. create new return order)
 
   const tableColumns = useMemo(() => {
     return [
@@ -81,38 +78,56 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       CreationDateColumn(),
       TargetDateColumn(),
       ResponsibleColumn(),
-      TotalPriceColumn()
+      {
+        accessor: 'total_price',
+        title: t`Total Price`,
+        sortable: true,
+        render: (record: any) => {
+          return formatCurrency(record.total_price, {
+            currency: record.order_currency ?? record.customer_detail?.currency
+          });
+        }
+      }
     ];
   }, []);
 
-  const addReturnOrder = useCallback(() => {
-    notYetImplemented();
-  }, []);
+  const returnOrderFields = useReturnOrderFields();
+
+  const newReturnOrder = useCreateApiFormModal({
+    url: ApiEndpoints.return_order_list,
+    title: t`Add Return Order`,
+    fields: returnOrderFields,
+    follow: true,
+    modelType: ModelType.returnorder
+  });
 
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
         tooltip={t`Add Return Order`}
-        onClick={addReturnOrder}
-        hidden={!user.hasAddRole(UserRoles.sales_order)}
+        onClick={() => newReturnOrder.open()}
+        hidden={!user.hasAddRole(UserRoles.return_order)}
       />
     ];
   }, [user]);
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.return_order_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          customer_detail: true
-        },
-        tableFilters: tableFilters,
-        tableActions: tableActions,
-        modelType: ModelType.returnorder
-      }}
-    />
+    <>
+      {newReturnOrder.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.return_order_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            customer_detail: true
+          },
+          tableFilters: tableFilters,
+          tableActions: tableActions,
+          modelType: ModelType.returnorder
+        }}
+      />
+    </>
   );
 }

@@ -25,7 +25,10 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -188,6 +191,17 @@ export default function ManufacturerPartDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const duplicateManufacturerPart = useCreateApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    title: t`Add Manufacturer Part`,
+    fields: editManufacturerPartFields,
+    initialData: {
+      ...manufacturerPart
+    },
+    follow: true,
+    modelType: ModelType.manufacturerpart
+  });
+
   const manufacturerPartActions = useMemo(() => {
     return [
       <ActionDropdown
@@ -196,7 +210,8 @@ export default function ManufacturerPartDetail() {
         icon={<IconDots />}
         actions={[
           DuplicateItemAction({
-            hidden: !user.hasAddRole(UserRoles.purchase_order)
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
+            onClick: () => duplicateManufacturerPart.open()
           }),
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
@@ -226,6 +241,7 @@ export default function ManufacturerPartDetail() {
   return (
     <>
       {editManufacturerPart.modal}
+      {duplicateManufacturerPart.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
