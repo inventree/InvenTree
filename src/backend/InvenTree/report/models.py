@@ -41,14 +41,11 @@ logger = logging.getLogger('inventree')
 class WeasyprintReportMixin(WeasyTemplateResponseMixin):
     """Class for rendering a HTML template to a PDF."""
 
-    pdf_filename = 'report.pdf'
-    pdf_attachment = True
-
     def __init__(self, request, template, **kwargs):
         """Initialize the report mixin with some standard attributes."""
         self.request = request
         self.template_name = template
-        self.pdf_filename = kwargs.get('filename', 'report.pdf')
+        self.pdf_filename = kwargs.get('filename', 'output.pdf')
 
 
 class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
@@ -148,7 +145,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         return wp.render_to_response(context, **kwargs)
 
     filename_pattern = models.CharField(
-        default='report.pdf',
+        default='output.pdf',
         verbose_name=_('Filename Pattern'),
         help_text=_('Pattern for generating filenames'),
         max_length=100,

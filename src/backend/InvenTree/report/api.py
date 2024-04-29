@@ -191,6 +191,9 @@ class LabelTemplatePrint(TemplatePrintBase):
         plugin = self.get_plugin(request)
         label = self.get_object()
 
+        if len(items_to_print) == 0:
+            raise ValidationError('No items provided to print')
+
         # Check the label dimensions
         if label.width <= 0 or label.height <= 0:
             raise ValidationError('Label has invalid dimensions')
@@ -220,30 +223,11 @@ class LabelTemplatePrint(TemplatePrintBase):
             InvenTree.exceptions.log_error(f'plugins.{plugin.slug}.print_labels')
             raise ValidationError([_('Error printing label'), str(e)])
 
-        # TODO: Refactor response into a proper serializer class
+        output.refresh_from_db()
+
         return Response(
-            data={
-                'output': output.pk,
-                'progress': output.progress,
-                'plugin': plugin.plugin_slug(),
-                'template': label.pk,
-            },
-            status=201,
+            report.serializers.LabelOutputSerializer(output).data, status=201
         )
-
-        valid_responses = [JsonResponse, HttpResponse, StreamingHttpResponse]
-
-        valid = any((isinstance(response, x) for x in valid_responses))
-
-        if not valid:
-            raise ValidationError(
-                f"Plugin '{plugin.plugin_slug()}' returned invalid response type: '{type(response)}'"
-            )
-
-        if isinstance(response, JsonResponse):
-            response['plugin'] = plugin.plugin_slug()
-
-        return response
 
 
 class LabelTemplateList(ListCreateAPI):

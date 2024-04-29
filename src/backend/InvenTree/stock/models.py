@@ -405,7 +405,7 @@ class StockItem(
         """Custom API instance filters."""
         return {'parent': {'exclude_tree': self.pk}}
 
-    def get_test_keys(self):
+    def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
         keys = []
 
@@ -417,7 +417,7 @@ class StockItem(
             if test.key not in keys:
                 keys.append(test.key)
 
-        for result in self.testResultList(include_installed=self.include_installed):
+        for result in self.testResultList(include_installed=include_installed):
             if result.key not in keys:
                 keys.append(result.key)
 
@@ -442,10 +442,8 @@ class StockItem(
             'test_keys': self.get_test_keys(),
             'test_template_list': self.part.getTestTemplates(),
             'test_template_map': self.part.getTestTemplateMap(),
-            'results': self.testResultMap(include_installed=self.include_installed),
-            'result_list': self.testResultList(
-                include_installed=self.include_installed
-            ),
+            'results': self.testResultMap(include_installed=True),
+            'result_list': self.testResultList(include_installed=True),
             'installed_items': self.get_installed_items(cascade=True),
         }
 

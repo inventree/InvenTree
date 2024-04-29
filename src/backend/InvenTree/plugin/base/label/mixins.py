@@ -39,8 +39,7 @@ class LabelPrintingMixin:
         super().__init__()
         self.add_mixin('labels', True, __class__)
 
-    # A list of generated outputs
-    outputs = []
+    BLOCKING_PRINT = True
 
     def render_to_pdf(self, label: LabelTemplate, instance, request, **kwargs):
         """Render this label to PDF format.
@@ -162,6 +161,7 @@ class LabelPrintingMixin:
                 'pdf_data': pdf_data,
                 'png_file': png_file,
                 'filename': filename,
+                'output': output,
                 'label_instance': label,
                 'item_instance': item,
                 'user': user,
@@ -170,7 +170,14 @@ class LabelPrintingMixin:
                 'printing_options': kwargs['printing_options'],
             }
 
-            self.print_label(label, item, request, **print_args)
+            if self.BLOCKING_PRINT:
+                # Print the label (blocking)
+                self.print_label(**print_args)
+            else:
+                # Offload the print task to the background worker
+                # Exclude the 'pdf_file' object - cannot be pickled
+                kwargs.pop('pdf_file', None)
+                offload_task(plugin_label.print_label, self.plugin_slug(), **kwargs)
 
             # Update the progress of the print job
             output.progress += int(100 / N)
@@ -201,6 +208,7 @@ class LabelPrintingMixin:
             filename: The filename of this PDF label
             label_instance: The instance of the label model which triggered the print_label() method
             item_instance: The instance of the database model against which the label is printed
+            output: The TemplateOutput object used to store the results of the print job
             user: The user who triggered this print job
             width: The expected width of the label (in mm)
             height: The expected height of the label (in mm)

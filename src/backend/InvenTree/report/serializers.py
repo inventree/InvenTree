@@ -73,7 +73,7 @@ class LabelOutputSerializer(InvenTreeModelSerializer):
         model = report.models.LabelOutput
         fields = ['pk', 'created', 'user', 'complete', 'progress', 'output', 'template']
 
-    template = InvenTreeAttachmentSerializerField()
+    output = InvenTreeAttachmentSerializerField()
 
 
 class ReportSnippetSerializer(InvenTreeModelSerializer):

@@ -183,9 +183,10 @@ function printLabels(options) {
             },
         },
         onSuccess: (response) => {
-            if (response.file) {
+            let output = response.output ?? response.file;
+            if (output) {
                 // Download the generated file
-                window.open(response.file);
+                window.open(output, '_blank');
             } else {
                 showMessage('{% trans "Labels sent to printer" %}', {
                     style: 'success',

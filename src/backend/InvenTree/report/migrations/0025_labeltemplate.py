@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(help_text='Template description', max_length=250, verbose_name='Description')),
                 ('template', models.FileField(help_text='Template file', upload_to='report/label', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Template')),
                 ('revision', models.PositiveIntegerField(default=1, editable=False, help_text='Revision number (auto-increments)', verbose_name='Revision')),
-                ('filename_pattern', models.CharField(default='report.pdf', help_text='Pattern for generating filenames', max_length=100, verbose_name='Filename Pattern')),
+                ('filename_pattern', models.CharField(default='output.pdf', help_text='Pattern for generating filenames', max_length=100, verbose_name='Filename Pattern')),
                 ('enabled', models.BooleanField(default=True, help_text='Template is enabled', verbose_name='Enabled')),
                 ('model_type', models.CharField(max_length=100, validators=[report.validators.validate_report_model_type])),
                 ('filters', models.CharField(blank=True, help_text='Template query filters (comma-separated list of key=value pairs)', max_length=250, validators=[report.validators.validate_filters], verbose_name='Filters')),

@@ -6,7 +6,6 @@ from django.utils.translation import gettext_lazy as _
 from InvenTree.helpers import str2bool
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
-from report.models import LabelTemplate
 
 
 class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
@@ -19,7 +18,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
     NAME = 'InvenTreeLabel'
     TITLE = _('InvenTree PDF label printer')
     DESCRIPTION = _('Provides native support for printing PDF labels')
-    VERSION = '1.0.0'
+    VERSION = '1.1.0'
     AUTHOR = _('InvenTree contributors')
 
     BLOCKING_PRINT = True
@@ -45,11 +44,14 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlugin):
 
         return self.debug
 
-    def print_label(self, label, item, request, **kwargs):
+    def print_label(self, **kwargs):
         """Print a single label."""
+        label = kwargs['label_instance']
+        instance = kwargs['item_instance']
+
         if self.in_debug_mode():
             # In debug mode, return raw HTML output
-            output = self.render_to_html(label, item, request, **kwargs)
+            output = self.render_to_html(label, instance, None, **kwargs)
         else:
             # Output is already provided
             output = kwargs['pdf_file']
