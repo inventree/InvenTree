@@ -28,11 +28,17 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import {
+  RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '../RowActions';
 
 export type TemplateI = {
   pk: number;
@@ -170,6 +176,7 @@ export function TemplateTable({
 
   const table = useTable(`${templateType}-template`);
   const navigate = useNavigate();
+  const user = useUserState();
 
   const openDetailDrawer = useCallback((pk: number) => navigate(`${pk}/`), []);
 
@@ -186,6 +193,11 @@ export function TemplateTable({
         switchable: true
       },
       {
+        accessor: 'model_type',
+        sortable: true,
+        switchable: false
+      },
+      {
         accessor: 'filters',
         sortable: false,
         switchable: true
@@ -200,18 +212,24 @@ export function TemplateTable({
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(-1);
 
-  const rowActions = useCallback((record: TemplateI): RowAction[] => {
-    return [
-      RowEditAction({
-        onClick: () => openDetailDrawer(record.pk)
-      }),
-      RowDeleteAction({
-        onClick: () => {
-          setSelectedTemplate(record.pk), deleteTemplate.open();
-        }
-      })
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: TemplateI): RowAction[] => {
+      return [
+        RowEditAction({
+          onClick: () => openDetailDrawer(record.pk)
+        }),
+        RowDuplicateAction({
+          // TODO: Duplicate selected template
+        }),
+        RowDeleteAction({
+          onClick: () => {
+            setSelectedTemplate(record.pk), deleteTemplate.open();
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   const deleteTemplate = useDeleteApiFormModal({
     url: apiEndpoint,
@@ -257,6 +275,8 @@ export function TemplateTable({
         description: t`Filter by enabled status`,
         type: 'checkbox'
       }
+      // TODO: Implement "model_type" filter
+      // TODO: This will require a lookup of the available model types (via OPTIONS API)
     ];
   }, []);
 
