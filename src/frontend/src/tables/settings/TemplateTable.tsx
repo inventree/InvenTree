@@ -1,9 +1,11 @@
 import { Trans, t } from '@lingui/macro';
 import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { IconFileCode } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   CodeEditor,
@@ -14,6 +16,7 @@ import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { resolveItem } from '../../functions/conversion';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -25,7 +28,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import { TableFilter, TableFilterChoice } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowAction,
@@ -136,6 +139,11 @@ export function TemplateTable({
         switchable: false
       },
       {
+        accessor: 'revision',
+        sortable: false,
+        switchable: true
+      },
+      {
         accessor: 'filters',
         sortable: false,
         switchable: true
@@ -239,6 +247,30 @@ export function TemplateTable({
     ];
   }, []);
 
+  const modelTypeQuery = useQuery({
+    enabled: true,
+    queryKey: ['template', apiEndpoint, templateType],
+    queryFn: async () => {
+      return await api
+        .options(apiUrl(apiEndpoint))
+        .then((response: any) => {
+          return (
+            resolveItem(response.data, 'actions.POST.model_type.choices') ?? []
+          );
+        })
+        .catch((error) => []);
+    }
+  });
+
+  const modelTypeOptions: TableFilterChoice[] = useMemo(() => {
+    return modelTypeQuery.data?.map((choice: any) => {
+      return {
+        value: choice.value,
+        label: choice.display_name
+      };
+    });
+  }, [modelTypeQuery.data]);
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -246,9 +278,13 @@ export function TemplateTable({
         label: t`Enabled`,
         description: t`Filter by enabled status`,
         type: 'checkbox'
+      },
+      {
+        name: 'model_type',
+        label: t`Model Type`,
+        description: t`Filter by target model type`,
+        choices: modelTypeOptions
       }
-      // TODO: Implement "model_type" filter
-      // TODO: This will require a lookup of the available model types (via OPTIONS API)
     ];
   }, []);
 
