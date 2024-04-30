@@ -129,7 +129,8 @@ export default function AdminCenter() {
         content: (
           <TemplateTable
             templateProps={{
-              apiEndpoint: ApiEndpoints.label_list,
+              templateEndpoint: ApiEndpoints.label_list,
+              printingEndpoint: ApiEndpoints.label_print,
               templateType: 'label',
               additionalFormFields: {
                 width: {},
@@ -146,7 +147,8 @@ export default function AdminCenter() {
         content: (
           <TemplateTable
             templateProps={{
-              apiEndpoint: ApiEndpoints.report_list,
+              templateEndpoint: ApiEndpoints.report_list,
+              printingEndpoint: ApiEndpoints.report_print,
               templateType: 'report',
               additionalFormFields: {
                 page_size: {},

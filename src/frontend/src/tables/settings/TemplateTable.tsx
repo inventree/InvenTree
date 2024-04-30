@@ -50,7 +50,8 @@ export type TemplateI = {
 };
 
 export interface TemplateProps {
-  apiEndpoint: ApiEndpoints;
+  templateEndpoint: ApiEndpoints;
+  printingEndpoint: ApiEndpoints;
   templateType: 'label' | 'report';
   additionalFormFields?: ApiFormFieldSet;
 }
@@ -62,13 +63,13 @@ export function TemplateDrawer({
   id: string | number;
   templateProps: TemplateProps;
 }) {
-  const { apiEndpoint, templateType } = templateProps;
+  const { templateEndpoint, printingEndpoint, templateType } = templateProps;
 
   const {
     instance: template,
     instanceQuery: { isFetching, error }
   } = useInstance<TemplateI>({
-    endpoint: apiEndpoint,
+    endpoint: templateEndpoint,
     hasPrimaryKey: true,
     pk: id,
     throwError: true
@@ -97,7 +98,8 @@ export function TemplateDrawer({
       </Group>
 
       <TemplateEditor
-        url={apiUrl(apiEndpoint, id)}
+        templateUrl={apiUrl(templateEndpoint, id)}
+        printingUrl={apiUrl(printingEndpoint)}
         templateType={templateType}
         template={template}
         editors={[CodeEditor]}
@@ -112,7 +114,8 @@ export function TemplateTable({
 }: {
   templateProps: TemplateProps;
 }) {
-  const { apiEndpoint, templateType, additionalFormFields } = templateProps;
+  const { templateEndpoint, templateType, additionalFormFields } =
+    templateProps;
 
   const table = useTable(`${templateType}-template`);
   const navigate = useNavigate();
@@ -220,7 +223,7 @@ export function TemplateTable({
   }, [additionalFormFields]);
 
   const editTemplate = useEditApiFormModal({
-    url: apiEndpoint,
+    url: templateEndpoint,
     pk: selectedTemplate,
     title: t`Edit Template`,
     fields: editTemplateFields,
@@ -228,14 +231,14 @@ export function TemplateTable({
   });
 
   const deleteTemplate = useDeleteApiFormModal({
-    url: apiEndpoint,
+    url: templateEndpoint,
     pk: selectedTemplate,
     title: t`Delete template`,
     onFormSuccess: table.refreshTable
   });
 
   const newTemplate = useCreateApiFormModal({
-    url: apiEndpoint,
+    url: templateEndpoint,
     title: t`Add Template`,
     fields: newTemplateFields,
     onFormSuccess: (data) => {
@@ -255,7 +258,7 @@ export function TemplateTable({
   }, []);
 
   const modelTypeFilters = useFilters({
-    url: apiUrl(apiEndpoint),
+    url: apiUrl(templateEndpoint),
     method: 'OPTIONS',
     accessor: 'data.actions.POST.model_type.choices',
     transform: (item: any) => {
@@ -297,7 +300,7 @@ export function TemplateTable({
         }}
       />
       <InvenTreeTable
-        url={apiUrl(apiEndpoint)}
+        url={apiUrl(templateEndpoint)}
         tableState={table}
         columns={columns}
         props={{

@@ -71,7 +71,8 @@ export type PreviewArea = {
 };
 
 export type TemplateEditorProps = {
-  url: string;
+  templateUrl: string;
+  printingUrl: string;
   templateType: 'label' | 'report';
   editors: Editor[];
   previewAreas: PreviewArea[];
@@ -79,7 +80,14 @@ export type TemplateEditorProps = {
 };
 
 export function TemplateEditor(props: TemplateEditorProps) {
-  const { url, editors, previewAreas, template, templateType } = props;
+  const {
+    templateUrl,
+    printingUrl,
+    editors,
+    previewAreas,
+    template,
+    templateType
+  } = props;
   const editorRef = useRef<EditorRef>();
   const previewRef = useRef<PreviewAreaRef>();
 
@@ -122,9 +130,9 @@ export function TemplateEditor(props: TemplateEditorProps) {
   }, []);
 
   useEffect(() => {
-    if (!url) return;
+    if (!templateUrl) return;
 
-    api.get(url).then((response: any) => {
+    api.get(templateUrl).then((response: any) => {
       if (response.data?.template) {
         api.get(response.data.template).then((res) => {
           codeRef.current = res.data;
@@ -132,7 +140,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
         });
       }
     });
-  }, [url]);
+  }, [templateUrl]);
 
   useEffect(() => {
     if (codeRef.current === undefined) return;

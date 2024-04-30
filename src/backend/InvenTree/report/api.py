@@ -396,126 +396,6 @@ class ReportPrint(GenericAPIView):
         )
 
 
-class ReportTemplatePrint(TemplatePrintBase):
-    """API endpoint for printing reports against a specified template."""
-
-    queryset = report.models.ReportTemplate.objects.all()
-
-    def get_serializer(self, *args, **kwargs):
-        """Serializer for printing."""
-        return serializers.Serializer()
-
-    def print(self, request, items_to_print):
-        """Print this report template against a number of provided items."""
-        report = self.get_object()
-        outputs = []
-
-        # In debug mode, generate single HTML output, rather than PDF
-        debug_mode = common.models.InvenTreeSetting.get_setting(
-            'REPORT_DEBUG_MODE', cache=False
-        )
-
-        # Start with a default report name
-        report_name = 'report.pdf'
-
-        try:
-            # Merge one or more PDF files into a single download
-            for instance in items_to_print:
-                context = report.get_context(instance, request)
-                report_name = report.generate_filename(context)
-
-                output = report.render(instance, request)
-
-                # Provide generated report to any interested plugins
-                for plugin in registry.with_mixin('report'):
-                    try:
-                        plugin.report_callback(self, instance, output, request)
-                    except Exception as e:
-                        InvenTree.exceptions.log_error(
-                            f'plugins.{plugin.slug}.report_callback'
-                        )
-
-                try:
-                    if debug_mode:
-                        outputs.append(report.render_as_string(instance, request))
-                    else:
-                        outputs.append(report.render(instance, request))
-                except TemplateDoesNotExist as e:
-                    template = str(e)
-                    if not template:
-                        template = report.template
-
-                    return Response(
-                        {
-                            'error': _(
-                                f"Template file '{template}' is missing or does not exist"
-                            )
-                        },
-                        status=400,
-                    )
-
-            if not report_name.endswith('.pdf'):
-                report_name += '.pdf'
-
-            if debug_mode:
-                """Concatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
-
-                html = '\n'.join(outputs)
-
-                return HttpResponse(html)
-            else:
-                """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
-
-                pages = []
-
-                try:
-                    for output in outputs:
-                        doc = output.get_document()
-                        for page in doc.pages:
-                            pages.append(page)
-
-                    pdf = outputs[0].get_document().copy(pages).write_pdf()
-
-                except TemplateDoesNotExist as e:
-                    template = str(e)
-
-                    if not template:
-                        template = report.template
-
-                    return Response(
-                        {
-                            'error': _(
-                                f"Template file '{template}' is missing or does not exist"
-                            )
-                        },
-                        status=400,
-                    )
-
-                inline = common.models.InvenTreeUserSetting.get_setting(
-                    'REPORT_INLINE', user=request.user, cache=False
-                )
-
-                return InvenTree.helpers.DownloadFile(
-                    pdf, report_name, content_type='application/pdf', inline=inline
-                )
-
-        except Exception as exc:
-            # Log the exception to the database
-            if InvenTree.helpers.str2bool(
-                common.models.InvenTreeSetting.get_setting(
-                    'REPORT_LOG_ERRORS', cache=False
-                )
-            ):
-                log_error(request.path)
-
-            # Re-throw the exception to the client as a DRF exception
-            raise ValidationError({
-                'error': 'Report printing failed',
-                'detail': str(exc),
-                'path': request.path,
-            })
-
-
 class ReportTemplateList(ListCreateAPI):
     """API endpoint for viewing list of ReportTemplate objects."""
 
@@ -627,11 +507,6 @@ report_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
-                        ReportTemplatePrint.as_view(),
-                        name='api-report-template-print',
-                    ),
                     path(
                         'metadata/',
                         MetadataView.as_view(),
