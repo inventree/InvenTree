@@ -15,10 +15,11 @@ import {
   IconTruckReturn,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -28,8 +29,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup } from '../../components/nav/PanelGroup';
-import { PanelType } from '../../components/nav/PanelGroup';
+import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
@@ -56,7 +56,7 @@ export type CompanyDetailProps = {
 /**
  * Detail view for a single company instance
  */
-export default function CompanyDetail(props: CompanyDetailProps) {
+export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
   const user = useUserState();
@@ -293,6 +293,12 @@ export default function CompanyDetail(props: CompanyDetailProps) {
     ];
   }, [id, company, user]);
 
+  const badges: ReactNode[] = useMemo(() => {
+    return [
+      <DetailsBadge label={t`Inactive`} color="red" visible={!company.active} />
+    ];
+  }, [company]);
+
   return (
     <>
       {editCompany.modal}
@@ -304,6 +310,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
           actions={companyActions}
           imageUrl={company.image}
           breadcrumbs={props.breadcrumbs}
+          badges={badges}
         />
         <PanelGroup pageKey="company" panels={companyPanels} />
       </Stack>

@@ -68,7 +68,11 @@ export default function ErrorReportTable() {
         onClose={close}
       >
         {error.split('\n').map((line: string) => {
-          return <Text size="sm">{line}</Text>;
+          return (
+            <Text key={line} size="sm">
+              {line}
+            </Text>
+          );
         })}
       </Drawer>
       <InvenTreeTable

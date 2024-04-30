@@ -38,8 +38,8 @@ steps:
 
 - script: |
     python -m pip install --upgrade pip setuptools wheel
-    pip install -r requirements.txt
-    pip install -r requirements-dev.txt
+    pip install --require-hashes -r requirements.txt
+    pip install --require-hashes -r requirements-dev.txt
     pip install unittest-xml-reporting coverage invoke
     sudo apt-get install poppler-utils
     sudo apt-get install libpoppler-dev

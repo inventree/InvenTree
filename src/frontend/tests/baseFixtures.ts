@@ -1,10 +1,19 @@
 import { test as baseTest } from '@playwright/test';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
+import os from 'os';
 import * as path from 'path';
 
 const istanbulCLIOutput = path.join(process.cwd(), '.nyc_output');
-export const classicUrl = 'http://127.0.0.1:8000';
+let platform = os.platform();
+let systemKeyVar;
+if (platform === 'darwin') {
+  systemKeyVar = 'Meta';
+} else {
+  systemKeyVar = 'Control';
+}
+/* metaKey is the local action key (used for spotlight for example) */
+export const systemKey = systemKeyVar;
 
 export function generateUUID(): string {
   return crypto.randomBytes(16).toString('hex');
@@ -41,6 +50,24 @@ export const test = baseTest.extend({
         )
       );
     }
+  },
+  // Ensure no errors are thrown in the console
+  page: async ({ baseURL, page }, use) => {
+    const messages = [];
+    page.on('console', (msg) => {
+      const url = msg.location().url;
+      if (
+        msg.type() === 'error' &&
+        !msg.text().startsWith('ERR: ') &&
+        url != 'http://localhost:8000/api/barcode/' &&
+        url != 'http://localhost:8000/api/news/?search=&offset=0&limit=25' &&
+        url != 'https://docs.inventree.org/en/versions.json' &&
+        !url.startsWith('chrome://')
+      )
+        messages.push(msg);
+    });
+    await use(page);
+    expect(messages).toEqual([]);
   }
 });
 

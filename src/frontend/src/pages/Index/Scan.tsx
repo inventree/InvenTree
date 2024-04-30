@@ -1,9 +1,11 @@
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
+  Badge,
   Button,
   Checkbox,
   Col,
+  Container,
   Grid,
   Group,
   ScrollArea,
@@ -15,15 +17,14 @@ import {
   TextInput,
   rem
 } from '@mantine/core';
-import { Badge, Container } from '@mantine/core';
 import {
   getHotkeyHandler,
   randomId,
+  useDocumentVisibility,
   useFullscreen,
   useListState,
   useLocalStorage
 } from '@mantine/hooks';
-import { useDocumentVisibility } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import {
   IconAlertCircle,
@@ -36,9 +37,9 @@ import {
   IconPlus,
   IconQuestionMark,
   IconSearch,
-  IconTrash
+  IconTrash,
+  IconX
 } from '@tabler/icons-react';
-import { IconX } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
 import { useEffect, useState } from 'react';
@@ -399,7 +400,6 @@ function HistoryTable({
     );
 
   const rows = data.map((item) => {
-    const selected = selection.includes(item.id);
     return (
       <tr key={item.id}>
         <td>
@@ -471,11 +471,11 @@ enum InputMethod {
   ImageBarcode = 'imageBarcode'
 }
 
-interface inputProps {
+interface ScanInputInterface {
   action: (items: ScanItem[]) => void;
 }
 
-function InputManual({ action }: inputProps) {
+function InputManual({ action }: Readonly<ScanInputInterface>) {
   const [value, setValue] = useState<string>('');
 
   function btnAddItem() {
@@ -527,7 +527,7 @@ function InputManual({ action }: inputProps) {
 }
 
 /* Input that uses QR code detection from images */
-function InputImageBarcode({ action }: inputProps) {
+function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
     key: 'camId',

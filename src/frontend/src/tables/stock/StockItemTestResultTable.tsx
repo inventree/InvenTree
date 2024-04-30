@@ -12,9 +12,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { PassFailButton } from '../../components/items/YesNoButton';
 import { RenderUser } from '../../components/render/User';
 import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -279,9 +279,7 @@ export default function StockItemTestResultTable({
     successMessage: t`Test result added`
   });
 
-  const [selectedTest, setSelectedTest] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedTest, setSelectedTest] = useState<number>(0);
 
   const editTestModal = useEditApiFormModal({
     url: ApiEndpoints.stock_test_result_list,

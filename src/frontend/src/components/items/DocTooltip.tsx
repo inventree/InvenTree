@@ -21,7 +21,7 @@ export function DocTooltip({
   detail,
   link,
   docchildren
-}: DocTooltipProps) {
+}: Readonly<DocTooltipProps>) {
   const { classes } = InvenTreeStyle();
 
   return (

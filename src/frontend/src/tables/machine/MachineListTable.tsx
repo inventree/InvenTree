@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { YesNoButton } from '../../components/buttons/YesNoButton';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -30,7 +31,6 @@ import {
 } from '../../components/items/ActionDropdown';
 import { InfoItem } from '../../components/items/InfoItem';
 import { UnavailableIndicator } from '../../components/items/UnavailableIndicator';
-import { YesNoButton } from '../../components/items/YesNoButton';
 import {
   DetailDrawer,
   DetailDrawerLink
@@ -491,7 +491,7 @@ export function MachineListTable({
   }, [machineDrivers, createFormMachineType]);
 
   const createMachineForm = useCreateApiFormModal({
-    title: t`Create machine`,
+    title: t`Add machine`,
     url: ApiEndpoints.machine_list,
     fields: {
       name: {},

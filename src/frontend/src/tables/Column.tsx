@@ -8,7 +8,7 @@ export type TableColumn<T = any> = {
   sortable?: boolean; // Whether the column is sortable
   switchable?: boolean; // Whether the column is switchable
   hidden?: boolean; // Whether the column is hidden
-  render?: (record: T) => any; // A custom render function
+  render?: (record: T, index?: number) => any; // A custom render function
   filter?: any; // A custom filter function
   filtering?: boolean; // Whether the column is filterable
   width?: number; // The width of the column

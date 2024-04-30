@@ -5,6 +5,17 @@ import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 import { Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 
+interface PageDetailInterface {
+  title?: string;
+  subtitle?: string;
+  imageUrl?: string;
+  detail?: ReactNode;
+  badges?: ReactNode[];
+  breadcrumbs?: Breadcrumb[];
+  breadcrumbAction?: () => void;
+  actions?: ReactNode[];
+}
+
 /**
  * Construct a "standard" page detail for common display between pages.
  *
@@ -15,19 +26,12 @@ export function PageDetail({
   title,
   subtitle,
   detail,
+  badges,
   imageUrl,
   breadcrumbs,
   breadcrumbAction,
   actions
-}: {
-  title?: string;
-  subtitle?: string;
-  imageUrl?: string;
-  detail?: ReactNode;
-  breadcrumbs?: Breadcrumb[];
-  breadcrumbAction?: () => void;
-  actions?: ReactNode[];
-}) {
+}: Readonly<PageDetailInterface>) {
   return (
     <Stack spacing="xs">
       {breadcrumbs && breadcrumbs.length > 0 && (
@@ -56,6 +60,11 @@ export function PageDetail({
             </Group>
             <Space />
             {detail}
+            <Group position="right" spacing="xs" noWrap>
+              {badges?.map((badge, idx) => (
+                <Fragment key={idx}>{badge}</Fragment>
+              ))}
+            </Group>
             <Space />
             {actions && (
               <Group spacing={5} position="right">

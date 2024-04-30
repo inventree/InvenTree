@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Input, useMantineTheme } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
-import { useId } from '@mantine/hooks';
+import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -78,7 +77,7 @@ export function RelatedModelField({
 
   // Search input query
   const [value, setValue] = useState<string>('');
-  const [searchText, cancelSearchText] = useDebouncedValue(value, 250);
+  const [searchText] = useDebouncedValue(value, 250);
 
   const [filters, setFilters] = useState<any>({});
 
@@ -269,6 +268,7 @@ export function RelatedModelField({
       <Select
         id={fieldId}
         value={currentValue}
+        ref={field.ref}
         options={data}
         filterOption={null}
         onInputChange={(value: any) => {

@@ -1,5 +1,6 @@
 """JSON serializers for common components."""
 
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import OuterRef, Subquery
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -16,6 +17,7 @@ from InvenTree.serializers import (
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
 )
+from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer
 
 
@@ -301,6 +303,26 @@ class FlagSerializer(serializers.Serializer):
             data['conditions'] = self.instance[instance]
 
         return data
+
+
+class ContentTypeSerializer(serializers.Serializer):
+    """Serializer for ContentType models."""
+
+    pk = serializers.IntegerField(read_only=True)
+    app_label = serializers.CharField(read_only=True)
+    model = serializers.CharField(read_only=True)
+    app_labeled_name = serializers.CharField(read_only=True)
+    is_plugin = serializers.SerializerMethodField('get_is_plugin', read_only=True)
+
+    class Meta:
+        """Meta options for ContentTypeSerializer."""
+
+        model = ContentType
+        fields = ['pk', 'app_label', 'model', 'app_labeled_name', 'is_plugin']
+
+    def get_is_plugin(self, obj) -> bool:
+        """Return True if the model is a plugin model."""
+        return obj.app_label in plugin_registry.installed_apps
 
 
 class CustomUnitSerializer(InvenTreeModelSerializer):

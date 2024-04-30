@@ -10,11 +10,11 @@ import {
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
-import { ReactNode, useCallback, useEffect } from 'react';
-import { useMemo } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 
 import { ModelType } from '../../../enums/ModelType';
+import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { NestedObjectField } from './NestedObjectField';
@@ -188,7 +188,7 @@ export function ApiFormField({
         return (
           <TextInput
             {...reducedDefinition}
-            ref={ref}
+            ref={field.ref}
             id={fieldId}
             type={definition.field_type}
             value={value || ''}
@@ -210,7 +210,7 @@ export function ApiFormField({
             id={fieldId}
             radius="lg"
             size="sm"
-            checked={value ?? false}
+            checked={isTrue(value)}
             error={error?.message}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
@@ -226,21 +226,14 @@ export function ApiFormField({
           <NumberInput
             {...reducedDefinition}
             radius="sm"
-            ref={ref}
+            ref={field.ref}
             id={fieldId}
             value={numericalValue}
             error={error?.message}
-            formatter={(value) => {
-              let v: any = parseFloat(value);
-
-              if (Number.isNaN(v) || !Number.isFinite(v)) {
-                return value;
-              }
-
-              return `${1 * v.toFixed()}`;
-            }}
             precision={definition.field_type == 'integer' ? 0 : 10}
             onChange={(value: number) => onChange(value)}
+            removeTrailingZeros
+            step={1}
           />
         );
       case 'choice':
@@ -256,7 +249,7 @@ export function ApiFormField({
           <FileInput
             {...reducedDefinition}
             id={fieldId}
-            ref={ref}
+            ref={field.ref}
             radius="sm"
             value={value}
             error={error?.message}

@@ -1868,7 +1868,7 @@ function loadPurchaseOrderTable(table, options) {
                 sortable: true,
                 formatter: function(value, row) {
                     return formatCurrency(value, {
-                        currency: row.order_currency,
+                        currency: row.order_currency ?? row.supplier_detail?.currency,
                     });
                 },
             },

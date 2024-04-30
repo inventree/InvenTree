@@ -6,7 +6,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
-  reporter: process.env.CI ? 'github' : 'list',
+  reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
 
   /* Configure projects for major browsers */
   projects: [
@@ -36,6 +36,9 @@ export default defineConfig({
     },
     {
       command: 'invoke server -a 127.0.0.1:8000',
+      env: {
+        INVENTREE_DEBUG: 'True'
+      },
       url: 'http://127.0.0.1:8000/api/',
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',

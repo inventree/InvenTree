@@ -288,6 +288,29 @@ QUERYCOUNT = {
     'RESPONSE_HEADER': 'X-Django-Query-Count',
 }
 
+ADMIN_SHELL_ENABLE = False
+ADMIN_SHELL_IMPORT_DJANGO = False
+ADMIN_SHELL_IMPORT_MODELS = False
+
+# In DEBUG mode, add support for django-admin-shell
+# Ref: https://github.com/djk2/django-admin-shell
+if (
+    DEBUG
+    and INVENTREE_ADMIN_ENABLED
+    and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
+):  # noqa
+    try:
+        import django_admin_shell
+
+        INSTALLED_APPS.append('django_admin_shell')
+        ADMIN_SHELL_ENABLE = True
+
+        logger.warning('Admin shell is enabled')
+    except ModuleNotFoundError:
+        logger.warning(
+            'django-admin-shell is not installed - Admin shell is not enabled'
+        )
+
 AUTHENTICATION_BACKENDS = CONFIG.get(
     'authentication_backends',
     [
@@ -469,10 +492,18 @@ if DEBUG:
         'rest_framework.renderers.BrowsableAPIRenderer'
     )
 
-# dj-rest-auth
 # JWT switch
 USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
 REST_USE_JWT = USE_JWT
+
+# dj-rest-auth
+REST_AUTH = {
+    'SESSION_LOGIN': True,
+    'TOKEN_MODEL': 'users.models.ApiToken',
+    'TOKEN_CREATOR': 'users.models.default_create_token',
+    'USE_JWT': USE_JWT,
+}
+
 OLD_PASSWORD_FIELD_ENABLED = True
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'
@@ -486,6 +517,7 @@ if USE_JWT:
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
     )
     INSTALLED_APPS.append('rest_framework_simplejwt')
+
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
@@ -1055,19 +1087,33 @@ CSRF_TRUSTED_ORIGINS = get_setting(
 if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
     CSRF_TRUSTED_ORIGINS.append(SITE_URL)
 
-if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
-    if DEBUG:
-        logger.warning(
-            'No CSRF_TRUSTED_ORIGINS specified. Defaulting to http://* for debug mode. This is not recommended for production use'
-        )
-        CSRF_TRUSTED_ORIGINS = ['http://*']
+if DEBUG:
+    for origin in [
+        'http://localhost',
+        'http://*.localhost',
+        'http://*localhost:8000',
+        'http://*localhost:5173',
+    ]:
+        if origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(origin)
 
-    elif isInMainThread():
-        # Server thread cannot run without CSRF_TRUSTED_ORIGINS
-        logger.error(
-            'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
-        )
-        sys.exit(-1)
+if (
+    not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0 and isInMainThread()
+):  # pragma: no cover
+    # Server thread cannot run without CSRF_TRUSTED_ORIGINS
+    logger.error(
+        'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+    )
+    sys.exit(-1)
+
+# Additional CSRF settings
+CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = get_boolean_setting(
+    'INVENTREE_SESSION_COOKIE_SECURE', 'session_cookie_secure', False
+)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',

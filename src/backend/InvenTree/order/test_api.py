@@ -419,7 +419,7 @@ class PurchaseOrderTest(OrderTest):
 
         po = models.PurchaseOrder.objects.get(pk=1)
 
-        self.assertTrue(po.lines.count() > 0)
+        self.assertGreater(po.lines.count(), 0)
 
         lines = []
 
@@ -1311,7 +1311,7 @@ class PurchaseOrderDownloadTest(OrderTest):
             expected_code=200,
             expected_fn='InvenTree_PurchaseOrderItems.xlsx',
         ) as file:
-            self.assertTrue(isinstance(file, io.BytesIO))
+            self.assertIsInstance(file, io.BytesIO)
 
 
 class PurchaseOrderReceiveTest(OrderTest):
@@ -2042,7 +2042,7 @@ class SalesOrderDownloadTest(OrderTest):
             expected_fn='InvenTree_SalesOrders.xls',
             decode=False,
         ) as file:
-            self.assertTrue(isinstance(file, io.BytesIO))
+            self.assertIsInstance(file, io.BytesIO)
 
     def test_download_csv(self):
         """Test that the list of sales orders can be downloaded as a .csv file."""
@@ -2244,7 +2244,7 @@ class SalesOrderAllocateTest(OrderTest):
         # At least one item should be allocated, and all should be variants
         self.assertGreater(self.order.stock_allocations.count(), 0)
         for allocation in self.order.stock_allocations.all():
-            self.assertNotEquals(allocation.item.part.pk, allocation.line.part.pk)
+            self.assertNotEqual(allocation.item.part.pk, allocation.line.part.pk)
 
     def test_shipment_complete(self):
         """Test that we can complete a shipment via the API."""

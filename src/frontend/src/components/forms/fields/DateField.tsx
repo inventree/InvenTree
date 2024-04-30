@@ -30,7 +30,6 @@ export default function DateField({
       // Convert the returned date object to a string
       if (value) {
         value = value.toString();
-        let date = new Date(value);
         value = dayjs(value).format(valueFormat);
       }
 
@@ -52,6 +51,7 @@ export default function DateField({
     <DateInput
       id={fieldId}
       radius="sm"
+      ref={field.ref}
       type={undefined}
       error={error?.message}
       value={dateValue}

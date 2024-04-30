@@ -77,16 +77,18 @@ class AbstractOrderSerializer(serializers.Serializer):
     """Abstract serializer class which provides fields common to all order types."""
 
     # Number of line items in this order
-    line_items = serializers.IntegerField(read_only=True)
+    line_items = serializers.IntegerField(read_only=True, label=_('Line Items'))
 
     # Number of completed line items (this is an annotated field)
-    completed_lines = serializers.IntegerField(read_only=True)
+    completed_lines = serializers.IntegerField(
+        read_only=True, label=_('Completed Lines')
+    )
 
     # Human-readable status text (read-only)
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
     # status field cannot be set directly
-    status = serializers.IntegerField(read_only=True)
+    status = serializers.IntegerField(read_only=True, label=_('Order Status'))
 
     # Reference string is *required*
     reference = serializers.CharField(required=True)
@@ -114,7 +116,9 @@ class AbstractOrderSerializer(serializers.Serializer):
 
     barcode_hash = serializers.CharField(read_only=True)
 
-    creation_date = serializers.DateField(required=False, allow_null=True)
+    creation_date = serializers.DateField(
+        required=False, allow_null=True, label=_('Creation Date')
+    )
 
     def validate_reference(self, reference):
         """Custom validation for the reference field."""
