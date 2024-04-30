@@ -11,6 +11,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -303,6 +304,12 @@ export default function PurchaseOrderDetail() {
             hidden: !order?.barcode_hash
           })
         ]}
+      />,
+      <PrintingActions
+        modelType={ModelType.purchaseorder}
+        items={[order.pk]}
+        enableLabels={false}
+        enableReports={true}
       />,
       <ActionDropdown
         key="order-actions"

@@ -112,8 +112,10 @@ class ReportConfig(AppConfig):
             ).exists():
                 continue
 
+            filename = template.pop('file')
+
             template_file = Path(__file__).parent.joinpath(
-                'templates', 'label', template['file']
+                'templates', 'label', filename
             )
 
             if not template_file.exists():
@@ -127,10 +129,7 @@ class ReportConfig(AppConfig):
 
             # Create a new entry
             report.models.LabelTemplate.objects.create(
-                name=template['name'],
-                description=template['description'],
-                model_type=template['model_type'],
-                template=ContentFile(data, os.path.basename(template['file'])),
+                **template, template=ContentFile(data, os.path.basename(filename))
             )
 
     def create_default_reports(self):
@@ -163,18 +162,21 @@ class ReportConfig(AppConfig):
                 'name': 'InvenTree Purchase Order',
                 'description': 'Sample purchase order report',
                 'model_type': 'purchaseorder',
+                'filename_pattern': 'PurchaseOrder-{{ reference }}.pdf',
             },
             {
                 'file': 'inventree_so_report_base.html',
                 'name': 'InvenTree Sales Order',
                 'description': 'Sample sales order report',
                 'model_type': 'salesorder',
+                'filename_pattern': 'SalesOrder-{{ reference }}.pdf',
             },
             {
                 'file': 'inventree_return_order_report_base.html',
                 'name': 'InvenTree Return Order',
                 'description': 'Sample return order report',
                 'model_type': 'returnorder',
+                'filename_pattern': 'ReturnOrder-{{ reference }}.pdf',
             },
             {
                 'file': 'inventree_test_report_base.html',
@@ -197,8 +199,10 @@ class ReportConfig(AppConfig):
             ).exists():
                 continue
 
+            filename = template.pop('file')
+
             template_file = Path(__file__).parent.joinpath(
-                'templates', 'report', template['file']
+                'templates', 'report', filename
             )
 
             if not template_file.exists():
@@ -212,8 +216,5 @@ class ReportConfig(AppConfig):
 
             # Create a new entry
             report.models.ReportTemplate.objects.create(
-                name=template['name'],
-                description=template['description'],
-                model_type=template['model_type'],
-                template=ContentFile(data, os.path.basename(template['file'])),
+                **template, template=ContentFile(data, os.path.basename(filename))
             )
