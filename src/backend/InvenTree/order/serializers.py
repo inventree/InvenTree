@@ -332,7 +332,8 @@ class PurchaseOrderRequestApprovalSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to 'approve' the order."""
         order = self.context['order']
-        order.request_approval()
+        request = self.context['request']
+        order.request_approval(request.user)
 
 
 class PurchaseOrderReadySerializer(serializers.Serializer):

@@ -2945,7 +2945,7 @@ class NotificationEntry(MetaMixin):
     @classmethod
     def check_recent(cls, key: str, uid: int, delta: timedelta):
         """Test if a particular notification has been sent in the specified time period."""
-        since = InvenTree.helpers.current_date() - delta
+        since = InvenTree.helpers.current_time() - delta
 
         entries = cls.objects.filter(key=key, uid=uid, updated__gte=since)
 

@@ -14,7 +14,7 @@ from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
 
-from common.models import InvenTreeSetting, ProjectCode
+from common.models import InvenTreeSetting, NotificationMessage, ProjectCode
 from common.settings import currency_codes
 from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.status_codes import (
@@ -689,7 +689,7 @@ class PurchaseOrderStateTests(OrderTest):
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.PENDING.value)
 
-    def test_po_request_approval_approvals_active(self):
+    def test_po_request_approval_approvals_active_no_valid_approver(self):
         """Test the PurchaseOrderRequestApproval API endpoint when approvals are active."""
         po = models.PurchaseOrder.objects.get(pk=2)
 
@@ -699,9 +699,11 @@ class PurchaseOrderStateTests(OrderTest):
         self.assignRole('purchase_order.add')
 
         url = reverse('api-po-req-approval', kwargs={'pk': po.pk})
-        self.post(url, {}, expected_code=201)
+
+        # PO fixutre pk=2 does not have a project_code, expect bad request
+        self.post(url, {}, expected_code=400)
         po.refresh_from_db()
-        self.assertEqual(po.status, PurchaseOrderStatus.IN_APPROVAL.value)
+        self.assertEqual(po.status, PurchaseOrderStatus.PENDING.value)
 
     def test_po_approve_master(self):
         """Test the PurchaseOrderApprove API endpoint using Master approval groups."""
@@ -981,7 +983,6 @@ class PurchaseOrderStateTests(OrderTest):
 
         purchaser_group = Group.objects.create(name='purchasers')
 
-        print(23456)
         InvenTreeSetting.set_setting(
             'PURCHASE_ORDER_PURCHASER_GROUP', purchaser_group.name
         )
@@ -1009,6 +1010,127 @@ class PurchaseOrderStateTests(OrderTest):
         self.post(url, {}, expected_code=201)
         po.refresh_from_db()
         self.assertEqual(po.status, PurchaseOrderStatus.PLACED.value)
+
+    def test_po_request_approval_notification(self):
+        """Check that notifications are sent when requesting approval."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        self.assignRole('purchase_order.add')
+        new_user = User.objects.create(username='newtestuser')
+        po = models.PurchaseOrder.objects.get(pk=2)
+        owner = Owner.create(new_user)
+        project = ProjectCode.objects.create(code='ABC')
+        project.responsible = owner
+        project.save()
+        po.project_code = project
+        po.save()
+
+        num_notifications = NotificationMessage.objects.filter(
+            category='purchase_order.approval_request'
+        ).count()
+
+        url = reverse('api-po-req-approval', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+
+        po.refresh_from_db()
+
+        new_num_notifications = NotificationMessage.objects.filter(
+            category='purchase_order.approval_request'
+        ).count()
+
+        self.assertNotEqual(new_num_notifications, num_notifications)
+
+    def test_po_approve_notification(self):
+        """Check that notifications are sent when approving a Purchase Order."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        self.assignRole('purchase_order.add')
+        new_user = User.objects.create(username='newtestuser')
+        po_responsible = Owner.create(new_user)
+        po = models.PurchaseOrder.objects.get(pk=8)
+        po.responsible = po_responsible
+        project_owner = Owner.create(self.user)
+        project = ProjectCode.objects.create(code='ABC')
+        project.responsible = project_owner
+        project.save()
+        po.project_code = project
+        po.save()
+
+        num_notifications = NotificationMessage.objects.filter(
+            category='purchase_order.approved'
+        ).count()
+
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+        new_num_notifications = NotificationMessage.objects.filter(
+            category='purchase_order.approved'
+        ).count()
+
+        self.assertNotEqual(new_num_notifications, num_notifications)
+
+    def test_po_reject_notification(self):
+        """Check that notifications are sent when rejecting a Purchase Order."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_APPROVAL', True)
+        self.assertTrue(InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_APPROVAL'))
+
+        self.assignRole('purchase_order.add')
+        new_user = User.objects.create(username='newtestuser')
+        po_responsible = Owner.create(new_user)
+        po = models.PurchaseOrder.objects.get(pk=8)
+        po.responsible = po_responsible
+        project_owner = Owner.create(self.user)
+        project = ProjectCode.objects.create(code='ABC')
+        project.responsible = project_owner
+        project.save()
+        po.project_code = project
+        po.save()
+
+        num_notifications = NotificationMessage.objects.filter(
+            category='purchase_order.approval_rejected'
+        ).count()
+
+        url = reverse('api-po-reject', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+        new_num_notifications = NotificationMessage.objects.filter(
+            category='purchase_order.approval_rejected'
+        ).count()
+
+        self.assertNotEqual(new_num_notifications, num_notifications)
+
+    def test_po_ready_notification(self):
+        """Check that notifications are sent when marking a Purchase Order as Ready."""
+        InvenTreeSetting.set_setting('ENABLE_PURCHASE_ORDER_READY_STATUS', True)
+        self.assertTrue(
+            InvenTreeSetting.get_setting('ENABLE_PURCHASE_ORDER_READY_STATUS')
+        )
+
+        self.assignRole('purchase_order.add')
+        po = models.PurchaseOrder.objects.get(pk=2)
+
+        responsible_user = User.objects.create(username='creatoruser')
+        owner = Owner.create(responsible_user)
+        issuer = User.objects.create(username='issueruser')
+
+        purchaser_group = Group.objects.create(name='purchasers')
+        issuer.groups.add(purchaser_group)
+        po.responsible = owner
+        InvenTreeSetting.set_setting(
+            'PURCHASE_ORDER_PURCHASER_GROUP', purchaser_group.name
+        )
+        po.save()
+
+        num_notifications = NotificationMessage.objects.filter(
+            category='purchase_order.ready_to_issue'
+        ).count()
+        url = reverse('api-po-ready', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=201)
+        new_num_notifications = NotificationMessage.objects.filter(
+            category='purchase_order.ready_to_issue'
+        ).count()
+
+        self.assertNotEqual(new_num_notifications, num_notifications)
 
 
 class PurchaseOrderLineItemTest(OrderTest):

@@ -55,7 +55,7 @@
         <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
     </ul>
 </div>
-{% if roles.purchase_order.change %}
+{% if roles.purchase_order.add %}
 <!-- order actions -->
 <div class='btn-group'>
     <button id='order-options' title='{% trans "Order actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
@@ -81,7 +81,7 @@
 <button type='button' class='btn btn-primary' id='req-order-approval' title='{% trans "Request approval of order" %}'>
     <span class='fas fa-file-signature'></span> {% trans "Request Approval" %}
 </button>
-{% elif order.is_pending and order.ready_state_active %}
+{% elif order.is_pending and order.can_be_ready %}
 <button type='button' class='btn btn-primary' id='ready-order' title='{% trans "Mark Order Ready" %}'>
     <span class='fas fa-paper-plane'></span> {% trans "Ready" %}
 </button>
@@ -147,20 +147,6 @@ src="{% static 'img/blank_image.png' %}"
             {% endif %}
         </td>
     </tr>
-    {% if order.approved_by %}
-    <tr>
-        <td><span class='fas fa-file-signature'></span></td>
-        <td>{% trans "Approved by" %}</td>
-        <td>{{ order.approved_by }}</td>
-    </tr>
-    {% elif order.reject_reason %}
-    <tr style="background-color: var(--label-red);">
-        <td><span class='fas fa-times'></span></td>
-        <td >{% trans "Rejected reason" %}</td>
-        <td>{{ order.reject_reason }}</td>
-    </tr>
-    {% endif %}
-
 </table>
 
 {% endblock details %}
@@ -210,11 +196,24 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Created" %}</td>
         <td>{% render_date order.creation_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
     </tr>
+    {% if order.approved_date %}
+    <tr>
+        <td><span class='fas fa-file-signature'></span></td>
+        <td>{% trans "Approved" %}</td>
+        <td>{% render_date order.approved_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.approved_by }}</span></td>
+    </tr>
+    {% elif order.reject_reason %}
+    <tr style="color: var(--label-red); font-weight: bold;">
+        <td><span class='fas fa-times'></span></td>
+        <td >{% trans "Rejected reason" %}</td>
+        <td>{{ order.reject_reason }}</td>
+    </tr>
+    {% endif %}
     {% if order.issue_date %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Issued" %}</td>
-        <td>{% render_date order.issue_date %}</td>
+        <td>{% render_date order.issue_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.placed_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.target_date %}
@@ -287,7 +286,7 @@ $("#req-order-approval").click(function() {
 
 });
 
-{% elif order.status == PurchaseOrderStatus.PENDING and order.ready_state_active %}
+{% elif order.status == PurchaseOrderStatus.PENDING and order.can_be_ready %}
 $("#ready-order").click(function() {
 
     readyPurchaseOrder(
