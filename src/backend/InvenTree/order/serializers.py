@@ -116,7 +116,9 @@ class AbstractOrderSerializer(serializers.Serializer):
 
     barcode_hash = serializers.CharField(read_only=True)
 
-    creation_date = serializers.DateField(required=False, allow_null=True)
+    creation_date = serializers.DateField(
+        required=False, allow_null=True, label=_('Creation Date')
+    )
 
     def validate_reference(self, reference):
         """Custom validation for the reference field."""
