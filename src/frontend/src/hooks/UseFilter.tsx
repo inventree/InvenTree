@@ -57,12 +57,35 @@ export function useFilters(props: UseFilterProps) {
   };
 }
 
+// Provide list of project code filters
 export function useProjectCodeFilters() {
   return useFilters({
     url: apiUrl(ApiEndpoints.project_code_list),
     transform: (item) => ({
       value: item.pk,
       label: item.code
+    })
+  });
+}
+
+// Provide list of user filters
+export function useUserFilters() {
+  return useFilters({
+    url: apiUrl(ApiEndpoints.user_list),
+    transform: (item) => ({
+      value: item.pk,
+      label: item.username
+    })
+  });
+}
+
+// Provide list of owner filters
+export function useOwnerFilters() {
+  return useFilters({
+    url: apiUrl(ApiEndpoints.owner_list),
+    transform: (item) => ({
+      value: item.pk,
+      label: item.name
     })
   });
 }
