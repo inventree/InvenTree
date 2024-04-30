@@ -12,6 +12,7 @@ from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import common.models
@@ -273,6 +274,11 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
     SUBDIR = 'report'
     TEMPLATE_FIELD = 'template'
 
+    @staticmethod
+    def get_api_url():
+        """Return the API endpoint for the ReportTemplate model."""
+        return reverse('api-report-template-list')
+
     def __init__(self, *args, **kwargs):
         """Initialize the particular report instance."""
         super().__init__(*args, **kwargs)
@@ -342,6 +348,11 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
     SUBDIR = 'label'
     TEMPLATE_FIELD = 'template'
+
+    @staticmethod
+    def get_api_url():
+        """Return the API endpoint for the LabelTemplate model."""
+        return reverse('api-label-template-list')
 
     template = models.FileField(
         upload_to=rename_template,
@@ -436,6 +447,14 @@ class TemplateOutput(models.Model):
         default=0, verbose_name=_('Progress'), help_text=_('Report generation progress')
     )
 
+
+class ReportOutput(TemplateOutput):
+    """Class representing a generated report output file."""
+
+    template = models.ForeignKey(
+        ReportTemplate, on_delete=models.CASCADE, verbose_name=_('Report Template')
+    )
+
     output = models.FileField(
         upload_to='report/output',
         blank=True,
@@ -457,6 +476,14 @@ class LabelOutput(TemplateOutput):
 
     template = models.ForeignKey(
         LabelTemplate, on_delete=models.CASCADE, verbose_name=_('Label Template')
+    )
+
+    output = models.FileField(
+        upload_to='label/output',
+        blank=True,
+        null=True,
+        verbose_name=_('Output File'),
+        help_text=_('Generated output file'),
     )
 
 

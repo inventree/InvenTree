@@ -7,6 +7,7 @@ from .models import (
     LabelOutput,
     LabelTemplate,
     ReportAsset,
+    ReportOutput,
     ReportSnippet,
     ReportTemplate,
 )
@@ -42,6 +43,7 @@ class ReportAssetAdmin(admin.ModelAdmin):
 
 
 @admin.register(LabelOutput)
+@admin.register(ReportOutput)
 class TemplateOutputAdmin(admin.ModelAdmin):
     """Admin class for the TemplateOutput model."""
 

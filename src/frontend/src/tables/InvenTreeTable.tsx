@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
+import { PrintingActions } from '../components/buttons/PrintingActions';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
@@ -39,7 +40,6 @@ import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
 import { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
-import { PrintingAction } from './PrintingAction';
 import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
 
@@ -568,8 +568,8 @@ export function InvenTreeTable<T = any>({
                 downloadCallback={downloadData}
               />
             )}
-            <PrintingAction
-              tableState={tableState}
+            <PrintingActions
+              items={tableState.selectedIds}
               modelType={tableProps.modelType}
               enableLabels={tableProps.enableLabels}
               enableReports={tableProps.enableReports}

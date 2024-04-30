@@ -3,32 +3,48 @@ import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import { ModelType } from '../enums/ModelType';
-import { TableState } from '../hooks/UseTable';
+import { api } from '../../App';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { useApiFormModal, useCreateApiFormModal } from '../../hooks/UseForm';
+import { apiUrl } from '../../states/ApiState';
 
-export function PrintingAction({
-  tableState,
+export function PrintingActions({
+  items,
   enableLabels,
   enableReports,
   modelType
 }: {
-  tableState: TableState;
+  items: number[];
   enableLabels?: boolean;
   enableReports?: boolean;
   modelType?: ModelType;
 }) {
-  const enabled = useMemo(
-    () => tableState.hasSelectedRecords,
-    [tableState.hasSelectedRecords]
-  );
+  const enabled = useMemo(() => items.length > 0, [items]);
 
   const printLabels = useCallback(() => {
-    // TODO
-  }, [tableState]);
+    // Fetch available label templates
+    api.get(apiUrl(ApiEndpoints.label_list), {
+      params: {
+        enabled: true,
+        model_type: modelType,
+        items: items.join(',')
+      }
+    });
+  }, [items]);
 
   const printReports = useCallback(() => {
-    // TODO
-  }, [tableState]);
+    reportModal.open();
+
+    // // Fetch available report templates
+    // api.get(apiUrl(ApiEndpoints.report_list), {
+    //   params: {
+    //     enabled: true,
+    //     model_type: modelType,
+    //     items: items.join(',')
+    //   }
+    // });
+  }, [items]);
 
   if (!modelType) {
     return null;
@@ -38,8 +54,28 @@ export function PrintingAction({
     return null;
   }
 
+  const reportModal = useCreateApiFormModal({
+    fetchInitialData: false,
+    title: t`Print Report`,
+    url: apiUrl(ApiEndpoints.report_print),
+    fields: {
+      template: {
+        filters: {
+          enabled: true,
+          model_type: modelType,
+          items: items.join(',')
+        }
+      },
+      items: {
+        hidden: true,
+        value: items
+      }
+    }
+  });
+
   return (
     <>
+      {reportModal.modal}
       <Menu withinPortal disabled={!enabled}>
         <Menu.Target>
           <ActionIcon disabled={!enabled}>

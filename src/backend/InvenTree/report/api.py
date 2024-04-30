@@ -1,7 +1,8 @@
 """API functionality for the 'report' app."""
 
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
+from django.core.files.base import ContentFile
+from django.http import HttpResponse
 from django.template.exceptions import TemplateDoesNotExist
 from django.urls import include, path
 from django.utils.decorators import method_decorator
@@ -10,8 +11,9 @@ from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import serializers
+from rest_framework import permissions, serializers
 from rest_framework.exceptions import NotFound
+from rest_framework.generics import GenericAPIView
 from rest_framework.request import clone_request
 from rest_framework.response import Response
 
@@ -255,6 +257,145 @@ class LabelTemplateDetail(RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.LabelTemplateSerializer
 
 
+class ReportPrint(GenericAPIView):
+    """API endpoint for printing reports."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = report.serializers.ReportPrintSerializer
+
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        """Perform custom creation action for label template."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        template = serializer.validated_data['template']
+        items = serializer.validated_data['items']
+
+        instances = template.get_model().objects.filter(pk__in=items)
+
+        if instances.count() == 0:
+            raise ValidationError({'items': _('No valid items provided to template')})
+
+        return self.print(template, instances, request)
+
+    def print(self, template, items_to_print, request):
+        """Print this report template against a number of provided items."""
+        outputs = []
+
+        # In debug mode, generate single HTML output, rather than PDF
+        debug_mode = common.models.InvenTreeSetting.get_setting(
+            'REPORT_DEBUG_MODE', cache=False
+        )
+
+        # Start with a default report name
+        report_name = 'report.pdf'
+
+        try:
+            # Merge one or more PDF files into a single download
+            for instance in items_to_print:
+                context = template.get_context(instance, request)
+                report_name = template.generate_filename(context)
+
+                output = template.render(instance, request)
+
+                # Provide generated report to any interested plugins
+                for plugin in registry.with_mixin('report'):
+                    try:
+                        plugin.report_callback(self, instance, output, request)
+                    except Exception as e:
+                        InvenTree.exceptions.log_error(
+                            f'plugins.{plugin.slug}.report_callback'
+                        )
+
+                try:
+                    if debug_mode:
+                        outputs.append(template.render_as_string(instance, request))
+                    else:
+                        outputs.append(template.render(instance, request))
+                except TemplateDoesNotExist as e:
+                    template = str(e)
+                    if not template:
+                        template = template.template
+
+                    return Response(
+                        {
+                            'error': _(
+                                f"Template file '{template}' is missing or does not exist"
+                            )
+                        },
+                        status=400,
+                    )
+
+            if not report_name.endswith('.pdf'):
+                report_name += '.pdf'
+
+            if debug_mode:
+                """Concatenate all rendered templates into a single HTML string, and return the string as a HTML response."""
+
+                data = '\n'.join(outputs)
+                report_name = report_name.replace('.pdf', '.html')
+            else:
+                """Concatenate all rendered pages into a single PDF object, and return the resulting document!"""
+
+                pages = []
+
+                try:
+                    for output in outputs:
+                        doc = output.get_document()
+                        for page in doc.pages:
+                            pages.append(page)
+
+                    data = outputs[0].get_document().copy(pages).write_pdf()
+
+                except TemplateDoesNotExist as e:
+                    template = str(e)
+
+                    if not template:
+                        template = template.template
+
+                    return Response(
+                        {
+                            'error': _(
+                                f"Template file '{template}' is missing or does not exist"
+                            )
+                        },
+                        status=400,
+                    )
+
+        except Exception as exc:
+            # Log the exception to the database
+            if InvenTree.helpers.str2bool(
+                common.models.InvenTreeSetting.get_setting(
+                    'REPORT_LOG_ERRORS', cache=False
+                )
+            ):
+                log_error(request.path)
+
+            # Re-throw the exception to the client as a DRF exception
+            raise ValidationError({
+                'error': 'Report printing failed',
+                'detail': str(exc),
+                'path': request.path,
+            })
+
+        # Generate a report output object
+        # TODO: This should be moved to a separate function
+        # TODO: Allow background printing of reports, with progress reporting
+        output = report.models.ReportOutput.objects.create(
+            template=template,
+            items=len(items_to_print),
+            user=request.user,
+            progress=100,
+            complete=True,
+            output=ContentFile(data, report_name),
+        )
+
+        return Response(
+            report.serializers.ReportOutputSerializer(output).data, status=201
+        )
+
+
 class ReportTemplatePrint(TemplatePrintBase):
     """API endpoint for printing reports against a specified template."""
 
@@ -477,6 +618,8 @@ label_api_urls = [
 ]
 
 report_api_urls = [
+    # Printing endpoint
+    path('print/', ReportPrint.as_view(), name='api-report-print'),
     # Report templates
     path(
         'template/',
