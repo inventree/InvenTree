@@ -61,12 +61,10 @@ export function TemplateDrawer({
   id: string | number;
   templateProps: TemplateProps;
 }) {
-  const { apiEndpoint, templateType, additionalFormFields } = templateProps;
-  const navigate = useNavigate();
+  const { apiEndpoint, templateType } = templateProps;
 
   const {
     instance: template,
-    refreshInstance,
     instanceQuery: { isFetching, error }
   } = useInstance<TemplateI>({
     endpoint: apiEndpoint,
