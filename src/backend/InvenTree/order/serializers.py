@@ -91,7 +91,7 @@ class AbstractOrderSerializer(serializers.Serializer):
     status = serializers.IntegerField(read_only=True, label=_('Order Status'))
 
     # Reference string is *required*
-    reference = serializers.CharField(required=True, label=_('Refrence'))
+    reference = serializers.CharField(required=True)
 
     # Detail for point-of-contact field
     contact_detail = ContactSerializer(source='contact', many=False, read_only=True)
