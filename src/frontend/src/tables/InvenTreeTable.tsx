@@ -216,13 +216,16 @@ export function InvenTreeTable<T = any>({
   }, [props]);
 
   // Check if any columns are switchable (can be hidden)
-  const hasSwitchableColumns = columns.some(
-    (col: TableColumn) => col.switchable ?? true
-  );
+  const hasSwitchableColumns: boolean = useMemo(() => {
+    return columns.some((col: TableColumn) => col.switchable ?? true);
+  }, [columns]);
 
-  const onSelectedRecordsChange = useCallback((records: any[]) => {
-    tableState.setSelectedRecords(records);
-  }, []);
+  const onSelectedRecordsChange = useCallback(
+    (records: any[]) => {
+      tableState.setSelectedRecords(records);
+    },
+    [tableState.setSelectedRecords]
+  );
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
