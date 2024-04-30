@@ -39,6 +39,7 @@ import { TableColumnSelect } from './ColumnSelect';
 import { DownloadAction } from './DownloadAction';
 import { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
+import { PrintingAction } from './PrintingAction';
 import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
 
@@ -56,13 +57,14 @@ const defaultPageSize: number = 25;
  * @param enableFilters : boolean - Enable filter actions
  * @param enableSelection : boolean - Enable row selection
  * @param enableSearch : boolean - Enable search actions
+ * @param enableLabels : boolean - Enable printing of labels against selected items
+ * @param enableReports : boolean - Enable printing of reports against selected items
  * @param enablePagination : boolean - Enable pagination
  * @param enableRefresh : boolean - Enable refresh actions
  * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
- * @param printingActions : any[] - List of printing actions
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
@@ -80,11 +82,12 @@ export type InvenTreeTableProps<T = any> = {
   enableSearch?: boolean;
   enablePagination?: boolean;
   enableRefresh?: boolean;
+  enableLabels?: boolean;
+  enableReports?: boolean;
   pageSize?: number;
   barcodeActions?: any[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
-  printingActions?: any[];
   rowExpansion?: any;
   idAccessor?: string;
   dataFormatter?: (data: any) => any;
@@ -103,6 +106,8 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
   noRecordsText: t`No records found`,
   enableDownload: false,
+  enableLabels: false,
+  enableReports: false,
   enableFilters: true,
   enablePagination: true,
   enableRefresh: true,
@@ -110,7 +115,6 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   enableSelection: false,
   pageSize: defaultPageSize,
   defaultSortColumn: '',
-  printingActions: [],
   barcodeActions: [],
   tableFilters: [],
   tableActions: [],
@@ -555,9 +559,18 @@ export function InvenTreeTable<T = any>({
       <Stack spacing="sm">
         <Group position="apart">
           <Group position="left" key="custom-actions" spacing={5}>
-            {tableProps.tableActions?.map((group, idx) => (
-              <Fragment key={idx}>{group}</Fragment>
-            ))}
+            {tableProps.enableDownload && (
+              <DownloadAction
+                key="download-action"
+                downloadCallback={downloadData}
+              />
+            )}
+            <PrintingAction
+              tableState={tableState}
+              modelType={tableProps.modelType}
+              enableLabels={tableProps.enableLabels}
+              enableReports={tableProps.enableReports}
+            />
             {(tableProps.barcodeActions?.length ?? 0 > 0) && (
               <ButtonMenu
                 key="barcode-actions"
@@ -567,24 +580,18 @@ export function InvenTreeTable<T = any>({
                 actions={tableProps.barcodeActions ?? []}
               />
             )}
-            {(tableProps.printingActions?.length ?? 0 > 0) && (
-              <ButtonMenu
-                key="printing-actions"
-                icon={<IconPrinter />}
-                label={t`Print actions`}
-                tooltip={t`Print actions`}
-                actions={tableProps.printingActions ?? []}
-              />
-            )}
             {(tableProps.enableBulkDelete ?? false) && (
               <ActionButton
-                disabled={tableState.selectedRecords.length == 0}
+                disabled={!tableState.hasSelectedRecords}
                 icon={<IconTrash />}
                 color="red"
                 tooltip={t`Delete selected records`}
                 onClick={deleteSelectedRecords}
               />
             )}
+            {tableProps.tableActions?.map((group, idx) => (
+              <Fragment key={idx}>{group}</Fragment>
+            ))}
           </Group>
           <Space />
           <Group position="right" spacing={5}>
@@ -622,12 +629,6 @@ export function InvenTreeTable<T = any>({
                   </Tooltip>
                 </ActionIcon>
               </Indicator>
-            )}
-            {tableProps.enableDownload && (
-              <DownloadAction
-                key="download-action"
-                downloadCallback={downloadData}
-              />
             )}
           </Group>
         </Group>

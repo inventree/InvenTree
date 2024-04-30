@@ -159,7 +159,10 @@ export function PurchaseOrderTable({
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
-          modelType: ModelType.purchaseorder
+          modelType: ModelType.purchaseorder,
+          enableSelection: true,
+          enableDownload: true,
+          enableReports: true
         }}
       />
     </>

@@ -11,12 +11,13 @@ export function DownloadAction({
   const formatOptions = [
     { value: 'csv', label: t`CSV` },
     { value: 'tsv', label: t`TSV` },
-    { value: 'xlsx', label: t`Excel` }
+    { value: 'xls', label: t`Excel (.xls)` },
+    { value: 'xlsx', label: t`Excel (.xlsx)` }
   ];
 
   return (
     <>
-      <Menu>
+      <Menu withinPortal>
         <Menu.Target>
           <ActionIcon>
             <Tooltip label={t`Download selected data`}>

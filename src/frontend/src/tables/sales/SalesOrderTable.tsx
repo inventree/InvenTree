@@ -157,7 +157,10 @@ export function SalesOrderTable({
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
-          modelType: ModelType.salesorder
+          modelType: ModelType.salesorder,
+          enableSelection: true,
+          enableDownload: true,
+          enableReports: true
         }}
       />
     </>
