@@ -92,6 +92,8 @@ export function BuildOrderTable({
 }) {
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
 
+  const projectCodeFilters = useProjectCodeFilters();
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -115,16 +117,20 @@ export function BuildOrderTable({
         type: 'boolean',
         label: t`Assigned to me`,
         description: t`Show orders assigned to me`
+      },
+      {
+        name: 'project_code',
+        label: t`Project Code`,
+        description: t`Filter by project code`,
+        choices: projectCodeFilters.choices
+      },
+      {
+        name: 'has_project_code',
+        label: t`Has Project Code`,
+        description: t`Filter by whether the purchase order has a project code`
       }
       // TODO: 'assigned to' filter
       // TODO: 'issued by' filter
-      // {
-      //   name: 'has_project_code',
-      //   title: t`Has Project Code`,
-      //   description: t`Show orders with project code`,
-      // }
-      // TODO: 'has project code' filter (see table_filters.js)
-      // TODO: 'project code' filter (see table_filters.js)
     ];
   }, []);
 
