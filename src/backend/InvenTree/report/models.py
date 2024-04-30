@@ -6,7 +6,6 @@ import sys
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
@@ -54,10 +53,13 @@ def rename_template(instance, filename):
     - Checks for duplicate filenames across instance class
     """
     path = instance.get_upload_path(filename)
+
+    # Throw error if any other model instances reference this path
     instance.check_existing_file(path, raise_error=True)
 
+    # Delete file with this name if it already exists
     if default_storage.exists(path):
-        logger.info(f'Deleting existing file: {path}')
+        logger.info(f'Deleting existing template file: {path}')
         default_storage.delete(path)
 
     return path
