@@ -134,6 +134,14 @@ export function TemplateTable({
         switchable: true
       },
       {
+        accessor: 'template',
+        sortable: false,
+        switchable: true,
+        render: (record: any) => {
+          return record.template?.split('/')?.pop() ?? '-';
+        }
+      },
+      {
         accessor: 'model_type',
         sortable: true,
         switchable: false
@@ -247,6 +255,7 @@ export function TemplateTable({
     ];
   }, []);
 
+  // TODO: Replace this with a useFilters hook
   const modelTypeQuery = useQuery({
     enabled: true,
     queryKey: ['template', apiEndpoint, templateType],
@@ -258,7 +267,7 @@ export function TemplateTable({
             resolveItem(response.data, 'actions.POST.model_type.choices') ?? []
           );
         })
-        .catch((error) => []);
+        .catch(() => []);
     }
   });
 

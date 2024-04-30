@@ -70,7 +70,7 @@ export type PreviewArea = {
   component: PreviewAreaComponent;
 };
 
-type TemplateEditorProps = {
+export type TemplateEditorProps = {
   url: string;
   templateType: 'label' | 'report';
   editors: Editor[];

@@ -17,7 +17,11 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
       ) => {
         if (saveTemplate) {
           const formData = new FormData();
-          formData.append('template', new File([code], 'template.html'));
+
+          const filename =
+            template.template?.split('/').pop() ?? 'template.html';
+
+          formData.append('template', new File([code], filename));
 
           const res = await api.patch(url, formData);
           if (res.status !== 200) {
