@@ -6,10 +6,9 @@ import sys
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.core.validators import FileExtensionValidator, MinValueValidator
 from django.db import models
 from django.template import Context, Template
@@ -406,17 +405,15 @@ class LabelOutput(TemplateOutput):
 def rename_snippet(instance, filename):
     """Function to rename a report snippet once uploaded."""
     path = ReportSnippet.snippet_path(filename)
-    fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
-    # If the snippet file is the *same* filename as the one being uploaded,
-    # delete the original one from the media directory
-    if str(filename) == str(instance.snippet):
-        if fullpath.exists():
-            logger.info("Deleting existing snippet file: '%s'", filename)
-            os.remove(fullpath)
+    if instance.check_existing_file(path):
+        raise ValidationError({
+            'snippet': _('Snippet file with this name already exists')
+        })
 
-    # Ensure that the cache is deleted for this snippet
-    cache.delete(fullpath)
+    if default_storage.exists(path):
+        logger.info("Deleting existing snippet file: '%s'", filename)
+        default_storage.delete(path)
 
     return path
 
@@ -445,16 +442,15 @@ class ReportSnippet(models.Model):
         """Return the fully-qualified snippet path for the given filename."""
         return os.path.join('report', 'snippets', os.path.basename(str(filename)))
 
+    def check_existing_file(self, path):
+        """Check if a snippet file already exists with the given filename."""
+        return ReportSnippet.objects.filter(snippet=path).exclude(pk=self.pk).exists()
+
     def validate_unique(self, exclude=None):
         """Validate that this report asset is unique."""
         proposed_path = self.snippet_path(self.snippet)
 
-        if (
-            ReportSnippet.objects.filter(snippet=proposed_path)
-            .exclude(pk=self.pk)
-            .count()
-            > 0
-        ):
+        if self.check_existing_file(proposed_path):
             raise ValidationError({
                 'snippet': _('Snippet file with this name already exists')
             })
@@ -478,18 +474,14 @@ class ReportSnippet(models.Model):
 def rename_asset(instance, filename):
     """Function to rename an asset file when uploaded."""
     path = ReportAsset.asset_path(filename)
-    fullpath = settings.MEDIA_ROOT.joinpath(path).resolve()
 
-    # If the asset file is the *same* filename as the one being uploaded,
-    # delete the original one from the media directory
-    if str(filename) == str(instance.asset):
-        if fullpath.exists():
-            # Check for existing asset file with the same name
-            logger.info("Deleting existing asset file: '%s'", filename)
-            os.remove(fullpath)
+    # Ensure that the file does not already exist
+    if instance.check_existing_file(path):
+        raise ValidationError({'asset': _('Asset file with this name already exists')})
 
-    # Ensure the cache is deleted for this asset
-    cache.delete(fullpath)
+    if default_storage.exists(path):
+        logger.info("Deleting existing asset file: '%s'", filename)
+        default_storage.delete(path)
 
     return path
 
@@ -520,14 +512,15 @@ class ReportAsset(models.Model):
         """Return the fully-qualified asset path for the given filename."""
         return os.path.join('report', 'assets', os.path.basename(str(filename)))
 
+    def check_existing_file(self, path):
+        """Check if a snippet file already exists with the given filename."""
+        return ReportAsset.objects.filter(snippet=path).exclude(pk=self.pk).exists()
+
     def validate_unique(self, exclude=None):
         """Validate that this report asset is unique."""
         proposed_path = self.asset_path(self.asset)
 
-        if (
-            ReportAsset.objects.filter(asset=proposed_path).exclude(pk=self.pk).count()
-            > 0
-        ):
+        if self.check_existing_file(proposed_path):
             raise ValidationError({
                 'asset': _('Asset file with this name already exists')
             })
