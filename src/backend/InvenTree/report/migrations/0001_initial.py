@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='ReportAsset',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('asset', models.FileField(help_text='Report asset file', upload_to=report.models.rename_asset)),
+                ('asset', models.FileField(help_text='Report asset file', upload_to='report/assets')),
                 ('description', models.CharField(help_text='Asset file description', max_length=250)),
             ],
         ),
