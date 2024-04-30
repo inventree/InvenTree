@@ -47,6 +47,83 @@ class WeasyprintReportMixin(WeasyTemplateResponseMixin):
         self.pdf_filename = kwargs.get('filename', 'output.pdf')
 
 
+def rename_template(instance, filename):
+    """Function to rename a report template once uploaded.
+
+    - Retains the original uploaded filename
+    - Checks for duplicate filenames across instance class
+    """
+    path = instance.get_upload_path(filename)
+    instance.check_existing_file(path, raise_error=True)
+
+    if default_storage.exists(path):
+        logger.info(f'Deleting existing file: {path}')
+        default_storage.delete(path)
+
+    return path
+
+
+class TemplateUploadMixin:
+    """Mixin class for providing template pathing functions.
+
+    - Provides generic method for determining the upload path for a template
+    - Provides generic method for checking for duplicate filenames
+
+    Classes which inherit this mixin can guarantee that uploaded templates are unique,
+    and that the same filename will be retained when uploaded.
+    """
+
+    # Directory in which to store uploaded templates
+    SUBDIR = ''
+
+    # Name of the template field
+    TEMPLATE_FIELD = 'template'
+
+    def __str__(self) -> str:
+        """String representation of a TemplateUploadMixin instance."""
+        return str(os.path.basename(self.template_name))
+
+    @property
+    def template_name(self):
+        """Return the filename of the template associated with this model class."""
+        template = getattr(self, self.TEMPLATE_FIELD).name
+        template = template.replace('/', os.path.sep)
+        template = template.replace('\\', os.path.sep)
+
+        template = settings.MEDIA_ROOT.joinpath(template)
+
+        return str(template)
+
+    @property
+    def extension(self):
+        """Return the filename extension of the associated template file."""
+        return os.path.splitext(self.template.name)[1].lower()
+
+    def get_upload_path(self, filename):
+        """Generate an upload path for the given filename."""
+        fn = os.path.basename(filename)
+        return os.path.join('report', self.SUBDIR, fn)
+
+    def check_existing_file(self, path, raise_error=False):
+        """Check if a file already exists with the given filename."""
+        filters = {self.TEMPLATE_FIELD: self.get_upload_path(path)}
+
+        exists = self.__class__.objects.filter(**filters).exclude(pk=self.pk).exists()
+
+        if exists and raise_error:
+            raise ValidationError({
+                self.TEMPLATE_FIELD: _('Template file with this name already exists')
+            })
+
+        return exists
+
+    def validate_unique(self, exclude=None):
+        """Validate that this template is unique."""
+        proposed_path = self.get_upload_path(self.template_name)
+        self.check_existing_file(proposed_path, raise_error=True)
+        return super().validate_unique(exclude)
+
+
 class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
     """Base class for reports, labels."""
 
@@ -62,31 +139,6 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         self.revision += 1
 
         super().save()
-
-    def __str__(self):
-        """Format a string representation of a report instance."""
-        return f'{self.name} - {self.description}'
-
-    @property
-    def extension(self):
-        """Return the filename extension of the associated template file."""
-        return os.path.splitext(self.template.name)[1].lower()
-
-    @property
-    def template_name(self):
-        """Returns the file system path to the template file.
-
-        Required for passing the file to an external process
-        """
-        template = self.template.name
-
-        # TODO @matmair change to using new file objects
-        template = template.replace('/', os.path.sep)
-        template = template.replace('\\', os.path.sep)
-
-        template = settings.MEDIA_ROOT.joinpath(template)
-
-        return str(template)
 
     name = models.CharField(
         blank=False,
@@ -130,8 +182,6 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         Uses django-weasyprint plugin to render HTML template against Weasyprint
         """
         context = self.get_context(instance, request)
-
-        print('rendering template:', self.template.name, '->', self.template_name)
 
         # Render HTML template to PDF
         wp = WeasyprintReportMixin(
@@ -215,8 +265,11 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         return context
 
 
-class ReportTemplate(ReportTemplateBase):
+class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
     """Class representing the ReportTemplate database model."""
+
+    SUBDIR = 'report'
+    TEMPLATE_FIELD = 'template'
 
     def __init__(self, *args, **kwargs):
         """Initialize the particular report instance."""
@@ -227,7 +280,7 @@ class ReportTemplate(ReportTemplateBase):
         ).choices = report.helpers.report_page_size_options()
 
     template = models.FileField(
-        upload_to='report/report',
+        upload_to=rename_template,
         verbose_name=_('Template'),
         help_text=_('Template file'),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
@@ -282,11 +335,14 @@ class ReportTemplate(ReportTemplateBase):
         return context
 
 
-class LabelTemplate(ReportTemplateBase):
+class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
     """Class representing the LabelTemplate database model."""
 
+    SUBDIR = 'label'
+    TEMPLATE_FIELD = 'template'
+
     template = models.FileField(
-        upload_to='report/label',
+        upload_to=rename_template,
         verbose_name=_('Template'),
         help_text=_('Template file'),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
@@ -402,63 +458,17 @@ class LabelOutput(TemplateOutput):
     )
 
 
-def rename_snippet(instance, filename):
-    """Function to rename a report snippet once uploaded."""
-    path = ReportSnippet.snippet_path(filename)
-
-    if instance.check_existing_file(path):
-        raise ValidationError({
-            'snippet': _('Snippet file with this name already exists')
-        })
-
-    if default_storage.exists(path):
-        logger.info("Deleting existing snippet file: '%s'", filename)
-        default_storage.delete(path)
-
-    return path
-
-
-class ReportSnippet(models.Model):
+class ReportSnippet(TemplateUploadMixin, models.Model):
     """Report template 'snippet' which can be used to make templates that can then be included in other reports.
 
     Useful for 'common' template actions, sub-templates, etc
     """
 
-    def __str__(self) -> str:
-        """String representation of a ReportSnippet instance."""
-        return f'snippets/{self.filename}'
-
-    @property
-    def filename(self):
-        """Return the filename of the asset."""
-        path = self.snippet.name
-        if path:
-            return os.path.basename(path)
-        else:
-            return '-'
-
-    @staticmethod
-    def snippet_path(filename):
-        """Return the fully-qualified snippet path for the given filename."""
-        return os.path.join('report', 'snippets', os.path.basename(str(filename)))
-
-    def check_existing_file(self, path):
-        """Check if a snippet file already exists with the given filename."""
-        return ReportSnippet.objects.filter(snippet=path).exclude(pk=self.pk).exists()
-
-    def validate_unique(self, exclude=None):
-        """Validate that this report asset is unique."""
-        proposed_path = self.snippet_path(self.snippet)
-
-        if self.check_existing_file(proposed_path):
-            raise ValidationError({
-                'snippet': _('Snippet file with this name already exists')
-            })
-
-        return super().validate_unique(exclude)
+    SUBDIR = 'snippets'
+    TEMPLATE_FIELD = 'snippet'
 
     snippet = models.FileField(
-        upload_to=rename_snippet,
+        upload_to=rename_template,
         verbose_name=_('Snippet'),
         help_text=_('Report snippet file'),
         validators=[FileExtensionValidator(allowed_extensions=['html', 'htm'])],
@@ -471,22 +481,7 @@ class ReportSnippet(models.Model):
     )
 
 
-def rename_asset(instance, filename):
-    """Function to rename an asset file when uploaded."""
-    path = ReportAsset.asset_path(filename)
-
-    # Ensure that the file does not already exist
-    if instance.check_existing_file(path):
-        raise ValidationError({'asset': _('Asset file with this name already exists')})
-
-    if default_storage.exists(path):
-        logger.info("Deleting existing asset file: '%s'", filename)
-        default_storage.delete(path)
-
-    return path
-
-
-class ReportAsset(models.Model):
+class ReportAsset(TemplateUploadMixin, models.Model):
     """Asset file for use in report templates.
 
     For example, an image to use in a header file.
@@ -494,42 +489,12 @@ class ReportAsset(models.Model):
     and can be loaded in a template using the {% report_asset <filename> %} tag.
     """
 
-    def __str__(self):
-        """String representation of a ReportAsset instance."""
-        return f'assets/{self.filename}'
-
-    @property
-    def filename(self):
-        """Return the filename of the asset."""
-        path = self.asset.name
-        if path:
-            return os.path.basename(path)
-        else:
-            return '-'
-
-    @staticmethod
-    def asset_path(filename):
-        """Return the fully-qualified asset path for the given filename."""
-        return os.path.join('report', 'assets', os.path.basename(str(filename)))
-
-    def check_existing_file(self, path):
-        """Check if a snippet file already exists with the given filename."""
-        return ReportAsset.objects.filter(snippet=path).exclude(pk=self.pk).exists()
-
-    def validate_unique(self, exclude=None):
-        """Validate that this report asset is unique."""
-        proposed_path = self.asset_path(self.asset)
-
-        if self.check_existing_file(proposed_path):
-            raise ValidationError({
-                'asset': _('Asset file with this name already exists')
-            })
-
-        return super().validate_unique(exclude)
+    SUBDIR = 'assets'
+    TEMPLATE_FIELD = 'asset'
 
     # Asset file
     asset = models.FileField(
-        upload_to=rename_asset,
+        upload_to=rename_template,
         verbose_name=_('Asset'),
         help_text=_('Report asset file'),
     )
