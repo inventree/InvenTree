@@ -17,6 +17,7 @@ import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { resolveItem } from '../../functions/conversion';
+import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -253,30 +254,17 @@ export function TemplateTable({
     ];
   }, []);
 
-  // TODO: Replace this with a useFilters hook
-  const modelTypeQuery = useQuery({
-    enabled: true,
-    queryKey: ['template', apiEndpoint, templateType],
-    queryFn: async () => {
-      return await api
-        .options(apiUrl(apiEndpoint))
-        .then((response: any) => {
-          return (
-            resolveItem(response.data, 'actions.POST.model_type.choices') ?? []
-          );
-        })
-        .catch(() => []);
+  const modelTypeFilters = useFilters({
+    url: apiUrl(apiEndpoint),
+    method: 'OPTIONS',
+    accessor: 'data.actions.POST.model_type.choices',
+    transform: (item: any) => {
+      return {
+        value: item.value,
+        label: item.display_name
+      };
     }
   });
-
-  const modelTypeOptions: TableFilterChoice[] = useMemo(() => {
-    return modelTypeQuery.data?.map((choice: any) => {
-      return {
-        value: choice.value,
-        label: choice.display_name
-      };
-    });
-  }, [modelTypeQuery.data]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -290,10 +278,10 @@ export function TemplateTable({
         name: 'model_type',
         label: t`Model Type`,
         description: t`Filter by target model type`,
-        choices: modelTypeOptions
+        choices: modelTypeFilters.choices
       }
     ];
-  }, []);
+  }, [modelTypeFilters.choices]);
 
   return (
     <>
