@@ -6,13 +6,13 @@ import {
   useUserSettingsState
 } from '../states/SettingsState';
 
-interface formatDecmimalOptionsType {
+interface FormatDecmimalOptionsInterface {
   digits?: number;
   minDigits?: number;
   locale?: string;
 }
 
-interface formatCurrencyOptionsType {
+interface FormatCurrencyOptionsInterface {
   digits?: number;
   minDigits?: number;
   currency?: string;
@@ -22,7 +22,7 @@ interface formatCurrencyOptionsType {
 
 export function formatDecimal(
   value: number | null | undefined,
-  options: formatDecmimalOptionsType = {}
+  options: FormatDecmimalOptionsInterface = {}
 ) {
   let locale = options.locale || navigator.language || 'en-US';
 
@@ -45,7 +45,7 @@ export function formatDecimal(
  */
 export function formatCurrency(
   value: number | string | null | undefined,
-  options: formatCurrencyOptionsType = {}
+  options: FormatCurrencyOptionsInterface = {}
 ) {
   if (value == null || value == undefined) {
     return null;
@@ -90,7 +90,7 @@ export function formatCurrency(
 export function formatPriceRange(
   minValue: number | null,
   maxValue: number | null,
-  options: formatCurrencyOptionsType = {}
+  options: FormatCurrencyOptionsInterface = {}
 ) {
   // If neither values are provided, return a dash
   if (minValue == null && maxValue == null) {
@@ -117,7 +117,7 @@ export function formatPriceRange(
   )}`;
 }
 
-interface renderDateOptionsType {
+interface RenderDateOptionsInterface {
   showTime?: boolean;
   showSeconds?: boolean;
 }
@@ -128,7 +128,10 @@ interface renderDateOptionsType {
  * The provided "date" variable is a string, nominally ISO format e.g. 2022-02-22
  * The user-configured setting DATE_DISPLAY_FORMAT determines how the date should be displayed.
  */
-export function renderDate(date: string, options: renderDateOptionsType = {}) {
+export function renderDate(
+  date: string,
+  options: RenderDateOptionsInterface = {}
+) {
   if (!date) {
     return '-';
   }

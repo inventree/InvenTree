@@ -37,7 +37,7 @@ type EnumDictionary<T extends string | symbol | number, U> = {
  */
 const RendererLookup: EnumDictionary<
   ModelType,
-  (props: { instance: any }) => ReactNode
+  (props: Readonly<InstanceRenderInterface>) => ReactNode
 > = {
   [ModelType.address]: RenderAddress,
   [ModelType.build]: RenderBuildOrder,
@@ -138,4 +138,8 @@ export function UnknownRenderer({
       <></>
     </Alert>
   );
+}
+
+export interface InstanceRenderInterface {
+  instance: any;
 }

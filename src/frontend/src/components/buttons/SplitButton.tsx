@@ -36,7 +36,7 @@ export function SplitButton({
   selected,
   setSelected,
   loading
-}: SplitButtonProps) {
+}: Readonly<SplitButtonProps>) {
   const [current, setCurrent] = useState<string>(defaultSelected);
 
   useEffect(() => {

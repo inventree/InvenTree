@@ -21,7 +21,7 @@ export function DocTooltip({
   detail,
   link,
   docchildren
-}: DocTooltipProps) {
+}: Readonly<DocTooltipProps>) {
   return (
     <HoverCard
       shadow="md"

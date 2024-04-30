@@ -90,7 +90,7 @@ function detect_envs() {
     echo "# Using existing config file: ${INVENTREE_CONFIG_FILE}"
 
     # Install parser
-    pip install -r ${APP_HOME}/.github/requirements.txt -q
+    pip install --require-hashes -r ${APP_HOME}/.github/requirements.txt -q
 
     # Load config
     local CONF=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)

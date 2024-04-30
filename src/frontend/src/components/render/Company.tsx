@@ -1,11 +1,13 @@
 import { ReactNode } from 'react';
 
-import { RenderInlineModel } from './Instance';
+import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Address instance
  */
-export function RenderAddress({ instance }: { instance: any }): ReactNode {
+export function RenderAddress({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   let text = [
     instance.country,
     instance.postal_code,
@@ -23,7 +25,9 @@ export function RenderAddress({ instance }: { instance: any }): ReactNode {
 /**
  * Inline rendering of a single Company instance
  */
-export function RenderCompany({ instance }: { instance: any }): ReactNode {
+export function RenderCompany({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   // TODO: Handle URL
 
   return (
@@ -38,14 +42,18 @@ export function RenderCompany({ instance }: { instance: any }): ReactNode {
 /**
  * Inline rendering of a single Contact instance
  */
-export function RenderContact({ instance }: { instance: any }): ReactNode {
+export function RenderContact({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   return <RenderInlineModel primary={instance.name} />;
 }
 
 /**
  * Inline rendering of a single SupplierPart instance
  */
-export function RenderSupplierPart({ instance }: { instance: any }): ReactNode {
+export function RenderSupplierPart({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   // TODO: handle URL
 
   let supplier = instance.supplier_detail ?? {};
@@ -66,9 +74,7 @@ export function RenderSupplierPart({ instance }: { instance: any }): ReactNode {
  */
 export function RenderManufacturerPart({
   instance
-}: {
-  instance: any;
-}): ReactNode {
+}: Readonly<InstanceRenderInterface>): ReactNode {
   let part = instance.part_detail ?? {};
   let manufacturer = instance.manufacturer_detail ?? {};
 

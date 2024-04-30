@@ -56,7 +56,7 @@ export type CompanyDetailProps = {
 /**
  * Detail view for a single company instance
  */
-export default function CompanyDetail(props: CompanyDetailProps) {
+export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
   const user = useUserState();

@@ -104,7 +104,7 @@ export function RowActions({
   }, [actions]);
 
   // Render a single action icon
-  function RowActionIcon(action: RowAction) {
+  function RowActionIcon(action: Readonly<RowAction>) {
     return (
       <Tooltip
         withinPortal={true}
