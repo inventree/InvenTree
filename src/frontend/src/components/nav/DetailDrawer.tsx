@@ -43,7 +43,7 @@ function DetailDrawerComponent({
   size,
   closeOnEscape = true,
   renderContent
-}: DrawerProps) {
+}: Readonly<DrawerProps>) {
   const navigate = useNavigate();
   const { id } = useParams();
   const { classes } = useStyles();
@@ -95,7 +95,7 @@ function DetailDrawerComponent({
   );
 }
 
-export function DetailDrawer(props: DrawerProps) {
+export function DetailDrawer(props: Readonly<DrawerProps>) {
   return (
     <Routes>
       <Route path=":id?/" element={<DetailDrawerComponent {...props} />} />
