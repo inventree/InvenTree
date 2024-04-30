@@ -148,6 +148,10 @@ class OrderFilter(rest_filters.FilterSet):
             return queryset.exclude(project_code=None)
         return queryset.filter(project_code=None)
 
+    assigned_to = rest_filters.ModelChoiceFilter(
+        queryset=Owner.objects.all(), field_name='responsible'
+    )
+
 
 class LineItemFilter(rest_filters.FilterSet):
     """Base class for custom API filters for order line item list(s)."""

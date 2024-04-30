@@ -4,7 +4,7 @@ import { ReactNode, useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
-import { formatCurrency, renderDate } from '../../defaults/formatters';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -206,18 +206,12 @@ function stockItemTableColumns(): TableColumn[] {
       title: t`Stocktake`,
       sortable: true
     }),
-    {
-      accessor: 'expiry_date',
-      sortable: true,
-      switchable: true,
-      render: (record: any) => renderDate(record.expiry_date)
-    },
-    {
-      accessor: 'updated',
-      sortable: true,
-      switchable: true,
-      render: (record: any) => renderDate(record.updated)
-    },
+    DateColumn({
+      accessor: 'expiry_date'
+    }),
+    DateColumn({
+      accessor: 'updated'
+    }),
     // TODO: purchase order
     // TODO: Supplier part
     {
