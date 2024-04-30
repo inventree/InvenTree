@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Space } from '@mantine/core';
-import { Group, Text } from '@mantine/core';
+import { Alert, Group, Space, Text } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
@@ -39,7 +38,7 @@ type EnumDictionary<T extends string | symbol | number, U> = {
  */
 const RendererLookup: EnumDictionary<
   ModelType,
-  (props: { instance: any }) => ReactNode
+  (props: Readonly<InstanceRenderInterface>) => ReactNode
 > = {
   [ModelType.address]: RenderAddress,
   [ModelType.build]: RenderBuildOrder,
@@ -142,4 +141,8 @@ export function UnknownRenderer({
       <></>
     </Alert>
   );
+}
+
+export interface InstanceRenderInterface {
+  instance: any;
 }

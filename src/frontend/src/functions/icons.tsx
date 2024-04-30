@@ -217,7 +217,7 @@ type InvenTreeIconProps = {
   iconProps?: TablerIconProps;
 };
 
-export function InvenTreeIcon(props: InvenTreeIconProps) {
+export function InvenTreeIcon(props: Readonly<InvenTreeIconProps>) {
   let Icon: React.ForwardRefExoticComponent<React.RefAttributes<any>>;
 
   if (props.icon in icons) {

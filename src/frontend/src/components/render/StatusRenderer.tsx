@@ -14,7 +14,7 @@ export interface StatusCodeListInterface {
   [key: string]: StatusCodeInterface;
 }
 
-interface renderStatusLabelOptionsInterface {
+interface RenderStatusLabelOptionsInterface {
   size?: MantineSize;
 }
 
@@ -24,7 +24,7 @@ interface renderStatusLabelOptionsInterface {
 function renderStatusLabel(
   key: string | number,
   codes: StatusCodeListInterface,
-  options: renderStatusLabelOptionsInterface = {}
+  options: RenderStatusLabelOptionsInterface = {}
 ) {
   let text = null;
   let color = null;
@@ -70,7 +70,7 @@ export const StatusRenderer = ({
 }: {
   status: string | number;
   type: ModelType | string;
-  options?: renderStatusLabelOptionsInterface;
+  options?: RenderStatusLabelOptionsInterface;
 }) => {
   const statusCodeList = useGlobalStatusState.getState().status;
 

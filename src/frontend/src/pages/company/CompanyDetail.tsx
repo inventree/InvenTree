@@ -29,8 +29,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup } from '../../components/nav/PanelGroup';
-import { PanelType } from '../../components/nav/PanelGroup';
+import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
@@ -57,7 +56,7 @@ export type CompanyDetailProps = {
 /**
  * Detail view for a single company instance
  */
-export default function CompanyDetail(props: CompanyDetailProps) {
+export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
   const user = useUserState();

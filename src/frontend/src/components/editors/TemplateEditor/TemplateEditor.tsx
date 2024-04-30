@@ -80,14 +80,7 @@ export type TemplateEditorProps = {
 };
 
 export function TemplateEditor(props: TemplateEditorProps) {
-  const {
-    templateUrl,
-    printingUrl,
-    editors,
-    previewAreas,
-    template,
-    templateType
-  } = props;
+  const { templateUrl, editors, previewAreas, template } = props;
   const editorRef = useRef<EditorRef>();
   const previewRef = useRef<PreviewAreaRef>();
 

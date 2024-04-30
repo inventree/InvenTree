@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Input, useMantineTheme } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
-import { useId } from '@mantine/hooks';
+import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
