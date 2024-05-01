@@ -44,7 +44,6 @@ export function Thumbnail({
         w={size}
         fit="contain"
         radius="xs"
-        //fallbackSrc="https://placehold.co/600x400?text=Placeholder"
         style={{ maxHeight: size }}
       />
       {inner}

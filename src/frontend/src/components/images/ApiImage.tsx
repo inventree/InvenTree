@@ -25,12 +25,7 @@ export function ApiImage(props: ApiImageProps) {
   return (
     <Stack>
       {imageUrl ? (
-        <Image
-          {...props}
-          src={imageUrl}
-          fit="contain"
-          //fallbackSrc="https://placehold.co/600x400?text=Placeholder"
-        />
+        <Image {...props} src={imageUrl} fit="contain" />
       ) : (
         <Skeleton h={props?.h ?? props.w} w={props?.w ?? props.h} />
       )}
