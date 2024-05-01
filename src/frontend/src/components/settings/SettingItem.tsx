@@ -6,9 +6,9 @@ import {
   Space,
   Stack,
   Switch,
-  Text
+  Text,
+  useMantineColorScheme
 } from '@mantine/core';
-import { useColorScheme } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import { IconEdit } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -166,14 +166,12 @@ export function SettingItem({
   shaded: boolean;
   onChange?: () => void;
 }) {
-  const [prefferedColorScheme] = useColorScheme();
+  const { colorScheme } = useMantineColorScheme();
 
   const style: Record<string, string> = { paddingLeft: '8px' };
   if (shaded) {
     style['backgroundColor'] =
-      prefferedColorScheme === 'light'
-        ? vars.colors.gray[1]
-        : vars.colors.gray[9];
+      colorScheme === 'light' ? vars.colors.gray[1] : vars.colors.gray[9];
   }
 
   return (

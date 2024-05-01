@@ -7,10 +7,11 @@ import {
   Overlay,
   Paper,
   Text,
-  rem
+  rem,
+  useMantineColorScheme
 } from '@mantine/core';
 import { Dropzone, FileWithPath, IMAGE_MIME_TYPE } from '@mantine/dropzone';
-import { useColorScheme, useHover } from '@mantine/hooks';
+import { useHover } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useMemo, useState } from 'react';
 
@@ -158,11 +159,11 @@ function UploadModal({
     }
   };
 
-  const preferredColorScheme = useColorScheme();
+  const { colorScheme } = useMantineColorScheme();
 
   const primaryColor =
-    vars.colors.primaryColors[preferredColorScheme === 'dark' ? 4 : 6];
-  const redColor = vars.colors.red[preferredColorScheme === 'dark' ? 4 : 6];
+    vars.colors.primaryColors[colorScheme === 'dark' ? 4 : 6];
+  const redColor = vars.colors.red[colorScheme === 'dark' ? 4 : 6];
 
   return (
     <Paper style={{ height: '220px' }}>

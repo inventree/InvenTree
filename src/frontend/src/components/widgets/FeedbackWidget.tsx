@@ -1,19 +1,16 @@
 import { Trans } from '@lingui/macro';
-import { Button, Stack, Title } from '@mantine/core';
-import { useColorScheme } from '@mantine/hooks';
+import { Button, Stack, Title, useMantineColorScheme } from '@mantine/core';
 import { IconExternalLink } from '@tabler/icons-react';
 
 import { vars } from '../../theme';
 
 export default function FeedbackWidget() {
-  const [preferredColorScheme] = useColorScheme();
+  const { colorScheme } = useMantineColorScheme();
   return (
     <Stack
       style={{
         backgroundColor:
-          preferredColorScheme === 'dark'
-            ? vars.colors.gray[9]
-            : vars.colors.gray[1],
+          colorScheme === 'dark' ? vars.colors.gray[9] : vars.colors.gray[1],
         borderRadius: vars.radius.md
       }}
       p={15}

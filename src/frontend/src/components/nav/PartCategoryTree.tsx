@@ -1,6 +1,12 @@
 import { t } from '@lingui/macro';
-import { Drawer, Group, LoadingOverlay, Stack, Text } from '@mantine/core';
-import { useColorScheme } from '@mantine/hooks';
+import {
+  Drawer,
+  Group,
+  LoadingOverlay,
+  Stack,
+  Text,
+  useMantineColorScheme
+} from '@mantine/core';
 import { ReactTree, ThemeSettings } from '@naisutech/react-tree';
 import {
   IconChevronDown,
@@ -75,11 +81,11 @@ export function PartCategoryTree({
     return open ? <IconChevronDown /> : <IconChevronRight />;
   }
 
-  const [prefferedColorScheme] = useColorScheme();
+  const { colorScheme } = useMantineColorScheme();
 
   const themes: ThemeSettings = useMemo(() => {
     const currentTheme =
-      prefferedColorScheme === 'dark'
+      colorScheme === 'dark'
         ? vars.colors.defaultColor
         : vars.colors.primaryColors;
 
@@ -161,7 +167,7 @@ export function PartCategoryTree({
           RenderIcon={renderIcon}
           defaultSelectedNodes={selectedCategory ? [selectedCategory] : []}
           showEmptyItems={false}
-          theme={prefferedColorScheme}
+          theme={colorScheme}
           themes={themes}
         />
       </Stack>

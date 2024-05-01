@@ -8,9 +8,9 @@ import {
   HoverCard,
   Skeleton,
   Text,
-  UnstyledButton
+  UnstyledButton,
+  useMantineColorScheme
 } from '@mantine/core';
-import { useColorScheme } from '@mantine/hooks';
 import { IconLayoutSidebar } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
@@ -35,7 +35,7 @@ export function NavHoverMenu({
   ]);
   const [servername] = useServerApiState((state) => [state.server.instance]);
   const [instanceName, setInstanceName] = useState<string>();
-  const [preferredColorScheme] = useColorScheme();
+  const { colorScheme } = useMantineColorScheme();
 
   useEffect(() => {
     if (hostKey && hostList[hostKey]) {
@@ -89,9 +89,7 @@ export function NavHoverMenu({
           my="sm"
           mx="-md"
           color={
-            preferredColorScheme === 'dark'
-              ? vars.colors.dark[5]
-              : vars.colors.gray[1]
+            colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
           }
         />
         <MenuLinks links={onlyItems} highlighted={true} />

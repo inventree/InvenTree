@@ -1,6 +1,11 @@
 import { t } from '@lingui/macro';
-import { Input, darken, useMantineTheme } from '@mantine/core';
-import { useColorScheme, useDebouncedValue, useId } from '@mantine/hooks';
+import {
+  Input,
+  darken,
+  useMantineColorScheme,
+  useMantineTheme
+} from '@mantine/core';
+import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -219,11 +224,11 @@ export function RelatedModelField({
   const theme = useMantineTheme();
 
   const colorschema = vars.colors.primaryColors;
-  const [preferredColorScheme] = useColorScheme();
+  const { colorScheme } = useMantineColorScheme();
 
   const colors = useMemo(() => {
     let colors: any;
-    if (preferredColorScheme === 'dark') {
+    if (colorScheme === 'dark') {
       colors = {
         neutral0: colorschema[6],
         neutral5: colorschema[4],
