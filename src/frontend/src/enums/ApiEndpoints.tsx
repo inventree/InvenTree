@@ -119,6 +119,8 @@ export enum ApiEndpoints {
   label_print = 'label/print/',
   report_list = 'report/template/',
   report_print = 'report/print/',
+  report_snippet = 'report/snippet/',
+  report_asset = 'report/asset/',
 
   // Plugin API endpoints
   plugin_list = 'plugins/',
