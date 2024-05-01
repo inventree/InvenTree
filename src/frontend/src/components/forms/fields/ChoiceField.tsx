@@ -31,8 +31,8 @@ export function ChoiceField({
 
     return choices.map((choice) => {
       return {
-        value: choice.value,
-        label: choice.display_name
+        value: choice.value.toString(),
+        label: choice.display_name.toString()
       };
     });
   }, [definition.choices]);
