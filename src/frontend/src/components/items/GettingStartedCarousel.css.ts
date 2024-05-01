@@ -15,18 +15,16 @@ export const card = style({
 
 export const title = style({
   fontWeight: 900,
-  color:
-    //vars.colorScheme === 'dark' ? vars.colors.white[0] : vars.colors.dark[0],
-    vars.colors.dark[0],
   lineHeight: 1.2,
   fontSize: rem(32),
-  marginTop: 0
+  marginTop: 0,
+  [vars.lightSelector]: { color: vars.colors.dark[0] },
+  [vars.darkSelector]: { color: vars.colors.white[0] }
 });
 
 export const category = style({
-  color:
-    //vars.colorScheme === 'dark' ? vars.colors.white : vars.colors.dark,
-    vars.colors.dark[0],
   opacity: 0.7,
-  fontWeight: 700
+  fontWeight: 700,
+  [vars.lightSelector]: { color: vars.colors.dark[0] },
+  [vars.darkSelector]: { color: vars.colors.white[0] }
 });
