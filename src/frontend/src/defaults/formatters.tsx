@@ -156,4 +156,4 @@ export function renderDate(
   }
 }
 
-export type UiSizeType = MantineSize | (string & {}) | number;
+export type UiSizeType = MantineSize | string | number;

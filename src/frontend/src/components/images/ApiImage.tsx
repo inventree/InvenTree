@@ -15,7 +15,7 @@ interface ApiImageProps extends ImageProps {
 /**
  * Construct an image container which will load and display the image
  */
-export function ApiImage(props: ApiImageProps) {
+export function ApiImage(props: Readonly<ApiImageProps>) {
   const { host } = useLocalState.getState();
 
   const imageUrl = useMemo(() => {
