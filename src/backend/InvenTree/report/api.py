@@ -160,14 +160,32 @@ class LabelPrint(GenericAPIView):
         template = serializer.validated_data['template']
         items = serializer.validated_data['items']
 
+        plugin_key = InvenTreeLabelPlugin.NAME.lower()
+
+        if plugin := serializer.validated_data.get('plugin', None):
+            plugin_key = plugin.slug
+
+        plugin = registry.get_plugin(plugin_key)
+
+        if not plugin:
+            raise ValidationError({'plugin': _('Plugin not found')})
+
+        if not plugin.is_active():
+            raise ValidationError({'plugin': f"Plugin '{plugin_key}' is not enabled"})
+
+        if not plugin.mixin_enabled('labels'):
+            raise ValidationError({
+                'plugin': f"Plugin '{plugin_key}' is not a label printing plugin"
+            })
+
         instances = template.get_model().objects.filter(pk__in=items)
 
         if instances.count() == 0:
             raise ValidationError({'items': _('No valid items provided to template')})
 
-        return self.print(template, instances, request)
+        return self.print(template, instances, plugin, request)
 
-    def print(self, template, items_to_print, request):
+    def print(self, template, items_to_print, plugin, request):
         """Print this label template against a number of provided items."""
         # TODO
         return Response({

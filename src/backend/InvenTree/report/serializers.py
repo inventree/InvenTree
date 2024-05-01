@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 
+import plugin.models
 import report.helpers
 import report.models
 from InvenTree.serializers import (
@@ -96,6 +97,15 @@ class LabelPrintSerializer(serializers.Serializer):
         allow_null=False,
         label=_('Template'),
         help_text=_('Select label template'),
+    )
+
+    plugin = serializers.PrimaryKeyRelatedField(
+        queryset=plugin.models.PluginConfig.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Plugin'),
+        help_text=_('Select plugin to use for label printing'),
     )
 
     items = serializers.ListField(
