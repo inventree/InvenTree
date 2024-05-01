@@ -2,9 +2,8 @@ import { t } from '@lingui/macro';
 import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -26,21 +25,6 @@ export function PrintingActions({
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
-  const printLabels = useCallback(() => {
-    // Fetch available label templates
-    api.get(apiUrl(ApiEndpoints.label_list), {
-      params: {
-        enabled: true,
-        model_type: modelType,
-        items: items.join(',')
-      }
-    });
-  }, [items]);
-
-  const printReports = useCallback(() => {
-    reportModal.open();
-  }, [items]);
-
   if (!modelType) {
     return null;
   }
@@ -49,8 +33,34 @@ export function PrintingActions({
     return null;
   }
 
+  const labelModal = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.label_print),
+    title: t`Print Label`,
+    fields: {
+      template: {
+        filters: {
+          enabled: true,
+          model_type: modelType,
+          items: items.join(',')
+        }
+      },
+      plugin: {
+        filters: {
+          active: true,
+          mixin: 'labels'
+        }
+      },
+      items: {
+        hidden: true,
+        value: items
+      }
+    },
+    onFormSuccess: (response: any) => {
+      console.log('response:', response);
+    }
+  });
+
   const reportModal = useCreateApiFormModal({
-    fetchInitialData: false,
     title: t`Print Report`,
     url: apiUrl(ApiEndpoints.report_print),
     fields: {
@@ -95,6 +105,7 @@ export function PrintingActions({
   return (
     <>
       {reportModal.modal}
+      {labelModal.modal}
       <Menu withinPortal disabled={!enabled}>
         <Menu.Target>
           <ActionIcon disabled={!enabled}>
@@ -108,14 +119,14 @@ export function PrintingActions({
             <Menu.Item
               key="labels"
               icon={<IconTags />}
-              onClick={printLabels}
+              onClick={() => labelModal.open()}
             >{t`Print Labels`}</Menu.Item>
           )}
           {enableReports && (
             <Menu.Item
               key="reports"
               icon={<IconReport />}
-              onClick={printReports}
+              onClick={() => reportModal.open()}
             >{t`Print Reports`}</Menu.Item>
           )}
         </Menu.Dropdown>

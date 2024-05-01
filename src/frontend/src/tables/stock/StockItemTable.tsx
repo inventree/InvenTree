@@ -502,6 +502,8 @@ export function StockItemTable({
         props={{
           enableDownload: true,
           enableSelection: true,
+          enableLabels: true,
+          enableReports: true,
           tableFilters: tableFilters,
           tableActions: tableActions,
           modelType: ModelType.stockitem,
