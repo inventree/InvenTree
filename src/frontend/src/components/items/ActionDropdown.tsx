@@ -14,7 +14,6 @@ import {
   IconTrash,
   IconUnlink
 } from '@tabler/icons-react';
-import { color } from '@uiw/react-codemirror';
 import { ReactNode, useMemo } from 'react';
 
 import { InvenTreeIcon } from '../../functions/icons';
@@ -77,7 +76,7 @@ export function ActionDropdown({
               {...action.indicator}
               key={action.name}
             >
-              <Tooltip label={action.tooltip}>
+              <Tooltip label={action.tooltip} hidden={!action.tooltip}>
                 <Menu.Item
                   icon={action.icon}
                   onClick={() => {

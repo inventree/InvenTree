@@ -158,6 +158,10 @@ class LabelPrint(GenericAPIView):
         # TODO: Custom serializer fields based on the selected plugin?
 
         template = serializer.validated_data['template']
+
+        if template.width <= 0 or template.height <= 0:
+            raise ValidationError({'template': _('Invalid label dimensions')})
+
         items = serializer.validated_data['items']
 
         plugin_key = InvenTreeLabelPlugin.NAME.lower()
@@ -187,79 +191,15 @@ class LabelPrint(GenericAPIView):
 
     def print(self, template, items_to_print, plugin, request):
         """Print this label template against a number of provided items."""
-        # TODO
-        return Response({
-            'template': template.pk,
-            'items': [item.pk for item in items_to_print],
-        })
-
-
-class LabelTemplatePrint(TemplatePrintBase):
-    """API endpoint for printing labels against a specified template."""
-
-    queryset = report.models.LabelTemplate.objects.all()
-
-    def get_serializer(self, *args, **kwargs):
-        """Define a get_serializer method to be discoverable by the OPTIONS request."""
-        # Check the request to determine if the user has selected a label printing plugin
-        plugin = self.get_plugin(self.request)
-
-        kwargs.setdefault('context', self.get_serializer_context())
-        serializer = plugin.get_printing_options_serializer(
-            self.request, *args, **kwargs
-        )
-
-        # if no serializer is defined, return an empty serializer
-        if not serializer:
-            return serializers.Serializer()
-
-        return serializer
-
-    def get_plugin(self, request):
-        """Return the label printing plugin associated with this request.
-
-        This is provided in the URL, e.g. ?plugin=myprinter
-        """
-        plugin_key = request.query_params.get(
-            'plugin', InvenTreeLabelPlugin.NAME.lower()
-        )
-        plugin = registry.get_plugin(plugin_key)
-
-        if not plugin:
-            raise NotFound(f"Plugin '{plugin_key}' not found")
-
-        if not plugin.is_active():
-            raise ValidationError(f"Plugin '{plugin_key}' is not enabled")
-
-        if not plugin.mixin_enabled('labels'):
-            raise ValidationError(
-                f"Plugin '{plugin_key}' is not a label printing plugin"
-            )
-
-        # Only return the plugin if it is enabled and has the label printing mixin
-        return plugin
-
-    def print(self, request, items_to_print):
-        """Print this label template against a number of provided items."""
-        plugin = self.get_plugin(request)
-        label = self.get_object()
-
-        if len(items_to_print) == 0:
-            raise ValidationError('No items provided to print')
-
-        # Check the label dimensions
-        if label.width <= 0 or label.height <= 0:
-            raise ValidationError('Label has invalid dimensions')
-
-        if serializer := plugin.get_printing_options_serializer(
+        # TODO: This needs refactoring
+        if plugin_serializer := plugin.get_printing_options_serializer(
             request, data=request.data, context=self.get_serializer_context()
         ):
-            serializer.is_valid(raise_exception=True)
+            plugin_serializer.is_valid(raise_exception=True)
 
-        # At this point, we offload the label(s) to the selected plugin.
-        # The plugin is responsible for handling the request and returning a response.
+        # Create a new LabelOutput instance to print against
         output = report.models.LabelOutput.objects.create(
-            template=label,
+            template=template,
             items=len(items_to_print),
             plugin=plugin.slug,
             user=request.user,
@@ -270,11 +210,11 @@ class LabelTemplatePrint(TemplatePrintBase):
         try:
             plugin.before_printing()
             plugin.print_labels(
-                label,
+                template,
                 output,
                 items_to_print,
                 request,
-                printing_options=(serializer.data if serializer else {}),
+                printing_options=(plugin_serializer.data if plugin_serializer else {}),
             )
             plugin.after_printing()
         except ValidationError as e:
@@ -517,11 +457,6 @@ label_api_urls = [
             path(
                 '<int:pk>/',
                 include([
-                    path(
-                        'print/',
-                        LabelTemplatePrint.as_view(),
-                        name='api-label-template-print',
-                    ),
                     path(
                         'metadata/',
                         MetadataView.as_view(),

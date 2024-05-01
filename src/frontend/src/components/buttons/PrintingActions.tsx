@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -9,6 +8,7 @@ import { ModelType } from '../../enums/ModelType';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
   items,
@@ -56,7 +56,27 @@ export function PrintingActions({
       }
     },
     onFormSuccess: (response: any) => {
-      console.log('response:', response);
+      if (!response.complete) {
+        // TODO: Periodically check for completion
+        notifications.show({
+          title: t`Error`,
+          message: t`The label could not be generated`,
+          color: 'red'
+        });
+        return;
+      }
+
+      notifications.show({
+        title: t`Success`,
+        message: t`Label printing completed successfully`,
+        color: 'green'
+      });
+
+      if (response.output) {
+        // An output file was generated
+        const url = `${host}${response.output}`;
+        window.open(url, '_blank');
+      }
     }
   });
 
@@ -96,7 +116,6 @@ export function PrintingActions({
       if (response.output) {
         // An output file was generated
         const url = `${host}${response.output}`;
-        console.log('url:', response.output, '->', url);
         window.open(url, '_blank');
       }
     }
@@ -106,31 +125,25 @@ export function PrintingActions({
     <>
       {reportModal.modal}
       {labelModal.modal}
-      <Menu withinPortal disabled={!enabled}>
-        <Menu.Target>
-          <ActionIcon disabled={!enabled}>
-            <Tooltip label={t`Printing actions`}>
-              <IconPrinter />
-            </Tooltip>
-          </ActionIcon>
-        </Menu.Target>
-        <Menu.Dropdown>
-          {enableLabels && (
-            <Menu.Item
-              key="labels"
-              icon={<IconTags />}
-              onClick={() => labelModal.open()}
-            >{t`Print Labels`}</Menu.Item>
-          )}
-          {enableReports && (
-            <Menu.Item
-              key="reports"
-              icon={<IconReport />}
-              onClick={() => reportModal.open()}
-            >{t`Print Reports`}</Menu.Item>
-          )}
-        </Menu.Dropdown>
-      </Menu>
+      <ActionDropdown
+        key="printing"
+        icon={<IconPrinter />}
+        disabled={!enabled}
+        actions={[
+          {
+            name: t`Print Labels`,
+            icon: <IconTags />,
+            onClick: () => labelModal.open(),
+            hidden: !enableLabels
+          },
+          {
+            name: t`Print Reports`,
+            icon: <IconReport />,
+            onClick: () => reportModal.open(),
+            hidden: !enableReports
+          }
+        ]}
+      />
     </>
   );
 }
