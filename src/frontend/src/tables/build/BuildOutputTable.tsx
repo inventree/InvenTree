@@ -190,10 +190,10 @@ export default function BuildOutputTable({
           }
 
           return (
-            <Group position="left" noWrap>
+            <Group justify="left" wrap="nowrap">
               <Text>{text}</Text>
               {record.batch && (
-                <Text italic size="sm">
+                <Text style={{ fontStyle: 'italic' }} size="sm">
                   {t`Batch`}: {record.batch}
                 </Text>
               )}
@@ -225,7 +225,7 @@ export default function BuildOutputTable({
             record.results?.map((result: TestResultOverview) => {
               return (
                 result && (
-                  <Group position="left" key={result.name} noWrap>
+                  <Group justify="left" key={result.name} wrap="nowrap">
                     {result.result ? (
                       <IconCircleCheck color="green" />
                     ) : (
