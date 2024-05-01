@@ -2,8 +2,10 @@
 
 import os
 
-from django.db import migrations
+from django.db import connection, migrations
+from django.db.utils import InternalError, OperationalError, ProgrammingError
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 
 
 def label_model_map():
@@ -17,6 +19,73 @@ def label_model_map():
     }
 
 
+def convert_legacy_labels(table_name, model_name, template_model):
+    """Map labels from an existing table to a new model type
+    
+    Arguments:
+        table_name: The name of the existing table
+        model_name: The name of the new model type
+        template_model: The model class for the new template model
+    
+    Note: We use raw SQL queries here, as the original 'label' app has been removed entirely.
+    """
+    count = 0
+
+    fields = [
+        'name', 'description', 'label', 'enabled', 'height', 'width', 'filename_pattern', 'filters'
+    ]
+
+    fieldnames = ', '.join(fields)
+
+    query = f"SELECT {fieldnames} FROM {table_name};"
+
+    with connection.cursor() as cursor:
+        try:
+            cursor.execute(query)
+        except (InternalError, ProgrammingError, OperationalError) as exc:
+            # Table does not exist
+            print(f"Legacy label table {table_name} not found - skipping")
+            return
+
+        rows = cursor.fetchall()
+
+    for row in rows:
+        data = {
+            fields[idx]: row[idx] for idx in range(len(fields))
+        }
+
+        # Skip any "builtin" labels
+        if 'label/inventree/' in data['label']:
+            continue
+
+        print(f"Creating new LabelTemplate for {model_name} - {data['name']}")
+
+        if template_model.objects.filter(name=data['name'], model_type=model_name).exists():
+            print(f"LabelTemplate {data['name']} already exists for {model_name} - skipping")
+            continue
+
+
+        if not default_storage.exists(data['label']):
+            print(f"Label template file {data['label']} does not exist - skipping")
+            continue
+
+        # Create a new template file object
+        filedata = default_storage.open(data['label']).read()
+        filename = os.path.basename(data['label'])
+
+        # Remove the 'label' key from the data dictionary
+        data.pop('label')
+
+        data['template'] = ContentFile(filedata, filename)
+        data['model_type'] = model_name
+
+        template_model.objects.create(**data)
+
+        count += 1
+
+    return count
+
+
 def forward(apps, schema_editor):
     """Run forwards migrations.
     
@@ -28,46 +97,10 @@ def forward(apps, schema_editor):
     count = 0
 
     for template_class, model_type in label_model_map().items():
-        try:
-            model = apps.get_model('label', template_class)
-        except LookupError:
-            # Note that the 'label' app may have been deleted already
-            continue
 
-        for template in model.objects.all():
-            # Construct a new LabelTemplate instance
+        table_name = f'label_{template_class}'
 
-            filename = template.label.path
-
-            if '/label/inventree/' in filename:
-                # Do not migrate internal label templates
-                continue
-
-            filename = os.path.basename(filename)
-            filedata = template.label.open('r').read()
-
-            name = template.name
-            offset = 1
-
-            # Prevent duplicate names during migration
-            while LabelTemplate.objects.filter(name=name, model_type=model_type).exists():
-                name = template.name + f"_{offset}"
-                offset += 1
-
-            LabelTemplate.objects.create(
-                name=name,
-                template=ContentFile(filedata, filename),
-                model_type=model_type,
-                description=template.description,
-                revision=1,
-                filters=template.filters,
-                filename_pattern=template.filename_pattern,
-                enabled=template.enabled,
-                width=template.width,
-                height=template.height,
-            )
-
-            count += 1
+        count += convert_legacy_labels(table_name, model_type, LabelTemplate)
 
     if count > 0:
         print(f"Migrated {count} report templates to new LabelTemplate model.")
