@@ -163,7 +163,7 @@ class LabelPrint(GenericAPIView):
         plugin_key = InvenTreeLabelPlugin.NAME.lower()
 
         if plugin := serializer.validated_data.get('plugin', None):
-            plugin_key = plugin.slug
+            plugin_key = plugin.key
 
         plugin = registry.get_plugin(plugin_key)
 

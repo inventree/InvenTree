@@ -25,5 +25,6 @@ export enum ModelType {
   owner = 'owner',
   user = 'user',
   reporttemplate = 'reporttemplate',
-  labeltemplate = 'labeltemplate'
+  labeltemplate = 'labeltemplate',
+  pluginconfig = 'pluginconfig'
 }
