@@ -81,6 +81,32 @@ class ReportPrintSerializer(serializers.Serializer):
     )
 
 
+class LabelPrintSerializer(serializers.Serializer):
+    """Serializer class for printing a label."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['template', 'items']
+
+    template = serializers.PrimaryKeyRelatedField(
+        queryset=report.models.LabelTemplate.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Template'),
+        help_text=_('Select label template'),
+    )
+
+    items = serializers.ListField(
+        child=serializers.IntegerField(),
+        required=True,
+        allow_empty=False,
+        label=_('Items'),
+        help_text=_('List of item primary keys to include in the report'),
+    )
+
+
 class LabelTemplateSerializer(ReportSerializerBase):
     """Serializer class for label template model."""
 

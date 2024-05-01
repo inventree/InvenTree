@@ -143,6 +143,39 @@ class LabelFilter(ReportFilterBase):
         fields = []
 
 
+class LabelPrint(GenericAPIView):
+    """API endpoint for printing labels."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = report.serializers.LabelPrintSerializer
+
+    @method_decorator(never_cache)
+    def post(self, request, *args, **kwargs):
+        """POST action for printing labels."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        # TODO: Custom serializer fields based on the selected plugin?
+
+        template = serializer.validated_data['template']
+        items = serializer.validated_data['items']
+
+        instances = template.get_model().objects.filter(pk__in=items)
+
+        if instances.count() == 0:
+            raise ValidationError({'items': _('No valid items provided to template')})
+
+        return self.print(template, instances, request)
+
+    def print(self, template, items_to_print, request):
+        """Print this label template against a number of provided items."""
+        # TODO
+        return Response({
+            'template': template.pk,
+            'items': [item.pk for item in items_to_print],
+        })
+
+
 class LabelTemplatePrint(TemplatePrintBase):
     """API endpoint for printing labels against a specified template."""
 
@@ -265,7 +298,7 @@ class ReportPrint(GenericAPIView):
 
     @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):
-        """Perform custom creation action for label template."""
+        """POST action for printing a report."""
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
@@ -457,6 +490,8 @@ class LabelOutputDetail(RetrieveAPI):
 
 
 label_api_urls = [
+    # Printing endpoint
+    path('print/', LabelPrint.as_view(), name='api-label-print'),
     # Label templates
     path(
         'template/',
