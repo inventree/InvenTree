@@ -60,7 +60,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
 
   const createManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
-    title: t`Create Manufacturer Part`,
+    title: t`Add Manufacturer Part`,
     fields: useManufacturerPartFields(),
     onFormSuccess: table.refreshTable,
     initialData: {

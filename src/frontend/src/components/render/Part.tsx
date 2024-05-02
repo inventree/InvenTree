@@ -1,12 +1,14 @@
 import { t } from '@lingui/macro';
 import { ReactNode } from 'react';
 
-import { RenderInlineModel } from './Instance';
+import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Part instance
  */
-export function RenderPart({ instance }: { instance: any }): ReactNode {
+export function RenderPart({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   const stock = t`Stock` + `: ${instance.in_stock}`;
 
   return (
@@ -22,7 +24,9 @@ export function RenderPart({ instance }: { instance: any }): ReactNode {
 /**
  * Inline rendering of a PartCategory instance
  */
-export function RenderPartCategory({ instance }: { instance: any }): ReactNode {
+export function RenderPartCategory({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   // TODO: Handle URL
 
   let lvl = '-'.repeat(instance.level || 0);

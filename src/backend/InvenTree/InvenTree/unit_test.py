@@ -397,7 +397,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     ):
         """Helper function to process and validate a downloaded csv file."""
         # Check that the correct object type has been passed
-        self.assertTrue(isinstance(file_object, io.StringIO))
+        self.assertIsInstance(file_object, io.StringIO)
 
         file_object.seek(0)
 
@@ -435,3 +435,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             data.append(entry)
 
         return data
+
+    def assertDictContainsSubset(self, a, b):
+        """Assert that dictionary 'a' is a subset of dictionary 'b'."""
+        self.assertEqual(b, b | a)

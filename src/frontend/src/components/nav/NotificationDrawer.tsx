@@ -4,15 +4,16 @@ import {
   Alert,
   Divider,
   Drawer,
+  Group,
   LoadingOverlay,
   Space,
+  Stack,
+  Text,
   Tooltip
 } from '@mantine/core';
-import { Group, Stack, Text } from '@mantine/core';
 import { IconBellCheck, IconBellPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';

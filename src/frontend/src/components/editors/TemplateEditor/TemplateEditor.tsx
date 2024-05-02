@@ -14,7 +14,6 @@ import {
   IconAlertTriangle,
   IconDeviceFloppy,
   IconExclamationCircle,
-  IconProps,
   IconRefresh
 } from '@tabler/icons-react';
 import Split from '@uiw/react-split';
@@ -88,7 +87,7 @@ type TemplateEditorProps = {
   template: TemplateI;
 };
 
-export function TemplateEditor(props: TemplateEditorProps) {
+export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   const { downloadUrl, editors, previewAreas, preview } = props;
   const editorRef = useRef<EditorRef>();
   const previewRef = useRef<PreviewAreaRef>();

@@ -22,6 +22,7 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
+  CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
@@ -35,14 +36,17 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { buildOrderFields } from '../../forms/BuildForms';
-import { partCategoryFields } from '../../forms/PartForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import { useBuildOrderFields } from '../../forms/BuildForms';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import BuildOutputTable from '../../tables/build/BuildOutputTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -137,6 +141,7 @@ export default function BuildDetail() {
         type: 'text',
         name: 'issued_by',
         label: t`Issued By`,
+        icon: 'user',
         badge: 'user'
       },
       {
@@ -204,8 +209,7 @@ export default function BuildDetail() {
         content: build?.pk ? (
           <BuildLineTable
             params={{
-              build: id,
-              tracked: false
+              build: id
             }}
           />
         ) : (
@@ -215,7 +219,12 @@ export default function BuildDetail() {
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
-        icon: <IconClipboardList />
+        icon: <IconClipboardList />,
+        content: build.pk ? (
+          <BuildOutputTable buildId={build.pk} partId={build.part} />
+        ) : (
+          <Skeleton />
+        )
         // TODO: Hide if build is complete
       },
       {
@@ -280,14 +289,28 @@ export default function BuildDetail() {
     ];
   }, [build, id]);
 
+  const buildOrderFields = useBuildOrderFields({ create: false });
+
   const editBuild = useEditApiFormModal({
     url: ApiEndpoints.build_order_list,
     pk: build.pk,
     title: t`Edit Build Order`,
-    fields: buildOrderFields(),
+    fields: buildOrderFields,
     onFormSuccess: () => {
       refreshInstance();
     }
+  });
+
+  const duplicateBuild = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Add Build Order`,
+    fields: buildOrderFields,
+    initialData: {
+      ...build,
+      reference: undefined
+    },
+    follow: true,
+    modelType: ModelType.build
   });
 
   const buildActions = useMemo(() => {
@@ -328,32 +351,40 @@ export default function BuildDetail() {
             onClick: () => editBuild.open(),
             hidden: !user.hasChangeRole(UserRoles.build)
           }),
-          DuplicateItemAction({})
+          CancelItemAction({
+            tooltip: t`Cancel order`
+          }),
+          DuplicateItemAction({
+            onClick: () => duplicateBuild.open(),
+            hidden: !user.hasAddRole(UserRoles.build)
+          })
         ]}
       />
     ];
   }, [id, build, user]);
 
-  const buildDetail = useMemo(() => {
-    return build?.status ? (
-      StatusRenderer({
-        status: build.status,
-        type: ModelType.build
-      })
-    ) : (
-      <Skeleton />
-    );
-  }, [build, id]);
+  const buildBadges = useMemo(() => {
+    return instanceQuery.isFetching
+      ? []
+      : [
+          <StatusRenderer
+            status={build.status}
+            type={ModelType.build}
+            options={{ size: 'lg' }}
+          />
+        ];
+  }, [build, instanceQuery]);
 
   return (
     <>
       {editBuild.modal}
+      {duplicateBuild.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={build.reference}
           subtitle={build.title}
-          detail={buildDetail}
+          badges={buildBadges}
           imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
           breadcrumbs={[
             { name: t`Build Orders`, url: '/build' },

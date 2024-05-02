@@ -5,11 +5,33 @@ import {
   useUserSettingsState
 } from '../states/SettingsState';
 
-interface formatCurrencyOptionsType {
+interface FormatDecmimalOptionsInterface {
+  digits?: number;
+  minDigits?: number;
+  locale?: string;
+}
+
+interface FormatCurrencyOptionsInterface {
   digits?: number;
   minDigits?: number;
   currency?: string;
   locale?: string;
+  multiplier?: number;
+}
+
+export function formatDecimal(
+  value: number | null | undefined,
+  options: FormatDecmimalOptionsInterface = {}
+) {
+  let locale = options.locale || navigator.language || 'en-US';
+
+  if (value === null || value === undefined) {
+    return value;
+  }
+
+  let formatter = new Intl.NumberFormat(locale);
+
+  return formatter.format(value);
 }
 
 /*
@@ -21,12 +43,20 @@ interface formatCurrencyOptionsType {
  * - digits: Maximum number of significant digits (default = 10)
  */
 export function formatCurrency(
-  value: number | null,
-  options: formatCurrencyOptionsType = {}
+  value: number | string | null | undefined,
+  options: FormatCurrencyOptionsInterface = {}
 ) {
-  if (value == null) {
+  if (value == null || value == undefined) {
     return null;
   }
+
+  value = parseFloat(value.toString());
+
+  if (isNaN(value) || !isFinite(value)) {
+    return null;
+  }
+
+  value *= options.multiplier ?? 1;
 
   const global_settings = useGlobalSettingsState.getState().lookup;
 
@@ -59,7 +89,7 @@ export function formatCurrency(
 export function formatPriceRange(
   minValue: number | null,
   maxValue: number | null,
-  options: formatCurrencyOptionsType = {}
+  options: FormatCurrencyOptionsInterface = {}
 ) {
   // If neither values are provided, return a dash
   if (minValue == null && maxValue == null) {
@@ -86,7 +116,7 @@ export function formatPriceRange(
   )}`;
 }
 
-interface renderDateOptionsType {
+interface RenderDateOptionsInterface {
   showTime?: boolean;
   showSeconds?: boolean;
 }
@@ -97,7 +127,10 @@ interface renderDateOptionsType {
  * The provided "date" variable is a string, nominally ISO format e.g. 2022-02-22
  * The user-configured setting DATE_DISPLAY_FORMAT determines how the date should be displayed.
  */
-export function renderDate(date: string, options: renderDateOptionsType = {}) {
+export function renderDate(
+  date: string,
+  options: RenderDateOptionsInterface = {}
+) {
   if (!date) {
     return '-';
   }

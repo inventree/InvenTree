@@ -8,8 +8,8 @@ import {
   IconPackages,
   IconPaperclip
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { ReactNode, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -17,7 +17,8 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
-  DeleteItemAction,
+  CancelItemAction,
+  DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
@@ -25,12 +26,16 @@ import {
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { purchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -59,14 +64,28 @@ export default function PurchaseOrderDetail() {
     refetchOnMount: true
   });
 
+  const purchaseOrderFields = usePurchaseOrderFields();
+
   const editPurchaseOrder = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     pk: id,
     title: t`Edit Purchase Order`,
-    fields: purchaseOrderFields(),
+    fields: purchaseOrderFields,
     onFormSuccess: () => {
       refreshInstance();
     }
+  });
+
+  const duplicatePurchaseOrder = useCreateApiFormModal({
+    url: ApiEndpoints.purchase_order_list,
+    title: t`Add Purchase Order`,
+    fields: purchaseOrderFields,
+    initialData: {
+      ...order,
+      reference: undefined
+    },
+    follow: true,
+    modelType: ModelType.purchaseorder
   });
 
   const detailsPanel = useMemo(() => {
@@ -226,7 +245,12 @@ export default function PurchaseOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <PurchaseOrderLineItemTable orderId={Number(id)} />
+        content: (
+          <PurchaseOrderLineItemTable
+            orderId={Number(id)}
+            supplierId={Number(order.supplier)}
+          />
+        )
       },
       {
         name: 'received-stock',
@@ -268,7 +292,6 @@ export default function PurchaseOrderDetail() {
   }, [order, id]);
 
   const poActions = useMemo(() => {
-    // TODO: Disable certain actions based on user permissions
     return [
       <BarcodeActionDropdown
         actions={[
@@ -287,19 +310,39 @@ export default function PurchaseOrderDetail() {
         icon={<IconDots />}
         actions={[
           EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.purchase_order),
             onClick: () => {
               editPurchaseOrder.open();
             }
           }),
-          DeleteItemAction({})
+          CancelItemAction({
+            tooltip: t`Cancel order`
+          }),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
+            onClick: () => duplicatePurchaseOrder.open()
+          })
         ]}
       />
     ];
   }, [id, order, user]);
 
+  const orderBadges: ReactNode[] = useMemo(() => {
+    return instanceQuery.isLoading
+      ? []
+      : [
+          <StatusRenderer
+            status={order.status}
+            type={ModelType.purchaseorder}
+            options={{ size: 'lg' }}
+          />
+        ];
+  }, [order, instanceQuery]);
+
   return (
     <>
       {editPurchaseOrder.modal}
+      {duplicatePurchaseOrder.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
@@ -308,6 +351,7 @@ export default function PurchaseOrderDetail() {
           imageUrl={order.supplier_detail?.image}
           breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
           actions={poActions}
+          badges={orderBadges}
         />
         <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
       </Stack>

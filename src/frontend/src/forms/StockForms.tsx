@@ -20,8 +20,7 @@ import { InvenTreeIcon } from '../functions/icons';
 import {
   ApiFormModalProps,
   useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
+  useDeleteApiFormModal
 } from '../hooks/UseForm';
 import { useGenerator } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
@@ -74,12 +73,12 @@ export function useStockFields({
           supplier_detail: true,
           ...(part ? { part } : {})
         },
-        adjustFilters: (value: ApiFormAdjustFilterType) => {
-          if (value.data.part) {
-            value.filters['part'] = value.data.part;
+        adjustFilters: (adjust: ApiFormAdjustFilterType) => {
+          if (adjust.data.part) {
+            adjust.filters['part'] = adjust.data.part;
           }
 
-          return value.filters;
+          return adjust.filters;
         }
       },
       use_pack_size: {
@@ -162,29 +161,6 @@ export function useCreateStockItem() {
   });
 }
 
-/**
- * Launch a form to edit an existing StockItem instance
- * @param item : primary key of the StockItem to edit
- */
-export function useEditStockItem({
-  item_id,
-  callback
-}: {
-  item_id: number;
-  callback?: () => void;
-}) {
-  const fields = useStockFields({ create: false });
-
-  return useEditApiFormModal({
-    url: ApiEndpoints.stock_item_list,
-    pk: item_id,
-    fields: fields,
-    title: t`Edit Stock Item`,
-    successMessage: t`Stock item updated`,
-    onFormSuccess: callback
-  });
-}
-
 function StockItemDefaultMove({
   stockItem,
   value
@@ -192,7 +168,6 @@ function StockItemDefaultMove({
   stockItem: any;
   value: any;
 }) {
-  console.log('item', stockItem);
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',
@@ -315,8 +290,6 @@ function StockOperationsRow({
   record?: any;
 }) {
   const item = input.item;
-
-  console.log('rec', record);
 
   const [value, setValue] = useState<StockItemQuantity>(
     add ? 0 : item.quantity ?? 0

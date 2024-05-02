@@ -1,5 +1,5 @@
 import { randomId, useLocalStorage } from '@mantine/hooks';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { TableFilter } from '../tables/Filter';
 
@@ -22,6 +22,7 @@ export type TableState = {
   expandedRecords: any[];
   setExpandedRecords: (records: any[]) => void;
   selectedRecords: any[];
+  hasSelectedRecords: boolean;
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
   hiddenColumns: string[];
@@ -78,6 +79,11 @@ export function useTable(tableName: string): TableState {
     setSelectedRecords([]);
   }, []);
 
+  const hasSelectedRecords = useMemo(
+    () => selectedRecords.length > 0,
+    [selectedRecords]
+  );
+
   // Total record count
   const [recordCount, setRecordCount] = useState<number>(0);
 
@@ -126,6 +132,7 @@ export function useTable(tableName: string): TableState {
     selectedRecords,
     setSelectedRecords,
     clearSelectedRecords,
+    hasSelectedRecords,
     hiddenColumns,
     setHiddenColumns,
     searchTerm,

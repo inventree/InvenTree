@@ -280,6 +280,8 @@ class InvenTreeMetadata(SimpleMetadata):
                 # Special case for 'user' model
                 if field_info['model'] == 'user':
                     field_info['api_url'] = '/api/user/'
+                elif field_info['model'] == 'contenttype':
+                    field_info['api_url'] = '/api/contenttype/'
                 else:
                     field_info['api_url'] = model.get_api_url()
 

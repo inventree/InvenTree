@@ -52,7 +52,11 @@ type ThumbProps = {
 /**
  * Renders a single image thumbnail
  */
-function PartThumbComponent({ selected, element, selectImage }: ThumbProps) {
+function PartThumbComponent({
+  selected,
+  element,
+  selectImage
+}: Readonly<ThumbProps>) {
   const { hovered, ref } = useHover();
 
   const hoverColor = 'rgba(127,127,127,0.2)';

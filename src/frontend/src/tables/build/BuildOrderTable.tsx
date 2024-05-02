@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { PartHoverCard } from '../../components/images/Thumbnail';
@@ -10,8 +9,12 @@ import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { buildOrderFields } from '../../forms/BuildForms';
-import { getDetailUrl } from '../../functions/urls';
+import { useBuildOrderFields } from '../../forms/BuildForms';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -19,6 +22,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
   CreationDateColumn,
+  DateColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -64,11 +68,10 @@ function buildOrderTableColumns(): TableColumn[] {
     },
     CreationDateColumn(),
     TargetDateColumn(),
-    {
+    DateColumn({
       accessor: 'completion_date',
-      sortable: true,
-      render: (record: any) => renderDate(record.completion_date)
-    },
+      sortable: true
+    }),
     {
       accessor: 'issued_by',
       sortable: true,
@@ -94,6 +97,10 @@ export function BuildOrderTable({
 }) {
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
 
+  const projectCodeFilters = useProjectCodeFilters();
+  const userFilters = useUserFilters();
+  const responsibleFilters = useOwnerFilters();
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -117,38 +124,54 @@ export function BuildOrderTable({
         type: 'boolean',
         label: t`Assigned to me`,
         description: t`Show orders assigned to me`
+      },
+      {
+        name: 'project_code',
+        label: t`Project Code`,
+        description: t`Filter by project code`,
+        choices: projectCodeFilters.choices
+      },
+      {
+        name: 'has_project_code',
+        label: t`Has Project Code`,
+        description: t`Filter by whether the purchase order has a project code`
+      },
+      {
+        name: 'issued_by',
+        label: t`Issued By`,
+        description: t`Filter by user who issued this order`,
+        choices: userFilters.choices
+      },
+      {
+        name: 'assigned_to',
+        label: t`Responsible`,
+        description: t`Filter by responsible owner`,
+        choices: responsibleFilters.choices
       }
-      // TODO: 'assigned to' filter
-      // TODO: 'issued by' filter
-      // {
-      //   name: 'has_project_code',
-      //   title: t`Has Project Code`,
-      //   description: t`Show orders with project code`,
-      // }
-      // TODO: 'has project code' filter (see table_filters.js)
-      // TODO: 'project code' filter (see table_filters.js)
     ];
-  }, []);
+  }, [
+    projectCodeFilters.choices,
+    userFilters.choices,
+    responsibleFilters.choices
+  ]);
 
-  const navigate = useNavigate();
   const user = useUserState();
 
   const table = useTable('buildorder');
 
+  const buildOrderFields = useBuildOrderFields({ create: true });
+
   const newBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
-    fields: buildOrderFields(),
+    fields: buildOrderFields,
     initialData: {
       part: partId,
       sales_order: salesOrderId,
       parent: parentBuildId
     },
-    onFormSuccess: (data: any) => {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.build, data.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.build
   });
 
   const tableActions = useMemo(() => {
@@ -157,6 +180,7 @@ export function BuildOrderTable({
         hidden={!user.hasAddRole(UserRoles.build)}
         tooltip={t`Add Build Order`}
         onClick={() => newBuild.open()}
+        key="add-build-order"
       />
     ];
   }, [user]);
