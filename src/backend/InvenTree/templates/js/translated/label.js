@@ -65,6 +65,47 @@ function printLabels(options) {
         items: item_string,
     };
 
+    constructForm('{% url "api-label-print" %}', {
+        method: 'POST',
+        title: '{% trans "Print Label" %}',
+        fields: {
+            template: {
+                filters: {
+                    enabled: true,
+                    model_type: options.model_type,
+                    items: item_string,
+                }
+            },
+            plugin: {
+                filters: {
+                    active: true,
+                    mixin: 'labels',
+                }
+            },
+            items: {
+                hidden: true,
+                value: options.items
+            }
+        },
+        onSuccess: function(response) {
+            if (response.complete) {
+                if (response.output) {
+                    window.open(response.output, '_blank');
+                } else {
+                    showMessage('{% trans "Labels sent to printer" %}', {
+                        style: 'success'
+                    });
+                }
+            } else {
+                showMessage('{% trans "Label printing failed" %}', {
+                    style: 'warning',
+                });
+            }
+        }
+    });
+
+    return;
+
     // Request a list of available label templates from the server
     let labelTemplates = [];
     inventreeGet('{% url "api-label-template-list" %}', params, {
