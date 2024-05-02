@@ -45,7 +45,7 @@ def convert_legacy_labels(table_name, model_name, template_model):
         except (InternalError, ProgrammingError, OperationalError) as exc:
             # Table does not exist
             print(f"Legacy label table {table_name} not found - skipping")
-            return
+            return 0
 
         rows = cursor.fetchall()
 
@@ -100,7 +100,7 @@ def forward(apps, schema_editor):
 
         table_name = f'label_{template_class}'
 
-        count += convert_legacy_labels(table_name, model_type, LabelTemplate)
+        count += convert_legacy_labels(table_name, model_type, LabelTemplate) or 0
 
     if count > 0:
         print(f"Migrated {count} report templates to new LabelTemplate model.")
