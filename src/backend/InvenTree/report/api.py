@@ -185,7 +185,7 @@ class LabelPrint(GenericAPIView):
         instances = template.get_model().objects.filter(pk__in=items)
 
         if instances.count() == 0:
-            raise ValidationError({'items': _('No valid items provided to template')})
+            raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, plugin, request)
 
@@ -266,7 +266,7 @@ class ReportPrint(GenericAPIView):
         instances = template.get_model().objects.filter(pk__in=items)
 
         if instances.count() == 0:
-            raise ValidationError({'items': _('No valid items provided to template')})
+            raise ValidationError(_('No valid items provided to template'))
 
         return self.print(template, instances, request)
 

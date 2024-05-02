@@ -17,92 +17,6 @@
     printReports,
 */
 
-/**
- * Present the user with the available reports,
- * and allow them to select which report to print.
- *
- * The intent is that the available report templates have been requested
- * (via AJAX) from the server.
- */
-function selectReport(reports, items, options={}) {
-
-    // If there is only a single report available, just print!
-    if (reports.length == 1) {
-        if (options.success) {
-            options.success(reports[0].pk);
-        }
-
-        return;
-    }
-
-    var modal = options.modal || '#modal-form';
-
-    var report_list = makeOptionsList(
-        reports,
-        function(item) {
-            var text = item.name;
-
-            if (item.description) {
-                text += ` - ${item.description}`;
-            }
-
-            return text;
-        },
-        function(item) {
-            return item.pk;
-        }
-    );
-
-    // Construct form
-    var html = '';
-
-    if (items.length > 0) {
-
-        html += `
-        <div class='alert alert-block alert-info'>
-        ${items.length} {% trans "items selected" %}
-        </div>`;
-    }
-
-    html += `
-    <form method='post' action='' class='js-modal-form' enctype='multipart/form-data'>
-        <div class='form-group'>
-            <label class='control-label requiredField' for='id_report'>
-            {% trans "Select Report Template" %}
-            </label>
-            <div class='controls'>
-                <select id='id_report' class='select form-control name='report'>
-                    ${report_list}
-                </select>
-            </div>
-        </div>
-    </form>`;
-
-    openModal({
-        modal: modal,
-    });
-
-    modalEnable(modal, true);
-    modalSetTitle(modal, '{% trans "Select Test Report Template" %}');
-    modalSetContent(modal, html);
-
-    attachSelect(modal);
-
-    modalSubmit(modal, function() {
-
-        var label = $(modal).find('#id_report');
-
-        var pk = label.val();
-
-        closeModal(modal);
-
-        if (options.success) {
-            options.success(pk);
-        }
-    });
-
-}
-
 
 /*
  * Print report(s) for the selected items:
@@ -128,31 +42,36 @@ function printReports(model_type, items) {
     // Join the items with a comma character
     const item_string = items.join(',');
 
-    let params = {
-        enabled: true,
-        model_type: model_type,
-        items: item_string,
-    };
-
-    // Request a list of available report templates
-    inventreeGet('{% url "api-report-template-list" %}', params, {
-        success: function(response) {
-            if (response.length == 0) {
-                showAlertDialog(
-                    '{% trans "No Reports Found" %}',
-                    '{% trans "No report templates found which match the selected items" %}',
-                );
-                return;
-            }
-
-            // Select report template for printing
-            selectReport(response, items, {
-                success: function(pk) {
-                    let href = `{% url "api-report-template-list" %}${pk}/print/?items=${item_string}`;
-
-                    window.open(href);
+    constructForm('{% url "api-report-print" %}', {
+        method: 'POST',
+        title: '{% trans "Print Report" %}',
+        fields: {
+            template: {
+                filters: {
+                    enabled: true,
+                    model_type: model_type,
+                    items: item_string,
                 }
-            });
+            },
+            items: {
+                hidden: true,
+                value: items,
+            }
+        },
+        onSuccess: function(response) {
+            if (response.complete) {
+                if (response.output) {
+                    window.open(response.output, '_blank');
+                } else {
+                    showMessage('{% trans "Report print successful" %}', {
+                        style: 'success'
+                    });
+                }
+            } else {
+                showMessage('{% trans "Report printing failed" %}', {
+                    style: 'warning',
+                });
+            }
         }
-    });
+    })
 }
