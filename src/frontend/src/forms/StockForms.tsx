@@ -288,7 +288,7 @@ function StockOperationsRow({
     } else {
       return `#${record.serial}`;
     }
-  }, record);
+  }, [record]);
 
   return (
     <tr>
@@ -316,6 +316,7 @@ function StockOperationsRow({
           <NumberInput
             value={value}
             onChange={onChange}
+            disabled={!!record.serial && record.quantity == 1}
             max={setMax ? record.quantity : undefined}
             min={0}
             style={{ maxWidth: '100px' }}
