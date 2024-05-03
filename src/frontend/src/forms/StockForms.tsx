@@ -305,7 +305,7 @@ function StockOperationsRow({
       <td>{record.location ? record.location_detail.pathstring : '-'}</td>
       <td>
         <Flex align="center" gap="xs">
-          <Group position="apart">
+          <Group justify="space-between">
             <Text>{stockString}</Text>
             <StatusRenderer status={record.status} type={ModelType.stockitem} />
           </Group>
