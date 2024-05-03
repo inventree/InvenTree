@@ -371,6 +371,13 @@ class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
 
     filterset_fields = ['category', 'read']
 
+    def get_queryset(self):
+        """Return prefetched queryset."""
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related('target', 'source', 'user')
+
+        return queryset
+
     def filter_queryset(self, queryset):
         """Only list notifications which apply to the current user."""
         try:
