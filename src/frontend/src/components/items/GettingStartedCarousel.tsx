@@ -46,7 +46,9 @@ export function GettingStartedCarousel({
     <Carousel
       slideSize={{ base: '50%', sm: '100%' }}
       slideGap={{ base: 'xl', sm: rem(2) }}
+      slidesToScroll={3}
       align="start"
+      loop
     >
       {slides}
     </Carousel>
