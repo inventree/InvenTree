@@ -1122,7 +1122,7 @@ function adjustStock(action, items, options={}) {
             location = item.location_detail.pathstring;
         }
 
-        if (item.serial != null) {
+        if (!!item.serial) {
             quantity = `#${item.serial}`;
         }
 
