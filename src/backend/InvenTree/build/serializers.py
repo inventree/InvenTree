@@ -611,7 +611,7 @@ class BuildCancelSerializer(serializers.Serializer):
 
         build.cancel_build(
             request.user,
-            remove_allocated_stock=data.get('remove_unallocated_stock', False),
+            remove_allocated_stock=data.get('remove_allocated_stock', False),
             remove_incomplete_outputs=data.get('remove_incomplete_outputs', False),
         )
 
