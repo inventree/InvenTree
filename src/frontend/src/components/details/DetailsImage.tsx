@@ -359,8 +359,8 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
         <>
           <ApiImage
             src={img}
-            h={IMAGE_DIMENSION}
-            w={IMAGE_DIMENSION}
+            mah={IMAGE_DIMENSION}
+            maw={IMAGE_DIMENSION}
             onClick={expandImage}
           />
           {permissions.hasChangeRole(props.appRole) &&
