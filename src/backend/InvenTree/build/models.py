@@ -624,8 +624,7 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         if remove_incomplete_outputs:
             outputs = self.build_outputs.filter(is_building=True)
 
-            for output in outputs:
-                output.delete()
+            outputs.delete()
 
         # Date of 'completion' is the date the build was cancelled
         self.completion_date = InvenTree.helpers.current_date()
