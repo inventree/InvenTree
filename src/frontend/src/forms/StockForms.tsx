@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Flex, NumberInput, Skeleton, Text } from '@mantine/core';
+import { Flex, Group, NumberInput, Skeleton, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useCallback, useMemo, useState } from 'react';
@@ -283,6 +283,14 @@ function StockOperationsRow({
     input.removeFn(input.idx);
   };
 
+  const stockString: string = useMemo(() => {
+    if (!!record.serial) {
+      return `#${record.serial}`;
+    } else {
+      return `${record.quantity}`;
+    }
+  }, record);
+
   return (
     <tr>
       <td>
@@ -298,8 +306,10 @@ function StockOperationsRow({
       <td>{record.location ? record.location_detail.pathstring : '-'}</td>
       <td>
         <Flex align="center" gap="xs">
-          <Text>{record.quantity}</Text>
-          <StatusRenderer status={record.status} type={ModelType.stockitem} />
+          <Group position="apart">
+            <Text>{stockString}</Text>
+            <StatusRenderer status={record.status} type={ModelType.stockitem} />
+          </Group>
         </Flex>
       </td>
       {!merge && (
