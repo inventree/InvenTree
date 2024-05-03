@@ -18,13 +18,13 @@ export const title = style({
   lineHeight: 1.2,
   fontSize: rem(32),
   marginTop: 0,
-  [vars.lightSelector]: { color: vars.colors.dark[0] },
+  [vars.lightSelector]: { color: vars.colors.dark[5] },
   [vars.darkSelector]: { color: vars.colors.white[0] }
 });
 
 export const category = style({
   opacity: 0.7,
   fontWeight: 700,
-  [vars.lightSelector]: { color: vars.colors.dark[0] },
+  [vars.lightSelector]: { color: vars.colors.dark[5] },
   [vars.darkSelector]: { color: vars.colors.white[0] }
 });
