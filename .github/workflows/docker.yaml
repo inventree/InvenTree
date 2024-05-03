@@ -29,6 +29,7 @@ permissions:
 
 env:
   platforms: linux/amd64
+  image: ghcr.io/invenhost/inventree
 
 jobs:
   paths-filter:
@@ -147,7 +148,7 @@ jobs:
         uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # pin@v5.5.1
         with:
           images: |
-            ghcr.io/${{ github.repository }}
+            ${{ env.image }}
 
       - name: Set SOURCE_DATE_EPOCH
         run: echo "SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)" >> $GITHUB_OUTPUT
@@ -183,6 +184,6 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: github-early-access/generate-build-provenance@main
         with:
-          subject-name: ghcr.io/${{ github.repository }}
+          subject-name: ${{ env.image }}
           subject-digest: ${{ steps.push-docker.outputs.digest }}
           push-to-registry: true
