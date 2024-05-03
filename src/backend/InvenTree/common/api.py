@@ -127,6 +127,7 @@ class CurrencyExchangeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
 
+    @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
     def get(self, request, format=None):
         """Return information on available currency conversions."""
         # Extract a list of all available rates
