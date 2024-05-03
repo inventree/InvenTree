@@ -284,10 +284,10 @@ function StockOperationsRow({
   };
 
   const stockString: string = useMemo(() => {
-    if (!!record.serial) {
-      return `#${record.serial}`;
-    } else {
+    if (!record.serial) {
       return `${record.quantity}`;
+    } else {
+      return `#${record.serial}`;
     }
   }, record);
 

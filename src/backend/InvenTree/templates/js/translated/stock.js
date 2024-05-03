@@ -1110,11 +1110,8 @@ function adjustStock(action, items, options={}) {
             classes: 'float-right'
         });
 
-        var quantity = item.quantity;
+        let quantityString = '';
 
-        if (item.part_detail.units != null) {
-            quantity += ` ${item.part_detail.units}`;
-        }
 
         var location = locationDetail(item, false);
 
@@ -1122,7 +1119,13 @@ function adjustStock(action, items, options={}) {
             location = item.location_detail.pathstring;
         }
 
-        if (!!item.serial) {
+        if (!item.serial) {
+            quantityString = `${item.quantity}`;
+
+            if (item.part_detail?.units) {
+                quantityString += `<small> [${item.part_detail.units}]</small>`;
+            }
+        } else {
             quantity = `#${item.serial}`;
         }
 
