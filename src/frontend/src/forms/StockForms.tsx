@@ -143,7 +143,6 @@ function StockItemDefaultMove({
   stockItem: any;
   value: any;
 }) {
-  console.log('item', stockItem);
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',
@@ -317,6 +316,7 @@ function StockOperationsRow({
           <NumberInput
             value={value}
             onChange={onChange}
+            disabled={!!record.serial && record.quantity == 1}
             max={setMax ? record.quantity : undefined}
             min={0}
             style={{ maxWidth: '100px' }}
