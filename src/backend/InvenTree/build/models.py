@@ -552,11 +552,12 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         self.save()
 
         # Offload task to complete build allocations
-        InvenTree.tasks.offload_task(
+        if not InvenTree.tasks.offload_task(
             build.tasks.complete_build_allocations,
             self.pk,
             user.pk if user else None
-        )
+        ):
+            raise ValidationError(_("Failed to offload task to complete build allocations"))
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
@@ -614,19 +615,17 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
-        # Find all BuildItem objects associated with this Build
-        items = self.allocated_stock
-
         if remove_allocated_stock:
             # Offload task to remove allocated stock
-            InvenTree.tasks.offload_task(
+            if not InvenTree.tasks.offload_task(
                 build.tasks.complete_build_allocations,
                 self.pk,
                 user.pk if user else None
-            )
+            ):
+                raise ValidationError(_("Failed to offload task to complete build allocations"))
 
         else:
-            items.delete()
+            self.allocated_stock.all().delete()
 
         # Remove incomplete outputs (if required)
         if remove_incomplete_outputs:

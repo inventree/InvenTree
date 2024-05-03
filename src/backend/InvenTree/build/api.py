@@ -116,6 +116,10 @@ class BuildMixin:
         queryset = queryset.prefetch_related(
             'responsible',
             'issued_by',
+            'build_lines',
+            'build_lines__bom_item',
+            'build_lines__build',
+            'part',
         )
 
         return queryset
