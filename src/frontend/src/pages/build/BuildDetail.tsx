@@ -141,6 +141,7 @@ export default function BuildDetail() {
         type: 'text',
         name: 'issued_by',
         label: t`Issued By`,
+        icon: 'user',
         badge: 'user'
       },
       {
