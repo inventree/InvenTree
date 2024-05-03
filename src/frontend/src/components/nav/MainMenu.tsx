@@ -16,20 +16,23 @@ import { vars } from '../../theme';
 
 export function MainMenu() {
   const navigate = useNavigate();
-  const userState = useUserState();
+  const [user, username] = useUserState((state) => [
+    state.user,
+    state.username
+  ]);
 
   return (
     <Menu width={260} position="bottom-end">
       <Menu.Target>
         <UnstyledButton className={classes.layoutHeaderUser}>
           <Group gap={7}>
-            <Text fw={500} size="sm" style={{ lineHeight: 1 }} mr={3}>
-              {userState.username() ? (
-                userState.username()
-              ) : (
-                <Skeleton height={20} width={40} radius={vars.radiusDefault} />
-              )}
-            </Text>
+            {username() ? (
+              <Text fw={500} size="sm" style={{ lineHeight: 1 }} mr={3}>
+                {username()}
+              </Text>
+            ) : (
+              <Skeleton height={20} width={40} radius={vars.radiusDefault} />
+            )}
             <IconChevronDown />
           </Group>
         </UnstyledButton>
@@ -45,7 +48,7 @@ export function MainMenu() {
         >
           <Trans>Account settings</Trans>
         </Menu.Item>
-        {userState.user?.is_staff && (
+        {user?.is_staff && (
           <Menu.Item
             leftSection={<IconSettings />}
             component={Link}
@@ -54,8 +57,8 @@ export function MainMenu() {
             <Trans>System Settings</Trans>
           </Menu.Item>
         )}
-        {userState.user?.is_staff && <Menu.Divider />}
-        {userState.user?.is_staff && (
+        {user?.is_staff && <Menu.Divider />}
+        {user?.is_staff && (
           <Menu.Item
             leftSection={<IconUserBolt />}
             component={Link}
