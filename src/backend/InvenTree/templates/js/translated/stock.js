@@ -1126,11 +1126,11 @@ function adjustStock(action, items, options={}) {
                 quantityString += `<small> [${item.part_detail.units}]</small>`;
             }
         } else {
-            quantity = `#${item.serial}`;
+            quantityString = `#${item.serial}`;
         }
 
         if (item.batch) {
-            quantity += ` - <small>{% trans "Batch" %}: ${item.batch}</small>`;
+            quantityString += ` - <small>{% trans "Batch" %}: ${item.batch}</small>`;
         }
 
         var actionInput = '';
@@ -1161,7 +1161,7 @@ function adjustStock(action, items, options={}) {
         html += `
         <tr id='stock_item_${pk}' class='stock-item-row'>
             <td id='part_${pk}'>${thumb} ${item.part_detail.full_name}</td>
-            <td id='stock_${pk}'>${quantity}${status}</td>
+            <td id='stock_${pk}'>${quantityString}${status}</td>
             <td id='location_${pk}'>${location}</td>
             <td id='action_${pk}'>
                 <div id='div_id_${pk}'>
