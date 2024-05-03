@@ -589,8 +589,8 @@ class BuildCancelSerializer(serializers.Serializer):
         }
 
     remove_allocated_stock = serializers.BooleanField(
-        label=_('Remove Allocated Stock'),
-        help_text=_('Subtract any stock which has already been allocated to this build'),
+        label=_('Consume Allocated Stock'),
+        help_text=_('Consume any stock which has already been allocated to this build'),
         required=False,
         default=False,
     )
