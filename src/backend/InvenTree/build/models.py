@@ -608,6 +608,9 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         - Set build status to CANCELLED
         - Save the Build object
         """
+
+        import build.tasks
+
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
@@ -615,10 +618,15 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         items = self.allocated_stock
 
         if remove_allocated_stock:
-            for item in items:
-                item.complete_allocation(user)
+            # Offload task to remove allocated stock
+            InvenTree.tasks.offload_task(
+                build.tasks.complete_build_allocations,
+                self.pk,
+                user.pk if user else None
+            )
 
-        items.delete()
+        else:
+            items.delete()
 
         # Remove incomplete outputs (if required)
         if remove_incomplete_outputs:
