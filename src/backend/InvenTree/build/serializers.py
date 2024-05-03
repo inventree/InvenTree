@@ -15,14 +15,12 @@ from django.db.models.functions import Coalesce
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from sql_util.utils import SubquerySum
-
 from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
 from InvenTree.serializers import UserSerializer
 
 import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
-from InvenTree.status_codes import BuildStatusGroups, StockStatus
+from InvenTree.status_codes import StockStatus
 
 from stock.models import generate_batch_code, StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
@@ -994,17 +992,24 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
     def save(self):
         """Perform the auto-allocation step"""
+
+        import build.tasks
+        import InvenTree.tasks
+
         data = self.validated_data
 
-        build = self.context['build']
+        build_order = self.context['build']
 
-        build.auto_allocate_stock(
+        if not InvenTree.tasks.offload_task(
+            build.tasks.auto_allocate_build,
+            build_order.pk,
             location=data.get('location', None),
             exclude_location=data.get('exclude_location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
-            optional_items=data['optional_items'],
-        )
+            optional_items=data['optional_items']
+        ):
+            raise ValidationError(_("Failed to start auto-allocation task"))
 
 
 class BuildItemSerializer(InvenTreeModelSerializer):
