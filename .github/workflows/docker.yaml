@@ -62,9 +62,10 @@ jobs:
     needs: paths-filter
     if: needs.paths-filter.outputs.docker == 'true' || github.event_name == 'release' || github.event_name == 'push'
     permissions:
-      contents: read
-      packages: write
       id-token: write
+      packages: write
+      attestations: write
+      contents: read
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       python_version: "3.11"
@@ -127,7 +128,6 @@ jobs:
         if: github.event_name != 'pull_request'
         uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 # pin@v3.0.0
       - name: Set up Docker Buildx
-        if: github.event_name != 'pull_request'
         uses: docker/setup-buildx-action@d70bba72b1f3fd22344832f00baa16ece964efeb # pin@v3.3.0
       - name: Set up cosign
         if: github.event_name != 'pull_request'
@@ -156,13 +156,12 @@ jobs:
 
       - name: Push Docker Images
         id: push-docker
-        if: github.event_name != 'pull_request'
         uses: docker/build-push-action@2cdde995de11925a030ce8070c3d77a52ffcf1c0 # pin@v5.3.0
         with:
           context: .
           file: ./contrib/container/Dockerfile
           platforms: ${{ env.platforms }}
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           sbom: true
           provenance: mode=max
           target: production
@@ -172,3 +171,18 @@ jobs:
             commit_hash=${{ steps.epoch.outputs.git_commit_hash }}
             commit_date=${{ steps.epoch.outputs.git_commit_date }}
             SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.SOURCE_DATE_EPOCH }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Sign the published Docker image
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          TAGS: ${{ steps.meta.outputs.tags }}
+          DIGEST: ${{ steps.push-docker.outputs.digest }}
+        run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+      - name: Attest image
+        if: ${{ github.event_name != 'pull_request' }}
+        uses: github-early-access/generate-build-provenance@main
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.push-docker.outputs.digest }}
+          push-to-registry: true
