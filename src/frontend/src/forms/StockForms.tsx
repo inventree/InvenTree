@@ -289,7 +289,7 @@ function StockOperationsRow({
     } else {
       return `#${record.serial}`;
     }
-  }, record);
+  }, [record]);
 
   return (
     <tr>
