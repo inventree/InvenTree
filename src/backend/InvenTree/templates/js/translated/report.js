@@ -3,6 +3,7 @@
 /* globals
     attachSelect,
     closeModal,
+    constructForm,
     inventreeGet,
     openModal,
     makeOptionsList,
@@ -11,6 +12,7 @@
     modalSetTitle,
     modalSubmit,
     showAlertDialog,
+    showMessage,
 */
 
 /* exported
