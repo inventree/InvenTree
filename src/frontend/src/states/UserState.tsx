@@ -61,7 +61,6 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         }
       })
       .catch(() => {
-        console.error('ERR: Error fetching user data');
         get().clearUserState();
       });
 
