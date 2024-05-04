@@ -801,8 +801,24 @@ class PluginsRegistry:
         return str(data.hexdigest())
 
     def check_reload(self):
-        """Determine if the registry needs to be reloaded."""
+        """Determine if the registry needs to be reloaded.
+
+        - If a "request" object is available, then we can cache the result and attach it.
+        - The assumption is that plugins will not change during a single request.
+
+        """
+        from django_middleware_global_request import get_request
+
         from common.models import InvenTreeSetting
+
+        request = get_request()
+        plugins_checked = (
+            getattr(request, 'plugins_checked', False) if request else False
+        )
+
+        if plugins_checked:
+            # Skip check if plugins have already been checked
+            return
 
         if settings.TESTING:
             # Skip if running during unit testing
@@ -829,6 +845,10 @@ class PluginsRegistry:
         if reg_hash and reg_hash != self.registry_hash:
             logger.info('Plugin registry hash has changed - reloading')
             self.reload_plugins(full_reload=True, force_reload=True, collect=True)
+
+        if request:
+            # Cache the 'plugins_checked' attribute against the request object
+            request.plugins_checked = True
 
     # endregion
 
