@@ -52,8 +52,10 @@ export enum ApiEndpoints {
 
   // Build API endpoints
   build_order_list = 'build/',
+  build_order_cancel = 'build/:id/cancel/',
   build_order_attachment_list = 'build/attachment/',
   build_line_list = 'build/line/',
+
   bom_list = 'bom/',
 
   // Part API endpoints
