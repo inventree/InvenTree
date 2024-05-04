@@ -26,6 +26,18 @@ import part.models as part_models
 logger = logging.getLogger('inventree')
 
 
+def auto_allocate_build(build_id: int, **kwargs):
+    """Run auto-allocation for a specified BuildOrder."""
+
+    build_order = build.models.Build.objects.filter(pk=build_id).first()
+
+    if not build_order:
+        logger.warning("Could not auto-allocate BuildOrder <%s> - BuildOrder does not exist", build_id)
+        return
+
+    build_order.auto_allocate_stock(**kwargs)
+
+
 def complete_build_allocations(build_id: int, user_id: int):
     """Complete build allocations for a specified BuildOrder."""
 

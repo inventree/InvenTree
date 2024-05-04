@@ -264,8 +264,35 @@ class BuildTest(BuildAPITest):
         self.assertTrue(self.build.is_complete)
 
     def test_cancel(self):
-        """Test that we can cancel a BuildOrder via the API."""
-        bo = Build.objects.get(pk=1)
+        """Test that we can cancel a BuildOrder via the API.
+
+        - First test that all stock is returned to stock
+        - Second test that stock is consumed by the build order
+        """
+
+        def make_new_build(ref):
+            """Make a new build order, and allocate stock to it."""
+
+            data = self.post(
+                reverse('api-build-list'),
+                {
+                    'part': 100,
+                    'quantity': 10,
+                    'title': 'Test build',
+                    'reference': ref,
+                },
+                expected_code=201
+            ).data
+
+            build = Build.objects.get(pk=data['pk'])
+
+            build.auto_allocate_stock()
+
+            self.assertGreater(build.build_lines.count(), 0)
+
+            return build
+
+        bo = make_new_build('BO-12345')
 
         url = reverse('api-build-cancel', kwargs={'pk': bo.pk})
 
@@ -276,6 +303,23 @@ class BuildTest(BuildAPITest):
         bo.refresh_from_db()
 
         self.assertEqual(bo.status, BuildStatus.CANCELLED)
+
+        # No items were "consumed" by this build
+        self.assertEqual(bo.consumed_stock.count(), 0)
+
+        # Make another build, this time we will *consume* the allocated stock
+        bo = make_new_build('BO-12346')
+
+        url = reverse('api-build-cancel', kwargs={'pk': bo.pk})
+
+        self.post(url, {'remove_allocated_stock': True}, expected_code=201)
+
+        bo.refresh_from_db()
+
+        self.assertEqual(bo.status, BuildStatus.CANCELLED)
+
+        # This time, there should be *consumed* stock
+        self.assertGreater(bo.consumed_stock.count(), 0)
 
     def test_delete(self):
         """Test that we can delete a BuildOrder via the API"""
