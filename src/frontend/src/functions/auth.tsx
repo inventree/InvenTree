@@ -169,20 +169,7 @@ export const checkLoginState = async (
 
   // Not yet logged in, but we might have a valid session cookie
   // Attempt to login
-  let result: boolean = false;
-
-  await api
-    .get(apiUrl(ApiEndpoints.user_me))
-    .then((response: any) => {
-      if (response.status == 200) {
-        result = true;
-      }
-    })
-    .catch(() => {});
-
-  if (result) {
-    await fetchUserState();
-  }
+  await fetchUserState();
 
   if (isLoggedIn()) {
     loginSuccess();
