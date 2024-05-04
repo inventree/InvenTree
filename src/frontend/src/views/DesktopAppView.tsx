@@ -16,7 +16,7 @@ import { useUserState } from '../states/UserState';
 
 export default function DesktopAppView() {
   const [hostList] = useLocalState((state) => [state.hostList]);
-  const { fetchUserState, isLoggedIn } = useUserState();
+  const [fetchUserState, isLoggedIn] = useUserState((state) => [state.fetchUserState, state.isLoggedIn]);
 
   const [fetchGlobalSettings] = useGlobalSettingsState((state) => [
     state.fetchSettings
