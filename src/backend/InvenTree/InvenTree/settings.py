@@ -271,9 +271,8 @@ MIDDLEWARE = CONFIG.get(
 # In DEBUG mode, add support for django-querycount
 # We also force this option when in testing mode
 # Ref: https://github.com/bradmontgomery/django-querycount
-if TESTING or (
-    DEBUG
-    and get_boolean_setting('INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False)
+if DEBUG and get_boolean_setting(
+    'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
 ):
     MIDDLEWARE.append('querycount.middleware.QueryCountMiddleware')
     logger.debug('Running with debug_querycount middleware enabled')
@@ -282,8 +281,8 @@ QUERYCOUNT = {
     'THRESHOLDS': {
         'MEDIUM': 50,
         'HIGH': 200,
-        'MIN_TIME_TO_LOG': 1 if TESTING else 0.1,
-        'MIN_QUERY_COUNT_TO_LOG': 50 if TESTING else 10,
+        'MIN_TIME_TO_LOG': 0.1,
+        'MIN_QUERY_COUNT_TO_LOG': 25,
     },
     'IGNORE_REQUEST_PATTERNS': ['^(?!\/(api)?(plugin)?\/).*'],
     'IGNORE_SQL_PATTERNS': [],
