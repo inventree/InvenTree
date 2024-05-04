@@ -13,49 +13,49 @@ export function getActions(navigate: NavigateFunction) {
   const actions: SpotlightActionData[] = [
     {
       id: 'home',
-      title: t`Home`,
+      label: t`Home`,
       description: `Go to the home page`,
       onClick: () => navigate(menuItems.home.link),
       leftSection: <IconHome size="1.2rem" />
     },
     {
       id: 'dashboard',
-      title: t`Dashboard`,
+      label: t`Dashboard`,
       description: t`Go to the InvenTree dashboard`,
       onClick: () => navigate(menuItems.dashboard.link),
       leftSection: <IconLink size="1.2rem" />
     },
     {
       id: 'documentation',
-      title: t`Documentation`,
+      label: t`Documentation`,
       description: t`Visit the documentation to learn more about InvenTree`,
       onClick: () => (window.location.href = docLinks.faq),
       leftSection: <IconLink size="1.2rem" />
     },
     {
       id: 'about',
-      title: t`About InvenTree`,
+      label: t`About InvenTree`,
       description: t`About the InvenTree org`,
       onClick: () => aboutInvenTree(),
       leftSection: <IconLink size="1.2rem" />
     },
     {
       id: 'server-info',
-      title: t`Server Information`,
+      label: t`Server Information`,
       description: t`About this Inventree instance`,
       onClick: () => serverInfo(),
       leftSection: <IconLink size="1.2rem" />
     },
     {
       id: 'license-info',
-      title: t`License Information`,
+      label: t`License Information`,
       description: t`Licenses for dependencies of the service`,
       onClick: () => licenseInfo(),
       leftSection: <IconLink size="1.2rem" />
     },
     {
       id: 'navigation',
-      title: t`Open Navigation`,
+      label: t`Open Navigation`,
       description: t`Open the main navigation menu`,
       onClick: () => setNavigationOpen(true),
       leftSection: <IconPointer size="1.2rem" />

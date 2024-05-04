@@ -16,7 +16,7 @@ test('PUI - Quick Command', async ({ page }) => {
 
   // Open Spotlight with Button
   await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByRole('button', { name: 'Go to the home page' }).click();
+  await page.getByRole('button', { name: 'Home Go to the home page' }).click();
   await page
     .getByRole('heading', { name: 'Welcome to your Dashboard,' })
     .click();
@@ -36,7 +36,7 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
 
   // Open Spotlight with Button
   await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByRole('button', { name: 'Go to the home page' }).click();
+  await page.getByRole('button', { name: 'Home Go to the home page' }).click();
   await page
     .getByRole('heading', { name: 'Welcome to your Dashboard,' })
     .click();
@@ -44,7 +44,9 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
 
   // Use navigation menu
   await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByRole('button', { name: 'Open the main' }).click();
+  await page
+    .getByRole('button', { name: 'Open Navigation Open the main' })
+    .click();
   // assert the nav headers are visible
   await page.getByRole('heading', { name: 'Navigation' }).waitFor();
   await page.getByRole('heading', { name: 'Pages' }).waitFor();
@@ -57,7 +59,7 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
   await page.getByRole('button', { name: 'Open spotlight' }).click();
   await page
     .getByRole('button', {
-      name: 'About this Inventree instance'
+      name: 'Server Information About this Inventree instance'
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
@@ -69,7 +71,7 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
   await page.getByRole('button', { name: 'Open spotlight' }).click();
   await page
     .getByRole('button', {
-      name: 'Licenses for dependencies of the service'
+      name: 'License Information Licenses for dependencies of the service'
     })
     .click();
   await page.getByText('License Information').first().waitFor();
@@ -79,7 +81,9 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
 
   // use about
   await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByRole('button', { name: 'About the InvenTree org' }).click();
+  await page
+    .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
+    .click();
   await page.getByText('This information is only').waitFor();
 
   await page.getByLabel('About InvenTree').getByRole('button').click();
@@ -88,7 +92,7 @@ test('PUI - Quick Command - No Keys', async ({ page }) => {
   await page.getByRole('button', { name: 'Open spotlight' }).click();
   await page
     .getByRole('button', {
-      name: 'Visit the documentation to learn more about InvenTree'
+      name: 'Documentation Visit the documentation to learn more about InvenTree'
     })
     .click();
   await page.waitForURL('https://docs.inventree.org/**');

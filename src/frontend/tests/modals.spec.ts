@@ -8,7 +8,7 @@ test('PUI - Modals as admin', async ({ page }) => {
   await page.getByRole('button', { name: 'Open spotlight' }).click();
   await page
     .getByRole('button', {
-      name: 'About this Inventree instance'
+      name: 'Server Information About this Inventree instance'
     })
     .click();
   await page.getByRole('cell', { name: 'Instance Name' }).waitFor();
@@ -20,7 +20,7 @@ test('PUI - Modals as admin', async ({ page }) => {
   await page.getByRole('button', { name: 'Open spotlight' }).click();
   await page
     .getByRole('button', {
-      name: 'Licenses for dependencies of the service'
+      name: 'License Information Licenses for dependencies of the service'
     })
     .click();
   await page.getByText('License Information').first().waitFor();
@@ -43,7 +43,9 @@ test('PUI - Modals as admin', async ({ page }) => {
 
   // use about
   await page.getByRole('button', { name: 'Open spotlight' }).click();
-  await page.getByRole('button', { name: 'About the InvenTree org' }).click();
+  await page
+    .getByRole('button', { name: 'About InvenTree About the InvenTree org' })
+    .click();
   await page.getByRole('cell', { name: 'InvenTree Version' }).click();
 
   await page.goto('./platform/');
