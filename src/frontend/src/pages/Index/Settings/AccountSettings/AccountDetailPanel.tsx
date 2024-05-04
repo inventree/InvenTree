@@ -25,7 +25,9 @@ export function AccountDetailPanel() {
           fetchUserState();
         }
       })
-      .catch(() => {});
+      .catch(() => {
+        console.error('ERR: Error saving user data');
+      });
   }
 
   return (
