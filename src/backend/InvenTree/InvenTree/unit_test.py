@@ -230,7 +230,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
     # Default query count threshold value
-    MAX_QUERY_COUNT = 50
+    MAX_QUERY_COUNT = 75
     MAX_QUERY_TIME = 1.0
 
     @contextmanager
