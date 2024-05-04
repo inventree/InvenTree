@@ -60,14 +60,10 @@ class ScheduleMixin:
         """Activate schedules from plugins with the ScheduleMixin."""
         logger.debug('Activating plugin tasks')
 
-        from common.models import InvenTreeSetting
-
         # List of tasks we have activated
         task_keys = []
 
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting(
-            'ENABLE_PLUGINS_SCHEDULE'
-        ):
+        if settings.PLUGIN_TESTING or registry.get_setting('ENABLE_PLUGINS_SCHEDULE'):
             for _key, plugin in plugins:
                 if plugin.mixin_enabled('schedule') and plugin.is_active():
                     # Only active tasks for plugins which are enabled

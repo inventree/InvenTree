@@ -87,6 +87,19 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
+    def get_setting(self, key, default=None):
+        """Return the value of a plugin setting.
+
+        Note: The value *may* be cached (against the request object),
+        in which case we can access it without a database hit.
+        """
+        from common.models import InvenTreeSetting
+
+        if hasattr(self, key):
+            return getattr(self, key)
+
+        return InvenTreeSetting.get_setting(key, default, cache=False, create=False)
+
     def get_plugin(self, slug, active=None):
         """Lookup plugin by slug (unique key)."""
         # Check if the registry needs to be reloaded
@@ -758,6 +771,16 @@ class PluginsRegistry:
                 # Some other exception, we want to know about it
                 logger.exception('Failed to update plugin registry hash: %s', str(exc))
 
+    def plugin_settings_keys(self):
+        """A list of keys which are used to store plugin settings."""
+        return [
+            'ENABLE_PLUGINS_URL',
+            'ENABLE_PLUGINS_NAVIGATION',
+            'ENABLE_PLUGINS_APP',
+            'ENABLE_PLUGINS_SCHEDULE',
+            'ENABLE_PLUGINS_EVENTS',
+        ]
+
     def calculate_plugin_hash(self):
         """Calculate a 'hash' value for the current registry.
 
@@ -777,24 +800,15 @@ class PluginsRegistry:
             data.update(str(plug.version).encode())
             data.update(str(plug.is_active()).encode())
 
-        # Also hash for all config settings which define plugin behavior
-        keys = [
-            'ENABLE_PLUGINS_URL',
-            'ENABLE_PLUGINS_NAVIGATION',
-            'ENABLE_PLUGINS_APP',
-            'ENABLE_PLUGINS_SCHEDULE',
-            'ENABLE_PLUGINS_EVENTS',
-        ]
-
-        for k in keys:
+        for k in self.plugin_settings_keys():
             try:
-                data.update(
-                    str(
-                        InvenTreeSetting.get_setting(
-                            k, False, cache=False, create=False
-                        )
-                    ).encode()
-                )
+                val = InvenTreeSetting.get_setting(k, False, cache=False, create=False)
+                msg = f'{k}-{val}'
+
+                # Cache the value to the registry instance
+                setattr(self, k, val)
+
+                data.update(msg.encode())
             except Exception:
                 pass
 

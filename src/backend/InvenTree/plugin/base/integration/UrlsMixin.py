@@ -36,11 +36,7 @@ class UrlsMixin:
             force_reload (bool, optional): Only reload base apps. Defaults to False.
             full_reload (bool, optional): Reload everything - including plugin mechanism. Defaults to False.
         """
-        from common.models import InvenTreeSetting
-
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting(
-            'ENABLE_PLUGINS_URL'
-        ):
+        if settings.PLUGIN_TESTING or registry.get_setting('ENABLE_PLUGINS_URL'):
             logger.info('Registering UrlsMixin Plugin')
             urls_changed = False
             # check whether an activated plugin extends UrlsMixin

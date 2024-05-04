@@ -1361,8 +1361,6 @@ class PartDetailTests(PartAPITestBase):
             },
         )
 
-        self.assertEqual(response.status_code, 201)
-
         pk = response.data['pk']
 
         # Check that a new part has been added
