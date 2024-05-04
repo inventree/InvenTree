@@ -229,11 +229,11 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
     # Default query count threshold value
-    MAX_QUERY_THRESHOLD = 50
+    MAX_QUERY_THRESHOLD = 35
 
     @contextmanager
     def assertNumQueriesLessThan(
-        self, value, using='default', verbose=False, debug=False
+        self, value, using='default', verbose=False, url=None, method=None
     ):
         """Context manager to check that the number of queries is less than a certain value.
 
@@ -254,9 +254,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         n = len(context.captured_queries)
 
-        if debug:
+        if url:
             print(
-                f'Expected less than {value} queries, got {n} queries'
+                f'Query count exceeded at {method}:{url}: Expected {value} queries, got {n}'
             )  # pragma: no cover
 
         self.assertLess(n, value, msg=msg)
@@ -281,22 +281,6 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
             self.assertEqual(expected_code, response.status_code)
 
-        # Check that the API action executed the expected number of queries
-        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
-        min_queries = kwargs.get('min_queries', None)
-
-        num_queries = response.headers['X-Django-Query-Count']
-
-        if max_queries is not None:
-            if num_queries > max_queries:
-                print(f'max_queries {max_queries} exceeded ({num_queries}) at {url}')
-            self.assertLessEqual(num_queries, max_queries)
-
-        if min_queries is not None:
-            if num_queries < min_queries:
-                print(f'min_queries {max_queries} exceeded ({num_queries}) at {url}')
-            self.assertGreaterEqual(num_queries, min_queries)
-
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
 
@@ -314,7 +298,10 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         if data is None:
             data = {}
 
-        response = self.client.get(url, data, format=format, **kwargs)
+        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
+
+        with self.assertNumQueriesLessThan(max_queries, url=url, method='GET'):
+            response = self.client.get(url, data, format=format, **kwargs)
 
         self.checkResponse(url, 'GET', response, expected_code=expected_code, **kwargs)
 
@@ -326,7 +313,10 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         if data is None:
             data = {}
 
-        response = self.client.post(url, data=data, format=format, **kwargs)
+        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
+
+        with self.assertNumQueriesLessThan(max_queries, url=url, method='POST'):
+            response = self.client.post(url, data=data, format=format, **kwargs)
 
         self.checkResponse(url, 'POST', response, expected_code=expected_code, **kwargs)
 
@@ -337,7 +327,10 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         if data is None:
             data = {}
 
-        response = self.client.delete(url, data=data, format=format, **kwargs)
+        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
+
+        with self.assertNumQueriesLessThan(max_queries, url=url, method='DELETE'):
+            response = self.client.delete(url, data=data, format=format, **kwargs)
 
         self.checkResponse(
             url, 'DELETE', response, expected_code=expected_code, **kwargs
@@ -348,10 +341,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     def patch(self, url, data, expected_code=None, format='json', **kwargs):
         """Issue a PATCH request."""
         response = self.client.patch(url, data=data, format=format, **kwargs)
+        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
 
-        self.checkResponse(
-            url, 'PATCH', response, expected_code=expected_code, **kwargs
-        )
+        with self.assertNumQueriesLessThan(max_queries, url=url, method='PATCH'):
+            self.checkResponse(
+                url, 'PATCH', response, expected_code=expected_code, **kwargs
+            )
 
         return response
 
@@ -359,7 +354,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue a PUT request."""
         response = self.client.put(url, data=data, format=format, **kwargs)
 
-        self.checkResponse(url, 'PUT', response, expected_code=expected_code, **kwargs)
+        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
+
+        with self.assertNumQueriesLessThan(max_queries, url=url, method='PUT'):
+            self.checkResponse(
+                url, 'PUT', response, expected_code=expected_code, **kwargs
+            )
 
         return response
 
@@ -367,9 +367,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue an OPTIONS request."""
         response = self.client.options(url, format='json', **kwargs)
 
-        self.checkResponse(
-            url, 'OPTIONS', response, expected_code=expected_code, **kwargs
-        )
+        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
+
+        with self.assertNumQueriesLessThan(max_queries, url=url, method='OPTIONS'):
+            self.checkResponse(
+                url, 'OPTIONS', response, expected_code=expected_code, **kwargs
+            )
 
         return response
 
@@ -379,9 +382,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
 
-        self.checkResponse(
-            url, 'DOWNLOAD_FILE', response, expected_code=expected_code, **kwargs
-        )
+        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
+
+        with self.assertNumQueriesLessThan(max_queries, url=url, method='DOWNLOAD'):
+            self.checkResponse(
+                url, 'DOWNLOAD_FILE', response, expected_code=expected_code, **kwargs
+            )
 
         # Check that the response is of the correct type
         if not isinstance(response, StreamingHttpResponse):
