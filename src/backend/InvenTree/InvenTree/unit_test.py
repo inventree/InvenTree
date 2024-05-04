@@ -230,12 +230,11 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
     # Default query count threshold value
-    MAX_QUERY_THRESHOLD = 35
+    MAX_QUERY_COUNT = 35
+    MAX_QUERY_TIME = 1.0
 
     @contextmanager
-    def assertNumQueriesLessThan(
-        self, value, using='default', verbose=False, url=None, method=None
-    ):
+    def assertNumQueriesLessThan(self, value, using='default', verbose=False, url=None):
         """Context manager to check that the number of queries is less than a certain value.
 
         Example:
@@ -257,20 +256,19 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         if url and n >= value:
             print(
-                f'Query count exceeded at {method}:{url}: Expected {value} queries, got {n}'
+                f'Query count exceeded at {url}: Expected < {value} queries, got {n}'
             )  # pragma: no cover
 
         self.assertLess(n, value, msg=msg)
 
-    def checkResponse(self, url, method, response, expected_code=None, **kwargs):
+    def check_response(self, url, response, expected_code=None):
         """Debug output for an unexpected response."""
         # Check that the response returned the expected status code
-        expected_code = kwargs.get('expected_code', None)
 
         if expected_code is not None:
             if expected_code != response.status_code:  # pragma: no cover
                 print(
-                    f"Unexpected {method} response at '{url}': status_code = {response.status_code}"
+                    f"Unexpected response at '{url}': status_code = {response.status_code} (expected {expected_code})"
                 )
 
                 if hasattr(response, 'data'):
@@ -293,89 +291,70 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         actions = response.data.get('actions', {})
         return actions
 
-    def get(self, url, data=None, format='json', expected_code=200, **kwargs):
+    def query(self, url, method, data=None, **kwargs):
+        """Perform a generic API query."""
+        if data is None:
+            data = {}
+
+        expected_code = kwargs.pop('expected_code', None)
+
+        format = kwargs.get('format', 'json')
+
+        max_queries = kwargs.get('max_queriy_count', self.MAX_QUERY_COUNT)
+        max_time = kwargs.get('max_query_time', self.MAX_QUERY_TIME)
+
+        t1 = time.time()
+
+        with self.assertNumQueriesLessThan(max_queries, url=url):
+            response = method(url, data, format=format, **kwargs)
+
+        t2 = time.time()
+        dt = t2 - t1
+
+        self.check_response(url, response, expected_code=expected_code)
+
+        if dt > max_time:
+            print(f'Query time exceeded at {url}: Expected {max_time}s, got {dt}s')
+
+        self.assertLessEqual(dt, max_time)
+
+        return response
+
+    def get(self, url, data=None, expected_code=200, **kwargs):
         """Issue a GET request."""
-        # Set default - see B006
-        if data is None:
-            data = {}
-
-        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
-
-        with self.assertNumQueriesLessThan(max_queries, url=url, method='GET'):
-            response = self.client.get(url, data, format=format, **kwargs)
-
-        self.checkResponse(url, 'GET', response, expected_code=expected_code, **kwargs)
-
-        return response
-
-    def post(self, url, data=None, expected_code=None, format='json', **kwargs):
-        """Issue a POST request."""
-        # Set default value - see B006
-        if data is None:
-            data = {}
-
-        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
-
-        with self.assertNumQueriesLessThan(max_queries, url=url, method='POST'):
-            response = self.client.post(url, data=data, format=format, **kwargs)
-
-        self.checkResponse(url, 'POST', response, expected_code=expected_code, **kwargs)
-
-        return response
-
-    def delete(self, url, data=None, expected_code=None, format='json', **kwargs):
-        """Issue a DELETE request."""
-        if data is None:
-            data = {}
-
-        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
-
-        with self.assertNumQueriesLessThan(max_queries, url=url, method='DELETE'):
-            response = self.client.delete(url, data=data, format=format, **kwargs)
-
-        self.checkResponse(
-            url, 'DELETE', response, expected_code=expected_code, **kwargs
+        return self.query(
+            url, self.client.get, data=data, expected_code=expected_code, **kwargs
         )
 
-        return response
+    def post(self, url, data=None, expected_code=201, **kwargs):
+        """Issue a POST request."""
+        return self.query(
+            url, self.client.post, data=data, expected_code=expected_code, **kwargs
+        )
 
-    def patch(self, url, data, expected_code=None, format='json', **kwargs):
+    def delete(self, url, data=None, expected_code=204, **kwargs):
+        """Issue a DELETE request."""
+        return self.query(
+            url, self.client.delete, data=data, expected_code=expected_code, **kwargs
+        )
+
+    def patch(self, url, data, expected_code=200, **kwargs):
         """Issue a PATCH request."""
-        response = self.client.patch(url, data=data, format=format, **kwargs)
-        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
+        return self.query(
+            url, self.client.patch, data=data, expected_code=expected_code, **kwargs
+        )
 
-        with self.assertNumQueriesLessThan(max_queries, url=url, method='PATCH'):
-            self.checkResponse(
-                url, 'PATCH', response, expected_code=expected_code, **kwargs
-            )
-
-        return response
-
-    def put(self, url, data, expected_code=None, format='json', **kwargs):
+    def put(self, url, data, expected_code=200, **kwargs):
         """Issue a PUT request."""
-        response = self.client.put(url, data=data, format=format, **kwargs)
-
-        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
-
-        with self.assertNumQueriesLessThan(max_queries, url=url, method='PUT'):
-            self.checkResponse(
-                url, 'PUT', response, expected_code=expected_code, **kwargs
-            )
-
-        return response
+        return self.query(
+            url, self.client.put, data=data, expected_code=expected_code, **kwargs
+        )
 
     def options(self, url, expected_code=None, **kwargs):
         """Issue an OPTIONS request."""
-        response = self.client.options(url, format='json', **kwargs)
-
-        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
-
-        with self.assertNumQueriesLessThan(max_queries, url=url, method='OPTIONS'):
-            self.checkResponse(
-                url, 'OPTIONS', response, expected_code=expected_code, **kwargs
-            )
-
-        return response
+        return self.query(
+            url, self.client.options, data=None, expected_code=expected_code, **kwargs
+        )
 
     def download_file(
         self, url, data, expected_code=None, expected_fn=None, decode=True, **kwargs
@@ -383,12 +362,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
 
-        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
-
-        with self.assertNumQueriesLessThan(max_queries, url=url, method='DOWNLOAD'):
-            self.checkResponse(
-                url, 'DOWNLOAD_FILE', response, expected_code=expected_code, **kwargs
-            )
+        self.check_response(url, response, expected_code=expected_code)
 
         # Check that the response is of the correct type
         if not isinstance(response, StreamingHttpResponse):
