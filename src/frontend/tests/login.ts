@@ -35,5 +35,7 @@ export const doQuickLogin = async (
   // await page.goto(logoutUrl);
   await page.goto(`${url}/login/?login=${username}&password=${password}`);
   await page.waitForURL('**/platform/home');
-  await page.waitForTimeout(250);
+  await page
+    .getByRole('heading', { name: 'Welcome to your Dashboard,' })
+    .waitFor();
 };

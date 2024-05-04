@@ -107,9 +107,6 @@ test('PUI - Pages - Part - Pricing (Variant)', async ({ page }) => {
 
 test('PUI - Pages - Part - Pricing (Internal)', async ({ page }) => {
   await doQuickLogin(page);
-  await page
-    .getByRole('heading', { name: 'Welcome to your Dashboard,' })
-    .waitFor();
 
   // Part
   await page.goto(`${baseUrl}/part/65/pricing`);
