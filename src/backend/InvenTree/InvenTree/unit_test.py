@@ -328,6 +328,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
     def post(self, url, data=None, expected_code=201, **kwargs):
         """Issue a POST request."""
+        # Default query limit is higher for POST requests, due to extra event processing
+        kwargs['max_query_count'] = kwargs.get('max_query_count', 100)
+
         return self.query(
             url, self.client.post, data=data, expected_code=expected_code, **kwargs
         )
