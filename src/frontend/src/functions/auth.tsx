@@ -6,6 +6,7 @@ import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { apiUrl } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
+import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 
@@ -16,7 +17,7 @@ import { showLoginNotification } from './notifications';
  */
 export const doBasicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
-  // const apiState = useServerApiState.getState();
+  const { fetchUserState, isLoggedIn } = useUserState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -25,6 +26,8 @@ export const doBasicLogin = async (username: string, password: string) => {
   clearCsrfCookie();
 
   const login_url = apiUrl(ApiEndpoints.user_login);
+
+  let result: boolean = false;
 
   // Attempt login with
   await api
@@ -39,18 +42,19 @@ export const doBasicLogin = async (username: string, password: string) => {
       }
     )
     .then((response) => {
-      switch (response.status) {
-        case 200:
-          fetchGlobalStates();
-          break;
-        default:
-          clearCsrfCookie();
-          break;
+      if (response.status == 200) {
+        result = true;
       }
-    })
-    .catch(() => {
-      clearCsrfCookie();
     });
+
+  if (result) {
+    await fetchUserState();
+    await fetchGlobalStates();
+  }
+
+  if (!isLoggedIn()) {
+    clearCsrfCookie();
+  }
 };
 
 /**
@@ -59,8 +63,11 @@ export const doBasicLogin = async (username: string, password: string) => {
  * @arg deleteToken: If true, delete the token from the server
  */
 export const doLogout = async (navigate: any) => {
+  const { clearUserState } = useUserState.getState();
+
   // Logout from the server session
   await api.post(apiUrl(ApiEndpoints.user_logout)).finally(() => {
+    clearUserState();
     clearCsrfCookie();
     navigate('/login');
 
@@ -122,16 +129,18 @@ export function handleReset(navigate: any, values: { email: string }) {
  * - An existing API token is stored in the session
  * - An existing CSRF cookie is stored in the browser
  */
-export function checkLoginState(
+export const checkLoginState = async (
   navigate: any,
   redirect?: string,
   no_redirect?: boolean
-) {
+) => {
   setApiDefaults();
 
   if (redirect == '/') {
     redirect = '/home';
   }
+
+  const { isLoggedIn, fetchUserState } = useUserState.getState();
 
   // Callback function when login is successful
   const loginSuccess = () => {
@@ -139,6 +148,8 @@ export function checkLoginState(
       title: t`Logged In`,
       message: t`Successfully logged in`
     });
+
+    fetchGlobalStates();
 
     navigate(redirect ?? '/home');
   };
@@ -150,24 +161,35 @@ export function checkLoginState(
     }
   };
 
-  // Check the 'user_me' endpoint to see if the user is logged in
   if (isLoggedIn()) {
-    api
-      .get(apiUrl(ApiEndpoints.user_me))
-      .then((response) => {
-        if (response.status == 200) {
-          loginSuccess();
-        } else {
-          loginFailure();
-        }
-      })
-      .catch(() => {
-        loginFailure();
-      });
+    // Already logged in
+    loginSuccess();
+    return;
+  }
+
+  // Not yet logged in, but we might have a valid session cookie
+  // Attempt to login
+  let result: boolean = false;
+
+  await api
+    .get(apiUrl(ApiEndpoints.user_me))
+    .then((response: any) => {
+      if (response.status == 200) {
+        result = true;
+      }
+    })
+    .catch(() => {});
+
+  if (result) {
+    await fetchUserState();
+  }
+
+  if (isLoggedIn()) {
+    loginSuccess();
   } else {
     loginFailure();
   }
-}
+};
 
 /*
  * Return the value of the CSRF cookie, if available
@@ -179,10 +201,6 @@ export function getCsrfCookie() {
     ?.split('=')[1];
 
   return cookieValue;
-}
-
-export function isLoggedIn() {
-  return !!getCsrfCookie();
 }
 
 /*

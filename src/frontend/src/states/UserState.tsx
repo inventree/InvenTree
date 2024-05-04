@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { UserPermissions, UserRoles } from '../enums/Roles';
-import { isLoggedIn } from '../functions/auth';
 import { apiUrl } from './ApiState';
 import { UserProps } from './states';
 
@@ -12,11 +11,13 @@ interface UserStateProps {
   username: () => string;
   setUser: (newUser: UserProps) => void;
   fetchUserState: () => void;
+  clearUserState: () => void;
   checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
   hasDeleteRole: (role: UserRoles) => boolean;
   hasChangeRole: (role: UserRoles) => boolean;
   hasAddRole: (role: UserRoles) => boolean;
   hasViewRole: (role: UserRoles) => boolean;
+  isLoggedIn: () => boolean;
   isStaff: () => boolean;
   isSuperuser: () => boolean;
 }
@@ -36,46 +37,59 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     }
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
+  clearUserState: () => {
+    set({ user: undefined });
+  },
   fetchUserState: async () => {
-    if (!isLoggedIn()) {
-      return;
-    }
-
     // Fetch user data
     await api
       .get(apiUrl(ApiEndpoints.user_me), {
         timeout: 2000
       })
       .then((response) => {
-        const user: UserProps = {
-          pk: response.data.pk,
-          first_name: response.data?.first_name ?? '',
-          last_name: response.data?.last_name ?? '',
-          email: response.data.email,
-          username: response.data.username
-        };
-        set({ user: user });
+        if (response.status == 200) {
+          const user: UserProps = {
+            pk: response.data.pk,
+            first_name: response.data?.first_name ?? '',
+            last_name: response.data?.last_name ?? '',
+            email: response.data.email,
+            username: response.data.username
+          };
+          set({ user: user });
+        } else {
+          get().clearUserState();
+        }
       })
-      .catch((error) => {
-        console.error('ERR: Error fetching user data');
+      .catch(() => {
+        console.error('Error fetching user data');
+        get().clearUserState();
       });
+
+    if (!get().isLoggedIn()) {
+      return;
+    }
 
     // Fetch role data
     await api
       .get(apiUrl(ApiEndpoints.user_roles))
       .then((response) => {
-        const user: UserProps = get().user as UserProps;
+        if (response.status == 200) {
+          const user: UserProps = get().user as UserProps;
 
-        // Update user with role data
-        if (user) {
-          user.roles = response.data?.roles ?? {};
-          user.is_staff = response.data?.is_staff ?? false;
-          user.is_superuser = response.data?.is_superuser ?? false;
-          set({ user: user });
+          // Update user with role data
+          if (user) {
+            user.roles = response.data?.roles ?? {};
+            user.is_staff = response.data?.is_staff ?? false;
+            user.is_superuser = response.data?.is_superuser ?? false;
+            set({ user: user });
+          }
+        } else {
+          get().clearUserState();
         }
       })
       .catch((_error) => {
         console.error('ERR: Error fetching user roles');
+        get().clearUserState();
       });
   },
   checkUserRole: (role: UserRoles, permission: UserPermissions) => {
@@ -92,6 +106,10 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     if (user?.roles[role] === null) return false;
 
     return user?.roles[role]?.includes(permission) ?? false;
+  },
+  isLoggedIn: () => {
+    const user: UserProps = get().user as UserProps;
+    return !!user && !!user.pk;
   },
   isStaff: () => {
     const user: UserProps = get().user as UserProps;

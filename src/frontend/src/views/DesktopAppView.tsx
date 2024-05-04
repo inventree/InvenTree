@@ -5,7 +5,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { queryClient } from '../App';
 import { BaseContext } from '../contexts/BaseContext';
 import { defaultHostList } from '../defaults/defaultHostList';
-import { isLoggedIn } from '../functions/auth';
 import { base_url } from '../main';
 import { routes } from '../router';
 import { useLocalState } from '../states/LocalState';
@@ -17,7 +16,7 @@ import { useUserState } from '../states/UserState';
 
 export default function DesktopAppView() {
   const [hostList] = useLocalState((state) => [state.hostList]);
-  const [fetchUserState] = useUserState((state) => [state.fetchUserState]);
+  const { fetchUserState, isLoggedIn } = useUserState();
 
   const [fetchGlobalSettings] = useGlobalSettingsState((state) => [
     state.fetchSettings
