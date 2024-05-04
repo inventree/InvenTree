@@ -55,7 +55,7 @@ def navigation_enabled(*args, **kwargs):
     """Is plugin navigation enabled?"""
     if djangosettings.PLUGIN_TESTING:
         return True
-    return registry.get_setting('ENABLE_PLUGINS_NAVIGATION')  # pragma: no cover
+    return InvenTreeSetting.get_setting('ENABLE_PLUGINS_NAVIGATION')  # pragma: no cover
 
 
 @register.simple_tag()
