@@ -87,19 +87,6 @@ class PluginsRegistry:
         """Return True if the plugin registry is currently loading."""
         return self.loading_lock.locked()
 
-    def get_setting(self, key, default=None):
-        """Return the value of a plugin setting.
-
-        Note: The value *may* be cached (against the request object),
-        in which case we can access it without a database hit.
-        """
-        from common.models import InvenTreeSetting
-
-        if hasattr(self, key):
-            return getattr(self, key)
-
-        return InvenTreeSetting.get_setting(key, default, cache=False, create=False)
-
     def get_plugin(self, slug, active=None):
         """Lookup plugin by slug (unique key)."""
         # Check if the registry needs to be reloaded
@@ -804,9 +791,6 @@ class PluginsRegistry:
             try:
                 val = InvenTreeSetting.get_setting(k, False, cache=False, create=False)
                 msg = f'{k}-{val}'
-
-                # Cache the value to the registry instance
-                setattr(self, k, val)
 
                 data.update(msg.encode())
             except Exception:

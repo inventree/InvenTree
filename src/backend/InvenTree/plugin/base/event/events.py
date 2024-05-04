@@ -21,7 +21,9 @@ def trigger_event(event, *args, **kwargs):
     This event will be stored in the database,
     and the worker will respond to it later on.
     """
-    if not registry.get_setting('ENABLE_PLUGINS_EVENTS', False):
+    from common.models import InvenTreeSetting
+
+    if not InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS', False):
         # Do nothing if plugin events are not enabled
         return
 
@@ -53,7 +55,9 @@ def register_event(event, *args, **kwargs):
     logger.debug("Registering triggered event: '%s'", event)
 
     # Determine if there are any plugins which are interested in responding
-    if settings.PLUGIN_TESTING or registry.get_setting('ENABLE_PLUGINS_EVENTS', False):
+    if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting(
+        'ENABLE_PLUGINS_EVENTS', False
+    ):
         with transaction.atomic():
             for slug, plugin in registry.plugins.items():
                 if not plugin.mixin_enabled('events'):
