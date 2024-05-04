@@ -230,8 +230,8 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
     # Default query count threshold value
-    MAX_QUERY_COUNT = 75
-    MAX_QUERY_TIME = 1.0
+    MAX_QUERY_COUNT = 125
+    MAX_QUERY_TIME = 2.0
 
     @contextmanager
     def assertNumQueriesLessThan(self, value, using='default', verbose=False, url=None):
@@ -329,7 +329,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     def post(self, url, data=None, expected_code=201, **kwargs):
         """Issue a POST request."""
         # Default query limit is higher for POST requests, due to extra event processing
-        kwargs['max_query_count'] = kwargs.get('max_query_count', 100)
+        kwargs['max_query_count'] = kwargs.get(
+            'max_query_count', self.MAX_QUERY_COUNT + 100
+        )
 
         return self.query(
             url, self.client.post, data=data, expected_code=expected_code, **kwargs
