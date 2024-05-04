@@ -228,6 +228,9 @@ class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
+    # Default query count threshold value
+    MAX_QUERY_THRESHOLD = 50
+
     @contextmanager
     def assertNumQueriesLessThan(
         self, value, using='default', verbose=False, debug=False
@@ -258,25 +261,41 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         self.assertLess(n, value, msg=msg)
 
-    def checkResponse(self, url, method, expected_code, response):
+    def checkResponse(self, url, method, response, expected_code=None, **kwargs):
         """Debug output for an unexpected response."""
-        # No expected code, return
-        if expected_code is None:
-            return
+        # Check that the response returned the expected status code
+        expected_code = kwargs.get('expected_code', None)
 
-        if expected_code != response.status_code:  # pragma: no cover
-            print(
-                f"Unexpected {method} response at '{url}': status_code = {response.status_code}"
-            )
+        if expected_code is not None:
+            if expected_code != response.status_code:  # pragma: no cover
+                print(
+                    f"Unexpected {method} response at '{url}': status_code = {response.status_code}"
+                )
 
-            if hasattr(response, 'data'):
-                print('data:', response.data)
-            if hasattr(response, 'body'):
-                print('body:', response.body)
-            if hasattr(response, 'content'):
-                print('content:', response.content)
+                if hasattr(response, 'data'):
+                    print('data:', response.data)
+                if hasattr(response, 'body'):
+                    print('body:', response.body)
+                if hasattr(response, 'content'):
+                    print('content:', response.content)
 
-        self.assertEqual(expected_code, response.status_code)
+            self.assertEqual(expected_code, response.status_code)
+
+        # Check that the API action executed the expected number of queries
+        max_queries = kwargs.get('max_queries', self.MAX_QUERY_THRESHOLD)
+        min_queries = kwargs.get('min_queries', None)
+
+        num_queries = response.headers['X-Django-Query-Count']
+
+        if max_queries is not None:
+            if num_queries > max_queries:
+                print(f'max_queries {max_queries} exceeded ({num_queries}) at {url}')
+            self.assertLessEqual(num_queries, max_queries)
+
+        if min_queries is not None:
+            if num_queries < min_queries:
+                print(f'min_queries {max_queries} exceeded ({num_queries}) at {url}')
+            self.assertGreaterEqual(num_queries, min_queries)
 
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
@@ -289,7 +308,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         actions = response.data.get('actions', {})
         return actions
 
-    def get(self, url, data=None, expected_code=200, format='json', **kwargs):
+    def get(self, url, data=None, format='json', expected_code=200, **kwargs):
         """Issue a GET request."""
         # Set default - see B006
         if data is None:
@@ -297,7 +316,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         response = self.client.get(url, data, format=format, **kwargs)
 
-        self.checkResponse(url, 'GET', expected_code, response)
+        self.checkResponse(url, 'GET', response, expected_code=expected_code, **kwargs)
 
         return response
 
@@ -309,7 +328,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         response = self.client.post(url, data=data, format=format, **kwargs)
 
-        self.checkResponse(url, 'POST', expected_code, response)
+        self.checkResponse(url, 'POST', response, expected_code=expected_code, **kwargs)
 
         return response
 
@@ -320,7 +339,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         response = self.client.delete(url, data=data, format=format, **kwargs)
 
-        self.checkResponse(url, 'DELETE', expected_code, response)
+        self.checkResponse(
+            url, 'DELETE', response, expected_code=expected_code, **kwargs
+        )
 
         return response
 
@@ -328,7 +349,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue a PATCH request."""
         response = self.client.patch(url, data=data, format=format, **kwargs)
 
-        self.checkResponse(url, 'PATCH', expected_code, response)
+        self.checkResponse(
+            url, 'PATCH', response, expected_code=expected_code, **kwargs
+        )
 
         return response
 
@@ -336,7 +359,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue a PUT request."""
         response = self.client.put(url, data=data, format=format, **kwargs)
 
-        self.checkResponse(url, 'PUT', expected_code, response)
+        self.checkResponse(url, 'PUT', response, expected_code=expected_code, **kwargs)
 
         return response
 
@@ -344,17 +367,21 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         """Issue an OPTIONS request."""
         response = self.client.options(url, format='json', **kwargs)
 
-        self.checkResponse(url, 'OPTIONS', expected_code, response)
+        self.checkResponse(
+            url, 'OPTIONS', response, expected_code=expected_code, **kwargs
+        )
 
         return response
 
     def download_file(
-        self, url, data, expected_code=None, expected_fn=None, decode=True
+        self, url, data, expected_code=None, expected_fn=None, decode=True, **kwargs
     ):
         """Download a file from the server, and return an in-memory file."""
         response = self.client.get(url, data=data, format='json')
 
-        self.checkResponse(url, 'DOWNLOAD_FILE', expected_code, response)
+        self.checkResponse(
+            url, 'DOWNLOAD_FILE', response, expected_code=expected_code, **kwargs
+        )
 
         # Check that the response is of the correct type
         if not isinstance(response, StreamingHttpResponse):

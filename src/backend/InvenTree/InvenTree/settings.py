@@ -276,6 +276,7 @@ if TESTING or (
     and get_boolean_setting('INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False)
 ):
     MIDDLEWARE.append('querycount.middleware.QueryCountMiddleware')
+    logger.debug('Running with debug_querycount middleware enabled')
 
 QUERYCOUNT = {
     'THRESHOLDS': {
