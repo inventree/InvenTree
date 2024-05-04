@@ -636,14 +636,6 @@ class BaseInvenTreeSetting(models.Model):
 
         If it does not exist, return the backup value (default = None)
         """
-        from django_middleware_global_request import get_request
-
-        request = get_request()
-
-        # If the setting value is cached against the request, return that value
-        if request and hasattr(request, key):
-            return getattr(request, key)
-
         if (
             cls.CHECK_SETTING_KEY
             and key not in cls.SETTINGS
@@ -678,10 +670,6 @@ class BaseInvenTreeSetting(models.Model):
         else:
             value = backup_value
 
-        if request:
-            # Cache against the request object
-            setattr(request, key, value)
-
         return value
 
     @classmethod
@@ -694,8 +682,6 @@ class BaseInvenTreeSetting(models.Model):
             change_user: User object (must be staff member to update a core setting)
             create: If True, create a new setting if the specified key does not exist.
         """
-        from django_middleware_global_request import get_request
-
         if (
             cls.CHECK_SETTING_KEY
             and key not in cls.SETTINGS
@@ -763,12 +749,6 @@ class BaseInvenTreeSetting(models.Model):
                     attempts=attempts - 1,
                     **kwargs,
                 )
-
-                request = get_request()
-
-                if request:
-                    # Cache the new value against the request object
-                    setattr(request, key, value)
 
         except (OperationalError, ProgrammingError):
             logger.warning("Database is locked, cannot set setting '%s'", key)

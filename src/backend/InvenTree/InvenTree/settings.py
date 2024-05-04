@@ -241,7 +241,6 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
-    'django_middleware_global_request',
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -262,7 +261,6 @@ MIDDLEWARE = CONFIG.get(
         'allauth.account.middleware.AccountMiddleware',
         'django.contrib.messages.middleware.MessageMiddleware',
         'django.middleware.clickjacking.XFrameOptionsMiddleware',
-        'django_middleware_global_request.middleware.GlobalRequestMiddleware',
         'InvenTree.middleware.AuthRequiredMiddleware',
         'InvenTree.middleware.Check2FAMiddleware',  # Check if the user should be forced to use MFA
         'maintenance_mode.middleware.MaintenanceModeMiddleware',

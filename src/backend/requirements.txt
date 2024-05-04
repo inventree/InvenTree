@@ -346,7 +346,6 @@ django==4.2.11 \
     #   django-import-export
     #   django-js-asset
     #   django-markdownify
-    #   django-middleware-global-request
     #   django-money
     #   django-otp
     #   django-picklefield
@@ -410,9 +409,6 @@ django-maintenance-mode==0.21.1 \
 django-markdownify==0.9.3 \
     --hash=sha256:acf42614a418aef55535a66d4b3426b181cf8c8f990e265f453df900c3ad3d25 \
     --hash=sha256:df00291bc338400b9ef999402751fc12c30623d266b7c04e43336d27d0eadee6
-django-middleware-global-request==0.3.3 \
-    --hash=sha256:0ce7fc406d14d4befd484cab1455f90a75b749fdcb358fd3c1596f2c4ea16d46 \
-    --hash=sha256:ae90033f2fb4334492426e94bdce1333a3b280e6184dc3aa93dea7570c499b0f
 django-money==3.2.0 \
     --hash=sha256:2e4174b47993780bf4b61ad3fa0a66ebe140da42fdbe68b628c7ba9788287214 \
     --hash=sha256:3099f906407175af06b56ef3ff5c250e2fc525ff00f50d42f77b98597e625459
