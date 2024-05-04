@@ -4,6 +4,7 @@ import csv
 import io
 import json
 import re
+import time
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -254,7 +255,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         n = len(context.captured_queries)
 
-        if url:
+        if url and n >= value:
             print(
                 f'Query count exceeded at {method}:{url}: Expected {value} queries, got {n}'
             )  # pragma: no cover
