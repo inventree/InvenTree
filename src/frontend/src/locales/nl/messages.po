@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-30 19:52\n"
+"PO-Revision-Date: 2024-05-05 04:25\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -4934,6 +4934,10 @@ msgstr ""
 msgid "Cancel build output"
 msgstr ""
 
+#: src/tables/build/BuildOutputTable.tsx:161
+#~ msgid "Delete build output"
+#~ msgstr "Delete build output"
+
 #: src/tables/build/BuildOutputTable.tsx:184
 msgid "Build Output"
 msgstr ""
@@ -6424,3 +6428,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
