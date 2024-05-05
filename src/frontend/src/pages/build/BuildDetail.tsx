@@ -229,6 +229,8 @@ export default function BuildDetail() {
         icon: <IconClipboardCheck />,
         content: (
           <StockItemTable
+            allowAdd={false}
+            tableName="build-outputs"
             params={{
               build: id,
               is_building: false
@@ -242,6 +244,8 @@ export default function BuildDetail() {
         icon: <IconList />,
         content: (
           <StockItemTable
+            allowAdd={false}
+            tableName="build-consumed"
             params={{
               consumed_by: id
             }}

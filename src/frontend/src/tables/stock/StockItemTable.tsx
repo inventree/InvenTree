@@ -336,12 +336,12 @@ function stockItemTableFilters(): TableFilter[] {
  */
 export function StockItemTable({
   params = {},
-  allowAdd = true,
+  allowAdd = false,
   tableName = 'stockitems'
 }: {
   params?: any;
   allowAdd?: boolean;
-  tableName?: string;
+  tableName: string;
 }) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
@@ -482,7 +482,7 @@ export function StockItemTable({
         onClick={() => newStockItem.open()}
       />
     ];
-  }, [user, table]);
+  }, [user, table, allowAdd]);
 
   return (
     <>
