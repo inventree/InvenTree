@@ -309,8 +309,7 @@ export default function PurchaseOrderDetail() {
       <PrintingActions
         modelType={ModelType.purchaseorder}
         items={[order.pk]}
-        enableLabels={false}
-        enableReports={true}
+        enableReports
       />,
       <ActionDropdown
         key="order-actions"

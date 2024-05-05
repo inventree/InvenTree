@@ -4,19 +4,18 @@ import {
   IconClipboardCheck,
   IconClipboardList,
   IconDots,
-  IconFileTypePdf,
   IconInfoCircle,
   IconList,
   IconListCheck,
   IconNotes,
   IconPaperclip,
-  IconPrinter,
   IconQrcode,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -342,17 +341,10 @@ export default function BuildDetail() {
           })
         ]}
       />,
-      <ActionDropdown
-        key="report"
-        tooltip={t`Reporting Actions`}
-        icon={<IconPrinter />}
-        actions={[
-          {
-            icon: <IconFileTypePdf />,
-            name: t`Build Order Report`,
-            tooltip: t`Print build report`
-          }
-        ]}
+      <PrintingActions
+        modelType={ModelType.build}
+        items={[build.pk]}
+        enableReports
       />,
       <ActionDropdown
         key="build"

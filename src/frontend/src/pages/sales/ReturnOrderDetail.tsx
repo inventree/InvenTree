@@ -10,6 +10,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -278,6 +279,11 @@ export default function ReturnOrderDetail() {
 
   const orderActions = useMemo(() => {
     return [
+      <PrintingActions
+        modelType={ModelType.returnorder}
+        items={[order.pk]}
+        enableReports
+      />,
       <ActionDropdown
         key="order-actions"
         tooltip={t`Order Actions`}
@@ -299,7 +305,7 @@ export default function ReturnOrderDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, order]);
 
   return (
     <>

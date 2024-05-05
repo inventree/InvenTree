@@ -10,6 +10,7 @@ import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -231,21 +232,11 @@ export default function Stock() {
           }
         ]}
       />,
-      <ActionDropdown
-        key="reports"
-        icon={<InvenTreeIcon icon="reports" />}
-        actions={[
-          {
-            name: 'Print Label',
-            icon: '',
-            tooltip: 'Print label'
-          },
-          {
-            name: 'Print Location Report',
-            icon: '',
-            tooltip: 'Print Report'
-          }
-        ]}
+      <PrintingActions
+        modelType={ModelType.stocklocation}
+        items={[location.pk ?? 0]}
+        enableLabels
+        enableReports
       />,
       <ActionDropdown
         key="operations"
