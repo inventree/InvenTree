@@ -1106,7 +1106,7 @@ if (
     )
     sys.exit(-1)
 
-COOKIE_MODE = get_setting('INVENTREE_COOKIE_MODE', 'cookie_mode', 'Lax')
+COOKIE_MODE = get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'Lax')
 
 if COOKIE_MODE not in ['Lax', 'Strict', None]:
     logger.error('Invalid cookie mode: %s', COOKIE_MODE)
@@ -1118,7 +1118,7 @@ CSRF_COOKIE_NAME = 'csrftoken'
 CSRF_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SAMESITE = COOKIE_MODE
 SESSION_COOKIE_SECURE = get_boolean_setting(
-    'INVENTREE_SESSION_COOKIE_SECURE', 'session_cookie_secure', False
+    'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
 )
 
 USE_X_FORWARDED_HOST = get_boolean_setting(

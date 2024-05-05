@@ -97,10 +97,11 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_CORS_ORIGIN_ALLOW_ALL | cors.allow_all | Allow all remote URLS for CORS checks | False |
 | INVENTREE_CORS_ORIGIN_WHITELIST | cors.whitelist | List of whitelisted CORS URLs. Refer to the [django-cors-headers documentation](https://github.com/adamchainz/django-cors-headers#cors_allowed_origins-sequencestr) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
 | INVENTREE_CORS_ORIGIN_REGEX | cors.regex | List of regular expressions for CORS whitelisted URL patterns | *Empty list* |
+| INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | True |
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | False |
 | INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | False |
-| INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | True |
-| INVENTREE_SESSION_COOKIE_SECURE | session_cookie_secure | Enforce secure session cookies | False |
+| INVENTREE_SESSION_COOKIE_SECURE | cookie.secure | Enforce secure session cookies | False |
+| INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `None | "Strict" | "Lax"`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) for more information. | `"Lax"` |
 
 ### Proxy Settings
 
