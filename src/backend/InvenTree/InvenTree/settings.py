@@ -1106,11 +1106,19 @@ if (
     )
     sys.exit(-1)
 
-COOKIE_MODE = get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'Lax')
+COOKIE_MODE = (
+    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'Lax'))
+    .lower()
+    .strip()
+)
 
-if COOKIE_MODE not in ['Lax', 'Strict', None]:
+valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': None, 'null': None}
+
+if COOKIE_MODE not in valid_cookie_modes.keys():
     logger.error('Invalid cookie mode: %s', COOKIE_MODE)
     sys.exit(-1)
+
+COOKIE_MODE = valid_cookie_modes[COOKIE_MODE.lower()]
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
