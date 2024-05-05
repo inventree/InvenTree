@@ -7,7 +7,7 @@ import {
   IconUser,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 
@@ -19,6 +19,10 @@ export function useBuildOrderFields({
 }: {
   create: boolean;
 }): ApiFormFieldSet {
+  const [destination, setDestination] = useState<number | null | undefined>(
+    null
+  );
+
   return useMemo(() => {
     return {
       reference: {},
@@ -26,6 +30,14 @@ export function useBuildOrderFields({
         filters: {
           assembly: true,
           virtual: false
+        },
+        onValueChange(value: any, record?: any) {
+          // Adjust the destination location for the build order
+          if (record) {
+            setDestination(
+              record.default_location || record.category_default_location
+            );
+          }
         }
       },
       title: {},
@@ -51,7 +63,8 @@ export function useBuildOrderFields({
       destination: {
         filters: {
           structural: false
-        }
+        },
+        value: destination
       },
       link: {
         icon: <IconLink />
@@ -66,5 +79,5 @@ export function useBuildOrderFields({
         }
       }
     };
-  }, [create]);
+  }, [create, destination]);
 }
