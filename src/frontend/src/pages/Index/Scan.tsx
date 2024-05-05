@@ -169,15 +169,17 @@ export default function Scan() {
               .get(url)
               .then((response) => {
                 item.instance = response.data;
+                const list_idx = history.findIndex((i) => i.id === id);
+                historyHandlers.setItem(list_idx, item);
               })
               .catch((err) => {
                 console.error('error while fetching instance data at', url);
                 console.info(err);
               });
           }
+        } else {
+          historyHandlers.setState(history);
         }
-
-        historyHandlers.setState(history);
       })
       .catch((err) => {
         // 400 and no plugin means no match
