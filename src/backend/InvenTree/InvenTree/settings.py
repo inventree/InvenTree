@@ -1107,7 +1107,7 @@ if (
     sys.exit(-1)
 
 COOKIE_MODE = (
-    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'Lax'))
+    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'None'))
     .lower()
     .strip()
 )
