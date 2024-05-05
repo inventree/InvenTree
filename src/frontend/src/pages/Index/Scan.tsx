@@ -42,7 +42,7 @@ import {
 } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
@@ -398,30 +398,35 @@ function HistoryTable({
     setSelection((current) =>
       current.length === data.length ? [] : data.map((item) => item.id)
     );
+  const [rows, setRows] = useState<ReactNode>();
 
-  const rows = data.map((item) => {
-    return (
-      <tr key={item.id}>
-        <td>
-          <Checkbox
-            checked={selection.includes(item.id)}
-            onChange={() => toggleRow(item.id)}
-            transitionDuration={0}
-          />
-        </td>
-        <td>
-          {item.pk && item.model && item.instance ? (
-            <RenderInstance model={item.model} instance={item.instance} />
-          ) : (
-            item.ref
-          )}
-        </td>
-        <td>{item.model}</td>
-        <td>{item.source}</td>
-        <td>{item.timestamp?.toString()}</td>
-      </tr>
+  useEffect(() => {
+    setRows(
+      data.map((item) => {
+        return (
+          <tr key={item.id}>
+            <td>
+              <Checkbox
+                checked={selection.includes(item.id)}
+                onChange={() => toggleRow(item.id)}
+                transitionDuration={0}
+              />
+            </td>
+            <td>
+              {item.pk && item.model && item.instance ? (
+                <RenderInstance model={item.model} instance={item.instance} />
+              ) : (
+                item.ref
+              )}
+            </td>
+            <td>{item.model}</td>
+            <td>{item.source}</td>
+            <td>{item.timestamp?.toString()}</td>
+          </tr>
+        );
+      })
     );
-  });
+  }, [data, selection]);
 
   // rendering
   if (data.length === 0)
