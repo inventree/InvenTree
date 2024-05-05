@@ -184,7 +184,7 @@ use_x_forwarded_port: false
 # Cookie settings
 cookie:
   secure: false
-  samesite: 'Lax'
+  samesite: none
 
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
