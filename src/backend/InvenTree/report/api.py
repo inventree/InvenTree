@@ -149,6 +149,48 @@ class LabelPrint(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = report.serializers.LabelPrintSerializer
 
+    def get_plugin_class(self, plugin_key: str, raise_error=False):
+        """Return the plugin class for the given plugin key."""
+        if not plugin_key:
+            plugin_key = InvenTreeLabelPlugin.NAME.lower()
+
+        plugin = registry.get_plugin(plugin_key)
+
+        error = None
+
+        if not plugin:
+            error = _('Plugin not found')
+        elif not plugin.is_active():
+            error = _('Plugin is not active')
+        elif not plugin.mixin_enabled('labels'):
+            error = _('Plugin does not support label printing')
+
+        if error:
+            plugin = None
+
+            if raise_error:
+                raise ValidationError({'plugin': error})
+
+        return plugin
+
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer information for the label print endpoint."""
+        plugin = None
+
+        # Plugin information provided?
+        if self.request:
+            plugin_key = self.request.query_params.get('plugin', '')
+            plugin = self.get_plugin_class(plugin_key)
+
+            if plugin and hasattr(plugin, 'get_printing_options_serializer'):
+                if plugin_serializer := plugin.get_printing_options_serializer(
+                    self.request, *args, **kwargs
+                ):
+                    kwargs['plugin_serializer'] = plugin_serializer
+
+        serializer = super().get_serializer(*args, **kwargs)
+        return serializer
+
     @method_decorator(never_cache)
     def post(self, request, *args, **kwargs):
         """POST action for printing labels."""
@@ -164,23 +206,9 @@ class LabelPrint(GenericAPIView):
 
         items = serializer.validated_data['items']
 
-        plugin_key = InvenTreeLabelPlugin.NAME.lower()
+        plugin_key = serializer.validated_data.get('plugin', None)
 
-        if plugin := serializer.validated_data.get('plugin', None):
-            plugin_key = plugin.key
-
-        plugin = registry.get_plugin(plugin_key)
-
-        if not plugin:
-            raise ValidationError({'plugin': _('Plugin not found')})
-
-        if not plugin.is_active():
-            raise ValidationError({'plugin': f"Plugin '{plugin_key}' is not enabled"})
-
-        if not plugin.mixin_enabled('labels'):
-            raise ValidationError({
-                'plugin': f"Plugin '{plugin_key}' is not a label printing plugin"
-            })
+        plugin = self.get_plugin_class(plugin_key, raise_error=True)
 
         instances = template.get_model().objects.filter(pk__in=items)
 

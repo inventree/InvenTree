@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { resolveItem } from '../../functions/conversion';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
@@ -33,28 +36,70 @@ export function PrintingActions({
     return null;
   }
 
+  const [pluginKey, setPluginKey] = useState<string>('');
+
+  const loadFields = useCallback(() => {
+    api
+      .options(apiUrl(ApiEndpoints.label_print), {
+        params: {
+          plugin: pluginKey
+        }
+      })
+      .then((response: any) => {
+        let fields = resolveItem(response, 'data.actions.POST');
+        setExtraFields(fields ?? {});
+      })
+      .catch(() => {});
+  }, [pluginKey]);
+
+  useEffect(() => {
+    loadFields();
+  }, [loadFields, pluginKey]);
+
+  const [extraFields, setExtraFields] = useState<ApiFormFieldSet>({});
+
+  const labelFields: ApiFormFieldSet = useMemo(() => {
+    let fields: ApiFormFieldSet = extraFields;
+
+    // Override field values
+    fields['template'] = {
+      ...fields['template'],
+      filters: {
+        enabled: true,
+        model_type: modelType,
+        items: items.join(',')
+      }
+    };
+
+    fields['items'] = {
+      ...fields['items'],
+      value: items,
+      hidden: true
+    };
+
+    fields['plugin'] = {
+      ...fields['plugin'],
+      filters: {
+        active: true,
+        mixin: 'labels'
+      },
+      onValueChange: (value: string, record?: any) => {
+        console.log('change:', pluginKey, '->', record?.key);
+        if (record?.key) {
+          if (record?.key != pluginKey) {
+            setPluginKey(record.key);
+          }
+        }
+      }
+    };
+
+    return fields;
+  }, [extraFields, items, loadFields]);
+
   const labelModal = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.label_print),
     title: t`Print Label`,
-    fields: {
-      template: {
-        filters: {
-          enabled: true,
-          model_type: modelType,
-          items: items.join(',')
-        }
-      },
-      plugin: {
-        filters: {
-          active: true,
-          mixin: 'labels'
-        }
-      },
-      items: {
-        hidden: true,
-        value: items
-      }
-    },
+    fields: labelFields,
     onFormSuccess: (response: any) => {
       if (!response.complete) {
         // TODO: Periodically check for completion

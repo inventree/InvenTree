@@ -85,10 +85,26 @@ class ReportPrintSerializer(serializers.Serializer):
 class LabelPrintSerializer(serializers.Serializer):
     """Serializer class for printing a label."""
 
+    # List of extra plugin field names
+    plugin_fields = []
+
     class Meta:
         """Metaclass options."""
 
-        fields = ['template', 'items']
+        fields = ['template', 'items', 'plugin']
+
+    def __init__(self, *args, **kwargs):
+        """Override the constructor to add the extra plugin fields."""
+        # Reset to a known state
+        self.Meta.fields = ['template', 'items', 'plugin']
+
+        if plugin_serializer := kwargs.pop('plugin_serializer', None):
+            for key, field in plugin_serializer.fields.items():
+                self.Meta.fields.append(key)
+                # self._declared_fields[key] = field
+                setattr(self, key, field)
+
+        super().__init__(*args, **kwargs)
 
     template = serializers.PrimaryKeyRelatedField(
         queryset=report.models.LabelTemplate.objects.all(),
@@ -104,7 +120,7 @@ class LabelPrintSerializer(serializers.Serializer):
         many=False,
         required=False,
         allow_null=True,
-        label=_('Plugin'),
+        label=_('Printing Plugin'),
         help_text=_('Select plugin to use for label printing'),
     )
 
