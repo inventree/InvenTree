@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 194
+INVENTREE_API_VERSION = 195
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v195 - 2024-05-03 : https://github.com/inventree/InvenTree/pull/7153
+    - Fixes bug in BuildOrderCancel API endpoint
 
 v194 - 2024-05-01 : https://github.com/inventree/InvenTree/pull/7147
     -  Adds field description to the currency_exchange_retrieve API call

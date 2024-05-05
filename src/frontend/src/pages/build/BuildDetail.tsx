@@ -301,6 +301,18 @@ export default function BuildDetail() {
     }
   });
 
+  const cancelBuild = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
+    title: t`Cancel Build Order`,
+    fields: {
+      remove_allocated_stock: {},
+      remove_incomplete_outputs: {}
+    },
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
+
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
@@ -352,7 +364,9 @@ export default function BuildDetail() {
             hidden: !user.hasChangeRole(UserRoles.build)
           }),
           CancelItemAction({
-            tooltip: t`Cancel order`
+            tooltip: t`Cancel order`,
+            onClick: () => cancelBuild.open()
+            // TODO: Hide if build cannot be cancelled
           }),
           DuplicateItemAction({
             onClick: () => duplicateBuild.open(),
@@ -379,6 +393,7 @@ export default function BuildDetail() {
     <>
       {editBuild.modal}
       {duplicateBuild.modal}
+      {cancelBuild.modal}
       <Stack spacing="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
