@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-04 04:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-05 04:25\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
@@ -1535,10 +1535,8 @@ msgid "Consume Allocated Stock"
 msgstr ""
 
 #: build/serializers.py:591
-#, fuzzy
-#| msgid "Accept that stock items have not been fully allocated to this build order"
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "Accepter at lagervarer ikke er fuldt tildelt til denne byggeordre"
+msgstr ""
 
 #: build/serializers.py:597
 msgid "Remove Incomplete Outputs"
@@ -14264,3 +14262,4 @@ msgstr ""
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr ""
+
