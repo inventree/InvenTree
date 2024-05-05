@@ -6,6 +6,9 @@ INVENTREE_API_VERSION = 208
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v209 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7164
+    - Adds test statistics endpoint
+
 v208 - 2024-06-19 : https://github.com/inventree/InvenTree/pull/7479
     - Adds documentation for the user roles API endpoint (no functional changes)
 
