@@ -101,7 +101,7 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
 | INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | `False` |
 | INVENTREE_SESSION_COOKIE_SECURE | cookie.secure | Enforce secure session cookies | `False` |
-| INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) for more information. | `Lax` |
+| INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) for more information. | `None` |
 
 ### Proxy Settings
 
