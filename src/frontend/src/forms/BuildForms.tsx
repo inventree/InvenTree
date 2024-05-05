@@ -91,6 +91,12 @@ export function useBuildOrderOutputFields({
     return build.part_detail?.trackable ?? false;
   }, [build.part_detail]);
 
+  const [location, setLocation] = useState<number | null>(null);
+
+  useEffect(() => {
+    setLocation(build.location || build.part_detail?.default_location || null);
+  }, [build.location, build.part_detail]);
+
   const [quantity, setQuantity] = useState<number>(0);
 
   useEffect(() => {
@@ -104,7 +110,7 @@ export function useBuildOrderOutputFields({
     return {
       quantity: {
         value: quantity,
-        onValueChange(value: any) {
+        onValueChange: (value: any) => {
           setQuantity(value);
         }
       },
@@ -112,7 +118,12 @@ export function useBuildOrderOutputFields({
         hidden: !trackable
       },
       batch_code: {},
-      location: {},
+      location: {
+        value: location,
+        onValueChange: (value: any) => {
+          setQuantity(value);
+        }
+      },
       auto_allocate: {
         hidden: !trackable
       }

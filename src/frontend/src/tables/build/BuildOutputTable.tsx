@@ -11,7 +11,9 @@ import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useBuildOrderOutputFields } from '../../forms/BuildForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -26,19 +28,21 @@ type TestResultOverview = {
   result: boolean;
 };
 
-export default function BuildOutputTable({
-  buildId,
-  partId
-}: {
-  buildId: number;
-  partId: number;
-}) {
+export default function BuildOutputTable({ build }: { build: any }) {
   const user = useUserState();
   const table = useTable('build-outputs');
 
+  const buildId: number = useMemo(() => {
+    return build.pk ?? -1;
+  }, [build.pk]);
+
+  const partId: number = useMemo(() => {
+    return build.part ?? -1;
+  }, [build.part]);
+
   // Fetch the test templates associated with the partId
   const { data: testTemplates } = useQuery({
-    queryKey: ['buildoutputtests', partId],
+    queryKey: ['buildoutputtests', build.part],
     queryFn: async () => {
       if (!partId) {
         return [];
@@ -98,6 +102,17 @@ export default function BuildOutputTable({
     [partId, testTemplates]
   );
 
+  const buildOutputFields = useBuildOrderOutputFields({ build: build });
+
+  const addBuildOutput = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_output_create, buildId),
+    title: t`Add Build Output`,
+    fields: buildOutputFields,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const tableActions = useMemo(() => {
     // TODO: Button to create new build output
     // TODO: Button to complete output(s)
@@ -107,6 +122,7 @@ export default function BuildOutputTable({
       <AddItemButton
         tooltip={t`Add Build Output`}
         hidden={!user.hasAddRole(UserRoles.build)}
+        onClick={addBuildOutput.open}
       />,
       <ActionButton
         tooltip={t`Complete selected outputs`}
@@ -127,7 +143,7 @@ export default function BuildOutputTable({
         disabled={!table.hasSelectedRecords}
       />
     ];
-  }, [user, partId, buildId, table.hasSelectedRecords]);
+  }, [user, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any) => {
@@ -166,7 +182,7 @@ export default function BuildOutputTable({
 
       return actions;
     },
-    [user, partId, buildId]
+    [user, partId]
   );
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -257,6 +273,7 @@ export default function BuildOutputTable({
 
   return (
     <>
+      {addBuildOutput.modal}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.stock_item_list)}

@@ -220,11 +220,7 @@ export default function BuildDetail() {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
         icon: <IconClipboardList />,
-        content: build.pk ? (
-          <BuildOutputTable buildId={build.pk} partId={build.part} />
-        ) : (
-          <Skeleton />
-        )
+        content: build.pk ? <BuildOutputTable build={build} /> : <Skeleton />
         // TODO: Hide if build is complete
       },
       {
