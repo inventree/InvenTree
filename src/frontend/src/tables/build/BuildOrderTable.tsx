@@ -60,7 +60,7 @@ function buildOrderTableColumns(): TableColumn[] {
         />
       )
     },
-    StatusColumn(ModelType.build),
+    StatusColumn({ model: ModelType.build }),
     ProjectCodeColumn(),
     {
       accessor: 'priority',

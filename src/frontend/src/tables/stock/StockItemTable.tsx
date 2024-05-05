@@ -193,7 +193,7 @@ function stockItemTableColumns(): TableColumn[] {
         );
       }
     },
-    StatusColumn(ModelType.stockitem),
+    StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
       sortable: true

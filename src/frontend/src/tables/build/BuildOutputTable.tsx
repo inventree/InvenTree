@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
@@ -11,7 +11,10 @@ import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useBuildOrderOutputFields } from '../../forms/BuildForms';
+import {
+  useBuildOrderOutputFields,
+  useCompleteBuildOutputsForm
+} from '../../forms/BuildForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
@@ -113,11 +116,17 @@ export default function BuildOutputTable({ build }: { build: any }) {
     }
   });
 
+  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
+
+  const completeBuildOutputsForm = useCompleteBuildOutputsForm({
+    build: build,
+    outputs: selectedOutputs,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const tableActions = useMemo(() => {
-    // TODO: Button to create new build output
-    // TODO: Button to complete output(s)
-    // TODO: Button to cancel output(s)
-    // TODO: Button to scrap output(s)
     return [
       <AddItemButton
         tooltip={t`Add Build Output`}
@@ -129,6 +138,10 @@ export default function BuildOutputTable({ build }: { build: any }) {
         icon={<InvenTreeIcon icon="success" />}
         color="green"
         disabled={!table.hasSelectedRecords}
+        onClick={() => {
+          setSelectedOutputs(table.selectedRecords);
+          completeBuildOutputsForm.open();
+        }}
       />,
       <ActionButton
         tooltip={t`Scrap selected outputs`}
@@ -143,7 +156,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
         disabled={!table.hasSelectedRecords}
       />
     ];
-  }, [user, table.hasSelectedRecords]);
+  }, [user, table.selectedRecords, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any) => {
@@ -164,7 +177,11 @@ export default function BuildOutputTable({ build }: { build: any }) {
           title: t`Complete`,
           tooltip: t`Complete build output`,
           color: 'green',
-          icon: <InvenTreeIcon icon="success" />
+          icon: <InvenTreeIcon icon="success" />,
+          onClick: () => {
+            setSelectedOutputs([record]);
+            completeBuildOutputsForm.open();
+          }
         },
         {
           title: t`Scrap`,
@@ -274,6 +291,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
   return (
     <>
       {addBuildOutput.modal}
+      {completeBuildOutputsForm.modal}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.stock_item_list)}
