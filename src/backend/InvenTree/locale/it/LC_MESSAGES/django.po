@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-04 04:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-05 04:25\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -1531,16 +1531,12 @@ msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Completa l'output se le scorte non sono state interamente assegnate"
 
 #: build/serializers.py:590
-#, fuzzy
-#| msgid "Remove Allocated Stock"
 msgid "Consume Allocated Stock"
-msgstr "Rimuovi Giacenze Allocate"
+msgstr ""
 
 #: build/serializers.py:591
-#, fuzzy
-#| msgid "Subtract any stock which has already been allocated to this build"
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "Detrai qualsiasi scorta che è stata già assegnata a questa produzione"
+msgstr ""
 
 #: build/serializers.py:597
 msgid "Remove Incomplete Outputs"
@@ -14266,3 +14262,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
