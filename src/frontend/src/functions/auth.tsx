@@ -17,7 +17,8 @@ import { showLoginNotification } from './notifications';
  */
 export const doBasicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
-  const { fetchUserState, isLoggedIn } = useUserState.getState();
+  const { clearUserState, setToken, fetchUserState, isLoggedIn } =
+    useUserState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -43,17 +44,19 @@ export const doBasicLogin = async (username: string, password: string) => {
     )
     .then((response) => {
       if (response.status == 200) {
-        result = true;
+        if (response.data.key) {
+          setToken(response.data.key);
+          result = true;
+        }
       }
-    });
+    })
+    .catch(() => {});
 
   if (result) {
     await fetchUserState();
     await fetchGlobalStates();
-  }
-
-  if (!isLoggedIn()) {
-    clearCsrfCookie();
+  } else {
+    clearUserState();
   }
 };
 

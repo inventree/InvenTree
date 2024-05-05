@@ -1,15 +1,19 @@
 import { create } from 'zustand';
 
-import { api } from '../App';
+import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { UserPermissions, UserRoles } from '../enums/Roles';
+import { clearCsrfCookie } from '../functions/auth';
 import { apiUrl } from './ApiState';
 import { UserProps } from './states';
 
 interface UserStateProps {
   user: UserProps | undefined;
+  token: string | undefined;
   username: () => string;
   setUser: (newUser: UserProps) => void;
+  setToken: (newToken: string) => void;
+  clearToken: () => void;
   fetchUserState: () => void;
   clearUserState: () => void;
   checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
@@ -27,6 +31,15 @@ interface UserStateProps {
  */
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
+  token: undefined,
+  setToken: (newToken: string) => {
+    set({ token: newToken });
+    setApiDefaults();
+  },
+  clearToken: () => {
+    set({ token: undefined });
+    setApiDefaults();
+  },
   username: () => {
     const user: UserProps = get().user as UserProps;
 
@@ -39,6 +52,9 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   setUser: (newUser: UserProps) => set({ user: newUser }),
   clearUserState: () => {
     set({ user: undefined });
+    set({ token: undefined });
+    clearCsrfCookie();
+    setApiDefaults();
   },
   fetchUserState: async () => {
     // Fetch user data
@@ -107,6 +123,9 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     return user?.roles[role]?.includes(permission) ?? false;
   },
   isLoggedIn: () => {
+    if (!get().token) {
+      return false;
+    }
     const user: UserProps = get().user as UserProps;
     return !!user && !!user.pk;
   },
