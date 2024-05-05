@@ -109,6 +109,12 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         self.validate_reference_field(self.reference)
         self.reference_int = self.rebuild_reference_field(self.reference)
 
+        # On first save (i.e. creation), run some extra checks
+        if self.pk is None:
+            # Set the destination location (if not specified)
+            if not self.destination:
+                self.destination = self.part.get_default_location()
+
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
