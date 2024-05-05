@@ -1,3 +1,4 @@
+import { t } from '@lingui/macro';
 import {
   IconCalendar,
   IconLink,
@@ -9,7 +10,10 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { api } from '../App';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { apiUrl } from '../states/ApiState';
 
 /**
  * Field set for BuildOrder forms
@@ -106,6 +110,33 @@ export function useBuildOrderOutputFields({
     setQuantity(Math.max(0, build_quantity - build_complete));
   }, [build]);
 
+  const [serialPlaceholder, setSerialPlaceholder] = useState<string>('');
+
+  useEffect(() => {
+    if (trackable) {
+      api
+        .get(apiUrl(ApiEndpoints.part_serial_numbers, build.part_detail.pk))
+        .then((response: any) => {
+          if (response.data?.next) {
+            setSerialPlaceholder(
+              t`Next serial number` + ' - ' + response.data.next
+            );
+          } else if (response.data?.latest) {
+            setSerialPlaceholder(
+              t`Latest serial number` + ' - ' + response.data.latest
+            );
+          } else {
+            setSerialPlaceholder('');
+          }
+        })
+        .catch(() => {
+          setSerialPlaceholder('');
+        });
+    } else {
+      setSerialPlaceholder('');
+    }
+  }, [build, trackable]);
+
   return useMemo(() => {
     return {
       quantity: {
@@ -115,7 +146,8 @@ export function useBuildOrderOutputFields({
         }
       },
       serial_numbers: {
-        hidden: !trackable
+        hidden: !trackable,
+        placeholder: serialPlaceholder
       },
       batch_code: {},
       location: {
@@ -128,5 +160,5 @@ export function useBuildOrderOutputFields({
         hidden: !trackable
       }
     };
-  }, [quantity, trackable]);
+  }, [quantity, serialPlaceholder, trackable]);
 }
