@@ -3,7 +3,6 @@
 import os
 
 from django.db import connection, migrations
-from django.db.utils import InternalError, OperationalError, ProgrammingError
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
@@ -42,8 +41,8 @@ def convert_legacy_labels(table_name, model_name, template_model):
     with connection.cursor() as cursor:
         try:
             cursor.execute(query)
-        except (InternalError, ProgrammingError, OperationalError) as exc:
-            # Table does not exist
+        except Exception:
+            # Table likely does not exist
             print(f"Legacy label table {table_name} not found - skipping")
             return 0
 
@@ -124,6 +123,8 @@ def reverse(apps, schema_editor):
         print(f"Deleted {n} LabelTemplate objects and templates")
 
 class Migration(migrations.Migration):
+
+    atomic = False
 
     dependencies = [
         ('report', '0025_labeltemplate'),
