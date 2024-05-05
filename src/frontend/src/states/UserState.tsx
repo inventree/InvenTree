@@ -14,6 +14,7 @@ interface UserStateProps {
   setUser: (newUser: UserProps) => void;
   setToken: (newToken: string) => void;
   clearToken: () => void;
+  fetchUserToken: () => void;
   fetchUserState: () => void;
   clearUserState: () => void;
   checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
@@ -56,7 +57,26 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     clearCsrfCookie();
     setApiDefaults();
   },
+  fetchUserToken: async () => {
+    await api
+      .get(apiUrl(ApiEndpoints.user_token))
+      .then((response) => {
+        if (response.status == 200 && response.data.token) {
+          get().setToken(response.data.token);
+        } else {
+          get().clearToken();
+        }
+      })
+      .catch(() => {
+        console.error('ERR: Error fetching user token');
+        get().clearToken();
+      });
+  },
   fetchUserState: async () => {
+    if (!get().token) {
+      await get().fetchUserToken();
+    }
+
     // Fetch user data
     await api
       .get(apiUrl(ApiEndpoints.user_me), {
