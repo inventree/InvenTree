@@ -124,7 +124,7 @@ export function SalesOrderTable({
       },
       DescriptionColumn({}),
       LineItemsProgressColumn(),
-      StatusColumn(ModelType.salesorder),
+      StatusColumn({ model: ModelType.salesorder }),
       ProjectCodeColumn(),
       CreationDateColumn(),
       TargetDateColumn(),

@@ -86,10 +86,9 @@ export function useTable(tableName: string): TableState {
     setSelectedRecords([]);
   }, []);
 
-  const hasSelectedRecords = useMemo(
-    () => selectedRecords.length > 0,
-    [selectedRecords]
-  );
+  const hasSelectedRecords = useMemo(() => {
+    return selectedRecords.length > 0;
+  }, [selectedRecords]);
 
   // Total record count
   const [recordCount, setRecordCount] = useState<number>(0);

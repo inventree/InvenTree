@@ -974,11 +974,13 @@ function loadBuildOrderAllocationTable(table, options={}) {
                     let ref = row.build_detail?.reference ?? row.build;
                     let html = renderLink(ref, `/build/${row.build}/`);
 
-                    html += `- <small>${row.build_detail.title}</small>`;
+                    if (row.build_detail) {
+                        html += `- <small>${row.build_detail.title}</small>`;
 
-                    html += buildStatusDisplay(row.build_detail.status, {
-                        classes: 'float-right',
-                    });
+                        html += buildStatusDisplay(row.build_detail.status, {
+                            classes: 'float-right',
+                        });
+                    }
 
                     return html;
                 }

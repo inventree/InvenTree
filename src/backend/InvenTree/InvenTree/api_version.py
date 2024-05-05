@@ -1,15 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 195
+INVENTREE_API_VERSION = 197
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v195 - 2024-05-03 : https://github.com/inventree/InvenTree/pull/7074
+v197 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7074
     - Major refactor of the report template / report printing interface
     - This is a *breaking change* to the report template API
     - All report printing has now been simplified to a single set of API endpoints
+
+v196 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7160
+    - Adds "location" field to BuildOutputComplete API endpoint
+
+v195 - 2024-05-03 : https://github.com/inventree/InvenTree/pull/7153
+    - Fixes bug in BuildOrderCancel API endpoint
 
 v194 - 2024-05-01 : https://github.com/inventree/InvenTree/pull/7147
     -  Adds field description to the currency_exchange_retrieve API call

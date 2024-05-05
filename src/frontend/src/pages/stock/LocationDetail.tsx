@@ -156,6 +156,8 @@ export default function Stock() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
+            tableName="location-stock"
+            allowAdd
             params={{
               location: id
             }}
