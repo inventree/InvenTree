@@ -3347,11 +3347,11 @@ function loadTestStatisticsTable(table, prefix, url, options, filters = {}) {
         async: true,
         success: function(data) {
             const keys = ['passed', 'failed', 'total']
-            header = '';
-            rows = []
-            passed= '';
-            failed = '';
-            total = '';
+            let header = '';
+            let rows = []
+            let passed= '';
+            let failed = '';
+            let total = '';
             $('.test-stat-result-cell').remove();
             $.each(data[0], function(key, value){
                 if (key != "total") {
@@ -3359,7 +3359,7 @@ function loadTestStatisticsTable(table, prefix, url, options, filters = {}) {
                     keys.forEach(function(keyName) {
                         var tdText = '-';
                         if (value['total'] != '0' && value[keyName] != '0') {
-                            percentage = ''
+                            let percentage = ''
                             if (keyName != 'total' && value[total] != 0) {
                                 percentage = ' (' + (100.0 * (parseFloat(value[keyName]) / parseFloat(value['total']))).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + '%)';
                             }
