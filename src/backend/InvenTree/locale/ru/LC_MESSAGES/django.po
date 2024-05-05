@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-04 04:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-05 04:26\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1531,16 +1531,12 @@ msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Завершить продукцию, если запасы не были полностью распределены"
 
 #: build/serializers.py:590
-#, fuzzy
-#| msgid "Remove Allocated Stock"
 msgid "Consume Allocated Stock"
-msgstr "Удалить зарезервированный запас"
+msgstr ""
 
 #: build/serializers.py:591
-#, fuzzy
-#| msgid "Subtract any stock which has already been allocated to this build"
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "Вычесть запасы, которые уже были зарезервированы для этого производства"
+msgstr ""
 
 #: build/serializers.py:597
 msgid "Remove Incomplete Outputs"
@@ -14266,3 +14262,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
