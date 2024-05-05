@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-04 04:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-05 04:26\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1531,16 +1531,12 @@ msgid "Complete outputs if stock has not been fully allocated"
 msgstr ""
 
 #: build/serializers.py:590
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Consume Allocated Stock"
-msgstr "Stok Tahsis Et"
+msgstr ""
 
 #: build/serializers.py:591
-#, fuzzy
-#| msgid "Stock has not been fully allocated to this Build Order"
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
+msgstr ""
 
 #: build/serializers.py:597
 msgid "Remove Incomplete Outputs"
@@ -14266,3 +14262,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
