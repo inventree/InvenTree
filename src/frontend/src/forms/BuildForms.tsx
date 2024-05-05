@@ -170,6 +170,51 @@ export function useBuildOrderOutputFields({
   }, [quantity, serialPlaceholder, trackable]);
 }
 
+/*
+ * Construct a table of build outputs, for displaying at the top of a form
+ */
+function buildOutputFormTable(outputs: any[], onRemove: (output: any) => void) {
+  return (
+    <DataTable
+      idAccessor="pk"
+      records={outputs}
+      columns={[
+        {
+          accessor: 'part',
+          title: t`Part`,
+          render: (record: any) => PartColumn(record.part_detail)
+        },
+        {
+          accessor: 'quantity',
+          title: t`Quantity`,
+          render: (record: any) => {
+            if (record.serial) {
+              return `# ${record.serial}`;
+            } else {
+              return record.quantity;
+            }
+          }
+        },
+        StatusColumn({ model: ModelType.stockitem, sortable: false }),
+        {
+          accessor: 'actions',
+          title: '',
+          render: (record: any) => (
+            <ActionButton
+              key={`remove-output-${record.pk}`}
+              tooltip={t`Remove output`}
+              icon={<InvenTreeIcon icon="cancel" />}
+              color="red"
+              onClick={() => onRemove(record)}
+              disabled={outputs.length <= 1}
+            />
+          )
+        }
+      ]}
+    />
+  );
+}
+
 export function useCompleteBuildOutputsForm({
   build,
   outputs,
@@ -207,48 +252,9 @@ export function useCompleteBuildOutputsForm({
     [selectedOutputs]
   );
 
-  const preFormContent = useMemo(
-    () => (
-      <DataTable
-        idAccessor="pk"
-        records={selectedOutputs}
-        columns={[
-          {
-            accessor: 'part',
-            title: t`Part`,
-            render: (record: any) => PartColumn(record.part_detail)
-          },
-          {
-            accessor: 'quantity',
-            title: t`Quantity`,
-            render: (record: any) => {
-              if (record.serial) {
-                return `# ${record.serial}`;
-              } else {
-                return record.quantity;
-              }
-            }
-          },
-          StatusColumn({ model: ModelType.stockitem, sortable: false }),
-          {
-            accessor: 'actions',
-            title: '',
-            render: (record: any) => (
-              <ActionButton
-                key={`remove-output-${record.pk}`}
-                tooltip={t`Remove output`}
-                icon={<InvenTreeIcon icon="cancel" />}
-                color="red"
-                onClick={() => removeOutput(record)}
-                disabled={selectedOutputs.length <= 1}
-              />
-            )
-          }
-        ]}
-      />
-    ),
-    [outputs, selectedOutputs]
-  );
+  const preFormContent = useMemo(() => {
+    return buildOutputFormTable(selectedOutputs, removeOutput);
+  }, [outputs, selectedOutputs, removeOutput]);
 
   const buildOutputCompleteFields: ApiFormFieldSet = useMemo(() => {
     return {
