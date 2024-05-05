@@ -13,7 +13,8 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {
   useBuildOrderOutputFields,
-  useCompleteBuildOutputsForm
+  useCompleteBuildOutputsForm,
+  useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
@@ -126,6 +127,14 @@ export default function BuildOutputTable({ build }: { build: any }) {
     }
   });
 
+  const scrapBuildOutputsForm = useScrapBuildOutputsForm({
+    build: build,
+    outputs: selectedOutputs,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -148,6 +157,10 @@ export default function BuildOutputTable({ build }: { build: any }) {
         icon={<InvenTreeIcon icon="delete" />}
         color="red"
         disabled={!table.hasSelectedRecords}
+        onClick={() => {
+          setSelectedOutputs(table.selectedRecords);
+          scrapBuildOutputsForm.open();
+        }}
       />,
       <ActionButton
         tooltip={t`Cancel selected outputs`}
@@ -187,7 +200,11 @@ export default function BuildOutputTable({ build }: { build: any }) {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
           icon: <InvenTreeIcon icon="delete" />,
-          color: 'red'
+          color: 'red',
+          onClick: () => {
+            setSelectedOutputs([record]);
+            scrapBuildOutputsForm.open();
+          }
         },
         {
           title: t`Cancel`,
@@ -292,6 +309,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
     <>
       {addBuildOutput.modal}
       {completeBuildOutputsForm.modal}
+      {scrapBuildOutputsForm.modal}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.stock_item_list)}

@@ -254,7 +254,7 @@ export function useCompleteBuildOutputsForm({
 
   const preFormContent = useMemo(() => {
     return buildOutputFormTable(selectedOutputs, removeOutput);
-  }, [outputs, selectedOutputs, removeOutput]);
+  }, [selectedOutputs, removeOutput]);
 
   const buildOutputCompleteFields: ApiFormFieldSet = useMemo(() => {
     return {
@@ -286,6 +286,78 @@ export function useCompleteBuildOutputsForm({
     method: 'POST',
     title: t`Complete Build Outputs`,
     fields: buildOutputCompleteFields,
+    onFormSuccess: onFormSuccess,
+    preFormContent: preFormContent
+  });
+}
+
+export function useScrapBuildOutputsForm({
+  build,
+  outputs,
+  onFormSuccess
+}: {
+  build: any;
+  outputs: any[];
+  onFormSuccess: (response: any) => void;
+}) {
+  const [location, setLocation] = useState<number | null>(null);
+  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
+
+  useEffect(() => {
+    setSelectedOutputs(outputs);
+  }, [outputs]);
+
+  // Remove a selected output from the list
+  const removeOutput = useCallback(
+    (output: any) => {
+      setSelectedOutputs(
+        selectedOutputs.filter((item) => item.pk != output.pk)
+      );
+    },
+    [selectedOutputs]
+  );
+
+  useEffect(() => {
+    if (location) {
+      return;
+    }
+
+    setLocation(
+      build.destination || build.part_detail?.default_location || null
+    );
+  }, [location, build.destination, build.part_detail]);
+
+  const preFormContent = useMemo(() => {
+    return buildOutputFormTable(selectedOutputs, removeOutput);
+  }, [selectedOutputs, removeOutput]);
+
+  const buildOutputScrapFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      outputs: {
+        hidden: true,
+        value: selectedOutputs.map((output) => {
+          return {
+            output: output.pk,
+            quantity: output.quantity
+          };
+        })
+      },
+      location: {
+        value: location,
+        onValueChange: (value) => {
+          setLocation(value);
+        }
+      },
+      notes: {},
+      discard_allocations: {}
+    };
+  }, [location, selectedOutputs]);
+
+  return useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_output_scrap, build.pk),
+    method: 'POST',
+    title: t`Scrap Build Outputs`,
+    fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
     preFormContent: preFormContent
   });
