@@ -112,6 +112,7 @@ export function useBuildOrderOutputFields({
         hidden: !trackable
       },
       batch_code: {},
+      location: {},
       auto_allocate: {
         hidden: !trackable
       }

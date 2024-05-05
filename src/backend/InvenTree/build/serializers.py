@@ -286,6 +286,13 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         help_text=_('Enter serial numbers for build outputs'),
     )
 
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        label=_('Location'),
+        help_text=_('Stock location for build output'),
+        required=False, allow_null=True
+    )
+
     def validate_serial_numbers(self, serial_numbers):
         """Clean the provided serial number string"""
         serial_numbers = serial_numbers.strip()
@@ -346,19 +353,15 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         """Generate the new build output(s)"""
         data = self.validated_data
 
-        quantity = data['quantity']
-        batch_code = data.get('batch_code', '')
-        auto_allocate = data.get('auto_allocate', False)
-
         build = self.get_build()
-        user = self.context['request'].user
 
         build.create_build_output(
-            quantity,
+            data['quantity'],
             serials=self.serials,
-            batch=batch_code,
-            auto_allocate=auto_allocate,
-            user=user,
+            batch=data.get('batch_code', ''),
+            location=data.get('location', None),
+            auto_allocate=data.get('auto_allocate', False),
+            user=self.context['request'].user,
         )
 
 
