@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon } from '@mantine/core';
+import { ActionIcon, Alert, Stack, Text } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,
@@ -287,7 +287,8 @@ export function useCompleteBuildOutputsForm({
     title: t`Complete Build Outputs`,
     fields: buildOutputCompleteFields,
     onFormSuccess: onFormSuccess,
-    preFormContent: preFormContent
+    preFormContent: preFormContent,
+    successMessage: t`Build outputs have been completed`
   });
 }
 
@@ -359,6 +360,67 @@ export function useScrapBuildOutputsForm({
     title: t`Scrap Build Outputs`,
     fields: buildOutputScrapFields,
     onFormSuccess: onFormSuccess,
-    preFormContent: preFormContent
+    preFormContent: preFormContent,
+    successMessage: t`Build outputs have been scrapped`
+  });
+}
+
+export function useCancelBuildOutputsForm({
+  build,
+  outputs,
+  onFormSuccess
+}: {
+  build: any;
+  outputs: any[];
+  onFormSuccess: (response: any) => void;
+}) {
+  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
+
+  useEffect(() => {
+    setSelectedOutputs(outputs);
+  }, [outputs]);
+
+  // Remove a selected output from the list
+  const removeOutput = useCallback(
+    (output: any) => {
+      setSelectedOutputs(
+        selectedOutputs.filter((item) => item.pk != output.pk)
+      );
+    },
+    [selectedOutputs]
+  );
+
+  const preFormContent = useMemo(() => {
+    return (
+      <Stack spacing="xs">
+        <Alert color="red" title={t`Cancel Build Outputs`}>
+          <Text>{t`Selected build outputs will be deleted`}</Text>
+        </Alert>
+        {buildOutputFormTable(selectedOutputs, removeOutput)}
+      </Stack>
+    );
+  }, [selectedOutputs, removeOutput]);
+
+  const buildOutputCancelFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      outputs: {
+        hidden: true,
+        value: selectedOutputs.map((output) => {
+          return {
+            output: output.pk
+          };
+        })
+      }
+    };
+  }, [selectedOutputs]);
+
+  return useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_output_delete, build.pk),
+    method: 'POST',
+    title: t`Cancel Build Outputs`,
+    fields: buildOutputCancelFields,
+    preFormContent: preFormContent,
+    onFormSuccess: onFormSuccess,
+    successMessage: t`Build outputs have been cancelled`
   });
 }
