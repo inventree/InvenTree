@@ -211,7 +211,9 @@ class LabelPrint(GenericAPIView):
 
         items = serializer.validated_data['items']
 
-        plugin_key = serializer.validated_data.get('plugin', None)
+        plugin_key = ''
+        if plugin_cfg := serializer.validated_data.get('plugin', None):
+            plugin_key = plugin_cfg.key
 
         plugin = self.get_plugin_class(plugin_key, raise_error=True)
 
@@ -224,7 +226,6 @@ class LabelPrint(GenericAPIView):
 
     def print(self, template, items_to_print, plugin, request):
         """Print this label template against a number of provided items."""
-        # TODO: This needs refactoring
         if plugin_serializer := plugin.get_printing_options_serializer(
             request, data=request.data, context=self.get_serializer_context()
         ):

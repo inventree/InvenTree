@@ -98,6 +98,9 @@ export function PrintingActions({
     url: apiUrl(ApiEndpoints.label_print),
     title: t`Print Label`,
     fields: labelFields,
+    onClose: () => {
+      setPluginKey('');
+    },
     onFormSuccess: (response: any) => {
       if (!response.complete) {
         // TODO: Periodically check for completion
