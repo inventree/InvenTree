@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { resolveItem } from '../../functions/conversion';
+import { extractAvailableFields } from '../../functions/forms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
@@ -46,8 +46,7 @@ export function PrintingActions({
         }
       })
       .then((response: any) => {
-        let fields = resolveItem(response, 'data.actions.POST');
-        setExtraFields(fields ?? {});
+        setExtraFields(extractAvailableFields(response, 'POST') || {});
       })
       .catch(() => {});
   }, [pluginKey]);
@@ -84,7 +83,6 @@ export function PrintingActions({
         mixin: 'labels'
       },
       onValueChange: (value: string, record?: any) => {
-        console.log('change:', pluginKey, '->', record?.key);
         if (record?.key) {
           if (record?.key != pluginKey) {
             setPluginKey(record.key);

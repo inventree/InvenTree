@@ -101,7 +101,6 @@ class LabelPrintSerializer(serializers.Serializer):
         if plugin_serializer := kwargs.pop('plugin_serializer', None):
             for key, field in plugin_serializer.fields.items():
                 self.Meta.fields.append(key)
-                # self._declared_fields[key] = field
                 setattr(self, key, field)
 
         super().__init__(*args, **kwargs)
