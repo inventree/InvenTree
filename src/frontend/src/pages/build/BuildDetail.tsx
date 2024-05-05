@@ -220,11 +220,7 @@ export default function BuildDetail() {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
         icon: <IconClipboardList />,
-        content: build.pk ? (
-          <BuildOutputTable buildId={build.pk} partId={build.part} />
-        ) : (
-          <Skeleton />
-        )
+        content: build.pk ? <BuildOutputTable build={build} /> : <Skeleton />
         // TODO: Hide if build is complete
       },
       {
@@ -233,6 +229,8 @@ export default function BuildDetail() {
         icon: <IconClipboardCheck />,
         content: (
           <StockItemTable
+            allowAdd={false}
+            tableName="build-outputs"
             params={{
               build: id,
               is_building: false
@@ -246,6 +244,8 @@ export default function BuildDetail() {
         icon: <IconList />,
         content: (
           <StockItemTable
+            allowAdd={false}
+            tableName="build-consumed"
             params={{
               consumed_by: id
             }}

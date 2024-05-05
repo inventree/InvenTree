@@ -258,6 +258,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
+            tableName="received-stock"
             params={{
               purchase_order: id
             }}

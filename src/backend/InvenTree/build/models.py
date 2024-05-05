@@ -109,6 +109,12 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         self.validate_reference_field(self.reference)
         self.reference_int = self.rebuild_reference_field(self.reference)
 
+        # On first save (i.e. creation), run some extra checks
+        if self.pk is None:
+            # Set the destination location (if not specified)
+            if not self.destination:
+                self.destination = self.part.get_default_location()
+
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
@@ -682,9 +688,12 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         """
         user = kwargs.get('user', None)
         batch = kwargs.get('batch', self.batch)
-        location = kwargs.get('location', self.destination)
+        location = kwargs.get('location', None)
         serials = kwargs.get('serials', None)
         auto_allocate = kwargs.get('auto_allocate', False)
+
+        if location is None:
+            location = self.destination or self.part.get_default_location()
 
         """
         Determine if we can create a single output (with quantity > 0),
