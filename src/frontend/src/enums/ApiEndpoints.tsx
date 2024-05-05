@@ -54,6 +54,9 @@ export enum ApiEndpoints {
   build_order_list = 'build/',
   build_order_cancel = 'build/:id/cancel/',
   build_output_create = 'build/:id/create-output/',
+  build_output_complete = 'build/:id/complete/',
+  build_output_scrap = 'build/:id/scrap-outputs/',
+  build_output_delete = 'build/output/:id/delete-outputs/',
   build_order_attachment_list = 'build/attachment/',
   build_line_list = 'build/line/',
 
