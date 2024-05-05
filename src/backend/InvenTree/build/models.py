@@ -688,9 +688,12 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         """
         user = kwargs.get('user', None)
         batch = kwargs.get('batch', self.batch)
-        location = kwargs.get('location', self.destination)
+        location = kwargs.get('location', None)
         serials = kwargs.get('serials', None)
         auto_allocate = kwargs.get('auto_allocate', False)
+
+        if location is None:
+            location = self.destination or self.part.get_default_location()
 
         """
         Determine if we can create a single output (with quantity > 0),
