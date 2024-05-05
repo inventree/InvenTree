@@ -7,7 +7,7 @@ import {
   IconUser,
   IconUsersGroup
 } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 
@@ -80,4 +80,41 @@ export function useBuildOrderFields({
       }
     };
   }, [create, destination]);
+}
+
+export function useBuildOrderOutputFields({
+  build
+}: {
+  build: any;
+}): ApiFormFieldSet {
+  const trackable: boolean = useMemo(() => {
+    return build.part_detail?.trackable ?? false;
+  }, [build.part_detail]);
+
+  const [quantity, setQuantity] = useState<number>(0);
+
+  useEffect(() => {
+    let build_quantity = build.quantity ?? 0;
+    let build_complete = build.completed ?? 0;
+
+    setQuantity(Math.max(0, build_quantity - build_complete));
+  }, [build]);
+
+  return useMemo(() => {
+    return {
+      quantity: {
+        value: quantity,
+        onValueChange(value: any) {
+          setQuantity(value);
+        }
+      },
+      serial_numbers: {
+        hidden: !trackable
+      },
+      batch_code: {},
+      auto_allocate: {
+        hidden: !trackable
+      }
+    };
+  }, [quantity, trackable]);
 }
