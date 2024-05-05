@@ -202,8 +202,6 @@ class LabelPrint(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # TODO: Custom serializer fields based on the selected plugin?
-
         template = serializer.validated_data['template']
 
         if template.width <= 0 or template.height <= 0:

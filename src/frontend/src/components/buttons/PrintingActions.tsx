@@ -104,7 +104,7 @@ export function PrintingActions({
     },
     onFormSuccess: (response: any) => {
       if (!response.complete) {
-        // TODO: Periodically check for completion
+        // TODO: Periodically check for completion (requires server-side changes)
         notifications.show({
           title: t`Error`,
           message: t`The label could not be generated`,
@@ -146,7 +146,7 @@ export function PrintingActions({
     },
     onFormSuccess: (response: any) => {
       if (!response.complete) {
-        // TODO: Periodically check for completion
+        // TODO: Periodically check for completion (requires server-side changes)
         notifications.show({
           title: t`Error`,
           message: t`The report could not be generated`,
