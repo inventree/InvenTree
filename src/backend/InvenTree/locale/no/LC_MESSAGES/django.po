@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-04 04:37+0000\n"
-"PO-Revision-Date: 2024-05-05 04:26\n"
+"POT-Creation-Date: 2024-05-05 09:35+0000\n"
+"PO-Revision-Date: 2024-05-06 04:22\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -56,8 +56,8 @@ msgstr "Feildetaljer kan finnes i admin-panelet"
 msgid "Enter date"
 msgstr "Oppgi dato"
 
-#: InvenTree/fields.py:208 InvenTree/models.py:1021 build/serializers.py:436
-#: build/serializers.py:514 build/templates/build/sidebar.html:21
+#: InvenTree/fields.py:208 InvenTree/models.py:1021 build/serializers.py:444
+#: build/serializers.py:522 build/templates/build/sidebar.html:21
 #: company/models.py:849 company/templates/company/sidebar.html:37
 #: order/models.py:1283 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
@@ -426,7 +426,7 @@ msgstr "Velg fil å legge ved"
 msgid "Link"
 msgstr "Lenke"
 
-#: InvenTree/models.py:568 build/models.py:315 part/models.py:920
+#: InvenTree/models.py:568 build/models.py:321 part/models.py:920
 #: stock/models.py:819
 msgid "Link to external URL"
 msgstr "Lenke til ekstern URL"
@@ -507,7 +507,7 @@ msgstr "Ugyldig valg"
 msgid "Name"
 msgstr "Navn"
 
-#: InvenTree/models.py:899 build/models.py:188
+#: InvenTree/models.py:899 build/models.py:194
 #: build/templates/build/detail.html:24 common/models.py:136
 #: company/models.py:523 company/models.py:840
 #: company/templates/company/company_base.html:77
@@ -1008,23 +1008,23 @@ msgstr "Produksjonsordre"
 msgid "Build Orders"
 msgstr "Produksjonsordrer"
 
-#: build/models.py:116
+#: build/models.py:122
 msgid "Invalid choice for parent build"
 msgstr "Ugyldig valg for overordnet produksjon"
 
-#: build/models.py:127 order/models.py:239
+#: build/models.py:133 order/models.py:239
 msgid "Responsible user or group must be specified"
 msgstr ""
 
-#: build/models.py:133
+#: build/models.py:139
 msgid "Build order part cannot be changed"
 msgstr "Produksjonsordrens del kan ikke endres"
 
-#: build/models.py:179
+#: build/models.py:185
 msgid "Build Order Reference"
 msgstr "Produksjonsordre-referanse"
 
-#: build/models.py:180 order/models.py:442 order/models.py:898
+#: build/models.py:186 order/models.py:442 order/models.py:898
 #: order/models.py:1276 order/models.py:1998 part/admin.py:417
 #: part/models.py:4062 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
@@ -1040,20 +1040,20 @@ msgstr "Produksjonsordre-referanse"
 msgid "Reference"
 msgstr "Referanse"
 
-#: build/models.py:191
+#: build/models.py:197
 msgid "Brief description of the build (optional)"
 msgstr "Kort beskrivelse av produksjonen (valgfritt)"
 
-#: build/models.py:199 build/templates/build/build_base.html:183
+#: build/models.py:205 build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
 msgstr "Overordnet produksjon"
 
-#: build/models.py:200
+#: build/models.py:206
 msgid "BuildOrder to which this build is allocated"
 msgstr "Produksjonsordre som denne produksjonen er tildelt"
 
-#: build/models.py:205 build/templates/build/build_base.html:97
+#: build/models.py:211 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:1058 order/api.py:821
 #: order/models.py:1401 order/models.py:1546 order/models.py:1547
 #: part/api.py:1547 part/api.py:1841 part/models.py:390 part/models.py:3004
@@ -1104,103 +1104,103 @@ msgstr "Produksjonsordre som denne produksjonen er tildelt"
 msgid "Part"
 msgstr "Del"
 
-#: build/models.py:213
+#: build/models.py:219
 msgid "Select part to build"
 msgstr "Velg del å produsere"
 
-#: build/models.py:218
+#: build/models.py:224
 msgid "Sales Order Reference"
 msgstr "Salgsordrereferanse"
 
-#: build/models.py:222
+#: build/models.py:228
 msgid "SalesOrder to which this build is allocated"
 msgstr "Salgsordren denne produksjonen er tildelt til"
 
-#: build/models.py:227 build/serializers.py:962
+#: build/models.py:233 build/serializers.py:970
 #: templates/js/translated/build.js:1730
 #: templates/js/translated/sales_order.js:1185
 msgid "Source Location"
 msgstr "Kildeplassering"
 
-#: build/models.py:231
+#: build/models.py:237
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "Velg plassering å ta lagerbeholdning fra for denne produksjonen (la stå tomt for a ta fra alle lagerplasseringer)"
 
-#: build/models.py:236
+#: build/models.py:242
 msgid "Destination Location"
 msgstr "Fullført plassering"
 
-#: build/models.py:240
+#: build/models.py:246
 msgid "Select location where the completed items will be stored"
 msgstr "Velg plassering der fullførte artikler vil bli lagret"
 
-#: build/models.py:244
+#: build/models.py:250
 msgid "Build Quantity"
 msgstr "Produksjonsmengde"
 
-#: build/models.py:247
+#: build/models.py:253
 msgid "Number of stock items to build"
 msgstr "Antall lagervarer å produsere"
 
-#: build/models.py:251
+#: build/models.py:257
 msgid "Completed items"
 msgstr "Fullførte artikler"
 
-#: build/models.py:253
+#: build/models.py:259
 msgid "Number of stock items which have been completed"
 msgstr "Antall lagervarer som er fullført"
 
-#: build/models.py:257
+#: build/models.py:263
 msgid "Build Status"
 msgstr "Produksjonsstatus"
 
-#: build/models.py:261
+#: build/models.py:267
 msgid "Build status code"
 msgstr "Produksjonsstatuskode"
 
-#: build/models.py:270 build/serializers.py:278 order/serializers.py:581
+#: build/models.py:276 build/serializers.py:278 order/serializers.py:581
 #: stock/models.py:823 stock/serializers.py:1333
 #: templates/js/translated/purchase_order.js:1129
 msgid "Batch Code"
 msgstr "Batchkode"
 
-#: build/models.py:274 build/serializers.py:279
+#: build/models.py:280 build/serializers.py:279
 msgid "Batch code for this build output"
 msgstr "Batchkode for denne produksjonsartikkelen"
 
-#: build/models.py:277 order/models.py:304 order/serializers.py:120
+#: build/models.py:283 order/models.py:304 order/serializers.py:120
 #: part/models.py:1079 part/templates/part/part_base.html:310
 #: templates/js/translated/return_order.js:339
 #: templates/js/translated/sales_order.js:827
 msgid "Creation Date"
 msgstr "Opprettelsesdato"
 
-#: build/models.py:281
+#: build/models.py:287
 msgid "Target completion date"
 msgstr "Forventet sluttdato"
 
-#: build/models.py:282
+#: build/models.py:288
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Måldato for ferdigstillelse. Produksjonen vil være forfalt etter denne datoen."
 
-#: build/models.py:285 order/models.py:500 order/models.py:2043
+#: build/models.py:291 order/models.py:500 order/models.py:2043
 #: templates/js/translated/build.js:2247
 msgid "Completion Date"
 msgstr "Fullført dato"
 
-#: build/models.py:291
+#: build/models.py:297
 msgid "completed by"
 msgstr "fullført av"
 
-#: build/models.py:299 templates/js/translated/build.js:2207
+#: build/models.py:305 templates/js/translated/build.js:2207
 msgid "Issued by"
 msgstr "Utstedt av"
 
-#: build/models.py:300
+#: build/models.py:306
 msgid "User who issued this build order"
 msgstr "Brukeren som utstedte denne produksjonsordren"
 
-#: build/models.py:308 build/templates/build/build_base.html:204
+#: build/models.py:314 build/templates/build/build_base.html:204
 #: build/templates/build/detail.html:122 common/models.py:145
 #: order/models.py:322 order/templates/order/order_base.html:217
 #: order/templates/order/return_order_base.html:188
@@ -1215,11 +1215,11 @@ msgstr "Brukeren som utstedte denne produksjonsordren"
 msgid "Responsible"
 msgstr "Ansvarlig"
 
-#: build/models.py:309
+#: build/models.py:315
 msgid "User or group responsible for this build order"
 msgstr "Bruker eller gruppe ansvarlig for produksjonsordren"
 
-#: build/models.py:314 build/templates/build/detail.html:108
+#: build/models.py:320 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
 #: company/templates/company/supplier_part.html:194
 #: order/templates/order/order_base.html:167
@@ -1231,15 +1231,15 @@ msgstr "Bruker eller gruppe ansvarlig for produksjonsordren"
 msgid "External Link"
 msgstr "Ekstern lenke"
 
-#: build/models.py:319
+#: build/models.py:325
 msgid "Build Priority"
 msgstr "Produksjonsprioritet"
 
-#: build/models.py:322
+#: build/models.py:328
 msgid "Priority of this build order"
 msgstr "Produksjonsordrens prioritet"
 
-#: build/models.py:329 common/models.py:129 order/admin.py:18
+#: build/models.py:335 common/models.py:129 order/admin.py:18
 #: order/models.py:286 templates/InvenTree/settings/settings_staff_js.html:146
 #: templates/js/translated/build.js:2144
 #: templates/js/translated/purchase_order.js:1711
@@ -1250,56 +1250,56 @@ msgstr "Produksjonsordrens prioritet"
 msgid "Project Code"
 msgstr "Prosjektkode"
 
-#: build/models.py:330
+#: build/models.py:336
 msgid "Project code for this build order"
 msgstr "Prosjektkode for denne produksjonsordren"
 
-#: build/models.py:560 build/models.py:625
+#: build/models.py:566 build/models.py:631
 msgid "Failed to offload task to complete build allocations"
 msgstr ""
 
-#: build/models.py:582
+#: build/models.py:588
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "Produksjonsordre {build} er fullført"
 
-#: build/models.py:588
+#: build/models.py:594
 msgid "A build order has been completed"
 msgstr "En produksjonsordre er fullført"
 
-#: build/models.py:811 build/models.py:886
+#: build/models.py:820 build/models.py:895
 msgid "No build output specified"
 msgstr "Ingen produksjonsartikkel spesifisert"
 
-#: build/models.py:814
+#: build/models.py:823
 msgid "Build output is already completed"
 msgstr "Produksjonsartikkelen er allerede fullført"
 
-#: build/models.py:817
+#: build/models.py:826
 msgid "Build output does not match Build Order"
 msgstr "Produksjonsartikkelen samsvarer ikke med produksjonsordren"
 
-#: build/models.py:890 build/serializers.py:221 build/serializers.py:260
-#: build/serializers.py:829 order/models.py:538 order/serializers.py:433
+#: build/models.py:899 build/serializers.py:221 build/serializers.py:260
+#: build/serializers.py:837 order/models.py:538 order/serializers.py:433
 #: order/serializers.py:576 part/serializers.py:1471 part/serializers.py:1871
 #: stock/models.py:662 stock/models.py:1474 stock/serializers.py:472
 msgid "Quantity must be greater than zero"
 msgstr "Mengden må være større enn null"
 
-#: build/models.py:895 build/serializers.py:226
+#: build/models.py:904 build/serializers.py:226
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Kvantitet kan ikke være større enn utgangsantallet"
 
-#: build/models.py:952 build/serializers.py:531
+#: build/models.py:961 build/serializers.py:539
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr ""
 
-#: build/models.py:1314
+#: build/models.py:1323
 msgid "Build object"
 msgstr "Produksjonsobjekt"
 
-#: build/models.py:1328 build/models.py:1584 build/serializers.py:208
+#: build/models.py:1337 build/models.py:1593 build/serializers.py:208
 #: build/serializers.py:245 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2516
 #: order/models.py:1259 order/models.py:1918 order/serializers.py:1339
@@ -1346,36 +1346,36 @@ msgstr "Produksjonsobjekt"
 msgid "Quantity"
 msgstr "Antall"
 
-#: build/models.py:1329
+#: build/models.py:1338
 msgid "Required quantity for build order"
 msgstr "Påkrevd antall for produksjonsordre"
 
-#: build/models.py:1409
+#: build/models.py:1418
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Produksjonselement må spesifisere en produksjonsartikkel, da master-del er merket som sporbar"
 
-#: build/models.py:1418
+#: build/models.py:1427
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Tildelt antall ({q}) kan ikke overstige tilgjengelig lagerbeholdning ({a})"
 
-#: build/models.py:1428 order/models.py:1869
+#: build/models.py:1437 order/models.py:1869
 msgid "Stock item is over-allocated"
 msgstr "Lagervaren er overtildelt"
 
-#: build/models.py:1434 order/models.py:1872
+#: build/models.py:1443 order/models.py:1872
 msgid "Allocation quantity must be greater than zero"
 msgstr "Tildelingsantall må være større enn null"
 
-#: build/models.py:1440
+#: build/models.py:1449
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Mengden må være 1 for serialisert lagervare"
 
-#: build/models.py:1499
+#: build/models.py:1508
 msgid "Selected stock item does not match BOM line"
 msgstr "Valgt lagervare samsvarer ikke med BOM-linjen"
 
-#: build/models.py:1571 build/serializers.py:809 order/serializers.py:1183
+#: build/models.py:1580 build/serializers.py:817 order/serializers.py:1183
 #: order/serializers.py:1204 stock/serializers.py:566 stock/serializers.py:1052
 #: stock/serializers.py:1164 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1392,23 +1392,23 @@ msgstr "Valgt lagervare samsvarer ikke med BOM-linjen"
 msgid "Stock Item"
 msgstr "Lagervare"
 
-#: build/models.py:1572
+#: build/models.py:1581
 msgid "Source stock item"
 msgstr "Kildelagervare"
 
-#: build/models.py:1585
+#: build/models.py:1594
 msgid "Stock quantity to allocate to build"
 msgstr "Lagerantall å tildele til produksjonen"
 
-#: build/models.py:1593
+#: build/models.py:1602
 msgid "Install into"
 msgstr "Monteres i"
 
-#: build/models.py:1594
+#: build/models.py:1603
 msgid "Destination stock item"
 msgstr "Lagervare for montering"
 
-#: build/serializers.py:158 build/serializers.py:838
+#: build/serializers.py:158 build/serializers.py:846
 #: templates/js/translated/build.js:1321
 msgid "Build Output"
 msgstr "Produksjonsartikkel"
@@ -1451,26 +1451,10 @@ msgstr "Serienummer"
 msgid "Enter serial numbers for build outputs"
 msgstr "Angi serienummer for produksjonsartikler"
 
-#: build/serializers.py:299
-msgid "Auto Allocate Serial Numbers"
-msgstr "Automatisk tildeling av serienummer"
-
-#: build/serializers.py:300
-msgid "Automatically allocate required items with matching serial numbers"
-msgstr "Automatisk tildeling av nødvendige artikler med tilsvarende serienummer"
-
-#: build/serializers.py:335 stock/api.py:995
-msgid "The following serial numbers already exist or are invalid"
-msgstr "Følgende serienummer finnes allerede eller er ugyldige"
-
-#: build/serializers.py:386 build/serializers.py:448 build/serializers.py:537
-msgid "A list of build outputs must be provided"
-msgstr "En liste over produksjonsartikler må oppgis"
-
-#: build/serializers.py:424 build/serializers.py:496 order/serializers.py:565
-#: order/serializers.py:673 order/serializers.py:1679 part/serializers.py:1127
-#: stock/serializers.py:494 stock/serializers.py:654 stock/serializers.py:750
-#: stock/serializers.py:1196 stock/serializers.py:1452
+#: build/serializers.py:291 build/serializers.py:432 build/serializers.py:504
+#: order/serializers.py:565 order/serializers.py:673 order/serializers.py:1679
+#: part/serializers.py:1127 stock/serializers.py:494 stock/serializers.py:654
+#: stock/serializers.py:750 stock/serializers.py:1196 stock/serializers.py:1452
 #: stock/templates/stock/item_base.html:394
 #: templates/js/translated/barcode.js:547
 #: templates/js/translated/barcode.js:795 templates/js/translated/build.js:1001
@@ -1487,27 +1471,51 @@ msgstr "En liste over produksjonsartikler må oppgis"
 msgid "Location"
 msgstr "Plassering"
 
-#: build/serializers.py:425
+#: build/serializers.py:292
+msgid "Stock location for build output"
+msgstr ""
+
+#: build/serializers.py:306
+msgid "Auto Allocate Serial Numbers"
+msgstr "Automatisk tildeling av serienummer"
+
+#: build/serializers.py:307
+msgid "Automatically allocate required items with matching serial numbers"
+msgstr "Automatisk tildeling av nødvendige artikler med tilsvarende serienummer"
+
+#: build/serializers.py:322
+msgid "Serial numbers must be provided for trackable parts"
+msgstr ""
+
+#: build/serializers.py:347 stock/api.py:995
+msgid "The following serial numbers already exist or are invalid"
+msgstr "Følgende serienummer finnes allerede eller er ugyldige"
+
+#: build/serializers.py:394 build/serializers.py:456 build/serializers.py:545
+msgid "A list of build outputs must be provided"
+msgstr "En liste over produksjonsartikler må oppgis"
+
+#: build/serializers.py:433
 msgid "Stock location for scrapped outputs"
 msgstr "Lagerplassering for skrotede produksjonsartikler"
 
-#: build/serializers.py:431
+#: build/serializers.py:439
 msgid "Discard Allocations"
 msgstr "Forkast tildelinger"
 
-#: build/serializers.py:432
+#: build/serializers.py:440
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr "Forkast tildelinger fra skrotede produksjonsartikler"
 
-#: build/serializers.py:437
+#: build/serializers.py:445
 msgid "Reason for scrapping build output(s)"
 msgstr "Grunn for skroting av produksjonsartikler"
 
-#: build/serializers.py:497
+#: build/serializers.py:505
 msgid "Location for completed build outputs"
 msgstr "Plassering for ferdige produksjonsartikler"
 
-#: build/serializers.py:503 build/templates/build/build_base.html:151
+#: build/serializers.py:511 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:922
 #: order/models.py:2022 order/serializers.py:597 stock/admin.py:165
 #: stock/serializers.py:801 stock/serializers.py:1340
@@ -1522,173 +1530,173 @@ msgstr "Plassering for ferdige produksjonsartikler"
 msgid "Status"
 msgstr ""
 
-#: build/serializers.py:509
+#: build/serializers.py:517
 msgid "Accept Incomplete Allocation"
 msgstr "Godta ufullstendig tildeling"
 
-#: build/serializers.py:510
+#: build/serializers.py:518
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Fullfør artikler dersom lagerbeholdning ikke er fullt tildelt"
 
-#: build/serializers.py:590
+#: build/serializers.py:598
 msgid "Consume Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:591
+#: build/serializers.py:599
 msgid "Consume any stock which has already been allocated to this build"
 msgstr ""
 
-#: build/serializers.py:597
+#: build/serializers.py:605
 msgid "Remove Incomplete Outputs"
 msgstr "Fjern ufullstendige artikler"
 
-#: build/serializers.py:598
+#: build/serializers.py:606
 msgid "Delete any build outputs which have not been completed"
 msgstr "Slett alle produksjonsartikler som ikke er fullført"
 
-#: build/serializers.py:625
+#: build/serializers.py:633
 msgid "Not permitted"
 msgstr "Ikke tillatt"
 
-#: build/serializers.py:626
+#: build/serializers.py:634
 msgid "Accept as consumed by this build order"
 msgstr "Godta som brukt av denne produksjonsordren"
 
-#: build/serializers.py:627
+#: build/serializers.py:635
 msgid "Deallocate before completing this build order"
 msgstr "Fjern tildeling før produksjonsordren fullføres"
 
-#: build/serializers.py:649
+#: build/serializers.py:657
 msgid "Overallocated Stock"
 msgstr "Overtildelt lagerbeholdning"
 
-#: build/serializers.py:651
+#: build/serializers.py:659
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr "Hvordan vil du håndtere ekstra lagervarer tildelt produksjonsordren"
 
-#: build/serializers.py:661
+#: build/serializers.py:669
 msgid "Some stock items have been overallocated"
 msgstr "Noen lagervarer har blitt overtildelt"
 
-#: build/serializers.py:666
+#: build/serializers.py:674
 msgid "Accept Unallocated"
 msgstr "Godta ikke tildelt"
 
-#: build/serializers.py:667
+#: build/serializers.py:675
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr "Godta at lagervarer ikke er fullt tildelt til denne produksjonsordren"
 
-#: build/serializers.py:677 templates/js/translated/build.js:315
+#: build/serializers.py:685 templates/js/translated/build.js:315
 msgid "Required stock has not been fully allocated"
 msgstr "Nøvendig lagerbeholdning er ikke fullt tildelt"
 
-#: build/serializers.py:682 order/serializers.py:301 order/serializers.py:1246
+#: build/serializers.py:690 order/serializers.py:301 order/serializers.py:1246
 msgid "Accept Incomplete"
 msgstr "Godta uferdig"
 
-#: build/serializers.py:683
+#: build/serializers.py:691
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr "Godta at nødvendig antall fullførte produksjonsartikler ikke er nådd"
 
-#: build/serializers.py:693 templates/js/translated/build.js:319
+#: build/serializers.py:701 templates/js/translated/build.js:319
 msgid "Required build quantity has not been completed"
 msgstr "Nødvendig produksjonsmengde er ikke nådd"
 
-#: build/serializers.py:702 templates/js/translated/build.js:303
+#: build/serializers.py:710 templates/js/translated/build.js:303
 msgid "Build order has incomplete outputs"
 msgstr "Produksjonsordren har uferdige artikler"
 
-#: build/serializers.py:732
+#: build/serializers.py:740
 msgid "Build Line"
 msgstr "Produksjonslinje"
 
-#: build/serializers.py:742
+#: build/serializers.py:750
 msgid "Build output"
 msgstr "Produksjonsartikkel"
 
-#: build/serializers.py:750
+#: build/serializers.py:758
 msgid "Build output must point to the same build"
 msgstr "Produksjonsartikkel må peke til samme produksjon"
 
-#: build/serializers.py:786
+#: build/serializers.py:794
 msgid "Build Line Item"
 msgstr "Produksjonsartikkel"
 
-#: build/serializers.py:800
+#: build/serializers.py:808
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part må peke på den samme delen som produksjonsordren"
 
-#: build/serializers.py:815 stock/serializers.py:1065
+#: build/serializers.py:823 stock/serializers.py:1065
 msgid "Item must be in stock"
 msgstr "Artikkelen må være på lager"
 
-#: build/serializers.py:863 order/serializers.py:1237
+#: build/serializers.py:871 order/serializers.py:1237
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Tilgjengelig antall ({q}) overskredet"
 
-#: build/serializers.py:869
+#: build/serializers.py:877
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "Produksjonsartikkel må spesifiseres for tildeling av sporede deler"
 
-#: build/serializers.py:876
+#: build/serializers.py:884
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Produksjonsartikkel kan ikke spesifiseres for tildeling av usporede deler"
 
-#: build/serializers.py:900 order/serializers.py:1489
+#: build/serializers.py:908 order/serializers.py:1489
 msgid "Allocation items must be provided"
 msgstr "Tildelingsartikler må oppgis"
 
-#: build/serializers.py:963
+#: build/serializers.py:971
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "Lagerplassering hvor deler skal hentes (la stå tomt for å ta fra alle plasseringer)"
 
-#: build/serializers.py:971
+#: build/serializers.py:979
 msgid "Exclude Location"
 msgstr "Eksluderer plassering"
 
-#: build/serializers.py:972
+#: build/serializers.py:980
 msgid "Exclude stock items from this selected location"
 msgstr "Ekskluder lagervarer fra denne valgte plasseringen"
 
-#: build/serializers.py:977
+#: build/serializers.py:985
 msgid "Interchangeable Stock"
 msgstr "Utskiftbar lagerbeholdning"
 
-#: build/serializers.py:978
+#: build/serializers.py:986
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "Lagervarer ved flere plasseringer kan brukes om hverandre"
 
-#: build/serializers.py:983
+#: build/serializers.py:991
 msgid "Substitute Stock"
 msgstr "Erstatning-lagerbeholdning"
 
-#: build/serializers.py:984
+#: build/serializers.py:992
 msgid "Allow allocation of substitute parts"
 msgstr "Tilatt tildelling av erstatningsdeler"
 
-#: build/serializers.py:989
+#: build/serializers.py:997
 msgid "Optional Items"
 msgstr "Valgfrie artikler"
 
-#: build/serializers.py:990
+#: build/serializers.py:998
 msgid "Allocate optional BOM items to build order"
 msgstr "Tildel valgfrie BOM-artikler til produksjonsordre"
 
-#: build/serializers.py:1012
+#: build/serializers.py:1020
 msgid "Failed to start auto-allocation task"
 msgstr ""
 
-#: build/serializers.py:1102 part/models.py:3930 part/models.py:4366
+#: build/serializers.py:1110 part/models.py:3930 part/models.py:4366
 #: stock/api.py:758
 msgid "BOM Item"
 msgstr "BOM-artikkel"
 
-#: build/serializers.py:1111 templates/js/translated/index.js:130
+#: build/serializers.py:1119 templates/js/translated/index.js:130
 msgid "Allocated Stock"
 msgstr "Tildelt lagerbeholdning"
 
-#: build/serializers.py:1116 part/admin.py:132 part/bom.py:173
+#: build/serializers.py:1124 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:817 part/serializers.py:1489
 #: part/templates/part/part_base.html:210 templates/js/translated/bom.js:1208
 #: templates/js/translated/build.js:2614 templates/js/translated/part.js:709
@@ -1697,13 +1705,13 @@ msgstr "Tildelt lagerbeholdning"
 msgid "On Order"
 msgstr "I bestilling"
 
-#: build/serializers.py:1121 part/serializers.py:1491
+#: build/serializers.py:1129 part/serializers.py:1491
 #: templates/js/translated/build.js:2618
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
 msgstr "I produksjon"
 
-#: build/serializers.py:1126 part/bom.py:172 part/serializers.py:1514
+#: build/serializers.py:1134 part/bom.py:172 part/serializers.py:1514
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1893
 msgid "Available Stock"
