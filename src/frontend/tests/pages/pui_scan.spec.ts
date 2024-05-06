@@ -86,3 +86,47 @@ test('PUI - Pages - Index - Scan (Build)', async ({ page }) => {
   await page.getByText('PCBA build').waitFor();
   await page.getByRole('cell', { name: 'build', exact: true }).waitFor();
 });
+
+test('PUI - Pages - Index - Scan (General)', async ({ page }) => {
+  await defaultScanTest(page, '{"unknown": 312}');
+  await page.getByText('"unknown": 312').waitFor();
+
+  // checkAll
+  await page.getByRole('checkbox').nth(0).check();
+
+  // Delete
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+
+  // Reload to check history is working
+  await page.goto(`${baseUrl}/scan`);
+  await page.getByText('"unknown": 312').waitFor();
+
+  // Clear history
+  await page.getByRole('button', { name: 'Delete History' }).click();
+  await page.getByText('No history').waitFor();
+
+  // reload again
+  await page.goto(`${baseUrl}/scan`);
+  await page.getByText('No history').waitFor();
+
+  // Empty dummy input
+  await page.getByPlaceholder('Enter item serial or data').fill('');
+  await page.getByPlaceholder('Enter item serial or data').press('Enter');
+
+  // Empty add dummy item
+  await page.getByRole('button', { name: 'Add dummy item' }).click();
+
+  // Empty plus sign
+  await page
+    .locator('div')
+    .filter({ hasText: /^InputAdd dummy item$/ })
+    .getByRole('button')
+    .first()
+    .click();
+
+  // Toggle fullscreen
+  await page.getByRole('button', { name: 'Toggle Fullscreen' }).click();
+  await page.waitForTimeout(1000);
+  await page.getByRole('button', { name: 'Toggle Fullscreen' }).click();
+  await page.waitForTimeout(1000);
+});
