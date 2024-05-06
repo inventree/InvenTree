@@ -16,7 +16,7 @@ async function defaultScanTest(page, search_text) {
   await page.getByRole('cell', { name: '123' }).click();
   await page.getByRole('cell', { name: 'manually' }).click();
   await page.getByRole('button', { name: 'Lookup part' }).click();
-  await page.getByRole('button', { name: 'Delete' }).click();
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
 
   await page.getByPlaceholder('Enter item serial or data').fill(search_text);
   await page.getByPlaceholder('Enter item serial or data').press('Enter');

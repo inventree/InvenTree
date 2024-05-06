@@ -282,7 +282,12 @@ export default function Scan() {
             text={t`This page can be used for continuously scanning items and taking actions on them.`}
           />
         </Group>
-        <Button onClick={toggleFullscreen} size="sm" variant="subtle">
+        <Button
+          onClick={toggleFullscreen}
+          size="sm"
+          variant="subtle"
+          title={t`Toggle Fullscreen`}
+        >
           {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
         </Button>
       </Group>
@@ -366,7 +371,11 @@ export default function Scan() {
             >
               <Trans>History</Trans>
             </TitleWithDoc>
-            <ActionIcon color="red" onClick={btnDeleteFullHistory}>
+            <ActionIcon
+              color="red"
+              onClick={btnDeleteFullHistory}
+              title={t`Delete History`}
+            >
               <IconTrash />
             </ActionIcon>
           </Group>
