@@ -24,7 +24,7 @@ async function defaultScanTest(page, search_text) {
   await page.getByRole('button', { name: 'Lookup part' }).click();
 }
 
-test('PUI - Pages - Index - Scan - Part', async ({ page }) => {
+test('PUI - Pages - Index - Scan (Part)', async ({ page }) => {
   await defaultScanTest(page, '{"part": 1}');
 
   // part: 1
@@ -33,7 +33,7 @@ test('PUI - Pages - Index - Scan - Part', async ({ page }) => {
   await page.getByRole('cell', { name: 'part' }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan - Stockitem', async ({ page }) => {
+test('PUI - Pages - Index - Scan (Stockitem)', async ({ page }) => {
   await defaultScanTest(page, '{"stockitem": 408}');
 
   // stockitem: 408
@@ -42,7 +42,7 @@ test('PUI - Pages - Index - Scan - Stockitem', async ({ page }) => {
   await page.getByRole('cell', { name: 'Quantity: 145' }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan - StockLocation', async ({ page }) => {
+test('PUI - Pages - Index - Scan (StockLocation)', async ({ page }) => {
   await defaultScanTest(page, '{"stocklocation": 3}');
 
   // stocklocation: 3
@@ -51,7 +51,7 @@ test('PUI - Pages - Index - Scan - StockLocation', async ({ page }) => {
   await page.getByRole('cell', { name: 'stocklocation' }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan - SupplierPart', async ({ page }) => {
+test('PUI - Pages - Index - Scan (SupplierPart)', async ({ page }) => {
   await defaultScanTest(page, '{"supplierpart": 204}');
 
   // supplierpart: 204
@@ -60,7 +60,7 @@ test('PUI - Pages - Index - Scan - SupplierPart', async ({ page }) => {
   await page.getByRole('cell', { name: 'supplierpart' }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan - PurchaseOrder', async ({ page }) => {
+test('PUI - Pages - Index - Scan (PurchaseOrder)', async ({ page }) => {
   await defaultScanTest(page, '{"purchaseorder": 12}');
 
   // purchaseorder: 12
@@ -69,7 +69,7 @@ test('PUI - Pages - Index - Scan - PurchaseOrder', async ({ page }) => {
   await page.getByRole('cell', { name: 'purchaseorder' }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan - SalesOrder', async ({ page }) => {
+test('PUI - Pages - Index - Scan (SalesOrder)', async ({ page }) => {
   await defaultScanTest(page, '{"salesorder": 6}');
 
   // salesorder: 6
@@ -78,7 +78,7 @@ test('PUI - Pages - Index - Scan - SalesOrder', async ({ page }) => {
   await page.getByRole('cell', { name: 'salesorder' }).waitFor();
 });
 
-test('PUI - Pages - Index - Scan - Build', async ({ page }) => {
+test('PUI - Pages - Index - Scan (Build)', async ({ page }) => {
   await defaultScanTest(page, '{"build": 8}');
 
   // build: 8
