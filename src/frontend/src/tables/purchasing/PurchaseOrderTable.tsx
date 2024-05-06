@@ -103,7 +103,7 @@ export function PurchaseOrderTable({
         accessor: 'supplier_reference'
       },
       LineItemsProgressColumn(),
-      StatusColumn(ModelType.purchaseorder),
+      StatusColumn({ model: ModelType.purchaseorder }),
       ProjectCodeColumn(),
       CreationDateColumn(),
       TargetDateColumn(),

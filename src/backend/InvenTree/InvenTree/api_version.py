@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 195
+INVENTREE_API_VERSION = 196
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v196 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7160
+    - Adds "location" field to BuildOutputComplete API endpoint
 
 v195 - 2024-05-03 : https://github.com/inventree/InvenTree/pull/7153
     - Fixes bug in BuildOrderCancel API endpoint
