@@ -34,40 +34,10 @@ class LabelMixinTests(InvenTreeAPITestCase):
         config.active = True
         config.save()
 
-    def do_url(
-        self,
-        parts,
-        plugin_ref,
-        label,
-        url_name: str = 'api-part-label-print',
-        url_single: str = 'part',
-        invalid: bool = False,
-    ):
-        """Generate an URL to print a label."""
-        # Construct URL
-        kwargs = {}
-        if label:
-            kwargs['pk'] = label.pk
-
-        url = reverse(url_name, kwargs=kwargs)
-
-        # Append part filters
-        if not parts:
-            pass
-        elif len(parts) == 1:
-            url += f'?{url_single}={parts[0].pk}'
-        elif len(parts) > 1:
-            url += '?' + '&'.join([f'{url_single}s={item.pk}' for item in parts])
-
-        # Append an invalid item
-        if invalid:
-            url += f'&{url_single}{"s" if len(parts) > 1 else ""}=abc'
-
-        # Append plugin reference
-        if plugin_ref:
-            url += f'&plugin={plugin_ref}'
-
-        return url
+    @property
+    def printing_url(self):
+        """Return the label printing URL."""
+        return reverse('api-label-print')
 
     def test_wrong_implementation(self):
         """Test that a wrong implementation raises an error."""
@@ -124,20 +94,40 @@ class LabelMixinTests(InvenTreeAPITestCase):
         apps.get_app_config('report').create_default_labels()
         apps.get_app_config('report').create_default_reports()
 
-        # Lookup references
-        part = Part.objects.first()
-        parts = Part.objects.all()[:2]
-        plugin_ref = 'samplelabelprinter'
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='part'
+        ).first()
+        self.assertIsNotNone(template)
 
-        label = ReportTemplate.objects.filter(enabled=True, model_type='part')
+        url = self.printing_url
 
-        url = self.do_url([part], plugin_ref, label)
-
-        # Non-existing plugin
-        response = self.get(f'{url}123', expected_code=404)
-        self.assertIn(
-            f"Plugin '{plugin_ref}123' not found", str(response.content, 'utf8')
+        # Template does not exist
+        response = self.post(
+            url, {'template': 9999, 'plugin': 9999, 'items': []}, expected_code=400
         )
+
+        self.assertIn('object does not exist', str(response.data['template']))
+        self.assertIn('object does not exist', str(response.data['plugin']))
+        self.assertIn('list may not be empty', str(response.data['items']))
+
+        # Find available plugins
+        plugins = registry.with_mixin('labels')
+        self.assertGreater(len(plugins), 0)
+
+        plugin = plugins[0]
+        config = plugin.plugin_config()
+
+        # Ensure that the plugin is not active
+        registry.set_plugin_state(plugin.slug, False)
+
+        # Plugin is not active - should return error
+        response = self.post(
+            url,
+            {'template': template.pk, 'plugin': config.pk, 'items': [1, 2, 3]},
+            expected_code=400,
+        )
+
+        self.assertIn('abc', str(response.data['plugin']))
 
         # Inactive plugin
         response = self.get(url, expected_code=400)
