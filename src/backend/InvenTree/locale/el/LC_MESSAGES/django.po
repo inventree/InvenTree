@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-04 04:37+0000\n"
-"PO-Revision-Date: 2024-05-05 04:25\n"
+"POT-Creation-Date: 2024-05-05 09:35+0000\n"
+"PO-Revision-Date: 2024-05-06 04:22\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -56,8 +56,8 @@ msgstr "Μπορείτε να βρείτε λεπτομέρειες σφάλμα
 msgid "Enter date"
 msgstr "Εισάγετε ημερομηνία"
 
-#: InvenTree/fields.py:208 InvenTree/models.py:1021 build/serializers.py:436
-#: build/serializers.py:514 build/templates/build/sidebar.html:21
+#: InvenTree/fields.py:208 InvenTree/models.py:1021 build/serializers.py:444
+#: build/serializers.py:522 build/templates/build/sidebar.html:21
 #: company/models.py:849 company/templates/company/sidebar.html:37
 #: order/models.py:1283 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
@@ -426,7 +426,7 @@ msgstr "Επιλέξτε αρχείο για επισύναψη"
 msgid "Link"
 msgstr "Σύνδεσμος"
 
-#: InvenTree/models.py:568 build/models.py:315 part/models.py:920
+#: InvenTree/models.py:568 build/models.py:321 part/models.py:920
 #: stock/models.py:819
 msgid "Link to external URL"
 msgstr "Σύνδεσμος προς εξωτερική διεύθυνση URL"
@@ -507,7 +507,7 @@ msgstr "Μη έγκυρη επιλογή"
 msgid "Name"
 msgstr "Όνομα"
 
-#: InvenTree/models.py:899 build/models.py:188
+#: InvenTree/models.py:899 build/models.py:194
 #: build/templates/build/detail.html:24 common/models.py:136
 #: company/models.py:523 company/models.py:840
 #: company/templates/company/company_base.html:77
@@ -1008,23 +1008,23 @@ msgstr "Σειρά Κατασκευής"
 msgid "Build Orders"
 msgstr "Δημιουργία Παραγγελιών"
 
-#: build/models.py:116
+#: build/models.py:122
 msgid "Invalid choice for parent build"
 msgstr "Μη έγκυρη επιλογή για γονική κατασκευή"
 
-#: build/models.py:127 order/models.py:239
+#: build/models.py:133 order/models.py:239
 msgid "Responsible user or group must be specified"
 msgstr ""
 
-#: build/models.py:133
+#: build/models.py:139
 msgid "Build order part cannot be changed"
 msgstr "Εξάρτημα από εντολή κατασκευής δεν μπορεί να αλλάξει"
 
-#: build/models.py:179
+#: build/models.py:185
 msgid "Build Order Reference"
 msgstr "Αναφορά Παραγγελίας Κατασκευής"
 
-#: build/models.py:180 order/models.py:442 order/models.py:898
+#: build/models.py:186 order/models.py:442 order/models.py:898
 #: order/models.py:1276 order/models.py:1998 part/admin.py:417
 #: part/models.py:4062 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
@@ -1040,20 +1040,20 @@ msgstr "Αναφορά Παραγγελίας Κατασκευής"
 msgid "Reference"
 msgstr "Αναφορά"
 
-#: build/models.py:191
+#: build/models.py:197
 msgid "Brief description of the build (optional)"
 msgstr "Σύντομη περιγραφή της κατασκευής (προαιρετικό)"
 
-#: build/models.py:199 build/templates/build/build_base.html:183
+#: build/models.py:205 build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
 msgstr "Γονική Κατασκευή"
 
-#: build/models.py:200
+#: build/models.py:206
 msgid "BuildOrder to which this build is allocated"
 msgstr "BuildOrder στην οποία έχει δοθεί αυτή η κατασκευή"
 
-#: build/models.py:205 build/templates/build/build_base.html:97
+#: build/models.py:211 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:1058 order/api.py:821
 #: order/models.py:1401 order/models.py:1546 order/models.py:1547
 #: part/api.py:1547 part/api.py:1841 part/models.py:390 part/models.py:3004
@@ -1104,103 +1104,103 @@ msgstr "BuildOrder στην οποία έχει δοθεί αυτή η κατα�
 msgid "Part"
 msgstr "Εξάρτημα"
 
-#: build/models.py:213
+#: build/models.py:219
 msgid "Select part to build"
 msgstr "Επιλέξτε τμήμα για κατασκευή"
 
-#: build/models.py:218
+#: build/models.py:224
 msgid "Sales Order Reference"
 msgstr "Κωδικός Παραγγελίας Πωλήσεων"
 
-#: build/models.py:222
+#: build/models.py:228
 msgid "SalesOrder to which this build is allocated"
 msgstr "SalesOrder στην οποία έχει διατεθεί αυτό το build"
 
-#: build/models.py:227 build/serializers.py:962
+#: build/models.py:233 build/serializers.py:970
 #: templates/js/translated/build.js:1730
 #: templates/js/translated/sales_order.js:1185
 msgid "Source Location"
 msgstr "Τοποθεσία Προέλευσης"
 
-#: build/models.py:231
+#: build/models.py:237
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
 msgstr "Επιλέξτε τοποθεσία από την οποία θα γίνει απόθεμα, για αυτή την κατασκευή (αφήστε κενό για να πάρετε από οποιαδήποτε θέση αποθήκευσης)"
 
-#: build/models.py:236
+#: build/models.py:242
 msgid "Destination Location"
 msgstr "Τοποθεσία Προορισμού"
 
-#: build/models.py:240
+#: build/models.py:246
 msgid "Select location where the completed items will be stored"
 msgstr "Επιλέξτε την τοποθεσία όπου θα αποθηκευτούν τα ολοκληρωμένα στοιχεία"
 
-#: build/models.py:244
+#: build/models.py:250
 msgid "Build Quantity"
 msgstr "Ποσότητα Κατασκευής"
 
-#: build/models.py:247
+#: build/models.py:253
 msgid "Number of stock items to build"
 msgstr "Αριθμός αντικειμένων για κατασκευή"
 
-#: build/models.py:251
+#: build/models.py:257
 msgid "Completed items"
 msgstr "Ολοκληρωμένα αντικείμενα"
 
-#: build/models.py:253
+#: build/models.py:259
 msgid "Number of stock items which have been completed"
 msgstr "Αριθμός αντικειμένων αποθέματος που έχουν ολοκληρωθεί"
 
-#: build/models.py:257
+#: build/models.py:263
 msgid "Build Status"
 msgstr "Κατάσταση Κατασκευής"
 
-#: build/models.py:261
+#: build/models.py:267
 msgid "Build status code"
 msgstr "Κωδικός κατάστασης κατασκευής"
 
-#: build/models.py:270 build/serializers.py:278 order/serializers.py:581
+#: build/models.py:276 build/serializers.py:278 order/serializers.py:581
 #: stock/models.py:823 stock/serializers.py:1333
 #: templates/js/translated/purchase_order.js:1129
 msgid "Batch Code"
 msgstr "Κωδικός Παρτίδας"
 
-#: build/models.py:274 build/serializers.py:279
+#: build/models.py:280 build/serializers.py:279
 msgid "Batch code for this build output"
 msgstr "Κωδικός παρτίδας για αυτήν την κατασκευή"
 
-#: build/models.py:277 order/models.py:304 order/serializers.py:120
+#: build/models.py:283 order/models.py:304 order/serializers.py:120
 #: part/models.py:1079 part/templates/part/part_base.html:310
 #: templates/js/translated/return_order.js:339
 #: templates/js/translated/sales_order.js:827
 msgid "Creation Date"
 msgstr "Ημερομηνία Δημιουργίας"
 
-#: build/models.py:281
+#: build/models.py:287
 msgid "Target completion date"
 msgstr "Ημερομηνία ολοκλήρωσης στόχου"
 
-#: build/models.py:282
+#: build/models.py:288
 msgid "Target date for build completion. Build will be overdue after this date."
 msgstr "Ημερομηνία ολοκλήρωσης της κατασκευής. Η κατασκευή θα καθυστερήσει μετά από αυτή την ημερομηνία."
 
-#: build/models.py:285 order/models.py:500 order/models.py:2043
+#: build/models.py:291 order/models.py:500 order/models.py:2043
 #: templates/js/translated/build.js:2247
 msgid "Completion Date"
 msgstr "Ημερομηνία ολοκλήρωσης"
 
-#: build/models.py:291
+#: build/models.py:297
 msgid "completed by"
 msgstr "ολοκληρώθηκε από"
 
-#: build/models.py:299 templates/js/translated/build.js:2207
+#: build/models.py:305 templates/js/translated/build.js:2207
 msgid "Issued by"
 msgstr "Εκδόθηκε από"
 
-#: build/models.py:300
+#: build/models.py:306
 msgid "User who issued this build order"
 msgstr "Χρήστης που εξέδωσε αυτήν την παραγγελία κατασκευής"
 
-#: build/models.py:308 build/templates/build/build_base.html:204
+#: build/models.py:314 build/templates/build/build_base.html:204
 #: build/templates/build/detail.html:122 common/models.py:145
 #: order/models.py:322 order/templates/order/order_base.html:217
 #: order/templates/order/return_order_base.html:188
@@ -1215,11 +1215,11 @@ msgstr "Χρήστης που εξέδωσε αυτήν την παραγγελ�
 msgid "Responsible"
 msgstr "Υπεύθυνος"
 
-#: build/models.py:309
+#: build/models.py:315
 msgid "User or group responsible for this build order"
 msgstr "Χρήστης ή ομάδα υπεύθυνη για αυτή την εντολή κατασκευής"
 
-#: build/models.py:314 build/templates/build/detail.html:108
+#: build/models.py:320 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
 #: company/templates/company/supplier_part.html:194
 #: order/templates/order/order_base.html:167
@@ -1231,15 +1231,15 @@ msgstr "Χρήστης ή ομάδα υπεύθυνη για αυτή την ε�
 msgid "External Link"
 msgstr "Εξωτερικοί σύνδεσμοι"
 
-#: build/models.py:319
+#: build/models.py:325
 msgid "Build Priority"
 msgstr "Προτεραιότητα Κατασκευής"
 
-#: build/models.py:322
+#: build/models.py:328
 msgid "Priority of this build order"
 msgstr "Προτεραιότητα αυτής της εντολής κατασκευής"
 
-#: build/models.py:329 common/models.py:129 order/admin.py:18
+#: build/models.py:335 common/models.py:129 order/admin.py:18
 #: order/models.py:286 templates/InvenTree/settings/settings_staff_js.html:146
 #: templates/js/translated/build.js:2144
 #: templates/js/translated/purchase_order.js:1711
@@ -1250,56 +1250,56 @@ msgstr "Προτεραιότητα αυτής της εντολής κατασκ
 msgid "Project Code"
 msgstr "Κωδικός Έργου"
 
-#: build/models.py:330
+#: build/models.py:336
 msgid "Project code for this build order"
 msgstr "Κωδικός έργου για αυτήν την εντολή κατασκευής"
 
-#: build/models.py:560 build/models.py:625
+#: build/models.py:566 build/models.py:631
 msgid "Failed to offload task to complete build allocations"
 msgstr ""
 
-#: build/models.py:582
+#: build/models.py:588
 #, python-brace-format
 msgid "Build order {build} has been completed"
 msgstr "Η παραγγελία κατασκευής {build} έχει ολοκληρωθεί"
 
-#: build/models.py:588
+#: build/models.py:594
 msgid "A build order has been completed"
 msgstr "Η παραγγελία κατασκευής έχει ολοκληρωθεί"
 
-#: build/models.py:811 build/models.py:886
+#: build/models.py:820 build/models.py:895
 msgid "No build output specified"
 msgstr "Δεν καθορίστηκε έξοδος κατασκευής"
 
-#: build/models.py:814
+#: build/models.py:823
 msgid "Build output is already completed"
 msgstr "Η παραγγελία κατασκευής έχει ολοκληρωθεί"
 
-#: build/models.py:817
+#: build/models.py:826
 msgid "Build output does not match Build Order"
 msgstr "Η έξοδος κατασκευής δεν ταιριάζει με την παραγγελία κατασκευής"
 
-#: build/models.py:890 build/serializers.py:221 build/serializers.py:260
-#: build/serializers.py:829 order/models.py:538 order/serializers.py:433
+#: build/models.py:899 build/serializers.py:221 build/serializers.py:260
+#: build/serializers.py:837 order/models.py:538 order/serializers.py:433
 #: order/serializers.py:576 part/serializers.py:1471 part/serializers.py:1871
 #: stock/models.py:662 stock/models.py:1474 stock/serializers.py:472
 msgid "Quantity must be greater than zero"
 msgstr "Η ποσότητα πρέπει να είναι μεγαλύτερη από 0"
 
-#: build/models.py:895 build/serializers.py:226
+#: build/models.py:904 build/serializers.py:226
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Η ποσότητα δεν μπορεί να είναι μεγαλύτερη από την παραγόμενη ποσότητα"
 
-#: build/models.py:952 build/serializers.py:531
+#: build/models.py:961 build/serializers.py:539
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "Το προϊόν κατασκευής {serial} δεν έχει περάσει όλες τις απαιτούμενες δοκιμές"
 
-#: build/models.py:1314
+#: build/models.py:1323
 msgid "Build object"
 msgstr "Αντικείμενο κατασκευής"
 
-#: build/models.py:1328 build/models.py:1584 build/serializers.py:208
+#: build/models.py:1337 build/models.py:1593 build/serializers.py:208
 #: build/serializers.py:245 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2516
 #: order/models.py:1259 order/models.py:1918 order/serializers.py:1339
@@ -1346,36 +1346,36 @@ msgstr "Αντικείμενο κατασκευής"
 msgid "Quantity"
 msgstr "Ποσότητα"
 
-#: build/models.py:1329
+#: build/models.py:1338
 msgid "Required quantity for build order"
 msgstr "Απαιτούμενη ποσότητα για την εντολή κατασκευής"
 
-#: build/models.py:1409
+#: build/models.py:1418
 msgid "Build item must specify a build output, as master part is marked as trackable"
 msgstr "Το στοιχείο κατασκευής πρέπει να ορίζει μια έξοδο κατασκευής, καθώς το κύριο τμήμα επισημαίνεται ως ανιχνεύσιμο"
 
-#: build/models.py:1418
+#: build/models.py:1427
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
 msgstr "Η καταχωρημένη ποσότητα ({q}) δεν πρέπει να υπερβαίνει τη διαθέσιμη ποσότητα αποθέματος ({a})"
 
-#: build/models.py:1428 order/models.py:1869
+#: build/models.py:1437 order/models.py:1869
 msgid "Stock item is over-allocated"
 msgstr "Στοιχείο αποθέματος είναι υπερ-κατανεμημένο"
 
-#: build/models.py:1434 order/models.py:1872
+#: build/models.py:1443 order/models.py:1872
 msgid "Allocation quantity must be greater than zero"
 msgstr "Η ποσότητα πρέπει να είναι μεγαλύτερη από 0"
 
-#: build/models.py:1440
+#: build/models.py:1449
 msgid "Quantity must be 1 for serialized stock"
 msgstr "Η ποσότητα πρέπει να είναι 1 για σειριακό απόθεμα"
 
-#: build/models.py:1499
+#: build/models.py:1508
 msgid "Selected stock item does not match BOM line"
 msgstr "Το επιλεγμένο στοιχείο αποθέματος δεν ταιριάζει με τη γραμμή ΤΥ"
 
-#: build/models.py:1571 build/serializers.py:809 order/serializers.py:1183
+#: build/models.py:1580 build/serializers.py:817 order/serializers.py:1183
 #: order/serializers.py:1204 stock/serializers.py:566 stock/serializers.py:1052
 #: stock/serializers.py:1164 stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1392,23 +1392,23 @@ msgstr "Το επιλεγμένο στοιχείο αποθέματος δεν �
 msgid "Stock Item"
 msgstr "Στοιχείο Αποθέματος"
 
-#: build/models.py:1572
+#: build/models.py:1581
 msgid "Source stock item"
 msgstr "Στοιχείο πηγαίου αποθέματος"
 
-#: build/models.py:1585
+#: build/models.py:1594
 msgid "Stock quantity to allocate to build"
 msgstr "Ποσότητα αποθέματος για διάθεση για κατασκευή"
 
-#: build/models.py:1593
+#: build/models.py:1602
 msgid "Install into"
 msgstr "Εγκατάσταση σε"
 
-#: build/models.py:1594
+#: build/models.py:1603
 msgid "Destination stock item"
 msgstr "Αποθήκη προορισμού"
 
-#: build/serializers.py:158 build/serializers.py:838
+#: build/serializers.py:158 build/serializers.py:846
 #: templates/js/translated/build.js:1321
 msgid "Build Output"
 msgstr "Κατασκευή Εξόδου"
@@ -1451,26 +1451,10 @@ msgstr "Σειριακοί αριθμοί"
 msgid "Enter serial numbers for build outputs"
 msgstr "Εισάγετε ποσότητα για την έξοδο κατασκευής"
 
-#: build/serializers.py:299
-msgid "Auto Allocate Serial Numbers"
-msgstr "Αυτόματη Κατανομή Σειριακών Αριθμών"
-
-#: build/serializers.py:300
-msgid "Automatically allocate required items with matching serial numbers"
-msgstr "Αυτόματη κατανομή των απαιτούμενων στοιχείων με τους αντίστοιχους σειριακούς αριθμούς"
-
-#: build/serializers.py:335 stock/api.py:995
-msgid "The following serial numbers already exist or are invalid"
-msgstr "Οι παρακάτω σειριακοί αριθμοί υπάρχουν ήδη ή δεν είναι έγκυροι"
-
-#: build/serializers.py:386 build/serializers.py:448 build/serializers.py:537
-msgid "A list of build outputs must be provided"
-msgstr "Πρέπει να παρέχεται μια λίστα με τα αποτελέσματα κατασκευής"
-
-#: build/serializers.py:424 build/serializers.py:496 order/serializers.py:565
-#: order/serializers.py:673 order/serializers.py:1679 part/serializers.py:1127
-#: stock/serializers.py:494 stock/serializers.py:654 stock/serializers.py:750
-#: stock/serializers.py:1196 stock/serializers.py:1452
+#: build/serializers.py:291 build/serializers.py:432 build/serializers.py:504
+#: order/serializers.py:565 order/serializers.py:673 order/serializers.py:1679
+#: part/serializers.py:1127 stock/serializers.py:494 stock/serializers.py:654
+#: stock/serializers.py:750 stock/serializers.py:1196 stock/serializers.py:1452
 #: stock/templates/stock/item_base.html:394
 #: templates/js/translated/barcode.js:547
 #: templates/js/translated/barcode.js:795 templates/js/translated/build.js:1001
@@ -1487,27 +1471,51 @@ msgstr "Πρέπει να παρέχεται μια λίστα με τα απο�
 msgid "Location"
 msgstr "Τοποθεσία"
 
-#: build/serializers.py:425
+#: build/serializers.py:292
+msgid "Stock location for build output"
+msgstr ""
+
+#: build/serializers.py:306
+msgid "Auto Allocate Serial Numbers"
+msgstr "Αυτόματη Κατανομή Σειριακών Αριθμών"
+
+#: build/serializers.py:307
+msgid "Automatically allocate required items with matching serial numbers"
+msgstr "Αυτόματη κατανομή των απαιτούμενων στοιχείων με τους αντίστοιχους σειριακούς αριθμούς"
+
+#: build/serializers.py:322
+msgid "Serial numbers must be provided for trackable parts"
+msgstr ""
+
+#: build/serializers.py:347 stock/api.py:995
+msgid "The following serial numbers already exist or are invalid"
+msgstr "Οι παρακάτω σειριακοί αριθμοί υπάρχουν ήδη ή δεν είναι έγκυροι"
+
+#: build/serializers.py:394 build/serializers.py:456 build/serializers.py:545
+msgid "A list of build outputs must be provided"
+msgstr "Πρέπει να παρέχεται μια λίστα με τα αποτελέσματα κατασκευής"
+
+#: build/serializers.py:433
 msgid "Stock location for scrapped outputs"
 msgstr "Θέση αποθέματος για απορριφθείσες παραγωγές"
 
-#: build/serializers.py:431
+#: build/serializers.py:439
 msgid "Discard Allocations"
 msgstr "Απόρριψη Κατανομών"
 
-#: build/serializers.py:432
+#: build/serializers.py:440
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr "Απορρίψτε τυχόν κατανομές αποθέματος για παραγωγές που έχουν απορριφθεί"
 
-#: build/serializers.py:437
+#: build/serializers.py:445
 msgid "Reason for scrapping build output(s)"
 msgstr "Αιτία απόρριψης προϊόντων κατασκευής"
 
-#: build/serializers.py:497
+#: build/serializers.py:505
 msgid "Location for completed build outputs"
 msgstr "Τοποθεσία για ολοκληρωμένα προϊόντα κατασκευής"
 
-#: build/serializers.py:503 build/templates/build/build_base.html:151
+#: build/serializers.py:511 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:922
 #: order/models.py:2022 order/serializers.py:597 stock/admin.py:165
 #: stock/serializers.py:801 stock/serializers.py:1340
@@ -1522,173 +1530,173 @@ msgstr "Τοποθεσία για ολοκληρωμένα προϊόντα κα
 msgid "Status"
 msgstr "Κατάσταση"
 
-#: build/serializers.py:509
+#: build/serializers.py:517
 msgid "Accept Incomplete Allocation"
 msgstr "Αποδοχή Ελλιπούς Δέσμευσης"
 
-#: build/serializers.py:510
+#: build/serializers.py:518
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Ολοκλήρωσε τα προϊόντα εάν το απόθεμα δεν έχει δεσμευτεί πλήρως"
 
-#: build/serializers.py:590
+#: build/serializers.py:598
 msgid "Consume Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:591
+#: build/serializers.py:599
 msgid "Consume any stock which has already been allocated to this build"
 msgstr ""
 
-#: build/serializers.py:597
+#: build/serializers.py:605
 msgid "Remove Incomplete Outputs"
 msgstr "Αφαίρεση Ατελείωτων Προϊόντων"
 
-#: build/serializers.py:598
+#: build/serializers.py:606
 msgid "Delete any build outputs which have not been completed"
 msgstr "Διαγράψτε τυχόν προϊόντα κατασκευής που δεν έχουν ολοκληρωθεί"
 
-#: build/serializers.py:625
+#: build/serializers.py:633
 msgid "Not permitted"
 msgstr "Δεν επιτρέπεται"
 
-#: build/serializers.py:626
+#: build/serializers.py:634
 msgid "Accept as consumed by this build order"
 msgstr "Αποδοχή ως κατανάλωση για αυτή την παραγγελία κατασκευής"
 
-#: build/serializers.py:627
+#: build/serializers.py:635
 msgid "Deallocate before completing this build order"
 msgstr "Αποδέσμευση πριν από την ολοκλήρωση αυτής της παραγγελίας κατασκευής"
 
-#: build/serializers.py:649
+#: build/serializers.py:657
 msgid "Overallocated Stock"
 msgstr "Υπερ-δεσμευμένο Απόθεμα"
 
-#: build/serializers.py:651
+#: build/serializers.py:659
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr "Πώς θέλετε να χειριστείτε το επιπλέον απόθεμα που έχει δεσμευτεί στην παραγγελία κατασκευής"
 
-#: build/serializers.py:661
+#: build/serializers.py:669
 msgid "Some stock items have been overallocated"
 msgstr "Μερικά στοιχεία αποθέματος έχουν υπερ-δεσμευτεί"
 
-#: build/serializers.py:666
+#: build/serializers.py:674
 msgid "Accept Unallocated"
 msgstr "Αποδοχή Μη Δεσμευμένων"
 
-#: build/serializers.py:667
+#: build/serializers.py:675
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr "Αποδεχτείτε ότι αντικείμενα αποθέματος δεν έχουν δεσμευτεί πλήρως σε αυτή την παραγγελία κατασκευής"
 
-#: build/serializers.py:677 templates/js/translated/build.js:315
+#: build/serializers.py:685 templates/js/translated/build.js:315
 msgid "Required stock has not been fully allocated"
 msgstr "Το απαιτούμενο απόθεμα δεν έχει δεσμευτεί πλήρως"
 
-#: build/serializers.py:682 order/serializers.py:301 order/serializers.py:1246
+#: build/serializers.py:690 order/serializers.py:301 order/serializers.py:1246
 msgid "Accept Incomplete"
 msgstr "Αποδοχή Μη Ολοκληρωμένων"
 
-#: build/serializers.py:683
+#: build/serializers.py:691
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr "Αποδεχτείτε ότι ο απαιτούμενος αριθμός προϊόντων κατασκευής δεν έχει ολοκληρωθεί"
 
-#: build/serializers.py:693 templates/js/translated/build.js:319
+#: build/serializers.py:701 templates/js/translated/build.js:319
 msgid "Required build quantity has not been completed"
 msgstr "Ο απαιτούμενος αριθμός προϊόντων δεν έχει ολοκληρωθεί"
 
-#: build/serializers.py:702 templates/js/translated/build.js:303
+#: build/serializers.py:710 templates/js/translated/build.js:303
 msgid "Build order has incomplete outputs"
 msgstr "Η παραγγελία κατασκευής έχει ελλιπή προϊόντα"
 
-#: build/serializers.py:732
+#: build/serializers.py:740
 msgid "Build Line"
 msgstr "Γραμμή Κατασκευής"
 
-#: build/serializers.py:742
+#: build/serializers.py:750
 msgid "Build output"
 msgstr "Προϊόν Κατασκευής"
 
-#: build/serializers.py:750
+#: build/serializers.py:758
 msgid "Build output must point to the same build"
 msgstr "Το προϊόν κατασκευής πρέπει να δείχνει στην ίδια κατασκευή"
 
-#: build/serializers.py:786
+#: build/serializers.py:794
 msgid "Build Line Item"
 msgstr "Αντικείμενο Γραμμής Κατασκευής"
 
-#: build/serializers.py:800
+#: build/serializers.py:808
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part πρέπει να δείχνει στο ίδιο εξάρτημα με τη εντολή κατασκευής"
 
-#: build/serializers.py:815 stock/serializers.py:1065
+#: build/serializers.py:823 stock/serializers.py:1065
 msgid "Item must be in stock"
 msgstr ""
 
-#: build/serializers.py:863 order/serializers.py:1237
+#: build/serializers.py:871 order/serializers.py:1237
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr ""
 
-#: build/serializers.py:869
+#: build/serializers.py:877
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr ""
 
-#: build/serializers.py:876
+#: build/serializers.py:884
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr ""
 
-#: build/serializers.py:900 order/serializers.py:1489
+#: build/serializers.py:908 order/serializers.py:1489
 msgid "Allocation items must be provided"
 msgstr ""
 
-#: build/serializers.py:963
+#: build/serializers.py:971
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr ""
 
-#: build/serializers.py:971
+#: build/serializers.py:979
 msgid "Exclude Location"
 msgstr ""
 
-#: build/serializers.py:972
+#: build/serializers.py:980
 msgid "Exclude stock items from this selected location"
 msgstr ""
 
-#: build/serializers.py:977
+#: build/serializers.py:985
 msgid "Interchangeable Stock"
 msgstr ""
 
-#: build/serializers.py:978
+#: build/serializers.py:986
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr ""
 
-#: build/serializers.py:983
+#: build/serializers.py:991
 msgid "Substitute Stock"
 msgstr ""
 
-#: build/serializers.py:984
+#: build/serializers.py:992
 msgid "Allow allocation of substitute parts"
 msgstr ""
 
-#: build/serializers.py:989
+#: build/serializers.py:997
 msgid "Optional Items"
 msgstr ""
 
-#: build/serializers.py:990
+#: build/serializers.py:998
 msgid "Allocate optional BOM items to build order"
 msgstr ""
 
-#: build/serializers.py:1012
+#: build/serializers.py:1020
 msgid "Failed to start auto-allocation task"
 msgstr ""
 
-#: build/serializers.py:1102 part/models.py:3930 part/models.py:4366
+#: build/serializers.py:1110 part/models.py:3930 part/models.py:4366
 #: stock/api.py:758
 msgid "BOM Item"
 msgstr ""
 
-#: build/serializers.py:1111 templates/js/translated/index.js:130
+#: build/serializers.py:1119 templates/js/translated/index.js:130
 msgid "Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:1116 part/admin.py:132 part/bom.py:173
+#: build/serializers.py:1124 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:817 part/serializers.py:1489
 #: part/templates/part/part_base.html:210 templates/js/translated/bom.js:1208
 #: templates/js/translated/build.js:2614 templates/js/translated/part.js:709
@@ -1697,13 +1705,13 @@ msgstr ""
 msgid "On Order"
 msgstr ""
 
-#: build/serializers.py:1121 part/serializers.py:1491
+#: build/serializers.py:1129 part/serializers.py:1491
 #: templates/js/translated/build.js:2618
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
 msgstr ""
 
-#: build/serializers.py:1126 part/bom.py:172 part/serializers.py:1514
+#: build/serializers.py:1134 part/bom.py:172 part/serializers.py:1514
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1893
 msgid "Available Stock"
