@@ -121,7 +121,7 @@ export function RenderInlineModel({
       {suffix && (
         <>
           <Space />
-          <Text size="xs">{suffix}</Text>
+          <div style={{ fontSize: 'xs', lineHeight: 'xs' }}>{suffix}</div>
         </>
       )}
     </Group>
