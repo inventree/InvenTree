@@ -66,22 +66,21 @@ export const doBasicLogin = async (username: string, password: string) => {
  * @arg deleteToken: If true, delete the token from the server
  */
 export const doLogout = async (navigate: any) => {
-  const { clearUserState } = useUserState.getState();
+  const { clearUserState, isLoggedIn } = useUserState.getState();
 
   // Logout from the server session
-  await api
-    .post(apiUrl(ApiEndpoints.user_logout))
-    .catch(() => {})
-    .finally(() => {
-      clearUserState();
-      clearCsrfCookie();
-      navigate('/login');
+  if (isLoggedIn() || !!getCsrfCookie()) {
+    await api.post(apiUrl(ApiEndpoints.user_logout)).catch(() => {});
 
-      showLoginNotification({
-        title: t`Logged Out`,
-        message: t`Successfully logged out`
-      });
+    showLoginNotification({
+      title: t`Logged Out`,
+      message: t`Successfully logged out`
     });
+  }
+
+  clearUserState();
+  clearCsrfCookie();
+  navigate('/login');
 };
 
 export const doSimpleLogin = async (email: string) => {
