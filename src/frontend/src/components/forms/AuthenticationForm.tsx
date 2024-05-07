@@ -17,9 +17,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { doBasicLogin, doSimpleLogin, isLoggedIn } from '../../functions/auth';
+import { doBasicLogin, doSimpleLogin } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { SsoButton } from '../buttons/SSOButton';
 
 export function AuthenticationForm() {
@@ -31,6 +32,7 @@ export function AuthenticationForm() {
   const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isLoggedIn } = useUserState();
 
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
