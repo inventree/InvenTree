@@ -59,6 +59,8 @@ export const test = baseTest.extend({
       if (
         msg.type() === 'error' &&
         !msg.text().startsWith('ERR: ') &&
+        url != 'http://localhost:8000/api/user/me/' &&
+        url != 'http://localhost:8000/api/user/token/' &&
         url != 'http://localhost:8000/api/barcode/' &&
         url != 'http://localhost:8000/api/news/?search=&offset=0&limit=25' &&
         url != 'https://docs.inventree.org/en/versions.json' &&

@@ -6,14 +6,15 @@ import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import { getActions } from '../../defaults/actions';
-import { isLoggedIn } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
+import { useUserState } from '../../states/UserState';
 import { Boundary } from '../Boundary';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
 export const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const location = useLocation();
+  const { isLoggedIn } = useUserState();
 
   if (!isLoggedIn()) {
     return (
