@@ -327,7 +327,8 @@ function CopyField({ value }: { value: string }) {
           <ActionIcon
             color={copied ? 'teal' : 'gray'}
             onClick={copy}
-            variant="default"
+            variant="transparent"
+            size="sm"
           >
             {copied ? (
               <InvenTreeIcon icon="check" />
@@ -404,7 +405,12 @@ export function DetailsTable({
     <Paper p="xs" withBorder radius="xs">
       <Stack gap="xs">
         {title && <StylishText size="lg">{title}</StylishText>}
-        <Table striped>
+        <Table
+          striped
+          verticalSpacing="sm"
+          horizontalSpacing="md"
+          withColumnBorders
+        >
           <tbody>
             {fields
               .filter((field: DetailsField) => !field.hidden)

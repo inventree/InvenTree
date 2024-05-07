@@ -81,7 +81,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`
+        label: t`Description`,
+        copy: true
       },
       {
         type: 'link',
