@@ -11,7 +11,7 @@ import {
   IconTruckLoading
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';

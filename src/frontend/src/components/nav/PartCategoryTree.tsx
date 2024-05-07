@@ -52,7 +52,7 @@ export function PartCategoryTree({
         )
         .catch((error) => {
           console.error('Error fetching part category tree:', error);
-          return error;
+          return [];
         }),
     refetchOnMount: true
   });

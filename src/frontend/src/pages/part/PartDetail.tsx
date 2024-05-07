@@ -486,6 +486,8 @@ export default function PartDetail() {
         icon: <IconPackages />,
         content: part.pk && (
           <StockItemTable
+            tableName="part-stock"
+            allowAdd
             params={{
               part: part.pk
             }}

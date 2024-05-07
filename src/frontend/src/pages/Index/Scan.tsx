@@ -41,7 +41,7 @@ import {
 } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
@@ -168,15 +168,17 @@ export default function Scan() {
               .get(url)
               .then((response) => {
                 item.instance = response.data;
+                const list_idx = history.findIndex((i) => i.id === id);
+                historyHandlers.setItem(list_idx, item);
               })
               .catch((err) => {
                 console.error('error while fetching instance data at', url);
                 console.info(err);
               });
           }
+        } else {
+          historyHandlers.setState(history);
         }
-
-        historyHandlers.setState(history);
       })
       .catch((err) => {
         // 400 and no plugin means no match
@@ -283,7 +285,12 @@ export default function Scan() {
             text={t`This page can be used for continuously scanning items and taking actions on them.`}
           />
         </Group>
-        <Button onClick={toggleFullscreen} size="sm" variant="subtle">
+        <Button
+          onClick={toggleFullscreen}
+          size="sm"
+          variant="subtle"
+          title={t`Toggle Fullscreen`}
+        >
           {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
         </Button>
       </Group>
@@ -374,6 +381,7 @@ export default function Scan() {
               color="red"
               onClick={btnDeleteFullHistory}
               variant="default"
+              title={t`Delete History`}
             >
               <IconTrash />
             </ActionIcon>
@@ -409,28 +417,30 @@ function HistoryTable({
       current.length === data.length ? [] : data.map((item) => item.id)
     );
 
-  const rows = data.map((item) => {
-    return (
-      <tr key={item.id}>
-        <td>
-          <Checkbox
-            checked={selection.includes(item.id)}
-            onChange={() => toggleRow(item.id)}
-          />
-        </td>
-        <td>
-          {item.pk && item.model && item.instance ? (
-            <RenderInstance model={item.model} instance={item.instance} />
-          ) : (
-            item.ref
-          )}
-        </td>
-        <td>{item.model}</td>
-        <td>{item.source}</td>
-        <td>{item.timestamp?.toString()}</td>
-      </tr>
-    );
-  });
+  const rows = useMemo(() => {
+    return data.map((item) => {
+      return (
+        <tr key={item.id}>
+          <td>
+            <Checkbox
+              checked={selection.includes(item.id)}
+              onChange={() => toggleRow(item.id)}
+            />
+          </td>
+          <td>
+            {item.pk && item.model && item.instance ? (
+              <RenderInstance model={item.model} instance={item.instance} />
+            ) : (
+              item.ref
+            )}
+          </td>
+          <td>{item.model}</td>
+          <td>{item.source}</td>
+          <td>{item.timestamp?.toString()}</td>
+        </tr>
+      );
+    });
+  }, [data, selection]);
 
   // rendering
   if (data.length === 0)

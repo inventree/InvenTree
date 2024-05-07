@@ -45,16 +45,15 @@ function ConditionalDocTooltip({
 
 export function MenuLinks({
   links,
-  highlighted
+  highlighted = false
 }: {
   links: MenuLinkItem[];
   highlighted?: boolean;
 }) {
-  highlighted = highlighted || false;
-
   const filteredLinks = links.filter(
     (item) => !highlighted || item.highlight === true
   );
+
   return (
     <SimpleGrid cols={2} spacing={0}>
       {filteredLinks.map((item) => (

@@ -9,7 +9,7 @@ import {
   IconPaperclip
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -258,6 +258,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
+            tableName="received-stock"
             params={{
               purchase_order: id
             }}

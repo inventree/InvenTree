@@ -11,6 +11,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import * as classes from '../../main.css';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { useUserState } from '../../states/UserState';
 import { ScanButton } from '../buttons/ScanButton';
 import { SpotlightButton } from '../buttons/SpotlightButton';
 import { MainMenu } from './MainMenu';
@@ -36,11 +37,14 @@ export function Header() {
     { open: openNotificationDrawer, close: closeNotificationDrawer }
   ] = useDisclosure(false);
 
+  const { isLoggedIn } = useUserState();
+
   const [notificationCount, setNotificationCount] = useState<number>(0);
 
   // Fetch number of notifications for the current user
   const notifications = useQuery({
     queryKey: ['notification-count'],
+    enabled: isLoggedIn(),
     queryFn: async () => {
       try {
         const params = {

@@ -43,7 +43,7 @@ export function StockLocationTree({
         )
         .catch((error) => {
           console.error('Error fetching stock location tree:', error);
-          return error;
+          return [];
         }),
     refetchOnMount: true
   });

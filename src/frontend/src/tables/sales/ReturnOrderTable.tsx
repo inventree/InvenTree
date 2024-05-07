@@ -94,7 +94,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       },
       DescriptionColumn({}),
       LineItemsProgressColumn(),
-      StatusColumn(ModelType.returnorder),
+      StatusColumn({ model: ModelType.returnorder }),
       ProjectCodeColumn(),
       CreationDateColumn(),
       TargetDateColumn(),

@@ -5,8 +5,12 @@ import { doQuickLogin } from './login.js';
 test('PUI - Stock', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/stock`);
+  await page.goto(`${baseUrl}/stock/location/index/`);
+  await page.waitForURL('**/platform/stock/location/**');
+
+  await page.getByRole('tab', { name: 'Location Details' }).click();
   await page.waitForURL('**/platform/stock/location/index/details');
+
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('cell', { name: '1551ABK' }).click();
   await page.getByRole('tab', { name: 'Stock', exact: true }).click();

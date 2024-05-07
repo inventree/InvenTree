@@ -17,12 +17,17 @@ export function AccountDetailPanel() {
   const form = useForm({ initialValues: user });
   const [editing, setEditing] = useToggle([false, true] as const);
   function SaveData(values: any) {
-    api.put(apiUrl(ApiEndpoints.user_me), values).then((res) => {
-      if (res.status === 200) {
-        setEditing();
-        fetchUserState();
-      }
-    });
+    api
+      .put(apiUrl(ApiEndpoints.user_me), values)
+      .then((res) => {
+        if (res.status === 200) {
+          setEditing();
+          fetchUserState();
+        }
+      })
+      .catch(() => {
+        console.error('ERR: Error saving user data');
+      });
   }
 
   return (
