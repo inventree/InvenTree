@@ -53,11 +53,10 @@ export function Header() {
             limit: 1
           }
         };
-        let response = await api.get(
-          apiUrl(ApiEndpoints.notifications_list),
-          params
-        );
-        setNotificationCount(response.data.count);
+        let response = await api
+          .get(apiUrl(ApiEndpoints.notifications_list), params)
+          .catch(() => {});
+        setNotificationCount(response.data?.count ?? 0);
         return response.data;
       } catch (error) {
         return error;
