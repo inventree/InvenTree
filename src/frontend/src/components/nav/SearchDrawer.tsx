@@ -36,6 +36,7 @@ import { UserRoles } from '../../enums/Roles';
 import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
+import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
 import { ModelInformationDict } from '../render/ModelType';
 
@@ -386,48 +387,50 @@ export function SearchDrawer({
         </Group>
       }
     >
-      {searchQuery.isFetching && (
-        <Center>
-          <Loader />
-        </Center>
-      )}
-      {!searchQuery.isFetching && !searchQuery.isError && (
-        <Stack spacing="md">
-          {queryResults.map((query, idx) => (
-            <QueryResultGroup
-              key={idx}
-              query={query}
-              onRemove={(query) => removeResults(query)}
-              onResultClick={(query, pk) => onResultClick(query, pk)}
-            />
-          ))}
-        </Stack>
-      )}
-      {searchQuery.isError && (
-        <Alert
-          color="red"
-          radius="sm"
-          variant="light"
-          title={t`Error`}
-          icon={<IconAlertCircle size="1rem" />}
-        >
-          <Trans>An error occurred during search query</Trans>
-        </Alert>
-      )}
-      {searchText &&
-        !searchQuery.isFetching &&
-        !searchQuery.isError &&
-        queryResults.length == 0 && (
+      <Boundary label="SearchDrawer">
+        {searchQuery.isFetching && (
+          <Center>
+            <Loader />
+          </Center>
+        )}
+        {!searchQuery.isFetching && !searchQuery.isError && (
+          <Stack spacing="md">
+            {queryResults.map((query, idx) => (
+              <QueryResultGroup
+                key={idx}
+                query={query}
+                onRemove={(query) => removeResults(query)}
+                onResultClick={(query, pk) => onResultClick(query, pk)}
+              />
+            ))}
+          </Stack>
+        )}
+        {searchQuery.isError && (
           <Alert
-            color="blue"
+            color="red"
             radius="sm"
             variant="light"
-            title={t`No results`}
-            icon={<IconSearch size="1rem" />}
+            title={t`Error`}
+            icon={<IconAlertCircle size="1rem" />}
           >
-            <Trans>No results available for search query</Trans>
+            <Trans>An error occurred during search query</Trans>
           </Alert>
         )}
+        {searchText &&
+          !searchQuery.isFetching &&
+          !searchQuery.isError &&
+          queryResults.length == 0 && (
+            <Alert
+              color="blue"
+              radius="sm"
+              variant="light"
+              title={t`No results`}
+              icon={<IconSearch size="1rem" />}
+            >
+              <Trans>No results available for search query</Trans>
+            </Alert>
+          )}
+      </Boundary>
     </Drawer>
   );
 }
