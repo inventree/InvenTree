@@ -35,12 +35,10 @@ export function PageDetail({
   return (
     <Stack gap="xs">
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <Paper p="xs" radius="xs" shadow="xs">
-          <BreadcrumbList
-            navCallback={breadcrumbAction}
-            breadcrumbs={breadcrumbs}
-          />
-        </Paper>
+        <BreadcrumbList
+          navCallback={breadcrumbAction}
+          breadcrumbs={breadcrumbs}
+        />
       )}
       <Paper p="xs" radius="xs" shadow="xs">
         <Stack gap="xs">

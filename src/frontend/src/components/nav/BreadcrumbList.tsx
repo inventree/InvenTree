@@ -41,7 +41,7 @@ export function BreadcrumbList({
   }, [breadcrumbs]);
 
   return (
-    <Paper p="3" radius="xs">
+    <Paper p="3" radius="xs" shadow="xs">
       <Group gap="xs">
         {navCallback && (
           <ActionIcon
