@@ -300,7 +300,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         format = kwargs.get('format', 'json')
 
-        max_queries = kwargs.get('max_queriy_count', self.MAX_QUERY_COUNT)
+        max_queries = kwargs.get('max_query_count', self.MAX_QUERY_COUNT)
         max_time = kwargs.get('max_query_time', self.MAX_QUERY_TIME)
 
         t1 = time.time()
