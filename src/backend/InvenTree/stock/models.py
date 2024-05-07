@@ -2127,7 +2127,7 @@ class StockItem(
         """Return a list of test-result objects for this StockItem."""
         return self.testResultMap(**kwargs).values()
 
-    def requiredTestStatus(self):
+    def requiredTestStatus(self, required_tests=None):
         """Return the status of the tests required for this StockItem.
 
         Return:
@@ -2137,15 +2137,17 @@ class StockItem(
             - failed: Number of tests that have failed
         """
         # All the tests required by the part object
-        required = self.part.getRequiredTests()
+
+        if required_tests is None:
+            required_tests = self.part.getRequiredTests()
 
         results = self.testResultMap()
 
-        total = len(required)
+        total = len(required_tests)
         passed = 0
         failed = 0
 
-        for test in required:
+        for test in required_tests:
             key = InvenTree.helpers.generateTestKey(test.test_name)
 
             if key in results:

@@ -559,10 +559,13 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
         outputs = data.get('outputs', [])
 
+        # Cache some calculated values which can be passed to each output
+        required_tests = outputs[0]['output'].part.getRequiredTests()
+        prevent_on_incomplete = common.settings.prevent_build_output_complete_on_incompleted_tests()
+
         # Mark the specified build outputs as "complete"
         with transaction.atomic():
             for item in outputs:
-
                 output = item['output']
 
                 build.complete_build_output(
@@ -571,6 +574,8 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
                     location=location,
                     status=status,
                     notes=notes,
+                    required_tests=required_tests,
+                    prevent_on_incomplete=prevent_on_incomplete,
                 )
 
 
@@ -717,10 +722,11 @@ class BuildCompleteSerializer(serializers.Serializer):
         build = self.context['build']
 
         data = self.validated_data
-        if data.get('accept_overallocated', OverallocationChoice.REJECT) == OverallocationChoice.TRIM:
-            build.trim_allocated_stock()
 
-        build.complete_build(request.user)
+        build.complete_build(
+            request.user,
+            trim_allocated_stock=data.get('accept_overallocated', OverallocationChoice.REJECT) == OverallocationChoice.TRIM
+        )
 
 
 class BuildUnallocationSerializer(serializers.Serializer):

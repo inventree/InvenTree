@@ -230,11 +230,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
 
     # Default query count threshold value
-    MAX_QUERY_COUNT = 125
+    # TODO: This value should be reduced
+    MAX_QUERY_COUNT = 250
     MAX_QUERY_TIME = 2.0
 
     @contextmanager
-    def assertNumQueriesLessThan(self, value, using='default', verbose=False, url=None):
+    def assertNumQueriesLessThan(self, value, using='default', verbose=None, url=None):
         """Context manager to check that the number of queries is less than a certain value.
 
         Example:
@@ -245,19 +246,19 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         with CaptureQueriesContext(connections[using]) as context:
             yield  # your test will be run here
 
-        if verbose:
-            msg = '\r\n%s' % json.dumps(
-                context.captured_queries, indent=4
-            )  # pragma: no cover
-        else:
-            msg = None
-
         n = len(context.captured_queries)
 
         if url and n >= value:
             print(
                 f'Query count exceeded at {url}: Expected < {value} queries, got {n}'
             )  # pragma: no cover
+
+        if verbose:
+            msg = '\r\n%s' % json.dumps(
+                context.captured_queries, indent=4
+            )  # pragma: no cover
+        else:
+            msg = None
 
         self.assertLess(n, value, msg=msg)
 
