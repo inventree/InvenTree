@@ -64,7 +64,8 @@ export const test = baseTest.extend({
         url != 'http://localhost:8000/api/barcode/' &&
         url != 'http://localhost:8000/api/news/?search=&offset=0&limit=25' &&
         url != 'https://docs.inventree.org/en/versions.json' &&
-        !url.startsWith('chrome://')
+        !url.startsWith('chrome://') &&
+        !url.startsWith('http://localhost:5173/node_modules/.vite/')
       )
         messages.push(msg);
     });

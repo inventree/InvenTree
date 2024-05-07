@@ -69,16 +69,19 @@ export const doLogout = async (navigate: any) => {
   const { clearUserState } = useUserState.getState();
 
   // Logout from the server session
-  await api.post(apiUrl(ApiEndpoints.user_logout)).finally(() => {
-    clearUserState();
-    clearCsrfCookie();
-    navigate('/login');
+  await api
+    .post(apiUrl(ApiEndpoints.user_logout))
+    .catch(() => {})
+    .finally(() => {
+      clearUserState();
+      clearCsrfCookie();
+      navigate('/login');
 
-    showLoginNotification({
-      title: t`Logged Out`,
-      message: t`Successfully logged out`
+      showLoginNotification({
+        title: t`Logged Out`,
+        message: t`Successfully logged out`
+      });
     });
-  });
 };
 
 export const doSimpleLogin = async (email: string) => {

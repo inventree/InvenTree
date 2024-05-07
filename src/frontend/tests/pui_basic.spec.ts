@@ -39,6 +39,7 @@ test('PUI - Basic Login Test', async ({ page }) => {
   await page.getByRole('menuitem', { name: 'Logout' }).click();
 
   await page.waitForURL('**/platform/login');
+  await page.getByLabel('username');
 });
 
 test('PUI - Quick Login Test', async ({ page }) => {
