@@ -102,17 +102,21 @@ export function Header() {
             </ActionIcon>
             <SpotlightButton />
             <ScanButton />
-            <ActionIcon onClick={openNotificationDrawer} variant="transparent">
-              <Indicator
-                radius="lg"
-                size="18"
-                label={notificationCount}
-                color="red"
-                disabled={notificationCount <= 0}
+            <Indicator
+              radius="lg"
+              size="18"
+              label={notificationCount}
+              color="red"
+              disabled={notificationCount <= 0}
+              inline
+            >
+              <ActionIcon
+                onClick={openNotificationDrawer}
+                variant="transparent"
               >
                 <IconBell />
-              </Indicator>
-            </ActionIcon>
+              </ActionIcon>
+            </Indicator>
             <MainMenu />
           </Group>
         </Group>
