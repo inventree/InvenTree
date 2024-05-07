@@ -12,16 +12,15 @@ import {
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
-import { IconCheck } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { doBasicLogin, doSimpleLogin } from '../../functions/auth';
+import { showLoginNotification } from '../../functions/notifications';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
-import { useSessionState } from '../../states/SessionState';
+import { useUserState } from '../../states/UserState';
 import { SsoButton } from '../buttons/SSOButton';
 
 export function AuthenticationForm() {
@@ -33,6 +32,7 @@ export function AuthenticationForm() {
   const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isLoggedIn } = useUserState();
 
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
@@ -46,19 +46,18 @@ export function AuthenticationForm() {
       ).then(() => {
         setIsLoggingIn(false);
 
-        if (useSessionState.getState().hasToken()) {
-          notifications.show({
+        if (isLoggedIn()) {
+          showLoginNotification({
             title: t`Login successful`,
-            message: t`Welcome back!`,
-            color: 'green',
-            icon: <IconCheck size="1rem" />
+            message: t`Logged in successfully`
           });
+
           navigate(location?.state?.redirectFrom ?? '/home');
         } else {
-          notifications.show({
+          showLoginNotification({
             title: t`Login failed`,
             message: t`Check your input and try again.`,
-            color: 'red'
+            success: false
           });
         }
       });
@@ -67,18 +66,15 @@ export function AuthenticationForm() {
         setIsLoggingIn(false);
 
         if (ret?.status === 'ok') {
-          notifications.show({
+          showLoginNotification({
             title: t`Mail delivery successful`,
-            message: t`Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too.`,
-            color: 'green',
-            icon: <IconCheck size="1rem" />,
-            autoClose: false
+            message: t`Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too.`
           });
         } else {
-          notifications.show({
-            title: t`Input error`,
+          showLoginNotification({
+            title: t`Mail delivery failed`,
             message: t`Check your input and try again.`,
-            color: 'red'
+            success: false
           });
         }
       });
@@ -193,11 +189,9 @@ export function RegistrationForm() {
       .then((ret) => {
         if (ret?.status === 204) {
           setIsRegistering(false);
-          notifications.show({
+          showLoginNotification({
             title: t`Registration successful`,
-            message: t`Please confirm your email address to complete the registration`,
-            color: 'green',
-            icon: <IconCheck size="1rem" />
+            message: t`Please confirm your email address to complete the registration`
           });
           navigate('/home');
         }
@@ -212,11 +206,10 @@ export function RegistrationForm() {
           if (err.response?.data?.non_field_errors) {
             err_msg = err.response.data.non_field_errors;
           }
-          notifications.show({
+          showLoginNotification({
             title: t`Input error`,
             message: t`Check your input and try again. ` + err_msg,
-            color: 'red',
-            autoClose: 30000
+            success: false
           });
         }
       });

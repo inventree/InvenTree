@@ -1,22 +1,28 @@
 import { create } from 'zustand';
 
-import { api } from '../App';
+import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { UserPermissions, UserRoles } from '../enums/Roles';
+import { clearCsrfCookie } from '../functions/auth';
 import { apiUrl } from './ApiState';
-import { useSessionState } from './SessionState';
 import { UserProps } from './states';
 
 interface UserStateProps {
   user: UserProps | undefined;
+  token: string | undefined;
   username: () => string;
   setUser: (newUser: UserProps) => void;
+  setToken: (newToken: string) => void;
+  clearToken: () => void;
+  fetchUserToken: () => void;
   fetchUserState: () => void;
+  clearUserState: () => void;
   checkUserRole: (role: UserRoles, permission: UserPermissions) => boolean;
   hasDeleteRole: (role: UserRoles) => boolean;
   hasChangeRole: (role: UserRoles) => boolean;
   hasAddRole: (role: UserRoles) => boolean;
   hasViewRole: (role: UserRoles) => boolean;
+  isLoggedIn: () => boolean;
   isStaff: () => boolean;
   isSuperuser: () => boolean;
 }
@@ -26,6 +32,15 @@ interface UserStateProps {
  */
 export const useUserState = create<UserStateProps>((set, get) => ({
   user: undefined,
+  token: undefined,
+  setToken: (newToken: string) => {
+    set({ token: newToken });
+    setApiDefaults();
+  },
+  clearToken: () => {
+    set({ token: undefined });
+    setApiDefaults();
+  },
   username: () => {
     const user: UserProps = get().user as UserProps;
 
@@ -36,9 +51,29 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     }
   },
   setUser: (newUser: UserProps) => set({ user: newUser }),
+  clearUserState: () => {
+    set({ user: undefined });
+    set({ token: undefined });
+    clearCsrfCookie();
+    setApiDefaults();
+  },
+  fetchUserToken: async () => {
+    await api
+      .get(apiUrl(ApiEndpoints.user_token))
+      .then((response) => {
+        if (response.status == 200 && response.data.token) {
+          get().setToken(response.data.token);
+        } else {
+          get().clearToken();
+        }
+      })
+      .catch(() => {
+        get().clearToken();
+      });
+  },
   fetchUserState: async () => {
-    if (!useSessionState.getState().hasToken()) {
-      return;
+    if (!get().token) {
+      await get().fetchUserToken();
     }
 
     // Fetch user data
@@ -47,35 +82,48 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         timeout: 2000
       })
       .then((response) => {
-        const user: UserProps = {
-          pk: response.data.pk,
-          first_name: response.data?.first_name ?? '',
-          last_name: response.data?.last_name ?? '',
-          email: response.data.email,
-          username: response.data.username
-        };
-        set({ user: user });
+        if (response.status == 200) {
+          const user: UserProps = {
+            pk: response.data.pk,
+            first_name: response.data?.first_name ?? '',
+            last_name: response.data?.last_name ?? '',
+            email: response.data.email,
+            username: response.data.username
+          };
+          set({ user: user });
+        } else {
+          get().clearUserState();
+        }
       })
-      .catch((_error) => {
-        console.error('Error fetching user data');
+      .catch(() => {
+        get().clearUserState();
       });
+
+    if (!get().isLoggedIn()) {
+      return;
+    }
 
     // Fetch role data
     await api
       .get(apiUrl(ApiEndpoints.user_roles))
       .then((response) => {
-        const user: UserProps = get().user as UserProps;
+        if (response.status == 200) {
+          const user: UserProps = get().user as UserProps;
 
-        // Update user with role data
-        if (user) {
-          user.roles = response.data?.roles ?? {};
-          user.is_staff = response.data?.is_staff ?? false;
-          user.is_superuser = response.data?.is_superuser ?? false;
-          set({ user: user });
+          // Update user with role data
+          if (user) {
+            user.roles = response.data?.roles ?? {};
+            user.is_staff = response.data?.is_staff ?? false;
+            user.is_superuser = response.data?.is_superuser ?? false;
+            set({ user: user });
+          }
+        } else {
+          get().clearUserState();
         }
       })
       .catch((_error) => {
-        console.error('Error fetching user roles');
+        console.error('ERR: Error fetching user roles');
+        get().clearUserState();
       });
   },
   checkUserRole: (role: UserRoles, permission: UserPermissions) => {
@@ -92,6 +140,13 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     if (user?.roles[role] === null) return false;
 
     return user?.roles[role]?.includes(permission) ?? false;
+  },
+  isLoggedIn: () => {
+    if (!get().token) {
+      return false;
+    }
+    const user: UserProps = get().user as UserProps;
+    return !!user && !!user.pk;
   },
   isStaff: () => {
     const user: UserProps = get().user as UserProps;

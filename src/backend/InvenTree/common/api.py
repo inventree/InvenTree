@@ -3,6 +3,7 @@
 import json
 
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
@@ -126,6 +127,7 @@ class CurrencyExchangeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
 
+    @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
     def get(self, request, format=None):
         """Return information on available currency conversions."""
         # Extract a list of all available rates
@@ -619,6 +621,38 @@ class FlagDetail(RetrieveAPI):
         return {key: value}
 
 
+class ContentTypeList(ListAPI):
+    """List view for ContentTypes."""
+
+    queryset = ContentType.objects.all()
+    serializer_class = common.serializers.ContentTypeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class ContentTypeDetail(RetrieveAPI):
+    """Detail view for a ContentType model."""
+
+    queryset = ContentType.objects.all()
+    serializer_class = common.serializers.ContentTypeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+@extend_schema(operation_id='contenttype_retrieve_model')
+class ContentTypeModelDetail(ContentTypeDetail):
+    """Detail view for a ContentType model."""
+
+    def get_object(self):
+        """Attempt to find a ContentType object with the provided key."""
+        model_ref = self.kwargs.get('model', None)
+        if model_ref:
+            qs = self.filter_queryset(self.get_queryset())
+            try:
+                return qs.get(model=model_ref)
+            except ContentType.DoesNotExist:
+                raise NotFound()
+        raise NotFound()
+
+
 settings_api_urls = [
     # User settings
     path(
@@ -797,6 +831,21 @@ common_api_urls = [
                 include([path('', StatusView.as_view(), name='api-status')]),
             ),
             path('', AllStatusViews.as_view(), name='api-status-all'),
+        ]),
+    ),
+    # Contenttype
+    path(
+        'contenttype/',
+        include([
+            path(
+                '<int:pk>/', ContentTypeDetail.as_view(), name='api-contenttype-detail'
+            ),
+            path(
+                '<str:model>/',
+                ContentTypeModelDetail.as_view(),
+                name='api-contenttype-detail-modelname',
+            ),
+            path('', ContentTypeList.as_view(), name='api-contenttype-list'),
         ]),
     ),
 ]

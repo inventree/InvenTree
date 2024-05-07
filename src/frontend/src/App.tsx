@@ -1,39 +1,31 @@
 import { QueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { getCsrfCookie } from './functions/auth';
 import { useLocalState } from './states/LocalState';
-import { useSessionState } from './states/SessionState';
+import { useUserState } from './states/UserState';
 
 // Global API instance
 export const api = axios.create({});
 
 /*
  * Setup default settings for the Axios API instance.
- *
- * This includes:
- * - Base URL
- * - Authorization token (if available)
- * - CSRF token (if available)
  */
 export function setApiDefaults() {
   const host = useLocalState.getState().host;
-  const token = useSessionState.getState().token;
+  const token = useUserState.getState().token;
 
   api.defaults.baseURL = host;
   api.defaults.timeout = 2500;
-  api.defaults.headers.common['Authorization'] = token
-    ? `Token ${token}`
-    : undefined;
 
-  if (!!getCsrfCookie()) {
-    api.defaults.withCredentials = true;
-    api.defaults.xsrfCookieName = 'csrftoken';
-    api.defaults.xsrfHeaderName = 'X-CSRFToken';
+  api.defaults.withCredentials = true;
+  api.defaults.withXSRFToken = true;
+  api.defaults.xsrfCookieName = 'csrftoken';
+  api.defaults.xsrfHeaderName = 'X-CSRFToken';
+
+  if (token) {
+    api.defaults.headers['Authorization'] = `Token ${token}`;
   } else {
-    api.defaults.withCredentials = false;
-    api.defaults.xsrfCookieName = undefined;
-    api.defaults.xsrfHeaderName = undefined;
+    delete api.defaults.headers['Authorization'];
   }
 }
 

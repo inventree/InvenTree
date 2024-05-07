@@ -36,18 +36,18 @@ class LabelTest(InvenTreeAPITestCase):
         """Test that the default label templates are copied across."""
         labels = StockItemLabel.objects.all()
 
-        self.assertTrue(labels.count() > 0)
+        self.assertGreater(labels.count(), 0)
 
         labels = StockLocationLabel.objects.all()
 
-        self.assertTrue(labels.count() > 0)
+        self.assertGreater(labels.count(), 0)
 
     def test_default_files(self):
         """Test that label files exist in the MEDIA directory."""
 
         def test_subdir(ref_name):
             item_dir = settings.MEDIA_ROOT.joinpath('label', 'inventree', ref_name)
-            self.assertTrue(len([item_dir.iterdir()]) > 0)
+            self.assertGreater(len([item_dir.iterdir()]), 0)
 
         test_subdir('stockitem')
         test_subdir('stocklocation')

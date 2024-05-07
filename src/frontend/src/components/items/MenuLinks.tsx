@@ -16,6 +16,10 @@ export interface MenuLinkItem {
   docchildren?: React.ReactNode;
 }
 
+export type menuItemsCollection = {
+  [key: string]: MenuLinkItem;
+};
+
 function ConditionalDocTooltip({
   item,
   children
@@ -41,17 +45,17 @@ function ConditionalDocTooltip({
 
 export function MenuLinks({
   links,
-  highlighted
+  highlighted = false
 }: {
   links: MenuLinkItem[];
   highlighted?: boolean;
 }) {
   const { classes } = InvenTreeStyle();
-  highlighted = highlighted || false;
 
   const filteredLinks = links.filter(
     (item) => !highlighted || item.highlight === true
   );
+
   return (
     <SimpleGrid cols={2} spacing={0}>
       {filteredLinks.map((item) => (

@@ -1,13 +1,49 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 187
+INVENTREE_API_VERSION = 197
+
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v187 - 2024-04-12 : https://github.com/inventree/InvenTree/pull/7000
+v197 - 2024-05-07 : https://github.com/inventree/InvenTree/pull/7000
     - Adds API endpoint for generating custom batch codes
+
+v196 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7160
+    - Adds "location" field to BuildOutputComplete API endpoint
+
+v195 - 2024-05-03 : https://github.com/inventree/InvenTree/pull/7153
+    - Fixes bug in BuildOrderCancel API endpoint
+
+v194 - 2024-05-01 : https://github.com/inventree/InvenTree/pull/7147
+    -  Adds field description to the currency_exchange_retrieve API call
+
+v193 - 2024-04-30 : https://github.com/inventree/InvenTree/pull/7144
+    - Adds "assigned_to" filter to PurchaseOrder / SalesOrder / ReturnOrder API endpoints
+
+v192 - 2024-04-23 : https://github.com/inventree/InvenTree/pull/7106
+    - Adds 'trackable' ordering option to BuildLineLabel API endpoint
+
+v191 - 2024-04-22 : https://github.com/inventree/InvenTree/pull/7079
+    - Adds API endpoints for Contenttype model
+
+v190 - 2024-04-19 : https://github.com/inventree/InvenTree/pull/7024
+    - Adds "active" field to the Company API endpoints
+    - Allow company list to be filtered by "active" status
+
+v189 - 2024-04-19 : https://github.com/inventree/InvenTree/pull/7066
+    - Adds "currency" field to CompanyBriefSerializer class
+
+v188 - 2024-04-16 : https://github.com/inventree/InvenTree/pull/6970
+    - Adds session authentication support for the API
+    - Improvements for login / logout endpoints for better support of React web interface
+
+v187 - 2024-04-10 : https://github.com/inventree/InvenTree/pull/6985
+    - Allow Part list endpoint to be sorted by pricing_min and pricing_max values
+    - Allow BomItem list endpoint to be sorted by pricing_min and pricing_max values
+    - Allow InternalPrice and SalePrice endpoints to be sorted by quantity
+    - Adds total pricing values to BomItem serializer
 
 v186 - 2024-03-26 : https://github.com/inventree/InvenTree/pull/6855
     - Adds license information to the API

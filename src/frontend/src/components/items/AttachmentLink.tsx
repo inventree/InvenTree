@@ -1,14 +1,17 @@
-import { Anchor, Group, Text } from '@mantine/core';
-import { IconLink, IconPhoto } from '@tabler/icons-react';
+import { Anchor, Group } from '@mantine/core';
 import {
   IconFile,
   IconFileTypeCsv,
   IconFileTypeDoc,
   IconFileTypePdf,
   IconFileTypeXls,
-  IconFileTypeZip
+  IconFileTypeZip,
+  IconLink,
+  IconPhoto
 } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
+
+import { useLocalState } from '../../states/LocalState';
 
 /**
  * Return an icon based on the provided filename
@@ -58,10 +61,20 @@ export function AttachmentLink({
 }): ReactNode {
   let text = external ? attachment : attachment.split('/').pop();
 
+  const host = useLocalState((s) => s.host);
+
+  const url = useMemo(() => {
+    if (external) {
+      return attachment;
+    }
+
+    return `${host}${attachment}`;
+  }, [host, attachment, external]);
+
   return (
     <Group position="left" spacing="sm">
       {external ? <IconLink /> : attachmentIcon(attachment)}
-      <Anchor href={attachment} target="_blank" rel="noopener noreferrer">
+      <Anchor href={url} target="_blank" rel="noopener noreferrer">
         {text}
       </Anchor>
     </Group>

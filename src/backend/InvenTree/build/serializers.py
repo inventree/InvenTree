@@ -285,6 +285,13 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         help_text=_('Enter serial numbers for build outputs'),
     )
 
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        label=_('Location'),
+        help_text=_('Stock location for build output'),
+        required=False, allow_null=True
+    )
+
     def validate_serial_numbers(self, serial_numbers):
         """Clean the provided serial number string"""
         serial_numbers = serial_numbers.strip()
@@ -308,6 +315,11 @@ class BuildOutputCreateSerializer(serializers.Serializer):
 
         quantity = data['quantity']
         serial_numbers = data.get('serial_numbers', '')
+
+        if part.trackable and not serial_numbers:
+            raise ValidationError({
+                'serial_numbers': _('Serial numbers must be provided for trackable parts')
+            })
 
         if serial_numbers:
 
@@ -345,19 +357,15 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         """Generate the new build output(s)"""
         data = self.validated_data
 
-        quantity = data['quantity']
-        batch_code = data.get('batch_code', '')
-        auto_allocate = data.get('auto_allocate', False)
-
         build = self.get_build()
-        user = self.context['request'].user
 
         build.create_build_output(
-            quantity,
+            data['quantity'],
             serials=self.serials,
-            batch=batch_code,
-            auto_allocate=auto_allocate,
-            user=user,
+            batch=data.get('batch_code', ''),
+            location=data.get('location', None),
+            auto_allocate=data.get('auto_allocate', False),
+            user=self.context['request'].user,
         )
 
 
@@ -586,8 +594,8 @@ class BuildCancelSerializer(serializers.Serializer):
         }
 
     remove_allocated_stock = serializers.BooleanField(
-        label=_('Remove Allocated Stock'),
-        help_text=_('Subtract any stock which has already been allocated to this build'),
+        label=_('Consume Allocated Stock'),
+        help_text=_('Consume any stock which has already been allocated to this build'),
         required=False,
         default=False,
     )
@@ -608,7 +616,7 @@ class BuildCancelSerializer(serializers.Serializer):
 
         build.cancel_build(
             request.user,
-            remove_allocated_stock=data.get('remove_unallocated_stock', False),
+            remove_allocated_stock=data.get('remove_allocated_stock', False),
             remove_incomplete_outputs=data.get('remove_incomplete_outputs', False),
         )
 
@@ -991,17 +999,24 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
     def save(self):
         """Perform the auto-allocation step"""
+
+        import build.tasks
+        import InvenTree.tasks
+
         data = self.validated_data
 
-        build = self.context['build']
+        build_order = self.context['build']
 
-        build.auto_allocate_stock(
+        if not InvenTree.tasks.offload_task(
+            build.tasks.auto_allocate_build,
+            build_order.pk,
             location=data.get('location', None),
             exclude_location=data.get('exclude_location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
-            optional_items=data['optional_items'],
-        )
+            optional_items=data['optional_items']
+        ):
+            raise ValidationError(_("Failed to start auto-allocation task"))
 
 
 class BuildItemSerializer(InvenTreeModelSerializer):

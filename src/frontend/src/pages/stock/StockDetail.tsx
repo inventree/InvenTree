@@ -1,17 +1,9 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Grid,
-  LoadingOverlay,
-  Skeleton,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconCopy,
   IconDots,
   IconHistory,
   IconInfoCircle,
@@ -20,16 +12,18 @@ import {
   IconPaperclip,
   IconSitemap
 } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
+import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
+  DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
@@ -38,6 +32,7 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StockLocationTree } from '../../components/nav/StockLocationTree';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -46,12 +41,16 @@ import {
   StockOperationProps,
   useAddStockItem,
   useCountStockItem,
-  useEditStockItem,
   useRemoveStockItem,
+  useStockFields,
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -302,7 +301,10 @@ export default function StockDetail() {
         icon: <IconSitemap />,
         hidden: (stockitem?.child_items ?? 0) == 0,
         content: stockitem?.pk ? (
-          <StockItemTable params={{ ancestor: stockitem.pk }} />
+          <StockItemTable
+            tableName="child-stock"
+            params={{ ancestor: stockitem.pk }}
+          />
         ) : (
           <Skeleton />
         )
@@ -345,9 +347,27 @@ export default function StockDetail() {
     [stockitem]
   );
 
-  const editStockItem = useEditStockItem({
-    item_id: stockitem.pk,
-    callback: () => refreshInstance()
+  const editStockItemFields = useStockFields({ create: false });
+
+  const editStockItem = useEditApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    pk: stockitem.pk,
+    title: t`Edit Stock Item`,
+    fields: editStockItemFields,
+    onFormSuccess: refreshInstance
+  });
+
+  const duplicateStockItemFields = useStockFields({ create: true });
+
+  const duplicateStockItem = useCreateApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    title: t`Add Stock Item`,
+    fields: duplicateStockItemFields,
+    initialData: {
+      ...stockitem
+    },
+    follow: true,
+    modelType: ModelType.stockitem
   });
 
   const stockActionProps: StockOperationProps = useMemo(() => {
@@ -364,15 +384,17 @@ export default function StockDetail() {
   const transferStockItem = useTransferStockItem(stockActionProps);
 
   const stockActions = useMemo(
-    () => /* TODO: Disable actions based on user permissions*/ [
+    () => [
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            hidden: stockitem?.barcode_hash
+            hidden:
+              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
           }),
           UnlinkBarcodeAction({
-            hidden: !stockitem?.barcode_hash
+            hidden:
+              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
           })
         ]}
       />,
@@ -421,21 +443,61 @@ export default function StockDetail() {
       />,
       <ActionDropdown
         key="stock"
-        // tooltip={t`Stock Actions`}
+        tooltip={t`Stock Item Actions`}
         icon={<IconDots />}
         actions={[
-          {
-            name: t`Duplicate`,
-            tooltip: t`Duplicate stock item`,
-            icon: <IconCopy />
-          },
-          EditItemAction({}),
-          DeleteItemAction({})
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.stock),
+            onClick: () => duplicateStockItem.open()
+          }),
+          EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.stock),
+            onClick: () => editStockItem.open()
+          }),
+          DeleteItemAction({
+            hidden: !user.hasDeleteRole(UserRoles.stock)
+          })
         ]}
       />
     ],
     [id, stockitem, user]
   );
+
+  const stockBadges: ReactNode[] = useMemo(() => {
+    return instanceQuery.isLoading
+      ? []
+      : [
+          <DetailsBadge
+            color="yellow"
+            label={t`In Production`}
+            visible={stockitem.is_building}
+          />,
+          <DetailsBadge
+            color="blue"
+            label={t`Serial Number` + `: ${stockitem.serial}`}
+            visible={!!stockitem.serial}
+            key="serial"
+          />,
+          <DetailsBadge
+            color="blue"
+            label={t`Quantity` + `: ${stockitem.quantity}`}
+            visible={!stockitem.serial}
+            key="quantity"
+          />,
+          <DetailsBadge
+            color="blue"
+            label={t`Batch Code` + `: ${stockitem.batch}`}
+            visible={!!stockitem.batch}
+            key="batch"
+          />,
+          <StatusRenderer
+            status={stockitem.status}
+            type={ModelType.stockitem}
+            options={{ size: 'lg' }}
+            key="status"
+          />
+        ];
+  }, [stockitem, instanceQuery]);
 
   return (
     <Stack>
@@ -449,11 +511,7 @@ export default function StockDetail() {
         title={t`Stock Item`}
         subtitle={stockitem.part_detail?.full_name}
         imageUrl={stockitem.part_detail?.thumbnail}
-        detail={
-          <Alert color="teal" title="Stock Item">
-            <Text>Quantity: {stockitem.quantity ?? 'idk'}</Text>
-          </Alert>
-        }
+        badges={stockBadges}
         breadcrumbs={breadcrumbs}
         breadcrumbAction={() => {
           setTreeOpen(true);
@@ -462,6 +520,7 @@ export default function StockDetail() {
       />
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
       {editStockItem.modal}
+      {duplicateStockItem.modal}
       {countStockItem.modal}
       {addStockItem.modal}
       {removeStockItem.modal}

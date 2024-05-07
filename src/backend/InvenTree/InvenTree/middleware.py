@@ -70,7 +70,8 @@ class AuthRequiredMiddleware(object):
 
         # API requests are handled by the DRF library
         if request.path_info.startswith('/api/'):
-            return self.get_response(request)
+            response = self.get_response(request)
+            return response
 
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func

@@ -128,7 +128,7 @@ class APITests(InvenTreeAPITestCase):
         response = self.client.get(url, format='json')
 
         # Not logged in, so cannot access user role data
-        self.assertTrue(response.status_code in [401, 403])
+        self.assertIn(response.status_code, [401, 403])
 
         # Now log in!
         self.basicAuth()

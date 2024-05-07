@@ -15,7 +15,6 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
-  DeleteItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
@@ -157,6 +156,8 @@ export default function Stock() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
+            tableName="location-stock"
+            allowAdd
             params={{
               location: id
             }}

@@ -15,14 +15,15 @@ export enum ApiEndpoints {
   user_roles = 'user/roles/',
   user_token = 'user/token/',
   user_simple_login = 'email/generate/',
-  user_reset = 'auth/password/reset/', // Note leading prefix here
-  user_reset_set = 'auth/password/reset/confirm/', // Note leading prefix here
+  user_reset = 'auth/password/reset/',
+  user_reset_set = 'auth/password/reset/confirm/',
   user_sso = 'auth/social/',
   user_sso_remove = 'auth/social/:id/disconnect/',
   user_emails = 'auth/emails/',
   user_email_remove = 'auth/emails/:id/remove/',
   user_email_verify = 'auth/emails/:id/verify/',
   user_email_primary = 'auth/emails/:id/primary/',
+  user_login = 'auth/login/',
   user_logout = 'auth/logout/',
   user_register = 'auth/registration/',
 
@@ -51,8 +52,14 @@ export enum ApiEndpoints {
 
   // Build API endpoints
   build_order_list = 'build/',
+  build_order_cancel = 'build/:id/cancel/',
+  build_output_create = 'build/:id/create-output/',
+  build_output_complete = 'build/:id/complete/',
+  build_output_scrap = 'build/:id/scrap-outputs/',
+  build_output_delete = 'build/:id/delete-outputs/',
   build_order_attachment_list = 'build/attachment/',
   build_line_list = 'build/line/',
+
   bom_list = 'bom/',
 
   // Part API endpoints
@@ -61,6 +68,9 @@ export enum ApiEndpoints {
   part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing_get = 'part/:id/pricing/',
+  part_serial_numbers = 'part/:id/serial-numbers/',
+  part_pricing_internal = 'part/internal-price/',
+  part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
@@ -75,6 +85,7 @@ export enum ApiEndpoints {
   address_list = 'company/address/',
   company_attachment_list = 'company/attachment/',
   supplier_part_list = 'company/part/',
+  supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
   manufacturer_part_attachment_list = 'company/part/manufacturer/attachment/',
   manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
@@ -102,9 +113,12 @@ export enum ApiEndpoints {
   purchase_order_line_list = 'order/po-line/',
   purchase_order_attachment_list = 'order/po/attachment/',
   purchase_order_receive = 'order/po/:id/receive/',
+
   sales_order_list = 'order/so/',
+  sales_order_line_list = 'order/so-line/',
   sales_order_attachment_list = 'order/so/attachment/',
   sales_order_shipment_list = 'order/so/shipment/',
+
   return_order_list = 'order/ro/',
   return_order_attachment_list = 'order/ro/attachment/',
 

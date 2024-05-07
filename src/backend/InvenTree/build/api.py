@@ -103,15 +103,35 @@ class BuildFilter(rest_filters.FilterSet):
         return queryset.filter(project_code=None)
 
 
-class BuildList(APIDownloadMixin, ListCreateAPI):
+class BuildMixin:
+    """Mixin class for Build API endpoints."""
+
+    queryset = Build.objects.all()
+    serializer_class = build.serializers.BuildSerializer
+
+    def get_queryset(self):
+        """Return the queryset for the Build API endpoints."""
+        queryset = super().get_queryset()
+
+        queryset = queryset.prefetch_related(
+            'responsible',
+            'issued_by',
+            'build_lines',
+            'build_lines__bom_item',
+            'build_lines__build',
+            'part',
+        )
+
+        return queryset
+
+
+class BuildList(APIDownloadMixin, BuildMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
     - POST: Create a new Build object
     """
 
-    queryset = Build.objects.all()
-    serializer_class = build.serializers.BuildSerializer
     filterset_class = BuildFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
@@ -223,11 +243,8 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
         return self.serializer_class(*args, **kwargs)
 
 
-class BuildDetail(RetrieveUpdateDestroyAPI):
+class BuildDetail(BuildMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a Build object."""
-
-    queryset = Build.objects.all()
-    serializer_class = build.serializers.BuildSerializer
 
     def destroy(self, request, *args, **kwargs):
         """Only allow deletion of a BuildOrder if the build status is CANCELLED"""
@@ -349,6 +366,7 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
         'optional',
         'unit_quantity',
         'available_stock',
+        'trackable',
     ]
 
     ordering_field_aliases = {
@@ -357,6 +375,7 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
         'unit_quantity': 'bom_item__quantity',
         'consumable': 'bom_item__consumable',
         'optional': 'bom_item__optional',
+        'trackable': 'bom_item__sub_part__trackable',
     }
 
     search_fields = [

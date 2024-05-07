@@ -1,6 +1,5 @@
 import { setApiDefaults } from '../App';
 import { useServerApiState } from './ApiState';
-import { useSessionState } from './SessionState';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
 import { useUserState } from './UserState';
@@ -126,7 +125,9 @@ export type SettingsLookup = {
  * Necessary on login, or if locale is changed.
  */
 export function fetchGlobalStates() {
-  if (!useSessionState.getState().hasToken()) {
+  const { isLoggedIn } = useUserState.getState();
+
+  if (!isLoggedIn()) {
     return;
   }
 

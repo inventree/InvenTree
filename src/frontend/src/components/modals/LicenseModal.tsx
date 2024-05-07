@@ -23,7 +23,10 @@ export function LicenceView(entries: Readonly<any[]>) {
       {entries?.length > 0 ? (
         <Accordion variant="contained" defaultValue="-">
           {entries?.map((entry: any, index: number) => (
-            <Accordion.Item key={entry.name} value={`entry-${index}`}>
+            <Accordion.Item
+              key={entry.name + entry.license + entry.version}
+              value={`entry-${index}`}
+            >
               <Accordion.Control>
                 <Group position="apart" grow>
                   <Text>{entry.name}</Text>

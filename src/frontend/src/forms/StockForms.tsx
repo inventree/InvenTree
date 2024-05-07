@@ -1,9 +1,8 @@
 import { t } from '@lingui/macro';
-import { Flex, NumberInput, Skeleton, Text } from '@mantine/core';
+import { Flex, Group, NumberInput, Skeleton, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { Suspense, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -20,8 +19,7 @@ import { InvenTreeIcon } from '../functions/icons';
 import {
   ApiFormModalProps,
   useCreateApiFormModal,
-  useDeleteApiFormModal,
-  useEditApiFormModal
+  useDeleteApiFormModal
 } from '../hooks/UseForm';
 import { useGenerator } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
@@ -56,6 +54,7 @@ export function useStockFields({
         disabled: !create,
         onValueChange: (value) => {
           setPart(value);
+
           // TODO: implement remaining functionality from old stock.py
 
           batchGenerator.update({ part: value });
@@ -74,12 +73,12 @@ export function useStockFields({
           supplier_detail: true,
           ...(part ? { part } : {})
         },
-        adjustFilters: (value: ApiFormAdjustFilterType) => {
-          if (value.data.part) {
-            value.filters['part'] = value.data.part;
+        adjustFilters: (adjust: ApiFormAdjustFilterType) => {
+          if (adjust.data.part) {
+            adjust.filters['part'] = adjust.data.part;
           }
 
-          return value.filters;
+          return adjust.filters;
         }
       },
       use_pack_size: {
@@ -162,29 +161,6 @@ export function useCreateStockItem() {
   });
 }
 
-/**
- * Launch a form to edit an existing StockItem instance
- * @param item : primary key of the StockItem to edit
- */
-export function useEditStockItem({
-  item_id,
-  callback
-}: {
-  item_id: number;
-  callback?: () => void;
-}) {
-  const fields = useStockFields({ create: false });
-
-  return useEditApiFormModal({
-    url: ApiEndpoints.stock_item_list,
-    pk: item_id,
-    fields: fields,
-    title: t`Edit Stock Item`,
-    successMessage: t`Stock item updated`,
-    onFormSuccess: callback
-  });
-}
-
 function StockItemDefaultMove({
   stockItem,
   value
@@ -192,7 +168,6 @@ function StockItemDefaultMove({
   stockItem: any;
   value: any;
 }) {
-  console.log('item', stockItem);
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',
@@ -316,8 +291,6 @@ function StockOperationsRow({
 }) {
   const item = input.item;
 
-  console.log('rec', record);
-
   const [value, setValue] = useState<StockItemQuantity>(
     add ? 0 : item.quantity ?? 0
   );
@@ -334,6 +307,14 @@ function StockOperationsRow({
     input.removeFn(input.idx);
   };
 
+  const stockString: string = useMemo(() => {
+    if (!record.serial) {
+      return `${record.quantity}`;
+    } else {
+      return `#${record.serial}`;
+    }
+  }, [record]);
+
   return (
     <tr>
       <td>
@@ -349,8 +330,10 @@ function StockOperationsRow({
       <td>{record.location ? record.location_detail.pathstring : '-'}</td>
       <td>
         <Flex align="center" gap="xs">
-          <Text>{record.quantity}</Text>
-          <StatusRenderer status={record.status} type={ModelType.stockitem} />
+          <Group position="apart">
+            <Text>{stockString}</Text>
+            <StatusRenderer status={record.status} type={ModelType.stockitem} />
+          </Group>
         </Flex>
       </td>
       {!merge && (
@@ -358,6 +341,7 @@ function StockOperationsRow({
           <NumberInput
             value={value}
             onChange={onChange}
+            disabled={!!record.serial && record.quantity == 1}
             max={setMax ? record.quantity : undefined}
             min={0}
             style={{ maxWidth: '100px' }}

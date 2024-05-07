@@ -1030,7 +1030,7 @@ class TestVersionNumber(TestCase):
 
         s = '.'.join([str(i) for i in v])
 
-        self.assertTrue(s in version.inventreeVersion())
+        self.assertIn(s, version.inventreeVersion())
 
     def test_comparison(self):
         """Test direct comparison of version numbers."""
@@ -1039,10 +1039,10 @@ class TestVersionNumber(TestCase):
         v_c = version.inventreeVersionTuple('1.2.4')
         v_d = version.inventreeVersionTuple('2.0.0')
 
-        self.assertTrue(v_b > v_a)
-        self.assertTrue(v_c > v_b)
-        self.assertTrue(v_d > v_c)
-        self.assertTrue(v_d > v_a)
+        self.assertGreater(v_b, v_a)
+        self.assertGreater(v_c, v_b)
+        self.assertGreater(v_d, v_c)
+        self.assertGreater(v_d, v_a)
 
     def test_commit_info(self):
         """Test that the git commit information is extracted successfully."""
@@ -1505,7 +1505,7 @@ class MagicLoginTest(InvenTreeTestCase):
         self.assertEqual(mail.outbox[0].subject, '[InvenTree] Log in to the app')
 
         # Check that the token is in the email
-        self.assertTrue('http://testserver/api/email/login/' in mail.outbox[0].body)
+        self.assertIn('http://testserver/api/email/login/', mail.outbox[0].body)
         token = mail.outbox[0].body.split('/')[-1].split('\n')[0][8:]
         self.assertEqual(get_user(token), self.user)
 

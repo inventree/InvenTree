@@ -6,13 +6,14 @@ export type ProgressBarProps = {
   maximum?: number;
   label?: string;
   progressLabel?: boolean;
+  size?: string;
 };
 
 /**
  * A progress bar element, built on mantine.Progress
  * The color of the bar is determined based on the value
  */
-export function ProgressBar(props: ProgressBarProps) {
+export function ProgressBar(props: Readonly<ProgressBarProps>) {
   const progress = useMemo(() => {
     let maximum = props.maximum ?? 100;
     let value = Math.max(props.value, 0);
@@ -31,8 +32,8 @@ export function ProgressBar(props: ProgressBarProps) {
       <Progress
         value={progress}
         color={progress < 100 ? 'orange' : progress > 100 ? 'blue' : 'green'}
-        size="sm"
-        radius="xs"
+        size={props.size ?? 'md'}
+        radius="sm"
       />
     </Stack>
   );

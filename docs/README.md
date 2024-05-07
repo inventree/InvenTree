@@ -12,8 +12,7 @@ Run the following commands from the top-level project directory:
 
 ```
 $ git clone https://github.com/inventree/inventree
-$ cd inventree/docs
-$ pip install -r requirements.txt
+$ pip install --require-hashes -r docs/requirements.txt
 ```
 
 ## Serve Locally

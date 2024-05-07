@@ -3,7 +3,9 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
+  timeout: 60000,
   forbidOnly: !!process.env.CI,
+  timeout: 5 * 60 * 1000,
   retries: process.env.CI ? 1 : 0,
   workers: process.env.CI ? 2 : undefined,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
@@ -36,6 +38,9 @@ export default defineConfig({
     },
     {
       command: 'invoke server -a 127.0.0.1:8000',
+      env: {
+        INVENTREE_DEBUG: 'True'
+      },
       url: 'http://127.0.0.1:8000/api/',
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',

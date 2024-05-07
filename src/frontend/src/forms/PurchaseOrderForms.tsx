@@ -38,8 +38,12 @@ import { apiUrl } from '../states/ApiState';
  * Construct a set of fields for creating / editing a PurchaseOrderLineItem instance
  */
 export function usePurchaseOrderLineItemFields({
+  supplierId,
+  orderId,
   create
 }: {
+  supplierId?: number;
+  orderId?: number;
   create?: boolean;
 }) {
   const [purchasePrice, setPurchasePrice] = useState<string>('');
@@ -61,16 +65,20 @@ export function usePurchaseOrderLineItemFields({
         filters: {
           supplier_detail: true
         },
-        hidden: true
+        disabled: true
       },
       part: {
         filters: {
           part_detail: true,
-          supplier_detail: true
+          supplier_detail: true,
+          active: true,
+          part_active: true
         },
-        adjustFilters: (value: ApiFormAdjustFilterType) => {
-          // TODO: Adjust part based on the supplier associated with the supplier
-          return value.filters;
+        adjustFilters: (adjust: ApiFormAdjustFilterType) => {
+          return {
+            ...adjust.filters,
+            supplier: supplierId
+          };
         }
       },
       quantity: {},
@@ -106,7 +114,7 @@ export function usePurchaseOrderLineItemFields({
     }
 
     return fields;
-  }, [create, autoPricing, purchasePrice]);
+  }, [create, orderId, supplierId, autoPricing, purchasePrice]);
 
   return fields;
 }
@@ -114,50 +122,53 @@ export function usePurchaseOrderLineItemFields({
 /**
  * Construct a set of fields for creating / editing a PurchaseOrder instance
  */
-export function purchaseOrderFields(): ApiFormFieldSet {
-  return {
-    reference: {
-      icon: <IconHash />
-    },
-    description: {},
-    supplier: {
-      filters: {
-        is_supplier: true
+export function usePurchaseOrderFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      reference: {
+        icon: <IconHash />
+      },
+      description: {},
+      supplier: {
+        filters: {
+          is_supplier: true,
+          active: true
+        }
+      },
+      supplier_reference: {},
+      project_code: {
+        icon: <IconList />
+      },
+      order_currency: {
+        icon: <IconCoins />
+      },
+      target_date: {
+        icon: <IconCalendar />
+      },
+      link: {},
+      contact: {
+        icon: <IconUser />,
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          return {
+            ...value.filters,
+            company: value.data.supplier
+          };
+        }
+      },
+      address: {
+        icon: <IconAddressBook />,
+        adjustFilters: (value: ApiFormAdjustFilterType) => {
+          return {
+            ...value.filters,
+            company: value.data.supplier
+          };
+        }
+      },
+      responsible: {
+        icon: <IconUsers />
       }
-    },
-    supplier_reference: {},
-    project_code: {
-      icon: <IconList />
-    },
-    order_currency: {
-      icon: <IconCoins />
-    },
-    target_date: {
-      icon: <IconCalendar />
-    },
-    link: {},
-    contact: {
-      icon: <IconUser />,
-      adjustFilters: (value: ApiFormAdjustFilterType) => {
-        return {
-          ...value.filters,
-          company: value.data.supplier
-        };
-      }
-    },
-    address: {
-      icon: <IconAddressBook />,
-      adjustFilters: (value: ApiFormAdjustFilterType) => {
-        return {
-          ...value.filters,
-          company: value.data.supplier
-        };
-      }
-    },
-    responsible: {
-      icon: <IconUsers />
-    }
-  };
+    };
+  }, []);
 }
 
 /**

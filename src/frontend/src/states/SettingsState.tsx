@@ -7,7 +7,7 @@ import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { isTrue } from '../functions/conversion';
 import { PathParams, apiUrl } from './ApiState';
-import { useSessionState } from './SessionState';
+import { useUserState } from './UserState';
 import { Setting, SettingsLookup } from './states';
 
 export interface SettingsStateProps {
@@ -29,7 +29,9 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
     lookup: {},
     endpoint: ApiEndpoints.settings_global_list,
     fetchSettings: async () => {
-      if (!useSessionState.getState().hasToken()) {
+      const { isLoggedIn } = useUserState.getState();
+
+      if (!isLoggedIn()) {
         return;
       }
 
@@ -42,7 +44,7 @@ export const useGlobalSettingsState = create<SettingsStateProps>(
           });
         })
         .catch((_error) => {
-          console.error('Error fetching global settings');
+          console.error('ERR: Error fetching global settings');
         });
     },
     getSetting: (key: string, default_value?: string) => {
@@ -63,7 +65,9 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
   lookup: {},
   endpoint: ApiEndpoints.settings_user_list,
   fetchSettings: async () => {
-    if (!useSessionState.getState().hasToken()) {
+    const { isLoggedIn } = useUserState.getState();
+
+    if (!isLoggedIn()) {
       return;
     }
 
@@ -76,7 +80,7 @@ export const useUserSettingsState = create<SettingsStateProps>((set, get) => ({
         });
       })
       .catch((_error) => {
-        console.error('Error fetching user settings');
+        console.error('ERR: Error fetching user settings');
       });
   },
   getSetting: (key: string, default_value?: string) => {
