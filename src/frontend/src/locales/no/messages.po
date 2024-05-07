@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-06 04:21\n"
+"PO-Revision-Date: 2024-05-07 07:40\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -279,7 +279,7 @@ msgstr "Oppdater"
 #: src/components/items/ActionDropdown.tsx:201
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:121
-#: src/pages/Index/Scan.tsx:333
+#: src/pages/Index/Scan.tsx:340
 #: src/pages/Notifications.tsx:123
 #: src/tables/InvenTreeTable.tsx:479
 #: src/tables/RowActions.tsx:71
@@ -757,43 +757,43 @@ msgid "Unknown response"
 msgstr "Ukjent svar"
 
 #: src/components/modals/QrCodeModal.tsx:102
-#: src/pages/Index/Scan.tsx:618
+#: src/pages/Index/Scan.tsx:634
 msgid "Error while getting camera"
 msgstr "Feil under henting av kamera"
 
 #: src/components/modals/QrCodeModal.tsx:125
-#: src/pages/Index/Scan.tsx:641
+#: src/pages/Index/Scan.tsx:657
 msgid "Error while scanning"
 msgstr "Feil under skanning"
 
 #: src/components/modals/QrCodeModal.tsx:139
-#: src/pages/Index/Scan.tsx:655
+#: src/pages/Index/Scan.tsx:671
 msgid "Error while stopping"
 msgstr "Feil under stans"
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/defaults/menuItems.tsx:21
-#: src/pages/Index/Scan.tsx:724
+#: src/pages/Index/Scan.tsx:740
 msgid "Scanning"
 msgstr "Skanner"
 
 #: src/components/modals/QrCodeModal.tsx:154
-#: src/pages/Index/Scan.tsx:724
+#: src/pages/Index/Scan.tsx:740
 msgid "Not scanning"
 msgstr "Skanner ikke"
 
 #: src/components/modals/QrCodeModal.tsx:159
-#: src/pages/Index/Scan.tsx:730
+#: src/pages/Index/Scan.tsx:746
 msgid "Select Camera"
 msgstr "Velg kamera"
 
 #: src/components/modals/QrCodeModal.tsx:169
-#: src/pages/Index/Scan.tsx:716
+#: src/pages/Index/Scan.tsx:732
 msgid "Start scanning"
 msgstr "Start skanningen"
 
 #: src/components/modals/QrCodeModal.tsx:176
-#: src/pages/Index/Scan.tsx:710
+#: src/pages/Index/Scan.tsx:726
 msgid "Stop scanning"
 msgstr "Stopp skanning"
 
@@ -2496,7 +2496,7 @@ msgid "Add"
 msgstr "Legg til"
 
 #: src/forms/StockForms.tsx:491
-#: src/pages/Index/Scan.tsx:263
+#: src/pages/Index/Scan.tsx:265
 #: src/pages/stock/StockDetail.tsx:407
 msgid "Count"
 msgstr "Tell"
@@ -2653,7 +2653,7 @@ msgid "Checking if you are already logged in"
 msgstr "Sjekker om du allerede er innlogget"
 
 #: src/pages/Auth/Login.tsx:31
-#: src/pages/Index/Scan.tsx:319
+#: src/pages/Index/Scan.tsx:326
 msgid "No selection"
 msgstr "Ingen utvalg"
 
@@ -2866,112 +2866,120 @@ msgstr "Denne siden er et utstillingsvindu for Platform UI."
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:215
+#: src/pages/Index/Scan.tsx:217
 msgid "Manual input"
 msgstr "Manuell innskriving"
 
-#: src/pages/Index/Scan.tsx:216
+#: src/pages/Index/Scan.tsx:218
 msgid "Image Barcode"
 msgstr "Bilde-strekkode"
 
-#: src/pages/Index/Scan.tsx:246
+#: src/pages/Index/Scan.tsx:248
 msgid "Selected elements are not known"
 msgstr "Valgte elementer er ikke kjent"
 
-#: src/pages/Index/Scan.tsx:253
+#: src/pages/Index/Scan.tsx:255
 msgid "Multiple object types selected"
 msgstr "Flere objekttyper er valgt"
 
-#: src/pages/Index/Scan.tsx:260
+#: src/pages/Index/Scan.tsx:262
 msgid "Actions for {0}"
 msgstr "Handlinger for {0}"
 
-#: src/pages/Index/Scan.tsx:277
+#: src/pages/Index/Scan.tsx:279
 msgid "Scan Page"
 msgstr "Skann side"
 
-#: src/pages/Index/Scan.tsx:280
+#: src/pages/Index/Scan.tsx:282
 msgid "This page can be used for continuously scanning items and taking actions on them."
 msgstr "Denne siden kan brukes til kontinuerlig skanning av elementer og til å utføre handlinger på dem."
 
-#: src/pages/Index/Scan.tsx:295
+#: src/pages/Index/Scan.tsx:289
+msgid "Toggle Fullscreen"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:302
 msgid "Select the input method you want to use to scan items."
 msgstr "Velg hvilken inndatametode du vil bruke til å skanne elementer."
 
-#: src/pages/Index/Scan.tsx:297
+#: src/pages/Index/Scan.tsx:304
 msgid "Input"
 msgstr "Inndata"
 
-#: src/pages/Index/Scan.tsx:304
+#: src/pages/Index/Scan.tsx:311
 msgid "Select input method"
 msgstr "Velg inndatametode"
 
-#: src/pages/Index/Scan.tsx:305
+#: src/pages/Index/Scan.tsx:312
 msgid "Nothing found"
 msgstr "Ingenting funnet"
 
-#: src/pages/Index/Scan.tsx:313
+#: src/pages/Index/Scan.tsx:320
 msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
 msgstr "Avhengig av valgte delhandlinger vil bli vist her. Ikke alle strekkodetyper støttes for øyeblikket."
 
-#: src/pages/Index/Scan.tsx:315
+#: src/pages/Index/Scan.tsx:322
 msgid "Action"
 msgstr "Handling"
 
-#: src/pages/Index/Scan.tsx:324
+#: src/pages/Index/Scan.tsx:331
 msgid "{0} items selected"
 msgstr "{0} elementer valgt"
 
-#: src/pages/Index/Scan.tsx:327
+#: src/pages/Index/Scan.tsx:334
 msgid "General Actions"
 msgstr "Generelle handliger"
 
-#: src/pages/Index/Scan.tsx:340
+#: src/pages/Index/Scan.tsx:347
 msgid "Lookup part"
 msgstr "Slå opp del"
 
-#: src/pages/Index/Scan.tsx:347
+#: src/pages/Index/Scan.tsx:354
 msgid "Open Link"
 msgstr "Åpne lenke"
 
-#: src/pages/Index/Scan.tsx:362
+#: src/pages/Index/Scan.tsx:369
 msgid "History is locally kept in this browser."
 msgstr "Historikk holdes lokalt i denne nettleseren."
 
-#: src/pages/Index/Scan.tsx:363
+#: src/pages/Index/Scan.tsx:370
 msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
 msgstr "Historien ligger i denne nettleserens lokale lagringsplass. Så den vil ikke bli delt med andre brukere eller andre enheter, men er vedvarende ved gjennom nyinnlasting. Du kan velge elementer i historien for å utføre handlinger på dem. For å legge til elementer, skan/skriv dem inn i Input området."
 
-#: src/pages/Index/Scan.tsx:365
+#: src/pages/Index/Scan.tsx:372
 #: src/pages/Notifications.tsx:100
 msgid "History"
 msgstr "Logg"
 
-#: src/pages/Index/Scan.tsx:430
+#: src/pages/Index/Scan.tsx:377
+msgid "Delete History"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:446
 msgid "No history"
 msgstr "Ingen historikk"
 
-#: src/pages/Index/Scan.tsx:449
+#: src/pages/Index/Scan.tsx:465
 msgid "Item"
 msgstr "Artikkel"
 
-#: src/pages/Index/Scan.tsx:452
+#: src/pages/Index/Scan.tsx:468
 msgid "Type"
 msgstr "Type"
 
-#: src/pages/Index/Scan.tsx:455
+#: src/pages/Index/Scan.tsx:471
 msgid "Source"
 msgstr "Kilde"
 
-#: src/pages/Index/Scan.tsx:458
+#: src/pages/Index/Scan.tsx:474
 msgid "Scanned at"
 msgstr "Skannet ved"
 
-#: src/pages/Index/Scan.tsx:510
+#: src/pages/Index/Scan.tsx:526
 msgid "Enter item serial or data"
 msgstr "Legg inn elementets serienummer eller data"
 
-#: src/pages/Index/Scan.tsx:522
+#: src/pages/Index/Scan.tsx:538
 msgid "Add dummy item"
 msgstr "Legg til dummyelement"
 
