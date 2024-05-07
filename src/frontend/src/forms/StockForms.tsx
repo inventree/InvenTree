@@ -54,7 +54,6 @@ export function useStockFields({
         disabled: !create,
         onValueChange: (value) => {
           setPart(value);
-
           // TODO: implement remaining functionality from old stock.py
 
           batchGenerator.update({ part: value });
