@@ -8,6 +8,7 @@ import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { getActions } from '../../defaults/actions';
 import { isLoggedIn } from '../../functions/auth';
 import { InvenTreeStyle } from '../../globalStyle';
+import { Boundary } from '../Boundary';
 import { Footer } from './Footer';
 import { Header } from './Header';
 
@@ -28,17 +29,17 @@ export default function LayoutComponent() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const defaultactions = getActions(navigate);
-  const [actions, setActions] = useState(defaultactions);
+  const defaultActions = getActions(navigate);
+  const [actions, setActions] = useState(defaultActions);
   const [customActions, setCustomActions] = useState<boolean>(false);
 
   function actionsAreChanging(change: []) {
-    if (change.length > defaultactions.length) setCustomActions(true);
+    if (change.length > defaultActions.length) setCustomActions(true);
     setActions(change);
   }
   useEffect(() => {
     if (customActions) {
-      setActions(defaultactions);
+      setActions(defaultActions);
       setCustomActions(false);
     }
   }, [location]);
@@ -56,7 +57,10 @@ export default function LayoutComponent() {
         <Flex direction="column" mih="100vh">
           <Header />
           <Container className={classes.layoutContent} size="100%">
-            <Outlet />
+            <Boundary label={'layout'}>
+              <Outlet />
+            </Boundary>
+            {/* </ErrorBoundary> */}
           </Container>
           <Space h="xl" />
           <Footer />
