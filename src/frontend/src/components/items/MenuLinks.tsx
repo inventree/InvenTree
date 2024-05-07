@@ -45,13 +45,13 @@ function ConditionalDocTooltip({
 
 export function MenuLinks({
   links,
-  highlighted
+  highlighted = false
 }: {
   links: MenuLinkItem[];
   highlighted?: boolean;
 }) {
   const { classes } = InvenTreeStyle();
-  highlighted = highlighted || false;
+  highlighted = highlighted ?? false;
 
   const filteredLinks = links.filter(
     (item) => !highlighted || item.highlight === true
