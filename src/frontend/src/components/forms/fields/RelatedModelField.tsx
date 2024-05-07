@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Input, useMantineTheme } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
-import { useId } from '@mantine/hooks';
+import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -188,7 +187,7 @@ export function RelatedModelField({
       setPk(_pk);
 
       // Run custom callback for this field (if provided)
-      definition.onValueChange?.(_pk);
+      definition.onValueChange?.(_pk, value.data ?? {});
     },
     [field.onChange, definition]
   );

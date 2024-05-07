@@ -8,6 +8,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
+import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -41,6 +42,9 @@ export function SalesOrderTable({
   const table = useTable('sales-order');
   const user = useUserState();
 
+  const projectCodeFilters = useProjectCodeFilters();
+  const responsibleFilters = useOwnerFilters();
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -51,11 +55,26 @@ export function SalesOrderTable({
       },
       OutstandingFilter(),
       OverdueFilter(),
-      AssignedToMeFilter()
-      // TODO: has_project_code
-      // TODO: project_code
+      AssignedToMeFilter(),
+      {
+        name: 'project_code',
+        label: t`Project Code`,
+        description: t`Filter by project code`,
+        choices: projectCodeFilters.choices
+      },
+      {
+        name: 'has_project_code',
+        label: t`Has Project Code`,
+        description: t`Filter by whether the purchase order has a project code`
+      },
+      {
+        name: 'assigned_to',
+        label: t`Responsible`,
+        description: t`Filter by responsible owner`,
+        choices: responsibleFilters.choices
+      }
     ];
-  }, []);
+  }, [projectCodeFilters.choices, responsibleFilters.choices]);
 
   const salesOrderFields = useSalesOrderFields();
 
@@ -105,7 +124,7 @@ export function SalesOrderTable({
       },
       DescriptionColumn({}),
       LineItemsProgressColumn(),
-      StatusColumn(ModelType.salesorder),
+      StatusColumn({ model: ModelType.salesorder }),
       ProjectCodeColumn(),
       CreationDateColumn(),
       TargetDateColumn(),

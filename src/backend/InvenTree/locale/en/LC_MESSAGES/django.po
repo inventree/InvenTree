@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-23 01:51+0000\n"
+"POT-Creation-Date: 2024-04-29 12:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,7 +59,7 @@ msgstr ""
 
 #: InvenTree/fields.py:208 InvenTree/models.py:1021 build/serializers.py:438
 #: build/serializers.py:516 build/templates/build/sidebar.html:21
-#: company/models.py:847 company/templates/company/sidebar.html:37
+#: company/models.py:849 company/templates/company/sidebar.html:37
 #: order/models.py:1283 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
 #: order/templates/order/so_sidebar.html:17 part/admin.py:59
@@ -325,14 +325,18 @@ msgid "Turkish"
 msgstr ""
 
 #: InvenTree/locales.py:48
-msgid "Vietnamese"
+msgid "Ukrainian"
 msgstr ""
 
 #: InvenTree/locales.py:49
-msgid "Chinese (Simplified)"
+msgid "Vietnamese"
 msgstr ""
 
 #: InvenTree/locales.py:50
+msgid "Chinese (Simplified)"
+msgstr ""
+
+#: InvenTree/locales.py:51
 msgid "Chinese (Traditional)"
 msgstr ""
 
@@ -407,7 +411,7 @@ msgid "Select file to attach"
 msgstr ""
 
 #: InvenTree/models.py:567 common/models.py:3018 company/models.py:146
-#: company/models.py:457 company/models.py:514 company/models.py:830
+#: company/models.py:457 company/models.py:514 company/models.py:831
 #: order/models.py:291 order/models.py:1288 order/models.py:1704
 #: part/admin.py:55 part/models.py:919
 #: part/templates/part/part_scheduling.html:11
@@ -485,12 +489,12 @@ msgid "Invalid choice"
 msgstr ""
 
 #: InvenTree/models.py:893 common/models.py:2706 common/models.py:3104
-#: common/serializers.py:392 company/models.py:613 label/models.py:120
+#: common/serializers.py:392 company/models.py:614 label/models.py:120
 #: machine/models.py:24 part/models.py:855 part/models.py:3616
 #: plugin/models.py:41 report/models.py:176 stock/models.py:76
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
-#: templates/InvenTree/settings/plugin.html:81
+#: templates/InvenTree/settings/plugin.html:83
 #: templates/InvenTree/settings/plugin_settings.html:22
 #: templates/InvenTree/settings/settings_staff_js.html:67
 #: templates/InvenTree/settings/settings_staff_js.html:446
@@ -506,7 +510,7 @@ msgstr ""
 
 #: InvenTree/models.py:899 build/models.py:188
 #: build/templates/build/detail.html:24 common/models.py:136
-#: company/models.py:522 company/models.py:838
+#: company/models.py:523 company/models.py:840
 #: company/templates/company/company_base.html:77
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:107 label/models.py:127
@@ -971,7 +975,7 @@ msgstr ""
 msgid "Allocated"
 msgstr ""
 
-#: build/api.py:294 company/models.py:902 company/serializers.py:383
+#: build/api.py:294 company/models.py:904 company/serializers.py:383
 #: company/templates/company/supplier_part.html:114
 #: templates/email/build_order_required_stock.html:19
 #: templates/email/low_stock_notification.html:17
@@ -1051,7 +1055,7 @@ msgid "BuildOrder to which this build is allocated"
 msgstr ""
 
 #: build/models.py:205 build/templates/build/build_base.html:97
-#: build/templates/build/detail.html:29 company/models.py:1056 order/api.py:817
+#: build/templates/build/detail.html:29 company/models.py:1058 order/api.py:817
 #: order/models.py:1401 order/models.py:1546 order/models.py:1547
 #: part/api.py:1547 part/api.py:1841 part/models.py:390 part/models.py:3004
 #: part/models.py:3148 part/models.py:3292 part/models.py:3315
@@ -3575,7 +3579,7 @@ msgstr ""
 msgid "Name for this webhook"
 msgstr ""
 
-#: common/models.py:2711 company/models.py:160 company/models.py:813
+#: common/models.py:2711 company/models.py:160 company/models.py:814
 #: machine/models.py:39 part/admin.py:88 part/models.py:1045
 #: plugin/models.py:56 templates/js/translated/company.js:523
 #: templates/js/translated/table_filters.js:135
@@ -4042,13 +4046,13 @@ msgstr ""
 msgid "Link to address information (external)"
 msgstr ""
 
-#: company/models.py:489 company/models.py:791 stock/models.py:751
+#: company/models.py:489 company/models.py:792 stock/models.py:751
 #: stock/serializers.py:266 stock/templates/stock/item_base.html:142
 #: templates/js/translated/bom.js:622
 msgid "Base Part"
 msgstr ""
 
-#: company/models.py:491 company/models.py:793
+#: company/models.py:491 company/models.py:794
 msgid "Select part"
 msgstr ""
 
@@ -4087,22 +4091,22 @@ msgstr ""
 msgid "URL for external manufacturer part link"
 msgstr ""
 
-#: company/models.py:523
+#: company/models.py:524
 msgid "Manufacturer part description"
 msgstr ""
 
-#: company/models.py:580 company/models.py:607 company/models.py:823
+#: company/models.py:581 company/models.py:608 company/models.py:824
 #: company/templates/company/manufacturer_part.html:7
 #: company/templates/company/manufacturer_part.html:24
 #: stock/templates/stock/item_base.html:217
 msgid "Manufacturer Part"
 msgstr ""
 
-#: company/models.py:614
+#: company/models.py:615
 msgid "Parameter name"
 msgstr ""
 
-#: company/models.py:620
+#: company/models.py:621
 #: report/templates/report/inventree_test_report_base.html:104
 #: stock/models.py:2436 templates/js/translated/company.js:1166
 #: templates/js/translated/company.js:1419 templates/js/translated/part.js:1492
@@ -4110,11 +4114,11 @@ msgstr ""
 msgid "Value"
 msgstr ""
 
-#: company/models.py:621
+#: company/models.py:622
 msgid "Parameter value"
 msgstr ""
 
-#: company/models.py:628 company/templates/company/supplier_part.html:168
+#: company/models.py:629 company/templates/company/supplier_part.html:168
 #: part/admin.py:57 part/models.py:1009 part/models.py:3623
 #: part/templates/part/part_base.html:284
 #: templates/js/translated/company.js:1425 templates/js/translated/part.js:1511
@@ -4122,23 +4126,23 @@ msgstr ""
 msgid "Units"
 msgstr ""
 
-#: company/models.py:629
+#: company/models.py:630
 msgid "Parameter units"
 msgstr ""
 
-#: company/models.py:731
+#: company/models.py:732
 msgid "Pack units must be compatible with the base part units"
 msgstr ""
 
-#: company/models.py:738
+#: company/models.py:739
 msgid "Pack units must be greater than zero"
 msgstr ""
 
-#: company/models.py:752
+#: company/models.py:753
 msgid "Linked manufacturer part must reference the same base part"
 msgstr ""
 
-#: company/models.py:801 company/templates/company/company_base.html:87
+#: company/models.py:802 company/templates/company/company_base.html:87
 #: company/templates/company/supplier_part.html:129 order/models.py:465
 #: order/templates/order/order_base.html:136 part/bom.py:272 part/bom.py:310
 #: part/serializers.py:499 plugin/builtin/suppliers/digikey.py:25
@@ -4154,31 +4158,31 @@ msgstr ""
 msgid "Supplier"
 msgstr ""
 
-#: company/models.py:802
+#: company/models.py:803
 msgid "Select supplier"
 msgstr ""
 
-#: company/models.py:808 part/serializers.py:510
+#: company/models.py:809 part/serializers.py:510
 msgid "Supplier stock keeping unit"
 msgstr ""
 
-#: company/models.py:814
+#: company/models.py:815
 msgid "Is this supplier part active?"
 msgstr ""
 
-#: company/models.py:824
+#: company/models.py:825
 msgid "Select manufacturer part"
 msgstr ""
 
-#: company/models.py:831
+#: company/models.py:832
 msgid "URL for external supplier part link"
 msgstr ""
 
-#: company/models.py:839
+#: company/models.py:841
 msgid "Supplier part description"
 msgstr ""
 
-#: company/models.py:846 company/templates/company/supplier_part.html:187
+#: company/models.py:848 company/templates/company/supplier_part.html:187
 #: part/admin.py:418 part/models.py:4070 part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_po_report_base.html:32
@@ -4189,15 +4193,15 @@ msgstr ""
 msgid "Note"
 msgstr ""
 
-#: company/models.py:855 part/models.py:1967
+#: company/models.py:857 part/models.py:1967
 msgid "base cost"
 msgstr ""
 
-#: company/models.py:856 part/models.py:1968
+#: company/models.py:858 part/models.py:1968
 msgid "Minimum charge (e.g. stocking fee)"
 msgstr ""
 
-#: company/models.py:863 company/templates/company/supplier_part.html:160
+#: company/models.py:865 company/templates/company/supplier_part.html:160
 #: stock/admin.py:224 stock/models.py:782 stock/serializers.py:1350
 #: stock/templates/stock/item_base.html:240
 #: templates/js/translated/company.js:1646
@@ -4205,11 +4209,11 @@ msgstr ""
 msgid "Packaging"
 msgstr ""
 
-#: company/models.py:864
+#: company/models.py:866
 msgid "Part packaging"
 msgstr ""
 
-#: company/models.py:869 templates/js/translated/company.js:1651
+#: company/models.py:871 templates/js/translated/company.js:1651
 #: templates/js/translated/part.js:1821 templates/js/translated/part.js:1877
 #: templates/js/translated/purchase_order.js:311
 #: templates/js/translated/purchase_order.js:841
@@ -4219,27 +4223,27 @@ msgstr ""
 msgid "Pack Quantity"
 msgstr ""
 
-#: company/models.py:871
+#: company/models.py:873
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
 msgstr ""
 
-#: company/models.py:890 part/models.py:1974
+#: company/models.py:892 part/models.py:1974
 msgid "multiple"
 msgstr ""
 
-#: company/models.py:891
+#: company/models.py:893
 msgid "Order multiple"
 msgstr ""
 
-#: company/models.py:903
+#: company/models.py:905
 msgid "Quantity available from supplier"
 msgstr ""
 
-#: company/models.py:909
+#: company/models.py:911
 msgid "Availability Updated"
 msgstr ""
 
-#: company/models.py:910
+#: company/models.py:912
 msgid "Date of last update of availability data"
 msgstr ""
 
@@ -8303,17 +8307,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:588
+#: plugin/registry.py:597
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:591
+#: plugin/registry.py:600
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:593
+#: plugin/registry.py:602
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
@@ -9873,12 +9877,12 @@ msgstr ""
 msgid "Outgoing email has not been configured. Some login and sign-up features may not work correctly!"
 msgstr ""
 
-#: templates/InvenTree/settings/login.html:25 templates/account/signup.html:5
+#: templates/InvenTree/settings/login.html:27 templates/account/signup.html:5
 #: templates/socialaccount/signup.html:5
 msgid "Signup"
 msgstr ""
 
-#: templates/InvenTree/settings/login.html:34
+#: templates/InvenTree/settings/login.html:36
 msgid "Single Sign On"
 msgstr ""
 
@@ -9955,36 +9959,36 @@ msgstr ""
 msgid "Changing the settings below require you to immediately restart the server. Do not change this while under active usage."
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:36
+#: templates/InvenTree/settings/plugin.html:38
 #: templates/InvenTree/settings/sidebar.html:66
 msgid "Plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:42
-#: templates/InvenTree/settings/plugin.html:43
+#: templates/InvenTree/settings/plugin.html:44
+#: templates/InvenTree/settings/plugin.html:45
 #: templates/js/translated/plugin.js:151
 msgid "Install Plugin"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:45
-#: templates/InvenTree/settings/plugin.html:46
+#: templates/InvenTree/settings/plugin.html:47
+#: templates/InvenTree/settings/plugin.html:48
 #: templates/js/translated/plugin.js:224
 msgid "Reload Plugins"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:56
+#: templates/InvenTree/settings/plugin.html:58
 msgid "External plugins are not enabled for this InvenTree installation"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:71
+#: templates/InvenTree/settings/plugin.html:73
 msgid "Plugin Error Stack"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:80
+#: templates/InvenTree/settings/plugin.html:82
 msgid "Stage"
 msgstr ""
 
-#: templates/InvenTree/settings/plugin.html:82
+#: templates/InvenTree/settings/plugin.html:84
 #: templates/js/translated/notification.js:76
 msgid "Message"
 msgstr ""
@@ -10608,26 +10612,26 @@ msgstr ""
 msgid "This email confirmation link expired or is invalid. Please <a href=\"%(email_url)s\">issue a new email confirmation request</a>."
 msgstr ""
 
-#: templates/account/login.html:6 templates/account/login.html:17
-#: templates/account/login.html:38 templates/socialaccount/login.html:5
+#: templates/account/login.html:6 templates/account/login.html:19
+#: templates/account/login.html:40 templates/socialaccount/login.html:5
 msgid "Sign In"
 msgstr ""
 
-#: templates/account/login.html:21
+#: templates/account/login.html:23
 msgid "Not a member?"
 msgstr ""
 
-#: templates/account/login.html:23 templates/account/signup.html:11
+#: templates/account/login.html:25 templates/account/signup.html:11
 #: templates/account/signup.html:22 templates/socialaccount/signup.html:8
 #: templates/socialaccount/signup.html:23
 msgid "Sign Up"
 msgstr ""
 
-#: templates/account/login.html:45
+#: templates/account/login.html:47
 msgid "Forgot Password?"
 msgstr ""
 
-#: templates/account/login.html:53
+#: templates/account/login.html:55
 msgid "or log in with"
 msgstr ""
 
@@ -13976,6 +13980,22 @@ msgstr ""
 
 #: templates/notifications.html:9
 msgid "Show all notifications and history"
+msgstr ""
+
+#: templates/pui_banner.html:9
+msgid "Platform UI - the new UI for InvenTree - provides more modern administration options."
+msgstr ""
+
+#: templates/pui_banner.html:12
+msgid "Platform UI - the new UI for InvenTree - is ready to be tested."
+msgstr ""
+
+#: templates/pui_banner.html:15
+msgid "Try it out now"
+msgstr ""
+
+#: templates/pui_banner.html:15
+msgid "here"
 msgstr ""
 
 #: templates/qr_code.html:11

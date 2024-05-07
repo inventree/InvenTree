@@ -73,8 +73,24 @@ class LicenseView(APIView):
             logger.exception("Exception while reading license file '%s': %s", path, e)
             return []
 
-        # Ensure consistent string between backend and frontend licenses
-        return [{key.lower(): value for key, value in entry.items()} for entry in data]
+        output = []
+        names = set()
+
+        # Ensure we do not have any duplicate 'name' values in the list
+        for entry in data:
+            name = None
+            for key in entry.keys():
+                if key.lower() == 'name':
+                    name = entry[key]
+                    break
+
+            if name is None or name in names:
+                continue
+
+            names.add(name)
+            output.append({key.lower(): value for key, value in entry.items()})
+
+        return output
 
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):

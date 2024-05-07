@@ -49,6 +49,7 @@ import {
   IconPaperclip,
   IconPhone,
   IconPhoto,
+  IconPoint,
   IconPrinter,
   IconProgressCheck,
   IconProps,
@@ -84,6 +85,7 @@ import {
 import React from 'react';
 
 const icons = {
+  name: IconPoint,
   description: IconInfoCircle,
   variant_of: IconStatusChange,
   unallocated_stock: IconPackage,
@@ -217,7 +219,7 @@ type InvenTreeIconProps = {
   iconProps?: TablerIconProps;
 };
 
-export function InvenTreeIcon(props: InvenTreeIconProps) {
+export function InvenTreeIcon(props: Readonly<InvenTreeIconProps>) {
   let Icon: React.ForwardRefExoticComponent<React.RefAttributes<any>>;
 
   if (props.icon in icons) {

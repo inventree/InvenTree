@@ -4,9 +4,10 @@ import {
   Container,
   Group,
   Indicator,
+  Menu,
+  Text,
   createStyles
 } from '@mantine/core';
-import { Menu, Text } from '@mantine/core';
 import { useDisclosure, useHotkeys } from '@mantine/hooks';
 import {
   IconArrowBackUpDouble,

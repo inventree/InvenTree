@@ -322,7 +322,7 @@ function ImageActionButtons({
 /**
  * Renders an image with action buttons for display on Details panels
  */
-export function DetailsImage(props: DetailImageProps) {
+export function DetailsImage(props: Readonly<DetailImageProps>) {
   // Displays a group of ActionButtons on hover
   const { hovered, ref } = useHover();
   const [img, setImg] = useState<string>(props.src ?? backup_image);

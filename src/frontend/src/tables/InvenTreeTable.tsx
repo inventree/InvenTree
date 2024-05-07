@@ -3,17 +3,22 @@ import {
   ActionIcon,
   Alert,
   Box,
+  Group,
   Indicator,
   LoadingOverlay,
   Space,
   Stack,
   Tooltip
 } from '@mantine/core';
-import { Group } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
-import { IconFilter, IconRefresh, IconTrash } from '@tabler/icons-react';
-import { IconBarcode, IconPrinter } from '@tabler/icons-react';
+import {
+  IconBarcode,
+  IconFilter,
+  IconPrinter,
+  IconRefresh,
+  IconTrash
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import {
   DataTable,

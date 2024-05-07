@@ -1,16 +1,14 @@
 import { t } from '@lingui/macro';
 import { ReactNode } from 'react';
 
-import { RenderInlineModel } from './Instance';
+import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single StockLocation instance
  */
 export function RenderStockLocation({
   instance
-}: {
-  instance: any;
-}): ReactNode {
+}: Readonly<InstanceRenderInterface>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.name}
@@ -19,7 +17,9 @@ export function RenderStockLocation({
   );
 }
 
-export function RenderStockItem({ instance }: { instance: any }): ReactNode {
+export function RenderStockItem({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   let quantity_string = '';
 
   if (instance?.serial !== null && instance?.serial !== undefined) {

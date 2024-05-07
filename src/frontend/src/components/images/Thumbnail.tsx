@@ -1,7 +1,5 @@
 import { t } from '@lingui/macro';
-import { Anchor, Skeleton } from '@mantine/core';
-import { Group } from '@mantine/core';
-import { Text } from '@mantine/core';
+import { Anchor, Group, Skeleton, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 
 import { ApiImage } from './ApiImage';

@@ -170,10 +170,18 @@ export function ProjectCodeColumn(): TableColumn {
   };
 }
 
-export function StatusColumn(model: ModelType) {
+export function StatusColumn({
+  model,
+  sortable,
+  accessor
+}: {
+  model: ModelType;
+  sortable?: boolean;
+  accessor?: string;
+}) {
   return {
-    accessor: 'status',
-    sortable: true,
+    accessor: accessor ?? 'status',
+    sortable: sortable ?? true,
     render: TableStatusRenderer(model)
   };
 }
@@ -191,9 +199,11 @@ export function DateColumn({
   accessor,
   sortable,
   switchable,
+  ordering,
   title
 }: {
   accessor?: string;
+  ordering?: string;
   sortable?: boolean;
   switchable?: boolean;
   title?: string;
@@ -201,9 +211,10 @@ export function DateColumn({
   return {
     accessor: accessor ?? 'date',
     sortable: sortable ?? true,
+    ordering: ordering,
     title: title ?? t`Date`,
     switchable: switchable,
-    render: (record: any) => renderDate(record[accessor ?? 'date'])
+    render: (record: any) => renderDate(resolveItem(record, accessor ?? 'date'))
   };
 }
 

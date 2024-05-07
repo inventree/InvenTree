@@ -27,10 +27,19 @@ test('PUI - Parts', async ({ page }) => {
   await page.getByText('1551ACLR').click();
   await page.getByRole('tab', { name: 'Part Details' }).click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
-  // await page.getByRole('tab', { name: 'Stock' }).click();
+  await page
+    .getByRole('tab', { name: 'Part Details' })
+    .locator('xpath=..')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
+
+  await page.goto(`${baseUrl}/part/category/index/parts`);
+  await page.getByText('Blue Chair').click();
+  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
+  await page.getByRole('tab', { name: 'Build Orders' }).click();
 });
 
 test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
@@ -62,9 +71,10 @@ test('PUI - Parts - Supplier Parts', async ({ page }) => {
 test('PUI - Sales', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/sales/`);
-
+  await page.goto(`${baseUrl}/sales/index/`);
   await page.waitForURL('**/platform/sales/**');
+
+  await page.getByRole('tab', { name: 'Sales Orders' }).click();
   await page.waitForURL('**/platform/sales/index/salesorders');
   await page.getByRole('tab', { name: 'Return Orders' }).click();
 

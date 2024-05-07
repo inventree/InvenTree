@@ -5,8 +5,12 @@ import { doQuickLogin } from './login.js';
 test('PUI - Stock', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/stock`);
+  await page.goto(`${baseUrl}/stock/location/index/`);
+  await page.waitForURL('**/platform/stock/location/**');
+
+  await page.getByRole('tab', { name: 'Location Details' }).click();
   await page.waitForURL('**/platform/stock/location/index/details');
+
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('cell', { name: '1551ABK' }).click();
   await page.getByRole('tab', { name: 'Stock', exact: true }).click();
@@ -16,6 +20,14 @@ test('PUI - Stock', async ({ page }) => {
   await page.getByRole('tab', { name: 'Stock Locations' }).click();
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('tab', { name: 'Location Details' }).click();
+
+  await page.goto(`${baseUrl}/stock/item/1194/details`);
+  await page.getByText('D.123 | Doohickey').waitFor();
+  await page.getByText('Batch Code: BX-123-2024-2-7').waitFor();
+  await page.getByRole('tab', { name: 'Stock Tracking' }).click();
+  await page.getByRole('tab', { name: 'Test Data' }).click();
+  await page.getByText('395c6d5586e5fb656901d047be27e1f7').waitFor();
+  await page.getByRole('tab', { name: 'Installed Items' }).click();
 });
 
 test('PUI - Build', async ({ page }) => {

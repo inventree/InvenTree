@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { IconCircleCheck, IconCircleX } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
@@ -11,7 +11,14 @@ import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import {
+  useBuildOrderOutputFields,
+  useCancelBuildOutputsForm,
+  useCompleteBuildOutputsForm,
+  useScrapBuildOutputsForm
+} from '../../forms/BuildForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -26,19 +33,21 @@ type TestResultOverview = {
   result: boolean;
 };
 
-export default function BuildOutputTable({
-  buildId,
-  partId
-}: {
-  buildId: number;
-  partId: number;
-}) {
+export default function BuildOutputTable({ build }: { build: any }) {
   const user = useUserState();
   const table = useTable('build-outputs');
 
+  const buildId: number = useMemo(() => {
+    return build.pk ?? -1;
+  }, [build.pk]);
+
+  const partId: number = useMemo(() => {
+    return build.part ?? -1;
+  }, [build.part]);
+
   // Fetch the test templates associated with the partId
   const { data: testTemplates } = useQuery({
-    queryKey: ['buildoutputtests', partId],
+    queryKey: ['buildoutputtests', build.part],
     queryFn: async () => {
       if (!partId) {
         return [];
@@ -98,36 +107,82 @@ export default function BuildOutputTable({
     [partId, testTemplates]
   );
 
+  const buildOutputFields = useBuildOrderOutputFields({ build: build });
+
+  const addBuildOutput = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_output_create, buildId),
+    title: t`Add Build Output`,
+    fields: buildOutputFields,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
+  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
+
+  const completeBuildOutputsForm = useCompleteBuildOutputsForm({
+    build: build,
+    outputs: selectedOutputs,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
+  const scrapBuildOutputsForm = useScrapBuildOutputsForm({
+    build: build,
+    outputs: selectedOutputs,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
+  const cancelBuildOutputsForm = useCancelBuildOutputsForm({
+    build: build,
+    outputs: selectedOutputs,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
+
   const tableActions = useMemo(() => {
-    // TODO: Button to create new build output
-    // TODO: Button to complete output(s)
-    // TODO: Button to cancel output(s)
-    // TODO: Button to scrap output(s)
     return [
       <AddItemButton
         tooltip={t`Add Build Output`}
         hidden={!user.hasAddRole(UserRoles.build)}
+        onClick={addBuildOutput.open}
       />,
       <ActionButton
         tooltip={t`Complete selected outputs`}
         icon={<InvenTreeIcon icon="success" />}
         color="green"
         disabled={!table.hasSelectedRecords}
+        onClick={() => {
+          setSelectedOutputs(table.selectedRecords);
+          completeBuildOutputsForm.open();
+        }}
       />,
       <ActionButton
         tooltip={t`Scrap selected outputs`}
-        icon={<InvenTreeIcon icon="cancel" />}
-        color="red"
-        disabled={!table.hasSelectedRecords}
-      />,
-      <ActionButton
-        tooltip={t`Cancel selected outputs`}
         icon={<InvenTreeIcon icon="delete" />}
         color="red"
         disabled={!table.hasSelectedRecords}
+        onClick={() => {
+          setSelectedOutputs(table.selectedRecords);
+          scrapBuildOutputsForm.open();
+        }}
+      />,
+      <ActionButton
+        tooltip={t`Cancel selected outputs`}
+        icon={<InvenTreeIcon icon="cancel" />}
+        color="red"
+        disabled={!table.hasSelectedRecords}
+        onClick={() => {
+          setSelectedOutputs(table.selectedRecords);
+          cancelBuildOutputsForm.open();
+        }}
       />
     ];
-  }, [user, partId, buildId, table.hasSelectedRecords]);
+  }, [user, table.selectedRecords, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
     (record: any) => {
@@ -148,25 +203,37 @@ export default function BuildOutputTable({
           title: t`Complete`,
           tooltip: t`Complete build output`,
           color: 'green',
-          icon: <InvenTreeIcon icon="success" />
+          icon: <InvenTreeIcon icon="success" />,
+          onClick: () => {
+            setSelectedOutputs([record]);
+            completeBuildOutputsForm.open();
+          }
         },
         {
           title: t`Scrap`,
           tooltip: t`Scrap build output`,
+          icon: <InvenTreeIcon icon="delete" />,
           color: 'red',
-          icon: <InvenTreeIcon icon="cancel" />
+          onClick: () => {
+            setSelectedOutputs([record]);
+            scrapBuildOutputsForm.open();
+          }
         },
         {
-          title: t`Delete`,
-          tooltip: t`Delete build output`,
+          title: t`Cancel`,
+          tooltip: t`Cancel build output`,
+          icon: <InvenTreeIcon icon="cancel" />,
           color: 'red',
-          icon: <InvenTreeIcon icon="delete" />
+          onClick: () => {
+            setSelectedOutputs([record]);
+            cancelBuildOutputsForm.open();
+          }
         }
       ];
 
       return actions;
     },
-    [user, partId, buildId]
+    [user, partId]
   );
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -257,6 +324,10 @@ export default function BuildOutputTable({
 
   return (
     <>
+      {addBuildOutput.modal}
+      {completeBuildOutputsForm.modal}
+      {scrapBuildOutputsForm.modal}
+      {cancelBuildOutputsForm.modal}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(ApiEndpoints.stock_item_list)}

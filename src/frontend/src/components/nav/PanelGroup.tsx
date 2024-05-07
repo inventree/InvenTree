@@ -10,8 +10,7 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
-import { ReactNode, useMemo } from 'react';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import {
   Navigate,
   Route,
@@ -51,7 +50,7 @@ function BasePanelGroup({
   onPanelChange,
   selectedPanel,
   collapsible = true
-}: PanelProps): ReactNode {
+}: Readonly<PanelProps>): ReactNode {
   const navigate = useNavigate();
   const { panel } = useParams();
 
@@ -178,7 +177,11 @@ function BasePanelGroup({
   );
 }
 
-function IndexPanelComponent({ pageKey, selectedPanel, panels }: PanelProps) {
+function IndexPanelComponent({
+  pageKey,
+  selectedPanel,
+  panels
+}: Readonly<PanelProps>) {
   const lastUsedPanel = useLocalState((state) => {
     const panelName =
       selectedPanel || state.lastUsedPanels[pageKey] || panels[0]?.name;
@@ -203,7 +206,7 @@ function IndexPanelComponent({ pageKey, selectedPanel, panels }: PanelProps) {
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
  */
-export function PanelGroup(props: PanelProps) {
+export function PanelGroup(props: Readonly<PanelProps>) {
   return (
     <Routes>
       <Route index element={<IndexPanelComponent {...props} />} />

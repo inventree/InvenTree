@@ -8,6 +8,7 @@ import {
   Divider,
   Drawer,
   Group,
+  Loader,
   Menu,
   Paper,
   Space,
@@ -15,7 +16,6 @@ import {
   Text,
   TextInput
 } from '@mantine/core';
-import { Loader } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconAlertCircle,

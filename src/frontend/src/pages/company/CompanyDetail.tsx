@@ -29,8 +29,7 @@ import {
 } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup } from '../../components/nav/PanelGroup';
-import { PanelType } from '../../components/nav/PanelGroup';
+import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
@@ -57,7 +56,7 @@ export type CompanyDetailProps = {
 /**
  * Detail view for a single company instance
  */
-export default function CompanyDetail(props: CompanyDetailProps) {
+export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
   const user = useUserState();
@@ -198,7 +197,11 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPackages />,
         hidden: !company?.is_manufacturer && !company?.is_supplier,
         content: company?.pk && (
-          <StockItemTable params={{ company: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="company-stock"
+            params={{ company: company.pk }}
+          />
         )
       },
       {
@@ -223,7 +226,11 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPackageExport />,
         hidden: !company?.is_customer,
         content: company?.pk ? (
-          <StockItemTable params={{ customer: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="assigned-stock"
+            params={{ customer: company.pk }}
+          />
         ) : (
           <Skeleton />
         )

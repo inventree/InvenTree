@@ -58,8 +58,14 @@ export enum ApiEndpoints {
 
   // Build API endpoints
   build_order_list = 'build/',
+  build_order_cancel = 'build/:id/cancel/',
+  build_output_create = 'build/:id/create-output/',
+  build_output_complete = 'build/:id/complete/',
+  build_output_scrap = 'build/:id/scrap-outputs/',
+  build_output_delete = 'build/:id/delete-outputs/',
   build_order_attachment_list = 'build/attachment/',
   build_line_list = 'build/line/',
+
   bom_list = 'bom/',
 
   // Part API endpoints
@@ -68,6 +74,7 @@ export enum ApiEndpoints {
   part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing_get = 'part/:id/pricing/',
+  part_serial_numbers = 'part/:id/serial-numbers/',
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',

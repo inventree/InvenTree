@@ -1,7 +1,13 @@
 import { Trans } from '@lingui/macro';
-import { Button, Card, Stack, TextInput } from '@mantine/core';
-import { Group, Text } from '@mantine/core';
-import { Accordion } from '@mantine/core';
+import {
+  Accordion,
+  Button,
+  Card,
+  Group,
+  Stack,
+  Text,
+  TextInput
+} from '@mantine/core';
 import { spotlight } from '@mantine/spotlight';
 import { IconAlien } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';

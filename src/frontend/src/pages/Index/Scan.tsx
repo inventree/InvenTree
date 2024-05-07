@@ -1,9 +1,11 @@
 import { Trans, t } from '@lingui/macro';
 import {
   ActionIcon,
+  Badge,
   Button,
   Checkbox,
   Col,
+  Container,
   Grid,
   Group,
   ScrollArea,
@@ -15,15 +17,14 @@ import {
   TextInput,
   rem
 } from '@mantine/core';
-import { Badge, Container } from '@mantine/core';
 import {
   getHotkeyHandler,
   randomId,
+  useDocumentVisibility,
   useFullscreen,
   useListState,
   useLocalStorage
 } from '@mantine/hooks';
-import { useDocumentVisibility } from '@mantine/hooks';
 import { showNotification } from '@mantine/notifications';
 import {
   IconAlertCircle,
@@ -36,12 +37,12 @@ import {
   IconPlus,
   IconQuestionMark,
   IconSearch,
-  IconTrash
+  IconTrash,
+  IconX
 } from '@tabler/icons-react';
-import { IconX } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 
 import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
@@ -168,15 +169,17 @@ export default function Scan() {
               .get(url)
               .then((response) => {
                 item.instance = response.data;
+                const list_idx = history.findIndex((i) => i.id === id);
+                historyHandlers.setItem(list_idx, item);
               })
               .catch((err) => {
                 console.error('error while fetching instance data at', url);
                 console.info(err);
               });
           }
+        } else {
+          historyHandlers.setState(history);
         }
-
-        historyHandlers.setState(history);
       })
       .catch((err) => {
         // 400 and no plugin means no match
@@ -279,7 +282,12 @@ export default function Scan() {
             text={t`This page can be used for continuously scanning items and taking actions on them.`}
           />
         </Group>
-        <Button onClick={toggleFullscreen} size="sm" variant="subtle">
+        <Button
+          onClick={toggleFullscreen}
+          size="sm"
+          variant="subtle"
+          title={t`Toggle Fullscreen`}
+        >
           {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
         </Button>
       </Group>
@@ -363,7 +371,11 @@ export default function Scan() {
             >
               <Trans>History</Trans>
             </TitleWithDoc>
-            <ActionIcon color="red" onClick={btnDeleteFullHistory}>
+            <ActionIcon
+              color="red"
+              onClick={btnDeleteFullHistory}
+              title={t`Delete History`}
+            >
               <IconTrash />
             </ActionIcon>
           </Group>
@@ -397,30 +409,35 @@ function HistoryTable({
     setSelection((current) =>
       current.length === data.length ? [] : data.map((item) => item.id)
     );
+  const [rows, setRows] = useState<ReactNode>();
 
-  const rows = data.map((item) => {
-    return (
-      <tr key={item.id}>
-        <td>
-          <Checkbox
-            checked={selection.includes(item.id)}
-            onChange={() => toggleRow(item.id)}
-            transitionDuration={0}
-          />
-        </td>
-        <td>
-          {item.pk && item.model && item.instance ? (
-            <RenderInstance model={item.model} instance={item.instance} />
-          ) : (
-            item.ref
-          )}
-        </td>
-        <td>{item.model}</td>
-        <td>{item.source}</td>
-        <td>{item.timestamp?.toString()}</td>
-      </tr>
+  useEffect(() => {
+    setRows(
+      data.map((item) => {
+        return (
+          <tr key={item.id}>
+            <td>
+              <Checkbox
+                checked={selection.includes(item.id)}
+                onChange={() => toggleRow(item.id)}
+                transitionDuration={0}
+              />
+            </td>
+            <td>
+              {item.pk && item.model && item.instance ? (
+                <RenderInstance model={item.model} instance={item.instance} />
+              ) : (
+                item.ref
+              )}
+            </td>
+            <td>{item.model}</td>
+            <td>{item.source}</td>
+            <td>{item.timestamp?.toString()}</td>
+          </tr>
+        );
+      })
     );
-  });
+  }, [data, selection]);
 
   // rendering
   if (data.length === 0)
@@ -470,11 +487,11 @@ enum InputMethod {
   ImageBarcode = 'imageBarcode'
 }
 
-interface inputProps {
+interface ScanInputInterface {
   action: (items: ScanItem[]) => void;
 }
 
-function InputManual({ action }: inputProps) {
+function InputManual({ action }: Readonly<ScanInputInterface>) {
   const [value, setValue] = useState<string>('');
 
   function btnAddItem() {
@@ -526,7 +543,7 @@ function InputManual({ action }: inputProps) {
 }
 
 /* Input that uses QR code detection from images */
-function InputImageBarcode({ action }: inputProps) {
+function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
     key: 'camId',
