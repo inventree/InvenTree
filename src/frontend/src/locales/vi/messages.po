@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-06 04:21\n"
+"PO-Revision-Date: 2024-05-07 07:40\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -279,7 +279,7 @@ msgstr "Cập nhật"
 #: src/components/items/ActionDropdown.tsx:201
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:121
-#: src/pages/Index/Scan.tsx:333
+#: src/pages/Index/Scan.tsx:340
 #: src/pages/Notifications.tsx:123
 #: src/tables/InvenTreeTable.tsx:479
 #: src/tables/RowActions.tsx:71
@@ -757,43 +757,43 @@ msgid "Unknown response"
 msgstr "Trả lời không xác định"
 
 #: src/components/modals/QrCodeModal.tsx:102
-#: src/pages/Index/Scan.tsx:618
+#: src/pages/Index/Scan.tsx:634
 msgid "Error while getting camera"
 msgstr "Có lỗi khi lấy camera"
 
 #: src/components/modals/QrCodeModal.tsx:125
-#: src/pages/Index/Scan.tsx:641
+#: src/pages/Index/Scan.tsx:657
 msgid "Error while scanning"
 msgstr "Lỗi khi quét"
 
 #: src/components/modals/QrCodeModal.tsx:139
-#: src/pages/Index/Scan.tsx:655
+#: src/pages/Index/Scan.tsx:671
 msgid "Error while stopping"
 msgstr "Lỗi trong khi dừng lại"
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/defaults/menuItems.tsx:21
-#: src/pages/Index/Scan.tsx:724
+#: src/pages/Index/Scan.tsx:740
 msgid "Scanning"
 msgstr "Đang quét"
 
 #: src/components/modals/QrCodeModal.tsx:154
-#: src/pages/Index/Scan.tsx:724
+#: src/pages/Index/Scan.tsx:740
 msgid "Not scanning"
 msgstr "Chưa quét"
 
 #: src/components/modals/QrCodeModal.tsx:159
-#: src/pages/Index/Scan.tsx:730
+#: src/pages/Index/Scan.tsx:746
 msgid "Select Camera"
 msgstr "Chọn camera"
 
 #: src/components/modals/QrCodeModal.tsx:169
-#: src/pages/Index/Scan.tsx:716
+#: src/pages/Index/Scan.tsx:732
 msgid "Start scanning"
 msgstr "Bắt đầu quét"
 
 #: src/components/modals/QrCodeModal.tsx:176
-#: src/pages/Index/Scan.tsx:710
+#: src/pages/Index/Scan.tsx:726
 msgid "Stop scanning"
 msgstr "Dừng quét"
 
@@ -2496,7 +2496,7 @@ msgid "Add"
 msgstr "Thêm"
 
 #: src/forms/StockForms.tsx:491
-#: src/pages/Index/Scan.tsx:263
+#: src/pages/Index/Scan.tsx:265
 #: src/pages/stock/StockDetail.tsx:407
 msgid "Count"
 msgstr "Đếm"
@@ -2653,7 +2653,7 @@ msgid "Checking if you are already logged in"
 msgstr "Đang kiểm tra trạng thái đăng nhập của bạn"
 
 #: src/pages/Auth/Login.tsx:31
-#: src/pages/Index/Scan.tsx:319
+#: src/pages/Index/Scan.tsx:326
 msgid "No selection"
 msgstr "Không có lựa chọn"
 
@@ -2866,112 +2866,120 @@ msgstr "Trang này là trình diễn tính năng dự kiến cho nền tảng UI
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:215
+#: src/pages/Index/Scan.tsx:217
 msgid "Manual input"
 msgstr "Nhập thủ công"
 
-#: src/pages/Index/Scan.tsx:216
+#: src/pages/Index/Scan.tsx:218
 msgid "Image Barcode"
 msgstr "Mã vạch dạng ảnh"
 
-#: src/pages/Index/Scan.tsx:246
+#: src/pages/Index/Scan.tsx:248
 msgid "Selected elements are not known"
 msgstr "Chọn phần tử chưa được biết đến"
 
-#: src/pages/Index/Scan.tsx:253
+#: src/pages/Index/Scan.tsx:255
 msgid "Multiple object types selected"
 msgstr "Đã chọn nhiều loại đối tượng"
 
-#: src/pages/Index/Scan.tsx:260
+#: src/pages/Index/Scan.tsx:262
 msgid "Actions for {0}"
 msgstr "Chức năng cho {0}"
 
-#: src/pages/Index/Scan.tsx:277
+#: src/pages/Index/Scan.tsx:279
 msgid "Scan Page"
 msgstr "Quét trang"
 
-#: src/pages/Index/Scan.tsx:280
+#: src/pages/Index/Scan.tsx:282
 msgid "This page can be used for continuously scanning items and taking actions on them."
 msgstr "Trang này hữu dụng khi quét liên tục các mục và thao tác với chúng."
 
-#: src/pages/Index/Scan.tsx:295
+#: src/pages/Index/Scan.tsx:289
+msgid "Toggle Fullscreen"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:302
 msgid "Select the input method you want to use to scan items."
 msgstr "Chọn phương thức nhập liệu bạn muốn để dùng quét mục."
 
-#: src/pages/Index/Scan.tsx:297
+#: src/pages/Index/Scan.tsx:304
 msgid "Input"
 msgstr "Nhập liệu"
 
-#: src/pages/Index/Scan.tsx:304
+#: src/pages/Index/Scan.tsx:311
 msgid "Select input method"
 msgstr "Chọn phương thức nhập liệu"
 
-#: src/pages/Index/Scan.tsx:305
+#: src/pages/Index/Scan.tsx:312
 msgid "Nothing found"
 msgstr "Không tìm thấy"
 
-#: src/pages/Index/Scan.tsx:313
+#: src/pages/Index/Scan.tsx:320
 msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
 msgstr "Tùy vào sản phẩm được chọn, chức năng sẽ được hiển thị ở đây. Hiện tại chưa hỗ trợ tất cả các loại mã vạch."
 
-#: src/pages/Index/Scan.tsx:315
+#: src/pages/Index/Scan.tsx:322
 msgid "Action"
 msgstr "Thao tác"
 
-#: src/pages/Index/Scan.tsx:324
+#: src/pages/Index/Scan.tsx:331
 msgid "{0} items selected"
 msgstr "đã chọn {0} mục"
 
-#: src/pages/Index/Scan.tsx:327
+#: src/pages/Index/Scan.tsx:334
 msgid "General Actions"
 msgstr "Chức năng chung"
 
-#: src/pages/Index/Scan.tsx:340
+#: src/pages/Index/Scan.tsx:347
 msgid "Lookup part"
 msgstr "Tra cứu phụ kiện"
 
-#: src/pages/Index/Scan.tsx:347
+#: src/pages/Index/Scan.tsx:354
 msgid "Open Link"
 msgstr "Mở liên kết"
 
-#: src/pages/Index/Scan.tsx:362
+#: src/pages/Index/Scan.tsx:369
 msgid "History is locally kept in this browser."
 msgstr "Lịch sử được lưu tạm trên trình duyệt của máy này."
 
-#: src/pages/Index/Scan.tsx:363
+#: src/pages/Index/Scan.tsx:370
 msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
 msgstr "Lịch sử được giữ trong lưu trữ nội bộ trình duyệt. Vậy nó sẽ không thể được chia sẻ với người dùng khác hoặc thiết bị khác nhưng nó vẫn tồn tại bền bỉ cho dù có nạp lại trang. Bạn có thể chọn mục trong lịch sử để thao tác với chúng. Để thêm mục, quét/nhập chúng trong khu vực nhập liệu."
 
-#: src/pages/Index/Scan.tsx:365
+#: src/pages/Index/Scan.tsx:372
 #: src/pages/Notifications.tsx:100
 msgid "History"
 msgstr "Lịch sử"
 
-#: src/pages/Index/Scan.tsx:430
+#: src/pages/Index/Scan.tsx:377
+msgid "Delete History"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:446
 msgid "No history"
 msgstr "Chưa có lịch sử"
 
-#: src/pages/Index/Scan.tsx:449
+#: src/pages/Index/Scan.tsx:465
 msgid "Item"
 msgstr "Hàng hóa"
 
-#: src/pages/Index/Scan.tsx:452
+#: src/pages/Index/Scan.tsx:468
 msgid "Type"
 msgstr "Loại"
 
-#: src/pages/Index/Scan.tsx:455
+#: src/pages/Index/Scan.tsx:471
 msgid "Source"
 msgstr "Nguồn"
 
-#: src/pages/Index/Scan.tsx:458
+#: src/pages/Index/Scan.tsx:474
 msgid "Scanned at"
 msgstr "Quét lúc"
 
-#: src/pages/Index/Scan.tsx:510
+#: src/pages/Index/Scan.tsx:526
 msgid "Enter item serial or data"
 msgstr "Nhập sê-ri hàng hóa hoặc dữ liệu"
 
-#: src/pages/Index/Scan.tsx:522
+#: src/pages/Index/Scan.tsx:538
 msgid "Add dummy item"
 msgstr "Thêm mục giả lập"
 
