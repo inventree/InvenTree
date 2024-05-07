@@ -31,6 +31,9 @@ test('PUI - Pages - Index - Scan (Part)', async ({ page }) => {
   await page.getByText('R_10R_0402_1%').waitFor();
   await page.getByText('Stock:').waitFor();
   await page.getByRole('cell', { name: 'part' }).waitFor();
+
+  // follow link section
+  await page.getByRole('button', { name: 'Open Link' }).click();
 });
 
 test('PUI - Pages - Index - Scan (Stockitem)', async ({ page }) => {
@@ -126,7 +129,8 @@ test('PUI - Pages - Index - Scan (General)', async ({ page }) => {
 
   // Toggle fullscreen
   await page.getByRole('button', { name: 'Toggle Fullscreen' }).click();
-  await page.waitForTimeout(1000);
   await page.getByRole('button', { name: 'Toggle Fullscreen' }).click();
-  await page.waitForTimeout(1000);
+
+  // Search for part
+  await page.getByRole('button', { name: 'Lookup part' });
 });
