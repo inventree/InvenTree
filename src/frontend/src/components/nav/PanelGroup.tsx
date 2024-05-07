@@ -139,7 +139,8 @@ function BasePanelGroup({
                 paddingLeft: '10px'
               }}
               onClick={() => setExpanded(!expanded)}
-              variant="default"
+              variant="transparent"
+              size="md"
             >
               {expanded ? (
                 <IconLayoutSidebarLeftCollapse opacity={0.5} />
