@@ -55,9 +55,11 @@ export function Header() {
         };
         let response = await api
           .get(apiUrl(ApiEndpoints.notifications_list), params)
-          .catch(() => {});
-        setNotificationCount(response.data?.count ?? 0);
-        return response.data;
+          .catch(() => {
+            return null;
+          });
+        setNotificationCount(response?.data?.count ?? 0);
+        return response?.data;
       } catch (error) {
         return error;
       }
