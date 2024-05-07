@@ -4,12 +4,12 @@ import { ErrorBoundary, FallbackRender } from '@sentry/react';
 import { IconExclamationCircle } from '@tabler/icons-react';
 import { ReactNode, useCallback } from 'react';
 
-function DefaultFallback(): ReactNode {
+function DefaultFallback({ title }: { title: String }): ReactNode {
   return (
     <Alert
       color="red"
       icon={<IconExclamationCircle />}
-      title={t`Error rendering component`}
+      title={t`Error rendering component` + `: ${title}`}
     >
       {t`An error occurred while rendering this component. Refer to the console for more information.`}
     </Alert>
@@ -34,7 +34,10 @@ export function Boundary({
   );
 
   return (
-    <ErrorBoundary fallback={fallback ?? <DefaultFallback />} onError={onError}>
+    <ErrorBoundary
+      fallback={fallback ?? <DefaultFallback title={label} />}
+      onError={onError}
+    >
       {children}
     </ErrorBoundary>
   );
