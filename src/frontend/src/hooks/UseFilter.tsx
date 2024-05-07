@@ -27,7 +27,7 @@ export function useFilters(props: UseFilterProps) {
       return await api
         .request({
           url: props.url,
-          method: props.method || 'GET',
+          method: props.method ?? 'GET',
           params: props.params
         })
         .then((response) => {

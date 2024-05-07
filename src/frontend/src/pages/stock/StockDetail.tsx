@@ -301,7 +301,10 @@ export default function StockDetail() {
         icon: <IconSitemap />,
         hidden: (stockitem?.child_items ?? 0) == 0,
         content: stockitem?.pk ? (
-          <StockItemTable params={{ ancestor: stockitem.pk }} />
+          <StockItemTable
+            tableName="child-stock"
+            params={{ ancestor: stockitem.pk }}
+          />
         ) : (
           <Skeleton />
         )

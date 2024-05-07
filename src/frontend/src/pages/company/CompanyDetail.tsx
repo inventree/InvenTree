@@ -197,7 +197,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconPackages />,
         hidden: !company?.is_manufacturer && !company?.is_supplier,
         content: company?.pk && (
-          <StockItemTable params={{ company: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="company-stock"
+            params={{ company: company.pk }}
+          />
         )
       },
       {
@@ -222,7 +226,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconPackageExport />,
         hidden: !company?.is_customer,
         content: company?.pk ? (
-          <StockItemTable params={{ customer: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="assigned-stock"
+            params={{ customer: company.pk }}
+          />
         ) : (
           <Skeleton />
         )
