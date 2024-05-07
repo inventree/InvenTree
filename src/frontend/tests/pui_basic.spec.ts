@@ -18,13 +18,6 @@ test('PUI - Basic Login Test', async ({ page }) => {
     .getByRole('heading', { name: `Welcome to your Dashboard, ${user.name}` })
     .click();
 
-  // Logout (via URL)
-  await page.goto(`${baseUrl}/logout/`);
-  await page.waitForURL('**/platform/login');
-
-  // Login again
-  await doLogin(page);
-
   // Check that the username is provided
   await page.getByText(user.username);
 
@@ -57,4 +50,8 @@ test('PUI - Quick Login Test', async ({ page }) => {
   await page
     .getByRole('heading', { name: `Welcome to your Dashboard, ${user.name}` })
     .click();
+
+  // Logout (via URL)
+  await page.goto(`${baseUrl}/logout/`);
+  await page.waitForURL('**/platform/login');
 });
