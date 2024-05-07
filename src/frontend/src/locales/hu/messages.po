@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-06 04:21\n"
+"PO-Revision-Date: 2024-05-07 07:40\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -279,7 +279,7 @@ msgstr "Frissítés"
 #: src/components/items/ActionDropdown.tsx:201
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:121
-#: src/pages/Index/Scan.tsx:333
+#: src/pages/Index/Scan.tsx:340
 #: src/pages/Notifications.tsx:123
 #: src/tables/InvenTreeTable.tsx:479
 #: src/tables/RowActions.tsx:71
@@ -757,43 +757,43 @@ msgid "Unknown response"
 msgstr "Ismeretlen válasz"
 
 #: src/components/modals/QrCodeModal.tsx:102
-#: src/pages/Index/Scan.tsx:618
+#: src/pages/Index/Scan.tsx:634
 msgid "Error while getting camera"
 msgstr "Hiba a kamera megnyitása közben"
 
 #: src/components/modals/QrCodeModal.tsx:125
-#: src/pages/Index/Scan.tsx:641
+#: src/pages/Index/Scan.tsx:657
 msgid "Error while scanning"
 msgstr "Hiba a kódolvasás közben"
 
 #: src/components/modals/QrCodeModal.tsx:139
-#: src/pages/Index/Scan.tsx:655
+#: src/pages/Index/Scan.tsx:671
 msgid "Error while stopping"
 msgstr "Hiba a leállítás közben"
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/defaults/menuItems.tsx:21
-#: src/pages/Index/Scan.tsx:724
+#: src/pages/Index/Scan.tsx:740
 msgid "Scanning"
 msgstr "Kódolvasás"
 
 #: src/components/modals/QrCodeModal.tsx:154
-#: src/pages/Index/Scan.tsx:724
+#: src/pages/Index/Scan.tsx:740
 msgid "Not scanning"
 msgstr "Nincs kódolvasás"
 
 #: src/components/modals/QrCodeModal.tsx:159
-#: src/pages/Index/Scan.tsx:730
+#: src/pages/Index/Scan.tsx:746
 msgid "Select Camera"
 msgstr "Kamera kiválasztása"
 
 #: src/components/modals/QrCodeModal.tsx:169
-#: src/pages/Index/Scan.tsx:716
+#: src/pages/Index/Scan.tsx:732
 msgid "Start scanning"
 msgstr "Kódolvasás indítása"
 
 #: src/components/modals/QrCodeModal.tsx:176
-#: src/pages/Index/Scan.tsx:710
+#: src/pages/Index/Scan.tsx:726
 msgid "Stop scanning"
 msgstr "Kódolvasás leállítása"
 
@@ -2496,7 +2496,7 @@ msgid "Add"
 msgstr "Hozzáadás"
 
 #: src/forms/StockForms.tsx:491
-#: src/pages/Index/Scan.tsx:263
+#: src/pages/Index/Scan.tsx:265
 #: src/pages/stock/StockDetail.tsx:407
 msgid "Count"
 msgstr "Mennyiség"
@@ -2653,7 +2653,7 @@ msgid "Checking if you are already logged in"
 msgstr "Ellenőrzöm hogy be vagy-e már jelentkezve"
 
 #: src/pages/Auth/Login.tsx:31
-#: src/pages/Index/Scan.tsx:319
+#: src/pages/Index/Scan.tsx:326
 msgid "No selection"
 msgstr "Nincs kijelölés"
 
@@ -2866,112 +2866,120 @@ msgstr "Ez az oldal a Platform UI lehetőségeit mutatja be."
 #~ msgid "Design <0/>"
 #~ msgstr "Design <0/>"
 
-#: src/pages/Index/Scan.tsx:215
+#: src/pages/Index/Scan.tsx:217
 msgid "Manual input"
 msgstr "Kézi bevitel"
 
-#: src/pages/Index/Scan.tsx:216
+#: src/pages/Index/Scan.tsx:218
 msgid "Image Barcode"
 msgstr "Vonalkód képe"
 
-#: src/pages/Index/Scan.tsx:246
+#: src/pages/Index/Scan.tsx:248
 msgid "Selected elements are not known"
 msgstr "Kiválasztott elemek ismeretlenek"
 
-#: src/pages/Index/Scan.tsx:253
+#: src/pages/Index/Scan.tsx:255
 msgid "Multiple object types selected"
 msgstr "Többféle objektum típus lett kiválasztva"
 
-#: src/pages/Index/Scan.tsx:260
+#: src/pages/Index/Scan.tsx:262
 msgid "Actions for {0}"
 msgstr "{0} műveletei"
 
-#: src/pages/Index/Scan.tsx:277
+#: src/pages/Index/Scan.tsx:279
 msgid "Scan Page"
 msgstr "Kódolvasó lap"
 
-#: src/pages/Index/Scan.tsx:280
+#: src/pages/Index/Scan.tsx:282
 msgid "This page can be used for continuously scanning items and taking actions on them."
 msgstr "Lap a tételek folyamatos kódolvasására és műveleteire."
 
-#: src/pages/Index/Scan.tsx:295
+#: src/pages/Index/Scan.tsx:289
+msgid "Toggle Fullscreen"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:302
 msgid "Select the input method you want to use to scan items."
 msgstr "Válassz beviteli módot a tételek beolvasásához."
 
-#: src/pages/Index/Scan.tsx:297
+#: src/pages/Index/Scan.tsx:304
 msgid "Input"
 msgstr "Bevitel"
 
-#: src/pages/Index/Scan.tsx:304
+#: src/pages/Index/Scan.tsx:311
 msgid "Select input method"
 msgstr "Beviteli mód kiválasztása"
 
-#: src/pages/Index/Scan.tsx:305
+#: src/pages/Index/Scan.tsx:312
 msgid "Nothing found"
 msgstr "Nincs találat"
 
-#: src/pages/Index/Scan.tsx:313
+#: src/pages/Index/Scan.tsx:320
 msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
 msgstr "A kiválasztott alkatrészektől függő műveletek jelennek meg itt. Jelenleg nem minden vonalkód támogatott."
 
-#: src/pages/Index/Scan.tsx:315
+#: src/pages/Index/Scan.tsx:322
 msgid "Action"
 msgstr "Művelet"
 
-#: src/pages/Index/Scan.tsx:324
+#: src/pages/Index/Scan.tsx:331
 msgid "{0} items selected"
 msgstr "{0} kiválasztott tétel"
 
-#: src/pages/Index/Scan.tsx:327
+#: src/pages/Index/Scan.tsx:334
 msgid "General Actions"
 msgstr "Általános műveletek"
 
-#: src/pages/Index/Scan.tsx:340
+#: src/pages/Index/Scan.tsx:347
 msgid "Lookup part"
 msgstr "Alkatrész keresés"
 
-#: src/pages/Index/Scan.tsx:347
+#: src/pages/Index/Scan.tsx:354
 msgid "Open Link"
 msgstr "Link megnyitása"
 
-#: src/pages/Index/Scan.tsx:362
+#: src/pages/Index/Scan.tsx:369
 msgid "History is locally kept in this browser."
 msgstr "Az előzmények lokálisan a böngészőben tárolódnak."
 
-#: src/pages/Index/Scan.tsx:363
+#: src/pages/Index/Scan.tsx:370
 msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
 msgstr "Az előzmények a böngésző helyi tárhelyén tárolódnak. Így nem lesz megosztva más felhasználókkal vagy más eszközökkel, de az újratöltések során megmarad. Kijelölhetsz elemeket az előzményekből, hogy műveleteket hajts végre rajtuk. Elemek hozzáadásához szkennelje be/írja be azokat a beviteli területen."
 
-#: src/pages/Index/Scan.tsx:365
+#: src/pages/Index/Scan.tsx:372
 #: src/pages/Notifications.tsx:100
 msgid "History"
 msgstr "Előzmények"
 
-#: src/pages/Index/Scan.tsx:430
+#: src/pages/Index/Scan.tsx:377
+msgid "Delete History"
+msgstr ""
+
+#: src/pages/Index/Scan.tsx:446
 msgid "No history"
 msgstr "Nincs előzmény"
 
-#: src/pages/Index/Scan.tsx:449
+#: src/pages/Index/Scan.tsx:465
 msgid "Item"
 msgstr "Tétel"
 
-#: src/pages/Index/Scan.tsx:452
+#: src/pages/Index/Scan.tsx:468
 msgid "Type"
 msgstr "Típus"
 
-#: src/pages/Index/Scan.tsx:455
+#: src/pages/Index/Scan.tsx:471
 msgid "Source"
 msgstr "Forrás"
 
-#: src/pages/Index/Scan.tsx:458
+#: src/pages/Index/Scan.tsx:474
 msgid "Scanned at"
 msgstr "Szkennelve ekkor"
 
-#: src/pages/Index/Scan.tsx:510
+#: src/pages/Index/Scan.tsx:526
 msgid "Enter item serial or data"
 msgstr "Add meg a tétel szériaszámát vagy adatát"
 
-#: src/pages/Index/Scan.tsx:522
+#: src/pages/Index/Scan.tsx:538
 msgid "Add dummy item"
 msgstr "Ál-tétel hozzáadása"
 
