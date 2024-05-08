@@ -380,25 +380,25 @@ export function DetailsTableField({
   const FieldType: any = getFieldType(field.type);
 
   return (
-    <tr style={{ verticalAlign: 'top' }}>
-      <td
+    <Table.Tr style={{ verticalAlign: 'top' }}>
+      <Table.Td
         style={{
-          gap: '20px',
-          width: '50'
+          width: '50',
+          maxWidth: '50'
         }}
       >
         <InvenTreeIcon icon={(field.icon ?? field.name) as InvenTreeIconType} />
-      </td>
-      <td style={{ minWidth: '25%', maxWidth: '65%' }}>
+      </Table.Td>
+      <Table.Td style={{ maxWidth: '65%' }}>
         <Text>{field.label}</Text>
-      </td>
-      <td style={{ width: '100%' }}>
+      </Table.Td>
+      <Table.Td style={{}}>
         <FieldType field_data={field} field_value={item[field.name]} />
-      </td>
-      <td style={{ width: '50' }}>
+      </Table.Td>
+      <Table.Td style={{ width: '50' }}>
         {field.copy && <CopyField value={item[field.name]} />}
-      </td>
-    </tr>
+      </Table.Td>
+    </Table.Tr>
   );
 }
 
@@ -415,19 +415,14 @@ export function DetailsTable({
     <Paper p="xs" withBorder radius="xs">
       <Stack gap="xs">
         {title && <StylishText size="lg">{title}</StylishText>}
-        <Table
-          striped
-          verticalSpacing="sm"
-          horizontalSpacing="md"
-          withColumnBorders
-        >
-          <tbody>
+        <Table striped verticalSpacing="xs" horizontalSpacing="sm">
+          <Table.Tbody>
             {fields
               .filter((field: DetailsField) => !field.hidden)
               .map((field: DetailsField, index: number) => (
                 <DetailsTableField field={field} item={item} key={index} />
               ))}
-          </tbody>
+          </Table.Tbody>
         </Table>
       </Stack>
     </Paper>
