@@ -35,7 +35,9 @@ import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
+import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
+import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
 import { TableState } from '../hooks/UseTable';
 import { base_url } from '../main';
@@ -526,6 +528,7 @@ export function InvenTreeTable<T = any>({
   // Callback when a row is clicked
   const handleRowClick = useCallback(
     (record: any, index: number, event: any) => {
+      cancelEvent(event);
       if (props.onRowClick) {
         // If a custom row click handler is provided, use that
         props.onRowClick(record, index, event);
@@ -536,16 +539,7 @@ export function InvenTreeTable<T = any>({
         if (pk) {
           // If a model type is provided, navigate to the detail view for that model
           let url = getDetailUrl(tableProps.modelType, pk);
-
-          // Should it be opened in a new tab?
-          if (event?.ctrlKey || event?.shiftKey) {
-            // Open in a new tab
-            url = `/${base_url}${url}`;
-            window.open(url, '_blank');
-          } else {
-            // Navigate internally
-            navigate(url);
-          }
+          navigateToLink(url, navigate, event);
         }
       }
     },

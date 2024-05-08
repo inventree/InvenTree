@@ -12,14 +12,15 @@ import {
   Tooltip
 } from '@mantine/core';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useMemo } from 'react';
+import { Suspense, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
+import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
-import { base_url } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { YesNoButton } from '../buttons/YesNoButton';
@@ -222,6 +223,8 @@ function BooleanValue(props: Readonly<FieldProps>) {
 }
 
 function TableAnchorValue(props: Readonly<FieldProps>) {
+  const navigate = useNavigate();
+
   if (props.field_data.external) {
     return (
       <Anchor
@@ -268,6 +271,13 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     return getDetailUrl(props.field_data.model, props.field_value);
   }, [props.field_data.model, props.field_value]);
 
+  const handleLinkClick = useCallback(
+    (event: any) => {
+      navigateToLink(detailUrl, navigate, event);
+    },
+    [detailUrl]
+  );
+
   let make_link = props.field_data?.link ?? true;
 
   // Construct the "return value" for the fetched data
@@ -282,18 +292,14 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   }
 
   if (value === undefined) {
-    value = data?.name ?? props.field_data?.backup_value ?? 'No name defined';
+    value = data?.name ?? props.field_data?.backup_value ?? t`No name defined`;
     make_link = false;
   }
 
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
       {make_link ? (
-        <Anchor
-          href={`/${base_url}${detailUrl}`}
-          target={data?.external ? '_blank' : undefined}
-          rel={data?.external ? 'noreferrer noopener' : undefined}
-        >
+        <Anchor href="#" onClick={handleLinkClick}>
           <Text>{value}</Text>
         </Anchor>
       ) : (
