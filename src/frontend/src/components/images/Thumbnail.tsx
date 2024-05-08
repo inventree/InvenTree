@@ -37,19 +37,14 @@ export function Thumbnail({
   }, [link, text]);
 
   return (
-    <Group align={align ?? 'left'} spacing="xs" noWrap={true}>
+    <Group align={align ?? 'left'} gap="xs" wrap="nowrap">
       <ApiImage
         src={src || backup_image}
-        alt={alt}
-        width={size}
+        aria-label={alt}
+        w={size}
         fit="contain"
         radius="xs"
-        withPlaceholder
-        imageProps={{
-          style: {
-            maxHeight: size
-          }
-        }}
+        style={{ maxHeight: size }}
       />
       {inner}
     </Group>
@@ -71,7 +66,7 @@ export function ThumbnailHoverCard({
 }) {
   const card = useMemo(() => {
     return (
-      <Group position="left" spacing={10} noWrap={true}>
+      <Group justify="left" gap={10} wrap="nowrap">
         <Thumbnail src={src} alt={alt} size={size} />
         <Text>{text}</Text>
       </Group>

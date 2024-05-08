@@ -17,7 +17,7 @@ export function CopyButton({
           onClick={copy}
           title={t`Copy to clipboard`}
           variant="subtle"
-          compact
+          size="compact-md"
         >
           <IconCopy size={10} />
           {label && <div>&nbsp;</div>}

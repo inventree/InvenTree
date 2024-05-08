@@ -39,10 +39,12 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
       },
       {
         name: 'structural',
+        label: t`structural`,
         description: t`Show structural locations`
       },
       {
         name: 'external',
+        label: t`external`,
         description: t`Show external locations`
       },
       {

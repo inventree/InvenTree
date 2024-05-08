@@ -46,7 +46,9 @@ export function LocationColumn({
       let location = resolveItem(record, accessor);
 
       if (!location) {
-        return <Text italic>{t`No location set`}</Text>;
+        return (
+          <Text style={{ fontStyle: 'italic' }}>{t`No location set`}</Text>
+        );
       }
 
       return <Text>{location.name}</Text>;

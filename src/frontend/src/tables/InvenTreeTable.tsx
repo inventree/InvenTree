@@ -525,7 +525,7 @@ export function InvenTreeTable<T = any>({
 
   // Callback when a row is clicked
   const handleRowClick = useCallback(
-    (record: any, index: number, event: any) => {
+    ({ event, record, index }: { event: any; record: any; index: number }) => {
       if (props.onRowClick) {
         // If a custom row click handler is provided, use that
         props.onRowClick(record, index, event);
@@ -563,9 +563,9 @@ export function InvenTreeTable<T = any>({
         />
       )}
       <Boundary label="inventreetable">
-        <Stack spacing="sm">
-          <Group position="apart">
-            <Group position="left" key="custom-actions" spacing={5}>
+        <Stack gap="sm">
+          <Group justify="space-between">
+            <Group justify="left" key="custom-actions" gap={5}>
               {tableProps.tableActions?.map((group, idx) => (
                 <Fragment key={idx}>{group}</Fragment>
               ))}
@@ -598,7 +598,7 @@ export function InvenTreeTable<T = any>({
               )}
             </Group>
             <Space />
-            <Group position="right" spacing={5}>
+            <Group justify="right" gap={5}>
               {tableProps.enableSearch && (
                 <TableSearchInput
                   searchCallback={(term: string) =>
@@ -607,7 +607,7 @@ export function InvenTreeTable<T = any>({
                 />
               )}
               {tableProps.enableRefresh && (
-                <ActionIcon>
+                <ActionIcon variant="transparent">
                   <Tooltip label={t`Refresh data`}>
                     <IconRefresh onClick={() => refetch()} />
                   </Tooltip>
@@ -625,7 +625,7 @@ export function InvenTreeTable<T = any>({
                   label={tableState.activeFilters?.length ?? 0}
                   disabled={tableState.activeFilters?.length == 0}
                 >
-                  <ActionIcon>
+                  <ActionIcon variant="transparent">
                     <Tooltip label={t`Table filters`}>
                       <IconFilter
                         onClick={() => setFiltersVisible(!filtersVisible)}
@@ -650,10 +650,10 @@ export function InvenTreeTable<T = any>({
             />
 
             <DataTable
-              withBorder
+              withTableBorder
               striped
               highlightOnHover
-              loaderVariant="dots"
+              loaderType="dots"
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableProps.idAccessor}
               minHeight={300}
@@ -681,11 +681,11 @@ export function InvenTreeTable<T = any>({
               onCellClick={tableProps.onCellClick}
               defaultColumnProps={{
                 noWrap: true,
-                textAlignment: 'left',
-                cellsStyle: {
+                textAlign: 'left',
+                cellsStyle: () => (theme) => ({
                   // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
                   overflow: 'hidden'
-                }
+                })
               }}
             />
           </Box>

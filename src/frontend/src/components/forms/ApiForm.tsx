@@ -482,11 +482,11 @@ export function ApiForm({
         <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
           <div>
             {/* Form Fields */}
-            <Stack spacing="sm">
+            <Stack gap="sm">
               {(!isValid || nonFieldErrors.length > 0) && (
                 <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
                   {nonFieldErrors.length > 0 && (
-                    <Stack spacing="xs">
+                    <Stack gap="xs">
                       {nonFieldErrors.map((message) => (
                         <Text key={message}>{message}</Text>
                       ))}
@@ -509,7 +509,7 @@ export function ApiForm({
               </Boundary>
               <Boundary label={`ApiForm-${id}-FormContent`}>
                 <FormProvider {...form}>
-                  <Stack spacing="xs">
+                  <Stack gap="xs">
                     {!optionsLoading &&
                       Object.entries(fields).map(([fieldName, field]) => (
                         <ApiFormField
@@ -532,7 +532,7 @@ export function ApiForm({
         {/* Footer with Action Buttons */}
         <Divider />
         <div>
-          <Group position="right">
+          <Group justify="right">
             {props.actions?.map((action, i) => (
               <Button
                 key={i}

@@ -311,8 +311,7 @@ export default function SupplierPartDetail() {
   return (
     <>
       {editSuppliertPart.modal}
-      {duplicateSupplierPart.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Supplier Part`}

@@ -324,7 +324,12 @@ function CopyField({ value }: { value: string }) {
     <CopyButton value={value}>
       {({ copied, copy }) => (
         <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
-          <ActionIcon color={copied ? 'teal' : 'gray'} onClick={copy}>
+          <ActionIcon
+            color={copied ? 'teal' : 'gray'}
+            onClick={copy}
+            variant="transparent"
+            size="sm"
+          >
             {copied ? (
               <InvenTreeIcon icon="check" />
             ) : (
@@ -398,9 +403,14 @@ export function DetailsTable({
 }) {
   return (
     <Paper p="xs" withBorder radius="xs">
-      <Stack spacing="xs">
+      <Stack gap="xs">
         {title && <StylishText size="lg">{title}</StylishText>}
-        <Table striped>
+        <Table
+          striped
+          verticalSpacing="sm"
+          horizontalSpacing="md"
+          withColumnBorders
+        >
           <tbody>
             {fields
               .filter((field: DetailsField) => !field.hidden)

@@ -8,7 +8,7 @@ import { UserTable } from '../../../../tables/settings/UserTable';
 
 export default function UserManagementPanel() {
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <Title order={5}>
         <Trans>Users</Trans>
       </Title>
@@ -21,7 +21,7 @@ export default function UserManagementPanel() {
 
       <Divider />
 
-      <Stack spacing={0}>
+      <Stack gap={0}>
         <Text>
           <Trans>Settings</Trans>
         </Text>

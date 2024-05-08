@@ -305,7 +305,7 @@ export default function ReturnOrderDetail() {
     <>
       {editReturnOrder.modal}
       {duplicateReturnOrder.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Return Order` + `: ${order.reference}`}

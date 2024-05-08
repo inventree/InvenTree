@@ -1,5 +1,4 @@
-import { ActionIcon, Group, Tooltip } from '@mantine/core';
-import { FloatingPosition } from '@mantine/core/lib/Floating';
+import { ActionIcon, FloatingPosition, Group, Tooltip } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { notYetImplemented } from '../../functions/notifications';
@@ -41,7 +40,7 @@ export function ActionButton(props: ActionButtonProps) {
           onClick={props.onClick ?? notYetImplemented}
           variant={props.variant ?? 'light'}
         >
-          <Group spacing="xs" noWrap={true}>
+          <Group gap="xs" wrap="nowrap">
             {props.icon}
           </Group>
         </ActionIcon>

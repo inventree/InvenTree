@@ -149,7 +149,7 @@ export default function BomPricingPanel({
           let units = record.sub_part_detail?.units;
 
           return (
-            <Group spacing="apart" grow>
+            <Group justify="space-between" grow>
               <Text>{quantity}</Text>
               {units && <Text size="xs">[{units}]</Text>}
             </Group>
@@ -214,7 +214,7 @@ export default function BomPricingPanel({
   }, [table.isLoading, bomPricingData.length]);
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SimpleGrid cols={2}>
         <InvenTreeTable
           tableState={table}
@@ -231,10 +231,10 @@ export default function BomPricingPanel({
             modelField: 'sub_part'
           }}
         />
-        <Stack spacing="xs">
+        <Stack gap="xs">
           {table.isLoading && <LoadingPricingData />}
           {hasData && (
-            <Stack spacing="xs">
+            <Stack gap="xs">
               {chartType == 'bar' && (
                 <BomBarChart
                   data={bomPricingData}

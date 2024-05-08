@@ -41,12 +41,12 @@ function FilterItem({
 
   return (
     <Paper p="sm" shadow="sm" radius="xs">
-      <Group position="apart" key={flt.name}>
-        <Stack spacing="xs">
+      <Group justify="space-between" key={flt.name}>
+        <Stack gap="xs">
           <Text size="sm">{flt.label}</Text>
           <Text size="xs">{flt.description}</Text>
         </Stack>
-        <Group position="right">
+        <Group justify="right">
           <Badge>{flt.displayValue ?? flt.value}</Badge>
           <Tooltip label={t`Remove filter`} withinPortal={true}>
             <CloseButton size="md" color="red" onClick={removeFilter} />
@@ -138,11 +138,11 @@ function FilterAddGroup({
   );
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <Divider />
       <Select
         data={filterOptions}
-        itemComponent={FilterSelectItem}
+        component={FilterSelectItem}
         searchable={true}
         placeholder={t`Select filter`}
         label={t`Filter`}
@@ -195,14 +195,14 @@ export function FilterSelectDrawer({
       onClose={onClose}
       title={<StylishText size="lg">{t`Table Filters`}</StylishText>}
     >
-      <Stack spacing="xs">
+      <Stack gap="xs">
         {hasFilters &&
           tableState.activeFilters?.map((f) => (
             <FilterItem key={f.name} flt={f} tableState={tableState} />
           ))}
         {hasFilters && <Divider />}
         {addFilter && (
-          <Stack spacing="xs">
+          <Stack gap="xs">
             <FilterAddGroup
               tableState={tableState}
               availableFilters={availableFilters}
