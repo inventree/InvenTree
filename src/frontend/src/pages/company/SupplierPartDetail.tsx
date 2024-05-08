@@ -303,7 +303,7 @@ export default function SupplierPartDetail() {
       <DetailsBadge
         label={t`Inactive`}
         color="red"
-        visible={!supplierPart.active}
+        visible={supplierPart.active == false}
       />
     ];
   }, [supplierPart]);
