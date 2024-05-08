@@ -233,7 +233,7 @@ export default function CategoryDetail({}: {}) {
         />
         <PageDetail
           title={t`Part Category`}
-          detail={<Text>{category.name ?? 'Top level'}</Text>}
+          subtitle={category?.name}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {
             setTreeOpen(true);

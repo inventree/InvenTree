@@ -311,7 +311,7 @@ export default function Stock() {
         />
         <PageDetail
           title={t`Stock Items`}
-          detail={<Text>{location.name ?? 'Top level'}</Text>}
+          subtitle={location?.name}
           actions={locationActions}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {
