@@ -20,6 +20,7 @@ import {
 } from 'react-router-dom';
 
 import { useLocalState } from '../../states/LocalState';
+import { Boundary } from '../Boundary';
 import { PlaceholderPanel } from '../items/Placeholder';
 import { StylishText } from '../items/StylishText';
 
@@ -103,79 +104,83 @@ function BasePanelGroup({
   const [expanded, setExpanded] = useState<boolean>(true);
 
   return (
-    <Paper p="sm" radius="xs" shadow="xs">
-      <Tabs
-        value={panel}
-        orientation="vertical"
-        onChange={handlePanelChange}
-        keepMounted={false}
-      >
-        <Tabs.List justify="left">
+    <Boundary label={`PanelGroup-${pageKey}`}>
+      <Paper p="sm" radius="xs" shadow="xs">
+        <Tabs
+          value={panel}
+          orientation="vertical"
+          onChange={handlePanelChange}
+          keepMounted={false}
+        >
+          <Tabs.List justify="left">
+            {panels.map(
+              (panel) =>
+                !panel.hidden && (
+                  <Tooltip
+                    label={panel.label}
+                    key={panel.name}
+                    disabled={expanded}
+                  >
+                    <Tabs.Tab
+                      p="xs"
+                      value={panel.name}
+                      //                    icon={(<InvenTreeIcon icon={panel.name}/>)}  // Enable when implementing Icon manager everywhere
+                      leftSection={panel.icon}
+                      hidden={panel.hidden}
+                      disabled={panel.disabled}
+                      style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}
+                    >
+                      {expanded && panel.label}
+                    </Tabs.Tab>
+                  </Tooltip>
+                )
+            )}
+            {collapsible && (
+              <ActionIcon
+                style={{
+                  paddingLeft: '10px'
+                }}
+                onClick={() => setExpanded(!expanded)}
+                variant="transparent"
+                size="md"
+              >
+                {expanded ? (
+                  <IconLayoutSidebarLeftCollapse opacity={0.5} />
+                ) : (
+                  <IconLayoutSidebarRightCollapse opacity={0.5} />
+                )}
+              </ActionIcon>
+            )}
+          </Tabs.List>
           {panels.map(
             (panel) =>
               !panel.hidden && (
-                <Tooltip
-                  label={panel.label}
+                <Tabs.Panel
                   key={panel.name}
-                  disabled={expanded}
+                  value={panel.name}
+                  p="sm"
+                  style={{
+                    overflowX: 'scroll',
+                    width: '100%'
+                  }}
                 >
-                  <Tabs.Tab
-                    p="xs"
-                    value={panel.name}
-                    //                    icon={(<InvenTreeIcon icon={panel.name}/>)}  // Enable when implementing Icon manager everywhere
-                    leftSection={panel.icon}
-                    hidden={panel.hidden}
-                    disabled={panel.disabled}
-                    style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}
-                  >
-                    {expanded && panel.label}
-                  </Tabs.Tab>
-                </Tooltip>
+                  <Stack gap="md">
+                    {panel.showHeadline !== false && (
+                      <>
+                        <StylishText size="xl">{panel.label}</StylishText>
+                        <Divider />
+                      </>
+                    )}
+                    <Boundary label={`PanelContent-${panel.name}`}>
+                      {panel.content ?? <PlaceholderPanel />}
+                    </Boundary>
+                  </Stack>
+                </Tabs.Panel>
               )
           )}
-          {collapsible && (
-            <ActionIcon
-              style={{
-                paddingLeft: '10px'
-              }}
-              onClick={() => setExpanded(!expanded)}
-              variant="transparent"
-              size="md"
-            >
-              {expanded ? (
-                <IconLayoutSidebarLeftCollapse opacity={0.5} />
-              ) : (
-                <IconLayoutSidebarRightCollapse opacity={0.5} />
-              )}
-            </ActionIcon>
-          )}
-        </Tabs.List>
-        {panels.map(
-          (panel) =>
-            !panel.hidden && (
-              <Tabs.Panel
-                key={panel.name}
-                value={panel.name}
-                p="sm"
-                style={{
-                  overflowX: 'scroll',
-                  width: '100%'
-                }}
-              >
-                <Stack gap="md">
-                  {panel.showHeadline !== false && (
-                    <>
-                      <StylishText size="xl">{panel.label}</StylishText>
-                      <Divider />
-                    </>
-                  )}
-                  {panel.content ?? <PlaceholderPanel />}
-                </Stack>
-              </Tabs.Panel>
-            )
-        )}
-      </Tabs>
-    </Paper>
+        </Tabs>
+      </Paper>
+    </Boundary>
   );
 }
 

@@ -65,6 +65,18 @@ function stockItemTableColumns(): TableColumn[] {
         let extra: ReactNode[] = [];
         let color = undefined;
 
+        // Determine if a stock item is "in stock"
+        // TODO: Refactor this out into a function
+        let in_stock =
+          !record?.belongs_to &&
+          !record?.consumed_by &&
+          !record?.customer &&
+          !record?.is_building &&
+          !record?.sales_order &&
+          !record?.expired &&
+          record?.quantity &&
+          record?.quantity > 0;
+
         if (record.serial && quantity == 1) {
           text = `# ${record.serial}`;
         }
@@ -166,13 +178,16 @@ function stockItemTableColumns(): TableColumn[] {
         }
 
         if (quantity <= 0) {
-          color = 'red';
           extra.push(
             <Text
               key="depleted"
               size="sm"
             >{t`This stock item has been depleted`}</Text>
           );
+        }
+
+        if (!in_stock) {
+          color = 'red';
         }
 
         return (
@@ -353,7 +368,10 @@ export function StockItemTable({
     return {
       items: table.selectedRecords,
       model: ModelType.stockitem,
-      refresh: table.refreshTable
+      refresh: table.refreshTable,
+      filters: {
+        in_stock: true
+      }
     };
   }, [table]);
 

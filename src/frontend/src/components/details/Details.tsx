@@ -183,12 +183,12 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
 function TableStringValue(props: Readonly<FieldProps>) {
   let value = props?.field_value;
 
-  if (value === undefined) {
-    return '---';
-  }
-
   if (props.field_data?.value_formatter) {
     value = props.field_data.value_formatter();
+  }
+
+  if (value === undefined) {
+    return '---';
   }
 
   if (props.field_data?.badge) {

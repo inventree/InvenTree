@@ -190,15 +190,16 @@ export default function PartDetail() {
     let tr: DetailsField[] = [
       {
         type: 'string',
-        name: 'unallocated_stock',
-        unit: true,
-        label: t`Available Stock`
-      },
-      {
-        type: 'string',
         name: 'total_in_stock',
         unit: true,
         label: t`In Stock`
+      },
+      {
+        type: 'string',
+        name: 'unallocated_stock',
+        unit: true,
+        label: t`Available Stock`,
+        hidden: part.total_in_stock == part.unallocated_stock
       },
       {
         type: 'string',
@@ -220,10 +221,7 @@ export default function PartDetail() {
         total: part.required_for_build_orders,
         progress: part.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
-        hidden:
-          !part.assembly ||
-          (part.allocated_to_build_orders <= 0 &&
-            part.required_for_build_orders <= 0)
+        hidden: !part.component || part.required_for_build_orders <= 0
       },
       {
         type: 'progressbar',
@@ -231,10 +229,7 @@ export default function PartDetail() {
         total: part.required_for_sales_orders,
         progress: part.allocated_to_sales_orders,
         label: t`Allocated to Sales Orders`,
-        hidden:
-          !part.salable ||
-          (part.allocated_to_sales_orders <= 0 &&
-            part.required_for_sales_orders <= 0)
+        hidden: !part.salable || part.required_for_sales_orders <= 0
       },
       {
         type: 'string',
@@ -306,7 +301,8 @@ export default function PartDetail() {
         name: 'creation_user',
         label: t`Created By`,
         badge: 'user',
-        icon: 'user'
+        icon: 'user',
+        hidden: !part.creation_user
       },
       {
         type: 'string',
@@ -645,10 +641,16 @@ export default function PartDetail() {
 
     return [
       <DetailsBadge
-        label={t`In Stock` + `: ${part.in_stock}`}
+        label={t`In Stock` + `: ${part.total_in_stock}`}
         color={part.in_stock >= part.minimum_stock ? 'green' : 'orange'}
         visible={part.in_stock > 0}
         key="in_stock"
+      />,
+      <DetailsBadge
+        label={t`Available` + `: ${part.unallocated_stock}`}
+        color="yellow"
+        key="available_stock"
+        visible={part.unallocated_stock != part.total_in_stock}
       />,
       <DetailsBadge
         label={t`No Stock`}
@@ -671,7 +673,7 @@ export default function PartDetail() {
       <DetailsBadge
         label={t`Inactive`}
         color="red"
-        visible={!part.active}
+        visible={part.active == false}
         key="inactive"
       />
     ];
@@ -702,7 +704,10 @@ export default function PartDetail() {
     return {
       pk: part.pk,
       model: ModelType.part,
-      refresh: refreshInstance
+      refresh: refreshInstance,
+      filters: {
+        in_stock: true
+      }
     };
   }, [part]);
 

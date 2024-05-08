@@ -29,6 +29,7 @@ import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../App';
+import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
@@ -453,6 +454,10 @@ export function InvenTreeTable<T = any>({
     refetchOnMount: true
   });
 
+  useEffect(() => {
+    tableState.setIsLoading(isFetching);
+  }, [isFetching]);
+
   // Update tableState.records when new data received
   useEffect(() => {
     tableState.setRecords(data ?? []);
@@ -557,131 +562,135 @@ export function InvenTreeTable<T = any>({
           onClose={() => setFiltersVisible(false)}
         />
       )}
-      <Stack gap="sm">
-        <Group justify="space-between">
-          <Group justify="left" key="custom-actions" gap={5}>
-            {tableProps.tableActions?.map((group, idx) => (
-              <Fragment key={idx}>{group}</Fragment>
-            ))}
-            {(tableProps.barcodeActions?.length ?? 0 > 0) && (
-              <ButtonMenu
-                key="barcode-actions"
-                icon={<IconBarcode />}
-                label={t`Barcode actions`}
-                tooltip={t`Barcode actions`}
-                actions={tableProps.barcodeActions ?? []}
-              />
-            )}
-            {(tableProps.printingActions?.length ?? 0 > 0) && (
-              <ButtonMenu
-                key="printing-actions"
-                icon={<IconPrinter />}
-                label={t`Print actions`}
-                tooltip={t`Print actions`}
-                actions={tableProps.printingActions ?? []}
-              />
-            )}
-            {(tableProps.enableBulkDelete ?? false) && (
-              <ActionButton
-                disabled={tableState.selectedRecords.length == 0}
-                icon={<IconTrash />}
-                color="red"
-                tooltip={t`Delete selected records`}
-                onClick={deleteSelectedRecords}
-              />
-            )}
-          </Group>
-          <Space />
-          <Group justify="right" gap={5}>
-            {tableProps.enableSearch && (
-              <TableSearchInput
-                searchCallback={(term: string) =>
-                  tableState.setSearchTerm(term)
-                }
-              />
-            )}
-            {tableProps.enableRefresh && (
-              <ActionIcon variant="transparent">
-                <Tooltip label={t`Refresh data`}>
-                  <IconRefresh onClick={() => refetch()} />
-                </Tooltip>
-              </ActionIcon>
-            )}
-            {hasSwitchableColumns && (
-              <TableColumnSelect
-                columns={dataColumns}
-                onToggleColumn={toggleColumn}
-              />
-            )}
-            {tableProps.enableFilters && filters.length > 0 && (
-              <Indicator
-                size="xs"
-                label={tableState.activeFilters?.length ?? 0}
-                disabled={tableState.activeFilters?.length == 0}
-              >
+      <Boundary label="inventreetable">
+        <Stack gap="sm">
+          <Group justify="space-between">
+            <Group justify="left" key="custom-actions" gap={5}>
+              {tableProps.tableActions?.map((group, idx) => (
+                <Fragment key={idx}>{group}</Fragment>
+              ))}
+              {(tableProps.barcodeActions?.length ?? 0 > 0) && (
+                <ButtonMenu
+                  key="barcode-actions"
+                  icon={<IconBarcode />}
+                  label={t`Barcode actions`}
+                  tooltip={t`Barcode actions`}
+                  actions={tableProps.barcodeActions ?? []}
+                />
+              )}
+              {(tableProps.printingActions?.length ?? 0 > 0) && (
+                <ButtonMenu
+                  key="printing-actions"
+                  icon={<IconPrinter />}
+                  label={t`Print actions`}
+                  tooltip={t`Print actions`}
+                  actions={tableProps.printingActions ?? []}
+                />
+              )}
+              {(tableProps.enableBulkDelete ?? false) && (
+                <ActionButton
+                  disabled={tableState.selectedRecords.length == 0}
+                  icon={<IconTrash />}
+                  color="red"
+                  tooltip={t`Delete selected records`}
+                  onClick={deleteSelectedRecords}
+                />
+              )}
+            </Group>
+            <Space />
+            <Group justify="right" gap={5}>
+              {tableProps.enableSearch && (
+                <TableSearchInput
+                  searchCallback={(term: string) =>
+                    tableState.setSearchTerm(term)
+                  }
+                />
+              )}
+              {tableProps.enableRefresh && (
                 <ActionIcon variant="transparent">
-                  <Tooltip label={t`Table filters`}>
-                    <IconFilter
-                      onClick={() => setFiltersVisible(!filtersVisible)}
-                    />
+                  <Tooltip label={t`Refresh data`}>
+                    <IconRefresh onClick={() => refetch()} />
                   </Tooltip>
                 </ActionIcon>
-              </Indicator>
-            )}
-            {tableProps.enableDownload && (
-              <DownloadAction
-                key="download-action"
-                downloadCallback={downloadData}
-              />
-            )}
+              )}
+              {hasSwitchableColumns && (
+                <TableColumnSelect
+                  columns={dataColumns}
+                  onToggleColumn={toggleColumn}
+                />
+              )}
+              {tableProps.enableFilters && filters.length > 0 && (
+                <Indicator
+                  size="xs"
+                  label={tableState.activeFilters?.length ?? 0}
+                  disabled={tableState.activeFilters?.length == 0}
+                >
+                  <ActionIcon variant="transparent">
+                    <Tooltip label={t`Table filters`}>
+                      <IconFilter
+                        onClick={() => setFiltersVisible(!filtersVisible)}
+                      />
+                    </Tooltip>
+                  </ActionIcon>
+                </Indicator>
+              )}
+              {tableProps.enableDownload && (
+                <DownloadAction
+                  key="download-action"
+                  downloadCallback={downloadData}
+                />
+              )}
+            </Group>
           </Group>
-        </Group>
-        <Box pos="relative">
-          <LoadingOverlay
-            visible={tableOptionQuery.isLoading || tableOptionQuery.isFetching}
-          />
+          <Box pos="relative">
+            <LoadingOverlay
+              visible={
+                tableOptionQuery.isLoading || tableOptionQuery.isFetching
+              }
+            />
 
-          <DataTable
-            withTableBorder
-            striped
-            highlightOnHover
-            loaderType="dots"
-            pinLastColumn={tableProps.rowActions != undefined}
-            idAccessor={tableProps.idAccessor}
-            minHeight={300}
-            totalRecords={tableState.recordCount}
-            recordsPerPage={tableProps.pageSize ?? defaultPageSize}
-            page={tableState.page}
-            onPageChange={tableState.setPage}
-            sortStatus={sortStatus}
-            onSortStatusChange={handleSortStatusChange}
-            selectedRecords={
-              tableProps.enableSelection
-                ? tableState.selectedRecords
-                : undefined
-            }
-            onSelectedRecordsChange={
-              tableProps.enableSelection ? onSelectedRecordsChange : undefined
-            }
-            rowExpansion={tableProps.rowExpansion}
-            rowStyle={tableProps.rowStyle}
-            fetching={isFetching}
-            noRecordsText={missingRecordsText}
-            records={tableState.records}
-            columns={dataColumns}
-            onRowClick={handleRowClick}
-            onCellClick={tableProps.onCellClick}
-            defaultColumnProps={{
-              noWrap: true,
-              textAlign: 'left',
-              cellsStyle: () => (theme) => ({
-                // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
-                overflow: 'hidden'
-              })
-            }}
-          />
-        </Box>
-      </Stack>
+            <DataTable
+              withTableBorder
+              striped
+              highlightOnHover
+              loaderType="dots"
+              pinLastColumn={tableProps.rowActions != undefined}
+              idAccessor={tableProps.idAccessor}
+              minHeight={300}
+              totalRecords={tableState.recordCount}
+              recordsPerPage={tableProps.pageSize ?? defaultPageSize}
+              page={tableState.page}
+              onPageChange={tableState.setPage}
+              sortStatus={sortStatus}
+              onSortStatusChange={handleSortStatusChange}
+              selectedRecords={
+                tableProps.enableSelection
+                  ? tableState.selectedRecords
+                  : undefined
+              }
+              onSelectedRecordsChange={
+                tableProps.enableSelection ? onSelectedRecordsChange : undefined
+              }
+              rowExpansion={tableProps.rowExpansion}
+              rowStyle={tableProps.rowStyle}
+              fetching={isFetching}
+              noRecordsText={missingRecordsText}
+              records={tableState.records}
+              columns={dataColumns}
+              onRowClick={handleRowClick}
+              onCellClick={tableProps.onCellClick}
+              defaultColumnProps={{
+                noWrap: true,
+                textAlign: 'left',
+                cellsStyle: () => (theme) => ({
+                  // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
+                  overflow: 'hidden'
+                })
+              }}
+            />
+          </Box>
+        </Stack>
+      </Boundary>
     </>
   );
 }

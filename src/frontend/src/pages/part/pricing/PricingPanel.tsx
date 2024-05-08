@@ -4,6 +4,8 @@ import {
   AccordionControlProps,
   Alert,
   Box,
+  Center,
+  Loader,
   Space,
   Stack,
   Text,
@@ -66,5 +68,16 @@ export function NoPricingData() {
       </Alert>
       <Space />
     </Stack>
+  );
+}
+
+export function LoadingPricingData() {
+  return (
+    <Center>
+      <Stack gap="xs">
+        <Text>{t`Loading pricing data`}</Text>
+        <Loader />
+      </Stack>
+    </Center>
   );
 }

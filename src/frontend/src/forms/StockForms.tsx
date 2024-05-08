@@ -283,6 +283,10 @@ function StockOperationsRow({
   };
 
   const stockString: string = useMemo(() => {
+    if (!record) {
+      return '-';
+    }
+
     if (!record.serial) {
       return `${record.quantity}`;
     } else {
@@ -290,19 +294,21 @@ function StockOperationsRow({
     }
   }, [record]);
 
-  return (
+  return !record ? (
+    <div>{t`Loading...`}</div>
+  ) : (
     <tr>
       <td>
         <Flex gap="sm" align="center">
           <Thumbnail
             size={40}
-            src={record.part_detail.thumbnail}
+            src={record.part_detail?.thumbnail}
             align="center"
           />
-          <div>{record.part_detail.name}</div>
+          <div>{record.part_detail?.name}</div>
         </Flex>
       </td>
-      <td>{record.location ? record.location_detail.pathstring : '-'}</td>
+      <td>{record.location ? record.location_detail?.pathstring : '-'}</td>
       <td>
         <Flex align="center" gap="xs">
           <Group justify="space-between">
@@ -332,8 +338,8 @@ function StockOperationsRow({
               tooltip={t`Move to default location`}
               tooltipAlignment="top"
               disabled={
-                !record.part_detail.default_location &&
-                !record.part_detail.category_default_location
+                !record.part_detail?.default_location &&
+                !record.part_detail?.category_default_location
               }
             />
           )}
@@ -653,11 +659,13 @@ function stockOperationModal({
   refresh,
   fieldGenerator,
   endpoint,
+  filters,
   title,
   modalFunc = useCreateApiFormModal
 }: {
   items?: object;
   pk?: number;
+  filters?: any;
   model: ModelType | string;
   refresh: () => void;
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
@@ -665,17 +673,26 @@ function stockOperationModal({
   title: string;
   modalFunc?: apiModalFunc;
 }) {
-  const params: any = {
+  const baseParams: any = {
     part_detail: true,
     location_detail: true,
     cascade: false
   };
 
-  // A Stock item can have location=null, but not part=null
-  params[model] = pk === undefined && model === 'location' ? 'null' : pk;
+  const params = useMemo(() => {
+    let query_params: any = {
+      ...baseParams,
+      ...(filters ?? {})
+    };
+
+    query_params[model] =
+      pk === undefined && model === 'location' ? 'null' : pk;
+
+    return query_params;
+  }, [baseParams, filters, model, pk]);
 
   const { data } = useQuery({
-    queryKey: ['stockitems', model, pk, items],
+    queryKey: ['stockitems', model, pk, items, params],
     queryFn: async () => {
       if (items) {
         return Array.isArray(items) ? items : [items];
@@ -712,6 +729,7 @@ function stockOperationModal({
 export type StockOperationProps = {
   items?: object;
   pk?: number;
+  filters?: any;
   model: ModelType.stockitem | 'location' | ModelType.part;
   refresh: () => void;
 };
