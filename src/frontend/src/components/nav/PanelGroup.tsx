@@ -72,7 +72,7 @@ function BasePanelGroup({
   }, [setLastUsedPanel]);
 
   // Callback when the active panel changes
-  function handlePanelChange(panel: string) {
+  function handlePanelChange(panel: string | null) {
     if (activePanels.findIndex((p) => p.name === panel) === -1) {
       setLastUsedPanel('');
       return navigate('../');
@@ -81,7 +81,7 @@ function BasePanelGroup({
     navigate(`../${panel}`);
 
     // Optionally call external callback hook
-    if (onPanelChange) {
+    if (panel && onPanelChange) {
       onPanelChange(panel);
     }
   }
@@ -109,10 +109,10 @@ function BasePanelGroup({
         <Tabs
           value={panel}
           orientation="vertical"
-          onTabChange={handlePanelChange}
+          onChange={handlePanelChange}
           keepMounted={false}
         >
-          <Tabs.List position="left">
+          <Tabs.List justify="left">
             {panels.map(
               (panel) =>
                 !panel.hidden && (
@@ -125,7 +125,7 @@ function BasePanelGroup({
                       p="xs"
                       value={panel.name}
                       //                    icon={(<InvenTreeIcon icon={panel.name}/>)}  // Enable when implementing Icon manager everywhere
-                      icon={panel.icon}
+                      leftSection={panel.icon}
                       hidden={panel.hidden}
                       disabled={panel.disabled}
                       style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}
@@ -141,6 +141,8 @@ function BasePanelGroup({
                   paddingLeft: '10px'
                 }}
                 onClick={() => setExpanded(!expanded)}
+                variant="transparent"
+                size="md"
               >
                 {expanded ? (
                   <IconLayoutSidebarLeftCollapse opacity={0.5} />
@@ -162,7 +164,7 @@ function BasePanelGroup({
                     width: '100%'
                   }}
                 >
-                  <Stack spacing="md">
+                  <Stack gap="md">
                     {panel.showHeadline !== false && (
                       <>
                         <StylishText size="xl">{panel.label}</StylishText>

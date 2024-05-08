@@ -415,7 +415,7 @@ export default function BuildDetail() {
       {editBuild.modal}
       {duplicateBuild.modal}
       {cancelBuild.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={build.reference}

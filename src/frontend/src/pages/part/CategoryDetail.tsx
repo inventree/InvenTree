@@ -222,7 +222,7 @@ export default function CategoryDetail({}: {}) {
   return (
     <>
       {editCategory.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PartCategoryTree
           opened={treeOpen}

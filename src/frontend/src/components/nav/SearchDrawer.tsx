@@ -69,10 +69,10 @@ function QueryResultGroup({
   return (
     <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
       <Stack key={`stack-${query.model}`}>
-        <Group position="apart" noWrap={true}>
-          <Group position="left" spacing={5} noWrap={true}>
+        <Group justify="space-between" wrap="nowrap">
+          <Group justify="left" gap={5} wrap="nowrap">
             <Text size="lg">{model.label_multiple}</Text>
-            <Text size="sm" italic>
+            <Text size="sm" style={{ fontStyle: 'italic' }}>
               {' '}
               - {query.results.count} <Trans>results</Trans>
             </Text>
@@ -332,13 +332,13 @@ export function SearchDrawer({
       withCloseButton={false}
       styles={{ header: { width: '100%' }, title: { width: '100%' } }}
       title={
-        <Group position="apart" spacing={1} noWrap={true}>
+        <Group justify="space-between" gap={1} wrap="nowrap">
           <TextInput
             placeholder={t`Enter search text`}
             radius="xs"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
-            icon={<IconSearch size="0.8rem" />}
+            leftSection={<IconSearch size="0.8rem" />}
             rightSection={
               value && (
                 <IconBackspace color="red" onClick={() => setValue('')} />
@@ -394,7 +394,7 @@ export function SearchDrawer({
           </Center>
         )}
         {!searchQuery.isFetching && !searchQuery.isError && (
-          <Stack spacing="md">
+          <Stack gap="md">
             {queryResults.map((query, idx) => (
               <QueryResultGroup
                 key={idx}

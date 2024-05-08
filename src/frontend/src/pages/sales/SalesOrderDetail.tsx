@@ -327,8 +327,7 @@ export default function SalesOrderDetail() {
   return (
     <>
       {editSalesOrder.modal}
-      {duplicateSalesOrder.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Sales Order` + `: ${order.reference}`}

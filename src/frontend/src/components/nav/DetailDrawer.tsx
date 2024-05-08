@@ -1,19 +1,12 @@
-import {
-  ActionIcon,
-  Divider,
-  Drawer,
-  Group,
-  MantineNumberSize,
-  Stack,
-  Text,
-  createStyles
-} from '@mantine/core';
+import { ActionIcon, Divider, Drawer, Group, Stack, Text } from '@mantine/core';
 import { IconChevronLeft } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 import { Link, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import type { To } from 'react-router-dom';
 
+import { UiSizeType } from '../../defaults/formatters';
 import { useLocalState } from '../../states/LocalState';
+import * as classes from './DetailDrawer.css';
 
 /**
  * @param title - drawer title
@@ -26,16 +19,9 @@ export interface DrawerProps {
   position?: 'right' | 'left';
   renderContent: (id?: string) => React.ReactNode;
   urlPrefix?: string;
-  size?: MantineNumberSize;
+  size?: UiSizeType;
   closeOnEscape?: boolean;
 }
-
-const useStyles = createStyles(() => ({
-  flex: {
-    display: 'flex',
-    flex: 1
-  }
-}));
 
 function DetailDrawerComponent({
   title,
@@ -46,7 +32,6 @@ function DetailDrawerComponent({
 }: Readonly<DrawerProps>) {
   const navigate = useNavigate();
   const { id } = useParams();
-  const { classes } = useStyles();
 
   const content = renderContent(id);
   const opened = useMemo(() => !!id && !!content, [id, content]);
@@ -87,7 +72,7 @@ function DetailDrawerComponent({
         </Group>
       }
     >
-      <Stack spacing={'xs'} className={classes.flex}>
+      <Stack gap={'xs'} className={classes.flex}>
         <Divider />
         {content}
       </Stack>
