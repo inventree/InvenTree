@@ -247,11 +247,11 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
             case 200:
               return response.data;
             default:
-              return null;
+              return {};
           }
         })
         .catch(() => {
-          return null;
+          return {};
         });
     }
   });
