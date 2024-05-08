@@ -156,7 +156,7 @@ export default function PurchaseOrderDetail() {
       {
         type: 'text',
         name: 'currency',
-        label: t`Order Currency,`
+        label: t`Order Currency`
       },
       {
         type: 'text',

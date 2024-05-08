@@ -127,7 +127,7 @@ export default function SalesOrderDetail() {
       {
         type: 'text',
         name: 'currency',
-        label: t`Order Currency,`
+        label: t`Order Currency`
       },
       {
         type: 'text',

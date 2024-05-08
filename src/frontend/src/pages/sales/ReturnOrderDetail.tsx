@@ -123,7 +123,7 @@ export default function ReturnOrderDetail() {
       {
         type: 'text',
         name: 'currency',
-        label: t`Order Currency,`
+        label: t`Order Currency`
       },
       {
         type: 'text',
