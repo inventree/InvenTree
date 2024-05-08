@@ -225,21 +225,6 @@ function BooleanValue(props: Readonly<FieldProps>) {
 function TableAnchorValue(props: Readonly<FieldProps>) {
   const navigate = useNavigate();
 
-  if (props.field_data.external) {
-    return (
-      <Anchor
-        href={`${props.field_value}`}
-        target={'_blank'}
-        rel={'noreferrer noopener'}
-      >
-        <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-          <Text>{props.field_value}</Text>
-          <InvenTreeIcon icon="external" iconProps={{ size: 15 }} />
-        </span>
-      </Anchor>
-    );
-  }
-
   const { data } = useSuspenseQuery({
     queryKey: ['detail', props.field_data.model, props.field_value],
     queryFn: async () => {
@@ -277,6 +262,21 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     },
     [detailUrl]
   );
+
+  if (props.field_data.external) {
+    return (
+      <Anchor
+        href={`${props.field_value}`}
+        target={'_blank'}
+        rel={'noreferrer noopener'}
+      >
+        <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+          <Text>{props.field_value}</Text>
+          <InvenTreeIcon icon="external" iconProps={{ size: 15 }} />
+        </span>
+      </Anchor>
+    );
+  }
 
   let make_link = props.field_data?.link ?? true;
 
