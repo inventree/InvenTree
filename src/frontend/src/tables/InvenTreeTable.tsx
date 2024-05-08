@@ -454,6 +454,10 @@ export function InvenTreeTable<T = any>({
     refetchOnMount: true
   });
 
+  useEffect(() => {
+    tableState.setIsLoading(isFetching);
+  }, [isFetching]);
+
   // Update tableState.records when new data received
   useEffect(() => {
     tableState.setRecords(data ?? []);
