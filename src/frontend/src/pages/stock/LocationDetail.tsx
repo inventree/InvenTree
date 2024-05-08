@@ -200,7 +200,10 @@ export default function Stock() {
     return {
       pk: location.pk,
       model: 'location',
-      refresh: refreshInstance
+      refresh: refreshInstance,
+      filters: {
+        in_stock: true
+      }
     };
   }, [location]);
 

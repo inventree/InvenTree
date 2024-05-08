@@ -374,7 +374,10 @@ export default function StockDetail() {
     return {
       items: stockitem,
       model: ModelType.stockitem,
-      refresh: refreshInstance
+      refresh: refreshInstance,
+      filters: {
+        in_stock: true
+      }
     };
   }, [stockitem]);
 
