@@ -228,6 +228,10 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   const { data } = useSuspenseQuery({
     queryKey: ['detail', props.field_data.model, props.field_value],
     queryFn: async () => {
+      if (!props.field_data?.model) {
+        return {};
+      }
+
       const modelDef = getModelInfo(props.field_data.model);
 
       if (!modelDef?.api_endpoint) {
