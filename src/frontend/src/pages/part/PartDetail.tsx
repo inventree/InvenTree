@@ -704,7 +704,10 @@ export default function PartDetail() {
     return {
       pk: part.pk,
       model: ModelType.part,
-      refresh: refreshInstance
+      refresh: refreshInstance,
+      filters: {
+        in_stock: true
+      }
     };
   }, [part]);
 
