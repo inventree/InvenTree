@@ -102,7 +102,8 @@ export default function CategoryDetail({}: {}) {
         type: 'text',
         name: 'part_count',
         label: t`Parts`,
-        icon: 'part'
+        icon: 'part',
+        value_formatter: () => category?.part_count || '0'
       },
       {
         type: 'text',
