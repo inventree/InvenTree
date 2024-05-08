@@ -303,7 +303,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
   const badges: ReactNode[] = useMemo(() => {
     return [
-      <DetailsBadge label={t`Inactive`} color="red" visible={!company.active} />
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={company.active == false}
+      />
     ];
   }, [company]);
 
