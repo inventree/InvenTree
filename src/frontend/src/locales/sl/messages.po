@@ -8,7 +8,7 @@ msgstr ""
 "Language: sl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-04-30 19:52\n"
+"PO-Revision-Date: 2024-05-08 08:02\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -3475,7 +3475,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:171
 msgid "Completed"
-msgstr "Completed"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:183
 msgid "Source Location"
@@ -4747,7 +4747,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:279
 msgid "Validated"
-msgstr "Validated"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:280
 msgid "Show validated items"
@@ -4972,6 +4972,10 @@ msgstr ""
 #: src/tables/build/BuildOutputTable.tsx:155
 msgid "Complete selected outputs"
 msgstr ""
+
+#: src/tables/build/BuildOutputTable.tsx:161
+#~ msgid "Delete build output"
+#~ msgstr "Delete build output"
 
 #: src/tables/build/BuildOutputTable.tsx:165
 msgid "Scrap selected outputs"
@@ -5531,7 +5535,7 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:89
 msgid "Requires Value"
-msgstr "Requires Value"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:90
 msgid "Show tests that require a value"
@@ -5539,7 +5543,7 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:94
 msgid "Requires Attachment"
-msgstr "Requires Attachment"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:95
 msgid "Show tests that require an attachment"
@@ -6522,3 +6526,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
