@@ -184,7 +184,7 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
 function TableStringValue(props: Readonly<FieldProps>) {
   let value = props?.field_value;
 
-  if (props.field_data?.value_formatter) {
+  if (props?.field_data?.value_formatter) {
     value = props.field_data.value_formatter();
   }
 
@@ -415,7 +415,7 @@ export function DetailsTable({
     <Paper p="xs" withBorder radius="xs">
       <Stack gap="xs">
         {title && <StylishText size="lg">{title}</StylishText>}
-        <Table striped verticalSpacing="xs" horizontalSpacing="sm">
+        <Table striped verticalSpacing={5} horizontalSpacing="sm">
           <Table.Tbody>
             {fields
               .filter((field: DetailsField) => !field.hidden)
