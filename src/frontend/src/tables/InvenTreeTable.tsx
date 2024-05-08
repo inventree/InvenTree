@@ -25,7 +25,13 @@ import {
   DataTableCellClickHandler,
   DataTableSortStatus
 } from 'mantine-datatable';
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../App';
@@ -527,7 +533,15 @@ export function InvenTreeTable<T = any>({
 
   // Callback when a row is clicked
   const handleRowClick = useCallback(
-    (record: any, index: number, event: any) => {
+    ({
+      event,
+      record,
+      index
+    }: {
+      event: React.MouseEvent;
+      record: any;
+      index: number;
+    }) => {
       cancelEvent(event);
 
       if (props.onRowClick) {
