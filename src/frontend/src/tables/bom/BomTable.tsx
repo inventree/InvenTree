@@ -419,6 +419,7 @@ export function BomTable({
           tableActions: tableActions,
           tableFilters: tableFilters,
           modelType: ModelType.part,
+          modelField: 'sub_part',
           rowActions: rowActions
         }}
       />

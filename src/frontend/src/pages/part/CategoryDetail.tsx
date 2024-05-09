@@ -102,7 +102,8 @@ export default function CategoryDetail({}: {}) {
         type: 'text',
         name: 'part_count',
         label: t`Parts`,
-        icon: 'part'
+        icon: 'part',
+        value_formatter: () => category?.part_count || '0'
       },
       {
         type: 'text',
@@ -233,7 +234,7 @@ export default function CategoryDetail({}: {}) {
         />
         <PageDetail
           title={t`Part Category`}
-          detail={<Text>{category.name ?? 'Top level'}</Text>}
+          subtitle={category?.name}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {
             setTreeOpen(true);

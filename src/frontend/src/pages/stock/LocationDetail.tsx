@@ -108,7 +108,8 @@ export default function Stock() {
         type: 'text',
         name: 'items',
         icon: 'stock',
-        label: t`Stock Items`
+        label: t`Stock Items`,
+        value_formatter: () => location?.items || '0'
       },
       {
         type: 'text',
@@ -311,7 +312,7 @@ export default function Stock() {
         />
         <PageDetail
           title={t`Stock Items`}
-          detail={<Text>{location.name ?? 'Top level'}</Text>}
+          subtitle={location?.name}
           actions={locationActions}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {
