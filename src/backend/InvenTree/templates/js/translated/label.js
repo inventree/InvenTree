@@ -81,7 +81,8 @@ function printLabels(options) {
                     let fields = response?.actions?.POST ?? {};
                     callback(fields);
                 }
-        });
+            }
+        );
     }
 
     // Callback when a particular label printing plugin is selected
