@@ -257,7 +257,10 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   });
 
   const detailUrl = useMemo(() => {
-    return getDetailUrl(props.field_data.model, props.field_value);
+    return (
+      props?.field_data?.model &&
+      getDetailUrl(props.field_data.model, props.field_value)
+    );
   }, [props.field_data.model, props.field_value]);
 
   const handleLinkClick = useCallback(
