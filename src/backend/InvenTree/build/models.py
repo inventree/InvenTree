@@ -1604,7 +1604,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
     build_line = models.ForeignKey(
         BuildLine,
-        on_delete=models.SET_NULL, null=True,
+        on_delete=models.CASCADE, null=True,
         related_name='allocations',
     )
 

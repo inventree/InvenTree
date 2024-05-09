@@ -149,6 +149,27 @@ export default function BuildDetail() {
         label: t`Responsible`,
         badge: 'owner',
         hidden: !build.responsible
+      },
+      {
+        type: 'text',
+        name: 'creation_date',
+        label: t`Created`,
+        icon: 'calendar',
+        hidden: !build.creation_date
+      },
+      {
+        type: 'text',
+        name: 'target_date',
+        label: t`Target Date`,
+        icon: 'calendar',
+        hidden: !build.target_date
+      },
+      {
+        type: 'text',
+        name: 'completion_date',
+        label: t`Completed`,
+        icon: 'calendar',
+        hidden: !build.completion_date
       }
     ];
 
@@ -386,7 +407,7 @@ export default function BuildDetail() {
       {editBuild.modal}
       {duplicateBuild.modal}
       {cancelBuild.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={build.reference}

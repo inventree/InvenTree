@@ -392,7 +392,7 @@ export function useCancelBuildOutputsForm({
 
   const preFormContent = useMemo(() => {
     return (
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <Alert color="red" title={t`Cancel Build Outputs`}>
           <Text>{t`Selected build outputs will be deleted`}</Text>
         </Alert>

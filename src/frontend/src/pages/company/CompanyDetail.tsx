@@ -81,7 +81,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`
+        label: t`Description`,
+        copy: true
       },
       {
         type: 'link',
@@ -303,14 +304,18 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
   const badges: ReactNode[] = useMemo(() => {
     return [
-      <DetailsBadge label={t`Inactive`} color="red" visible={!company.active} />
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={company.active == false}
+      />
     ];
   }, [company]);
 
   return (
     <>
       {editCompany.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Company` + `: ${company.name}`}

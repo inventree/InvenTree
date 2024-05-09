@@ -53,7 +53,7 @@ function attachmentTableColumns(): TableColumn[] {
 
       render: function (record: any) {
         return (
-          <Group position="apart">
+          <Group justify="space-between">
             <Text>{record.upload_date}</Text>
             {record.user_detail && (
               <Badge size="xs">{record.user_detail.username}</Badge>
@@ -196,6 +196,7 @@ export function AttachmentTable({
                 callback: table.refreshTable
               });
             }}
+            variant="transparent"
           >
             <IconFileUpload />
           </ActionIcon>
@@ -215,6 +216,7 @@ export function AttachmentTable({
                 callback: table.refreshTable
               });
             }}
+            variant="transparent"
           >
             <IconExternalLink />
           </ActionIcon>
@@ -226,7 +228,7 @@ export function AttachmentTable({
   }, [allowEdit]);
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       {pk && pk > 0 && (
         <InvenTreeTable
           key="attachment-table"
@@ -247,7 +249,7 @@ export function AttachmentTable({
       {allowEdit && validPk && (
         <Dropzone onDrop={uploadFiles} key="attachment-dropzone">
           <Dropzone.Idle>
-            <Group position="center">
+            <Group justify="center">
               <IconFileUpload size={24} />
               <Text size="sm">{t`Upload attachment`}</Text>
             </Group>

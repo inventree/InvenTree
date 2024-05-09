@@ -23,9 +23,9 @@ export function ProgressBar(props: Readonly<ProgressBarProps>) {
   }, [props]);
 
   return (
-    <Stack spacing={2} style={{ flexGrow: 1, minWidth: '100px' }}>
+    <Stack gap={2} style={{ flexGrow: 1, minWidth: '100px' }}>
       {props.progressLabel && (
-        <Text align="center" size="xs">
+        <Text ta="center" size="xs">
           {props.value} / {props.maximum}
         </Text>
       )}

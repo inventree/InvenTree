@@ -163,6 +163,7 @@ const icons = {
   link: IconLink,
   responsible: IconUserStar,
   pricing: IconCurrencyDollar,
+  total_price: IconCurrencyDollar,
   currency: IconCurrencyDollar,
   stocktake: IconClipboardList,
   user: IconUser,

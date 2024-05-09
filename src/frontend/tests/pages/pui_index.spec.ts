@@ -46,7 +46,7 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
 
   // EditCategory
   await page.getByRole('button', { name: 'Edit Category' }).click();
-  await page.locator('.css-1xvbfjt-Input2').first().click();
+  await page.locator('.css-fehojk-Input2').first().click();
   await page.getByText('Category 0').click();
   await page
     .getByLabel('Edit Category')
@@ -61,7 +61,7 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
 
   // Create Part new Modal
   await page.getByRole('button', { name: 'Create Part new Modal' }).click();
-  await page.locator('.css-1xvbfjt-Input2').first().click();
+  await page.locator('.css-fehojk-Input2').first().click();
   await page.getByText('Category 0').click();
   await page
     .getByLabel('Create part')

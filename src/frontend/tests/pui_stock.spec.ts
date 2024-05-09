@@ -85,6 +85,7 @@ test('PUI - Purchasing', async ({ page }) => {
   await page.getByLabel('Line 2').fill(value == 'old' ? 'new' : 'old');
 
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
+
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('tab', { name: 'Details' }).waitFor();
 });

@@ -230,9 +230,8 @@ export function ApiFormField({
             id={fieldId}
             value={numericalValue}
             error={error?.message}
-            precision={definition.field_type == 'integer' ? 0 : 10}
-            onChange={(value: number) => onChange(value)}
-            removeTrailingZeros
+            decimalScale={definition.field_type == 'integer' ? 0 : 10}
+            onChange={(value: number | string | null) => onChange(value)}
             step={1}
           />
         );

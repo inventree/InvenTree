@@ -17,6 +17,8 @@ export type TableState = {
   tableKey: string;
   refreshTable: () => void;
   activeFilters: TableFilter[];
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
   setActiveFilters: (filters: TableFilter[]) => void;
   clearActiveFilters: () => void;
   expandedRecords: any[];
@@ -127,9 +129,13 @@ export function useTable(tableName: string): TableState {
     [records]
   );
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   return {
     tableKey,
     refreshTable,
+    isLoading,
+    setIsLoading,
     activeFilters,
     setActiveFilters,
     clearActiveFilters,

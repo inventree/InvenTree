@@ -7,7 +7,7 @@ import {
   Stack,
   Switch,
   Text,
-  useMantineTheme
+  useMantineColorScheme
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { IconEdit } from '@tabler/icons-react';
@@ -19,6 +19,7 @@ import { openModalApiForm } from '../../functions/forms';
 import { apiUrl } from '../../states/ApiState';
 import { SettingsStateProps } from '../../states/SettingsState';
 import { Setting, SettingType } from '../../states/states';
+import { vars } from '../../theme';
 import { ApiFormFieldType } from '../forms/fields/ApiFormField';
 
 /**
@@ -137,7 +138,7 @@ function SettingValue({
       );
     default:
       return valueText ? (
-        <Group spacing="xs" position="right">
+        <Group gap="xs" justify="right">
           <Space />
           <Button variant="subtle" onClick={onEditButton}>
             {valueText}
@@ -165,20 +166,18 @@ export function SettingItem({
   shaded: boolean;
   onChange?: () => void;
 }) {
-  const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
 
   const style: Record<string, string> = { paddingLeft: '8px' };
   if (shaded) {
     style['backgroundColor'] =
-      theme.colorScheme === 'light'
-        ? theme.colors.gray[1]
-        : theme.colors.gray[9];
+      colorScheme === 'light' ? vars.colors.gray[1] : vars.colors.gray[9];
   }
 
   return (
     <Paper style={style}>
-      <Group position="apart" p="3">
-        <Stack spacing="2" p="4px">
+      <Group justify="space-between" p="3">
+        <Stack gap="2" p="4px">
           <Text>
             {setting.name}
             {setting.required ? ' *' : ''}

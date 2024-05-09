@@ -92,8 +92,8 @@ export function TemplateDrawer({
   }
 
   return (
-    <Stack spacing="xs" style={{ display: 'flex', flex: '1' }}>
-      <Group position="left">
+    <Stack gap="xs" style={{ display: 'flex', flex: '1' }}>
+      <Group justify="left">
         <Title order={4}>{template?.name}</Title>
       </Group>
 
