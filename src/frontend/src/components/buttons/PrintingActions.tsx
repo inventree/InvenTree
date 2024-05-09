@@ -100,6 +100,7 @@ export function PrintingActions({
     onClose: () => {
       setPluginId(0);
     },
+    successMessage: t`Label printing completed successfully`,
     onFormSuccess: (response: any) => {
       if (!response.complete) {
         // TODO: Periodically check for completion (requires server-side changes)
@@ -110,12 +111,6 @@ export function PrintingActions({
         });
         return;
       }
-
-      notifications.show({
-        title: t`Success`,
-        message: t`Label printing completed successfully`,
-        color: 'green'
-      });
 
       if (response.output) {
         // An output file was generated
@@ -142,6 +137,7 @@ export function PrintingActions({
         value: items
       }
     },
+    successMessage: t`Report printing completed successfully`,
     onFormSuccess: (response: any) => {
       if (!response.complete) {
         // TODO: Periodically check for completion (requires server-side changes)
@@ -152,12 +148,6 @@ export function PrintingActions({
         });
         return;
       }
-
-      notifications.show({
-        title: t`Success`,
-        message: t`Report printing completed successfully`,
-        color: 'green'
-      });
 
       if (response.output) {
         // An output file was generated
