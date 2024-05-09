@@ -148,7 +148,10 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         tableState={table}
         columns={tableColumns}
         props={{
+          enableSelection: true,
           enableDownload: true,
+          enableLabels: true,
+          enableReports: true,
           params: {
             parent: parentId
           },

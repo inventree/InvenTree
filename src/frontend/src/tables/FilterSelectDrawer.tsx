@@ -63,18 +63,6 @@ interface FilterProps extends React.ComponentPropsWithoutRef<'div'> {
   description?: string;
 }
 
-/*
- * Custom component for the filter select
- */
-const FilterSelectItem = forwardRef<HTMLDivElement, FilterProps>(
-  ({ label, description, ...others }, ref) => (
-    <div ref={ref} {...others}>
-      <Text size="sm">{label}</Text>
-      <Text size="xs">{description}</Text>
-    </div>
-  )
-);
-
 function FilterAddGroup({
   tableState,
   availableFilters
