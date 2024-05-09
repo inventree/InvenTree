@@ -142,7 +142,6 @@ function FilterAddGroup({
       <Divider />
       <Select
         data={filterOptions}
-        component={FilterSelectItem}
         searchable={true}
         placeholder={t`Select filter`}
         label={t`Filter`}
