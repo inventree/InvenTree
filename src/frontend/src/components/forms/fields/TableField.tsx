@@ -33,7 +33,7 @@ export function TableField({
   };
 
   return (
-    <Table highlightOnHover striped>
+    <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
       <thead>
         <tr>
           {definition.headers?.map((header) => {

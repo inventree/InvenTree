@@ -190,6 +190,7 @@ export function ApiFormField({
             {...reducedDefinition}
             ref={field.ref}
             id={fieldId}
+            aria-label={`text-field-${field.name}`}
             type={definition.field_type}
             value={value || ''}
             error={error?.message}
@@ -208,6 +209,7 @@ export function ApiFormField({
             {...reducedDefinition}
             ref={ref}
             id={fieldId}
+            aria-label={`boolean-field-${field.name}`}
             radius="lg"
             size="sm"
             checked={isTrue(value)}
@@ -228,6 +230,7 @@ export function ApiFormField({
             radius="sm"
             ref={field.ref}
             id={fieldId}
+            aria-label={`number-field-${field.name}`}
             value={numericalValue}
             error={error?.message}
             decimalScale={definition.field_type == 'integer' ? 0 : 10}

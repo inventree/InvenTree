@@ -77,9 +77,7 @@ export function ActionDropdown({
       </Indicator>
       <Menu.Dropdown>
         {actions.map((action) => {
-          const id: string = identifierString(
-            `action-item-${name}-${action.name}`
-          );
+          const id: string = identifierString(`${menuName}-${action.name}`);
           return action.hidden ? null : (
             <Indicator
               disabled={!action.indicator}

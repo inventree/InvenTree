@@ -276,6 +276,7 @@ export function RelatedModelField({
     >
       <Select
         id={fieldId}
+        aria-label={`related-field-${field.name}`}
         value={currentValue}
         ref={field.ref}
         options={data}
