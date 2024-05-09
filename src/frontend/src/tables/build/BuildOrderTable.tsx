@@ -5,11 +5,15 @@ import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { PartHoverCard } from '../../components/images/Thumbnail';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderUser } from '../../components/render/User';
-import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import {
+  useOwnerFilters,
+  useProjectCodeFilters,
+  useUserFilters
+} from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -17,6 +21,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
   CreationDateColumn,
+  DateColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -54,7 +59,7 @@ function buildOrderTableColumns(): TableColumn[] {
         />
       )
     },
-    StatusColumn(ModelType.build),
+    StatusColumn({ model: ModelType.build }),
     ProjectCodeColumn(),
     {
       accessor: 'priority',
@@ -62,11 +67,10 @@ function buildOrderTableColumns(): TableColumn[] {
     },
     CreationDateColumn(),
     TargetDateColumn(),
-    {
+    DateColumn({
       accessor: 'completion_date',
-      sortable: true,
-      render: (record: any) => renderDate(record.completion_date)
-    },
+      sortable: true
+    }),
     {
       accessor: 'issued_by',
       sortable: true,
@@ -92,6 +96,10 @@ export function BuildOrderTable({
 }) {
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
 
+  const projectCodeFilters = useProjectCodeFilters();
+  const userFilters = useUserFilters();
+  const responsibleFilters = useOwnerFilters();
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -102,11 +110,13 @@ export function BuildOrderTable({
       },
       {
         name: 'status',
+        label: t`Status`,
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.build)
       },
       {
         name: 'overdue',
+        label: t`Overdue`,
         type: 'boolean',
         description: t`Show overdue status`
       },
@@ -115,18 +125,36 @@ export function BuildOrderTable({
         type: 'boolean',
         label: t`Assigned to me`,
         description: t`Show orders assigned to me`
+      },
+      {
+        name: 'project_code',
+        label: t`Project Code`,
+        description: t`Filter by project code`,
+        choices: projectCodeFilters.choices
+      },
+      {
+        name: 'has_project_code',
+        label: t`Has Project Code`,
+        description: t`Filter by whether the purchase order has a project code`
+      },
+      {
+        name: 'issued_by',
+        label: t`Issued By`,
+        description: t`Filter by user who issued this order`,
+        choices: userFilters.choices
+      },
+      {
+        name: 'assigned_to',
+        label: t`Responsible`,
+        description: t`Filter by responsible owner`,
+        choices: responsibleFilters.choices
       }
-      // TODO: 'assigned to' filter
-      // TODO: 'issued by' filter
-      // {
-      //   name: 'has_project_code',
-      //   title: t`Has Project Code`,
-      //   description: t`Show orders with project code`,
-      // }
-      // TODO: 'has project code' filter (see table_filters.js)
-      // TODO: 'project code' filter (see table_filters.js)
     ];
-  }, []);
+  }, [
+    projectCodeFilters.choices,
+    userFilters.choices,
+    responsibleFilters.choices
+  ]);
 
   const user = useUserState();
 

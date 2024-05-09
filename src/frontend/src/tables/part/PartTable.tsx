@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatPriceRange } from '../../defaults/formatters';
@@ -9,8 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
-import { shortenString } from '../../functions/tables';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -44,13 +41,7 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'category',
       sortable: true,
-
-      render: function (record: any) {
-        // TODO: Link to the category detail page
-        return shortenString({
-          str: record.category_detail?.pathstring
-        });
-      }
+      render: (record: any) => record.category_detail?.pathstring
     },
     {
       accessor: 'total_in_stock',
@@ -140,8 +131,8 @@ function partTableColumns(): TableColumn[] {
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left" noWrap>
-                <Text color={color}>{text}</Text>
+              <Group gap="xs" justify="left" wrap="nowrap">
+                <Text c={color}>{text}</Text>
                 {record.units && (
                   <Text size="xs" color={color}>
                     [{record.units}]
@@ -269,7 +260,6 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
 
   const table = useTable('part-list');
   const user = useUserState();
-  const navigate = useNavigate();
 
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,

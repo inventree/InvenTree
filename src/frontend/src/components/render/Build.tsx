@@ -1,13 +1,15 @@
 import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
-import { RenderInlineModel } from './Instance';
+import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
 /**
  * Inline rendering of a single BuildOrder instance
  */
-export function RenderBuildOrder({ instance }: { instance: any }): ReactNode {
+export function RenderBuildOrder({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.reference}
@@ -24,7 +26,9 @@ export function RenderBuildOrder({ instance }: { instance: any }): ReactNode {
 /*
  * Inline rendering of a single BuildLine instance
  */
-export function RenderBuildLine({ instance }: { instance: any }): ReactNode {
+export function RenderBuildLine({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   return (
     <RenderInlineModel
       primary={instance.part_detail.full_name}

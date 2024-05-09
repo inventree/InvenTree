@@ -40,7 +40,7 @@ jobs:
       force: ${{ steps.force.outputs.force }}
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -72,7 +72,7 @@ jobs:
     needs: ["pre-commit"]
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -94,7 +94,7 @@ jobs:
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.frontend == 'true' || needs.paths-filter.outputs.force == 'true'
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Set up Python ${{ env.python_version }}
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
         with:
@@ -125,7 +125,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -186,7 +186,7 @@ jobs:
       INVENTREE_SITE_URL: http://127.0.0.1:12345
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -209,21 +209,25 @@ jobs:
           coverage run -m unittest discover -s test/
 
   coverage:
-    name: Tests - DB [SQLite] + Coverage
+    name: Tests - DB [SQLite] + Coverage ${{ matrix.python_version }}
     runs-on: ubuntu-20.04
 
     needs: ["pre-commit", "paths-filter"]
     if: needs.paths-filter.outputs.server == 'true' || needs.paths-filter.outputs.force == 'true'
     continue-on-error: true # continue if a step fails so that coverage gets pushed
+    strategy:
+      matrix:
+        python_version: [3.9, 3.12]
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
       INVENTREE_DB_ENGINE: sqlite3
       INVENTREE_PLUGINS_ENABLED: true
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      python_version: ${{ matrix.python_version }}
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -239,7 +243,7 @@ jobs:
       - name: Coverage Tests
         run: invoke test --coverage
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
+        uses: codecov/codecov-action@5ecb98a3c6b747ed38dc09f787459979aebb39be # pin@v4.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -277,7 +281,7 @@ jobs:
           - 6379:6379
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -321,7 +325,7 @@ jobs:
           - 3306:3306
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -360,7 +364,7 @@ jobs:
           - 5432:5432
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -371,7 +375,7 @@ jobs:
       - name: Run Tests
         run: invoke test --migrations --report --coverage
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
+        uses: codecov/codecov-action@5ecb98a3c6b747ed38dc09f787459979aebb39be # pin@v4.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -391,7 +395,7 @@ jobs:
       INVENTREE_PLUGINS_ENABLED: false
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
         name: Checkout Code
       - name: Environment Setup
         uses: ./.github/actions/setup
@@ -448,7 +452,7 @@ jobs:
       VITE_COVERAGE: true
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -476,7 +480,7 @@ jobs:
         if: always()
         run: cd src/frontend && npx nyc report --report-dir ./coverage --temp-dir .nyc_output --reporter=lcov --exclude-after-remap false
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@84508663e988701840491b86de86b666e8a86bed # pin@v4.3.0
+        uses: codecov/codecov-action@5ecb98a3c6b747ed38dc09f787459979aebb39be # pin@v4.3.1
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -489,7 +493,7 @@ jobs:
     timeout-minutes: 60
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # pin@v4.1.5
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:

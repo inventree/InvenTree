@@ -2,7 +2,7 @@ import { t } from '@lingui/macro';
 import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
-import { RenderInlineModel } from './Instance';
+import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
 /**
@@ -10,9 +10,7 @@ import { StatusRenderer } from './StatusRenderer';
  */
 export function RenderPurchaseOrder({
   instance
-}: {
-  instance: any;
-}): ReactNode {
+}: Readonly<InstanceRenderInterface>): ReactNode {
   let supplier = instance.supplier_detail || {};
 
   // TODO: Handle URL
@@ -32,7 +30,9 @@ export function RenderPurchaseOrder({
 /**
  * Inline rendering of a single ReturnOrder instance
  */
-export function RenderReturnOrder({ instance }: { instance: any }): ReactNode {
+export function RenderReturnOrder({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   let customer = instance.customer_detail || {};
 
   return (
@@ -51,7 +51,9 @@ export function RenderReturnOrder({ instance }: { instance: any }): ReactNode {
 /**
  * Inline rendering of a single SalesOrder instance
  */
-export function RenderSalesOrder({ instance }: { instance: any }): ReactNode {
+export function RenderSalesOrder({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   let customer = instance.customer_detail || {};
 
   // TODO: Handle URL

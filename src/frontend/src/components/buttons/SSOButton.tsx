@@ -50,7 +50,7 @@ export function SsoButton({ provider }: { provider: Provider }) {
 
   return (
     <Button
-      leftIcon={getBrandIcon(provider)}
+      leftSection={getBrandIcon(provider)}
       radius="xl"
       component="a"
       onClick={login}

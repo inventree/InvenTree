@@ -15,12 +15,12 @@ import { notifications, showNotification } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconCircleX,
+  IconDots,
   IconHelpCircle,
   IconInfoCircle,
   IconPlaylistAdd,
   IconRefresh
 } from '@tabler/icons-react';
-import { IconDots } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -119,11 +119,11 @@ export function PluginDrawer({
   }
 
   return (
-    <Stack spacing={'xs'}>
-      <Group position="apart">
+    <Stack gap={'xs'}>
+      <Group justify="space-between">
         <Box></Box>
 
-        <Group spacing={'xs'}>
+        <Group gap={'xs'}>
           {plugin && PluginIcon(plugin)}
           <Title order={4}>
             {plugin?.meta?.human_name ?? plugin?.name ?? '-'}
@@ -158,14 +158,14 @@ export function PluginDrawer({
         />
       </Group>
 
-      <LoadingOverlay visible={isFetching} overlayOpacity={0} />
+      <LoadingOverlay visible={isFetching} overlayProps={{ opacity: 0 }} />
 
       <Card withBorder>
-        <Stack spacing="md">
+        <Stack gap="md">
           <Title order={4}>
             <Trans>Plugin information</Trans>
           </Title>
-          <Stack pos="relative" spacing="xs">
+          <Stack pos="relative" gap="xs">
             <InfoItem type="text" name={t`Name`} value={plugin?.name} />
             <InfoItem
               type="text"
@@ -193,11 +193,11 @@ export function PluginDrawer({
       </Card>
 
       <Card withBorder>
-        <Stack spacing="md">
+        <Stack gap="md">
           <Title order={4}>
             <Trans>Package information</Trans>
           </Title>
-          <Stack pos="relative" spacing="xs">
+          <Stack pos="relative" gap="xs">
             {plugin?.is_package && (
               <InfoItem
                 type="text"
@@ -226,7 +226,7 @@ export function PluginDrawer({
 
       {plugin && plugin.active && (
         <Card withBorder>
-          <Stack spacing="md">
+          <Stack gap="md">
             <Title order={4}>
               <Trans>Plugin settings</Trans>
             </Title>
@@ -290,7 +290,7 @@ export default function PluginListTable() {
           // TODO: Add link to plugin detail page
           // TODO: Add custom badges
           return (
-            <Group position="left">
+            <Group justify="left">
               <PluginIcon {...record} />
               <Text>{record.name}</Text>
             </Group>
@@ -304,9 +304,13 @@ export default function PluginListTable() {
 
         render: function (record: any) {
           if (record.active) {
-            return record.meta.description;
+            return record?.meta.description;
           } else {
-            return <Text italic>{t`Description not available`}</Text>;
+            return (
+              <Text
+                style={{ fontStyle: 'italic' }}
+              >{t`Description not available`}</Text>
+            );
           }
         }
       },
@@ -344,14 +348,14 @@ export default function PluginListTable() {
                 : t`Confirm plugin deactivation`
             }
           >
-            <Stack spacing="xs">
+            <Stack gap="xs">
               <Text>
                 {active
                   ? t`The following plugin will be activated`
                   : t`The following plugin will be deactivated`}
                 :
               </Text>
-              <Text size="lg" italic>
+              <Text size="lg" style={{ fontStyle: 'italic' }}>
                 {plugin_name}
               </Text>
             </Stack>
@@ -532,7 +536,7 @@ export default function PluginListTable() {
         icon={<IconInfoCircle />}
         title={t`Confirm plugin uninstall`}
       >
-        <Stack spacing="xs">
+        <Stack gap="xs">
           <Text>{t`The selected plugin will be uninstalled.`}</Text>
           <Text>{t`This action cannot be undone.`}</Text>
         </Stack>

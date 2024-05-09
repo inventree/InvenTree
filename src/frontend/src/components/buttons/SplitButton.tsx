@@ -5,13 +5,13 @@ import {
   Menu,
   Text,
   Tooltip,
-  createStyles,
   useMantineTheme
 } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { TablerIconType } from '../../functions/icons';
+import * as classes from './SplitButton.css';
 
 interface SplitButtonOption {
   key: string;
@@ -30,31 +30,14 @@ interface SplitButtonProps {
   loading?: boolean;
 }
 
-const useStyles = createStyles((theme) => ({
-  button: {
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    '&::before': {
-      borderRadius: '0 !important'
-    }
-  },
-  icon: {
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-    border: 0,
-    borderLeft: `1px solid ${theme.primaryShade}`
-  }
-}));
-
 export function SplitButton({
   options,
   defaultSelected,
   selected,
   setSelected,
   loading
-}: SplitButtonProps) {
+}: Readonly<SplitButtonProps>) {
   const [current, setCurrent] = useState<string>(defaultSelected);
-  const { classes } = useStyles();
 
   useEffect(() => {
     setSelected?.(current);
@@ -72,7 +55,7 @@ export function SplitButton({
   const theme = useMantineTheme();
 
   return (
-    <Group noWrap style={{ gap: 0 }}>
+    <Group wrap="nowrap" style={{ gap: 0 }}>
       <Button
         onClick={currentOption?.onClick}
         disabled={loading ? false : currentOption?.disabled}
@@ -106,7 +89,7 @@ export function SplitButton({
                 option.onClick();
               }}
               disabled={option.disabled}
-              icon={<option.icon />}
+              leftSection={<option.icon />}
             >
               <Tooltip label={option.tooltip} position="right">
                 <Text>{option.name}</Text>

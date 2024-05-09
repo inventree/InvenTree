@@ -47,8 +47,8 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
           let part = getPart(record);
           return (
             <Group
-              noWrap={true}
-              position="left"
+              wrap="nowrap"
+              justify="left"
               onClick={() => {
                 navigate(`/part/${part.pk}/`);
               }}

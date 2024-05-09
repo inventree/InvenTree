@@ -79,7 +79,7 @@ export function ActionDropdown({
             >
               <Tooltip label={action.tooltip}>
                 <Menu.Item
-                  icon={action.icon}
+                  leftSection={action.icon}
                   onClick={() => {
                     if (action.onClick != undefined) {
                       action.onClick();

@@ -303,7 +303,7 @@ export default function SupplierPartDetail() {
       <DetailsBadge
         label={t`Inactive`}
         color="red"
-        visible={!supplierPart.active}
+        visible={supplierPart.active == false}
       />
     ];
   }, [supplierPart]);
@@ -311,8 +311,7 @@ export default function SupplierPartDetail() {
   return (
     <>
       {editSuppliertPart.modal}
-      {duplicateSupplierPart.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Supplier Part`}

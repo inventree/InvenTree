@@ -15,7 +15,6 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
-  DeleteItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
@@ -109,7 +108,8 @@ export default function Stock() {
         type: 'text',
         name: 'items',
         icon: 'stock',
-        label: t`Stock Items`
+        label: t`Stock Items`,
+        value_formatter: () => location?.items || '0'
       },
       {
         type: 'text',
@@ -157,6 +157,8 @@ export default function Stock() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
+            tableName="location-stock"
+            allowAdd
             params={{
               location: id
             }}
@@ -199,7 +201,10 @@ export default function Stock() {
     return {
       pk: location.pk,
       model: 'location',
-      refresh: refreshInstance
+      refresh: refreshInstance,
+      filters: {
+        in_stock: true
+      }
     };
   }, [location]);
 
@@ -307,7 +312,7 @@ export default function Stock() {
         />
         <PageDetail
           title={t`Stock Items`}
-          detail={<Text>{location.name ?? 'Top level'}</Text>}
+          subtitle={location?.name}
           actions={locationActions}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {

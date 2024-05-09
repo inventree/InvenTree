@@ -92,3 +92,7 @@ repos:
 #    rev: 3.0.0
 #    hooks:
 #    -   id: shellcheck
+-   repo: https://github.com/isidentical/teyit
+    rev: 0.4.3
+    hooks:
+    -   id: teyit

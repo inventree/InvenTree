@@ -97,7 +97,7 @@ export default function AdminCenter() {
         label: t`Project Codes`,
         icon: <IconListDetails />,
         content: (
-          <Stack spacing="xs">
+          <Stack gap="xs">
             <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
             <Divider />
             <ProjectCodeTable />
@@ -144,7 +144,7 @@ export default function AdminCenter() {
   }, []);
 
   const QuickAction = () => (
-    <Stack spacing={'xs'} ml={'sm'}>
+    <Stack gap={'xs'} ml={'sm'}>
       <Title order={5}>
         <Trans>Quick Actions</Trans>
       </Title>
@@ -167,7 +167,7 @@ export default function AdminCenter() {
   );
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SettingsHeader
         title={t`Admin Center`}
         subtitle={t`Advanced Options`}

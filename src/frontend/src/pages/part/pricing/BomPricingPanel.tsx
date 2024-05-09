@@ -34,7 +34,7 @@ import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
 import { DateColumn, PartColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
-import { NoPricingData } from './PricingPanel';
+import { LoadingPricingData, NoPricingData } from './PricingPanel';
 
 // Display BOM data as a pie chart
 function BomPieChart({
@@ -149,7 +149,7 @@ export default function BomPricingPanel({
           let units = record.sub_part_detail?.units;
 
           return (
-            <Group spacing="apart" grow>
+            <Group justify="space-between" grow>
               <Text>{quantity}</Text>
               {units && <Text size="xs">[{units}]</Text>}
             </Group>
@@ -209,8 +209,12 @@ export default function BomPricingPanel({
 
   const [chartType, setChartType] = useState<string>('pie');
 
+  const hasData: boolean = useMemo(() => {
+    return !table.isLoading && bomPricingData.length > 0;
+  }, [table.isLoading, bomPricingData.length]);
+
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SimpleGrid cols={2}>
         <InvenTreeTable
           tableState={table}
@@ -227,26 +231,34 @@ export default function BomPricingPanel({
             modelField: 'sub_part'
           }}
         />
-        {bomPricingData.length > 0 ? (
-          <Stack spacing="xs">
-            {chartType == 'bar' && (
-              <BomBarChart data={bomPricingData} currency={pricing?.currency} />
-            )}
-            {chartType == 'pie' && (
-              <BomPieChart data={bomPricingData} currency={pricing?.currency} />
-            )}
-            <SegmentedControl
-              value={chartType}
-              onChange={setChartType}
-              data={[
-                { value: 'pie', label: t`Pie Chart` },
-                { value: 'bar', label: t`Bar Chart` }
-              ]}
-            />
-          </Stack>
-        ) : (
-          <NoPricingData />
-        )}
+        <Stack gap="xs">
+          {table.isLoading && <LoadingPricingData />}
+          {hasData && (
+            <Stack gap="xs">
+              {chartType == 'bar' && (
+                <BomBarChart
+                  data={bomPricingData}
+                  currency={pricing?.currency}
+                />
+              )}
+              {chartType == 'pie' && (
+                <BomPieChart
+                  data={bomPricingData}
+                  currency={pricing?.currency}
+                />
+              )}
+              <SegmentedControl
+                value={chartType}
+                onChange={setChartType}
+                data={[
+                  { value: 'pie', label: t`Pie Chart` },
+                  { value: 'bar', label: t`Bar Chart` }
+                ]}
+              />
+            </Stack>
+          )}
+          {!hasData && !table.isLoading && <NoPricingData />}
+        </Stack>
       </SimpleGrid>
     </Stack>
   );

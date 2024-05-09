@@ -1,5 +1,7 @@
 import {
+  Icon,
   Icon123,
+  IconArrowBigDownLineFilled,
   IconArrowMerge,
   IconBinaryTree2,
   IconBookmarks,
@@ -10,7 +12,7 @@ import {
   IconBusinessplan,
   IconCalendar,
   IconCalendarStats,
-  IconCategory,
+  IconCalendarTime,
   IconCheck,
   IconCircleCheck,
   IconCircleMinus,
@@ -23,13 +25,14 @@ import {
   IconCornerUpRightDouble,
   IconCurrencyDollar,
   IconDots,
-  IconDotsCircleHorizontal,
   IconExternalLink,
   IconFileUpload,
+  IconFlag,
   IconFlagShare,
   IconGitBranch,
   IconGridDots,
   IconHash,
+  IconInfoCircle,
   IconLayersLinked,
   IconLink,
   IconList,
@@ -46,14 +49,18 @@ import {
   IconPaperclip,
   IconPhone,
   IconPhoto,
+  IconPoint,
   IconPrinter,
   IconProgressCheck,
+  IconProps,
   IconQrcode,
   IconQuestionMark,
   IconRulerMeasure,
   IconShoppingCart,
   IconShoppingCartHeart,
+  IconShoppingCartPlus,
   IconSitemap,
+  IconSquareXFilled,
   IconStack2,
   IconStatusChange,
   IconTag,
@@ -65,6 +72,7 @@ import {
   IconTrash,
   IconTruck,
   IconTruckDelivery,
+  IconTruckReturn,
   IconUnlink,
   IconUser,
   IconUserStar,
@@ -74,17 +82,10 @@ import {
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
-import { IconFlag } from '@tabler/icons-react';
-import { IconSquareXFilled } from '@tabler/icons-react';
-import { IconShoppingCartPlus } from '@tabler/icons-react';
-import { IconArrowBigDownLineFilled } from '@tabler/icons-react';
-import { IconTruckReturn } from '@tabler/icons-react';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { IconCalendarTime } from '@tabler/icons-react';
-import { Icon, IconProps } from '@tabler/icons-react';
 import React from 'react';
 
 const icons = {
+  name: IconPoint,
   description: IconInfoCircle,
   variant_of: IconStatusChange,
   unallocated_stock: IconPackage,
@@ -162,6 +163,7 @@ const icons = {
   link: IconLink,
   responsible: IconUserStar,
   pricing: IconCurrencyDollar,
+  total_price: IconCurrencyDollar,
   currency: IconCurrencyDollar,
   stocktake: IconClipboardList,
   user: IconUser,
@@ -218,7 +220,7 @@ type InvenTreeIconProps = {
   iconProps?: TablerIconProps;
 };
 
-export function InvenTreeIcon(props: InvenTreeIconProps) {
+export function InvenTreeIcon(props: Readonly<InvenTreeIconProps>) {
   let Icon: React.ForwardRefExoticComponent<React.RefAttributes<any>>;
 
   if (props.icon in icons) {

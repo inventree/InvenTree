@@ -19,7 +19,6 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { StylishText } from '../../../components/items/StylishText';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
@@ -288,7 +287,7 @@ export default function SystemSettings() {
 
   return (
     <>
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <SettingsHeader
           title={t`System Settings`}
           subtitle={server.instance || ''}

@@ -50,7 +50,7 @@ class SettingsTest(InvenTreeTestCase):
         # There should be two settings objects in the database
         settings = InvenTreeSetting.objects.all()
 
-        self.assertTrue(settings.count() >= 2)
+        self.assertGreaterEqual(settings.count(), 2)
 
         instance_name = InvenTreeSetting.objects.get(pk=1)
         self.assertEqual(instance_name.key, 'INVENTREE_INSTANCE')
@@ -207,7 +207,7 @@ class SettingsTest(InvenTreeTestCase):
         - Ensure that every setting key is valid
         - Ensure that a validator is supplied
         """
-        self.assertTrue(type(setting) is dict)
+        self.assertIs(type(setting), dict)
 
         name = setting.get('name', None)
 
@@ -726,7 +726,7 @@ class TaskListApiTests(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
 
         for task in response.data:
-            self.assertTrue(task['name'] == 'time.sleep')
+            self.assertEqual(task['name'], 'time.sleep')
 
 
 class WebhookMessageTests(TestCase):

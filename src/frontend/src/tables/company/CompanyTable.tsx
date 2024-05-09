@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { access } from 'fs';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -45,7 +44,7 @@ export function CompanyTable({
         sortable: true,
         render: (record: any) => {
           return (
-            <Group spacing="xs" noWrap={true}>
+            <Group gap="xs" wrap="nowrap">
               <Thumbnail
                 src={record.thumbnail ?? record.image ?? ''}
                 alt={record.name}

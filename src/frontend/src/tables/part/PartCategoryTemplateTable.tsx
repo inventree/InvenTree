@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
-import { set } from 'react-hook-form';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
@@ -94,7 +93,7 @@ export default function PartCategoryTemplateTable({}: {}) {
           }
 
           return (
-            <Group position="apart" grow>
+            <Group justify="space-between" grow>
               <Text>{record.default_value}</Text>
               {units && <Text size="xs">{units}</Text>}
             </Group>

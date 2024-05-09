@@ -35,13 +35,13 @@ export function HostOptionsForm({
           <TextInput
             placeholder={t`Host`}
             withAsterisk
-            sx={{ flex: 1 }}
+            style={{ flex: 1 }}
             {...form.getInputProps(`${key}.host`)}
           />
           <TextInput
             placeholder={t`Name`}
             withAsterisk
-            sx={{ flex: 1 }}
+            style={{ flex: 1 }}
             {...form.getInputProps(`${key}.name`)}
           />
           <ActionIcon
@@ -49,6 +49,7 @@ export function HostOptionsForm({
             onClick={() => {
               deleteItem(key);
             }}
+            variant="default"
           >
             <IconTrash />
           </ActionIcon>
@@ -59,18 +60,18 @@ export function HostOptionsForm({
 
   return (
     <form onSubmit={form.onSubmit(saveOptions)}>
-      <Box sx={{ maxWidth: 500 }} mx="auto">
+      <Box style={{ maxWidth: 500 }} mx="auto">
         {fields.length > 0 ? (
           <Group mb="xs">
-            <Text weight={500} size="sm" sx={{ flex: 1 }}>
+            <Text fw={500} size="sm" style={{ flex: 1 }}>
               <Trans>Host</Trans>
             </Text>
-            <Text weight={500} size="sm" sx={{ flex: 1 }}>
+            <Text fw={500} size="sm" style={{ flex: 1 }}>
               <Trans>Name</Trans>
             </Text>
           </Group>
         ) : (
-          <Text color="dimmed" align="center">
+          <Text c="dimmed" ta="center">
             <Trans>No one here...</Trans>
           </Text>
         )}
@@ -84,7 +85,7 @@ export function HostOptionsForm({
             <IconSquarePlus />
             <Trans>Add Host</Trans>
           </Button>
-          <Space sx={{ flex: 1 }} />
+          <Space style={{ flex: 1 }} />
           <Button type="submit">
             <Trans>Save</Trans>
           </Button>

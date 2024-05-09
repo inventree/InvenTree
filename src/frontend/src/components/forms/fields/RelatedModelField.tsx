@@ -1,7 +1,11 @@
 import { t } from '@lingui/macro';
-import { Input, useMantineTheme } from '@mantine/core';
-import { useDebouncedValue } from '@mantine/hooks';
-import { useId } from '@mantine/hooks';
+import {
+  Input,
+  darken,
+  useMantineColorScheme,
+  useMantineTheme
+} from '@mantine/core';
+import { useDebouncedValue, useId } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
@@ -12,6 +16,7 @@ import {
 import Select from 'react-select';
 
 import { api } from '../../../App';
+import { vars } from '../../../theme';
 import { RenderInstance } from '../../render/Instance';
 import { ApiFormFieldType } from './ApiFormField';
 
@@ -78,7 +83,7 @@ export function RelatedModelField({
 
   // Search input query
   const [value, setValue] = useState<string>('');
-  const [searchText, cancelSearchText] = useDebouncedValue(value, 250);
+  const [searchText] = useDebouncedValue(value, 250);
 
   const [filters, setFilters] = useState<any>({});
 
@@ -188,7 +193,7 @@ export function RelatedModelField({
       setPk(_pk);
 
       // Run custom callback for this field (if provided)
-      definition.onValueChange?.(_pk);
+      definition.onValueChange?.(_pk, value.data ?? {});
     },
     [field.onChange, definition]
   );
@@ -218,43 +223,46 @@ export function RelatedModelField({
   // Define color theme to pass to field based on Mantine theme
   const theme = useMantineTheme();
 
+  const colorschema = vars.colors.primaryColors;
+  const { colorScheme } = useMantineColorScheme();
+
   const colors = useMemo(() => {
     let colors: any;
-    if (theme.colorScheme === 'dark') {
+    if (colorScheme === 'dark') {
       colors = {
-        neutral0: theme.colors[theme.colorScheme][6],
-        neutral5: theme.colors[theme.colorScheme][4],
-        neutral10: theme.colors[theme.colorScheme][4],
-        neutral20: theme.colors[theme.colorScheme][4],
-        neutral30: theme.colors[theme.colorScheme][3],
-        neutral40: theme.colors[theme.colorScheme][2],
-        neutral50: theme.colors[theme.colorScheme][1],
-        neutral60: theme.colors[theme.colorScheme][0],
-        neutral70: theme.colors[theme.colorScheme][0],
-        neutral80: theme.colors[theme.colorScheme][0],
-        neutral90: theme.colors[theme.colorScheme][0],
-        primary: theme.colors[theme.primaryColor][7],
-        primary25: theme.colors[theme.primaryColor][6],
-        primary50: theme.colors[theme.primaryColor][5],
-        primary75: theme.colors[theme.primaryColor][4]
+        neutral0: colorschema[6],
+        neutral5: colorschema[4],
+        neutral10: colorschema[4],
+        neutral20: colorschema[4],
+        neutral30: colorschema[3],
+        neutral40: colorschema[2],
+        neutral50: colorschema[1],
+        neutral60: colorschema[0],
+        neutral70: colorschema[0],
+        neutral80: colorschema[0],
+        neutral90: colorschema[0],
+        primary: vars.colors.primaryColors[7],
+        primary25: vars.colors.primaryColors[6],
+        primary50: vars.colors.primaryColors[5],
+        primary75: vars.colors.primaryColors[4]
       };
     } else {
       colors = {
-        neutral0: theme.white,
-        neutral5: theme.fn.darken(theme.white, 0.05),
-        neutral10: theme.fn.darken(theme.white, 0.1),
-        neutral20: theme.fn.darken(theme.white, 0.2),
-        neutral30: theme.fn.darken(theme.white, 0.3),
-        neutral40: theme.fn.darken(theme.white, 0.4),
-        neutral50: theme.fn.darken(theme.white, 0.5),
-        neutral60: theme.fn.darken(theme.white, 0.6),
-        neutral70: theme.fn.darken(theme.white, 0.7),
-        neutral80: theme.fn.darken(theme.white, 0.8),
-        neutral90: theme.fn.darken(theme.white, 0.9),
-        primary: theme.colors[theme.primaryColor][7],
-        primary25: theme.colors[theme.primaryColor][4],
-        primary50: theme.colors[theme.primaryColor][5],
-        primary75: theme.colors[theme.primaryColor][6]
+        neutral0: vars.colors.white,
+        neutral5: darken(vars.colors.white, 0.05),
+        neutral10: darken(vars.colors.white, 0.1),
+        neutral20: darken(vars.colors.white, 0.2),
+        neutral30: darken(vars.colors.white, 0.3),
+        neutral40: darken(vars.colors.white, 0.4),
+        neutral50: darken(vars.colors.white, 0.5),
+        neutral60: darken(vars.colors.white, 0.6),
+        neutral70: darken(vars.colors.white, 0.7),
+        neutral80: darken(vars.colors.white, 0.8),
+        neutral90: darken(vars.colors.white, 0.9),
+        primary: vars.colors.primaryColors[7],
+        primary25: vars.colors.primaryColors[4],
+        primary50: vars.colors.primaryColors[5],
+        primary75: vars.colors.primaryColors[6]
       };
     }
     return colors;
