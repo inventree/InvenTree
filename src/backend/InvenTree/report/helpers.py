@@ -12,7 +12,7 @@ logger = logging.getLogger('inventree')
 def report_model_types():
     """Return a list of database models for which reports can be generated."""
     from InvenTree.helpers_model import getModelsWithMixin
-    from InvenTree.models import InvenTreeReportMixin
+    from report.mixins import InvenTreeReportMixin
 
     return list(getModelsWithMixin(InvenTreeReportMixin))
 

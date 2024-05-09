@@ -30,6 +30,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import report.mixins
 import stock.models
 import users.models as UserModels
 from common.notifications import InvenTreeNotificationBodies
@@ -185,7 +186,7 @@ class Order(
     StateTransitionMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
-    InvenTree.models.InvenTreeReportMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.ReferenceIndexingMixin,
     InvenTree.models.InvenTreeModel,

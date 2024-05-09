@@ -31,6 +31,7 @@ import InvenTree.helpers
 import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
+import report.mixins
 import report.models
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -107,7 +108,7 @@ class StockLocationManager(TreeManager):
 
 class StockLocation(
     InvenTree.models.InvenTreeBarcodeMixin,
-    InvenTree.models.InvenTreeReportMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeTree,
 ):
     """Organization tree for StockItem objects.
@@ -364,7 +365,7 @@ def default_delete_on_deplete():
 class StockItem(
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
-    InvenTree.models.InvenTreeReportMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
     common.models.MetaMixin,

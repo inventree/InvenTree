@@ -37,7 +37,7 @@ except OSError as err:  # pragma: no cover
 logger = logging.getLogger('inventree')
 
 
-class WeasyprintReportMixin(WeasyTemplateResponseMixin):
+class WeasyprintReport(WeasyTemplateResponseMixin):
     """Class for rendering a HTML template to a PDF."""
 
     def __init__(self, request, template, **kwargs):
@@ -187,7 +187,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         context = self.get_context(instance, request)
 
         # Render HTML template to PDF
-        wp = WeasyprintReportMixin(
+        wp = WeasyprintReport(
             request,
             self.template_name,
             base_url=request.build_absolute_uri('/'),

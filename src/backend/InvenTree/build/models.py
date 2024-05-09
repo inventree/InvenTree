@@ -38,6 +38,7 @@ from common.notifications import trigger_notification, InvenTreeNotificationBodi
 from plugin.events import trigger_event
 
 import part.models
+import report.mixins
 import stock.models
 import users.models
 
@@ -46,9 +47,9 @@ logger = logging.getLogger('inventree')
 
 
 class Build(
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
-    InvenTree.models.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
     InvenTree.models.ReferenceIndexingMixin,
@@ -1313,7 +1314,7 @@ class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildLine(InvenTree.models.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
+class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
