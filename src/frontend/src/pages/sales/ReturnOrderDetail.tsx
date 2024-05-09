@@ -292,7 +292,6 @@ export default function ReturnOrderDetail() {
         enableReports
       />,
       <ActionDropdown
-        key="order-actions"
         tooltip={t`Order Actions`}
         icon={<IconDots />}
         actions={[

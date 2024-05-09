@@ -286,7 +286,6 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const companyActions = useMemo(() => {
     return [
       <ActionDropdown
-        key="company"
         tooltip={t`Company Actions`}
         icon={<IconDots />}
         actions={[

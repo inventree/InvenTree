@@ -36,7 +36,7 @@ export function DownloadAction({
   return (
     <>
       <ActionDropdown
-        key="download"
+        tooltip={t`Download Data`}
         icon={<IconDownload />}
         actions={actions}
       />

@@ -243,7 +243,7 @@ export default function Stock() {
         enableReports
       />,
       <ActionDropdown
-        key="operations"
+        tooltip={t`Stock Actions`}
         icon={<InvenTreeIcon icon="stock" />}
         actions={[
           {
@@ -265,7 +265,6 @@ export default function Stock() {
         ]}
       />,
       <ActionDropdown
-        key="location"
         tooltip={t`Location Actions`}
         icon={<IconDots />}
         actions={[

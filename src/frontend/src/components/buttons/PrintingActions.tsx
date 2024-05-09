@@ -172,7 +172,7 @@ export function PrintingActions({
       {reportModal.modal}
       {labelModal.modal}
       <ActionDropdown
-        key="printing"
+        tooltip={t`Printing Actions`}
         icon={<IconPrinter />}
         disabled={!enabled}
         actions={[

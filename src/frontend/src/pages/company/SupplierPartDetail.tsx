@@ -244,7 +244,6 @@ export default function SupplierPartDetail() {
   const supplierPartActions = useMemo(() => {
     return [
       <ActionDropdown
-        key="part"
         tooltip={t`Supplier Part Actions`}
         icon={<IconDots />}
         actions={[

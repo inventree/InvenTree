@@ -157,7 +157,6 @@ export default function CategoryDetail({}: {}) {
   const categoryActions = useMemo(() => {
     return [
       <ActionDropdown
-        key="category"
         tooltip={t`Category Actions`}
         icon={<IconDots />}
         actions={[

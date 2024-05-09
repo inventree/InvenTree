@@ -402,7 +402,6 @@ export default function StockDetail() {
         ]}
       />,
       <ActionDropdown
-        key="operations"
         tooltip={t`Stock Operations`}
         icon={<IconPackages />}
         actions={[
@@ -445,7 +444,6 @@ export default function StockDetail() {
         ]}
       />,
       <ActionDropdown
-        key="stock"
         tooltip={t`Stock Item Actions`}
         icon={<IconDots />}
         actions={[
