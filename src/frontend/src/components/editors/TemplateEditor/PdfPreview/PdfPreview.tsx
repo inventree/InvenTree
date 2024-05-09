@@ -1,4 +1,5 @@
 import { Trans, t } from '@lingui/macro';
+import { notifications } from '@mantine/notifications';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { api } from '../../../../App';

@@ -46,7 +46,7 @@ test('PUI - Label Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByText('Label printing completed');
+  await page.getByText('Label printing completed').waitFor();
 });
 
 /*
@@ -84,7 +84,29 @@ test('PUI - Report Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
 
-  await page.getByText('Report printing completed');
+  await page.getByText('Report printing completed').waitFor();
 });
 
-test('PUI - Report Editing', async ({ page }) => {});
+test('PUI - Report Editing', async ({ page }) => {
+  await doQuickLogin(page, 'admin', 'inventree');
+
+  // Navigate to the admin center
+  await page.getByRole('button', { name: 'admin' }).click();
+  await page.getByRole('menuitem', { name: 'Admin Center' }).click();
+  await page.getByRole('tab', { name: 'Label Templates' }).click();
+  await page
+    .getByRole('cell', { name: 'InvenTree Stock Item Label (' })
+    .click();
+
+  // Generate preview
+  await page.getByLabel('split-button-preview-options-action').click();
+  await page
+    .getByLabel('split-button-preview-options-item-preview-save', {
+      exact: true
+    })
+    .click();
+
+  await page.getByRole('button', { name: 'Save & Reload' }).click();
+
+  await page.getByText('The preview has been updated').waitFor();
+});

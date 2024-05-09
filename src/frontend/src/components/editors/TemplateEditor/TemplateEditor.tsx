@@ -9,7 +9,7 @@ import {
   Tabs
 } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
-import { showNotification } from '@mantine/notifications';
+import { notifications, showNotification } from '@mantine/notifications';
 import {
   IconAlertTriangle,
   IconDeviceFloppy,
@@ -183,10 +183,14 @@ export function TemplateEditor(props: TemplateEditorProps) {
       )
         .then(() => {
           setErrorOverlay(null);
+
+          notifications.hide('template-preview');
+
           showNotification({
             title: t`Preview updated`,
             message: t`The preview has been updated successfully.`,
-            color: 'green'
+            color: 'green',
+            id: 'template-preview'
           });
         })
         .catch((error) => {
@@ -252,6 +256,7 @@ export function TemplateEditor(props: TemplateEditorProps) {
               <SplitButton
                 loading={isPreviewLoading}
                 defaultSelected="preview_save"
+                name="preview-options"
                 options={[
                   {
                     key: 'preview',

@@ -105,7 +105,7 @@ class LabelPrintingMixin:
             return pdf2image.convert_from_bytes(pdf_data, **pdf2image_kwargs)[0]
         except Exception:
             log_error('label.render_to_png')
-            raise ValidationError(_('Error rendering label to PNG'))
+            return None
 
     def print_labels(
         self,
