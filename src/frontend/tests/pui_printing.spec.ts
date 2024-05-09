@@ -49,6 +49,42 @@ test('PUI - Label Printing', async ({ page }) => {
   await page.getByText('Label printing completed');
 });
 
-test('PUI - Report Printing', async ({ page }) => {});
+/*
+ * Test for report printing
+ * Navigate to a PurchaseOrder detail page,
+ * and print a report against it.
+ */
+test('PUI - Report Printing', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/stock/location/index/`);
+  await page.waitForURL('**/platform/stock/location/**');
+
+  // Navigate to a specific PurchaseOrder
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.getByRole('cell', { name: 'PO0009' }).click();
+
+  // Select "print report"
+  await page.getByLabel('action-menu-printing-actions').click();
+  await page.getByLabel('action-menu-printing-actions-print-reports').click();
+
+  // Submit the form (should result in failure, no template selected)
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Form Errors Exist');
+
+  // Select template
+  await page.getByLabel('related-field-template').click();
+  await page.getByText('InvenTree Purchase Order').click();
+
+  await page.waitForTimeout(100);
+
+  // Submit the form (should result in success)
+  await page.getByRole('button', { name: 'Submit' }).isEnabled();
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('Report printing completed');
+});
 
 test('PUI - Report Editing', async ({ page }) => {});
