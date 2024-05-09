@@ -214,8 +214,13 @@ class LabelPrint(GenericAPIView):
 
         items = serializer.validated_data['items']
 
-        plugin_cfg = serializer.validated_data['plugin']
-        plugin = self.get_plugin_class(plugin_cfg.pk, raise_error=True)
+        plugin_cfg = serializer.validated_data.get('plugin', None)
+
+        if plugin_cfg:
+            plugin = self.get_plugin_class(plugin_cfg.pk, raise_error=True)
+        else:
+            # If plugin is not supplied, use the default label printing plugin
+            plugin = registry.get_plugin(InvenTreeLabelPlugin.NAME.lower())
 
         instances = template.get_model().objects.filter(pk__in=items)
 

@@ -117,8 +117,8 @@ class LabelPrintSerializer(serializers.Serializer):
     plugin = serializers.PrimaryKeyRelatedField(
         queryset=plugin.models.PluginConfig.objects.all(),
         many=False,
-        required=True,
-        allow_null=False,
+        required=False,
+        allow_null=True,
         label=_('Printing Plugin'),
         help_text=_('Select plugin to use for label printing'),
     )
