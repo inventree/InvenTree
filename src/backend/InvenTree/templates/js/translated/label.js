@@ -48,6 +48,8 @@ const defaultLabelTemplates = {
  */
 function printLabels(options) {
 
+    let pluginId = -1;
+
     if (!options.items || options.items.length == 0) {
         showAlertDialog(
             '{% trans "Select Items" %}',
@@ -65,28 +67,79 @@ function printLabels(options) {
         items: item_string,
     };
 
+    function getPrintingFields(plugin_id, callback) {
+        let url = '{% url "api-label-print" %}' + `?plugin=${plugin_id}`;
+
+        inventreeGet(
+            url,
+            {
+                plugin: plugin_id,
+            },
+            {
+                method: 'OPTIONS',
+                success: function(response) {
+                    let fields = response?.actions?.POST ?? {};
+                    callback(fields);
+                }
+        });
+    }
+
+    // Callback when a particular label printing plugin is selected
+    function onPluginSelected(value, name, field, formOptions) {
+
+        if (value == pluginId) {
+            return;
+        }
+
+        pluginId = value;
+
+        // Request new printing options for the selected plugin
+        getPrintingFields(value, function(fields) {
+            formOptions.fields = getFormFields(fields);
+            updateForm(formOptions);
+
+            // workaround to fix a bug where one cannot scroll after changing the plugin
+            // without opening and closing the select box again manually
+            $("#id__plugin").select2("open");
+            $("#id__plugin").select2("close");
+        });
+    }
+
+    const baseFields = {
+        template: {},
+        plugin: {},
+        items: {}
+    };
+
+    function getFormFields(customFields={}) {
+        let fields = {
+            ...baseFields,
+            ...customFields,
+        };
+
+        fields['template'].filters = {
+            enabled: true,
+            model_type: options.model_type,
+            items: item_string,
+        };
+
+        fields['plugin'].filters = {
+            active: true,
+            mixin: 'labels'
+        };
+
+        fields['plugin'].onEdit = onPluginSelected;
+
+        fields['items'].hidden = true;
+        fields['items'].value = options.items;
+
+        return fields;
+    }
+
     constructForm('{% url "api-label-print" %}', {
         method: 'POST',
         title: '{% trans "Print Label" %}',
-        fields: {
-            template: {
-                filters: {
-                    enabled: true,
-                    model_type: options.model_type,
-                    items: item_string,
-                }
-            },
-            plugin: {
-                filters: {
-                    active: true,
-                    mixin: 'labels',
-                }
-            },
-            items: {
-                hidden: true,
-                value: options.items
-            }
-        },
+        fields: getFormFields(),
         onSuccess: function(response) {
             if (response.complete) {
                 if (response.output) {
@@ -103,143 +156,4 @@ function printLabels(options) {
             }
         }
     });
-
-    return;
-
-    // Request a list of available label templates from the server
-    let labelTemplates = [];
-    inventreeGet('{% url "api-label-template-list" %}', params, {
-        async: false,
-        success: function (response) {
-            if (response.length == 0) {
-                showAlertDialog(
-                    '{% trans "No Labels Found" %}',
-                    '{% trans "No label templates found which match the selected items" %}',
-                );
-                return;
-            }
-
-            labelTemplates = response;
-        }
-    });
-
-    // Request a list of available label printing plugins from the server
-    let plugins = [];
-    inventreeGet(`/api/plugins/`, { mixin: 'labels' }, {
-        async: false,
-        success: function (response) {
-            plugins = response;
-        }
-    });
-
-    let header_html = "";
-
-    // show how much items are selected if there is more than one item selected
-    if (options.items.length > 1) {
-        header_html += `
-            <div class='alert alert-block alert-info'>
-            ${options.items.length} ${options.plural_name} {% trans "selected" %}
-            </div>
-        `;
-    }
-
-    const updateFormUrl = (formOptions) => {
-        const plugin = getFormFieldValue("_plugin", formOptions.fields._plugin, formOptions);
-        const labelTemplate = getFormFieldValue("_label_template", formOptions.fields._label_template, formOptions);
-        const params = $.param({ plugin, items: item_string })
-        formOptions.url = `{% url "api-label-template-list" %}${labelTemplate ?? "1"}/print/?${params}`;
-    }
-
-    const updatePrintingOptions = (formOptions) => {
-        let printingOptionsRes = null;
-        $.ajax({
-            url: formOptions.url,
-            type: "OPTIONS",
-            contentType: "application/json",
-            dataType: "json",
-            accepts: { json: "application/json" },
-            async: false,
-            success: (res) => { printingOptionsRes = res },
-            error: (xhr) => showApiError(xhr, formOptions.url)
-        });
-
-        const printingOptions = printingOptionsRes.actions.POST || {};
-
-        // clear all other options
-        formOptions.fields = {
-            _label_template: formOptions.fields._label_template,
-            _plugin: formOptions.fields._plugin,
-        }
-
-        if (Object.keys(printingOptions).length > 0) {
-            formOptions.fields = {
-                ...formOptions.fields,
-                divider: { type: "candy", html: `<hr/><h5>{% trans "Printing Options" %}</h5>` },
-                ...printingOptions,
-            };
-        }
-
-        // update form
-        updateForm(formOptions);
-
-        // workaround to fix a bug where one cannot scroll after changing the plugin
-        // without opening and closing the select box again manually
-        $("#id__plugin").select2("open");
-        $("#id__plugin").select2("close");
-    }
-
-    const printingFormOptions = {
-        title: options.items.length === 1 ? `{% trans "Print label" %}` : `{% trans "Print labels" %}`,
-        submitText: `{% trans "Print" %}`,
-        method: "POST",
-        disableSuccessMessage: true,
-        header_html,
-        fields: {
-            _label_template: {
-                label: `{% trans "Select label template" %}`,
-                type: "choice",
-                localOnly: true,
-                value: defaultLabelTemplates[options.key],
-                choices: labelTemplates.map(t => ({
-                    value: t.pk,
-                    display_name: `${t.name} - <small>${t.description}</small>`,
-                })),
-                onEdit: (_value, _name, _field, formOptions) => {
-                    updateFormUrl(formOptions);
-                }
-            },
-            _plugin: {
-                label: `{% trans "Select plugin" %}`,
-                type: "choice",
-                localOnly: true,
-                value: user_settings.LABEL_DEFAULT_PRINTER || plugins[0].key,
-                choices: plugins.map(p => ({
-                    value: p.key,
-                    display_name: `${p.name} - <small>${p.meta.human_name}</small>`,
-                })),
-                onEdit: (_value, _name, _field, formOptions) => {
-                    updateFormUrl(formOptions);
-                    updatePrintingOptions(formOptions);
-                }
-            },
-        },
-        onSuccess: (response) => {
-            let output = response.output ?? response.file;
-            if (output) {
-                // Download the generated file
-                window.open(output, '_blank');
-            } else {
-                showMessage('{% trans "Labels sent to printer" %}', {
-                    style: 'success',
-                });
-            }
-        }
-    };
-
-    // construct form
-    constructForm(null, printingFormOptions);
-
-    // fetch the options for the default plugin
-    updateFormUrl(printingFormOptions);
-    updatePrintingOptions(printingFormOptions);
 }

@@ -36,24 +36,24 @@ export function PrintingActions({
     return null;
   }
 
-  const [pluginKey, setPluginKey] = useState<string>('');
+  const [pluginId, setPluginId] = useState<number>(0);
 
   const loadFields = useCallback(() => {
     api
       .options(apiUrl(ApiEndpoints.label_print), {
         params: {
-          plugin: pluginKey
+          plugin: pluginId
         }
       })
       .then((response: any) => {
         setExtraFields(extractAvailableFields(response, 'POST') || {});
       })
       .catch(() => {});
-  }, [pluginKey]);
+  }, [pluginId]);
 
   useEffect(() => {
     loadFields();
-  }, [loadFields, pluginKey]);
+  }, [loadFields, pluginId]);
 
   const [extraFields, setExtraFields] = useState<ApiFormFieldSet>({});
 
@@ -83,10 +83,8 @@ export function PrintingActions({
         mixin: 'labels'
       },
       onValueChange: (value: string, record?: any) => {
-        if (record?.key) {
-          if (record?.key != pluginKey) {
-            setPluginKey(record.key);
-          }
+        if (record?.pk && record?.pk != pluginId) {
+          setPluginId(record.pk);
         }
       }
     };
@@ -100,7 +98,7 @@ export function PrintingActions({
     fields: labelFields,
     timeout: (items.length + 1) * 1000,
     onClose: () => {
-      setPluginKey('');
+      setPluginId(0);
     },
     onFormSuccess: (response: any) => {
       if (!response.complete) {
