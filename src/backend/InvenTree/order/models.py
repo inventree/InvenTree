@@ -375,6 +375,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
 
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Purchase Order')
+
     def report_context(self):
         """Return report context data for this PurchaseOrder."""
         return {**super().report_context(), 'supplier': self.supplier}
@@ -836,6 +841,11 @@ class SalesOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order')
 
     def report_context(self):
         """Generate report context data for this SalesOrder."""
@@ -1982,6 +1992,11 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Return Order')
 
     def report_context(self):
         """Generate report context data for this ReturnOrder."""

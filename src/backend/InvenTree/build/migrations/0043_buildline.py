@@ -23,6 +23,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'unique_together': {('build', 'bom_item')},
+                'verbose_name': 'Build Order Line Item',
             },
         ),
     ]

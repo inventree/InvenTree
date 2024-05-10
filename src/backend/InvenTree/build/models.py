@@ -1331,7 +1331,8 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
     """
 
     class Meta:
-        """Model meta options"""
+        """Model meta options."""
+        verbose_name = _('Build Order Line Item')
         unique_together = [
             ('build', 'bom_item'),
         ]
@@ -1420,7 +1421,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
     """
 
     class Meta:
-        """Model meta options"""
+        """Model meta options."""
         unique_together = [
             ('build_line', 'stock_item', 'install_into'),
         ]

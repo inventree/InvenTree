@@ -398,6 +398,11 @@ class StockItem(
         packaging: Description of how the StockItem is packaged (e.g. "reel", "loose", "tape" etc)
     """
 
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Stock Item')
+
     @staticmethod
     def get_api_url():
         """Return API url."""
