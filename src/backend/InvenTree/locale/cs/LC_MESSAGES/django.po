@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-10 05:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-10 08:30\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -1472,10 +1472,8 @@ msgid "Location"
 msgstr "Lokace"
 
 #: build/serializers.py:292
-#, fuzzy
-#| msgid "Stock location for scrapped outputs"
 msgid "Stock location for build output"
-msgstr "Umístění zásob pro seškrábnuté výstupy"
+msgstr ""
 
 #: build/serializers.py:306
 msgid "Auto Allocate Serial Numbers"
@@ -1486,10 +1484,8 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
 #: build/serializers.py:322
-#, fuzzy
-#| msgid "Integer quantity required for trackable parts"
 msgid "Serial numbers must be provided for trackable parts"
-msgstr "Celé množství požadované pro sledovatelné díly"
+msgstr ""
 
 #: build/serializers.py:347 stock/api.py:995
 msgid "The following serial numbers already exist or are invalid"
@@ -14282,3 +14278,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
