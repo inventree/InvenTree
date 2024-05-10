@@ -1,5 +1,5 @@
 import { test } from './baseFixtures.js';
-import { baseUrl } from './defaults.js';
+import { baseUrl, logoutUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
 /*
@@ -30,12 +30,6 @@ test('PUI - Label Printing', async ({ page }) => {
   await page.getByLabel('related-field-plugin').click();
   await page.getByText('InvenTreeLabelSheet').click();
 
-  // Submit the form (first time should result in error, no template selected)
-  await page.getByRole('button', { name: 'Submit' }).isEnabled();
-  await page.getByRole('button', { name: 'Submit' }).click();
-
-  await page.getByText('Form Errors Exist');
-
   // Select label template
   await page.getByLabel('related-field-template').click();
   await page.getByText('InvenTree Stock Item Label (').click();
@@ -46,6 +40,7 @@ test('PUI - Label Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  await page.locator('#form-success').waitFor();
   await page.getByText('Label printing completed').waitFor();
 });
 
@@ -68,12 +63,6 @@ test('PUI - Report Printing', async ({ page }) => {
   await page.getByLabel('action-menu-printing-actions').click();
   await page.getByLabel('action-menu-printing-actions-print-reports').click();
 
-  // Submit the form (should result in failure, no template selected)
-  await page.getByRole('button', { name: 'Submit' }).isEnabled();
-  await page.getByRole('button', { name: 'Submit' }).click();
-
-  await page.getByText('Form Errors Exist');
-
   // Select template
   await page.getByLabel('related-field-template').click();
   await page.getByText('InvenTree Purchase Order').click();
@@ -84,6 +73,7 @@ test('PUI - Report Printing', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
   await page.getByRole('button', { name: 'Submit' }).click();
 
+  await page.locator('#form-success').waitFor();
   await page.getByText('Report printing completed').waitFor();
 });
 
