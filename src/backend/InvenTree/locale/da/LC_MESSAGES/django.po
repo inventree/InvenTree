@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-10 05:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-10 08:30\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
@@ -1472,10 +1472,8 @@ msgid "Location"
 msgstr ""
 
 #: build/serializers.py:292
-#, fuzzy
-#| msgid "Batch code for this build output"
 msgid "Stock location for build output"
-msgstr "Batch kode til dette produktions output"
+msgstr ""
 
 #: build/serializers.py:306
 msgid "Auto Allocate Serial Numbers"
@@ -1545,10 +1543,8 @@ msgid "Consume Allocated Stock"
 msgstr ""
 
 #: build/serializers.py:599
-#, fuzzy
-#| msgid "Accept that stock items have not been fully allocated to this build order"
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "Accepter at lagervarer ikke er fuldt tildelt til denne byggeordre"
+msgstr ""
 
 #: build/serializers.py:605
 msgid "Remove Incomplete Outputs"
@@ -14282,3 +14278,4 @@ msgstr ""
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr ""
+
