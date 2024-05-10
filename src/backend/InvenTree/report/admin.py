@@ -20,6 +20,8 @@ class ReportAdmin(admin.ModelAdmin):
 
     list_display = ('name', 'description', 'model_type', 'enabled')
 
+    list_filter = ('model_type', 'enabled')
+
     def formfield_for_dbfield(self, db_field, request, **kwargs):
         """Provide custom choices for 'model_type' field."""
         if db_field.name == 'model_type':
