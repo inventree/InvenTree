@@ -175,7 +175,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
     def test_printing_options(self):
         """Test printing options."""
         # Ensure the labels were created
-        apps.get_app_config('label').create_defaults()
+        apps.get_app_config('report').create_default_labels()
 
         # Lookup references
         parts = Part.objects.all()[:2]
@@ -216,7 +216,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         plugin_ref = 'samplelabelprinter'
 
         # Activate the label components
-        apps.get_app_config('label').create_defaults()
+        apps.get_app_config('report').create_default_labels()
         self.do_activate_plugin()
 
         def run_print_test(label, qs, url_name, url_single):
