@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-10 05:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-10 08:31\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -1472,10 +1472,8 @@ msgid "Location"
 msgstr "Địa điểm"
 
 #: build/serializers.py:292
-#, fuzzy
-#| msgid "Stock location for scrapped outputs"
 msgid "Stock location for build output"
-msgstr "Vị trí kho cho đầu ra phế phẩm"
+msgstr ""
 
 #: build/serializers.py:306
 msgid "Auto Allocate Serial Numbers"
@@ -1486,10 +1484,8 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Tự động cấp số seri phù hợp cho hàng hóa được yêu cầu"
 
 #: build/serializers.py:322
-#, fuzzy
-#| msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgid "Serial numbers must be provided for trackable parts"
-msgstr "Số sê-ri không thê được cung cấp cho sản phẩm không thể theo dõi"
+msgstr ""
 
 #: build/serializers.py:347 stock/api.py:995
 msgid "The following serial numbers already exist or are invalid"
@@ -1543,16 +1539,12 @@ msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Hoàn hiện đầu ra nếu kho chưa được phân bổ hết chỗ trống"
 
 #: build/serializers.py:598
-#, fuzzy
-#| msgid "Remove Allocated Stock"
 msgid "Consume Allocated Stock"
-msgstr "Xóa phân kho"
+msgstr ""
 
 #: build/serializers.py:599
-#, fuzzy
-#| msgid "Subtract any stock which has already been allocated to this build"
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "Trừ số lượng bất kỳ kho nào được phân bổ đến bản dựng này"
+msgstr ""
 
 #: build/serializers.py:605
 msgid "Remove Incomplete Outputs"
@@ -14286,3 +14278,4 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
+
