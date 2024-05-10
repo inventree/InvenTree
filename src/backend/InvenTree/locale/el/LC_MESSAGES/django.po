@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-10 05:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-10 08:30\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -1472,10 +1472,8 @@ msgid "Location"
 msgstr "Τοποθεσία"
 
 #: build/serializers.py:292
-#, fuzzy
-#| msgid "Stock location for scrapped outputs"
 msgid "Stock location for build output"
-msgstr "Θέση αποθέματος για απορριφθείσες παραγωγές"
+msgstr ""
 
 #: build/serializers.py:306
 msgid "Auto Allocate Serial Numbers"
@@ -1486,10 +1484,8 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Αυτόματη κατανομή των απαιτούμενων στοιχείων με τους αντίστοιχους σειριακούς αριθμούς"
 
 #: build/serializers.py:322
-#, fuzzy
-#| msgid "Integer quantity required for trackable parts"
 msgid "Serial numbers must be provided for trackable parts"
-msgstr "Ακέραιη ποσότητα που απαιτείται για ανιχνεύσιμα μέρη"
+msgstr ""
 
 #: build/serializers.py:347 stock/api.py:995
 msgid "The following serial numbers already exist or are invalid"
@@ -1543,16 +1539,12 @@ msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Ολοκλήρωσε τα προϊόντα εάν το απόθεμα δεν έχει δεσμευτεί πλήρως"
 
 #: build/serializers.py:598
-#, fuzzy
-#| msgid "Remove Allocated Stock"
 msgid "Consume Allocated Stock"
-msgstr "Αφαίρεση Καταχωρημένου Αποθέματος"
+msgstr ""
 
 #: build/serializers.py:599
-#, fuzzy
-#| msgid "Subtract any stock which has already been allocated to this build"
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "Αφαίρεσε το απόθεμα που έχει κατανεμηθεί σε αυτή την κατασκευή"
+msgstr ""
 
 #: build/serializers.py:605
 msgid "Remove Incomplete Outputs"
@@ -14286,3 +14278,4 @@ msgstr ""
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr ""
+
