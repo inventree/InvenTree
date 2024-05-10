@@ -47,7 +47,6 @@ def apps():
         'build',
         'common',
         'company',
-        'label',
         'order',
         'part',
         'report',
