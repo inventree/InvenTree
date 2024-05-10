@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-10 05:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-10 08:31\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -1472,10 +1472,8 @@ msgid "Location"
 msgstr ""
 
 #: build/serializers.py:292
-#, fuzzy
-#| msgid "Batch code for this build output"
 msgid "Stock location for build output"
-msgstr "Številka serije za to izgradnjo"
+msgstr ""
 
 #: build/serializers.py:306
 msgid "Auto Allocate Serial Numbers"
@@ -14280,3 +14278,4 @@ msgstr ""
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr ""
+
