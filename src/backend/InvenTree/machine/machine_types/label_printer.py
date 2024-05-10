@@ -12,7 +12,7 @@ from rest_framework.request import Request
 
 from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
 from plugin import registry as plg_registry
-from plugin.base.label.mixins import LabelItemType, LabelPrintingMixin
+from plugin.base.label.mixins import LabelPrintingMixin
 from report.models import LabelTemplate
 from stock.models import StockLocation
 
@@ -32,7 +32,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         self,
         machine: 'LabelPrinterMachine',
         label: LabelTemplate,
-        item: LabelItemType,
+        item,
         request: Request,
         **kwargs,
     ) -> None:
@@ -56,7 +56,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         self,
         machine: 'LabelPrinterMachine',
         label: LabelTemplate,
-        items: QuerySet[LabelItemType],
+        items: QuerySet,
         request: Request,
         **kwargs,
     ) -> Union[None, JsonResponse]:
@@ -83,7 +83,7 @@ class LabelPrinterBaseDriver(BaseDriver):
             self.print_label(machine, label, item, request, **kwargs)
 
     def get_printers(
-        self, label: LabelTemplate, items: QuerySet[LabelItemType], **kwargs
+        self, label: LabelTemplate, items: QuerySet, **kwargs
     ) -> list['LabelPrinterMachine']:
         """Get all printers that would be available to print this job.
 
@@ -122,7 +122,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         return cast(LabelPrintingMixin, plg)
 
     def render_to_pdf(
-        self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
+        self, label: LabelTemplate, item, request: Request, **kwargs
     ) -> HttpResponse:
         """Helper method to render a label to PDF format for a specific item.
 
@@ -137,7 +137,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         return response
 
     def render_to_pdf_data(
-        self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
+        self, label: LabelTemplate, item, request: Request, **kwargs
     ) -> bytes:
         """Helper method to render a label to PDF and return it as bytes for a specific item.
 
@@ -153,7 +153,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         )
 
     def render_to_html(
-        self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
+        self, label: LabelTemplate, item, request: Request, **kwargs
     ) -> str:
         """Helper method to render a label to HTML format for a specific item.
 
@@ -168,7 +168,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         return html
 
     def render_to_png(
-        self, label: LabelTemplate, item: LabelItemType, request: Request, **kwargs
+        self, label: LabelTemplate, item, request: Request, **kwargs
     ) -> Image:
         """Helper method to render a label to PNG format for a specific item.
 

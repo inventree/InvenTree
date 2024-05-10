@@ -441,7 +441,7 @@ class ReportTest(InvenTreeAPITestCase):
 class TestReportTest(ReportTest):
     """Unit testing class for the stock item TestReport model."""
 
-    model = report_models.TestReport
+    model = report_models.ReportTemplate
 
     list_url = 'api-stockitem-testreport-list'
     detail_url = 'api-stockitem-testreport-detail'
