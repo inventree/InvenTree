@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-10 05:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-10 08:31\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1472,10 +1472,8 @@ msgid "Location"
 msgstr "Konum"
 
 #: build/serializers.py:292
-#, fuzzy
-#| msgid "Enter quantity for build output"
 msgid "Stock location for build output"
-msgstr "Yapım işi çıktısı için miktarını girin"
+msgstr ""
 
 #: build/serializers.py:306
 msgid "Auto Allocate Serial Numbers"
@@ -1486,10 +1484,8 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr ""
 
 #: build/serializers.py:322
-#, fuzzy
-#| msgid "Serial numbers must be a list of integers"
 msgid "Serial numbers must be provided for trackable parts"
-msgstr "Seri numaraları tam sayı listesi olmalı"
+msgstr ""
 
 #: build/serializers.py:347 stock/api.py:995
 msgid "The following serial numbers already exist or are invalid"
@@ -1543,16 +1539,12 @@ msgid "Complete outputs if stock has not been fully allocated"
 msgstr ""
 
 #: build/serializers.py:598
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "Consume Allocated Stock"
-msgstr "Stok Tahsis Et"
+msgstr ""
 
 #: build/serializers.py:599
-#, fuzzy
-#| msgid "Stock has not been fully allocated to this Build Order"
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "Stok, yapım işi emri için tamamen tahsis edilemedi"
+msgstr ""
 
 #: build/serializers.py:605
 msgid "Remove Incomplete Outputs"
@@ -14286,3 +14278,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
