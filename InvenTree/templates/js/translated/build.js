@@ -1109,8 +1109,7 @@ function loadBuildOutputTable(build_info, options={}) {
 
     setupFilterList('builditems', $(table), options.filterTarget || '#filter-list-incompletebuilditems', {
         labels: {
-            url: '{% url "api-stockitem-label-list" %}',
-            key: 'item',
+            model_type: 'stockitem',
         },
         singular_name: '{% trans "build output" %}',
         plural_name: '{% trans "build outputs" %}',
@@ -1123,29 +1122,31 @@ function loadBuildOutputTable(build_info, options={}) {
     });
 
     // Request list of required tests for the part being assembled
-    inventreeGet(
-        '{% url "api-part-test-template-list" %}',
-        {
-            part: build_info.part,
-            required: true,
-            enabled: true,
-        },
-        {
-            async: false,
-            success: function(response) {
-                test_templates = [];
-                response.forEach(function(item) {
-                    // Only include "required" tests
-                    if (item.required) {
-                        test_templates.push(item);
-                    }
-                });
+    if (build_info.trackable) {
+        inventreeGet(
+            '{% url "api-part-test-template-list" %}',
+            {
+                part: build_info.part,
+                required: true,
+                enabled: true,
             },
-            error: function() {
-                test_templates = [];
+            {
+                async: false,
+                success: function(response) {
+                    test_templates = [];
+                    response.forEach(function(item) {
+                        // Only include "required" tests
+                        if (item.required) {
+                            test_templates.push(item);
+                        }
+                    });
+                },
+                error: function() {
+                    test_templates = [];
+                }
             }
-        }
-    );
+        );
+    }
 
     // Callback function to load the allocated stock items
     function reloadOutputAllocations() {
@@ -2004,7 +2005,6 @@ function loadBuildTable(table, options) {
     setupFilterList('build', table, filterTarget, {
         download: true,
         report: {
-            url: '{% url "api-build-report-list" %}',
             key: 'build',
         }
     });
@@ -2450,8 +2450,7 @@ function loadBuildLineTable(table, build_id, options={}) {
     if (!options.data) {
         setupFilterList('buildlines', $(table), filterTarget, {
             labels: {
-                url: '{% url "api-buildline-label-list" %}',
-                key: 'line',
+                modeltype: 'buildline',
             },
             singular_name: '{% trans "build line" %}',
             plural_name: '{% trans "build lines" %}',
