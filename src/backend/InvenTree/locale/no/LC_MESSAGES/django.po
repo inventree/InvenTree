@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-10 05:37+0000\n"
-"PO-Revision-Date: 2024-04-30 19:53\n"
+"PO-Revision-Date: 2024-05-10 08:31\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -1472,10 +1472,8 @@ msgid "Location"
 msgstr "Plassering"
 
 #: build/serializers.py:292
-#, fuzzy
-#| msgid "Stock location for scrapped outputs"
 msgid "Stock location for build output"
-msgstr "Lagerplassering for skrotede produksjonsartikler"
+msgstr ""
 
 #: build/serializers.py:306
 msgid "Auto Allocate Serial Numbers"
@@ -1486,10 +1484,8 @@ msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Automatisk tildeling av nødvendige artikler med tilsvarende serienummer"
 
 #: build/serializers.py:322
-#, fuzzy
-#| msgid "Serial numbers cannot be supplied for a non-trackable part"
 msgid "Serial numbers must be provided for trackable parts"
-msgstr "Serienumre kan ikke angis for en ikke-sporbar del"
+msgstr ""
 
 #: build/serializers.py:347 stock/api.py:995
 msgid "The following serial numbers already exist or are invalid"
@@ -1543,16 +1539,12 @@ msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Fullfør artikler dersom lagerbeholdning ikke er fullt tildelt"
 
 #: build/serializers.py:598
-#, fuzzy
-#| msgid "Remove Allocated Stock"
 msgid "Consume Allocated Stock"
-msgstr "Fjern tildelt lagerbeholdning"
+msgstr ""
 
 #: build/serializers.py:599
-#, fuzzy
-#| msgid "Subtract any stock which has already been allocated to this build"
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "Trekk fra all lagerbeholdning som allerede er tildelt denne produksjonen"
+msgstr ""
 
 #: build/serializers.py:605
 msgid "Remove Incomplete Outputs"
@@ -14286,3 +14278,4 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
+
