@@ -1419,6 +1419,14 @@ class StockItem(
         if deltas is None:
             deltas = {}
 
+        # Prevent empty entry
+        if (
+            entry_type == StockHistoryCode.STOCK_UPDATE
+            and len(deltas) == 0
+            and not notes
+        ):
+            return
+
         # Has a location been specified?
         location = kwargs.get('location', None)
 
