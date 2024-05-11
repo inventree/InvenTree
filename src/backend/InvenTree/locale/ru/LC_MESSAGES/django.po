@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-10 05:37+0000\n"
-"PO-Revision-Date: 2024-05-10 08:31\n"
+"PO-Revision-Date: 2024-05-11 12:11\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -273,7 +273,7 @@ msgstr "Корейский"
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr ""
+msgstr "Латышский"
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
@@ -325,7 +325,7 @@ msgstr "Турецкий"
 
 #: InvenTree/locales.py:48
 msgid "Ukrainian"
-msgstr ""
+msgstr "Украинский"
 
 #: InvenTree/locales.py:49
 msgid "Vietnamese"
@@ -1014,7 +1014,7 @@ msgstr "Неверный выбор для родительской сборки
 
 #: build/models.py:133 order/models.py:239
 msgid "Responsible user or group must be specified"
-msgstr ""
+msgstr "Должен быть указан ответственный пользователь или группа"
 
 #: build/models.py:139
 msgid "Build order part cannot be changed"
@@ -1256,7 +1256,7 @@ msgstr "Код проекта для этого заказа на произво
 
 #: build/models.py:566 build/models.py:631
 msgid "Failed to offload task to complete build allocations"
-msgstr ""
+msgstr "Не удалось выгрузить задачу для распределения на сборку"
 
 #: build/models.py:588
 #, python-brace-format
@@ -1485,7 +1485,7 @@ msgstr "Автоматически зарезервировать необход
 
 #: build/serializers.py:322
 msgid "Serial numbers must be provided for trackable parts"
-msgstr ""
+msgstr "Для отслеживаемых частей должны быть указаны серийные номера"
 
 #: build/serializers.py:347 stock/api.py:995
 msgid "The following serial numbers already exist or are invalid"
@@ -2012,7 +2012,7 @@ msgstr "Зарезервировать Остатки"
 
 #: build/templates/build/detail.html:191
 msgid "Order required parts"
-msgstr ""
+msgstr "Заказать необходимые части"
 
 #: build/templates/build/detail.html:192
 #: templates/js/translated/purchase_order.js:795
