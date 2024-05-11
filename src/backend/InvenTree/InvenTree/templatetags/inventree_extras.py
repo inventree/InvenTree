@@ -668,25 +668,7 @@ def admin_url(user, table, pk):
 @register.simple_tag()
 def approval_allowed(user, order):
     """Check that the given user is allowed to approve the order."""
-    active = common.models.InvenTreeSetting.get_setting(
-        'ENABLE_PURCHASE_ORDER_APPROVAL'
-    )
-    master_group = common.models.InvenTreeSetting.get_setting(
-        'PURCHASE_ORDER_APPROVE_ALL_GROUP'
-    )
-
-    if not active:
-        return False
-
-    user_has_permission = False
-
-    if master_group:
-        user_has_permission = user.groups.filter(name=master_group).exists()
-
-    if order.project_code and order.project_code.responsible:
-        user_has_permission = order.project_code.responsible.is_user_allowed(user)
-
-    return user_has_permission
+    return order.approval_allowed(user)
 
 
 @register.simple_tag()

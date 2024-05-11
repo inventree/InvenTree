@@ -117,7 +117,7 @@ class PurchaseOrderTest(OrderTest):
     def test_po_list(self):
         """Test the PurchaseOrder list API endpoint."""
         # List *ALL* PurchaseOrder items
-        self.filter({}, 7)
+        self.filter({}, 8)
 
         # Filter by assigned-to-me
         self.filter({'assigned_to_me': 1}, 0)
@@ -212,7 +212,7 @@ class PurchaseOrderTest(OrderTest):
     def test_overdue(self):
         """Test "overdue" status."""
         self.filter({'overdue': True}, 0)
-        self.filter({'overdue': False}, 7)
+        self.filter({'overdue': False}, 8)
 
         order = models.PurchaseOrder.objects.get(pk=1)
         order.target_date = datetime.now().date() - timedelta(days=10)

@@ -1,6 +1,7 @@
 import {
   Icon,
   Icon123,
+  IconArrowBackUp,
   IconArrowBigDownLineFilled,
   IconArrowMerge,
   IconBinaryTree2,
@@ -20,6 +21,7 @@ import {
   IconCircleX,
   IconClipboardList,
   IconClipboardText,
+  IconClipboardX,
   IconCopy,
   IconCornerDownLeft,
   IconCornerUpRightDouble,
@@ -47,6 +49,7 @@ import {
   IconPackageImport,
   IconPackages,
   IconPaperclip,
+  IconPencilQuestion,
   IconPhone,
   IconPhoto,
   IconPrinter,
@@ -55,6 +58,7 @@ import {
   IconQrcode,
   IconQuestionMark,
   IconRulerMeasure,
+  IconSend,
   IconShoppingCart,
   IconShoppingCartHeart,
   IconShoppingCartPlus,
@@ -79,6 +83,8 @@ import {
   IconVersions,
   IconWorld,
   IconWorldCode,
+  IconWritingSign,
+  IconWritingSignOff,
   IconX
 } from '@tabler/icons-react';
 import React from 'react';
@@ -193,7 +199,17 @@ const icons = {
   destination: IconFlag,
   repeat_destination: IconFlagShare,
   unlink: IconUnlink,
-  success: IconCircleCheck
+  success: IconCircleCheck,
+  reject_reason: IconClipboardX,
+  recall: IconArrowBackUp,
+  issue_order: IconSend,
+  reject_order: IconWritingSignOff,
+  approve_order: IconWritingSign,
+  request_approval: IconPencilQuestion,
+  created_by: IconUser,
+  approved_by: IconUser,
+  placed_by: IconUser,
+  complete: IconCircleCheck
 };
 
 export type InvenTreeIconType = keyof typeof icons;

@@ -246,7 +246,11 @@ export default function SystemSettings() {
               'PURCHASEORDER_REFERENCE_PATTERN',
               'PURCHASEORDER_REQUIRE_RESPONSIBLE',
               'PURCHASEORDER_EDIT_COMPLETED_ORDERS',
-              'PURCHASEORDER_AUTO_COMPLETE'
+              'PURCHASEORDER_AUTO_COMPLETE',
+              'ENABLE_PURCHASE_ORDER_APPROVAL',
+              'PURCHASE_ORDER_APPROVE_ALL_GROUP',
+              'ENABLE_PURCHASE_ORDER_READY_STATUS',
+              'PURCHASE_ORDER_PURCHASER_GROUP'
             ]}
           />
         )

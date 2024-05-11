@@ -19,6 +19,7 @@ interface UserStateProps {
   hasViewRole: (role: UserRoles) => boolean;
   isStaff: () => boolean;
   isSuperuser: () => boolean;
+  canApproveOrder: (order: number) => boolean;
 }
 
 /**
@@ -112,5 +113,8 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   hasViewRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.view);
+  },
+  canApproveOrder: (order: number) => {
+    return false;
   }
 }));

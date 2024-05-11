@@ -29,7 +29,13 @@ from InvenTree.api import (
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
-from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (
+    CreateAPI,
+    ListAPI,
+    ListCreateAPI,
+    RetrieveAPI,
+    RetrieveUpdateDestroyAPI,
+)
 from InvenTree.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -396,25 +402,37 @@ class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
 
 
 class PurchaseOrderRequestApproval(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'issue' (place) a PurchaseOrder."""
+    """API endpoint to request approval a PurchaseOrder."""
 
     serializer_class = serializers.PurchaseOrderRequestApprovalSerializer
 
 
+class PurchaseOrderApprovalAllowed(PurchaseOrderContextMixin, RetrieveAPI):
+    """API endpoint to indicate if a user is allowed to approve a PurchaseOrder."""
+
+    serializer_class = serializers.PurchaseOrderCanApproveSerializer
+
+
 class PurchaseOrderReject(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'issue' (place) a PurchaseOrder."""
+    """API endpoint to reject a PurchaseOrder that was requested approval for."""
 
     serializer_class = serializers.PurchaseOrderRejectSerializer
 
 
 class PurchaseOrderReady(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'issue' (place) a PurchaseOrder."""
+    """API endpoint to mark a PurchaseOrder as ready to issue."""
 
     serializer_class = serializers.PurchaseOrderReadySerializer
 
 
+class PurchaseOrderIssueAllowed(PurchaseOrderContextMixin, RetrieveAPI):
+    """API endpoint to indicate if a user is allowed to issue a PurchaseOrder."""
+
+    serializer_class = serializers.PurchaseOrderCanIssueSerializer
+
+
 class PurchaseOrderPending(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to 'issue' (place) a PurchaseOrder."""
+    """API endpoint to return a PurchaseOrder to Pending."""
 
     serializer_class = serializers.PurchaseOrderRejectSerializer
 
@@ -1642,6 +1660,11 @@ order_api_urls = [
                 '<int:pk>/',
                 include([
                     path(
+                        'can_approve/',
+                        PurchaseOrderApprovalAllowed.as_view(),
+                        name='api-po-approval-allowed',
+                    ),
+                    path(
                         'request_approval/',
                         PurchaseOrderRequestApproval.as_view(),
                         name='api-po-req-approval',
@@ -1650,6 +1673,11 @@ order_api_urls = [
                         'reject/', PurchaseOrderReject.as_view(), name='api-po-reject'
                     ),
                     path('ready/', PurchaseOrderReady.as_view(), name='api-po-ready'),
+                    path(
+                        'can_issue/',
+                        PurchaseOrderIssueAllowed.as_view(),
+                        name='api-po-issue-allowed',
+                    ),
                     path(
                         'pending/',
                         PurchaseOrderPending.as_view(),

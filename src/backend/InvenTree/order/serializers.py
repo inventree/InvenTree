@@ -215,9 +215,21 @@ class PurchaseOrderSerializer(
             'supplier_reference',
             'total_price',
             'order_currency',
+            'reject_reason',
+            'is_complete',
+            'created_by',
+            'approved_by',
+            'placed_by',
         ])
 
-        read_only_fields = ['issue_date', 'complete_date', 'creation_date']
+        read_only_fields = [
+            'issue_date',
+            'complete_date',
+            'creation_date',
+            'created_by',
+            'approved_by',
+            'placed_by',
+        ]
 
         extra_kwargs = {
             'supplier': {'required': True},
@@ -340,6 +352,24 @@ class PurchaseOrderRequestApprovalSerializer(serializers.Serializer):
         order.request_approval(request.user)
 
 
+class PurchaseOrderCanApproveSerializer(serializers.Serializer):
+    """Serializer indicating if a user is allowed to approve Purchase Orders."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.PurchaseOrder
+        fields = ['can_approve']
+
+    def get_can_approve(self, instance):
+        """Run model method."""
+        request = self.context['request']
+
+        return instance.approval_allowed(request.user)
+
+    can_approve = serializers.SerializerMethodField()
+
+
 class PurchaseOrderReadySerializer(serializers.Serializer):
     """Serializer for approving a purchase order."""
 
@@ -353,6 +383,24 @@ class PurchaseOrderReadySerializer(serializers.Serializer):
         order = self.context['order']
         request = self.context['request']
         order.mark_order_ready(request.user)
+
+
+class PurchaseOrderCanIssueSerializer(serializers.Serializer):
+    """Serializer indicating if a user is allowed to issue Purchase Orders."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.PurchaseOrder
+        fields = ['can_issue']
+
+    def get_can_issue(self, instance):
+        """Run model method."""
+        request = self.context['request']
+
+        return instance.allowed_to_issue(request.user)
+
+    can_issue = serializers.SerializerMethodField()
 
 
 class PurchaseOrderRejectSerializer(serializers.Serializer):

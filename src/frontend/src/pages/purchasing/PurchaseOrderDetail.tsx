@@ -11,6 +11,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { OrderStatebuttons } from '../../components/buttons/OrderStateTransition';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -126,6 +127,12 @@ export default function PurchaseOrderDetail() {
         name: 'status',
         label: t`Status`,
         model: ModelType.purchaseorder
+      },
+      {
+        type: 'text',
+        name: 'reject_reason',
+        label: t`Reason for rejection`,
+        hidden: !order.reject_reason
       }
     ];
 
@@ -194,6 +201,26 @@ export default function PurchaseOrderDetail() {
         name: 'creation_date',
         label: t`Created On`,
         icon: 'calendar'
+      },
+      {
+        type: 'text',
+        name: 'created_by',
+        label: t`Created by`,
+        badge: 'user'
+      },
+      {
+        type: 'text',
+        name: 'approved_by',
+        label: t`Approved by`,
+        badge: 'user',
+        hidden: !order.approved_by
+      },
+      {
+        type: 'text',
+        name: 'placed_by',
+        label: t`Issued by`,
+        badge: 'user',
+        hidden: !order.placed_by
       },
       {
         type: 'text',
@@ -323,6 +350,12 @@ export default function PurchaseOrderDetail() {
             onClick: () => duplicatePurchaseOrder.open()
           })
         ]}
+      />,
+      <OrderStatebuttons
+        status={order?.status}
+        orderPk={order?.pk}
+        refresh={refreshInstance}
+        complete={order.is_complete}
       />
     ];
   }, [id, order, user]);

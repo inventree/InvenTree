@@ -943,6 +943,35 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 content=InvenTreeNotificationBodies.OrderCanceled,
             )
 
+    def approval_allowed(self, user):
+        """Check that the given user is allowed to approve the order."""
+        active = getSetting('ENABLE_PURCHASE_ORDER_APPROVAL')
+        masters = getSetting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
+
+        if not active:
+            return False
+
+        user_has_permission = False
+
+        if masters:
+            user_has_permission = user.groups.filter(name=masters).exists()
+
+        if self.project_code and self.project_code.responsible:
+            user_has_permission = order.project_code.responsible.is_user_allowed(user)
+
+        return user_has_permission
+
+    def allowed_to_issue(self, user):
+        """Check that the given user is allowed to issue the order."""
+        purchasers = getSetting('PURCHASE_ORDER_PURCHASER_GROUP')
+
+        user_has_permission = True
+
+        if purchasers:
+            user_has_permission = user.groups.filter(name=purchasers).exists()
+
+        return user_has_permission
+
     # endregion
 
     def pending_line_items(self):
