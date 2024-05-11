@@ -104,7 +104,7 @@ def inventreeDocUrl():
 
 def inventreeAppUrl():
     """Return URL for InvenTree app site."""
-    return f'https://docs.inventree.org/en/latest/app/app/'
+    return f'{inventreeDocUrl()}/app/app/'
 
 
 def inventreeCreditsUrl():
