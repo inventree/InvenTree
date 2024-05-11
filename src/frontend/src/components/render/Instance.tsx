@@ -112,8 +112,8 @@ export function RenderInlineModel({
   // TODO: Handle URL
 
   return (
-    <Group spacing="xs" position="apart" noWrap={true}>
-      <Group spacing="xs" position="left" noWrap={true}>
+    <Group gap="xs" justify="space-between" wrap="nowrap">
+      <Group gap="xs" justify="left" wrap="nowrap">
         {image && Thumbnail({ src: image, size: 18 })}
         <Text size="sm">{primary}</Text>
         {secondary && <Text size="xs">{secondary}</Text>}
@@ -121,7 +121,7 @@ export function RenderInlineModel({
       {suffix && (
         <>
           <Space />
-          <Text size="xs">{suffix}</Text>
+          <div style={{ fontSize: 'xs', lineHeight: 'xs' }}>{suffix}</div>
         </>
       )}
     </Group>

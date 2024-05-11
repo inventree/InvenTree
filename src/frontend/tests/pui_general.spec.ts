@@ -71,9 +71,10 @@ test('PUI - Parts - Supplier Parts', async ({ page }) => {
 test('PUI - Sales', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/sales/`);
-
+  await page.goto(`${baseUrl}/sales/index/`);
   await page.waitForURL('**/platform/sales/**');
+
+  await page.getByRole('tab', { name: 'Sales Orders' }).click();
   await page.waitForURL('**/platform/sales/index/salesorders');
   await page.getByRole('tab', { name: 'Return Orders' }).click();
 
@@ -228,10 +229,7 @@ test('PUI - Company', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/company/1/details`);
-  await page
-    .locator('div')
-    .filter({ hasText: /^DigiKey Electronics$/ })
-    .waitFor();
+  await page.getByLabel('Details').getByText('DigiKey Electronics').waitFor();
   await page.getByRole('cell', { name: 'https://www.digikey.com/' }).waitFor();
   await page.getByRole('tab', { name: 'Supplied Parts' }).click();
   await page

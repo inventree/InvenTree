@@ -137,7 +137,7 @@ export function ServerInfoModal({
         </tbody>
       </Table>
       <Divider />
-      <Group position="right">
+      <Group justify="right">
         <Button
           color="red"
           onClick={() => {

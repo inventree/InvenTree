@@ -212,6 +212,7 @@ export default function SystemSettings() {
               'STOCK_LOCATION_DEFAULT_ICON',
               'STOCK_SHOW_INSTALLED_ITEMS',
               'STOCK_ENFORCE_BOM_INSTALLATION',
+              'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
               'TEST_STATION_DATA'
             ]}
           />
@@ -291,7 +292,7 @@ export default function SystemSettings() {
 
   return (
     <>
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <SettingsHeader
           title={t`System Settings`}
           subtitle={server.instance || ''}

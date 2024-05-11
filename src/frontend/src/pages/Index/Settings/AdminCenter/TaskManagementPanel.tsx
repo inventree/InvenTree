@@ -20,7 +20,7 @@ const FailedTasksTable = Loadable(
 export default function TaskManagementPanel() {
   return (
     <Accordion defaultValue="pending">
-      <Accordion.Item value="pending">
+      <Accordion.Item value="pending" key="pending-tasks">
         <Accordion.Control>
           <StylishText size="lg">{t`Pending Tasks`}</StylishText>
         </Accordion.Control>
@@ -28,7 +28,7 @@ export default function TaskManagementPanel() {
           <PendingTasksTable />
         </Accordion.Panel>
       </Accordion.Item>
-      <Accordion.Item value="scheduled">
+      <Accordion.Item value="scheduled" key="scheduled-tasks">
         <Accordion.Control>
           <StylishText size="lg">{t`Scheduled Tasks`}</StylishText>
         </Accordion.Control>
@@ -36,7 +36,7 @@ export default function TaskManagementPanel() {
           <ScheduledTasksTable />
         </Accordion.Panel>
       </Accordion.Item>
-      <Accordion.Item value="failed">
+      <Accordion.Item value="failed" key="failed-tasks">
         <Accordion.Control>
           <StylishText size="lg">{t`Failed Tasks`}</StylishText>
         </Accordion.Control>

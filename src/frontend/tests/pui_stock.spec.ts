@@ -5,8 +5,12 @@ import { doQuickLogin } from './login.js';
 test('PUI - Stock', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/stock`);
+  await page.goto(`${baseUrl}/stock/location/index/`);
+  await page.waitForURL('**/platform/stock/location/**');
+
+  await page.getByRole('tab', { name: 'Location Details' }).click();
   await page.waitForURL('**/platform/stock/location/index/details');
+
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('cell', { name: '1551ABK' }).click();
   await page.getByRole('tab', { name: 'Stock', exact: true }).click();
@@ -81,6 +85,7 @@ test('PUI - Purchasing', async ({ page }) => {
   await page.getByLabel('Line 2').fill(value == 'old' ? 'new' : 'old');
 
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
+
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('tab', { name: 'Details' }).waitFor();
 });

@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Flex, NumberInput, Skeleton, Text } from '@mantine/core';
+import { Flex, Group, NumberInput, Skeleton, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useCallback, useMemo, useState } from 'react';
@@ -143,7 +143,6 @@ function StockItemDefaultMove({
   stockItem: any;
   value: any;
 }) {
-  console.log('item', stockItem);
   const { data } = useSuspenseQuery({
     queryKey: [
       'location',
@@ -283,23 +282,39 @@ function StockOperationsRow({
     input.removeFn(input.idx);
   };
 
-  return (
+  const stockString: string = useMemo(() => {
+    if (!record) {
+      return '-';
+    }
+
+    if (!record.serial) {
+      return `${record.quantity}`;
+    } else {
+      return `#${record.serial}`;
+    }
+  }, [record]);
+
+  return !record ? (
+    <div>{t`Loading...`}</div>
+  ) : (
     <tr>
       <td>
         <Flex gap="sm" align="center">
           <Thumbnail
             size={40}
-            src={record.part_detail.thumbnail}
+            src={record.part_detail?.thumbnail}
             align="center"
           />
-          <div>{record.part_detail.name}</div>
+          <div>{record.part_detail?.name}</div>
         </Flex>
       </td>
-      <td>{record.location ? record.location_detail.pathstring : '-'}</td>
+      <td>{record.location ? record.location_detail?.pathstring : '-'}</td>
       <td>
         <Flex align="center" gap="xs">
-          <Text>{record.quantity}</Text>
-          <StatusRenderer status={record.status} type={ModelType.stockitem} />
+          <Group justify="space-between">
+            <Text>{stockString}</Text>
+            <StatusRenderer status={record.status} type={ModelType.stockitem} />
+          </Group>
         </Flex>
       </td>
       {!merge && (
@@ -307,6 +322,7 @@ function StockOperationsRow({
           <NumberInput
             value={value}
             onChange={onChange}
+            disabled={!!record.serial && record.quantity == 1}
             max={setMax ? record.quantity : undefined}
             min={0}
             style={{ maxWidth: '100px' }}
@@ -322,8 +338,8 @@ function StockOperationsRow({
               tooltip={t`Move to default location`}
               tooltipAlignment="top"
               disabled={
-                !record.part_detail.default_location &&
-                !record.part_detail.category_default_location
+                !record.part_detail?.default_location &&
+                !record.part_detail?.category_default_location
               }
             />
           )}
@@ -643,11 +659,13 @@ function stockOperationModal({
   refresh,
   fieldGenerator,
   endpoint,
+  filters,
   title,
   modalFunc = useCreateApiFormModal
 }: {
   items?: object;
   pk?: number;
+  filters?: any;
   model: ModelType | string;
   refresh: () => void;
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
@@ -655,17 +673,26 @@ function stockOperationModal({
   title: string;
   modalFunc?: apiModalFunc;
 }) {
-  const params: any = {
+  const baseParams: any = {
     part_detail: true,
     location_detail: true,
     cascade: false
   };
 
-  // A Stock item can have location=null, but not part=null
-  params[model] = pk === undefined && model === 'location' ? 'null' : pk;
+  const params = useMemo(() => {
+    let query_params: any = {
+      ...baseParams,
+      ...(filters ?? {})
+    };
+
+    query_params[model] =
+      pk === undefined && model === 'location' ? 'null' : pk;
+
+    return query_params;
+  }, [baseParams, filters, model, pk]);
 
   const { data } = useQuery({
-    queryKey: ['stockitems', model, pk, items],
+    queryKey: ['stockitems', model, pk, items, params],
     queryFn: async () => {
       if (items) {
         return Array.isArray(items) ? items : [items];
@@ -702,6 +729,7 @@ function stockOperationModal({
 export type StockOperationProps = {
   items?: object;
   pk?: number;
+  filters?: any;
   model: ModelType.stockitem | 'location' | ModelType.part;
   refresh: () => void;
 };

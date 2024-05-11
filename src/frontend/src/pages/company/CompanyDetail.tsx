@@ -81,7 +81,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`
+        label: t`Description`,
+        copy: true
       },
       {
         type: 'link',
@@ -197,7 +198,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconPackages />,
         hidden: !company?.is_manufacturer && !company?.is_supplier,
         content: company?.pk && (
-          <StockItemTable params={{ company: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="company-stock"
+            params={{ company: company.pk }}
+          />
         )
       },
       {
@@ -222,7 +227,11 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconPackageExport />,
         hidden: !company?.is_customer,
         content: company?.pk ? (
-          <StockItemTable params={{ customer: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="assigned-stock"
+            params={{ customer: company.pk }}
+          />
         ) : (
           <Skeleton />
         )
@@ -295,14 +304,18 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
   const badges: ReactNode[] = useMemo(() => {
     return [
-      <DetailsBadge label={t`Inactive`} color="red" visible={!company.active} />
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={company.active == false}
+      />
     ];
   }, [company]);
 
   return (
     <>
       {editCompany.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Company` + `: ${company.name}`}

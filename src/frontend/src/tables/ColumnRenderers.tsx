@@ -46,7 +46,9 @@ export function LocationColumn({
       let location = resolveItem(record, accessor);
 
       if (!location) {
-        return <Text italic>{t`No location set`}</Text>;
+        return (
+          <Text style={{ fontStyle: 'italic' }}>{t`No location set`}</Text>
+        );
       }
 
       return <Text>{location.name}</Text>;
@@ -170,10 +172,18 @@ export function ProjectCodeColumn(): TableColumn {
   };
 }
 
-export function StatusColumn(model: ModelType) {
+export function StatusColumn({
+  model,
+  sortable,
+  accessor
+}: {
+  model: ModelType;
+  sortable?: boolean;
+  accessor?: string;
+}) {
   return {
-    accessor: 'status',
-    sortable: true,
+    accessor: accessor ?? 'status',
+    sortable: sortable ?? true,
     render: TableStatusRenderer(model)
   };
 }

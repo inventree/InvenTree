@@ -5,7 +5,6 @@ import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { PartHoverCard } from '../../components/images/Thumbnail';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderUser } from '../../components/render/User';
-import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -60,7 +59,7 @@ function buildOrderTableColumns(): TableColumn[] {
         />
       )
     },
-    StatusColumn(ModelType.build),
+    StatusColumn({ model: ModelType.build }),
     ProjectCodeColumn(),
     {
       accessor: 'priority',
@@ -111,11 +110,13 @@ export function BuildOrderTable({
       },
       {
         name: 'status',
+        label: t`Status`,
         description: t`Filter by order status`,
         choiceFunction: StatusFilterOptions(ModelType.build)
       },
       {
         name: 'overdue',
+        label: t`Overdue`,
         type: 'boolean',
         description: t`Show overdue status`
       },

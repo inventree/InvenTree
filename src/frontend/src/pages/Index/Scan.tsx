@@ -4,7 +4,6 @@ import {
   Badge,
   Button,
   Checkbox,
-  Col,
   Container,
   Grid,
   Group,
@@ -42,7 +41,7 @@ import {
 } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
@@ -169,15 +168,17 @@ export default function Scan() {
               .get(url)
               .then((response) => {
                 item.instance = response.data;
+                const list_idx = history.findIndex((i) => i.id === id);
+                historyHandlers.setItem(list_idx, item);
               })
               .catch((err) => {
                 console.error('error while fetching instance data at', url);
                 console.info(err);
               });
           }
+        } else {
+          historyHandlers.setState(history);
         }
-
-        historyHandlers.setState(history);
       })
       .catch((err) => {
         // 400 and no plugin means no match
@@ -241,14 +242,14 @@ export default function Scan() {
 
     if (uniqueObjectTypes.length === 0) {
       return (
-        <Group spacing={0}>
+        <Group gap={0}>
           <IconQuestionMark color="orange" />
           <Trans>Selected elements are not known</Trans>
         </Group>
       );
     } else if (uniqueObjectTypes.length > 1) {
       return (
-        <Group spacing={0}>
+        <Group gap={0}>
           <IconAlertCircle color="orange" />
           <Trans>Multiple object types selected</Trans>
         </Group>
@@ -260,7 +261,11 @@ export default function Scan() {
           <Trans>Actions for {uniqueObjectTypes[0]} </Trans>
         </Text>
         <Group>
-          <ActionIcon onClick={notYetImplemented} title={t`Count`}>
+          <ActionIcon
+            onClick={notYetImplemented}
+            title={t`Count`}
+            variant="default"
+          >
             <IconNumber />
           </ActionIcon>
         </Group>
@@ -271,8 +276,8 @@ export default function Scan() {
   // rendering
   return (
     <>
-      <Group position="apart">
-        <Group position="left">
+      <Group justify="space-between">
+        <Group justify="left">
           <StylishText>
             <Trans>Scan Page</Trans>
           </StylishText>
@@ -280,16 +285,21 @@ export default function Scan() {
             text={t`This page can be used for continuously scanning items and taking actions on them.`}
           />
         </Group>
-        <Button onClick={toggleFullscreen} size="sm" variant="subtle">
+        <Button
+          onClick={toggleFullscreen}
+          size="sm"
+          variant="subtle"
+          title={t`Toggle Fullscreen`}
+        >
           {fullscreen ? <IconArrowsMaximize /> : <IconArrowsMinimize />}
         </Button>
       </Group>
       <Space h={'md'} />
       <Grid maw={'100%'}>
-        <Col span={4}>
+        <Grid.Col span={4}>
           <Stack>
-            <Stack spacing="xs">
-              <Group position="apart">
+            <Stack gap="xs">
+              <Group justify="space-between">
                 <TitleWithDoc
                   order={3}
                   text={t`Select the input method you want to use to scan items.`}
@@ -302,12 +312,12 @@ export default function Scan() {
                   data={inputOptions}
                   searchable
                   placeholder={t`Select input method`}
-                  nothingFound={t`Nothing found`}
+                  nothingFoundMessage={t`Nothing found`}
                 />
               </Group>
               {inp}
             </Stack>
-            <Stack spacing={0}>
+            <Stack gap={0}>
               <TitleWithDoc
                 order={3}
                 text={t`Depending on the selected parts actions will be shown here. Not all barcode types are supported currently.`}
@@ -331,6 +341,7 @@ export default function Scan() {
                       color="red"
                       onClick={btnDeleteHistory}
                       title={t`Delete`}
+                      variant="default"
                     >
                       <IconTrash />
                     </ActionIcon>
@@ -338,6 +349,7 @@ export default function Scan() {
                       onClick={btnRunSelectedBarcode}
                       disabled={selection.length > 1}
                       title={t`Lookup part`}
+                      variant="default"
                     >
                       <IconSearch />
                     </ActionIcon>
@@ -345,6 +357,7 @@ export default function Scan() {
                       onClick={btnOpenSelectedLink}
                       disabled={!selectionLinked}
                       title={t`Open Link`}
+                      variant="default"
                     >
                       <IconLink />
                     </ActionIcon>
@@ -354,9 +367,9 @@ export default function Scan() {
               )}
             </Stack>
           </Stack>
-        </Col>
-        <Col span={8}>
-          <Group position="apart">
+        </Grid.Col>
+        <Grid.Col span={8}>
+          <Group justify="space-between">
             <TitleWithDoc
               order={3}
               text={t`History is locally kept in this browser.`}
@@ -364,7 +377,12 @@ export default function Scan() {
             >
               <Trans>History</Trans>
             </TitleWithDoc>
-            <ActionIcon color="red" onClick={btnDeleteFullHistory}>
+            <ActionIcon
+              color="red"
+              onClick={btnDeleteFullHistory}
+              variant="default"
+              title={t`Delete History`}
+            >
               <IconTrash />
             </ActionIcon>
           </Group>
@@ -373,7 +391,7 @@ export default function Scan() {
             selection={selection}
             setSelection={setSelection}
           />
-        </Col>
+        </Grid.Col>
       </Grid>
     </>
   );
@@ -399,29 +417,30 @@ function HistoryTable({
       current.length === data.length ? [] : data.map((item) => item.id)
     );
 
-  const rows = data.map((item) => {
-    return (
-      <tr key={item.id}>
-        <td>
-          <Checkbox
-            checked={selection.includes(item.id)}
-            onChange={() => toggleRow(item.id)}
-            transitionDuration={0}
-          />
-        </td>
-        <td>
-          {item.pk && item.model && item.instance ? (
-            <RenderInstance model={item.model} instance={item.instance} />
-          ) : (
-            item.ref
-          )}
-        </td>
-        <td>{item.model}</td>
-        <td>{item.source}</td>
-        <td>{item.timestamp?.toString()}</td>
-      </tr>
-    );
-  });
+  const rows = useMemo(() => {
+    return data.map((item) => {
+      return (
+        <tr key={item.id}>
+          <td>
+            <Checkbox
+              checked={selection.includes(item.id)}
+              onChange={() => toggleRow(item.id)}
+            />
+          </td>
+          <td>
+            {item.pk && item.model && item.instance ? (
+              <RenderInstance model={item.model} instance={item.instance} />
+            ) : (
+              item.ref
+            )}
+          </td>
+          <td>{item.model}</td>
+          <td>{item.source}</td>
+          <td>{item.timestamp?.toString()}</td>
+        </tr>
+      );
+    });
+  }, [data, selection]);
 
   // rendering
   if (data.length === 0)
@@ -442,7 +461,6 @@ function HistoryTable({
                 indeterminate={
                   selection.length > 0 && selection.length !== data.length
                 }
-                transitionDuration={0}
               />
             </th>
             <th>
@@ -512,7 +530,7 @@ function InputManual({ action }: Readonly<ScanInputInterface>) {
           onChange={(event) => setValue(event.currentTarget.value)}
           onKeyDown={getHotkeyHandler([['Enter', btnAddItem]])}
         />
-        <ActionIcon onClick={btnAddItem} w={16}>
+        <ActionIcon onClick={btnAddItem} w={16} variant="default">
           <IconPlus />
         </ActionIcon>
       </Group>
@@ -696,8 +714,8 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
   }, [cameraValue]);
 
   return (
-    <Stack spacing="xs">
-      <Group spacing="xs">
+    <Stack gap="xs">
+      <Group gap="xs">
         <Select
           value={cameraValue}
           onChange={setCameraValue}
@@ -707,7 +725,11 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
           size="sm"
         />
         {ScanningEnabled ? (
-          <ActionIcon onClick={btnStopScanning} title={t`Stop scanning`}>
+          <ActionIcon
+            onClick={btnStopScanning}
+            title={t`Stop scanning`}
+            variant="default"
+          >
             <IconPlayerStopFilled />
           </ActionIcon>
         ) : (
@@ -715,11 +737,12 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
             onClick={btnStartScanning}
             title={t`Start scanning`}
             disabled={!camId}
+            variant="default"
           >
             <IconPlayerPlayFilled />
           </ActionIcon>
         )}
-        <Space sx={{ flex: 1 }} />
+        <Space style={{ flex: 1 }} />
         <Badge color={ScanningEnabled ? 'green' : 'orange'}>
           {ScanningEnabled ? t`Scanning` : t`Not scanning`}
         </Badge>

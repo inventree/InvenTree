@@ -1788,6 +1788,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER': {
+            'name': _('Allow Out of Stock Transfer'),
+            'description': _(
+                'Allow stock items which are not in stock to be transferred between stock locations'
+            ),
+            'default': False,
+            'validator': bool,
+        },
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _(

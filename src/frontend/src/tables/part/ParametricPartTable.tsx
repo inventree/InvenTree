@@ -67,7 +67,7 @@ function ParameterCell({
 
   return (
     <div>
-      <Group grow ref={ref} position="apart">
+      <Group grow ref={ref} justify="space-between">
         <Group grow style={{ flex: 1 }}>
           <TableHoverCard
             value={value ?? '-'}
@@ -78,7 +78,7 @@ function ParameterCell({
         {hovered && canEdit && (
           <div style={{ flex: 0 }}>
             <Tooltip label={t`Edit parameter`}>
-              <ActionIcon size="xs" onClick={handleClick}>
+              <ActionIcon size="xs" onClick={handleClick} variant="transparent">
                 <IconEdit />
               </ActionIcon>
             </Tooltip>
