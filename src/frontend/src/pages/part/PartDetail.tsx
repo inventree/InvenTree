@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack, Table } from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -443,13 +443,13 @@ export default function PartDetail() {
           </Grid.Col>
           <Grid.Col span={8}>
             <Stack gap="xs">
-              <table>
-                <tbody>
-                  <tr>
+              <Table>
+                <Table.Tbody>
+                  <Table.Tr>
                     <PartIcons part={part} />
-                  </tr>
-                </tbody>
-              </table>
+                  </Table.Tr>
+                </Table.Tbody>
+              </Table>
               <DetailsTable fields={tl} item={part} />
             </Stack>
           </Grid.Col>
