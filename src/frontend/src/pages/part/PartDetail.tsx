@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack, Table } from '@mantine/core';
+import {
+  Alert,
+  Grid,
+  LoadingOverlay,
+  Skeleton,
+  Stack,
+  Table
+} from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -24,7 +31,7 @@ import {
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { ReactNode, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -32,6 +39,7 @@ import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PartIcons } from '../../components/details/PartIcons';
+import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -60,6 +68,7 @@ import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -85,6 +94,7 @@ import PartPricingPanel from './PartPricingPanel';
 export default function PartDetail() {
   const { id } = useParams();
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   const [treeOpen, setTreeOpen] = useState(false);
@@ -700,6 +710,26 @@ export default function PartDetail() {
     modelType: ModelType.part
   });
 
+  const deletePart = useDeleteApiFormModal({
+    url: ApiEndpoints.part_list,
+    pk: part.pk,
+    title: t`Delete Part`,
+    onFormSuccess: () => {
+      if (part.category) {
+        navigate(getDetailUrl(ModelType.partcategory, part.category));
+      } else {
+        navigate('/part/');
+      }
+    },
+    preFormContent: (
+      <Alert color="red" title={t`Deleting this part cannot be reversed`}>
+        <Stack gap="xs">
+          <Thumbnail src={part.thumbnail ?? part.image} text={part.full_name} />
+        </Stack>
+      </Alert>
+    )
+  });
+
   const stockActionProps: StockOperationProps = useMemo(() => {
     return {
       pk: part.pk,
@@ -771,7 +801,9 @@ export default function PartDetail() {
             onClick: () => editPart.open()
           }),
           DeleteItemAction({
-            hidden: part?.active || !user.hasDeleteRole(UserRoles.part)
+            hidden: !user.hasDeleteRole(UserRoles.part),
+            disabled: part.active,
+            onClick: () => deletePart.open()
           })
         ]}
       />
@@ -782,6 +814,7 @@ export default function PartDetail() {
     <>
       {duplicatePart.modal}
       {editPart.modal}
+      {deletePart.modal}
       <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PartCategoryTree
