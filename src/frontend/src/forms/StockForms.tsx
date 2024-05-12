@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Flex, Group, NumberInput, Skeleton, Text } from '@mantine/core';
+import { Flex, Group, NumberInput, Skeleton, Table, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useCallback, useMemo, useState } from 'react';
@@ -297,8 +297,8 @@ function StockOperationsRow({
   return !record ? (
     <div>{t`Loading...`}</div>
   ) : (
-    <tr>
-      <td>
+    <Table.Tr>
+      <Table.Td>
         <Flex gap="sm" align="center">
           <Thumbnail
             size={40}
@@ -307,18 +307,20 @@ function StockOperationsRow({
           />
           <div>{record.part_detail?.name}</div>
         </Flex>
-      </td>
-      <td>{record.location ? record.location_detail?.pathstring : '-'}</td>
-      <td>
+      </Table.Td>
+      <Table.Td>
+        {record.location ? record.location_detail?.pathstring : '-'}
+      </Table.Td>
+      <Table.Td>
         <Flex align="center" gap="xs">
           <Group justify="space-between">
             <Text>{stockString}</Text>
             <StatusRenderer status={record.status} type={ModelType.stockitem} />
           </Group>
         </Flex>
-      </td>
+      </Table.Td>
       {!merge && (
-        <td>
+        <Table.Td>
           <NumberInput
             value={value}
             onChange={onChange}
@@ -327,9 +329,9 @@ function StockOperationsRow({
             min={0}
             style={{ maxWidth: '100px' }}
           />
-        </td>
+        </Table.Td>
       )}
-      <td>
+      <Table.Td>
         <Flex gap="3px">
           {transfer && (
             <ActionButton
@@ -351,8 +353,8 @@ function StockOperationsRow({
             color="red"
           />
         </Flex>
-      </td>
-    </tr>
+      </Table.Td>
+    </Table.Tr>
   );
 }
 
