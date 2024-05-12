@@ -31,10 +31,7 @@ import {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
-import {
-  TableFieldExtraRow,
-  TableFieldRow
-} from '../components/forms/fields/TableField';
+import { TableFieldExtraRow } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
