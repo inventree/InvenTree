@@ -13,7 +13,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
@@ -49,6 +49,7 @@ import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -63,6 +64,8 @@ export default function StockDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const navigate = useNavigate();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -370,6 +373,23 @@ export default function StockDetail() {
     modelType: ModelType.stockitem
   });
 
+  const preDeleteContent = useMemo(() => {
+    // TODO: Fill this out with information on the stock item.
+    // e.g. list of child items which would be deleted, etc
+    return undefined;
+  }, [stockitem]);
+
+  const deleteStockItem = useDeleteApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    pk: stockitem.pk,
+    title: t`Delete Stock Item`,
+    preFormContent: preDeleteContent,
+    onFormSuccess: () => {
+      // Redirect to the part page
+      navigate(getDetailUrl(ModelType.part, stockitem.part));
+    }
+  });
+
   const stockActionProps: StockOperationProps = useMemo(() => {
     return {
       items: stockitem,
@@ -458,7 +478,8 @@ export default function StockDetail() {
             onClick: () => editStockItem.open()
           }),
           DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.stock)
+            hidden: !user.hasDeleteRole(UserRoles.stock),
+            onClick: () => deleteStockItem.open()
           })
         ]}
       />
@@ -524,6 +545,7 @@ export default function StockDetail() {
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
       {editStockItem.modal}
       {duplicateStockItem.modal}
+      {deleteStockItem.modal}
       {countStockItem.modal}
       {addStockItem.modal}
       {removeStockItem.modal}
