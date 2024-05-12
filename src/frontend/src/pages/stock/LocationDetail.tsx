@@ -227,8 +227,8 @@ export default function Stock() {
         choices: deleteOptions
       },
       delete_sub_location: {
-        label: t`Locations Action`,
-        description: t`Action for sub locations in this location`,
+        label: t`Child Locations Action`,
+        description: t`Action for child locations in this location`,
         field_type: 'choice',
         choices: deleteOptions
       }
