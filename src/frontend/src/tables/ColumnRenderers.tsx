@@ -265,8 +265,8 @@ export function CurrencyColumn({
     sortable: sortable ?? true,
     render: (record: any) => {
       let currency_key = currency_accessor ?? `${accessor}_currency`;
-      return formatCurrency(record[accessor], {
-        currency: currency ?? record[currency_key]
+      return formatCurrency(resolveItem(record, accessor), {
+        currency: currency ?? resolveItem(record, currency_key)
       });
     }
   };
