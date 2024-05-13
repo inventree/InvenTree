@@ -10,6 +10,7 @@ import report.models
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
+    UserSerializer,
 )
 
 
@@ -152,6 +153,7 @@ class BaseOutputSerializer(InvenTreeModelSerializer):
             'pk',
             'created',
             'user',
+            'user_detail',
             'model_type',
             'items',
             'complete',
@@ -162,6 +164,8 @@ class BaseOutputSerializer(InvenTreeModelSerializer):
 
     output = InvenTreeAttachmentSerializerField()
     model_type = serializers.CharField(source='template.model_type', read_only=True)
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
 
 class LabelOutputSerializer(BaseOutputSerializer):
