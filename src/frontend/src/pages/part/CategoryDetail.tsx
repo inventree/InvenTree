@@ -8,12 +8,13 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
+  DeleteItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -24,7 +25,10 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
 import { getDetailUrl } from '../../functions/urls';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
@@ -43,6 +47,7 @@ export default function CategoryDetail({}: {}) {
     [_id]
   );
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   const [treeOpen, setTreeOpen] = useState(false);
@@ -154,6 +159,46 @@ export default function CategoryDetail({}: {}) {
     onFormSuccess: refreshInstance
   });
 
+  const deleteOptions = useMemo(() => {
+    return [
+      {
+        value: 0,
+        display_name: `Move items to parent category`
+      },
+      {
+        value: 1,
+        display_name: t`Delete items`
+      }
+    ];
+  }, []);
+
+  const deleteCategory = useDeleteApiFormModal({
+    url: ApiEndpoints.category_list,
+    pk: id,
+    title: t`Delete Part Category`,
+    fields: {
+      delete_parts: {
+        label: t`Parts Action`,
+        description: t`Action for parts in this category`,
+        choices: deleteOptions,
+        field_type: 'choice'
+      },
+      delete_child_categories: {
+        label: t`Child Categories Action`,
+        description: t`Action for child categories in this category`,
+        choices: deleteOptions,
+        field_type: 'choice'
+      }
+    },
+    onFormSuccess: () => {
+      if (category.parent) {
+        navigate(getDetailUrl(ModelType.partcategory, category.parent));
+      } else {
+        navigate('/part/');
+      }
+    }
+  });
+
   const categoryActions = useMemo(() => {
     return [
       <ActionDropdown
@@ -164,6 +209,11 @@ export default function CategoryDetail({}: {}) {
             hidden: !id || !user.hasChangeRole(UserRoles.part_category),
             tooltip: t`Edit Part Category`,
             onClick: () => editCategory.open()
+          }),
+          DeleteItemAction({
+            hidden: !id || !user.hasDeleteRole(UserRoles.part_category),
+            tooltip: t`Delete Part Category`,
+            onClick: () => deleteCategory.open()
           })
         ]}
       />
@@ -222,6 +272,7 @@ export default function CategoryDetail({}: {}) {
   return (
     <>
       {editCategory.modal}
+      {deleteCategory.modal}
       <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PartCategoryTree

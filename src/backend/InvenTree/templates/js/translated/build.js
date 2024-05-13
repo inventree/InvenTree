@@ -1124,29 +1124,31 @@ function loadBuildOutputTable(build_info, options={}) {
     });
 
     // Request list of required tests for the part being assembled
-    inventreeGet(
-        '{% url "api-part-test-template-list" %}',
-        {
-            part: build_info.part,
-            required: true,
-            enabled: true,
-        },
-        {
-            async: false,
-            success: function(response) {
-                test_templates = [];
-                response.forEach(function(item) {
-                    // Only include "required" tests
-                    if (item.required) {
-                        test_templates.push(item);
-                    }
-                });
+    if (build_info.trackable) {
+        inventreeGet(
+            '{% url "api-part-test-template-list" %}',
+            {
+                part: build_info.part,
+                required: true,
+                enabled: true,
             },
-            error: function() {
-                test_templates = [];
+            {
+                async: false,
+                success: function(response) {
+                    test_templates = [];
+                    response.forEach(function(item) {
+                        // Only include "required" tests
+                        if (item.required) {
+                            test_templates.push(item);
+                        }
+                    });
+                },
+                error: function() {
+                    test_templates = [];
+                }
             }
-        }
-    );
+        );
+    }
 
     // Callback function to load the allocated stock items
     function reloadOutputAllocations() {

@@ -1470,6 +1470,14 @@ class StocktakeTest(StockAPITestCase):
 
     def test_transfer(self):
         """Test stock transfers."""
+        stock_item = StockItem.objects.get(pk=1234)
+
+        # Mark this stock item as "quarantined" (cannot be moved)
+        stock_item.status = StockStatus.QUARANTINED.value
+        stock_item.save()
+
+        InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', False)
+
         data = {
             'items': [{'pk': 1234, 'quantity': 10}],
             'location': 1,
@@ -1477,6 +1485,14 @@ class StocktakeTest(StockAPITestCase):
         }
 
         url = reverse('api-stock-transfer')
+
+        # First attempt should *fail* - stock item is quarantined
+        response = self.post(url, data, expected_code=400)
+
+        self.assertIn('cannot be moved as it is not in stock', str(response.data))
+
+        # Now, allow transfer of "out of stock" items
+        InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', True)
 
         # This should succeed
         response = self.post(url, data, expected_code=201)
