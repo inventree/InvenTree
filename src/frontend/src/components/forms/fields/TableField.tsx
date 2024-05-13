@@ -37,7 +37,7 @@ export function TableField({
       <Table.Thead>
         <Table.Tr>
           {definition.headers?.map((header) => {
-            return <th key={header}>{header}</th>;
+            return <Table.Th key={header}>{header}</Table.Th>;
           })}
         </Table.Tr>
       </Table.Thead>
