@@ -253,9 +253,8 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         config.save()
 
         parts = Part.objects.all()[:2]
-        label = cast(PartLabel, PartLabel.objects.first())
 
-        url = reverse('api-part-label-print', kwargs={'pk': label.pk})
+        url = reverse('api-label-print')
         url += f'/?plugin={plugin_ref}&part[]={parts[0].pk}&part[]={parts[1].pk}'
 
         self.post(
