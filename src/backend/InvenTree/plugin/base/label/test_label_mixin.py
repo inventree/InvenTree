@@ -27,10 +27,11 @@ class LabelMixinTests(InvenTreeAPITestCase):
     fixtures = ['category', 'part', 'location', 'stock']
 
     roles = 'all'
+    plugin_ref = 'samplelabelprinter'
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
-        config = registry.get_plugin('samplelabelprinter').plugin_config()
+        config = registry.get_plugin(self.plugin_ref).plugin_config()
         config.active = True
         config.save()
 
@@ -237,8 +238,6 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`."""
-        plugin_ref = 'samplelabelprinter'
-
         # Activate the label components
         apps.get_app_config('report').create_default_labels()
         self.do_activate_plugin()
@@ -254,7 +253,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
             template = LabelTemplate.objects.filter(
                 enabled=True, model_type=model_type
             ).first()
-            plugin = registry.get_plugin(plugin_ref)
+            plugin = registry.get_plugin(self.plugin_ref)
 
             # Single page printing
             self.post(
