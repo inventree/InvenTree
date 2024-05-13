@@ -8,7 +8,7 @@ msgstr ""
 "Language: sr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-08 08:03\n"
+"PO-Revision-Date: 2024-05-13 02:48\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
@@ -2419,7 +2419,7 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:658
 #~ msgid "Receive line items"
-#~ msgstr ""
+#~ msgstr "Receive line items"
 
 #: src/forms/StockForms.tsx:69
 msgid "Add given quantity as packs instead of individual items"
@@ -4384,7 +4384,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:126
 #: src/pages/sales/SalesOrderDetail.tsx:130
 #~ msgid "Order Currency,"
-#~ msgstr ""
+#~ msgstr "Order Currency,"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:166
 #: src/pages/sales/ReturnOrderDetail.tsx:134
@@ -6599,3 +6599,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
