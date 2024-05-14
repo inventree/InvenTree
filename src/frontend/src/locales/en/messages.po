@@ -3220,15 +3220,26 @@ msgstr "Plugin Errors"
 msgid "Plugin Settings"
 msgstr "Plugin Settings"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:25
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:53
+msgid "Background Worker Not Running"
+msgstr "Background Worker Not Running"
+
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:54
+msgid "The background task manager service is not running. Contact your system administrator."
+msgstr "The background task manager service is not running. Contact your system administrator."
+
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:60
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:76
 msgid "Pending Tasks"
 msgstr "Pending Tasks"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:33
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:64
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:84
 msgid "Scheduled Tasks"
 msgstr "Scheduled Tasks"
 
-#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:41
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:68
+#: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:92
 msgid "Failed Tasks"
 msgstr "Failed Tasks"
 
