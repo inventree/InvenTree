@@ -209,16 +209,14 @@ class LabelMixinTests(InvenTreeAPITestCase):
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='part'
         ).first()
-        plugin = registry.get_plugin(self.plugin_ref)
-
         self.do_activate_plugin()
+        plugin = registry.get_plugin(self.plugin_ref)
 
         # test options response
         options = self.options(
             self.printing_url, data={'plugin': plugin.pk}, expected_code=200
         ).json()
-        # self.assertIn('amount', options['actions']['POST'])
-        print(options)
+        self.assertIn('amount', options['actions']['POST'])
 
         with mock.patch.object(plugin, 'print_label') as print_label:
             # wrong value type
@@ -246,7 +244,9 @@ class LabelMixinTests(InvenTreeAPITestCase):
                 },
                 expected_code=201,
             ).json()
-            # self.assertEqual(print_label.call_args.kwargs['printing_options'], {'amount': 13})
+            self.assertEqual(
+                print_label.call_args.kwargs['printing_options'], {'amount': 13}
+            )
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`."""
