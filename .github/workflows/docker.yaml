@@ -85,9 +85,9 @@ jobs:
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
           docker run --rm inventree-test pg_dump --version
-          docker run --rm inventree-test test -f /home/inventere/init.sh
-          docker run --rm inventree-test test -f /home/inventere/tasks.py
-          docker run --rm inventree-test test -f /home/inventere/gunicorn.conf.py
+          docker run --rm inventree-test test -f /home/inventree/init.sh
+          docker run --rm inventree-test test -f /home/inventree/tasks.py
+          docker run --rm inventree-test test -f /home/inventree/gunicorn.conf.py
           docker run --rm inventree-test test -f /home/inventree/src/backend/requirements.txt
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/manage.py
       - name: Build Docker Image
