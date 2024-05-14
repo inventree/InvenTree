@@ -410,24 +410,20 @@ plugin_api_urls = [
     path('action/', ActionPluginView.as_view(), name='api-action-plugin'),
     path('barcode/', include(barcode_api_urls)),
     path('locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
+    # Plugin endpoints for individual plugins
     path(
         'plugins/',
         include([
-            # Plugin settings URLs
+            # Plugin management
+            path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
+            path('install/', PluginInstall.as_view(), name='api-plugin-install'),
+            # Registry status
             path(
-                'settings/',
-                include([
-                    re_path(
-                        r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/',
-                        PluginSettingDetail.as_view(),
-                        name='api-plugin-setting-detail',
-                    ),  # Used for admin interface
-                    path(
-                        '', PluginSettingList.as_view(), name='api-plugin-setting-list'
-                    ),
-                ]),
+                'status/',
+                RegistryStatusView.as_view(),
+                name='api-plugin-registry-status',
             ),
-            # Detail views for a single PluginConfig item
+            # Lookup for individual plugins (based on 'key', not 'pk')
             path(
                 '<str:key>/',
                 include([
@@ -447,6 +443,12 @@ plugin_api_urls = [
                         ]),
                     ),
                     path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': PluginConfig, 'lookup_field': 'key'},
+                        name='api-plugin-metadata',
+                    ),
+                    path(
                         'activate/',
                         PluginActivate.as_view(),
                         name='api-plugin-detail-activate',
@@ -459,23 +461,19 @@ plugin_api_urls = [
                     path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),
             ),
-            # Metadata
             path(
-                'metadata/',
-                MetadataView.as_view(),
-                {'model': PluginConfig},
-                name='api-plugin-metadata',
+                'settings/',
+                include([
+                    re_path(
+                        r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/',
+                        PluginSettingDetail.as_view(),
+                        name='api-plugin-setting-detail',
+                    ),  # Used for admin interface
+                    path(
+                        '', PluginSettingList.as_view(), name='api-plugin-setting-list'
+                    ),
+                ]),
             ),
-            # Plugin management
-            path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
-            path('install/', PluginInstall.as_view(), name='api-plugin-install'),
-            # Registry status
-            path(
-                'status/',
-                RegistryStatusView.as_view(),
-                name='api-plugin-registry-status',
-            ),
-            # Anything else
             path('', PluginList.as_view(), name='api-plugin-list'),
         ]),
     ),
