@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-10 05:37+0000\n"
-"PO-Revision-Date: 2024-05-10 08:30\n"
+"PO-Revision-Date: 2024-05-14 02:46\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -77,7 +77,7 @@ msgstr "Entrer la date"
 #: templates/js/translated/sales_order.js:1982
 #: templates/js/translated/stock.js:1536 templates/js/translated/stock.js:2430
 msgid "Notes"
-msgstr ""
+msgstr "Notes"
 
 #: InvenTree/format.py:164
 #, python-brace-format
@@ -253,7 +253,7 @@ msgstr "Hébreu"
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
@@ -325,7 +325,7 @@ msgstr "Turc"
 
 #: InvenTree/locales.py:48
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrainien"
 
 #: InvenTree/locales.py:49
 msgid "Vietnamese"
@@ -542,7 +542,7 @@ msgstr "Nom"
 #: templates/js/translated/stock.js:1515 templates/js/translated/stock.js:2060
 #: templates/js/translated/stock.js:2751 templates/js/translated/stock.js:2834
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: InvenTree/models.py:900 stock/models.py:83
 msgid "Description (optional)"
@@ -550,7 +550,7 @@ msgstr "Description (facultative)"
 
 #: InvenTree/models.py:909
 msgid "parent"
-msgstr ""
+msgstr "parent"
 
 #: InvenTree/models.py:915 templates/js/translated/part.js:2794
 #: templates/js/translated/stock.js:2760
@@ -744,7 +744,7 @@ msgstr "Expédié"
 
 #: InvenTree/status_codes.py:62
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: InvenTree/status_codes.py:63
 msgid "Attention needed"
@@ -1256,7 +1256,7 @@ msgstr "Code de projet pour cet ordre de construction"
 
 #: build/models.py:566 build/models.py:631
 msgid "Failed to offload task to complete build allocations"
-msgstr ""
+msgstr "Échec du déchargement de la tâche pour terminer les allocations de construction"
 
 #: build/models.py:588
 #, python-brace-format
@@ -14278,3 +14278,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
