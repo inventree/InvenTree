@@ -262,3 +262,26 @@ class PluginRegistryStatusSerializer(serializers.Serializer):
     """Serializer for plugin registry status."""
 
     registry_errors = serializers.ListField(child=PluginRegistryErrorSerializer())
+
+
+class PluginRelationSerializer(serializers.PrimaryKeyRelatedField):
+    """Serializer for a plugin field. Uses the 'slug' of the plugin as the lookup."""
+
+    def __init__(self, **kwargs):
+        """Custom init routine for the serializer."""
+        kwargs['pk_field'] = 'key'
+        kwargs['queryset'] = PluginConfig.objects.all()
+
+        super().__init__(**kwargs)
+
+    def use_pk_only_optimization(self):
+        """Disable the PK optimization."""
+        return False
+
+    def to_internal_value(self, data):
+        """Lookup the PluginConfig object based on the slug."""
+        return PluginConfig.objects.filter(key=data).first()
+
+    def to_representation(self, value):
+        """Return the 'key' of the PluginConfig object."""
+        return value.key
