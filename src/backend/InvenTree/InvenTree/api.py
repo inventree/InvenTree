@@ -546,10 +546,6 @@ class MetadataView(RetrieveUpdateAPI):
 
     MODEL_REF = 'model'
 
-    def __init__(self, *args, **kwargs):
-        """Initialize the MetadataView."""
-        super().__init__(*args, **kwargs)
-
     def get_model_type(self):
         """Return the model type associated with this API instance."""
         model = self.kwargs.get(self.MODEL_REF, None)
