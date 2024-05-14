@@ -298,10 +298,7 @@ class InvenTreeMetadata(SimpleMetadata):
                     field_info['api_url'] = model.get_api_url()
 
                 # Handle custom 'primary key' field
-                pk_field = getattr(field, 'pk_field', 'pk')
-
-                if pk_field != 'pk':
-                    field_info['pk_field'] = pk_field
+                field_info['pk_field'] = getattr(field, 'pk_field', 'pk')
 
         # Add more metadata about dependent fields
         if field_info['type'] == 'dependent field':
