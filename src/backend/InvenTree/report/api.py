@@ -191,7 +191,10 @@ class LabelPrint(GenericAPIView):
 
         # Plugin information provided?
         if self.request:
-            plugin_key = self.request.query_params.get('plugin', None)
+            plugin_key = self.request.data.get('plugin', None)
+            # Legacy url based lookup
+            if not plugin_key:
+                plugin_key = self.request.query_params.get('plugin', None)
             plugin = self.get_plugin_class(plugin_key)
             plugin_serializer = self.get_plugin_serializer(plugin)
 
