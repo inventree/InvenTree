@@ -95,6 +95,7 @@ jobs:
         run: docker compose --project-directory . -f contrib/container/dev-docker-compose.yml build --no-cache
       - name: Update Docker Image
         run: |
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke install
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke update
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke setup-dev
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
