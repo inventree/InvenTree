@@ -2,7 +2,6 @@
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.http import HttpResponse
 from django.template.exceptions import TemplateDoesNotExist
 from django.urls import include, path
 from django.utils.decorators import method_decorator
@@ -11,8 +10,7 @@ from django.views.decorators.cache import cache_page, never_cache
 
 from django_filters import rest_framework as rest_filters
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import permissions, serializers
-from rest_framework.exceptions import NotFound
+from rest_framework import permissions
 from rest_framework.generics import GenericAPIView
 from rest_framework.request import clone_request
 from rest_framework.response import Response
@@ -23,7 +21,7 @@ import InvenTree.helpers
 import report.helpers
 import report.models
 import report.serializers
-from InvenTree.api import MetadataView
+from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.exceptions import log_error
 from InvenTree.filters import InvenTreeSearchFilter
 from InvenTree.mixins import (
@@ -475,18 +473,18 @@ class ReportAssetDetail(RetrieveUpdateDestroyAPI):
     serializer_class = report.serializers.ReportAssetSerializer
 
 
-class LabelOutputList(ListAPI):
+class LabelOutputList(BulkDeleteMixin, ListAPI):
     """List endpoint for LabelOutput objects."""
 
     queryset = report.models.LabelOutput.objects.all()
     serializer_class = report.serializers.LabelOutputSerializer
 
 
-class LabelOutputDetail(RetrieveAPI):
-    """Detail endpoint for a single LabelOutput object."""
+class ReportOutputList(BulkDeleteMixin, ListAPI):
+    """List endpoint for ReportOutput objects."""
 
-    queryset = report.models.LabelOutput.objects.all()
-    serializer_class = report.serializers.LabelOutputSerializer
+    queryset = report.models.ReportOutput.objects.all()
+    serializer_class = report.serializers.ReportOutputSerializer
 
 
 label_api_urls = [
@@ -518,12 +516,7 @@ label_api_urls = [
     # Label outputs
     path(
         'output/',
-        include([
-            path(
-                '<int:pk>/', LabelOutputDetail.as_view(), name='api-label-output-detail'
-            ),
-            path('', LabelOutputList.as_view(), name='api-label-output-list'),
-        ]),
+        include([path('', LabelOutputList.as_view(), name='api-label-output-list')]),
     ),
 ]
 
@@ -552,6 +545,11 @@ report_api_urls = [
             ),
             path('', ReportTemplateList.as_view(), name='api-report-template-list'),
         ]),
+    ),
+    # Generated report outputs
+    path(
+        'output/',
+        include([path('', ReportOutputList.as_view(), name='api-report-output-list')]),
     ),
     # Report assets
     path(

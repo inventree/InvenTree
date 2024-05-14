@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Table } from '@mantine/core';
+import { Container, Flex, Group, Table } from '@mantine/core';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { InvenTreeIcon } from '../../../functions/icons';
@@ -34,19 +34,21 @@ export function TableField({
 
   return (
     <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
-      <thead>
-        <tr>
+      <Table.Thead>
+        <Table.Tr>
           {definition.headers?.map((header) => {
-            return <th key={header}>{header}</th>;
+            return <Table.Th key={header}>{header}</Table.Th>;
           })}
-        </tr>
-      </thead>
-      <tbody>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>
         {value.length > 0 ? (
           value.map((item: any, idx: number) => {
             // Table fields require render function
             if (!definition.modelRenderer) {
-              return <tr>{t`modelRenderer entry required for tables`}</tr>;
+              return (
+                <Table.Tr>{t`modelRenderer entry required for tables`}</Table.Tr>
+              );
             }
             return definition.modelRenderer({
               item: item,
@@ -56,8 +58,8 @@ export function TableField({
             });
           })
         ) : (
-          <tr>
-            <td
+          <Table.Tr>
+            <Table.Td
               style={{ textAlign: 'center' }}
               colSpan={definition.headers?.length}
             >
@@ -71,10 +73,36 @@ export function TableField({
                 <InvenTreeIcon icon="info" />
                 <Trans>No entries available</Trans>
               </span>
-            </td>
-          </tr>
+            </Table.Td>
+          </Table.Tr>
         )}
-      </tbody>
+      </Table.Tbody>
     </Table>
+  );
+}
+
+/*
+ * Display an "extra" row below the main table row, for additional information.
+ */
+export function TableFieldExtraRow({
+  visible,
+  content,
+  colSpan
+}: {
+  visible: boolean;
+  content: React.ReactNode;
+  colSpan?: number;
+}) {
+  return (
+    visible && (
+      <Table.Tr>
+        <Table.Td colSpan={colSpan ?? 3}>
+          <Group justify="flex-start" grow>
+            <InvenTreeIcon icon="downright" />
+            {content}
+          </Group>
+        </Table.Td>
+      </Table.Tr>
+    )
   );
 }

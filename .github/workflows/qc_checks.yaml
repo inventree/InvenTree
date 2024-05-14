@@ -248,7 +248,7 @@ jobs:
           update: true
           npm: true
       - name: Download Python Code For `${{ env.wrapper_name }}`
-        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }} -b new-printing-api
+        run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start InvenTree Server
         run: |
           invoke delete-data -f

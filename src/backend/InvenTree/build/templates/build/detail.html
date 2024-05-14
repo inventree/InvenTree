@@ -366,6 +366,7 @@ onPanelLoad('outputs', function() {
         source_location: {{ build.take_from.pk }},
         {% endif %}
         tracked_parts: true,
+        trackable: {% js_bool build.part.trackable %}
     };
 
     loadBuildOutputTable(build_info);

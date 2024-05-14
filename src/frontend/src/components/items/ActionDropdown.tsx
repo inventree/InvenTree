@@ -196,10 +196,12 @@ export function EditItemAction({
 // Common action button for deleting an item
 export function DeleteItemAction({
   hidden = false,
+  disabled = false,
   tooltip,
   onClick
 }: {
   hidden?: boolean;
+  disabled?: boolean;
   tooltip?: string;
   onClick?: () => void;
 }): ActionDropdownItem {
@@ -208,7 +210,8 @@ export function DeleteItemAction({
     name: t`Delete`,
     tooltip: tooltip ?? t`Delete item`,
     onClick: onClick,
-    hidden: hidden
+    hidden: hidden,
+    disabled: disabled
   };
 }
 
