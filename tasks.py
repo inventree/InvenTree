@@ -230,7 +230,9 @@ def plugins(c, uv=False):
 @task(help={'uv': 'Use UV package manager (experimental)'})
 def install(c, uv=False):
     """Installs required python packages."""
-    print("Installing required python packages from 'src/backend/requirements.txt'")
+    INSTALL_FILE = 'src/backend/requirements.txt'
+
+    print(f"Installing required python packages from '{INSTALL_FILE}'")
 
     # Install required Python packages with PIP
     if not uv:
@@ -238,13 +240,13 @@ def install(c, uv=False):
             'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools'
         )
         c.run(
-            'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r src/backend/requirements.txt'
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}'
         )
     else:
         c.run(
             'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools'
         )
-        c.run('uv pip install -U --require-hashes  -r src/backend/requirements.txt')
+        c.run(f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
 
     # Run plugins install
     plugins(c, uv=uv)
