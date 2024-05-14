@@ -234,6 +234,9 @@ def install(c, uv=False):
 
     print(f"Installing required python packages from '{INSTALL_FILE}'")
 
+    if not Path(INSTALL_FILE).is_file():
+        raise FileNotFoundError(f"Requirements file '{INSTALL_FILE}' not found")
+
     # Install required Python packages with PIP
     if not uv:
         c.run(
