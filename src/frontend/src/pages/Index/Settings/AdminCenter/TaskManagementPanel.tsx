@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import {
   Accordion,
   Alert,
+  Divider,
   Paper,
   SimpleGrid,
   Stack,
@@ -68,6 +69,7 @@ export default function TaskManagementPanel() {
             value={taskInfo?.failed_tasks}
           />
         </SimpleGrid>
+        <Divider />
         <Accordion defaultValue="pending">
           <Accordion.Item value="pending" key="pending-tasks">
             <Accordion.Control>
