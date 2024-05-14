@@ -411,7 +411,6 @@ plugin_api_urls = [
     path('action/', ActionPluginView.as_view(), name='api-action-plugin'),
     path('barcode/', include(barcode_api_urls)),
     path('locate/', LocatePluginView.as_view(), name='api-locate-plugin'),
-    # Plugin endpoints for individual plugins
     path(
         'plugins/',
         include([
@@ -423,6 +422,19 @@ plugin_api_urls = [
                 'status/',
                 RegistryStatusView.as_view(),
                 name='api-plugin-registry-status',
+            ),
+            path(
+                'settings/',
+                include([
+                    re_path(
+                        r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/',
+                        PluginSettingDetail.as_view(),
+                        name='api-plugin-setting-detail',
+                    ),  # Used for admin interface
+                    path(
+                        '', PluginSettingList.as_view(), name='api-plugin-setting-list'
+                    ),
+                ]),
             ),
             # Lookup for individual plugins (based on 'key', not 'pk')
             path(
@@ -460,19 +472,6 @@ plugin_api_urls = [
                         name='api-plugin-uninstall',
                     ),
                     path('', PluginDetail.as_view(), name='api-plugin-detail'),
-                ]),
-            ),
-            path(
-                'settings/',
-                include([
-                    re_path(
-                        r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/',
-                        PluginSettingDetail.as_view(),
-                        name='api-plugin-setting-detail',
-                    ),  # Used for admin interface
-                    path(
-                        '', PluginSettingList.as_view(), name='api-plugin-setting-list'
-                    ),
                 ]),
             ),
             path('', PluginList.as_view(), name='api-plugin-list'),
