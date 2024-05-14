@@ -387,7 +387,7 @@ class RegistryStatusView(APIView):
 
     @extend_schema(responses={200: PluginSerializers.PluginRegistryStatusSerializer()})
     def get(self, request):
-        """Show registry status information."""
+        """Show plugin registry status information."""
         error_list = []
 
         for stage, errors in registry.errors.items():
@@ -400,7 +400,8 @@ class RegistryStatusView(APIView):
                     })
 
         result = PluginSerializers.PluginRegistryStatusSerializer({
-            'registry_errors': error_list
+            'registry_errors': error_list,
+            'active_plugins': PluginConfig.objects.filter(active=True).count(),
         }).data
 
         return Response(result)
