@@ -23,7 +23,8 @@ export function useInstance<T = any>({
   hasPrimaryKey = true,
   refetchOnMount = true,
   refetchOnWindowFocus = false,
-  throwError = false
+  throwError = false,
+  updateInterval
 }: {
   endpoint: ApiEndpoints;
   pk?: string | undefined;
@@ -34,6 +35,7 @@ export function useInstance<T = any>({
   refetchOnMount?: boolean;
   refetchOnWindowFocus?: boolean;
   throwError?: boolean;
+  updateInterval?: number;
 }) {
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
@@ -74,7 +76,8 @@ export function useInstance<T = any>({
         });
     },
     refetchOnMount: refetchOnMount,
-    refetchOnWindowFocus: refetchOnWindowFocus
+    refetchOnWindowFocus: refetchOnWindowFocus,
+    refetchInterval: updateInterval
   });
 
   const refreshInstance = useCallback(function () {
