@@ -202,13 +202,11 @@ class LabelMixinTests(InvenTreeAPITestCase):
     def test_printing_options(self):
         """Test printing options."""
         # Ensure the labels were created
-        apps.get_app_config('report').create_default_reports()
+        apps.get_app_config('report').create_default_labels()
 
         # Lookup references
         parts = Part.objects.all()[:2]
-        template = ReportTemplate.objects.filter(
-            enabled=True, model_type='part'
-        ).first()
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
         self.do_activate_plugin()
         plugin = registry.get_plugin(self.plugin_ref)
 
@@ -244,9 +242,9 @@ class LabelMixinTests(InvenTreeAPITestCase):
                 },
                 expected_code=201,
             ).json()
-            # self.assertEqual(
-            #     print_label.call_args.kwargs['printing_options'], {'amount': 13}
-            # )
+            self.assertEqual(
+                print_label.call_args.kwargs['printing_options'], {'amount': 13}
+            )
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`."""
