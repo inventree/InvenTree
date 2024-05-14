@@ -255,11 +255,12 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         parts = Part.objects.all()[:2]
 
         url = reverse('api-label-print')
-        url += f'/?plugin={plugin_ref}&part[]={parts[0].pk}&part[]={parts[1].pk}'
 
         self.post(
             url,
             {
+                'plugin': config.pk,
+                'items': [a.pk for a in parts],
                 'machine': str(self.machine.pk),
                 'driver_options': {'copies': '1', 'test_option': '2'},
             },
