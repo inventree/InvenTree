@@ -14,7 +14,6 @@ import { notifications, showNotification } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconCircleX,
-  IconDots,
   IconHelpCircle,
   IconInfoCircle,
   IconPlaylistAdd,
@@ -25,15 +24,10 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
-import {
-  ActionDropdown,
-  EditItemAction
-} from '../../components/items/ActionDropdown';
 import { InfoItem } from '../../components/items/InfoItem';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { PluginSettingList } from '../../components/settings/SettingList';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { openEditApiForm } from '../../functions/forms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -96,11 +90,6 @@ export function PluginDrawer({
     throwError: true
   });
 
-  const refetch = useCallback(() => {
-    refreshTable();
-    refreshInstance();
-  }, [refreshTable, refreshInstance]);
-
   if (!pluginKey || isFetching) {
     return <LoadingOverlay visible={true} />;
   }
@@ -119,7 +108,7 @@ export function PluginDrawer({
 
   return (
     <Stack gap={'xs'}>
-      <Group justify="space-between">
+      <Group justify="left">
         <Box></Box>
 
         <Group gap={'xs'}>
@@ -128,33 +117,6 @@ export function PluginDrawer({
             {plugin?.meta?.human_name ?? plugin?.name ?? '-'}
           </Title>
         </Group>
-
-        <ActionDropdown
-          tooltip={t`Plugin Actions`}
-          icon={<IconDots />}
-          actions={[
-            EditItemAction({
-              tooltip: t`Edit plugin`,
-              onClick: () => {
-                openEditApiForm({
-                  title: t`Edit plugin`,
-                  url: ApiEndpoints.plugin_list,
-                  pathParams: { key: pluginKey },
-                  fields: {
-                    active: {}
-                  },
-                  onClose: refetch
-                });
-              }
-            }),
-            {
-              name: t`Reload`,
-              tooltip: t`Reload`,
-              icon: <IconRefresh />,
-              onClick: refreshInstance
-            }
-          ]}
-        />
       </Group>
 
       <LoadingOverlay visible={isFetching} overlayProps={{ opacity: 0 }} />
