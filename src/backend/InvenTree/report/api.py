@@ -179,7 +179,11 @@ class LabelPrint(GenericAPIView):
     def get_plugin_serializer(self, plugin):
         """Return the serializer for the given plugin."""
         if plugin and hasattr(plugin, 'get_printing_options_serializer'):
-            return plugin.get_printing_options_serializer(self.request)
+            return plugin.get_printing_options_serializer(
+                self.request,
+                data=self.request.data,
+                context=self.get_serializer_context(),
+            )
 
         return None
 
