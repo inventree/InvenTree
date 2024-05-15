@@ -27,10 +27,11 @@ class LabelMixinTests(InvenTreeAPITestCase):
     fixtures = ['category', 'part', 'location', 'stock']
 
     roles = 'all'
+    plugin_ref = 'samplelabelprinter'
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
-        config = registry.get_plugin('samplelabelprinter').plugin_config()
+        config = registry.get_plugin(self.plugin_ref).plugin_config()
         config.active = True
         config.save()
 
@@ -94,6 +95,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         apps.get_app_config('report').create_default_labels()
         apps.get_app_config('report').create_default_reports()
 
+        parts = Part.objects.all()[:2]
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='part'
         ).first()
@@ -114,7 +116,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         plugins = registry.with_mixin('labels')
         self.assertGreater(len(plugins), 0)
 
-        plugin = plugins[0]
+        plugin = registry.get_plugin('samplelabelprinter')
         config = plugin.plugin_config()
 
         # Ensure that the plugin is not active
@@ -126,35 +128,60 @@ class LabelMixinTests(InvenTreeAPITestCase):
             {'template': template.pk, 'plugin': config.pk, 'items': [1, 2, 3]},
             expected_code=400,
         )
-
-        self.assertIn('abc', str(response.data['plugin']))
-
-        # Inactive plugin
-        response = self.get(url, expected_code=400)
-        self.assertIn(
-            f"Plugin '{plugin_ref}' is not enabled", str(response.content, 'utf8')
-        )
+        self.assertIn('Plugin is not active', str(response.data['plugin']))
 
         # Active plugin
         self.do_activate_plugin()
 
         # Print one part
-        self.get(url, expected_code=200)
+        self.post(
+            url,
+            {'template': template.pk, 'plugin': plugin.pk, 'items': [parts[0].pk]},
+            expected_code=201,
+        )
 
         # Print multiple parts
-        self.get(self.do_url(parts, plugin_ref, label), expected_code=200)
+        self.post(
+            url,
+            {
+                'template': template.pk,
+                'plugin': plugin.pk,
+                'items': [item.pk for item in parts],
+            },
+            expected_code=201,
+        )
 
         # Print multiple parts without a plugin
-        self.get(self.do_url(parts, None, label), expected_code=200)
+        self.post(
+            url,
+            {
+                'template': template.pk,
+                'plugin': None,
+                'items': [item.pk for item in parts],
+            },
+            expected_code=201,
+        )
 
         # Print multiple parts without a plugin in debug mode
-        response = self.get(self.do_url(parts, None, label), expected_code=200)
+        response = self.post(
+            url,
+            {
+                'template': template.pk,
+                'plugin': None,
+                'items': [item.pk for item in parts],
+            },
+            expected_code=201,
+        )
 
         data = json.loads(response.content)
-        self.assertIn('file', data)
+        self.assertIn('output', data)
 
         # Print no part
-        self.get(self.do_url(None, plugin_ref, label), expected_code=400)
+        self.post(
+            url,
+            {'template': template.pk, 'plugin': plugin.pk, 'items': None},
+            expected_code=400,
+        )
 
         # Test that the labels have been printed
         # The sample labelling plugin simply prints to file
@@ -179,24 +206,26 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # Lookup references
         parts = Part.objects.all()[:2]
-        plugin_ref = 'samplelabelprinter'
-
-        label = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
-
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
         self.do_activate_plugin()
+        plugin = registry.get_plugin(self.plugin_ref)
 
         # test options response
         options = self.options(
-            self.do_url(parts, plugin_ref, label), expected_code=200
+            self.printing_url, data={'plugin': plugin.pk}, expected_code=200
         ).json()
         self.assertIn('amount', options['actions']['POST'])
 
-        plg = registry.get_plugin(plugin_ref)
-        with mock.patch.object(plg, 'print_label') as print_label:
+        with mock.patch.object(plugin, 'print_label') as print_label:
             # wrong value type
             res = self.post(
-                self.do_url(parts, plugin_ref, label),
-                data={'amount': '-no-valid-int-'},
+                self.printing_url,
+                {
+                    'plugin': plugin.pk,
+                    'template': template.pk,
+                    'items': [a.pk for a in parts],
+                    'amount': '-no-valid-int-',
+                },
                 expected_code=400,
             ).json()
             self.assertIn('amount', res)
@@ -204,9 +233,14 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
             # correct value type
             self.post(
-                self.do_url(parts, plugin_ref, label),
-                data={'amount': 13},
-                expected_code=200,
+                self.printing_url,
+                {
+                    'template': template.pk,
+                    'plugin': plugin.pk,
+                    'items': [a.pk for a in parts],
+                    'amount': 13,
+                },
+                expected_code=201,
             ).json()
             self.assertEqual(
                 print_label.call_args.kwargs['printing_options'], {'amount': 13}
@@ -214,57 +248,46 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
     def test_printing_endpoints(self):
         """Cover the endpoints not covered by `test_printing_process`."""
-        plugin_ref = 'samplelabelprinter'
-
         # Activate the label components
-        apps.get_app_config('label').create_defaults()
+        apps.get_app_config('report').create_default_labels()
         self.do_activate_plugin()
 
-        def run_print_test(label, qs, url_name, url_single):
+        def run_print_test(qs, model_type):
             """Run tests on single and multiple page printing.
 
             Args:
-                label: class of the label
                 qs: class of the base queryset
-                url_name: url for endpoints
-                url_single: item lookup reference
+                model_type: the model type of the queryset
             """
-            label = label.objects.first()
             qs = qs.objects.all()
-
-            # List endpoint
-            self.get(
-                self.do_url(None, None, None, f'{url_name}-list', url_single),
-                expected_code=200,
-            )
-
-            # List endpoint with filter
-            self.get(
-                self.do_url(
-                    qs[:2], None, None, f'{url_name}-list', url_single, invalid=True
-                ),
-                expected_code=200,
-            )
+            template = LabelTemplate.objects.filter(
+                enabled=True, model_type=model_type
+            ).first()
+            plugin = registry.get_plugin(self.plugin_ref)
 
             # Single page printing
-            self.get(
-                self.do_url(qs[:1], plugin_ref, label, f'{url_name}-print', url_single),
-                expected_code=200,
+            self.post(
+                self.printing_url,
+                {'template': template.pk, 'plugin': plugin.pk, 'items': [qs[0].pk]},
+                expected_code=201,
             )
 
             # Multi page printing
-            self.get(
-                self.do_url(qs[:2], plugin_ref, label, f'{url_name}-print', url_single),
-                expected_code=200,
+            self.post(
+                self.printing_url,
+                {
+                    'template': template.pk,
+                    'plugin': plugin.pk,
+                    'items': [item.pk for item in qs],
+                },
+                expected_code=201,
             )
 
-        # Test StockItemLabels
-        run_print_test(StockItemLabel, StockItem, 'api-stockitem-label', 'item')
+        # Test StockItemLabel
+        run_print_test(StockItem, 'stockitem')
 
-        # Test StockLocationLabels
-        run_print_test(
-            StockLocationLabel, StockLocation, 'api-stocklocation-label', 'location'
-        )
+        # Test StockLocationLabel
+        run_print_test(StockLocation, 'stocklocation')
 
-        # Test PartLabels
-        run_print_test(PartLabel, Part, 'api-part-label', 'part')
+        # Test PartLabel
+        run_print_test(Part, 'part')

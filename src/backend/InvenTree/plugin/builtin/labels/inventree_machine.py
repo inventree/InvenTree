@@ -112,8 +112,9 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
             super().__init__(*args, **kwargs)
 
             view = kwargs['context']['view']
-            template = view.get_object()
-            items_to_print = view.get_items()
+            # TODO @matmair Re-enable this when the need is clear
+            template = None  # view.get_object()
+            items_to_print = None  # view.get_items()
 
             # get all available printers for each driver
             machines: list[LabelPrinterMachine] = []

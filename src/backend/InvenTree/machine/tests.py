@@ -17,6 +17,7 @@ from machine.registry import registry
 from part.models import Part
 from plugin.models import PluginConfig
 from plugin.registry import registry as plg_registry
+from report.models import LabelTemplate
 
 
 class TestMachineRegistryMixin(TestCase):
@@ -246,21 +247,23 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         plugin_ref = 'inventreelabelmachine'
 
         # setup the label app
-        apps.get_app_config('label').create_defaults()  # type: ignore
+        apps.get_app_config('report').create_default_labels()  # type: ignore
         plg_registry.reload_plugins()
         config = cast(PluginConfig, plg_registry.get_plugin(plugin_ref).plugin_config())  # type: ignore
         config.active = True
         config.save()
 
         parts = Part.objects.all()[:2]
-        label = cast(PartLabel, PartLabel.objects.first())
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
 
-        url = reverse('api-part-label-print', kwargs={'pk': label.pk})
-        url += f'/?plugin={plugin_ref}&part[]={parts[0].pk}&part[]={parts[1].pk}'
+        url = reverse('api-label-print')
 
         self.post(
             url,
             {
+                'plugin': config.pk,
+                'items': [a.pk for a in parts],
+                'template': template.pk,
                 'machine': str(self.machine.pk),
                 'driver_options': {'copies': '1', 'test_option': '2'},
             },
