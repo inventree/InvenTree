@@ -83,7 +83,10 @@ export default function PartParameterTemplateTable() {
   const newTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
     title: t`Add Parameter Template`,
-    fields: partParameterTemplateFields,
+    fields: useMemo(
+      () => ({ ...partParameterTemplateFields }),
+      [partParameterTemplateFields]
+    ),
     onFormSuccess: table.refreshTable
   });
 
@@ -95,7 +98,10 @@ export default function PartParameterTemplateTable() {
     url: ApiEndpoints.part_parameter_template_list,
     pk: selectedTemplate,
     title: t`Edit Parameter Template`,
-    fields: partParameterTemplateFields,
+    fields: useMemo(
+      () => ({ ...partParameterTemplateFields }),
+      [partParameterTemplateFields]
+    ),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
