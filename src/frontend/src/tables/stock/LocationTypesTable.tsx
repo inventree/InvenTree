@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -18,7 +17,7 @@ import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
-export default function LocationTypesTable({}: {}) {
+export default function LocationTypesTable() {
   const table = useTable('location-types');
   const user = useUserState();
 
@@ -102,6 +101,7 @@ export default function LocationTypesTable({}: {}) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-location-type"
         tooltip={t`Add Location Type`}
         onClick={() => newLocationType.open()}
         hidden={!user.hasAddRole(UserRoles.stock_location)}
