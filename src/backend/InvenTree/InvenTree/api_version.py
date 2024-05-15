@@ -1,10 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 196
+INVENTREE_API_VERSION = 197
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v197 - 2024-05-14 : https://github.com/inventree/InvenTree/pull/7224
+    - Refactor the plugin API endpoints to use the plugin "key" for lookup, rather than the PK value
 
 v196 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7160
     - Adds "location" field to BuildOutputComplete API endpoint

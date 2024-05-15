@@ -81,10 +81,10 @@ export interface PluginI {
 }
 
 export function PluginDrawer({
-  id,
+  pluginKey,
   refreshTable
 }: {
-  id: string;
+  pluginKey: string;
   refreshTable: () => void;
 }) {
   const {
@@ -93,7 +93,8 @@ export function PluginDrawer({
     instanceQuery: { isFetching, error }
   } = useInstance<PluginI>({
     endpoint: ApiEndpoints.plugin_list,
-    pk: id,
+    hasPrimaryKey: true,
+    pk: pluginKey,
     throwError: true
   });
 
@@ -102,15 +103,15 @@ export function PluginDrawer({
     refreshInstance();
   }, [refreshTable, refreshInstance]);
 
-  if (isFetching) {
+  if (!pluginKey || isFetching) {
     return <LoadingOverlay visible={true} />;
   }
 
-  if (error) {
+  if (!plugin || error) {
     return (
       <Text>
         {(error as any)?.response?.status === 404 ? (
-          <Trans>Plugin with id {id} not found</Trans>
+          <Trans>Plugin with key {pluginKey} not found</Trans>
         ) : (
           <Trans>An error occurred while fetching plugin details</Trans>
         )}
@@ -124,7 +125,7 @@ export function PluginDrawer({
         <Box></Box>
 
         <Group gap={'xs'}>
-          {plugin && PluginIcon(plugin)}
+          {plugin && <PluginIcon plugin={plugin} />}
           <Title order={4}>
             {plugin?.meta?.human_name ?? plugin?.name ?? '-'}
           </Title>
@@ -140,7 +141,7 @@ export function PluginDrawer({
                 openEditApiForm({
                   title: t`Edit plugin`,
                   url: ApiEndpoints.plugin_list,
-                  pk: id,
+                  pathParams: { key: pluginKey },
                   fields: {
                     active: {}
                   },
@@ -224,13 +225,13 @@ export function PluginDrawer({
         </Stack>
       </Card>
 
-      {plugin && plugin.active && (
+      {plugin && plugin?.active && (
         <Card withBorder>
           <Stack gap="md">
             <Title order={4}>
               <Trans>Plugin settings</Trans>
             </Title>
-            <PluginSettingList pluginPk={id} />
+            <PluginSettingList pluginKey={pluginKey} />
           </Stack>
         </Card>
       )}
@@ -241,9 +242,9 @@ export function PluginDrawer({
 /**
  * Construct an indicator icon for a single plugin
  */
-function PluginIcon(plugin: PluginI) {
-  if (plugin.is_installed) {
-    if (plugin.active) {
+function PluginIcon({ plugin }: { plugin: PluginI }) {
+  if (plugin?.is_installed) {
+    if (plugin?.active) {
       return (
         <Tooltip label={t`Plugin is active`}>
           <IconCircleCheck color="green" />
@@ -287,11 +288,13 @@ export default function PluginListTable() {
         title: t`Plugin`,
         sortable: true,
         render: function (record: any) {
-          // TODO: Add link to plugin detail page
-          // TODO: Add custom badges
+          if (!record) {
+            return;
+          }
+
           return (
             <Group justify="left">
-              <PluginIcon {...record} />
+              <PluginIcon plugin={record} />
               <Text>{record.name}</Text>
             </Group>
           );
@@ -331,7 +334,7 @@ export default function PluginListTable() {
   );
 
   const activatePlugin = useCallback(
-    (plugin_id: number, plugin_name: string, active: boolean) => {
+    (plugin_key: string, plugin_name: string, active: boolean) => {
       modals.openConfirmModal({
         title: (
           <StylishText>
@@ -366,7 +369,9 @@ export default function PluginListTable() {
           confirm: t`Confirm`
         },
         onConfirm: () => {
-          let url = apiUrl(ApiEndpoints.plugin_activate, plugin_id);
+          let url = apiUrl(ApiEndpoints.plugin_activate, null, {
+            key: plugin_key
+          });
 
           const id = 'plugin-activate';
 
@@ -424,7 +429,7 @@ export default function PluginListTable() {
             color: 'red',
             icon: <IconCircleX />,
             onClick: () => {
-              activatePlugin(record.pk, record.name, false);
+              activatePlugin(record.key, record.name, false);
             }
           });
         } else {
@@ -433,7 +438,7 @@ export default function PluginListTable() {
             color: 'green',
             icon: <IconCircleCheck />,
             onClick: () => {
-              activatePlugin(record.pk, record.name, true);
+              activatePlugin(record.key, record.name, true);
             }
           });
         }
@@ -464,7 +469,7 @@ export default function PluginListTable() {
           color: 'red',
           icon: <IconCircleX />,
           onClick: () => {
-            setSelectedPlugin(record.pk);
+            setSelectedPlugin(record.key);
             uninstallPluginModal.open();
           },
           disabled: plugins_install_disabled || false
@@ -478,7 +483,7 @@ export default function PluginListTable() {
           color: 'red',
           icon: <IconCircleX />,
           onClick: () => {
-            setSelectedPlugin(record.pk);
+            setSelectedPlugin(record.key);
             deletePluginModal.open();
           }
         });
@@ -519,12 +524,12 @@ export default function PluginListTable() {
     }
   });
 
-  const [selectedPlugin, setSelectedPlugin] = useState<number>(-1);
+  const [selectedPlugin, setSelectedPlugin] = useState<string>('');
 
   const uninstallPluginModal = useEditApiFormModal({
     title: t`Uninstall Plugin`,
     url: ApiEndpoints.plugin_uninstall,
-    pk: selectedPlugin,
+    pathParams: { key: selectedPlugin },
     fetchInitialData: false,
     timeout: 30000,
     fields: {
@@ -556,7 +561,7 @@ export default function PluginListTable() {
 
   const deletePluginModal = useDeleteApiFormModal({
     url: ApiEndpoints.plugin_list,
-    pk: selectedPlugin,
+    pathParams: { key: selectedPlugin },
     title: t`Delete Plugin`,
     onFormSuccess: table.refreshTable,
     preFormWarning: t`Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?`
@@ -618,9 +623,14 @@ export default function PluginListTable() {
       <DetailDrawer
         title={t`Plugin Detail`}
         size={'50%'}
-        renderContent={(id) => {
-          if (!id) return false;
-          return <PluginDrawer id={id} refreshTable={table.refreshTable} />;
+        renderContent={(pluginKey) => {
+          if (!pluginKey) return;
+          return (
+            <PluginDrawer
+              pluginKey={pluginKey}
+              refreshTable={table.refreshTable}
+            />
+          );
         }}
       />
       <InvenTreeTable
@@ -630,7 +640,7 @@ export default function PluginListTable() {
         props={{
           enableDownload: false,
           rowActions: rowActions,
-          onRowClick: (plugin) => navigate(`${plugin.pk}/`),
+          onRowClick: (plugin) => navigate(`${plugin.key}/`),
           tableActions: tableActions,
           tableFilters: [
             {
