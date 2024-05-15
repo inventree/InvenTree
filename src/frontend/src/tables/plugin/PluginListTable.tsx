@@ -10,7 +10,6 @@ import {
   Title,
   Tooltip
 } from '@mantine/core';
-import { modals } from '@mantine/modals';
 import { notifications, showNotification } from '@mantine/notifications';
 import {
   IconCircleCheck,
@@ -31,7 +30,6 @@ import {
   EditItemAction
 } from '../../components/items/ActionDropdown';
 import { InfoItem } from '../../components/items/InfoItem';
-import { StylishText } from '../../components/items/StylishText';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { PluginSettingList } from '../../components/settings/SettingList';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -312,6 +310,7 @@ export default function PluginListTable() {
             return (
               <Text
                 style={{ fontStyle: 'italic' }}
+                size="sm"
               >{t`Description not available`}</Text>
             );
           }
@@ -333,87 +332,51 @@ export default function PluginListTable() {
     []
   );
 
-  const activatePlugin = useCallback(
-    (plugin_key: string, plugin_name: string, active: boolean) => {
-      modals.openConfirmModal({
-        title: (
-          <StylishText>
-            {active ? t`Activate Plugin` : t`Deactivate Plugin`}
-          </StylishText>
-        ),
-        children: (
-          <Alert
-            color="green"
-            icon={<IconCircleCheck />}
-            title={
-              active
-                ? t`Confirm plugin activation`
-                : t`Confirm plugin deactivation`
-            }
-          >
-            <Stack gap="xs">
-              <Text>
-                {active
-                  ? t`The following plugin will be activated`
-                  : t`The following plugin will be deactivated`}
-                :
-              </Text>
-              <Text size="lg" style={{ fontStyle: 'italic' }}>
-                {plugin_name}
-              </Text>
-            </Stack>
-          </Alert>
-        ),
-        labels: {
-          cancel: t`Cancel`,
-          confirm: t`Confirm`
-        },
-        onConfirm: () => {
-          let url = apiUrl(ApiEndpoints.plugin_activate, null, {
-            key: plugin_key
-          });
+  const [selectedPlugin, setSelectedPlugin] = useState<string>('');
+  const [activate, setActivate] = useState<boolean>(false);
 
-          const id = 'plugin-activate';
+  const activateModalContent = useMemo(() => {
+    return (
+      <Stack gap="xs">
+        <Alert
+          color={activate ? 'green' : 'red'}
+          icon={<IconCircleCheck />}
+          title={
+            activate
+              ? t`Confirm plugin activation`
+              : t`Confirm plugin deactivation`
+          }
+        >
+          <Text>
+            {activate
+              ? t`The selected plugin will be activated`
+              : t`The selected plugin will be deactivated`}
+          </Text>
+        </Alert>
+      </Stack>
+    );
+  }, [activate]);
 
-          // Show a progress notification
-          notifications.show({
-            id: id,
-            message: active ? t`Activating plugin` : t`Deactivating plugin`,
-            loading: true
-          });
-
-          api
-            .patch(
-              url,
-              { active: active },
-              {
-                timeout: 30 * 1000
-              }
-            )
-            .then(() => {
-              table.refreshTable();
-              notifications.hide(id);
-              notifications.show({
-                title: t`Plugin updated`,
-                message: active
-                  ? t`The plugin was activated`
-                  : t`The plugin was deactivated`,
-                color: 'green'
-              });
-            })
-            .catch((_err) => {
-              notifications.hide(id);
-              notifications.show({
-                title: t`Error`,
-                message: t`Error updating plugin`,
-                color: 'red'
-              });
-            });
-        }
-      });
+  const activatePluginModal = useEditApiFormModal({
+    title: t`Activate Plugin`,
+    url: ApiEndpoints.plugin_activate,
+    pathParams: { key: selectedPlugin },
+    preFormContent: activateModalContent,
+    fetchInitialData: false,
+    method: 'POST',
+    successMessage: activate
+      ? `The plugin was activated`
+      : `The plugin was deactivated`,
+    fields: {
+      active: {
+        value: activate,
+        hidden: true
+      }
     },
-    []
-  );
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
+  });
 
   // Determine available actions for a given plugin
   const rowActions = useCallback(
@@ -429,7 +392,9 @@ export default function PluginListTable() {
             color: 'red',
             icon: <IconCircleX />,
             onClick: () => {
-              activatePlugin(record.key, record.name, false);
+              setSelectedPlugin(record.key);
+              setActivate(false);
+              activatePluginModal.open();
             }
           });
         } else {
@@ -438,7 +403,9 @@ export default function PluginListTable() {
             color: 'green',
             icon: <IconCircleCheck />,
             onClick: () => {
-              activatePlugin(record.key, record.name, true);
+              setSelectedPlugin(record.key);
+              setActivate(true);
+              activatePluginModal.open();
             }
           });
         }
@@ -523,8 +490,6 @@ export default function PluginListTable() {
       table.refreshTable();
     }
   });
-
-  const [selectedPlugin, setSelectedPlugin] = useState<string>('');
 
   const uninstallPluginModal = useEditApiFormModal({
     title: t`Uninstall Plugin`,
@@ -617,6 +582,7 @@ export default function PluginListTable() {
 
   return (
     <>
+      {activatePluginModal.modal}
       {installPluginModal.modal}
       {uninstallPluginModal.modal}
       {deletePluginModal.modal}
