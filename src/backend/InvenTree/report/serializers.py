@@ -119,7 +119,7 @@ class LabelPrintSerializer(serializers.Serializer):
     # Plugin field - note that we use the 'key' (not the pk) for lookup
     plugin = plugin.serializers.PluginRelationSerializer(
         many=False,
-        required=True,
+        required=False,
         allow_null=False,
         label=_('Printing Plugin'),
         help_text=_('Select plugin to use for label printing'),

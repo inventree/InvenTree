@@ -151,6 +151,10 @@ class LabelPrint(GenericAPIView):
         """Return the plugin class for the given plugin key."""
         from plugin.models import PluginConfig
 
+        if plugin_slug is None:
+            # Use the default label printing plugin
+            plugin_slug = InvenTreeLabelPlugin.NAME.lower()
+
         plugin = None
 
         try:
@@ -211,7 +215,7 @@ class LabelPrint(GenericAPIView):
             raise ValidationError({'template': _('Invalid label dimensions')})
 
         items = serializer.validated_data['items']
-        plugin_key = serializer.validated_data['plugin']
+        plugin_key = serializer.validated_data.get('plugin', None)
 
         plugin = self.get_plugin_class(plugin_key, raise_error=True)
 
