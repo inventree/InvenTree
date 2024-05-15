@@ -9,8 +9,11 @@ import { api } from '../../App';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { deleteAttachment, editAttachment } from '../../forms/AttachmentForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -103,48 +106,6 @@ export function AttachmentTable({
       });
   }, [url]);
 
-  // Construct row actions for the attachment table
-  const rowActions = useCallback(
-    (record: any) => {
-      let actions: RowAction[] = [];
-
-      if (allowEdit) {
-        actions.push(
-          RowEditAction({
-            onClick: () => {
-              editAttachment({
-                endpoint: endpoint,
-                model: model,
-                pk: record.pk,
-                attachmentType: record.attachment ? 'file' : 'link',
-                callback: (record: any) => {
-                  table.updateRecord(record);
-                }
-              });
-            }
-          })
-        );
-      }
-
-      if (allowDelete) {
-        actions.push(
-          RowDeleteAction({
-            onClick: () => {
-              deleteAttachment({
-                endpoint: endpoint,
-                pk: record.pk,
-                callback: table.refreshTable
-              });
-            }
-          })
-        );
-      }
-
-      return actions;
-    },
-    [allowEdit, allowDelete]
-  );
-
   // Callback to upload file attachment(s)
   function uploadFiles(files: File[]) {
     files.forEach((file) => {
@@ -181,6 +142,10 @@ export function AttachmentTable({
     'attachment'
   );
 
+  const [selectedAttachment, setSelectedAttachment] = useState<
+    number | undefined
+  >(undefined);
+
   const uploadFields: ApiFormFieldSet = useMemo(() => {
     let fields: ApiFormFieldSet = {
       [model]: {
@@ -196,18 +161,42 @@ export function AttachmentTable({
       delete fields['link'];
     }
 
-    if (attachmentType != 'attachment') {
+    // Remove the 'attachment' field if we are editing an existing attachment, or uploading a link
+    if (attachmentType != 'attachment' || !!selectedAttachment) {
       delete fields['attachment'];
     }
 
     return fields;
-  }, [endpoint, model, pk, attachmentType]);
+  }, [endpoint, model, pk, attachmentType, selectedAttachment]);
 
   const uploadAttachment = useCreateApiFormModal({
     url: endpoint,
     title: t`Upload Attachment`,
     fields: uploadFields,
     onFormSuccess: (record: any) => table.refreshTable
+  });
+
+  const editAttachment = useEditApiFormModal({
+    url: endpoint,
+    pk: selectedAttachment,
+    title: t`Edit Attachment`,
+    fields: uploadFields,
+    onFormSuccess: (record: any) => {
+      if (record.pk) {
+        table.updateRecord(record);
+      } else {
+        table.refreshTable();
+      }
+    }
+  });
+
+  const deleteAttachment = useDeleteApiFormModal({
+    url: endpoint,
+    pk: selectedAttachment,
+    title: t`Delete Attachment`,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
   });
 
   const tableActions: ReactNode[] = useMemo(() => {
@@ -220,6 +209,7 @@ export function AttachmentTable({
             radius="sm"
             onClick={() => {
               setAttachmentType('attachment');
+              setSelectedAttachment(undefined);
               uploadAttachment.open();
             }}
             variant="transparent"
@@ -235,6 +225,7 @@ export function AttachmentTable({
             radius="sm"
             onClick={() => {
               setAttachmentType('link');
+              setSelectedAttachment(undefined);
               uploadAttachment.open();
             }}
             variant="transparent"
@@ -248,9 +239,43 @@ export function AttachmentTable({
     return actions;
   }, [allowEdit]);
 
+  // Construct row actions for the attachment table
+  const rowActions = useCallback(
+    (record: any) => {
+      let actions: RowAction[] = [];
+
+      if (allowEdit) {
+        actions.push(
+          RowEditAction({
+            onClick: () => {
+              setSelectedAttachment(record.pk);
+              editAttachment.open();
+            }
+          })
+        );
+      }
+
+      if (allowDelete) {
+        actions.push(
+          RowDeleteAction({
+            onClick: () => {
+              setSelectedAttachment(record.pk);
+              deleteAttachment.open();
+            }
+          })
+        );
+      }
+
+      return actions;
+    },
+    [allowEdit, allowDelete]
+  );
+
   return (
     <>
       {uploadAttachment.modal}
+      {editAttachment.modal}
+      {deleteAttachment.modal}
       <Stack gap="xs">
         {pk && pk > 0 && (
           <InvenTreeTable
