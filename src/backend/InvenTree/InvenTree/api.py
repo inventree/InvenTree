@@ -550,6 +550,10 @@ class MetadataView(RetrieveUpdateAPI):
         """Return the model type associated with this API instance."""
         model = self.kwargs.get(self.MODEL_REF, None)
 
+        if 'lookup_field' in self.kwargs:
+            # Set custom lookup field (instead of default 'pk' value) if supplied
+            self.lookup_field = self.kwargs.pop('lookup_field')
+
         if model is None:
             raise ValidationError(
                 f"MetadataView called without '{self.MODEL_REF}' parameter"

@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 197
+INVENTREE_API_VERSION = 198
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v197 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7074
+v198 - 2024-05-15 : https://github.com/inventree/InvenTree/pull/7074
     - Major refactor of the report template / report printing interface
     - This is a *breaking change* to the report template API
     - All report printing has now been simplified to a single set of API endpoints
+
+v197 - 2024-05-14 : https://github.com/inventree/InvenTree/pull/7224
+    - Refactor the plugin API endpoints to use the plugin "key" for lookup, rather than the PK value
 
 v196 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7160
     - Adds "location" field to BuildOutputComplete API endpoint

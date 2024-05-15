@@ -80,9 +80,9 @@ export function GlobalSettingList({ keys }: { keys: string[] }) {
   return <SettingList settingsState={globalSettings} keys={keys} />;
 }
 
-export function PluginSettingList({ pluginPk }: { pluginPk: string }) {
+export function PluginSettingList({ pluginKey }: { pluginKey: string }) {
   const pluginSettingsStore = useRef(
-    createPluginSettingsState({ plugin: pluginPk })
+    createPluginSettingsState({ plugin: pluginKey })
   ).current;
   const pluginSettings = useStore(pluginSettingsStore);
 

@@ -155,6 +155,7 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
 
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
+    lookup_field = 'key'
 
     def delete(self, request, *args, **kwargs):
         """Handle DELETE request for a PluginConfig instance.
@@ -200,6 +201,7 @@ class PluginUninstall(UpdateAPI):
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginUninstallSerializer
     permission_classes = [IsSuperuser]
+    lookup_field = 'key'
 
     def perform_update(self, serializer):
         """Uninstall the plugin."""
@@ -219,6 +221,7 @@ class PluginActivate(UpdateAPI):
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginActivateSerializer
     permission_classes = [IsSuperuser]
+    lookup_field = 'key'
 
     def get_object(self):
         """Returns the object for the view."""
@@ -320,10 +323,10 @@ class PluginAllSettingList(APIView):
     @extend_schema(
         responses={200: PluginSerializers.PluginSettingSerializer(many=True)}
     )
-    def get(self, request, pk):
+    def get(self, request, key):
         """Get all settings for a plugin config."""
         # look up the plugin
-        plugin = check_plugin(None, pk)
+        plugin = check_plugin(key, None)
 
         settings = getattr(plugin, 'settings', {})
 
@@ -352,21 +355,21 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         The URL provides the 'slug' of the plugin, and the 'key' of the setting.
         Both the 'slug' and 'key' must be valid, else a 404 error is raised
         """
-        key = self.kwargs['key']
+        setting_key = self.kwargs['setting']
 
         # Look up plugin
-        plugin = check_plugin(
-            plugin_slug=self.kwargs.get('plugin'), plugin_pk=self.kwargs.get('pk')
-        )
+        plugin = check_plugin(self.kwargs.pop('key', None), None)
 
         settings = getattr(plugin, 'settings', {})
 
-        if key not in settings:
+        if setting_key not in settings:
             raise NotFound(
-                detail=f"Plugin '{plugin.slug}' has no setting matching '{key}'"
+                detail=f"Plugin '{plugin.slug}' has no setting matching '{setting_key}'"
             )
 
-        return PluginSetting.get_setting_object(key, plugin=plugin.plugin_config())
+        return PluginSetting.get_setting_object(
+            setting_key, plugin=plugin.plugin_config()
+        )
 
     # Staff permission required
     permission_classes = [GlobalSettingsPermissions]
@@ -384,7 +387,7 @@ class RegistryStatusView(APIView):
 
     @extend_schema(responses={200: PluginSerializers.PluginRegistryStatusSerializer()})
     def get(self, request):
-        """Show registry status information."""
+        """Show plugin registry status information."""
         error_list = []
 
         for stage, errors in registry.errors.items():
@@ -397,7 +400,8 @@ class RegistryStatusView(APIView):
                     })
 
         result = PluginSerializers.PluginRegistryStatusSerializer({
-            'registry_errors': error_list
+            'registry_errors': error_list,
+            'active_plugins': PluginConfig.objects.filter(active=True).count(),
         }).data
 
         return Response(result)
@@ -410,31 +414,34 @@ plugin_api_urls = [
     path(
         'plugins/',
         include([
-            # Plugin settings URLs
+            # Plugin management
+            path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
+            path('install/', PluginInstall.as_view(), name='api-plugin-install'),
+            # Registry status
+            path(
+                'status/',
+                RegistryStatusView.as_view(),
+                name='api-plugin-registry-status',
+            ),
             path(
                 'settings/',
                 include([
-                    re_path(
-                        r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/',
-                        PluginSettingDetail.as_view(),
-                        name='api-plugin-setting-detail',
-                    ),  # Used for admin interface
                     path(
                         '', PluginSettingList.as_view(), name='api-plugin-setting-list'
-                    ),
+                    )
                 ]),
             ),
-            # Detail views for a single PluginConfig item
+            # Lookup for individual plugins (based on 'key', not 'pk')
             path(
-                '<int:pk>/',
+                '<str:key>/',
                 include([
                     path(
                         'settings/',
                         include([
                             re_path(
-                                r'^(?P<key>\w+)/',
+                                r'^(?P<setting>\w+)/',
                                 PluginSettingDetail.as_view(),
-                                name='api-plugin-setting-detail-pk',
+                                name='api-plugin-setting-detail',
                             ),
                             path(
                                 '',
@@ -442,6 +449,12 @@ plugin_api_urls = [
                                 name='api-plugin-settings',
                             ),
                         ]),
+                    ),
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': PluginConfig, 'lookup_field': 'key'},
+                        name='api-plugin-metadata',
                     ),
                     path(
                         'activate/',
@@ -456,23 +469,6 @@ plugin_api_urls = [
                     path('', PluginDetail.as_view(), name='api-plugin-detail'),
                 ]),
             ),
-            # Metadata
-            path(
-                'metadata/',
-                MetadataView.as_view(),
-                {'model': PluginConfig},
-                name='api-plugin-metadata',
-            ),
-            # Plugin management
-            path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
-            path('install/', PluginInstall.as_view(), name='api-plugin-install'),
-            # Registry status
-            path(
-                'status/',
-                RegistryStatusView.as_view(),
-                name='api-plugin-registry-status',
-            ),
-            # Anything else
             path('', PluginList.as_view(), name='api-plugin-list'),
         ]),
     ),
