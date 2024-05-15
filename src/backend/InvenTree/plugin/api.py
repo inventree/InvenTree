@@ -426,14 +426,9 @@ plugin_api_urls = [
             path(
                 'settings/',
                 include([
-                    re_path(
-                        r'^(?P<plugin>[-\w]+)/(?P<key>\w+)/',
-                        PluginSettingDetail.as_view(),
-                        name='api-plugin-setting-detail',
-                    ),  # Used for admin interface
                     path(
                         '', PluginSettingList.as_view(), name='api-plugin-setting-list'
-                    ),
+                    )
                 ]),
             ),
             # Lookup for individual plugins (based on 'key', not 'pk')
@@ -446,7 +441,7 @@ plugin_api_urls = [
                             re_path(
                                 r'^(?P<setting>\w+)/',
                                 PluginSettingDetail.as_view(),
-                                name='api-plugin-setting-detail-pk',
+                                name='api-plugin-setting-detail',
                             ),
                             path(
                                 '',

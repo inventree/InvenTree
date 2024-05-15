@@ -236,7 +236,8 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         for key in valid_settings:
             response = self.get(
                 reverse(
-                    'api-plugin-setting-detail', kwargs={'plugin': 'sample', 'key': key}
+                    'api-plugin-setting-detail',
+                    kwargs={'key': 'sample', 'setting': key},
                 )
             )
 
@@ -246,7 +247,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         response = self.get(
             reverse(
                 'api-plugin-setting-detail',
-                kwargs={'plugin': 'sample', 'key': 'INVALID_SETTING'},
+                kwargs={'key': 'sample', 'setting': 'INVALID_SETTING'},
             ),
             expected_code=404,
         )
@@ -255,7 +256,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         response = self.get(
             reverse(
                 'api-plugin-setting-detail',
-                kwargs={'plugin': 'sample', 'key': 'PROTECTED_SETTING'},
+                kwargs={'key': 'sample', 'setting': 'PROTECTED_SETTING'},
             ),
             expected_code=200,
         )
@@ -266,7 +267,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         response = self.patch(
             reverse(
                 'api-plugin-setting-detail',
-                kwargs={'plugin': 'sample', 'key': 'NUMERICAL_SETTING'},
+                kwargs={'key': 'sample', 'setting': 'NUMERICAL_SETTING'},
             ),
             {'value': 456},
             expected_code=200,
@@ -278,7 +279,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         response = self.get(
             reverse(
                 'api-plugin-setting-detail',
-                kwargs={'plugin': 'sample', 'key': 'NUMERICAL_SETTING'},
+                kwargs={'key': 'sample', 'setting': 'NUMERICAL_SETTING'},
             ),
             expected_code=200,
         )
