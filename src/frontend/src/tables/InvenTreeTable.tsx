@@ -542,8 +542,6 @@ export function InvenTreeTable<T = any>({
       record: any;
       index: number;
     }) => {
-      cancelEvent(event);
-
       if (props.onRowClick) {
         // If a custom row click handler is provided, use that
         props.onRowClick(record, index, event);
@@ -552,6 +550,7 @@ export function InvenTreeTable<T = any>({
         const pk = resolveItem(record, accessor);
 
         if (pk) {
+          cancelEvent();
           // If a model type is provided, navigate to the detail view for that model
           let url = getDetailUrl(tableProps.modelType, pk);
           navigateToLink(url, navigate, event);

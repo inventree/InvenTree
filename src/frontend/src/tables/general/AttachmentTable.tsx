@@ -194,7 +194,9 @@ export function AttachmentTable({
     url: endpoint,
     title: t`Upload Attachment`,
     fields: uploadFields,
-    onFormSuccess: (record: any) => table.refreshTable
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
   });
 
   const editAttachment = useEditApiFormModal({
