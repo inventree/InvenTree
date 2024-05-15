@@ -64,22 +64,24 @@ export function RelatedModelField({
       field.value !== ''
     ) {
       const url = `${definition.api_url}${field.value}/`;
+
       api.get(url).then((response) => {
-        if (response.data && response.data.pk) {
+        let pk_field = definition.pk_field ?? 'pk';
+        if (response.data && response.data[pk_field]) {
           const value = {
-            value: response.data.pk,
+            value: response.data[pk_field],
             data: response.data
           };
 
           setInitialData(value);
           dataRef.current = [value];
-          setPk(response.data.pk);
+          setPk(response.data[pk_field]);
         }
       });
     } else {
       setPk(null);
     }
-  }, [definition.api_url, field.value]);
+  }, [definition.api_url, definition.pk_field, field.value]);
 
   // Search input query
   const [value, setValue] = useState<string>('');
@@ -146,13 +148,15 @@ export function RelatedModelField({
           const results = response.data?.results ?? response.data ?? [];
 
           results.forEach((item: any) => {
-            // do not push already existing items into the values array
-            if (alreadyPresentPks.includes(item.pk)) return;
+            let pk_field = definition.pk_field ?? 'pk';
+            let pk = item[pk_field];
 
-            values.push({
-              value: item.pk ?? -1,
-              data: item
-            });
+            if (pk && !alreadyPresentPks.includes(pk)) {
+              values.push({
+                value: pk,
+                data: item
+              });
+            }
           });
 
           setData(values);
