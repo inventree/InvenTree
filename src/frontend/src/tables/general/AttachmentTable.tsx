@@ -1,8 +1,22 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Badge,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  Tooltip,
+  rem
+} from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
-import { IconExternalLink, IconFileUpload } from '@tabler/icons-react';
+import {
+  IconExternalLink,
+  IconFileUpload,
+  IconUpload,
+  IconX
+} from '@tabler/icons-react';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
@@ -106,12 +120,16 @@ export function AttachmentTable({
       });
   }, [url]);
 
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+
   // Callback to upload file attachment(s)
   function uploadFiles(files: File[]) {
     files.forEach((file) => {
       let formData = new FormData();
       formData.append('attachment', file);
       formData.append(model, pk.toString());
+
+      setIsUploading(true);
 
       api
         .post(url, formData)
@@ -134,6 +152,9 @@ export function AttachmentTable({
             color: 'red'
           });
           return error;
+        })
+        .finally(() => {
+          setIsUploading(false);
         });
     });
   }
@@ -295,14 +316,35 @@ export function AttachmentTable({
           />
         )}
         {allowEdit && validPk && (
-          <Dropzone onDrop={uploadFiles} key="attachment-dropzone">
-            <Dropzone.Idle>
-              <Group justify="center">
-                <IconFileUpload size={24} />
-                <Text size="sm">{t`Upload attachment`}</Text>
+          <Paper p="md" shadow="xs" radius="md">
+            <Dropzone
+              onDrop={uploadFiles}
+              loading={isUploading}
+              key="attachment-dropzone"
+            >
+              <Group justify="center" gap="lg" mih={100}>
+                <Dropzone.Accept>
+                  <IconUpload
+                    style={{ color: 'var(--mantine-color-blue-6)' }}
+                    stroke={1.5}
+                  />
+                </Dropzone.Accept>
+                <Dropzone.Reject>
+                  <IconX
+                    style={{ color: 'var(--mantine-color-red-6)' }}
+                    stroke={1.5}
+                  />
+                </Dropzone.Reject>
+                <Dropzone.Idle>
+                  <IconUpload
+                    style={{ color: 'var(--mantine-color-dimmed)' }}
+                    stroke={1.5}
+                  />
+                </Dropzone.Idle>
+                <Text size="sm">{t`Drag attachment file here to upload`}</Text>
               </Group>
-            </Dropzone.Idle>
-          </Dropzone>
+            </Dropzone>
+          </Paper>
         )}
       </Stack>
     </>
