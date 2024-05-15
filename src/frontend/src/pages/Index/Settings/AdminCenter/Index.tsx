@@ -12,7 +12,6 @@ import {
   IconScale,
   IconSitemap,
   IconTags,
-  IconTemplate,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
@@ -21,9 +20,13 @@ import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
-import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { Loadable } from '../../../../functions/loading';
-import { TemplateTable } from '../../../../tables/settings/TemplateTable';
+
+const ReportTemplatePanel = Loadable(
+  lazy(() => import('./ReportTemplatePanel'))
+);
+
+const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
@@ -126,37 +129,13 @@ export default function AdminCenter() {
         name: 'labels',
         label: t`Label Templates`,
         icon: <IconTags />,
-        content: (
-          <TemplateTable
-            templateProps={{
-              templateEndpoint: ApiEndpoints.label_list,
-              printingEndpoint: ApiEndpoints.label_print,
-              templateType: 'label',
-              additionalFormFields: {
-                width: {},
-                height: {}
-              }
-            }}
-          />
-        )
+        content: <LabelTemplatePanel />
       },
       {
         name: 'reports',
         label: t`Report Templates`,
         icon: <IconReport />,
-        content: (
-          <TemplateTable
-            templateProps={{
-              templateEndpoint: ApiEndpoints.report_list,
-              printingEndpoint: ApiEndpoints.report_print,
-              templateType: 'report',
-              additionalFormFields: {
-                page_size: {},
-                landscape: {}
-              }
-            }}
-          />
-        )
+        content: <ReportTemplatePanel />
       },
       {
         name: 'plugin',

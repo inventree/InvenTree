@@ -274,7 +274,9 @@ class InvenTreeMetadata(SimpleMetadata):
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
             # If the field is a PrimaryKeyRelatedField, we can extract the model from the queryset
-            if isinstance(field, serializers.PrimaryKeyRelatedField):
+            if isinstance(field, serializers.PrimaryKeyRelatedField) or issubclass(
+                field.__class__, serializers.PrimaryKeyRelatedField
+            ):
                 model = field.queryset.model
             else:
                 logger.debug(
@@ -294,6 +296,9 @@ class InvenTreeMetadata(SimpleMetadata):
                     field_info['api_url'] = '/api/contenttype/'
                 else:
                     field_info['api_url'] = model.get_api_url()
+
+                # Handle custom 'primary key' field
+                field_info['pk_field'] = getattr(field, 'pk_field', 'pk') or 'pk'
 
         # Add more metadata about dependent fields
         if field_info['type'] == 'dependent field':

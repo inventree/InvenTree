@@ -147,14 +147,18 @@ class LabelPrint(GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = report.serializers.LabelPrintSerializer
 
-    def get_plugin_class(self, plugin_id: int, raise_error=False):
+    def get_plugin_class(self, plugin_slug: str, raise_error=False):
         """Return the plugin class for the given plugin key."""
         from plugin.models import PluginConfig
+
+        if plugin_slug is None:
+            # Use the default label printing plugin
+            plugin_slug = InvenTreeLabelPlugin.NAME.lower()
 
         plugin = None
 
         try:
-            plugin_config = PluginConfig.objects.get(pk=plugin_id)
+            plugin_config = PluginConfig.objects.get(key=plugin_slug)
             plugin = plugin_config.plugin
         except (ValueError, PluginConfig.DoesNotExist):
             pass
@@ -219,13 +223,13 @@ class LabelPrint(GenericAPIView):
 
         items = serializer.validated_data['items']
 
-        plugin_cfg = serializer.validated_data.get('plugin', None)
+        # Default to the InvenTreeLabelPlugin
+        plugin_key = InvenTreeLabelPlugin.NAME.lower()
 
-        if plugin_cfg:
-            plugin = self.get_plugin_class(plugin_cfg.pk, raise_error=True)
-        else:
-            # If plugin is not supplied, use the default label printing plugin
-            plugin = registry.get_plugin(InvenTreeLabelPlugin.NAME.lower())
+        if plugin_config := serializer.validated_data.get('plugin', None):
+            plugin_key = plugin_config.key
+
+        plugin = self.get_plugin_class(plugin_key, raise_error=True)
 
         instances = template.get_model().objects.filter(pk__in=items)
 

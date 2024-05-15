@@ -15,6 +15,7 @@ import {
 import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -420,6 +421,12 @@ export default function StockDetail() {
               !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
           })
         ]}
+      />,
+      <PrintingActions
+        modelType={ModelType.stockitem}
+        items={[stockitem.pk]}
+        enableReports
+        enableLabels
       />,
       <ActionDropdown
         tooltip={t`Stock Operations`}
