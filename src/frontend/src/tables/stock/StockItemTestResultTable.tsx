@@ -28,7 +28,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn, NoteColumn } from '../ColumnRenderers';
+import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowActions, RowDeleteAction, RowEditAction } from '../RowActions';
@@ -188,20 +188,13 @@ export default function StockItemTestResultTable({
           record.attachment && <AttachmentLink attachment={record.attachment} />
       },
       NoteColumn(),
+      DateColumn({}),
       {
-        accessor: 'date',
-        sortable: true,
-        title: t`Date`,
-        render: (record: any) => {
-          return (
-            <Group justify="space-between">
-              {renderDate(record.date)}
-              {record.user_detail && (
-                <RenderUser instance={record.user_detail} />
-              )}
-            </Group>
-          );
-        }
+        accessor: 'user',
+        title: t`User`,
+        sortable: false,
+        render: (record: any) =>
+          record.user_detail && <RenderUser instance={record.user_detail} />
       },
       {
         accessor: 'test_station',
