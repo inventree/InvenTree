@@ -564,12 +564,14 @@ export function InvenTreeTable<T = any>({
   return (
     <>
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
-        <FilterSelectDrawer
-          availableFilters={filters}
-          tableState={tableState}
-          opened={filtersVisible}
-          onClose={() => setFiltersVisible(false)}
-        />
+        <Boundary label="table-filter-drawer">
+          <FilterSelectDrawer
+            availableFilters={filters}
+            tableState={tableState}
+            opened={filtersVisible}
+            onClose={() => setFiltersVisible(false)}
+          />
+        </Boundary>
       )}
       <Boundary label="inventreetable">
         <Stack gap="sm">

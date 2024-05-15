@@ -22,51 +22,6 @@ export function attachmentFields(editing: boolean): ApiFormFieldSet {
 }
 
 /**
- * Add a new attachment (either a file or a link)
- */
-export function addAttachment({
-  endpoint,
-  model,
-  pk,
-  attachmentType,
-  callback
-}: {
-  endpoint: ApiEndpoints;
-  model: string;
-  pk: number;
-  attachmentType: 'file' | 'link';
-  callback?: () => void;
-}) {
-  let formFields: ApiFormFieldSet = {
-    attachment: {},
-    link: {},
-    comment: {}
-  };
-
-  if (attachmentType === 'link') {
-    delete formFields['attachment'];
-  } else {
-    delete formFields['link'];
-  }
-
-  formFields[model] = {
-    value: pk,
-    hidden: true
-  };
-
-  let title = attachmentType === 'file' ? t`Add File` : t`Add Link`;
-  let message = attachmentType === 'file' ? t`File added` : t`Link added`;
-
-  openCreateApiForm({
-    title: title,
-    url: endpoint,
-    successMessage: message,
-    fields: formFields,
-    onFormSuccess: callback
-  });
-}
-
-/**
  * Edit an existing attachment (either a file or a link)
  */
 export function editAttachment({
