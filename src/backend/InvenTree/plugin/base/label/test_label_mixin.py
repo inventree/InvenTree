@@ -17,7 +17,7 @@ from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.helpers import MixinNotImplementedError
 from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
-from report.models import ReportTemplate
+from report.models import LabelTemplate, ReportTemplate
 from stock.models import StockItem, StockLocation
 
 
@@ -175,12 +175,13 @@ class LabelMixinTests(InvenTreeAPITestCase):
     def test_printing_options(self):
         """Test printing options."""
         # Ensure the labels were created
-        apps.get_app_config('label').create_defaults()
+        apps.get_app_config('report').create_default_labels()
 
         # Lookup references
         parts = Part.objects.all()[:2]
         plugin_ref = 'samplelabelprinter'
-        label = PartLabel.objects.first()
+
+        label = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
 
         self.do_activate_plugin()
 
