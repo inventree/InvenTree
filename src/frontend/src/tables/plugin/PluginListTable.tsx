@@ -24,6 +24,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
+import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { InfoItem } from '../../components/items/InfoItem';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { PluginSettingList } from '../../components/settings/SettingList';
@@ -72,16 +73,9 @@ export interface PluginI {
   >;
 }
 
-export function PluginDrawer({
-  pluginKey,
-  refreshTable
-}: {
-  pluginKey: string;
-  refreshTable: () => void;
-}) {
+export function PluginDrawer({ pluginKey }: { pluginKey: string }) {
   const {
     instance: plugin,
-    refreshInstance,
     instanceQuery: { isFetching, error }
   } = useInstance<PluginI>({
     endpoint: ApiEndpoints.plugin_list,
@@ -108,17 +102,18 @@ export function PluginDrawer({
 
   return (
     <Stack gap={'xs'}>
-      <Group justify="left">
-        <Box></Box>
+      <Card withBorder>
+        <Group justify="left">
+          <Box></Box>
 
-        <Group gap={'xs'}>
-          {plugin && <PluginIcon plugin={plugin} />}
-          <Title order={4}>
-            {plugin?.meta?.human_name ?? plugin?.name ?? '-'}
-          </Title>
+          <Group gap={'xs'}>
+            {plugin && <PluginIcon plugin={plugin} />}
+            <Title order={4}>
+              {plugin?.meta?.human_name ?? plugin?.name ?? '-'}
+            </Title>
+          </Group>
         </Group>
-      </Group>
-
+      </Card>
       <LoadingOverlay visible={isFetching} overlayProps={{ opacity: 0 }} />
 
       <Card withBorder>
@@ -126,64 +121,74 @@ export function PluginDrawer({
           <Title order={4}>
             <Trans>Plugin information</Trans>
           </Title>
-          <Stack pos="relative" gap="xs">
-            <InfoItem type="text" name={t`Name`} value={plugin?.name} />
-            <InfoItem
-              type="text"
-              name={t`Description`}
-              value={plugin?.meta.description}
-            />
-            <InfoItem
-              type="text"
-              name={t`Author`}
-              value={plugin?.meta.author}
-            />
-            <InfoItem
-              type="text"
-              name={t`Date`}
-              value={plugin?.meta.pub_date}
-            />
-            <InfoItem
-              type="text"
-              name={t`Version`}
-              value={plugin?.meta.version}
-            />
-            <InfoItem type="boolean" name={t`Active`} value={plugin?.active} />
-          </Stack>
+          {plugin.active ? (
+            <Stack pos="relative" gap="xs">
+              <InfoItem type="text" name={t`Name`} value={plugin?.name} />
+              <InfoItem
+                type="text"
+                name={t`Description`}
+                value={plugin?.meta.description}
+              />
+              <InfoItem
+                type="text"
+                name={t`Author`}
+                value={plugin?.meta.author}
+              />
+              <InfoItem
+                type="text"
+                name={t`Date`}
+                value={plugin?.meta.pub_date}
+              />
+              <InfoItem
+                type="text"
+                name={t`Version`}
+                value={plugin?.meta.version}
+              />
+              <InfoItem
+                type="boolean"
+                name={t`Active`}
+                value={plugin?.active}
+              />
+            </Stack>
+          ) : (
+            <Text color="red">{t`Plugin is not active`}</Text>
+          )}
         </Stack>
       </Card>
 
-      <Card withBorder>
-        <Stack gap="md">
-          <Title order={4}>
-            <Trans>Package information</Trans>
-          </Title>
-          <Stack pos="relative" gap="xs">
-            {plugin?.is_package && (
+      {plugin.active && (
+        <Card withBorder>
+          <Stack gap="md">
+            <Title order={4}>
+              <Trans>Package information</Trans>
+            </Title>
+            <Stack pos="relative" gap="xs">
+              {plugin?.is_package && (
+                <InfoItem
+                  type="text"
+                  name={t`Package Name`}
+                  value={plugin?.package_name}
+                />
+              )}
               <InfoItem
                 type="text"
-                name={t`Package Name`}
-                value={plugin?.package_name}
+                name={t`Installation Path`}
+                value={plugin?.meta.package_path}
               />
-            )}
-            <InfoItem
-              type="text"
-              name={t`Installation Path`}
-              value={plugin?.meta.package_path}
-            />
-            <InfoItem
-              type="boolean"
-              name={t`Builtin`}
-              value={plugin?.is_builtin}
-            />
-            <InfoItem
-              type="boolean"
-              name={t`Package`}
-              value={plugin?.is_package}
-            />
+              <InfoItem
+                type="boolean"
+                name={t`Builtin`}
+                value={plugin?.is_builtin}
+              />
+              <InfoItem
+                type="boolean"
+                name={t`Package`}
+                value={plugin?.is_package}
+              />
+            </Stack>
           </Stack>
-        </Stack>
-      </Card>
+        </Card>
+      )}
 
       {plugin && plugin?.active && (
         <Card withBorder>
@@ -259,6 +264,12 @@ export default function PluginListTable() {
             </Group>
           );
         }
+      },
+      {
+        accessor: 'active',
+        sortable: true,
+        title: t`Active`,
+        render: (record: any) => <YesNoButton value={record.active} />
       },
       {
         accessor: 'meta.description',
@@ -553,12 +564,7 @@ export default function PluginListTable() {
         size={'50%'}
         renderContent={(pluginKey) => {
           if (!pluginKey) return;
-          return (
-            <PluginDrawer
-              pluginKey={pluginKey}
-              refreshTable={table.refreshTable}
-            />
-          );
+          return <PluginDrawer pluginKey={pluginKey} />;
         }}
       />
       <InvenTreeTable
