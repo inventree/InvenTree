@@ -261,19 +261,19 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         self.post(
             url,
             {
-                'plugin': config.pk,
+                'plugin': config.key,
                 'items': [a.pk for a in parts],
                 'template': template.pk,
                 'machine': str(self.machine.pk),
                 'driver_options': {'copies': '1', 'test_option': '2'},
             },
-            expected_code=200,
+            expected_code=201,
         )
 
         # test the print labels method call
         self.print_labels.assert_called_once()
         self.assertEqual(self.print_labels.call_args.args[0], self.machine.machine)
-        self.assertEqual(self.print_labels.call_args.args[1], label)
+        self.assertEqual(self.print_labels.call_args.args[1], template)
 
         # TODO re-activate test
         # self.assertQuerySetEqual(

@@ -63,7 +63,7 @@ class InvenTreeLabelPlugin(LabelPrintingMixin, InvenTreePlugin):
     VERSION = '1.0.0'
     AUTHOR = _('InvenTree contributors')
 
-    def print_labels(self, label: LabelTemplate, items, request, **kwargs):
+    def print_labels(self, label: LabelTemplate, output, items, request, **kwargs):
         """Print labels implementation that calls the correct machine driver print_labels method."""
         machine, driver = get_machine_and_driver(
             kwargs['printing_options'].get('machine', '')
