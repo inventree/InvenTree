@@ -81,41 +81,41 @@ export function UserTheme({ height }: { height: number }) {
         <Trans>Theme</Trans>
       </Title>
       <Table>
-        <tbody>
-          <tr>
-            <td>
+        <Table.Tbody>
+          <Table.Tr>
+            <Table.Td>
               <Trans>Primary color</Trans>
-            </td>
-            <td>
+            </Table.Td>
+            <Table.Td>
               <ColorPicker
                 format="hex"
                 onChange={changePrimary}
                 withPicker={false}
                 swatches={Object.keys(LOOKUP)}
               />
-            </td>
-          </tr>
-          <tr>
-            <td>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
               <Trans>White color</Trans>
-            </td>
-            <td>
+            </Table.Td>
+            <Table.Td>
               <ColorInput value={whiteColor} onChange={changeWhite} />
-            </td>
-          </tr>
-          <tr>
-            <td>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
               <Trans>Black color</Trans>
-            </td>
-            <td>
+            </Table.Td>
+            <Table.Td>
               <ColorInput value={blackColor} onChange={changeBlack} />
-            </td>
-          </tr>
-          <tr>
-            <td>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
               <Trans>Border Radius</Trans>
-            </td>
-            <td>
+            </Table.Td>
+            <Table.Td>
               <Slider
                 label={(val) => getMark(val).label}
                 defaultValue={50}
@@ -125,13 +125,13 @@ export function UserTheme({ height }: { height: number }) {
                 onChange={changeRadius}
                 mb={18}
               />
-            </td>
-          </tr>
-          <tr>
-            <td>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
               <Trans>Loader</Trans>
-            </td>
-            <td>
+            </Table.Td>
+            <Table.Td>
               <Group align="center">
                 <Select
                   data={loaderDate}
@@ -140,9 +140,9 @@ export function UserTheme({ height }: { height: number }) {
                 />
                 <Loader type={themeLoader} mah={18} />
               </Group>
-            </td>
-          </tr>
-        </tbody>
+            </Table.Td>
+          </Table.Tr>
+        </Table.Tbody>
       </Table>
     </Container>
   );

@@ -1,7 +1,10 @@
-# Caddyfile for Inventree
+# Example Caddyfile for Inventree
 # The following environment variables may be used:
 # - INVENTREE_SITE_URL: The upstream URL of the Inventree site (default: inventree.localhost)
 # - INVENTREE_SERVER: The internal URL of the Inventree container (default: http://inventree-server:8000)
+#
+# Note that while this file is a good starting point, it may need to be modified to suit your specific requirements
+
 
 (log_common) {
 	log {

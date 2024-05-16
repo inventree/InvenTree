@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { Flex, FocusTrap, Modal, NumberInput, TextInput } from '@mantine/core';
+import {
+  Flex,
+  FocusTrap,
+  Modal,
+  NumberInput,
+  Table,
+  TextInput
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
   IconAddressBook,
@@ -24,6 +31,7 @@ import {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
+import { TableFieldExtraRow } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
@@ -308,8 +316,8 @@ function LineItemFormRow({
           />
         </FocusTrap>
       </Modal>
-      <tr>
-        <td>
+      <Table.Tr>
+        <Table.Td>
           <Flex gap="sm" align="center">
             <Thumbnail
               size={40}
@@ -318,16 +326,16 @@ function LineItemFormRow({
             />
             <div>{record.part_detail.name}</div>
           </Flex>
-        </td>
-        <td>{record.supplier_part_detail.SKU}</td>
-        <td>
+        </Table.Td>
+        <Table.Td>{record.supplier_part_detail.SKU}</Table.Td>
+        <Table.Td>
           <ProgressBar
             value={record.received}
             maximum={record.quantity}
             progressLabel
           />
-        </td>
-        <td style={{ width: '1%', whiteSpace: 'nowrap' }}>
+        </Table.Td>
+        <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
           <NumberInput
             value={input.item.quantity}
             style={{ width: '100px' }}
@@ -335,8 +343,8 @@ function LineItemFormRow({
             min={0}
             onChange={(value) => input.changeFn(input.idx, 'quantity', value)}
           />
-        </td>
-        <td style={{ width: '1%', whiteSpace: 'nowrap' }}>
+        </Table.Td>
+        <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
           <Flex gap="1px">
             <ActionButton
               onClick={() => locationHandlers.toggle()}
@@ -387,11 +395,11 @@ function LineItemFormRow({
               color="red"
             />
           </Flex>
-        </td>
-      </tr>
+        </Table.Td>
+      </Table.Tr>
       {locationOpen && (
-        <tr>
-          <td colSpan={4}>
+        <Table.Tr>
+          <Table.Td colSpan={4}>
             <Flex align="end" gap={5}>
               <div style={{ flexGrow: '1' }}>
                 <StandaloneField
@@ -453,8 +461,8 @@ function LineItemFormRow({
                   )}
               </Flex>
             </Flex>
-          </td>
-          <td>
+          </Table.Td>
+          <Table.Td>
             <div
               style={{
                 height: '100%',
@@ -466,107 +474,54 @@ function LineItemFormRow({
             >
               <InvenTreeIcon icon="downleft" />
             </div>
-          </td>
-        </tr>
+          </Table.Td>
+        </Table.Tr>
       )}
-      {batchOpen && (
-        <>
-          <tr>
-            <td colSpan={4}>
-              <Flex align="end" gap={5}>
-                <div style={{ flexGrow: '1' }}>
-                  <StandaloneField
-                    fieldDefinition={{
-                      field_type: 'string',
-                      onValueChange: (value) => setBatchCode(value),
-                      label: 'Batch Code',
-                      value: batchCode
-                    }}
-                  />
-                </div>
-              </Flex>
-            </td>
-            <td>
-              <div
-                style={{
-                  height: '100%',
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(6, 1fr)',
-                  gridTemplateRows: 'auto',
-                  alignItems: 'end'
-                }}
-              >
-                <span></span>
-                <InvenTreeIcon icon="downleft" />
-              </div>
-            </td>
-          </tr>
-          {record.trackable && (
-            <tr>
-              <td colSpan={4}>
-                <Flex align="end" gap={5}>
-                  <div style={{ flexGrow: '1' }}>
-                    <StandaloneField
-                      fieldDefinition={{
-                        field_type: 'string',
-                        onValueChange: (value) => setSerials(value),
-                        label: 'Serial numbers',
-                        value: serials
-                      }}
-                    />
-                  </div>
-                </Flex>
-              </td>
-              <td>
-                <div
-                  style={{
-                    height: '100%',
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(6, 1fr)',
-                    gridTemplateRows: 'auto',
-                    alignItems: 'end'
-                  }}
-                >
-                  <span></span>
-                  <InvenTreeIcon icon="downleft" />
-                </div>
-              </td>
-            </tr>
-          )}
-        </>
-      )}
-      {statusOpen && (
-        <tr>
-          <td colSpan={4}>
-            <StandaloneField
-              fieldDefinition={{
-                field_type: 'choice',
-                api_url: apiUrl(ApiEndpoints.stock_status),
-                choices: statuses,
-                label: 'Status',
-                onValueChange: (value) =>
-                  input.changeFn(input.idx, 'status', value)
-              }}
-              defaultValue={10}
-            />
-          </td>
-          <td>
-            <div
-              style={{
-                height: '100%',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(6, 1fr)',
-                gridTemplateRows: 'auto',
-                alignItems: 'end'
-              }}
-            >
-              <span></span>
-              <span></span>
-              <InvenTreeIcon icon="downleft" />
-            </div>
-          </td>
-        </tr>
-      )}
+      <TableFieldExtraRow
+        visible={batchOpen}
+        colSpan={4}
+        content={
+          <StandaloneField
+            fieldDefinition={{
+              field_type: 'string',
+              onValueChange: (value) => setBatchCode(value),
+              label: 'Batch Code',
+              value: batchCode
+            }}
+          />
+        }
+      />
+      <TableFieldExtraRow
+        visible={batchOpen && record.trackable}
+        colSpan={4}
+        content={
+          <StandaloneField
+            fieldDefinition={{
+              field_type: 'string',
+              onValueChange: (value) => setSerials(value),
+              label: 'Serial numbers',
+              value: serials
+            }}
+          />
+        }
+      />
+      <TableFieldExtraRow
+        visible={statusOpen}
+        colSpan={4}
+        content={
+          <StandaloneField
+            fieldDefinition={{
+              field_type: 'choice',
+              api_url: apiUrl(ApiEndpoints.stock_status),
+              choices: statuses,
+              label: 'Status',
+              onValueChange: (value) =>
+                input.changeFn(input.idx, 'status', value)
+            }}
+            defaultValue={10}
+          />
+        }
+      />
     </>
   );
 }
@@ -655,11 +610,11 @@ export function useReceiveLineItems(props: LineItemsForm) {
   return useCreateApiFormModal({
     ...props.formProps,
     url: url,
-    title: t`Receive line items`,
+    title: t`Receive Line Items`,
     fields: fields,
     initialData: {
       location: null
     },
-    size: 'max(60%,800px)'
+    size: 'xl'
   });
 }

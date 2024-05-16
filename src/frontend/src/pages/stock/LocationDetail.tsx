@@ -7,7 +7,7 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -15,6 +15,7 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
+  DeleteItemAction,
   EditItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
@@ -34,7 +35,10 @@ import {
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
@@ -49,6 +53,7 @@ export default function Stock() {
     [_id]
   );
 
+  const navigate = useNavigate();
   const user = useUserState();
 
   const [treeOpen, setTreeOpen] = useState(false);
@@ -128,6 +133,14 @@ export default function Stock() {
         type: 'boolean',
         name: 'external',
         label: t`External`
+      },
+      {
+        type: 'string',
+        // TODO: render location type icon here (ref: #7237)
+        name: 'location_type_detail.name',
+        label: t`Location Type`,
+        hidden: !location?.location_type,
+        icon: 'packages'
       }
     ];
 
@@ -195,6 +208,46 @@ export default function Stock() {
     title: t`Edit Stock Location`,
     fields: stockLocationFields({}),
     onFormSuccess: refreshInstance
+  });
+
+  const deleteOptions = useMemo(() => {
+    return [
+      {
+        value: 0,
+        display_name: `Move items to parent location`
+      },
+      {
+        value: 1,
+        display_name: t`Delete items`
+      }
+    ];
+  }, []);
+
+  const deleteLocation = useDeleteApiFormModal({
+    url: ApiEndpoints.stock_location_list,
+    pk: id,
+    title: t`Delete Stock Location`,
+    fields: {
+      delete_stock_items: {
+        label: t`Items Action`,
+        description: t`Action for stock items in this location`,
+        field_type: 'choice',
+        choices: deleteOptions
+      },
+      delete_sub_location: {
+        label: t`Child Locations Action`,
+        description: t`Action for child locations in this location`,
+        field_type: 'choice',
+        choices: deleteOptions
+      }
+    },
+    onFormSuccess: () => {
+      if (location.parent) {
+        navigate(getDetailUrl(ModelType.stocklocation, location.parent));
+      } else {
+        navigate('/stock/');
+      }
+    }
   });
 
   const stockItemActionProps: StockOperationProps = useMemo(() => {
@@ -282,6 +335,11 @@ export default function Stock() {
             hidden: !id || !user.hasChangeRole(UserRoles.stock_location),
             tooltip: t`Edit Stock Location`,
             onClick: () => editLocation.open()
+          }),
+          DeleteItemAction({
+            hidden: !id || !user.hasDeleteRole(UserRoles.stock_location),
+            tooltip: t`Delete Stock Location`,
+            onClick: () => deleteLocation.open()
           })
         ]}
       />
@@ -303,6 +361,7 @@ export default function Stock() {
   return (
     <>
       {editLocation.modal}
+      {deleteLocation.modal}
       <Stack>
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <StockLocationTree
