@@ -25,7 +25,6 @@ In addition to the model-specific context variables, the following global contex
 
 ::: report.models.ReportTemplateBase.base_context
     options:
-        show_root_heading: False
         show_source: True
 
 ### Report Context
@@ -41,7 +40,6 @@ Note that custom plugins may also add additional context variables to the report
 
 ::: report.models.ReportTemplate.get_context
     options:
-        show_root_heading: False
         show_source: True
 
 ### Label Context
@@ -57,7 +55,6 @@ Note that custom plugins may also add additional context variables to the label 
 
 ::: report.models.LabelTemplate.get_context
     options:
-        show_root_heading: False
         show_source: True
 
 
@@ -93,7 +90,6 @@ When printing a report or label against a [Build Order](../build/build.md) objec
 
 ::: build.models.Build.report_context
     options:
-        show_root_heading: False
         show_source: True
 
 ### Build Line
@@ -112,7 +108,6 @@ When printing a report or label against a [BuildOrderLineItem](../build/build.md
 
 ::: build.models.BuildLine.report_context
     options:
-        show_root_heading: False
         show_source: True
 
 
@@ -132,7 +127,6 @@ When printing a report or label against a [SalesOrder](../order/sales_order.md) 
 
 ::: order.models.Order.report_context
     options:
-        show_root_heading: False
         show_source: True
 
 ### Return Order
@@ -193,7 +187,6 @@ When printing a report or label against a [StockItem](../stock/stock.md#stock-it
 
 ::: stock.models.StockItem.report_context
     options:
-        show_root_heading: False
         show_source: True
 
 
@@ -211,7 +204,6 @@ When printing a report or label against a [StockLocation](../stock/stock.md#stoc
 
 ::: stock.models.StockLocation.report_context
     options:
-        show_root_heading: False
         show_source: True
 
 
@@ -236,9 +228,7 @@ When printing a report or label against a [Part](../part/part.md) object, the fo
 
 ::: part.models.Part.report_context
     options:
-        show_root_heading: False
         show_source: True
-
 
 ## Model Variables
 
@@ -251,13 +241,6 @@ For each model type, a subset of the most commonly used attributes are listed be
 #### Part
 
 Each part object has access to a lot of context variables about the part. The following context variables are provided when accessing a `Part` object from within the template.
-
-For a full description of the `Part` model, refer to the code in:
-
-::: part.models.Part
-    options:
-        show_root_heading: False
-        show_source: False
 
 | Variable | Description |
 |----------|-------------|
@@ -304,12 +287,6 @@ For a full description of the `Part` model, refer to the code in:
 
 #### Part Category
 
-For a full description of the `PartCategory` model, refer to the code in:
-
-::: part.models.PartCategory
-    options:
-        show_root_heading: False
-        show_source: False
 
 | Variable | Description |
 |----------|-------------|
@@ -322,12 +299,6 @@ For a full description of the `PartCategory` model, refer to the code in:
 
 #### StockItem
 
-For a full description of the `StockItem` model, refer to the code in:
-
-::: stock.models.StockItem
-    options:
-        show_root_heading: False
-        show_source: False
 
 | Variable | Description |
 |----------|-------------|
@@ -359,13 +330,6 @@ For a full description of the `StockItem` model, refer to the code in:
 
 #### StockLocation
 
-For a full description of the `StockLocation` model, refer to the code in:
-
-::: stock.models.StockLocation
-    options:
-        show_root_heading: False
-        show_source: False
-
 | Variable | Description |
 |----------|-------------|
 | barcode | Brief payload data (e.g. for labels). Example: {"stocklocation": 826} where 826 is the primary key|
@@ -383,12 +347,6 @@ For a full description of the `StockLocation` model, refer to the code in:
 
 #### Company
 
-For a full description of the `Company` model, refer to the code in:
-
-::: company.models.Company
-    options:
-        show_root_heading: False
-        show_source: False
 
 | Variable | Description |
 |----------|-------------|
@@ -410,12 +368,6 @@ For a full description of the `Company` model, refer to the code in:
 
 #### Address
 
-For a full description of the `Address` model, refer to the code in:
-
-::: company.models.Address
-    options:
-        show_root_heading: False
-        show_source: False
 
 | Variable | Description |
 |----------|-------------|
@@ -427,13 +379,6 @@ For a full description of the `Address` model, refer to the code in:
 
 #### Contact
 
-Contacts are added to companies. For a full description of the `Contact` model, refer to the code in:
-
-::: company.models.Contact
-    options:
-        show_root_heading: False
-        show_source: False
-
 | Variable | Description |
 |----------|-------------|
 | company | Company object where the contact belongs to |
@@ -444,12 +389,6 @@ Contacts are added to companies. For a full description of the `Contact` model, 
 
 #### SupplierPart
 
-For a full description of the `SupplierPart` model, refer to the code in:
-
-::: company.models.SupplierPart
-    options:
-        show_root_heading: False
-        show_source: False
 
 | Variable | Description |
 |----------|-------------|
@@ -475,23 +414,12 @@ For a full description of the `SupplierPart` model, refer to the code in:
 
 #### Purchase Order
 
-For a full description of the `PurchaseOrder` model, refer to the code in:
-
-::: order.models.PurchaseOrder
-    options:
-        show_root_heading: False
-        show_source: False
+!!! note "TODO"
+    This section is incomplete
 
 #### SalesOrder
 
 A [Sales Order](../order/sales_order.md) object has the following context variables available.
-
-For a full description of the `SalesOrder` model, refer to the code in:
-
-::: order.models.SalesOrder
-    options:
-        show_root_heading: False
-        show_source: False
 
 | Variable | Description |
 |----------|-------------|
@@ -503,13 +431,6 @@ For a full description of the `SalesOrder` model, refer to the code in:
 #### Return Order
 
 A [Return Order](../order/return_order.md) object has the following context variables available.
-
-For a full description of the `ReturnOrder` model, refer to the code in:
-
-::: order.models.ReturnOrder
-    options:
-        show_root_heading: False
-        show_source: False
 
 | Variable | Description |
 | --- | --- |
