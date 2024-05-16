@@ -109,7 +109,6 @@ class LabelMixinTests(InvenTreeAPITestCase):
         )
 
         self.assertIn('object does not exist', str(response.data['template']))
-        self.assertIn('object does not exist', str(response.data['plugin']))
         self.assertIn('list may not be empty', str(response.data['items']))
 
         # Find available plugins
@@ -125,7 +124,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
         # Plugin is not active - should return error
         response = self.post(
             url,
-            {'template': template.pk, 'plugin': config.pk, 'items': [1, 2, 3]},
+            {'template': template.pk, 'plugin': config.key, 'items': [1, 2, 3]},
             expected_code=400,
         )
         self.assertIn('Plugin is not active', str(response.data['plugin']))
@@ -154,22 +153,14 @@ class LabelMixinTests(InvenTreeAPITestCase):
         # Print multiple parts without a plugin
         self.post(
             url,
-            {
-                'template': template.pk,
-                'plugin': None,
-                'items': [item.pk for item in parts],
-            },
+            {'template': template.pk, 'items': [item.pk for item in parts]},
             expected_code=201,
         )
 
         # Print multiple parts without a plugin in debug mode
         response = self.post(
             url,
-            {
-                'template': template.pk,
-                'plugin': None,
-                'items': [item.pk for item in parts],
-            },
+            {'template': template.pk, 'items': [item.pk for item in parts]},
             expected_code=201,
         )
 
@@ -212,7 +203,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
 
         # test options response
         options = self.options(
-            self.printing_url, data={'plugin': plugin.pk}, expected_code=200
+            self.printing_url, data={'plugin': plugin.slug}, expected_code=200
         ).json()
         self.assertIn('amount', options['actions']['POST'])
 
@@ -221,7 +212,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
             res = self.post(
                 self.printing_url,
                 {
-                    'plugin': plugin.pk,
+                    'plugin': plugin.slug,
                     'template': template.pk,
                     'items': [a.pk for a in parts],
                     'amount': '-no-valid-int-',
@@ -236,7 +227,7 @@ class LabelMixinTests(InvenTreeAPITestCase):
                 self.printing_url,
                 {
                     'template': template.pk,
-                    'plugin': plugin.pk,
+                    'plugin': plugin.slug,
                     'items': [a.pk for a in parts],
                     'amount': 13,
                 },
