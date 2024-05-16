@@ -143,6 +143,7 @@ nav:
     - Context Variables: report/context_variables.md
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md
+    - Sample Templates: report/samples.md
   - Admin:
     - Global Settings: settings/global.md
     - User Settings: settings/user.md
@@ -230,6 +231,7 @@ plugins:
         on_config: "docs.docs.hooks:on_config"
   - macros:
       include_dir: docs/_includes
+      module_name: main
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -296,4 +298,4 @@ extra:
       link: https://reddit.com/r/inventree
 
 use_directory_urls: true
-strict: false
+strict: true
