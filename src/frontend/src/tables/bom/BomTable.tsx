@@ -99,7 +99,9 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
-      ReferenceColumn({}),
+      ReferenceColumn({
+        switchable: true
+      }),
       {
         accessor: 'quantity',
         switchable: false,
