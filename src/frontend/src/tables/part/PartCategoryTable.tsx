@@ -79,13 +79,9 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     initialData: {
       parent: parentId
     },
-    onFormSuccess(data: any) {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.partcategory, data.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.partcategory,
+    table: table
   });
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);

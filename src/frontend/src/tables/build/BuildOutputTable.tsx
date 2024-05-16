@@ -113,9 +113,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
     url: apiUrl(ApiEndpoints.build_output_create, buildId),
     title: t`Add Build Output`,
     fields: buildOutputFields,
-    onFormSuccess: () => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);

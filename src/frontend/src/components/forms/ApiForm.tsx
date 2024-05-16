@@ -396,18 +396,14 @@ export function ApiForm({
           case 204:
             // Form was submitted successfully
 
-            // Optionally call the onFormSuccess callback
             if (props.onFormSuccess) {
+              // A custom callback hook is provided
               props.onFormSuccess(response.data);
-            }
-
-            // If we want to automatically follow the returned data
-            if (props.follow && props.modelType && response.data?.pk) {
+            } else if (props.follow && props.modelType && response.data?.pk) {
+              // If we want to automatically follow the returned data
               navigate(getDetailUrl(props.modelType, response.data?.pk));
-            }
-
-            // If we want to automatically update or reload a linked table
-            if (props.table) {
+            } else if (props.table) {
+              // If we want to automatically update or reload a linked table
               let pk_field = props.pk_field ?? 'pk';
               if (response?.data[pk_field]) {
                 props.table.updateRecord(response.data);

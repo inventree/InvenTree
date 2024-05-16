@@ -37,7 +37,7 @@ export default function PartCategoryTemplateTable({}: {}) {
     url: ApiEndpoints.category_parameter_list,
     title: t`Add Category Parameter`,
     fields: formFields,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const editTemplate = useEditApiFormModal({
@@ -45,14 +45,14 @@ export default function PartCategoryTemplateTable({}: {}) {
     pk: selectedTemplate,
     title: t`Edit Category Parameter`,
     fields: formFields,
-    onFormSuccess: (record: any) => table.updateRecord(record)
+    table: table
   });
 
   const deleteTemplate = useDeleteApiFormModal({
     url: ApiEndpoints.category_parameter_list,
     pk: selectedTemplate,
     title: t`Delete Category Parameter`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const tableFilters: TableFilter[] = useMemo(() => {

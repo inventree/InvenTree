@@ -91,13 +91,9 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     initialData: {
       parent: parentId
     },
-    onFormSuccess(data: any) {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.stocklocation, data.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.stocklocation,
+    table: table
   });
 
   const [selectedLocation, setSelectedLocation] = useState<number>(-1);

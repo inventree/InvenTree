@@ -346,9 +346,7 @@ export default function PluginListTable() {
         hidden: true
       }
     },
-    onFormSuccess: () => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   // Determine available actions for a given plugin
@@ -451,17 +449,8 @@ export default function PluginListTable() {
     },
     closeOnClickOutside: false,
     submitText: t`Install`,
-    successMessage: undefined,
-    onFormSuccess: (data) => {
-      notifications.show({
-        title: t`Plugin installed successfully`,
-        message: data.result,
-        autoClose: 30000,
-        color: 'green'
-      });
-
-      table.refreshTable();
-    }
+    successMessage: t`Plugin installed successfully`,
+    table: table
   });
 
   const uninstallPluginModal = useEditApiFormModal({
@@ -485,24 +474,16 @@ export default function PluginListTable() {
         </Stack>
       </Alert>
     ),
-    onFormSuccess: (data) => {
-      notifications.show({
-        title: t`Plugin uninstalled successfully`,
-        message: data.result,
-        autoClose: 30000,
-        color: 'green'
-      });
-
-      table.refreshTable();
-    }
+    successMessage: t`Plugin uninstalled successfully`,
+    table: table
   });
 
   const deletePluginModal = useDeleteApiFormModal({
     url: ApiEndpoints.plugin_list,
     pathParams: { key: selectedPlugin },
     title: t`Delete Plugin`,
-    onFormSuccess: table.refreshTable,
-    preFormWarning: t`Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?`
+    preFormWarning: t`Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?`,
+    table: table
   });
 
   const reloadPlugins = useCallback(() => {

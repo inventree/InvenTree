@@ -53,9 +53,7 @@ export default function ErrorReportTable() {
       <Text c="red">{t`Are you sure you want to delete this error report?`}</Text>
     ),
     successMessage: t`Error report deleted`,
-    onFormSuccess: () => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const rowActions = useCallback((record: any): RowAction[] => {

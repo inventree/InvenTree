@@ -84,7 +84,7 @@ export default function PartParameterTemplateTable() {
     url: ApiEndpoints.part_parameter_template_list,
     title: t`Add Parameter Template`,
     fields: partParameterTemplateFields,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
@@ -96,14 +96,14 @@ export default function PartParameterTemplateTable() {
     pk: selectedTemplate,
     title: t`Edit Parameter Template`,
     fields: partParameterTemplateFields,
-    onFormSuccess: (record: any) => table.updateRecord(record)
+    table: table
   });
 
   const deleteTemplate = useDeleteApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
     pk: selectedTemplate,
     title: t`Delete Parameter Template`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   // Callback for row actions
