@@ -88,7 +88,7 @@ export function PurchaseOrderLineItemTable({
         sortable: false,
         render: (record: any) => record?.part_detail?.description
       },
-      ReferenceColumn(),
+      ReferenceColumn({}),
       {
         accessor: 'quantity',
         title: t`Quantity`,
