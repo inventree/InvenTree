@@ -111,8 +111,6 @@ If you enter an invalid option for the filter field, an error message will be di
 
 A JSON field made available to any [plugins](../extend/plugins.md) - but not used by internal code.
 
-
-
 ## Reporting Options
 
 A number of global reporting options are available for customizing InvenTree reports:
