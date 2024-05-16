@@ -73,7 +73,7 @@ export interface PluginI {
   >;
 }
 
-export function PluginDrawer({ pluginKey }: { pluginKey: string }) {
+export function PluginDrawer({ pluginKey }: { pluginKey: Readonly<string> }) {
   const {
     instance: plugin,
     instanceQuery: { isFetching, error }

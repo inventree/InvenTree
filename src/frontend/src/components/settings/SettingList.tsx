@@ -56,7 +56,9 @@ export function SettingList({
       value: {
         value: setting?.value ?? '',
         field_type:
-          setting?.type ?? setting?.choices ?? 0 > 0 ? 'choice' : 'string',
+          setting?.type ?? (setting?.choices?.length ?? 0) > 0
+            ? 'choice'
+            : 'string',
         label: setting?.name,
         description: setting?.description,
         api_url: setting?.api_url ?? '',
