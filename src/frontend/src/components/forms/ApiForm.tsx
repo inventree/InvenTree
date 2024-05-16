@@ -35,6 +35,7 @@ import {
 } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
+import { TableState } from '../../hooks/UseTable';
 import { PathParams } from '../../states/ApiState';
 import { Boundary } from '../Boundary';
 import {
@@ -54,6 +55,7 @@ export interface ApiFormAction {
  * Properties for the ApiForm component
  * @param url : The API endpoint to fetch the form data from
  * @param pk : Optional primary-key value when editing an existing object
+ * @param pk_field : Optional primary-key field name (default: pk)
  * @param pathParams : Optional path params for the url
  * @param method : Optional HTTP method to use when submitting the form (default: GET)
  * @param fields : The fields to render in the form
@@ -67,10 +69,12 @@ export interface ApiFormAction {
  * @param onFormError : A callback function to call when the form is submitted with errors.
  * @param modelType : Define a model type for this form
  * @param follow : Boolean, follow the result of the form (if possible)
+ * @param table : Table to update on success (if provided)
  */
 export interface ApiFormProps {
   url: ApiEndpoints | string;
   pk?: number | string | undefined;
+  pk_field?: string;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   fields?: ApiFormFieldSet;
@@ -87,6 +91,7 @@ export interface ApiFormProps {
   successMessage?: string;
   onFormSuccess?: (data: any) => void;
   onFormError?: () => void;
+  table?: TableState;
   modelType?: ModelType;
   follow?: boolean;
   actions?: ApiFormAction[];
@@ -391,14 +396,22 @@ export function ApiForm({
           case 204:
             // Form was submitted successfully
 
-            // Optionally call the onFormSuccess callback
             if (props.onFormSuccess) {
+              // A custom callback hook is provided
               props.onFormSuccess(response.data);
             }
 
-            if (props.follow) {
-              if (props.modelType && response.data?.pk) {
-                navigate(getDetailUrl(props.modelType, response.data?.pk));
+            if (props.follow && props.modelType && response.data?.pk) {
+              // If we want to automatically follow the returned data
+              navigate(getDetailUrl(props.modelType, response.data?.pk));
+            } else if (props.table) {
+              // If we want to automatically update or reload a linked table
+              let pk_field = props.pk_field ?? 'pk';
+
+              if (props.pk && response?.data[pk_field]) {
+                props.table.updateRecord(response.data);
+              } else {
+                props.table.refreshTable();
               }
             }
 

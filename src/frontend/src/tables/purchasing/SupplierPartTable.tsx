@@ -166,7 +166,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
       part: params?.part,
       supplier: params?.supplier
     },
-    onFormSuccess: table.refreshTable,
+    table: table,
     successMessage: t`Supplier part created`
   });
 
@@ -209,14 +209,14 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
     pk: selectedSupplierPart,
     title: t`Edit Supplier Part`,
     fields: editSupplierPartFields,
-    onFormSuccess: () => table.refreshTable()
+    table: table
   });
 
   const deleteSupplierPart = useDeleteApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: selectedSupplierPart,
     title: t`Delete Supplier Part`,
-    onFormSuccess: () => table.refreshTable()
+    table: table
   });
 
   // Row action callback

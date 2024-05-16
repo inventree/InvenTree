@@ -131,7 +131,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     initialData: {
       part: partId
     },
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedTest, setSelectedTest] = useState<number>(-1);
@@ -140,11 +140,11 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
     title: t`Edit Test Template`,
+    table: table,
     fields: useMemo(
       () => ({ ...partTestTemplateFields }),
       [partTestTemplateFields]
-    ),
-    onFormSuccess: (record: any) => table.updateRecord(record)
+    )
   });
 
   const deleteTestTemplate = useDeleteApiFormModal({
@@ -160,7 +160,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         </Text>
       </Alert>
     ),
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(

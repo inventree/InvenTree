@@ -86,7 +86,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
     initialData: {
       part_1: partId
     },
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedRelatedPart, setSelectedRelatedPart] = useState<
@@ -97,7 +97,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
     url: ApiEndpoints.related_part_list,
     pk: selectedRelatedPart,
     title: t`Delete Related Part`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const tableActions: ReactNode[] = useMemo(() => {

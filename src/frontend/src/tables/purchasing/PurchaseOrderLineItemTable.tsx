@@ -198,7 +198,7 @@ export function PurchaseOrderLineItemTable({
     title: t`Add Line Item`,
     fields: addPurchaseOrderFields,
     initialData: initialData,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedLine, setSelectedLine] = useState<number>(0);
@@ -214,14 +214,14 @@ export function PurchaseOrderLineItemTable({
     pk: selectedLine,
     title: t`Edit Line Item`,
     fields: editPurchaseOrderFields,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const deleteLine = useDeleteApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Delete Line Item`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(
