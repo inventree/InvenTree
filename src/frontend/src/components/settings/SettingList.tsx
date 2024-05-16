@@ -22,7 +22,6 @@ import {
   useUserSettingsState
 } from '../../states/SettingsState';
 import { Setting } from '../../states/states';
-import { ApiFormFieldType } from '../forms/fields/ApiFormField';
 import { SettingItem } from './SettingItem';
 
 /**

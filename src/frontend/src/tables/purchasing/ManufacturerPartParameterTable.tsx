@@ -104,6 +104,7 @@ export default function ManufacturerPartParameterTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-parameter"
         tooltip={t`Add Parameter`}
         onClick={() => {
           createParameter.open();

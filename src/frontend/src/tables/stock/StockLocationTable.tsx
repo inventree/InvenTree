@@ -1,13 +1,11 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { stockLocationFields } from '../../forms/StockForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -27,8 +25,6 @@ import { RowEditAction } from '../RowActions';
 export function StockLocationTable({ parentId }: { parentId?: any }) {
   const table = useTable('stocklocation');
   const user = useUserState();
-
-  const navigate = useNavigate();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [

@@ -171,6 +171,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-parameter"
         hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Add parameter`}
         onClick={() => newParameter.open()}

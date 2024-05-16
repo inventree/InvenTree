@@ -10,7 +10,7 @@ import {
   Title,
   Tooltip
 } from '@mantine/core';
-import { notifications, showNotification } from '@mantine/notifications';
+import { showNotification } from '@mantine/notifications';
 import {
   IconCircleCheck,
   IconCircleX,
