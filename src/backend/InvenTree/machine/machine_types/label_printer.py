@@ -2,6 +2,7 @@
 
 from typing import Union, cast
 
+from django.db import models
 from django.db.models.query import QuerySet
 from django.http import HttpResponse, JsonResponse
 from django.utils.translation import gettext_lazy as _
@@ -32,7 +33,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         self,
         machine: 'LabelPrinterMachine',
         label: LabelTemplate,
-        item,
+        item: models.Model,
         request: Request,
         **kwargs,
     ) -> None:
@@ -122,7 +123,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         return cast(LabelPrintingMixin, plg)
 
     def render_to_pdf(
-        self, label: LabelTemplate, item, request: Request, **kwargs
+        self, label: LabelTemplate, item: models.Model, request: Request, **kwargs
     ) -> HttpResponse:
         """Helper method to render a label to PDF format for a specific item.
 
@@ -137,7 +138,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         return response
 
     def render_to_pdf_data(
-        self, label: LabelTemplate, item, request: Request, **kwargs
+        self, label: LabelTemplate, item: models.Model, request: Request, **kwargs
     ) -> bytes:
         """Helper method to render a label to PDF and return it as bytes for a specific item.
 
@@ -153,7 +154,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         )
 
     def render_to_html(
-        self, label: LabelTemplate, item, request: Request, **kwargs
+        self, label: LabelTemplate, item: models.Model, request: Request, **kwargs
     ) -> str:
         """Helper method to render a label to HTML format for a specific item.
 
@@ -168,7 +169,7 @@ class LabelPrinterBaseDriver(BaseDriver):
         return html
 
     def render_to_png(
-        self, label: LabelTemplate, item, request: Request, **kwargs
+        self, label: LabelTemplate, item: models.Model, request: Request, **kwargs
     ) -> Image:
         """Helper method to render a label to PNG format for a specific item.
 
