@@ -312,7 +312,7 @@ export function BomTable({
       part: partId
     },
     successMessage: t`BOM item created`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const editBomItem = useEditApiFormModal({
@@ -321,7 +321,7 @@ export function BomTable({
     title: t`Edit BOM Item`,
     fields: bomItemFields(),
     successMessage: t`BOM item updated`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const deleteBomItem = useDeleteApiFormModal({
@@ -329,7 +329,7 @@ export function BomTable({
     pk: selectedBomItem,
     title: t`Delete BOM Item`,
     successMessage: t`BOM item deleted`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(

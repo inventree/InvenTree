@@ -234,7 +234,7 @@ export function TemplateTable({
     url: templateEndpoint,
     pk: selectedTemplate,
     title: t`Delete template`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const newTemplate = useCreateApiFormModal({
