@@ -52,7 +52,7 @@ To indicate a *field* validation error (i.e. the validation error applies only t
 
 Note that an error can be which corresponds to multiple model instance fields.
 
-### Example
+### Example Plugin
 
 Presented below is a simple working example for a plugin which implements the `validate_model_instance` method:
 
@@ -182,3 +182,15 @@ def increment_serial_number(self, serial: str):
 
     return val
 ```
+
+## Sample Plugin
+
+A sample plugin which implements custom validation routines is provided in the InvenTree source code:
+
+::: plugin.samples.integration.validation_sample.SampleValidatorPlugin
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
