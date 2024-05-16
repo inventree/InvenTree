@@ -79,6 +79,11 @@ export const ModelInformationDict: ModelDict = {
     cui_detail: '/stock/location/:pk/',
     api_endpoint: ApiEndpoints.stock_location_list
   },
+  stocklocationtype: {
+    label: t`Stock Location Type`,
+    label_multiple: t`Stock Location Types`,
+    api_endpoint: ApiEndpoints.stock_location_type_list
+  },
   stockhistory: {
     label: t`Stock History`,
     label_multiple: t`Stock Histories`,

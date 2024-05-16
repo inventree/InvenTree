@@ -94,6 +94,7 @@ export enum ApiEndpoints {
   stock_item_list = 'stock/',
   stock_tracking_list = 'stock/track/',
   stock_location_list = 'stock/location/',
+  stock_location_type_list = 'stock/location-type/',
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
   stock_test_result_list = 'stock/test/',

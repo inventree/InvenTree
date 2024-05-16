@@ -11,6 +11,7 @@ export enum ModelType {
   projectcode = 'projectcode',
   stockitem = 'stockitem',
   stocklocation = 'stocklocation',
+  stocklocationtype = 'stocklocationtype',
   stockhistory = 'stockhistory',
   build = 'build',
   buildline = 'buildline',

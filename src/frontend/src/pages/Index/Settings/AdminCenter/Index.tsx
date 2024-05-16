@@ -7,6 +7,7 @@ import {
   IconExclamationCircle,
   IconList,
   IconListDetails,
+  IconPackages,
   IconPlugConnected,
   IconReport,
   IconScale,
@@ -62,6 +63,10 @@ const PartParameterTemplateTable = Loadable(
 
 const PartCategoryTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartCategoryTemplateTable'))
+);
+
+const LocationTypesTable = Loadable(
+  lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
 const CurrencyTable = Loadable(
@@ -136,6 +141,12 @@ export default function AdminCenter() {
         label: t`Report Templates`,
         icon: <IconReport />,
         content: <ReportTemplatePanel />
+      },
+      {
+        name: 'location-types',
+        label: t`Location types`,
+        icon: <IconPackages />,
+        content: <LocationTypesTable />
       },
       {
         name: 'plugin',

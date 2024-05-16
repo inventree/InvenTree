@@ -110,7 +110,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
     title: t`New Part Parameter`,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     focus: 'template',
     initialData: {
       part: partId
@@ -126,7 +126,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
     url: ApiEndpoints.part_parameter_list,
     pk: selectedParameter,
     title: t`Edit Part Parameter`,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     onFormSuccess: table.refreshTable
   });
 

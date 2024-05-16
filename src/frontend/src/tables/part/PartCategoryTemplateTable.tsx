@@ -36,7 +36,7 @@ export default function PartCategoryTemplateTable({}: {}) {
   const newTemplate = useCreateApiFormModal({
     url: ApiEndpoints.category_parameter_list,
     title: t`Add Category Parameter`,
-    fields: formFields,
+    fields: useMemo(() => ({ ...formFields }), [formFields]),
     onFormSuccess: table.refreshTable
   });
 
@@ -44,7 +44,7 @@ export default function PartCategoryTemplateTable({}: {}) {
     url: ApiEndpoints.category_parameter_list,
     pk: selectedTemplate,
     title: t`Edit Category Parameter`,
-    fields: formFields,
+    fields: useMemo(() => ({ ...formFields }), [formFields]),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
