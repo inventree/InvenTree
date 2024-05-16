@@ -414,16 +414,18 @@ class Part(
     def report_context(self):
         """Return custom report context information."""
         return {
-            'part': self,
-            'category': self.category,
             'bom_items': self.get_bom_items(),
-            'name': self.name,
+            'category': self.category,
             'description': self.description,
             'IPN': self.IPN,
-            'revision': self.revision,
+            'name': self.name,
+            'parameters': self.parameters_map(),
+            'part': self,
             'qr_data': self.format_barcode(brief=True),
             'qr_url': self.get_absolute_url(),
-            'parameters': self.parameters_map(),
+            'revision': self.revision,
+            'test_template_list': self.getTestTemplates(),
+            'test_templates': self.getTestTemplates(),
         }
 
     def get_context_data(self, request, **kwargs):

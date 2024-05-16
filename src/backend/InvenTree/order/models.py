@@ -251,11 +251,11 @@ class Order(
     def report_context(self):
         """Generate context data for the reporting interface."""
         return {
-            'order': self,
             'description': self.description,
-            'reference': self.reference,
-            'lines': self.lines,
             'extra_lines': self.extra_lines,
+            'lines': self.lines,
+            'order': self,
+            'reference': self.reference,
             'title': str(self),
         }
 
