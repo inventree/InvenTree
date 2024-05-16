@@ -99,7 +99,7 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
-      ReferenceColumn(),
+      ReferenceColumn({}),
       {
         accessor: 'quantity',
         switchable: false,
@@ -248,7 +248,7 @@ export function BomTable({
           );
         }
       },
-      NoteColumn()
+      NoteColumn({})
     ];
   }, [partId, params]);
 
