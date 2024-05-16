@@ -322,7 +322,7 @@ Each part object has access to a lot of context variables about the part. The fo
 | notes | Extra notes field |
 | build | Link to a Build (if this stock item was created from a build) |
 | is_building | Boolean field indicating if this stock item is currently being built (or is "in production") |
-| purchase_order | Link to a [PurchaseOrder](./context_variables.md#purchaseorder) (if this stock item was created from a PurchaseOrder) |
+| purchase_order | Link to a [PurchaseOrder](./context_variables.md#purchase-order) (if this stock item was created from a PurchaseOrder) |
 | infinite | If True this [StockItem](./context_variables.md#stockitem) can never be exhausted |
 | sales_order | Link to a [SalesOrder](./context_variables.md#salesorder) object (if the StockItem has been assigned to a SalesOrder) |
 | purchase_price | The unit purchase price for this [StockItem](./context_variables.md#stockitem) - this is the unit price at time of purchase (if this item was purchased from an external supplier) |
