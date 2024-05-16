@@ -124,7 +124,10 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
   const newTestTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_test_template_list,
     title: t`Add Test Template`,
-    fields: partTestTemplateFields,
+    fields: useMemo(
+      () => ({ ...partTestTemplateFields }),
+      [partTestTemplateFields]
+    ),
     initialData: {
       part: partId
     },
@@ -137,8 +140,11 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
     title: t`Edit Test Template`,
-    fields: partTestTemplateFields,
-    table: table
+    table: table,
+    fields: useMemo(
+      () => ({ ...partTestTemplateFields }),
+      [partTestTemplateFields]
+    )
   });
 
   const deleteTestTemplate = useDeleteApiFormModal({

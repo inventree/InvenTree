@@ -17,6 +17,21 @@ export function RenderStockLocation({
   );
 }
 
+/**
+ * Inline rendering of a single StockLocationType instance
+ */
+export function RenderStockLocationType({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return (
+    <RenderInlineModel
+      primary={instance.name}
+      // TODO: render location icon here too (ref: #7237)
+      secondary={instance.description + ` (${instance.location_count})`}
+    />
+  );
+}
+
 export function RenderStockItem({
   instance
 }: Readonly<InstanceRenderInterface>): ReactNode {

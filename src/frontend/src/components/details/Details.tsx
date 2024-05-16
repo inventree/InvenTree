@@ -12,6 +12,7 @@ import {
   Tooltip
 } from '@mantine/core';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { getValueAtPath } from 'mantine-datatable';
 import { Suspense, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -43,7 +44,7 @@ export type PartIconsType = {
 export type DetailsField =
   | {
       hidden?: boolean;
-      icon?: string;
+      icon?: InvenTreeIconType;
       name: string;
       label?: string;
       badge?: BadgeType;
@@ -382,6 +383,11 @@ export function DetailsTableField({
 
   const FieldType: any = getFieldType(field.type);
 
+  const fieldValue = useMemo(
+    () => getValueAtPath(item, field.name) as string,
+    [item, field.name]
+  );
+
   return (
     <Table.Tr style={{ verticalAlign: 'top' }}>
       <Table.Td
@@ -390,16 +396,16 @@ export function DetailsTableField({
           maxWidth: '50'
         }}
       >
-        <InvenTreeIcon icon={(field.icon ?? field.name) as InvenTreeIconType} />
+        <InvenTreeIcon icon={field.icon ?? (field.name as InvenTreeIconType)} />
       </Table.Td>
       <Table.Td style={{ maxWidth: '65%' }}>
         <Text>{field.label}</Text>
       </Table.Td>
       <Table.Td style={{}}>
-        <FieldType field_data={field} field_value={item[field.name]} />
+        <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
       <Table.Td style={{ width: '50' }}>
-        {field.copy && <CopyField value={item[field.name]} />}
+        {field.copy && <CopyField value={fieldValue} />}
       </Table.Td>
     </Table.Tr>
   );
