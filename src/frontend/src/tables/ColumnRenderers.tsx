@@ -13,7 +13,7 @@ import { formatCurrency, renderDate } from '../defaults/formatters';
 import { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
-import { TableColumn } from './Column';
+import { TableColumn, TableColumnProps } from './Column';
 import { ProjectCodeHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
@@ -26,8 +26,9 @@ export function PartColumn(part: any, full_name?: boolean) {
   );
 }
 
-export function LocationColumn(props: TableColumn): TableColumn {
+export function LocationColumn(props: TableColumnProps): TableColumn {
   return {
+    accessor: 'location',
     title: t`Location`,
     sortable: true,
     ordering: 'location',
@@ -57,7 +58,7 @@ export function BooleanColumn(props: TableColumn): TableColumn {
   };
 }
 
-export function DescriptionColumn(props: TableColumn): TableColumn {
+export function DescriptionColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'description',
     title: t`Description`,
@@ -67,7 +68,7 @@ export function DescriptionColumn(props: TableColumn): TableColumn {
   };
 }
 
-export function LinkColumn(props: TableColumn): TableColumn {
+export function LinkColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'link',
     sortable: false,
@@ -97,7 +98,7 @@ export function LinkColumn(props: TableColumn): TableColumn {
   };
 }
 
-export function ReferenceColumn(props: TableColumn): TableColumn {
+export function ReferenceColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'reference',
     title: t`Reference`,
@@ -107,7 +108,7 @@ export function ReferenceColumn(props: TableColumn): TableColumn {
   };
 }
 
-export function NoteColumn(props: TableColumn): TableColumn {
+export function NoteColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'note',
     sortable: false,
@@ -131,7 +132,7 @@ export function LineItemsProgressColumn(): TableColumn {
   };
 }
 
-export function ProjectCodeColumn(props: TableColumn): TableColumn {
+export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'project_code',
     sortable: true,
@@ -158,7 +159,7 @@ export function StatusColumn({
   };
 }
 
-export function ResponsibleColumn(props: TableColumn): TableColumn {
+export function ResponsibleColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'responsible',
     sortable: true,
@@ -170,7 +171,7 @@ export function ResponsibleColumn(props: TableColumn): TableColumn {
   };
 }
 
-export function DateColumn(props: TableColumn): TableColumn {
+export function DateColumn(props: TableColumnProps): TableColumn {
   return {
     accessor: 'date',
     sortable: true,
@@ -182,7 +183,7 @@ export function DateColumn(props: TableColumn): TableColumn {
   };
 }
 
-export function TargetDateColumn(props: TableColumn): TableColumn {
+export function TargetDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'target_date',
     title: t`Target Date`,
@@ -190,7 +191,7 @@ export function TargetDateColumn(props: TableColumn): TableColumn {
   });
 }
 
-export function CreationDateColumn(props: TableColumn): TableColumn {
+export function CreationDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'creation_date',
     title: t`Creation Date`,
@@ -198,7 +199,7 @@ export function CreationDateColumn(props: TableColumn): TableColumn {
   });
 }
 
-export function ShipmentDateColumn(props: TableColumn): TableColumn {
+export function ShipmentDateColumn(props: TableColumnProps): TableColumn {
   return DateColumn({
     accessor: 'shipment_date',
     title: t`Shipment Date`,
