@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='salesorder',
             name='status',
-            field=models.PositiveIntegerField(choices=InvenTree.status_codes.SalesOrderStatus.items(), default=10, help_text='Purchase order status', verbose_name='Status', validators=[django.core.validators.MinValueValidator(0)]),
+            field=models.PositiveIntegerField(choices=InvenTree.status_codes.SalesOrderStatus.items(), default=10, help_text='Purchase order status', verbose_name='Status'),
         ),
     ]
