@@ -130,7 +130,6 @@ export function SettingList({
             <React.Fragment key={key}>
               {setting ? (
                 <SettingItem
-                  settingsState={settingsState}
                   setting={setting}
                   shaded={i % 2 === 0}
                   onEdit={onValueEdit}

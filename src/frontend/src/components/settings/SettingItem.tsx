@@ -11,9 +11,9 @@ import {
 import { IconEdit } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { SettingsStateProps } from '../../states/SettingsState';
 import { Setting } from '../../states/states';
 import { vars } from '../../theme';
+import { Boundary } from '../Boundary';
 
 /**
  * Render a single setting value
@@ -77,13 +77,11 @@ function SettingValue({
  * Display a single setting item, and allow editing of the value
  */
 export function SettingItem({
-  settingsState,
   setting,
   shaded,
   onEdit,
   onToggle
 }: {
-  settingsState: SettingsStateProps;
   setting: Setting;
   shaded: boolean;
   onEdit: (setting: Setting) => void;
@@ -107,7 +105,9 @@ export function SettingItem({
           </Text>
           <Text size="xs">{setting.description}</Text>
         </Stack>
-        <SettingValue setting={setting} onEdit={onEdit} onToggle={onToggle} />
+        <Boundary label={`setting-value-${setting.key}`}>
+          <SettingValue setting={setting} onEdit={onEdit} onToggle={onToggle} />
+        </Boundary>
       </Group>
     </Paper>
   );
