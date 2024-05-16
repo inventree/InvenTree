@@ -136,6 +136,7 @@ nav:
     - Project Codes: order/project_codes.md
   - Report:
     - Templates: report/templates.md
+    - Template Rendering: report/weasyprint.md
     - Template Editor: report/template_editor.md
     - Reports: report/report.md
     - Labels: report/labels.md
@@ -295,4 +296,4 @@ extra:
       link: https://reddit.com/r/inventree
 
 use_directory_urls: true
-strict: true
+strict: false

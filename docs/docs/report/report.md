@@ -2,7 +2,7 @@
 title: Report and LabelGeneration
 ---
 
-## Report and Label Generation
+## Custom Reports
 
 InvenTree supports a customizable reporting ecosystem, allowing the user to develop document templates that meet their particular needs.
 
@@ -44,21 +44,3 @@ For example, rendering the name of a part (which is available in the particular 
 </p></i>
 {% endraw %}
 ```
-
-
-
-
-
-
-## Report Types
-
-InvenTree supports the following reporting functionality:
-
-| Report Type | Description |
-| --- | --- |
-| [Test Report](./test.md) | Format results of a test report against for a particular StockItem |
-| [Build Order Report](./build.md) | Format a build order report |
-| [Purchase Order Report](./purchase_order.md) | Format a purchase order report |
-| [Sales Order Report](./sales_order.md) | Format a sales order report |
-| [Return Order Report](./return_order.md) | Format a return order report |
-| [Stock Location Report](./stock_location.md) | Format a stock location report |
