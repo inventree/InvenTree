@@ -1,10 +1,15 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartParameterFields } from '../../forms/CompanyForms';
-import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -45,34 +50,50 @@ export default function ManufacturerPartParameterTable({
 
   const fields = useManufacturerPartParameterFields();
 
+  const [selectedParameter, setSelectedParameter] = useState<
+    number | undefined
+  >(undefined);
+
+  const createParameter = useCreateApiFormModal({
+    url: ApiEndpoints.manufacturer_part_parameter_list,
+    title: t`Add Parameter`,
+    fields: fields,
+    table: table,
+    initialData: {
+      manufacturer_part: params.manufacturer_part
+    }
+  });
+
+  const editParameter = useEditApiFormModal({
+    url: ApiEndpoints.manufacturer_part_parameter_list,
+    pk: selectedParameter,
+    title: t`Edit Parameter`,
+    fields: fields,
+    table: table
+  });
+
+  const deleteParameter = useDeleteApiFormModal({
+    url: ApiEndpoints.manufacturer_part_parameter_list,
+    pk: selectedParameter,
+    title: t`Delete Parameter`,
+    table: table
+  });
+
   const rowActions = useCallback(
     (record: any) => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
-            openEditApiForm({
-              url: ApiEndpoints.manufacturer_part_parameter_list,
-              pk: record.pk,
-              title: t`Edit Parameter`,
-              fields: fields,
-              onFormSuccess: table.refreshTable,
-              successMessage: t`Parameter updated`
-            });
+            setSelectedParameter(record.pk);
+            editParameter.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
-            record.pk &&
-              openDeleteApiForm({
-                url: ApiEndpoints.manufacturer_part_parameter_list,
-                pk: record.pk,
-                title: t`Delete Parameter`,
-                onFormSuccess: table.refreshTable,
-                successMessage: t`Parameter deleted`,
-                preFormWarning: t`Are you sure you want to delete this parameter?`
-              });
+            setSelectedParameter(record.pk);
+            deleteParameter.open();
           }
         })
       ];
@@ -80,17 +101,35 @@ export default function ManufacturerPartParameterTable({
     [user]
   );
 
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add Parameter`}
+        onClick={() => {
+          createParameter.open();
+        }}
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+      />
+    ];
+  }, [user]);
+
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.manufacturer_part_parameter_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params
-        },
-        rowActions: rowActions
-      }}
-    />
+    <>
+      {createParameter.modal}
+      {editParameter.modal}
+      {deleteParameter.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.manufacturer_part_parameter_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params
+          },
+          rowActions: rowActions,
+          tableActions: tableActions
+        }}
+      />
+    </>
   );
 }
