@@ -28,17 +28,13 @@ export function PrintingActions({
 
   const enabled = useMemo(() => items.length > 0, [items]);
 
-  if (!modelType) {
-    return null;
-  }
-
-  if (!enableLabels && !enableReports) {
-    return null;
-  }
-
   const [pluginKey, setPluginKey] = useState<string>('');
 
   const loadFields = useCallback(() => {
+    if (!enableLabels) {
+      return;
+    }
+
     api
       .options(apiUrl(ApiEndpoints.label_print), {
         params: {
@@ -49,7 +45,7 @@ export function PrintingActions({
         setExtraFields(extractAvailableFields(response, 'POST') || {});
       })
       .catch(() => {});
-  }, [pluginKey]);
+  }, [enableLabels, pluginKey]);
 
   useEffect(() => {
     loadFields();
@@ -158,6 +154,14 @@ export function PrintingActions({
       }
     }
   });
+
+  if (!modelType) {
+    return null;
+  }
+
+  if (!enableLabels && !enableReports) {
+    return null;
+  }
 
   return (
     <>

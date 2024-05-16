@@ -90,7 +90,6 @@ class ReportFilterBase(rest_filters.FilterSet):
     )
 
     items = rest_filters.CharFilter(method='filter_items', label=_('Items'))
-    # items = rest_filters.AllValuesMultipleFilter(method='filter_items', label=_('Items'))
 
     def filter_items(self, queryset, name, values):
         """Filter against a comma-separated list of provided items.

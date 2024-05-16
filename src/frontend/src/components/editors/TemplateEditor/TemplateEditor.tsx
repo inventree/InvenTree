@@ -72,14 +72,12 @@ export type PreviewArea = {
 
 export type TemplateEditorProps = {
   templateUrl: string;
-  printingUrl: string;
-  templateType: 'label' | 'report';
   editors: Editor[];
   previewAreas: PreviewArea[];
   template: TemplateI;
 };
 
-export function TemplateEditor(props: TemplateEditorProps) {
+export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   const { templateUrl, editors, previewAreas, template } = props;
   const editorRef = useRef<EditorRef>();
   const previewRef = useRef<PreviewAreaRef>();

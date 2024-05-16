@@ -1,11 +1,9 @@
 import { Trans, t } from '@lingui/macro';
 import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { IconFileCode } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   CodeEditor,
@@ -16,7 +14,6 @@ import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { resolveItem } from '../../functions/conversion';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
@@ -29,7 +26,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { TableFilter, TableFilterChoice } from '../Filter';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowAction,
