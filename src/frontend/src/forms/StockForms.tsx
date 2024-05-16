@@ -819,6 +819,7 @@ export function stockLocationFields({}: {}): ApiFormFieldSet {
     description: {},
     structural: {},
     external: {},
+    icon: {},
     location_type: {}
   };
 

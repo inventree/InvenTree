@@ -25,7 +25,11 @@ import {
   RenderPartParameterTemplate,
   RenderPartTestTemplate
 } from './Part';
-import { RenderStockItem, RenderStockLocation } from './Stock';
+import {
+  RenderStockItem,
+  RenderStockLocation,
+  RenderStockLocationType
+} from './Stock';
 import { RenderOwner, RenderUser } from './User';
 
 type EnumDictionary<T extends string | symbol | number, U> = {
@@ -57,6 +61,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
   [ModelType.stocklocation]: RenderStockLocation,
+  [ModelType.stocklocationtype]: RenderStockLocationType,
   [ModelType.stockitem]: RenderStockItem,
   [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,

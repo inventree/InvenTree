@@ -268,7 +268,7 @@ export default function StockItemTestResultTable({
       result: true
     },
     title: t`Add Test Result`,
-    onFormSuccess: () => table.refreshTable(),
+    table: table,
     successMessage: t`Test result added`
   });
 
@@ -279,7 +279,7 @@ export default function StockItemTestResultTable({
     pk: selectedTest,
     fields: resultFields,
     title: t`Edit Test Result`,
-    onFormSuccess: () => table.refreshTable(),
+    table: table,
     successMessage: t`Test result updated`
   });
 
@@ -287,7 +287,7 @@ export default function StockItemTestResultTable({
     url: ApiEndpoints.stock_test_result_list,
     pk: selectedTest,
     title: t`Delete Test Result`,
-    onFormSuccess: () => table.refreshTable(),
+    table: table,
     successMessage: t`Test result deleted`
   });
 

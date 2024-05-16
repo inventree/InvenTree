@@ -133,6 +133,14 @@ export default function Stock() {
         type: 'boolean',
         name: 'external',
         label: t`External`
+      },
+      {
+        type: 'string',
+        // TODO: render location type icon here (ref: #7237)
+        name: 'location_type_detail.name',
+        label: t`Location Type`,
+        hidden: !location?.location_type,
+        icon: 'packages'
       }
     ];
 
