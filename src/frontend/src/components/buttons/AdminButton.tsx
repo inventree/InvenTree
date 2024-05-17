@@ -22,15 +22,15 @@ export type AdminButtonProps = {
  * This button is only rendered if:
  * - The admin interface is enabled for the server
  * - The selected model has an associated admin URL
- * - The user has "staff" role
+ * - The user has "superuser" role
  * - The user has at least read rights for the selected item
  */
 export default function AdminButton(props: AdminButtonProps) {
   const user = useUserState();
 
   const enabled: boolean = useMemo(() => {
-    // Only users with staff roles will see this button
-    if (!user || !user.isLoggedIn() || !user.isStaff()) {
+    // Only users with superuser permission will see this button
+    if (!user || !user.isLoggedIn() || !user.isSuperuser()) {
       return false;
     }
 
