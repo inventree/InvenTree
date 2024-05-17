@@ -13,6 +13,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -297,6 +298,7 @@ export default function SalesOrderDetail() {
 
   const soActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.salesorder} pk={order.pk} />,
       <ActionDropdown
         key="order-actions"
         tooltip={t`Order Actions`}
@@ -316,7 +318,7 @@ export default function SalesOrderDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, order]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
