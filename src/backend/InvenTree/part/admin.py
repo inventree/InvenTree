@@ -250,6 +250,8 @@ class PartAdmin(ImportExportModelAdmin):
         'category',
         'default_location',
         'default_supplier',
+        'bom_checked_by',
+        'creation_user',
     ]
 
     inlines = [PartParameterInline]
@@ -260,7 +262,7 @@ class PartPricingAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'overall_min', 'overall_max')
 
-    autcomplete_fields = ['part']
+    autocomplete_fields = ['part']
 
 
 class PartStocktakeAdmin(admin.ModelAdmin):
