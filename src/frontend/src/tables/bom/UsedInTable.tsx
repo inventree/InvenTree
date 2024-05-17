@@ -52,7 +52,7 @@ export function UsedInTable({
           );
         }
       },
-      ReferenceColumn()
+      ReferenceColumn({})
     ];
   }, [partId]);
 

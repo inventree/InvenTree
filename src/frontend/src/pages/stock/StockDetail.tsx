@@ -15,6 +15,7 @@ import {
 import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
@@ -409,6 +410,7 @@ export default function StockDetail() {
 
   const stockActions = useMemo(
     () => [
+      <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),

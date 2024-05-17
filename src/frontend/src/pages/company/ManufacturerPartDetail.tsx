@@ -10,6 +10,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -204,6 +205,10 @@ export default function ManufacturerPartDetail() {
 
   const manufacturerPartActions = useMemo(() => {
     return [
+      <AdminButton
+        model={ModelType.manufacturerpart}
+        pk={manufacturerPart.pk}
+      />,
       <ActionDropdown
         tooltip={t`Manufacturer Part Actions`}
         icon={<IconDots />}
@@ -222,7 +227,7 @@ export default function ManufacturerPartDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, manufacturerPart]);
 
   const breadcrumbs = useMemo(() => {
     return [
