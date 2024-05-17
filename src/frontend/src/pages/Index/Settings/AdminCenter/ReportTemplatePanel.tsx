@@ -7,7 +7,6 @@ export default function ReportTemplateTable() {
       templateProps={{
         templateEndpoint: ApiEndpoints.report_list,
         printingEndpoint: ApiEndpoints.report_print,
-        templateType: 'report',
         additionalFormFields: {
           page_size: {},
           landscape: {}

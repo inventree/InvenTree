@@ -151,3 +151,11 @@ test('PUI - Pages - Part - Pricing (Purchase)', async ({ page }) => {
     .waitFor();
   await page.getByText('2022-04-29').waitFor();
 });
+
+test('PUI - Pages - Part - Attachments', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/69/attachments`);
+
+  await page.waitForTimeout(5000);
+});

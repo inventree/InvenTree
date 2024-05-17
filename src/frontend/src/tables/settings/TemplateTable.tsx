@@ -1,11 +1,9 @@
 import { Trans, t } from '@lingui/macro';
 import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
 import { IconFileCode } from '@tabler/icons-react';
-import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import {
   CodeEditor,
@@ -16,7 +14,6 @@ import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { resolveItem } from '../../functions/conversion';
 import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
@@ -29,7 +26,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
-import { TableFilter, TableFilterChoice } from '../Filter';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowAction,
@@ -52,7 +49,6 @@ export type TemplateI = {
 export interface TemplateProps {
   templateEndpoint: ApiEndpoints;
   printingEndpoint: ApiEndpoints;
-  templateType: 'label' | 'report';
   additionalFormFields?: ApiFormFieldSet;
 }
 
@@ -63,7 +59,7 @@ export function TemplateDrawer({
   id: string | number;
   templateProps: TemplateProps;
 }) {
-  const { templateEndpoint, printingEndpoint, templateType } = templateProps;
+  const { templateEndpoint, printingEndpoint } = templateProps;
 
   const {
     instance: template,
@@ -100,7 +96,6 @@ export function TemplateDrawer({
       <TemplateEditor
         templateUrl={apiUrl(templateEndpoint, id)}
         printingUrl={apiUrl(printingEndpoint)}
-        templateType={templateType}
         template={template}
         editors={[CodeEditor]}
         previewAreas={[PdfPreview]}
@@ -114,10 +109,9 @@ export function TemplateTable({
 }: {
   templateProps: TemplateProps;
 }) {
-  const { templateEndpoint, templateType, additionalFormFields } =
-    templateProps;
+  const { templateEndpoint, additionalFormFields } = templateProps;
 
-  const table = useTable(`${templateType}-template`);
+  const table = useTable(`${templateEndpoint}-template`);
   const navigate = useNavigate();
   const user = useUserState();
 
@@ -234,7 +228,7 @@ export function TemplateTable({
     url: templateEndpoint,
     pk: selectedTemplate,
     title: t`Delete template`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const newTemplate = useCreateApiFormModal({
@@ -250,7 +244,7 @@ export function TemplateTable({
   const tableActions: ReactNode[] = useMemo(() => {
     return [
       <AddItemButton
-        key={`add-${templateType}`}
+        key="add-template"
         onClick={() => newTemplate.open()}
         tooltip={t`Add template`}
       />

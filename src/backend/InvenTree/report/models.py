@@ -241,6 +241,20 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         """Return a filter dict which can be applied to the target model."""
         return report.validators.validate_filters(self.filters, model=self.get_model())
 
+    def base_context(self, request=None):
+        """Return base context data (available to all templates)."""
+        return {
+            'base_url': get_base_url(request=request),
+            'date': InvenTree.helpers.current_date(),
+            'datetime': InvenTree.helpers.current_time(),
+            'request': request,
+            'template': self,
+            'template_description': self.description,
+            'template_name': self.name,
+            'template_revision': self.revision,
+            'user': request.user if request else None,
+        }
+
     def get_context(self, instance, request=None, **kwargs):
         """Supply context data to the generic template for rendering.
 
@@ -249,18 +263,7 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
             request: The request object (optional)
         """
         # Provide base context information to all templates
-        base_context = {
-            'base_url': get_base_url(request=request),
-            'date': InvenTree.helpers.current_date(),
-            'datetime': InvenTree.helpers.current_time(),
-            'template': self,
-            'template_description': self.description,
-            'template_name': self.name,
-            'template_revision': self.revision,
-        }
-
-        if request is not None:
-            base_context['user'] = request.user
+        base_context = self.base_context(request=request)
 
         # Add in an context information provided by the model instance itself
         context = {**base_context, **instance.report_context()}

@@ -136,12 +136,14 @@ nav:
     - Project Codes: order/project_codes.md
   - Report:
     - Templates: report/templates.md
+    - Template Rendering: report/weasyprint.md
     - Template Editor: report/template_editor.md
     - Reports: report/report.md
     - Labels: report/labels.md
     - Context Variables: report/context_variables.md
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md
+    - Sample Templates: report/samples.md
   - Admin:
     - Global Settings: settings/global.md
     - User Settings: settings/user.md
@@ -229,6 +231,7 @@ plugins:
         on_config: "docs.docs.hooks:on_config"
   - macros:
       include_dir: docs/_includes
+      module_name: main
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -238,6 +241,8 @@ plugins:
           options:
             show_symbol_type_heading: true
             show_symbol_type_toc: true
+            show_root_heading: false
+            show_root_toc_entry: false
 
 # Extensions
 markdown_extensions:

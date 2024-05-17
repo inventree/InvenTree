@@ -34,6 +34,7 @@ import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -746,6 +747,7 @@ export default function PartDetail() {
 
   const partActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.part} pk={part.pk} />,
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),

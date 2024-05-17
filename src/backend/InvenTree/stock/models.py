@@ -148,9 +148,10 @@ class StockLocation(
         """Return report context data for this StockLocation."""
         return {
             'location': self,
+            'qr_data': self.format_barcode(brief=True),
+            'parent': self.parent,
             'stock_location': self,
             'stock_items': self.get_stock_items(),
-            'qr_data': self.format_barcode(brief=True),
         }
 
     custom_icon = models.CharField(
@@ -433,25 +434,27 @@ class StockItem(
     def report_context(self):
         """Generate custom report context data for this StockItem."""
         return {
-            'item': self,
-            'stock_item': self,
-            'serial': self.serial,
-            'quantity': InvenTree.helpers.normalize(self.quantity),
             'barcode_data': self.barcode_data,
             'barcode_hash': self.barcode_hash,
+            'batch': self.batch,
+            'child_items': self.get_children(),
+            'ipn': self.part.IPN,
+            'installed_items': self.get_installed_items(cascade=True),
+            'item': self,
+            'name': self.part.full_name,
+            'part': self.part,
             'qr_data': self.format_barcode(brief=True),
             'qr_url': self.get_absolute_url(),
-            'part': self.part,
-            'name': self.part.full_name,
-            'ipn': self.part.IPN,
             'parameters': self.part.parameters_map(),
+            'quantity': InvenTree.helpers.normalize(self.quantity),
+            'result_list': self.testResultList(include_installed=True),
+            'results': self.testResultMap(include_installed=True),
+            'serial': self.serial,
+            'stock_item': self,
             'tests': self.testResultMap(),
             'test_keys': self.get_test_keys(),
             'test_template_list': self.part.getTestTemplates(),
-            'test_template_map': self.part.getTestTemplateMap(),
-            'results': self.testResultMap(include_installed=True),
-            'result_list': self.testResultList(include_installed=True),
-            'installed_items': self.get_installed_items(cascade=True),
+            'test_templates': self.part.getTestTemplateMap(),
         }
 
     tags = TaggableManager(blank=True)

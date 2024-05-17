@@ -15,6 +15,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -346,8 +347,8 @@ export default function BuildDetail() {
   });
 
   const buildActions = useMemo(() => {
-    // TODO: Disable certain actions based on user permissions
     return [
+      <AdminButton model={ModelType.build} pk={build.pk} />,
       <ActionDropdown
         tooltip={t`Barcode Actions`}
         icon={<IconQrcode />}
@@ -376,7 +377,8 @@ export default function BuildDetail() {
           }),
           CancelItemAction({
             tooltip: t`Cancel order`,
-            onClick: () => cancelBuild.open()
+            onClick: () => cancelBuild.open(),
+            hidden: !user.hasChangeRole(UserRoles.build)
             // TODO: Hide if build cannot be cancelled
           }),
           DuplicateItemAction({

@@ -151,13 +151,13 @@ class Build(
         """Generate custom report context data."""
 
         return {
+            'bom_items': self.part.get_bom_items(),
             'build': self,
-            'part': self.part,
             'build_outputs': self.build_outputs.all(),
             'line_items': self.build_lines.all(),
-            'bom_items': self.part.get_bom_items(),
-            'reference': self.reference,
+            'part': self.part,
             'quantity': self.quantity,
+            'reference': self.reference,
             'title': str(self)
         }
 
@@ -1346,13 +1346,13 @@ class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeMo
         """Generate custom report context for this BuildLine object."""
 
         return {
-            'build_line': self,
-            'build': self.build,
-            'bom_item': self.bom_item,
-            'part': self.bom_item.sub_part,
-            'quantity': self.quantity,
             'allocated_quantity': self.allocated_quantity,
             'allocations': self.allocations,
+            'bom_item': self.bom_item,
+            'build': self.build,
+            'build_line': self,
+            'part': self.bom_item.sub_part,
+            'quantity': self.quantity,
         }
 
     build = models.ForeignKey(

@@ -45,18 +45,19 @@ InvenTree is supplied with a number of default templates "out of the box" - for 
 
 The [ReportMixin plugin class](../extend/plugins/report.md) allows reporting functionality to be extended with custom features.
 
-## WeasyPrint Templates
+## WeasyPrint Template Rendering
 
 InvenTree report templates utilize the powerful [WeasyPrint](https://weasyprint.org/) PDF generation engine.
 
 To read more about the capabilities of the report templating engine, and how to use it, refer to the [weasyprint documentation](./weasyprint.md).
 
-
 ## Creating Templates
 
-Report templates can be created (and edited) via the [admin interface](../settings/admin.md), under the *Report* section. Select the certain type of report template you are wanting to create, and press the *Add* button in the top right corner:
+Report and label templates can be created (and edited) via the [admin interface](../settings/admin.md), under the *Report* section.
 
-{% with id="report-create", url="report/add_report_template.png", description="Create new report" %}
+Select the type of template you are wanting to create (a *Report Template* or *Label Template*) and press the *Add* button in the top right corner:
+
+{% with id="report-list", url="report/report_template_admin.png", description="Report templates in admin interface" %}
 {% include 'img.html' %}
 {% endwith %}
 
@@ -81,18 +82,18 @@ Boolean field which determines if the specific report template is enabled, and a
 
 The filename pattern used to generate the output `.pdf` file. Defaults to "report.pdf".
 
-The filename pattern allows custom rendering with any context variables which are available to the report. For example, a [test report](./test.md) for a particular [Stock Item](../stock/stock.md#stock-item) can use the part name and serial number of the stock item when generating the report name:
+The filename pattern allows custom rendering with any context variables which are available to the report. For example, a test report for a particular [Stock Item](../stock/stock.md#stock-item) can use the part name and serial number of the stock item when generating the report name:
 
 {% with id="report-filename-pattern", url="report/filename_pattern.png", description="Report filename pattern" %}
 {% include 'img.html' %}
 {% endwith %}
 
 
-### Report Filters
+### Template Filters
 
-Each type of report provides a *filters* field, which can be used to filter which items a report can be generated against. The target of the *filters* field depends on the type of report - refer to the documentation on the specific report type for more information.
+Each template instance provides a *filters* field, which can be used to filter which items a report or label template can be generated against. The target of the *filters* field depends on the model type associated with the particular template.
 
-For example, the [Test Report](./test.md) filter targets the linked [Stock Item](../stock/status.md) object, and can be used to select which stock items are allowed for the given report. Let's say that a certain test report should only be generated for "trackable" stock items. A filter could easily be constructed to accommodate this, by limiting available items to those where the associated [Part](../part/part.md) is *trackable*:
+As an example, let's say that a certain `StockItem` report should only be generated for "trackable" stock items. A filter could easily be constructed to accommodate this, by limiting available items to those where the associated [Part](../part/part.md) is *trackable*:
 
 {% with id="report-filter-valid", url="report/filters_valid.png", description="Report filter  selection" %}
 {% include 'img.html' %}
@@ -110,8 +111,6 @@ If you enter an invalid option for the filter field, an error message will be di
 ### Metadata
 
 A JSON field made available to any [plugins](../extend/plugins.md) - but not used by internal code.
-
-
 
 ## Reporting Options
 
