@@ -88,7 +88,7 @@ export function PurchaseOrderLineItemTable({
         sortable: false,
         render: (record: any) => record?.part_detail?.description
       },
-      ReferenceColumn(),
+      ReferenceColumn({}),
       {
         accessor: 'quantity',
         title: t`Quantity`,
@@ -170,7 +170,7 @@ export function PurchaseOrderLineItemTable({
         title: t`Unit Price`
       }),
       TotalPriceColumn(),
-      TargetDateColumn(),
+      TargetDateColumn({}),
       {
         accessor: 'destination',
         title: t`Destination`,
@@ -180,7 +180,7 @@ export function PurchaseOrderLineItemTable({
             ? RenderStockLocation({ instance: record.destination_detail })
             : '-'
       },
-      NoteColumn(),
+      NoteColumn({}),
       LinkColumn({})
     ];
   }, [orderId, user]);
