@@ -7,7 +7,6 @@ export default function LabelTemplatePanel() {
       templateProps={{
         templateEndpoint: ApiEndpoints.label_list,
         printingEndpoint: ApiEndpoints.label_print,
-        templateType: 'label',
         additionalFormFields: {
           width: {},
           height: {}
