@@ -106,6 +106,17 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         self.assertIn('object does not exist', str(response.data['template']))
         self.assertIn('list may not be empty', str(response.data['items']))
 
+        # Plugin is not a label plugin
+        no_valid_plg = registry.get_plugin('digikeyplugin').plugin_config()
+        response = self.post(
+            url,
+            {'template': template.pk, 'plugin': no_valid_plg.key, 'items': [1, 2, 3]},
+            expected_code=400,
+        )
+        self.assertIn(
+            'Plugin does not support label printing', str(response.data['plugin'])
+        )
+
         # Find available plugins
         plugins = registry.with_mixin('labels')
         self.assertGreater(len(plugins), 0)
