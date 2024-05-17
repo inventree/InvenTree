@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-17 02:26+0000\n"
-"PO-Revision-Date: 2024-05-10 08:31\n"
+"PO-Revision-Date: 2024-05-17 03:25\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -19,42 +19,42 @@ msgstr ""
 
 #: InvenTree/api.py:271
 msgid "API endpoint not found"
-msgstr ""
+msgstr "Endpoint de API no encontrado"
 
 #: InvenTree/api.py:535
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "El usuario no tiene permiso para ver este modelo"
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Unidad proporcionada no válida ({unit})"
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr ""
+msgstr "Ningún valor proporcionado"
 
 #: InvenTree/conversion.py:204
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "No se pudo convertir {original} a {unit}"
 
 #: InvenTree/conversion.py:206
 msgid "Invalid quantity supplied"
-msgstr ""
+msgstr "La cantidad suministrada es inválida"
 
 #: InvenTree/conversion.py:220
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr ""
+msgstr "La cantidad suministrada es inválida ({exc})"
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "Detalles del error pueden encontrarse en el panel de administración"
 
 #: InvenTree/fields.py:139
 msgid "Enter date"
-msgstr ""
+msgstr "Ingrese la fecha"
 
 #: InvenTree/fields.py:208 InvenTree/models.py:1021 build/serializers.py:444
 #: build/serializers.py:522 build/templates/build/sidebar.html:21
@@ -77,7 +77,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:2019
 #: templates/js/translated/stock.js:1536 templates/js/translated/stock.js:2430
 msgid "Notes"
-msgstr ""
+msgstr "Notas"
 
 #: InvenTree/format.py:164
 #, python-brace-format
@@ -90,78 +90,78 @@ msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr ""
+msgstr "Ingresa tu contraseña"
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr ""
+msgstr "Ingrese su nueva contraseña"
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr ""
+msgstr "Confirma la contraseña"
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr ""
+msgstr "Confirma la nueva contraseña"
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr ""
+msgstr "Contraseña anterior"
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr ""
+msgstr "Email (de nuevo)"
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Confirmación de correo electrónico"
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "El correo electrónico debe coincidir."
 
 #: InvenTree/forms.py:253 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "La dirección de correo electrónico principal proporcionada no es válida."
 
 #: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "El dominio de correo electrónico proporcionado no está aprobado."
 
 #: InvenTree/forms.py:395
 msgid "Registration is disabled."
-msgstr ""
+msgstr "El registro ha sido desactivado."
 
 #: InvenTree/helpers.py:525 order/models.py:541 order/models.py:743
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Cantidad proporcionada no válida"
 
 #: InvenTree/helpers.py:533
 msgid "Empty serial number string"
-msgstr ""
+msgstr "No se ha proporcionado un número de serie"
 
 #: InvenTree/helpers.py:562
 msgid "Duplicate serial"
-msgstr ""
+msgstr "Número de serie duplicado"
 
 #: InvenTree/helpers.py:594 InvenTree/helpers.py:637
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr ""
+msgstr "Rango de grupo inválido: {group}"
 
 #: InvenTree/helpers.py:625
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr ""
+msgstr "El rango del grupo {group} supera la cantidad permitida ({expected_quantity})"
 
 #: InvenTree/helpers.py:655 InvenTree/helpers.py:662 InvenTree/helpers.py:681
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr ""
+msgstr "Secuencia de grupo inválida: {group}"
 
 #: InvenTree/helpers.py:691
 msgid "No serial numbers found"
-msgstr ""
+msgstr "No se encontraron números de serie"
 
 #: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
@@ -14302,3 +14302,4 @@ msgstr ""
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr ""
+
