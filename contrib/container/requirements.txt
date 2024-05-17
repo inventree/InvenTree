@@ -11,12 +11,15 @@ django==4.2.11 \
 django-auth-ldap==4.8.0 \
     --hash=sha256:4b4b944f3c28bce362f33fb6e8db68429ed8fd8f12f0c0c4b1a4344a7ef225ce \
     --hash=sha256:604250938ddc9fda619f247c7a59b0b2f06e53a7d3f46a156f28aa30dd71a738
+    # via -r contrib/container/requirements.in
 gunicorn==22.0.0 \
     --hash=sha256:350679f91b24062c86e386e198a15438d53a7a8207235a78ba1b53df4c4378d9 \
     --hash=sha256:4a0b436239ff76fb33f11c07a16482c521a7e09c1ce3cc293c2330afe01bec63
+    # via -r contrib/container/requirements.in
 invoke==2.2.0 \
     --hash=sha256:6ea924cc53d4f78e3d98bc436b08069a03077e6f85ad1ddaa8a116d7dad15820 \
     --hash=sha256:ee6cbb101af1a859c7fe84f2a264c059020b0cb7fe3535f9424300ab568f6bd5
+    # via -r contrib/container/requirements.in
 mariadb==1.1.10 \
     --hash=sha256:03d6284ef713d1cad40146576a4cc2d6cbc1662060f2a0e59b174e1694521698 \
     --hash=sha256:1ce87971c02375236ff8933e6c593c748e7b2f2950b86eabfab4289fd250ea63 \
@@ -29,6 +32,7 @@ mariadb==1.1.10 \
     --hash=sha256:a332893e3ef7ceb7970ab4bd7c844bcb4bd68a051ca51313566f9808d7411f2d \
     --hash=sha256:d7b09ec4abd02ed235257feb769f90cd4066e8f536b55b92f5166103d5b66a63 \
     --hash=sha256:dff8b28ce4044574870d7bdd2d9f9f5da8e5f95a7ff6d226185db733060d1a93
+    # via -r contrib/container/requirements.in
 mysqlclient==2.2.4 \
     --hash=sha256:329e4eec086a2336fe3541f1ce095d87a6f169d1cc8ba7b04ac68bcb234c9711 \
     --hash=sha256:33bc9fb3464e7d7c10b1eaf7336c5ff8f2a3d3b88bab432116ad2490beb3bf41 \
@@ -39,6 +43,7 @@ mysqlclient==2.2.4 \
     --hash=sha256:ac44777eab0a66c14cb0d38965572f762e193ec2e5c0723bcd11319cc5b693c5 \
     --hash=sha256:d43987bb9626096a302ca6ddcdd81feaeca65ced1d5fe892a6a66b808326aa54 \
     --hash=sha256:e1ebe3f41d152d7cb7c265349fdb7f1eca86ccb0ca24a90036cde48e00ceb2ab
+    # via -r contrib/container/requirements.in
 packaging==24.0 \
     --hash=sha256:2ddfb553fdf02fb784c234c7ba6ccc288296ceabec964ad2eae3777778130bc5 \
     --hash=sha256:eb82c5e3e56209074766e6885bb04b8c38a0c015d0a30036ebe7ece34c9989e9
@@ -48,6 +53,7 @@ packaging==24.0 \
 psycopg[binary, pool]==3.1.18 \
     --hash=sha256:31144d3fb4c17d78094d9e579826f047d4af1da6a10427d91dfcfb6ecdf6f12b \
     --hash=sha256:4d5a0a5a8590906daa58ebd5f3cfc34091377354a1acced269dd10faf55da60e
+    # via -r contrib/container/requirements.in
 psycopg-binary==3.1.18 \
     --hash=sha256:02bd4da45d5ee9941432e2e9bf36fa71a3ac21c6536fe7366d1bd3dd70d6b1e7 \
     --hash=sha256:0f68ac2364a50d4cf9bb803b4341e83678668f1881a253e1224574921c69868c \
@@ -131,7 +137,9 @@ pyasn1-modules==0.4.0 \
     # via python-ldap
 python-ldap==3.4.4 \
     --hash=sha256:7edb0accec4e037797705f3a05cbf36a9fde50d08c8f67f2aef99a2628fab828
-    # via django-auth-ldap
+    # via
+    #   -r contrib/container/requirements.in
+    #   django-auth-ldap
 pyyaml==6.0.1 \
     --hash=sha256:04ac92ad1925b2cff1db0cfebffb6ffc43457495c9b3c39d3fcae417d7125dc5 \
     --hash=sha256:062582fca9fabdd2c8b54a3ef1c978d786e0f6b3a1510e0ac93ef59e0ddae2bc \
@@ -184,9 +192,11 @@ pyyaml==6.0.1 \
     --hash=sha256:fca0e3a251908a499833aa292323f32437106001d436eca0e6e7833256674585 \
     --hash=sha256:fd1592b3fdf65fff2ad0004b5e363300ef59ced41c2e6b3a99d4089fa8c5435d \
     --hash=sha256:fd66fc5d0da6d9815ba2cebeb4205f95818ff4b79c3ebe268e75d961704af52f
+    # via -r contrib/container/requirements.in
 setuptools==69.5.1 \
     --hash=sha256:6c1fccdac05a97e598fb0ae3bbed5904ccb317337a51139dcd51453611bbb987 \
     --hash=sha256:c636ac361bc47580504644275c9ad802c50415c7522212252c033bd15f301f32
+    # via -r contrib/container/requirements.in
 sqlparse==0.5.0 \
     --hash=sha256:714d0a4932c059d16189f58ef5411ec2287a4360f17cdd0edd2d09d4c5087c93 \
     --hash=sha256:c204494cd97479d0e39f28c93d46c0b2d5959c7b9ab904762ea6c7af211c8663
@@ -215,6 +225,8 @@ uv==0.1.38 \
     --hash=sha256:b0b15e51a0f8240969bc412ed0dd60cfe3f664b30173139ef263d71c596d631f \
     --hash=sha256:ea44c07605d1359a7d82bf42706dd86d341f15f4ca2e1f36e51626a7111c2ad5 \
     --hash=sha256:f87c9711493c53d32012a96b49c4d53aabdf7ed666cbf2c3fb55dd402a6b31a8
+    # via -r contrib/container/requirements.in
 wheel==0.43.0 \
     --hash=sha256:465ef92c69fa5c5da2d1cf8ac40559a8c940886afcef87dcf14b9470862f1d85 \
     --hash=sha256:55c570405f142630c6b9f72fe09d9b67cf1477fcf543ae5b8dcb1f5b7377da81
+    # via -r contrib/container/requirements.in
