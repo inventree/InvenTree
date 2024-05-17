@@ -4,13 +4,13 @@ import { ReactNode } from 'react';
 import { notYetImplemented } from '../../functions/notifications';
 
 export type ActionButtonProps = {
-  key?: string;
   icon?: ReactNode;
   text?: string;
   color?: string;
   tooltip?: string;
   variant?: string;
   size?: number | string;
+  radius?: number | string;
   disabled?: boolean;
   onClick?: any;
   hidden?: boolean;
@@ -26,15 +26,16 @@ export function ActionButton(props: ActionButtonProps) {
   return (
     !hidden && (
       <Tooltip
-        key={`tooltip-${props.key}`}
+        key={`tooltip-${props.text}`}
         disabled={!props.tooltip && !props.text}
         label={props.tooltip ?? props.text}
         position={props.tooltipAlignment ?? 'left'}
       >
         <ActionIcon
-          key={`action-icon-${props.key}`}
+          key={`action-icon-${props.text}`}
           disabled={props.disabled}
-          radius="xs"
+          p={17}
+          radius={props.radius ?? 'xs'}
           color={props.color}
           size={props.size}
           onClick={props.onClick ?? notYetImplemented}
