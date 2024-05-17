@@ -1,13 +1,10 @@
 """Unit testing for the various report models."""
 
-import os
-import shutil
 from io import StringIO
 
 from django.apps import apps
 from django.conf import settings
 from django.core.cache import cache
-from django.http.response import StreamingHttpResponse
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -17,10 +14,12 @@ import pytz
 from PIL import Image
 
 import report.models as report_models
-from build.models import Build
-from common.models import InvenTreeSetting, InvenTreeUserSetting
-from InvenTree.files import MEDIA_STORAGE_DIR, TEMPLATES_DIR
+from build.models import Build, BuildLine
+from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
+from order.models import Order, PurchaseOrder, ReturnOrder, SalesOrder
+from plugin.registry import registry
+from report.models import LabelTemplate, ReportTemplate
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
 from stock.models import StockItem, StockItemAttachment
@@ -234,6 +233,9 @@ class ReportTest(InvenTreeAPITestCase):
         'stock_tests',
         'bom',
         'build',
+        'order',
+        'return_order',
+        'sales_order',
     ]
 
     superuser = True
@@ -414,7 +416,52 @@ class ReportTest(InvenTreeAPITestCase):
             self.assertEqual(len(p.metadata.keys()), 4)
 
 
-class TestReportTest(ReportTest):
+class PrintTestMixins:
+    """Mixin that enables e2e printing tests."""
+
+    plugin_ref = 'samplelabelprinter'
+
+    def do_activate_plugin(self):
+        """Activate the 'samplelabel' plugin."""
+        config = registry.get_plugin(self.plugin_ref).plugin_config()
+        config.active = True
+        config.save()
+
+    def run_print_test(self, qs, model_type, label: bool = True):
+        """Run tests on single and multiple page printing.
+
+        Args:
+            qs: class of the base queryset
+            model_type: the model type of the queryset
+            label: whether the model is a label or report
+        """
+        mdl = LabelTemplate if label else ReportTemplate
+        url = reverse('api-label-print' if label else 'api-report-print')
+
+        qs = qs.objects.all()
+        template = mdl.objects.filter(enabled=True, model_type=model_type).first()
+        plugin = registry.get_plugin(self.plugin_ref)
+
+        # Single page printing
+        self.post(
+            url,
+            {'template': template.pk, 'plugin': plugin.pk, 'items': [qs[0].pk]},
+            expected_code=201,
+        )
+
+        # Multi page printing
+        self.post(
+            url,
+            {
+                'template': template.pk,
+                'plugin': plugin.pk,
+                'items': [item.pk for item in qs],
+            },
+            expected_code=201,
+        )
+
+
+class TestReportTest(PrintTestMixins, ReportTest):
     """Unit testing class for the stock item TestReport model."""
 
     model = report_models.ReportTemplate
@@ -426,6 +473,7 @@ class TestReportTest(ReportTest):
     def setUp(self):
         """Setup function for the stock item TestReport."""
         apps.get_app_config('report').create_default_reports()
+        self.do_activate_plugin()
 
         return super().setUp()
 
@@ -469,3 +517,15 @@ class TestReportTest(ReportTest):
         # Check that a report has been uploaded
         attachment = StockItemAttachment.objects.filter(stock_item=item).first()
         self.assertIsNotNone(attachment)
+
+    def test_mdl_build(self):
+        """Test the Build model."""
+        self.run_print_test(Build, 'build', label=False)
+
+    def test_mdl_returnorder(self):
+        """Test the ReturnOrder model."""
+        self.run_print_test(ReturnOrder, 'returnorder', label=False)
+
+    def test_mdl_salesorder(self):
+        """Test the SalesOrder model."""
+        self.run_print_test(SalesOrder, 'salesorder', label=False)

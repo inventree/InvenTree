@@ -18,22 +18,17 @@ from plugin.helpers import MixinNotImplementedError
 from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
+from report.tests import PrintTestMixins
 from stock.models import StockItem, StockLocation
 
 
-class LabelMixinTests(InvenTreeAPITestCase):
+class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
     """Test that the Label mixin operates correctly."""
 
     fixtures = ['category', 'part', 'location', 'stock']
 
     roles = 'all'
     plugin_ref = 'samplelabelprinter'
-
-    def do_activate_plugin(self):
-        """Activate the 'samplelabel' plugin."""
-        config = registry.get_plugin(self.plugin_ref).plugin_config()
-        config.active = True
-        config.save()
 
     @property
     def printing_url(self):
@@ -243,42 +238,11 @@ class LabelMixinTests(InvenTreeAPITestCase):
         apps.get_app_config('report').create_default_labels()
         self.do_activate_plugin()
 
-        def run_print_test(qs, model_type):
-            """Run tests on single and multiple page printing.
-
-            Args:
-                qs: class of the base queryset
-                model_type: the model type of the queryset
-            """
-            qs = qs.objects.all()
-            template = LabelTemplate.objects.filter(
-                enabled=True, model_type=model_type
-            ).first()
-            plugin = registry.get_plugin(self.plugin_ref)
-
-            # Single page printing
-            self.post(
-                self.printing_url,
-                {'template': template.pk, 'plugin': plugin.pk, 'items': [qs[0].pk]},
-                expected_code=201,
-            )
-
-            # Multi page printing
-            self.post(
-                self.printing_url,
-                {
-                    'template': template.pk,
-                    'plugin': plugin.pk,
-                    'items': [item.pk for item in qs],
-                },
-                expected_code=201,
-            )
-
         # Test StockItemLabel
-        run_print_test(StockItem, 'stockitem')
+        self.run_print_test(StockItem, 'stockitem')
 
         # Test StockLocationLabel
-        run_print_test(StockLocation, 'stocklocation')
+        self.run_print_test(StockLocation, 'stocklocation')
 
         # Test PartLabel
-        run_print_test(Part, 'part')
+        self.run_print_test(Part, 'part')
