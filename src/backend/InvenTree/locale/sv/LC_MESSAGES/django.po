@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-17 02:26+0000\n"
-"PO-Revision-Date: 2024-05-10 08:31\n"
+"PO-Revision-Date: 2024-05-17 03:25\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -325,7 +325,7 @@ msgstr "Turkiska"
 
 #: InvenTree/locales.py:48
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrainska"
 
 #: InvenTree/locales.py:49
 msgid "Vietnamese"
@@ -2948,7 +2948,7 @@ msgstr ""
 
 #: common/models.py:1908
 msgid "Enable registration"
-msgstr ""
+msgstr "Aktivera registrering"
 
 #: common/models.py:1909
 msgid "Enable self-registration for users on the login pages"
@@ -3288,7 +3288,7 @@ msgstr ""
 
 #: common/models.py:2237
 msgid "Show News"
-msgstr ""
+msgstr "Visa nyheter"
 
 #: common/models.py:2238
 msgid "Show news on the homepage"
@@ -5853,10 +5853,8 @@ msgstr ""
 
 #: order/templates/order/sales_order_base.html:91
 #: order/templates/order/sales_order_base.html:92
-#, fuzzy
-#| msgid "Mark as read"
 msgid "Mark As Shipped"
-msgstr "Markera som läst"
+msgstr ""
 
 #: order/templates/order/sales_order_base.html:96
 #: templates/js/translated/sales_order.js:536
@@ -9666,10 +9664,8 @@ msgid "You are not in the list of owners of this location. This stock location c
 msgstr ""
 
 #: stock/templates/stock/location.html:176
-#, fuzzy
-#| msgid "Location"
 msgid "Location Type"
-msgstr "Plats"
+msgstr ""
 
 #: stock/templates/stock/location.html:224
 msgid "Create new stock location"
@@ -13028,10 +13024,8 @@ msgid "Skip"
 msgstr ""
 
 #: templates/js/translated/sales_order.js:484
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Ship Sales Order"
-msgstr "Försäljningsorder"
+msgstr ""
 
 #: templates/js/translated/sales_order.js:500
 msgid "Ship this order?"
@@ -14308,3 +14302,4 @@ msgstr ""
 #: users/models.py:426
 msgid "Permission to delete items"
 msgstr ""
+
