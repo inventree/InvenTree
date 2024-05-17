@@ -31,23 +31,23 @@ repos:
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, --python-version=3.9, --no-strip-extras, --generate-hashes]
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [src/backend/requirements.in, -o, src/backend/requirements.txt,--python-version=3.9, --no-strip-extras,--generate-hashes]
+        args: [src/backend/requirements.in, -o, src/backend/requirements.txt]
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [.github/requirements.in, -o, .github/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
+        args: [.github/requirements.in, -o, .github/requirements.txt]
         files: .github/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [docs/requirements.in, -o, docs/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
+        args: [docs/requirements.in, -o, docs/requirements.txt]
         files: docs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt,--python-version=3.11, --no-strip-extras, --generate-hashes]
+        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11]
         files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.1
