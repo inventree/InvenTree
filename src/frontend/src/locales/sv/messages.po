@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-13 02:48\n"
+"PO-Revision-Date: 2024-05-17 03:24\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1350,7 +1350,7 @@ msgstr "Antal"
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
 #~ msgid "{0} updated successfully"
-#~ msgstr ""
+#~ msgstr "{0} updated successfully"
 
 #: src/components/settings/SettingList.tsx:54
 msgid "Edit Setting"
@@ -1932,7 +1932,7 @@ msgstr "Turkiska"
 
 #: src/contexts/LanguageContext.tsx:49
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrainska"
 
 #: src/contexts/LanguageContext.tsx:50
 msgid "Vietnamese"
@@ -2249,43 +2249,43 @@ msgstr ""
 
 #: src/forms/AttachmentForms.tsx:57
 #~ msgid "Add File"
-#~ msgstr ""
+#~ msgstr "Add File"
 
 #: src/forms/AttachmentForms.tsx:57
 #~ msgid "Add Link"
-#~ msgstr ""
+#~ msgstr "Add Link"
 
 #: src/forms/AttachmentForms.tsx:58
 #~ msgid "File added"
-#~ msgstr ""
+#~ msgstr "File added"
 
 #: src/forms/AttachmentForms.tsx:58
 #~ msgid "Link added"
-#~ msgstr ""
+#~ msgstr "Link added"
 
 #: src/forms/AttachmentForms.tsx:99
 #~ msgid "Edit File"
-#~ msgstr "Redigera fil"
+#~ msgstr "Edit File"
 
 #: src/forms/AttachmentForms.tsx:99
 #~ msgid "Edit Link"
-#~ msgstr "Redigera länk"
+#~ msgstr "Edit Link"
 
 #: src/forms/AttachmentForms.tsx:100
 #~ msgid "File updated"
-#~ msgstr ""
+#~ msgstr "File updated"
 
 #: src/forms/AttachmentForms.tsx:100
 #~ msgid "Link updated"
-#~ msgstr ""
+#~ msgstr "Link updated"
 
 #: src/forms/AttachmentForms.tsx:125
 #~ msgid "Attachment deleted"
-#~ msgstr ""
+#~ msgstr "Attachment deleted"
 
 #: src/forms/AttachmentForms.tsx:128
 #~ msgid "Are you sure you want to delete this attachment?"
-#~ msgstr "Är du säker på att du vill radera denna bilaga?"
+#~ msgstr "Are you sure you want to delete this attachment?"
 
 #: src/forms/BuildForms.tsx:129
 msgid "Next serial number"
@@ -4480,7 +4480,7 @@ msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:142
 msgid "Location Type"
-msgstr "Location Type"
+msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:153
 msgid "Top level stock location"
@@ -4634,7 +4634,7 @@ msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:205
 msgid "Shipment Date"
-msgstr "Shipment Date"
+msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:225
 #: src/tables/settings/CurrencyTable.tsx:23
@@ -5225,11 +5225,11 @@ msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:195
 msgid "Upload Attachment"
-msgstr ""
+msgstr "Ladda upp bilaga"
 
 #: src/tables/general/AttachmentTable.tsx:205
 msgid "Edit Attachment"
-msgstr ""
+msgstr "Redigera bilaga"
 
 #: src/tables/general/AttachmentTable.tsx:219
 msgid "Delete Attachment"
@@ -5245,7 +5245,7 @@ msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:254
 #~ msgid "Upload attachment"
-#~ msgstr ""
+#~ msgstr "Upload attachment"
 
 #: src/tables/general/AttachmentTable.tsx:310
 msgid "No attachments found"
@@ -5751,7 +5751,7 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:113
 #~ msgid "Plugin with id {id} not found"
-#~ msgstr ""
+#~ msgstr "Plugin with id {id} not found"
 
 #: src/tables/plugin/PluginListTable.tsx:122
 msgid "Plugin information"
@@ -5763,17 +5763,17 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:134
 #~ msgid "Plugin Actions"
-#~ msgstr ""
+#~ msgstr "Plugin Actions"
 
 #: src/tables/plugin/PluginListTable.tsx:138
 #: src/tables/plugin/PluginListTable.tsx:141
 #~ msgid "Edit plugin"
-#~ msgstr ""
+#~ msgstr "Edit plugin"
 
 #: src/tables/plugin/PluginListTable.tsx:152
 #: src/tables/plugin/PluginListTable.tsx:153
 #~ msgid "Reload"
-#~ msgstr ""
+#~ msgstr "Reload"
 
 #: src/tables/plugin/PluginListTable.tsx:154
 msgid "Plugin is not active"
@@ -5841,15 +5841,15 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:338
 #~ msgid "Deactivate Plugin"
-#~ msgstr ""
+#~ msgstr "Deactivate Plugin"
 
 #: src/tables/plugin/PluginListTable.tsx:354
 #~ msgid "The following plugin will be activated"
-#~ msgstr ""
+#~ msgstr "The following plugin will be activated"
 
 #: src/tables/plugin/PluginListTable.tsx:355
 #~ msgid "The following plugin will be deactivated"
-#~ msgstr ""
+#~ msgstr "The following plugin will be deactivated"
 
 #: src/tables/plugin/PluginListTable.tsx:362
 msgid "Deactivate"
@@ -5857,7 +5857,7 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:366
 #~ msgid "Confirm"
-#~ msgstr ""
+#~ msgstr "Confirm"
 
 #: src/tables/plugin/PluginListTable.tsx:373
 msgid "Activate"
@@ -5865,27 +5865,27 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:376
 #~ msgid "Activating plugin"
-#~ msgstr ""
+#~ msgstr "Activating plugin"
 
 #: src/tables/plugin/PluginListTable.tsx:376
 #~ msgid "Deactivating plugin"
-#~ msgstr ""
+#~ msgstr "Deactivating plugin"
 
 #: src/tables/plugin/PluginListTable.tsx:392
 #~ msgid "Plugin updated"
-#~ msgstr ""
+#~ msgstr "Plugin updated"
 
 #: src/tables/plugin/PluginListTable.tsx:394
 #~ msgid "The plugin was activated"
-#~ msgstr ""
+#~ msgstr "The plugin was activated"
 
 #: src/tables/plugin/PluginListTable.tsx:395
 #~ msgid "The plugin was deactivated"
-#~ msgstr ""
+#~ msgstr "The plugin was deactivated"
 
 #: src/tables/plugin/PluginListTable.tsx:403
 #~ msgid "Error updating plugin"
-#~ msgstr ""
+#~ msgstr "Error updating plugin"
 
 #: src/tables/plugin/PluginListTable.tsx:406
 msgid "Uninstall"
@@ -5971,7 +5971,7 @@ msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:60
 #~ msgid "Parameter updated"
-#~ msgstr ""
+#~ msgstr "Parameter updated"
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:70
 msgid "Edit Parameter"
@@ -5979,11 +5979,11 @@ msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:73
 #~ msgid "Parameter deleted"
-#~ msgstr ""
+#~ msgstr "Parameter deleted"
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:74
 #~ msgid "Are you sure you want to delete this parameter?"
-#~ msgstr ""
+#~ msgstr "Are you sure you want to delete this parameter?"
 
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:78
 msgid "Delete Parameter"
@@ -5999,15 +5999,15 @@ msgstr ""
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:100
 #~ msgid "Manufacturer part updated"
-#~ msgstr ""
+#~ msgstr "Manufacturer part updated"
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:112
 #~ msgid "Manufacturer part deleted"
-#~ msgstr ""
+#~ msgstr "Manufacturer part deleted"
 
 #: src/tables/purchasing/ManufacturerPartTable.tsx:114
 #~ msgid "Are you sure you want to remove this manufacturer part?"
-#~ msgstr ""
+#~ msgstr "Are you sure you want to remove this manufacturer part?"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:86
 msgid "Part Description"
@@ -6155,11 +6155,11 @@ msgstr ""
 
 #: src/tables/settings/ErrorTable.tsx:51
 msgid "Delete Error Report"
-msgstr ""
+msgstr "Radera felrapport"
 
 #: src/tables/settings/ErrorTable.tsx:51
 #~ msgid "Delete error report"
-#~ msgstr ""
+#~ msgstr "Delete error report"
 
 #: src/tables/settings/ErrorTable.tsx:53
 msgid "Are you sure you want to delete this error report?"
@@ -6363,7 +6363,7 @@ msgstr ""
 
 #: src/tables/stock/LocationTypesTable.tsx:69
 msgid "Icon"
-msgstr ""
+msgstr "Ikon"
 
 #: src/tables/stock/StockItemTable.tsx:90
 msgid "This stock item is in production"
@@ -6687,3 +6687,4 @@ msgstr "Läs dokumenten"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
