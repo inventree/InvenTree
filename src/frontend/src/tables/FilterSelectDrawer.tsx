@@ -12,7 +12,7 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { StylishText } from '../components/items/StylishText';
 import { TableState } from '../hooks/UseTable';

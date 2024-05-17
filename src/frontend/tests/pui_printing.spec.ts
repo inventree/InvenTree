@@ -1,5 +1,5 @@
 import { test } from './baseFixtures.js';
-import { baseUrl, logoutUrl } from './defaults.js';
+import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
 /*
