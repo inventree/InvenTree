@@ -72,6 +72,7 @@ export type PreviewArea = {
 
 export type TemplateEditorProps = {
   templateUrl: string;
+  printingUrl: string;
   editors: Editor[];
   previewAreas: PreviewArea[];
   template: TemplateI;
