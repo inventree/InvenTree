@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-05-17 02:26+0000\n"
-"PO-Revision-Date: 2024-05-17 03:25\n"
+"PO-Revision-Date: 2024-05-18 03:41\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -165,95 +165,95 @@ msgstr "No se encontraron números de serie"
 
 #: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr ""
+msgstr "Los números de serie únicos ({len(serials)}) deben coincidir con la cantidad ({expected_quantity})"
 
 #: InvenTree/helpers.py:814
 msgid "Remove HTML tags from this value"
-msgstr ""
+msgstr "Elimine etiquetas HTML de este valor"
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr ""
+msgstr "Error de conexión"
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
-msgstr ""
+msgstr "El servidor respondió con un código de estado no válido"
 
 #: InvenTree/helpers_model.py:158
 msgid "Exception occurred"
-msgstr ""
+msgstr "Se ha producido una excepción"
 
 #: InvenTree/helpers_model.py:168
 msgid "Server responded with invalid Content-Length value"
-msgstr ""
+msgstr "El servidor respondió con un valor de longitud de contenido inválido"
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr ""
+msgstr "El tamaño de la imagen es demasiado grande"
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
-msgstr ""
+msgstr "La imagen descargada exedió el tamaño máximo"
 
 #: InvenTree/helpers_model.py:188
 msgid "Remote server returned empty response"
-msgstr ""
+msgstr "El servidor remoto devolvió una respuesta vacía"
 
 #: InvenTree/helpers_model.py:196
 msgid "Supplied URL is not a valid image file"
-msgstr ""
+msgstr "La URL proporcionada no es un archivo de imagen válido"
 
 #: InvenTree/locales.py:18
 msgid "Bulgarian"
-msgstr ""
+msgstr "Búlgaro"
 
 #: InvenTree/locales.py:19
 msgid "Czech"
-msgstr ""
+msgstr "Checo"
 
 #: InvenTree/locales.py:20
 msgid "Danish"
-msgstr ""
+msgstr "Danés"
 
 #: InvenTree/locales.py:21
 msgid "German"
-msgstr ""
+msgstr "Alemán"
 
 #: InvenTree/locales.py:22
 msgid "Greek"
-msgstr ""
+msgstr "Griego"
 
 #: InvenTree/locales.py:23
 msgid "English"
-msgstr ""
+msgstr "Inglés"
 
 #: InvenTree/locales.py:24
 msgid "Spanish"
-msgstr ""
+msgstr "Español"
 
 #: InvenTree/locales.py:25
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Español (México)"
 
 #: InvenTree/locales.py:26
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persa"
 
 #: InvenTree/locales.py:27
 msgid "Finnish"
-msgstr ""
+msgstr "Finlandés"
 
 #: InvenTree/locales.py:28
 msgid "French"
-msgstr ""
+msgstr "Francés"
 
 #: InvenTree/locales.py:29
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebreo"
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
@@ -477,15 +477,15 @@ msgstr ""
 
 #: InvenTree/models.py:670
 msgid "Error renaming file"
-msgstr ""
+msgstr "Error al cambiar el nombre del archivo"
 
 #: InvenTree/models.py:846
 msgid "Duplicate names cannot exist under the same parent"
-msgstr ""
+msgstr "Los nombres duplicados no pueden existir bajo el mismo padre"
 
 #: InvenTree/models.py:863
 msgid "Invalid choice"
-msgstr ""
+msgstr "Selección no válida"
 
 #: InvenTree/models.py:893 common/models.py:2714 common/models.py:3112
 #: common/serializers.py:403 company/models.py:614 label/models.py:120
@@ -505,7 +505,7 @@ msgstr ""
 #: templates/js/translated/part.js:1474 templates/js/translated/part.js:1610
 #: templates/js/translated/part.js:2749 templates/js/translated/stock.js:2719
 msgid "Name"
-msgstr ""
+msgstr "Nombre"
 
 #: InvenTree/models.py:899 build/models.py:194
 #: build/templates/build/detail.html:24 common/models.py:136
@@ -542,48 +542,48 @@ msgstr ""
 #: templates/js/translated/stock.js:1515 templates/js/translated/stock.js:2060
 #: templates/js/translated/stock.js:2751 templates/js/translated/stock.js:2834
 msgid "Description"
-msgstr ""
+msgstr "Descripción"
 
 #: InvenTree/models.py:900 stock/models.py:83
 msgid "Description (optional)"
-msgstr ""
+msgstr "Descripción (opcional)"
 
 #: InvenTree/models.py:909
 msgid "parent"
-msgstr ""
+msgstr "padre"
 
 #: InvenTree/models.py:915 templates/js/translated/part.js:2794
 #: templates/js/translated/stock.js:2760
 msgid "Path"
-msgstr ""
+msgstr "Ruta"
 
 #: InvenTree/models.py:1021
 msgid "Markdown notes (optional)"
-msgstr ""
+msgstr "Notas (opcional)"
 
 #: InvenTree/models.py:1050
 msgid "Barcode Data"
-msgstr ""
+msgstr "Datos de código de barras"
 
 #: InvenTree/models.py:1051
 msgid "Third party barcode data"
-msgstr ""
+msgstr "Datos de código de barras de terceros"
 
 #: InvenTree/models.py:1057
 msgid "Barcode Hash"
-msgstr ""
+msgstr "Hash del Código de barras"
 
 #: InvenTree/models.py:1058
 msgid "Unique hash of barcode data"
-msgstr ""
+msgstr "Hash único de datos de código de barras"
 
 #: InvenTree/models.py:1111
 msgid "Existing barcode found"
-msgstr ""
+msgstr "Código de barras existente encontrado"
 
 #: InvenTree/models.py:1154
 msgid "Server Error"
-msgstr ""
+msgstr "Error de servidor"
 
 #: InvenTree/models.py:1155
 msgid "An error has been logged by the server."
