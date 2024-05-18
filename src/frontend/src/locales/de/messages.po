@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-17 03:24\n"
+"PO-Revision-Date: 2024-05-18 03:41\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -32,7 +32,7 @@ msgstr "Titel"
 
 #: src/components/buttons/AdminButton.tsx:83
 msgid "Open in admin interface"
-msgstr ""
+msgstr "Im Admin-Interface öffnen"
 
 #: src/components/buttons/CopyButton.tsx:18
 msgid "Copy to clipboard"
@@ -4634,7 +4634,7 @@ msgstr "Kein Lagerort gesetzt"
 
 #: src/tables/ColumnRenderers.tsx:205
 msgid "Shipment Date"
-msgstr ""
+msgstr "Versanddatum"
 
 #: src/tables/ColumnRenderers.tsx:225
 #: src/tables/settings/CurrencyTable.tsx:23
