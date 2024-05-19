@@ -47,11 +47,6 @@ export function SettingList({
 
   const [setting, setSetting] = useState<Setting | undefined>(undefined);
 
-  useEffect(() => {
-    console.log('setting changed:');
-    console.log('setting:', setting);
-  }, [setting]);
-
   // Determine the field type of the setting
   const fieldType = useMemo(() => {
     if (setting?.type != undefined) {
