@@ -442,7 +442,7 @@ plugin_api_urls = [
                         'settings/',
                         include([
                             re_path(
-                                '^(?P<key>\w+)/',
+                                r'^(?P<key>\w+)/',
                                 PluginSettingDetail.as_view(),
                                 name='api-plugin-setting-detail',
                             ),
