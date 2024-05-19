@@ -47,6 +47,24 @@ export function SettingList({
 
   const [setting, setSetting] = useState<Setting | undefined>(undefined);
 
+  useEffect(() => {
+    console.log('setting changed:');
+    console.log('setting:', setting);
+  }, [setting]);
+
+  // Determine the field type of the setting
+  const fieldType = useMemo(() => {
+    if (setting?.type != undefined) {
+      return setting.type;
+    }
+
+    if (setting?.choices != undefined && setting.choices.length > 0) {
+      return 'choice';
+    }
+
+    return 'string';
+  }, [setting]);
+
   const editSettingModal = useEditApiFormModal({
     url: settingsState.endpoint,
     pk: setting?.key,
@@ -54,11 +72,7 @@ export function SettingList({
     title: t`Edit Setting`,
     fields: {
       value: {
-        value: setting?.value ?? '',
-        field_type:
-          setting?.type ?? (setting?.choices?.length ?? 0) > 0
-            ? 'choice'
-            : 'string',
+        field_type: fieldType,
         label: setting?.name,
         description: setting?.description,
         api_url: setting?.api_url ?? '',
