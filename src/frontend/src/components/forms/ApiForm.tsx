@@ -497,7 +497,7 @@ export function ApiForm({
             {/* Form Fields */}
             <Stack gap="sm">
               {(!isValid || nonFieldErrors.length > 0) && (
-                <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
+                <Alert radius="sm" color="red" title={t`Error`}>
                   {nonFieldErrors.length > 0 && (
                     <Stack gap="xs">
                       {nonFieldErrors.map((message) => (
