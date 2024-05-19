@@ -232,7 +232,8 @@ export default function SystemSettings() {
             keys={[
               'BUILDORDER_REFERENCE_PATTERN',
               'BUILDORDER_REQUIRE_RESPONSIBLE',
-              'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
+              'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS',
+              'PART_ALLOW_DELETE_FROM_ASSEMBLY'
             ]}
           />
         )

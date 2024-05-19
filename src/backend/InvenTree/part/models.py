@@ -459,10 +459,13 @@ class Part(
         if self.active:
             raise ValidationError(_('Cannot delete this part as it is still active'))
 
-        if BomItem.objects.filter(sub_part=self).exists():
-            raise ValidationError(
-                _('Cannot delete this part as it is used in an assembly')
-            )
+        if not common.models.InvenTreeSetting.get_setting(
+            'PART_ALLOW_DELETE_FROM_ASSEMBLY', cache=False
+        ):
+            if BomItem.objects.filter(sub_part=self).exists():
+                raise ValidationError(
+                    _('Cannot delete this part as it is used in an assembly')
+                )
 
         super().delete()
 
