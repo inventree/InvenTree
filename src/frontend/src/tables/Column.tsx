@@ -1,8 +1,5 @@
-/**
- * Interface for the table column definition
- */
-export type TableColumn<T = any> = {
-  accessor: string; // The key in the record to access
+export type TableColumnProps<T = any> = {
+  accessor?: string; // The key in the record to access
   title?: string; // The title of the column - Note: this may be supplied by the API, and is not required, but it can be overridden if required
   ordering?: string; // The key in the record to sort by (defaults to accessor)
   sortable?: boolean; // Whether the column is sortable
@@ -18,3 +15,10 @@ export type TableColumn<T = any> = {
   cellsStyle?: any; // The style of the cells in the column
   extra?: any; // Extra data to pass to the render function
 };
+
+/**
+ * Interface for the table column definition
+ */
+export type TableColumn<T = any> = {
+  accessor: string; // The key in the record to access
+} & TableColumnProps<T>;

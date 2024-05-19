@@ -10,6 +10,7 @@ import {
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -201,6 +202,7 @@ export default function CategoryDetail({}: {}) {
 
   const categoryActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.partcategory} pk={category.pk} />,
       <ActionDropdown
         key="category"
         tooltip={t`Category Actions`}
@@ -219,7 +221,7 @@ export default function CategoryDetail({}: {}) {
         ]}
       />
     ];
-  }, [id, user]);
+  }, [id, user, category.pk]);
 
   const categoryPanels: PanelType[] = useMemo(
     () => [

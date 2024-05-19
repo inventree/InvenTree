@@ -620,7 +620,7 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
         # get data
         url = reverse(
-            'api-plugin-setting-detail', kwargs={'key': 'sample', 'setting': 'API_KEY'}
+            'api-plugin-setting-detail', kwargs={'plugin': 'sample', 'key': 'API_KEY'}
         )
         response = self.get(url, expected_code=200)
 
@@ -637,7 +637,7 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
         # Non-existent plugin
         url = reverse(
             'api-plugin-setting-detail',
-            kwargs={'key': 'doesnotexist', 'setting': 'doesnotmatter'},
+            kwargs={'plugin': 'doesnotexist', 'key': 'doesnotmatter'},
         )
         response = self.get(url, expected_code=404)
         self.assertIn("Plugin 'doesnotexist' not installed", str(response.data))
@@ -645,7 +645,7 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
         # Wrong key
         url = reverse(
             'api-plugin-setting-detail',
-            kwargs={'key': 'sample', 'setting': 'doesnotexist'},
+            kwargs={'plugin': 'sample', 'key': 'doesnotexist'},
         )
         response = self.get(url, expected_code=404)
         self.assertIn(
