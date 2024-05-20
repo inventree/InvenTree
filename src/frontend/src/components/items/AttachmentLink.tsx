@@ -72,7 +72,7 @@ export function AttachmentLink({
   }, [host, attachment, external]);
 
   return (
-    <Group justify="left" gap="sm">
+    <Group justify="left" gap="sm" wrap="nowrap">
       {external ? <IconLink /> : attachmentIcon(attachment)}
       <Anchor href={url} target="_blank" rel="noopener noreferrer">
         {text}
