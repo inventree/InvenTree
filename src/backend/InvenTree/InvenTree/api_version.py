@@ -1,15 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 199
+INVENTREE_API_VERSION = 200
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v199 - 2024-05-20 : https://github.com/inventree/InvenTree/pull/7000
+v200 - 2024-05-20 : https://github.com/inventree/InvenTree/pull/7000
     - Adds API endpoint for generating custom batch codes
     - Adds API endpoint for generating custom serial numbers
+
+v199 - 2024-05-20 : https://github.com/inventree/InvenTree/pull/7264
+    - Expose "bom_valid" filter for the Part API
+    - Expose "starred" filter for the Part API
 
 v198 - 2024-05-19 : https://github.com/inventree/InvenTree/pull/7258
     - Fixed lookup field conflicts in the plugins API
