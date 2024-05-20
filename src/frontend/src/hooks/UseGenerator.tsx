@@ -1,3 +1,4 @@
+import { useDebouncedValue } from '@mantine/hooks';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useState } from 'react';
 
@@ -27,6 +28,9 @@ export function useGenerator(
   // Track the generator query
   const [query, setQuery] = useState<Record<string, any>>({});
 
+  // Prevent rapid updates
+  const [debouncedQuery] = useDebouncedValue<Record<string, any>>(query, 250);
+
   // Callback to update the generator query
   const update = useCallback(
     (params: Record<string, any>, overwrite?: boolean) => {
@@ -38,8 +42,6 @@ export function useGenerator(
           ...params
         }));
       }
-
-      queryGenerator.refetch();
     },
     []
   );
@@ -47,9 +49,9 @@ export function useGenerator(
   // API query handler
   const queryGenerator = useQuery({
     enabled: true,
-    queryKey: ['generator', key, endpoint, query],
+    queryKey: ['generator', key, endpoint, debouncedQuery],
     queryFn: async () => {
-      return api.post(apiUrl(endpoint), query).then((response) => {
+      return api.post(apiUrl(endpoint), debouncedQuery).then((response) => {
         const value = response?.data[key];
         setResult(value);
 
