@@ -8,6 +8,7 @@ from pathlib import Path
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import OrmQ

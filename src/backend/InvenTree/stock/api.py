@@ -1,5 +1,6 @@
 """JSON API for the Stock app."""
 
+import json
 from collections import OrderedDict
 from datetime import timedelta
 
@@ -13,7 +14,8 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import status
+from rest_framework import permissions, status
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -64,6 +66,7 @@ from order.serializers import (
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from stock.admin import LocationResource, StockItemResource
+from stock.generators import generate_batch_code, generate_serial_number
 from stock.models import (
     StockItem,
     StockItemAttachment,
@@ -72,6 +75,38 @@ from stock.models import (
     StockLocation,
     StockLocationType,
 )
+
+
+class GenerateBatchCode(GenericAPIView):
+    """API endpoint for generating batch codes."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StockSerializers.GenerateBatchCodeSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Generate a new batch code."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = {'batch_code': generate_batch_code(**serializer.validated_data)}
+
+        return Response(data, status=status.HTTP_201_CREATED)
+
+
+class GenerateSerialNumber(GenericAPIView):
+    """API endpoint for generating serial numbers."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StockSerializers.GenerateSerialNumberSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Generate a new serial number."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = {'serial_number': generate_serial_number(**serializer.validated_data)}
+
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class StockDetail(RetrieveUpdateDestroyAPI):
