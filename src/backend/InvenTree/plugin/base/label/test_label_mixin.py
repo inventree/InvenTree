@@ -90,6 +90,8 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         apps.get_app_config('report').create_default_labels()
         apps.get_app_config('report').create_default_reports()
 
+        test_path = BASE_DIR / '_testfolder' / 'label'
+
         parts = Part.objects.all()[:2]
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='part'
@@ -113,6 +115,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             {'template': template.pk, 'plugin': no_valid_plg.key, 'items': [1, 2, 3]},
             expected_code=400,
         )
+
         self.assertIn(
             'Plugin does not support label printing', str(response.data['plugin'])
         )
@@ -139,14 +142,17 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         self.do_activate_plugin()
 
         # Print one part
-        self.post(
+        response = self.post(
             url,
-            {'template': template.pk, 'plugin': plugin.pk, 'items': [parts[0].pk]},
+            {'template': template.pk, 'plugin': config.key, 'items': [parts[0].pk]},
             expected_code=201,
         )
 
+        self.assertEqual(response.data['plugin'], 'samplelabelprinter')
+        self.assertIsNone(response.data['output'])
+
         # Print multiple parts
-        self.post(
+        response = self.post(
             url,
             {
                 'template': template.pk,
@@ -156,19 +162,18 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             expected_code=201,
         )
 
-        # Print multiple parts without a plugin
-        self.post(
-            url,
-            {'template': template.pk, 'items': [item.pk for item in parts]},
-            expected_code=201,
-        )
+        self.assertEqual(response.data['plugin'], 'samplelabelprinter')
+        self.assertIsNone(response.data['output'])
 
-        # Print multiple parts without a plugin in debug mode
+        # Print multiple parts without a plugin
         response = self.post(
             url,
             {'template': template.pk, 'items': [item.pk for item in parts]},
             expected_code=201,
         )
+
+        self.assertEqual(response.data['plugin'], 'inventreelabel')
+        self.assertIsNotNone(response.data['output'])
 
         data = json.loads(response.content)
         self.assertIn('output', data)
@@ -182,7 +187,6 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
         # Test that the labels have been printed
         # The sample labelling plugin simply prints to file
-        test_path = BASE_DIR / '_testfolder' / 'label'
         self.assertTrue(os.path.exists(f'{test_path}.pdf'))
 
         # Read the raw .pdf data - ensure it contains some sensible information

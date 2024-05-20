@@ -43,7 +43,7 @@ def convert_legacy_labels(table_name, model_name, template_model):
             cursor.execute(query)
         except Exception:
             # Table likely does not exist
-            print(f"Legacy label table {table_name} not found - skipping")
+            print(f"Legacy label table {table_name} not found - skipping migration")
             return 0
 
         rows = cursor.fetchall()
