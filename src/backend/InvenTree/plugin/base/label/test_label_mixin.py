@@ -93,9 +93,11 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         test_path = BASE_DIR / '_testfolder' / 'label'
 
         parts = Part.objects.all()[:2]
+
         template = ReportTemplate.objects.filter(
             enabled=True, model_type='part'
         ).first()
+
         self.assertIsNotNone(template)
 
         url = self.printing_url
@@ -110,6 +112,9 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
         # Plugin is not a label plugin
         no_valid_plg = registry.get_plugin('digikeyplugin').plugin_config()
+        print('AAAAABBBBBCCCCC:')
+        print('- template:', template.pk)
+        print(' - plugin:', no_valid_plg.key)
         response = self.post(
             url,
             {'template': template.pk, 'plugin': no_valid_plg.key, 'items': [1, 2, 3]},
