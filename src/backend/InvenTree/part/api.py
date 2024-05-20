@@ -4,7 +4,6 @@ import functools
 import re
 
 from django.db.models import Count, F, Q
-from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
@@ -32,13 +31,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import (
-    DownloadFile,
-    increment_serial_number,
-    is_ajax,
-    isNull,
-    str2bool,
-)
+from InvenTree.helpers import DownloadFile, increment_serial_number, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -1216,33 +1209,6 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
         return DownloadFile(filedata, filename)
 
-    def list(self, request, *args, **kwargs):
-        """Override the 'list' method, as the PartCategory objects are very expensive to serialize!
-
-        So we will serialize them first, and keep them in memory, so that they do not have to be serialized multiple times...
-        """
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-
-        data = serializer.data
-
-        """
-        Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browsable API) return a DRF response
-        b) For AJAX requests, simply return a JSON rendered response.
-        """
-        if page is not None:
-            return self.get_paginated_response(data)
-        elif is_ajax(request):
-            return JsonResponse(data, safe=False)
-        return Response(data)
-
     def filter_queryset(self, queryset):
         """Perform custom filtering of the queryset."""
         params = self.request.query_params
@@ -1889,30 +1855,6 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
     """
 
     filterset_class = BomFilter
-
-    def list(self, request, *args, **kwargs):
-        """Return serialized list response for this endpoint."""
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-
-        data = serializer.data
-
-        """
-        Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browsable API) return a DRF response
-        b) For AJAX requests, simply return a JSON rendered response.
-        """
-        if page is not None:
-            return self.get_paginated_response(data)
-        elif is_ajax(request):
-            return JsonResponse(data, safe=False)
-        return Response(data)
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
