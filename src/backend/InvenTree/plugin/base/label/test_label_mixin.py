@@ -156,7 +156,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             url,
             {
                 'template': template.pk,
-                'plugin': plugin.pk,
+                'plugin': config.key,
                 'items': [item.pk for item in parts],
             },
             expected_code=201,
