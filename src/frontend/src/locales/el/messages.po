@@ -8,7 +8,7 @@ msgstr ""
 "Language: el\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-17 03:24\n"
+"PO-Revision-Date: 2024-05-20 08:23\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -281,9 +281,24 @@ msgstr "Σφάλμα Φόρμας"
 msgid "Success"
 msgstr "Επιτυχία"
 
+#: src/components/forms/ApiForm.tsx:487
+#~ msgid "Form Errors Exist"
+#~ msgstr "Form Errors Exist"
+
 #: src/components/forms/ApiForm.tsx:500
-msgid "Form Errors Exist"
-msgstr "Υπάρχουν Σφάλματα Φόρμας"
+#: src/components/forms/fields/ApiFormField.tsx:276
+#: src/components/modals/LicenseModal.tsx:75
+#: src/components/nav/SearchDrawer.tsx:413
+#: src/components/widgets/MarkdownEditor.tsx:107
+#: src/components/widgets/MarkdownEditor.tsx:153
+#: src/pages/ErrorPage.tsx:12
+#: src/pages/ErrorPage.tsx:25
+#: src/pages/part/PartPricingPanel.tsx:71
+#: src/tables/InvenTreeTable.tsx:445
+#: src/tables/InvenTreeTable.tsx:525
+#: src/tables/stock/StockItemTestResultTable.tsx:312
+msgid "Error"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:605
 #: src/tables/plugin/PluginListTable.tsx:388
@@ -522,20 +537,6 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr ""
-
-#: src/components/forms/fields/ApiFormField.tsx:276
-#: src/components/modals/LicenseModal.tsx:75
-#: src/components/nav/SearchDrawer.tsx:413
-#: src/components/widgets/MarkdownEditor.tsx:107
-#: src/components/widgets/MarkdownEditor.tsx:153
-#: src/pages/ErrorPage.tsx:12
-#: src/pages/ErrorPage.tsx:25
-#: src/pages/part/PartPricingPanel.tsx:71
-#: src/tables/InvenTreeTable.tsx:445
-#: src/tables/InvenTreeTable.tsx:525
-#: src/tables/stock/StockItemTestResultTable.tsx:312
-msgid "Error"
 msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:305
@@ -929,7 +930,7 @@ msgstr ""
 
 #: src/components/nav/MainMenu.tsx:57
 #: src/defaults/menuItems.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:293
+#: src/pages/Index/Settings/SystemSettings.tsx:294
 msgid "System Settings"
 msgstr ""
 
@@ -1220,7 +1221,7 @@ msgid "Purchase Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:134
-#: src/pages/Index/Settings/SystemSettings.tsx:242
+#: src/pages/Index/Settings/SystemSettings.tsx:243
 #: src/pages/company/CompanyDetail.tsx:192
 #: src/pages/company/SupplierPartDetail.tsx:224
 #: src/pages/part/PartDetail.tsx:572
@@ -1245,7 +1246,7 @@ msgid "Sales Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:148
-#: src/pages/Index/Settings/SystemSettings.tsx:257
+#: src/pages/Index/Settings/SystemSettings.tsx:258
 #: src/pages/company/CompanyDetail.tsx:212
 #: src/pages/part/PartDetail.tsx:578
 #: src/pages/sales/SalesIndex.tsx:21
@@ -1267,7 +1268,7 @@ msgid "Return Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:164
-#: src/pages/Index/Settings/SystemSettings.tsx:272
+#: src/pages/Index/Settings/SystemSettings.tsx:273
 #: src/pages/company/CompanyDetail.tsx:219
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
@@ -1321,7 +1322,7 @@ msgstr ""
 #: src/components/render/Part.tsx:12
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
-#: src/pages/Index/Settings/SystemSettings.tsx:198
+#: src/pages/Index/Settings/SystemSettings.tsx:199
 #: src/pages/part/PartDetail.tsx:492
 #: src/pages/stock/LocationDetail.tsx:354
 #: src/pages/stock/StockDetail.tsx:345
@@ -1352,24 +1353,24 @@ msgstr ""
 #~ msgid "{0} updated successfully"
 #~ msgstr "{0} updated successfully"
 
-#: src/components/settings/SettingList.tsx:54
+#: src/components/settings/SettingList.tsx:67
 msgid "Edit Setting"
 msgstr ""
 
-#: src/components/settings/SettingList.tsx:69
-#: src/components/settings/SettingList.tsx:99
+#: src/components/settings/SettingList.tsx:78
+#: src/components/settings/SettingList.tsx:108
 msgid "Setting {0} updated successfully"
 msgstr ""
 
-#: src/components/settings/SettingList.tsx:98
+#: src/components/settings/SettingList.tsx:107
 msgid "Setting updated"
 msgstr ""
 
-#: src/components/settings/SettingList.tsx:108
+#: src/components/settings/SettingList.tsx:117
 msgid "Error editing setting"
 msgstr ""
 
-#: src/components/settings/SettingList.tsx:149
+#: src/components/settings/SettingList.tsx:158
 msgid "No settings specified"
 msgstr ""
 
@@ -3345,13 +3346,13 @@ msgstr ""
 msgid "Reporting"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:223
+#: src/pages/Index/Settings/SystemSettings.tsx:224
 #: src/pages/part/PartDetail.tsx:590
 #: src/tables/stock/StockItemTable.tsx:221
 msgid "Stocktake"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:228
+#: src/pages/Index/Settings/SystemSettings.tsx:229
 #: src/pages/build/BuildDetail.tsx:428
 #: src/pages/build/BuildIndex.tsx:14
 #: src/pages/part/PartDetail.tsx:526
@@ -3359,7 +3360,7 @@ msgstr ""
 msgid "Build Orders"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:296
+#: src/pages/Index/Settings/SystemSettings.tsx:297
 msgid "Switch to User Setting"
 msgstr ""
 
