@@ -47,6 +47,7 @@ export function useBuildOrderFields({
     return {
       reference: {},
       part: {
+        disabled: !create,
         filters: {
           assembly: true,
           virtual: false
