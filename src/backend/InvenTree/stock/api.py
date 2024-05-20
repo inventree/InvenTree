@@ -2,7 +2,7 @@
 
 import json
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
@@ -47,7 +47,6 @@ from InvenTree.helpers import (
     is_ajax,
     isNull,
     str2bool,
-    str2int,
 )
 from InvenTree.mixins import (
     CreateAPI,
@@ -1073,36 +1072,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         filename = f'InvenTree_StockItems_{InvenTree.helpers.current_date().strftime("%d-%b-%Y")}.{export_format}'
 
         return DownloadFile(filedata, filename)
-
-    def list(self, request, *args, **kwargs):
-        """Override the 'list' method, as the StockLocation objects are very expensive to serialize.
-
-        So, we fetch and serialize the required StockLocation objects only as required.
-        """
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-
-        data = serializer.data
-
-        """
-        Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browsable API) return a DRF response
-        b) For AJAX requests, simply return a JSON rendered response.
-
-        Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft
-        """
-
-        if page is not None:
-            return self.get_paginated_response(data)
-        elif is_ajax(request):
-            return JsonResponse(data, safe=False)
-        return Response(data)
 
     def get_queryset(self, *args, **kwargs):
         """Annotate queryset before returning."""

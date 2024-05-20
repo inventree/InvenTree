@@ -11,6 +11,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -28,6 +29,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -151,18 +153,23 @@ export default function PurchaseOrderDetail() {
         label: t`Completed Shipments`,
         total: order.shipments,
         progress: order.completed_shipments
-        // TODO: Fix this progress bar
       },
       {
         type: 'text',
         name: 'currency',
-        label: t`Order Currency,`
+        label: t`Order Currency`,
+        value_formatter: () =>
+          order?.order_currency ?? order?.supplier_detail?.currency
       },
       {
         type: 'text',
-        name: 'total_cost',
-        label: t`Total Cost`
-        // TODO: Implement this!
+        name: 'total_price',
+        label: t`Total Cost`,
+        value_formatter: () => {
+          return formatCurrency(order?.total_price, {
+            currency: order?.order_currency ?? order?.supplier_detail?.currency
+          });
+        }
       }
     ];
 
@@ -294,6 +301,7 @@ export default function PurchaseOrderDetail() {
 
   const poActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
@@ -343,8 +351,7 @@ export default function PurchaseOrderDetail() {
   return (
     <>
       {editPurchaseOrder.modal}
-      {duplicatePurchaseOrder.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Purchase Order` + `: ${order.reference}`}

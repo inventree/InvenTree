@@ -1408,7 +1408,7 @@ class PartDetailTests(PartAPITestBase):
         response = self.delete(url)
 
         # As the part is 'active' we cannot delete it
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 400)
 
         # So, let's make it not active
         response = self.patch(url, {'active': False}, expected_code=200)
@@ -2585,6 +2585,8 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
         p = Part.objects.get(pk=1)
         p.active = False
         p.save()
+
+        InvenTreeSetting.set_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', True)
 
         response = self.delete(reverse('api-part-detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 204)

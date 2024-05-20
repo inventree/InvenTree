@@ -49,6 +49,23 @@ class ValidationMixin:
         """Raise a ValidationError with the given message."""
         raise ValidationError(message)
 
+    def validate_model_deletion(self, instance):
+        """Run custom validation when a model instance is being deleted.
+
+        This method is called when a model instance is being deleted.
+        It allows the plugin to raise a ValidationError if the instance cannot be deleted.
+
+        Arguments:
+            instance: The model instance to validate
+
+        Returns:
+            None or True (refer to class docstring)
+
+        Raises:
+            ValidationError if the instance cannot be deleted
+        """
+        return None
+
     def validate_model_instance(self, instance, deltas=None):
         """Run custom validation on a database model instance.
 

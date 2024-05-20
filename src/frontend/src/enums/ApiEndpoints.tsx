@@ -94,6 +94,7 @@ export enum ApiEndpoints {
   stock_item_list = 'stock/',
   stock_tracking_list = 'stock/track/',
   stock_location_list = 'stock/location/',
+  stock_location_type_list = 'stock/location-type/',
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
   stock_test_result_list = 'stock/test/',
@@ -132,8 +133,8 @@ export enum ApiEndpoints {
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',
-  plugin_activate = 'plugins/:id/activate/',
-  plugin_uninstall = 'plugins/:id/uninstall/',
+  plugin_activate = 'plugins/:key/activate/',
+  plugin_uninstall = 'plugins/:key/uninstall/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

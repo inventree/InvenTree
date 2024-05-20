@@ -1,14 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 197
+INVENTREE_API_VERSION = 199
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v197 - 2024-05-07 : https://github.com/inventree/InvenTree/pull/7000
+v199 - 2024-05-20 : https://github.com/inventree/InvenTree/pull/7000
     - Adds API endpoint for generating custom batch codes
+    - Adds API endpoint for generating custom serial numbers
+
+v198 - 2024-05-19 : https://github.com/inventree/InvenTree/pull/7258
+    - Fixed lookup field conflicts in the plugins API
+
+v197 - 2024-05-14 : https://github.com/inventree/InvenTree/pull/7224
+    - Refactor the plugin API endpoints to use the plugin "key" for lookup, rather than the PK value
 
 v196 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7160
     - Adds "location" field to BuildOutputComplete API endpoint

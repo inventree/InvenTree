@@ -79,7 +79,7 @@ export function ActionDropdown({
             >
               <Tooltip label={action.tooltip}>
                 <Menu.Item
-                  icon={action.icon}
+                  leftSection={action.icon}
                   onClick={() => {
                     if (action.onClick != undefined) {
                       action.onClick();
@@ -189,10 +189,12 @@ export function EditItemAction({
 // Common action button for deleting an item
 export function DeleteItemAction({
   hidden = false,
+  disabled = false,
   tooltip,
   onClick
 }: {
   hidden?: boolean;
+  disabled?: boolean;
   tooltip?: string;
   onClick?: () => void;
 }): ActionDropdownItem {
@@ -201,7 +203,8 @@ export function DeleteItemAction({
     name: t`Delete`,
     tooltip: tooltip ?? t`Delete item`,
     onClick: onClick,
-    hidden: hidden
+    hidden: hidden,
+    disabled: disabled
   };
 }
 

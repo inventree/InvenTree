@@ -7,6 +7,15 @@ from import_export.admin import ImportExportModelAdmin
 import common.models
 
 
+@admin.register(common.models.ProjectCode)
+class ProjectCodeAdmin(ImportExportModelAdmin):
+    """Admin settings for ProjectCode."""
+
+    list_display = ('code', 'description')
+
+    search_fields = ('code', 'description')
+
+
 class SettingsAdmin(ImportExportModelAdmin):
     """Admin settings for InvenTreeSetting."""
 

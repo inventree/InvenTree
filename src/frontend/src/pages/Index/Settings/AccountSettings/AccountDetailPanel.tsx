@@ -40,7 +40,7 @@ export function AccountDetailPanel() {
       </Group>
       <Group>
         {editing ? (
-          <Stack spacing="xs">
+          <Stack gap="xs">
             <TextInput
               label="first name"
               placeholder={t`First name`}
@@ -51,14 +51,14 @@ export function AccountDetailPanel() {
               placeholder={t`Last name`}
               {...form.getInputProps('last_name')}
             />
-            <Group position="right" mt="md">
+            <Group justify="right" mt="md">
               <Button type="submit">
                 <Trans>Submit</Trans>
               </Button>
             </Group>
           </Stack>
         ) : (
-          <Stack spacing="0">
+          <Stack gap="0">
             <Text>
               <Trans>First name: </Trans>
               {form.values.first_name}
