@@ -17,7 +17,7 @@ from plugin.base.label.mixins import LabelPrintingMixin
 from plugin.helpers import MixinNotImplementedError
 from plugin.plugin import InvenTreePlugin
 from plugin.registry import registry
-from report.models import LabelTemplate, ReportTemplate
+from report.models import LabelTemplate
 from report.tests import PrintTestMixins
 from stock.models import StockItem, StockLocation
 
@@ -94,11 +94,10 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
         parts = Part.objects.all()[:2]
 
-        template = ReportTemplate.objects.filter(
-            enabled=True, model_type='part'
-        ).first()
+        template = LabelTemplate.objects.filter(enabled=True, model_type='part').first()
 
         self.assertIsNotNone(template)
+        self.assertTrue(template.enabled)
 
         url = self.printing_url
 
@@ -112,9 +111,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
 
         # Plugin is not a label plugin
         no_valid_plg = registry.get_plugin('digikeyplugin').plugin_config()
-        print('AAAAABBBBBCCCCC:')
-        print('- template:', template.pk)
-        print(' - plugin:', no_valid_plg.key)
+
         response = self.post(
             url,
             {'template': template.pk, 'plugin': no_valid_plg.key, 'items': [1, 2, 3]},
