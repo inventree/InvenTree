@@ -353,6 +353,8 @@ class PartTest(TestCase):
         self.assertEqual(len(self.r2.get_related_parts()), n)
 
         # Deleting r2 should remove *all* newly created relationships
+        self.r1.active = False
+        self.r1.save()
         self.r2.delete()
         self.assertEqual(PartRelated.objects.count(), countbefore)
 

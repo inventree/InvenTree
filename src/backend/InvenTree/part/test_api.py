@@ -2586,6 +2586,8 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
         p.active = False
         p.save()
 
+        InvenTreeSetting.set_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', True)
+
         response = self.delete(reverse('api-part-detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 204)
 
