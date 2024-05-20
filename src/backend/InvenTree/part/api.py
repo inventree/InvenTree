@@ -1141,7 +1141,7 @@ class PartFilter(rest_filters.FilterSet):
 
         starred_parts = [
             star.part.pk
-            for star in self.request.user.starred_parts.all().prefetch_related(part)
+            for star in self.request.user.starred_parts.all().prefetch_related('part')
         ]
 
         if value:
