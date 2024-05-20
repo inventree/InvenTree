@@ -194,6 +194,7 @@ const icons = {
   downright: IconCornerDownRight,
   barcode: IconQrcode,
   barLine: IconMinusVertical,
+  batch: IconClipboardText,
   batch_code: IconClipboardText,
   destination: IconFlag,
   repeat_destination: IconFlagShare,
