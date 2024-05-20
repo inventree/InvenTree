@@ -116,9 +116,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
             expected_code=400,
         )
 
-        self.assertIn(
-            'Plugin does not support label printing', str(response.data['plugin'])
-        )
+        self.assertIn('Plugin does not support label printing', str(response.data))
 
         # Find available plugins
         plugins = registry.with_mixin('labels')
