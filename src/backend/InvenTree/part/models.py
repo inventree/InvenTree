@@ -470,6 +470,27 @@ class Part(
 
         return context
 
+    def delete(self, **kwargs):
+        """Custom delete method for the Part model.
+
+        Prevents deletion of a Part if any of the following conditions are met:
+
+        - The part is still active
+        - The part is used in a BOM for a different part.
+        """
+        if self.active:
+            raise ValidationError(_('Cannot delete this part as it is still active'))
+
+        if not common.models.InvenTreeSetting.get_setting(
+            'PART_ALLOW_DELETE_FROM_ASSEMBLY', cache=False
+        ):
+            if BomItem.objects.filter(sub_part=self).exists():
+                raise ValidationError(
+                    _('Cannot delete this part as it is used in an assembly')
+                )
+
+        super().delete()
+
     def save(self, *args, **kwargs):
         """Overrides the save function for the Part model.
 

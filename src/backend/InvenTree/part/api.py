@@ -1446,21 +1446,6 @@ class PartChangeCategory(CreateAPI):
 class PartDetail(PartMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single Part object."""
 
-    def destroy(self, request, *args, **kwargs):
-        """Delete a Part instance via the API.
-
-        - If the part is 'active' it cannot be deleted
-        - It must first be marked as 'inactive'
-        """
-        part = Part.objects.get(pk=int(kwargs['pk']))
-        # Check if inactive
-        if not part.active:
-            # Delete
-            return super(PartDetail, self).destroy(request, *args, **kwargs)
-        # Return 405 error
-        message = 'Part is active: cannot delete'
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED, data=message)
-
     def update(self, request, *args, **kwargs):
         """Custom update functionality for Part instance.
 
