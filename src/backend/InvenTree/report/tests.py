@@ -14,10 +14,10 @@ import pytz
 from PIL import Image
 
 import report.models as report_models
-from build.models import Build, BuildLine
+from build.models import Build
 from common.models import InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
-from order.models import Order, PurchaseOrder, ReturnOrder, SalesOrder
+from order.models import ReturnOrder, SalesOrder
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
 from report.templatetags import barcode as barcode_tags
@@ -240,34 +240,22 @@ class ReportTest(InvenTreeAPITestCase):
 
     superuser = True
 
-    model = None
-    list_url = None
-    detail_url = None
-    print_url = None
-
     def setUp(self):
         """Ensure cache is cleared as part of test setup."""
         cache.clear()
+
+        apps.get_app_config('report').create_default_reports()
+
         return super().setUp()
-
-    def test_api_url(self):
-        """Test returned API Url against URL tag defined in this file."""
-        if not self.list_url:
-            return
-
-        self.assertEqual(reverse(self.list_url), self.model.get_api_url())
 
     def test_list_endpoint(self):
         """Test that the LIST endpoint works for each report."""
-        if not self.list_url:
-            return
-
-        url = reverse(self.list_url)
+        url = reverse('api-report-template-list')
 
         response = self.get(url)
         self.assertEqual(response.status_code, 200)
 
-        reports = self.model.objects.all()
+        reports = ReportTemplate.objects.all()
 
         n = len(reports)
         # API endpoint must return correct number of reports
@@ -294,10 +282,7 @@ class ReportTest(InvenTreeAPITestCase):
 
     def test_create_endpoint(self):
         """Test that creating a new report works for each report."""
-        if not self.list_url:
-            return
-
-        url = reverse(self.list_url)
+        url = reverse('api-report-template-list')
 
         # Create a new report
         # Django REST API "APITestCase" does not work like requests - to send a file without it existing on disk,
@@ -335,10 +320,7 @@ class ReportTest(InvenTreeAPITestCase):
 
     def test_detail_endpoint(self):
         """Test that the DETAIL endpoint works for each report."""
-        if not self.detail_url:
-            return
-
-        reports = self.model.objects.all()
+        reports = ReportTemplate.objects.all()
 
         n = len(reports)
 
@@ -347,7 +329,8 @@ class ReportTest(InvenTreeAPITestCase):
 
         # Check detail page for first report
         response = self.get(
-            reverse(self.detail_url, kwargs={'pk': reports[0].pk}), expected_code=200
+            reverse('api-report-template-detail', kwargs={'pk': reports[0].pk}),
+            expected_code=200,
         )
 
         # Make sure the expected keys are in the response
@@ -365,7 +348,7 @@ class ReportTest(InvenTreeAPITestCase):
 
         # Check PATCH method
         response = self.patch(
-            reverse(self.detail_url, kwargs={'pk': reports[0].pk}),
+            reverse('api-report-template-detail', kwargs={'pk': reports[0].pk}),
             {
                 'name': 'Changed name during test',
                 'description': 'New version of the template',
@@ -392,28 +375,27 @@ class ReportTest(InvenTreeAPITestCase):
 
         # Delete the last report
         response = self.delete(
-            reverse(self.detail_url, kwargs={'pk': reports[n - 1].pk}),
+            reverse('api-report-template-detail', kwargs={'pk': reports[n - 1].pk}),
             expected_code=204,
         )
 
     def test_metadata(self):
         """Unit tests for the metadata field."""
-        if self.model is not None:
-            p = self.model.objects.first()
+        p = ReportTemplate.objects.first()
 
-            self.assertEqual(p.metadata, {})
+        self.assertEqual(p.metadata, {})
 
-            self.assertIsNone(p.get_metadata('test'))
-            self.assertEqual(p.get_metadata('test', backup_value=123), 123)
+        self.assertIsNone(p.get_metadata('test'))
+        self.assertEqual(p.get_metadata('test', backup_value=123), 123)
 
-            # Test update via the set_metadata() method
-            p.set_metadata('test', 3)
-            self.assertEqual(p.get_metadata('test'), 3)
+        # Test update via the set_metadata() method
+        p.set_metadata('test', 3)
+        self.assertEqual(p.get_metadata('test'), 3)
 
-            for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
-                p.set_metadata(k, k)
+        for k in ['apple', 'banana', 'carrot', 'carrot', 'banana']:
+            p.set_metadata(k, k)
 
-            self.assertEqual(len(p.metadata.keys()), 4)
+        self.assertEqual(len(p.metadata.keys()), 4)
 
 
 class PrintTestMixins:
