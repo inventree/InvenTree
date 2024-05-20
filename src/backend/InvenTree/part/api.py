@@ -1132,6 +1132,23 @@ class PartFilter(rest_filters.FilterSet):
 
         return queryset.filter(pk__in=pks)
 
+    starred = rest_filters.BooleanFilter(label='Starred', method='filter_starred')
+
+    def filter_starred(self, queryset, name, value):
+        """Filter by whether the Part is 'starred' by the current user."""
+        if self.request.user.is_anonymous:
+            return queryset
+
+        starred_parts = [
+            star.part.pk
+            for star in self.request.user.starred_parts.all().prefetch_related(part)
+        ]
+
+        if value:
+            return queryset.filter(pk__in=starred_parts)
+        else:
+            return queryset.exclude(pk__in=starred_parts)
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1320,20 +1337,6 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        # Filter by 'starred' parts?
-        starred = params.get('starred', None)
-
-        if starred is not None:
-            starred = str2bool(starred)
-            starred_parts = [
-                star.part.pk for star in self.request.user.starred_parts.all()
-            ]
-
-            if starred:
-                queryset = queryset.filter(pk__in=starred_parts)
-            else:
-                queryset = queryset.exclude(pk__in=starred_parts)
 
         # Cascade? (Default = True)
         cascade = str2bool(params.get('cascade', True))
