@@ -66,7 +66,7 @@ from order.serializers import (
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from stock.admin import LocationResource, StockItemResource
-from stock.generators import generate_batch_code
+from stock.generators import generate_batch_code, generate_serial_number
 from stock.models import (
     StockItem,
     StockItemAttachment,
@@ -89,6 +89,22 @@ class GenerateBatchCode(GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         data = {'batch_code': generate_batch_code(**serializer.validated_data)}
+
+        return Response(data, status=status.HTTP_201_CREATED)
+
+
+class GenerateSerialNumber(GenericAPIView):
+    """API endpoint for generating serial numbers."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StockSerializers.GenerateSerialNumberSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Generate a new serial number."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = {'serial_number': generate_serial_number(**serializer.validated_data)}
 
         return Response(data, status=status.HTTP_201_CREATED)
 
@@ -1711,16 +1727,6 @@ stock_api_urls = [
         StatusView.as_view(),
         {StatusView.MODEL_REF: StockStatus},
         name='api-stock-status-codes',
-    ),
-    path(
-        'generate/',
-        include([
-            path(
-                'batch-code/',
-                GenerateBatchCode.as_view(),
-                name='api-generate-batch-code',
-            )
-        ]),
     ),
     # Anything else
     path('', StockList.as_view(), name='api-stock-list'),

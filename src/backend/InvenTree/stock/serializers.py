@@ -128,6 +128,46 @@ class GenerateBatchCodeSerializer(serializers.Serializer):
     )
 
 
+class GenerateSerialNumberSerializer(serializers.Serializer):
+    """Serializer for generating one or multiple serial numbers.
+
+    Any of the provided write-only fields can be used for additional context.
+
+    Note that in the case where multiple serial numbers are required,
+    the "serial" field will return a string with multiple serial numbers separated by a comma.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['serial', 'part', 'quantity']
+
+        read_only_fields = ['serial']
+
+        write_only_fields = ['part', 'quantity']
+
+    serial = serializers.CharField(
+        read_only=True, help_text=_('Generated serial number'), label=_('Serial Number')
+    )
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Part'),
+        help_text=_('Select part to generate serial number for'),
+    )
+
+    quantity = serializers.IntegerField(
+        required=False,
+        allow_null=False,
+        default=1,
+        label=_('Quantity'),
+        help_text=_('Quantity of serial numbers to generate'),
+    )
+
+
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Provides a brief serializer for a StockLocation object."""
 
