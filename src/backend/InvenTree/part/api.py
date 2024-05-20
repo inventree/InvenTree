@@ -4,7 +4,6 @@ import functools
 import re
 
 from django.db.models import Count, F, Q
-from django.http import JsonResponse
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
 
@@ -32,13 +31,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import (
-    DownloadFile,
-    increment_serial_number,
-    is_ajax,
-    isNull,
-    str2bool,
-)
+from InvenTree.helpers import DownloadFile, increment_serial_number, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,

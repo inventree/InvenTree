@@ -1,7 +1,7 @@
 """JSON API for the Stock app."""
 
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
@@ -45,7 +45,6 @@ from InvenTree.helpers import (
     is_ajax,
     isNull,
     str2bool,
-    str2int,
 )
 from InvenTree.mixins import (
     CreateAPI,
