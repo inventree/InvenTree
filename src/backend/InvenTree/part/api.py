@@ -1106,6 +1106,42 @@ class PartFilter(rest_filters.FilterSet):
         label='Default Location', queryset=StockLocation.objects.all()
     )
 
+    bom_valid = rest_filters.BooleanFilter(
+        label=_('BOM Valid'), method='filter_bom_valid'
+    )
+
+    def filter_bom_valid(self, queryset, name, value):
+        """Filter by whether the BOM for the part is valid or not."""
+        # Limit queryset to active assemblies
+        queryset = queryset.filter(active=True, assembly=True).distinct()
+
+        # Iterate through the queryset
+        # TODO: We should cache BOM checksums to make this process more efficient
+        pks = []
+
+        for part in queryset:
+            if part.is_bom_valid() == value:
+                pks.append(part.pk)
+
+        return queryset.filter(pk__in=pks)
+
+    starred = rest_filters.BooleanFilter(label='Starred', method='filter_starred')
+
+    def filter_starred(self, queryset, name, value):
+        """Filter by whether the Part is 'starred' by the current user."""
+        if self.request.user.is_anonymous:
+            return queryset
+
+        starred_parts = [
+            star.part.pk
+            for star in self.request.user.starred_parts.all().prefetch_related('part')
+        ]
+
+        if value:
+            return queryset.filter(pk__in=starred_parts)
+        else:
+            return queryset.exclude(pk__in=starred_parts)
+
     is_template = rest_filters.BooleanFilter()
 
     assembly = rest_filters.BooleanFilter()
@@ -1235,26 +1271,6 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
             queryset = queryset.exclude(pk__in=id_values)
 
-        # Filter by whether the BOM has been validated (or not)
-        bom_valid = params.get('bom_valid', None)
-
-        # TODO: Querying bom_valid status may be quite expensive
-        # TODO: (It needs to be profiled!)
-        # TODO: It might be worth caching the bom_valid status to a database column
-        if bom_valid is not None:
-            bom_valid = str2bool(bom_valid)
-
-            # Limit queryset to active assemblies
-            queryset = queryset.filter(active=True, assembly=True)
-
-            pks = []
-
-            for prt in queryset:
-                if prt.is_bom_valid() == bom_valid:
-                    pks.append(prt.pk)
-
-            queryset = queryset.filter(pk__in=pks)
-
         # Filter by 'related' parts?
         related = params.get('related', None)
         exclude_related = params.get('exclude_related', None)
@@ -1287,20 +1303,6 @@ class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
 
             except (ValueError, Part.DoesNotExist):
                 pass
-
-        # Filter by 'starred' parts?
-        starred = params.get('starred', None)
-
-        if starred is not None:
-            starred = str2bool(starred)
-            starred_parts = [
-                star.part.pk for star in self.request.user.starred_parts.all()
-            ]
-
-            if starred:
-                queryset = queryset.filter(pk__in=starred_parts)
-            else:
-                queryset = queryset.exclude(pk__in=starred_parts)
 
         # Cascade? (Default = True)
         cascade = str2bool(params.get('cascade', True))
