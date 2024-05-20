@@ -153,8 +153,8 @@ class GenerateSerialNumberSerializer(serializers.Serializer):
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
         many=False,
-        required=True,
-        allow_null=False,
+        required=False,
+        allow_null=True,
         label=_('Part'),
         help_text=_('Select part to generate serial number for'),
     )

@@ -21,7 +21,10 @@ import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
-import { useBatchCodeGenerator } from '../hooks/UseGenerator';
+import {
+  useBatchCodeGenerator,
+  useSerialNumberGenerator
+} from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
 
 /**
@@ -36,10 +39,19 @@ export function useStockFields({
   const [supplierPart, setSupplierPart] = useState<number | null>(null);
 
   const [batchCode, setBatchCode] = useState<string>('');
+  const [serialNumbers, setSerialNumbers] = useState<string>('');
+
+  const [trackable, setTrackable] = useState<boolean>(false);
 
   const batchGenerator = useBatchCodeGenerator((value: any) => {
     if (!batchCode) {
       setBatchCode(value);
+    }
+  });
+
+  const serialGenerator = useSerialNumberGenerator((value: any) => {
+    if (!serialNumbers && create && trackable) {
+      setSerialNumbers(value);
     }
   });
 
@@ -48,11 +60,19 @@ export function useStockFields({
       part: {
         value: part,
         disabled: !create,
-        onValueChange: (value) => {
+        onValueChange: (value, record) => {
           setPart(value);
           // TODO: implement remaining functionality from old stock.py
 
+          setTrackable(record.trackable ?? false);
+
           batchGenerator.update({ part: value });
+          serialGenerator.update({ part: value });
+
+          if (!record.trackable) {
+            setSerialNumbers('');
+          }
+
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
         }
@@ -88,7 +108,6 @@ export function useStockFields({
         filters: {
           structural: false
         }
-        // TODO: icon
       },
       quantity: {
         hidden: !create,
@@ -98,12 +117,14 @@ export function useStockFields({
         }
       },
       serial_numbers: {
-        // TODO: icon
         field_type: 'string',
         label: t`Serial Numbers`,
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
-        hidden: !create
+        disabled: !trackable,
+        hidden: !create,
+        value: serialNumbers,
+        onValueChange: (value) => setSerialNumbers(value)
       },
       serial: {
         hidden: create
@@ -140,7 +161,7 @@ export function useStockFields({
     // TODO: refer to stock.py in original codebase
 
     return fields;
-  }, [part, supplierPart, batchCode]);
+  }, [part, supplierPart, batchCode, serialNumbers, trackable, create]);
 }
 
 /**

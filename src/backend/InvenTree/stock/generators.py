@@ -80,6 +80,10 @@ def generate_serial_number(part=None, quantity=1, **kwargs) -> str:
 
     quantity = quantity or 1
 
+    if part is None:
+        # Cannot generate a serial number without a part
+        return None
+
     try:
         quantity = int(quantity)
     except Exception:
@@ -87,9 +91,6 @@ def generate_serial_number(part=None, quantity=1, **kwargs) -> str:
 
     if quantity < 1:
         raise ValidationError({'quantity': 'Quantity must be greater than zero'})
-
-    if part is None:
-        raise ValidationError({'part': 'Part must be specified'})
 
     # If we are here, no plugins were available to generate a serial number
     # In this case, we will generate a simple serial number based on the provided part
