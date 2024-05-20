@@ -479,21 +479,24 @@ class TestReportTest(PrintTestMixins, ReportTest):
 
     def test_print(self):
         """Printing tests for the TestReport."""
-        report = self.model.objects.first()
+        template = ReportTemplate.objects.filter(
+            enabled=True, model_type='stockitem'
+        ).first()
+        self.assertIsNotNone(template)
 
         url = reverse(self.print_url)
 
         # Try to print without providing a valid StockItem
-        self.post(url, {'template': report.pk}, expected_code=400)
+        self.post(url, {'template': template.pk}, expected_code=400)
 
         # Try to print with an invalid StockItem
-        self.post(url, {'template': report.pk, 'items': [9999]}, expected_code=400)
+        self.post(url, {'template': template.pk, 'items': [9999]}, expected_code=400)
 
         # Now print with a valid StockItem
         item = StockItem.objects.first()
 
         response = self.post(
-            url, {'template': report.pk, 'items': [item.pk]}, expected_code=201
+            url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
         )
 
         # There should be a link to the generated PDF
