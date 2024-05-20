@@ -38,7 +38,7 @@ export function useStockFields({
   const [batchCode, setBatchCode] = useState<string>('');
 
   const batchGenerator = useGenerator(
-    ApiEndpoints.stock_generate_batch_code,
+    ApiEndpoints.generate_batch_code,
     'batch_code',
     (value: any) => {
       if (!batchCode) {
