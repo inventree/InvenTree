@@ -70,3 +70,21 @@ export function useGenerator(
     result
   };
 }
+
+// Generate a batch code with provided data
+export function useBatchCodeGenerator(onGenerate: (value: any) => void) {
+  return useGenerator(
+    ApiEndpoints.generate_batch_code,
+    'batch_code',
+    onGenerate
+  );
+}
+
+// Generate a serial number with provided data
+export function useSerialNumberGenerator(onGenerate: (value: any) => void) {
+  return useGenerator(
+    ApiEndpoints.generate_serial_number,
+    'serial_number',
+    onGenerate
+  );
+}

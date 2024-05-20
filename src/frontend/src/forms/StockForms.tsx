@@ -21,7 +21,7 @@ import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
-import { useGenerator } from '../hooks/UseGenerator';
+import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
 
 /**
@@ -37,15 +37,11 @@ export function useStockFields({
 
   const [batchCode, setBatchCode] = useState<string>('');
 
-  const batchGenerator = useGenerator(
-    ApiEndpoints.generate_batch_code,
-    'batch_code',
-    (value: any) => {
-      if (!batchCode) {
-        setBatchCode(value);
-      }
+  const batchGenerator = useBatchCodeGenerator((value: any) => {
+    if (!batchCode) {
+      setBatchCode(value);
     }
-  );
+  });
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {

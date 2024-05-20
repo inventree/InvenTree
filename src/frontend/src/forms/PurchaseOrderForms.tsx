@@ -39,7 +39,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useGenerator } from '../hooks/UseGenerator';
+import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
 
 /*
@@ -213,15 +213,11 @@ function LineItemFormRow({
     input.changeFn(input.idx, 'location', location);
   }, [location]);
 
-  const batchCodeGenerator = useGenerator(
-    ApiEndpoints.generate_batch_code,
-    'batch_code',
-    (value: any) => {
-      if (!batchCode) {
-        setBatchCode(value);
-      }
+  const batchCodeGenerator = useBatchCodeGenerator((value: any) => {
+    if (!batchCode) {
+      setBatchCode(value);
     }
-  );
+  });
 
   // State for serializing
   const [batchCode, setBatchCode] = useState<string>('');
