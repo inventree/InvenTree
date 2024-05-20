@@ -336,6 +336,8 @@ class PartTest(TestCase):
         self.assertIn(self.r1, r2_relations)
 
         # Delete a part, ensure the relationship also gets deleted
+        self.r1.active = False
+        self.r1.save()
         self.r1.delete()
 
         self.assertEqual(PartRelated.objects.count(), countbefore)
