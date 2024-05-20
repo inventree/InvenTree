@@ -747,6 +747,25 @@ class PartAPITest(PartAPITestBase):
         response = self.get(url, {'related': 1}, expected_code=200)
         self.assertEqual(len(response.data), 2)
 
+    def test_filter_by_bom_valid(self):
+        """Test the 'bom_valid' Part API filter."""
+        url = reverse('api-part-list')
+
+        n = Part.objects.filter(active=True, assembly=True).count()
+
+        # Initially, there are no parts with a valid BOM
+        response = self.get(url, {'bom_valid': False}, expected_code=200)
+        n1 = len(response.data)
+
+        for item in response.data:
+            self.assertTrue(item['assembly'])
+            self.assertTrue(item['active'])
+
+        response = self.get(url, {'bom_valid': True}, expected_code=200)
+        n2 = len(response.data)
+
+        self.assertEqual(n1 + n2, n)
+
     def test_filter_by_convert(self):
         """Test that we can correctly filter the Part list by conversion options."""
         category = PartCategory.objects.get(pk=3)
