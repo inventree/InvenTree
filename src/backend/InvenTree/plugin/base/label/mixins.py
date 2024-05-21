@@ -178,8 +178,9 @@ class LabelPrintingMixin:
             else:
                 # Offload the print task to the background worker
                 # Exclude the 'pdf_file' object - cannot be pickled
+
                 kwargs.pop('pdf_file', None)
-                offload_task(plugin_label.print_label, self.plugin_slug(), **kwargs)
+                offload_task(plugin_label.print_label, self.plugin_slug(), **print_args)
 
             # Update the progress of the print job
             output.progress += int(100 / N)
