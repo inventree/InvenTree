@@ -132,6 +132,30 @@ In the [settings screen](./global.md), navigate to the *Login Settings* panel. H
 
 Note that [email settings](./email.md) must be correctly configured before SSO will be activated. Ensure that your email setup is correctly configured and operational.
 
+## SSO Group Sync Configuration
+
+InvenTree has the ability to synchronize groups assigned to each user directly from the IdP. To enable this feature, navigate to the *Login Settings* panel in the [settings screen](./global.md) first. Here, the following options are available:
+
+| Setting | Description |
+| --- | --- |
+| Enable SSO group sync | Enable synchronizing InvenTree groups with groups provided by the IdP |
+| SSO group key | The name of the claim containing all groups, e.g. `groups` or `roles` |
+| SSO group map | A mapping from SSO groups to InvenTree groups as JSON, e.g. `{"/inventree/admins": "admin"}` |
+| Remove groups outside of SSO | Whether groups should be removed from the user if they are not present in the IdP data |
+
+!!! warning "Remove groups outside of SSO"
+    Disabling this feature might cause security issues as groups that are removed in the IdP will stay assigned in InvenTree
+
+### Keycloak OIDC example configuration
+
+The main challenge in enabling the SSO group sync feature is for the SSO admin to configure the IdP such that the groups are correctly represented in in the Django allauth `extra_data` attribute. The SSO group sync feature has been developed and tested using integrated Keycloak users/groups and OIDC. If you are utilizing this feature using another IdP, kindly consider documenting your configuration steps as well.
+
+Keycloak groups are not sent to the OIDC client by default. To enable such functionality, create a new client scope named `groups` in the Keycloak admin console. For this scope, add a new mapper ('By Configuration') and select 'Group Membership'. Give it a descriptive name and set the token claim name to `groups`.
+
+For each OIDC client that relies on those group, explicitly add the `groups` scope to client scopes. The groups will now be sent to client upon request.
+
+**Note:** A group named `foo` will be displayed as `/foo`. For this reason, the example above recommends using group names like `appname/rolename` which will be sent to the client as `/appname/rolename`.
+
 ## Security Considerations
 
 You should use SSL for your website if you want to use this feature. Also set your callback-endpoints to `https://` addresses to reduce the risk of leaking user's tokens.
