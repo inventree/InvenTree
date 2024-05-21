@@ -17,6 +17,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -190,6 +191,13 @@ export default function BuildDetail() {
         model: ModelType.stocklocation,
         label: t`Destination Location`,
         hidden: !build.destination
+      },
+      {
+        type: 'text',
+        name: 'batch',
+        label: t`Batch Code`,
+        hidden: !build.batch,
+        copy: true
       }
     ];
 
@@ -347,8 +355,8 @@ export default function BuildDetail() {
   });
 
   const buildActions = useMemo(() => {
-    // TODO: Disable certain actions based on user permissions
     return [
+      <AdminButton model={ModelType.build} pk={build.pk} />,
       <ActionDropdown
         key="barcode"
         tooltip={t`Barcode Actions`}
@@ -386,7 +394,8 @@ export default function BuildDetail() {
           }),
           CancelItemAction({
             tooltip: t`Cancel order`,
-            onClick: () => cancelBuild.open()
+            onClick: () => cancelBuild.open(),
+            hidden: !user.hasChangeRole(UserRoles.build)
             // TODO: Hide if build cannot be cancelled
           }),
           DuplicateItemAction({

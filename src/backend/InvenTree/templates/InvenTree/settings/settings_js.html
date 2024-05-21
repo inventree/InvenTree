@@ -19,7 +19,7 @@ $('table').find('.boolean-setting').change(function() {
     if (notification) {
         url = `/api/settings/notification/${pk}/`;
     } else if (plugin) {
-        url = `/api/plugins/settings/${plugin}/${setting}/`;
+        url = `/api/plugins/${plugin}/settings/${setting}/`;
     } else if (user) {
         url = `/api/settings/user/${setting}/`;
     }

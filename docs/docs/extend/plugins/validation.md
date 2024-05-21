@@ -116,7 +116,7 @@ Validation of the Part IPN (Internal Part Number) field is exposed to custom plu
 
 The `validate_batch_code` method allows plugins to raise an error if a batch code input by the user does not meet a particular pattern.
 
-The `generate_batch_code` method can be implemented to generate a new batch code.
+The `generate_batch_code` method can be implemented to generate a new batch code, based on a set of provided information.
 
 ### Serial Numbers
 

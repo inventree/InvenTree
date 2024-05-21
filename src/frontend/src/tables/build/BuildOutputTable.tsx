@@ -113,6 +113,9 @@ export default function BuildOutputTable({ build }: { build: any }) {
     url: apiUrl(ApiEndpoints.build_output_create, buildId),
     title: t`Add Build Output`,
     fields: buildOutputFields,
+    initialData: {
+      batch_code: build.batch
+    },
     table: table
   });
 

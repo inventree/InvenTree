@@ -108,6 +108,10 @@ export enum ApiEndpoints {
   stock_status = 'stock/status/',
   stock_install = 'stock/:id/install',
 
+  // Generator API endpoints
+  generate_batch_code = 'generate/batch-code/',
+  generate_serial_number = 'generate/serial-number/',
+
   // Order API endpoints
   purchase_order_list = 'order/po/',
   purchase_order_line_list = 'order/po-line/',

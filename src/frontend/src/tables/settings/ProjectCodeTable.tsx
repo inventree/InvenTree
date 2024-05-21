@@ -33,7 +33,7 @@ export default function ProjectCodeTable() {
         sortable: true
       },
       DescriptionColumn({}),
-      ResponsibleColumn()
+      ResponsibleColumn({})
     ];
   }, []);
 
