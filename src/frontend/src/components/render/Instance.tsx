@@ -36,6 +36,11 @@ type EnumDictionary<T extends string | symbol | number, U> = {
   [K in T]: U;
 };
 
+export interface InstanceRenderInterface {
+  instance: any;
+  link?: boolean;
+}
+
 /**
  * Lookup table for rendering a model instance
  */
@@ -68,31 +73,27 @@ const RendererLookup: EnumDictionary<
   [ModelType.user]: RenderUser
 };
 
-// import { ApiFormFieldType } from "../forms/fields/ApiFormField";
+export type RenderInstanceProps = {
+  model: ModelType | undefined;
+} & InstanceRenderInterface;
 
 /**
  * Render an instance of a database model, depending on the provided data
  */
-export function RenderInstance({
-  model,
-  instance
-}: {
-  model: ModelType | undefined;
-  instance: any;
-}): ReactNode {
-  if (model === undefined) {
+export function RenderInstance(props: RenderInstanceProps): ReactNode {
+  if (props.model === undefined) {
     console.error('RenderInstance: No model provided');
-    return <UnknownRenderer model={model} />;
+    return <UnknownRenderer model={props.model} />;
   }
 
-  const RenderComponent = RendererLookup[model];
+  const RenderComponent = RendererLookup[props.model];
 
   if (!RenderComponent) {
-    console.error(`RenderInstance: No renderer for model ${model}`);
-    return <UnknownRenderer model={model} />;
+    console.error(`RenderInstance: No renderer for model ${props.model}`);
+    return <UnknownRenderer model={props.model} />;
   }
 
-  return <RenderComponent instance={instance} />;
+  return <RenderComponent instance={props.instance} link={props.link} />;
 }
 
 /**
@@ -143,8 +144,4 @@ export function UnknownRenderer({
       <></>
     </Alert>
   );
-}
-
-export interface InstanceRenderInterface {
-  instance: any;
 }
