@@ -50,7 +50,7 @@ class ValidationMixin:
         """Raise a ValidationError with the given message."""
         raise ValidationError(message)
 
-    def validate_model_deletion(self, instance: Model):
+    def validate_model_deletion(self, instance: Model) -> None:
         """Run custom validation when a model instance is being deleted.
 
         This method is called when a model instance is being deleted.
@@ -60,14 +60,14 @@ class ValidationMixin:
             instance: The model instance to validate
 
         Returns:
-            None or True (refer to class docstring)
+            None: or True (refer to class docstring)
 
         Raises:
-            ValidationError if the instance cannot be deleted
+            ValidationError: if the instance cannot be deleted
         """
         return None
 
-    def validate_model_instance(self, instance: Model, deltas: dict = None):
+    def validate_model_instance(self, instance: Model, deltas: dict = None) -> None:
         """Run custom validation on a database model instance.
 
         This method is called when a model instance is being validated.
@@ -78,10 +78,10 @@ class ValidationMixin:
             deltas: A dictionary of field names and updated values (if the instance is being updated)
 
         Returns:
-            None or True (refer to class docstring)
+            None: or True (refer to class docstring)
 
         Raises:
-            ValidationError if the instance is invalid
+            ValidationError: if the instance is invalid
         """
         return None
 
