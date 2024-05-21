@@ -44,24 +44,6 @@ Any plugin which inherits the `ValidationMixin` can implement the `validate_mode
       summary: False
       members: []
 
-The `validate_model_instance` method is passed the following arguments:
-
-| Argument | Description |
-| --- | --- |
-| `instance` | The model instance to be validated |
-| `deltas` | A dict of field deltas (if the instance is being updated) |
-
-```python
-def validate_model_instance(self, instance, deltas=None):
-    """Validate the supplied model instance.
-
-    Arguments:
-        instance: The model instance to be validated
-        deltas: A dict of field deltas (if the instance is being updated)
-    """
-    ...
-```
-
 ### Error Messages
 
 Any error messages must be raised as a `ValidationError`. The `ValidationMixin` class provides the `raise_error` method, which is a simple wrapper method which raises a `ValidationError`
