@@ -1917,20 +1917,24 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
         },
         'SSO_GROUP_KEY': {
-            'name': 'SSO group key',
-            'description': 'The name of the groups claim attribute provided by the IdP',
+            'name': _('SSO group key'),
+            'description': _(
+                'The name of the groups claim attribute provided by the IdP'
+            ),
             'default': 'groups',
             'validator': str,
         },
         'SSO_GROUP_MAP': {
-            'name': 'SSO group map',
-            'description': 'A mapping from SSO groups to local InvenTree groups',
+            'name': _('SSO group map'),
+            'description': _('A mapping from SSO groups to local InvenTree groups'),
             'validator': json.loads,
             'default': '{}',
         },
         'SSO_REMOVE_GROUPS': {
-            'name': 'Remove groups outside of SSO',
-            'description': 'Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues',
+            'name': _('Remove groups outside of SSO'),
+            'description': _(
+                'Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues'
+            ),
             'default': True,
             'validator': bool,
         },
