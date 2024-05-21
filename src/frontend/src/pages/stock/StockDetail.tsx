@@ -60,6 +60,7 @@ import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
+import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -269,7 +270,12 @@ export default function StockDetail() {
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory />
+        icon: <IconHistory />,
+        content: stockitem.pk ? (
+          <StockTrackingTable itemId={stockitem.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'allocations',
