@@ -292,17 +292,23 @@ class ReportTest(InvenTreeAPITestCase):
         )
         filestr.name = 'ExampleTemplate.html'
 
-        response = self.post(
-            url,
-            data={
-                'name': 'New report',
-                'description': 'A fancy new report created through API test',
-                'template': filestr,
-                'model_type': 'part',
-            },
-            format=None,
-            expected_code=201,
-        )
+        data = {
+            'name': 'New report',
+            'description': 'A fancy new report created through API test',
+            'template': filestr,
+            'model_type': 'part2',
+        }
+
+        # Test with invalid model type
+        response = self.post(url, data=data, expected_code=400)
+
+        self.assertIn('"part2" is not a valid choice', str(response.data['model_type']))
+
+        # With valid model type
+        data['model_type'] = 'part'
+        filestr.seek(0)
+
+        response = self.post(url, data=data, format=None, expected_code=201)
 
         # Make sure the expected keys are in the response
         self.assertIn('pk', response.data)
