@@ -20,7 +20,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
-import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -33,7 +32,6 @@ type StockTrackingEntry = {
 
 export function StockTrackingTable({ itemId }: { itemId: number }) {
   const table = useTable('stock_tracking');
-  const user = useUserState();
 
   // Render "details" for a stock tracking record
   const renderDetails = useCallback((record: any) => {
