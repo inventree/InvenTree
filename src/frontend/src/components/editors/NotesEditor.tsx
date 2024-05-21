@@ -6,7 +6,7 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 // import SimpleMDE from 'react-simplemde-editor';
-import MarkdownEditor from '../editors/MarkdownEditor';
+import MarkdownEditor from './MarkdownEditor';
 
 /**
  * Markdon editor component. Uses react-simplemde-editor
