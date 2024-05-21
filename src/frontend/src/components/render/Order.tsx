@@ -2,20 +2,22 @@ import { t } from '@lingui/macro';
 import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
+import { getDetailUrl } from '../../functions/urls';
 import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
 /**
  * Inline rendering of a single PurchaseOrder instance
  */
-export function RenderPurchaseOrder({
-  instance
-}: Readonly<InstanceRenderInterface>): ReactNode {
-  let supplier = instance.supplier_detail || {};
+export function RenderPurchaseOrder(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+  const supplier = instance?.supplier_detail || {};
 
-  // TODO: Handle URL
   return (
     <RenderInlineModel
+      {...props}
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
@@ -23,6 +25,11 @@ export function RenderPurchaseOrder({
         type: ModelType.purchaseorder
       })}
       image={supplier.thumnbnail || supplier.image}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.purchaseorder, instance.pk)
+          : undefined
+      }
     />
   );
 }
@@ -30,13 +37,15 @@ export function RenderPurchaseOrder({
 /**
  * Inline rendering of a single ReturnOrder instance
  */
-export function RenderReturnOrder({
-  instance
-}: Readonly<InstanceRenderInterface>): ReactNode {
-  let customer = instance.customer_detail || {};
+export function RenderReturnOrder(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+  const customer = instance?.customer_detail || {};
 
   return (
     <RenderInlineModel
+      {...props}
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
@@ -44,6 +53,11 @@ export function RenderReturnOrder({
         type: ModelType.returnorder
       })}
       image={customer.thumnbnail || customer.image}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.returnorder, instance.pk)
+          : undefined
+      }
     />
   );
 }
@@ -51,15 +65,15 @@ export function RenderReturnOrder({
 /**
  * Inline rendering of a single SalesOrder instance
  */
-export function RenderSalesOrder({
-  instance
-}: Readonly<InstanceRenderInterface>): ReactNode {
-  let customer = instance.customer_detail || {};
-
-  // TODO: Handle URL
+export function RenderSalesOrder(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+  const customer = instance?.customer_detail || {};
 
   return (
     <RenderInlineModel
+      {...props}
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
@@ -67,6 +81,9 @@ export function RenderSalesOrder({
         type: ModelType.salesorder
       })}
       image={customer.thumnbnail || customer.image}
+      url={
+        props.link ? getDetailUrl(ModelType.salesorder, instance.pk) : undefined
+      }
     />
   );
 }

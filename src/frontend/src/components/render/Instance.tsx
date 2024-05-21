@@ -1,8 +1,9 @@
 import { t } from '@lingui/macro';
-import { Alert, Group, Space, Text } from '@mantine/core';
-import { ReactNode } from 'react';
+import { Alert, Anchor, Group, Space, Text } from '@mantine/core';
+import { ReactNode, useCallback } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
+import { navigateToLink } from '../../functions/navigation';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -39,6 +40,7 @@ type EnumDictionary<T extends string | symbol | number, U> = {
 export interface InstanceRenderInterface {
   instance: any;
   link?: boolean;
+  navigate?: any;
 }
 
 /**
@@ -93,7 +95,7 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
     return <UnknownRenderer model={props.model} />;
   }
 
-  return <RenderComponent instance={props.instance} link={props.link} />;
+  return <RenderComponent {...props} />;
 }
 
 /**
@@ -105,7 +107,8 @@ export function RenderInlineModel({
   suffix,
   image,
   labels,
-  url
+  url,
+  navigate
 }: {
   primary: string;
   secondary?: string;
@@ -113,15 +116,30 @@ export function RenderInlineModel({
   image?: string;
   labels?: string[];
   url?: string;
+  navigate?: any;
 }): ReactNode {
   // TODO: Handle labels
-  // TODO: Handle URL
+
+  const onClick = useCallback(
+    (event: any) => {
+      if (url && navigate) {
+        navigateToLink(url, navigate, event);
+      }
+    },
+    [url, navigate]
+  );
 
   return (
     <Group gap="xs" justify="space-between" wrap="nowrap">
       <Group gap="xs" justify="left" wrap="nowrap">
         {image && Thumbnail({ src: image, size: 18 })}
-        <Text size="sm">{primary}</Text>
+        {url ? (
+          <Anchor href={url} onClick={(event: any) => onClick(event)}>
+            <Text size="sm">{primary}</Text>
+          </Anchor>
+        ) : (
+          <Text size="sm">{primary}</Text>
+        )}
         {secondary && <Text size="xs">{secondary}</Text>}
       </Group>
       {suffix && (

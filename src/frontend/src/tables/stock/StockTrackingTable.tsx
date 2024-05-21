@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Table, Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { RenderBuildOrder } from '../../components/render/Build';
 import { RenderCompany } from '../../components/render/Company';
@@ -31,110 +32,143 @@ type StockTrackingEntry = {
 };
 
 export function StockTrackingTable({ itemId }: { itemId: number }) {
+  const navigate = useNavigate();
   const table = useTable('stock_tracking');
 
   // Render "details" for a stock tracking record
-  const renderDetails = useCallback((record: any) => {
-    const deltas: any = record?.deltas ?? {};
+  const renderDetails = useCallback(
+    (record: any) => {
+      const deltas: any = record?.deltas ?? {};
 
-    let entries: StockTrackingEntry[] = [
-      {
-        label: t`Stock Item`,
-        key: 'stockitem',
-        details:
-          deltas.stockitem_detail &&
-          RenderStockItem({ instance: deltas.stockitem_detail })
-      },
-      {
-        label: t`Status`,
-        key: 'status',
-        details:
-          deltas.status &&
-          StatusRenderer({ status: deltas.status, type: ModelType.stockitem })
-      },
-      {
-        label: t`Quantity`,
-        key: 'quantity',
-        details: deltas.quantity
-      },
-      {
-        label: t`Added`,
-        key: 'added',
-        details: deltas.added
-      },
-      {
-        label: t`Removed`,
-        key: 'removed',
-        details: deltas.removed
-      },
-      {
-        label: t`Part`,
-        key: 'part',
-        details:
-          deltas.part_detail && RenderPart({ instance: deltas.part_detail })
-      },
-      {
-        label: t`Location`,
-        key: 'location',
-        details:
-          deltas.location_detail &&
-          RenderStockLocation({ instance: deltas.location_detail })
-      },
-      {
-        label: t`Build Order`,
-        key: 'buildorder',
-        details:
-          deltas.buildorder_detail &&
-          RenderBuildOrder({ instance: deltas.buildorder_detail })
-      },
-      {
-        label: t`Purchase Order`,
-        key: 'purchaseorder',
-        details:
-          deltas.purchaseorder_detail &&
-          RenderPurchaseOrder({ instance: deltas.purchaseorder_detail })
-      },
-      {
-        label: t`Sales Order`,
-        key: 'salesorder',
-        details:
-          deltas.salesorder_detail &&
-          RenderSalesOrder({ instance: deltas.salesorder_detail })
-      },
-      {
-        label: t`Return Order`,
-        key: 'returnorder',
-        details:
-          deltas.returnorder_detail &&
-          RenderReturnOrder({ instance: deltas.returnorder_detail })
-      },
-      {
-        label: t`Customer`,
-        key: 'customer',
-        details:
-          deltas.customer_detail &&
-          RenderCompany({ instance: deltas.customer_detail })
-      }
-    ];
+      let entries: StockTrackingEntry[] = [
+        {
+          label: t`Stock Item`,
+          key: 'stockitem',
+          details:
+            deltas.stockitem_detail &&
+            RenderStockItem({ instance: deltas.stockitem_detail })
+        },
+        {
+          label: t`Status`,
+          key: 'status',
+          details:
+            deltas.status &&
+            StatusRenderer({ status: deltas.status, type: ModelType.stockitem })
+        },
+        {
+          label: t`Quantity`,
+          key: 'quantity',
+          details: deltas.quantity
+        },
+        {
+          label: t`Added`,
+          key: 'added',
+          details: deltas.added
+        },
+        {
+          label: t`Removed`,
+          key: 'removed',
+          details: deltas.removed
+        },
+        {
+          label: t`Part`,
+          key: 'part',
+          details:
+            deltas.part_detail &&
+            RenderPart({
+              instance: deltas.part_detail,
+              link: true,
+              navigate: navigate
+            })
+        },
+        {
+          label: t`Location`,
+          key: 'location',
+          details:
+            deltas.location_detail &&
+            RenderStockLocation({
+              instance: deltas.location_detail,
+              link: true,
+              navigate: navigate
+            })
+        },
+        {
+          label: t`Build Order`,
+          key: 'buildorder',
+          details:
+            deltas.buildorder_detail &&
+            RenderBuildOrder({
+              instance: deltas.buildorder_detail,
+              link: true,
+              navigate: navigate
+            })
+        },
+        {
+          label: t`Purchase Order`,
+          key: 'purchaseorder',
+          details:
+            deltas.purchaseorder_detail &&
+            RenderPurchaseOrder({
+              instance: deltas.purchaseorder_detail,
+              link: true,
+              navigate: navigate
+            })
+        },
+        {
+          label: t`Sales Order`,
+          key: 'salesorder',
+          details:
+            deltas.salesorder_detail &&
+            RenderSalesOrder({
+              instance: deltas.salesorder_detail,
+              link: true,
+              navigate: navigate
+            })
+        },
+        {
+          label: t`Return Order`,
+          key: 'returnorder',
+          details:
+            deltas.returnorder_detail &&
+            RenderReturnOrder({
+              instance: deltas.returnorder_detail,
+              link: true,
+              navigate: navigate
+            })
+        },
+        {
+          label: t`Customer`,
+          key: 'customer',
+          details:
+            deltas.customer_detail &&
+            RenderCompany({
+              instance: deltas.customer_detail,
+              link: true,
+              navigate: navigate
+            })
+        }
+      ];
 
-    return (
-      <Table striped>
-        <Table.Tbody>
-          {entries.map(
-            (entry) =>
-              entry.details && (
-                <Table.Tr key={entry.key}>
-                  <Table.Td>
-                    <Text>{entry.label}</Text>
-                  </Table.Td>
-                  <Table.Td>{entry.details}</Table.Td>
-                </Table.Tr>
-              )
-          )}
-        </Table.Tbody>
-      </Table>
-    );
-  }, []);
+      return (
+        <Table striped>
+          <Table.Tbody>
+            {entries.map(
+              (entry) =>
+                entry.details && (
+                  <Table.Tr key={entry.key}>
+                    <Table.Td>
+                      <Text>{entry.label}</Text>
+                    </Table.Td>
+                    <Table.Td>{entry.details}</Table.Td>
+                  </Table.Tr>
+                )
+            )}
+          </Table.Tbody>
+        </Table>
+      );
+    },
+    [navigate]
+  );
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
