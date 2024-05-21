@@ -14,6 +14,20 @@ Any of the methods described below can be implemented in a custom plugin to prov
 !!! info "Multi Plugin Support"
     It is possible to have multiple plugins loaded simultaneously which support validation methods. For example when validating a field, if one plugin returns a null value (`None`) then the *next* plugin (if available) will be queried.
 
+## Model Deletion
+
+Any model which inherits the `PluginValidationMixin` class is exposed to the plugin system for custom deletion validation. Before the model is deleted from the database, it is first passed to the plugin ecosystem to check if it really should be deleted.
+
+A custom plugin may implement the `validate_model_deletion` method to perform custom validation on the model instance before it is deleted.
+
+::: plugin.base.integration.ValidationMixin.ValidationMixin
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      members: []
+
 ## Model Validation
 
 Any model which inherits the `PluginValidationMixin` mixin class is exposed to the plugin system for custom validation. Before the model is saved to the database (either when created, or updated), it is first passed to the plugin ecosystem for validation.
