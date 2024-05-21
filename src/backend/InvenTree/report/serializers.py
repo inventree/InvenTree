@@ -18,6 +18,17 @@ from InvenTree.serializers import (
 class ReportSerializerBase(InvenTreeModelSerializer):
     """Base serializer class for report and label templates."""
 
+    def __init__(self, *args, **kwargs):
+        """Override the constructor for the ReportSerializerBase.
+
+        The primary goal here is to ensure that the 'choices' attribute
+        is set correctly for the 'model_type' field.
+        """
+        super().__init__(*args, **kwargs)
+
+        if len(self.fields['model_type'].choices) == 0:
+            self.fields['model_type'].choices = report.helpers.report_model_options()
+
     @staticmethod
     def base_fields():
         """Base serializer field set."""
@@ -37,8 +48,13 @@ class ReportSerializerBase(InvenTreeModelSerializer):
 
     revision = serializers.IntegerField(read_only=True)
 
+    # Note: The choices are overridden at run-time
     model_type = serializers.ChoiceField(
-        label=_('Model Type'), choices=report.helpers.report_model_options()
+        label=_('Model Type'),
+        choices=report.helpers.report_model_options(),
+        required=True,
+        allow_blank=False,
+        allow_null=False,
     )
 
 
@@ -141,7 +157,7 @@ class LabelTemplateSerializer(ReportSerializerBase):
         """Metaclass options."""
 
         model = report.models.LabelTemplate
-        fields = [*ReportSerializerBase().base_fields(), 'width', 'height']
+        fields = [*ReportSerializerBase.base_fields(), 'width', 'height']
 
 
 class BaseOutputSerializer(InvenTreeModelSerializer):
