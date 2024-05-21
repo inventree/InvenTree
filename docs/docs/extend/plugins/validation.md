@@ -26,6 +26,7 @@ A custom plugin may implement the `validate_model_deletion` method to perform cu
       show_root_heading: False
       show_root_toc_entry: False
       show_sources: True
+      summary: False
       members: []
 
 ## Model Validation
@@ -40,6 +41,7 @@ Any plugin which inherits the `ValidationMixin` can implement the `validate_mode
       show_root_heading: False
       show_root_toc_entry: False
       show_sources: True
+      summary: False
       members: []
 
 The `validate_model_instance` method is passed the following arguments:
