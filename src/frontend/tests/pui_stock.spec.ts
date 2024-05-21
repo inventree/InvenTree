@@ -13,7 +13,9 @@ test('PUI - Stock', async ({ page }) => {
 
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('cell', { name: '1551ABK' }).click();
+
   await page.getByRole('tab', { name: 'Stock', exact: true }).click();
+  await page.waitForURL('**/platform/stock/**');
   await page.getByRole('tab', { name: 'Stock Locations' }).click();
   await page.getByRole('cell', { name: 'Electronics Lab' }).first().click();
   await page.getByRole('tab', { name: 'Default Parts' }).click();
