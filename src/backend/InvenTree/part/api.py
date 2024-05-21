@@ -439,7 +439,8 @@ class PartTestTemplateFilter(rest_filters.FilterSet):
     def filter_part(self, queryset, name, part):
         """Filter by the 'part' field.
 
-        Note that for the 'part' field, we also include any parts "above" the specified part.
+        Note: If the 'include_inherited' query parameter is set,
+        we also include any parts "above" the specified part.
         """
         include_inherited = str2bool(
             self.request.query_params.get('include_inherited', True)
