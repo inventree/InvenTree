@@ -282,7 +282,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Returns True if the specified user subscribes to this category."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status):
+    def set_starred(self, user, status: bool) -> None:
         """Set the "subscription" status of this PartCategory against the specified user."""
         if not user:
             return
