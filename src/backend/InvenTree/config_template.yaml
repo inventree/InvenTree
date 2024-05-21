@@ -181,6 +181,11 @@ use_x_forwarded_host: false
 # Override with the environment variable INVENTREE_USE_X_FORWARDED_PORT
 use_x_forwarded_port: false
 
+# Cookie settings
+cookie:
+  secure: false
+  samesite: none
+
 # Cross Origin Resource Sharing (CORS) settings (see https://github.com/adamchainz/django-cors-headers)
 cors:
   allow_all: true
@@ -300,6 +305,7 @@ remote_login_header: HTTP_REMOTE_USER
 #   hide_password_reset: true
 #   logo: img/custom_logo.png
 #   splash: img/custom_splash.jpg
+#   hide_pui_banner: true
 
 # Set enabled frontends
 # Use the environment variable INVENTREE_CLASSIC_FRONTEND

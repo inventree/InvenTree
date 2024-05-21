@@ -1,5 +1,4 @@
-import { test } from '@playwright/test';
-
+import { test } from '../baseFixtures';
 import { baseUrl } from '../defaults';
 import { doQuickLogin } from '../login';
 
@@ -151,4 +150,12 @@ test('PUI - Pages - Part - Pricing (Purchase)', async ({ page }) => {
     .getByRole('button', { name: 'Purchase Order Not sorted' })
     .waitFor();
   await page.getByText('2022-04-29').waitFor();
+});
+
+test('PUI - Pages - Part - Attachments', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/69/attachments`);
+
+  await page.waitForTimeout(5000);
 });

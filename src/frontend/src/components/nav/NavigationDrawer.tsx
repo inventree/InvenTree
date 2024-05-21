@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { aboutLinks, navDocLinks } from '../../defaults/links';
 import { menuItems } from '../../defaults/menuItems';
-import { InvenTreeStyle } from '../../globalStyle';
+import * as classes from '../../main.css';
 import { DocumentationLinks } from '../items/DocumentationLinks';
 import { MenuLinkItem, MenuLinks } from '../items/MenuLinks';
 
@@ -27,8 +27,6 @@ export function NavigationDrawer({
   opened: boolean;
   close: () => void;
 }) {
-  const { classes } = InvenTreeStyle();
-
   return (
     <Drawer
       opened={opened}
@@ -44,7 +42,6 @@ export function NavigationDrawer({
   );
 }
 function DrawerContent() {
-  const { classes } = InvenTreeStyle();
   const [scrollHeight, setScrollHeight] = useState(0);
   const ref = useRef(null);
   const { height } = useViewportSize();

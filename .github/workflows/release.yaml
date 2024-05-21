@@ -5,17 +5,17 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: read
-
 jobs:
   stable:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # pin@v4.1.6
       - name: Version Check
         run: |
           pip install --require-hashes -r .github/requirements.txt
@@ -30,8 +30,11 @@ jobs:
 
   publish-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # pin@v4.1.6
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:

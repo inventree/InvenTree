@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Tooltip } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
 import { IconEdit } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -67,7 +67,7 @@ function ParameterCell({
 
   return (
     <div>
-      <Group grow ref={ref} position="apart">
+      <Group grow ref={ref} justify="space-between">
         <Group grow style={{ flex: 1 }}>
           <TableHoverCard
             value={value ?? '-'}
@@ -78,7 +78,7 @@ function ParameterCell({
         {hovered && canEdit && (
           <div style={{ flex: 0 }}>
             <Tooltip label={t`Edit parameter`}>
-              <ActionIcon size="xs" onClick={handleClick}>
+              <ActionIcon size="xs" onClick={handleClick} variant="transparent">
                 <IconEdit />
               </ActionIcon>
             </Tooltip>
@@ -131,7 +131,7 @@ export default function ParametricPartTable({
   const addParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
     title: t`Add Part Parameter`,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     focus: 'data',
     onFormSuccess: (parameter: any) => {
       updateParameterRecord(selectedPart, parameter);
@@ -146,7 +146,7 @@ export default function ParametricPartTable({
     url: ApiEndpoints.part_parameter_list,
     title: t`Edit Part Parameter`,
     pk: selectedParameter,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     focus: 'data',
     onFormSuccess: (parameter: any) => {
       updateParameterRecord(selectedPart, parameter);
@@ -245,35 +245,6 @@ export default function ParametricPartTable({
 
     return [...partColumns, ...parameterColumns];
   }, [parameterColumns]);
-
-  // Callback when a parameter cell is clicked - either edit or add a new parameter
-  const handleCellClick = useCallback(
-    (record: any, column: any) => {
-      let template_id = column?.extra?.template;
-
-      if (!template_id) {
-        return;
-      }
-
-      setSelectedPart(record.pk);
-      setSelectedTemplate(template_id);
-
-      // Find the associated parameter
-      let parameter = record?.parameters?.find(
-        (p: any) => p.template == template_id
-      );
-
-      if (parameter) {
-        // Parameter exists - open edit dialog
-        setSelectedParameter(parameter.pk);
-        editParameter.open();
-      } else {
-        // Parameter does not exist - create it!
-        addParameter.open();
-      }
-    },
-    [user]
-  );
 
   return (
     <>

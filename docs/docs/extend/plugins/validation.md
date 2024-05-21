@@ -14,29 +14,35 @@ Any of the methods described below can be implemented in a custom plugin to prov
 !!! info "Multi Plugin Support"
     It is possible to have multiple plugins loaded simultaneously which support validation methods. For example when validating a field, if one plugin returns a null value (`None`) then the *next* plugin (if available) will be queried.
 
+## Model Deletion
+
+Any model which inherits the `PluginValidationMixin` class is exposed to the plugin system for custom deletion validation. Before the model is deleted from the database, it is first passed to the plugin ecosystem to check if it really should be deleted.
+
+A custom plugin may implement the `validate_model_deletion` method to perform custom validation on the model instance before it is deleted.
+
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_model_deletion
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
 ## Model Validation
 
 Any model which inherits the `PluginValidationMixin` mixin class is exposed to the plugin system for custom validation. Before the model is saved to the database (either when created, or updated), it is first passed to the plugin ecosystem for validation.
 
 Any plugin which inherits the `ValidationMixin` can implement the `validate_model_instance` method, and run a custom validation routine.
 
-The `validate_model_instance` method is passed the following arguments:
-
-| Argument | Description |
-| --- | --- |
-| `instance` | The model instance to be validated |
-| `deltas` | A dict of field deltas (if the instance is being updated) |
-
-```python
-def validate_model_instance(self, instance, deltas=None):
-    """Validate the supplied model instance.
-
-    Arguments:
-        instance: The model instance to be validated
-        deltas: A dict of field deltas (if the instance is being updated)
-    """
-    ...
-```
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_model_instance
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
 
 ### Error Messages
 
@@ -116,7 +122,7 @@ Validation of the Part IPN (Internal Part Number) field is exposed to custom plu
 
 The `validate_batch_code` method allows plugins to raise an error if a batch code input by the user does not meet a particular pattern.
 
-The `generate_batch_code` method can be implemented to generate a new batch code.
+The `generate_batch_code` method can be implemented to generate a new batch code, based on a set of provided information.
 
 ### Serial Numbers
 

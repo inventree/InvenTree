@@ -17,7 +17,7 @@ import {
   IconShoppingCart,
   IconTriangleSquareCircle
 } from '@tabler/icons-react';
-import { DataTable, DataTableColumn } from 'mantine-datatable';
+import { DataTable } from 'mantine-datatable';
 import { ReactNode, useMemo } from 'react';
 import {
   Bar,
@@ -53,7 +53,7 @@ export default function PricingOverviewPanel({
   pricing: any;
   doNavigation: (panel: panelOptions) => void;
 }): ReactNode {
-  const columns: DataTableColumn<any>[] = useMemo(() => {
+  const columns: any[] = useMemo(() => {
     return [
       {
         accessor: 'title',
@@ -61,14 +61,14 @@ export default function PricingOverviewPanel({
         render: (record: PricingOverviewEntry) => {
           const is_link = record.name !== panelOptions.overall;
           return (
-            <Group position="left" spacing="xs">
+            <Group justify="left" gap="xs">
               {record.icon}
               {is_link ? (
-                <Anchor weight={700} onClick={() => doNavigation(record.name)}>
+                <Anchor fw={700} onClick={() => doNavigation(record.name)}>
                   {record.title}
                 </Anchor>
               ) : (
-                <Text weight={700}>{record.title}</Text>
+                <Text fw={700}>{record.title}</Text>
               )}
             </Group>
           );
@@ -176,9 +176,9 @@ export default function PricingOverviewPanel({
   // TODO: Add "update now" button
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SimpleGrid cols={2}>
-        <Stack spacing="xs">
+        <Stack gap="xs">
           {pricing?.updated && (
             <Paper p="xs">
               <Alert color="blue" title={t`Last Updated`}>
@@ -186,7 +186,11 @@ export default function PricingOverviewPanel({
               </Alert>
             </Paper>
           )}
-          <DataTable records={overviewData} columns={columns} />
+          <DataTable
+            idAccessor="name"
+            records={overviewData}
+            columns={columns}
+          />
         </Stack>
         <ResponsiveContainer width="100%" height={500}>
           <BarChart data={overviewData} id="pricing-overview-chart">

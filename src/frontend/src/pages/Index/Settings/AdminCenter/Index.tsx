@@ -7,6 +7,7 @@ import {
   IconExclamationCircle,
   IconList,
   IconListDetails,
+  IconPackages,
   IconPlugConnected,
   IconScale,
   IconSitemap,
@@ -57,6 +58,10 @@ const PartCategoryTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartCategoryTemplateTable'))
 );
 
+const LocationTypesTable = Loadable(
+  lazy(() => import('../../../../tables/stock/LocationTypesTable'))
+);
+
 const CurrencyTable = Loadable(
   lazy(() => import('../../../../tables/settings/CurrencyTable'))
 );
@@ -97,7 +102,7 @@ export default function AdminCenter() {
         label: t`Project Codes`,
         icon: <IconListDetails />,
         content: (
-          <Stack spacing="xs">
+          <Stack gap="xs">
             <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
             <Divider />
             <ProjectCodeTable />
@@ -123,6 +128,12 @@ export default function AdminCenter() {
         content: <PartCategoryTemplateTable />
       },
       {
+        name: 'location-types',
+        label: t`Location types`,
+        icon: <IconPackages />,
+        content: <LocationTypesTable />
+      },
+      {
         name: 'templates',
         label: t`Templates`,
         icon: <IconTemplate />,
@@ -144,7 +155,7 @@ export default function AdminCenter() {
   }, []);
 
   const QuickAction = () => (
-    <Stack spacing={'xs'} ml={'sm'}>
+    <Stack gap={'xs'} ml={'sm'}>
       <Title order={5}>
         <Trans>Quick Actions</Trans>
       </Title>
@@ -167,7 +178,7 @@ export default function AdminCenter() {
   );
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SettingsHeader
         title={t`Admin Center`}
         subtitle={t`Advanced Options`}

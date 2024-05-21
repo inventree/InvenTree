@@ -23,7 +23,8 @@ export function useInstance<T = any>({
   hasPrimaryKey = true,
   refetchOnMount = true,
   refetchOnWindowFocus = false,
-  throwError = false
+  throwError = false,
+  updateInterval
 }: {
   endpoint: ApiEndpoints;
   pk?: string | undefined;
@@ -34,16 +35,17 @@ export function useInstance<T = any>({
   refetchOnMount?: boolean;
   refetchOnWindowFocus?: boolean;
   throwError?: boolean;
+  updateInterval?: number;
 }) {
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
   const instanceQuery = useQuery<T>({
-    queryKey: ['instance', endpoint, pk, params],
+    queryKey: ['instance', endpoint, pk, params, pathParams],
     queryFn: async () => {
       if (hasPrimaryKey) {
         if (pk == null || pk == undefined || pk.length == 0 || pk == '-1') {
           setInstance(defaultValue);
-          return null;
+          return defaultValue;
         }
       }
 
@@ -61,7 +63,7 @@ export function useInstance<T = any>({
               return response.data;
             default:
               setInstance(defaultValue);
-              return null;
+              return defaultValue;
           }
         })
         .catch((error) => {
@@ -70,11 +72,12 @@ export function useInstance<T = any>({
 
           if (throwError) throw error;
 
-          return null;
+          return defaultValue;
         });
     },
     refetchOnMount: refetchOnMount,
-    refetchOnWindowFocus: refetchOnWindowFocus
+    refetchOnWindowFocus: refetchOnWindowFocus,
+    refetchInterval: updateInterval
   });
 
   const refreshInstance = useCallback(function () {

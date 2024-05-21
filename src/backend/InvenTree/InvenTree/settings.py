@@ -284,7 +284,7 @@ QUERYCOUNT = {
     },
     'IGNORE_REQUEST_PATTERNS': ['^(?!\/(api)?(plugin)?\/).*'],
     'IGNORE_SQL_PATTERNS': [],
-    'DISPLAY_DUPLICATES': 3,
+    'DISPLAY_DUPLICATES': 1,
     'RESPONSE_HEADER': 'X-Django-Query-Count',
 }
 
@@ -1090,26 +1090,44 @@ if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
 if DEBUG:
     for origin in [
         'http://localhost',
-        'http://*.localhost' 'http://*localhost:8000',
+        'http://*.localhost',
+        'http://*localhost:8000',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
             CSRF_TRUSTED_ORIGINS.append(origin)
 
-if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
-    if isInMainThread():
-        # Server thread cannot run without CSRF_TRUSTED_ORIGINS
-        logger.error(
-            'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
-        )
-        sys.exit(-1)
+if (
+    not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0 and isInMainThread()
+):  # pragma: no cover
+    # Server thread cannot run without CSRF_TRUSTED_ORIGINS
+    logger.error(
+        'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+    )
+    sys.exit(-1)
+
+COOKIE_MODE = (
+    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'None'))
+    .lower()
+    .strip()
+)
+
+valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': None, 'null': None}
+
+if COOKIE_MODE not in valid_cookie_modes.keys():
+    logger.error('Invalid cookie samesite mode: %s', COOKIE_MODE)
+    sys.exit(-1)
+
+COOKIE_MODE = valid_cookie_modes[COOKIE_MODE.lower()]
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = COOKIE_MODE
+SESSION_COOKIE_SAMESITE = COOKIE_MODE
+SESSION_COOKIE_SECURE = get_boolean_setting(
+    'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',

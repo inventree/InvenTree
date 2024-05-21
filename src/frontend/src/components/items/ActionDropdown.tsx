@@ -14,8 +14,10 @@ import {
   IconTrash,
   IconUnlink
 } from '@tabler/icons-react';
+import { color } from '@uiw/react-codemirror';
 import { ReactNode, useMemo } from 'react';
 
+import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 
 export type ActionDropdownItem = {
@@ -77,7 +79,7 @@ export function ActionDropdown({
             >
               <Tooltip label={action.tooltip}>
                 <Menu.Item
-                  icon={action.icon}
+                  leftSection={action.icon}
                   onClick={() => {
                     if (action.onClick != undefined) {
                       action.onClick();
@@ -187,6 +189,27 @@ export function EditItemAction({
 // Common action button for deleting an item
 export function DeleteItemAction({
   hidden = false,
+  disabled = false,
+  tooltip,
+  onClick
+}: {
+  hidden?: boolean;
+  disabled?: boolean;
+  tooltip?: string;
+  onClick?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <IconTrash color="red" />,
+    name: t`Delete`,
+    tooltip: tooltip ?? t`Delete item`,
+    onClick: onClick,
+    hidden: hidden,
+    disabled: disabled
+  };
+}
+
+export function CancelItemAction({
+  hidden = false,
   tooltip,
   onClick
 }: {
@@ -195,9 +218,9 @@ export function DeleteItemAction({
   onClick?: () => void;
 }): ActionDropdownItem {
   return {
-    icon: <IconTrash color="red" />,
-    name: t`Delete`,
-    tooltip: tooltip ?? t`Delete item`,
+    icon: <InvenTreeIcon icon="cancel" iconProps={{ color: 'red' }} />,
+    name: t`Cancel`,
+    tooltip: tooltip ?? t`Cancel`,
     onClick: onClick,
     hidden: hidden
   };

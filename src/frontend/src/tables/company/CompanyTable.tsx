@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
-import { access } from 'fs';
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -10,13 +9,17 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowEditAction } from '../RowActions';
 
 /**
  * A table which displays a list of company records,
@@ -41,7 +44,7 @@ export function CompanyTable({
         sortable: true,
         render: (record: any) => {
           return (
-            <Group spacing="xs" noWrap={true}>
+            <Group gap="xs" wrap="nowrap">
               <Thumbnail
                 src={record.thumbnail ?? record.image ?? ''}
                 alt={record.name}
@@ -68,17 +71,21 @@ export function CompanyTable({
 
   const newCompany = useCreateApiFormModal({
     url: ApiEndpoints.company_list,
-    title: t`New Company`,
+    title: t`Add Company`,
     fields: companyFields(),
     initialData: params,
-    onFormSuccess: (response) => {
-      if (response.pk) {
-        let base = path ?? 'company';
-        navigate(`/${base}/${response.pk}`);
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.company
+  });
+
+  const [selectedCompany, setSelectedCompany] = useState<number>(0);
+
+  const editCompany = useEditApiFormModal({
+    url: ApiEndpoints.company_list,
+    pk: selectedCompany,
+    title: t`Edit Company`,
+    fields: companyFields(),
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -120,9 +127,27 @@ export function CompanyTable({
     ];
   }, [user]);
 
+  const rowActions = useCallback(
+    (record: any) => {
+      return [
+        RowEditAction({
+          hidden:
+            !user.hasChangeRole(UserRoles.purchase_order) &&
+            !user.hasChangeRole(UserRoles.sales_order),
+          onClick: () => {
+            setSelectedCompany(record.pk);
+            editCompany.open();
+          }
+        })
+      ];
+    },
+    [user]
+  );
+
   return (
     <>
       {newCompany.modal}
+      {editCompany.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.company_list)}
         tableState={table}
@@ -133,6 +158,7 @@ export function CompanyTable({
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
+          rowActions: rowActions,
           onRowClick: (row: any) => {
             if (row.pk) {
               let base = path ?? 'company';

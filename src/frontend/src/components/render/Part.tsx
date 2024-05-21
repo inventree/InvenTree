@@ -1,20 +1,27 @@
 import { t } from '@lingui/macro';
 import { ReactNode } from 'react';
 
-import { RenderInlineModel } from './Instance';
+import { ModelType } from '../../enums/ModelType';
+import { getDetailUrl } from '../../functions/urls';
+import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single Part instance
  */
-export function RenderPart({ instance }: { instance: any }): ReactNode {
+export function RenderPart(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
   const stock = t`Stock` + `: ${instance.in_stock}`;
 
   return (
     <RenderInlineModel
+      {...props}
       primary={instance.name}
       secondary={instance.description}
       suffix={stock}
       image={instance.thumnbnail || instance.image}
+      url={props.link ? getDetailUrl(ModelType.part, instance.pk) : undefined}
     />
   );
 }
@@ -22,15 +29,22 @@ export function RenderPart({ instance }: { instance: any }): ReactNode {
 /**
  * Inline rendering of a PartCategory instance
  */
-export function RenderPartCategory({ instance }: { instance: any }): ReactNode {
-  // TODO: Handle URL
-
-  let lvl = '-'.repeat(instance.level || 0);
+export function RenderPartCategory(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+  const lvl = '-'.repeat(instance.level || 0);
 
   return (
     <RenderInlineModel
+      {...props}
       primary={`${lvl} ${instance.name}`}
       secondary={instance.description}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.partcategory, instance.pk)
+          : undefined
+      }
     />
   );
 }

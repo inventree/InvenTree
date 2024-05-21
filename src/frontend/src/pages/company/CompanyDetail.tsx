@@ -18,6 +18,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -29,10 +30,10 @@ import {
 } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup } from '../../components/nav/PanelGroup';
-import { PanelType } from '../../components/nav/PanelGroup';
+import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
@@ -57,7 +58,7 @@ export type CompanyDetailProps = {
 /**
  * Detail view for a single company instance
  */
-export default function CompanyDetail(props: CompanyDetailProps) {
+export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
   const user = useUserState();
@@ -82,7 +83,8 @@ export default function CompanyDetail(props: CompanyDetailProps) {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`
+        label: t`Description`,
+        copy: true
       },
       {
         type: 'link',
@@ -198,7 +200,11 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPackages />,
         hidden: !company?.is_manufacturer && !company?.is_supplier,
         content: company?.pk && (
-          <StockItemTable params={{ company: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="company-stock"
+            params={{ company: company.pk }}
+          />
         )
       },
       {
@@ -223,7 +229,11 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPackageExport />,
         hidden: !company?.is_customer,
         content: company?.pk ? (
-          <StockItemTable params={{ customer: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="assigned-stock"
+            params={{ customer: company.pk }}
+          />
         ) : (
           <Skeleton />
         )
@@ -277,6 +287,7 @@ export default function CompanyDetail(props: CompanyDetailProps) {
 
   const companyActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.company} pk={company.pk} />,
       <ActionDropdown
         key="company"
         tooltip={t`Company Actions`}
@@ -296,14 +307,18 @@ export default function CompanyDetail(props: CompanyDetailProps) {
 
   const badges: ReactNode[] = useMemo(() => {
     return [
-      <DetailsBadge label={t`Inactive`} color="red" visible={!company.active} />
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={company.active == false}
+      />
     ];
   }, [company]);
 
   return (
     <>
       {editCompany.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Company` + `: ${company.name}`}

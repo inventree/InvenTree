@@ -127,6 +127,7 @@ class CurrencyExchangeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
 
+    @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
     def get(self, request, format=None):
         """Return information on available currency conversions."""
         # Extract a list of all available rates
@@ -355,6 +356,22 @@ class NotificationMessageMixin:
     queryset = common.models.NotificationMessage.objects.all()
     serializer_class = common.serializers.NotificationMessageSerializer
     permission_classes = [UserSettingsPermissions]
+
+    def get_queryset(self):
+        """Return prefetched queryset."""
+        queryset = (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                'source_content_type',
+                'source_object',
+                'target_content_type',
+                'target_object',
+                'user',
+            )
+        )
+
+        return queryset
 
 
 class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):

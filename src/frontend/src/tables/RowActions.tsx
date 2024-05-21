@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Tooltip } from '@mantine/core';
-import { Menu } from '@mantine/core';
+import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import { IconCopy, IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
@@ -105,7 +104,7 @@ export function RowActions({
   }, [actions]);
 
   // Render a single action icon
-  function RowActionIcon(action: RowAction) {
+  function RowActionIcon(action: Readonly<RowAction>) {
     return (
       <Tooltip
         withinPortal={true}
@@ -114,7 +113,7 @@ export function RowActions({
       >
         <Menu.Item
           color={action.color}
-          icon={action.icon}
+          leftSection={action.icon}
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
             cancelEvent(event);

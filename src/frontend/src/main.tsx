@@ -1,4 +1,9 @@
+import '@mantine/carousel/styles.css';
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
+import '@mantine/spotlight/styles.css';
 import * as Sentry from '@sentry/react';
+import 'mantine-datatable/styles.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'react-grid-layout/css/styles.css';

@@ -35,7 +35,7 @@ logger = logging.getLogger('inventree')
 # string representation of a user
 def user_model_str(self):
     """Function to override the default Django User __str__."""
-    if common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+    if common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES', cache=True):
         if self.first_name or self.last_name:
             return f'{self.first_name} {self.last_name}'
     return self.username
@@ -832,7 +832,9 @@ class Owner(models.Model):
         """Defines the owner string representation."""
         if (
             self.owner_type.name == 'user'
-            and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES')
+            and common_models.InvenTreeSetting.get_setting(
+                'DISPLAY_FULL_NAMES', cache=True
+            )
         ):
             display_name = self.owner.get_full_name()
         else:
@@ -843,7 +845,9 @@ class Owner(models.Model):
         """Return the 'name' of this owner."""
         if (
             self.owner_type.name == 'user'
-            and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES')
+            and common_models.InvenTreeSetting.get_setting(
+                'DISPLAY_FULL_NAMES', cache=True
+            )
         ):
             return self.owner.get_full_name() or str(self.owner)
         return str(self.owner)

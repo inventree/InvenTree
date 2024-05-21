@@ -10,8 +10,7 @@ import {
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
-import { ReactNode, useCallback, useEffect } from 'react';
-import { useMemo } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 
 import { ModelType } from '../../../enums/ModelType';
@@ -88,7 +87,7 @@ export type ApiFormFieldType = {
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
-  onValueChange?: (value: any) => void;
+  onValueChange?: (value: any, record?: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;
   headers?: string[];
 };
@@ -231,9 +230,8 @@ export function ApiFormField({
             id={fieldId}
             value={numericalValue}
             error={error?.message}
-            precision={definition.field_type == 'integer' ? 0 : 10}
-            onChange={(value: number) => onChange(value)}
-            removeTrailingZeros
+            decimalScale={definition.field_type == 'integer' ? 0 : 10}
+            onChange={(value: number | string | null) => onChange(value)}
             step={1}
           />
         );
