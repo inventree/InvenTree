@@ -77,7 +77,11 @@ export default function SystemSettings() {
               'LOGIN_SIGNUP_MAIL_RESTRICTION',
               'LOGIN_ENABLE_SSO',
               'LOGIN_ENABLE_SSO_REG',
-              'LOGIN_SIGNUP_SSO_AUTO'
+              'LOGIN_SIGNUP_SSO_AUTO',
+              'LOGIN_ENABLE_SSO_GROUP_SYNC',
+              'SSO_GROUP_MAP',
+              'SSO_GROUP_MAP',
+              'SSO_REMOVE_GROUPS'
             ]}
           />
         )
