@@ -73,8 +73,9 @@ class InvenTreeConfig(AppConfig):
             self.add_user_from_file()
 
         # register event receiver and connect signal for SSO group sync. The connected signal is
-        # used for account updates wheras the receiver is used for the initial account creation.
+        # used for account updates whereas the receiver is used for the initial account creation.
         from InvenTree import sso
+
         social_account_updated.connect(sso.ensure_sso_groups)
 
     def remove_obsolete_tasks(self):

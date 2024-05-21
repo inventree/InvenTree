@@ -89,11 +89,11 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
 
     This event listener is registered in the apps ready method.
     """
-    if not get_global_setting("LOGIN_ENABLE_SSO_GROUP_SYNC"):
+    if not get_global_setting('LOGIN_ENABLE_SSO_GROUP_SYNC'):
         return
 
-    group_key = get_global_setting("SSO_GROUP_KEY")
-    group_map = json.loads(get_global_setting("SSO_GROUP_MAP"))
+    group_key = get_global_setting('SSO_GROUP_KEY')
+    group_map = json.loads(get_global_setting('SSO_GROUP_MAP'))
     # map SSO groups to InvenTree groups
     group_names = []
     for sso_group in sociallogin.account.extra_data[group_key]:
@@ -108,15 +108,17 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
             # user not in group yet
             try:
                 user.groups.add(Group.objects.get(name=group_name))
-                logger.info(f"Adding group {group_name} to user {user}")
+                logger.info(f'Adding group {group_name} to user {user}')
             except Group.DoesNotExist:
-                logger.error(f"Failed to add group {group_name} to user {user}: Group does not exist")
+                logger.error(
+                    f'Failed to add group {group_name} to user {user}: Group does not exist'
+                )
 
     # remove groups not listed by SSO if not disabled
-    if get_global_setting("SSO_REMOVE_GROUPS"):
+    if get_global_setting('SSO_REMOVE_GROUPS'):
         for group in user.groups.all():
             if not group.name in group_names:
-                logger.warning(f"Removing group {group.name} from {user}")
+                logger.warning(f'Removing group {group.name} from {user}')
                 user.groups.remove(group)
 
 
