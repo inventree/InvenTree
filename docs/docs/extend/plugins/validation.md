@@ -26,13 +26,23 @@ A custom plugin may implement the `validate_model_deletion` method to perform cu
       show_root_heading: False
       show_root_toc_entry: False
       show_sources: True
-      members: []
+      members:
+        - validate_model_deletion
 
 ## Model Validation
 
 Any model which inherits the `PluginValidationMixin` mixin class is exposed to the plugin system for custom validation. Before the model is saved to the database (either when created, or updated), it is first passed to the plugin ecosystem for validation.
 
 Any plugin which inherits the `ValidationMixin` can implement the `validate_model_instance` method, and run a custom validation routine.
+
+::: plugin.base.integration.ValidationMixin.ValidationMixin
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      members:
+        - validate_model_instance
 
 The `validate_model_instance` method is passed the following arguments:
 
