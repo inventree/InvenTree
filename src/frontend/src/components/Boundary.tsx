@@ -26,7 +26,7 @@ export function Boundary({
   fallback?: React.ReactElement | FallbackRender | undefined;
 }): ReactNode {
   const onError = useCallback(
-    (error: Error, componentStack: string, eventId: string) => {
+    (error: unknown, componentStack: string, eventId: string) => {
       console.error(`Error rendering component: ${label}`);
       console.error(error, componentStack);
     },
