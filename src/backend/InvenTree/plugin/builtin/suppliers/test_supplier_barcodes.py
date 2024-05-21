@@ -232,7 +232,9 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         assert 'success' in result1.data
 
         result2 = self.post(
-            reverse('api-barcode-scan'), data={'barcode': MOUSER_BARCODE}
+            reverse('api-barcode-scan'),
+            data={'barcode': MOUSER_BARCODE},
+            expected_code=200,
         )
         stock_item = StockItem.objects.get(pk=result2.data['stockitem']['pk'])
         assert stock_item.supplier_part.SKU == '42'
@@ -245,7 +247,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         stock_location = StockLocation.objects.create(name='Test Location')
 
         url = reverse('api-barcode-po-receive')
-        result1 = self.post(url, data={'barcode': MOUSER_BARCODE})
+        result1 = self.post(url, data={'barcode': MOUSER_BARCODE}, expected_code=200)
         assert 'success' in result1.data
 
         result2 = self.post(
@@ -264,11 +266,13 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         line_item.save()
 
         url = reverse('api-barcode-po-receive')
-        result1 = self.post(url, data={'barcode': MOUSER_BARCODE})
+        result1 = self.post(url, data={'barcode': MOUSER_BARCODE}, expected_code=200)
         assert 'success' in result1.data
 
         result2 = self.post(
-            reverse('api-barcode-scan'), data={'barcode': MOUSER_BARCODE}
+            reverse('api-barcode-scan'),
+            data={'barcode': MOUSER_BARCODE},
+            expected_code=200,
         )
         stock_item = StockItem.objects.get(pk=result2.data['stockitem']['pk'])
         assert stock_item.location == stock_location2
@@ -283,11 +287,13 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
         part.save()
 
         url = reverse('api-barcode-po-receive')
-        result1 = self.post(url, data={'barcode': MOUSER_BARCODE})
+        result1 = self.post(url, data={'barcode': MOUSER_BARCODE}, expected_code=200)
         assert 'success' in result1.data
 
         result2 = self.post(
-            reverse('api-barcode-scan'), data={'barcode': MOUSER_BARCODE}
+            reverse('api-barcode-scan'),
+            data={'barcode': MOUSER_BARCODE},
+            expected_code=200,
         )
         stock_item = StockItem.objects.get(pk=result2.data['stockitem']['pk'])
         assert stock_item.location == stock_location2
@@ -306,6 +312,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
                 'purchase_order': self.purchase_order2.pk,
                 'location': stock_location2.pk,
             },
+            expected_code=200,
         )
         assert 'success' in result1.data
 
