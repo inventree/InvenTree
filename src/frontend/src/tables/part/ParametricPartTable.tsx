@@ -131,7 +131,7 @@ export default function ParametricPartTable({
   const addParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
     title: t`Add Part Parameter`,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     focus: 'data',
     onFormSuccess: (parameter: any) => {
       updateParameterRecord(selectedPart, parameter);
@@ -146,7 +146,7 @@ export default function ParametricPartTable({
     url: ApiEndpoints.part_parameter_list,
     title: t`Edit Part Parameter`,
     pk: selectedParameter,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     focus: 'data',
     onFormSuccess: (parameter: any) => {
       updateParameterRecord(selectedPart, parameter);

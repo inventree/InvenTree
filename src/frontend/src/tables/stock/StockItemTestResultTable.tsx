@@ -28,7 +28,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn, NoteColumn } from '../ColumnRenderers';
+import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowActions, RowDeleteAction, RowEditAction } from '../RowActions';
@@ -187,21 +187,14 @@ export default function StockItemTestResultTable({
         render: (record: any) =>
           record.attachment && <AttachmentLink attachment={record.attachment} />
       },
-      NoteColumn(),
+      NoteColumn({}),
+      DateColumn({}),
       {
-        accessor: 'date',
-        sortable: true,
-        title: t`Date`,
-        render: (record: any) => {
-          return (
-            <Group justify="space-between">
-              {renderDate(record.date)}
-              {record.user_detail && (
-                <RenderUser instance={record.user_detail} />
-              )}
-            </Group>
-          );
-        }
+        accessor: 'user',
+        title: t`User`,
+        sortable: false,
+        render: (record: any) =>
+          record.user_detail && <RenderUser instance={record.user_detail} />
       },
       {
         accessor: 'test_station',
@@ -275,7 +268,7 @@ export default function StockItemTestResultTable({
       result: true
     },
     title: t`Add Test Result`,
-    onFormSuccess: () => table.refreshTable(),
+    table: table,
     successMessage: t`Test result added`
   });
 
@@ -286,7 +279,7 @@ export default function StockItemTestResultTable({
     pk: selectedTest,
     fields: resultFields,
     title: t`Edit Test Result`,
-    onFormSuccess: () => table.refreshTable(),
+    table: table,
     successMessage: t`Test result updated`
   });
 
@@ -294,7 +287,7 @@ export default function StockItemTestResultTable({
     url: ApiEndpoints.stock_test_result_list,
     pk: selectedTest,
     title: t`Delete Test Result`,
-    onFormSuccess: () => table.refreshTable(),
+    table: table,
     successMessage: t`Test result deleted`
   });
 

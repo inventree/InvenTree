@@ -10,6 +10,7 @@ import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -133,6 +134,14 @@ export default function Stock() {
         type: 'boolean',
         name: 'external',
         label: t`External`
+      },
+      {
+        type: 'string',
+        // TODO: render location type icon here (ref: #7237)
+        name: 'location_type_detail.name',
+        label: t`Location Type`,
+        hidden: !location?.location_type,
+        icon: 'packages'
       }
     ];
 
@@ -258,6 +267,7 @@ export default function Stock() {
 
   const locationActions = useMemo(
     () => [
+      <AdminButton model={ModelType.stocklocation} pk={location.pk} />,
       <ActionButton
         icon={<InvenTreeIcon icon="stocktake" />}
         variant="outline"

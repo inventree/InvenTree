@@ -21,6 +21,10 @@ import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
+import {
+  useBatchCodeGenerator,
+  useSerialNumberGenerator
+} from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
 
 /**
@@ -34,14 +38,40 @@ export function useStockFields({
   const [part, setPart] = useState<number | null>(null);
   const [supplierPart, setSupplierPart] = useState<number | null>(null);
 
+  const [batchCode, setBatchCode] = useState<string>('');
+  const [serialNumbers, setSerialNumbers] = useState<string>('');
+
+  const [trackable, setTrackable] = useState<boolean>(false);
+
+  const batchGenerator = useBatchCodeGenerator((value: any) => {
+    if (!batchCode) {
+      setBatchCode(value);
+    }
+  });
+
+  const serialGenerator = useSerialNumberGenerator((value: any) => {
+    if (!serialNumbers && create && trackable) {
+      setSerialNumbers(value);
+    }
+  });
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
         value: part,
         disabled: !create,
-        onValueChange: (change) => {
-          setPart(change);
+        onValueChange: (value, record) => {
+          setPart(value);
           // TODO: implement remaining functionality from old stock.py
+
+          setTrackable(record.trackable ?? false);
+
+          batchGenerator.update({ part: value });
+          serialGenerator.update({ part: value });
+
+          if (!record.trackable) {
+            setSerialNumbers('');
+          }
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
@@ -50,7 +80,9 @@ export function useStockFields({
       supplier_part: {
         // TODO: icon
         value: supplierPart,
-        onValueChange: setSupplierPart,
+        onValueChange: (value) => {
+          setSupplierPart(value);
+        },
         filters: {
           part_detail: true,
           supplier_detail: true,
@@ -70,22 +102,29 @@ export function useStockFields({
       },
       location: {
         hidden: !create,
+        onValueChange: (value) => {
+          batchGenerator.update({ location: value });
+        },
         filters: {
           structural: false
         }
-        // TODO: icon
       },
       quantity: {
         hidden: !create,
-        description: t`Enter initial quantity for this stock item`
+        description: t`Enter initial quantity for this stock item`,
+        onValueChange: (value) => {
+          batchGenerator.update({ quantity: value });
+        }
       },
       serial_numbers: {
-        // TODO: icon
         field_type: 'string',
         label: t`Serial Numbers`,
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
-        hidden: !create
+        disabled: !trackable,
+        hidden: !create,
+        value: serialNumbers,
+        onValueChange: (value) => setSerialNumbers(value)
       },
       serial: {
         hidden: create
@@ -93,6 +132,8 @@ export function useStockFields({
       },
       batch: {
         // TODO: icon
+        value: batchCode,
+        onValueChange: (value) => setBatchCode(value)
       },
       status: {},
       expiry_date: {
@@ -120,7 +161,7 @@ export function useStockFields({
     // TODO: refer to stock.py in original codebase
 
     return fields;
-  }, [part, supplierPart]);
+  }, [part, supplierPart, batchCode, serialNumbers, trackable, create]);
 }
 
 /**
@@ -819,6 +860,7 @@ export function stockLocationFields({}: {}): ApiFormFieldSet {
     description: {},
     structural: {},
     external: {},
+    icon: {},
     location_type: {}
   };
 

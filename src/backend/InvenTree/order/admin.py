@@ -114,7 +114,7 @@ class PurchaseOrderAdmin(ImportExportModelAdmin):
 
     inlines = [PurchaseOrderLineItemInlineAdmin]
 
-    autocomplete_fields = ('supplier',)
+    autocomplete_fields = ['supplier', 'project_code', 'contact', 'address']
 
 
 class SalesOrderResource(
@@ -152,7 +152,7 @@ class SalesOrderAdmin(ImportExportModelAdmin):
 
     search_fields = ['reference', 'customer__name', 'description']
 
-    autocomplete_fields = ('customer',)
+    autocomplete_fields = ['customer', 'project_code', 'contact', 'address']
 
 
 class PurchaseOrderLineItemResource(PriceResourceMixin, InvenTreeResource):
@@ -317,7 +317,7 @@ class ReturnOrderAdmin(ImportExportModelAdmin):
 
     search_fields = ['reference', 'customer__name', 'description']
 
-    autocomplete_fields = ['customer']
+    autocomplete_fields = ['customer', 'project_code', 'contact', 'address']
 
 
 class ReturnOrderLineItemResource(PriceResourceMixin, InvenTreeResource):

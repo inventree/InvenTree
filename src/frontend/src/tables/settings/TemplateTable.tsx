@@ -234,7 +234,7 @@ export function TemplateTable({
     pathParams: { variant },
     pk: selectedTemplate,
     title: t`Delete` + ' ' + templateTypeTranslation,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const newTemplate = useCreateApiFormModal({

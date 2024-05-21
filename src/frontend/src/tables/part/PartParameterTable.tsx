@@ -110,12 +110,12 @@ export function PartParameterTable({ partId }: { partId: any }) {
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
     title: t`New Part Parameter`,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     focus: 'template',
     initialData: {
       part: partId
     },
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedParameter, setSelectedParameter] = useState<
@@ -126,15 +126,15 @@ export function PartParameterTable({ partId }: { partId: any }) {
     url: ApiEndpoints.part_parameter_list,
     pk: selectedParameter,
     title: t`Edit Part Parameter`,
-    fields: partParameterFields,
-    onFormSuccess: table.refreshTable
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
+    table: table
   });
 
   const deleteParameter = useDeleteApiFormModal({
     url: ApiEndpoints.part_parameter_list,
     pk: selectedParameter,
     title: t`Delete Part Parameter`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   // Callback for row actions
@@ -171,6 +171,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-parameter"
         hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Add parameter`}
         onClick={() => newParameter.open()}

@@ -114,7 +114,7 @@ services:
         env_file:
             - .env
         volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile:ro
+            - ./Caddyfile:/etc/caddy/Caddyfile:ro,z
             - ${INVENTREE_EXT_VOLUME}/static:/var/www/static:z
             - ${INVENTREE_EXT_VOLUME}/media:/var/www/media:z
             - ${INVENTREE_EXT_VOLUME}:/var/log:z

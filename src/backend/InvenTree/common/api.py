@@ -357,6 +357,22 @@ class NotificationMessageMixin:
     serializer_class = common.serializers.NotificationMessageSerializer
     permission_classes = [UserSettingsPermissions]
 
+    def get_queryset(self):
+        """Return prefetched queryset."""
+        queryset = (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                'source_content_type',
+                'source_object',
+                'target_content_type',
+                'target_object',
+                'user',
+            )
+        )
+
+        return queryset
+
 
 class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
     """List view for all notifications of the current user."""
