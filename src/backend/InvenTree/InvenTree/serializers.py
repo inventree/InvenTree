@@ -6,7 +6,6 @@ from copy import deepcopy
 from decimal import Decimal
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -25,6 +24,7 @@ from taggit.serializers import TaggitSerializer
 import common.models as common_models
 from common.settings import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
+from users.CustomUser import CustomUser
 
 
 class EmptySerializer(serializers.Serializer):
@@ -398,7 +398,7 @@ class UserSerializer(InvenTreeModelSerializer):
     class Meta:
         """Metaclass defines serializer fields."""
 
-        model = User
+        model = CustomUser
         fields = ['pk', 'username', 'first_name', 'last_name', 'email']
 
         read_only_fields = ['username']
@@ -453,7 +453,7 @@ class UserCreateSerializer(ExendedUserSerializer):
             raise serializers.ValidationError(_('Only superusers can create new users'))
 
         # Generate a random password
-        password = User.objects.make_random_password(length=14)
+        password = CustomUser.objects.make_random_password(length=14)
         attrs.update({'password': password})
         return super().validate(attrs)
 

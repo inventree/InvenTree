@@ -4,10 +4,9 @@ from datetime import timedelta
 from decimal import Decimal
 import logging
 
-from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
-
+from users.CustomUser import CustomUser
 from allauth.account.models import EmailAddress
 
 from plugin.events import trigger_event
@@ -45,8 +44,8 @@ def complete_build_allocations(build_id: int, user_id: int):
 
     if user_id:
         try:
-            user = User.objects.get(pk=user_id)
-        except User.DoesNotExist:
+            user = CustomUser.objects.get(pk=user_id)
+        except CustomUser.DoesNotExist:
             logger.warning("Could not complete build allocations for BuildOrder <%s> - User does not exist", build_id)
             return
     else:

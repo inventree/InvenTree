@@ -3,14 +3,12 @@
 from django import forms
 from django.contrib import admin, messages
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.utils.translation import gettext_lazy as _
 
+from users.CustomUser import CustomUser
 from users.models import ApiToken, Owner, RuleSet
-
-User = get_user_model()
 
 
 @admin.register(ApiToken)
@@ -98,7 +96,7 @@ class InvenTreeGroupAdminForm(forms.ModelForm):
 
     # Add the users field.
     users = forms.ModelMultipleChoiceField(
-        queryset=User.objects.all(),
+        queryset=CustomUser.objects.all(),
         required=False,
         widget=FilteredSelectMultiple('users', False),
         label=_('Users'),
@@ -299,5 +297,5 @@ class OwnerAdmin(admin.ModelAdmin):
 admin.site.unregister(Group)
 admin.site.register(Group, RoleGroupAdmin)
 
-admin.site.unregister(User)
-admin.site.register(User, InvenTreeUserAdmin)
+admin.site.unregister(CustomUser)
+admin.site.register(CustomUser, InvenTreeUserAdmin)

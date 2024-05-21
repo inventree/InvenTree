@@ -7,7 +7,6 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
@@ -305,7 +304,7 @@ class Order(
     )
 
     created_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -479,7 +478,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     )
 
     received_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -940,7 +939,7 @@ class SalesOrder(TotalPriceMixin, Order):
     )
 
     shipped_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -1682,7 +1681,7 @@ class SalesOrderShipment(
     )
 
     checked_by = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,

@@ -8,7 +8,6 @@ from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
@@ -43,6 +42,7 @@ from InvenTree.status_codes import (
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.generators import generate_batch_code
+from users.CustomUser import CustomUser
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
@@ -848,7 +848,7 @@ class StockItem(
     stocktake_date = models.DateField(blank=True, null=True)
 
     stocktake_user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -1362,7 +1362,7 @@ class StockItem(
     def add_tracking_entry(
         self,
         entry_type: int,
-        user: User,
+        user: CustomUser,
         deltas: dict = None,
         notes: str = '',
         **kwargs,
@@ -2304,7 +2304,9 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
         help_text=_('Entry notes'),
     )
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True
+    )
 
     deltas = models.JSONField(null=True, blank=True)
 
@@ -2420,7 +2422,9 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         blank=True, max_length=500, verbose_name=_('Notes'), help_text=_('Test notes')
     )
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True
+    )
 
     test_station = models.CharField(
         blank=True,
@@ -2443,6 +2447,8 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         help_text=_('The timestamp of the test finish'),
     )
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
+    user = models.ForeignKey(
+        CustomUser, on_delete=models.SET_NULL, blank=True, null=True
+    )
 
     date = models.DateTimeField(auto_now_add=True, editable=False)

@@ -20,7 +20,7 @@ from typing import Any, Callable, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
@@ -2501,7 +2501,7 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
     )
 
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         blank=True,
         null=True,
@@ -2726,7 +2726,7 @@ class WebhookEndpoint(models.Model):
     )
 
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -2974,7 +2974,7 @@ class NotificationMessage(models.Model):
 
     # user that receives the notification
     user = models.ForeignKey(
-        User,
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name=_('User'),
         help_text=_('User'),
@@ -3058,7 +3058,9 @@ class NotesImage(models.Model):
         upload_to=rename_notes_image, verbose_name=_('Image'), help_text=_('Image file')
     )
 
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     date = models.DateTimeField(auto_now_add=True)
 
