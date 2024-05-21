@@ -359,8 +359,17 @@ class NotificationMessageMixin:
 
     def get_queryset(self):
         """Return prefetched queryset."""
-        queryset = super().get_queryset()
-        queryset = queryset.prefetch_related('target', 'source', 'user')
+        queryset = (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                'source_content_type',
+                'source_object',
+                'target_content_type',
+                'target_object',
+                'user',
+            )
+        )
 
         return queryset
 
