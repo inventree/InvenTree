@@ -1,6 +1,13 @@
 """Helper functions for Single Sign On functionality."""
 
+import json
 import logging
+
+from django.contrib.auth.models import Group
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+from allauth.socialaccount.models import SocialAccount, SocialLogin
 
 from common.settings import get_global_setting
 from InvenTree.helpers import str2bool
@@ -75,3 +82,51 @@ def registration_enabled() -> bool:
 def auto_registration_enabled() -> bool:
     """Return True if SSO auto-registration is enabled."""
     return str2bool(get_global_setting('LOGIN_SIGNUP_SSO_AUTO'))
+
+
+def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
+    """Sync groups from IdP each time a SSO user logs on.
+
+    This event listener is registered in the apps ready method.
+    """
+    if not get_global_setting("LOGIN_ENABLE_SSO_GROUP_SYNC"):
+        return
+
+    group_key = get_global_setting("SSO_GROUP_KEY")
+    group_map = json.loads(get_global_setting("SSO_GROUP_MAP"))
+    # map SSO groups to InvenTree groups
+    group_names = []
+    for sso_group in sociallogin.account.extra_data[group_key]:
+        group_names.append(group_map[sso_group])
+
+    # ensure user has groups
+    user = sociallogin.account.user
+    for group_name in group_names:
+        try:
+            user.groups.get(name=group_name)
+        except Group.DoesNotExist:
+            # user not in group yet
+            try:
+                user.groups.add(Group.objects.get(name=group_name))
+                logger.info(f"Adding group {group_name} to user {user}")
+            except Group.DoesNotExist:
+                logger.error(f"Failed to add group {group_name} to user {user}: Group does not exist")
+
+    # remove groups not listed by SSO if not disabled
+    if get_global_setting("SSO_REMOVE_GROUPS"):
+        for group in user.groups.all():
+            if not group.name in group_names:
+                logger.warning(f"Removing group {group.name} from {user}")
+                user.groups.remove(group)
+
+
+@receiver(post_save, sender=SocialAccount)
+def on_social_account_created(sender, instance: SocialAccount, created: bool, **kwargs):
+    """Sync SSO groups when new SocialAccount is added.
+
+    Since the allauth `social_account_added` signal is not sent for some reason, this
+    signal is simulated using post_save signals. The issue has been reported as
+    https://github.com/pennersr/django-allauth/issues/3834
+    """
+    if created:
+        ensure_sso_groups(None, SocialLogin(account=instance))

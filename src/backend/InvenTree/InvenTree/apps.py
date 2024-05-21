@@ -11,6 +11,8 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError
 
+from allauth.socialaccount.signals import social_account_added, social_account_updated
+
 import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
@@ -69,6 +71,11 @@ class InvenTreeConfig(AppConfig):
         if InvenTree.ready.canAppAccessDatabase() or settings.TESTING_ENV:
             self.add_user_on_startup()
             self.add_user_from_file()
+
+        # register event receiver and connect signal for SSO group sync. The connected signal is
+        # used for account updates wheras the receiver is used for the initial account creation.
+        from InvenTree import sso
+        social_account_updated.connect(sso.ensure_sso_groups)
 
     def remove_obsolete_tasks(self):
         """Delete any obsolete scheduled tasks in the database."""
