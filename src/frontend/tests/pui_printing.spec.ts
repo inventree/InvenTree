@@ -42,6 +42,8 @@ test('PUI - Label Printing', async ({ page }) => {
 
   await page.locator('#form-success').waitFor();
   await page.getByText('Label printing completed').waitFor();
+
+  await page.context().close();
 });
 
 /*
@@ -75,6 +77,8 @@ test('PUI - Report Printing', async ({ page }) => {
 
   await page.locator('#form-success').waitFor();
   await page.getByText('Report printing completed').waitFor();
+
+  await page.context().close();
 });
 
 test('PUI - Report Editing', async ({ page }) => {
@@ -99,4 +103,6 @@ test('PUI - Report Editing', async ({ page }) => {
   await page.getByRole('button', { name: 'Save & Reload' }).click();
 
   await page.getByText('The preview has been updated').waitFor();
+
+  await page.context().close();
 });
