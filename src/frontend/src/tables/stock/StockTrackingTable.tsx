@@ -1,9 +1,23 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
-import { useMemo } from 'react';
+import { Table, Text } from '@mantine/core';
+import { ReactNode, useCallback, useMemo } from 'react';
 
+import { RenderBuildOrder } from '../../components/render/Build';
+import { RenderCompany } from '../../components/render/Company';
+import {
+  RenderPurchaseOrder,
+  RenderReturnOrder,
+  RenderSalesOrder
+} from '../../components/render/Order';
+import { RenderPart } from '../../components/render/Part';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
+import {
+  RenderStockItem,
+  RenderStockLocation
+} from '../../components/render/Stock';
 import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -11,9 +25,118 @@ import { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 
+type StockTrackingEntry = {
+  label: string;
+  key: string;
+  details: ReactNode;
+};
+
 export function StockTrackingTable({ itemId }: { itemId: number }) {
   const table = useTable('stock_tracking');
   const user = useUserState();
+
+  // Render "details" for a stock tracking record
+  const renderDetails = useCallback((record: any) => {
+    const deltas: any = record?.deltas ?? {};
+
+    let entries: StockTrackingEntry[] = [
+      {
+        label: t`Stock Item`,
+        key: 'stockitem',
+        details:
+          deltas.stockitem_detail &&
+          RenderStockItem({ instance: deltas.stockitem_detail })
+      },
+      {
+        label: t`Status`,
+        key: 'status',
+        details:
+          deltas.status &&
+          StatusRenderer({ status: deltas.status, type: ModelType.stockitem })
+      },
+      {
+        label: t`Quantity`,
+        key: 'quantity',
+        details: deltas.quantity
+      },
+      {
+        label: t`Added`,
+        key: 'added',
+        details: deltas.added
+      },
+      {
+        label: t`Removed`,
+        key: 'removed',
+        details: deltas.removed
+      },
+      {
+        label: t`Part`,
+        key: 'part',
+        details:
+          deltas.part_detail && RenderPart({ instance: deltas.part_detail })
+      },
+      {
+        label: t`Location`,
+        key: 'location',
+        details:
+          deltas.location_detail &&
+          RenderStockLocation({ instance: deltas.location_detail })
+      },
+      {
+        label: t`Build Order`,
+        key: 'buildorder',
+        details:
+          deltas.buildorder_detail &&
+          RenderBuildOrder({ instance: deltas.buildorder_detail })
+      },
+      {
+        label: t`Purchase Order`,
+        key: 'purchaseorder',
+        details:
+          deltas.purchaseorder_detail &&
+          RenderPurchaseOrder({ instance: deltas.purchaseorder_detail })
+      },
+      {
+        label: t`Sales Order`,
+        key: 'salesorder',
+        details:
+          deltas.salesorder_detail &&
+          RenderSalesOrder({ instance: deltas.salesorder_detail })
+      },
+      {
+        label: t`Return Order`,
+        key: 'returnorder',
+        details:
+          deltas.returnorder_detail &&
+          RenderReturnOrder({ instance: deltas.returnorder_detail })
+      },
+      {
+        label: t`Customer`,
+        key: 'customer',
+        details:
+          deltas.customer_detail &&
+          RenderCompany({ instance: deltas.customer_detail })
+      }
+    ];
+
+    return (
+      <Table striped>
+        <Table.Tbody>
+          {entries.map(
+            (entry) =>
+              entry.details && (
+                <Table.Tr key={entry.key}>
+                  <Table.Td>
+                    <Text>{entry.label}</Text>
+                  </Table.Td>
+                  <Table.Td>{entry.details}</Table.Td>
+                </Table.Tr>
+              )
+          )}
+        </Table.Tbody>
+      </Table>
+    );
+  }, []);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -26,7 +149,14 @@ export function StockTrackingTable({ itemId }: { itemId: number }) {
       {
         accessor: 'details',
         title: t`Details`,
-        switchable: false
+        switchable: false,
+        render: renderDetails
+      },
+      {
+        accessor: 'notes',
+        title: t`Notes`,
+        sortable: false,
+        switchable: true
       },
       {
         accessor: 'user',
