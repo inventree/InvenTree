@@ -1178,7 +1178,6 @@ class PartMixin:
     queryset = Part.objects.all()
 
     starred_parts = None
-
     is_create = False
 
     def get_queryset(self, *args, **kwargs):
