@@ -8,6 +8,7 @@ from pathlib import Path
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import OrmQ
@@ -73,8 +74,24 @@ class LicenseView(APIView):
             logger.exception("Exception while reading license file '%s': %s", path, e)
             return []
 
-        # Ensure consistent string between backend and frontend licenses
-        return [{key.lower(): value for key, value in entry.items()} for entry in data]
+        output = []
+        names = set()
+
+        # Ensure we do not have any duplicate 'name' values in the list
+        for entry in data:
+            name = None
+            for key in entry.keys():
+                if key.lower() == 'name':
+                    name = entry[key]
+                    break
+
+            if name is None or name in names:
+                continue
+
+            names.add(name)
+            output.append({key.lower(): value for key, value in entry.items()})
+
+        return output
 
     @extend_schema(responses={200: OpenApiResponse(response=LicenseViewSerializer)})
     def get(self, request, *args, **kwargs):
@@ -533,6 +550,10 @@ class MetadataView(RetrieveUpdateAPI):
     def get_model_type(self):
         """Return the model type associated with this API instance."""
         model = self.kwargs.get(self.MODEL_REF, None)
+
+        if 'lookup_field' in self.kwargs:
+            # Set custom lookup field (instead of default 'pk' value) if supplied
+            self.lookup_field = self.kwargs.pop('lookup_field')
 
         if model is None:
             raise ValidationError(

@@ -44,7 +44,7 @@ export function CompanyTable({
         sortable: true,
         render: (record: any) => {
           return (
-            <Group spacing="xs" noWrap={true}>
+            <Group gap="xs" wrap="nowrap">
               <Thumbnail
                 src={record.thumbnail ?? record.image ?? ''}
                 alt={record.name}

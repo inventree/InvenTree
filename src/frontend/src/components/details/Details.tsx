@@ -12,14 +12,16 @@ import {
   Tooltip
 } from '@mantine/core';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useMemo } from 'react';
+import { getValueAtPath } from 'mantine-datatable';
+import { Suspense, useCallback, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
+import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
-import { base_url } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { YesNoButton } from '../buttons/YesNoButton';
@@ -42,7 +44,7 @@ export type PartIconsType = {
 export type DetailsField =
   | {
       hidden?: boolean;
-      icon?: string;
+      icon?: InvenTreeIconType;
       name: string;
       label?: string;
       badge?: BadgeType;
@@ -183,12 +185,12 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
 function TableStringValue(props: Readonly<FieldProps>) {
   let value = props?.field_value;
 
-  if (value === undefined) {
-    return '---';
+  if (props?.field_data?.value_formatter) {
+    value = props.field_data.value_formatter();
   }
 
-  if (props.field_data?.value_formatter) {
-    value = props.field_data.value_formatter();
+  if (value === undefined) {
+    return '---';
   }
 
   if (props.field_data?.badge) {
@@ -222,24 +224,15 @@ function BooleanValue(props: Readonly<FieldProps>) {
 }
 
 function TableAnchorValue(props: Readonly<FieldProps>) {
-  if (props.field_data.external) {
-    return (
-      <Anchor
-        href={`${props.field_value}`}
-        target={'_blank'}
-        rel={'noreferrer noopener'}
-      >
-        <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
-          <Text>{props.field_value}</Text>
-          <InvenTreeIcon icon="external" iconProps={{ size: 15 }} />
-        </span>
-      </Anchor>
-    );
-  }
+  const navigate = useNavigate();
 
   const { data } = useSuspenseQuery({
     queryKey: ['detail', props.field_data.model, props.field_value],
     queryFn: async () => {
+      if (!props.field_data?.model) {
+        return {};
+      }
+
       const modelDef = getModelInfo(props.field_data.model);
 
       if (!modelDef?.api_endpoint) {
@@ -255,18 +248,43 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
             case 200:
               return response.data;
             default:
-              return null;
+              return {};
           }
         })
         .catch(() => {
-          return null;
+          return {};
         });
     }
   });
 
   const detailUrl = useMemo(() => {
-    return getDetailUrl(props.field_data.model, props.field_value);
+    return (
+      props?.field_data?.model &&
+      getDetailUrl(props.field_data.model, props.field_value)
+    );
   }, [props.field_data.model, props.field_value]);
+
+  const handleLinkClick = useCallback(
+    (event: any) => {
+      navigateToLink(detailUrl, navigate, event);
+    },
+    [detailUrl]
+  );
+
+  if (props.field_data.external) {
+    return (
+      <Anchor
+        href={`${props.field_value}`}
+        target={'_blank'}
+        rel={'noreferrer noopener'}
+      >
+        <span style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+          <Text>{props.field_value}</Text>
+          <InvenTreeIcon icon="external" iconProps={{ size: 15 }} />
+        </span>
+      </Anchor>
+    );
+  }
 
   let make_link = props.field_data?.link ?? true;
 
@@ -282,18 +300,14 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   }
 
   if (value === undefined) {
-    value = data?.name ?? props.field_data?.backup_value ?? 'No name defined';
+    value = data?.name ?? props.field_data?.backup_value ?? t`No name defined`;
     make_link = false;
   }
 
   return (
     <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
       {make_link ? (
-        <Anchor
-          href={`/${base_url}${detailUrl}`}
-          target={data?.external ? '_blank' : undefined}
-          rel={data?.external ? 'noreferrer noopener' : undefined}
-        >
+        <Anchor href="#" onClick={handleLinkClick}>
           <Text>{value}</Text>
         </Anchor>
       ) : (
@@ -324,7 +338,12 @@ function CopyField({ value }: { value: string }) {
     <CopyButton value={value}>
       {({ copied, copy }) => (
         <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
-          <ActionIcon color={copied ? 'teal' : 'gray'} onClick={copy}>
+          <ActionIcon
+            color={copied ? 'teal' : 'gray'}
+            onClick={copy}
+            variant="transparent"
+            size="sm"
+          >
             {copied ? (
               <InvenTreeIcon icon="check" />
             ) : (
@@ -364,26 +383,31 @@ export function DetailsTableField({
 
   const FieldType: any = getFieldType(field.type);
 
+  const fieldValue = useMemo(
+    () => getValueAtPath(item, field.name) as string,
+    [item, field.name]
+  );
+
   return (
-    <tr style={{ verticalAlign: 'top' }}>
-      <td
+    <Table.Tr style={{ verticalAlign: 'top' }}>
+      <Table.Td
         style={{
-          gap: '20px',
-          width: '50'
+          width: '50',
+          maxWidth: '50'
         }}
       >
-        <InvenTreeIcon icon={(field.icon ?? field.name) as InvenTreeIconType} />
-      </td>
-      <td style={{ minWidth: '25%', maxWidth: '65%' }}>
+        <InvenTreeIcon icon={field.icon ?? (field.name as InvenTreeIconType)} />
+      </Table.Td>
+      <Table.Td style={{ maxWidth: '65%' }}>
         <Text>{field.label}</Text>
-      </td>
-      <td style={{ width: '100%' }}>
-        <FieldType field_data={field} field_value={item[field.name]} />
-      </td>
-      <td style={{ width: '50' }}>
-        {field.copy && <CopyField value={item[field.name]} />}
-      </td>
-    </tr>
+      </Table.Td>
+      <Table.Td style={{}}>
+        <FieldType field_data={field} field_value={fieldValue} />
+      </Table.Td>
+      <Table.Td style={{ width: '50' }}>
+        {field.copy && <CopyField value={fieldValue} />}
+      </Table.Td>
+    </Table.Tr>
   );
 }
 
@@ -398,16 +422,16 @@ export function DetailsTable({
 }) {
   return (
     <Paper p="xs" withBorder radius="xs">
-      <Stack spacing="xs">
+      <Stack gap="xs">
         {title && <StylishText size="lg">{title}</StylishText>}
-        <Table striped>
-          <tbody>
+        <Table striped verticalSpacing={5} horizontalSpacing="sm">
+          <Table.Tbody>
             {fields
               .filter((field: DetailsField) => !field.hidden)
               .map((field: DetailsField, index: number) => (
                 <DetailsTableField field={field} item={item} key={index} />
               ))}
-          </tbody>
+          </Table.Tbody>
         </Table>
       </Stack>
     </Paper>

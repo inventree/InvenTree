@@ -97,12 +97,10 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
             assert plgs is not None
             self.assertEqual(plgs.active, active)
 
+        url = reverse('api-plugin-detail-activate', kwargs={'plugin': test_plg.key})
+
         # Should not work - not a superuser
-        response = self.client.post(
-            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.pk}),
-            {},
-            follow=True,
-        )
+        response = self.client.post(url, {}, follow=True)
         self.assertEqual(response.status_code, 403)
 
         # Make user superuser
@@ -115,11 +113,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         # Activate plugin with detail url
         assert_plugin_active(self, False)
-        response = self.client.patch(
-            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.pk}),
-            {},
-            follow=True,
-        )
+        response = self.client.patch(url, {}, follow=True)
         self.assertEqual(response.status_code, 200)
         assert_plugin_active(self, True)
 
@@ -129,11 +123,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
 
         # Activate plugin
         assert_plugin_active(self, False)
-        response = self.client.patch(
-            reverse('api-plugin-detail-activate', kwargs={'pk': test_plg.pk}),
-            {},
-            follow=True,
-        )
+        response = self.client.patch(url, {}, follow=True)
         self.assertEqual(response.status_code, 200)
         assert_plugin_active(self, True)
 
@@ -237,7 +227,7 @@ class PluginDetailAPITest(PluginMixin, InvenTreeAPITestCase):
         cfg = PluginConfig.objects.filter(key='sample').first()
         assert cfg is not None
 
-        url = reverse('api-plugin-detail-activate', kwargs={'pk': cfg.pk})
+        url = reverse('api-plugin-detail-activate', kwargs={'plugin': cfg.key})
         self.client.patch(url, {}, expected_code=200)
 
         # Valid plugin settings endpoints

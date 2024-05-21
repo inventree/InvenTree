@@ -101,7 +101,7 @@ export function SalesOrderTable({
 
   const tableColumns = useMemo(() => {
     return [
-      ReferenceColumn(),
+      ReferenceColumn({}),
       {
         accessor: 'customer__name',
         title: t`Customer`,
@@ -124,11 +124,11 @@ export function SalesOrderTable({
       },
       DescriptionColumn({}),
       LineItemsProgressColumn(),
-      StatusColumn(ModelType.salesorder),
-      ProjectCodeColumn(),
-      CreationDateColumn(),
-      TargetDateColumn(),
-      ShipmentDateColumn(),
+      StatusColumn({ model: ModelType.salesorder }),
+      ProjectCodeColumn({}),
+      CreationDateColumn({}),
+      TargetDateColumn({}),
+      ShipmentDateColumn({}),
       {
         accessor: 'total_price',
         title: t`Total Price`,

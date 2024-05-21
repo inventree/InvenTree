@@ -292,6 +292,7 @@ class StockItemAdmin(ImportExportModelAdmin):
         'sales_order',
         'stocktake_user',
         'supplier_part',
+        'consumed_by',
     ]
 
 

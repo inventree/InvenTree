@@ -10,6 +10,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -243,6 +244,7 @@ export default function SupplierPartDetail() {
 
   const supplierPartActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
       <ActionDropdown
         key="part"
         tooltip={t`Supplier Part Actions`}
@@ -262,7 +264,7 @@ export default function SupplierPartDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, supplierPart]);
 
   const supplierPartFields = useSupplierPartFields();
 
@@ -303,7 +305,7 @@ export default function SupplierPartDetail() {
       <DetailsBadge
         label={t`Inactive`}
         color="red"
-        visible={!supplierPart.active}
+        visible={supplierPart.active == false}
       />
     ];
   }, [supplierPart]);
@@ -311,8 +313,7 @@ export default function SupplierPartDetail() {
   return (
     <>
       {editSuppliertPart.modal}
-      {duplicateSupplierPart.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Supplier Part`}

@@ -81,7 +81,7 @@ export function PurchaseOrderTable({
 
   const tableColumns = useMemo(() => {
     return [
-      ReferenceColumn(),
+      ReferenceColumn({}),
       DescriptionColumn({}),
       {
         accessor: 'supplier__name',
@@ -103,10 +103,10 @@ export function PurchaseOrderTable({
         accessor: 'supplier_reference'
       },
       LineItemsProgressColumn(),
-      StatusColumn(ModelType.purchaseorder),
-      ProjectCodeColumn(),
-      CreationDateColumn(),
-      TargetDateColumn(),
+      StatusColumn({ model: ModelType.purchaseorder }),
+      ProjectCodeColumn({}),
+      CreationDateColumn({}),
+      TargetDateColumn({}),
       {
         accessor: 'total_price',
         title: t`Total Price`,
@@ -117,7 +117,7 @@ export function PurchaseOrderTable({
           });
         }
       },
-      ResponsibleColumn()
+      ResponsibleColumn({})
     ];
   }, []);
 

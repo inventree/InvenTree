@@ -36,23 +36,23 @@ export default function PartCategoryTemplateTable({}: {}) {
   const newTemplate = useCreateApiFormModal({
     url: ApiEndpoints.category_parameter_list,
     title: t`Add Category Parameter`,
-    fields: formFields,
-    onFormSuccess: table.refreshTable
+    fields: useMemo(() => ({ ...formFields }), [formFields]),
+    table: table
   });
 
   const editTemplate = useEditApiFormModal({
     url: ApiEndpoints.category_parameter_list,
     pk: selectedTemplate,
     title: t`Edit Category Parameter`,
-    fields: formFields,
-    onFormSuccess: (record: any) => table.updateRecord(record)
+    fields: useMemo(() => ({ ...formFields }), [formFields]),
+    table: table
   });
 
   const deleteTemplate = useDeleteApiFormModal({
     url: ApiEndpoints.category_parameter_list,
     pk: selectedTemplate,
     title: t`Delete Category Parameter`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const tableFilters: TableFilter[] = useMemo(() => {
@@ -93,7 +93,7 @@ export default function PartCategoryTemplateTable({}: {}) {
           }
 
           return (
-            <Group position="apart" grow>
+            <Group justify="space-between" grow>
               <Text>{record.default_value}</Text>
               {units && <Text size="xs">{units}</Text>}
             </Group>

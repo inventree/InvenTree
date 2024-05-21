@@ -72,7 +72,7 @@ export function ReturnOrderTable({ params }: { params?: any }) {
 
   const tableColumns = useMemo(() => {
     return [
-      ReferenceColumn(),
+      ReferenceColumn({}),
       {
         accessor: 'customer__name',
         title: t`Customer`,
@@ -94,11 +94,11 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       },
       DescriptionColumn({}),
       LineItemsProgressColumn(),
-      StatusColumn(ModelType.returnorder),
-      ProjectCodeColumn(),
-      CreationDateColumn(),
-      TargetDateColumn(),
-      ResponsibleColumn(),
+      StatusColumn({ model: ModelType.returnorder }),
+      ProjectCodeColumn({}),
+      CreationDateColumn({}),
+      TargetDateColumn({}),
+      ResponsibleColumn({}),
       {
         accessor: 'total_price',
         title: t`Total Price`,

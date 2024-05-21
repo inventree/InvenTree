@@ -39,7 +39,7 @@ jobs:
       docker: ${{ steps.filter.outputs.docker }}
 
     steps:
-      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # pin@v4.1.6
       - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # pin@v3.0.2
         id: filter
         with:
@@ -66,7 +66,7 @@ jobs:
 
     steps:
       - name: Check out repo
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # pin@v4.1.4
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # pin@v4.1.6
       - name: Set Up Python ${{ env.python_version }}
         uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
         with:
@@ -85,12 +85,17 @@ jobs:
           docker run --rm inventree-test invoke --list
           docker run --rm inventree-test gunicorn --version
           docker run --rm inventree-test pg_dump --version
+          docker run --rm inventree-test test -f /home/inventree/init.sh
+          docker run --rm inventree-test test -f /home/inventree/tasks.py
+          docker run --rm inventree-test test -f /home/inventree/gunicorn.conf.py
+          docker run --rm inventree-test test -f /home/inventree/src/backend/requirements.txt
           docker run --rm inventree-test test -f /home/inventree/src/backend/InvenTree/manage.py
       - name: Build Docker Image
         # Build the development docker image (using docker-compose.yml)
         run: docker compose --project-directory . -f contrib/container/dev-docker-compose.yml build --no-cache
       - name: Update Docker Image
         run: |
+          docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke install
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke update
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run inventree-dev-server invoke setup-dev
           docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d

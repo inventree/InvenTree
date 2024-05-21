@@ -52,8 +52,14 @@ export enum ApiEndpoints {
 
   // Build API endpoints
   build_order_list = 'build/',
+  build_order_cancel = 'build/:id/cancel/',
+  build_output_create = 'build/:id/create-output/',
+  build_output_complete = 'build/:id/complete/',
+  build_output_scrap = 'build/:id/scrap-outputs/',
+  build_output_delete = 'build/:id/delete-outputs/',
   build_order_attachment_list = 'build/attachment/',
   build_line_list = 'build/line/',
+
   bom_list = 'bom/',
 
   // Part API endpoints
@@ -62,6 +68,7 @@ export enum ApiEndpoints {
   part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing_get = 'part/:id/pricing/',
+  part_serial_numbers = 'part/:id/serial-numbers/',
   part_pricing_internal = 'part/internal-price/',
   part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
@@ -87,6 +94,7 @@ export enum ApiEndpoints {
   stock_item_list = 'stock/',
   stock_tracking_list = 'stock/track/',
   stock_location_list = 'stock/location/',
+  stock_location_type_list = 'stock/location-type/',
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
   stock_test_result_list = 'stock/test/',
@@ -99,6 +107,10 @@ export enum ApiEndpoints {
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
   stock_install = 'stock/:id/install',
+
+  // Generator API endpoints
+  generate_batch_code = 'generate/batch-code/',
+  generate_serial_number = 'generate/serial-number/',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',
@@ -124,8 +136,8 @@ export enum ApiEndpoints {
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',
-  plugin_activate = 'plugins/:id/activate/',
-  plugin_uninstall = 'plugins/:id/uninstall/',
+  plugin_activate = 'plugins/:key/activate/',
+  plugin_uninstall = 'plugins/:key/uninstall/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

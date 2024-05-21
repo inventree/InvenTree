@@ -130,11 +130,11 @@ export function TemplateDrawer({
   }
 
   return (
-    <Stack spacing="xs" style={{ display: 'flex', flex: '1' }}>
+    <Stack gap="xs" style={{ display: 'flex', flex: '1' }}>
       {editTemplate.modal}
       {deleteTemplate.modal}
 
-      <Group position="apart">
+      <Group justify="space-between">
         <Box></Box>
 
         <Group>
@@ -234,7 +234,7 @@ export function TemplateTable({
     pathParams: { variant },
     pk: selectedTemplate,
     title: t`Delete` + ' ' + templateTypeTranslation,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const newTemplate = useCreateApiFormModal({

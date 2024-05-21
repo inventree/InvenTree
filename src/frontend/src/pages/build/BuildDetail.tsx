@@ -17,6 +17,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -150,6 +151,27 @@ export default function BuildDetail() {
         label: t`Responsible`,
         badge: 'owner',
         hidden: !build.responsible
+      },
+      {
+        type: 'text',
+        name: 'creation_date',
+        label: t`Created`,
+        icon: 'calendar',
+        hidden: !build.creation_date
+      },
+      {
+        type: 'text',
+        name: 'target_date',
+        label: t`Target Date`,
+        icon: 'calendar',
+        hidden: !build.target_date
+      },
+      {
+        type: 'text',
+        name: 'completion_date',
+        label: t`Completed`,
+        icon: 'calendar',
+        hidden: !build.completion_date
       }
     ];
 
@@ -169,6 +191,13 @@ export default function BuildDetail() {
         model: ModelType.stocklocation,
         label: t`Destination Location`,
         hidden: !build.destination
+      },
+      {
+        type: 'text',
+        name: 'batch',
+        label: t`Batch Code`,
+        hidden: !build.batch,
+        copy: true
       }
     ];
 
@@ -220,11 +249,7 @@ export default function BuildDetail() {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
         icon: <IconClipboardList />,
-        content: build.pk ? (
-          <BuildOutputTable buildId={build.pk} partId={build.part} />
-        ) : (
-          <Skeleton />
-        )
+        content: build.pk ? <BuildOutputTable build={build} /> : <Skeleton />
         // TODO: Hide if build is complete
       },
       {
@@ -233,6 +258,8 @@ export default function BuildDetail() {
         icon: <IconClipboardCheck />,
         content: (
           <StockItemTable
+            allowAdd={false}
+            tableName="build-outputs"
             params={{
               build: id,
               is_building: false
@@ -246,6 +273,8 @@ export default function BuildDetail() {
         icon: <IconList />,
         content: (
           <StockItemTable
+            allowAdd={false}
+            tableName="build-consumed"
             params={{
               consumed_by: id
             }}
@@ -301,6 +330,18 @@ export default function BuildDetail() {
     }
   });
 
+  const cancelBuild = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
+    title: t`Cancel Build Order`,
+    fields: {
+      remove_allocated_stock: {},
+      remove_incomplete_outputs: {}
+    },
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
+
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
@@ -314,8 +355,8 @@ export default function BuildDetail() {
   });
 
   const buildActions = useMemo(() => {
-    // TODO: Disable certain actions based on user permissions
     return [
+      <AdminButton model={ModelType.build} pk={build.pk} />,
       <ActionDropdown
         key="barcode"
         tooltip={t`Barcode Actions`}
@@ -352,7 +393,10 @@ export default function BuildDetail() {
             hidden: !user.hasChangeRole(UserRoles.build)
           }),
           CancelItemAction({
-            tooltip: t`Cancel order`
+            tooltip: t`Cancel order`,
+            onClick: () => cancelBuild.open(),
+            hidden: !user.hasChangeRole(UserRoles.build)
+            // TODO: Hide if build cannot be cancelled
           }),
           DuplicateItemAction({
             onClick: () => duplicateBuild.open(),
@@ -379,7 +423,8 @@ export default function BuildDetail() {
     <>
       {editBuild.modal}
       {duplicateBuild.modal}
-      <Stack spacing="xs">
+      {cancelBuild.modal}
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={build.reference}

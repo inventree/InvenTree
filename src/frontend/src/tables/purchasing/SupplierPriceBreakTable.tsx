@@ -38,7 +38,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
       switchable: true,
       render: (record: any) => {
         return (
-          <Group spacing="xs" noWrap>
+          <Group gap="xs" wrap="nowrap">
             <Thumbnail
               src={
                 record?.supplier_detail?.thumbnail ??
@@ -96,7 +96,7 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
         });
 
         return (
-          <Group position="apart" spacing="xs" grow>
+          <Group justify="space-between" gap="xs" grow>
             <Text>{price}</Text>
             {units && <Text size="xs">[{units}]</Text>}
           </Group>
@@ -140,9 +140,7 @@ export default function SupplierPriceBreakTable({
     initialData: {
       part: supplierPartId
     },
-    onFormSuccess: (data: any) => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const editPriceBreak = useEditApiFormModal({
@@ -150,18 +148,14 @@ export default function SupplierPriceBreakTable({
     pk: selectedPriceBreak,
     title: t`Edit Price Break`,
     fields: supplierPriceBreakFields,
-    onFormSuccess: (data: any) => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const deletePriceBreak = useDeleteApiFormModal({
     url: apiUrl(ApiEndpoints.supplier_part_pricing_list),
     pk: selectedPriceBreak,
     title: t`Delete Price Break`,
-    onFormSuccess: () => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const tableActions = useMemo(() => {
