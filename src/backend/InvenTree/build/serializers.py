@@ -1,7 +1,5 @@
 """JSON serializers for Build API."""
 
-from decimal import Decimal
-
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
@@ -22,7 +20,8 @@ import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
 
-from stock.models import generate_batch_code, StockItem, StockLocation
+from stock.generators import generate_batch_code
+from stock.models import StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
 import common.models
