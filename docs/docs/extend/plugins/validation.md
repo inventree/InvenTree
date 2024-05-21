@@ -20,14 +20,13 @@ Any model which inherits the `PluginValidationMixin` class is exposed to the plu
 
 A custom plugin may implement the `validate_model_deletion` method to perform custom validation on the model instance before it is deleted.
 
-::: plugin.base.integration.ValidationMixin.ValidationMixin
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_model_deletion
     options:
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
       show_sources: True
-      members:
-        - validate_model_deletion
+      members: []
 
 ## Model Validation
 
@@ -35,14 +34,13 @@ Any model which inherits the `PluginValidationMixin` mixin class is exposed to t
 
 Any plugin which inherits the `ValidationMixin` can implement the `validate_model_instance` method, and run a custom validation routine.
 
-::: plugin.base.integration.ValidationMixin.ValidationMixin
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_model_instance
     options:
       show_bases: False
       show_root_heading: False
       show_root_toc_entry: False
       show_sources: True
-      members:
-        - validate_model_instance
+      members: []
 
 The `validate_model_instance` method is passed the following arguments:
 
