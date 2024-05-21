@@ -31,7 +31,11 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         verbose_name_plural = _('Plugin Configurations')
 
     key = models.CharField(
-        unique=True, max_length=255, verbose_name=_('Key'), help_text=_('Key of plugin')
+        unique=True,
+        db_index=True,
+        max_length=255,
+        verbose_name=_('Key'),
+        help_text=_('Key of plugin'),
     )
 
     name = models.CharField(

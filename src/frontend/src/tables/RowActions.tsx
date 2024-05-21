@@ -113,7 +113,7 @@ export function RowActions({
       >
         <Menu.Item
           color={action.color}
-          icon={action.icon}
+          leftSection={action.icon}
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
             cancelEvent(event);

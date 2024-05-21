@@ -173,6 +173,7 @@ export default function SystemSettings() {
               'PART_IPN_REGEX',
               'PART_ALLOW_DUPLICATE_IPN',
               'PART_ALLOW_EDIT_IPN',
+              'PART_ALLOW_DELETE_FROM_ASSEMBLY',
               'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',
@@ -212,6 +213,7 @@ export default function SystemSettings() {
               'STOCK_LOCATION_DEFAULT_ICON',
               'STOCK_SHOW_INSTALLED_ITEMS',
               'STOCK_ENFORCE_BOM_INSTALLATION',
+              'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
               'TEST_STATION_DATA'
             ]}
           />
@@ -287,7 +289,7 @@ export default function SystemSettings() {
 
   return (
     <>
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <SettingsHeader
           title={t`System Settings`}
           subtitle={server.instance || ''}

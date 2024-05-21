@@ -1437,6 +1437,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'default': True,
         },
+        'PART_ALLOW_DELETE_FROM_ASSEMBLY': {
+            'name': _('Allow Deletion from Assembly'),
+            'description': _('Allow deletion of parts which are used in an assembly'),
+            'validator': bool,
+            'default': False,
+        },
         'PART_IPN_REGEX': {
             'name': _('IPN Regex'),
             'description': _('Regular expression pattern for matching Part IPN'),
@@ -1780,6 +1786,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
                 'Installed stock items must exist in the BOM for the parent part'
             ),
             'default': True,
+            'validator': bool,
+        },
+        'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER': {
+            'name': _('Allow Out of Stock Transfer'),
+            'description': _(
+                'Allow stock items which are not in stock to be transferred between stock locations'
+            ),
+            'default': False,
             'validator': bool,
         },
         'BUILDORDER_REFERENCE_PATTERN': {

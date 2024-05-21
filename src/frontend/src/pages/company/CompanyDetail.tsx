@@ -18,6 +18,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -32,6 +33,7 @@ import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
@@ -81,7 +83,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`
+        label: t`Description`,
+        copy: true
       },
       {
         type: 'link',
@@ -284,6 +287,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
   const companyActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.company} pk={company.pk} />,
       <ActionDropdown
         key="company"
         tooltip={t`Company Actions`}
@@ -303,14 +307,18 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
 
   const badges: ReactNode[] = useMemo(() => {
     return [
-      <DetailsBadge label={t`Inactive`} color="red" visible={!company.active} />
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={company.active == false}
+      />
     ];
   }, [company]);
 
   return (
     <>
       {editCompany.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Company` + `: ${company.name}`}

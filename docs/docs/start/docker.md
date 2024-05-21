@@ -117,11 +117,14 @@ Runs an InvenTree web server instance, powered by a Gunicorn web server.
 
 Runs the InvenTree background worker process. This spins up a second instance of the *inventree* container, with a different entrypoint command.
 
-#### File Server
+#### Proxy Server
 
 Caddy working as a reverse proxy, separating requests for static and media files, and directing everything else to Gunicorn.
 
 This container uses the official [caddy image](https://hub.docker.com/_/caddy).
+
+!!! info "Nginx Proxy"
+    An alternative is to run nginx as the reverse proxy. A sample configuration file is provided in the `./contrib/container/` source directory.
 
 #### Redis Cache
 

@@ -261,4 +261,10 @@ class PluginRegistryErrorSerializer(serializers.Serializer):
 class PluginRegistryStatusSerializer(serializers.Serializer):
     """Serializer for plugin registry status."""
 
+    class Meta:
+        """Meta for serializer."""
+
+        fields = ['active_plugins', 'registry_errors']
+
+    active_plugins = serializers.IntegerField(read_only=True)
     registry_errors = serializers.ListField(child=PluginRegistryErrorSerializer())

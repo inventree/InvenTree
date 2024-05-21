@@ -8,7 +8,7 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { InvenTreeStyle } from '../../globalStyle';
+import * as classes from '../../main.css';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
@@ -21,7 +21,6 @@ import { NotificationDrawer } from './NotificationDrawer';
 import { SearchDrawer } from './SearchDrawer';
 
 export function Header() {
-  const { classes } = InvenTreeStyle();
   const [setNavigationOpen, navigationOpen] = useLocalState((state) => [
     state.setNavigationOpen,
     state.navigationOpen
@@ -54,12 +53,13 @@ export function Header() {
             limit: 1
           }
         };
-        let response = await api.get(
-          apiUrl(ApiEndpoints.notifications_list),
-          params
-        );
-        setNotificationCount(response.data.count);
-        return response.data;
+        let response = await api
+          .get(apiUrl(ApiEndpoints.notifications_list), params)
+          .catch(() => {
+            return null;
+          });
+        setNotificationCount(response?.data?.count ?? 0);
+        return response?.data;
       } catch (error) {
         return error;
       }
@@ -93,28 +93,32 @@ export function Header() {
         }}
       />
       <Container className={classes.layoutHeaderSection} size="100%">
-        <Group position="apart">
+        <Group justify="space-between">
           <Group>
             <NavHoverMenu openDrawer={openNavDrawer} />
             <NavTabs />
           </Group>
           <Group>
-            <ActionIcon onClick={openSearchDrawer}>
+            <ActionIcon onClick={openSearchDrawer} variant="transparent">
               <IconSearch />
             </ActionIcon>
             <SpotlightButton />
             <ScanButton />
-            <ActionIcon onClick={openNotificationDrawer}>
-              <Indicator
-                radius="lg"
-                size="18"
-                label={notificationCount}
-                color="red"
-                disabled={notificationCount <= 0}
+            <Indicator
+              radius="lg"
+              size="18"
+              label={notificationCount}
+              color="red"
+              disabled={notificationCount <= 0}
+              inline
+            >
+              <ActionIcon
+                onClick={openNotificationDrawer}
+                variant="transparent"
               >
                 <IconBell />
-              </Indicator>
-            </ActionIcon>
+              </ActionIcon>
+            </Indicator>
             <MainMenu />
           </Group>
         </Group>
@@ -124,7 +128,6 @@ export function Header() {
 }
 
 function NavTabs() {
-  const { classes } = InvenTreeStyle();
   const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
@@ -134,11 +137,11 @@ function NavTabs() {
       defaultValue="home"
       classNames={{
         root: classes.tabs,
-        tabsList: classes.tabsList,
+        list: classes.tabsList,
         tab: classes.tab
       }}
       value={tabValue}
-      onTabChange={(value) =>
+      onChange={(value) =>
         value == '/' ? navigate('/') : navigate(`/${value}`)
       }
     >

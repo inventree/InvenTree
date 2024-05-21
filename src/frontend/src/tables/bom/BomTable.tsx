@@ -99,7 +99,9 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
-      ReferenceColumn(),
+      ReferenceColumn({
+        switchable: true
+      }),
       {
         accessor: 'quantity',
         switchable: false,
@@ -109,7 +111,7 @@ export function BomTable({
           let units = record.sub_part_detail?.units;
 
           return (
-            <Group position="apart" grow>
+            <Group justify="space-between" grow>
               <Text>{quantity}</Text>
               {record.overage && <Text size="xs">+{record.overage}</Text>}
               {units && <Text size="xs">{units}</Text>}
@@ -174,7 +176,7 @@ export function BomTable({
 
           let text =
             available_stock <= 0 ? (
-              <Text color="red" italic>{t`No stock`}</Text>
+              <Text c="red" style={{ fontStyle: 'italic' }}>{t`No stock`}</Text>
             ) : (
               available_stock
             );
@@ -235,18 +237,20 @@ export function BomTable({
         sortable: false, // TODO: Custom sorting via API
         render: (record: any) => {
           if (record.consumable) {
-            return <Text italic>{t`Consumable item`}</Text>;
+            return (
+              <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
+            );
           }
 
           let can_build = availableStockQuantity(record) / record.quantity;
           can_build = Math.trunc(can_build);
 
           return (
-            <Text color={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
+            <Text c={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
           );
         }
       },
-      NoteColumn()
+      NoteColumn({})
     ];
   }, [partId, params]);
 
@@ -264,26 +268,32 @@ export function BomTable({
       },
       {
         name: 'available_stock',
+        label: t`Available Stock`,
         description: t`Show items with available stock`
       },
       {
         name: 'on_order',
+        label: t`On Order`,
         description: t`Show items on order`
       },
       {
         name: 'validated',
+        label: t`Validated`,
         description: t`Show validated items`
       },
       {
         name: 'inherited',
+        label: t`Inherited`,
         description: t`Show inherited items`
       },
       {
         name: 'optional',
+        label: t`Optional`,
         description: t`Show optional items`
       },
       {
         name: 'consumable',
+        label: t`Consumable`,
         description: t`Show consumable items`
       },
       {
@@ -304,7 +314,7 @@ export function BomTable({
       part: partId
     },
     successMessage: t`BOM item created`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const editBomItem = useEditApiFormModal({
@@ -313,7 +323,7 @@ export function BomTable({
     title: t`Edit BOM Item`,
     fields: bomItemFields(),
     successMessage: t`BOM item updated`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const deleteBomItem = useDeleteApiFormModal({
@@ -321,7 +331,7 @@ export function BomTable({
     pk: selectedBomItem,
     title: t`Delete BOM Item`,
     successMessage: t`BOM item deleted`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(
@@ -411,6 +421,7 @@ export function BomTable({
           tableActions: tableActions,
           tableFilters: tableFilters,
           modelType: ModelType.part,
+          modelField: 'sub_part',
           rowActions: rowActions
         }}
       />

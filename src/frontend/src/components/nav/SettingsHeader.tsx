@@ -24,7 +24,7 @@ export function SettingsHeader({
   switch_link
 }: Readonly<SettingsHeaderInterface>) {
   return (
-    <Stack spacing="0" ml={'sm'}>
+    <Stack gap="0" ml={'sm'}>
       <Group>
         <Title order={3}>{title}</Title>
         {shorthand && <Text c="dimmed">({shorthand})</Text>}

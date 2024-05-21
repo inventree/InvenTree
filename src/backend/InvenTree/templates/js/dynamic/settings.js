@@ -44,7 +44,7 @@ function editSetting(key, options={}) {
     var url = '';
 
     if (plugin) {
-        url = `/api/plugins/settings/${plugin}/${key}/`;
+        url = `/api/plugins/${plugin}/settings/${key}/`;
     } else if (notification) {
         url = `/api/settings/notification/${pk}/`;
     } else if (global) {

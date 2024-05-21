@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -7,8 +7,11 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
-import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -58,14 +61,35 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     ];
   }, [params]);
 
+  const manufacturerPartFields = useManufacturerPartFields();
+
+  const [selectedPart, setSelectedPart] = useState<number | undefined>(
+    undefined
+  );
+
   const createManufacturerPart = useCreateApiFormModal({
     url: ApiEndpoints.manufacturer_part_list,
     title: t`Add Manufacturer Part`,
-    fields: useManufacturerPartFields(),
-    onFormSuccess: table.refreshTable,
+    fields: manufacturerPartFields,
+    table: table,
     initialData: {
       manufacturer: params?.manufacturer
     }
+  });
+
+  const editManufacturerPart = useEditApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    pk: selectedPart,
+    title: t`Edit Manufacturer Part`,
+    fields: manufacturerPartFields,
+    table: table
+  });
+
+  const deleteManufacturerPart = useDeleteApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    pk: selectedPart,
+    title: t`Delete Manufacturer Part`,
+    table: table
   });
 
   const tableActions = useMemo(() => {
@@ -82,37 +106,21 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     ];
   }, [user]);
 
-  const editManufacturerPartFields = useManufacturerPartFields();
-
   const rowActions = useCallback(
     (record: any) => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
           onClick: () => {
-            record.pk &&
-              openEditApiForm({
-                url: ApiEndpoints.manufacturer_part_list,
-                pk: record.pk,
-                title: t`Edit Manufacturer Part`,
-                fields: editManufacturerPartFields,
-                onFormSuccess: table.refreshTable,
-                successMessage: t`Manufacturer part updated`
-              });
+            setSelectedPart(record.pk);
+            editManufacturerPart.open();
           }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
           onClick: () => {
-            record.pk &&
-              openDeleteApiForm({
-                url: ApiEndpoints.manufacturer_part_list,
-                pk: record.pk,
-                title: t`Delete Manufacturer Part`,
-                successMessage: t`Manufacturer part deleted`,
-                onFormSuccess: table.refreshTable,
-                preFormWarning: t`Are you sure you want to remove this manufacturer part?`
-              });
+            setSelectedPart(record.pk);
+            deleteManufacturerPart.open();
           }
         })
       ];
@@ -123,6 +131,8 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   return (
     <>
       {createManufacturerPart.modal}
+      {editManufacturerPart.modal}
+      {deleteManufacturerPart.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.manufacturer_part_list)}
         tableState={table}
