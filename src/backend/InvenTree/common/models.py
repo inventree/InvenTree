@@ -41,6 +41,7 @@ from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
 import build.validators
+import common.validators
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -3051,7 +3052,7 @@ def rename_notes_image(instance, filename):
 class NotesImage(models.Model):
     """Model for storing uploading images for the 'notes' fields of various models.
 
-    Simply stores the image file, for use in the 'notes' field (of any models which support markdown)
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
     """
 
     image = models.ImageField(
@@ -3061,6 +3062,20 @@ class NotesImage(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     date = models.DateTimeField(auto_now_add=True)
+
+    model_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        validators=[common.validators.validate_notes_model_type],
+        help_text=_('Target model type for this image'),
+    )
+
+    model_id = models.IntegerField(
+        help_text=_('Target model ID for this image'),
+        validators=[MinValueValidator(1)],
+        null=True,
+    )
 
 
 class CustomUnit(models.Model):
