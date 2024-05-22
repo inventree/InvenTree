@@ -16,7 +16,7 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { NotesEditor } from '../../components/editors/NotesEditor';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -290,11 +290,7 @@ export default function PurchaseOrderDetail() {
         label: t`Notes`,
         icon: <IconNotes />,
         content: (
-          <NotesEditor
-            url={apiUrl(ApiEndpoints.purchase_order_list, id)}
-            data={order.notes ?? ''}
-            allowEdit={true}
-          />
+          <NotesEditor modelType={ModelType.purchaseorder} modelId={order.pk} />
         )
       }
     ];

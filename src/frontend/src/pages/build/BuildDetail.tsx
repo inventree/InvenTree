@@ -20,7 +20,7 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { NotesEditor } from '../../components/editors/NotesEditor';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   CancelItemAction,
@@ -306,13 +306,7 @@ export default function BuildDetail() {
         name: 'notes',
         label: t`Notes`,
         icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            url={apiUrl(ApiEndpoints.build_order_list, build.pk)}
-            data={build.notes ?? ''}
-            allowEdit={true}
-          />
-        )
+        content: <NotesEditor modelType={ModelType.build} modelId={build.pk} />
       }
     ];
   }, [build, id]);

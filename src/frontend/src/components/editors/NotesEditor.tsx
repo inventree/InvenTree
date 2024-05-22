@@ -1,164 +1,130 @@
-import { t } from '@lingui/macro';
-import { showNotification } from '@mantine/notifications';
-// import EasyMDE from 'easymde';
-// import 'easymde/dist/easymde.min.css';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import {
+  BlockTypeSelect,
+  BoldItalicUnderlineToggles,
+  CodeToggle,
+  CreateLink,
+  InsertAdmonition,
+  InsertCodeBlock,
+  InsertImage,
+  InsertTable,
+  InsertThematicBreak,
+  ListsToggle,
+  MDXEditor,
+  type MDXEditorMethods,
+  type MDXEditorProps,
+  Separator,
+  UndoRedo,
+  headingsPlugin,
+  imagePlugin,
+  listsPlugin,
+  markdownShortcutPlugin,
+  quotePlugin,
+  thematicBreakPlugin,
+  toolbarPlugin
+} from '@mdxeditor/editor';
+import '@mdxeditor/editor/style.css';
+import { useQuery } from '@tanstack/react-query';
+import { type ForwardedRef, useCallback, useMemo } from 'react';
 
 import { api } from '../../App';
-// import SimpleMDE from 'react-simplemde-editor';
-import MarkdownEditor from './MarkdownEditor';
+import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
+import { ModelInformationDict } from '../render/ModelType';
 
-/**
- * Markdon editor component. Uses react-simplemde-editor
+/*
+ * Upload an drag-n-dropped image to the server against a model type and instance.
  */
-// export function xMarkdownEditor({
-//   data,
-//   allowEdit,
-//   saveValue
-// }: {
-//   data?: string;
-//   allowEdit?: boolean;
-//   saveValue?: (value: string) => void;
-// }): ReactNode {
-//   const [value, setValue] = useState(data);
+async function uploadNotesImage(
+  image: File,
+  modelType: ModelType,
+  modelId: number
+): Promise<string> {
+  const formData = new FormData();
+  formData.append('image', image);
 
-//   // Construct markdown editor options
-//   const options = useMemo(() => {
-//     // Custom set of toolbar icons for the editor
-//     let icons: any[] = ['preview', 'side-by-side'];
+  formData.append('model_type', modelType);
+  formData.append('model_id', modelId.toString());
 
-//     if (allowEdit) {
-//       icons.push(
-//         '|',
+  const response = await api.post(
+    apiUrl(ApiEndpoints.notes_image_upload),
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  );
 
-//         // Heading icons
-//         'heading-1',
-//         'heading-2',
-//         'heading-3',
-//         '|',
+  return response.data.image;
+}
 
-//         // Font styles
-//         'bold',
-//         'italic',
-//         'strikethrough',
-//         '|',
-
-//         // Text formatting
-//         'unordered-list',
-//         'ordered-list',
-//         'code',
-//         'quote',
-//         '|',
-
-//         // Link and image icons
-//         'table',
-//         'link',
-//         'image'
-//       );
-//     }
-
-//     if (allowEdit) {
-//       icons.push(
-//         '|',
-
-//         // Save button
-//         {
-//           name: 'save',
-//           action: (editor: EasyMDE) => {
-//             if (saveValue) {
-//               saveValue(editor.value());
-//             }
-//           },
-//           className: 'fa fa-save',
-//           title: t`Save`
-//         }
-//       );
-//     }
-
-//     return {
-//       minHeight: '400px',
-//       toolbar: icons,
-//       sideBySideFullscreen: false,
-//       uploadImage: allowEdit,
-//       imagePathAbsolute: true,
-//       imageUploadFunction: (
-//         file: File,
-//         onSuccess: (url: string) => void,
-//         onError: (error: string) => void
-//       ) => {
-//         api
-//           .post(
-//             '/notes-image-upload/',
-//             {
-//               image: file
-//             },
-//             {
-//               headers: {
-//                 'Content-Type': 'multipart/form-data'
-//               }
-//             }
-//           )
-//           .then((response) => {
-//             if (response.data?.image) {
-//               onSuccess(response.data.image);
-//             }
-//           })
-//           .catch((error) => {
-//             showNotification({
-//               title: t`Error`,
-//               message: t`Failed to upload image`,
-//               color: 'red'
-//             });
-//             onError(error);
-//           });
-//       }
-//     };
-//   }, [allowEdit]);
-
-//   return (
-//     <SimpleMDE
-//       value={value}
-//       options={options}
-//       onChange={(v: string) => setValue(v)}
-//     />
-//   );
-// }
-
-/**
- * Custom implementation of the MarkdownEditor widget for editing notes.
- * Includes a callback hook for saving the notes to the server.
- */
-export function NotesEditor({
-  url,
-  data,
-  allowEdit
+export default function NotesEditor({
+  modelType,
+  modelId
 }: {
-  url: string;
-  data?: string;
-  allowEdit?: boolean;
-}): ReactNode {
-  // Callback function to upload data to the server
-  const uploadData = useCallback((value: string) => {
-    api
-      .patch(url, { notes: value })
-      .then((response) => {
-        showNotification({
-          title: t`Success`,
-          message: t`Notes saved`,
-          color: 'green'
-        });
-        return response;
-      })
-      .catch((error) => {
-        showNotification({
-          title: t`Error`,
-          message: t`Failed to save notes`,
-          color: 'red'
-        });
-        return error;
-      });
-  }, []);
+  modelType: ModelType;
+  modelId: number;
+}) {
+  const user = useUserState();
 
-  //  {/*data={data} allowEdit={allowEdit} saveValue={uploadData} />*/}
-  return <MarkdownEditor />;
+  // TODO: Use user information to determine if the user has permission to edit notes
+
+  const noteUrl: string = useMemo(() => {
+    const modelInfo = ModelInformationDict[modelType];
+    return apiUrl(modelInfo.api_endpoint, modelId);
+  }, [modelType, modelId]);
+
+  const imageUploadHandler = useCallback(
+    (image: File): Promise<string> => {
+      return uploadNotesImage(image, modelType, modelId);
+    },
+    [modelType, modelId]
+  );
+
+  const dataQuery = useQuery({
+    queryKey: [noteUrl],
+    queryFn: () =>
+      api
+        .get(noteUrl)
+        .then((response) => response.data)
+        .catch(() => ''),
+    enabled: true
+  });
+
+  return (
+    <MDXEditor
+      markdown="hello world"
+      plugins={[
+        headingsPlugin(),
+        listsPlugin(),
+        markdownShortcutPlugin(),
+        quotePlugin(),
+        imagePlugin({ imageUploadHandler }),
+        thematicBreakPlugin(),
+        toolbarPlugin({
+          toolbarContents: () => (
+            <>
+              {' '}
+              <UndoRedo />
+              <Separator />
+              <BoldItalicUnderlineToggles />
+              <CodeToggle />
+              <ListsToggle />
+              <Separator />
+              <BlockTypeSelect />
+              <Separator />
+              <CreateLink />
+              <InsertImage />
+              <InsertTable />
+              <InsertCodeBlock />
+              <InsertAdmonition />
+              <InsertThematicBreak />
+            </>
+          )
+        })
+      ]}
+    />
+  );
 }

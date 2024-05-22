@@ -18,7 +18,7 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { NotesEditor } from '../../components/editors/NotesEditor';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   CancelItemAction,
@@ -287,11 +287,7 @@ export default function SalesOrderDetail() {
         label: t`Notes`,
         icon: <IconNotes />,
         content: (
-          <NotesEditor
-            url={apiUrl(ApiEndpoints.sales_order_list, id)}
-            data={order.notes ?? ''}
-            allowEdit={true}
-          />
+          <NotesEditor modelType={ModelType.salesorder} modelId={order.pk} />
         )
       }
     ];

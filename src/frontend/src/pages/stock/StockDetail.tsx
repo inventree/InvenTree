@@ -21,7 +21,7 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { NotesEditor } from '../../components/editors/NotesEditor';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -337,11 +337,7 @@ export default function StockDetail() {
         label: t`Notes`,
         icon: <IconNotes />,
         content: (
-          <NotesEditor
-            url={apiUrl(ApiEndpoints.stock_item_list, id)}
-            data={stockitem.notes ?? ''}
-            allowEdit={true}
-          />
+          <NotesEditor modelType={ModelType.stockitem} modelId={stockitem.pk} />
         )
       }
     ];

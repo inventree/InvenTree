@@ -23,7 +23,7 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { NotesEditor } from '../../components/editors/NotesEditor';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -267,11 +267,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Notes`,
         icon: <IconNotes />,
         content: (
-          <NotesEditor
-            url={apiUrl(ApiEndpoints.company_list, company.pk)}
-            data={company?.notes ?? ''}
-            allowEdit={true}
-          />
+          <NotesEditor modelType={ModelType.company} modelId={company.pk} />
         )
       }
     ];

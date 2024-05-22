@@ -40,7 +40,7 @@ import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PartIcons } from '../../components/details/PartIcons';
-import { NotesEditor } from '../../components/editors/NotesEditor';
+import NotesEditor from '../../components/editors/NotesEditor';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -623,13 +623,7 @@ export default function PartDetail() {
         name: 'notes',
         label: t`Notes`,
         icon: <IconNotes />,
-        content: (
-          <NotesEditor
-            url={apiUrl(ApiEndpoints.part_list, part.pk)}
-            data={part.notes ?? ''}
-            allowEdit={true}
-          />
-        )
+        content: <NotesEditor modelType={ModelType.part} modelId={part.pk} />
       }
     ];
   }, [id, part]);
