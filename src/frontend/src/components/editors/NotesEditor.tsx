@@ -27,7 +27,7 @@ import {
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 import { useQuery } from '@tanstack/react-query';
-import { type useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import React from 'react';
 
 import { api } from '../../App';
@@ -60,6 +60,8 @@ async function uploadNotesImage(
       }
     }
   );
+
+  console.log('uploaded image:', response.data.image);
 
   return response.data.image;
 }
