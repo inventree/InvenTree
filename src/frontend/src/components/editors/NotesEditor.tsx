@@ -30,13 +30,14 @@ import {
 import '@mdxeditor/editor/style.css';
 import { IconUpload } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import React from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
+import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { ModelInformationDict } from '../render/ModelType';
 
@@ -78,6 +79,8 @@ export default function NotesEditor({
 }) {
   const ref = React.useRef<MDXEditorMethods>(null);
 
+  const { host } = useLocalState();
+
   const user = useUserState();
 
   // TODO: Use user information to determine if the user has permission to edit notes
@@ -92,6 +95,18 @@ export default function NotesEditor({
       return uploadNotesImage(image, modelType, modelId);
     },
     [modelType, modelId]
+  );
+
+  const imagePreviewHandler = useCallback(
+    async (image: string): Promise<string> => {
+      // If the image is a relative URL, then we need to prepend the base URL
+      if (image.startsWith('/media/')) {
+        image = host + image;
+      }
+
+      return image;
+    },
+    [host]
   );
 
   const dataQuery = useQuery({
@@ -128,7 +143,10 @@ export default function NotesEditor({
           directiveDescriptors: [AdmonitionDirectiveDescriptor]
         }),
         headingsPlugin(),
-        imagePlugin({ imageUploadHandler: imageUploadHandler }),
+        imagePlugin({
+          imageUploadHandler: imageUploadHandler,
+          imagePreviewHandler: imagePreviewHandler
+        }),
         linkPlugin(),
         linkDialogPlugin(),
         listsPlugin(),
