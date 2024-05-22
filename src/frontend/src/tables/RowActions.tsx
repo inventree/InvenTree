@@ -90,7 +90,7 @@ export function RowActions({
   title?: string;
   disabled?: boolean;
   actions: RowAction[];
-  index?: number | undefined;
+  index?: number;
 }): ReactNode {
   // Prevent default event handling
   // Ref: https://icflorescu.github.io/mantine-datatable/examples/links-or-buttons-inside-clickable-rows-or-cells

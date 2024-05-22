@@ -217,6 +217,7 @@ export function AttachmentTable({
   const tableActions: ReactNode[] = useMemo(() => {
     return [
       <ActionButton
+        key="add-attachment"
         tooltip={t`Add attachment`}
         hidden={!allowEdit}
         icon={<IconFileUpload />}
@@ -227,6 +228,7 @@ export function AttachmentTable({
         }}
       />,
       <ActionButton
+        key="add-external-link"
         tooltip={t`Add external link`}
         hidden={!allowEdit}
         icon={<IconExternalLink />}

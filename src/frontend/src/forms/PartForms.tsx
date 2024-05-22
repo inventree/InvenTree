@@ -115,7 +115,7 @@ export function partCategoryFields({}: {}): ApiFormFieldSet {
   return fields;
 }
 
-export function usePartParameterFields({}: {}): ApiFormFieldSet {
+export function usePartParameterFields(): ApiFormFieldSet {
   // Valid field choices
   const [choices, setChoices] = useState<any[]>([]);
 

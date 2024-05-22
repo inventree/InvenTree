@@ -98,7 +98,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
     ];
   }, [partId]);
 
-  const partParameterFields: ApiFormFieldSet = usePartParameterFields({});
+  const partParameterFields: ApiFormFieldSet = usePartParameterFields();
 
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
