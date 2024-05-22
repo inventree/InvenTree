@@ -1,7 +1,9 @@
+import { t } from '@lingui/macro';
 import {
   AdmonitionDirectiveDescriptor,
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
+  ButtonWithTooltip,
   CodeToggle,
   CreateLink,
   InsertAdmonition,
@@ -26,8 +28,9 @@ import {
   toolbarPlugin
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
+import { IconUpload } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
 import { api } from '../../App';
@@ -105,6 +108,17 @@ export default function NotesEditor({
     ref.current?.setMarkdown(dataQuery.data ?? '');
   }, [dataQuery.data, ref.current]);
 
+  // Callback to save notes to the server
+  const saveNotes = useCallback(() => {
+    const markdown = ref.current?.getMarkdown() ?? '';
+    api
+      .patch(noteUrl, { notes: markdown })
+      .then(() => {})
+      .catch(() => {
+        console.error('Failed to save notes');
+      });
+  }, [noteUrl, ref.current, dataQuery.refetch]);
+
   return (
     <MDXEditor
       ref={ref}
@@ -126,6 +140,13 @@ export default function NotesEditor({
           toolbarContents: () => (
             <>
               {' '}
+              <ButtonWithTooltip
+                title={t`Save Notes`}
+                onClick={() => saveNotes()}
+              >
+                <IconUpload />
+              </ButtonWithTooltip>
+              <Separator />
               <UndoRedo />
               <Separator />
               <BoldItalicUnderlineToggles />
