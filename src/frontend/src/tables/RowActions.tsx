@@ -84,11 +84,13 @@ export function RowDeleteAction({
 export function RowActions({
   title,
   actions,
-  disabled = false
+  disabled = false,
+  index
 }: {
   title?: string;
   disabled?: boolean;
   actions: RowAction[];
+  index?: number | undefined;
 }): ReactNode {
   // Prevent default event handling
   // Ref: https://icflorescu.github.io/mantine-datatable/examples/links-or-buttons-inside-clickable-rows-or-cells
@@ -146,6 +148,8 @@ export function RowActions({
         <Menu.Target>
           <Tooltip withinPortal={true} label={title || t`Actions`}>
             <ActionIcon
+              key={`row-action-menu-${index ?? ''}`}
+              aria-label={`row-action-menu-${index ?? ''}`}
               onClick={openMenu}
               disabled={disabled}
               variant="subtle"
