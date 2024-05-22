@@ -4,6 +4,7 @@
 
 /* globals
     addCachedAlert,
+    addTableFilter,
     baseCurrency,
     calculateTotalPrice,
     clearFormInput,
@@ -39,6 +40,8 @@
     moment,
     orderParts,
     partDetail,
+    reloadTableFilters,
+    removeTableFilter,
     renderClipboard,
     renderDate,
     renderLink,
