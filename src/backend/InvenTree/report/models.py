@@ -148,7 +148,6 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
         max_length=100,
         verbose_name=_('Name'),
         help_text=_('Template name'),
-        unique=True,
     )
 
     description = models.CharField(

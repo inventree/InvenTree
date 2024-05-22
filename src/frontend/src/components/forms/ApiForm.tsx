@@ -277,6 +277,10 @@ export function ApiForm({
               res[k] = processFields(field.children, dataValue);
             } else {
               res[k] = dataValue;
+
+              if (field.onValueChange) {
+                field.onValueChange(dataValue, data);
+              }
             }
           }
 

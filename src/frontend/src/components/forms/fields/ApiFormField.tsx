@@ -52,6 +52,7 @@ export type ApiFormAdjustFilterType = {
  * @param postFieldContent : Content to render after the field
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
+ * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -89,6 +90,7 @@ export type ApiFormFieldType = {
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
+  adjustValue?: (value: any) => any;
   onValueChange?: (value: any, record?: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;
   headers?: string[];
@@ -133,6 +135,7 @@ export function ApiFormField({
       ...definition,
       onValueChange: undefined,
       adjustFilters: undefined,
+      adjustValue: undefined,
       read_only: undefined,
       children: undefined
     };
@@ -141,6 +144,11 @@ export function ApiFormField({
   // Callback helper when form value changes
   const onChange = useCallback(
     (value: any) => {
+      // Allow for custom value adjustments (per field)
+      if (definition.adjustValue) {
+        value = definition.adjustValue(value);
+      }
+
       field.onChange(value);
 
       // Run custom callback for this field
@@ -171,6 +179,11 @@ export function ApiFormField({
     }
 
     return val;
+  }, [value]);
+
+  // Coerce the value to a (stringified) boolean value
+  const booleanValue: string = useMemo(() => {
+    return isTrue(value).toString();
   }, [value]);
 
   // Construct the individual field
@@ -209,6 +222,7 @@ export function ApiFormField({
         return (
           <Switch
             {...reducedDefinition}
+            value={booleanValue}
             ref={ref}
             id={fieldId}
             aria-label={`boolean-field-${field.name}`}

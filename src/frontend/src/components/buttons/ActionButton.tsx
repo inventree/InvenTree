@@ -1,6 +1,7 @@
 import { ActionIcon, FloatingPosition, Group, Tooltip } from '@mantine/core';
 import { ReactNode } from 'react';
 
+import { identifierString } from '../../functions/conversion';
 import { notYetImplemented } from '../../functions/notifications';
 
 export type ActionButtonProps = {
@@ -26,18 +27,21 @@ export function ActionButton(props: ActionButtonProps) {
   return (
     !hidden && (
       <Tooltip
-        key={`tooltip-${props.text}`}
+        key={`tooltip-${props.tooltip ?? props.text}`}
         disabled={!props.tooltip && !props.text}
         label={props.tooltip ?? props.text}
         position={props.tooltipAlignment ?? 'left'}
       >
         <ActionIcon
-          key={`action-icon-${props.text}`}
+          key={`action-icon-${props.tooltip ?? props.text}`}
           disabled={props.disabled}
           p={17}
           radius={props.radius ?? 'xs'}
           color={props.color}
           size={props.size}
+          aria-label={`action-button-${identifierString(
+            props.tooltip ?? props.text ?? ''
+          )}`}
           onClick={props.onClick ?? notYetImplemented}
           variant={props.variant ?? 'light'}
         >
