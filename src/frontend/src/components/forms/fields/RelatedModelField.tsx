@@ -73,6 +73,11 @@ export function RelatedModelField({
             data: response.data
           };
 
+          // Run custom callback for this field (if provided)
+          if (definition.onValueChange) {
+            definition.onValueChange(response.data[pk_field], response.data);
+          }
+
           setInitialData(value);
           dataRef.current = [value];
           setPk(response.data[pk_field]);
