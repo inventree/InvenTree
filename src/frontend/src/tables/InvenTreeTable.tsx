@@ -263,10 +263,11 @@ export function InvenTreeTable<T = any>({
         hidden: false,
         switchable: false,
         width: 50,
-        render: (record: any) => (
+        render: (record: any, index?: number | undefined) => (
           <RowActions
             actions={tableProps.rowActions?.(record) ?? []}
             disabled={tableState.selectedRecords.length > 0}
+            index={index}
           />
         )
       });
