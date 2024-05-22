@@ -40,6 +40,7 @@ export type ApiFormAdjustFilterType = {
  * @param icon : An icon to display next to the field
  * @param field_type : The type of field to render
  * @param api_url : The API endpoint to fetch data from (for related fields)
+ * @param pk_field : The primary key field for the related field (default = "pk")
  * @param model : The model to use for related fields
  * @param filters : Optional API filters to apply to related fields
  * @param required : Whether the field is required
@@ -74,6 +75,7 @@ export type ApiFormFieldType = {
     | 'nested object'
     | 'table';
   api_url?: string;
+  pk_field?: string;
   model?: ModelType;
   modelRenderer?: (instance: any) => ReactNode;
   filters?: any;
@@ -190,6 +192,7 @@ export function ApiFormField({
             {...reducedDefinition}
             ref={field.ref}
             id={fieldId}
+            aria-label={`text-field-${field.name}`}
             type={definition.field_type}
             value={value || ''}
             error={error?.message}
@@ -208,6 +211,7 @@ export function ApiFormField({
             {...reducedDefinition}
             ref={ref}
             id={fieldId}
+            aria-label={`boolean-field-${field.name}`}
             radius="lg"
             size="sm"
             checked={isTrue(value)}
@@ -228,6 +232,7 @@ export function ApiFormField({
             radius="sm"
             ref={field.ref}
             id={fieldId}
+            aria-label={`number-field-${field.name}`}
             value={numericalValue}
             error={error?.message}
             decimalScale={definition.field_type == 'integer' ? 0 : 10}

@@ -30,7 +30,7 @@ class BuildFilter(rest_filters.FilterSet):
     """Custom filterset for BuildList API endpoint."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
         model = Build
         fields = [
             'parent',

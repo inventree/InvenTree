@@ -127,8 +127,14 @@ export enum ApiEndpoints {
   return_order_attachment_list = 'order/ro/attachment/',
 
   // Template API endpoints
-  label_list = 'label/:variant/',
-  report_list = 'report/:variant/',
+  label_list = 'label/template/',
+  label_print = 'label/print/',
+  label_output = 'label/output/',
+  report_list = 'report/template/',
+  report_print = 'report/print/',
+  report_output = 'report/output/',
+  report_snippet = 'report/snippet/',
+  report_asset = 'report/asset/',
 
   // Plugin API endpoints
   plugin_list = 'plugins/',

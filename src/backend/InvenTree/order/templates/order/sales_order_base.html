@@ -310,11 +310,7 @@ $("#complete-order").click(function() {
 
 {% if report_enabled %}
 $('#print-order-report').click(function() {
-    printReports({
-        items: [{{ order.pk }}],
-        key: 'order',
-        url: '{% url "api-so-report-list" %}',
-    });
+    printReports('salesorder', [{{ order.pk }}]);
 });
 {% endif %}
 

@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.utils import IntegrityError
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 import common.models
@@ -23,6 +23,11 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
         name: PluginName of the plugin - serves for a manual double check  if the right plugin is used
         active: Should the plugin be loaded?
     """
+
+    @staticmethod
+    def get_api_url():
+        """Return the API URL associated with the PluginConfig model."""
+        return reverse('api-plugin-list')
 
     class Meta:
         """Meta for PluginConfig."""

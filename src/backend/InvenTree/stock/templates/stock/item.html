@@ -242,11 +242,7 @@
     );
 
     $("#test-report").click(function() {
-        printReports({
-            items: [{{ item.pk }}],
-            key: 'item',
-            url: '{% url "api-stockitem-testreport-list" %}',
-        });
+        printReports('stockitem', [{{ item.pk }}]);
     });
 
     {% if user.is_staff %}

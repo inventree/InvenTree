@@ -11,6 +11,7 @@ import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -287,8 +288,12 @@ export default function ReturnOrderDetail() {
   const orderActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.returnorder} pk={order.pk} />,
+      <PrintingActions
+        modelType={ModelType.returnorder}
+        items={[order.pk]}
+        enableReports
+      />,
       <ActionDropdown
-        key="order-actions"
         tooltip={t`Order Actions`}
         icon={<IconDots />}
         actions={[

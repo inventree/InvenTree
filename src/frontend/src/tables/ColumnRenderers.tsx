@@ -2,7 +2,7 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/macro';
-import { Anchor, Text } from '@mantine/core';
+import { Anchor, Skeleton, Text } from '@mantine/core';
 
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -18,11 +18,13 @@ import { ProjectCodeHoverCard } from './TableHoverCard';
 
 // Render a Part instance within a table
 export function PartColumn(part: any, full_name?: boolean) {
-  return (
+  return part ? (
     <Thumbnail
-      src={part?.thumbnail ?? part.image}
-      text={full_name ? part.full_name : part.name}
+      src={part?.thumbnail ?? part?.image}
+      text={full_name ? part?.full_name : part?.name}
     />
+  ) : (
+    <Skeleton />
   );
 }
 
@@ -226,8 +228,8 @@ export function CurrencyColumn({
     sortable: sortable ?? true,
     render: (record: any) => {
       let currency_key = currency_accessor ?? `${accessor}_currency`;
-      return formatCurrency(record[accessor], {
-        currency: currency ?? record[currency_key]
+      return formatCurrency(resolveItem(record, accessor), {
+        currency: currency ?? resolveItem(record, currency_key)
       });
     }
   };

@@ -193,7 +193,6 @@ INSTALLED_APPS = [
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
-    'label.apps.LabelConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
@@ -434,12 +433,7 @@ ROOT_URLCONF = 'InvenTree.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR.joinpath('templates'),
-            # Allow templates in the reporting directory to be accessed
-            MEDIA_ROOT.joinpath('report'),
-            MEDIA_ROOT.joinpath('label'),
-        ],
+        'DIRS': [BASE_DIR.joinpath('templates'), MEDIA_ROOT.joinpath('report')],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',

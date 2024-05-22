@@ -246,7 +246,6 @@ export default function SupplierPartDetail() {
     return [
       <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
       <ActionDropdown
-        key="part"
         tooltip={t`Supplier Part Actions`}
         icon={<IconDots />}
         actions={[

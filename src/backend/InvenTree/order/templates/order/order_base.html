@@ -253,11 +253,7 @@ $("#place-order").click(function() {
 
 {% if report_enabled %}
 $('#print-order-report').click(function() {
-    printReports({
-        items: [{{ order.pk }}],
-        key: 'order',
-        url: '{% url "api-po-report-list" %}',
-    });
+    printReports('purchaseorder', [{{ order.pk }}]);
 });
 {% endif %}
 

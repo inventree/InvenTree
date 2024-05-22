@@ -26,6 +26,8 @@ import {
   RenderPartParameterTemplate,
   RenderPartTestTemplate
 } from './Part';
+import { RenderPlugin } from './Plugin';
+import { RenderLabelTemplate, RenderReportTemplate } from './Report';
 import {
   RenderStockItem,
   RenderStockLocation,
@@ -72,7 +74,10 @@ const RendererLookup: EnumDictionary<
   [ModelType.stockitem]: RenderStockItem,
   [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,
-  [ModelType.user]: RenderUser
+  [ModelType.user]: RenderUser,
+  [ModelType.reporttemplate]: RenderReportTemplate,
+  [ModelType.labeltemplate]: RenderLabelTemplate,
+  [ModelType.pluginconfig]: RenderPlugin
 };
 
 export type RenderInstanceProps = {
