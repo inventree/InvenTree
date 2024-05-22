@@ -187,5 +187,12 @@ test('PUI - Pages - Part - Parameters', async ({ page }) => {
   // Select the "polarized" parameter template (should create a "checkbox" field)
   await page.getByLabel('related-field-template').fill('Polarized');
   await page.getByText('Is this part polarized?').click();
-  await page.getByLabel('boolean-field-data').click();
+  await page
+    .locator('label')
+    .filter({ hasText: 'DataParameter Value' })
+    .locator('div')
+    .first()
+    .click();
+
+  await page.getByRole('button', { name: 'Cancel' }).click();
 });
