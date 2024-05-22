@@ -479,6 +479,10 @@ class NotesImageList(ListCreateAPI):
     serializer_class = common.serializers.NotesImageSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    filter_backends = SEARCH_ORDER_FILTER
+
+    search_fields = ['user', 'model_type', 'model_id']
+
     def perform_create(self, serializer):
         """Create (upload) a new notes image."""
         image = serializer.save()

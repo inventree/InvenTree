@@ -190,6 +190,8 @@
             'order-notes',
             '{% url "api-so-detail" order.pk %}',
             {
+                model_type: "salesorder",
+                model_id: {{ order.pk }},
                 {% if roles.purchase_order.change %}
                 editable: true,
                 {% else %}

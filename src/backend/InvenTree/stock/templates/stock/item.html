@@ -208,6 +208,8 @@
             'stock-notes',
             '{% url "api-stock-detail" item.pk %}',
             {
+                model_type: 'stockitem',
+                model_id: {{ item.pk }},
                 {% if roles.stock.change and user_owns_item %}
                 editable: true,
                 {% else %}
