@@ -1,30 +1,34 @@
 import {
+  AdmonitionDirectiveDescriptor,
   BlockTypeSelect,
   BoldItalicUnderlineToggles,
   CodeToggle,
   CreateLink,
   InsertAdmonition,
-  InsertCodeBlock,
   InsertImage,
   InsertTable,
   InsertThematicBreak,
   ListsToggle,
   MDXEditor,
   type MDXEditorMethods,
-  type MDXEditorProps,
   Separator,
   UndoRedo,
+  directivesPlugin,
   headingsPlugin,
   imagePlugin,
+  linkDialogPlugin,
+  linkPlugin,
   listsPlugin,
   markdownShortcutPlugin,
   quotePlugin,
+  tablePlugin,
   thematicBreakPlugin,
   toolbarPlugin
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
 import { useQuery } from '@tanstack/react-query';
-import { type ForwardedRef, useCallback, useMemo } from 'react';
+import { type useCallback, useEffect, useMemo } from 'react';
+import React from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -67,6 +71,8 @@ export default function NotesEditor({
   modelType: ModelType;
   modelId: number;
 }) {
+  const ref = React.useRef<MDXEditorMethods>(null);
+
   const user = useUserState();
 
   // TODO: Use user information to determine if the user has permission to edit notes
@@ -88,20 +94,31 @@ export default function NotesEditor({
     queryFn: () =>
       api
         .get(noteUrl)
-        .then((response) => response.data)
+        .then((response) => response.data?.notes ?? '')
         .catch(() => ''),
     enabled: true
   });
 
+  useEffect(() => {
+    ref.current?.setMarkdown(dataQuery.data ?? '');
+  }, [dataQuery.data, ref.current]);
+
   return (
     <MDXEditor
-      markdown="hello world"
+      ref={ref}
+      markdown={''}
       plugins={[
+        directivesPlugin({
+          directiveDescriptors: [AdmonitionDirectiveDescriptor]
+        }),
         headingsPlugin(),
+        imagePlugin({ imageUploadHandler: imageUploadHandler }),
+        linkPlugin(),
+        linkDialogPlugin(),
         listsPlugin(),
         markdownShortcutPlugin(),
         quotePlugin(),
-        imagePlugin({ imageUploadHandler }),
+        tablePlugin(),
         thematicBreakPlugin(),
         toolbarPlugin({
           toolbarContents: () => (
@@ -118,7 +135,6 @@ export default function NotesEditor({
               <CreateLink />
               <InsertImage />
               <InsertTable />
-              <InsertCodeBlock />
               <InsertAdmonition />
               <InsertThematicBreak />
             </>
