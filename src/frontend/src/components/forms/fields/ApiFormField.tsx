@@ -135,6 +135,7 @@ export function ApiFormField({
       ...definition,
       onValueChange: undefined,
       adjustFilters: undefined,
+      adjustValue: undefined,
       read_only: undefined,
       children: undefined
     };
@@ -180,6 +181,11 @@ export function ApiFormField({
     return val;
   }, [value]);
 
+  // Coerce the value to a (stringified) boolean value
+  const booleanValue: string = useMemo(() => {
+    return isTrue(value).toString();
+  }, [value]);
+
   // Construct the individual field
   function buildField() {
     switch (definition.field_type) {
@@ -216,6 +222,7 @@ export function ApiFormField({
         return (
           <Switch
             {...reducedDefinition}
+            value={booleanValue}
             ref={ref}
             id={fieldId}
             aria-label={`boolean-field-${field.name}`}
