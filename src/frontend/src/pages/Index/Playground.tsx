@@ -202,7 +202,6 @@ function SpotlighPlayground() {
             onClick: () => console.log('Secret')
           }
         ]);
-        console.log('registed');
         firstSpotlight.open();
       }}
     >

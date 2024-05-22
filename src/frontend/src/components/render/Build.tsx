@@ -1,17 +1,21 @@
 import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
+import { getDetailUrl } from '../../functions/urls';
 import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 import { StatusRenderer } from './StatusRenderer';
 
 /**
  * Inline rendering of a single BuildOrder instance
  */
-export function RenderBuildOrder({
-  instance
-}: Readonly<InstanceRenderInterface>): ReactNode {
+export function RenderBuildOrder(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+
   return (
     <RenderInlineModel
+      {...props}
       primary={instance.reference}
       secondary={instance.title}
       suffix={StatusRenderer({
@@ -19,6 +23,7 @@ export function RenderBuildOrder({
         type: ModelType.build
       })}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
+      url={props.link ? getDetailUrl(ModelType.build, instance.pk) : undefined}
     />
   );
 }

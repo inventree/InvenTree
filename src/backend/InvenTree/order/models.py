@@ -30,6 +30,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import report.mixins
 import stock.models
 import users.models as UserModels
 from common.notifications import InvenTreeNotificationBodies
@@ -185,6 +186,7 @@ class Order(
     StateTransitionMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.ReferenceIndexingMixin,
     InvenTree.models.InvenTreeModel,
@@ -245,6 +247,17 @@ class Order(
                 raise ValidationError({
                     'contact': _('Contact does not match selected company')
                 })
+
+    def report_context(self):
+        """Generate context data for the reporting interface."""
+        return {
+            'description': self.description,
+            'extra_lines': self.extra_lines,
+            'lines': self.lines,
+            'order': self,
+            'reference': self.reference,
+            'title': str(self),
+        }
 
     @classmethod
     def overdue_filter(cls):
@@ -361,6 +374,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Purchase Order')
+
+    def report_context(self):
+        """Return report context data for this PurchaseOrder."""
+        return {**super().report_context(), 'supplier': self.supplier}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -819,6 +841,15 @@ class SalesOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order')
+
+    def report_context(self):
+        """Generate report context data for this SalesOrder."""
+        return {**super().report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -1976,6 +2007,15 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Return Order')
+
+    def report_context(self):
+        """Generate report context data for this ReturnOrder."""
+        return {**super().report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""

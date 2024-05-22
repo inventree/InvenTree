@@ -289,7 +289,6 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     return [
       <AdminButton model={ModelType.company} pk={company.pk} />,
       <ActionDropdown
-        key="company"
         tooltip={t`Company Actions`}
         icon={<IconDots />}
         actions={[

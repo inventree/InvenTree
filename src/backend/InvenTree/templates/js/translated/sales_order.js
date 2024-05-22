@@ -682,8 +682,7 @@ function loadSalesOrderTable(table, options) {
     setupFilterList('salesorder', $(table), '#filter-list-salesorder', {
         download: true,
         report: {
-            url: '{% url "api-so-report-list" %}',
-            key: 'order'
+            key: 'salesorder'
         }
     });
 
