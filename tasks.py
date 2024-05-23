@@ -214,10 +214,10 @@ def check_file_existance(filename: str, overwrite: bool = False):
 @task(
     help={
         'uv': 'Use UV (experimental package manager)',
-        'system_venv': 'Use system python instead of venv',
+        'system': 'Use system python instead of venv',
     }
 )
-def plugins(c, uv=False, system_venv=False):
+def plugins(c, uv=False, system=False):
     """Installs all plugins as specified in 'plugins.txt'."""
     from src.backend.InvenTree.InvenTree.config import get_plugin_file
 
@@ -231,7 +231,7 @@ def plugins(c, uv=False, system_venv=False):
     else:
         c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
         install_cmd = f"uv pip install -r '{plugin_file}'"
-        if system_venv:
+        if system:
             install_cmd += ' --system'
         c.run(install_cmd)
 
@@ -239,10 +239,10 @@ def plugins(c, uv=False, system_venv=False):
 @task(
     help={
         'uv': 'Use UV package manager (experimental)',
-        'system_venv': 'Use system python instead of venv',
+        'system': 'Use system python instead of venv',
     }
 )
-def install(c, uv=False, system_venv=False):
+def install(c, uv=False, system=False):
     """Installs required python packages."""
     INSTALL_FILE = 'src/backend/requirements.txt'
 
@@ -264,7 +264,7 @@ def install(c, uv=False, system_venv=False):
             'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools'
         )
         install_cmd = f'uv pip install -U --require-hashes  -r {INSTALL_FILE}'
-        if system_venv:
+        if system:
             install_cmd += ' --system'
         c.run(install_cmd)
 
