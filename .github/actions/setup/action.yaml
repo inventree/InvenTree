@@ -93,4 +93,5 @@ runs:
       - name: Run invoke update
         if: ${{ inputs.update == 'true' }}
         shell: bash
-        run: invoke update --uv
+        # run: invoke update --uv
+        run: invoke update
