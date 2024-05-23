@@ -51,10 +51,10 @@ function TransitionButton(props: TransitionButtonProps) {
       variant="filled"
       radius="sm"
       color={props.color}
-      rightIcon={
+      rightSection={
         !props.flipIcon && props.icon && <InvenTreeIcon icon={props.icon} />
       }
-      leftIcon={
+      leftSection={
         props.flipIcon && props.icon && <InvenTreeIcon icon={props.icon} />
       }
       loading={loading}
@@ -240,7 +240,7 @@ function ApprovalTransitions({
           radius="sm"
           color="red"
           onClick={reject.open}
-          leftIcon={<InvenTreeIcon icon="reject_order" />}
+          leftSection={<InvenTreeIcon icon="reject_order" />}
         >
           Reject
         </Button>
@@ -390,7 +390,7 @@ function CompleteTransition({
         variant="filled"
         color="green"
         radius="sm"
-        rightIcon={<InvenTreeIcon icon="complete" />}
+        rightSection={<InvenTreeIcon icon="complete" />}
         onClick={open}
       >
         Complete
