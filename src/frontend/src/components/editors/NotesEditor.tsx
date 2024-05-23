@@ -65,8 +65,6 @@ async function uploadNotesImage(
     }
   );
 
-  console.log('uploaded image:', response.data.image);
-
   return response.data.image;
 }
 
@@ -145,7 +143,8 @@ export default function NotesEditor({
         headingsPlugin(),
         imagePlugin({
           imageUploadHandler: imageUploadHandler,
-          imagePreviewHandler: imagePreviewHandler
+          imagePreviewHandler: imagePreviewHandler,
+          disableImageResize: true // Note: To enable image resize, we must allow HTML tags in the server
         }),
         linkPlugin(),
         linkDialogPlugin(),
