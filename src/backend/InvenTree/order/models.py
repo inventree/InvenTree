@@ -1024,22 +1024,16 @@ class SalesOrder(TotalPriceMixin, Order):
         Throws a ValidationError if cannot be completed.
         """
         try:
-            # Order without line items cannot be completed
-            if self.lines.count() == 0:
-                raise ValidationError(
-                    _('Order cannot be completed as no parts have been assigned')
-                )
-
             # Only an open order can be marked as shipped
-            elif not self.is_open and not self.is_completed:
+            if self.is_open and not self.is_completed:
                 raise ValidationError(_('Only an open order can be marked as complete'))
 
-            elif self.pending_shipment_count > 0:
+            if self.pending_shipment_count > 0:
                 raise ValidationError(
                     _('Order cannot be completed as there are incomplete shipments')
                 )
 
-            elif not allow_incomplete_lines and self.pending_line_count > 0:
+            if not allow_incomplete_lines and self.pending_line_count > 0:
                 raise ValidationError(
                     _('Order cannot be completed as there are incomplete line items')
                 )
