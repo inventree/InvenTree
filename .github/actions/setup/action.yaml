@@ -49,7 +49,8 @@ runs:
         shell: bash
         run: |
           python3 -m pip install -U pip
-          pip3 install invoke wheel uv
+          pip3 install -U invoke wheel
+          pip3 install uv<0.2.0
       - name: Set the VIRTUAL_ENV variable for uv to work
         run: echo "VIRTUAL_ENV=${Python_ROOT_DIR}" >> $GITHUB_ENV
         shell: bash
