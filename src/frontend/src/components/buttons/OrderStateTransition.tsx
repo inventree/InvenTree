@@ -235,6 +235,11 @@ function ApprovalTransitions(props: Readonly<TransitionProps>) {
     }
   });
 
+  const reject = useRejectModal({
+    endpoint: rejectEndpoint,
+    ...props
+  });
+
   if (approvalsActive !== 'True') {
     return (
       <Button disabled>
@@ -242,11 +247,6 @@ function ApprovalTransitions(props: Readonly<TransitionProps>) {
       </Button>
     );
   }
-
-  const reject = useRejectModal({
-    endpoint: rejectEndpoint,
-    ...props
-  });
 
   return (
     <>

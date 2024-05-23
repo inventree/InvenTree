@@ -7,6 +7,20 @@ INVENTREE_API_VERSION = 201
 
 INVENTREE_API_TEXT = """
 
+v202 - 2024-05-23 : https://github.com/inventree/InvenTree/pull/6989
+    - Adds new API endpoints for PurchaseOrder state transitions
+        - Request Approval
+        - User allowed to Approve
+        - Reject order
+        - Order Ready to issue
+        - User allowed to Issue
+        - Recall order to Pending
+    - Adds fields to PurchaseOrder PAI calls:
+        - reject_reason
+        - created_by
+        - approved_by
+        - placed_by
+
 v201 - 2024-05-21 : https://github.com/inventree/InvenTree/pull/7074
     - Major refactor of the report template / report printing interface
     - This is a *breaking change* to the report template API
