@@ -237,6 +237,16 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     The Build object is provided to the serializer context.
     """
 
+    class Meta:
+        """Serializer metaclass."""
+        fields = [
+            'quantity',
+            'batch_code',
+            'serial_numbers',
+            'location',
+            'auto_allocate',
+        ]
+
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
@@ -639,6 +649,14 @@ class OverallocationChoice():
 class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
 
+    class Meta:
+        """Serializer metaclass"""
+        fields = [
+            'accept_overallocated',
+            'accept_unallocated',
+            'accept_incomplete',
+        ]
+
     def get_context_data(self):
         """Retrieve extra context data for this serializer.
 
@@ -731,6 +749,13 @@ class BuildUnallocationSerializer(serializers.Serializer):
     - output: Filter against a particular build output (blank = untracked stock)
     - bom_item: Filter against a particular BOM line item
     """
+
+    class Meta:
+        """Serializer metaclass"""
+        fields = [
+            'build_line',
+            'output',
+        ]
 
     build_line = serializers.PrimaryKeyRelatedField(
         queryset=BuildLine.objects.all(),
