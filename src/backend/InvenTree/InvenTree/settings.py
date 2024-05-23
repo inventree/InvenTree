@@ -1022,8 +1022,12 @@ if SITE_URL:
     logger.info('Using Site URL: %s', SITE_URL)
 
     # Check that the site URL is valid
-    validator = URLValidator()
-    validator(SITE_URL)
+    try:
+        validator = URLValidator()
+        validator(SITE_URL)
+    except Exception:
+        print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
+        sys.exit(-1)
 
 # Enable or disable multi-site framework
 SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
