@@ -267,11 +267,19 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         label: t`Notes`,
         icon: <IconNotes />,
         content: (
-          <NotesEditor modelType={ModelType.company} modelId={company.pk} />
+          <NotesEditor
+            modelType={ModelType.company}
+            modelId={company.pk}
+            editable={
+              user.hasChangeRole(UserRoles.purchase_order) ||
+              user.hasChangeRole(UserRoles.sales_order) ||
+              user.hasChangeRole(UserRoles.return_order)
+            }
+          />
         )
       }
     ];
-  }, [id, company]);
+  }, [id, company, user]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,

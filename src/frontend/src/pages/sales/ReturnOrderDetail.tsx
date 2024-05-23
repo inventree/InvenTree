@@ -239,11 +239,15 @@ export default function ReturnOrderDetail() {
         label: t`Notes`,
         icon: <IconNotes />,
         content: (
-          <NotesEditor modelType={ModelType.returnorder} modelId={order.pk} />
+          <NotesEditor
+            modelType={ModelType.returnorder}
+            modelId={order.pk}
+            editable={user.hasChangeRole(UserRoles.return_order)}
+          />
         )
       }
     ];
-  }, [order, id]);
+  }, [order, id, user]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

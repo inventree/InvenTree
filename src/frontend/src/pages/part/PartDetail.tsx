@@ -623,10 +623,16 @@ export default function PartDetail() {
         name: 'notes',
         label: t`Notes`,
         icon: <IconNotes />,
-        content: <NotesEditor modelType={ModelType.part} modelId={part.pk} />
+        content: (
+          <NotesEditor
+            modelType={ModelType.part}
+            modelId={part.pk}
+            editable={user.hasChangeRole(UserRoles.part)}
+          />
+        )
       }
     ];
-  }, [id, part]);
+  }, [id, part, user]);
 
   const breadcrumbs = useMemo(
     () => [

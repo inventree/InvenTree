@@ -39,7 +39,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
-import { useUserState } from '../../states/UserState';
 import { ModelInformationDict } from '../render/ModelType';
 
 /*
@@ -77,18 +76,16 @@ async function uploadNotesImage(
 
 export default function NotesEditor({
   modelType,
-  modelId
+  modelId,
+  editable
 }: {
   modelType: ModelType;
   modelId: number;
+  editable?: boolean;
 }) {
   const ref = React.useRef<MDXEditorMethods>(null);
 
   const { host } = useLocalState();
-
-  const user = useUserState();
-
-  // TODO: Use user information to determine if the user has permission to edit notes
 
   const noteUrl: string = useMemo(() => {
     const modelInfo = ModelInformationDict[modelType];
@@ -153,27 +150,28 @@ export default function NotesEditor({
       });
   }, [noteUrl, ref.current]);
 
-  return (
-    <MDXEditor
-      ref={ref}
-      markdown={''}
-      plugins={[
-        directivesPlugin({
-          directiveDescriptors: [AdmonitionDirectiveDescriptor]
-        }),
-        headingsPlugin(),
-        imagePlugin({
-          imageUploadHandler: imageUploadHandler,
-          imagePreviewHandler: imagePreviewHandler,
-          disableImageResize: true // Note: To enable image resize, we must allow HTML tags in the server
-        }),
-        linkPlugin(),
-        linkDialogPlugin(),
-        listsPlugin(),
-        markdownShortcutPlugin(),
-        quotePlugin(),
-        tablePlugin(),
-        thematicBreakPlugin(),
+  const plugins: any[] = useMemo(() => {
+    let plg = [
+      directivesPlugin({
+        directiveDescriptors: [AdmonitionDirectiveDescriptor]
+      }),
+      headingsPlugin(),
+      imagePlugin({
+        imageUploadHandler: imageUploadHandler,
+        imagePreviewHandler: imagePreviewHandler,
+        disableImageResize: true // Note: To enable image resize, we must allow HTML tags in the server
+      }),
+      linkPlugin(),
+      linkDialogPlugin(),
+      listsPlugin(),
+      markdownShortcutPlugin(),
+      quotePlugin(),
+      tablePlugin(),
+      thematicBreakPlugin()
+    ];
+
+    if (editable) {
+      plugins.push(
         toolbarPlugin({
           toolbarContents: () => (
             <>
@@ -201,7 +199,11 @@ export default function NotesEditor({
             </>
           )
         })
-      ]}
-    />
+      );
+    }
+  }, [editable]);
+
+  return (
+    <MDXEditor ref={ref} markdown={''} readOnly={!editable} plugins={plugins} />
   );
 }

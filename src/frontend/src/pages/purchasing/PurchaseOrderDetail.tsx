@@ -290,11 +290,15 @@ export default function PurchaseOrderDetail() {
         label: t`Notes`,
         icon: <IconNotes />,
         content: (
-          <NotesEditor modelType={ModelType.purchaseorder} modelId={order.pk} />
+          <NotesEditor
+            modelType={ModelType.purchaseorder}
+            modelId={order.pk}
+            editable={user.hasChangeRole(UserRoles.purchase_order)}
+          />
         )
       }
     ];
-  }, [order, id]);
+  }, [order, id, user]);
 
   const poActions = useMemo(() => {
     return [

@@ -287,11 +287,15 @@ export default function SalesOrderDetail() {
         label: t`Notes`,
         icon: <IconNotes />,
         content: (
-          <NotesEditor modelType={ModelType.salesorder} modelId={order.pk} />
+          <NotesEditor
+            modelType={ModelType.salesorder}
+            modelId={order.pk}
+            editable={user.hasChangeRole(UserRoles.sales_order)}
+          />
         )
       }
     ];
-  }, [order, id]);
+  }, [order, id, user]);
 
   const soActions = useMemo(() => {
     return [

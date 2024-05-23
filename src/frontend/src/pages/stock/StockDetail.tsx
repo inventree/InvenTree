@@ -337,11 +337,15 @@ export default function StockDetail() {
         label: t`Notes`,
         icon: <IconNotes />,
         content: (
-          <NotesEditor modelType={ModelType.stockitem} modelId={stockitem.pk} />
+          <NotesEditor
+            modelType={ModelType.stockitem}
+            modelId={stockitem.pk}
+            editable={user.hasChangeRole(UserRoles.stock)}
+          />
         )
       }
     ];
-  }, [stockitem, id]);
+  }, [stockitem, id, user]);
 
   const breadcrumbs = useMemo(
     () => [

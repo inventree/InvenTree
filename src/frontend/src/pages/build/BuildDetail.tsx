@@ -306,10 +306,16 @@ export default function BuildDetail() {
         name: 'notes',
         label: t`Notes`,
         icon: <IconNotes />,
-        content: <NotesEditor modelType={ModelType.build} modelId={build.pk} />
+        content: (
+          <NotesEditor
+            modelType={ModelType.build}
+            modelId={build.pk}
+            editable={user.hasChangeRole(UserRoles.build)}
+          />
+        )
       }
     ];
-  }, [build, id]);
+  }, [build, id, user]);
 
   const buildOrderFields = useBuildOrderFields({ create: false });
 
