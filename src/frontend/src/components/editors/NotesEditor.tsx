@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { notifications } from '@mantine/notifications';
 import {
   AdmonitionDirectiveDescriptor,
   BlockTypeSelect,
@@ -55,17 +56,23 @@ async function uploadNotesImage(
   formData.append('model_type', modelType);
   formData.append('model_id', modelId.toString());
 
-  const response = await api.post(
-    apiUrl(ApiEndpoints.notes_image_upload),
-    formData,
-    {
+  const response = await api
+    .post(apiUrl(ApiEndpoints.notes_image_upload), formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
-    }
-  );
+    })
+    .catch(() => {
+      notifications.hide('notes');
+      notifications.show({
+        title: t`Error`,
+        message: t`Image upload failed`,
+        color: 'red',
+        id: 'notes'
+      });
+    });
 
-  return response.data.image;
+  return response?.data?.image ?? '';
 }
 
 export default function NotesEditor({
@@ -126,11 +133,25 @@ export default function NotesEditor({
     const markdown = ref.current?.getMarkdown() ?? '';
     api
       .patch(noteUrl, { notes: markdown })
-      .then(() => {})
+      .then(() => {
+        notifications.hide('notes');
+        notifications.show({
+          title: t`Success`,
+          message: t`Notes saved successfully`,
+          color: 'green',
+          id: 'notes'
+        });
+      })
       .catch(() => {
-        console.error('Failed to save notes');
+        notifications.hide('notes');
+        notifications.show({
+          title: t`Error`,
+          message: t`Failed to save notes`,
+          color: 'red',
+          id: 'notes'
+        });
       });
-  }, [noteUrl, ref.current, dataQuery.refetch]);
+  }, [noteUrl, ref.current]);
 
   return (
     <MDXEditor
