@@ -171,7 +171,7 @@ export default function NotesEditor({
     ];
 
     if (editable) {
-      plugins.push(
+      plg.push(
         toolbarPlugin({
           toolbarContents: () => (
             <>
@@ -201,6 +201,8 @@ export default function NotesEditor({
         })
       );
     }
+
+    return plg;
   }, [editable]);
 
   return (
