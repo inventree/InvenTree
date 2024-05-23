@@ -1,5 +1,6 @@
 """Tests barcode parsing for all suppliers."""
 
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 
 from company.models import Company, ManufacturerPart, SupplierPart
@@ -178,7 +179,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
             reference='P0-1337', supplier=mouser
         )
 
-        self.purchase_order2.place_order()
+        self.purchase_order2.place_order(get_user_model().objects.get(pk=4))
         supplier_parts2 = [
             SupplierPart(SKU=f'2_{i}', part=part, supplier=mouser) for i in range(6)
         ]
