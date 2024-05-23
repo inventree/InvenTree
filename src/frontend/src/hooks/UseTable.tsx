@@ -24,6 +24,7 @@ export type TableState = {
   expandedRecords: any[];
   setExpandedRecords: (records: any[]) => void;
   selectedRecords: any[];
+  selectedIds: number[];
   hasSelectedRecords: boolean;
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
@@ -76,6 +77,12 @@ export function useTable(tableName: string): TableState {
 
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
+
+  // Array of selected primary key values
+  const selectedIds = useMemo(
+    () => selectedRecords.map((r) => r.pk ?? r.id),
+    [selectedRecords]
+  );
 
   const clearSelectedRecords = useCallback(() => {
     setSelectedRecords([]);
@@ -135,6 +142,7 @@ export function useTable(tableName: string): TableState {
     expandedRecords,
     setExpandedRecords,
     selectedRecords,
+    selectedIds,
     setSelectedRecords,
     clearSelectedRecords,
     hasSelectedRecords,

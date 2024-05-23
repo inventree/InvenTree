@@ -30,6 +30,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import report.mixins
 import stock.models
 import users.models as UserModels
 from common.notifications import InvenTreeNotificationBodies
@@ -185,6 +186,7 @@ class Order(
     StateTransitionMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.ReferenceIndexingMixin,
     InvenTree.models.InvenTreeModel,
@@ -245,6 +247,17 @@ class Order(
                 raise ValidationError({
                     'contact': _('Contact does not match selected company')
                 })
+
+    def report_context(self):
+        """Generate context data for the reporting interface."""
+        return {
+            'description': self.description,
+            'extra_lines': self.extra_lines,
+            'lines': self.lines,
+            'order': self,
+            'reference': self.reference,
+            'title': str(self),
+        }
 
     @classmethod
     def overdue_filter(cls):
@@ -361,6 +374,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Purchase Order')
+
+    def report_context(self):
+        """Return report context data for this PurchaseOrder."""
+        return {**super().report_context(), 'supplier': self.supplier}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -1118,6 +1140,15 @@ class SalesOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
 
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order')
+
+    def report_context(self):
+        """Generate report context data for this SalesOrder."""
+        return {**super().report_context(), 'customer': self.customer}
+
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
         if settings.ENABLE_CLASSIC_FRONTEND:
@@ -1291,22 +1322,16 @@ class SalesOrder(TotalPriceMixin, Order):
         Throws a ValidationError if cannot be completed.
         """
         try:
-            # Order without line items cannot be completed
-            if self.lines.count() == 0:
-                raise ValidationError(
-                    _('Order cannot be completed as no parts have been assigned')
-                )
-
             # Only an open order can be marked as shipped
-            elif not self.is_open:
+            if self.is_open and not self.is_completed:
                 raise ValidationError(_('Only an open order can be marked as complete'))
 
-            elif self.pending_shipment_count > 0:
+            if self.pending_shipment_count > 0:
                 raise ValidationError(
                     _('Order cannot be completed as there are incomplete shipments')
                 )
 
-            elif not allow_incomplete_lines and self.pending_line_count > 0:
+            if not allow_incomplete_lines and self.pending_line_count > 0:
                 raise ValidationError(
                     _('Order cannot be completed as there are incomplete line items')
                 )
@@ -1340,9 +1365,12 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_complete(**kwargs):
             return False
 
-        self.status = SalesOrderStatus.SHIPPED.value
-        self.shipped_by = user
-        self.shipment_date = InvenTree.helpers.current_date()
+        if self.status == SalesOrderStatus.SHIPPED:
+            self.status = SalesOrderStatus.COMPLETE.value
+        else:
+            self.status = SalesOrderStatus.SHIPPED.value
+            self.shipped_by = user
+            self.shipment_date = InvenTree.helpers.current_date()
 
         self.save()
 
@@ -1396,11 +1424,23 @@ class SalesOrder(TotalPriceMixin, Order):
         )
 
     @transaction.atomic
-    def complete_order(self, user, **kwargs):
+    def ship_order(self, user, **kwargs):
         """Attempt to transition to SHIPPED status."""
         return self.handle_transition(
             self.status,
             SalesOrderStatus.SHIPPED.value,
+            self,
+            self._action_complete,
+            user=user,
+            **kwargs,
+        )
+
+    @transaction.atomic
+    def complete_order(self, user, **kwargs):
+        """Attempt to transition to COMPLETED status."""
+        return self.handle_transition(
+            self.status,
+            SalesOrderStatus.COMPLETED.value,
             self,
             self._action_complete,
             user=user,
@@ -2259,6 +2299,15 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Return Order')
+
+    def report_context(self):
+        """Generate report context data for this ReturnOrder."""
+        return {**super().report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""

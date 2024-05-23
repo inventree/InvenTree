@@ -48,6 +48,7 @@ class SalesOrderStatus(StatusCode):
         'primary',
     )  # Order has been issued, and is in progress
     SHIPPED = 20, _('Shipped'), 'success'  # Order has been shipped to customer
+    COMPLETE = 30, _('Complete'), 'success'  # Order is complete
     CANCELLED = 40, _('Cancelled'), 'danger'  # Order has been cancelled
     LOST = 50, _('Lost'), 'warning'  # Order was lost
     RETURNED = 60, _('Returned'), 'warning'  # Order was returned
@@ -60,7 +61,7 @@ class SalesOrderStatusGroups:
     OPEN = [SalesOrderStatus.PENDING.value, SalesOrderStatus.IN_PROGRESS.value]
 
     # Completed orders
-    COMPLETE = [SalesOrderStatus.SHIPPED.value]
+    COMPLETE = [SalesOrderStatus.SHIPPED.value, SalesOrderStatus.COMPLETE.value]
 
 
 class StockStatus(StatusCode):

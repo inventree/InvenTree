@@ -1402,7 +1402,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
 
         user = getattr(request, 'user', None)
 
-        order.complete_order(
+        order.ship_order(
             user, allow_incomplete_lines=str2bool(data.get('accept_incomplete', False))
         )
 

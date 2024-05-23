@@ -19,7 +19,7 @@ from dulwich.repo import NotGitRepository, Repo
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
-INVENTREE_SW_VERSION = '0.15.0 dev'
+INVENTREE_SW_VERSION = '0.16.0 dev'
 
 # Discover git
 try:
@@ -104,7 +104,7 @@ def inventreeDocUrl():
 
 def inventreeAppUrl():
     """Return URL for InvenTree app site."""
-    return f'https://docs.inventree.org/en/latest/app/app/'
+    return f'{inventreeDocUrl()}/app/app/'
 
 
 def inventreeCreditsUrl():

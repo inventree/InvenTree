@@ -10,6 +10,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -243,8 +244,8 @@ export default function SupplierPartDetail() {
 
   const supplierPartActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
       <ActionDropdown
-        key="part"
         tooltip={t`Supplier Part Actions`}
         icon={<IconDots />}
         actions={[
@@ -262,7 +263,7 @@ export default function SupplierPartDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, supplierPart]);
 
   const supplierPartFields = useSupplierPartFields();
 

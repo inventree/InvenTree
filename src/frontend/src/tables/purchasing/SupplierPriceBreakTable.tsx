@@ -140,9 +140,7 @@ export default function SupplierPriceBreakTable({
     initialData: {
       part: supplierPartId
     },
-    onFormSuccess: (data: any) => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const editPriceBreak = useEditApiFormModal({
@@ -150,18 +148,14 @@ export default function SupplierPriceBreakTable({
     pk: selectedPriceBreak,
     title: t`Edit Price Break`,
     fields: supplierPriceBreakFields,
-    onFormSuccess: (data: any) => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const deletePriceBreak = useDeleteApiFormModal({
     url: apiUrl(ApiEndpoints.supplier_part_pricing_list),
     pk: selectedPriceBreak,
     title: t`Delete Price Break`,
-    onFormSuccess: () => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const tableActions = useMemo(() => {

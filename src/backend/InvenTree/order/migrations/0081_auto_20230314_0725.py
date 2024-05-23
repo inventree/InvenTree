@@ -39,6 +39,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'abstract': False,
+                'verbose_name': 'Return Order',
             },
         ),
         migrations.AlterField(

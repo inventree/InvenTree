@@ -14,9 +14,9 @@ import {
   IconTrash,
   IconUnlink
 } from '@tabler/icons-react';
-import { color } from '@uiw/react-codemirror';
 import { ReactNode, useMemo } from 'react';
 
+import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
 
@@ -42,19 +42,24 @@ export function ActionDropdown({
   disabled = false
 }: {
   icon: ReactNode;
-  tooltip?: string;
+  tooltip: string;
   actions: ActionDropdownItem[];
   disabled?: boolean;
 }) {
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.hidden);
   }, [actions]);
+
   const indicatorProps = useMemo(() => {
     return actions.find((action) => action.indicator);
   }, [actions]);
 
+  const menuName: string = useMemo(() => {
+    return identifierString(`action-menu-${tooltip}`);
+  }, [tooltip]);
+
   return hasActions ? (
-    <Menu position="bottom-end">
+    <Menu position="bottom-end" key={menuName}>
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
           <Tooltip label={tooltip} hidden={!tooltip}>
@@ -63,6 +68,7 @@ export function ActionDropdown({
               radius="sm"
               variant="outline"
               disabled={disabled}
+              aria-label={menuName}
             >
               {icon}
             </ActionIcon>
@@ -70,15 +76,17 @@ export function ActionDropdown({
         </Menu.Target>
       </Indicator>
       <Menu.Dropdown>
-        {actions.map((action) =>
-          action.hidden ? null : (
+        {actions.map((action) => {
+          const id: string = identifierString(`${menuName}-${action.name}`);
+          return action.hidden ? null : (
             <Indicator
               disabled={!action.indicator}
               {...action.indicator}
               key={action.name}
             >
-              <Tooltip label={action.tooltip}>
+              <Tooltip label={action.tooltip} hidden={!action.tooltip}>
                 <Menu.Item
+                  aria-label={id}
                   leftSection={action.icon}
                   onClick={() => {
                     if (action.onClick != undefined) {
@@ -93,8 +101,8 @@ export function ActionDropdown({
                 </Menu.Item>
               </Tooltip>
             </Indicator>
-          )
-        )}
+          );
+        })}
       </Menu.Dropdown>
     </Menu>
   ) : null;
@@ -108,7 +116,6 @@ export function BarcodeActionDropdown({
 }) {
   return (
     <ActionDropdown
-      key="barcode-actions"
       tooltip={t`Barcode Actions`}
       icon={<IconQrcode />}
       actions={actions}
@@ -189,10 +196,12 @@ export function EditItemAction({
 // Common action button for deleting an item
 export function DeleteItemAction({
   hidden = false,
+  disabled = false,
   tooltip,
   onClick
 }: {
   hidden?: boolean;
+  disabled?: boolean;
   tooltip?: string;
   onClick?: () => void;
 }): ActionDropdownItem {
@@ -201,7 +210,8 @@ export function DeleteItemAction({
     name: t`Delete`,
     tooltip: tooltip ?? t`Delete item`,
     onClick: onClick,
-    hidden: hidden
+    hidden: hidden,
+    disabled: disabled
   };
 }
 

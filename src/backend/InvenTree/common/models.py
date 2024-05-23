@@ -1443,6 +1443,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'default': True,
         },
+        'PART_ALLOW_DELETE_FROM_ASSEMBLY': {
+            'name': _('Allow Deletion from Assembly'),
+            'description': _('Allow deletion of parts which are used in an assembly'),
+            'validator': bool,
+            'default': False,
+        },
         'PART_IPN_REGEX': {
             'name': _('IPN Regex'),
             'description': _('Regular expression pattern for matching Part IPN'),

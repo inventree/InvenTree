@@ -1681,8 +1681,7 @@ function loadPurchaseOrderTable(table, options) {
     setupFilterList('purchaseorder', $(table), '#filter-list-purchaseorder', {
         download: true,
         report: {
-            url: '{% url "api-po-report-list" %}',
-            key: 'order',
+            key: 'purchaseorder',
         }
     });
 

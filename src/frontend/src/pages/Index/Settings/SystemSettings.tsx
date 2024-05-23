@@ -173,6 +173,7 @@ export default function SystemSettings() {
               'PART_IPN_REGEX',
               'PART_ALLOW_DUPLICATE_IPN',
               'PART_ALLOW_EDIT_IPN',
+              'PART_ALLOW_DELETE_FROM_ASSEMBLY',
               'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',

@@ -32,7 +32,7 @@ export function ChoiceField({
     return choices.map((choice) => {
       return {
         value: choice.value.toString(),
-        label: choice.display_name.toString()
+        label: choice.display_name ?? choice.value
       };
     });
   }, [definition.choices]);
@@ -51,6 +51,7 @@ export function ChoiceField({
   return (
     <Select
       id={fieldId}
+      aria-label={`choice-field-${field.name}`}
       error={error?.message}
       radius="sm"
       {...field}

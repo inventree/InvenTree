@@ -151,3 +151,48 @@ test('PUI - Pages - Part - Pricing (Purchase)', async ({ page }) => {
     .waitFor();
   await page.getByText('2022-04-29').waitFor();
 });
+
+test('PUI - Pages - Part - Attachments', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/69/attachments`);
+
+  // Submit a new external link
+  await page.getByLabel('action-button-add-external-').click();
+  await page.getByLabel('text-field-link').fill('https://www.google.com');
+  await page.getByLabel('text-field-comment').fill('a sample comment');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByRole('cell', { name: 'a sample comment' }).first().waitFor();
+
+  // Launch dialog to upload a file
+  await page.getByLabel('action-button-add-attachment').click();
+  await page.getByLabel('text-field-comment').fill('some comment');
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('PUI - Pages - Part - Parameters', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/69/parameters`);
+
+  // Create a new template
+  await page.getByLabel('action-button-add-parameter').click();
+
+  // Select the "Color" parameter template (should create a "choice" field)
+  await page.getByLabel('related-field-template').fill('Color');
+  await page.getByText('Part color').click();
+  await page.getByLabel('choice-field-data').click();
+  await page.getByRole('option', { name: 'Green' }).click();
+
+  // Select the "polarized" parameter template (should create a "checkbox" field)
+  await page.getByLabel('related-field-template').fill('Polarized');
+  await page.getByText('Is this part polarized?').click();
+  await page
+    .locator('label')
+    .filter({ hasText: 'DataParameter Value' })
+    .locator('div')
+    .first()
+    .click();
+
+  await page.getByRole('button', { name: 'Cancel' }).click();
+});

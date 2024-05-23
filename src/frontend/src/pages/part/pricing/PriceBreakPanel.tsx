@@ -84,9 +84,7 @@ export default function PriceBreakPanel({
     url: tableUrl,
     pk: selectedPriceBreak,
     title: t`Delete Price Break`,
-    onFormSuccess: () => {
-      table.refreshTable();
-    }
+    table: table
   });
 
   const columns: TableColumn[] = useMemo(() => {

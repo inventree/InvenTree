@@ -18,7 +18,7 @@ class BuildResource(InvenTreeResource):
     # TODO: 2022-05-12 - Need to investigate why this is the case!
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
         models = Build
         skip_unchanged = True
         report_skipped = False

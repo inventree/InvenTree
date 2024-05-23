@@ -13,8 +13,10 @@ import {
   IconSitemap
 } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -49,6 +51,7 @@ import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -58,11 +61,14 @@ import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
+import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 
 export default function StockDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const navigate = useNavigate();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -265,7 +271,12 @@ export default function StockDetail() {
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory />
+        icon: <IconHistory />,
+        content: stockitem.pk ? (
+          <StockTrackingTable itemId={stockitem.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'allocations',
@@ -370,6 +381,23 @@ export default function StockDetail() {
     modelType: ModelType.stockitem
   });
 
+  const preDeleteContent = useMemo(() => {
+    // TODO: Fill this out with information on the stock item.
+    // e.g. list of child items which would be deleted, etc
+    return undefined;
+  }, [stockitem]);
+
+  const deleteStockItem = useDeleteApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    pk: stockitem.pk,
+    title: t`Delete Stock Item`,
+    preFormContent: preDeleteContent,
+    onFormSuccess: () => {
+      // Redirect to the part page
+      navigate(getDetailUrl(ModelType.part, stockitem.part));
+    }
+  });
+
   const stockActionProps: StockOperationProps = useMemo(() => {
     return {
       items: stockitem,
@@ -388,6 +416,7 @@ export default function StockDetail() {
 
   const stockActions = useMemo(
     () => [
+      <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
@@ -401,8 +430,13 @@ export default function StockDetail() {
           })
         ]}
       />,
+      <PrintingActions
+        modelType={ModelType.stockitem}
+        items={[stockitem.pk]}
+        enableReports
+        enableLabels
+      />,
       <ActionDropdown
-        key="operations"
         tooltip={t`Stock Operations`}
         icon={<IconPackages />}
         actions={[
@@ -445,7 +479,6 @@ export default function StockDetail() {
         ]}
       />,
       <ActionDropdown
-        key="stock"
         tooltip={t`Stock Item Actions`}
         icon={<IconDots />}
         actions={[
@@ -458,7 +491,8 @@ export default function StockDetail() {
             onClick: () => editStockItem.open()
           }),
           DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.stock)
+            hidden: !user.hasDeleteRole(UserRoles.stock),
+            onClick: () => deleteStockItem.open()
           })
         ]}
       />
@@ -524,6 +558,7 @@ export default function StockDetail() {
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
       {editStockItem.modal}
       {duplicateStockItem.modal}
+      {deleteStockItem.modal}
       {countStockItem.modal}
       {addStockItem.modal}
       {removeStockItem.modal}

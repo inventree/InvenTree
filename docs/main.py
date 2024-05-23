@@ -1,6 +1,7 @@
 """Main entry point for the documentation build process."""
 
 import os
+import textwrap
 
 
 def define_env(env):
@@ -22,3 +23,29 @@ def define_env(env):
                 assets.append(os.path.join(subdir, asset))
 
         return assets
+
+    @env.macro
+    def templatefile(filename):
+        """Include code for a provided template file."""
+        here = os.path.dirname(__file__)
+        template_dir = os.path.join(
+            here, '..', 'src', 'backend', 'InvenTree', 'report', 'templates'
+        )
+        template_file = os.path.join(template_dir, filename)
+        template_file = os.path.abspath(template_file)
+
+        basename = os.path.basename(filename)
+
+        if not os.path.exists(template_file):
+            raise FileNotFoundError(f'Report template file {filename} does not exist.')
+
+        with open(template_file, 'r') as f:
+            content = f.read()
+
+        data = f'??? abstract "Template: {basename}"\n\n'
+        data += '    ```html\n'
+        data += textwrap.indent(content, '    ')
+        data += '\n\n'
+        data += '    ```\n\n'
+
+        return data

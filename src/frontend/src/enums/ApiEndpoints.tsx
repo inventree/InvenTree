@@ -94,6 +94,7 @@ export enum ApiEndpoints {
   stock_item_list = 'stock/',
   stock_tracking_list = 'stock/track/',
   stock_location_list = 'stock/location/',
+  stock_location_type_list = 'stock/location-type/',
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
   stock_test_result_list = 'stock/test/',
@@ -106,6 +107,10 @@ export enum ApiEndpoints {
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
   stock_install = 'stock/:id/install',
+
+  // Generator API endpoints
+  generate_batch_code = 'generate/batch-code/',
+  generate_serial_number = 'generate/serial-number/',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',
@@ -131,8 +136,14 @@ export enum ApiEndpoints {
   return_order_attachment_list = 'order/ro/attachment/',
 
   // Template API endpoints
-  label_list = 'label/:variant/',
-  report_list = 'report/:variant/',
+  label_list = 'label/template/',
+  label_print = 'label/print/',
+  label_output = 'label/output/',
+  report_list = 'report/template/',
+  report_print = 'report/print/',
+  report_output = 'report/output/',
+  report_snippet = 'report/snippet/',
+  report_asset = 'report/asset/',
 
   // Plugin API endpoints
   plugin_list = 'plugins/',
@@ -140,8 +151,8 @@ export enum ApiEndpoints {
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',
-  plugin_activate = 'plugins/:id/activate/',
-  plugin_uninstall = 'plugins/:id/uninstall/',
+  plugin_activate = 'plugins/:key/activate/',
+  plugin_uninstall = 'plugins/:key/uninstall/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

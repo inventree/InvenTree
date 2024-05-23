@@ -12,7 +12,7 @@ import {
   Text,
   Tooltip
 } from '@mantine/core';
-import { forwardRef, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { StylishText } from '../components/items/StylishText';
 import { TableState } from '../hooks/UseTable';
@@ -63,18 +63,6 @@ interface FilterProps extends React.ComponentPropsWithoutRef<'div'> {
   description?: string;
 }
 
-/*
- * Custom component for the filter select
- */
-const FilterSelectItem = forwardRef<HTMLDivElement, FilterProps>(
-  ({ label, description, ...others }, ref) => (
-    <div ref={ref} {...others}>
-      <Text size="sm">{label}</Text>
-      <Text size="xs">{description}</Text>
-    </div>
-  )
-);
-
 function FilterAddGroup({
   tableState,
   availableFilters
@@ -82,17 +70,19 @@ function FilterAddGroup({
   tableState: TableState;
   availableFilters: TableFilter[];
 }) {
-  const filterOptions = useMemo(() => {
+  const filterOptions: TableFilterChoice[] = useMemo(() => {
     let activeFilterNames =
       tableState.activeFilters?.map((flt) => flt.name) ?? [];
 
-    return availableFilters
-      .filter((flt) => !activeFilterNames.includes(flt.name))
-      .map((flt) => ({
-        value: flt.name,
-        label: flt.label,
-        description: flt.description
-      }));
+    return (
+      availableFilters
+        ?.filter((flt) => !activeFilterNames.includes(flt.name))
+        ?.map((flt) => ({
+          value: flt.name,
+          label: flt.label,
+          description: flt.description
+        })) ?? []
+    );
   }, [tableState.activeFilters, availableFilters]);
 
   const [selectedFilter, setSelectedFilter] = useState<string | null>(null);
@@ -142,7 +132,6 @@ function FilterAddGroup({
       <Divider />
       <Select
         data={filterOptions}
-        component={FilterSelectItem}
         searchable={true}
         placeholder={t`Select filter`}
         label={t`Filter`}

@@ -36,7 +36,7 @@ import { InvenTreeTable } from '../InvenTreeTable';
  */
 function buildOrderTableColumns(): TableColumn[] {
   return [
-    ReferenceColumn(),
+    ReferenceColumn({}),
     {
       accessor: 'part',
       sortable: true,
@@ -60,13 +60,13 @@ function buildOrderTableColumns(): TableColumn[] {
       )
     },
     StatusColumn({ model: ModelType.build }),
-    ProjectCodeColumn(),
+    ProjectCodeColumn({}),
     {
       accessor: 'priority',
       sortable: true
     },
-    CreationDateColumn(),
-    TargetDateColumn(),
+    CreationDateColumn({}),
+    TargetDateColumn({}),
     DateColumn({
       accessor: 'completion_date',
       sortable: true
@@ -78,7 +78,7 @@ function buildOrderTableColumns(): TableColumn[] {
         <RenderUser instance={record?.issued_by_detail} />
       )
     },
-    ResponsibleColumn()
+    ResponsibleColumn({})
   ];
 }
 
@@ -194,7 +194,6 @@ export function BuildOrderTable({
         tableState={table}
         columns={tableColumns}
         props={{
-          enableDownload: true,
           params: {
             part: partId,
             sales_order: salesOrderId,
@@ -203,7 +202,10 @@ export function BuildOrderTable({
           },
           tableActions: tableActions,
           tableFilters: tableFilters,
-          modelType: ModelType.build
+          modelType: ModelType.build,
+          enableSelection: true,
+          enableReports: true,
+          enableDownload: true
         }}
       />
     </>

@@ -1178,6 +1178,10 @@ function getFormFieldValue(name, field={}, options={}) {
         return null;
     }
 
+    if (field.hidden && !!field.value) {
+        return field.value;
+    }
+
     var value = null;
 
     let guessed_type = guessFieldType(el);

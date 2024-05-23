@@ -1,6 +1,6 @@
 import { Trans, t } from '@lingui/macro';
-import { Box, Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
-import { IconDots } from '@tabler/icons-react';
+import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import { IconFileCode } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,15 +10,11 @@ import {
   PdfPreview,
   TemplateEditor
 } from '../../components/editors/TemplateEditor';
-import { TemplatePreviewProps } from '../../components/editors/TemplateEditor/TemplateEditor';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import {
-  ActionDropdown,
-  DeleteItemAction,
-  EditItemAction
-} from '../../components/items/ActionDropdown';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -27,86 +23,52 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { BooleanColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import {
+  RowAction,
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '../RowActions';
 
 export type TemplateI = {
   pk: number;
   name: string;
   description: string;
+  model_type: ModelType;
   filters: string;
+  filename_pattern: string;
   enabled: boolean;
+  template: string;
 };
 
 export interface TemplateProps {
-  apiEndpoint: ApiEndpoints;
-  templateType: 'label' | 'report';
-  templateTypeTranslation: string;
-  variant: string;
-  templateKey: string;
+  templateEndpoint: ApiEndpoints;
+  printingEndpoint: ApiEndpoints;
   additionalFormFields?: ApiFormFieldSet;
-  preview: TemplatePreviewProps;
-  defaultTemplate: string;
 }
 
 export function TemplateDrawer({
   id,
-  refreshTable,
   templateProps
 }: {
-  id: string;
-  refreshTable: () => void;
+  id: string | number;
   templateProps: TemplateProps;
 }) {
-  const {
-    apiEndpoint,
-    templateType,
-    templateTypeTranslation,
-    variant,
-    additionalFormFields
-  } = templateProps;
-  const navigate = useNavigate();
+  const { templateEndpoint, printingEndpoint } = templateProps;
+
   const {
     instance: template,
-    refreshInstance,
     instanceQuery: { isFetching, error }
   } = useInstance<TemplateI>({
-    endpoint: apiEndpoint,
-    pathParams: { variant },
+    endpoint: templateEndpoint,
+    hasPrimaryKey: true,
     pk: id,
     throwError: true
-  });
-
-  const editTemplate = useEditApiFormModal({
-    url: apiEndpoint,
-    pathParams: { variant },
-    pk: id,
-    title: t`Edit` + ' ' + templateTypeTranslation,
-    fields: {
-      name: {},
-      description: {},
-      filters: {},
-      enabled: {},
-      ...additionalFormFields
-    },
-    onFormSuccess: (data) => {
-      refreshInstance();
-      refreshTable();
-    }
-  });
-
-  const deleteTemplate = useDeleteApiFormModal({
-    url: apiEndpoint,
-    pathParams: { variant },
-    pk: id,
-    title: t`Delete` + ' ' + templateTypeTranslation,
-    onFormSuccess: () => {
-      refreshTable();
-      navigate('../');
-    }
   });
 
   if (isFetching) {
@@ -117,13 +79,9 @@ export function TemplateDrawer({
     return (
       <Text>
         {(error as any)?.response?.status === 404 ? (
-          <Trans>
-            {templateTypeTranslation} with id {id} not found
-          </Trans>
+          <Trans>Template not found</Trans>
         ) : (
-          <Trans>
-            An error occurred while fetching {templateTypeTranslation} details
-          </Trans>
+          <Trans>An error occurred while fetching template details</Trans>
         )}
       </Text>
     );
@@ -131,40 +89,13 @@ export function TemplateDrawer({
 
   return (
     <Stack gap="xs" style={{ display: 'flex', flex: '1' }}>
-      {editTemplate.modal}
-      {deleteTemplate.modal}
-
-      <Group justify="space-between">
-        <Box></Box>
-
-        <Group>
-          <Title order={4}>{template?.name}</Title>
-        </Group>
-
-        <Group>
-          <ActionDropdown
-            tooltip={templateTypeTranslation + ' ' + t`actions`}
-            icon={<IconDots />}
-            actions={[
-              EditItemAction({
-                tooltip: t`Edit` + ' ' + templateTypeTranslation,
-                onClick: editTemplate.open
-              }),
-              DeleteItemAction({
-                tooltip: t`Delete` + ' ' + templateTypeTranslation,
-                onClick: deleteTemplate.open
-              })
-            ]}
-          />
-        </Group>
+      <Group justify="left">
+        <Title order={4}>{template?.name}</Title>
       </Group>
 
       <TemplateEditor
-        downloadUrl={(template as any)[templateProps.templateKey]}
-        uploadUrl={apiUrl(apiEndpoint, id, { variant })}
-        uploadKey={templateProps.templateKey}
-        preview={templateProps.preview}
-        templateType={templateType}
+        templateUrl={apiUrl(templateEndpoint, id)}
+        printingUrl={apiUrl(printingEndpoint)}
         template={template}
         editors={[CodeEditor]}
         previewAreas={[PdfPreview]}
@@ -178,17 +109,11 @@ export function TemplateTable({
 }: {
   templateProps: TemplateProps;
 }) {
-  const {
-    apiEndpoint,
-    templateType,
-    templateTypeTranslation,
-    variant,
-    templateKey,
-    additionalFormFields,
-    defaultTemplate
-  } = templateProps;
-  const table = useTable(`${templateType}-${variant}`);
+  const { templateEndpoint, additionalFormFields } = templateProps;
+
+  const table = useTable(`${templateEndpoint}-template`);
   const navigate = useNavigate();
+  const user = useUserState();
 
   const openDetailDrawer = useCallback((pk: number) => navigate(`${pk}/`), []);
 
@@ -196,62 +121,120 @@ export function TemplateTable({
     return [
       {
         accessor: 'name',
-        sortable: true
+        sortable: true,
+        switchable: false
       },
       {
         accessor: 'description',
-        sortable: false
+        sortable: false,
+        switchable: true
+      },
+      {
+        accessor: 'template',
+        sortable: false,
+        switchable: true,
+        render: (record: any) => {
+          return record.template?.split('/')?.pop() ?? '-';
+        }
+      },
+      {
+        accessor: 'model_type',
+        sortable: true,
+        switchable: false
+      },
+      {
+        accessor: 'revision',
+        sortable: false,
+        switchable: true
       },
       {
         accessor: 'filters',
-        sortable: false
+        sortable: false,
+        switchable: true
       },
       ...Object.entries(additionalFormFields || {})?.map(([key, field]) => ({
         accessor: key,
-        sortable: false
+        sortable: false,
+        switchable: true
       })),
       BooleanColumn({ accessor: 'enabled', title: t`Enabled` })
     ];
-  }, []);
+  }, [additionalFormFields]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number>(-1);
 
-  const rowActions = useCallback((record: TemplateI): RowAction[] => {
-    return [
-      RowEditAction({
-        onClick: () => openDetailDrawer(record.pk)
-      }),
-      RowDeleteAction({
-        onClick: () => {
-          setSelectedTemplate(record.pk), deleteTemplate.open();
-        }
-      })
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: TemplateI): RowAction[] => {
+      return [
+        {
+          title: t`Modify`,
+          tooltip: t`Modify template file`,
+          icon: <IconFileCode />,
+          onClick: () => openDetailDrawer(record.pk)
+        },
+        RowEditAction({
+          onClick: () => {
+            setSelectedTemplate(record.pk);
+            editTemplate.open();
+          }
+        }),
+        RowDuplicateAction({
+          // TODO: Duplicate selected template
+        }),
+        RowDeleteAction({
+          onClick: () => {
+            setSelectedTemplate(record.pk);
+            deleteTemplate.open();
+          }
+        })
+      ];
+    },
+    [user]
+  );
+
+  const templateFields: ApiFormFieldSet = {
+    name: {},
+    description: {},
+    model_type: {},
+    filters: {},
+    filename_pattern: {},
+    enabled: {}
+  };
+
+  const editTemplateFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      ...templateFields,
+      ...additionalFormFields
+    };
+  }, [additionalFormFields]);
+
+  const newTemplateFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      template: {},
+      ...templateFields,
+      ...additionalFormFields
+    };
+  }, [additionalFormFields]);
+
+  const editTemplate = useEditApiFormModal({
+    url: templateEndpoint,
+    pk: selectedTemplate,
+    title: t`Edit Template`,
+    fields: editTemplateFields,
+    onFormSuccess: (record: any) => table.updateRecord(record)
+  });
 
   const deleteTemplate = useDeleteApiFormModal({
-    url: apiEndpoint,
-    pathParams: { variant },
+    url: templateEndpoint,
     pk: selectedTemplate,
-    title: t`Delete` + ' ' + templateTypeTranslation,
-    onFormSuccess: table.refreshTable
+    title: t`Delete template`,
+    table: table
   });
 
   const newTemplate = useCreateApiFormModal({
-    url: apiEndpoint,
-    pathParams: { variant },
-    title: t`Add new` + ' ' + templateTypeTranslation,
-    fields: {
-      name: {},
-      description: {},
-      filters: {},
-      enabled: {},
-      [templateKey]: {
-        hidden: true,
-        value: new File([defaultTemplate], 'template.html')
-      },
-      ...additionalFormFields
-    },
+    url: templateEndpoint,
+    title: t`Add Template`,
+    fields: newTemplateFields,
     onFormSuccess: (data) => {
       table.refreshTable();
       openDetailDrawer(data.pk);
@@ -261,12 +244,24 @@ export function TemplateTable({
   const tableActions: ReactNode[] = useMemo(() => {
     return [
       <AddItemButton
-        key={`add-${templateType}`}
+        key="add-template"
         onClick={() => newTemplate.open()}
-        tooltip={t`Add` + ' ' + templateTypeTranslation}
+        tooltip={t`Add template`}
       />
     ];
   }, []);
+
+  const modelTypeFilters = useFilters({
+    url: apiUrl(templateEndpoint),
+    method: 'OPTIONS',
+    accessor: 'data.actions.POST.model_type.choices',
+    transform: (item: any) => {
+      return {
+        value: item.value,
+        label: item.display_name
+      };
+    }
+  });
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -275,30 +270,31 @@ export function TemplateTable({
         label: t`Enabled`,
         description: t`Filter by enabled status`,
         type: 'checkbox'
+      },
+      {
+        name: 'model_type',
+        label: t`Model Type`,
+        description: t`Filter by target model type`,
+        choices: modelTypeFilters.choices
       }
     ];
-  }, []);
+  }, [modelTypeFilters.choices]);
 
   return (
     <>
       {newTemplate.modal}
+      {editTemplate.modal}
       {deleteTemplate.modal}
       <DetailDrawer
-        title={t`Edit` + ' ' + templateTypeTranslation}
+        title={t`Edit Template`}
         size={'90%'}
         closeOnEscape={false}
         renderContent={(id) => {
-          return (
-            <TemplateDrawer
-              id={id ?? ''}
-              refreshTable={table.refreshTable}
-              templateProps={templateProps}
-            />
-          );
+          return <TemplateDrawer id={id ?? ''} templateProps={templateProps} />;
         }}
       />
       <InvenTreeTable
-        url={apiUrl(apiEndpoint, undefined, { variant })}
+        url={apiUrl(templateEndpoint)}
         tableState={table}
         columns={columns}
         props={{
