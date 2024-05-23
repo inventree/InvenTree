@@ -329,7 +329,7 @@ export default function PurchaseOrderDetail() {
 
   const poActions = useMemo(() => {
     return [
-      <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
+      <AdminButton model={ModelType.purchaseorder} pk={order.pk} key={0} />,
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
@@ -340,11 +340,13 @@ export default function PurchaseOrderDetail() {
             hidden: !order?.barcode_hash
           })
         ]}
+        key={1}
       />,
       <PrintingActions
         modelType={ModelType.purchaseorder}
         items={[order.pk]}
         enableReports
+        key={2}
       />,
       <ActionDropdown
         tooltip={t`Order Actions`}
@@ -364,12 +366,14 @@ export default function PurchaseOrderDetail() {
             onClick: () => duplicatePurchaseOrder.open()
           })
         ]}
+        key={3}
       />,
       <OrderStatebuttons
         status={order?.status}
         orderPk={order?.pk}
         refresh={refreshInstance}
-        complete={order.is_complete}
+        complete={order.line_items === order.completed_lines}
+        key={4}
       />
     ];
   }, [id, order, user]);

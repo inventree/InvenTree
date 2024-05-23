@@ -356,7 +356,7 @@ def notify_users(
         context['template']['html'] = content.template.format(**content_context)
 
     excluded = exclude
-    if type(exclude) != list:
+    if not isinstance(exclude, list):
         excluded = [exclude]
 
     # Create notification

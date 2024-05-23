@@ -216,7 +216,6 @@ class PurchaseOrderSerializer(
             'total_price',
             'order_currency',
             'reject_reason',
-            'is_complete',
             'created_by',
             'approved_by',
             'placed_by',

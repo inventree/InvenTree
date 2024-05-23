@@ -121,14 +121,14 @@ class PurchaseOrderTest(OrderTest):
 
         # Filter by assigned-to-me
         self.filter({'assigned_to_me': 1}, 0)
-        self.filter({'assigned_to_me': 0}, 7)
+        self.filter({'assigned_to_me': 0}, 8)
 
         # Filter by supplier
         self.filter({'supplier': 1}, 1)
         self.filter({'supplier': 3}, 5)
 
         # Filter by "outstanding"
-        self.filter({'outstanding': True}, 5)
+        self.filter({'outstanding': True}, 6)
         self.filter({'outstanding': False}, 2)
 
         # Filter by "status"
@@ -141,7 +141,7 @@ class PurchaseOrderTest(OrderTest):
 
         # Filter by "assigned_to_me"
         self.filter({'assigned_to_me': 1}, 0)
-        self.filter({'assigned_to_me': 0}, 7)
+        self.filter({'assigned_to_me': 0}, 8)
 
         # Filter by "part"
         self.filter({'part': 1}, 2)
@@ -219,7 +219,7 @@ class PurchaseOrderTest(OrderTest):
         order.save()
 
         self.filter({'overdue': True}, 1)
-        self.filter({'overdue': False}, 6)
+        self.filter({'overdue': False}, 7)
 
     def test_po_detail(self):
         """Test the PurchaseOrder detail API endpoint."""

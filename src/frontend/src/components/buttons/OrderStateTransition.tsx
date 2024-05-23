@@ -4,18 +4,17 @@ import {
   Button,
   Flex,
   Modal,
-  Skeleton,
   Switch,
   Text,
-  TextInput,
-  useMantineTheme
+  TextInput
 } from '@mantine/core';
 import { useDisclosure, useInputState } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useSuspenseQuery } from '@tanstack/react-query';
+import React, { useEffect, useState } from 'react';
 
 import { api } from '../../App';
+import { colorMap } from '../../defaults/backendMappings';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
@@ -24,12 +23,19 @@ import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 
-type StateButtonProps = {
-  status: number;
+type TransitionProps = {
   orderPk: number;
   refresh: () => void;
-  complete?: boolean;
 };
+
+type StatusObject = {
+  color: string;
+};
+
+type StateButtonProps = {
+  status: number | { [key: string]: StatusObject };
+  complete?: boolean;
+} & TransitionProps;
 
 type TransitionButtonProps = {
   label: string;
@@ -38,12 +44,11 @@ type TransitionButtonProps = {
   color: string;
   onClick: any;
   disabled?: boolean;
-  tooltip?: string;
   icon?: InvenTreeIconType;
   flipIcon?: boolean;
 };
 
-function TransitionButton(props: TransitionButtonProps) {
+function TransitionButton(props: Readonly<TransitionButtonProps>) {
   const [loading, { toggle }] = useDisclosure();
 
   return (
@@ -75,18 +80,20 @@ function TransitionButton(props: TransitionButtonProps) {
   );
 }
 
-function RecallButton({ pk, refresh }: { pk: number; refresh: () => void }) {
-  const pending = apiUrl(ApiEndpoints.purchase_order_pending, null, { id: pk });
+function RecallButton(props: Readonly<TransitionProps>) {
+  const pending = apiUrl(ApiEndpoints.purchase_order_pending, null, {
+    id: props.orderPk
+  });
   return (
     <TransitionButton
-      color="gray"
+      color={colorMap.default}
       title={t`Recall purchase order`}
       description={t`Recall the purchase order from Approval, returning it to Pending`}
-      label="Recall"
+      label={t`Recall`}
       onClick={() =>
         api
           .post(pending)
-          .then(() => refresh())
+          .then(() => props.refresh())
           .catch(() => permissionDenied())
       }
       icon="recall"
@@ -95,15 +102,7 @@ function RecallButton({ pk, refresh }: { pk: number; refresh: () => void }) {
   );
 }
 
-function PendingTransitions({
-  status,
-  pk,
-  refresh
-}: {
-  status: any;
-  pk: any;
-  refresh: () => void;
-}) {
+function PendingTransitions(props: Readonly<StateButtonProps>) {
   const settings = useGlobalSettingsState();
 
   const approvalsActive = settings.getSetting('ENABLE_PURCHASE_ORDER_APPROVAL');
@@ -111,41 +110,48 @@ function PendingTransitions({
     'ENABLE_PURCHASE_ORDER_READY_STATUS'
   );
 
-  const color = status['PLACED'].color;
+  let color =
+    typeof props.status === 'object' ? props.status['PLACED'].color : 'default';
+  color = colorMap[color];
   let label = t`Issue Order`;
   let title = label;
   let description = t`By clicking confirm, the order will be marked as issued to the supplier.`;
+  let icon: InvenTreeIconType = 'issue_order';
   let endpoint = ApiEndpoints.purchase_order_issue;
 
   if (approvalsActive === 'True') {
     label = t`Request Approval`;
     title = label;
     description = t`Request approval of order`;
+    icon = 'request_approval';
     endpoint = ApiEndpoints.purchase_order_request_approval;
   } else if (readyStateActive === 'True') {
     label = t`Ready`;
     title = t`Ready to Issue`;
     description = t`Mark order as ready for issuance`;
+    icon = 'ready_order';
     endpoint = ApiEndpoints.purchase_order_ready;
   }
 
   return (
-    <>
-      <TransitionButton
-        color={color}
-        title={title}
-        label={label}
-        description={description}
-        icon="request_approval"
-        onClick={() =>
-          api.post(apiUrl(endpoint, null, { id: pk })).then(() => refresh())
-        }
-      />
-    </>
+    <TransitionButton
+      color={color}
+      title={title}
+      label={label}
+      description={description}
+      icon={icon}
+      onClick={() =>
+        api
+          .post(apiUrl(endpoint, null, { id: props.orderPk }))
+          .then(() => props.refresh())
+      }
+    />
   );
 }
 
-function RejectReason({ setReason }: { setReason: any }) {
+function RejectReason({
+  setReason
+}: Readonly<{ setReason: React.Dispatch<React.SetStateAction<string>> }>) {
   const [value, setValue] = useInputState('');
 
   useEffect(() => {
@@ -164,29 +170,33 @@ function RejectReason({ setReason }: { setReason: any }) {
   );
 }
 
-function rejectModal(endpoint: any, pk: number, refresh: () => void) {
+type RejectModalProps = {
+  endpoint: ApiEndpoints;
+} & TransitionProps;
+
+function useRejectModal(props: Readonly<RejectModalProps>) {
   const [value, setValue] = useState('');
   const [opened, { open, close }] = useDisclosure(false);
 
   const modal = (
-    <Modal opened={opened} onClose={close} title="Reject Purchase Order">
+    <Modal opened={opened} onClose={close} title={t`Reject Purchase Order`}>
       <RejectReason setReason={setValue} />
       <Flex gap="10px" justify="end" style={{ marginTop: '10px' }}>
-        <Button variant="outline" color="gray" onClick={close}>
-          Cancel
+        <Button variant="outline" color={colorMap.default} onClick={close}>
+          <Trans>Cancel</Trans>
         </Button>
         <Button
           variant="filled"
           onClick={() => {
             close();
             api
-              .post(apiUrl(endpoint, null, { id: pk }), {
+              .post(apiUrl(props.endpoint, null, { id: props.orderPk }), {
                 reject_reason: value
               })
-              .then(() => refresh());
+              .then(() => props.refresh());
           }}
         >
-          Submit
+          <Trans>Submit</Trans>
         </Button>
       </Flex>
     </Modal>
@@ -199,13 +209,7 @@ function rejectModal(endpoint: any, pk: number, refresh: () => void) {
   };
 }
 
-function ApprovalTransitions({
-  pk,
-  refresh
-}: {
-  pk: any;
-  refresh: () => void;
-}) {
+function ApprovalTransitions(props: Readonly<TransitionProps>) {
   const settings = useGlobalSettingsState();
   const approvalsActive = settings.getSetting('ENABLE_PURCHASE_ORDER_APPROVAL');
 
@@ -213,23 +217,35 @@ function ApprovalTransitions({
   const rejectEndpoint = ApiEndpoints.purchase_order_reject;
 
   const user = useUserState();
-
-  if (approvalsActive !== 'True') {
-    return <Button disabled>Invalid state</Button>;
-  }
-
-  const reject = rejectModal(rejectEndpoint, pk, refresh);
-  const pending = apiUrl(ApiEndpoints.purchase_order_pending, null, { id: pk });
-
   const { data } = useSuspenseQuery({
-    queryKey: ['po', 'approve', user.username(), pk],
+    queryKey: [
+      'po',
+      'approve',
+      user.username(),
+      props.orderPk,
+      approvalsActive
+    ],
     queryFn: async () => {
       const url = ApiEndpoints.purchase_order_approval_allowed;
-      return api.get(apiUrl(url, null, { id: pk })).then((result) => {
-        console.log(result);
-        return result.data;
-      });
+      return api
+        .get(apiUrl(url, null, { id: props.orderPk }))
+        .then((result) => {
+          return result.data;
+        });
     }
+  });
+
+  if (approvalsActive !== 'True') {
+    return (
+      <Button disabled>
+        <Trans>Invalid state</Trans>
+      </Button>
+    );
+  }
+
+  const reject = useRejectModal({
+    endpoint: rejectEndpoint,
+    ...props
   });
 
   return (
@@ -238,24 +254,24 @@ function ApprovalTransitions({
         <Button
           variant="filled"
           radius="sm"
-          color="red"
+          color={colorMap.danger}
           onClick={reject.open}
           leftSection={<InvenTreeIcon icon="reject_order" />}
         >
-          Reject
+          <Trans>Reject</Trans>
         </Button>
       ) : (
-        <RecallButton pk={pk} refresh={refresh} />
+        <RecallButton orderPk={props.orderPk} refresh={props.refresh} />
       )}
       <TransitionButton
-        color="green"
+        color={colorMap.success}
         title={t`Approve Purchase Order`}
         description={t`Approve the Purchase order, marking it ready to issue`}
         label={t`Approve`}
         onClick={() =>
           api
-            .post(apiUrl(approveEndpoint, null, { id: pk }))
-            .then(() => refresh())
+            .post(apiUrl(approveEndpoint, null, { id: props.orderPk }))
+            .then(() => props.refresh())
         }
         disabled={!data.can_approve}
         icon="approve_order"
@@ -265,32 +281,35 @@ function ApprovalTransitions({
   );
 }
 
-function ReadyTransitions({ pk, refresh }: { pk: any; refresh: () => void }) {
-  const issue = apiUrl(ApiEndpoints.purchase_order_issue, null, { id: pk });
+function ReadyTransitions(props: Readonly<TransitionProps>) {
+  const issue = apiUrl(ApiEndpoints.purchase_order_issue, null, {
+    id: props.orderPk
+  });
   const user = useUserState();
 
   const { data } = useSuspenseQuery({
-    queryKey: ['po', 'issue', user.username(), pk],
+    queryKey: ['po', 'issue', user.username(), props.orderPk],
     queryFn: async () => {
       const url = ApiEndpoints.purchase_order_issue_allowed;
-      return api.get(apiUrl(url, null, { id: pk })).then((result) => {
-        console.log('Issue', result);
-        return result.data;
-      });
+      return api
+        .get(apiUrl(url, null, { id: props.orderPk }))
+        .then((result) => {
+          return result.data;
+        });
     }
   });
 
   return (
     <>
-      <RecallButton pk={pk} refresh={refresh} />
+      <RecallButton orderPk={props.orderPk} refresh={props.refresh} />
       <TransitionButton
         label={t`Issue Order`}
         title={t`Issue order`}
-        color="primary"
+        color={colorMap['primary']}
         onClick={() =>
           api
             .post(issue)
-            .then(() => refresh())
+            .then(() => props.refresh())
             .catch(() => permissionDenied())
         }
         description={t`By clicking confirm, the order will be marked as issued to the supplier.`}
@@ -301,9 +320,9 @@ function ReadyTransitions({ pk, refresh }: { pk: any; refresh: () => void }) {
   );
 }
 
-function completeModal(pk: number, refresh: () => void, complete?: boolean) {
+function useCompleteModal(props: Readonly<Omit<StateButtonProps, 'status'>>) {
   const [opened, { open, close }] = useDisclosure(false);
-  const [selected, setSelected] = useState(complete);
+  const [selected, setSelected] = useState(props.complete);
 
   const endpoint = ApiEndpoints.purchase_order_complete;
 
@@ -314,14 +333,14 @@ function completeModal(pk: number, refresh: () => void, complete?: boolean) {
       title={t`Complete Purchase Order`}
       size="xl"
     >
-      Mark this order as complete.
-      {complete ? (
-        <Alert color="green">
+      <Trans>Mark this order as complete.</Trans>
+      {props.complete ? (
+        <Alert color={colorMap['success']}>
           <Trans>All line items have been received</Trans>
         </Alert>
       ) : (
         <>
-          <Alert color="yellow">
+          <Alert color={colorMap['warning']}>
             <Trans>
               This order has line items which have not been marked as received.
               Completing this order means that the order and line items will no
@@ -345,8 +364,13 @@ function completeModal(pk: number, refresh: () => void, complete?: boolean) {
         </>
       )}
       <Flex gap="10px" justify="end" style={{ marginTop: '10px' }}>
-        <Button variant="outline" radius="sm" color="gray" onClick={close}>
-          Cancel
+        <Button
+          variant="outline"
+          radius="sm"
+          color={colorMap.default}
+          onClick={close}
+        >
+          <Trans>Cancel</Trans>
         </Button>
         <Button
           variant="filled"
@@ -355,13 +379,13 @@ function completeModal(pk: number, refresh: () => void, complete?: boolean) {
           onClick={() => {
             close();
             api
-              .post(apiUrl(endpoint, null, { id: pk }), {
+              .post(apiUrl(endpoint, null, { id: props.orderPk }), {
                 accept_incomplete: selected
               })
-              .then(() => refresh());
+              .then(() => props.refresh());
           }}
         >
-          Submit
+          <Trans>Submit</Trans>
         </Button>
       </Flex>
     </Modal>
@@ -374,33 +398,25 @@ function completeModal(pk: number, refresh: () => void, complete?: boolean) {
   };
 }
 
-function CompleteTransition({
-  pk,
-  refresh,
-  complete
-}: {
-  pk: number;
-  refresh: () => void;
-  complete?: boolean;
-}) {
-  const { modal, open, close } = completeModal(pk, refresh, complete);
+function CompleteTransition(props: Readonly<Omit<StateButtonProps, 'status'>>) {
+  const { modal, open } = useCompleteModal(props);
   return (
     <>
       <Button
         variant="filled"
-        color="green"
+        color={colorMap.success}
         radius="sm"
         rightSection={<InvenTreeIcon icon="complete" />}
         onClick={open}
       >
-        Complete
+        <Trans>Complete</Trans>
       </Button>
       {modal}
     </>
   );
 }
 
-export function OrderStatebuttons(props: StateButtonProps) {
+export function OrderStatebuttons(props: Readonly<StateButtonProps>) {
   const user = useUserState();
   const hasAdd = user.hasAddRole(UserRoles.purchase_order);
   const { data } = useSuspenseQuery({
@@ -429,22 +445,25 @@ export function OrderStatebuttons(props: StateButtonProps) {
           {statusValue?.key === 10 && (
             <PendingTransitions
               status={data.values}
-              pk={props.orderPk}
+              orderPk={props.orderPk}
               refresh={props.refresh}
             />
           )}
           {statusValue?.key === 20 && (
             <CompleteTransition
-              pk={props.orderPk}
+              orderPk={props.orderPk}
               refresh={props.refresh}
               complete={props.complete}
             />
           )}
           {statusValue?.key === 70 && (
-            <ApprovalTransitions pk={props.orderPk} refresh={props.refresh} />
+            <ApprovalTransitions
+              orderPk={props.orderPk}
+              refresh={props.refresh}
+            />
           )}
           {statusValue?.key === 80 && (
-            <ReadyTransitions pk={props.orderPk} refresh={props.refresh} />
+            <ReadyTransitions orderPk={props.orderPk} refresh={props.refresh} />
           )}
         </Button.Group>
       )}

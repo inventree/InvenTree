@@ -340,7 +340,7 @@ class InvenTreeNotificationBodies:
         template='email/return_order_received.html',
     )
 
-    PruchaseOrderApprovalRequested = NotificationBody(
+    PurchaseOrderApprovalRequested = NotificationBody(
         name=_('Approval requested'),
         slug=_('purchase_order.approval_request'),
         message=_('You have been requested to approve a Purchase Order'),

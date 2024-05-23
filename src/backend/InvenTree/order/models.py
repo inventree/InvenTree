@@ -703,7 +703,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 approver or [master_users],
                 self,
                 PurchaseOrder,
-                content=InvenTreeNotificationBodies.PruchaseOrderApprovalRequested,
+                content=InvenTreeNotificationBodies.PurchaseOrderApprovalRequested,
                 delta=timedelta(seconds=60),
                 exclude=user,
             )

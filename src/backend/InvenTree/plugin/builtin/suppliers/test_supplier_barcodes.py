@@ -179,7 +179,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
             reference='P0-1337', supplier=mouser
         )
 
-        self.purchase_order2.place_order(get_user_model().objects.get(pk=4))
+        self.purchase_order2.place_order(get_user_model().objects.first())
         supplier_parts2 = [
             SupplierPart(SKU=f'2_{i}', part=part, supplier=mouser) for i in range(6)
         ]
@@ -201,7 +201,7 @@ class SupplierBarcodePOReceiveTests(InvenTreeAPITestCase):
 
         assert result1.data['error'].startswith('No matching purchase order')
 
-        self.purchase_order1.place_order()
+        self.purchase_order1.place_order(get_user_model().objects.first())
 
         result2 = self.post(url, data={'barcode': DIGIKEY_BARCODE}, expected_code=200)
         self.assertIn('success', result2.data)
