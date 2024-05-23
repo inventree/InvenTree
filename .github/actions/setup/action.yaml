@@ -83,7 +83,7 @@ runs:
 
       # Invoke commands
       - name: Install dev requirements
-        if: ${{ inputs.dev-install == 'true' ||inputs.install == 'true' }}
+        if: ${{ inputs.dev-install == 'true' || inputs.install == 'true' }}
         shell: bash
         run: uv pip install --require-hashes -r src/backend/requirements-dev.txt
       - name: Run invoke install
