@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { ActionIcon } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
   AdmonitionDirectiveDescriptor,
@@ -7,6 +8,7 @@ import {
   ButtonWithTooltip,
   CodeToggle,
   CreateLink,
+  DiffSourceToggleWrapper,
   InsertAdmonition,
   InsertImage,
   InsertTable,
@@ -16,6 +18,7 @@ import {
   type MDXEditorMethods,
   Separator,
   UndoRedo,
+  diffSourcePlugin,
   directivesPlugin,
   headingsPlugin,
   imagePlugin,
@@ -29,9 +32,9 @@ import {
   toolbarPlugin
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
-import { IconUpload } from '@tabler/icons-react';
+import { IconEdit, IconUpload } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
 import { api } from '../../App';
@@ -74,6 +77,15 @@ async function uploadNotesImage(
   return response?.data?.image ?? '';
 }
 
+/*
+ * A text editor component for editing notes against a model type and instance.
+ * Uses the MDXEditor component - https://mdxeditor.dev/
+ *
+ * TODO:
+ * - Disable editing by default when the component is launched - user can click an "edit" button to enable
+ * - Allow image resizing in the future (requires back-end validation changes))
+ * - Allow user to configure the editor toolbar (i.e. hide some buttons if they don't want them)
+ */
 export default function NotesEditor({
   modelType,
   modelId,
@@ -86,6 +98,14 @@ export default function NotesEditor({
   const ref = React.useRef<MDXEditorMethods>(null);
 
   const { host } = useLocalState();
+
+  // In addition to the editable prop, we also need to check if the user has "enabled" editing
+  const [editing, setEditing] = useState<boolean>(false);
+
+  useEffect(() => {
+    // Initially disable editing mode on load
+    setEditing(false);
+  }, [editable, modelId, modelType]);
 
   const noteUrl: string = useMemo(() => {
     const modelInfo = ModelInformationDict[modelType];
@@ -167,18 +187,24 @@ export default function NotesEditor({
       markdownShortcutPlugin(),
       quotePlugin(),
       tablePlugin(),
-      thematicBreakPlugin()
+      thematicBreakPlugin(),
+      diffSourcePlugin({
+        diffMarkdown: dataQuery.data,
+        viewMode: 'rich-text',
+        readOnlyDiff: true
+      })
     ];
 
+    // If the user is allowed to edit, then add the toolbar
     if (editable) {
       plg.push(
         toolbarPlugin({
           toolbarContents: () => (
             <>
-              {' '}
               <ButtonWithTooltip
                 title={t`Save Notes`}
                 onClick={() => saveNotes()}
+                disabled={false}
               >
                 <IconUpload />
               </ButtonWithTooltip>
@@ -196,6 +222,7 @@ export default function NotesEditor({
               <InsertTable />
               <InsertAdmonition />
               <InsertThematicBreak />
+              <DiffSourceToggleWrapper children={undefined} />
             </>
           )
         })
@@ -203,7 +230,14 @@ export default function NotesEditor({
     }
 
     return plg;
-  }, [editable]);
+  }, [
+    dataQuery.data,
+    editable,
+    editing,
+    imageUploadHandler,
+    imagePreviewHandler,
+    saveNotes
+  ]);
 
   return (
     <MDXEditor ref={ref} markdown={''} readOnly={!editable} plugins={plugins} />
