@@ -84,4 +84,4 @@ A default *Test Report* template is provided out of the box, which is useful for
 {% include "img.html" %}
 {% endwith %}
 
-View the [source code](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/report/templates/report/inventree_test_report_base.html) for the default test report template.
+View the [source code](https://github.com/inventree/InvenTree/blob/0.15.x/src/backend/InvenTree/report/templates/report/inventree_test_report_base.html) for the default test report template.
