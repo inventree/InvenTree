@@ -147,6 +147,9 @@ class LabelPrintingMixin:
 
         N = len(items)
 
+        if N <= 0:
+            raise ValidationError(_('No items provided to print'))
+
         # Generate a label output for each provided item
         for item in items:
             context = label.get_context(item, request)
