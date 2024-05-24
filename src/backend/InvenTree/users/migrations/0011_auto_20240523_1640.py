@@ -18,6 +18,8 @@ def clear_sessions(apps, schema_editor):
         pass
 class Migration(migrations.Migration):
 
+    atomic = False
+
     dependencies = [
         ("users", "0010_alter_apitoken_key"),
     ]
