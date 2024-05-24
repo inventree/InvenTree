@@ -13,7 +13,6 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
 from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import permissions, status
 from rest_framework.generics import GenericAPIView
