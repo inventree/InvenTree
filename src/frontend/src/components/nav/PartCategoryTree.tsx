@@ -5,7 +5,7 @@ import {
   LoadingOverlay,
   Stack,
   Text,
-  useMantineTheme
+  useMantineColorScheme
 } from '@mantine/core';
 import { ReactTree, ThemeSettings } from '@naisutech/react-tree';
 import {
@@ -20,6 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
+import { theme, vars } from '../../theme';
 import { StylishText } from '../items/StylishText';
 
 export function PartCategoryTree({
@@ -59,9 +60,9 @@ export function PartCategoryTree({
   function renderNode({ node }: { node: any }) {
     return (
       <Group
-        position="apart"
+        justify="space-between"
         key={node.id}
-        noWrap={true}
+        wrap="nowrap"
         onClick={() => {
           onClose();
           navigate(`/part/category/${node.id}`);
@@ -80,57 +81,61 @@ export function PartCategoryTree({
     return open ? <IconChevronDown /> : <IconChevronRight />;
   }
 
-  const mantineTheme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
 
   const themes: ThemeSettings = useMemo(() => {
     const currentTheme =
-      mantineTheme.colorScheme === 'dark'
-        ? mantineTheme.colorScheme
-        : mantineTheme.primaryColor;
+      colorScheme === 'dark'
+        ? vars.colors.defaultColor
+        : vars.colors.primaryColors;
 
     return {
       dark: {
         text: {
-          ...mantineTheme.fn.fontStyles()
+          fontFamily: vars.fontFamily,
+          //fontSize: vars.fontSizes.md,
+          color: vars.colors.text
         },
         nodes: {
           height: '2.5rem',
           folder: {
-            selectedBgColor: mantineTheme.colors[currentTheme][4],
-            hoverBgColor: mantineTheme.colors[currentTheme][6]
+            selectedBgColor: currentTheme[4],
+            hoverBgColor: currentTheme[6]
           },
           leaf: {
-            selectedBgColor: mantineTheme.colors[currentTheme][4],
-            hoverBgColor: mantineTheme.colors[currentTheme][6]
+            selectedBgColor: currentTheme[4],
+            hoverBgColor: currentTheme[6]
           },
           icons: {
-            folderColor: mantineTheme.colors[currentTheme][3],
-            leafColor: mantineTheme.colors[currentTheme][3]
+            folderColor: currentTheme[3],
+            leafColor: currentTheme[3]
           }
         }
       },
       light: {
         text: {
-          ...mantineTheme.fn.fontStyles()
+          fontFamily: vars.fontFamily,
+          //fontSize: vars.fontSizes.md,
+          color: vars.colors.text
         },
         nodes: {
           height: '2.5rem',
           folder: {
-            selectedBgColor: mantineTheme.colors[currentTheme][4],
-            hoverBgColor: mantineTheme.colors[currentTheme][2]
+            selectedBgColor: currentTheme[4],
+            hoverBgColor: currentTheme[2]
           },
           leaf: {
-            selectedBgColor: mantineTheme.colors[currentTheme][4],
-            hoverBgColor: mantineTheme.colors[currentTheme][2]
+            selectedBgColor: currentTheme[4],
+            hoverBgColor: currentTheme[2]
           },
           icons: {
-            folderColor: mantineTheme.colors[currentTheme][8],
-            leafColor: mantineTheme.colors[currentTheme][6]
+            folderColor: currentTheme[8],
+            leafColor: currentTheme[6]
           }
         }
       }
     };
-  }, [mantineTheme]);
+  }, [theme]);
 
   return (
     <Drawer
@@ -148,13 +153,13 @@ export function PartCategoryTree({
         }
       }}
       title={
-        <Group position="left" p="ms" spacing="md" noWrap={true}>
+        <Group justify="left" p="ms" gap="md" wrap="nowrap">
           <IconSitemap />
           <StylishText size="lg">{t`Part Categories`}</StylishText>
         </Group>
       }
     >
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={treeQuery.isFetching} />
         <ReactTree
           nodes={treeQuery.data ?? []}
@@ -162,7 +167,7 @@ export function PartCategoryTree({
           RenderIcon={renderIcon}
           defaultSelectedNodes={selectedCategory ? [selectedCategory] : []}
           showEmptyItems={false}
-          theme={mantineTheme.colorScheme}
+          theme={colorScheme}
           themes={themes}
         />
       </Stack>

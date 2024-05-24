@@ -293,12 +293,12 @@ def increment(value):
     QQQ -> QQQ
 
     """
-    value = str(value).strip()
-
     # Ignore empty strings
     if value in ['', None]:
         # Provide a default value if provided with a null input
         return '1'
+
+    value = str(value).strip()
 
     pattern = r'(.*?)(\d+)?$'
 

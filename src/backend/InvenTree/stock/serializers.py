@@ -15,11 +15,13 @@ from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
+import build.models
 import common.models
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status_codes
+import order.models
 import part.filters as part_filters
 import part.models as part_models
 import stock.filters
@@ -37,6 +39,133 @@ from .models import (
 )
 
 logger = logging.getLogger('inventree')
+
+
+class GenerateBatchCodeSerializer(serializers.Serializer):
+    """Serializer for generating a batch code.
+
+    Any of the provided write-only fields can be used for additional context.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = [
+            'batch_code',
+            'build_order',
+            'item',
+            'location',
+            'part',
+            'purchase_order',
+            'quantity',
+        ]
+
+        read_only_fields = ['batch_code']
+
+        write_only_fields = [
+            'build_order',
+            'item',
+            'location',
+            'part',
+            'purchase_order',
+            'quantity',
+        ]
+
+    batch_code = serializers.CharField(
+        read_only=True, help_text=_('Generated batch code'), label=_('Batch Code')
+    )
+
+    build_order = serializers.PrimaryKeyRelatedField(
+        queryset=build.models.Build.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Build Order'),
+        help_text=_('Select build order'),
+    )
+
+    item = serializers.PrimaryKeyRelatedField(
+        queryset=StockItem.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Stock Item'),
+        help_text=_('Select stock item to generate batch code for'),
+    )
+
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Location'),
+        help_text=_('Select location to generate batch code for'),
+    )
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Part'),
+        help_text=_('Select part to generate batch code for'),
+    )
+
+    purchase_order = serializers.PrimaryKeyRelatedField(
+        queryset=order.models.PurchaseOrder.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Purchase Order'),
+        help_text=_('Select purchase order'),
+    )
+
+    quantity = serializers.FloatField(
+        required=False,
+        allow_null=True,
+        label=_('Quantity'),
+        help_text=_('Enter quantity for batch code'),
+    )
+
+
+class GenerateSerialNumberSerializer(serializers.Serializer):
+    """Serializer for generating one or multiple serial numbers.
+
+    Any of the provided write-only fields can be used for additional context.
+
+    Note that in the case where multiple serial numbers are required,
+    the "serial" field will return a string with multiple serial numbers separated by a comma.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['serial', 'part', 'quantity']
+
+        read_only_fields = ['serial']
+
+        write_only_fields = ['part', 'quantity']
+
+    serial = serializers.CharField(
+        read_only=True, help_text=_('Generated serial number'), label=_('Serial Number')
+    )
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.Part.objects.all(),
+        many=False,
+        required=False,
+        allow_null=True,
+        label=_('Part'),
+        help_text=_('Select part to generate serial number for'),
+    )
+
+    quantity = serializers.IntegerField(
+        required=False,
+        allow_null=False,
+        default=1,
+        label=_('Quantity'),
+        help_text=_('Quantity of serial numbers to generate'),
+    )
 
 
 class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):

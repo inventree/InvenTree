@@ -171,4 +171,4 @@ The packages are provided by [packager.io](https://packager.io/). They are built
 
 The package sets up [services](#controlling-inventree) that run the needed processes as the unprivileged user `inventree`. This keeps the privileges of InvenTree as low as possible.
 
-A CLI is provided to interface with low-level management functions like [variable management](#enviroment-variables), log access, commands, process scaling, etc.
+A CLI is provided to interface with low-level management functions like [variable management](#environment-variables), log access, commands, process scaling, etc.

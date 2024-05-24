@@ -38,6 +38,7 @@ from common.notifications import trigger_notification, InvenTreeNotificationBodi
 from plugin.events import trigger_event
 
 import part.models
+import report.mixins
 import stock.models
 import users.models
 
@@ -45,7 +46,14 @@ import users.models
 logger = logging.getLogger('inventree')
 
 
-class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.PluginValidationMixin, InvenTree.models.ReferenceIndexingMixin, MPTTModel):
+class Build(
+    report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PluginValidationMixin,
+    InvenTree.models.ReferenceIndexingMixin,
+    MPTTModel):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -138,6 +146,21 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
             raise ValidationError({
                 'part': _('Build order part cannot be changed')
             })
+
+    def report_context(self) -> dict:
+        """Generate custom report context data."""
+
+        return {
+            'bom_items': self.part.get_bom_items(),
+            'build': self,
+            'build_outputs': self.build_outputs.all(),
+            'line_items': self.build_lines.all(),
+            'part': self.part,
+            'quantity': self.quantity,
+            'reference': self.reference,
+            'title': str(self)
+        }
+
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -1291,7 +1314,7 @@ class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
     build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
-class BuildLine(InvenTree.models.InvenTreeModel):
+class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
@@ -1309,6 +1332,7 @@ class BuildLine(InvenTree.models.InvenTreeModel):
 
     class Meta:
         """Model meta options."""
+        verbose_name = _('Build Order Line Item')
         unique_together = [
             ('build', 'bom_item'),
         ]
@@ -1317,6 +1341,19 @@ class BuildLine(InvenTree.models.InvenTreeModel):
     def get_api_url():
         """Return the API URL used to access this model"""
         return reverse('api-build-line-list')
+
+    def report_context(self):
+        """Generate custom report context for this BuildLine object."""
+
+        return {
+            'allocated_quantity': self.allocated_quantity,
+            'allocations': self.allocations,
+            'bom_item': self.bom_item,
+            'build': self.build,
+            'build_line': self,
+            'part': self.bom_item.sub_part,
+            'quantity': self.quantity,
+        }
 
     build = models.ForeignKey(
         Build, on_delete=models.CASCADE,
@@ -1384,7 +1421,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
     """
 
     class Meta:
-        """Model meta options"""
+        """Model meta options."""
         unique_together = [
             ('build_line', 'stock_item', 'install_into'),
         ]
@@ -1569,7 +1606,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
     build_line = models.ForeignKey(
         BuildLine,
-        on_delete=models.SET_NULL, null=True,
+        on_delete=models.CASCADE, null=True,
         related_name='allocations',
     )
 

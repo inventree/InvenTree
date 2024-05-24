@@ -98,7 +98,7 @@ While [line items](#line-items) must reference a particular stock item, extra li
 
 ## Return Order Reports
 
-Custom [reports](../report/return_order.md) can be generated against each Return Order.
+Custom [reports](../report/templates.md) can be generated against each Return Order.
 
 ### Calendar view
 

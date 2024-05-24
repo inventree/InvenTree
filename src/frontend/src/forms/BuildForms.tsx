@@ -19,6 +19,7 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
+import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
 import { PartColumn, StatusColumn } from '../tables/ColumnRenderers';
 
@@ -34,10 +35,19 @@ export function useBuildOrderFields({
     null
   );
 
+  const [batchCode, setBatchCode] = useState<string>('');
+
+  const batchGenerator = useBatchCodeGenerator((value: any) => {
+    if (!batchCode) {
+      setBatchCode(value);
+    }
+  });
+
   return useMemo(() => {
     return {
       reference: {},
       part: {
+        disabled: !create,
         filters: {
           assembly: true,
           virtual: false
@@ -49,6 +59,10 @@ export function useBuildOrderFields({
               record.default_location || record.category_default_location
             );
           }
+
+          batchGenerator.update({
+            part: value
+          });
         }
       },
       title: {},
@@ -66,7 +80,10 @@ export function useBuildOrderFields({
       sales_order: {
         icon: <IconTruckDelivery />
       },
-      batch: {},
+      batch: {
+        value: batchCode,
+        onValueChange: (value: any) => setBatchCode(value)
+      },
       target_date: {
         icon: <IconCalendar />
       },
@@ -90,7 +107,7 @@ export function useBuildOrderFields({
         }
       }
     };
-  }, [create, destination]);
+  }, [create, destination, batchCode]);
 }
 
 export function useBuildOrderOutputFields({
@@ -392,7 +409,7 @@ export function useCancelBuildOutputsForm({
 
   const preFormContent = useMemo(() => {
     return (
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <Alert color="red" title={t`Cancel Build Outputs`}>
           <Text>{t`Selected build outputs will be deleted`}</Text>
         </Alert>

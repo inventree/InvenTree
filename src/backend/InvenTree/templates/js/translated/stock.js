@@ -1944,12 +1944,10 @@ function loadStockTable(table, options) {
         setupFilterList(filterKey, table, filterTarget, {
             download: true,
             report: {
-                url: '{% url "api-stockitem-testreport-list" %}',
-                key: 'item',
+                key: 'stockitem',
             },
             labels: {
-                url: '{% url "api-stockitem-label-list" %}',
-                key: 'item',
+                model_type: 'stockitem',
             },
             singular_name: '{% trans "stock item" %}',
             plural_name: '{% trans "stock items" %}',
@@ -2569,8 +2567,7 @@ function loadStockLocationTable(table, options) {
     setupFilterList(filterKey, table, filterListElement, {
         download: true,
         labels: {
-            url: '{% url "api-stocklocation-label-list" %}',
-            key: 'location'
+            model_type: 'stocklocation',
         },
         singular_name: '{% trans "stock location" %}',
         plural_name: '{% trans "stock locations" %}',

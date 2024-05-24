@@ -65,6 +65,18 @@ function stockItemTableColumns(): TableColumn[] {
         let extra: ReactNode[] = [];
         let color = undefined;
 
+        // Determine if a stock item is "in stock"
+        // TODO: Refactor this out into a function
+        let in_stock =
+          !record?.belongs_to &&
+          !record?.consumed_by &&
+          !record?.customer &&
+          !record?.is_building &&
+          !record?.sales_order &&
+          !record?.expired &&
+          record?.quantity &&
+          record?.quantity > 0;
+
         if (record.serial && quantity == 1) {
           text = `# ${record.serial}`;
         }
@@ -166,7 +178,6 @@ function stockItemTableColumns(): TableColumn[] {
         }
 
         if (quantity <= 0) {
-          color = 'red';
           extra.push(
             <Text
               key="depleted"
@@ -175,11 +186,15 @@ function stockItemTableColumns(): TableColumn[] {
           );
         }
 
+        if (!in_stock) {
+          color = 'red';
+        }
+
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left" noWrap={true}>
-                <Text color={color}>{text}</Text>
+              <Group gap="xs" justify="left" wrap="nowrap">
+                <Text c={color}>{text}</Text>
                 {part.units && (
                   <Text size="xs" color={color}>
                     [{part.units}]
@@ -353,7 +368,10 @@ export function StockItemTable({
     return {
       items: table.selectedRecords,
       model: ModelType.stockitem,
-      refresh: table.refreshTable
+      refresh: table.refreshTable,
+      filters: {
+        in_stock: true
+      }
     };
   }, [table]);
 
@@ -388,7 +406,7 @@ export function StockItemTable({
     let can_change_order = user.hasChangeRole(UserRoles.purchase_order);
     return [
       <ActionDropdown
-        key="stockoperations"
+        tooltip={t`Stock Actions`}
         icon={<InvenTreeIcon icon="stock" />}
         disabled={table.selectedRecords.length === 0}
         actions={[
@@ -502,6 +520,8 @@ export function StockItemTable({
         props={{
           enableDownload: true,
           enableSelection: true,
+          enableLabels: true,
+          enableReports: true,
           tableFilters: tableFilters,
           tableActions: tableActions,
           modelType: ModelType.stockitem,

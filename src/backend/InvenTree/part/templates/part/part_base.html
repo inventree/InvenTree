@@ -468,9 +468,8 @@
     $('#print-label').click(function() {
         printLabels({
             items: [{{ part.pk }}],
-            key: 'part',
+            model_type: 'part',
             singular_name: 'part',
-            url: '{% url "api-part-label-list" %}',
         });
     });
     {% endif %}

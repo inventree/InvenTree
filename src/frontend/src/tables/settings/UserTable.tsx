@@ -230,7 +230,7 @@ export function UserTable() {
     pk: selectedUser,
     title: t`Delete user`,
     successMessage: t`User deleted`,
-    onFormSuccess: table.refreshTable,
+    table: table,
     preFormWarning: t`Are you sure you want to delete this user?`
   });
 
@@ -244,7 +244,7 @@ export function UserTable() {
       first_name: {},
       last_name: {}
     },
-    onFormSuccess: table.refreshTable,
+    table: table,
     successMessage: t`Added user`
   });
 

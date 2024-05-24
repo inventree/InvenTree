@@ -65,7 +65,7 @@ export default function PurchaseHistoryPanel({
           let units = record.supplier_part_detail?.pack_quantity;
 
           return (
-            <Group position="apart" spacing="xs">
+            <Group justify="space-between" gap="xs">
               <Text>{price}</Text>
               {units && <Text size="xs">[{units}]</Text>}
             </Group>
@@ -86,7 +86,7 @@ export default function PurchaseHistoryPanel({
           let units = record.part_detail?.units;
 
           return (
-            <Group position="apart" spacing="xs">
+            <Group justify="space-between" gap="xs">
               <Text>{price}</Text>
               {units && <Text size="xs">[{units}]</Text>}
             </Group>

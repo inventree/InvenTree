@@ -48,7 +48,6 @@ def apps():
         'common',
         'company',
         'importer',
-        'label',
         'machine',
         'order',
         'part',
@@ -92,6 +91,8 @@ def content_excludes(
         'importer.dataimportsession',
         'importer.dataimportcolumnmap',
         'importer.dataimportrow',
+        'report.labeloutput',
+        'report.reportoutput',
     ]
 
     # Optionally exclude user auth data
@@ -235,7 +236,12 @@ def plugins(c, uv=False):
 @task(help={'uv': 'Use UV package manager (experimental)'})
 def install(c, uv=False):
     """Installs required python packages."""
-    print("Installing required python packages from 'src/backend/requirements.txt'")
+    INSTALL_FILE = 'src/backend/requirements.txt'
+
+    print(f"Installing required python packages from '{INSTALL_FILE}'")
+
+    if not Path(INSTALL_FILE).is_file():
+        raise FileNotFoundError(f"Requirements file '{INSTALL_FILE}' not found")
 
     # Install required Python packages with PIP
     if not uv:
@@ -243,13 +249,13 @@ def install(c, uv=False):
             'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools'
         )
         c.run(
-            'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r src/backend/requirements.txt'
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}'
         )
     else:
         c.run(
             'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools'
         )
-        c.run('uv pip install -U --require-hashes  -r src/backend/requirements.txt')
+        c.run(f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
 
     # Run plugins install
     plugins(c, uv=uv)
@@ -1278,3 +1284,19 @@ via your signed in browser, or consider using a point release download via invok
     Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and
     continue by running: invoke frontend-download --file <path-to-downloaded-zip-file>"""
         )
+
+
+@task(
+    help={
+        'address': 'Host and port to run the server on (default: localhost:8080)',
+        'compile_schema': 'Compile the schema documentation first (default: False)',
+    }
+)
+def docs_server(c, address='localhost:8080', compile_schema=False):
+    """Start a local mkdocs server to view the documentation."""
+    if compile_schema:
+        # Build the schema docs first
+        schema(c, ignore_warnings=True, overwrite=True, filename='docs/schema.yml')
+        c.run('python docs/extract_schema.py docs/schema.yml')
+
+    c.run(f'mkdocs serve -a {address} -f docs/mkdocs.yml')

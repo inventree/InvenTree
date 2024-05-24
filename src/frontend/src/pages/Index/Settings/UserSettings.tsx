@@ -110,7 +110,7 @@ export default function UserSettings() {
 
   return (
     <>
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <SettingsHeader
           title={t`Account Settings`}
           subtitle={`${user?.first_name} ${user?.last_name}`}

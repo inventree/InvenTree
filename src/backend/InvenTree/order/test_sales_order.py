@@ -211,7 +211,7 @@ class SalesOrderTest(TestCase):
             self.order.can_complete(raise_error=True)
 
         # Now try to ship it - should fail
-        result = self.order.complete_order(None)
+        result = self.order.ship_order(None)
         self.assertFalse(result)
 
     def test_complete_order(self):
@@ -225,8 +225,8 @@ class SalesOrderTest(TestCase):
 
         self.assertEqual(SalesOrderAllocation.objects.count(), 2)
 
-        # Attempt to complete the order (but shipments are not completed!)
-        result = self.order.complete_order(None)
+        # Attempt to ship the order (but shipments are not completed!)
+        result = self.order.ship_order(None)
 
         self.assertFalse(result)
 
@@ -238,7 +238,7 @@ class SalesOrderTest(TestCase):
         self.assertTrue(self.shipment.is_complete())
 
         # Now, should be OK to ship
-        result = self.order.complete_order(None)
+        result = self.order.ship_order(None)
 
         self.assertTrue(result)
 

@@ -1,5 +1,6 @@
 """JSON API for the Stock app."""
 
+import json
 from collections import OrderedDict
 from datetime import timedelta
 
@@ -13,7 +14,8 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import status
+from rest_framework import permissions, status
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -41,7 +43,6 @@ from InvenTree.helpers import (
     is_ajax,
     isNull,
     str2bool,
-    str2int,
 )
 from InvenTree.mixins import (
     CreateAPI,
@@ -61,6 +62,7 @@ from order.serializers import (
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from stock.admin import LocationResource, StockItemResource
+from stock.generators import generate_batch_code, generate_serial_number
 from stock.models import (
     StockItem,
     StockItemAttachment,
@@ -69,6 +71,38 @@ from stock.models import (
     StockLocation,
     StockLocationType,
 )
+
+
+class GenerateBatchCode(GenericAPIView):
+    """API endpoint for generating batch codes."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StockSerializers.GenerateBatchCodeSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Generate a new batch code."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = {'batch_code': generate_batch_code(**serializer.validated_data)}
+
+        return Response(data, status=status.HTTP_201_CREATED)
+
+
+class GenerateSerialNumber(GenericAPIView):
+    """API endpoint for generating serial numbers."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StockSerializers.GenerateSerialNumberSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Generate a new serial number."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = {'serial_number': generate_serial_number(**serializer.validated_data)}
+
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class StockDetail(RetrieveUpdateDestroyAPI):
@@ -1030,35 +1064,18 @@ class StockList(DataExportMixin, ListCreateDestroyAPIView):
                 headers=self.get_success_headers(serializer.data),
             )
 
-    def list(self, request, *args, **kwargs):
-        """Override the 'list' method, as the StockLocation objects are very expensive to serialize.
+    def download_queryset(self, queryset, export_format):
+        """Download this queryset as a file.
 
-        So, we fetch and serialize the required StockLocation objects only as required.
+        Uses the APIDownloadMixin mixin class
         """
-        queryset = self.filter_queryset(self.get_queryset())
+        dataset = StockItemResource().export(queryset=queryset)
 
-        page = self.paginate_queryset(queryset)
+        filedata = dataset.export(export_format)
 
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
+        filename = f'InvenTree_StockItems_{InvenTree.helpers.current_date().strftime("%d-%b-%Y")}.{export_format}'
 
-        data = serializer.data
-
-        """
-        Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browsable API) return a DRF response
-        b) For AJAX requests, simply return a JSON rendered response.
-
-        Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft
-        """
-
-        if page is not None:
-            return self.get_paginated_response(data)
-        elif is_ajax(request):
-            return JsonResponse(data, safe=False)
-        return Response(data)
+        return DownloadFile(filedata, filename)
 
     def get_queryset(self, *args, **kwargs):
         """Annotate queryset before returning."""

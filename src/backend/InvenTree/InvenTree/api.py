@@ -8,6 +8,7 @@ from pathlib import Path
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
+from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import OrmQ
@@ -513,6 +514,10 @@ class MetadataView(RetrieveUpdateAPI):
     def get_model_type(self):
         """Return the model type associated with this API instance."""
         model = self.kwargs.get(self.MODEL_REF, None)
+
+        if 'lookup_field' in self.kwargs:
+            # Set custom lookup field (instead of default 'pk' value) if supplied
+            self.lookup_field = self.kwargs.pop('lookup_field')
 
         if model is None:
             raise ValidationError(

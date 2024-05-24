@@ -186,7 +186,8 @@ test('PUI - Admin', async ({ page }) => {
   await page.getByRole('tab', { name: 'Custom Units' }).click();
   await page.getByRole('tab', { name: 'Part Parameters' }).click();
   await page.getByRole('tab', { name: 'Category Parameters' }).click();
-  await page.getByRole('tab', { name: 'Templates' }).click();
+  await page.getByRole('tab', { name: 'Label Templates' }).click();
+  await page.getByRole('tab', { name: 'Report Templates' }).click();
   await page.getByRole('tab', { name: 'Plugins' }).click();
   await page.getByRole('tab', { name: 'Machines' }).click();
 });
@@ -229,10 +230,7 @@ test('PUI - Company', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/company/1/details`);
-  await page
-    .locator('div')
-    .filter({ hasText: /^DigiKey Electronics$/ })
-    .waitFor();
+  await page.getByLabel('Details').getByText('DigiKey Electronics').waitFor();
   await page.getByRole('cell', { name: 'https://www.digikey.com/' }).waitFor();
   await page.getByRole('tab', { name: 'Supplied Parts' }).click();
   await page

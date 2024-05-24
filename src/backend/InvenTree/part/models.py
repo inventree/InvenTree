@@ -7,7 +7,7 @@ import hashlib
 import logging
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
@@ -43,6 +43,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import part.helpers as part_helpers
 import part.settings as part_settings
+import report.mixins
 import users.models
 from build import models as BuildModels
 from common.models import InvenTreeSetting
@@ -281,7 +282,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Returns True if the specified user subscribes to this category."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status):
+    def set_starred(self, user, status: bool) -> None:
         """Set the "subscription" status of this PartCategory against the specified user."""
         if not user:
             return
@@ -340,6 +341,7 @@ class PartManager(TreeManager):
 class Part(
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
     MPTTModel,
@@ -409,8 +411,28 @@ class Part(
         """Return API query filters for limiting field results against this instance."""
         return {'variant_of': {'exclude_tree': self.pk}}
 
+    def report_context(self):
+        """Return custom report context information."""
+        return {
+            'bom_items': self.get_bom_items(),
+            'category': self.category,
+            'description': self.description,
+            'IPN': self.IPN,
+            'name': self.name,
+            'parameters': self.parameters_map(),
+            'part': self,
+            'qr_data': self.format_barcode(brief=True),
+            'qr_url': self.get_absolute_url(),
+            'revision': self.revision,
+            'test_template_list': self.getTestTemplates(),
+            'test_templates': self.getTestTemplates(),
+        }
+
     def get_context_data(self, request, **kwargs):
-        """Return some useful context data about this part for template rendering."""
+        """Return some useful context data about this part for template rendering.
+
+        TODO: 2024-04-21 - Remove this method once the legacy UI code is removed
+        """
         context = {}
 
         context['disabled'] = not self.active
@@ -447,6 +469,27 @@ class Part(
         )
 
         return context
+
+    def delete(self, **kwargs):
+        """Custom delete method for the Part model.
+
+        Prevents deletion of a Part if any of the following conditions are met:
+
+        - The part is still active
+        - The part is used in a BOM for a different part.
+        """
+        if self.active:
+            raise ValidationError(_('Cannot delete this part as it is still active'))
+
+        if not common.models.InvenTreeSetting.get_setting(
+            'PART_ALLOW_DELETE_FROM_ASSEMBLY', cache=False
+        ):
+            if BomItem.objects.filter(sub_part=self).exists():
+                raise ValidationError(
+                    _('Cannot delete this part as it is used in an assembly')
+                )
+
+        super().delete()
 
     def save(self, *args, **kwargs):
         """Overrides the save function for the Part model.

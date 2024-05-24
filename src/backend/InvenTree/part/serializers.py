@@ -438,6 +438,11 @@ class DuplicatePartSerializer(serializers.Serializer):
     The fields in this serializer control how the Part is duplicated.
     """
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['part', 'copy_image', 'copy_bom', 'copy_parameters', 'copy_notes']
+
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(),
         label=_('Original Part'),
@@ -477,6 +482,11 @@ class DuplicatePartSerializer(serializers.Serializer):
 class InitialStockSerializer(serializers.Serializer):
     """Serializer for creating initial stock quantity."""
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['quantity', 'location']
+
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
@@ -499,6 +509,11 @@ class InitialStockSerializer(serializers.Serializer):
 
 class InitialSupplierSerializer(serializers.Serializer):
     """Serializer for adding initial supplier / manufacturer information."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['supplier', 'sku', 'manufacturer', 'mpn']
 
     supplier = serializers.PrimaryKeyRelatedField(
         queryset=company.models.Company.objects.all(),

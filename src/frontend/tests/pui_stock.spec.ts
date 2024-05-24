@@ -13,7 +13,9 @@ test('PUI - Stock', async ({ page }) => {
 
   await page.getByRole('tab', { name: 'Stock Items' }).click();
   await page.getByRole('cell', { name: '1551ABK' }).click();
+
   await page.getByRole('tab', { name: 'Stock', exact: true }).click();
+  await page.waitForURL('**/platform/stock/**');
   await page.getByRole('tab', { name: 'Stock Locations' }).click();
   await page.getByRole('cell', { name: 'Electronics Lab' }).first().click();
   await page.getByRole('tab', { name: 'Default Parts' }).click();
@@ -78,13 +80,18 @@ test('PUI - Purchasing', async ({ page }) => {
     .getByRole('button')
     .click();
   await page.getByRole('menuitem', { name: 'Edit' }).click();
-  await page.getByLabel('Address title *').waitFor();
+
+  await page.getByLabel('text-field-title').waitFor();
+  await page.getByLabel('text-field-line2').waitFor();
 
   // Read the current value of the cell, to ensure we always *change* it!
-  const value = await page.getByLabel('Line 2').inputValue();
-  await page.getByLabel('Line 2').fill(value == 'old' ? 'new' : 'old');
+  const value = await page.getByLabel('text-field-line2').inputValue();
+  await page
+    .getByLabel('text-field-line2')
+    .fill(value == 'old' ? 'new' : 'old');
 
   await page.getByRole('button', { name: 'Submit' }).isEnabled();
+
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('tab', { name: 'Details' }).waitFor();
 });

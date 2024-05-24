@@ -121,6 +121,16 @@ class InvenTreeMetadata(SimpleMetadata):
 
         serializer_info = super().get_serializer_info(serializer)
 
+        # Look for any dynamic fields which were not available when the serializer was instantiated
+        for field_name in serializer.Meta.fields:
+            if field_name in serializer_info:
+                # Already know about this one
+                continue
+
+            if hasattr(serializer, field_name):
+                field = getattr(serializer, field_name)
+                serializer_info[field_name] = self.get_field_info(field)
+
         model_class = None
 
         # Attributes to copy extra attributes from the model to the field (if they don't exist)
@@ -265,7 +275,9 @@ class InvenTreeMetadata(SimpleMetadata):
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
             # If the field is a PrimaryKeyRelatedField, we can extract the model from the queryset
-            if isinstance(field, serializers.PrimaryKeyRelatedField):
+            if isinstance(field, serializers.PrimaryKeyRelatedField) or issubclass(
+                field.__class__, serializers.PrimaryKeyRelatedField
+            ):
                 model = field.queryset.model
             else:
                 logger.debug(
@@ -288,6 +300,9 @@ class InvenTreeMetadata(SimpleMetadata):
                 else:
                     logger.warning("'get_api_url' method not defined for %s", model)
                     field_info['api_url'] = getattr(model, 'api_url', None)
+
+                # Handle custom 'primary key' field
+                field_info['pk_field'] = getattr(field, 'pk_field', 'pk') or 'pk'
 
         # Add more metadata about dependent fields
         if field_info['type'] == 'dependent field':

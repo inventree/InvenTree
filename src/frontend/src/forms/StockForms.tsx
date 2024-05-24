@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Flex, Group, NumberInput, Skeleton, Text } from '@mantine/core';
+import { Flex, Group, NumberInput, Skeleton, Table, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useCallback, useMemo, useState } from 'react';
@@ -21,6 +21,10 @@ import {
   useCreateApiFormModal,
   useDeleteApiFormModal
 } from '../hooks/UseForm';
+import {
+  useBatchCodeGenerator,
+  useSerialNumberGenerator
+} from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
 
 /**
@@ -34,14 +38,40 @@ export function useStockFields({
   const [part, setPart] = useState<number | null>(null);
   const [supplierPart, setSupplierPart] = useState<number | null>(null);
 
+  const [batchCode, setBatchCode] = useState<string>('');
+  const [serialNumbers, setSerialNumbers] = useState<string>('');
+
+  const [trackable, setTrackable] = useState<boolean>(false);
+
+  const batchGenerator = useBatchCodeGenerator((value: any) => {
+    if (!batchCode) {
+      setBatchCode(value);
+    }
+  });
+
+  const serialGenerator = useSerialNumberGenerator((value: any) => {
+    if (!serialNumbers && create && trackable) {
+      setSerialNumbers(value);
+    }
+  });
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {
         value: part,
         disabled: !create,
-        onValueChange: (change) => {
-          setPart(change);
+        onValueChange: (value, record) => {
+          setPart(value);
           // TODO: implement remaining functionality from old stock.py
+
+          setTrackable(record.trackable ?? false);
+
+          batchGenerator.update({ part: value });
+          serialGenerator.update({ part: value });
+
+          if (!record.trackable) {
+            setSerialNumbers('');
+          }
 
           // Clear the 'supplier_part' field if the part is changed
           setSupplierPart(null);
@@ -50,7 +80,9 @@ export function useStockFields({
       supplier_part: {
         // TODO: icon
         value: supplierPart,
-        onValueChange: setSupplierPart,
+        onValueChange: (value) => {
+          setSupplierPart(value);
+        },
         filters: {
           part_detail: true,
           supplier_detail: true,
@@ -70,22 +102,29 @@ export function useStockFields({
       },
       location: {
         hidden: !create,
+        onValueChange: (value) => {
+          batchGenerator.update({ location: value });
+        },
         filters: {
           structural: false
         }
-        // TODO: icon
       },
       quantity: {
         hidden: !create,
-        description: t`Enter initial quantity for this stock item`
+        description: t`Enter initial quantity for this stock item`,
+        onValueChange: (value) => {
+          batchGenerator.update({ quantity: value });
+        }
       },
       serial_numbers: {
-        // TODO: icon
         field_type: 'string',
         label: t`Serial Numbers`,
         description: t`Enter serial numbers for new stock (or leave blank)`,
         required: false,
-        hidden: !create
+        disabled: !trackable,
+        hidden: !create,
+        value: serialNumbers,
+        onValueChange: (value) => setSerialNumbers(value)
       },
       serial: {
         hidden: create
@@ -93,6 +132,8 @@ export function useStockFields({
       },
       batch: {
         // TODO: icon
+        value: batchCode,
+        onValueChange: (value) => setBatchCode(value)
       },
       status: {},
       expiry_date: {
@@ -120,7 +161,7 @@ export function useStockFields({
     // TODO: refer to stock.py in original codebase
 
     return fields;
-  }, [part, supplierPart]);
+  }, [part, supplierPart, batchCode, serialNumbers, trackable, create]);
 }
 
 /**
@@ -283,6 +324,10 @@ function StockOperationsRow({
   };
 
   const stockString: string = useMemo(() => {
+    if (!record) {
+      return '-';
+    }
+
     if (!record.serial) {
       return `${record.quantity}`;
     } else {
@@ -290,29 +335,33 @@ function StockOperationsRow({
     }
   }, [record]);
 
-  return (
-    <tr>
-      <td>
+  return !record ? (
+    <div>{t`Loading...`}</div>
+  ) : (
+    <Table.Tr>
+      <Table.Td>
         <Flex gap="sm" align="center">
           <Thumbnail
             size={40}
-            src={record.part_detail.thumbnail}
+            src={record.part_detail?.thumbnail}
             align="center"
           />
-          <div>{record.part_detail.name}</div>
+          <div>{record.part_detail?.name}</div>
         </Flex>
-      </td>
-      <td>{record.location ? record.location_detail.pathstring : '-'}</td>
-      <td>
+      </Table.Td>
+      <Table.Td>
+        {record.location ? record.location_detail?.pathstring : '-'}
+      </Table.Td>
+      <Table.Td>
         <Flex align="center" gap="xs">
-          <Group position="apart">
+          <Group justify="space-between">
             <Text>{stockString}</Text>
             <StatusRenderer status={record.status} type={ModelType.stockitem} />
           </Group>
         </Flex>
-      </td>
+      </Table.Td>
       {!merge && (
-        <td>
+        <Table.Td>
           <NumberInput
             value={value}
             onChange={onChange}
@@ -321,9 +370,9 @@ function StockOperationsRow({
             min={0}
             style={{ maxWidth: '100px' }}
           />
-        </td>
+        </Table.Td>
       )}
-      <td>
+      <Table.Td>
         <Flex gap="3px">
           {transfer && (
             <ActionButton
@@ -332,8 +381,8 @@ function StockOperationsRow({
               tooltip={t`Move to default location`}
               tooltipAlignment="top"
               disabled={
-                !record.part_detail.default_location &&
-                !record.part_detail.category_default_location
+                !record.part_detail?.default_location &&
+                !record.part_detail?.category_default_location
               }
             />
           )}
@@ -345,8 +394,8 @@ function StockOperationsRow({
             color="red"
           />
         </Flex>
-      </td>
-    </tr>
+      </Table.Td>
+    </Table.Tr>
   );
 }
 
@@ -653,11 +702,13 @@ function stockOperationModal({
   refresh,
   fieldGenerator,
   endpoint,
+  filters,
   title,
   modalFunc = useCreateApiFormModal
 }: {
   items?: object;
   pk?: number;
+  filters?: any;
   model: ModelType | string;
   refresh: () => void;
   fieldGenerator: (items: any[]) => ApiFormFieldSet;
@@ -665,17 +716,26 @@ function stockOperationModal({
   title: string;
   modalFunc?: apiModalFunc;
 }) {
-  const params: any = {
+  const baseParams: any = {
     part_detail: true,
     location_detail: true,
     cascade: false
   };
 
-  // A Stock item can have location=null, but not part=null
-  params[model] = pk === undefined && model === 'location' ? 'null' : pk;
+  const params = useMemo(() => {
+    let query_params: any = {
+      ...baseParams,
+      ...(filters ?? {})
+    };
+
+    query_params[model] =
+      pk === undefined && model === 'location' ? 'null' : pk;
+
+    return query_params;
+  }, [baseParams, filters, model, pk]);
 
   const { data } = useQuery({
-    queryKey: ['stockitems', model, pk, items],
+    queryKey: ['stockitems', model, pk, items, params],
     queryFn: async () => {
       if (items) {
         return Array.isArray(items) ? items : [items];
@@ -712,6 +772,7 @@ function stockOperationModal({
 export type StockOperationProps = {
   items?: object;
   pk?: number;
+  filters?: any;
   model: ModelType.stockitem | 'location' | ModelType.part;
   refresh: () => void;
 };
@@ -799,6 +860,7 @@ export function stockLocationFields({}: {}): ApiFormFieldSet {
     description: {},
     structural: {},
     external: {},
+    icon: {},
     location_type: {}
   };
 

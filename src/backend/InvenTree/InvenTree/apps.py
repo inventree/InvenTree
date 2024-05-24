@@ -74,6 +74,7 @@ class InvenTreeConfig(AppConfig):
         obsolete = [
             'InvenTree.tasks.delete_expired_sessions',
             'stock.tasks.delete_old_stock_items',
+            'label.tasks.cleanup_old_label_outputs',
         ]
 
         try:
@@ -83,7 +84,14 @@ class InvenTreeConfig(AppConfig):
 
         # Remove any existing obsolete tasks
         try:
-            Schedule.objects.filter(func__in=obsolete).delete()
+            obsolete_tasks = Schedule.objects.filter(func__in=obsolete)
+
+            if obsolete_tasks.exists():
+                logger.info(
+                    'Removing %s obsolete background tasks', obsolete_tasks.count()
+                )
+                obsolete_tasks.delete()
+
         except Exception:
             logger.exception('Failed to remove obsolete tasks - database not ready')
 

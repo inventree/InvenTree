@@ -40,6 +40,7 @@ export type ApiFormAdjustFilterType = {
  * @param icon : An icon to display next to the field
  * @param field_type : The type of field to render
  * @param api_url : The API endpoint to fetch data from (for related fields)
+ * @param pk_field : The primary key field for the related field (default = "pk")
  * @param model : The model to use for related fields
  * @param filters : Optional API filters to apply to related fields
  * @param required : Whether the field is required
@@ -51,6 +52,7 @@ export type ApiFormAdjustFilterType = {
  * @param postFieldContent : Content to render after the field
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
+ * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -74,6 +76,7 @@ export type ApiFormFieldType = {
     | 'nested object'
     | 'table';
   api_url?: string;
+  pk_field?: string;
   model?: ModelType;
   modelRenderer?: (instance: any) => ReactNode;
   filters?: any;
@@ -87,6 +90,7 @@ export type ApiFormFieldType = {
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
+  adjustValue?: (value: any) => any;
   onValueChange?: (value: any, record?: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;
   headers?: string[];
@@ -141,6 +145,7 @@ export function ApiFormField({
       ...fieldDefinition,
       onValueChange: undefined,
       adjustFilters: undefined,
+      adjustValue: undefined,
       read_only: undefined,
       children: undefined
     };
@@ -149,6 +154,11 @@ export function ApiFormField({
   // Callback helper when form value changes
   const onChange = useCallback(
     (value: any) => {
+      // Allow for custom value adjustments (per field)
+      if (definition.adjustValue) {
+        value = definition.adjustValue(value);
+      }
+
       field.onChange(value);
 
       // Run custom callback for this field
@@ -181,6 +191,11 @@ export function ApiFormField({
     return val;
   }, [value]);
 
+  // Coerce the value to a (stringified) boolean value
+  const booleanValue: string = useMemo(() => {
+    return isTrue(value).toString();
+  }, [value]);
+
   // Construct the individual field
   function buildField() {
     switch (definition.field_type) {
@@ -200,6 +215,7 @@ export function ApiFormField({
             {...reducedDefinition}
             ref={field.ref}
             id={fieldId}
+            aria-label={`text-field-${field.name}`}
             type={definition.field_type}
             value={value || ''}
             error={error?.message}
@@ -216,8 +232,10 @@ export function ApiFormField({
         return (
           <Switch
             {...reducedDefinition}
+            value={booleanValue}
             ref={ref}
             id={fieldId}
+            aria-label={`boolean-field-${field.name}`}
             radius="lg"
             size="sm"
             checked={isTrue(reducedDefinition.value)}
@@ -240,11 +258,11 @@ export function ApiFormField({
             radius="sm"
             ref={field.ref}
             id={fieldId}
+            aria-label={`number-field-${field.name}`}
             value={numericalValue}
             error={error?.message}
-            precision={definition.field_type == 'integer' ? 0 : 10}
-            onChange={(value: number) => onChange(value)}
-            removeTrailingZeros
+            decimalScale={definition.field_type == 'integer' ? 0 : 10}
+            onChange={(value: number | string | null) => onChange(value)}
             step={1}
           />
         );

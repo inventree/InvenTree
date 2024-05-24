@@ -10,6 +10,7 @@ export interface ModelInformationInterface {
   url_detail?: string;
   api_endpoint: ApiEndpoints;
   cui_detail?: string;
+  admin_url?: string;
 }
 
 export type ModelDict = {
@@ -23,7 +24,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/part',
     url_detail: '/part/:pk/',
     cui_detail: '/part/:pk/',
-    api_endpoint: ApiEndpoints.part_list
+    api_endpoint: ApiEndpoints.part_list,
+    admin_url: '/part/part/'
   },
   partparametertemplate: {
     label: t`Part Parameter Template`,
@@ -45,7 +47,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/supplierpart',
     url_detail: '/purchasing/supplier-part/:pk/',
     cui_detail: '/supplier-part/:pk/',
-    api_endpoint: ApiEndpoints.supplier_part_list
+    api_endpoint: ApiEndpoints.supplier_part_list,
+    admin_url: '/company/supplierpart/'
   },
   manufacturerpart: {
     label: t`Manufacturer Part`,
@@ -53,7 +56,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/manufacturerpart',
     url_detail: '/purchasing/manufacturer-part/:pk/',
     cui_detail: '/manufacturer-part/:pk/',
-    api_endpoint: ApiEndpoints.manufacturer_part_list
+    api_endpoint: ApiEndpoints.manufacturer_part_list,
+    admin_url: '/company/manufacturerpart/'
   },
   partcategory: {
     label: t`Part Category`,
@@ -61,7 +65,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/part/category',
     url_detail: '/part/category/:pk/',
     cui_detail: '/part/category/:pk/',
-    api_endpoint: ApiEndpoints.category_list
+    api_endpoint: ApiEndpoints.category_list,
+    admin_url: '/part/partcategory/'
   },
   stockitem: {
     label: t`Stock Item`,
@@ -69,7 +74,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/stock/item',
     url_detail: '/stock/item/:pk/',
     cui_detail: '/stock/item/:pk/',
-    api_endpoint: ApiEndpoints.stock_item_list
+    api_endpoint: ApiEndpoints.stock_item_list,
+    admin_url: '/stock/stockitem/'
   },
   stocklocation: {
     label: t`Stock Location`,
@@ -77,7 +83,13 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/stock/location',
     url_detail: '/stock/location/:pk/',
     cui_detail: '/stock/location/:pk/',
-    api_endpoint: ApiEndpoints.stock_location_list
+    api_endpoint: ApiEndpoints.stock_location_list,
+    admin_url: '/stock/stocklocation/'
+  },
+  stocklocationtype: {
+    label: t`Stock Location Type`,
+    label_multiple: t`Stock Location Types`,
+    api_endpoint: ApiEndpoints.stock_location_type_list
   },
   stockhistory: {
     label: t`Stock History`,
@@ -90,7 +102,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/build',
     url_detail: '/build/:pk/',
     cui_detail: '/build/:pk/',
-    api_endpoint: ApiEndpoints.build_order_list
+    api_endpoint: ApiEndpoints.build_order_list,
+    admin_url: '/build/build/'
   },
   buildline: {
     label: t`Build Line`,
@@ -106,7 +119,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/company',
     url_detail: '/company/:pk/',
     cui_detail: '/company/:pk/',
-    api_endpoint: ApiEndpoints.company_list
+    api_endpoint: ApiEndpoints.company_list,
+    admin_url: '/company/company/'
   },
   projectcode: {
     label: t`Project Code`,
@@ -121,7 +135,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/purchasing/purchase-order',
     url_detail: '/purchasing/purchase-order/:pk/',
     cui_detail: '/order/purchase-order/:pk/',
-    api_endpoint: ApiEndpoints.purchase_order_list
+    api_endpoint: ApiEndpoints.purchase_order_list,
+    admin_url: '/order/purchaseorder/'
   },
   purchaseorderline: {
     label: t`Purchase Order Line`,
@@ -134,7 +149,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/sales/sales-order',
     url_detail: '/sales/sales-order/:pk/',
     cui_detail: '/order/sales-order/:pk/',
-    api_endpoint: ApiEndpoints.sales_order_list
+    api_endpoint: ApiEndpoints.sales_order_list,
+    admin_url: '/order/salesorder/'
   },
   salesordershipment: {
     label: t`Sales Order Shipment`,
@@ -149,7 +165,8 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/sales/return-order',
     url_detail: '/sales/return-order/:pk/',
     cui_detail: '/order/return-order/:pk/',
-    api_endpoint: ApiEndpoints.return_order_list
+    api_endpoint: ApiEndpoints.return_order_list,
+    admin_url: '/order/returnorder/'
   },
   address: {
     label: t`Address`,
@@ -185,6 +202,27 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/import',
     url_detail: '/import/:pk/',
     api_endpoint: ApiEndpoints.import_session_list
+  },
+  labeltemplate: {
+    label: t`Label Template`,
+    label_multiple: t`Label Templates`,
+    url_overview: '/labeltemplate',
+    url_detail: '/labeltemplate/:pk/',
+    api_endpoint: ApiEndpoints.label_list
+  },
+  reporttemplate: {
+    label: t`Report Template`,
+    label_multiple: t`Report Templates`,
+    url_overview: '/reporttemplate',
+    url_detail: '/reporttemplate/:pk/',
+    api_endpoint: ApiEndpoints.report_list
+  },
+  pluginconfig: {
+    label: t`Plugin Configuration`,
+    label_multiple: t`Plugin Configurations`,
+    url_overview: '/pluginconfig',
+    url_detail: '/pluginconfig/:pk/',
+    api_endpoint: ApiEndpoints.plugin_list
   }
 };
 

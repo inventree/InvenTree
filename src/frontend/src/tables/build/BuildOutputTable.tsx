@@ -113,9 +113,11 @@ export default function BuildOutputTable({ build }: { build: any }) {
     url: apiUrl(ApiEndpoints.build_output_create, buildId),
     title: t`Add Build Output`,
     fields: buildOutputFields,
-    onFormSuccess: () => {
-      table.refreshTable();
-    }
+    initialData: {
+      batch_code: build.batch,
+      location: build.destination ?? build.part_detail?.default_location
+    },
+    table: table
   });
 
   const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
@@ -257,10 +259,10 @@ export default function BuildOutputTable({ build }: { build: any }) {
           }
 
           return (
-            <Group position="left" noWrap>
+            <Group justify="left" wrap="nowrap">
               <Text>{text}</Text>
               {record.batch && (
-                <Text italic size="sm">
+                <Text style={{ fontStyle: 'italic' }} size="sm">
                   {t`Batch`}: {record.batch}
                 </Text>
               )}
@@ -292,7 +294,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
             record.results?.map((result: TestResultOverview) => {
               return (
                 result && (
-                  <Group position="left" key={result.name} noWrap>
+                  <Group justify="left" key={result.name} wrap="nowrap">
                     {result.result ? (
                       <IconCircleCheck color="green" />
                     ) : (
