@@ -1,14 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Badge,
-  Group,
-  Paper,
-  Stack,
-  Text,
-  Tooltip,
-  rem
-} from '@mantine/core';
+import { Badge, Group, Paper, Stack, Text } from '@mantine/core';
 import { Dropzone } from '@mantine/dropzone';
 import { notifications } from '@mantine/notifications';
 import {
@@ -20,6 +11,7 @@ import {
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -223,43 +215,30 @@ export function AttachmentTable({
   });
 
   const tableActions: ReactNode[] = useMemo(() => {
-    let actions = [];
-
-    if (allowEdit) {
-      actions.push(
-        <Tooltip label={t`Add attachment`} key="attachment-add">
-          <ActionIcon
-            radius="sm"
-            onClick={() => {
-              setAttachmentType('attachment');
-              setSelectedAttachment(undefined);
-              uploadAttachment.open();
-            }}
-            variant="transparent"
-          >
-            <IconFileUpload />
-          </ActionIcon>
-        </Tooltip>
-      );
-
-      actions.push(
-        <Tooltip label={t`Add external link`} key="link-add">
-          <ActionIcon
-            radius="sm"
-            onClick={() => {
-              setAttachmentType('link');
-              setSelectedAttachment(undefined);
-              uploadAttachment.open();
-            }}
-            variant="transparent"
-          >
-            <IconExternalLink />
-          </ActionIcon>
-        </Tooltip>
-      );
-    }
-
-    return actions;
+    return [
+      <ActionButton
+        key="add-attachment"
+        tooltip={t`Add attachment`}
+        hidden={!allowEdit}
+        icon={<IconFileUpload />}
+        onClick={() => {
+          setAttachmentType('attachment');
+          setSelectedAttachment(undefined);
+          uploadAttachment.open();
+        }}
+      />,
+      <ActionButton
+        key="add-external-link"
+        tooltip={t`Add external link`}
+        hidden={!allowEdit}
+        icon={<IconExternalLink />}
+        onClick={() => {
+          setAttachmentType('link');
+          setSelectedAttachment(undefined);
+          uploadAttachment.open();
+        }}
+      />
+    ];
   }, [allowEdit]);
 
   // Construct row actions for the attachment table

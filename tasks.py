@@ -47,7 +47,6 @@ def apps():
         'build',
         'common',
         'company',
-        'label',
         'order',
         'part',
         'report',
@@ -87,6 +86,8 @@ def content_excludes(
         'common.notificationentry',
         'common.notificationmessage',
         'user_sessions.session',
+        'report.labeloutput',
+        'report.reportoutput',
     ]
 
     # Optionally exclude user auth data
@@ -1278,3 +1279,19 @@ via your signed in browser, or consider using a point release download via invok
     Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and
     continue by running: invoke frontend-download --file <path-to-downloaded-zip-file>"""
         )
+
+
+@task(
+    help={
+        'address': 'Host and port to run the server on (default: localhost:8080)',
+        'compile_schema': 'Compile the schema documentation first (default: False)',
+    }
+)
+def docs_server(c, address='localhost:8080', compile_schema=False):
+    """Start a local mkdocs server to view the documentation."""
+    if compile_schema:
+        # Build the schema docs first
+        schema(c, ignore_warnings=True, overwrite=True, filename='docs/schema.yml')
+        c.run('python docs/extract_schema.py docs/schema.yml')
+
+    c.run(f'mkdocs serve -a {address} -f docs/mkdocs.yml')

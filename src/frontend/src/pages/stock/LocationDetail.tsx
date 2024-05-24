@@ -11,6 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
@@ -290,24 +291,14 @@ export default function Stock() {
           }
         ]}
       />,
-      <ActionDropdown
-        key="reports"
-        icon={<InvenTreeIcon icon="reports" />}
-        actions={[
-          {
-            name: 'Print Label',
-            icon: '',
-            tooltip: 'Print label'
-          },
-          {
-            name: 'Print Location Report',
-            icon: '',
-            tooltip: 'Print Report'
-          }
-        ]}
+      <PrintingActions
+        modelType={ModelType.stocklocation}
+        items={[location.pk ?? 0]}
+        enableLabels
+        enableReports
       />,
       <ActionDropdown
-        key="operations"
+        tooltip={t`Stock Actions`}
         icon={<InvenTreeIcon icon="stock" />}
         actions={[
           {
@@ -329,7 +320,6 @@ export default function Stock() {
         ]}
       />,
       <ActionDropdown
-        key="location"
         tooltip={t`Location Actions`}
         icon={<IconDots />}
         actions={[

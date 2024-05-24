@@ -277,6 +277,10 @@ export function ApiForm({
               res[k] = processFields(field.children, dataValue);
             } else {
               res[k] = dataValue;
+
+              if (field.onValueChange) {
+                field.onValueChange(dataValue, data);
+              }
             }
           }
 
@@ -497,7 +501,7 @@ export function ApiForm({
             {/* Form Fields */}
             <Stack gap="sm">
               {(!isValid || nonFieldErrors.length > 0) && (
-                <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
+                <Alert radius="sm" color="red" title={t`Error`}>
                   {nonFieldErrors.length > 0 && (
                     <Stack gap="xs">
                       {nonFieldErrors.map((message) => (

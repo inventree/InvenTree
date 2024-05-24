@@ -195,6 +195,27 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/user',
     url_detail: '/user/:pk/',
     api_endpoint: ApiEndpoints.user_list
+  },
+  labeltemplate: {
+    label: t`Label Template`,
+    label_multiple: t`Label Templates`,
+    url_overview: '/labeltemplate',
+    url_detail: '/labeltemplate/:pk/',
+    api_endpoint: ApiEndpoints.label_list
+  },
+  reporttemplate: {
+    label: t`Report Template`,
+    label_multiple: t`Report Templates`,
+    url_overview: '/reporttemplate',
+    url_detail: '/reporttemplate/:pk/',
+    api_endpoint: ApiEndpoints.report_list
+  },
+  pluginconfig: {
+    label: t`Plugin Configuration`,
+    label_multiple: t`Plugin Configurations`,
+    url_overview: '/pluginconfig',
+    url_detail: '/pluginconfig/:pk/',
+    api_endpoint: ApiEndpoints.plugin_list
   }
 };
 

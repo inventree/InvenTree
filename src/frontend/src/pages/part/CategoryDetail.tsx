@@ -204,7 +204,6 @@ export default function CategoryDetail({}: {}) {
     return [
       <AdminButton model={ModelType.partcategory} pk={category.pk} />,
       <ActionDropdown
-        key="category"
         tooltip={t`Category Actions`}
         icon={<IconDots />}
         actions={[

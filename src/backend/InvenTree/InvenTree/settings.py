@@ -193,7 +193,6 @@ INSTALLED_APPS = [
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
-    'label.apps.LabelConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
@@ -434,12 +433,7 @@ ROOT_URLCONF = 'InvenTree.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR.joinpath('templates'),
-            # Allow templates in the reporting directory to be accessed
-            MEDIA_ROOT.joinpath('report'),
-            MEDIA_ROOT.joinpath('label'),
-        ],
+        'DIRS': [BASE_DIR.joinpath('templates'), MEDIA_ROOT.joinpath('report')],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -1022,8 +1016,12 @@ if SITE_URL:
     logger.info('Using Site URL: %s', SITE_URL)
 
     # Check that the site URL is valid
-    validator = URLValidator()
-    validator(SITE_URL)
+    try:
+        validator = URLValidator()
+        validator(SITE_URL)
+    except Exception:
+        print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
+        sys.exit(-1)
 
 # Enable or disable multi-site framework
 SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)

@@ -291,9 +291,8 @@
 
         printLabels({
             items: locs,
+            model_type: 'stocklocation',
             singular_name: '{% trans "stock location" escape %}',
-            key: 'location',
-            url: '{% url "api-stocklocation-label-list" %}',
         });
     });
     {% endif %}
@@ -301,11 +300,7 @@
     {% if report_enabled %}
     $('#print-location-report').click(function() {
 
-        printReports({
-            items: [{{ location.pk }}],
-            key: 'location',
-            url: '{% url "api-stocklocation-report-list" %}',
-        });
+        printReports('stocklocation', [{{ location.pk }}]);
     });
     {% endif %}
 

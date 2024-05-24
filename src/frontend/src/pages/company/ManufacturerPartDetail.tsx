@@ -210,7 +210,6 @@ export default function ManufacturerPartDetail() {
         pk={manufacturerPart.pk}
       />,
       <ActionDropdown
-        key="part"
         tooltip={t`Manufacturer Part Actions`}
         icon={<IconDots />}
         actions={[

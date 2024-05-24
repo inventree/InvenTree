@@ -9,9 +9,10 @@ import {
   IconListDetails,
   IconPackages,
   IconPlugConnected,
+  IconReport,
   IconScale,
   IconSitemap,
-  IconTemplate,
+  IconTags,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
@@ -21,6 +22,12 @@ import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
+
+const ReportTemplatePanel = Loadable(
+  lazy(() => import('./ReportTemplatePanel'))
+);
+
+const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
@@ -64,10 +71,6 @@ const LocationTypesTable = Loadable(
 
 const CurrencyTable = Loadable(
   lazy(() => import('../../../../tables/settings/CurrencyTable'))
-);
-
-const TemplateManagementPanel = Loadable(
-  lazy(() => import('./TemplateManagementPanel'))
 );
 
 export default function AdminCenter() {
@@ -128,16 +131,22 @@ export default function AdminCenter() {
         content: <PartCategoryTemplateTable />
       },
       {
+        name: 'labels',
+        label: t`Label Templates`,
+        icon: <IconTags />,
+        content: <LabelTemplatePanel />
+      },
+      {
+        name: 'reports',
+        label: t`Report Templates`,
+        icon: <IconReport />,
+        content: <ReportTemplatePanel />
+      },
+      {
         name: 'location-types',
         label: t`Location types`,
         icon: <IconPackages />,
         content: <LocationTypesTable />
-      },
-      {
-        name: 'templates',
-        label: t`Templates`,
-        icon: <IconTemplate />,
-        content: <TemplateManagementPanel />
       },
       {
         name: 'plugin',

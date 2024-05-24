@@ -1,7 +1,5 @@
 """JSON serializers for Build API."""
 
-from decimal import Decimal
-
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
@@ -22,7 +20,8 @@ import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField
 from InvenTree.status_codes import StockStatus
 
-from stock.models import generate_batch_code, StockItem, StockLocation
+from stock.generators import generate_batch_code
+from stock.models import StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
 import common.models
@@ -236,6 +235,16 @@ class BuildOutputCreateSerializer(serializers.Serializer):
 
     The Build object is provided to the serializer context.
     """
+
+    class Meta:
+        """Serializer metaclass."""
+        fields = [
+            'quantity',
+            'batch_code',
+            'serial_numbers',
+            'location',
+            'auto_allocate',
+        ]
 
     quantity = serializers.DecimalField(
         max_digits=15,
@@ -639,6 +648,14 @@ class OverallocationChoice():
 class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
 
+    class Meta:
+        """Serializer metaclass"""
+        fields = [
+            'accept_overallocated',
+            'accept_unallocated',
+            'accept_incomplete',
+        ]
+
     def get_context_data(self):
         """Retrieve extra context data for this serializer.
 
@@ -731,6 +748,13 @@ class BuildUnallocationSerializer(serializers.Serializer):
     - output: Filter against a particular build output (blank = untracked stock)
     - bom_item: Filter against a particular BOM line item
     """
+
+    class Meta:
+        """Serializer metaclass"""
+        fields = [
+            'build_line',
+            'output',
+        ]
 
     build_line = serializers.PrimaryKeyRelatedField(
         queryset=BuildLine.objects.all(),

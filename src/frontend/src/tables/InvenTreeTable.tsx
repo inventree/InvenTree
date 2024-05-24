@@ -15,7 +15,6 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconBarcode,
   IconFilter,
-  IconPrinter,
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
@@ -38,6 +37,7 @@ import { api } from '../App';
 import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
+import { PrintingActions } from '../components/buttons/PrintingActions';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
 import { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
@@ -46,7 +46,6 @@ import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
 import { TableState } from '../hooks/UseTable';
-import { base_url } from '../main';
 import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
 import { TableColumnSelect } from './ColumnSelect';
@@ -70,13 +69,14 @@ const defaultPageSize: number = 25;
  * @param enableFilters : boolean - Enable filter actions
  * @param enableSelection : boolean - Enable row selection
  * @param enableSearch : boolean - Enable search actions
+ * @param enableLabels : boolean - Enable printing of labels against selected items
+ * @param enableReports : boolean - Enable printing of reports against selected items
  * @param enablePagination : boolean - Enable pagination
  * @param enableRefresh : boolean - Enable refresh actions
  * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
- * @param printingActions : any[] - List of printing actions
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
@@ -94,11 +94,12 @@ export type InvenTreeTableProps<T = any> = {
   enableSearch?: boolean;
   enablePagination?: boolean;
   enableRefresh?: boolean;
+  enableLabels?: boolean;
+  enableReports?: boolean;
   pageSize?: number;
   barcodeActions?: any[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
-  printingActions?: any[];
   rowExpansion?: any;
   idAccessor?: string;
   dataFormatter?: (data: any) => any;
@@ -117,6 +118,8 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
   noRecordsText: t`No records found`,
   enableDownload: false,
+  enableLabels: false,
+  enableReports: false,
   enableFilters: true,
   enablePagination: true,
   enableRefresh: true,
@@ -124,7 +127,6 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   enableSelection: false,
   pageSize: defaultPageSize,
   defaultSortColumn: '',
-  printingActions: [],
   barcodeActions: [],
   tableFilters: [],
   tableActions: [],
@@ -226,13 +228,16 @@ export function InvenTreeTable<T = any>({
   }, [props]);
 
   // Check if any columns are switchable (can be hidden)
-  const hasSwitchableColumns = columns.some(
-    (col: TableColumn) => col.switchable ?? true
-  );
+  const hasSwitchableColumns: boolean = useMemo(() => {
+    return columns.some((col: TableColumn) => col.switchable ?? true);
+  }, [columns]);
 
-  const onSelectedRecordsChange = useCallback((records: any[]) => {
-    tableState.setSelectedRecords(records);
-  }, []);
+  const onSelectedRecordsChange = useCallback(
+    (records: any[]) => {
+      tableState.setSelectedRecords(records);
+    },
+    [tableState.setSelectedRecords]
+  );
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
@@ -258,10 +263,11 @@ export function InvenTreeTable<T = any>({
         hidden: false,
         switchable: false,
         width: 50,
-        render: (record: any) => (
+        render: (record: any, index?: number | undefined) => (
           <RowActions
             actions={tableProps.rowActions?.(record) ?? []}
             disabled={tableState.selectedRecords.length > 0}
+            index={index}
           />
         )
       });
@@ -572,13 +578,22 @@ export function InvenTreeTable<T = any>({
           />
         </Boundary>
       )}
-      <Boundary label="inventreetable">
+      <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
         <Stack gap="sm">
-          <Group justify="space-between">
+          <Group justify="apart" grow>
             <Group justify="left" key="custom-actions" gap={5}>
-              {tableProps.tableActions?.map((group, idx) => (
-                <Fragment key={idx}>{group}</Fragment>
-              ))}
+              {tableProps.enableDownload && (
+                <DownloadAction
+                  key="download-action"
+                  downloadCallback={downloadData}
+                />
+              )}
+              <PrintingActions
+                items={tableState.selectedIds}
+                modelType={tableProps.modelType}
+                enableLabels={tableProps.enableLabels}
+                enableReports={tableProps.enableReports}
+              />
               {(tableProps.barcodeActions?.length ?? 0 > 0) && (
                 <ButtonMenu
                   key="barcode-actions"
@@ -588,24 +603,18 @@ export function InvenTreeTable<T = any>({
                   actions={tableProps.barcodeActions ?? []}
                 />
               )}
-              {(tableProps.printingActions?.length ?? 0 > 0) && (
-                <ButtonMenu
-                  key="printing-actions"
-                  icon={<IconPrinter />}
-                  label={t`Print actions`}
-                  tooltip={t`Print actions`}
-                  actions={tableProps.printingActions ?? []}
-                />
-              )}
               {(tableProps.enableBulkDelete ?? false) && (
                 <ActionButton
-                  disabled={tableState.selectedRecords.length == 0}
+                  disabled={!tableState.hasSelectedRecords}
                   icon={<IconTrash />}
                   color="red"
                   tooltip={t`Delete selected records`}
                   onClick={deleteSelectedRecords}
                 />
               )}
+              {tableProps.tableActions?.map((group, idx) => (
+                <Fragment key={idx}>{group}</Fragment>
+              ))}
             </Group>
             <Space />
             <Group justify="right" gap={5}>
@@ -643,12 +652,6 @@ export function InvenTreeTable<T = any>({
                     </Tooltip>
                   </ActionIcon>
                 </Indicator>
-              )}
-              {tableProps.enableDownload && (
-                <DownloadAction
-                  key="download-action"
-                  downloadCallback={downloadData}
-                />
               )}
             </Group>
           </Group>

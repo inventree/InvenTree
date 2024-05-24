@@ -10,6 +10,7 @@ import {
 import { IconChevronDown } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { identifierString } from '../../functions/conversion';
 import { TablerIconType } from '../../functions/icons';
 import * as classes from './SplitButton.css';
 
@@ -25,6 +26,7 @@ interface SplitButtonOption {
 interface SplitButtonProps {
   options: SplitButtonOption[];
   defaultSelected: string;
+  name: string;
   selected?: string;
   setSelected?: (value: string) => void;
   loading?: boolean;
@@ -34,6 +36,7 @@ export function SplitButton({
   options,
   defaultSelected,
   selected,
+  name,
   setSelected,
   loading
 }: Readonly<SplitButtonProps>) {
@@ -61,6 +64,7 @@ export function SplitButton({
         disabled={loading ? false : currentOption?.disabled}
         className={classes.button}
         loading={loading}
+        aria-label={`split-button-${name}`}
       >
         {currentOption?.name}
       </Button>
@@ -75,6 +79,7 @@ export function SplitButton({
             color={theme.primaryColor}
             size={36}
             className={classes.icon}
+            aria-label={`split-button-${name}-action`}
           >
             <IconChevronDown size={16} />
           </ActionIcon>
@@ -88,6 +93,9 @@ export function SplitButton({
                 setCurrent(option.key);
                 option.onClick();
               }}
+              aria-label={`split-button-${name}-item-${identifierString(
+                option.key
+              )}`}
               disabled={option.disabled}
               leftSection={<option.icon />}
             >
