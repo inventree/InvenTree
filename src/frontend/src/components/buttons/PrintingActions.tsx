@@ -15,11 +15,13 @@ import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
   items,
+  hidden,
   enableLabels,
   enableReports,
   modelType
 }: {
   items: number[];
+  hidden?: boolean;
   enableLabels?: boolean;
   enableReports?: boolean;
   modelType?: ModelType;
@@ -164,28 +166,30 @@ export function PrintingActions({
   }
 
   return (
-    <>
-      {reportModal.modal}
-      {labelModal.modal}
-      <ActionDropdown
-        tooltip={t`Printing Actions`}
-        icon={<IconPrinter />}
-        disabled={!enabled}
-        actions={[
-          {
-            name: t`Print Labels`,
-            icon: <IconTags />,
-            onClick: () => labelModal.open(),
-            hidden: !enableLabels
-          },
-          {
-            name: t`Print Reports`,
-            icon: <IconReport />,
-            onClick: () => reportModal.open(),
-            hidden: !enableReports
-          }
-        ]}
-      />
-    </>
+    !hidden && (
+      <>
+        {reportModal.modal}
+        {labelModal.modal}
+        <ActionDropdown
+          tooltip={t`Printing Actions`}
+          icon={<IconPrinter />}
+          disabled={!enabled}
+          actions={[
+            {
+              name: t`Print Labels`,
+              icon: <IconTags />,
+              onClick: () => labelModal.open(),
+              hidden: !enableLabels
+            },
+            {
+              name: t`Print Reports`,
+              icon: <IconReport />,
+              onClick: () => reportModal.open(),
+              hidden: !enableReports
+            }
+          ]}
+        />
+      </>
+    )
   );
 }

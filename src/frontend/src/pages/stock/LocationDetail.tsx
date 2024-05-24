@@ -294,6 +294,7 @@ export default function Stock() {
       <PrintingActions
         modelType={ModelType.stocklocation}
         items={[location.pk ?? 0]}
+        hidden={!location?.pk}
         enableLabels
         enableReports
       />,
