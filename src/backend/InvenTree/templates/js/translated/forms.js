@@ -2030,7 +2030,7 @@ function initializeRelatedField(field, fields, options={}) {
 
                 // Each 'row' must have the 'id' attribute
                 for (var idx = 0; idx < data.length; idx++) {
-                    data[idx].id = data[idx][field.idField ?? 'pk'];
+                    data[idx].id = data[idx][field.pk_field ?? 'pk'];
                 }
 
                 // Ref: https://select2.org/data-sources/formats
@@ -2054,7 +2054,7 @@ function initializeRelatedField(field, fields, options={}) {
                 data = item.element.instance;
             }
 
-            const pkField = field.idField ?? 'pk';
+            const pkField = field.pk_field ?? 'pk';
 
             if (!data[pkField]) {
                 return $(searching());
@@ -2077,7 +2077,7 @@ function initializeRelatedField(field, fields, options={}) {
             // Or, use the raw 'item' data as a backup
             var data = item;
 
-            const pkField = field.idField ?? 'pk';
+            const pkField = field.pk_field ?? 'pk';
 
             if (item.element && item.element.instance) {
                 data = item.element.instance;
@@ -2250,7 +2250,9 @@ function setRelatedFieldData(name, data, options={}) {
 
     var select = getFormFieldElement(name, options);
 
-    var option = new Option(name, data.pk, true, true);
+    const pkField = options?.fields[name]?.pk_field ?? 'pk';
+
+    var option = new Option(name, data[pkField], true, true);
 
     // Assign the JSON data to the 'instance' attribute,
     // so we can access and render it later
