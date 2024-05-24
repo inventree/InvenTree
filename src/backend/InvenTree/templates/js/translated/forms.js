@@ -2030,7 +2030,7 @@ function initializeRelatedField(field, fields, options={}) {
 
                 // Each 'row' must have the 'id' attribute
                 for (var idx = 0; idx < data.length; idx++) {
-                    data[idx].id = data[idx].pk;
+                    data[idx].id = data[idx][field.idField ?? 'pk'];
                 }
 
                 // Ref: https://select2.org/data-sources/formats
@@ -2054,7 +2054,9 @@ function initializeRelatedField(field, fields, options={}) {
                 data = item.element.instance;
             }
 
-            if (!data.pk) {
+            const pkField = field.idField ?? 'pk';
+
+            if (!data[pkField]) {
                 return $(searching());
             }
 
@@ -2075,6 +2077,8 @@ function initializeRelatedField(field, fields, options={}) {
             // Or, use the raw 'item' data as a backup
             var data = item;
 
+            const pkField = field.idField ?? 'pk';
+
             if (item.element && item.element.instance) {
                 data = item.element.instance;
             }
@@ -2084,7 +2088,7 @@ function initializeRelatedField(field, fields, options={}) {
                 field.onSelect(data, field, options);
             }
 
-            if (!data.pk) {
+            if (!data[pkField]) {
                 return field.placeholder || '';
             }
 
