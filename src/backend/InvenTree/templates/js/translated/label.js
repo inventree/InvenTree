@@ -73,7 +73,7 @@ function printLabels(options) {
         inventreeGet(
             url,
             {
-                plugin: plugin_name,
+                plugin: plugin_name || undefined,
             },
             {
                 method: 'OPTIONS',
@@ -88,13 +88,11 @@ function printLabels(options) {
     // Callback when a particular label printing plugin is selected
     function onPluginSelected(value, name, field, formOptions) {
 
-        console.log("plugin selected:", value);
-
         if (value == plugin_name) {
             return;
         }
 
-        pluginId = value;
+        pluginName = value;
 
         // Request new printing options for the selected plugin
         getPrintingFields(value, function(fields) {
