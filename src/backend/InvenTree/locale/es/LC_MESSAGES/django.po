@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-24 13:32+0000\n"
-"PO-Revision-Date: 2024-05-23 11:39\n"
+"POT-Creation-Date: 2024-05-23 23:15+0000\n"
+"PO-Revision-Date: 2024-05-25 11:45\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -86,7 +86,7 @@ msgstr ""
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
-msgstr ""
+msgstr "El valor proporcionado no coincide con el patrón requerido: "
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
@@ -257,103 +257,103 @@ msgstr "Hindi"
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
-msgstr ""
+msgstr "Húngaro"
 
 #: InvenTree/locales.py:32
 msgid "Italian"
-msgstr ""
+msgstr "Italiano"
 
 #: InvenTree/locales.py:33
 msgid "Japanese"
-msgstr ""
+msgstr "Japonés"
 
 #: InvenTree/locales.py:34
 msgid "Korean"
-msgstr ""
+msgstr "Coreano"
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr ""
+msgstr "Letón"
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
-msgstr ""
+msgstr "Holandés"
 
 #: InvenTree/locales.py:37
 msgid "Norwegian"
-msgstr ""
+msgstr "Noruego"
 
 #: InvenTree/locales.py:38
 msgid "Polish"
-msgstr ""
+msgstr "Polaco"
 
 #: InvenTree/locales.py:39
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugués"
 
 #: InvenTree/locales.py:40
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugués (Brasileño)"
 
 #: InvenTree/locales.py:41
 msgid "Russian"
-msgstr ""
+msgstr "Ruso"
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
-msgstr ""
+msgstr "Eslovaco"
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
-msgstr ""
+msgstr "Esloveno"
 
 #: InvenTree/locales.py:44
 msgid "Serbian"
-msgstr ""
+msgstr "Serbio"
 
 #: InvenTree/locales.py:45
 msgid "Swedish"
-msgstr ""
+msgstr "Sueco"
 
 #: InvenTree/locales.py:46
 msgid "Thai"
-msgstr ""
+msgstr "Tailandés"
 
 #: InvenTree/locales.py:47
 msgid "Turkish"
-msgstr ""
+msgstr "Turco"
 
 #: InvenTree/locales.py:48
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ucraniano"
 
 #: InvenTree/locales.py:49
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamita"
 
 #: InvenTree/locales.py:50
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Chino (Simplificado)"
 
 #: InvenTree/locales.py:51
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Chino (Tradicional)"
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr ""
+msgstr "[{site_name}] Iniciar sesión en la aplicación"
 
 #: InvenTree/magic_login.py:38 company/models.py:133
 #: company/templates/company/company_base.html:138
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:677
 msgid "Email"
-msgstr ""
+msgstr "Correo electrónico"
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Error al ejecutar la validación del plugin"
 
 #: InvenTree/models.py:176
 msgid "Metadata must be a python dict object"
@@ -14317,3 +14317,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
