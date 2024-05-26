@@ -21,6 +21,25 @@ def get_repo_url(raw=False):
         return f'https://github.com/{repo_name}/'
 
 
+def check_link(url) -> bool:
+    """Check that a provided URL is valid.
+
+    We allow a number attempts and a lengthy timeout,
+    as we do not want false negatives.
+    """
+    attempts = 5
+
+    while attempts > 0:
+        attempts -= 1
+
+        response = requests.head(url, timeout=5000)
+
+        if response.status_code == 200:
+            return True
+
+    return False
+
+
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
 
@@ -47,8 +66,6 @@ def define_env(env):
         directory = os.path.join(root, dirname)
         directory = os.path.abspath(directory)
 
-        print('checking dir:', directory)
-
         if not os.path.exists(directory) or not os.path.isdir(directory):
             raise FileNotFoundError(f'Source directory {dirname} does not exist.')
 
@@ -57,9 +74,7 @@ def define_env(env):
         url = f'{repo_url}/tree/{branch}/{dirname}'
 
         # Check that the URL exists before returning it
-        response = requests.head(url)
-
-        if response.status_code != 200:
+        if not check_link(url):
             raise FileNotFoundError(f'URL {url} does not exist.')
 
         return url
@@ -96,12 +111,8 @@ def define_env(env):
         else:
             url = f'{repo_url}/blob/{branch}/{filename}'
 
-        print(filename, '->', url)
-
         # Check that the URL exists before returning it
-        response = requests.head(url)
-
-        if response.status_code != 200:
+        if not check_link(url):
             raise FileNotFoundError(f'URL {url} does not exist.')
 
         return url
