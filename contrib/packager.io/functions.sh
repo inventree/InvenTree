@@ -53,6 +53,7 @@ function detect_python() {
     echo "# Found earliest version: ${SETUP_PYTHON}"
   else
     echo "# No python environment found - using ${SETUP_PYTHON}"
+  fi
 }
 
 function get_env() {
