@@ -33,6 +33,7 @@ detect_envs
 detect_docker
 detect_initcmd
 detect_ip
+detect_python
 
 # create processes
 create_initscripts

@@ -44,6 +44,17 @@ function detect_ip() {
   echo "IP address is ${INVENTREE_IP}"
 }
 
+function detect_python() {
+  # Detect if there is already a python version installed in /opt/inventree/env/lib
+  if test -f "${APP_HOME}/env/bin/python"; then
+    echo "# Python environment already present"
+    # Extract earliest python version initialised from /opt/inventree/env/lib
+    SETUP_PYTHON=$(ls -1 ${APP_HOME}/env/bin/python* | sort | head -n 1)
+    echo "# Found earliest version: ${SETUP_PYTHON}"
+  else
+    echo "# No python environment found - using ${SETUP_PYTHON}"
+}
+
 function get_env() {
   envname=$1
 
@@ -90,7 +101,7 @@ function detect_envs() {
     echo "# Using existing config file: ${INVENTREE_CONFIG_FILE}"
 
     # Install parser
-    pip install --require-hashes -r ${APP_HOME}/.github/requirements.txt -q
+    pip install --require-hashes -r ${APP_HOME}/contrib/dev_reqs/requirements.txt -q
 
     # Load config
     local CONF=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
@@ -163,12 +174,20 @@ function create_initscripts() {
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && ${SETUP_PYTHON} -m venv env"
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install invoke wheel"
 
+    # Check INSTALLER_EXTRA exists and load it
+    if test -f "${APP_HOME}/INSTALLER_EXTRA"; then
+      echo "# Loading extra packages from INSTALLER_EXTRA"
+      source ${APP_HOME}/INSTALLER_EXTRA
+    fi
+
     if [ -n "${SETUP_EXTRA_PIP}" ]; then
       echo "# Installing extra pip packages"
       if [ -n "${SETUP_DEBUG}" ]; then
         echo "# Extra pip packages: ${SETUP_EXTRA_PIP}"
       fi
       sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install ${SETUP_EXTRA_PIP}"
+      # Write extra packages to INSTALLER_EXTRA
+      echo "SETUP_EXTRA_PIP='${SETUP_EXTRA_PIP}'" >>${APP_HOME}/INSTALLER_EXTRA
     fi
   fi
 
@@ -248,6 +267,7 @@ function set_env() {
   echo "# Setting up InvenTree config values"
 
   inventree config:set INVENTREE_CONFIG_FILE=${INVENTREE_CONFIG_FILE}
+  inventree config:set INVENTREE_SITE_URL=http://${INVENTREE_IP}
 
   # Changing the config file
   echo "# Writing the settings to the config file ${INVENTREE_CONFIG_FILE}"
