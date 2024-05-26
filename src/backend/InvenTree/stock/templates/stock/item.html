@@ -233,6 +233,7 @@
 
     {% settings_value "TEST_STATION_DATA" as test_station_fields %}
 
+    {% if item.part.trackable %}
     loadStockTestResultsTable(
         $("#test-result-table"), {
             part: {{ item.part.id }},
@@ -248,6 +249,7 @@
             url: '{% url "api-stockitem-testreport-list" %}',
         });
     });
+    {% endif %}
 
     {% if user.is_staff %}
     $("#delete-test-results").click(function() {
