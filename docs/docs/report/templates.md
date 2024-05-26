@@ -39,7 +39,7 @@ To read more about the model types for which templates can be rendered, and the 
 InvenTree is supplied with a number of default templates "out of the box" - for generating both labels and reports. These are generally quite simple, but serve as a starting point for building custom reports to suit a specific need.
 
 !!! tip "Read the Source"
-    The source code for the default reports is [available on GitHub](https://github.com/inventree/InvenTree/tree/master/src/backend/InvenTree/report/templates/report). Use this as a guide for generating your own reports!
+    The source code for the default reports is [available on GitHub]({{ sourcedir("src/backend/InvenTree/report/templates/report") }}). Use this as a guide for generating your own reports!
 
 ### Extending with Plugins
 

@@ -15,6 +15,14 @@ wget -qO install.sh https://get.inventree.org && bash install.sh
 
 This script does all manual steps without any input. The installation might take up to 5-10 minutes to finish.
 
+#### Permission Denied Error
+
+The above command may need to be run with `sudo` permissions, depending on the system configuration. So, if the script fails with a permission error, try:
+
+```bash
+sudo wget -qO install.sh https://get.inventree.org && sudo bash install.sh
+```
+
 ### File Locations
 
 The installer creates the following directories:
