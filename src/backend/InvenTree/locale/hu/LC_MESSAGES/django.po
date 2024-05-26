@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-24 13:32+0000\n"
+"POT-Creation-Date: 2024-05-26 11:44+0000\n"
 "PO-Revision-Date: 2024-05-23 11:38\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -9429,7 +9429,7 @@ msgstr "Teszt adatok"
 msgid "Test Report"
 msgstr "Teszt riport"
 
-#: stock/templates/stock/item.html:89 stock/templates/stock/item.html:282
+#: stock/templates/stock/item.html:89 stock/templates/stock/item.html:284
 msgid "Delete Test Data"
 msgstr "Teszt adatok törlése"
 
@@ -9449,11 +9449,11 @@ msgstr "Beépített készlet tételek"
 msgid "Install Stock Item"
 msgstr "Készlet tétel beépítése"
 
-#: stock/templates/stock/item.html:270
+#: stock/templates/stock/item.html:272
 msgid "Delete all test results for this stock item"
 msgstr "Készlet tétel összes teszt eredményének törlése"
 
-#: stock/templates/stock/item.html:300 templates/js/translated/stock.js:1701
+#: stock/templates/stock/item.html:302 templates/js/translated/stock.js:1701
 msgid "Add Test Result"
 msgstr "Teszt eredmény hozzáadása"
 
