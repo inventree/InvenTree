@@ -27,7 +27,7 @@ The following guide provides a streamlined production InvenTree installation, wi
 
 ### Required Files
 
-The following files required for this setup are provided with the InvenTree source, located in the `/contrib/container/` directory of the [InvenTree source code](https://github.com/inventree/InvenTree/tree/master/contrib/container/):
+The following files required for this setup are provided with the InvenTree source, located in the `contrib/container/` directory of the [InvenTree source code]({{ sourcedir("/contrib/container/") }}):
 
 | Filename | Description |
 | --- | --- |

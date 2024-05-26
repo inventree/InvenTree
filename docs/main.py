@@ -7,20 +7,65 @@ import requests
 import yaml
 
 
-def get_repo_url():
+def get_repo_url(raw=False):
     """Return the repository URL for the current project."""
     mkdocs_yml = os.path.join(os.path.dirname(__file__), 'mkdocs.yml')
 
     with open(mkdocs_yml, 'r') as f:
         mkdocs_config = yaml.safe_load(f)
-        return mkdocs_config['repo_url']
+        repo_name = mkdocs_config['repo_name']
+
+    if raw:
+        return f'https://raw.githubusercontent.com/{repo_name}/'
+    else:
+        return f'https://github.com/{repo_name}/'
 
 
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
 
     @env.macro
-    def sourcefile(filename, branch='master'):
+    def sourcedir(dirname, branch='master'):
+        """Return a link to a directory within the source code repository.
+
+        Arguments:
+            - dirname: The name of the directory to link to (relative to the top-level directory)
+
+        Returns:
+            - A fully qualified URL to the source code directory on GitHub
+
+        Raises:
+            - FileNotFoundError: If the directory does not exist, or the generated URL is invalid
+        """
+        if dirname.startswith('/'):
+            dirname = dirname[1:]
+
+        # This file exists at ./docs/main.py, so any directory we link to must be relative to the top-level directory
+        here = os.path.dirname(__file__)
+        root = os.path.abspath(os.path.join(here, '..'))
+
+        directory = os.path.join(root, dirname)
+        directory = os.path.abspath(directory)
+
+        print('checking dir:', directory)
+
+        if not os.path.exists(directory) or not os.path.isdir(directory):
+            raise FileNotFoundError(f'Source directory {dirname} does not exist.')
+
+        repo_url = get_repo_url()
+
+        url = f'{repo_url}/tree/{branch}/{dirname}'
+
+        # Check that the URL exists before returning it
+        response = requests.head(url)
+
+        if response.status_code != 200:
+            raise FileNotFoundError(f'URL {url} does not exist.')
+
+        return url
+
+    @env.macro
+    def sourcefile(filename, branch='master', raw=False):
         """Return a link to a file within the source code repository.
 
         Arguments:
@@ -32,6 +77,9 @@ def define_env(env):
         Raises:
             - FileNotFoundError: If the file does not exist, or the generated URL is invalid
         """
+        if filename.startswith('/'):
+            filename = filename[1:]
+
         # This file exists at ./docs/main.py, so any file we link to must be relative to the top-level directory
         here = os.path.dirname(__file__)
         root = os.path.abspath(os.path.join(here, '..'))
@@ -41,9 +89,14 @@ def define_env(env):
         if not os.path.exists(file_path):
             raise FileNotFoundError(f'Source file {filename} does not exist.')
 
-        repo_url = get_repo_url()
+        repo_url = get_repo_url(raw=raw)
 
-        url = f'{repo_url}/blob/{branch}/{filename}'
+        if raw:
+            url = f'{repo_url}/{branch}/{filename}'
+        else:
+            url = f'{repo_url}/blob/{branch}/{filename}'
+
+        print(filename, '->', url)
 
         # Check that the URL exists before returning it
         response = requests.head(url)

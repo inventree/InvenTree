@@ -72,7 +72,7 @@ MIN_VERSION = None  # Lowest InvenTree version number that is supported by the p
 MAX_VERSION = None  # Highest InvenTree version number that is supported by the plugin
 ```
 
-Refer to the [sample plugins](https://github.com/inventree/InvenTree/tree/master/src/backend/InvenTree/plugin/samples) for further examples.
+Refer to the [sample plugins]({{ sourcedir("src/backend/InvenTree/plugin/samples") }}) for further examples.
 
 ### Plugin Config
 
