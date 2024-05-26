@@ -268,7 +268,6 @@ function set_env() {
   echo "# Setting up InvenTree config values"
 
   inventree config:set INVENTREE_CONFIG_FILE=${INVENTREE_CONFIG_FILE}
-  inventree config:set INVENTREE_SITE_URL=http://${INVENTREE_IP}
 
   # Changing the config file
   echo "# Writing the settings to the config file ${INVENTREE_CONFIG_FILE}"
@@ -302,6 +301,20 @@ function set_env() {
 
   # Fixing the permissions
   chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} ${INVENTREE_CONFIG_FILE}
+}
+
+function set_site() {
+  # Ensure IP is known
+  if [ -z "${INVENTREE_IP}" ]; then
+    echo "# No IP address found - skipping"
+    return
+  fi
+
+  # Check if INVENTREE_SITE_URL in inventree config
+  if [ -z "$(inventree config:get INVENTREE_SITE_URL)" ]; then
+    echo "# Setting up InvenTree site URL"
+    inventree config:set INVENTREE_SITE_URL=http://${INVENTREE_IP}
+  fi
 }
 
 function final_message() {

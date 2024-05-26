@@ -46,6 +46,7 @@ update_or_install
 if [ "${SETUP_CONF_LOADED}" = "true" ]; then
   set_env
 fi
+set_site
 start_inventree
 
 # show info
