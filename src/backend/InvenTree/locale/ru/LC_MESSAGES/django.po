@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-23 11:25+0000\n"
+"POT-Creation-Date: 2024-05-24 13:32+0000\n"
 "PO-Revision-Date: 2024-05-23 11:39\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -56,8 +56,8 @@ msgstr "Подробности об ошибке можно найти в пан
 msgid "Enter date"
 msgstr "Введите дату"
 
-#: InvenTree/fields.py:208 InvenTree/models.py:1035 build/serializers.py:443
-#: build/serializers.py:521 build/templates/build/sidebar.html:21
+#: InvenTree/fields.py:208 InvenTree/models.py:1035 build/serializers.py:453
+#: build/serializers.py:531 build/templates/build/sidebar.html:21
 #: company/models.py:849 company/templates/company/sidebar.html:37
 #: order/models.py:1323 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
@@ -1116,7 +1116,7 @@ msgstr "Ссылка на заказ"
 msgid "SalesOrder to which this build is allocated"
 msgstr "Заказ на продажу, которому принадлежит этот заказ на производство"
 
-#: build/models.py:256 build/serializers.py:969
+#: build/models.py:256 build/serializers.py:994
 #: templates/js/translated/build.js:1731
 #: templates/js/translated/sales_order.js:1221
 msgid "Source Location"
@@ -1158,13 +1158,13 @@ msgstr "Статус заказа на производство"
 msgid "Build status code"
 msgstr "Код статуса заказа на производство"
 
-#: build/models.py:299 build/serializers.py:277 order/serializers.py:581
+#: build/models.py:299 build/serializers.py:287 order/serializers.py:581
 #: stock/models.py:844 stock/serializers.py:75 stock/serializers.py:1462
 #: templates/js/translated/purchase_order.js:1129
 msgid "Batch Code"
 msgstr "Код партии"
 
-#: build/models.py:303 build/serializers.py:278
+#: build/models.py:303 build/serializers.py:288
 msgid "Batch code for this build output"
 msgstr "Код партии для продукции"
 
@@ -1279,8 +1279,8 @@ msgstr "Продукция уже произведена"
 msgid "Build output does not match Build Order"
 msgstr "Продукция не совпадает с заказом на производство"
 
-#: build/models.py:922 build/serializers.py:220 build/serializers.py:259
-#: build/serializers.py:836 order/models.py:560 order/serializers.py:433
+#: build/models.py:922 build/serializers.py:220 build/serializers.py:269
+#: build/serializers.py:861 order/models.py:560 order/serializers.py:433
 #: order/serializers.py:576 part/serializers.py:1486 part/serializers.py:1886
 #: stock/models.py:683 stock/models.py:1503 stock/serializers.py:601
 msgid "Quantity must be greater than zero"
@@ -1290,7 +1290,7 @@ msgstr "Количество должно быть больше нуля"
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Количество не может быть больше количества продукции"
 
-#: build/models.py:984 build/serializers.py:538
+#: build/models.py:984 build/serializers.py:548
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr "Сборка {serial} не прошла все необходимые тесты"
@@ -1304,7 +1304,7 @@ msgid "Build object"
 msgstr "Объект производства"
 
 #: build/models.py:1374 build/models.py:1630 build/serializers.py:207
-#: build/serializers.py:244 build/templates/build/build_base.html:102
+#: build/serializers.py:254 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2530
 #: order/models.py:1299 order/models.py:1958 order/serializers.py:1339
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:418
@@ -1379,7 +1379,7 @@ msgstr "Количество должно быть 1 для сериализов
 msgid "Selected stock item does not match BOM line"
 msgstr "Выбранная складская позиция не соответствует позиции в BOM"
 
-#: build/models.py:1617 build/serializers.py:816 order/serializers.py:1183
+#: build/models.py:1617 build/serializers.py:841 order/serializers.py:1183
 #: order/serializers.py:1204 stock/models.py:364 stock/serializers.py:92
 #: stock/serializers.py:695 stock/serializers.py:1181 stock/serializers.py:1293
 #: stock/templates/stock/item_base.html:10
@@ -1413,7 +1413,7 @@ msgstr "Установить в"
 msgid "Destination stock item"
 msgstr "Целевая складская позиция"
 
-#: build/serializers.py:157 build/serializers.py:845
+#: build/serializers.py:157 build/serializers.py:870
 #: templates/js/translated/build.js:1322
 msgid "Build Output"
 msgstr "Выход Продукции"
@@ -1434,29 +1434,29 @@ msgstr "Эта продукция уже помечена как заверше�
 msgid "This build output is not fully allocated"
 msgstr "Сырье для этой продукции не полностью зарезервировано"
 
-#: build/serializers.py:208 build/serializers.py:245
+#: build/serializers.py:208 build/serializers.py:255
 msgid "Enter quantity for build output"
 msgstr "Введите количество продукции"
 
-#: build/serializers.py:266
+#: build/serializers.py:276
 msgid "Integer quantity required for trackable parts"
 msgstr "Для отслеживаемых деталей должно быть указано целочисленное количество"
 
-#: build/serializers.py:269
+#: build/serializers.py:279
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Требуется целое количество, так как материал содержит отслеживаемые детали"
 
-#: build/serializers.py:284 order/serializers.py:589 order/serializers.py:1343
+#: build/serializers.py:294 order/serializers.py:589 order/serializers.py:1343
 #: stock/serializers.py:612 templates/js/translated/purchase_order.js:1153
 #: templates/js/translated/stock.js:367 templates/js/translated/stock.js:565
 msgid "Serial Numbers"
 msgstr "Серийные номера"
 
-#: build/serializers.py:285
+#: build/serializers.py:295
 msgid "Enter serial numbers for build outputs"
 msgstr "Введите серийные номера для продукции"
 
-#: build/serializers.py:290 build/serializers.py:431 build/serializers.py:503
+#: build/serializers.py:300 build/serializers.py:441 build/serializers.py:513
 #: order/serializers.py:565 order/serializers.py:673 order/serializers.py:1679
 #: part/serializers.py:1142 stock/serializers.py:101 stock/serializers.py:623
 #: stock/serializers.py:783 stock/serializers.py:879 stock/serializers.py:1325
@@ -1476,51 +1476,51 @@ msgstr "Введите серийные номера для продукции"
 msgid "Location"
 msgstr "Расположение"
 
-#: build/serializers.py:291
+#: build/serializers.py:301
 msgid "Stock location for build output"
 msgstr ""
 
-#: build/serializers.py:305
+#: build/serializers.py:315
 msgid "Auto Allocate Serial Numbers"
 msgstr "Автоматически выделить серийные номера"
 
-#: build/serializers.py:306
+#: build/serializers.py:316
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Автоматически зарезервировать необходимые элементы с соответствующими серийными номерами"
 
-#: build/serializers.py:321
+#: build/serializers.py:331
 msgid "Serial numbers must be provided for trackable parts"
 msgstr "Для отслеживаемых частей должны быть указаны серийные номера"
 
-#: build/serializers.py:346 stock/api.py:1029
+#: build/serializers.py:356 stock/api.py:1029
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Следующие серийные номера уже существуют или недействительны"
 
-#: build/serializers.py:393 build/serializers.py:455 build/serializers.py:544
+#: build/serializers.py:403 build/serializers.py:465 build/serializers.py:554
 msgid "A list of build outputs must be provided"
 msgstr "Необходимо представить список выхода деталей"
 
-#: build/serializers.py:432
+#: build/serializers.py:442
 msgid "Stock location for scrapped outputs"
 msgstr "Место хранения для списанной продукции"
 
-#: build/serializers.py:438
+#: build/serializers.py:448
 msgid "Discard Allocations"
 msgstr "Отменить резервирование"
 
-#: build/serializers.py:439
+#: build/serializers.py:449
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr "Отменить все резервы запасов для списанной продукции"
 
-#: build/serializers.py:444
+#: build/serializers.py:454
 msgid "Reason for scrapping build output(s)"
 msgstr "Причина списания продукции"
 
-#: build/serializers.py:504
+#: build/serializers.py:514
 msgid "Location for completed build outputs"
 msgstr "Место хранения для завершенной продукции"
 
-#: build/serializers.py:510 build/templates/build/build_base.html:151
+#: build/serializers.py:520 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:953
 #: order/models.py:2071 order/serializers.py:597 stock/admin.py:165
 #: stock/serializers.py:930 stock/serializers.py:1469
@@ -1535,173 +1535,173 @@ msgstr "Место хранения для завершенной продукц
 msgid "Status"
 msgstr "Статус"
 
-#: build/serializers.py:516
+#: build/serializers.py:526
 msgid "Accept Incomplete Allocation"
 msgstr "Разрешить неполное резервирование"
 
-#: build/serializers.py:517
+#: build/serializers.py:527
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Завершить продукцию, если запасы не были полностью распределены"
 
-#: build/serializers.py:597
+#: build/serializers.py:607
 msgid "Consume Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:598
+#: build/serializers.py:608
 msgid "Consume any stock which has already been allocated to this build"
 msgstr ""
 
-#: build/serializers.py:604
+#: build/serializers.py:614
 msgid "Remove Incomplete Outputs"
 msgstr "Удалить незавершенную продукцию"
 
-#: build/serializers.py:605
+#: build/serializers.py:615
 msgid "Delete any build outputs which have not been completed"
 msgstr "Удалить всю незавершенную продукцию"
 
-#: build/serializers.py:632
+#: build/serializers.py:642
 msgid "Not permitted"
 msgstr "Запрещено"
 
-#: build/serializers.py:633
+#: build/serializers.py:643
 msgid "Accept as consumed by this build order"
 msgstr "Принять как поглощенный этим заказом на производство"
 
-#: build/serializers.py:634
+#: build/serializers.py:644
 msgid "Deallocate before completing this build order"
 msgstr "Отменить резерв, до завершения заказа на производство"
 
-#: build/serializers.py:656
+#: build/serializers.py:674
 msgid "Overallocated Stock"
 msgstr "Перераспределенные запасы"
 
-#: build/serializers.py:658
+#: build/serializers.py:676
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr "Как вы хотите обработать дополнительные складские позиции, назначенные для заказа на производство"
 
-#: build/serializers.py:668
+#: build/serializers.py:686
 msgid "Some stock items have been overallocated"
 msgstr "Некоторые складские позиции были перераспределены"
 
-#: build/serializers.py:673
+#: build/serializers.py:691
 msgid "Accept Unallocated"
 msgstr "Разрешить не полное резервирование"
 
-#: build/serializers.py:674
+#: build/serializers.py:692
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr "Подтвердите, что складские позиции не были полностью зарезервированы для этого заказа на производство"
 
-#: build/serializers.py:684 templates/js/translated/build.js:315
+#: build/serializers.py:702 templates/js/translated/build.js:315
 msgid "Required stock has not been fully allocated"
 msgstr "Необходимые запасы не были полностью зарезервированы"
 
-#: build/serializers.py:689 order/serializers.py:301 order/serializers.py:1246
+#: build/serializers.py:707 order/serializers.py:301 order/serializers.py:1246
 msgid "Accept Incomplete"
 msgstr "Разрешить незавершенные производимые детали"
 
-#: build/serializers.py:690
+#: build/serializers.py:708
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr "Допустить, что требуемое кол-во продукции не завершено"
 
-#: build/serializers.py:700 templates/js/translated/build.js:319
+#: build/serializers.py:718 templates/js/translated/build.js:319
 msgid "Required build quantity has not been completed"
 msgstr "Требуемое количество деталей не было произведено"
 
-#: build/serializers.py:709 templates/js/translated/build.js:303
+#: build/serializers.py:727 templates/js/translated/build.js:303
 msgid "Build order has incomplete outputs"
 msgstr "Заказ на производство имеет незавершенную продукцию"
 
-#: build/serializers.py:739
+#: build/serializers.py:764
 msgid "Build Line"
 msgstr "Позиция для производства"
 
-#: build/serializers.py:749
+#: build/serializers.py:774
 msgid "Build output"
 msgstr "Выход продукции"
 
-#: build/serializers.py:757
+#: build/serializers.py:782
 msgid "Build output must point to the same build"
 msgstr "Продукция должна указывать на тот же производство"
 
-#: build/serializers.py:793
+#: build/serializers.py:818
 msgid "Build Line Item"
 msgstr "Позиция для производства"
 
-#: build/serializers.py:807
+#: build/serializers.py:832
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part должна указывать на ту же часть, что и заказ на производство"
 
-#: build/serializers.py:822 stock/serializers.py:1194
+#: build/serializers.py:847 stock/serializers.py:1194
 msgid "Item must be in stock"
 msgstr "Элемент должен быть в наличии"
 
-#: build/serializers.py:870 order/serializers.py:1237
+#: build/serializers.py:895 order/serializers.py:1237
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Превышено доступное количество ({q})"
 
-#: build/serializers.py:876
+#: build/serializers.py:901
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "Продукция должна быть указан для резервирования отслеживаемых частей"
 
-#: build/serializers.py:883
+#: build/serializers.py:908
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Продукция не может быть указана для резервирования не отслеживаемых частей"
 
-#: build/serializers.py:907 order/serializers.py:1489
+#: build/serializers.py:932 order/serializers.py:1489
 msgid "Allocation items must be provided"
 msgstr "Необходимо указать резервируемые элементы"
 
-#: build/serializers.py:970
+#: build/serializers.py:995
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "Место хранения, где будут зарезервированы детали (оставьте пустым, чтобы забрать их из любого места)"
 
-#: build/serializers.py:978
+#: build/serializers.py:1003
 msgid "Exclude Location"
 msgstr "Исключить место хранения"
 
-#: build/serializers.py:979
+#: build/serializers.py:1004
 msgid "Exclude stock items from this selected location"
 msgstr "Исключить складские позиции из этого выбранного места хранения"
 
-#: build/serializers.py:984
+#: build/serializers.py:1009
 msgid "Interchangeable Stock"
 msgstr "Обменный остаток"
 
-#: build/serializers.py:985
+#: build/serializers.py:1010
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "Складские позиции в нескольких местах могут использоваться на взаимозаменяемой основе"
 
-#: build/serializers.py:990
+#: build/serializers.py:1015
 msgid "Substitute Stock"
 msgstr "Заменить остатки"
 
-#: build/serializers.py:991
+#: build/serializers.py:1016
 msgid "Allow allocation of substitute parts"
 msgstr "Разрешить резервирование замещающих деталей"
 
-#: build/serializers.py:996
+#: build/serializers.py:1021
 msgid "Optional Items"
 msgstr "Необязательные элементы"
 
-#: build/serializers.py:997
+#: build/serializers.py:1022
 msgid "Allocate optional BOM items to build order"
 msgstr "Зарезервировать необязательные позиции BOM для заказа на производство"
 
-#: build/serializers.py:1019
+#: build/serializers.py:1044
 msgid "Failed to start auto-allocation task"
 msgstr ""
 
-#: build/serializers.py:1109 part/models.py:3973 part/models.py:4409
+#: build/serializers.py:1134 part/models.py:3973 part/models.py:4409
 #: stock/api.py:792
 msgid "BOM Item"
 msgstr "Позиция BOM"
 
-#: build/serializers.py:1118 templates/js/translated/index.js:130
+#: build/serializers.py:1143 templates/js/translated/index.js:130
 msgid "Allocated Stock"
 msgstr "Зарезервированные Запасы"
 
-#: build/serializers.py:1123 part/admin.py:132 part/bom.py:173
+#: build/serializers.py:1148 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:832 part/serializers.py:1504
 #: part/templates/part/part_base.html:210 templates/js/translated/bom.js:1208
 #: templates/js/translated/build.js:2613 templates/js/translated/part.js:709
@@ -1710,13 +1710,13 @@ msgstr "Зарезервированные Запасы"
 msgid "On Order"
 msgstr "В заказе"
 
-#: build/serializers.py:1128 part/serializers.py:1506
+#: build/serializers.py:1153 part/serializers.py:1506
 #: templates/js/translated/build.js:2617
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
 msgstr "В производстве"
 
-#: build/serializers.py:1133 part/bom.py:172 part/serializers.py:1529
+#: build/serializers.py:1158 part/bom.py:172 part/serializers.py:1529
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1929
 msgid "Available Stock"
@@ -14317,4 +14317,3 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
-

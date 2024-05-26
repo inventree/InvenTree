@@ -12,7 +12,7 @@ Some common functions are provided for use in custom report and label templates.
 ```
 
 !!! tip "Use the Source, Luke"
-    To see the full range of available helper functions, refer to the source file [report.py](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/report/templatetags/report.py) where these functions are defined!
+    To see the full range of available helper functions, refer to the source file [report.py]({{ sourcefile("src/backend/InvenTree/report/templatetags/report.py") }}) where these functions are defined!
 
 ## Assigning Variables
 
