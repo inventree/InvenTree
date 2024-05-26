@@ -30,12 +30,12 @@ def check_link(url) -> bool:
     attempts = 5
 
     while attempts > 0:
-        attempts -= 1
-
         response = requests.head(url, timeout=5000)
 
         if response.status_code == 200:
             return True
+
+        attempts -= 1
 
     return False
 
@@ -114,8 +114,6 @@ def define_env(env):
         # Check that the URL exists before returning it
         if not check_link(url):
             raise FileNotFoundError(f'URL {url} does not exist.')
-
-        print(filename, '->', url)
 
         return url
 
