@@ -65,7 +65,7 @@ Additionally, add the following imports after the extended line.
 #### Blocks
 The page_base file is split into multiple sections called blocks. This allows you to implement sections of the webpage while getting many items like navbars, sidebars, and general layout provided for you.
 
-The current default page base can be found [here](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/templates/page_base.html). Look through this file to determine overridable blocks. The [stock app](https://github.com/inventree/InvenTree/tree/master/src/backend/InvenTree/stock) offers a great example of implementing these blocks.
+The current default page base can be found [here]({{ sourcefile("src/backend/InvenTree/templates/page_base.html") }}). Look through this file to determine overridable blocks. The [stock app](https://github.com/inventree/InvenTree/tree/master/src/backend/InvenTree/stock) offers a great example of implementing these blocks.
 
 !!! warning "Sidebar Block"
     You may notice that implementing the `sidebar` block doesn't initially work. Be sure to enable the sidebar using JavaScript. This can be achieved by appending the following code, replacing `label` with a label of your choosing,  to the end of your template file.

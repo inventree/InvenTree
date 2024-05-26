@@ -16,7 +16,7 @@ For further information, read more about [installing plugins](./plugins/install.
 
 ### Plugin Base Class
 
-Custom plugins must inherit from the [InvenTreePlugin class](https://github.com/inventree/InvenTree/blob/2d1776a151721d65d0ae007049d358085b2fcfd5/InvenTree/plugin/plugin.py#L204). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
+Custom plugins must inherit from the [InvenTreePlugin class]({{ sourcefile("src/backend/InvenTree/plugin/plugin.py") }}). Any plugins installed via the methods outlined above will be "discovered" when the InvenTree server launches.
 
 !!! warning "Namechange"
     The name of the base class was changed with `0.7.0` from `IntegrationPluginBase` to `InvenTreePlugin`. While the old name is still available till `0.8.0` we strongly suggest upgrading your plugins. Deprecation warnings are raised if the old name is used.
@@ -28,7 +28,7 @@ Please read all release notes and watch out for warnings - we generally provide 
 
 #### Plugins
 
-General classes and mechanisms are provided under the `plugin` [namespaces](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/plugin/__init__.py). These include:
+General classes and mechanisms are provided under the `plugin` [namespaces]({{ sourcefile("src/backend/InvenTree/plugin/__init__.py") }}). These include:
 
 ```python
 # Management objects
@@ -44,7 +44,7 @@ MixinNotImplementedError    # Is raised if a mixin was not implemented (core mec
 
 #### Mixins
 
-Mixins are split up internally to keep the source tree clean and enable better testing separation. All public APIs that should be used are exposed under `plugin.mixins`. These include all built-in mixins and notification methods. An up-to-date reference can be found in the source code (current master can be [found here](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/plugin/mixins/__init__.py)).
+Mixins are split up internally to keep the source tree clean and enable better testing separation. All public APIs that should be used are exposed under `plugin.mixins`. These include all built-in mixins and notification methods. An up-to-date reference can be found in the source code [can be found here]({{ sourcefile("src/backend/InvenTree/plugin/mixins/__init__.py") }}).
 
 #### Models and other internal InvenTree APIs
 
