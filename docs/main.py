@@ -16,9 +16,9 @@ def get_repo_url(raw=False):
         repo_name = mkdocs_config['repo_name']
 
     if raw:
-        return f'https://raw.githubusercontent.com/{repo_name}/'
+        return f'https://raw.githubusercontent.com/{repo_name}'
     else:
-        return f'https://github.com/{repo_name}/'
+        return f'https://github.com/{repo_name}'
 
 
 def check_link(url) -> bool:
@@ -114,6 +114,8 @@ def define_env(env):
         # Check that the URL exists before returning it
         if not check_link(url):
             raise FileNotFoundError(f'URL {url} does not exist.')
+
+        print(filename, '->', url)
 
         return url
 

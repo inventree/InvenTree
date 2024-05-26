@@ -31,9 +31,9 @@ The following files required for this setup are provided with the InvenTree sour
 
 | Filename | Description |
 | --- | --- |
-| [docker-compose.yml](https://raw.githubusercontent.com/inventree/InvenTree/master/contrib/container/docker-compose.yml)| The docker compose script |
-| [.env](https://raw.githubusercontent.com/inventree/InvenTree/master/contrib/container/.env) | Environment variables |
-| [Caddyfile](https://raw.githubusercontent.com/inventree/InvenTree/master/contrib/container/Caddyfile) | Caddy configuration file |
+| [docker-compose.yml]({{ sourcefile("contrib/container/docker-compose.yml", raw=True) }}) | The docker compose script |
+| [.env]({{ sourcefile("contrib/container/.env", raw=True) }}) | Environment variables |
+| [Caddyfile]({{ sourcefile("contrib/container/Caddyfile", raw=True) }}) | Caddy configuration file |
 
 Download these files to a directory on your local machine.
 
