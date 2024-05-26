@@ -2,8 +2,6 @@
 
 import logging
 
-from django.utils.functional import lazy
-
 from rest_framework import serializers
 from rest_framework.fields import empty
 from rest_framework.metadata import SimpleMetadata
