@@ -1,6 +1,7 @@
 """Main entry point for the documentation build process."""
 
 import os
+import subprocess
 import textwrap
 
 import requests
@@ -27,12 +28,25 @@ def check_link(url) -> bool:
     We allow a number attempts and a lengthy timeout,
     as we do not want false negatives.
     """
+    CACHE_FILE = os.path.join(os.path.dirname(__file__), 'url_cache.txt')
+
+    # Keep a local cache file of URLs we have already checked
+    if os.path.exists(CACHE_FILE):
+        with open(CACHE_FILE, 'r') as f:
+            cache = f.read().splitlines()
+
+        if url in cache:
+            return True
+
     attempts = 5
 
     while attempts > 0:
         response = requests.head(url, timeout=5000)
-
         if response.status_code == 200:
+            # Update the cache file
+            with open(CACHE_FILE, 'a') as f:
+                f.write(f'{url}\n')
+
             return True
 
         attempts -= 1
@@ -116,6 +130,24 @@ def define_env(env):
             raise FileNotFoundError(f'URL {url} does not exist.')
 
         return url
+
+    @env.macro
+    def invoke_commands():
+        """Provides an output of the available commands."""
+        here = os.path.dirname(__file__)
+        base = os.path.join(here, '..')
+        base = os.path.abspath(base)
+        tasks = os.path.join(base, 'tasks.py')
+        output = os.path.join(here, 'invoke-commands.txt')
+
+        command = f'invoke -f {tasks} --list > {output}'
+
+        assert subprocess.call(command, shell=True) == 0
+
+        with open(output, 'r') as f:
+            content = f.read()
+
+        return content
 
     @env.macro
     def listimages(subdir):
