@@ -90,18 +90,24 @@
     <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
 </button>
 {% elif order.is_ready %}
-<button {% if not is_purchaser %} disabled {% endif %} type='button' class='btn btn-secondary' id='order-pending' title='{% trans "Set order as pending" %}'>
-    <span class='fas fa-undo'></span> {% trans "Set Pending" %}
+<button type='button' class='btn btn-secondary' id='order-recall' title='{% trans "Recall order" %}'>
+    <span class='fas fa-undo'></span> {% trans "Recall" %}
 </button>
-<button {% if not is_purchaser %} disabled {% endif %} type='button' class='btn btn-primary' id='place-order' title='{% trans "Issue Order" %}'>
+<button {% if not is_purchaser %} disabled {% endif %} type='button' class='btn btn-{% if is_purchaser %}primary{% else %}secondary{% endif %}' id='place-order' title='{% trans "Issue Order" %}'>
     <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
 </button>
 {% elif order.is_pending_approval %}
-<button type='button' class='btn btn-success' id='approve-order' {% if not has_approval_permission %} disabled {% endif %} title='{% trans "Approve Order" %}'>
-    <span class='fas fa-check-circle'></span> {% trans "Approve Order" %}
-</button>
+{% if has_approval_permission %}
 <button type='button' class='btn btn-danger' id='reject-order' {% if not has_approval_permission %} disabled {% endif %} title='{% trans "Reject Order" %}'>
     <span class='fas fa-times'></span> {% trans "Reject Order" %}
+</button>
+{% else %}
+<button type='button' class='btn btn-secondary' id='recall-order' title='{% trans "Recall Order" %}'>
+    <span class='fas fa-undo'></span> {% trans "Recall" %}
+</button>
+{% endif %}
+<button type='button' class='btn btn-{% if has_approval_permission %}success{% else %}secondary{% endif %}' id='approve-order' {% if not has_approval_permission %} disabled {% endif %} title='{% trans "Approve Order" %}'>
+    <span class='fas fa-check-circle'></span> {% trans "Approve Order" %}
 </button>
 {% elif order.is_open %}
 <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
@@ -341,8 +347,8 @@ $("#reject-order").click(function() {
 });
 {% endif %}
 
-{% if order.status == PurchaseOrderStatus.READY %}
-$("#order-pending").click(function() {
+{% if order.status == PurchaseOrderStatus.READY or order.status == PurchaseOrderStatus.IN_APPROVAL %}
+$("#order-recall").click(function() {
 
     pendingPurchaseOrder(
         {{ order.pk }},

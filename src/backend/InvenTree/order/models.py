@@ -539,7 +539,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     )
 
     reject_reason = models.CharField(
-        max_length=128,
+        max_length=250,
         blank=True,
         verbose_name=_('Reason for rejection'),
         help_text=_('The reason for rejecting this order'),
@@ -547,7 +547,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     placed_by = models.ForeignKey(
         User,
-        related_name='orders_placed',
+        related_name='purchase_orders_placed',
         on_delete=models.SET_NULL,
         blank=True,
         null=True,
@@ -756,7 +756,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         Order must currently be PENDING or IN_APPROVAL
         """
         if not self.requires_approval and not self.can_be_ready:
-            raise ValidationError('Ready state setting not active')
+            raise ValidationError(_('Ready state setting not active'))
 
         if self.is_pending or (self.is_pending_approval and self.approved_by):
             self.status = PurchaseOrderStatus.READY.value
@@ -818,7 +818,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 content=InvenTreeNotificationBodies.NewOrder,
             )
         else:
-            raise ValidationError('Order must be Pending or Ready')
+            raise ValidationError(_('Order must be Pending or Ready'))
 
     def _action_complete(self, *args, **kwargs):
         """Marks the PurchaseOrder as COMPLETE.
@@ -883,7 +883,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
             raise ValidationError('Ready state setting not active')
 
     @transaction.atomic
-    def place_order(self, user):
+    def place_order(self, user=None):
         """Attempt to transition to PLACED status."""
         return self.handle_transition(
             self.status,
@@ -968,15 +968,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
     def approval_allowed(self, user):
         """Check that the given user is allowed to approve the order."""
         active = getSetting('ENABLE_PURCHASE_ORDER_APPROVAL')
-        masters = getSetting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
+        master_approvers = getSetting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
 
         if not active:
             return False
 
         user_has_permission = False
 
-        if masters:
-            user_has_permission = user.groups.filter(name=masters).exists()
+        if master_approvers:
+            user_has_permission = user.groups.filter(name=master_approvers).exists()
 
         if self.project_code and self.project_code.responsible:
             user_has_permission = order.project_code.responsible.is_user_allowed(user)

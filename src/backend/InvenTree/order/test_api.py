@@ -676,6 +676,42 @@ class PurchaseOrderStateTests(OrderTest):
         self.assertEqual(po.placed_by, self.user)
         self.assertEqual(po.issue_date, datetime.now().date())
 
+    def test_po_recall(self):
+        """Test the PurchaseOrderRecall API endpoint with legal states."""
+        po = models.PurchaseOrder.objects.get(pk=8)
+
+        url = reverse('api-po-recall', kwargs={'pk': po.pk})
+        self.assignRole('purchase_order.add')
+
+        self.post(url, {}, expected_code=201)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PENDING.value)
+
+    def test_po_recall_when_order_not_open(self):
+        """Test the PurchaseOrderRecall API endpoint with illegal states."""
+        self.assignRole('purchase_order.add')
+
+        # Placed order
+        po = models.PurchaseOrder.objects.get(pk=3)
+        url = reverse('api-po-recall', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=400)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.PLACED.value)
+
+        # Complete order
+        po = models.PurchaseOrder.objects.get(pk=5)
+        url = reverse('api-po-recall', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=400)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.COMPLETE.value)
+
+        # Cancelled order
+        po = models.PurchaseOrder.objects.get(pk=6)
+        url = reverse('api-po-recall', kwargs={'pk': po.pk})
+        self.post(url, {}, expected_code=400)
+        po.refresh_from_db()
+        self.assertEqual(po.status, PurchaseOrderStatus.CANCELLED.value)
+
     def test_po_request_approval_approvals_inactive(self):
         """Test the PurchaseOrderRequestApproval API endpoint when approvals are inactive."""
         po = models.PurchaseOrder.objects.get(pk=2)

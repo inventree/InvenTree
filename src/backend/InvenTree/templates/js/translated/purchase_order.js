@@ -581,12 +581,12 @@ function pendingPurchaseOrder(order_id, options={}) {
 
     let html = `
     <div class='alert alert-block alert-warning'>
-    {% trans 'Mark order as pending' %}
+    {% trans 'Recall Order' %}
     </div>`;
 
-    constructForm(`{% url "api-po-list" %}${order_id}/pending/`, {
+    constructForm(`{% url "api-po-list" %}${order_id}/recall/`, {
         method: 'POST',
-        title: '{% trans "Mark order pending" %}',
+        title: '{% trans "Recall this order, returning the state to Pending" %}',
         confirm: true,
         preFormContent: html,
         onSuccess: function(response) {

@@ -407,12 +407,6 @@ class PurchaseOrderRequestApproval(PurchaseOrderContextMixin, CreateAPI):
     serializer_class = serializers.PurchaseOrderRequestApprovalSerializer
 
 
-class PurchaseOrderApprovalAllowed(PurchaseOrderContextMixin, RetrieveAPI):
-    """API endpoint to indicate if a user is allowed to approve a PurchaseOrder."""
-
-    serializer_class = serializers.PurchaseOrderCanApproveSerializer
-
-
 class PurchaseOrderReject(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to reject a PurchaseOrder that was requested approval for."""
 
@@ -425,16 +419,16 @@ class PurchaseOrderReady(PurchaseOrderContextMixin, CreateAPI):
     serializer_class = serializers.PurchaseOrderReadySerializer
 
 
-class PurchaseOrderIssueAllowed(PurchaseOrderContextMixin, RetrieveAPI):
-    """API endpoint to indicate if a user is allowed to issue a PurchaseOrder."""
+class PurchaseOrderStatePermissions(PurchaseOrderContextMixin, RetrieveAPI):
+    """API endpoint indicating what limited-permission states the user is allowed to perform."""
 
-    serializer_class = serializers.PurchaseOrderCanIssueSerializer
+    serializer_class = serializers.PurchaseOrderStatePermissionsSerializer
 
 
-class PurchaseOrderPending(PurchaseOrderContextMixin, CreateAPI):
-    """API endpoint to return a PurchaseOrder to Pending."""
+class PurchaseOrderRecall(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to recall an open PurchaseOrder to Pending."""
 
-    serializer_class = serializers.PurchaseOrderRejectSerializer
+    serializer_class = serializers.PurchaseOrderRecallSerializer
 
 
 class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
@@ -1660,11 +1654,6 @@ order_api_urls = [
                 '<int:pk>/',
                 include([
                     path(
-                        'can_approve/',
-                        PurchaseOrderApprovalAllowed.as_view(),
-                        name='api-po-approval-allowed',
-                    ),
-                    path(
                         'request_approval/',
                         PurchaseOrderRequestApproval.as_view(),
                         name='api-po-req-approval',
@@ -1674,14 +1663,12 @@ order_api_urls = [
                     ),
                     path('ready/', PurchaseOrderReady.as_view(), name='api-po-ready'),
                     path(
-                        'can_issue/',
-                        PurchaseOrderIssueAllowed.as_view(),
-                        name='api-po-issue-allowed',
+                        'permissions/',
+                        PurchaseOrderStatePermissions.as_view(),
+                        name='api-po-permissions',
                     ),
                     path(
-                        'pending/',
-                        PurchaseOrderPending.as_view(),
-                        name='api-po-pending',
+                        'recall/', PurchaseOrderRecall.as_view(), name='api-po-recall'
                     ),
                     path(
                         'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'

@@ -26,12 +26,12 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='purchaseorder',
             name='placed_by',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='orders_placed', to=settings.AUTH_USER_MODEL, verbose_name='Placed by'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='purchase_orders_placed', to=settings.AUTH_USER_MODEL, verbose_name='Placed by'),
         ),
         migrations.AddField(
             model_name='purchaseorder',
             name='reject_reason',
-            field=models.CharField(blank=True, help_text='The reason for rejecting this order', max_length=128, verbose_name='Reason for rejection'),
+            field=models.CharField(blank=True, help_text='The reason for rejecting this order', max_length=250, verbose_name='Reason for rejection'),
         ),
         migrations.AlterField(
             model_name='purchaseorder',

@@ -400,7 +400,9 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     # Check if we have notified recently...
     delta = override_delta or timedelta(days=1)
 
-    if common.models.NotificationEntry.check_recent(category, obj_ref_value, delta):
+    if common.models.NotificationEntry.check_recent(
+        category, obj_ref_value, delta, override_delta and True or False
+    ):
         logger.info(
             "Notification '%s' has recently been sent for '%s' - SKIPPING",
             category,

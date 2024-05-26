@@ -81,7 +81,7 @@ function TransitionButton(props: Readonly<TransitionButtonProps>) {
 }
 
 function RecallButton(props: Readonly<TransitionProps>) {
-  const pending = apiUrl(ApiEndpoints.purchase_order_pending, null, {
+  const pending = apiUrl(ApiEndpoints.purchase_order_recall, null, {
     id: props.orderPk
   });
   return (
@@ -218,15 +218,9 @@ function ApprovalTransitions(props: Readonly<TransitionProps>) {
 
   const user = useUserState();
   const { data } = useSuspenseQuery({
-    queryKey: [
-      'po',
-      'approve',
-      user.username(),
-      props.orderPk,
-      approvalsActive
-    ],
+    queryKey: ['po', 'permissions', user.username(), props.orderPk],
     queryFn: async () => {
-      const url = ApiEndpoints.purchase_order_approval_allowed;
+      const url = ApiEndpoints.purchase_order_state_permissions;
       return api
         .get(apiUrl(url, null, { id: props.orderPk }))
         .then((result) => {
@@ -288,9 +282,9 @@ function ReadyTransitions(props: Readonly<TransitionProps>) {
   const user = useUserState();
 
   const { data } = useSuspenseQuery({
-    queryKey: ['po', 'issue', user.username(), props.orderPk],
+    queryKey: ['po', 'permissions', user.username(), props.orderPk],
     queryFn: async () => {
-      const url = ApiEndpoints.purchase_order_issue_allowed;
+      const url = ApiEndpoints.purchase_order_state_permissions;
       return api
         .get(apiUrl(url, null, { id: props.orderPk }))
         .then((result) => {

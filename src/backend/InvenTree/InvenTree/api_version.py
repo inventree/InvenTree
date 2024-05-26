@@ -10,12 +10,11 @@ INVENTREE_API_TEXT = """
 v202 - 2024-05-23 : https://github.com/inventree/InvenTree/pull/6989
     - Adds new API endpoints for PurchaseOrder state transitions
         - Request Approval
-        - User allowed to Approve
         - Reject order
         - Order Ready to issue
-        - User allowed to Issue
+        - User Order State permissions
         - Recall order to Pending
-    - Adds fields to PurchaseOrder PAI calls:
+    - Adds fields to PurchaseOrder PUI calls:
         - reject_reason
         - created_by
         - approved_by
