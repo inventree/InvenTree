@@ -84,6 +84,7 @@ nav:
     - Credits: credits.md
     - Privacy: privacy.md
     - Release Notes: releases/release_notes.md
+    - Security: security.md
   - Install:
     - Introduction: start/intro.md
     - Configuration: start/config.md
@@ -134,24 +135,15 @@ nav:
     - Return Orders: order/return_order.md
     - Project Codes: order/project_codes.md
   - Report:
-    - Templates: report/report.md
-    - Report Types:
-      - Test Reports: report/test.md
-      - Build Order: report/build.md
-      - Purchase Order: report/purchase_order.md
-      - Sales Order: report/sales_order.md
-      - Return Order: report/return_order.md
-      - BOM: report/bom.md
-      - Stock Location: report/stock_location.md
-    - Labels:
-      - Custom Labels: report/labels.md
-      - Part Labels: report/labels/part_labels.md
-      - Stock Labels: report/labels/stock_labels.md
-      - Location Labels: report/labels/location_labels.md
-      - Build Labels: report/labels/build_labels.md
+    - Templates: report/templates.md
+    - Template Rendering: report/weasyprint.md
+    - Template Editor: report/template_editor.md
+    - Reports: report/report.md
+    - Labels: report/labels.md
+    - Context Variables: report/context_variables.md
     - Helper Functions: report/helpers.md
     - Barcodes: report/barcodes.md
-    - Context Variables: report/context_variables.md
+    - Sample Templates: report/samples.md
   - Admin:
     - Global Settings: settings/global.md
     - User Settings: settings/user.md
@@ -239,15 +231,18 @@ plugins:
         on_config: "docs.docs.hooks:on_config"
   - macros:
       include_dir: docs/_includes
+      module_name: main
   - mkdocstrings:
       default_handler: python
       handlers:
         python:
           paths:
-            - ../InvenTree
+            - ../src/backend/InvenTree
           options:
             show_symbol_type_heading: true
             show_symbol_type_toc: true
+            show_root_heading: false
+            show_root_toc_entry: false
 
 # Extensions
 markdown_extensions:
@@ -271,7 +266,7 @@ markdown_extensions:
 
 # Global Variables
 extra:
-  static_folder_source: ./InvenTree/InvenTree/static/
+  static_folder_source: ./src/backend/InvenTree/InvenTree/static/
   static_folder_local_default: ./inventree_static/
 
   # Site Analytics

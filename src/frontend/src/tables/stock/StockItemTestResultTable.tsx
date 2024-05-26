@@ -12,9 +12,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
-import { PassFailButton } from '../../components/items/YesNoButton';
 import { RenderUser } from '../../components/render/User';
 import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -28,7 +28,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn, NoteColumn } from '../ColumnRenderers';
+import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowActions, RowDeleteAction, RowEditAction } from '../RowActions';
@@ -126,22 +126,20 @@ export default function StockItemTestResultTable({
         switchable: false,
         sortable: true,
         render: (record: any) => {
-          let required = record.required ?? record.template_detail?.required;
-          let enabled = record.enabled ?? record.template_detail?.enabled;
-          let installed =
+          const enabled = record.enabled ?? record.template_detail?.enabled;
+          const installed =
             record.stock_item != undefined && record.stock_item != itemId;
 
           return (
-            <Group position="apart">
+            <Group justify="space-between" wrap="nowrap">
               <Text
-                italic={installed}
-                fw={required && 700}
-                color={enabled ? undefined : 'red'}
+                style={{ fontStyle: installed ? 'italic' : undefined }}
+                c={enabled ? undefined : 'red'}
               >
                 {!record.templateId && '- '}
                 {record.test_name ?? record.template_detail?.test_name}
               </Text>
-              <Group position="right">
+              <Group justify="right">
                 {record.results && record.results.length > 1 && (
                   <Tooltip label={t`Test Results`}>
                     <Badge color="lightblue" variant="filled">
@@ -187,18 +185,46 @@ export default function StockItemTestResultTable({
         render: (record: any) =>
           record.attachment && <AttachmentLink attachment={record.attachment} />
       },
-      NoteColumn(),
+      NoteColumn({}),
+      DateColumn({}),
       {
-        accessor: 'date',
+        accessor: 'user',
+        title: t`User`,
+        sortable: false,
+        render: (record: any) =>
+          record.user_detail && <RenderUser instance={record.user_detail} />
+      },
+      {
+        accessor: 'test_station',
         sortable: true,
-        title: t`Date`,
+        title: t`Test station`
+      },
+      {
+        accessor: 'started_datetime',
+        sortable: true,
+        title: t`Started`,
         render: (record: any) => {
           return (
-            <Group position="apart">
-              {renderDate(record.date)}
-              {record.user_detail && (
-                <RenderUser instance={record.user_detail} />
-              )}
+            <Group justify="space-between">
+              {renderDate(record.started_datetime, {
+                showTime: true,
+                showSeconds: true
+              })}
+            </Group>
+          );
+        }
+      },
+      {
+        accessor: 'finished_datetime',
+        sortable: true,
+        title: t`Finished`,
+        render: (record: any) => {
+          return (
+            <Group justify="space-between">
+              {renderDate(record.finished_datetime, {
+                showTime: true,
+                showSeconds: true
+              })}
             </Group>
           );
         }
@@ -218,6 +244,9 @@ export default function StockItemTestResultTable({
       value: {},
       attachment: {},
       notes: {},
+      test_station: {},
+      started_datetime: {},
+      finished_datetime: {},
       stock_item: {
         value: itemId,
         hidden: true
@@ -237,20 +266,18 @@ export default function StockItemTestResultTable({
       result: true
     },
     title: t`Add Test Result`,
-    onFormSuccess: () => table.refreshTable(),
+    table: table,
     successMessage: t`Test result added`
   });
 
-  const [selectedTest, setSelectedTest] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedTest, setSelectedTest] = useState<number>(0);
 
   const editTestModal = useEditApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
     pk: selectedTest,
     fields: resultFields,
     title: t`Edit Test Result`,
-    onFormSuccess: () => table.refreshTable(),
+    table: table,
     successMessage: t`Test result updated`
   });
 
@@ -258,7 +285,7 @@ export default function StockItemTestResultTable({
     url: ApiEndpoints.stock_test_result_list,
     pk: selectedTest,
     title: t`Delete Test Result`,
-    onFormSuccess: () => table.refreshTable(),
+    table: table,
     successMessage: t`Test result deleted`
   });
 
@@ -276,6 +303,13 @@ export default function StockItemTestResultTable({
             title: t`Test Passed`,
             message: t`Test result has been recorded`,
             color: 'green'
+          });
+        })
+        .catch(() => {
+          showNotification({
+            title: t`Error`,
+            message: t`Failed to record test result`,
+            color: 'red'
           });
         });
     },

@@ -3,26 +3,48 @@ import {
   ActionIcon,
   Alert,
   Box,
+  Group,
   Indicator,
   LoadingOverlay,
   Space,
   Stack,
   Tooltip
 } from '@mantine/core';
-import { Group } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { showNotification } from '@mantine/notifications';
-import { IconFilter, IconRefresh, IconTrash } from '@tabler/icons-react';
-import { IconBarcode, IconPrinter } from '@tabler/icons-react';
+import {
+  IconBarcode,
+  IconFilter,
+  IconRefresh,
+  IconTrash
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { Fragment, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  DataTable,
+  DataTableCellClickHandler,
+  DataTableSortStatus
+} from 'mantine-datatable';
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../App';
+import { Boundary } from '../components/Boundary';
 import { ActionButton } from '../components/buttons/ActionButton';
 import { ButtonMenu } from '../components/buttons/ButtonMenu';
+import { PrintingActions } from '../components/buttons/PrintingActions';
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { ModelType } from '../enums/ModelType';
+import { resolveItem } from '../functions/conversion';
+import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
+import { navigateToLink } from '../functions/navigation';
+import { getDetailUrl } from '../functions/urls';
 import { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
@@ -47,16 +69,19 @@ const defaultPageSize: number = 25;
  * @param enableFilters : boolean - Enable filter actions
  * @param enableSelection : boolean - Enable row selection
  * @param enableSearch : boolean - Enable search actions
+ * @param enableLabels : boolean - Enable printing of labels against selected items
+ * @param enableReports : boolean - Enable printing of reports against selected items
  * @param enablePagination : boolean - Enable pagination
  * @param enableRefresh : boolean - Enable refresh actions
  * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
- * @param printingActions : any[] - List of printing actions
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
+ * @param onCellClick : (event: any, record: any, recordIndex: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
+ * @param modelType: ModelType - The model type for the table
  */
 export type InvenTreeTableProps<T = any> = {
   params?: any;
@@ -69,16 +94,21 @@ export type InvenTreeTableProps<T = any> = {
   enableSearch?: boolean;
   enablePagination?: boolean;
   enableRefresh?: boolean;
+  enableLabels?: boolean;
+  enableReports?: boolean;
   pageSize?: number;
   barcodeActions?: any[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
-  printingActions?: any[];
   rowExpansion?: any;
   idAccessor?: string;
   dataFormatter?: (data: any) => any;
   rowActions?: (record: T) => RowAction[];
   onRowClick?: (record: T, index: number, event: any) => void;
+  onCellClick?: DataTableCellClickHandler<T>;
+  modelType?: ModelType;
+  rowStyle?: (record: T, index: number) => any;
+  modelField?: string;
 };
 
 /**
@@ -88,6 +118,8 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
   noRecordsText: t`No records found`,
   enableDownload: false,
+  enableLabels: false,
+  enableReports: false,
   enableFilters: true,
   enablePagination: true,
   enableRefresh: true,
@@ -95,7 +127,6 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   enableSelection: false,
   pageSize: defaultPageSize,
   defaultSortColumn: '',
-  printingActions: [],
   barcodeActions: [],
   tableFilters: [],
   tableActions: [],
@@ -119,6 +150,8 @@ export function InvenTreeTable<T = any>({
   const { getTableColumnNames, setTableColumnNames } = useLocalState();
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
+  const navigate = useNavigate();
+
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
     return (
@@ -133,9 +166,11 @@ export function InvenTreeTable<T = any>({
 
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
-    enabled: false,
+    enabled: true,
     queryKey: ['options', url, tableState.tableKey],
     retry: 3,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       return api
         .options(url, {
@@ -193,13 +228,16 @@ export function InvenTreeTable<T = any>({
   }, [props]);
 
   // Check if any columns are switchable (can be hidden)
-  const hasSwitchableColumns = columns.some(
-    (col: TableColumn) => col.switchable ?? true
-  );
+  const hasSwitchableColumns: boolean = useMemo(() => {
+    return columns.some((col: TableColumn) => col.switchable ?? true);
+  }, [columns]);
 
-  const onSelectedRecordsChange = useCallback((records: any[]) => {
-    tableState.setSelectedRecords(records);
-  }, []);
+  const onSelectedRecordsChange = useCallback(
+    (records: any[]) => {
+      tableState.setSelectedRecords(records);
+    },
+    [tableState.setSelectedRecords]
+  );
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
@@ -225,10 +263,11 @@ export function InvenTreeTable<T = any>({
         hidden: false,
         switchable: false,
         width: 50,
-        render: (record: any) => (
+        render: (record: any, index?: number | undefined) => (
           <RowActions
             actions={tableProps.rowActions?.(record) ?? []}
             disabled={tableState.selectedRecords.length > 0}
+            index={index}
           />
         )
       });
@@ -259,15 +298,12 @@ export function InvenTreeTable<T = any>({
     );
   }
 
-  // Pagination
-  const [page, setPage] = useState(1);
-
   // Filter list visibility
   const [filtersVisible, setFiltersVisible] = useState<boolean>(false);
 
   // Reset the pagination state when the search term changes
   useEffect(() => {
-    setPage(1);
+    tableState.setPage(1);
   }, [tableState.searchTerm]);
 
   /*
@@ -294,7 +330,7 @@ export function InvenTreeTable<T = any>({
     if (tableProps.enablePagination && paginate) {
       let pageSize = tableProps.pageSize ?? defaultPageSize;
       queryParams.limit = pageSize;
-      queryParams.offset = (page - 1) * pageSize;
+      queryParams.offset = (tableState.page - 1) * pageSize;
     }
 
     // Ordering
@@ -355,7 +391,7 @@ export function InvenTreeTable<T = any>({
   );
 
   const handleSortStatusChange = (status: DataTableSortStatus) => {
-    setPage(1);
+    tableState.setPage(1);
     setSortStatus(status);
   };
 
@@ -366,7 +402,7 @@ export function InvenTreeTable<T = any>({
     return api
       .get(url, {
         params: queryParams,
-        timeout: 30 * 1000
+        timeout: 5 * 1000
       })
       .then(function (response) {
         switch (response.status) {
@@ -387,7 +423,7 @@ export function InvenTreeTable<T = any>({
               results = [];
             }
 
-            setRecordCount(response.data?.count ?? results.length);
+            tableState.setRecordCount(response.data?.count ?? results.length);
 
             return results;
           case 400:
@@ -419,7 +455,7 @@ export function InvenTreeTable<T = any>({
 
   const { data, isFetching, refetch } = useQuery({
     queryKey: [
-      page,
+      tableState.page,
       props.params,
       sortStatus.columnAccessor,
       sortStatus.direction,
@@ -432,7 +468,14 @@ export function InvenTreeTable<T = any>({
     refetchOnMount: true
   });
 
-  const [recordCount, setRecordCount] = useState<number>(0);
+  useEffect(() => {
+    tableState.setIsLoading(isFetching);
+  }, [isFetching]);
+
+  // Update tableState.records when new data received
+  useEffect(() => {
+    tableState.setRecords(data ?? []);
+  }, [data]);
 
   // Callback function to delete the selected records in the table
   const deleteSelectedRecords = useCallback(() => {
@@ -494,139 +537,173 @@ export function InvenTreeTable<T = any>({
     });
   }, [tableState.selectedRecords]);
 
+  // Callback when a row is clicked
+  const handleRowClick = useCallback(
+    ({
+      event,
+      record,
+      index
+    }: {
+      event: React.MouseEvent;
+      record: any;
+      index: number;
+    }) => {
+      if (props.onRowClick) {
+        // If a custom row click handler is provided, use that
+        props.onRowClick(record, index, event);
+      } else if (tableProps.modelType) {
+        const accessor = tableProps.modelField ?? 'pk';
+        const pk = resolveItem(record, accessor);
+
+        if (pk) {
+          cancelEvent(event);
+          // If a model type is provided, navigate to the detail view for that model
+          let url = getDetailUrl(tableProps.modelType, pk);
+          navigateToLink(url, navigate, event);
+        }
+      }
+    },
+    [props.onRowClick]
+  );
+
   return (
     <>
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
-        <FilterSelectDrawer
-          availableFilters={filters}
-          tableState={tableState}
-          opened={filtersVisible}
-          onClose={() => setFiltersVisible(false)}
-        />
+        <Boundary label="table-filter-drawer">
+          <FilterSelectDrawer
+            availableFilters={filters}
+            tableState={tableState}
+            opened={filtersVisible}
+            onClose={() => setFiltersVisible(false)}
+          />
+        </Boundary>
       )}
-      <Stack spacing="sm">
-        <Group position="apart">
-          <Group position="left" key="custom-actions" spacing={5}>
-            {tableProps.tableActions?.map((group, idx) => (
-              <Fragment key={idx}>{group}</Fragment>
-            ))}
-            {(tableProps.barcodeActions?.length ?? 0 > 0) && (
-              <ButtonMenu
-                key="barcode-actions"
-                icon={<IconBarcode />}
-                label={t`Barcode actions`}
-                tooltip={t`Barcode actions`}
-                actions={tableProps.barcodeActions ?? []}
+      <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
+        <Stack gap="sm">
+          <Group justify="apart" grow>
+            <Group justify="left" key="custom-actions" gap={5}>
+              {tableProps.enableDownload && (
+                <DownloadAction
+                  key="download-action"
+                  downloadCallback={downloadData}
+                />
+              )}
+              <PrintingActions
+                items={tableState.selectedIds}
+                modelType={tableProps.modelType}
+                enableLabels={tableProps.enableLabels}
+                enableReports={tableProps.enableReports}
               />
-            )}
-            {(tableProps.printingActions?.length ?? 0 > 0) && (
-              <ButtonMenu
-                key="printing-actions"
-                icon={<IconPrinter />}
-                label={t`Print actions`}
-                tooltip={t`Print actions`}
-                actions={tableProps.printingActions ?? []}
-              />
-            )}
-            {(tableProps.enableBulkDelete ?? false) && (
-              <ActionButton
-                disabled={tableState.selectedRecords.length == 0}
-                icon={<IconTrash />}
-                color="red"
-                tooltip={t`Delete selected records`}
-                onClick={deleteSelectedRecords}
-              />
-            )}
-          </Group>
-          <Space />
-          <Group position="right" spacing={5}>
-            {tableProps.enableSearch && (
-              <TableSearchInput
-                searchCallback={(term: string) =>
-                  tableState.setSearchTerm(term)
-                }
-              />
-            )}
-            {tableProps.enableRefresh && (
-              <ActionIcon>
-                <Tooltip label={t`Refresh data`}>
-                  <IconRefresh onClick={() => refetch()} />
-                </Tooltip>
-              </ActionIcon>
-            )}
-            {hasSwitchableColumns && (
-              <TableColumnSelect
-                columns={dataColumns}
-                onToggleColumn={toggleColumn}
-              />
-            )}
-            {tableProps.enableFilters && filters.length > 0 && (
-              <Indicator
-                size="xs"
-                label={tableState.activeFilters?.length ?? 0}
-                disabled={tableState.activeFilters?.length == 0}
-              >
-                <ActionIcon>
-                  <Tooltip label={t`Table filters`}>
-                    <IconFilter
-                      onClick={() => setFiltersVisible(!filtersVisible)}
-                    />
+              {(tableProps.barcodeActions?.length ?? 0 > 0) && (
+                <ButtonMenu
+                  key="barcode-actions"
+                  icon={<IconBarcode />}
+                  label={t`Barcode actions`}
+                  tooltip={t`Barcode actions`}
+                  actions={tableProps.barcodeActions ?? []}
+                />
+              )}
+              {(tableProps.enableBulkDelete ?? false) && (
+                <ActionButton
+                  disabled={!tableState.hasSelectedRecords}
+                  icon={<IconTrash />}
+                  color="red"
+                  tooltip={t`Delete selected records`}
+                  onClick={deleteSelectedRecords}
+                />
+              )}
+              {tableProps.tableActions?.map((group, idx) => (
+                <Fragment key={idx}>{group}</Fragment>
+              ))}
+            </Group>
+            <Space />
+            <Group justify="right" gap={5}>
+              {tableProps.enableSearch && (
+                <TableSearchInput
+                  searchCallback={(term: string) =>
+                    tableState.setSearchTerm(term)
+                  }
+                />
+              )}
+              {tableProps.enableRefresh && (
+                <ActionIcon variant="transparent">
+                  <Tooltip label={t`Refresh data`}>
+                    <IconRefresh onClick={() => refetch()} />
                   </Tooltip>
                 </ActionIcon>
-              </Indicator>
-            )}
-            {tableProps.enableDownload && (
-              <DownloadAction
-                key="download-action"
-                downloadCallback={downloadData}
-              />
-            )}
+              )}
+              {hasSwitchableColumns && (
+                <TableColumnSelect
+                  columns={dataColumns}
+                  onToggleColumn={toggleColumn}
+                />
+              )}
+              {tableProps.enableFilters && filters.length > 0 && (
+                <Indicator
+                  size="xs"
+                  label={tableState.activeFilters?.length ?? 0}
+                  disabled={tableState.activeFilters?.length == 0}
+                >
+                  <ActionIcon variant="transparent">
+                    <Tooltip label={t`Table filters`}>
+                      <IconFilter
+                        onClick={() => setFiltersVisible(!filtersVisible)}
+                      />
+                    </Tooltip>
+                  </ActionIcon>
+                </Indicator>
+              )}
+            </Group>
           </Group>
-        </Group>
-        <Box pos="relative">
-          <LoadingOverlay
-            visible={tableOptionQuery.isLoading || tableOptionQuery.isFetching}
-          />
-
-          <DataTable
-            withBorder
-            striped
-            highlightOnHover
-            loaderVariant="dots"
-            pinLastColumn={tableProps.rowActions != undefined}
-            idAccessor={tableProps.idAccessor}
-            minHeight={300}
-            totalRecords={recordCount}
-            recordsPerPage={tableProps.pageSize ?? defaultPageSize}
-            page={page}
-            onPageChange={setPage}
-            sortStatus={sortStatus}
-            onSortStatusChange={handleSortStatusChange}
-            selectedRecords={
-              tableProps.enableSelection
-                ? tableState.selectedRecords
-                : undefined
-            }
-            onSelectedRecordsChange={
-              tableProps.enableSelection ? onSelectedRecordsChange : undefined
-            }
-            rowExpansion={tableProps.rowExpansion}
-            fetching={isFetching}
-            noRecordsText={missingRecordsText}
-            records={data}
-            columns={dataColumns}
-            onRowClick={tableProps.onRowClick}
-            defaultColumnProps={{
-              noWrap: true,
-              textAlignment: 'left',
-              cellsStyle: {
-                // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
-                overflow: 'hidden'
+          <Box pos="relative">
+            <LoadingOverlay
+              visible={
+                tableOptionQuery.isLoading || tableOptionQuery.isFetching
               }
-            }}
-          />
-        </Box>
-      </Stack>
+            />
+
+            <DataTable
+              withTableBorder
+              striped
+              highlightOnHover
+              loaderType="dots"
+              pinLastColumn={tableProps.rowActions != undefined}
+              idAccessor={tableProps.idAccessor}
+              minHeight={300}
+              totalRecords={tableState.recordCount}
+              recordsPerPage={tableProps.pageSize ?? defaultPageSize}
+              page={tableState.page}
+              onPageChange={tableState.setPage}
+              sortStatus={sortStatus}
+              onSortStatusChange={handleSortStatusChange}
+              selectedRecords={
+                tableProps.enableSelection
+                  ? tableState.selectedRecords
+                  : undefined
+              }
+              onSelectedRecordsChange={
+                tableProps.enableSelection ? onSelectedRecordsChange : undefined
+              }
+              rowExpansion={tableProps.rowExpansion}
+              rowStyle={tableProps.rowStyle}
+              fetching={isFetching}
+              noRecordsText={missingRecordsText}
+              records={tableState.records}
+              columns={dataColumns}
+              onRowClick={handleRowClick}
+              onCellClick={tableProps.onCellClick}
+              defaultColumnProps={{
+                noWrap: true,
+                textAlign: 'left',
+                cellsStyle: () => (theme) => ({
+                  // TODO @SchrodingersGat : Need a better way of handling "wide" cells,
+                  overflow: 'hidden'
+                })
+              }}
+            />
+          </Box>
+        </Stack>
+      </Boundary>
     </>
   );
 }

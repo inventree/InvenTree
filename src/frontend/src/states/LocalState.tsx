@@ -1,8 +1,7 @@
-import { MantineNumberSize } from '@mantine/core';
-import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { UiSizeType } from '../defaults/formatters';
 import { HostList } from './states';
 
 interface LocalStateProps {
@@ -19,8 +18,9 @@ interface LocalStateProps {
   primaryColor: string;
   whiteColor: string;
   blackColor: string;
-  radius: MantineNumberSize;
-  loader: LoaderType;
+  radius: UiSizeType;
+  loader: string;
+  setLoader: (value: string) => void;
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
   tableColumnNames: Record<string, Record<string, string>>;
@@ -29,6 +29,12 @@ interface LocalStateProps {
     tableKey: string
   ) => (names: Record<string, string>) => void;
   clearTableColumnNames: () => void;
+  detailDrawerStack: number;
+  addDetailDrawer: (value: number | false) => void;
+  navigationOpen: boolean;
+  setNavigationOpen: (value: boolean) => void;
+  allowMobile: boolean;
+  setAllowMobile: (value: boolean) => void;
 }
 
 export const useLocalState = create<LocalStateProps>()(
@@ -51,6 +57,9 @@ export const useLocalState = create<LocalStateProps>()(
       blackColor: '#000',
       radius: 'xs',
       loader: 'oval',
+      setLoader(value) {
+        set({ loader: value });
+      },
       // panels
       lastUsedPanels: {},
       setLastUsedPanel: (panelKey) => (value) => {
@@ -61,6 +70,7 @@ export const useLocalState = create<LocalStateProps>()(
           });
         }
       },
+      // tables
       tableColumnNames: {},
       getTableColumnNames: (tableKey) => {
         return get().tableColumnNames[tableKey] || {};
@@ -76,6 +86,23 @@ export const useLocalState = create<LocalStateProps>()(
       },
       clearTableColumnNames: () => {
         set({ tableColumnNames: {} });
+      },
+      // detail drawers
+      detailDrawerStack: 0,
+      addDetailDrawer: (value) => {
+        set({
+          detailDrawerStack:
+            value === false ? 0 : get().detailDrawerStack + value
+        });
+      },
+      // navigation
+      navigationOpen: false,
+      setNavigationOpen: (value) => {
+        set({ navigationOpen: value });
+      },
+      allowMobile: false,
+      setAllowMobile: (value) => {
+        set({ allowMobile: value });
       }
     }),
     {

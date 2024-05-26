@@ -2,7 +2,7 @@ import { Trans, t } from '@lingui/macro';
 import { Center, Container, Paper, Text } from '@mantine/core';
 import { useDisclosure, useToggle } from '@mantine/hooks';
 import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 
 import { setApiDefaults } from '../../App';
 import { AuthFormOptions } from '../../components/forms/AuthFormOptions';
@@ -13,7 +13,7 @@ import {
 } from '../../components/forms/AuthenticationForm';
 import { InstanceOptions } from '../../components/forms/InstanceOptions';
 import { defaultHostKey } from '../../defaults/defaultHostList';
-import { checkLoginState } from '../../functions/auth';
+import { checkLoginState, doBasicLogin } from '../../functions/auth';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 
@@ -32,9 +32,12 @@ export default function Login() {
   const [hostEdit, setHostEdit] = useToggle([false, true] as const);
   const [loginMode, setMode] = useDisclosure(true);
   const navigate = useNavigate();
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
 
   // Data manipulation functions
-  function ChangeHost(newHost: string): void {
+  function ChangeHost(newHost: string | null): void {
+    if (newHost === null) return;
     setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
     fetchServerApiState();
@@ -46,8 +49,17 @@ export default function Login() {
       ChangeHost(defaultHostKey);
     }
 
-    // check if user is logged in in PUI
-    checkLoginState(navigate, undefined, true);
+    checkLoginState(navigate, location?.state?.redirectFrom, true);
+
+    // check if we got login params (login and password)
+    if (searchParams.has('login') && searchParams.has('password')) {
+      doBasicLogin(
+        searchParams.get('login') ?? '',
+        searchParams.get('password') ?? ''
+      ).then(() => {
+        navigate(location?.state?.redirectFrom ?? '/home');
+      });
+    }
   }, []);
 
   // Fetch server data on mount if no server data is present
@@ -70,7 +82,7 @@ export default function Login() {
         ) : (
           <>
             <Paper radius="md" p="xl" withBorder>
-              <Text size="lg" weight={500}>
+              <Text size="lg" fw={500}>
                 {loginMode ? (
                   <Trans>Welcome, log in below</Trans>
                 ) : (

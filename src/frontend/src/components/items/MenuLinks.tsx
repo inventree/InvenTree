@@ -2,7 +2,7 @@ import { SimpleGrid, Text, UnstyledButton } from '@mantine/core';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { InvenTreeStyle } from '../../globalStyle';
+import * as classes from '../../main.css';
 import { DocTooltip } from './DocTooltip';
 
 export interface MenuLinkItem {
@@ -15,6 +15,10 @@ export interface MenuLinkItem {
   doclink?: string;
   docchildren?: React.ReactNode;
 }
+
+export type menuItemsCollection = {
+  [key: string]: MenuLinkItem;
+};
 
 function ConditionalDocTooltip({
   item,
@@ -41,17 +45,15 @@ function ConditionalDocTooltip({
 
 export function MenuLinks({
   links,
-  highlighted
+  highlighted = false
 }: {
   links: MenuLinkItem[];
   highlighted?: boolean;
 }) {
-  const { classes } = InvenTreeStyle();
-  highlighted = highlighted || false;
-
   const filteredLinks = links.filter(
     (item) => !highlighted || item.highlight === true
   );
+
   return (
     <SimpleGrid cols={2} spacing={0}>
       {filteredLinks.map((item) => (

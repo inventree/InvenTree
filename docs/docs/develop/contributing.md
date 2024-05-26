@@ -22,9 +22,9 @@ To setup a development environment using [docker](../start/docker.md), run the f
 
 ```bash
 git clone https://github.com/inventree/InvenTree.git && cd InvenTree
-docker compose run inventree-dev-server invoke install
-docker compose run inventree-dev-server invoke setup-test --dev
-docker compose up -d
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke install
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml run --rm inventree-dev-server invoke setup-test --dev
+docker compose --project-directory . -f contrib/container/dev-docker-compose.yml up -d
 ```
 
 ### Bare Metal
@@ -96,7 +96,7 @@ The HEAD of the "stable" branch represents the latest stable release code.
 
 ## API versioning
 
-The [API version](https://github.com/inventree/InvenTree/blob/master/InvenTree/InvenTree/api_version.py) needs to be bumped every time when the API is changed.
+The [API version](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/api_version.py) needs to be bumped every time when the API is changed.
 
 ## Environment
 

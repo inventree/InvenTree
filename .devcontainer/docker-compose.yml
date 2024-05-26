@@ -16,6 +16,7 @@ services:
   inventree:
     build:
       context: ..
+      dockerfile: ../InvenTree/contrib/container/Dockerfile
       target: dev
       args:
         base_image: "mcr.microsoft.com/vscode/devcontainers/base:alpine-3.18"
@@ -31,6 +32,8 @@ services:
       INVENTREE_DB_USER: inventree_user
       INVENTREE_DB_PASSWORD: inventree_password
       INVENTREE_PLUGINS_ENABLED: True
+      INVENTREE_SITE_URL: http://localhost:8000
+      INVENTREE_CORS_ORIGIN_ALLOW_ALL: True
       INVENTREE_PY_ENV: /home/inventree/dev/venv
 
     depends_on:

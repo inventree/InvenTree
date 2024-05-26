@@ -4,6 +4,7 @@ import { useId } from '@mantine/hooks';
 import { useEffect, useMemo, useRef } from 'react';
 
 import { ApiFormProps, OptionsApiForm } from '../components/forms/ApiForm';
+import { UiSizeType } from '../defaults/formatters';
 import { useModal } from './UseModal';
 
 /**
@@ -20,6 +21,7 @@ export interface ApiFormModalProps extends ApiFormProps {
   onClose?: () => void;
   onOpen?: () => void;
   closeOnClickOutside?: boolean;
+  size?: UiSizeType;
 }
 
 /**
@@ -59,9 +61,9 @@ export function useApiFormModal(props: ApiFormModalProps) {
     onOpen: formProps.onOpen,
     onClose: formProps.onClose,
     closeOnClickOutside: formProps.closeOnClickOutside,
-    size: 'xl',
+    size: props.size ?? 'xl',
     children: (
-      <Stack spacing={'xs'}>
+      <Stack gap={'xs'}>
         <Divider />
         <OptionsApiForm props={formProps} id={id} />
       </Stack>
@@ -125,7 +127,7 @@ export function useDeleteApiFormModal(props: ApiFormModalProps) {
           color={'red'}
         >{t`Are you sure you want to delete this item?`}</Alert>
       ),
-      fields: {}
+      fields: props.fields ?? {}
     }),
     [props]
   );

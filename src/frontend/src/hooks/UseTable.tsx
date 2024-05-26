@@ -1,5 +1,5 @@
 import { randomId, useLocalStorage } from '@mantine/hooks';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { TableFilter } from '../tables/Filter';
 
@@ -17,17 +17,28 @@ export type TableState = {
   tableKey: string;
   refreshTable: () => void;
   activeFilters: TableFilter[];
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
   setActiveFilters: (filters: TableFilter[]) => void;
   clearActiveFilters: () => void;
   expandedRecords: any[];
   setExpandedRecords: (records: any[]) => void;
   selectedRecords: any[];
+  selectedIds: number[];
+  hasSelectedRecords: boolean;
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
   hiddenColumns: string[];
   setHiddenColumns: (columns: string[]) => void;
   searchTerm: string;
   setSearchTerm: (term: string) => void;
+  recordCount: number;
+  setRecordCount: (count: number) => void;
+  page: number;
+  setPage: (page: number) => void;
+  records: any[];
+  setRecords: (records: any[]) => void;
+  updateRecord: (record: any) => void;
 };
 
 /**
@@ -67,9 +78,25 @@ export function useTable(tableName: string): TableState {
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
+  // Array of selected primary key values
+  const selectedIds = useMemo(
+    () => selectedRecords.map((r) => r.pk ?? r.id),
+    [selectedRecords]
+  );
+
   const clearSelectedRecords = useCallback(() => {
     setSelectedRecords([]);
   }, []);
+
+  const hasSelectedRecords = useMemo(() => {
+    return selectedRecords.length > 0;
+  }, [selectedRecords]);
+
+  // Total record count
+  const [recordCount, setRecordCount] = useState<number>(0);
+
+  // Pagination data
+  const [page, setPage] = useState<number>(1);
 
   // A list of hidden columns, saved to local storage
   const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
@@ -80,20 +107,55 @@ export function useTable(tableName: string): TableState {
   // Search term
   const [searchTerm, setSearchTerm] = useState<string>('');
 
+  // Table records
+  const [records, setRecords] = useState<any[]>([]);
+
+  // Update a single record in the table, by primary key value
+  const updateRecord = useCallback(
+    (record: any) => {
+      let _records = [...records];
+
+      // Find the matching record in the table
+      const index = _records.findIndex((r) => r.pk === record.pk);
+
+      if (index >= 0) {
+        _records[index] = record;
+      } else {
+        _records.push(record);
+      }
+
+      setRecords(_records);
+    },
+    [records]
+  );
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   return {
     tableKey,
     refreshTable,
+    isLoading,
+    setIsLoading,
     activeFilters,
     setActiveFilters,
     clearActiveFilters,
     expandedRecords,
     setExpandedRecords,
     selectedRecords,
+    selectedIds,
     setSelectedRecords,
     clearSelectedRecords,
+    hasSelectedRecords,
     hiddenColumns,
     setHiddenColumns,
     searchTerm,
-    setSearchTerm
+    setSearchTerm,
+    recordCount,
+    setRecordCount,
+    page,
+    setPage,
+    records,
+    setRecords,
+    updateRecord
   };
 }

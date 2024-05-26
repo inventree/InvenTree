@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="images/logo/inventree.png" alt="InvenTree logo" width="200" height="auto" />
+  <img src="assets/images/logo/inventree.png" alt="InvenTree logo" width="200" height="auto" />
   <h1>InvenTree</h1>
   <p>Open Source Inventory Management System </p>
 
@@ -9,10 +9,11 @@
 [![Documentation Status](https://readthedocs.org/projects/inventree/badge/?version=latest)](https://inventree.readthedocs.io/en/latest/?badge=latest)
 ![Docker Build](https://github.com/inventree/inventree/actions/workflows/docker.yaml/badge.svg)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/7179/badge)](https://bestpractices.coreinfrastructure.org/projects/7179)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/inventree/InvenTree/badge)](https://securityscorecards.dev/viewer/?uri=github.com/inventree/InvenTree)
 [![Netlify Status](https://api.netlify.com/api/v1/badges/9bbb2101-0a4d-41e7-ad56-b63fb6053094/deploy-status)](https://app.netlify.com/sites/inventree/deploys)
-[![DeepSource](https://app.deepsource.com/gh/inventree/InvenTree.svg/?label=active+issues&show_trend=false&token=trZWqixKLk2t-RXtpSIAslVJ)](https://app.deepsource.com/gh/inventree/InvenTree/)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=inventree_InvenTree&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=inventree_InvenTree)
 
-[![Coveralls](https://img.shields.io/coveralls/github/inventree/InvenTree)](https://coveralls.io/github/inventree/InvenTree)
+[![codecov](https://codecov.io/gh/inventree/InvenTree/graph/badge.svg?token=9DZRGUUV7B)](https://codecov.io/gh/inventree/InvenTree)
 [![Crowdin](https://badges.crowdin.net/inventree/localized.svg)](https://crowdin.com/project/inventree)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/inventree/inventree)
 [![Docker Pulls](https://img.shields.io/docker/pulls/inventree/inventree)](https://hub.docker.com/r/inventree/inventree)
@@ -93,7 +94,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
   <ul>
     <li><a href="https://hub.docker.com/r/inventree/inventree">Docker</a></li>
     <li><a href="https://crowdin.com/project/inventree">Crowdin</a></li>
-    <li><a href="https://coveralls.io/github/inventree/InvenTree">Coveralls</a></li>
+    <li><a href="https://app.codecov.io/gh/inventree/InvenTree">Codecov</a></li>
     <li><a href="https://app.deepsource.com/gh/inventree/InvenTree">DeepSource</a></li>
     <li><a href="https://packager.io/gh/inventree/InvenTree">Packager.io</a></li>
   </ul>

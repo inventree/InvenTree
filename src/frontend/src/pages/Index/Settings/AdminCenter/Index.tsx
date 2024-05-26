@@ -7,8 +7,12 @@ import {
   IconExclamationCircle,
   IconList,
   IconListDetails,
+  IconPackages,
   IconPlugConnected,
+  IconReport,
   IconScale,
+  IconSitemap,
+  IconTags,
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
@@ -18,6 +22,12 @@ import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
+
+const ReportTemplatePanel = Loadable(
+  lazy(() => import('./ReportTemplatePanel'))
+);
+
+const LabelTemplatePanel = Loadable(lazy(() => import('./LabelTemplatePanel')));
 
 const UserManagementPanel = Loadable(
   lazy(() => import('./UserManagementPanel'))
@@ -49,6 +59,14 @@ const CustomUnitsTable = Loadable(
 
 const PartParameterTemplateTable = Loadable(
   lazy(() => import('../../../../tables/part/PartParameterTemplateTable'))
+);
+
+const PartCategoryTemplateTable = Loadable(
+  lazy(() => import('../../../../tables/part/PartCategoryTemplateTable'))
+);
+
+const LocationTypesTable = Loadable(
+  lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
 const CurrencyTable = Loadable(
@@ -87,7 +105,7 @@ export default function AdminCenter() {
         label: t`Project Codes`,
         icon: <IconListDetails />,
         content: (
-          <Stack spacing="xs">
+          <Stack gap="xs">
             <GlobalSettingList keys={['PROJECT_CODES_ENABLED']} />
             <Divider />
             <ProjectCodeTable />
@@ -101,10 +119,34 @@ export default function AdminCenter() {
         content: <CustomUnitsTable />
       },
       {
-        name: 'parameters',
+        name: 'part-parameters',
         label: t`Part Parameters`,
         icon: <IconList />,
         content: <PartParameterTemplateTable />
+      },
+      {
+        name: 'category-parameters',
+        label: t`Category Parameters`,
+        icon: <IconSitemap />,
+        content: <PartCategoryTemplateTable />
+      },
+      {
+        name: 'labels',
+        label: t`Label Templates`,
+        icon: <IconTags />,
+        content: <LabelTemplatePanel />
+      },
+      {
+        name: 'reports',
+        label: t`Report Templates`,
+        icon: <IconReport />,
+        content: <ReportTemplatePanel />
+      },
+      {
+        name: 'location-types',
+        label: t`Location types`,
+        icon: <IconPackages />,
+        content: <LocationTypesTable />
       },
       {
         name: 'plugin',
@@ -122,7 +164,7 @@ export default function AdminCenter() {
   }, []);
 
   const QuickAction = () => (
-    <Stack spacing={'xs'} ml={'sm'}>
+    <Stack gap={'xs'} ml={'sm'}>
       <Title order={5}>
         <Trans>Quick Actions</Trans>
       </Title>
@@ -145,7 +187,7 @@ export default function AdminCenter() {
   );
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SettingsHeader
         title={t`Admin Center`}
         subtitle={t`Advanced Options`}

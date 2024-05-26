@@ -1,22 +1,26 @@
 import { t } from '@lingui/macro';
-import { Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconCircleCheck,
   IconSwitch3
 } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
-import { YesNoButton } from '../../components/items/YesNoButton';
-import { formatPriceRange } from '../../defaults/formatters';
+import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
-import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
-import { getDetailUrl } from '../../functions/urls';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -55,11 +59,9 @@ export function BomTable({
   partId: number;
   params?: any;
 }) {
-  const navigate = useNavigate();
-
   const user = useUserState();
-
   const table = useTable('bom');
+  const navigate = useNavigate();
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -97,13 +99,25 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
-      ReferenceColumn(),
+      ReferenceColumn({
+        switchable: true
+      }),
       {
         accessor: 'quantity',
         switchable: false,
-        sortable: true
-        // TODO: Custom quantity renderer
-        // TODO: see bom.js for existing implementation
+        sortable: true,
+        render: (record: any) => {
+          let quantity = formatDecimal(record.quantity);
+          let units = record.sub_part_detail?.units;
+
+          return (
+            <Group justify="space-between" grow>
+              <Text>{quantity}</Text>
+              {record.overage && <Text size="xs">+{record.overage}</Text>}
+              {units && <Text size="xs">{units}</Text>}
+            </Group>
+          );
+        }
       },
       {
         accessor: 'substitutes',
@@ -134,11 +148,21 @@ export function BomTable({
       }),
       {
         accessor: 'price_range',
-        title: t`Price Range`,
-
-        sortable: false,
+        title: t`Unit Price`,
+        ordering: 'pricing_max',
+        sortable: true,
+        switchable: true,
         render: (record: any) =>
           formatPriceRange(record.pricing_min, record.pricing_max)
+      },
+      {
+        accessor: 'total_price',
+        title: t`Total Price`,
+        ordering: 'pricing_max_total',
+        sortable: true,
+        switchable: true,
+        render: (record: any) =>
+          formatPriceRange(record.pricing_min_total, record.pricing_max_total)
       },
       {
         accessor: 'available_stock',
@@ -152,7 +176,7 @@ export function BomTable({
 
           let text =
             available_stock <= 0 ? (
-              <Text color="red" italic>{t`No stock`}</Text>
+              <Text c="red" style={{ fontStyle: 'italic' }}>{t`No stock`}</Text>
             ) : (
               available_stock
             );
@@ -213,18 +237,20 @@ export function BomTable({
         sortable: false, // TODO: Custom sorting via API
         render: (record: any) => {
           if (record.consumable) {
-            return <Text italic>{t`Consumable item`}</Text>;
+            return (
+              <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
+            );
           }
 
           let can_build = availableStockQuantity(record) / record.quantity;
           can_build = Math.trunc(can_build);
 
           return (
-            <Text color={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
+            <Text c={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
           );
         }
       },
-      NoteColumn()
+      NoteColumn({})
     ];
   }, [partId, params]);
 
@@ -242,26 +268,32 @@ export function BomTable({
       },
       {
         name: 'available_stock',
+        label: t`Available Stock`,
         description: t`Show items with available stock`
       },
       {
         name: 'on_order',
+        label: t`On Order`,
         description: t`Show items on order`
       },
       {
         name: 'validated',
+        label: t`Validated`,
         description: t`Show validated items`
       },
       {
         name: 'inherited',
+        label: t`Inherited`,
         description: t`Show inherited items`
       },
       {
         name: 'optional',
+        label: t`Optional`,
         description: t`Show optional items`
       },
       {
         name: 'consumable',
+        label: t`Consumable`,
         description: t`Show consumable items`
       },
       {
@@ -271,6 +303,36 @@ export function BomTable({
       }
     ];
   }, [partId, params]);
+
+  const [selectedBomItem, setSelectedBomItem] = useState<number>(0);
+
+  const newBomItem = useCreateApiFormModal({
+    url: ApiEndpoints.bom_list,
+    title: t`Add BOM Item`,
+    fields: bomItemFields(),
+    initialData: {
+      part: partId
+    },
+    successMessage: t`BOM item created`,
+    table: table
+  });
+
+  const editBomItem = useEditApiFormModal({
+    url: ApiEndpoints.bom_list,
+    pk: selectedBomItem,
+    title: t`Edit BOM Item`,
+    fields: bomItemFields(),
+    successMessage: t`BOM item updated`,
+    table: table
+  });
+
+  const deleteBomItem = useDeleteApiFormModal({
+    url: ApiEndpoints.bom_list,
+    pk: selectedBomItem,
+    title: t`Delete BOM Item`,
+    successMessage: t`BOM item deleted`,
+    table: table
+  });
 
   const rowActions = useCallback(
     (record: any) => {
@@ -308,14 +370,8 @@ export function BomTable({
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
-            openEditApiForm({
-              url: ApiEndpoints.bom_list,
-              pk: record.pk,
-              title: t`Edit Bom Item`,
-              fields: bomItemFields(),
-              successMessage: t`Bom item updated`,
-              onFormSuccess: table.refreshTable
-            });
+            setSelectedBomItem(record.pk);
+            editBomItem.open();
           }
         })
       );
@@ -325,14 +381,8 @@ export function BomTable({
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
-            openDeleteApiForm({
-              url: ApiEndpoints.bom_list,
-              pk: record.pk,
-              title: t`Delete Bom Item`,
-              successMessage: t`Bom item deleted`,
-              onFormSuccess: table.refreshTable,
-              preFormWarning: t`Are you sure you want to remove this BOM item?`
-            });
+            setSelectedBomItem(record.pk);
+            deleteBomItem.open();
           }
         })
       );
@@ -342,23 +392,39 @@ export function BomTable({
     [partId, user]
   );
 
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        hidden={!user.hasAddRole(UserRoles.part)}
+        tooltip={t`Add BOM Item`}
+        onClick={() => newBomItem.open()}
+      />
+    ];
+  }, [user]);
+
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.bom_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          part: partId,
-          part_detail: true,
-          sub_part_detail: true
-        },
-        tableFilters: tableFilters,
-        onRowClick: (row) =>
-          navigate(getDetailUrl(ModelType.part, row.sub_part)),
-        rowActions: rowActions
-      }}
-    />
+    <>
+      {newBomItem.modal}
+      {editBomItem.modal}
+      {deleteBomItem.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.bom_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            part: partId,
+            part_detail: true,
+            sub_part_detail: true
+          },
+          tableActions: tableActions,
+          tableFilters: tableFilters,
+          modelType: ModelType.part,
+          modelField: 'sub_part',
+          rowActions: rowActions
+        }}
+      />
+    </>
   );
 }

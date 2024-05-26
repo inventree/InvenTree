@@ -33,7 +33,7 @@ export default function ProjectCodeTable() {
         sortable: true
       },
       DescriptionColumn({}),
-      ResponsibleColumn()
+      ResponsibleColumn({})
     ];
   }, []);
 
@@ -41,7 +41,7 @@ export default function ProjectCodeTable() {
     url: ApiEndpoints.project_code_list,
     title: t`Add Project Code`,
     fields: projectCodeFields(),
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedProjectCode, setSelectedProjectCode] = useState<
@@ -53,14 +53,14 @@ export default function ProjectCodeTable() {
     pk: selectedProjectCode,
     title: t`Edit Project Code`,
     fields: projectCodeFields(),
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const deleteProjectCode = useDeleteApiFormModal({
     url: ApiEndpoints.project_code_list,
     pk: selectedProjectCode,
     title: t`Delete Project Code`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(

@@ -2,8 +2,8 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
-import { YesNoButton } from '../../components/items/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
@@ -124,7 +124,7 @@ export function AddressTable({
       company: companyId
     },
     successMessage: t`Address created`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedAddress, setSelectedAddress] = useState<number>(-1);
@@ -134,15 +134,15 @@ export function AddressTable({
     pk: selectedAddress,
     title: t`Edit Address`,
     fields: addressFields,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const deleteAddress = useDeleteApiFormModal({
     url: ApiEndpoints.address_list,
     pk: selectedAddress,
     title: t`Delete Address`,
-    onFormSuccess: table.refreshTable,
-    preFormWarning: t`Are you sure you want to delete this address?`
+    preFormWarning: t`Are you sure you want to delete this address?`,
+    table: table
   });
 
   const rowActions = useCallback(
@@ -184,7 +184,7 @@ export function AddressTable({
       <AddItemButton
         tooltip={t`Add Address`}
         onClick={() => newAddress.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);

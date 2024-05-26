@@ -10,15 +10,16 @@ import {
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
-import { ReactNode, useCallback, useEffect } from 'react';
-import { useMemo } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 
 import { ModelType } from '../../../enums/ModelType';
+import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
+import { TableField } from './TableField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
 
@@ -39,6 +40,7 @@ export type ApiFormAdjustFilterType = {
  * @param icon : An icon to display next to the field
  * @param field_type : The type of field to render
  * @param api_url : The API endpoint to fetch data from (for related fields)
+ * @param pk_field : The primary key field for the related field (default = "pk")
  * @param model : The model to use for related fields
  * @param filters : Optional API filters to apply to related fields
  * @param required : Whether the field is required
@@ -50,6 +52,7 @@ export type ApiFormAdjustFilterType = {
  * @param postFieldContent : Content to render after the field
  * @param onValueChange : Callback function to call when the field value changes
  * @param adjustFilters : Callback function to adjust the filters for a related field before a query is made
+ * @param adjustValue : Callback function to adjust the value of the field before it is sent to the API
  */
 export type ApiFormFieldType = {
   label?: string;
@@ -63,14 +66,17 @@ export type ApiFormFieldType = {
     | 'string'
     | 'boolean'
     | 'date'
+    | 'datetime'
     | 'integer'
     | 'decimal'
     | 'float'
     | 'number'
     | 'choice'
     | 'file upload'
-    | 'nested object';
+    | 'nested object'
+    | 'table';
   api_url?: string;
+  pk_field?: string;
   model?: ModelType;
   modelRenderer?: (instance: any) => ReactNode;
   filters?: any;
@@ -84,8 +90,10 @@ export type ApiFormFieldType = {
   description?: string;
   preFieldContent?: JSX.Element;
   postFieldContent?: JSX.Element;
-  onValueChange?: (value: any) => void;
+  adjustValue?: (value: any) => any;
+  onValueChange?: (value: any, record?: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;
+  headers?: string[];
 };
 
 /**
@@ -127,6 +135,7 @@ export function ApiFormField({
       ...definition,
       onValueChange: undefined,
       adjustFilters: undefined,
+      adjustValue: undefined,
       read_only: undefined,
       children: undefined
     };
@@ -135,6 +144,11 @@ export function ApiFormField({
   // Callback helper when form value changes
   const onChange = useCallback(
     (value: any) => {
+      // Allow for custom value adjustments (per field)
+      if (definition.adjustValue) {
+        value = definition.adjustValue(value);
+      }
+
       field.onChange(value);
 
       // Run custom callback for this field
@@ -167,6 +181,11 @@ export function ApiFormField({
     return val;
   }, [value]);
 
+  // Coerce the value to a (stringified) boolean value
+  const booleanValue: string = useMemo(() => {
+    return isTrue(value).toString();
+  }, [value]);
+
   // Construct the individual field
   function buildField() {
     switch (definition.field_type) {
@@ -184,8 +203,9 @@ export function ApiFormField({
         return (
           <TextInput
             {...reducedDefinition}
-            ref={ref}
+            ref={field.ref}
             id={fieldId}
+            aria-label={`text-field-${field.name}`}
             type={definition.field_type}
             value={value || ''}
             error={error?.message}
@@ -202,16 +222,19 @@ export function ApiFormField({
         return (
           <Switch
             {...reducedDefinition}
+            value={booleanValue}
             ref={ref}
             id={fieldId}
+            aria-label={`boolean-field-${field.name}`}
             radius="lg"
             size="sm"
-            checked={value ?? false}
+            checked={isTrue(value)}
             error={error?.message}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />
         );
       case 'date':
+      case 'datetime':
         return <DateField controller={controller} definition={definition} />;
       case 'integer':
       case 'decimal':
@@ -221,21 +244,14 @@ export function ApiFormField({
           <NumberInput
             {...reducedDefinition}
             radius="sm"
-            ref={ref}
+            ref={field.ref}
             id={fieldId}
+            aria-label={`number-field-${field.name}`}
             value={numericalValue}
             error={error?.message}
-            formatter={(value) => {
-              let v: any = parseFloat(value);
-
-              if (Number.isNaN(v) || !Number.isFinite(v)) {
-                return value;
-              }
-
-              return `${1 * v.toFixed()}`;
-            }}
-            precision={definition.field_type == 'integer' ? 0 : 10}
-            onChange={(value: number) => onChange(value)}
+            decimalScale={definition.field_type == 'integer' ? 0 : 10}
+            onChange={(value: number | string | null) => onChange(value)}
+            step={1}
           />
         );
       case 'choice':
@@ -251,7 +267,7 @@ export function ApiFormField({
           <FileInput
             {...reducedDefinition}
             id={fieldId}
-            ref={ref}
+            ref={field.ref}
             radius="sm"
             value={value}
             error={error?.message}
@@ -264,6 +280,14 @@ export function ApiFormField({
             definition={definition}
             fieldName={fieldName}
             control={control}
+          />
+        );
+      case 'table':
+        return (
+          <TableField
+            definition={definition}
+            fieldName={fieldName}
+            control={controller}
           />
         );
       default:

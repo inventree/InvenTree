@@ -34,7 +34,7 @@ In certain container environments (such as docker), plugins are installed into a
 
 #### Builtin Plugins
 
-Builtin plugins ship in `src/InvenTree/plugin/builtin`. To achieve full unit-testing for all mixins there are some sample implementations in `src/InvenTree/plugin/samples`.
+Builtin plugins ship in `src/backend/InvenTree/plugin/builtin`. To achieve full unit-testing for all mixins there are some sample implementations in `src/backend/InvenTree/plugin/samples`.
 
 !!! success "Builtin Plugins"
     Builtin plugins are always enabled, as they are required for core InvenTree functionality
@@ -74,10 +74,10 @@ Admin users can install plugins directly from the web interface, via the "Plugin
 
 #### Local Directory
 
-Custom plugins can be placed in the `src/InvenTree/plugins/` directory, where they will be automatically discovered. This can be useful for developing and testing plugins, but can prove more difficult in production (e.g. when using Docker).
+Custom plugins can be placed in the `data/plugins/` directory, where they will be automatically discovered. This can be useful for developing and testing plugins, but can prove more difficult in production (e.g. when using Docker).
 
 !!! info "Git Tracking"
-    The `src/InvenTree/plugins/` directory is excluded from Git version tracking - any plugin files here will be hidden from Git
+    The `data/plugins/` directory is excluded from Git version tracking - any plugin files here will be hidden from Git
 
 !!! warning "Not Recommended For Production"
     Loading plugins via the local *plugins* directory is not recommended for production. If you cannot use PIP installation (above), specify a custom plugin directory (below) or use a [VCS](https://pip.pypa.io/en/stable/topics/vcs-support/) as a plugin install source.

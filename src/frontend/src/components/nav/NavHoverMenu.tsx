@@ -8,30 +8,34 @@ import {
   HoverCard,
   Skeleton,
   Text,
-  UnstyledButton
+  UnstyledButton,
+  useMantineColorScheme
 } from '@mantine/core';
 import { IconLayoutSidebar } from '@tabler/icons-react';
 import { useEffect, useState } from 'react';
 
 import { menuItems } from '../../defaults/menuItems';
-import { InvenTreeStyle } from '../../globalStyle';
+import * as classes from '../../main.css';
 import { useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { vars } from '../../theme';
 import { InvenTreeLogo } from '../items/InvenTreeLogo';
 import { MenuLinks } from '../items/MenuLinks';
+
+const onlyItems = Object.values(menuItems);
 
 export function NavHoverMenu({
   openDrawer: openDrawer
 }: {
   openDrawer: () => void;
 }) {
-  const { classes, theme } = InvenTreeStyle();
   const [hostKey, hostList] = useLocalState((state) => [
     state.hostKey,
     state.hostList
   ]);
   const [servername] = useServerApiState((state) => [state.server.instance]);
   const [instanceName, setInstanceName] = useState<string>();
+  const { colorScheme } = useMantineColorScheme();
 
   useEffect(() => {
     if (hostKey && hostList[hostKey]) {
@@ -48,31 +52,32 @@ export function NavHoverMenu({
       withinPortal
     >
       <HoverCard.Target>
-        <UnstyledButton onClick={() => openDrawer()}>
+        <UnstyledButton onClick={() => openDrawer()} aria-label="Homenav">
           <InvenTreeLogo />
         </UnstyledButton>
       </HoverCard.Target>
 
-      <HoverCard.Dropdown sx={{ overflow: 'hidden' }}>
-        <Group position="apart" px="md">
+      <HoverCard.Dropdown style={{ overflow: 'hidden' }}>
+        <Group justify="space-between" px="md">
           <ActionIcon
             onClick={openDrawer}
             onMouseOver={openDrawer}
             title={t`Open Navigation`}
+            variant="default"
           >
             <IconLayoutSidebar />
           </ActionIcon>
-          <Group spacing={'xs'}>
+          <Group gap={'xs'}>
             {instanceName ? (
               instanceName
             ) : (
-              <Skeleton height={20} width={40} radius={theme.defaultRadius} />
+              <Skeleton height={20} width={40} radius={vars.radiusDefault} />
             )}{' '}
             |{' '}
             {servername ? (
               servername
             ) : (
-              <Skeleton height={20} width={40} radius={theme.defaultRadius} />
+              <Skeleton height={20} width={40} radius={vars.radiusDefault} />
             )}
           </Group>
           <Anchor href="#" fz="xs" onClick={openDrawer}>
@@ -83,11 +88,13 @@ export function NavHoverMenu({
         <Divider
           my="sm"
           mx="-md"
-          color={theme.colorScheme === 'dark' ? 'dark.5' : 'gray.1'}
+          color={
+            colorScheme === 'dark' ? vars.colors.dark[5] : vars.colors.gray[1]
+          }
         />
-        <MenuLinks links={menuItems} highlighted={true} />
+        <MenuLinks links={onlyItems} highlighted={true} />
         <div className={classes.headerDropdownFooter}>
-          <Group position="apart">
+          <Group justify="space-between">
             <div>
               <Text fw={500} fz="sm">
                 <Trans>Get started</Trans>

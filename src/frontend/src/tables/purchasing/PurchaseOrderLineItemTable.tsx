@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -12,8 +11,10 @@ import { RenderStockLocation } from '../../components/render/Stock';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { usePurchaseOrderLineItemFields } from '../../forms/PurchaseOrderForms';
-import { getDetailUrl } from '../../functions/urls';
+import {
+  usePurchaseOrderLineItemFields,
+  useReceiveLineItems
+} from '../../forms/PurchaseOrderForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -25,6 +26,7 @@ import { useUserState } from '../../states/UserState';
 import {
   CurrencyColumn,
   LinkColumn,
+  NoteColumn,
   ReferenceColumn,
   TargetDateColumn,
   TotalPriceColumn
@@ -42,21 +44,32 @@ import { TableHoverCard } from '../TableHoverCard';
  */
 export function PurchaseOrderLineItemTable({
   orderId,
+  supplierId,
   params
 }: {
   orderId: number;
+  supplierId?: number;
   params?: any;
 }) {
   const table = useTable('purchase-order-line-item');
 
-  const navigate = useNavigate();
   const user = useUserState();
+
+  const [singleRecord, setSingeRecord] = useState(null);
+  const receiveLineItems = useReceiveLineItems({
+    items: singleRecord ? [singleRecord] : table.selectedRecords,
+    orderPk: orderId,
+    formProps: {
+      // Timeout is a small hack to prevent function being called before re-render
+      onClose: () => setTimeout(() => setSingeRecord(null), 500)
+    }
+  });
 
   const tableColumns = useMemo(() => {
     return [
       {
         accessor: 'part',
-        title: t`Part`,
+        title: t`Internal Part`,
         sortable: true,
         switchable: false,
         render: (record: any) => {
@@ -75,7 +88,7 @@ export function PurchaseOrderLineItemTable({
         sortable: false,
         render: (record: any) => record?.part_detail?.description
       },
-      ReferenceColumn(),
+      ReferenceColumn({}),
       {
         accessor: 'quantity',
         title: t`Quantity`,
@@ -157,7 +170,7 @@ export function PurchaseOrderLineItemTable({
         title: t`Unit Price`
       }),
       TotalPriceColumn(),
-      TargetDateColumn(),
+      TargetDateColumn({}),
       {
         accessor: 'destination',
         title: t`Destination`,
@@ -167,41 +180,48 @@ export function PurchaseOrderLineItemTable({
             ? RenderStockLocation({ instance: record.destination_detail })
             : '-'
       },
-      {
-        accessor: 'notes',
-        title: t`Notes`
-      },
-      LinkColumn()
+      NoteColumn({}),
+      LinkColumn({})
     ];
   }, [orderId, user]);
+
+  const addPurchaseOrderFields = usePurchaseOrderLineItemFields({
+    create: true,
+    orderId: orderId,
+    supplierId: supplierId
+  });
+
+  const [initialData, setInitialData] = useState({});
 
   const newLine = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     title: t`Add Line Item`,
-    fields: usePurchaseOrderLineItemFields({ create: true }),
-    initialData: {
-      order: orderId
-    },
-    onFormSuccess: table.refreshTable
+    fields: addPurchaseOrderFields,
+    initialData: initialData,
+    table: table
   });
 
-  const [selectedLine, setSelectedLine] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedLine, setSelectedLine] = useState<number>(0);
+
+  const editPurchaseOrderFields = usePurchaseOrderLineItemFields({
+    create: false,
+    orderId: orderId,
+    supplierId: supplierId
+  });
 
   const editLine = useEditApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Edit Line Item`,
-    fields: usePurchaseOrderLineItemFields({}),
-    onFormSuccess: table.refreshTable
+    fields: editPurchaseOrderFields,
+    table: table
   });
 
   const deleteLine = useDeleteApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     pk: selectedLine,
     title: t`Delete Line Item`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(
@@ -213,7 +233,11 @@ export function PurchaseOrderLineItemTable({
           hidden: received,
           title: t`Receive line item`,
           icon: <IconSquareArrowRight />,
-          color: 'green'
+          color: 'green',
+          onClick: () => {
+            setSingeRecord(record);
+            receiveLineItems.open();
+          }
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),
@@ -223,7 +247,11 @@ export function PurchaseOrderLineItemTable({
           }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(UserRoles.purchase_order)
+          hidden: !user.hasAddRole(UserRoles.purchase_order),
+          onClick: () => {
+            setInitialData({ ...record });
+            newLine.open();
+          }
         }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.purchase_order),
@@ -241,21 +269,27 @@ export function PurchaseOrderLineItemTable({
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        key="add-line-item"
         tooltip={t`Add line item`}
-        onClick={() => newLine.open()}
+        onClick={() => {
+          setInitialData({
+            order: orderId
+          });
+          newLine.open();
+        }}
         hidden={!user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
-        key="receive-items"
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
+        onClick={() => receiveLineItems.open()}
+        disabled={table.selectedRecords.length === 0}
       />
     ];
-  }, [orderId, user]);
+  }, [orderId, user, table]);
 
   return (
     <>
+      {receiveLineItems.modal}
       {newLine.modal}
       {editLine.modal}
       {deleteLine.modal}
@@ -273,11 +307,7 @@ export function PurchaseOrderLineItemTable({
           },
           rowActions: rowActions,
           tableActions: tableActions,
-          onRowClick: (row: any) => {
-            if (row.part) {
-              navigate(getDetailUrl(ModelType.supplierpart, row.part));
-            }
-          }
+          modelType: ModelType.supplierpart
         }}
       />
     </>

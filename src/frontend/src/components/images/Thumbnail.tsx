@@ -1,7 +1,5 @@
 import { t } from '@lingui/macro';
-import { Anchor, Skeleton } from '@mantine/core';
-import { Group } from '@mantine/core';
-import { Text } from '@mantine/core';
+import { Anchor, Group, Skeleton, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 
 import { ApiImage } from './ApiImage';
@@ -13,6 +11,7 @@ export function Thumbnail({
   src,
   alt = t`Thumbnail`,
   size = 20,
+  link,
   text,
   align
 }: {
@@ -21,25 +20,33 @@ export function Thumbnail({
   size?: number;
   text?: ReactNode;
   align?: string;
+  link?: string;
 }) {
   const backup_image = '/static/img/blank_image.png';
 
+  const inner = useMemo(() => {
+    if (link) {
+      return (
+        <Anchor href={link} target="_blank">
+          {text}
+        </Anchor>
+      );
+    } else {
+      return text;
+    }
+  }, [link, text]);
+
   return (
-    <Group align={align ?? 'left'} spacing="xs" noWrap={true}>
+    <Group align={align ?? 'left'} gap="xs" wrap="nowrap">
       <ApiImage
         src={src || backup_image}
-        alt={alt}
-        width={size}
+        aria-label={alt}
+        w={size}
         fit="contain"
         radius="xs"
-        withPlaceholder
-        imageProps={{
-          style: {
-            maxHeight: size
-          }
-        }}
+        style={{ maxHeight: size }}
       />
-      {text}
+      {inner}
     </Group>
   );
 }
@@ -59,7 +66,7 @@ export function ThumbnailHoverCard({
 }) {
   const card = useMemo(() => {
     return (
-      <Group position="left" spacing={10} noWrap={true}>
+      <Group justify="left" gap={10} wrap="nowrap">
         <Thumbnail src={src} alt={alt} size={size} />
         <Text>{text}</Text>
       </Group>

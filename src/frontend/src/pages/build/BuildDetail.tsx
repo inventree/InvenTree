@@ -4,24 +4,25 @@ import {
   IconClipboardCheck,
   IconClipboardList,
   IconDots,
-  IconFileTypePdf,
   IconInfoCircle,
   IconList,
   IconListCheck,
   IconNotes,
   IconPaperclip,
-  IconPrinter,
   IconQrcode,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import {
   ActionDropdown,
+  CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
   LinkBarcodeAction,
@@ -35,14 +36,17 @@ import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { buildOrderFields } from '../../forms/BuildForms';
-import { partCategoryFields } from '../../forms/PartForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import { useBuildOrderFields } from '../../forms/BuildForms';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import BuildOutputTable from '../../tables/build/BuildOutputTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -137,6 +141,7 @@ export default function BuildDetail() {
         type: 'text',
         name: 'issued_by',
         label: t`Issued By`,
+        icon: 'user',
         badge: 'user'
       },
       {
@@ -145,6 +150,27 @@ export default function BuildDetail() {
         label: t`Responsible`,
         badge: 'owner',
         hidden: !build.responsible
+      },
+      {
+        type: 'text',
+        name: 'creation_date',
+        label: t`Created`,
+        icon: 'calendar',
+        hidden: !build.creation_date
+      },
+      {
+        type: 'text',
+        name: 'target_date',
+        label: t`Target Date`,
+        icon: 'calendar',
+        hidden: !build.target_date
+      },
+      {
+        type: 'text',
+        name: 'completion_date',
+        label: t`Completed`,
+        icon: 'calendar',
+        hidden: !build.completion_date
       }
     ];
 
@@ -164,6 +190,13 @@ export default function BuildDetail() {
         model: ModelType.stocklocation,
         label: t`Destination Location`,
         hidden: !build.destination
+      },
+      {
+        type: 'text',
+        name: 'batch',
+        label: t`Batch Code`,
+        hidden: !build.batch,
+        copy: true
       }
     ];
 
@@ -204,8 +237,7 @@ export default function BuildDetail() {
         content: build?.pk ? (
           <BuildLineTable
             params={{
-              build: id,
-              tracked: false
+              build: id
             }}
           />
         ) : (
@@ -215,7 +247,8 @@ export default function BuildDetail() {
       {
         name: 'incomplete-outputs',
         label: t`Incomplete Outputs`,
-        icon: <IconClipboardList />
+        icon: <IconClipboardList />,
+        content: build.pk ? <BuildOutputTable build={build} /> : <Skeleton />
         // TODO: Hide if build is complete
       },
       {
@@ -224,6 +257,8 @@ export default function BuildDetail() {
         icon: <IconClipboardCheck />,
         content: (
           <StockItemTable
+            allowAdd={false}
+            tableName="build-outputs"
             params={{
               build: id,
               is_building: false
@@ -237,6 +272,8 @@ export default function BuildDetail() {
         icon: <IconList />,
         content: (
           <StockItemTable
+            allowAdd={false}
+            tableName="build-consumed"
             params={{
               consumed_by: id
             }}
@@ -280,80 +317,109 @@ export default function BuildDetail() {
     ];
   }, [build, id]);
 
+  const buildOrderFields = useBuildOrderFields({ create: false });
+
   const editBuild = useEditApiFormModal({
     url: ApiEndpoints.build_order_list,
     pk: build.pk,
     title: t`Edit Build Order`,
-    fields: buildOrderFields(),
+    fields: buildOrderFields,
     onFormSuccess: () => {
       refreshInstance();
     }
   });
 
+  const cancelBuild = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
+    title: t`Cancel Build Order`,
+    fields: {
+      remove_allocated_stock: {},
+      remove_incomplete_outputs: {}
+    },
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
+
+  const duplicateBuild = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Add Build Order`,
+    fields: buildOrderFields,
+    initialData: {
+      ...build,
+      reference: undefined
+    },
+    follow: true,
+    modelType: ModelType.build
+  });
+
   const buildActions = useMemo(() => {
-    // TODO: Disable certain actions based on user permissions
     return [
+      <AdminButton model={ModelType.build} pk={build.pk} />,
       <ActionDropdown
-        key="barcode"
         tooltip={t`Barcode Actions`}
         icon={<IconQrcode />}
         actions={[
           ViewBarcodeAction({}),
           LinkBarcodeAction({
-            disabled: build?.barcode_hash
+            hidden: build?.barcode_hash
           }),
           UnlinkBarcodeAction({
-            disabled: !build?.barcode_hash
+            hidden: !build?.barcode_hash
           })
         ]}
       />,
-      <ActionDropdown
-        key="report"
-        tooltip={t`Reporting Actions`}
-        icon={<IconPrinter />}
-        actions={[
-          {
-            icon: <IconFileTypePdf />,
-            name: t`Report`,
-            tooltip: t`Print build report`
-          }
-        ]}
+      <PrintingActions
+        modelType={ModelType.build}
+        items={[build.pk]}
+        enableReports
       />,
       <ActionDropdown
-        key="build"
         tooltip={t`Build Order Actions`}
         icon={<IconDots />}
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),
-            disabled: !user.hasChangeRole(UserRoles.build)
+            hidden: !user.hasChangeRole(UserRoles.build)
           }),
-          DuplicateItemAction({})
+          CancelItemAction({
+            tooltip: t`Cancel order`,
+            onClick: () => cancelBuild.open(),
+            hidden: !user.hasChangeRole(UserRoles.build)
+            // TODO: Hide if build cannot be cancelled
+          }),
+          DuplicateItemAction({
+            onClick: () => duplicateBuild.open(),
+            hidden: !user.hasAddRole(UserRoles.build)
+          })
         ]}
       />
     ];
   }, [id, build, user]);
 
-  const buildDetail = useMemo(() => {
-    return build?.status ? (
-      StatusRenderer({
-        status: build.status,
-        type: ModelType.build
-      })
-    ) : (
-      <Skeleton />
-    );
-  }, [build, id]);
+  const buildBadges = useMemo(() => {
+    return instanceQuery.isFetching
+      ? []
+      : [
+          <StatusRenderer
+            status={build.status}
+            type={ModelType.build}
+            options={{ size: 'lg' }}
+          />
+        ];
+  }, [build, instanceQuery]);
 
   return (
     <>
       {editBuild.modal}
-      <Stack spacing="xs">
+      {duplicateBuild.modal}
+      {cancelBuild.modal}
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={build.reference}
           subtitle={build.title}
-          detail={buildDetail}
+          badges={buildBadges}
           imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
           breadcrumbs={[
             { name: t`Build Orders`, url: '/build' },

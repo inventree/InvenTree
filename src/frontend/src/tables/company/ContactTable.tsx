@@ -63,16 +63,14 @@ export function ContactTable({
     };
   }, []);
 
-  const [selectedContact, setSelectedContact] = useState<number | undefined>(
-    undefined
-  );
+  const [selectedContact, setSelectedContact] = useState<number>(0);
 
   const editContact = useEditApiFormModal({
     url: ApiEndpoints.contact_list,
     pk: selectedContact,
     title: t`Edit Contact`,
     fields: contactFields,
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const newContact = useCreateApiFormModal({
@@ -82,14 +80,14 @@ export function ContactTable({
       company: companyId
     },
     fields: contactFields,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const deleteContact = useDeleteApiFormModal({
     url: ApiEndpoints.contact_list,
     pk: selectedContact,
     title: t`Delete Contact`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(
@@ -130,7 +128,7 @@ export function ContactTable({
       <AddItemButton
         tooltip={t`Add contact`}
         onClick={() => newContact.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);

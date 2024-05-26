@@ -14,7 +14,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DescriptionColumn } from '../ColumnRenderers';
+import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
@@ -61,9 +61,9 @@ export default function PartParameterTemplateTable() {
         sortable: true
       },
       DescriptionColumn({}),
-      {
+      BooleanColumn({
         accessor: 'checkbox'
-      },
+      }),
       {
         accessor: 'choices'
       }
@@ -83,8 +83,11 @@ export default function PartParameterTemplateTable() {
   const newTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
     title: t`Add Parameter Template`,
-    fields: partParameterTemplateFields,
-    onFormSuccess: table.refreshTable
+    table: table,
+    fields: useMemo(
+      () => ({ ...partParameterTemplateFields }),
+      [partParameterTemplateFields]
+    )
   });
 
   const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
@@ -95,15 +98,18 @@ export default function PartParameterTemplateTable() {
     url: ApiEndpoints.part_parameter_template_list,
     pk: selectedTemplate,
     title: t`Edit Parameter Template`,
-    fields: partParameterTemplateFields,
-    onFormSuccess: table.refreshTable
+    table: table,
+    fields: useMemo(
+      () => ({ ...partParameterTemplateFields }),
+      [partParameterTemplateFields]
+    )
   });
 
   const deleteTemplate = useDeleteApiFormModal({
     url: ApiEndpoints.part_parameter_template_list,
     pk: selectedTemplate,
     title: t`Delete Parameter Template`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   // Callback for row actions
@@ -134,7 +140,7 @@ export default function PartParameterTemplateTable() {
       <AddItemButton
         tooltip={t`Add parameter template`}
         onClick={() => newTemplate.open()}
-        disabled={!user.hasAddRole(UserRoles.part)}
+        hidden={!user.hasAddRole(UserRoles.part)}
       />
     ];
   }, [user]);

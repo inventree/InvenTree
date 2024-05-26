@@ -14,7 +14,7 @@ export interface StatusCodeListInterface {
   [key: string]: StatusCodeInterface;
 }
 
-interface renderStatusLabelOptionsInterface {
+interface RenderStatusLabelOptionsInterface {
   size?: MantineSize;
 }
 
@@ -24,7 +24,7 @@ interface renderStatusLabelOptionsInterface {
 function renderStatusLabel(
   key: string | number,
   codes: StatusCodeListInterface,
-  options: renderStatusLabelOptionsInterface = {}
+  options: RenderStatusLabelOptionsInterface = {}
 ) {
   let text = null;
   let color = null;
@@ -70,23 +70,17 @@ export const StatusRenderer = ({
 }: {
   status: string | number;
   type: ModelType | string;
-  options?: renderStatusLabelOptionsInterface;
+  options?: RenderStatusLabelOptionsInterface;
 }) => {
   const statusCodeList = useGlobalStatusState.getState().status;
 
-  if (status === undefined) {
-    console.log('StatusRenderer: status is undefined');
-    return null;
-  }
-
-  if (statusCodeList === undefined) {
-    console.log('StatusRenderer: statusCodeList is undefined');
+  if (status === undefined || statusCodeList === undefined) {
     return null;
   }
 
   const statusCodes = statusCodeList[type];
   if (statusCodes === undefined) {
-    console.log('StatusRenderer: statusCodes is undefined');
+    console.warn('StatusRenderer: statusCodes is undefined');
     return null;
   }
 

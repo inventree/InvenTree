@@ -2,21 +2,22 @@
 # See https://pre-commit.com/hooks.html for more hooks
 exclude: |
     (?x)^(
-        InvenTree/InvenTree/static/.*|
-        InvenTree/locale/.*|
-        src/frontend/src/locales/.*|
-        .*/migrations/.*
+        src/backend/InvenTree/InvenTree/static/.*|
+        src/backend/InvenTree/locale/.*|
+        src/frontend/src/locales/.* |
+        .*/migrations/.* |
+        src/frontend/yarn.lock
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.2.2
+    rev: v0.4.1
     hooks:
     - id: ruff-format
       args: [--preview]
@@ -25,17 +26,29 @@ repos:
         --fix,
         --preview
       ]
--   repo: https://github.com/matmair/ruff-pre-commit
-    rev: 830893bf46db844d9c99b6c468e285199adf2de6  # uv-018
+-   repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.1.35
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [requirements-dev.in, -o, requirements-dev.txt, --python-version=3.9]
-        files: ^requirements-dev\.(in|txt)$
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, --python-version=3.9, --no-strip-extras, --generate-hashes]
+        files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [requirements.in, -o, requirements.txt,--python-version=3.9]
-        files: ^requirements\.(in|txt)$
+        args: [src/backend/requirements.in, -o, src/backend/requirements.txt,--python-version=3.9, --no-strip-extras,--generate-hashes]
+        files: src/backend/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [.github/requirements.in, -o, .github/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
+        files: .github/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [docs/requirements.in, -o, docs/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
+        files: docs/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt,--python-version=3.11, --no-strip-extras, --generate-hashes]
+        files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.1
     hooks:
@@ -60,7 +73,7 @@ repos:
       - "prettier@^2.4.1"
       - "@trivago/prettier-plugin-sort-imports"
 - repo: https://github.com/pre-commit/mirrors-eslint
-  rev: "v9.0.0-beta.0"
+  rev: "v9.1.0"
   hooks:
   - id: eslint
     additional_dependencies:
@@ -71,3 +84,15 @@ repos:
       - "@typescript-eslint/eslint-plugin@latest"
       - "@typescript-eslint/parser"
     files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
+-   repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.2
+    hooks:
+    -   id: gitleaks
+#-   repo: https://github.com/jumanjihouse/pre-commit-hooks
+#    rev: 3.0.0
+#    hooks:
+#    -   id: shellcheck
+-   repo: https://github.com/isidentical/teyit
+    rev: 0.4.3
+    hooks:
+    -   id: teyit

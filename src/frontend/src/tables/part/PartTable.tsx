@@ -1,17 +1,13 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
-import { shortenString } from '../../functions/tables';
-import { getDetailUrl } from '../../functions/urls';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -45,13 +41,7 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'category',
       sortable: true,
-
-      render: function (record: any) {
-        // TODO: Link to the category detail page
-        return shortenString({
-          str: record.category_detail?.pathstring
-        });
-      }
+      render: (record: any) => record.category_detail?.pathstring
     },
     {
       accessor: 'total_in_stock',
@@ -141,8 +131,8 @@ function partTableColumns(): TableColumn[] {
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left" noWrap>
-                <Text color={color}>{text}</Text>
+              <Group gap="xs" justify="left" wrap="nowrap">
+                <Text c={color}>{text}</Text>
                 {record.units && (
                   <Text size="xs" color={color}>
                     [{record.units}]
@@ -159,11 +149,12 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'price_range',
       title: t`Price Range`,
-      sortable: false,
+      sortable: true,
+      ordering: 'pricing_max',
       render: (record: any) =>
         formatPriceRange(record.pricing_min, record.pricing_max)
     },
-    LinkColumn()
+    LinkColumn({})
   ];
 }
 
@@ -268,7 +259,6 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
   const tableFilters = useMemo(() => partTableFilters(), []);
 
   const table = useTable('part-list');
-  const navigate = useNavigate();
   const user = useUserState();
 
   const newPart = useCreateApiFormModal({
@@ -278,11 +268,8 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
     initialData: {
       ...(props.params ?? {})
     },
-    onFormSuccess: (data: any) => {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.part, data.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.part
   });
 
   const tableActions = useMemo(() => {
@@ -305,14 +292,13 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
         props={{
           ...props,
           enableDownload: true,
+          modelType: ModelType.part,
           tableFilters: tableFilters,
           tableActions: tableActions,
           params: {
             ...props.params,
             category_detail: true
-          },
-          onRowClick: (record) =>
-            navigate(getDetailUrl(ModelType.part, record.pk))
+          }
         }}
       />
     </>

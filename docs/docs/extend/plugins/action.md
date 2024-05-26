@@ -15,4 +15,14 @@ POST {
 }
 ```
 
-For an example of a very simple action plugin, refer to `/InvenTree/plugin/samples/integratoni/simpleactionplugin.py`
+### Sample Plugin
+
+A sample action plugin is provided in the `InvenTree` source code, which can be used as a template for creating custom action plugins:
+
+::: plugin.samples.integration.simpleactionplugin.SimpleActionPlugin
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []

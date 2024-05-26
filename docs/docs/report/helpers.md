@@ -12,13 +12,13 @@ Some common functions are provided for use in custom report and label templates.
 ```
 
 !!! tip "Use the Source, Luke"
-    To see the full range of available helper functions, refer to the source file [report.py](https://github.com/inventree/InvenTree/blob/master/InvenTree/report/templatetags/report.py) where these functions are defined!
+    To see the full range of available helper functions, refer to the source file [report.py](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/report/templatetags/report.py) where these functions are defined!
 
 ## Assigning Variables
 
 When making use of helper functions within a template, it can be useful to store the result of the function to a variable, rather than immediately rendering the output.
 
-For example, using the [render_currency](#rendering-currency) helper function, we can store the output to a variable which can be used at a later point in the template:
+For example, using the [render_currency](#currency-formatting) helper function, we can store the output to a variable which can be used at a later point in the template:
 
 ```html
 {% raw %}
@@ -64,7 +64,7 @@ To return an element corresponding to a certain key in a container which support
 {% endraw %}
 ```
 
-## Formatting Numbers
+## Number Formatting
 
 The helper function `format_number` allows for some common number formatting options. It takes a number (or a number-like string) as an input, as well as some formatting arguments. It returns a *string* containing the formatted number:
 
@@ -78,7 +78,33 @@ The helper function `format_number` allows for some common number formatting opt
 {% endraw %}
 ```
 
-## Rendering Currency
+## Date Formatting
+
+For rendering date and datetime information, the following helper functions are available:
+
+- `format_date`: Format a date object
+- `format_datetime`: Format a datetime object
+
+Each of these helper functions takes a date or datetime object as an input, and returns a *string* containing the formatted date or datetime. The following additional arguments are available:
+
+| Argument | Description |
+| --- | --- |
+| timezone | Specify the timezone to render the date in. If not specified, uses the InvenTree server timezone |
+| format | Specify the format string to use for rendering the date. If not specified, uses ISO formatting. Refer to the [datetime format codes](https://docs.python.org/3/library/datetime.html#format-codes) for more information! |
+
+### Example
+
+A simple example of using the date formatting helper functions:
+
+```html
+{% raw %}
+{% load report %}
+Date: {% format_date my_date timezone="Australia/Sydney" %}
+Datetime: {% format_datetime my_datetime format="%d-%m-%Y %H:%M%S" %}
+{% endraw %}
+```
+
+## Currency Formatting
 
 The helper function `render_currency` allows for simple rendering of currency data. This function can also convert the specified amount of currency into a different target currency:
 
@@ -246,7 +272,7 @@ A template tag is provided to load the InvenTree logo image into a report. You c
 
 ### Custom Logo
 
-If the system administrator has enabled a [custom logo](../start/config.md#customisation-options), then this logo will be used instead of the base InvenTree logo.
+If the system administrator has enabled a [custom logo](../start/config.md#customization-options) then this logo will be used instead of the base InvenTree logo.
 
 This is a useful way to get a custom company logo into your reports.
 
@@ -261,7 +287,7 @@ If you have a custom logo, but explicitly wish to load the InvenTree logo itself
 
 ## Report Assets
 
-[Report Assets](./report.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
+[Report Assets](./templates.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
 
 You can add asset images to the reports and labels by using the `{% raw %}{% asset ... %}{% endraw %}` template tag:
 

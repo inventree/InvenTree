@@ -18,45 +18,14 @@ The ScheduleMixin class provides a plugin with the ability to call functions at 
 {% include 'img.html' %}
 {% endwith %}
 
-### Example
+### SamplePlugin
 
 An example of a plugin which supports scheduled tasks:
 
-```python
-class ScheduledTaskPlugin(ScheduleMixin, SettingsMixin, InvenTreePlugin):
-    """
-    Sample plugin which runs a scheduled task, and provides user configuration.
-    """
-
-    NAME = "Scheduled Tasks"
-    SLUG = 'schedule'
-
-    SCHEDULED_TASKS = {
-        'global': {
-            'func': 'some_module.function',
-            'schedule': 'H',  # Run every hour
-        },
-        'member': {
-            'func': 'foo',
-            'schedule': 'I',  # Minutes
-            'minutes': 15,
-        },
-    }
-
-    SETTINGS = {
-        'SECRET': {
-            'name': 'A secret',
-            'description': 'User configurable value',
-        },
-    }
-
-    def foo(self):
-        """
-        This function runs every 15 minutes
-        """
-        secret_value = self.get_setting('SECRET')
-        print(f"foo - SECRET = {secret_value})
-```
-
-!!! info "More Info"
-    For more information on any of the methods described below, refer to the InvenTree source code. [A working example is available as a starting point](https://github.com/inventree/InvenTree/blob/master/InvenTree/plugin/samples/integration/scheduled_task.py).
+::: plugin.samples.integration.scheduled_task.ScheduledTaskPlugin
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []

@@ -15,14 +15,15 @@ export enum ApiEndpoints {
   user_roles = 'user/roles/',
   user_token = 'user/token/',
   user_simple_login = 'email/generate/',
-  user_reset = 'auth/password/reset/', // Note leading prefix here
-  user_reset_set = 'auth/password/reset/confirm/', // Note leading prefix here
+  user_reset = 'auth/password/reset/',
+  user_reset_set = 'auth/password/reset/confirm/',
   user_sso = 'auth/social/',
   user_sso_remove = 'auth/social/:id/disconnect/',
   user_emails = 'auth/emails/',
   user_email_remove = 'auth/emails/:id/remove/',
   user_email_verify = 'auth/emails/:id/verify/',
   user_email_primary = 'auth/emails/:id/primary/',
+  user_login = 'auth/login/',
   user_logout = 'auth/logout/',
   user_register = 'auth/registration/',
 
@@ -40,6 +41,7 @@ export enum ApiEndpoints {
   news = 'news/',
   global_status = 'generic/status/',
   version = 'version/',
+  license = 'license/',
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
@@ -50,8 +52,14 @@ export enum ApiEndpoints {
 
   // Build API endpoints
   build_order_list = 'build/',
+  build_order_cancel = 'build/:id/cancel/',
+  build_output_create = 'build/:id/create-output/',
+  build_output_complete = 'build/:id/complete/',
+  build_output_scrap = 'build/:id/scrap-outputs/',
+  build_output_delete = 'build/:id/delete-outputs/',
   build_order_attachment_list = 'build/attachment/',
   build_line_list = 'build/line/',
+
   bom_list = 'bom/',
 
   // Part API endpoints
@@ -60,9 +68,13 @@ export enum ApiEndpoints {
   part_parameter_template_list = 'part/parameter/template/',
   part_thumbs_list = 'part/thumbs/',
   part_pricing_get = 'part/:id/pricing/',
+  part_serial_numbers = 'part/:id/serial-numbers/',
+  part_pricing_internal = 'part/internal-price/',
+  part_pricing_sale = 'part/sale-price/',
   part_stocktake_list = 'part/stocktake/',
   category_list = 'part/category/',
   category_tree = 'part/category/tree/',
+  category_parameter_list = 'part/category/parameters/',
   related_part_list = 'part/related/',
   part_attachment_list = 'part/attachment/',
   part_test_template_list = 'part/test-template/',
@@ -73,6 +85,7 @@ export enum ApiEndpoints {
   address_list = 'company/address/',
   company_attachment_list = 'company/attachment/',
   supplier_part_list = 'company/part/',
+  supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
   manufacturer_part_attachment_list = 'company/part/manufacturer/attachment/',
   manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
@@ -81,19 +94,47 @@ export enum ApiEndpoints {
   stock_item_list = 'stock/',
   stock_tracking_list = 'stock/track/',
   stock_location_list = 'stock/location/',
+  stock_location_type_list = 'stock/location-type/',
   stock_location_tree = 'stock/location/tree/',
   stock_attachment_list = 'stock/attachment/',
   stock_test_result_list = 'stock/test/',
+  stock_transfer = 'stock/transfer/',
+  stock_remove = 'stock/remove/',
+  stock_add = 'stock/add/',
+  stock_count = 'stock/count/',
+  stock_change_status = 'stock/change_status/',
+  stock_merge = 'stock/merge/',
+  stock_assign = 'stock/assign/',
+  stock_status = 'stock/status/',
+  stock_install = 'stock/:id/install',
+
+  // Generator API endpoints
+  generate_batch_code = 'generate/batch-code/',
+  generate_serial_number = 'generate/serial-number/',
 
   // Order API endpoints
   purchase_order_list = 'order/po/',
   purchase_order_line_list = 'order/po-line/',
   purchase_order_attachment_list = 'order/po/attachment/',
+  purchase_order_receive = 'order/po/:id/receive/',
+
   sales_order_list = 'order/so/',
+  sales_order_line_list = 'order/so-line/',
   sales_order_attachment_list = 'order/so/attachment/',
   sales_order_shipment_list = 'order/so/shipment/',
+
   return_order_list = 'order/ro/',
   return_order_attachment_list = 'order/ro/attachment/',
+
+  // Template API endpoints
+  label_list = 'label/template/',
+  label_print = 'label/print/',
+  label_output = 'label/output/',
+  report_list = 'report/template/',
+  report_print = 'report/print/',
+  report_output = 'report/output/',
+  report_snippet = 'report/snippet/',
+  report_asset = 'report/asset/',
 
   // Plugin API endpoints
   plugin_list = 'plugins/',
@@ -101,8 +142,8 @@ export enum ApiEndpoints {
   plugin_registry_status = 'plugins/status/',
   plugin_install = 'plugins/install/',
   plugin_reload = 'plugins/reload/',
-  plugin_activate = 'plugins/:id/activate/',
-  plugin_uninstall = 'plugins/:id/uninstall/',
+  plugin_activate = 'plugins/:key/activate/',
+  plugin_uninstall = 'plugins/:key/uninstall/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

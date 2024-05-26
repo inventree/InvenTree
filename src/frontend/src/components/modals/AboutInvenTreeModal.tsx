@@ -19,7 +19,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
-import { CopyButton } from '../items/CopyButton';
+import { CopyButton } from '../buttons/CopyButton';
 
 type AboutLookupRef = {
   ref: string;
@@ -59,7 +59,7 @@ export function AboutInvenTreeModal({
       <tr key={idx}>
         <td>{map.title}</td>
         <td>
-          <Group position="apart" spacing="xs">
+          <Group justify="space-between" gap="xs">
             {alwaysLink ? (
               <Anchor href={data[map.ref]} target="_blank">
                 {data[map.ref]}
@@ -177,7 +177,7 @@ export function AboutInvenTreeModal({
         </tbody>
       </Table>
       <Divider />
-      <Group position="apart">
+      <Group justify="space-between">
         <CopyButton
           value={copyval}
           label={<Trans>Copy version information</Trans>}

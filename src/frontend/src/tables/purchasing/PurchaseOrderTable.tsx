@@ -1,14 +1,14 @@
 import { t } from '@lingui/macro';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { purchaseOrderFields } from '../../forms/PurchaseOrderForms';
-import { getDetailUrl } from '../../functions/urls';
+import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -21,8 +21,7 @@ import {
   ReferenceColumn,
   ResponsibleColumn,
   StatusColumn,
-  TargetDateColumn,
-  TotalPriceColumn
+  TargetDateColumn
 } from '../ColumnRenderers';
 import {
   AssignedToMeFilter,
@@ -43,10 +42,11 @@ export function PurchaseOrderTable({
   supplierId?: number;
   supplierPartId?: number;
 }) {
-  const navigate = useNavigate();
-
   const table = useTable('purchase-order');
   const user = useUserState();
+
+  const projectCodeFilters = useProjectCodeFilters();
+  const responsibleFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -58,15 +58,30 @@ export function PurchaseOrderTable({
       },
       OutstandingFilter(),
       OverdueFilter(),
-      AssignedToMeFilter()
-      // TODO: has_project_code
-      // TODO: project_code
+      AssignedToMeFilter(),
+      {
+        name: 'project_code',
+        label: t`Project Code`,
+        description: t`Filter by project code`,
+        choices: projectCodeFilters.choices
+      },
+      {
+        name: 'has_project_code',
+        label: t`Has Project Code`,
+        description: t`Filter by whether the purchase order has a project code`
+      },
+      {
+        name: 'assigned_to',
+        label: t`Responsible`,
+        description: t`Filter by responsible owner`,
+        choices: responsibleFilters.choices
+      }
     ];
-  }, []);
+  }, [projectCodeFilters.choices, responsibleFilters.choices]);
 
   const tableColumns = useMemo(() => {
     return [
-      ReferenceColumn(),
+      ReferenceColumn({}),
       DescriptionColumn({}),
       {
         accessor: 'supplier__name',
@@ -88,29 +103,35 @@ export function PurchaseOrderTable({
         accessor: 'supplier_reference'
       },
       LineItemsProgressColumn(),
-      StatusColumn(ModelType.purchaseorder),
-      ProjectCodeColumn(),
-      CreationDateColumn(),
-      TargetDateColumn(),
-      TotalPriceColumn(),
-      ResponsibleColumn()
+      StatusColumn({ model: ModelType.purchaseorder }),
+      ProjectCodeColumn({}),
+      CreationDateColumn({}),
+      TargetDateColumn({}),
+      {
+        accessor: 'total_price',
+        title: t`Total Price`,
+        sortable: true,
+        render: (record: any) => {
+          return formatCurrency(record.total_price, {
+            currency: record.order_currency ?? record.supplier_detail?.currency
+          });
+        }
+      },
+      ResponsibleColumn({})
     ];
   }, []);
+
+  const purchaseOrderFields = usePurchaseOrderFields();
 
   const newPurchaseOrder = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_list,
     title: t`Add Purchase Order`,
-    fields: purchaseOrderFields(),
+    fields: purchaseOrderFields,
     initialData: {
       supplier: supplierId
     },
-    onFormSuccess: (response) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.purchaseorder, response.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.purchaseorder
   });
 
   const tableActions = useMemo(() => {
@@ -138,11 +159,10 @@ export function PurchaseOrderTable({
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
-          onRowClick: (row: any) => {
-            if (row.pk) {
-              navigate(getDetailUrl(ModelType.purchaseorder, row.pk));
-            }
-          }
+          modelType: ModelType.purchaseorder,
+          enableSelection: true,
+          enableDownload: true,
+          enableReports: true
         }}
       />
     </>

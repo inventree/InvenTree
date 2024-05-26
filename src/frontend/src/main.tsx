@@ -1,4 +1,9 @@
+import '@mantine/carousel/styles.css';
+import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
+import '@mantine/spotlight/styles.css';
 import * as Sentry from '@sentry/react';
+import 'mantine-datatable/styles.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import 'react-grid-layout/css/styles.css';
@@ -30,6 +35,7 @@ let loaded_vals = (window.INVENTREE_SETTINGS || {}) as any;
 Object.keys(loaded_vals).forEach((key) => {
   if (loaded_vals[key] === undefined) {
     delete loaded_vals[key];
+
     // check for empty server list
   } else if (key === 'server_list' && loaded_vals[key].length === 0) {
     delete loaded_vals[key];

@@ -1,22 +1,35 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { formatCurrency, renderDate } from '../../defaults/formatters';
+import { ActionDropdown } from '../../components/items/ActionDropdown';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useStockFields } from '../../forms/StockForms';
-import { getDetailUrl } from '../../functions/urls';
+import {
+  StockOperationProps,
+  useAddStockItem,
+  useAssignStockItem,
+  useChangeStockStatus,
+  useCountStockItem,
+  useDeleteStockItem,
+  useMergeStockItem,
+  useRemoveStockItem,
+  useStockFields,
+  useTransferStockItem
+} from '../../forms/StockForms';
+import { InvenTreeIcon } from '../../functions/icons';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import {
+  DateColumn,
   DescriptionColumn,
+  LocationColumn,
   PartColumn,
   StatusColumn
 } from '../ColumnRenderers';
@@ -42,7 +55,7 @@ function stockItemTableColumns(): TableColumn[] {
       ordering: 'stock',
       sortable: true,
       title: t`Stock`,
-      render: (record) => {
+      render: (record: any) => {
         // TODO: Push this out into a custom renderer
         let quantity = record?.quantity ?? 0;
         let allocated = record?.allocated ?? 0;
@@ -51,6 +64,18 @@ function stockItemTableColumns(): TableColumn[] {
         let part = record?.part_detail ?? {};
         let extra: ReactNode[] = [];
         let color = undefined;
+
+        // Determine if a stock item is "in stock"
+        // TODO: Refactor this out into a function
+        let in_stock =
+          !record?.belongs_to &&
+          !record?.consumed_by &&
+          !record?.customer &&
+          !record?.is_building &&
+          !record?.sales_order &&
+          !record?.expired &&
+          record?.quantity &&
+          record?.quantity > 0;
 
         if (record.serial && quantity == 1) {
           text = `# ${record.serial}`;
@@ -153,7 +178,6 @@ function stockItemTableColumns(): TableColumn[] {
         }
 
         if (quantity <= 0) {
-          color = 'red';
           extra.push(
             <Text
               key="depleted"
@@ -162,11 +186,15 @@ function stockItemTableColumns(): TableColumn[] {
           );
         }
 
+        if (!in_stock) {
+          color = 'red';
+        }
+
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left" noWrap={true}>
-                <Text color={color}>{text}</Text>
+              <Group gap="xs" justify="left" wrap="nowrap">
+                <Text c={color}>{text}</Text>
                 {part.units && (
                   <Text size="xs" color={color}>
                     [{part.units}]
@@ -180,33 +208,25 @@ function stockItemTableColumns(): TableColumn[] {
         );
       }
     },
-    StatusColumn(ModelType.stockitem),
+    StatusColumn({ model: ModelType.stockitem }),
     {
       accessor: 'batch',
       sortable: true
     },
-    {
-      accessor: 'location',
-      sortable: true,
-      render: function (record: any) {
-        // TODO: Custom renderer for location
-        // TODO: Note, if not "In stock" we don't want to display the actual location here
-        return record?.location_detail?.pathstring ?? record.location ?? '-';
-      }
-    },
-    // TODO: stocktake column
-    {
-      accessor: 'expiry_date',
-      sortable: true,
-      switchable: true,
-      render: (record: any) => renderDate(record.expiry_date)
-    },
-    {
-      accessor: 'updated',
-      sortable: true,
-      switchable: true,
-      render: (record: any) => renderDate(record.updated)
-    },
+    LocationColumn({
+      accessor: 'location_detail'
+    }),
+    DateColumn({
+      accessor: 'stocktake_date',
+      title: t`Stocktake`,
+      sortable: true
+    }),
+    DateColumn({
+      accessor: 'expiry_date'
+    }),
+    DateColumn({
+      accessor: 'updated'
+    }),
     // TODO: purchase order
     // TODO: Supplier part
     {
@@ -329,13 +349,31 @@ function stockItemTableFilters(): TableFilter[] {
 /*
  * Load a table of stock items
  */
-export function StockItemTable({ params = {} }: { params?: any }) {
+export function StockItemTable({
+  params = {},
+  allowAdd = false,
+  tableName = 'stockitems'
+}: {
+  params?: any;
+  allowAdd?: boolean;
+  tableName: string;
+}) {
   let tableColumns = useMemo(() => stockItemTableColumns(), []);
   let tableFilters = useMemo(() => stockItemTableFilters(), []);
 
-  const table = useTable('stockitems');
+  const table = useTable(tableName);
   const user = useUserState();
-  const navigate = useNavigate();
+
+  const tableActionParams: StockOperationProps = useMemo(() => {
+    return {
+      items: table.selectedRecords,
+      model: ModelType.stockitem,
+      refresh: table.refreshTable,
+      filters: {
+        in_stock: true
+      }
+    };
+  }, [table]);
 
   const stockItemFields = useStockFields({ create: true });
 
@@ -347,37 +385,146 @@ export function StockItemTable({ params = {} }: { params?: any }) {
       part: params.part,
       location: params.location
     },
-    onFormSuccess: (data: any) => {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.stockitem, data.pk));
-      }
-    }
+    follow: true,
+    modelType: ModelType.stockitem
   });
 
+  const transferStock = useTransferStockItem(tableActionParams);
+  const addStock = useAddStockItem(tableActionParams);
+  const removeStock = useRemoveStockItem(tableActionParams);
+  const countStock = useCountStockItem(tableActionParams);
+  const changeStockStatus = useChangeStockStatus(tableActionParams);
+  const mergeStock = useMergeStockItem(tableActionParams);
+  const assignStock = useAssignStockItem(tableActionParams);
+  const deleteStock = useDeleteStockItem(tableActionParams);
+
   const tableActions = useMemo(() => {
+    let can_delete_stock = user.hasDeleteRole(UserRoles.stock);
+    let can_add_stock = user.hasAddRole(UserRoles.stock);
+    let can_add_stocktake = user.hasAddRole(UserRoles.stocktake);
+    let can_add_order = user.hasAddRole(UserRoles.purchase_order);
+    let can_change_order = user.hasChangeRole(UserRoles.purchase_order);
     return [
+      <ActionDropdown
+        tooltip={t`Stock Actions`}
+        icon={<InvenTreeIcon icon="stock" />}
+        disabled={table.selectedRecords.length === 0}
+        actions={[
+          {
+            name: t`Add stock`,
+            icon: <InvenTreeIcon icon="add" iconProps={{ color: 'green' }} />,
+            tooltip: t`Add a new stock item`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              addStock.open();
+            }
+          },
+          {
+            name: t`Remove stock`,
+            icon: <InvenTreeIcon icon="remove" iconProps={{ color: 'red' }} />,
+            tooltip: t`Remove some quantity from a stock item`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              removeStock.open();
+            }
+          },
+          {
+            name: 'Count Stock',
+            icon: (
+              <InvenTreeIcon icon="stocktake" iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: 'Count Stock',
+            disabled: !can_add_stocktake,
+            onClick: () => {
+              countStock.open();
+            }
+          },
+          {
+            name: t`Transfer stock`,
+            icon: (
+              <InvenTreeIcon icon="transfer" iconProps={{ color: 'blue' }} />
+            ),
+            tooltip: t`Move Stock items to new locations`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              transferStock.open();
+            }
+          },
+          {
+            name: t`Change stock status`,
+            icon: <InvenTreeIcon icon="info" iconProps={{ color: 'blue' }} />,
+            tooltip: t`Change the status of stock items`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              changeStockStatus.open();
+            }
+          },
+          {
+            name: t`Merge stock`,
+            icon: <InvenTreeIcon icon="merge" />,
+            tooltip: t`Merge stock items`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              mergeStock.open();
+            }
+          },
+          {
+            name: t`Order stock`,
+            icon: <InvenTreeIcon icon="buy" />,
+            tooltip: t`Order new stock`,
+            disabled: !can_add_order || !can_change_order
+          },
+          {
+            name: t`Assign to customer`,
+            icon: <InvenTreeIcon icon="customer" />,
+            tooltip: t`Order new stock`,
+            disabled: !can_add_stock,
+            onClick: () => {
+              assignStock.open();
+            }
+          },
+          {
+            name: t`Delete stock`,
+            icon: <InvenTreeIcon icon="delete" iconProps={{ color: 'red' }} />,
+            tooltip: t`Delete stock items`,
+            disabled: !can_delete_stock,
+            onClick: () => {
+              deleteStock.open();
+            }
+          }
+        ]}
+      />,
       <AddItemButton
-        hidden={!user.hasAddRole(UserRoles.stock)}
+        hidden={!allowAdd || !user.hasAddRole(UserRoles.stock)}
         tooltip={t`Add Stock Item`}
         onClick={() => newStockItem.open()}
       />
     ];
-  }, [user]);
+  }, [user, table, allowAdd]);
 
   return (
     <>
       {newStockItem.modal}
+      {transferStock.modal}
+      {removeStock.modal}
+      {addStock.modal}
+      {countStock.modal}
+      {changeStockStatus.modal}
+      {mergeStock.modal}
+      {assignStock.modal}
+      {deleteStock.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}
         columns={tableColumns}
         props={{
           enableDownload: true,
-          enableSelection: false,
+          enableSelection: true,
+          enableLabels: true,
+          enableReports: true,
           tableFilters: tableFilters,
           tableActions: tableActions,
-          onRowClick: (record) =>
-            navigate(getDetailUrl(ModelType.stockitem, record.pk)),
+          modelType: ModelType.stockitem,
           params: {
             ...params,
             part_detail: true,

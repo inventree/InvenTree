@@ -1,14 +1,12 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { YesNoButton } from '../../components/items/YesNoButton';
+import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -26,8 +24,6 @@ import { RowEditAction } from '../RowActions';
  * PartCategoryTable - Displays a table of part categories
  */
 export function PartCategoryTable({ parentId }: { parentId?: any }) {
-  const navigate = useNavigate();
-
   const table = useTable('partcategory');
   const user = useUserState();
 
@@ -79,13 +75,9 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     initialData: {
       parent: parentId
     },
-    onFormSuccess(data: any) {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.partcategory, data.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.partcategory,
+    table: table
   });
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);
@@ -95,7 +87,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     pk: selectedCategory,
     title: t`Edit Part Category`,
     fields: partCategoryFields({}),
-    onFormSuccess: table.refreshTable
+    onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
   const tableActions = useMemo(() => {
@@ -105,7 +97,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
       <AddItemButton
         tooltip={t`Add Part Category`}
         onClick={() => newCategory.open()}
-        disabled={!can_add}
+        hidden={!can_add}
       />
     ];
   }, [user]);
@@ -143,8 +135,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
           tableFilters: tableFilters,
           tableActions: tableActions,
           rowActions: rowActions,
-          onRowClick: (record) =>
-            navigate(getDetailUrl(ModelType.partcategory, record.pk))
+          modelType: ModelType.partcategory
         }}
       />
     </>

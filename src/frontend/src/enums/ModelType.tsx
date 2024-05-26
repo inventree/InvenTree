@@ -11,8 +11,10 @@ export enum ModelType {
   projectcode = 'projectcode',
   stockitem = 'stockitem',
   stocklocation = 'stocklocation',
+  stocklocationtype = 'stocklocationtype',
   stockhistory = 'stockhistory',
   build = 'build',
+  buildline = 'buildline',
   company = 'company',
   purchaseorder = 'purchaseorder',
   purchaseorderline = 'purchaseorderline',
@@ -22,5 +24,8 @@ export enum ModelType {
   address = 'address',
   contact = 'contact',
   owner = 'owner',
-  user = 'user'
+  user = 'user',
+  reporttemplate = 'reporttemplate',
+  labeltemplate = 'labeltemplate',
+  pluginconfig = 'pluginconfig'
 }

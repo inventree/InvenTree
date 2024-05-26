@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
+  IconDots,
   IconInfoCircle,
   IconList,
   IconNotes,
@@ -9,20 +10,36 @@ import {
   IconTruckDelivery,
   IconTruckLoading
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import {
+  ActionDropdown,
+  CancelItemAction,
+  DuplicateItemAction,
+  EditItemAction
+} from '../../components/items/ActionDropdown';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useSalesOrderFields } from '../../forms/SalesOrderForms';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 
@@ -32,7 +49,13 @@ import { AttachmentTable } from '../../tables/general/AttachmentTable';
 export default function SalesOrderDetail() {
   const { id } = useParams();
 
-  const { instance: order, instanceQuery } = useInstance({
+  const user = useUserState();
+
+  const {
+    instance: order,
+    instanceQuery,
+    refreshInstance
+  } = useInstance({
     endpoint: ApiEndpoints.sales_order_list,
     pk: id,
     params: {
@@ -107,13 +130,19 @@ export default function SalesOrderDetail() {
       {
         type: 'text',
         name: 'currency',
-        label: t`Order Currency,`
+        label: t`Order Currency`,
+        value_formatter: () =>
+          order?.order_currency ?? order?.customer_detail.currency
       },
       {
         type: 'text',
-        name: 'total_cost',
-        label: t`Total Cost`
-        // TODO: Implement this!
+        name: 'total_price',
+        label: t`Total Cost`,
+        value_formatter: () => {
+          return formatCurrency(order?.total_price, {
+            currency: order?.order_currency ?? order?.customer_detail?.currency
+          });
+        }
       }
     ];
 
@@ -133,7 +162,8 @@ export default function SalesOrderDetail() {
         name: 'contact',
         label: t`Contact`,
         icon: 'user',
-        copy: true
+        copy: true,
+        hidden: !order.contact
       }
       // TODO: Project code
     ];
@@ -182,6 +212,30 @@ export default function SalesOrderDetail() {
       </ItemDetailsGrid>
     );
   }, [order, instanceQuery]);
+
+  const salesOrderFields = useSalesOrderFields();
+
+  const editSalesOrder = useEditApiFormModal({
+    url: ApiEndpoints.sales_order_list,
+    pk: order.pk,
+    title: t`Edit Sales Order`,
+    fields: salesOrderFields,
+    onFormSuccess: () => {
+      refreshInstance();
+    }
+  });
+
+  const duplicateSalesOrder = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_list,
+    title: t`Add Sales Order`,
+    fields: salesOrderFields,
+    initialData: {
+      ...order,
+      reference: undefined
+    },
+    follow: true,
+    modelType: ModelType.salesorder
+  });
 
   const orderPanels: PanelType[] = useMemo(() => {
     return [
@@ -243,14 +297,58 @@ export default function SalesOrderDetail() {
     ];
   }, [order, id]);
 
+  const soActions = useMemo(() => {
+    return [
+      <AdminButton model={ModelType.salesorder} pk={order.pk} />,
+      <PrintingActions
+        modelType={ModelType.salesorder}
+        items={[order.pk]}
+        enableReports
+      />,
+      <ActionDropdown
+        tooltip={t`Order Actions`}
+        icon={<IconDots />}
+        actions={[
+          EditItemAction({
+            hidden: !user.hasChangeRole(UserRoles.sales_order),
+            onClick: () => editSalesOrder.open()
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel order`
+          }),
+          DuplicateItemAction({
+            hidden: !user.hasAddRole(UserRoles.sales_order),
+            onClick: () => duplicateSalesOrder.open()
+          })
+        ]}
+      />
+    ];
+  }, [user, order]);
+
+  const orderBadges: ReactNode[] = useMemo(() => {
+    return instanceQuery.isLoading
+      ? []
+      : [
+          <StatusRenderer
+            status={order.status}
+            type={ModelType.salesorder}
+            options={{ size: 'lg' }}
+            key={order.pk}
+          />
+        ];
+  }, [order, instanceQuery]);
+
   return (
     <>
-      <Stack spacing="xs">
+      {editSalesOrder.modal}
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`Sales Order` + `: ${order.reference}`}
           subtitle={order.description}
           imageUrl={order.customer_detail?.image}
+          badges={orderBadges}
+          actions={soActions}
           breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
         />
         <PanelGroup pageKey="salesorder" panels={orderPanels} />

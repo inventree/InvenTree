@@ -1,12 +1,21 @@
 import { Trans } from '@lingui/macro';
-import { Button, Card, Stack, TextInput } from '@mantine/core';
-import { Group, Text } from '@mantine/core';
-import { Accordion } from '@mantine/core';
+import {
+  Accordion,
+  Button,
+  Card,
+  Group,
+  Stack,
+  Text,
+  TextInput
+} from '@mantine/core';
+import { SpotlightActionData } from '@mantine/spotlight';
+import { IconAlien } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
 import { OptionsApiForm } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
+import { firstSpotlight } from '../../components/nav/Layout';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -127,7 +136,7 @@ function ApiFormsPlayground() {
         <Button onClick={() => openCreatePart()}>Create Part new Modal</Button>
         {createPartModal}
       </Group>
-      <Card sx={{ padding: '30px' }}>
+      <Card style={{ padding: '30px' }}>
         <OptionsApiForm
           props={{
             url: ApiEndpoints.part_list,
@@ -164,6 +173,40 @@ function StatusLabelPlayground() {
         <StatusRenderer type={ModelType.stockitem} status={status} />
       </Group>
     </>
+  );
+}
+
+// Sample for spotlight actions
+function SpotlighPlayground() {
+  return (
+    <Button
+      variant="outline"
+      onClick={() => {
+        const setAdditionalActions = (value: SpotlightActionData[]) => {
+          console.log('would add', value);
+        };
+        setAdditionalActions([
+          {
+            id: 'secret-action-1',
+            title: 'Secret action',
+            description: 'It was registered with a button click',
+            leftSection: <IconAlien size="1.2rem" />,
+            onClick: () => console.log('Secret')
+          },
+          {
+            id: 'secret-action-2',
+            title: 'Another secret action',
+            description:
+              'You can register multiple actions with just one command',
+            leftSection: <IconAlien size="1.2rem" />,
+            onClick: () => console.log('Secret')
+          }
+        ]);
+        firstSpotlight.open();
+      }}
+    >
+      Register extra actions
+    </Button>
   );
 }
 
@@ -206,6 +249,10 @@ export default function Playground() {
         <PlaygroundArea
           title="Status labels"
           content={<StatusLabelPlayground />}
+        />
+        <PlaygroundArea
+          title="Spotlight actions"
+          content={<SpotlighPlayground />}
         />
       </Accordion>
     </>

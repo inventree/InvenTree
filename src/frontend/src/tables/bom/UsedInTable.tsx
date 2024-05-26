@@ -1,11 +1,11 @@
 import { t } from '@lingui/macro';
+import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { PartHoverCard } from '../../components/images/Thumbnail';
+import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -23,8 +23,6 @@ export function UsedInTable({
   partId: number;
   params?: any;
 }) {
-  const navigate = useNavigate();
-
   const table = useTable('usedin');
 
   const tableColumns: TableColumn[] = useMemo(() => {
@@ -43,11 +41,18 @@ export function UsedInTable({
       {
         accessor: 'quantity',
         render: (record: any) => {
-          // TODO: render units if appropriate
-          return record.quantity;
+          let quantity = formatDecimal(record.quantity);
+          let units = record.sub_part_detail?.units;
+
+          return (
+            <Group justify="space-between" grow>
+              <Text>{quantity}</Text>
+              {units && <Text size="xs">{units}</Text>}
+            </Group>
+          );
         }
       },
-      ReferenceColumn()
+      ReferenceColumn({})
     ];
   }, [partId]);
 
@@ -55,10 +60,12 @@ export function UsedInTable({
     return [
       {
         name: 'inherited',
+        label: t`Inherited`,
         description: t`Show inherited items`
       },
       {
         name: 'optional',
+        label: t`Optional`,
         description: t`Show optional items`
       },
       {
@@ -87,7 +94,8 @@ export function UsedInTable({
           sub_part_detail: true
         },
         tableFilters: tableFilters,
-        onRowClick: (row) => navigate(getDetailUrl(ModelType.part, row.part))
+        modelType: ModelType.part,
+        modelField: 'part'
       }}
     />
   );

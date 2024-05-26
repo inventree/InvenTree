@@ -72,7 +72,7 @@ sudo apt-get install supervisor
 Copy the supervisor configuration file:
 
 ```
-sudo cp /home/inventree/src/deploy/supervisord.conf /etc/supervisord.conf
+sudo cp /home/inventree/src/contrib/deploy/supervisord.conf /etc/supervisord.conf
 ```
 
 ### Start Supervisor Daemon
