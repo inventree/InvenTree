@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-24 13:32+0000\n"
+"POT-Creation-Date: 2024-05-27 11:31+0000\n"
 "PO-Revision-Date: 2024-05-23 11:39\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
@@ -517,7 +517,7 @@ msgstr "Ime"
 #: part/models.py:3674 part/templates/part/category.html:82
 #: part/templates/part/part_base.html:170
 #: part/templates/part/part_scheduling.html:12 report/models.py:155
-#: report/models.py:510 report/models.py:536
+#: report/models.py:509 report/models.py:535
 #: report/templates/report/inventree_build_order_report.html:117
 #: stock/admin.py:55 stock/models.py:82 stock/templates/stock/location.html:125
 #: templates/InvenTree/settings/notifications.html:19
@@ -686,7 +686,7 @@ msgstr "URL udaljene slike"
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Preuzimanje slika s udaljenog URL-a nije omogućeno"
 
-#: InvenTree/status.py:66 part/serializers.py:1176
+#: InvenTree/status.py:66 part/serializers.py:1178
 msgid "Background worker check failed"
 msgstr "Provera pozadinskog radnika nije uspjela"
 
@@ -712,7 +712,7 @@ msgstr "Postavljen"
 #: InvenTree/status_codes.py:14 InvenTree/status_codes.py:44
 #: InvenTree/status_codes.py:152 InvenTree/status_codes.py:170
 #: generic/states/tests.py:19 order/templates/order/order_base.html:158
-#: order/templates/order/sales_order_base.html:165 report/models.py:444
+#: order/templates/order/sales_order_base.html:165 report/models.py:443
 msgid "Complete"
 msgstr "Gotovo"
 
@@ -1060,7 +1060,7 @@ msgstr ""
 #: part/models.py:3191 part/models.py:3335 part/models.py:3358
 #: part/models.py:3379 part/models.py:3401 part/models.py:3511
 #: part/models.py:3807 part/models.py:3963 part/models.py:4056
-#: part/models.py:4417 part/serializers.py:1122 part/serializers.py:1728
+#: part/models.py:4417 part/serializers.py:1124 part/serializers.py:1730
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -1281,7 +1281,7 @@ msgstr ""
 
 #: build/models.py:922 build/serializers.py:220 build/serializers.py:269
 #: build/serializers.py:861 order/models.py:560 order/serializers.py:433
-#: order/serializers.py:576 part/serializers.py:1486 part/serializers.py:1886
+#: order/serializers.py:576 part/serializers.py:1488 part/serializers.py:1888
 #: stock/models.py:683 stock/models.py:1503 stock/serializers.py:601
 msgid "Quantity must be greater than zero"
 msgstr ""
@@ -1458,7 +1458,7 @@ msgstr ""
 
 #: build/serializers.py:300 build/serializers.py:441 build/serializers.py:513
 #: order/serializers.py:565 order/serializers.py:673 order/serializers.py:1679
-#: part/serializers.py:1142 stock/serializers.py:101 stock/serializers.py:623
+#: part/serializers.py:1144 stock/serializers.py:101 stock/serializers.py:623
 #: stock/serializers.py:783 stock/serializers.py:879 stock/serializers.py:1325
 #: stock/serializers.py:1581 stock/templates/stock/item_base.html:394
 #: templates/js/translated/barcode.js:547
@@ -1702,7 +1702,7 @@ msgid "Allocated Stock"
 msgstr ""
 
 #: build/serializers.py:1148 part/admin.py:132 part/bom.py:173
-#: part/serializers.py:832 part/serializers.py:1504
+#: part/serializers.py:832 part/serializers.py:1506
 #: part/templates/part/part_base.html:210 templates/js/translated/bom.js:1208
 #: templates/js/translated/build.js:2613 templates/js/translated/part.js:709
 #: templates/js/translated/part.js:2148
@@ -1710,13 +1710,13 @@ msgstr ""
 msgid "On Order"
 msgstr ""
 
-#: build/serializers.py:1153 part/serializers.py:1506
+#: build/serializers.py:1153 part/serializers.py:1508
 #: templates/js/translated/build.js:2617
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
 msgstr ""
 
-#: build/serializers.py:1158 part/bom.py:172 part/serializers.py:1529
+#: build/serializers.py:1158 part/bom.py:172 part/serializers.py:1531
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1929
 msgid "Available Stock"
@@ -2471,7 +2471,7 @@ msgid "Copy category parameter templates when creating a part"
 msgstr ""
 
 #: common/models.py:1486 part/admin.py:108 part/models.py:3815
-#: report/models.py:294 report/models.py:361 report/serializers.py:90
+#: report/models.py:293 report/models.py:360 report/serializers.py:90
 #: report/serializers.py:131 stock/serializers.py:228
 #: templates/js/translated/table_filters.js:139
 #: templates/js/translated/table_filters.js:767
@@ -2726,7 +2726,7 @@ msgid "Log errors which occur when generating reports"
 msgstr ""
 
 #: common/models.py:1692 plugin/builtin/labels/label_sheet.py:28
-#: report/models.py:302
+#: report/models.py:301
 msgid "Page Size"
 msgstr ""
 
@@ -5970,13 +5970,13 @@ msgstr ""
 msgid "Part IPN"
 msgstr ""
 
-#: part/admin.py:423 part/serializers.py:1276
+#: part/admin.py:423 part/serializers.py:1278
 #: templates/js/translated/pricing.js:358
 #: templates/js/translated/pricing.js:1024
 msgid "Minimum Price"
 msgstr ""
 
-#: part/admin.py:428 part/serializers.py:1291
+#: part/admin.py:428 part/serializers.py:1293
 #: templates/js/translated/pricing.js:353
 #: templates/js/translated/pricing.js:1032
 msgid "Maximum Price"
@@ -6059,7 +6059,7 @@ msgid "BOM Valid"
 msgstr ""
 
 #: part/api.py:1515 part/models.py:939 part/models.py:3429 part/models.py:3909
-#: part/serializers.py:406 part/serializers.py:1132
+#: part/serializers.py:406 part/serializers.py:1134
 #: part/templates/part/part_base.html:260 stock/api.py:779
 #: templates/InvenTree/settings/settings_staff_js.html:300
 #: templates/js/translated/notification.js:60
@@ -6920,197 +6920,197 @@ msgstr ""
 msgid "Variant Stock"
 msgstr ""
 
-#: part/serializers.py:871 part/templates/part/copy_part.html:9
+#: part/serializers.py:873 part/templates/part/copy_part.html:9
 #: templates/js/translated/part.js:471
 msgid "Duplicate Part"
 msgstr ""
 
-#: part/serializers.py:872
+#: part/serializers.py:874
 msgid "Copy initial data from another Part"
 msgstr ""
 
-#: part/serializers.py:878 templates/js/translated/part.js:102
+#: part/serializers.py:880 templates/js/translated/part.js:102
 msgid "Initial Stock"
 msgstr ""
 
-#: part/serializers.py:879
+#: part/serializers.py:881
 msgid "Create Part with initial stock quantity"
 msgstr ""
 
-#: part/serializers.py:885
+#: part/serializers.py:887
 msgid "Supplier Information"
 msgstr ""
 
-#: part/serializers.py:886
+#: part/serializers.py:888
 msgid "Add initial supplier information for this part"
 msgstr ""
 
-#: part/serializers.py:894
+#: part/serializers.py:896
 msgid "Copy Category Parameters"
 msgstr ""
 
-#: part/serializers.py:895
+#: part/serializers.py:897
 msgid "Copy parameter templates from selected part category"
 msgstr ""
 
-#: part/serializers.py:900
+#: part/serializers.py:902
 msgid "Existing Image"
 msgstr ""
 
-#: part/serializers.py:901
+#: part/serializers.py:903
 msgid "Filename of an existing part image"
 msgstr ""
 
-#: part/serializers.py:918
+#: part/serializers.py:920
 msgid "Image file does not exist"
 msgstr ""
 
-#: part/serializers.py:1124
+#: part/serializers.py:1126
 msgid "Limit stocktake report to a particular part, and any variant parts"
 msgstr ""
 
-#: part/serializers.py:1134
+#: part/serializers.py:1136
 msgid "Limit stocktake report to a particular part category, and any child categories"
 msgstr ""
 
-#: part/serializers.py:1144
+#: part/serializers.py:1146
 msgid "Limit stocktake report to a particular stock location, and any child locations"
 msgstr ""
 
-#: part/serializers.py:1150
+#: part/serializers.py:1152
 msgid "Exclude External Stock"
 msgstr ""
 
-#: part/serializers.py:1151
+#: part/serializers.py:1153
 msgid "Exclude stock items in external locations"
 msgstr ""
 
-#: part/serializers.py:1156
+#: part/serializers.py:1158
 msgid "Generate Report"
 msgstr ""
 
-#: part/serializers.py:1157
+#: part/serializers.py:1159
 msgid "Generate report file containing calculated stocktake data"
 msgstr ""
 
-#: part/serializers.py:1162
+#: part/serializers.py:1164
 msgid "Update Parts"
 msgstr ""
 
-#: part/serializers.py:1163
+#: part/serializers.py:1165
 msgid "Update specified parts with calculated stocktake data"
 msgstr ""
 
-#: part/serializers.py:1171
+#: part/serializers.py:1173
 msgid "Stocktake functionality is not enabled"
 msgstr ""
 
-#: part/serializers.py:1277
+#: part/serializers.py:1279
 msgid "Override calculated value for minimum price"
 msgstr ""
 
-#: part/serializers.py:1284
+#: part/serializers.py:1286
 msgid "Minimum price currency"
 msgstr ""
 
-#: part/serializers.py:1292
+#: part/serializers.py:1294
 msgid "Override calculated value for maximum price"
 msgstr ""
 
-#: part/serializers.py:1299
+#: part/serializers.py:1301
 msgid "Maximum price currency"
 msgstr ""
 
-#: part/serializers.py:1328
+#: part/serializers.py:1330
 msgid "Update"
 msgstr ""
 
-#: part/serializers.py:1329
+#: part/serializers.py:1331
 msgid "Update pricing for this part"
 msgstr ""
 
-#: part/serializers.py:1352
+#: part/serializers.py:1354
 #, python-brace-format
 msgid "Could not convert from provided currencies to {default_currency}"
 msgstr ""
 
-#: part/serializers.py:1359
+#: part/serializers.py:1361
 msgid "Minimum price must not be greater than maximum price"
 msgstr ""
 
-#: part/serializers.py:1362
+#: part/serializers.py:1364
 msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
-#: part/serializers.py:1729
+#: part/serializers.py:1731
 msgid "Select part to copy BOM from"
 msgstr ""
 
-#: part/serializers.py:1737
+#: part/serializers.py:1739
 msgid "Remove Existing Data"
 msgstr ""
 
-#: part/serializers.py:1738
+#: part/serializers.py:1740
 msgid "Remove existing BOM items before copying"
 msgstr ""
 
-#: part/serializers.py:1743
+#: part/serializers.py:1745
 msgid "Include Inherited"
 msgstr ""
 
-#: part/serializers.py:1744
+#: part/serializers.py:1746
 msgid "Include BOM items which are inherited from templated parts"
 msgstr ""
 
-#: part/serializers.py:1749
+#: part/serializers.py:1751
 msgid "Skip Invalid Rows"
 msgstr ""
 
-#: part/serializers.py:1750
+#: part/serializers.py:1752
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/serializers.py:1755
+#: part/serializers.py:1757
 msgid "Copy Substitute Parts"
 msgstr ""
 
-#: part/serializers.py:1756
+#: part/serializers.py:1758
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr ""
 
-#: part/serializers.py:1790
+#: part/serializers.py:1792
 msgid "Clear Existing BOM"
 msgstr ""
 
-#: part/serializers.py:1791
+#: part/serializers.py:1793
 msgid "Delete existing BOM items before uploading"
 msgstr ""
 
-#: part/serializers.py:1821
+#: part/serializers.py:1823
 msgid "No part column specified"
 msgstr ""
 
-#: part/serializers.py:1865
+#: part/serializers.py:1867
 msgid "Multiple matching parts found"
 msgstr ""
 
-#: part/serializers.py:1868
+#: part/serializers.py:1870
 msgid "No matching part found"
 msgstr ""
 
-#: part/serializers.py:1871
+#: part/serializers.py:1873
 msgid "Part is not designated as a component"
 msgstr ""
 
-#: part/serializers.py:1880
+#: part/serializers.py:1882
 msgid "Quantity not provided"
 msgstr ""
 
-#: part/serializers.py:1888
+#: part/serializers.py:1890
 msgid "Invalid quantity"
 msgstr ""
 
-#: part/serializers.py:1909
+#: part/serializers.py:1911
 msgid "At least one BOM item is required"
 msgstr ""
 
@@ -7433,7 +7433,7 @@ msgstr ""
 
 #: part/templates/part/part_base.html:52
 #: stock/templates/stock/item_base.html:62
-#: stock/templates/stock/location.html:74 templates/js/translated/label.js:142
+#: stock/templates/stock/location.html:74 templates/js/translated/label.js:143
 msgid "Print Label"
 msgstr ""
 
@@ -7981,7 +7981,7 @@ msgstr ""
 msgid "Quantity to allocate"
 msgstr ""
 
-#: plugin/base/label/label.py:39 templates/js/translated/label.js:154
+#: plugin/base/label/label.py:39 templates/js/translated/label.js:155
 msgid "Label printing failed"
 msgstr ""
 
@@ -7992,6 +7992,12 @@ msgstr ""
 #: plugin/base/label/mixins.py:70
 msgid "Error rendering label to HTML"
 msgstr ""
+
+#: plugin/base/label/mixins.py:151
+#, fuzzy
+#| msgid "No value provided"
+msgid "No items provided to print"
+msgstr "Nije navedena vrednost"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:25
 msgid "InvenTree Barcodes"
@@ -8110,7 +8116,7 @@ msgstr ""
 msgid "Print a border around each label"
 msgstr ""
 
-#: plugin/builtin/labels/label_sheet.py:47 report/models.py:308
+#: plugin/builtin/labels/label_sheet.py:47 report/models.py:307
 msgid "Landscape"
 msgstr ""
 
@@ -8272,7 +8278,7 @@ msgstr ""
 msgid "Package Plugin"
 msgstr ""
 
-#: plugin/models.py:205 report/models.py:475
+#: plugin/models.py:205 report/models.py:474
 #: templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
 msgid "Plugin"
@@ -8427,7 +8433,7 @@ msgstr ""
 msgid "Model Type"
 msgstr ""
 
-#: report/api.py:92 report/models.py:439 report/serializers.py:98
+#: report/api.py:92 report/models.py:438 report/serializers.py:98
 #: report/serializers.py:148 templates/js/translated/purchase_order.js:1747
 #: templates/js/translated/return_order.js:353
 #: templates/js/translated/sales_order.js:887
@@ -8520,91 +8526,91 @@ msgstr ""
 msgid "Template query filters (comma-separated list of key=value pairs)"
 msgstr ""
 
-#: report/models.py:295 report/models.py:362
+#: report/models.py:294 report/models.py:361
 msgid "Template file"
 msgstr ""
 
-#: report/models.py:303
+#: report/models.py:302
 msgid "Page size for PDF reports"
 msgstr ""
 
-#: report/models.py:309
+#: report/models.py:308
 msgid "Render report in landscape orientation"
 msgstr ""
 
-#: report/models.py:368
+#: report/models.py:367
 msgid "Width [mm]"
 msgstr ""
 
-#: report/models.py:369
+#: report/models.py:368
 msgid "Label width, specified in mm"
 msgstr ""
 
-#: report/models.py:375
+#: report/models.py:374
 msgid "Height [mm]"
 msgstr ""
 
-#: report/models.py:376
+#: report/models.py:375
 msgid "Label height, specified in mm"
 msgstr ""
 
-#: report/models.py:439
+#: report/models.py:438
 msgid "Number of items to process"
 msgstr ""
 
-#: report/models.py:445
+#: report/models.py:444
 msgid "Report generation is complete"
 msgstr ""
 
-#: report/models.py:449 templates/js/translated/build.js:2177
+#: report/models.py:448 templates/js/translated/build.js:2177
 msgid "Progress"
 msgstr ""
 
-#: report/models.py:449
+#: report/models.py:448
 msgid "Report generation progress"
 msgstr ""
 
-#: report/models.py:457
+#: report/models.py:456
 msgid "Report Template"
 msgstr ""
 
-#: report/models.py:464 report/models.py:487
+#: report/models.py:463 report/models.py:486
 msgid "Output File"
 msgstr ""
 
-#: report/models.py:465 report/models.py:488
+#: report/models.py:464 report/models.py:487
 msgid "Generated output file"
 msgstr ""
 
-#: report/models.py:476
+#: report/models.py:475
 msgid "Label output plugin"
 msgstr ""
 
-#: report/models.py:480
+#: report/models.py:479
 msgid "Label Template"
 msgstr ""
 
-#: report/models.py:503
+#: report/models.py:502
 msgid "Snippet"
 msgstr ""
 
-#: report/models.py:504
+#: report/models.py:503
 msgid "Report snippet file"
 msgstr ""
 
-#: report/models.py:511
+#: report/models.py:510
 msgid "Snippet file description"
 msgstr ""
 
-#: report/models.py:529
+#: report/models.py:528
 msgid "Asset"
 msgstr ""
 
-#: report/models.py:530
+#: report/models.py:529
 msgid "Report asset file"
 msgstr ""
 
-#: report/models.py:537
+#: report/models.py:536
 msgid "Asset file description"
 msgstr ""
 
@@ -9427,7 +9433,7 @@ msgstr ""
 msgid "Test Report"
 msgstr ""
 
-#: stock/templates/stock/item.html:89 stock/templates/stock/item.html:282
+#: stock/templates/stock/item.html:89 stock/templates/stock/item.html:284
 msgid "Delete Test Data"
 msgstr ""
 
@@ -9447,11 +9453,11 @@ msgstr ""
 msgid "Install Stock Item"
 msgstr ""
 
-#: stock/templates/stock/item.html:270
+#: stock/templates/stock/item.html:272
 msgid "Delete all test results for this stock item"
 msgstr ""
 
-#: stock/templates/stock/item.html:300 templates/js/translated/stock.js:1701
+#: stock/templates/stock/item.html:302 templates/js/translated/stock.js:1701
 msgid "Add Test Result"
 msgstr ""
 
@@ -10362,7 +10368,7 @@ msgid "Home Page"
 msgstr ""
 
 #: templates/InvenTree/settings/sidebar.html:15
-#: templates/js/translated/forms.js:2163 templates/js/translated/tables.js:543
+#: templates/js/translated/forms.js:2167 templates/js/translated/tables.js:543
 #: templates/navbar.html:107 templates/search.html:8
 #: templates/search_form.html:6 templates/search_form.html:7
 msgid "Search"
@@ -11668,7 +11674,7 @@ msgid "No builds matching query"
 msgstr ""
 
 #: templates/js/translated/build.js:2117 templates/js/translated/build.js:2479
-#: templates/js/translated/forms.js:2159 templates/js/translated/forms.js:2175
+#: templates/js/translated/forms.js:2163 templates/js/translated/forms.js:2179
 #: templates/js/translated/part.js:2315 templates/js/translated/part.js:2741
 #: templates/js/translated/stock.js:1983 templates/js/translated/stock.js:2710
 msgid "Select"
@@ -12077,23 +12083,23 @@ msgstr ""
 msgid "No results found"
 msgstr ""
 
-#: templates/js/translated/forms.js:2279 templates/js/translated/search.js:239
+#: templates/js/translated/forms.js:2285 templates/js/translated/search.js:239
 msgid "Searching"
 msgstr ""
 
-#: templates/js/translated/forms.js:2493
+#: templates/js/translated/forms.js:2499
 msgid "Clear input"
 msgstr ""
 
-#: templates/js/translated/forms.js:3095
+#: templates/js/translated/forms.js:3101
 msgid "File Column"
 msgstr ""
 
-#: templates/js/translated/forms.js:3095
+#: templates/js/translated/forms.js:3101
 msgid "Field Name"
 msgstr ""
 
-#: templates/js/translated/forms.js:3107
+#: templates/js/translated/forms.js:3113
 msgid "Select Columns"
 msgstr ""
 
@@ -12125,7 +12131,7 @@ msgstr ""
 msgid "No items selected for printing"
 msgstr ""
 
-#: templates/js/translated/label.js:149
+#: templates/js/translated/label.js:150
 msgid "Labels sent to printer"
 msgstr ""
 
