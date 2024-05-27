@@ -9,7 +9,7 @@ The `ValidationMixin` class enables plugins to perform custom validation of obje
 Any of the methods described below can be implemented in a custom plugin to provide functionality as required.
 
 !!! info "More Info"
-    For more information on any of the methods described below, refer to the InvenTree source code. [A working example is available as a starting point](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/plugin/samples/integration/validation_sample.py).
+    For more information on any of the methods described below, refer to the InvenTree source code. [A working example is available as a starting point]({{ sourcefile("src/backend/InvenTree/plugin/samples/integration/validation_sample.py") }}).
 
 !!! info "Multi Plugin Support"
     It is possible to have multiple plugins loaded simultaneously which support validation methods. For example when validating a field, if one plugin returns a null value (`None`) then the *next* plugin (if available) will be queried.

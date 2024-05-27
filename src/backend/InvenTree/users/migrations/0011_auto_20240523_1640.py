@@ -9,11 +9,16 @@ from django.db import migrations
 def clear_sessions(apps, schema_editor):
     """Clear all user sessions."""
 
-    engine = import_module(settings.SESSION_ENGINE)
-    engine.SessionStore.clear_expired()
-    print('Cleared all user sessions to deal with GHSA-2crp-q9pc-457j')
-
+    try:
+        engine = import_module(settings.SESSION_ENGINE)
+        engine.SessionStore.clear_expired()
+        print('Cleared all user sessions to deal with GHSA-2crp-q9pc-457j')
+    except Exception:
+        # Database may not be ready yet, so this does not matter anyhow
+        pass
 class Migration(migrations.Migration):
+
+    atomic = False
 
     dependencies = [
         ("users", "0010_alter_apitoken_key"),
