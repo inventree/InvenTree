@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { identifierString } from '../../functions/conversion';
+import { navigateToLink } from '../../functions/navigation';
 
 export type Breadcrumb = {
   name: string;
@@ -63,7 +64,10 @@ export function BreadcrumbList({
                 aria-label={`breadcrumb-${index}-${identifierString(
                   breadcrumb.name
                 )}`}
-                onClick={() => breadcrumb.url && navigate(breadcrumb.url)}
+                onClick={(event: any) =>
+                  breadcrumb.url &&
+                  navigateToLink(breadcrumb.url, navigate, event)
+                }
               >
                 <Text size="sm">{breadcrumb.name}</Text>
               </Anchor>
