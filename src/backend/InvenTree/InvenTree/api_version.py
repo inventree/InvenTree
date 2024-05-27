@@ -1,13 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 202
+INVENTREE_API_VERSION = 203
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v202 - 2024-05-23 : https://github.com/inventree/InvenTree/pull/6989
+v203 - 2024-05-28 : https://github.com/inventree/InvenTree/pull/6989
     - Adds new API endpoints for PurchaseOrder state transitions
         - Request Approval
         - Reject order
@@ -19,6 +19,9 @@ v202 - 2024-05-23 : https://github.com/inventree/InvenTree/pull/6989
         - created_by
         - approved_by
         - placed_by
+
+v202 - 2024-05-27 : https://github.com/inventree/InvenTree/pull/7343
+    - Adjust "required" attribute of Part.category field to be optional
 
 v201 - 2024-05-21 : https://github.com/inventree/InvenTree/pull/7074
     - Major refactor of the report template / report printing interface
