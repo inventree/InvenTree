@@ -194,7 +194,6 @@ export function BuildOrderTable({
         tableState={table}
         columns={tableColumns}
         props={{
-          enableDownload: true,
           params: {
             part: partId,
             sales_order: salesOrderId,
@@ -203,7 +202,10 @@ export function BuildOrderTable({
           },
           tableActions: tableActions,
           tableFilters: tableFilters,
-          modelType: ModelType.build
+          modelType: ModelType.build,
+          enableSelection: true,
+          enableReports: true,
+          enableDownload: true
         }}
       />
     </>

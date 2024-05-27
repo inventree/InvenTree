@@ -1,18 +1,28 @@
 import { t } from '@lingui/macro';
 import { ReactNode } from 'react';
 
+import { ModelType } from '../../enums/ModelType';
+import { getDetailUrl } from '../../functions/urls';
 import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
  * Inline rendering of a single StockLocation instance
  */
-export function RenderStockLocation({
-  instance
-}: Readonly<InstanceRenderInterface>): ReactNode {
+export function RenderStockLocation(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+
   return (
     <RenderInlineModel
+      {...props}
       primary={instance.name}
       secondary={instance.description}
+      url={
+        props.link
+          ? getDetailUrl(ModelType.stocklocation, instance.pk)
+          : undefined
+      }
     />
   );
 }
@@ -32,9 +42,10 @@ export function RenderStockLocationType({
   );
 }
 
-export function RenderStockItem({
-  instance
-}: Readonly<InstanceRenderInterface>): ReactNode {
+export function RenderStockItem(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
   let quantity_string = '';
 
   if (instance?.serial !== null && instance?.serial !== undefined) {
@@ -45,9 +56,13 @@ export function RenderStockItem({
 
   return (
     <RenderInlineModel
+      {...props}
       primary={instance.part_detail?.full_name}
       suffix={quantity_string}
       image={instance.part_detail?.thumbnail || instance.part_detail?.image}
+      url={
+        props.link ? getDetailUrl(ModelType.stockitem, instance.pk) : undefined
+      }
     />
   );
 }

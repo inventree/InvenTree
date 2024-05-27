@@ -146,7 +146,10 @@ export function ReturnOrderTable({ params }: { params?: any }) {
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
-          modelType: ModelType.returnorder
+          modelType: ModelType.returnorder,
+          enableSelection: true,
+          enableDownload: true,
+          enableReports: true
         }}
       />
     </>

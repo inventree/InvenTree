@@ -73,7 +73,8 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
     fields: manufacturerPartFields,
     table: table,
     initialData: {
-      manufacturer: params?.manufacturer
+      manufacturer: params?.manufacturer,
+      part: params?.part
     }
   });
 

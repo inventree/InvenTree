@@ -6,7 +6,24 @@ title: Currency Exchange Mixin
 
 The `CurrencyExchangeMixin` class enabled plugins to provide custom backends for updating currency exchange rate information.
 
-Any implementing classes must provide the `update_exchange_rates` method. A simple example is shown below (with fake data).
+Any implementing classes must provide the `update_exchange_rates` method.
+
+### Builtin Plugin
+
+The default builtin plugin for handling currency exchange rates is the `InvenTreeCurrencyExchangePlugin` class.
+
+::: plugin.builtin.integration.currency_exchange.InvenTreeCurrencyExchange
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
+
+
+### Sample Plugin
+
+A simple example is shown below (with fake data).
 
 ```python
 

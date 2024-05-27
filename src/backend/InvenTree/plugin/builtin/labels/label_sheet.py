@@ -12,9 +12,9 @@ import weasyprint
 from rest_framework import serializers
 
 import report.helpers
-from label.models import LabelOutput, LabelTemplate
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
+from report.models import LabelOutput, LabelTemplate
 
 logger = logging.getLogger('inventree')
 
@@ -68,8 +68,13 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
     PrintingOptionsSerializer = LabelPrintingOptionsSerializer
 
-    def print_labels(self, label: LabelTemplate, items: list, request, **kwargs):
-        """Handle printing of the provided labels."""
+    def print_labels(
+        self, label: LabelTemplate, output: LabelOutput, items: list, request, **kwargs
+    ):
+        """Handle printing of the provided labels.
+
+        Note that we override the entire print_labels method for this plugin.
+        """
         printing_options = kwargs['printing_options']
 
         # Extract page size for the label sheet
@@ -134,15 +139,10 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         html = weasyprint.HTML(string=html_data)
         document = html.render().write_pdf()
 
-        output_file = ContentFile(document, 'labels.pdf')
-
-        output = LabelOutput.objects.create(label=output_file, user=request.user)
-
-        return JsonResponse({
-            'file': output.label.url,
-            'success': True,
-            'message': f'{len(items)} labels generated',
-        })
+        output.output = ContentFile(document, 'labels.pdf')
+        output.progress = 100
+        output.complete = True
+        output.save()
 
     def print_page(self, label: LabelTemplate, items: list, request, **kwargs):
         """Generate a single page of labels.
@@ -185,7 +185,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
                         # Render the individual label template
                         # Note that we disable @page styling for this
                         cell = label.render_as_string(
-                            request, target_object=items[idx], insert_page_style=False
+                            items[idx], request, insert_page_style=False
                         )
                         html += cell
                     except Exception as exc:

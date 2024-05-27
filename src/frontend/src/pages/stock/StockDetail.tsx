@@ -16,6 +16,7 @@ import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -60,6 +61,7 @@ import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
+import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -269,7 +271,12 @@ export default function StockDetail() {
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory />
+        icon: <IconHistory />,
+        content: stockitem.pk ? (
+          <StockTrackingTable itemId={stockitem.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'allocations',
@@ -423,8 +430,13 @@ export default function StockDetail() {
           })
         ]}
       />,
+      <PrintingActions
+        modelType={ModelType.stockitem}
+        items={[stockitem.pk]}
+        enableReports
+        enableLabels
+      />,
       <ActionDropdown
-        key="operations"
         tooltip={t`Stock Operations`}
         icon={<IconPackages />}
         actions={[
@@ -467,7 +479,6 @@ export default function StockDetail() {
         ]}
       />,
       <ActionDropdown
-        key="stock"
         tooltip={t`Stock Item Actions`}
         icon={<IconDots />}
         actions={[

@@ -108,6 +108,10 @@ export enum ApiEndpoints {
   stock_status = 'stock/status/',
   stock_install = 'stock/:id/install',
 
+  // Generator API endpoints
+  generate_batch_code = 'generate/batch-code/',
+  generate_serial_number = 'generate/serial-number/',
+
   // Order API endpoints
   purchase_order_list = 'order/po/',
   purchase_order_line_list = 'order/po-line/',
@@ -123,8 +127,14 @@ export enum ApiEndpoints {
   return_order_attachment_list = 'order/ro/attachment/',
 
   // Template API endpoints
-  label_list = 'label/:variant/',
-  report_list = 'report/:variant/',
+  label_list = 'label/template/',
+  label_print = 'label/print/',
+  label_output = 'label/output/',
+  report_list = 'report/template/',
+  report_print = 'report/print/',
+  report_output = 'report/output/',
+  report_snippet = 'report/snippet/',
+  report_asset = 'report/asset/',
 
   // Plugin API endpoints
   plugin_list = 'plugins/',

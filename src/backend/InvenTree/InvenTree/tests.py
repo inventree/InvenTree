@@ -1065,7 +1065,8 @@ class TestVersionNumber(TestCase):
             subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
         ).strip()
 
-        self.assertEqual(hash, version.inventreeCommitHash())
+        # On some systems the hash is a different length, so just check the first 6 characters
+        self.assertEqual(hash[:6], version.inventreeCommitHash()[:6])
 
         d = (
             str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8')

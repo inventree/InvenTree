@@ -4,13 +4,11 @@ import {
   IconClipboardCheck,
   IconClipboardList,
   IconDots,
-  IconFileTypePdf,
   IconInfoCircle,
   IconList,
   IconListCheck,
   IconNotes,
   IconPaperclip,
-  IconPrinter,
   IconQrcode,
   IconSitemap
 } from '@tabler/icons-react';
@@ -18,6 +16,7 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -191,6 +190,13 @@ export default function BuildDetail() {
         model: ModelType.stocklocation,
         label: t`Destination Location`,
         hidden: !build.destination
+      },
+      {
+        type: 'text',
+        name: 'batch',
+        label: t`Batch Code`,
+        hidden: !build.batch,
+        copy: true
       }
     ];
 
@@ -351,7 +357,6 @@ export default function BuildDetail() {
     return [
       <AdminButton model={ModelType.build} pk={build.pk} />,
       <ActionDropdown
-        key="barcode"
         tooltip={t`Barcode Actions`}
         icon={<IconQrcode />}
         actions={[
@@ -364,20 +369,12 @@ export default function BuildDetail() {
           })
         ]}
       />,
-      <ActionDropdown
-        key="report"
-        tooltip={t`Reporting Actions`}
-        icon={<IconPrinter />}
-        actions={[
-          {
-            icon: <IconFileTypePdf />,
-            name: t`Report`,
-            tooltip: t`Print build report`
-          }
-        ]}
+      <PrintingActions
+        modelType={ModelType.build}
+        items={[build.pk]}
+        enableReports
       />,
       <ActionDropdown
-        key="build"
         tooltip={t`Build Order Actions`}
         icon={<IconDots />}
         actions={[

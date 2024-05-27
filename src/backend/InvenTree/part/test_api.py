@@ -541,12 +541,57 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         category = actions['category']
 
         self.assertEqual(category['type'], 'related field')
-        self.assertTrue(category['required'])
+        self.assertFalse(category['required'])
         self.assertFalse(category['read_only'])
         self.assertEqual(category['label'], 'Category')
         self.assertEqual(category['model'], 'partcategory')
         self.assertEqual(category['api_url'], reverse('api-part-category-list'))
         self.assertEqual(category['help_text'], 'Part category')
+
+    def test_part_label_translation(self):
+        """Test that 'label' values are correctly translated."""
+        response = self.options(reverse('api-part-list'))
+
+        labels = {
+            'IPN': 'IPN',
+            'category': 'Category',
+            'assembly': 'Assembly',
+            'ordering': 'On Order',
+            'stock_item_count': 'Stock Items',
+        }
+
+        help_text = {
+            'IPN': 'Internal Part Number',
+            'active': 'Is this part active?',
+            'barcode_hash': 'Unique hash of barcode data',
+            'category': 'Part category',
+        }
+
+        # Check basic return values
+        for field, value in labels.items():
+            self.assertEqual(response.data['actions']['POST'][field]['label'], value)
+
+        for field, value in help_text.items():
+            self.assertEqual(
+                response.data['actions']['POST'][field]['help_text'], value
+            )
+
+        # Check again, with a different locale
+        response = self.options(
+            reverse('api-part-list'), headers={'Accept-Language': 'de'}
+        )
+
+        translated = {
+            'IPN': 'IPN (Interne Produktnummer)',
+            'category': 'Kategorie',
+            'assembly': 'Baugruppe',
+            'ordering': 'Bestellt',
+            'stock_item_count': 'Lagerartikel',
+        }
+
+        for field, value in translated.items():
+            label = response.data['actions']['POST'][field]['label']
+            self.assertEqual(label, value)
 
     def test_category(self):
         """Test the PartCategory API OPTIONS endpoint."""
@@ -746,6 +791,50 @@ class PartAPITest(PartAPITestBase):
 
         response = self.get(url, {'related': 1}, expected_code=200)
         self.assertEqual(len(response.data), 2)
+
+    def test_filter_by_bom_valid(self):
+        """Test the 'bom_valid' Part API filter."""
+        url = reverse('api-part-list')
+
+        n = Part.objects.filter(active=True, assembly=True).count()
+
+        # Initially, there are no parts with a valid BOM
+        response = self.get(url, {'bom_valid': False}, expected_code=200)
+        n1 = len(response.data)
+
+        for item in response.data:
+            self.assertTrue(item['assembly'])
+            self.assertTrue(item['active'])
+
+        response = self.get(url, {'bom_valid': True}, expected_code=200)
+        n2 = len(response.data)
+
+        self.assertEqual(n1 + n2, n)
+
+    def test_filter_by_starred(self):
+        """Test by 'starred' filter."""
+        url = reverse('api-part-list')
+
+        # All parts
+        n = Part.objects.count()
+
+        # Initially, there are no starred parts
+        response = self.get(url, {'starred': True}, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+        response = self.get(url, {'starred': False, 'limit': 1}, expected_code=200)
+        self.assertEqual(response.data['count'], n)
+
+        # Star a part
+        part = Part.objects.first()
+        part.set_starred(self.user, True)
+
+        # Fetch data again
+        response = self.get(url, {'starred': True}, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        response = self.get(url, {'starred': False, 'limit': 1}, expected_code=200)
+        self.assertEqual(response.data['count'], n - 1)
 
     def test_filter_by_convert(self):
         """Test that we can correctly filter the Part list by conversion options."""
@@ -1408,7 +1497,7 @@ class PartDetailTests(PartAPITestBase):
         response = self.delete(url)
 
         # As the part is 'active' we cannot delete it
-        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.status_code, 400)
 
         # So, let's make it not active
         response = self.patch(url, {'active': False}, expected_code=200)
@@ -2585,6 +2674,8 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
         p = Part.objects.get(pk=1)
         p.active = False
         p.save()
+
+        InvenTreeSetting.set_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', True)
 
         response = self.delete(reverse('api-part-detail', kwargs={'pk': 1}))
         self.assertEqual(response.status_code, 204)

@@ -156,6 +156,7 @@ class PluginDetail(RetrieveUpdateDestroyAPI):
     queryset = PluginConfig.objects.all()
     serializer_class = PluginSerializers.PluginConfigSerializer
     lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
 
     def delete(self, request, *args, **kwargs):
         """Handle DELETE request for a PluginConfig instance.
@@ -202,6 +203,7 @@ class PluginUninstall(UpdateAPI):
     serializer_class = PluginSerializers.PluginUninstallSerializer
     permission_classes = [IsSuperuser]
     lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
 
     def perform_update(self, serializer):
         """Uninstall the plugin."""
@@ -222,6 +224,7 @@ class PluginActivate(UpdateAPI):
     serializer_class = PluginSerializers.PluginActivateSerializer
     permission_classes = [IsSuperuser]
     lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
 
     def get_object(self):
         """Returns the object for the view."""
@@ -323,10 +326,10 @@ class PluginAllSettingList(APIView):
     @extend_schema(
         responses={200: PluginSerializers.PluginSettingSerializer(many=True)}
     )
-    def get(self, request, key):
+    def get(self, request, plugin):
         """Get all settings for a plugin config."""
         # look up the plugin
-        plugin = check_plugin(key, None)
+        plugin = check_plugin(plugin, None)
 
         settings = getattr(plugin, 'settings', {})
 
@@ -355,10 +358,10 @@ class PluginSettingDetail(RetrieveUpdateAPI):
         The URL provides the 'slug' of the plugin, and the 'key' of the setting.
         Both the 'slug' and 'key' must be valid, else a 404 error is raised
         """
-        setting_key = self.kwargs['setting']
+        setting_key = self.kwargs['key']
 
         # Look up plugin
-        plugin = check_plugin(self.kwargs.pop('key', None), None)
+        plugin = check_plugin(self.kwargs.get('plugin', None), None)
 
         settings = getattr(plugin, 'settings', {})
 
@@ -433,13 +436,13 @@ plugin_api_urls = [
             ),
             # Lookup for individual plugins (based on 'key', not 'pk')
             path(
-                '<str:key>/',
+                '<str:plugin>/',
                 include([
                     path(
                         'settings/',
                         include([
                             re_path(
-                                r'^(?P<setting>\w+)/',
+                                r'^(?P<key>\w+)/',
                                 PluginSettingDetail.as_view(),
                                 name='api-plugin-setting-detail',
                             ),

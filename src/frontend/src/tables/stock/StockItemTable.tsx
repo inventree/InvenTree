@@ -406,7 +406,7 @@ export function StockItemTable({
     let can_change_order = user.hasChangeRole(UserRoles.purchase_order);
     return [
       <ActionDropdown
-        key="stockoperations"
+        tooltip={t`Stock Actions`}
         icon={<InvenTreeIcon icon="stock" />}
         disabled={table.selectedRecords.length === 0}
         actions={[
@@ -520,6 +520,8 @@ export function StockItemTable({
         props={{
           enableDownload: true,
           enableSelection: true,
+          enableLabels: true,
+          enableReports: true,
           tableFilters: tableFilters,
           tableActions: tableActions,
           modelType: ModelType.stockitem,
