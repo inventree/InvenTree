@@ -100,6 +100,7 @@ export function PrintingActions({
     },
     successMessage: t`Label printing completed successfully`,
     onFormSuccess: (response: any) => {
+      setPluginKey('');
       if (!response.complete) {
         // TODO: Periodically check for completion (requires server-side changes)
         notifications.show({
