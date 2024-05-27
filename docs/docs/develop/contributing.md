@@ -96,7 +96,7 @@ The HEAD of the "stable" branch represents the latest stable release code.
 
 ## API versioning
 
-The [API version](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/InvenTree/api_version.py) needs to be bumped every time when the API is changed.
+The [API version]({{ sourcefile("src/backend/InvenTree/InvenTree/api_version.py") }}) needs to be bumped every time when the API is changed.
 
 ## Environment
 
