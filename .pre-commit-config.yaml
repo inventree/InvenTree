@@ -39,8 +39,8 @@ repos:
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [.github/requirements.in, -o, .github/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
-        files: .github/requirements\.(in|txt)$
+        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
+        files: contrib/dev_reqs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
         args: [docs/requirements.in, -o, docs/requirements.txt,--python-version=3.9, --no-strip-extras, --generate-hashes]
