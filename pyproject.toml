@@ -85,3 +85,6 @@ src_paths=["src/backend/InvenTree", ]
 skip_glob ="*/migrations/*.py"
 known_django="django"
 sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
+
+[tool.codespell]
+ignore-words-list = ["assertIn","SME"]

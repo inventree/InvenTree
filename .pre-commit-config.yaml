@@ -57,12 +57,16 @@ repos:
   rev: v2.3.0
   hooks:
   - id: codespell
+    additional_dependencies:
+      - tomli
     exclude: >
       (?x)^(
           docs/docs/stylesheets/.*|
           docs/docs/javascripts/.*|
           docs/docs/webfonts/.* |
           src/frontend/src/locales/.* |
+          pyproject.toml |
+          src/frontend/vite.config.ts |
       )$
 - repo: https://github.com/pre-commit/mirrors-prettier
   rev: "v4.0.0-alpha.8"
