@@ -183,6 +183,10 @@ class LabelPrintingMixin:
 
                 # Exclude the 'pdf_file' object - cannot be pickled
                 print_args.pop('pdf_file', None)
+
+                # Exclude the 'request' object - cannot be pickled
+                print_args['context'].pop('request', None)
+
                 offload_task(plugin_label.print_label, self.plugin_slug(), **print_args)
 
             # Update the progress of the print job
