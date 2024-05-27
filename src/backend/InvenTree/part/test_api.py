@@ -541,7 +541,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         category = actions['category']
 
         self.assertEqual(category['type'], 'related field')
-        self.assertTrue(category['required'])
+        self.assertFalse(category['required'])
         self.assertFalse(category['read_only'])
         self.assertEqual(category['label'], 'Category')
         self.assertEqual(category['model'], 'partcategory')
