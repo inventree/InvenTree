@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-23 11:25+0000\n"
+"POT-Creation-Date: 2024-05-24 13:32+0000\n"
 "PO-Revision-Date: 2024-05-23 11:39\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -56,8 +56,8 @@ msgstr "Chi tiết lỗi có thể được tìm thấy trong bảng quản tr�
 msgid "Enter date"
 msgstr "Nhập ngày"
 
-#: InvenTree/fields.py:208 InvenTree/models.py:1035 build/serializers.py:443
-#: build/serializers.py:521 build/templates/build/sidebar.html:21
+#: InvenTree/fields.py:208 InvenTree/models.py:1035 build/serializers.py:453
+#: build/serializers.py:531 build/templates/build/sidebar.html:21
 #: company/models.py:849 company/templates/company/sidebar.html:37
 #: order/models.py:1323 order/templates/order/po_sidebar.html:11
 #: order/templates/order/return_order_sidebar.html:9
@@ -1116,7 +1116,7 @@ msgstr "Tham chiếu đơn đặt bản dựng"
 msgid "SalesOrder to which this build is allocated"
 msgstr "Đơn đặt bán hàng với bản dựng này đã được phân bổ"
 
-#: build/models.py:256 build/serializers.py:969
+#: build/models.py:256 build/serializers.py:994
 #: templates/js/translated/build.js:1731
 #: templates/js/translated/sales_order.js:1221
 msgid "Source Location"
@@ -1158,13 +1158,13 @@ msgstr "Trnạg thái bản dựng"
 msgid "Build status code"
 msgstr "Mã trạng thái bản dựng"
 
-#: build/models.py:299 build/serializers.py:277 order/serializers.py:581
+#: build/models.py:299 build/serializers.py:287 order/serializers.py:581
 #: stock/models.py:844 stock/serializers.py:75 stock/serializers.py:1462
 #: templates/js/translated/purchase_order.js:1129
 msgid "Batch Code"
 msgstr "Mã lô hàng"
 
-#: build/models.py:303 build/serializers.py:278
+#: build/models.py:303 build/serializers.py:288
 msgid "Batch code for this build output"
 msgstr "Mã lô cho đầu ra bản dựng này"
 
@@ -1279,8 +1279,8 @@ msgstr "Đầu ra bản dựng đã được hoàn thiện"
 msgid "Build output does not match Build Order"
 msgstr "Đầu ra bản dựng không phù hợp với đơn đặt bản dựng"
 
-#: build/models.py:922 build/serializers.py:220 build/serializers.py:259
-#: build/serializers.py:836 order/models.py:560 order/serializers.py:433
+#: build/models.py:922 build/serializers.py:220 build/serializers.py:269
+#: build/serializers.py:861 order/models.py:560 order/serializers.py:433
 #: order/serializers.py:576 part/serializers.py:1486 part/serializers.py:1886
 #: stock/models.py:683 stock/models.py:1503 stock/serializers.py:601
 msgid "Quantity must be greater than zero"
@@ -1290,7 +1290,7 @@ msgstr "Số lượng phải lớn hơn 0"
 msgid "Quantity cannot be greater than the output quantity"
 msgstr "Số lượng không thể lớn hơn số lượng đầu ra"
 
-#: build/models.py:984 build/serializers.py:538
+#: build/models.py:984 build/serializers.py:548
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
 msgstr ""
@@ -1304,7 +1304,7 @@ msgid "Build object"
 msgstr "Dựng đối tượng"
 
 #: build/models.py:1374 build/models.py:1630 build/serializers.py:207
-#: build/serializers.py:244 build/templates/build/build_base.html:102
+#: build/serializers.py:254 build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2530
 #: order/models.py:1299 order/models.py:1958 order/serializers.py:1339
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:418
@@ -1379,7 +1379,7 @@ msgstr "Số lượng phải là 1 cho kho sê ri"
 msgid "Selected stock item does not match BOM line"
 msgstr "Hàng trong kho đã chọn không phù hợp với đường BOM"
 
-#: build/models.py:1617 build/serializers.py:816 order/serializers.py:1183
+#: build/models.py:1617 build/serializers.py:841 order/serializers.py:1183
 #: order/serializers.py:1204 stock/models.py:364 stock/serializers.py:92
 #: stock/serializers.py:695 stock/serializers.py:1181 stock/serializers.py:1293
 #: stock/templates/stock/item_base.html:10
@@ -1413,7 +1413,7 @@ msgstr "Cài đặt vào"
 msgid "Destination stock item"
 msgstr "Kho hàng đích"
 
-#: build/serializers.py:157 build/serializers.py:845
+#: build/serializers.py:157 build/serializers.py:870
 #: templates/js/translated/build.js:1322
 msgid "Build Output"
 msgstr "Đầu ra bản dựng"
@@ -1434,29 +1434,29 @@ msgstr "Đầu ra bản dựng này đã được hoàn thành"
 msgid "This build output is not fully allocated"
 msgstr "Đầu ra bản dựng này chưa được phân bổ đầy đủ"
 
-#: build/serializers.py:208 build/serializers.py:245
+#: build/serializers.py:208 build/serializers.py:255
 msgid "Enter quantity for build output"
 msgstr "Điền số lượng cho đầu ra bản dựng"
 
-#: build/serializers.py:266
+#: build/serializers.py:276
 msgid "Integer quantity required for trackable parts"
 msgstr "Số lượng nguyên dương cần phải điền cho sản phẩm có thể theo dõi"
 
-#: build/serializers.py:269
+#: build/serializers.py:279
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Cần nhập số lượng nguyên dương, bởi vì hóa đơn vật liệu chứa sản phẩm có thể theo dõi"
 
-#: build/serializers.py:284 order/serializers.py:589 order/serializers.py:1343
+#: build/serializers.py:294 order/serializers.py:589 order/serializers.py:1343
 #: stock/serializers.py:612 templates/js/translated/purchase_order.js:1153
 #: templates/js/translated/stock.js:367 templates/js/translated/stock.js:565
 msgid "Serial Numbers"
 msgstr "Số sê-ri"
 
-#: build/serializers.py:285
+#: build/serializers.py:295
 msgid "Enter serial numbers for build outputs"
 msgstr "Nhập vào số sêri cho đầu ra bản dựng"
 
-#: build/serializers.py:290 build/serializers.py:431 build/serializers.py:503
+#: build/serializers.py:300 build/serializers.py:441 build/serializers.py:513
 #: order/serializers.py:565 order/serializers.py:673 order/serializers.py:1679
 #: part/serializers.py:1142 stock/serializers.py:101 stock/serializers.py:623
 #: stock/serializers.py:783 stock/serializers.py:879 stock/serializers.py:1325
@@ -1476,51 +1476,51 @@ msgstr "Nhập vào số sêri cho đầu ra bản dựng"
 msgid "Location"
 msgstr "Địa điểm"
 
-#: build/serializers.py:291
+#: build/serializers.py:301
 msgid "Stock location for build output"
 msgstr ""
 
-#: build/serializers.py:305
+#: build/serializers.py:315
 msgid "Auto Allocate Serial Numbers"
 msgstr "Số sêri tự cấp"
 
-#: build/serializers.py:306
+#: build/serializers.py:316
 msgid "Automatically allocate required items with matching serial numbers"
 msgstr "Tự động cấp số seri phù hợp cho hàng hóa được yêu cầu"
 
-#: build/serializers.py:321
+#: build/serializers.py:331
 msgid "Serial numbers must be provided for trackable parts"
 msgstr ""
 
-#: build/serializers.py:346 stock/api.py:1029
+#: build/serializers.py:356 stock/api.py:1029
 msgid "The following serial numbers already exist or are invalid"
 msgstr "Số sêri sau đây đã tồn tại hoặc không hợp lệ"
 
-#: build/serializers.py:393 build/serializers.py:455 build/serializers.py:544
+#: build/serializers.py:403 build/serializers.py:465 build/serializers.py:554
 msgid "A list of build outputs must be provided"
 msgstr "Danh sách đầu ra bản dựng phải được cung cấp"
 
-#: build/serializers.py:432
+#: build/serializers.py:442
 msgid "Stock location for scrapped outputs"
 msgstr "Vị trí kho cho đầu ra phế phẩm"
 
-#: build/serializers.py:438
+#: build/serializers.py:448
 msgid "Discard Allocations"
 msgstr "Hủy phân bổ"
 
-#: build/serializers.py:439
+#: build/serializers.py:449
 msgid "Discard any stock allocations for scrapped outputs"
 msgstr "Hủy bất kỳ phân kho nào cho đầu ra phế phẩm"
 
-#: build/serializers.py:444
+#: build/serializers.py:454
 msgid "Reason for scrapping build output(s)"
 msgstr "Lý do loại bỏ đầu ra bản dựng"
 
-#: build/serializers.py:504
+#: build/serializers.py:514
 msgid "Location for completed build outputs"
 msgstr "Vị trí cho đầu ra bản dựng hoàn thiện"
 
-#: build/serializers.py:510 build/templates/build/build_base.html:151
+#: build/serializers.py:520 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:953
 #: order/models.py:2071 order/serializers.py:597 stock/admin.py:165
 #: stock/serializers.py:930 stock/serializers.py:1469
@@ -1535,173 +1535,173 @@ msgstr "Vị trí cho đầu ra bản dựng hoàn thiện"
 msgid "Status"
 msgstr "Trạng thái"
 
-#: build/serializers.py:516
+#: build/serializers.py:526
 msgid "Accept Incomplete Allocation"
 msgstr "Chấp nhận phân kho dang dở"
 
-#: build/serializers.py:517
+#: build/serializers.py:527
 msgid "Complete outputs if stock has not been fully allocated"
 msgstr "Hoàn hiện đầu ra nếu kho chưa được phân bổ hết chỗ trống"
 
-#: build/serializers.py:597
+#: build/serializers.py:607
 msgid "Consume Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:598
+#: build/serializers.py:608
 msgid "Consume any stock which has already been allocated to this build"
 msgstr ""
 
-#: build/serializers.py:604
+#: build/serializers.py:614
 msgid "Remove Incomplete Outputs"
 msgstr "Xóa toàn bộ đầu ra chưa hoàn thành"
 
-#: build/serializers.py:605
+#: build/serializers.py:615
 msgid "Delete any build outputs which have not been completed"
 msgstr "Xóa bất kỳ đầu ra bản dựng nào chưa được hoàn thành"
 
-#: build/serializers.py:632
+#: build/serializers.py:642
 msgid "Not permitted"
 msgstr "Chưa được cấp phép"
 
-#: build/serializers.py:633
+#: build/serializers.py:643
 msgid "Accept as consumed by this build order"
 msgstr "Chấp nhận trạng thái tiêu hao bởi đơn đặt bản dựng này"
 
-#: build/serializers.py:634
+#: build/serializers.py:644
 msgid "Deallocate before completing this build order"
 msgstr "Phân bổ trước khi hoàn thiện đơn đặt bản dựng này"
 
-#: build/serializers.py:656
+#: build/serializers.py:674
 msgid "Overallocated Stock"
 msgstr "Kho quá tải"
 
-#: build/serializers.py:658
+#: build/serializers.py:676
 msgid "How do you want to handle extra stock items assigned to the build order"
 msgstr "Bạn muốn thế nào để xử lý hàng trong kho được gán thừa cho đơn đặt bản dựng"
 
-#: build/serializers.py:668
+#: build/serializers.py:686
 msgid "Some stock items have been overallocated"
 msgstr "Một vài hàng hóa đã được phân bổ quá thừa"
 
-#: build/serializers.py:673
+#: build/serializers.py:691
 msgid "Accept Unallocated"
 msgstr "Chấp nhận chưa phân bổ được"
 
-#: build/serializers.py:674
+#: build/serializers.py:692
 msgid "Accept that stock items have not been fully allocated to this build order"
 msgstr "Chấp nhận hàng hóa không được phân bổ đầy đủ vào đơn đặt bản dựng này"
 
-#: build/serializers.py:684 templates/js/translated/build.js:315
+#: build/serializers.py:702 templates/js/translated/build.js:315
 msgid "Required stock has not been fully allocated"
 msgstr "Kho được yêu cầu chưa được phân bổ hết không gian"
 
-#: build/serializers.py:689 order/serializers.py:301 order/serializers.py:1246
+#: build/serializers.py:707 order/serializers.py:301 order/serializers.py:1246
 msgid "Accept Incomplete"
 msgstr "Chấp nhận không hoàn thành"
 
-#: build/serializers.py:690
+#: build/serializers.py:708
 msgid "Accept that the required number of build outputs have not been completed"
 msgstr "Chấp nhận số yêu cầu của đầu ra bản dựng chưa được hoàn thành"
 
-#: build/serializers.py:700 templates/js/translated/build.js:319
+#: build/serializers.py:718 templates/js/translated/build.js:319
 msgid "Required build quantity has not been completed"
 msgstr "Số lượng bản dựng được yêu cầu chưa được hoàn thành"
 
-#: build/serializers.py:709 templates/js/translated/build.js:303
+#: build/serializers.py:727 templates/js/translated/build.js:303
 msgid "Build order has incomplete outputs"
 msgstr "Đơn đặt bản dựng có đầu ra chưa hoàn thiện"
 
-#: build/serializers.py:739
+#: build/serializers.py:764
 msgid "Build Line"
 msgstr "Lộ giới"
 
-#: build/serializers.py:749
+#: build/serializers.py:774
 msgid "Build output"
 msgstr "Đầu ra bản dựng"
 
-#: build/serializers.py:757
+#: build/serializers.py:782
 msgid "Build output must point to the same build"
 msgstr "Đầu ra bản dựng phải chỉ đến bản dựng tương ứng"
 
-#: build/serializers.py:793
+#: build/serializers.py:818
 msgid "Build Line Item"
 msgstr "Mục chi tiết bản dựng"
 
-#: build/serializers.py:807
+#: build/serializers.py:832
 msgid "bom_item.part must point to the same part as the build order"
 msgstr "bom_item.part phải trỏ đến phần tương tự của đơn đặt bản dựng"
 
-#: build/serializers.py:822 stock/serializers.py:1194
+#: build/serializers.py:847 stock/serializers.py:1194
 msgid "Item must be in stock"
 msgstr "Hàng hóa phải trong kho"
 
-#: build/serializers.py:870 order/serializers.py:1237
+#: build/serializers.py:895 order/serializers.py:1237
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Số lượng có sẵn ({q}) đã bị vượt quá"
 
-#: build/serializers.py:876
+#: build/serializers.py:901
 msgid "Build output must be specified for allocation of tracked parts"
 msgstr "Đầu ra bản dựng phải được xác định cho việc phân sản phẩm được theo dõi"
 
-#: build/serializers.py:883
+#: build/serializers.py:908
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Đầu ra bản dựng không thể chỉ định cho việc phân sản phẩm chưa được theo dõi"
 
-#: build/serializers.py:907 order/serializers.py:1489
+#: build/serializers.py:932 order/serializers.py:1489
 msgid "Allocation items must be provided"
 msgstr "Hàng hóa phân bổ phải được cung cấp"
 
-#: build/serializers.py:970
+#: build/serializers.py:995
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
 msgstr "Vị trí kho nơi sản phẩm được lấy ra (để trống để lấy từ bất kỳ vị trí nào)"
 
-#: build/serializers.py:978
+#: build/serializers.py:1003
 msgid "Exclude Location"
 msgstr "Ngoại trừ vị trí"
 
-#: build/serializers.py:979
+#: build/serializers.py:1004
 msgid "Exclude stock items from this selected location"
 msgstr "Không bao gồm hàng trong kho từ vị trí đã chọn này"
 
-#: build/serializers.py:984
+#: build/serializers.py:1009
 msgid "Interchangeable Stock"
 msgstr "Kho trao đổi"
 
-#: build/serializers.py:985
+#: build/serializers.py:1010
 msgid "Stock items in multiple locations can be used interchangeably"
 msgstr "Hàng trong kho thuộc nhiều vị trí có thể dùng thay thế được cho nhau"
 
-#: build/serializers.py:990
+#: build/serializers.py:1015
 msgid "Substitute Stock"
 msgstr "Kho thay thế"
 
-#: build/serializers.py:991
+#: build/serializers.py:1016
 msgid "Allow allocation of substitute parts"
 msgstr "Cho phép phân kho sản phẩm thay thế"
 
-#: build/serializers.py:996
+#: build/serializers.py:1021
 msgid "Optional Items"
 msgstr "Mục tùy chọn"
 
-#: build/serializers.py:997
+#: build/serializers.py:1022
 msgid "Allocate optional BOM items to build order"
 msgstr "Phân bổ các mục hóa đơn vật liệu tùy chọn đến đơn đặt bản dựng"
 
-#: build/serializers.py:1019
+#: build/serializers.py:1044
 msgid "Failed to start auto-allocation task"
 msgstr ""
 
-#: build/serializers.py:1109 part/models.py:3973 part/models.py:4409
+#: build/serializers.py:1134 part/models.py:3973 part/models.py:4409
 #: stock/api.py:792
 msgid "BOM Item"
 msgstr "Mục BOM"
 
-#: build/serializers.py:1118 templates/js/translated/index.js:130
+#: build/serializers.py:1143 templates/js/translated/index.js:130
 msgid "Allocated Stock"
 msgstr ""
 
-#: build/serializers.py:1123 part/admin.py:132 part/bom.py:173
+#: build/serializers.py:1148 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:832 part/serializers.py:1504
 #: part/templates/part/part_base.html:210 templates/js/translated/bom.js:1208
 #: templates/js/translated/build.js:2613 templates/js/translated/part.js:709
@@ -1710,13 +1710,13 @@ msgstr ""
 msgid "On Order"
 msgstr "Bật đơn hàng"
 
-#: build/serializers.py:1128 part/serializers.py:1506
+#: build/serializers.py:1153 part/serializers.py:1506
 #: templates/js/translated/build.js:2617
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
 msgstr "Đang sản xuất"
 
-#: build/serializers.py:1133 part/bom.py:172 part/serializers.py:1529
+#: build/serializers.py:1158 part/bom.py:172 part/serializers.py:1529
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1929
 msgid "Available Stock"
@@ -14317,4 +14317,3 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
-
