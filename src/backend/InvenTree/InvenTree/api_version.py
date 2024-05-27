@@ -100,7 +100,7 @@ v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
     - Adds "external_stock" field to the Part API endpoint
     - Adds "external_stock" field to the BomItem API endpoint
     - Adds "external_stock" field to the BuildLine API endpoint
-    - Stock quantites represented in the BuildLine API endpoint are now filtered by Build.source_location
+    - Stock quantities represented in the BuildLine API endpoint are now filtered by Build.source_location
 
 v177 - 2024-02-27 : https://github.com/inventree/InvenTree/pull/6581
     - Adds "subcategoies" count to PartCategoryTree serializer
