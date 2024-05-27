@@ -144,10 +144,12 @@ export function OptionsApiForm({
       if (error.response) {
         invalidResponse(error.response.status);
       } else {
+        notifications.hide('form-error');
         notifications.show({
           title: t`Form Error`,
           message: error.message,
-          color: 'red'
+          color: 'red',
+          id: 'form-error'
         });
       }
       return false;

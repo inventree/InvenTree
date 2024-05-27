@@ -147,6 +147,9 @@ class LabelPrintingMixin:
 
         N = len(items)
 
+        if N <= 0:
+            raise ValidationError(_('No items provided to print'))
+
         # Generate a label output for each provided item
         for item in items:
             context = label.get_context(item, request)
@@ -177,9 +180,13 @@ class LabelPrintingMixin:
                 self.print_label(**print_args)
             else:
                 # Offload the print task to the background worker
-                # Exclude the 'pdf_file' object - cannot be pickled
 
-                kwargs.pop('pdf_file', None)
+                # Exclude the 'pdf_file' object - cannot be pickled
+                print_args.pop('pdf_file', None)
+
+                # Exclude the 'context' object - cannot be pickled
+                print_args.pop('context', None)
+
                 offload_task(plugin_label.print_label, self.plugin_slug(), **print_args)
 
             # Update the progress of the print job
