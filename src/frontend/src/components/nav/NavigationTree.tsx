@@ -146,7 +146,11 @@ export default function NavigationTree({
           }}
         >
           <Space w={5 * payload.level} />
-          <ActionIcon size="sm" variant="transparent">
+          <ActionIcon
+            size="sm"
+            variant="transparent"
+            aria-label={`nav-tree-toggle-${payload.node.value}}`}
+          >
             {payload.hasChildren ? (
               payload.expanded ? (
                 <IconChevronDown />
@@ -157,7 +161,10 @@ export default function NavigationTree({
               <IconPoint />
             )}
           </ActionIcon>
-          <Anchor onClick={(event: any) => follow(payload.node, event)}>
+          <Anchor
+            onClick={(event: any) => follow(payload.node, event)}
+            aria-label={`nav-tree-item-${payload.node.value}`}
+          >
             {payload.node.label}
           </Anchor>
         </Group>
