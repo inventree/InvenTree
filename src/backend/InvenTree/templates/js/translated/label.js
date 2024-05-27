@@ -67,13 +67,14 @@ function printLabels(options) {
         items: item_string,
     };
 
-    function getPrintingFields(plugin_id, callback) {
-        let url = '{% url "api-label-print" %}' + `?plugin=${plugin_id}`;
+    function getPrintingFields(plugin_slug, callback) {
+
+        let url = '{% url "api-label-print" %}' + `?plugin=${plugin_slug}`;
 
         inventreeGet(
             url,
             {
-                plugin: plugin_name || undefined,
+                plugin: plugin_slug || undefined,
             },
             {
                 method: 'OPTIONS',
@@ -92,7 +93,7 @@ function printLabels(options) {
             return;
         }
 
-        pluginName = value;
+        plugin_name = value;
 
         // Request new printing options for the selected plugin
         getPrintingFields(value, function(fields) {
