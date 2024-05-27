@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-27 11:31+0000\n"
-"PO-Revision-Date: 2024-05-23 11:38\n"
+"POT-Creation-Date: 2024-05-27 09:13+0000\n"
+"PO-Revision-Date: 2024-05-27 11:54\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -7994,10 +7994,8 @@ msgid "Error rendering label to HTML"
 msgstr ""
 
 #: plugin/base/label/mixins.py:151
-#, fuzzy
-#| msgid "No value provided"
 msgid "No items provided to print"
-msgstr "Není k dispozici žádná hodnota"
+msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:25
 msgid "InvenTree Barcodes"
@@ -14323,3 +14321,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
