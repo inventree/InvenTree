@@ -114,7 +114,8 @@ export default function BuildOutputTable({ build }: { build: any }) {
     title: t`Add Build Output`,
     fields: buildOutputFields,
     initialData: {
-      batch_code: build.batch
+      batch_code: build.batch,
+      location: build.destination ?? build.part_detail?.default_location
     },
     table: table
   });

@@ -9,7 +9,7 @@ The `ValidationMixin` class enables plugins to perform custom validation of obje
 Any of the methods described below can be implemented in a custom plugin to provide functionality as required.
 
 !!! info "More Info"
-    For more information on any of the methods described below, refer to the InvenTree source code. [A working example is available as a starting point](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/plugin/samples/integration/validation_sample.py).
+    For more information on any of the methods described below, refer to the InvenTree source code. [A working example is available as a starting point]({{ sourcefile("src/backend/InvenTree/plugin/samples/integration/validation_sample.py") }}).
 
 !!! info "Multi Plugin Support"
     It is possible to have multiple plugins loaded simultaneously which support validation methods. For example when validating a field, if one plugin returns a null value (`None`) then the *next* plugin (if available) will be queried.
@@ -58,7 +58,7 @@ To indicate a *field* validation error (i.e. the validation error applies only t
 
 Note that an error can be which corresponds to multiple model instance fields.
 
-### Example
+### Example Plugin
 
 Presented below is a simple working example for a plugin which implements the `validate_model_instance` method:
 
@@ -188,3 +188,15 @@ def increment_serial_number(self, serial: str):
 
     return val
 ```
+
+## Sample Plugin
+
+A sample plugin which implements custom validation routines is provided in the InvenTree source code:
+
+::: plugin.samples.integration.validation_sample.SampleValidatorPlugin
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []

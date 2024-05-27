@@ -126,16 +126,14 @@ export default function StockItemTestResultTable({
         switchable: false,
         sortable: true,
         render: (record: any) => {
-          let required = record.required ?? record.template_detail?.required;
-          let enabled = record.enabled ?? record.template_detail?.enabled;
-          let installed =
+          const enabled = record.enabled ?? record.template_detail?.enabled;
+          const installed =
             record.stock_item != undefined && record.stock_item != itemId;
 
           return (
-            <Group justify="space-between">
+            <Group justify="space-between" wrap="nowrap">
               <Text
                 style={{ fontStyle: installed ? 'italic' : undefined }}
-                fw={required && 700}
                 c={enabled ? undefined : 'red'}
               >
                 {!record.templateId && '- '}

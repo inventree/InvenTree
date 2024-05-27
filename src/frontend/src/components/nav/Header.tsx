@@ -8,6 +8,7 @@ import { useMatch, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { navTabs as mainNavTabs } from '../../defaults/links';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { navigateToLink } from '../../functions/navigation';
 import * as classes from '../../main.css';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
@@ -141,13 +142,16 @@ function NavTabs() {
         tab: classes.tab
       }}
       value={tabValue}
-      onChange={(value) =>
-        value == '/' ? navigate('/') : navigate(`/${value}`)
-      }
     >
       <Tabs.List>
         {mainNavTabs.map((tab) => (
-          <Tabs.Tab value={tab.name} key={tab.name}>
+          <Tabs.Tab
+            value={tab.name}
+            key={tab.name}
+            onClick={(event: any) =>
+              navigateToLink(`/${tab.name}`, navigate, event)
+            }
+          >
             {tab.text}
           </Tabs.Tab>
         ))}

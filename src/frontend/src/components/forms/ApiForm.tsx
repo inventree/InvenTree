@@ -144,10 +144,12 @@ export function OptionsApiForm({
       if (error.response) {
         invalidResponse(error.response.status);
       } else {
+        notifications.hide('form-error');
         notifications.show({
           title: t`Form Error`,
           message: error.message,
-          color: 'red'
+          color: 'red',
+          id: 'form-error'
         });
       }
       return false;
@@ -277,6 +279,10 @@ export function ApiForm({
               res[k] = processFields(field.children, dataValue);
             } else {
               res[k] = dataValue;
+
+              if (field.onValueChange) {
+                field.onValueChange(dataValue, data);
+              }
             }
           }
 

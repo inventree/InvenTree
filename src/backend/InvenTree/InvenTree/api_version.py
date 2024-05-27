@@ -1,11 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 200
+INVENTREE_API_VERSION = 202
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+
+v202 - 2024-05-27 : https://github.com/inventree/InvenTree/pull/7343
+    - Adjust "required" attribute of Part.category field to be optional
+
+v201 - 2024-05-21 : https://github.com/inventree/InvenTree/pull/7074
+    - Major refactor of the report template / report printing interface
+    - This is a *breaking change* to the report template API
 
 v200 - 2024-05-20 : https://github.com/inventree/InvenTree/pull/7000
     - Adds API endpoint for generating custom batch codes

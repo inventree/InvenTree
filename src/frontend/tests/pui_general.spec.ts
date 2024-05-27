@@ -186,7 +186,8 @@ test('PUI - Admin', async ({ page }) => {
   await page.getByRole('tab', { name: 'Custom Units' }).click();
   await page.getByRole('tab', { name: 'Part Parameters' }).click();
   await page.getByRole('tab', { name: 'Category Parameters' }).click();
-  await page.getByRole('tab', { name: 'Templates' }).click();
+  await page.getByRole('tab', { name: 'Label Templates' }).click();
+  await page.getByRole('tab', { name: 'Report Templates' }).click();
   await page.getByRole('tab', { name: 'Plugins' }).click();
   await page.getByRole('tab', { name: 'Machines' }).click();
 });

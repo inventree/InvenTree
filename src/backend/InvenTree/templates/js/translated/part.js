@@ -2281,8 +2281,7 @@ function loadPartTable(table, url, options={}) {
         setupFilterList('parts', $(table), options.filterTarget, {
             download: true,
             labels: {
-                url: '{% url "api-part-label-list" %}',
-                key: 'part',
+                model_type: 'part',
             },
             singular_name: '{% trans "part" %}',
             plural_name: '{% trans "parts" %}',

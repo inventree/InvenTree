@@ -629,11 +629,7 @@
 
         {% if report_enabled %}
         $("#print-bom-report").click(function() {
-            printReports({
-                items: [{{ part.pk }}],
-                key: 'part',
-                url: '{% url "api-bom-report-list" %}'
-            });
+            printReports('part', [{{ part.pk }}]);
         });
         {% endif %}
     });

@@ -7,6 +7,7 @@ import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
+import { usePartParameterFields } from '../../forms/PartForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -97,15 +98,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
     ];
   }, [partId]);
 
-  const partParameterFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      part: {
-        disabled: true
-      },
-      template: {},
-      data: {}
-    };
-  }, []);
+  const partParameterFields: ApiFormFieldSet = usePartParameterFields();
 
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
@@ -126,6 +119,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
     url: ApiEndpoints.part_parameter_list,
     pk: selectedParameter,
     title: t`Edit Part Parameter`,
+    focus: 'data',
     fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     table: table
   });

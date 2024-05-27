@@ -761,7 +761,6 @@ export default function PartDetail() {
         key="action_dropdown"
       />,
       <ActionDropdown
-        key="stock"
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
         actions={[
@@ -790,7 +789,6 @@ export default function PartDetail() {
         ]}
       />,
       <ActionDropdown
-        key="part"
         tooltip={t`Part Actions`}
         icon={<IconDots />}
         actions={[
