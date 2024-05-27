@@ -548,6 +548,51 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         self.assertEqual(category['api_url'], reverse('api-part-category-list'))
         self.assertEqual(category['help_text'], 'Part category')
 
+    def test_part_label_translation(self):
+        """Test that 'label' values are correctly translated."""
+        response = self.options(reverse('api-part-list'))
+
+        labels = {
+            'IPN': 'IPN',
+            'category': 'Category',
+            'assembly': 'Assembly',
+            'ordering': 'On Order',
+            'stock_item_count': 'Stock Items',
+        }
+
+        help_text = {
+            'IPN': 'Internal Part Number',
+            'active': 'Is this part active?',
+            'barcode_hash': 'Unique hash of barcode data',
+            'category': 'Part category',
+        }
+
+        # Check basic return values
+        for field, value in labels.items():
+            self.assertEqual(response.data['actions']['POST'][field]['label'], value)
+
+        for field, value in help_text.items():
+            self.assertEqual(
+                response.data['actions']['POST'][field]['help_text'], value
+            )
+
+        # Check again, with a different locale
+        response = self.options(
+            reverse('api-part-list'), headers={'Accept-Language': 'de'}
+        )
+
+        translated = {
+            'IPN': 'IPN (Interne Produktnummer)',
+            'category': 'Kategorie',
+            'assembly': 'Baugruppe',
+            'ordering': 'Bestellt',
+            'stock_item_count': 'Lagerartikel',
+        }
+
+        for field, value in translated.items():
+            label = response.data['actions']['POST'][field]['label']
+            self.assertEqual(label, value)
+
     def test_category(self):
         """Test the PartCategory API OPTIONS endpoint."""
         actions = self.getActions(reverse('api-part-category-list'))
