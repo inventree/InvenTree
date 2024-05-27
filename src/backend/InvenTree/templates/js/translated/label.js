@@ -73,9 +73,7 @@ function printLabels(options) {
 
         inventreeGet(
             url,
-            {
-                plugin: plugin_slug || undefined,
-            },
+            {},
             {
                 method: 'OPTIONS',
                 success: function(response) {

@@ -150,7 +150,7 @@ class LabelPrint(GenericAPIView):
         """Return the plugin class for the given plugin key."""
         from plugin.models import PluginConfig
 
-        if plugin_slug is None:
+        if not plugin_slug:
             # Use the default label printing plugin
             plugin_slug = InvenTreeLabelPlugin.NAME.lower()
 
@@ -196,10 +196,10 @@ class LabelPrint(GenericAPIView):
 
         # Plugin information provided?
         if self.request:
-            plugin_key = self.request.data.get('plugin', None)
+            plugin_key = self.request.data.get('plugin', '')
             # Legacy url based lookup
             if not plugin_key:
-                plugin_key = self.request.query_params.get('plugin', None)
+                plugin_key = self.request.query_params.get('plugin', '')
             plugin = self.get_plugin_class(plugin_key)
             plugin_serializer = self.get_plugin_serializer(plugin)
 
