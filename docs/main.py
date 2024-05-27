@@ -167,27 +167,37 @@ def define_env(env):
         return assets
 
     @env.macro
-    def templatefile(filename):
-        """Include code for a provided template file."""
+    def includefile(filename: str, title: str, format: str = ''):
+        """Include a file in the documentation, in a 'collapse' block.
+
+        Arguments:
+            - filename: The name of the file to include (relative to the top-level directory)
+            - title:
+        """
         here = os.path.dirname(__file__)
-        template_dir = os.path.join(
-            here, '..', 'src', 'backend', 'InvenTree', 'report', 'templates'
-        )
-        template_file = os.path.join(template_dir, filename)
-        template_file = os.path.abspath(template_file)
+        path = os.path.join(here, '..', filename)
+        path = os.path.abspath(path)
 
-        basename = os.path.basename(filename)
+        if not os.path.exists(path):
+            raise FileNotFoundError(f'Required file {path} does not exist.')
 
-        if not os.path.exists(template_file):
-            raise FileNotFoundError(f'Report template file {filename} does not exist.')
-
-        with open(template_file, 'r') as f:
+        with open(path, 'r') as f:
             content = f.read()
 
-        data = f'??? abstract "Template: {basename}"\n\n'
-        data += '    ```html\n'
+        data = f'??? abstract "{title}"\n\n'
+        data += f'    ```{format}\n'
         data += textwrap.indent(content, '    ')
         data += '\n\n'
         data += '    ```\n\n'
 
         return data
+
+    @env.macro
+    def templatefile(filename):
+        """Include code for a provided template file."""
+        base = os.path.basename(filename)
+        fn = os.path.join(
+            'src', 'backend', 'InvenTree', 'report', 'templates', filename
+        )
+
+        return includefile(fn, f'Template: {base}', format='html')

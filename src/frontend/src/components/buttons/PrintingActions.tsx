@@ -15,11 +15,13 @@ import { ActionDropdown } from '../items/ActionDropdown';
 
 export function PrintingActions({
   items,
+  hidden,
   enableLabels,
   enableReports,
   modelType
 }: {
   items: number[];
+  hidden?: boolean;
   enableLabels?: boolean;
   enableReports?: boolean;
   modelType?: ModelType;
@@ -79,8 +81,6 @@ export function PrintingActions({
         mixin: 'labels'
       },
       onValueChange: (value: string, record?: any) => {
-        console.log('onValueChange:', value, record);
-
         if (record?.key && record?.key != pluginKey) {
           setPluginKey(record.key);
         }
@@ -100,6 +100,7 @@ export function PrintingActions({
     },
     successMessage: t`Label printing completed successfully`,
     onFormSuccess: (response: any) => {
+      setPluginKey('');
       if (!response.complete) {
         // TODO: Periodically check for completion (requires server-side changes)
         notifications.show({
@@ -164,28 +165,30 @@ export function PrintingActions({
   }
 
   return (
-    <>
-      {reportModal.modal}
-      {labelModal.modal}
-      <ActionDropdown
-        tooltip={t`Printing Actions`}
-        icon={<IconPrinter />}
-        disabled={!enabled}
-        actions={[
-          {
-            name: t`Print Labels`,
-            icon: <IconTags />,
-            onClick: () => labelModal.open(),
-            hidden: !enableLabels
-          },
-          {
-            name: t`Print Reports`,
-            icon: <IconReport />,
-            onClick: () => reportModal.open(),
-            hidden: !enableReports
-          }
-        ]}
-      />
-    </>
+    !hidden && (
+      <>
+        {reportModal.modal}
+        {labelModal.modal}
+        <ActionDropdown
+          tooltip={t`Printing Actions`}
+          icon={<IconPrinter />}
+          disabled={!enabled}
+          actions={[
+            {
+              name: t`Print Labels`,
+              icon: <IconTags />,
+              onClick: () => labelModal.open(),
+              hidden: !enableLabels
+            },
+            {
+              name: t`Print Reports`,
+              icon: <IconReport />,
+              onClick: () => reportModal.open(),
+              hidden: !enableReports
+            }
+          ]}
+        />
+      </>
+    )
   );
 }

@@ -246,7 +246,6 @@ class ReportTemplateBase(MetadataMixin, InvenTree.models.InvenTreeModel):
             'base_url': get_base_url(request=request),
             'date': InvenTree.helpers.current_date(),
             'datetime': InvenTree.helpers.current_time(),
-            'request': request,
             'template': self,
             'template_description': self.description,
             'template_name': self.name,
