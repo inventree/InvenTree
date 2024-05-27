@@ -858,7 +858,9 @@ class PartSerializer(
     starred = serializers.SerializerMethodField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
-    category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all(), required=False, allow_null=True
+    )
 
     # Pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(

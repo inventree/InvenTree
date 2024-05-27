@@ -414,7 +414,7 @@ def restore(
     ignore_database=False,
 ):
     """Restore the database and media files."""
-    base_cmd = '--no-input --uncompress -v 2'
+    base_cmd = '--noinput --uncompress -v 2'
 
     if path:
         base_cmd += f' -I {path}'
