@@ -147,14 +147,15 @@ class InvenTreeMetadata(SimpleMetadata):
         serializer_info = super().get_serializer_info(serializer)
 
         # Look for any dynamic fields which were not available when the serializer was instantiated
-        for field_name in serializer.Meta.fields:
-            if field_name in serializer_info:
-                # Already know about this one
-                continue
+        if hasattr(serializer, 'Meta'):
+            for field_name in serializer.Meta.fields:
+                if field_name in serializer_info:
+                    # Already know about this one
+                    continue
 
-            if hasattr(serializer, field_name):
-                field = getattr(serializer, field_name)
-                serializer_info[field_name] = self.get_field_info(field)
+                if hasattr(serializer, field_name):
+                    field = getattr(serializer, field_name)
+                    serializer_info[field_name] = self.get_field_info(field)
 
         model_class = None
 
