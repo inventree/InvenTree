@@ -56,8 +56,11 @@ def register_event(event, *args, **kwargs):
 
     # Determine if there are any plugins which are interested in responding
     if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting(
-        'ENABLE_PLUGINS_EVENTS', False
+        'ENABLE_PLUGINS_EVENTS', cache=False
     ):
+        # Check if the plugin registry needs to be reloaded
+        registry.check_reload()
+
         with transaction.atomic():
             for slug, plugin in registry.plugins.items():
                 if not plugin.mixin_enabled('events'):
