@@ -501,6 +501,9 @@ export default function StockDetail() {
   );
 
   const stockBadges: ReactNode[] = useMemo(() => {
+    let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
+    available = Math.max(0, available);
+
     return instanceQuery.isLoading
       ? []
       : [
@@ -520,6 +523,12 @@ export default function StockDetail() {
             label={t`Quantity` + `: ${stockitem.quantity}`}
             visible={!stockitem.serial}
             key="quantity"
+          />,
+          <DetailsBadge
+            color="yellow"
+            label={t`Available` + `: ${available}`}
+            visible={!stockitem.serial && available != stockitem.quantity}
+            key="available"
           />,
           <DetailsBadge
             color="blue"
