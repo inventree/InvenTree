@@ -1310,7 +1310,7 @@ class StockItemTest(StockAPITestCase):
             url,
             {'location': '1', 'notes': 'Returned from this customer for testing'},
             expected_code=201,
-            max_time=5.0,
+            max_query_time=5.0,
         )
 
         item.refresh_from_db()

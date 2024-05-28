@@ -306,7 +306,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         format = kwargs.get('format', 'json')
 
         max_queries = kwargs.get('max_query_count', self.MAX_QUERY_COUNT)
-        max_time = kwargs.get('max_query_time', self.MAX_QUERY_TIME)
+        max_query_time = kwargs.get('max_query_time', self.MAX_QUERY_TIME)
 
         t1 = time.time()
 
@@ -318,10 +318,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         self.check_response(url, response, expected_code=expected_code)
 
-        if dt > max_time:
-            print(f'Query time exceeded at {url}: Expected {max_time}s, got {dt}s')
+        if dt > max_query_time:
+            print(
+                f'Query time exceeded at {url}: Expected {max_query_time}s, got {dt}s'
+            )
 
-        self.assertLessEqual(dt, max_time)
+        self.assertLessEqual(dt, max_query_time)
 
         return response
 
