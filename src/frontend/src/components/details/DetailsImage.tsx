@@ -355,7 +355,7 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
 
   return (
     <>
-      <AspectRatio ref={ref} maw={IMAGE_DIMENSION} ratio={1}>
+      <AspectRatio ref={ref} maw={IMAGE_DIMENSION} ratio={1} pos="relative">
         <>
           <ApiImage
             src={img}

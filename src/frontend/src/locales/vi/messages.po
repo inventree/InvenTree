@@ -46,9 +46,9 @@ msgstr ""
 msgid "Label printing completed successfully"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:106
-#: src/components/buttons/PrintingActions.tsx:143
-#: src/components/forms/ApiForm.tsx:504
+#: src/components/buttons/PrintingActions.tsx:107
+#: src/components/buttons/PrintingActions.tsx:144
+#: src/components/forms/ApiForm.tsx:506
 #: src/components/forms/fields/ApiFormField.tsx:295
 #: src/components/modals/LicenseModal.tsx:75
 #: src/components/nav/SearchDrawer.tsx:413
@@ -63,31 +63,31 @@ msgstr ""
 msgid "Error"
 msgstr "Lỗi"
 
-#: src/components/buttons/PrintingActions.tsx:107
+#: src/components/buttons/PrintingActions.tsx:108
 msgid "The label could not be generated"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:122
+#: src/components/buttons/PrintingActions.tsx:123
 msgid "Print Report"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:138
+#: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:144
+#: src/components/buttons/PrintingActions.tsx:145
 msgid "The report could not be generated"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:171
+#: src/components/buttons/PrintingActions.tsx:173
 msgid "Printing Actions"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:176
+#: src/components/buttons/PrintingActions.tsx:178
 msgid "Print Labels"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:182
+#: src/components/buttons/PrintingActions.tsx:184
 msgid "Print Reports"
 msgstr ""
 
@@ -175,7 +175,7 @@ msgid "Clear"
 msgstr ""
 
 #: src/components/details/DetailsImage.tsx:227
-#: src/components/forms/ApiForm.tsx:571
+#: src/components/forms/ApiForm.tsx:573
 #: src/contexts/ThemeContext.tsx:43
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
 msgid "Submit"
@@ -329,12 +329,12 @@ msgstr ""
 msgid "Error rendering template"
 msgstr ""
 
-#: src/components/forms/ApiForm.tsx:148
+#: src/components/forms/ApiForm.tsx:149
 #: src/functions/forms.tsx:259
 msgid "Form Error"
 msgstr "Lỗi form"
 
-#: src/components/forms/ApiForm.tsx:428
+#: src/components/forms/ApiForm.tsx:430
 #: src/components/widgets/MarkdownEditor.tsx:145
 msgid "Success"
 msgstr "Thành công"
@@ -343,12 +343,12 @@ msgstr "Thành công"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:609
+#: src/components/forms/ApiForm.tsx:611
 #: src/tables/plugin/PluginListTable.tsx:388
 msgid "Update"
 msgstr "Cập nhật"
 
-#: src/components/forms/ApiForm.tsx:629
+#: src/components/forms/ApiForm.tsx:631
 #: src/components/items/ActionDropdown.tsx:210
 #: src/functions/forms.tsx:299
 #: src/hooks/UseForm.tsx:122
@@ -1182,7 +1182,7 @@ msgstr "Hàng trong kho"
 #: src/pages/company/CompanyDetail.tsx:199
 #: src/pages/stock/LocationDetail.tsx:118
 #: src/pages/stock/LocationDetail.tsx:171
-#: src/pages/stock/LocationDetail.tsx:365
+#: src/pages/stock/LocationDetail.tsx:366
 msgid "Stock Items"
 msgstr "Hàng trong kho"
 
@@ -1385,7 +1385,7 @@ msgstr "Lô hàng"
 #: src/defaults/menuItems.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:199
 #: src/pages/part/PartDetail.tsx:492
-#: src/pages/stock/LocationDetail.tsx:344
+#: src/pages/stock/LocationDetail.tsx:345
 #: src/pages/stock/StockDetail.tsx:352
 #: src/tables/stock/StockItemTable.tsx:57
 msgid "Stock"
@@ -4218,7 +4218,7 @@ msgid "Deleting this part cannot be reversed"
 msgstr ""
 
 #: src/pages/part/PartDetail.tsx:764
-#: src/pages/stock/LocationDetail.tsx:301
+#: src/pages/stock/LocationDetail.tsx:302
 #: src/tables/stock/StockItemTable.tsx:409
 msgid "Stock Actions"
 msgstr ""
@@ -4566,13 +4566,13 @@ msgid "Default Parts"
 msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:210
-#: src/pages/stock/LocationDetail.tsx:328
+#: src/pages/stock/LocationDetail.tsx:329
 #: src/tables/stock/StockLocationTable.tsx:100
 msgid "Edit Stock Location"
 msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:231
-#: src/pages/stock/LocationDetail.tsx:333
+#: src/pages/stock/LocationDetail.tsx:334
 msgid "Delete Stock Location"
 msgstr ""
 
@@ -4592,7 +4592,7 @@ msgstr ""
 msgid "Action for child locations in this location"
 msgstr ""
 
-#: src/pages/stock/LocationDetail.tsx:323
+#: src/pages/stock/LocationDetail.tsx:324
 msgid "Location Actions"
 msgstr ""
 

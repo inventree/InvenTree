@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import {
   Alert,
+  Divider,
   Grid,
   LoadingOverlay,
   Skeleton,
@@ -52,9 +53,9 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -817,12 +818,15 @@ export default function PartDetail() {
       {deletePart.modal}
       <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PartCategoryTree
+        <NavigationTree
+          title={t`Part Categories`}
+          modelType={ModelType.partcategory}
+          endpoint={ApiEndpoints.category_tree}
           opened={treeOpen}
           onClose={() => {
             setTreeOpen(false);
           }}
-          selectedCategory={part?.category}
+          selectedId={part?.category}
         />
         <PageDetail
           title={t`Part` + ': ' + part.full_name}
