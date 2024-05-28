@@ -1492,7 +1492,7 @@ class PartDetailTests(PartAPITestBase):
         self.assertEqual(response.data['tags'], ['tag1'])
 
         # Try to remove the part
-        response = self.delete(url)
+        response = self.delete(url, expected_code=400)
 
         # As the part is 'active' we cannot delete it
         self.assertEqual(response.status_code, 400)
