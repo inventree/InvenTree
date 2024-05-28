@@ -45,7 +45,7 @@ from InvenTree.fields import (
 )
 from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import getSetting, notify_responsible
-from InvenTree.status_codes import (
+from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
