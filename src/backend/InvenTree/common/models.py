@@ -1876,7 +1876,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'SALESORDER_SHIP_COMPLETE': {
             'name': _('Mark Shipped Orders as Complete'),
             'description': _(
-                'Sales orders marked as shipped will automatically be completed'
+                'Sales orders marked as shipped will automatically be completed, bypassing the "shipped" status'
             ),
             'default': True,
             'validator': bool,
