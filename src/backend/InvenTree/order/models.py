@@ -1024,6 +1024,12 @@ class SalesOrder(TotalPriceMixin, Order):
         Throws a ValidationError if cannot be completed.
         """
         try:
+            if self.status == SalesOrderStatus.COMPLETE.value:
+                raise ValidationError(_('Order is already complete'))
+
+            if self.status == SalesOrderStatus.CANCELLED.value:
+                raise ValidationError(_('Order is already cancelled'))
+
             # Only an open order can be marked as shipped
             if self.is_open and not self.is_completed:
                 raise ValidationError(_('Only an open order can be marked as complete'))

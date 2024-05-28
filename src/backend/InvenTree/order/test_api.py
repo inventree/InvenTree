@@ -1476,6 +1476,77 @@ class SalesOrderTest(OrderTest):
                 expected_fn=f'InvenTree_SalesOrders.{fmt}',
             )
 
+    def test_sales_order_complete(self):
+        """Tests for marking a SalesOrder as complete."""
+        self.assignRole('sales_order.add')
+
+        # Let's create a SalesOrder
+        customer = Company.objects.filter(is_customer=True).first()
+        so = models.SalesOrder.objects.create(
+            customer=customer, reference='SO-12345', description='Test SO'
+        )
+
+        self.assertEqual(so.status, SalesOrderStatus.PENDING.value)
+
+        # Create a line item
+        part = Part.objects.filter(salable=True).first()
+
+        line = models.SalesOrderLineItem.objects.create(
+            order=so, part=part, quantity=10, sale_price=Money(10, 'USD')
+        )
+
+        shipment = so.shipments.first()
+
+        if shipment is None:
+            shipment = models.SalesOrderShipment.objects.create(
+                order=so, reference='SHIP-12345'
+            )
+
+        # Allocate some stock
+        item = StockItem.objects.create(part=part, quantity=100, location=None)
+        models.SalesOrderAllocation.objects.create(
+            quantity=10, line=line, item=item, shipment=shipment
+        )
+
+        # Ship the shipment
+        shipment.complete_shipment(self.user)
+
+        # Ok, now we should be able to "complete" the shipment via the API
+        # The 'SALESORDER_SHIP_COMPLETE' setting determines if the outcome is "SHIPPED" or "COMPLETE"
+        InvenTreeSetting.set_setting('SALESORDER_SHIP_COMPLETE', False)
+
+        url = reverse('api-so-complete', kwargs={'pk': so.pk})
+        self.post(url, {}, expected_code=201)
+
+        so.refresh_from_db()
+        self.assertEqual(so.status, SalesOrderStatus.SHIPPED.value)
+
+        # Now, let's try to "complete" the shipment again
+        # This time it should get marked as "COMPLETE"
+        self.post(url, {}, expected_code=201)
+
+        so.refresh_from_db()
+        self.assertEqual(so.status, SalesOrderStatus.COMPLETE.value)
+
+        # Now, let's try *again* (it should fail as the order is already complete)
+        response = self.post(url, {}, expected_code=400)
+
+        self.assertIn('Order is already complete', str(response.data))
+
+        # Next, we'll change the setting so that the order status jumps straight to "complete"
+        so.status = SalesOrderStatus.PENDING.value
+        so.save()
+        so.refresh_from_db()
+        self.assertEqual(so.status, SalesOrderStatus.PENDING.value)
+
+        InvenTreeSetting.set_setting('SALESORDER_SHIP_COMPLETE', True)
+
+        self.post(url, {}, expected_code=201)
+
+        # The orders status should now be "complete" (not "shipped")
+        so.refresh_from_db()
+        self.assertEqual(so.status, SalesOrderStatus.COMPLETE.value)
+
 
 class SalesOrderLineItemTest(OrderTest):
     """Tests for the SalesOrderLineItem API."""
