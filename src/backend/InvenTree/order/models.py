@@ -1067,7 +1067,11 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_complete(**kwargs):
             return False
 
-        if self.status == SalesOrderStatus.SHIPPED:
+        bypass_shipped = InvenTree.helpers.str2bool(
+            common_models.InvenTreeSetting.get_setting('SALESORDER_SHIP_COMPLETE')
+        )
+
+        if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
             self.status = SalesOrderStatus.COMPLETE.value
         else:
             self.status = SalesOrderStatus.SHIPPED.value
