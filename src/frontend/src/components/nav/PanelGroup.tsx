@@ -20,6 +20,7 @@ import {
   useParams
 } from 'react-router-dom';
 
+import { identifierString } from '../../functions/conversion';
 import { navigateToLink } from '../../functions/navigation';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
@@ -172,6 +173,9 @@ function BasePanelGroup({
                 <Tabs.Panel
                   key={panel.name}
                   value={panel.name}
+                  aria-label={`nav-panel-${identifierString(
+                    `${pageKey}-${panel.name}`
+                  )}`}
                   p="sm"
                   style={{
                     overflowX: 'scroll',
