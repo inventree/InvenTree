@@ -19,6 +19,9 @@ class Migration(migrations.Migration):
                 ('category', models.ForeignKey(help_text='Part Category', on_delete=django.db.models.deletion.CASCADE, related_name='parameter_templates', to='part.PartCategory')),
                 ('parameter_template', models.ForeignKey(help_text='Parameter Template', on_delete=django.db.models.deletion.CASCADE, related_name='part_categories', to='part.PartParameterTemplate')),
             ],
+            options={
+                'verbose_name': 'Part Category Parameter Template',
+            },
         ),
         migrations.AddConstraint(
             model_name='partcategoryparametertemplate',

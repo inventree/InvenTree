@@ -3451,6 +3451,11 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     run on the model (refer to the validate_unique function).
     """
 
+    class Meta:
+        """Metaclass options for the PartTestTemplate model."""
+
+        verbose_name = _('Part Test Template')
+
     def __str__(self):
         """Format a string representation of this PartTestTemplate."""
         return ' | '.join([self.part.name, self.test_name])
@@ -3574,6 +3579,11 @@ class PartParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
         checkbox: Boolean flag to indicate whether the parameter is a checkbox [bool]
         choices: List of valid choices for the parameter [string]
     """
+
+    class Meta:
+        """Metaclass options for the PartParameterTemplate model."""
+
+        verbose_name = _('Part Parameter Template')
 
     @staticmethod
     def get_api_url():
@@ -3719,6 +3729,7 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
     class Meta:
         """Metaclass providing extra model definition."""
 
+        verbose_name = _('Part Parameter')
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
@@ -3868,6 +3879,8 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
 
     class Meta:
         """Metaclass providing extra model definition."""
+
+        verbose_name = _('Part Category Parameter Template')
 
         constraints = [
             UniqueConstraint(

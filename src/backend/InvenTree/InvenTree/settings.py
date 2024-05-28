@@ -572,6 +572,7 @@ It can be specified in config.yaml (or envvar) as either (for example):
 """
 
 db_engine = db_config['ENGINE'].lower()
+db_engine = 'sqlite'
 
 # Correct common misspelling
 if db_engine == 'sqlite':
@@ -584,6 +585,8 @@ if db_engine in ['sqlite3', 'postgresql', 'mysql']:
 
 db_name = db_config['NAME']
 db_host = db_config.get('HOST', "''")
+
+db_name = '/home/inventree/inventree-db.sqlite3'
 
 if 'sqlite' in db_engine:
     db_name = str(Path(db_name).resolve())

@@ -1691,7 +1691,6 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset
 
 
-@register_importer()
 class CategoryParameterTemplateSerializer(
     InvenTree.serializers.InvenTreeModelSerializer
 ):

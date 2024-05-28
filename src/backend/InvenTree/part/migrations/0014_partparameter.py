@@ -19,5 +19,8 @@ class Migration(migrations.Migration):
                 ('data', models.CharField(help_text='Parameter Value', max_length=100)),
                 ('part', models.ForeignKey(help_text='Parent Part', on_delete=django.db.models.deletion.CASCADE, related_name='parameters', to='part.Part')),
             ],
+            options={
+                'verbose_name': 'Part Parameter',
+            },
         ),
     ]
