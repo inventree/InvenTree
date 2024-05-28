@@ -53,11 +53,10 @@ from order.status_codes import (
     ReturnOrderStatusGroups,
     SalesOrderStatus,
     SalesOrderStatusGroups,
-    StockHistoryCode,
-    StockStatus,
 )
 from part import models as PartModels
 from plugin.events import trigger_event
+from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = logging.getLogger('inventree')
 
