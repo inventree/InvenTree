@@ -1420,7 +1420,7 @@ class StocktakeTest(StockAPITestCase):
             data = {}
 
             # POST with a valid action
-            response = self.post(url, data)
+            response = self.post(url, data, expected_code=400)
 
             self.assertIn('This field is required', str(response.data['items']))
 
@@ -1455,7 +1455,7 @@ class StocktakeTest(StockAPITestCase):
             # POST with an invalid quantity value
             data['items'] = [{'pk': 1234, 'quantity': '10x0d'}]
 
-            response = self.post(url, data)
+            response = self.post(url, data, expected_code=400)
             self.assertContains(
                 response,
                 'A valid number is required',
@@ -1464,7 +1464,8 @@ class StocktakeTest(StockAPITestCase):
 
             data['items'] = [{'pk': 1234, 'quantity': '-1.234'}]
 
-            response = self.post(url, data)
+            response = self.post(url, data, expected_code=400)
+
             self.assertContains(
                 response,
                 'Ensure this value is greater than or equal to 0',
