@@ -266,7 +266,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         else:
             msg = None
 
-        if n > self.WARNING_QUERY_THRESHOLD:
+        if url and n > self.WARNING_QUERY_THRESHOLD:
             print(f'Warning: {n} queries executed at {url}')
 
         self.assertLess(n, value, msg=msg)
