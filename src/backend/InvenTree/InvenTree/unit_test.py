@@ -233,6 +233,8 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     # TODO: This value should be reduced
     MAX_QUERY_COUNT = 250
 
+    WARNING_QUERY_THRESHOLD = 100
+
     # Default query time threshold value
     # TODO: This value should be reduced
     # Note: There is a lot of variability in the query time in unit testing...
@@ -263,6 +265,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             )  # pragma: no cover
         else:
             msg = None
+
+        if n > self.WARNING_QUERY_THRESHOLD:
+            print(f'Warning: {n} queries executed at {url}')
 
         self.assertLess(n, value, msg=msg)
 
@@ -312,7 +317,6 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         with self.assertNumQueriesLessThan(max_queries, url=url):
             response = method(url, data, format=format, **kwargs)
-
         t2 = time.time()
         dt = t2 - t1
 
