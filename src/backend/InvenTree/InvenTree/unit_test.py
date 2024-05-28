@@ -333,9 +333,9 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
     def get(self, url, data=None, expected_code=200, **kwargs):
         """Issue a GET request."""
-        return self.query(
-            url, self.client.get, data=data, expected_code=expected_code, **kwargs
-        )
+        kwargs['data'] = data
+
+        return self.query(url, self.client.get, expected_code=expected_code, **kwargs)
 
     def post(self, url, data=None, expected_code=201, **kwargs):
         """Issue a POST request."""
@@ -344,32 +344,36 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             'max_query_count', self.MAX_QUERY_COUNT + 100
         )
 
-        return self.query(
-            url, self.client.post, data=data, expected_code=expected_code, **kwargs
-        )
+        kwargs['data'] = data
+
+        return self.query(url, self.client.post, expected_code=expected_code, **kwargs)
 
     def delete(self, url, data=None, expected_code=204, **kwargs):
         """Issue a DELETE request."""
+        kwargs['data'] = data
+
         return self.query(
-            url, self.client.delete, data=data, expected_code=expected_code, **kwargs
+            url, self.client.delete, expected_code=expected_code, **kwargs
         )
 
     def patch(self, url, data, expected_code=200, **kwargs):
         """Issue a PATCH request."""
-        return self.query(
-            url, self.client.patch, data=data, expected_code=expected_code, **kwargs
-        )
+        kwargs['data'] = data
+
+        return self.query(url, self.client.patch, expected_code=expected_code, **kwargs)
 
     def put(self, url, data, expected_code=200, **kwargs):
         """Issue a PUT request."""
-        return self.query(
-            url, self.client.put, data=data, expected_code=expected_code, **kwargs
-        )
+        kwargs['data'] = data
+
+        return self.query(url, self.client.put, expected_code=expected_code, **kwargs)
 
     def options(self, url, expected_code=None, **kwargs):
         """Issue an OPTIONS request."""
+        kwargs['data'] = kwargs.get('data', None)
+
         return self.query(
-            url, self.client.options, data=None, expected_code=expected_code, **kwargs
+            url, self.client.options, expected_code=expected_code, **kwargs
         )
 
     def download_file(
