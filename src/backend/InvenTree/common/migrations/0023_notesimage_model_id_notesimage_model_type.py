@@ -20,6 +20,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='notesimage',
             name='model_type',
-            field=models.CharField(blank=True, null=True, default=None, help_text='Target model type for this image', max_length=100, null=True, validators=[common.validators.validate_notes_model_type]),
+            field=models.CharField(blank=True, null=True, default=None, help_text='Target model type for this image', max_length=100, validators=[common.validators.validate_notes_model_type]),
         ),
     ]
