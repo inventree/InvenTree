@@ -17,7 +17,6 @@ import build.models
 import company.models
 import part.models
 from common.models import InvenTreeSetting
-from InvenTree.status_codes import StockHistoryCode, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
@@ -26,6 +25,7 @@ from stock.models import (
     StockLocation,
     StockLocationType,
 )
+from stock.status_codes import StockHistoryCode, StockStatus
 
 
 class StockAPITestCase(InvenTreeAPITestCase):

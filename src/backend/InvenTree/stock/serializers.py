@@ -20,11 +20,11 @@ import common.models
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
-import InvenTree.status_codes
 import order.models
 import part.filters as part_filters
 import part.models as part_models
 import stock.filters
+import stock.status_codes
 from company.serializers import SupplierPartSerializer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
@@ -925,8 +925,8 @@ class StockChangeStatusSerializer(serializers.Serializer):
         return items
 
     status = serializers.ChoiceField(
-        choices=InvenTree.status_codes.StockStatus.items(),
-        default=InvenTree.status_codes.StockStatus.OK.value,
+        choices=stock.status_codes.StockStatus.items(),
+        default=stock.status_codes.StockStatus.OK.value,
         label=_('Status'),
     )
 
@@ -973,7 +973,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
             transaction_notes.append(
                 StockItemTracking(
                     item=item,
-                    tracking_type=InvenTree.status_codes.StockHistoryCode.EDITED.value,
+                    tracking_type=stock.status_codes.StockHistoryCode.EDITED.value,
                     date=now,
                     deltas=deltas,
                     user=user,
@@ -1419,7 +1419,7 @@ def stock_item_adjust_status_options():
 
     In particular, include a Null option for the status field.
     """
-    return [(None, _('No Change'))] + InvenTree.status_codes.StockStatus.items()
+    return [(None, _('No Change'))] + stock.status_codes.StockStatus.items()
 
 
 class StockAdjustmentItemSerializer(serializers.Serializer):

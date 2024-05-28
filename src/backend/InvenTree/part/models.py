@@ -46,20 +46,20 @@ import part.settings as part_settings
 import report.mixins
 import users.models
 from build import models as BuildModels
+from build.status_codes import BuildStatusGroups
 from common.models import InvenTreeSetting
 from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
-from InvenTree.status_codes import (
-    BuildStatusGroups,
+from order import models as OrderModels
+from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
     SalesOrderStatus,
     SalesOrderStatusGroups,
 )
-from order import models as OrderModels
 from stock import models as StockModels
 
 logger = logging.getLogger('inventree')

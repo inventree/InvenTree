@@ -22,7 +22,8 @@ from mptt.exceptions import InvalidMove
 
 from rest_framework import serializers
 
-from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode, BuildStatusGroups
+from build.status_codes import BuildStatus, BuildStatusGroups
+from stock.status_codes import StockStatus, StockHistoryCode
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 

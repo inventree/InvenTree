@@ -48,14 +48,14 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
 )
-from InvenTree.status_codes import (
+from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     SalesOrderStatusGroups,
-    StockStatus,
 )
 from part.serializers import PartBriefSerializer
+from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer
 
 
