@@ -3073,8 +3073,9 @@ class NotesImage(models.Model):
 
     model_id = models.IntegerField(
         help_text=_('Target model ID for this image'),
-        validators=[MinValueValidator(1)],
+        blank=True,
         null=True,
+        default=None,
     )
 
 
