@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-23 11:38\n"
+"PO-Revision-Date: 2024-05-29 12:26\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #: src/components/Boundary.tsx:12
 msgid "Error rendering component"
-msgstr ""
+msgstr "Erreur lors de l'affichage de l'application"
 
 #: src/components/Boundary.tsx:14
 msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr ""
+msgstr "Une erreur s'est produite lors du rendu de ce composant. Reportez-vous à la console pour plus d'informations."
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
@@ -32,7 +32,7 @@ msgstr "Titre"
 
 #: src/components/buttons/AdminButton.tsx:83
 msgid "Open in admin interface"
-msgstr ""
+msgstr "Ouvrir dans l'interface d'administration"
 
 #: src/components/buttons/CopyButton.tsx:18
 msgid "Copy to clipboard"
@@ -40,11 +40,11 @@ msgstr "Copier dans le Presse-papier"
 
 #: src/components/buttons/PrintingActions.tsx:95
 msgid "Print Label"
-msgstr ""
+msgstr "Imprimer l'étiquette"
 
 #: src/components/buttons/PrintingActions.tsx:101
 msgid "Label printing completed successfully"
-msgstr ""
+msgstr "Impression terminée avec succès"
 
 #: src/components/buttons/PrintingActions.tsx:107
 #: src/components/buttons/PrintingActions.tsx:144
@@ -65,31 +65,31 @@ msgstr "Erreur"
 
 #: src/components/buttons/PrintingActions.tsx:108
 msgid "The label could not be generated"
-msgstr ""
+msgstr "L'étiquette n'a pas pu être générée"
 
 #: src/components/buttons/PrintingActions.tsx:123
 msgid "Print Report"
-msgstr ""
+msgstr "Imprimer le rapport"
 
 #: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
-msgstr ""
+msgstr "Impression terminée avec succès"
 
 #: src/components/buttons/PrintingActions.tsx:145
 msgid "The report could not be generated"
-msgstr ""
+msgstr "Le rapport n'a pas pu être généré"
 
 #: src/components/buttons/PrintingActions.tsx:173
 msgid "Printing Actions"
-msgstr ""
+msgstr "Options d'impression"
 
 #: src/components/buttons/PrintingActions.tsx:178
 msgid "Print Labels"
-msgstr ""
+msgstr "Imprimer les étiquettes"
 
 #: src/components/buttons/PrintingActions.tsx:184
 msgid "Print Reports"
-msgstr ""
+msgstr "Imprimer les rapports"
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
@@ -97,19 +97,19 @@ msgstr "Scanner le QR code"
 
 #: src/components/buttons/ScanButton.tsx:20
 msgid "Open QR code scanner"
-msgstr ""
+msgstr "Ouvrir le scanner de code QR"
 
 #: src/components/buttons/SpotlightButton.tsx:14
 msgid "Open spotlight"
-msgstr ""
+msgstr "Ouvrir Spotlight"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
-msgstr ""
+msgstr "Réussi"
 
 #: src/components/buttons/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Échec"
 
 #: src/components/buttons/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:51
@@ -123,15 +123,15 @@ msgstr "Non"
 
 #: src/components/details/Details.tsx:303
 msgid "No name defined"
-msgstr ""
+msgstr "Aucun nom défini"
 
 #: src/components/details/Details.tsx:340
 msgid "Copied"
-msgstr ""
+msgstr "Copié"
 
 #: src/components/details/Details.tsx:340
 msgid "Copy"
-msgstr ""
+msgstr "Copier"
 
 #: src/components/details/DetailsImage.tsx:65
 msgid "Remove Image"
@@ -187,7 +187,7 @@ msgstr "Sélectionner parmi les images existantes"
 
 #: src/components/details/DetailsImage.tsx:275
 msgid "Select Image"
-msgstr ""
+msgstr "Sélectionner une Image"
 
 #: src/components/details/DetailsImage.tsx:287
 msgid "Upload new image"
@@ -203,7 +203,7 @@ msgstr "Supprimer l'image"
 
 #: src/components/details/PartIcons.tsx:28
 msgid "Part is not active"
-msgstr ""
+msgstr "La pièce n'est pas active"
 
 #: src/components/details/PartIcons.tsx:34
 #: src/components/render/Plugin.tsx:17
@@ -211,7 +211,7 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:305
 #: src/pages/part/PartDetail.tsx:686
 msgid "Inactive"
-msgstr ""
+msgstr "Inactif"
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
@@ -246,11 +246,11 @@ msgstr ""
 #: src/tables/part/PartTable.tsx:238
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
-msgstr ""
+msgstr "Virtuel"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
-msgstr ""
+msgstr "Code"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:44
 #~ msgid "Failed to parse error response from server."
@@ -258,28 +258,28 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:81
 msgid "Preview not available, click \"Reload Preview\"."
-msgstr ""
+msgstr "Aperçu non disponible, cliquez sur \"Recharger l'aperçu\"."
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr ""
+msgstr "Prévisualisation PDF"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:104
 msgid "Error loading template"
-msgstr ""
+msgstr "Erreur lors du chargement du modèle"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:116
 msgid "Error saving template"
-msgstr ""
+msgstr "Erreur lors de l'enregistrement du modèle"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:146
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:270
 msgid "Save & Reload Preview"
-msgstr ""
+msgstr "Enregistrer & Recharger l'aperçu"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 msgid "Are you sure you want to Save & Reload the preview?"
-msgstr ""
+msgstr "Êtes-vous sûr de vouloir enregistrer et recharger l'aperçu ?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 #~ msgid "Save & Reload preview?"
@@ -299,11 +299,11 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:190
 msgid "The preview has been updated successfully."
-msgstr ""
+msgstr "L'aperçu a été mis à jour avec succès."
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:262
 msgid "Reload preview"
-msgstr ""
+msgstr "Recharger l’aperçu"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 msgid "Use the currently stored template from the server"
@@ -6827,3 +6827,4 @@ msgstr "Lire la documentation"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
