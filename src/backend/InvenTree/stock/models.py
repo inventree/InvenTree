@@ -2202,9 +2202,9 @@ class StockItem(
         """Return True if there are any 'required tests' associated with this StockItem."""
         return self.required_test_count > 0
 
-    def passedAllRequiredTests(self):
+    def passedAllRequiredTests(self, required_tests=None):
         """Returns True if this StockItem has passed all required tests."""
-        status = self.requiredTestStatus()
+        status = self.requiredTestStatus(required_tests=required_tests)
 
         return status['passed'] >= status['total']
 
