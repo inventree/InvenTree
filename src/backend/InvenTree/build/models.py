@@ -567,13 +567,16 @@ class Build(
         self.allocated_stock.delete()
 
     @transaction.atomic
-    def complete_build(self, user):
+    def complete_build(self, user, trim_allocated_stock=False):
         """Mark this build as complete."""
 
         import build.tasks
 
         if self.incomplete_count > 0:
             return
+
+        if trim_allocated_stock:
+            self.trim_allocated_stock()
 
         self.completion_date = InvenTree.helpers.current_date()
         self.completed_by = user
@@ -858,6 +861,10 @@ class Build(
     def trim_allocated_stock(self):
         """Called after save to reduce allocated stock if the build order is now overallocated."""
         # Only need to worry about untracked stock here
+
+        items_to_save = []
+        items_to_delete = []
+
         for build_line in self.untracked_line_items:
 
             reduce_by = build_line.allocated_quantity() - build_line.quantity
@@ -875,13 +882,19 @@ class Build(
                 # Easy case - this item can just be reduced.
                 if item.quantity > reduce_by:
                     item.quantity -= reduce_by
-                    item.save()
+                    items_to_save.append(item)
                     break
 
                 # Harder case, this item needs to be deleted, and any remainder
                 # taken from the next items in the list.
                 reduce_by -= item.quantity
-                item.delete()
+                items_to_delete.append(item)
+
+        # Save the updated BuildItem objects
+        BuildItem.objects.bulk_update(items_to_save, ['quantity'])
+
+        # Delete the remaining BuildItem objects
+        BuildItem.objects.filter(pk__in=[item.pk for item in items_to_delete]).delete()
 
     @property
     def allocated_stock(self):
@@ -978,7 +991,10 @@ class Build(
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
 
-        if (common.settings.prevent_build_output_complete_on_incompleted_tests() and output.hasRequiredTests() and not output.passedAllRequiredTests()):
+        required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
+        prevent_on_incomplete = kwargs.get('prevent_on_incomplete', common.settings.prevent_build_output_complete_on_incompleted_tests())
+
+        if (prevent_on_incomplete and not output.passedAllRequiredTests(required_tests=required_tests)):
             serial = output.serial
             raise ValidationError(
                 _(f"Build output {serial} has not passed all required tests"))

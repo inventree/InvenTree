@@ -6,6 +6,8 @@ from django.db import connection, migrations
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 
+import InvenTree.ready
+
 
 def label_model_map():
     """Map legacy label template models to model_type values."""
@@ -43,7 +45,8 @@ def convert_legacy_labels(table_name, model_name, template_model):
             cursor.execute(query)
         except Exception:
             # Table likely does not exist
-            print(f"Legacy label table {table_name} not found - skipping migration")
+            if not InvenTree.ready.isInTestMode():
+                print(f"Legacy label table {table_name} not found - skipping migration")
             return 0
 
         rows = cursor.fetchall()
