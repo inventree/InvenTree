@@ -1220,9 +1220,9 @@
     "@lingui/core" "4.10.0"
 
 "@mantine/carousel@^7.8.0":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@mantine/carousel/-/carousel-7.8.0.tgz#d49b3a57cebfc9c774467bd4c46df1005eb765f4"
-  integrity sha512-nxuLtZ4N4KJaayab5KuaffYhiVi4UaIjywkgQiNfTxABlgFdERNfo5if9sSMyisL0r3RUPJBfLkyi8A4fEC8GQ==
+  version "7.10.0"
+  resolved "https://registry.yarnpkg.com/@mantine/carousel/-/carousel-7.10.0.tgz#ee750504814ec4eff7523e17a0052dc86bec45c8"
+  integrity sha512-+fP/hyHpXoK5nHR5mgEjPhPqjiurwMDP+aLseaE/mvmoBZEFF3vOPAqYOekNDrdyaqvtHkM82T9mnR4M3BAK0w==
 
 "@mantine/core@^7.10.0":
   version "7.10.0"
@@ -1277,26 +1277,21 @@
     react-transition-group "4.4.5"
 
 "@mantine/spotlight@^7.8.0":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@mantine/spotlight/-/spotlight-7.8.0.tgz#6cb83c21ed2dc1a2e4d5aff4205a7c71785f053f"
-  integrity sha512-HpYWxYyO9lnFwWFz8+M1KOzL7hpNPQVqUwD7xJec6XwlnisiOM9Qw0g2tvgxwDNm1rETOw8O3mPohMXy46D7Eg==
+  version "7.10.0"
+  resolved "https://registry.yarnpkg.com/@mantine/spotlight/-/spotlight-7.10.0.tgz#dcf65ae9d85bcf35a694e48251ec2deb3500d2c2"
+  integrity sha512-gkoBdd+GbAZ3heKxBm3MRdVwEYEgAxc3F5va3i/4X+AbyJ9ZeutCcyA2SL6++ZDNrb3bmWJG4zfLwdKI799dXg==
   dependencies:
-    "@mantine/store" "7.8.0"
+    "@mantine/store" "7.10.0"
 
 "@mantine/store@7.10.0":
   version "7.10.0"
   resolved "https://registry.yarnpkg.com/@mantine/store/-/store-7.10.0.tgz#68368c6ca5b75cfb331220e06a3235be753df055"
   integrity sha512-B6AyUX0cA97/hI9v0att7eJJnQTcUG7zBlTdWhOsptBV5UoDNrzdv3DDWIFxrA8h+nhNKGBh6Dif5HWh1+QLeA==
 
-"@mantine/store@7.8.0":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@mantine/store/-/store-7.8.0.tgz#d3ac70a96b71cbc0a4ef506bf751d8e290666d28"
-  integrity sha512-oN/BXGYdUywRi0zj9ppaShv2sw5QON2DaRisB4ewJ5tDDz8qyeckgdE0NMaaU2TwpoScs8ibSnOVWV5y+vYkMA==
-
 "@mantine/vanilla-extract@^7.8.0":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@mantine/vanilla-extract/-/vanilla-extract-7.8.0.tgz#fa2a10af01182bff54274ef2596763059992cc00"
-  integrity sha512-fdww8bZpWpTijalLGCdE56NZefhUuzi+jjboD2cCIrI6+g6j08NMjb/xmfmH6KkvZ+znoIiJQST/qJ0kE3KNyg==
+  version "7.10.0"
+  resolved "https://registry.yarnpkg.com/@mantine/vanilla-extract/-/vanilla-extract-7.10.0.tgz#34b458e6d8eb2b97627e309df901b8bf2618329e"
+  integrity sha512-DO7Ex/ebba2WdPgpxHHODZAjbq5x9ovY4VxIpe8PlDEpJaM8/OzlagH96a935PTXvEPkSQVfQYFptzsWkYBlWQ==
 
 "@messageformat/parser@^5.0.0":
   version "5.1.0"
