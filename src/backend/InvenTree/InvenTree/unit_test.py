@@ -238,7 +238,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     # Default query time threshold value
     # TODO: This value should be reduced
     # Note: There is a lot of variability in the query time in unit testing...
-    MAX_QUERY_TIME = 10.0
+    MAX_QUERY_TIME = 7.5
 
     @contextmanager
     def assertNumQueriesLessThan(self, value, using='default', verbose=None, url=None):
