@@ -308,7 +308,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         expected_code = kwargs.pop('expected_code', None)
 
-        format = kwargs.get('format', 'json')
+        kwargs['format'] = kwargs.get('format', 'json')
 
         max_queries = kwargs.get('max_query_count', self.MAX_QUERY_COUNT)
         max_query_time = kwargs.get('max_query_time', self.MAX_QUERY_TIME)
@@ -316,7 +316,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         t1 = time.time()
 
         with self.assertNumQueriesLessThan(max_queries, url=url):
-            response = method(url, data, format=format, **kwargs)
+            response = method(url, data, **kwargs)
         t2 = time.time()
         dt = t2 - t1
 
