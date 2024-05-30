@@ -58,9 +58,9 @@ class ScheduleMixin:
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):
         """Activate schedules from plugins with the ScheduleMixin."""
-        logger.debug('Activating plugin tasks')
-
         from common.models import InvenTreeSetting
+
+        logger.debug('Activating plugin tasks')
 
         # List of tasks we have activated
         task_keys = []

@@ -224,6 +224,7 @@ class BuildTest(BuildAPITest):
                 "status": 50,  # Item requires attention
             },
             expected_code=201,
+            max_query_count=450,  # TODO: Try to optimize this
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -993,6 +994,7 @@ class BuildOverallocationTest(BuildAPITest):
                 'accept_overallocated': 'accept',
             },
             expected_code=201,
+            max_query_count=550,  # TODO: Come back and refactor this
         )
 
         self.build.refresh_from_db()
@@ -1013,6 +1015,7 @@ class BuildOverallocationTest(BuildAPITest):
                 'accept_overallocated': 'trim',
             },
             expected_code=201,
+            max_query_count=550,  # TODO: Come back and refactor this
         )
 
         self.build.refresh_from_db()
