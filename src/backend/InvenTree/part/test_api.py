@@ -19,11 +19,12 @@ from rest_framework.test import APIClient
 import build.models
 import company.models
 import order.models
+from build.status_codes import BuildStatus
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
 from InvenTree.settings import BASE_DIR
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatusGroups, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
+from order.status_codes import PurchaseOrderStatusGroups
 from part.models import (
     BomItem,
     BomItemSubstitute,
@@ -37,6 +38,7 @@ from part.models import (
     PartTestTemplate,
 )
 from stock.models import StockItem, StockLocation
+from stock.status_codes import StockStatus
 
 
 class PartCategoryAPITest(InvenTreeAPITestCase):

@@ -18,6 +18,7 @@ from rest_framework.response import Response
 import order.models
 import part.filters
 from build.models import Build, BuildItem
+from build.status_codes import BuildStatusGroups
 from InvenTree.api import (
     APIDownloadMixin,
     AttachmentMixin,
@@ -45,11 +46,7 @@ from InvenTree.mixins import (
 )
 from InvenTree.permissions import RolePermission
 from InvenTree.serializers import EmptySerializer
-from InvenTree.status_codes import (
-    BuildStatusGroups,
-    PurchaseOrderStatusGroups,
-    SalesOrderStatusGroups,
-)
+from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from part.admin import PartCategoryResource, PartResource
 from stock.models import StockLocation
 

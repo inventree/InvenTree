@@ -10,7 +10,8 @@ from part.models import Part
 from build.models import Build, BuildItem
 from stock.models import StockItem
 
-from InvenTree.status_codes import BuildStatus, StockStatus
+from build.status_codes import BuildStatus
+from stock.status_codes import StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 

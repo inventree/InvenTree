@@ -1874,6 +1874,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'SALESORDER_SHIP_COMPLETE': {
+            'name': _('Mark Shipped Orders as Complete'),
+            'description': _(
+                'Sales orders marked as shipped will automatically be completed, bypassing the "shipped" status'
+            ),
+            'default': False,
+            'validator': bool,
+        },
         'PURCHASEORDER_REFERENCE_PATTERN': {
             'name': _('Purchase Order Reference Pattern'),
             'description': _(

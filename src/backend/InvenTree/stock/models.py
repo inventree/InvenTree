@@ -34,15 +34,11 @@ import report.mixins
 import report.models
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from InvenTree.status_codes import (
-    SalesOrderStatusGroups,
-    StockHistoryCode,
-    StockStatus,
-    StockStatusGroups,
-)
+from order.status_codes import SalesOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.generators import generate_batch_code
+from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
@@ -348,7 +344,7 @@ class StockItem(
         stocktake_user: User that performed the most recent stocktake
         review_needed: Flag if StockItem needs review
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
-        status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
+        status: Status of this StockItem (ref: stock.status_codes.StockStatus)
         notes: Extra notes field
         build: Link to a Build (if this stock item was created from a build)
         is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
