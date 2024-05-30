@@ -1678,6 +1678,9 @@ class StockItem(
         - Tracking history for the *other* item is deleted
         - Any allocations (build order, sales order) are moved to this StockItem
         """
+        if isinstance(other_items, StockItem):
+            other_items = [other_items]
+
         if len(other_items) == 0:
             return
 
@@ -1685,7 +1688,7 @@ class StockItem(
         tree_ids = {self.tree_id}
 
         user = kwargs.get('user', None)
-        location = kwargs.get('location', None)
+        location = kwargs.get('location', self.location)
         notes = kwargs.get('notes', None)
 
         parent_id = self.parent.pk if self.parent else None
@@ -1693,6 +1696,9 @@ class StockItem(
         for other in other_items:
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
+                logger.warning(
+                    'Stock item <%s> could not be merge into <%s>', other.pk, self.pk
+                )
                 return
 
             tree_ids.add(other.tree_id)
@@ -1722,7 +1728,7 @@ class StockItem(
             user,
             quantity=self.quantity,
             notes=notes,
-            deltas={'location': location.pk},
+            deltas={'location': location.pk if location else None},
         )
 
         self.location = location
