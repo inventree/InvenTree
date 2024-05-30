@@ -31,7 +31,7 @@ import InvenTree.tasks
 import InvenTree.validators
 from common.settings import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.status_codes import PurchaseOrderStatusGroups
+from order.status_codes import PurchaseOrderStatusGroups
 
 
 def rename_company_image(instance, filename):

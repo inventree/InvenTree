@@ -750,6 +750,7 @@ class BaseInvenTreeSetting(models.Model):
                     attempts=attempts - 1,
                     **kwargs,
                 )
+
         except (OperationalError, ProgrammingError):
             logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
@@ -1870,6 +1871,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Edit Completed Sales Orders'),
             'description': _(
                 'Allow editing of sales orders after they have been shipped or completed'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'SALESORDER_SHIP_COMPLETE': {
+            'name': _('Mark Shipped Orders as Complete'),
+            'description': _(
+                'Sales orders marked as shipped will automatically be completed, bypassing the "shipped" status'
             ),
             'default': False,
             'validator': bool,

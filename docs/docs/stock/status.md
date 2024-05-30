@@ -26,6 +26,18 @@ The *status* of a given stock item is displayed on the stock item detail page:
 {% include 'img.html' %}
 {% endwith %}
 
+**Source Code**
+
+Refer to the source code for the Stock status codes:
+
+::: stock.status_codes.StockStatus
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
+
 ### Default Status Code
 
 The default status code for any newly created Stock Item is <span class='badge inventree success'>OK</span>

@@ -17,8 +17,8 @@ import InvenTree.email
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
-from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.ready import isImportingData
+from build.status_codes import BuildStatusGroups
 
 import part.models as part_models
 

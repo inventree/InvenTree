@@ -273,13 +273,14 @@ if DEBUG and get_boolean_setting(
     'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
 ):
     MIDDLEWARE.append('querycount.middleware.QueryCountMiddleware')
+    logger.debug('Running with debug_querycount middleware enabled')
 
 QUERYCOUNT = {
     'THRESHOLDS': {
         'MEDIUM': 50,
         'HIGH': 200,
-        'MIN_TIME_TO_LOG': 0,
-        'MIN_QUERY_COUNT_TO_LOG': 0,
+        'MIN_TIME_TO_LOG': 0.1,
+        'MIN_QUERY_COUNT_TO_LOG': 25,
     },
     'IGNORE_REQUEST_PATTERNS': ['^(?!\/(api)?(plugin)?\/).*'],
     'IGNORE_SQL_PATTERNS': [],

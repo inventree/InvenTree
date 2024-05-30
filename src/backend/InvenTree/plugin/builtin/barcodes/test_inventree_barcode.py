@@ -19,7 +19,6 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         def test_assert_error(barcode_data):
             response = self.post(
                 reverse('api-barcode-link'),
-                format='json',
                 data={'barcode': barcode_data, 'stockitem': 521},
                 expected_code=400,
             )

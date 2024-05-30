@@ -33,7 +33,7 @@ import part.stocktake
 import part.tasks
 import stock.models
 import users.models
-from InvenTree.status_codes import BuildStatusGroups
+from build.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 
 from .models import (
