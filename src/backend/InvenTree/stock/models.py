@@ -1745,7 +1745,7 @@ class StockItem(
             user,
             quantity=self.quantity,
             notes=notes,
-            deltas={'location': location.pk},
+            deltas={'location': location.pk if location else None},
         )
 
         self.location = location
