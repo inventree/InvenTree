@@ -36,7 +36,7 @@ if (IS_DEV_OR_DEMO) {
 }
 
 export const docLinks = {
-  app: 'https://docs.inventree.org/en/latest/app/app/',
+  app: 'https://docs.inventree.org/app/',
   getting_started: 'https://docs.inventree.org/en/latest/getting_started/',
   api: 'https://docs.inventree.org/en/latest/api/api/',
   developer: 'https://docs.inventree.org/en/latest/develop/starting/',
