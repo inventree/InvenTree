@@ -11,7 +11,6 @@ database setup in this file.
 
 import logging
 import os
-import socket
 import sys
 from pathlib import Path
 
@@ -25,6 +24,7 @@ import moneyed
 import pytz
 from dotenv import load_dotenv
 
+from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
@@ -804,38 +804,11 @@ if TRACING_ENABLED:  # pragma: no cover
 # endregion
 
 # Cache configuration
-cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
-cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=int)
+GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
 
-if cache_host:  # pragma: no cover
-    # We are going to rely upon a possibly non-localhost for our cache,
-    # so don't wait too long for the cache as nothing in the cache should be
-    # irreplaceable.
-    _cache_options = {
-        'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        'SOCKET_CONNECT_TIMEOUT': int(os.getenv('CACHE_CONNECT_TIMEOUT', '2')),
-        'SOCKET_TIMEOUT': int(os.getenv('CACHE_SOCKET_TIMEOUT', '2')),
-        'CONNECTION_POOL_KWARGS': {
-            'socket_keepalive': config.is_true(os.getenv('CACHE_TCP_KEEPALIVE', '1')),
-            'socket_keepalive_options': {
-                socket.TCP_KEEPCNT: int(os.getenv('CACHE_KEEPALIVES_COUNT', '5')),
-                socket.TCP_KEEPIDLE: int(os.getenv('CACHE_KEEPALIVES_IDLE', '1')),
-                socket.TCP_KEEPINTVL: int(os.getenv('CACHE_KEEPALIVES_INTERVAL', '1')),
-                socket.TCP_USER_TIMEOUT: int(
-                    os.getenv('CACHE_TCP_USER_TIMEOUT', '1000')
-                ),
-            },
-        },
-    }
-    CACHES = {
-        'default': {
-            'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': f'redis://{cache_host}:{cache_port}/0',
-            'OPTIONS': _cache_options,
-        }
-    }
-else:
-    CACHES = {'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
+CACHES = {'default': get_cache_config(GLOBAL_CACHE_ENABLED)}
+
+print('CACHE CONFI:', CACHES['default'])
 
 _q_worker_timeout = int(
     get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
@@ -866,7 +839,7 @@ Q_CLUSTER = {
 if SENTRY_ENABLED and SENTRY_DSN:
     Q_CLUSTER['error_reporter'] = {'sentry': {'dsn': SENTRY_DSN}}
 
-if cache_host:  # pragma: no cover
+if GLOBAL_CACHE_ENABLED:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
     # as well
     Q_CLUSTER['django_redis'] = 'worker'
