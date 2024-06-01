@@ -13,6 +13,12 @@ services:
       POSTGRES_USER: inventree_user
       POSTGRES_PASSWORD: inventree_password
 
+  redis:
+    image: redis:7.0
+    restart: always
+    expose:
+      - 6379
+
   inventree:
     build:
       context: ..
