@@ -78,7 +78,7 @@ def get_cache_config(global_cache: bool) -> dict:
                 'SOCKET_CONNECT_TIMEOUT': cache_setting(
                     'connect_timeout', 5, typecast=int
                 ),
-                'SOCKET_TIMEOUT': cache_setting('socket_timeout', 3, typecast=int),
+                'SOCKET_TIMEOUT': cache_setting('timeout', 3, typecast=int),
                 'CONNECTION_POOL_KWARGS': {
                     'socket_keepalive': cache_setting(
                         'tcp_keepalive', True, typecast=bool
