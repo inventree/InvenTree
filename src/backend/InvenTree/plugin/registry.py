@@ -799,12 +799,7 @@ class PluginsRegistry:
         return str(data.hexdigest())
 
     def check_reload(self):
-        """Determine if the registry needs to be reloaded.
-
-        - If a "request" object is available, then we can cache the result and attach it.
-        - The assumption is that plugins will not change during a single request.
-
-        """
+        """Determine if the registry needs to be reloaded."""
         from common.models import InvenTreeSetting
 
         if settings.TESTING:
