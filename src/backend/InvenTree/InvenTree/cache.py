@@ -52,6 +52,8 @@ def is_global_cache_enabled():
         logger.info('Global cache bypassed for this operation')
         return False
 
+    logger.info('Global cache enabled')
+
     return True
 
 

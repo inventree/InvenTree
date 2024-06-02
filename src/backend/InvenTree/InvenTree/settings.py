@@ -808,8 +808,6 @@ GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
 
 CACHES = {'default': get_cache_config(GLOBAL_CACHE_ENABLED)}
 
-print('CACHE CONFI:', CACHES['default'])
-
 _q_worker_timeout = int(
     get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
 )
