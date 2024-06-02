@@ -4,12 +4,10 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
-import decimal
 import hashlib
 import hmac
 import json
 import logging
-import math
 import os
 import re
 import uuid
@@ -1161,18 +1159,6 @@ def validate_email_domains(setting):
             raise ValidationError(_(f'Invalid domain name: {domain}'))
 
 
-def currency_exchange_plugins():
-    """Return a set of plugin choices which can be used for currency exchange."""
-    try:
-        from plugin import registry
-
-        plugs = registry.with_mixin('currencyexchange', active=True)
-    except Exception:
-        plugs = []
-
-    return [('', _('No plugin'))] + [(plug.slug, plug.human_name) for plug in plugs]
-
-
 def reload_plugin_registry(setting):
     """When a core plugin setting is changed, reload the plugin registry."""
     from plugin import registry
@@ -1291,7 +1277,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'CURRENCY_CODES': {
             'name': _('Supported Currencies'),
             'description': _('List of supported currency codes'),
-            'default': 'AUD,CAD,CNY,EUR,GBP,JPY,NZD,USD',
+            'default': common.currency.currency_codes_default_list(),
             'validator': common.currency.validate_currency_codes,
         },
         'CURRENCY_UPDATE_INTERVAL': {
@@ -1306,7 +1292,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'CURRENCY_UPDATE_PLUGIN': {
             'name': _('Currency Update Plugin'),
             'description': _('Currency update plugin to use'),
-            'choices': currency_exchange_plugins,
+            'choices': common.currency.currency_exchange_plugins,
             'default': 'inventreecurrencyexchange',
         },
         'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -2551,82 +2537,6 @@ class PriceBreak(MetaMixin):
             return self.price.amount
 
         return converted.amount
-
-
-def get_price(
-    instance,
-    quantity,
-    moq=True,
-    multiples=True,
-    currency=None,
-    break_name: str = 'price_breaks',
-):
-    """Calculate the price based on quantity price breaks.
-
-    - Don't forget to add in flat-fee cost (base_cost field)
-    - If MOQ (minimum order quantity) is required, bump quantity
-    - If order multiples are to be observed, then we need to calculate based on that, too
-    """
-    from common.currency import currency_code_default
-
-    if hasattr(instance, break_name):
-        price_breaks = getattr(instance, break_name).all()
-    else:
-        price_breaks = []
-
-    # No price break information available?
-    if len(price_breaks) == 0:
-        return None
-
-    # Check if quantity is fraction and disable multiples
-    multiples = quantity % 1 == 0
-
-    # Order multiples
-    if multiples:
-        quantity = int(math.ceil(quantity / instance.multiple) * instance.multiple)
-
-    pb_found = False
-    pb_quantity = -1
-    pb_cost = 0.0
-
-    if currency is None:
-        # Default currency selection
-        currency = currency_code_default()
-
-    pb_min = None
-    for pb in price_breaks:
-        # Store smallest price break
-        if not pb_min:
-            pb_min = pb
-
-        # Ignore this pricebreak (quantity is too high)
-        if pb.quantity > quantity:
-            continue
-
-        pb_found = True
-
-        # If this price-break quantity is the largest so far, use it!
-        if pb.quantity > pb_quantity:
-            pb_quantity = pb.quantity
-
-            # Convert everything to the selected currency
-            pb_cost = pb.convert_to(currency)
-
-    # Use smallest price break
-    if not pb_found and pb_min:
-        # Update price break information
-        pb_quantity = pb_min.quantity
-        pb_cost = pb_min.convert_to(currency)
-        # Trigger cost calculation using smallest price break
-        pb_found = True
-
-    # Convert quantity to decimal.Decimal format
-    quantity = decimal.Decimal(f'{quantity}')
-
-    if pb_found:
-        cost = pb_cost * quantity
-        return InvenTree.helpers.normalize(cost + instance.base_cost)
-    return None
 
 
 class ColorTheme(models.Model):

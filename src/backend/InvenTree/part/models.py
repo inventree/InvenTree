@@ -2019,7 +2019,7 @@ class Part(
         help_text=_('Sell multiple'),
     )
 
-    get_price = common.models.get_price
+    get_price = common.currency.get_price
 
     @property
     def has_price_breaks(self):
@@ -2051,7 +2051,7 @@ class Part(
 
     def get_internal_price(self, quantity, moq=True, multiples=True, currency=None):
         """Return the internal price of this Part at the specified quantity."""
-        return common.models.get_price(
+        return common.currency.get_price(
             self, quantity, moq, multiples, currency, break_name='internal_price_breaks'
         )
 

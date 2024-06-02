@@ -1,7 +1,6 @@
 """Company database model definitions."""
 
 import os
-from datetime import datetime
 from decimal import Decimal
 
 from django.apps import apps
@@ -968,7 +967,7 @@ class SupplierPart(
 
         SupplierPriceBreak.objects.create(part=self, quantity=quantity, price=price)
 
-    get_price = common.models.get_price
+    get_price = common.currency.get_price
 
     def open_orders(self):
         """Return a database query for PurchaseOrder line items for this SupplierPart, limited to purchase orders that are open / outstanding."""
