@@ -69,6 +69,8 @@ def currency_codes() -> list:
         else:
             logger.warning(f"Invalid currency code: '{code}'")
 
+    print('Currency Codes:', list(valid_codes))
+
     return list(valid_codes)
 
 
