@@ -823,7 +823,7 @@ class PluginsRegistry:
 
         try:
             reg_hash = InvenTreeSetting.get_setting(
-                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+                '_PLUGIN_REGISTRY_HASH', '', create=False
             )
         except Exception as exc:
             logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
