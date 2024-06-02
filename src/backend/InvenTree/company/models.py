@@ -20,6 +20,7 @@ from moneyed import CURRENCIES
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
+import common.currency
 import common.models
 import common.settings
 import InvenTree.conversion
@@ -29,7 +30,7 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
-from common.settings import currency_code_default
+from common.currency import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from order.status_codes import PurchaseOrderStatusGroups
 
@@ -212,7 +213,7 @@ class Company(
         code = self.currency
 
         if code not in CURRENCIES:
-            code = common.settings.currency_code_default()
+            code = common.currency.currency_code_default()
 
         return code
 

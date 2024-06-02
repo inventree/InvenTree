@@ -7,7 +7,7 @@ from django.db.transaction import atomic
 from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 
-from common.settings import currency_code_default, currency_codes
+from common.currency import currency_code_default, currency_codes
 
 logger = logging.getLogger('inventree')
 

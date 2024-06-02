@@ -571,8 +571,8 @@ def update_exchange_rates(force: bool = False):
     try:
         from djmoney.contrib.exchange.models import Rate
 
+        from common.currency import currency_code_default, currency_codes
         from common.models import InvenTreeSetting
-        from common.settings import currency_code_default, currency_codes
         from InvenTree.exchange import InvenTreeExchange
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!

@@ -23,7 +23,7 @@ from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
-from common.settings import currency_code_default, currency_code_mappings
+from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
 
