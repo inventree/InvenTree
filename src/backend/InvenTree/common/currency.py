@@ -52,11 +52,20 @@ def all_currency_codes() -> list:
     return [(a, CURRENCIES[a].name) for a in CURRENCIES]
 
 
+def currency_codes_default_list() -> str:
+    """Return a comma-separated list of default currency codes."""
+    return 'AUD,CAD,CNY,EUR,GBP,JPY,NZD,USD'
+
+
 def currency_codes() -> list:
     """Returns the current currency codes."""
     from common.models import InvenTreeSetting
 
-    codes = InvenTreeSetting.get_setting('CURRENCY_CODES', 'USD', create=False)
+    codes = InvenTreeSetting.get_setting('CURRENCY_CODES', '', create=False).strip()
+
+    if not codes:
+        codes = currency_codes_default_list()
+
     codes = codes.split(',')
 
     valid_codes = set()
@@ -69,14 +78,10 @@ def currency_codes() -> list:
         else:
             logger.warning(f"Invalid currency code: '{code}'")
 
-    print('Currency Codes:', list(valid_codes))
+    if len(valid_codes) == 0:
+        valid_codes = set(currency_codes_default_list().split(','))
 
     return list(valid_codes)
-
-
-def currency_codes_default_list() -> str:
-    """Return a comma-separated list of default currency codes."""
-    return 'AUD,CAD,CNY,EUR,GBP,JPY,NZD,USD'
 
 
 def currency_code_mappings():
@@ -126,6 +131,9 @@ def validate_currency_codes(value):
             raise ValidationError(_('Duplicate currency code') + f": '{code}'")
         else:
             valid_currencies.add(code)
+
+    if len(valid_currencies) == 0:
+        raise ValidationError(_('No valid currency codes provided'))
 
     return list(valid_currencies)
 
