@@ -1271,7 +1271,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Default Currency'),
             'description': _('Select base currency for pricing calculations'),
             'default': 'USD',
-            'choices': CURRENCY_CHOICES,
+            'choices': common.currency.currency_code_mappings,
             'after_save': common.currency.after_change_currency,
         },
         'CURRENCY_CODES': {

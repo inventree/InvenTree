@@ -9,7 +9,7 @@ def set_default_currency(apps, schema_editor):
     # get value from settings-file
     base_currency = get_setting('INVENTREE_BASE_CURRENCY', 'base_currency', 'USD')
 
-    from common.settings import currency_codes
+    from common.currency import currency_codes
 
     # check if value is valid
     if base_currency not in currency_codes():
