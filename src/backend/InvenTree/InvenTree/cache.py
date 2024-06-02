@@ -32,8 +32,11 @@ def is_global_cache_enabled():
     - Test if the user has enabled and configured global cache
     - Test if it is appropriate to enable global cache based on the current operation.
     """
+    host = cache_host()
+
     # Test if cache is enabled
-    if not cache_setting('enabled', False, typecast=bool):
+    # If the cache host is set, then the "default" action is to enable the cache
+    if not cache_setting('enabled', host is not None, typecast=bool):
         return False
 
     # Test if the cache is configured
