@@ -118,10 +118,12 @@ def validate_currency_codes(value):
         if not code:
             continue
 
-        if code in CURRENCIES:
-            valid_currencies.add(code)
-        else:
+        if code not in CURRENCIES:
             raise ValidationError(_('Invalid currency code') + f": '{code}'")
+        elif code in valid_currencies:
+            raise ValidationError(_('Duplicate currency code') + f": '{code}'")
+        else:
+            valid_currencies.add(code)
 
     return list(valid_currencies)
 
