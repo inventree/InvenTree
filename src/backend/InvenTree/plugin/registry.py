@@ -789,7 +789,7 @@ class PluginsRegistry:
 
         for k in self.plugin_settings_keys():
             try:
-                val = InvenTreeSetting.get_setting(k, False, cache=False, create=False)
+                val = InvenTreeSetting.get_setting(k, False, create=False)
                 msg = f'{k}-{val}'
 
                 data.update(msg.encode())

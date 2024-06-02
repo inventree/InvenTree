@@ -2748,15 +2748,11 @@ class PartPricing(common.models.MetaMixin):
                 purchase_max = purchase_cost
 
         # Also check if manual stock item pricing is included
-        if InvenTreeSetting.get_setting('PRICING_USE_STOCK_PRICING', True, cache=False):
+        if InvenTreeSetting.get_setting('PRICING_USE_STOCK_PRICING', True):
             items = self.part.stock_items.all()
 
             # Limit to stock items updated within a certain window
-            days = int(
-                InvenTreeSetting.get_setting(
-                    'PRICING_STOCK_ITEM_AGE_DAYS', 0, cache=False
-                )
-            )
+            days = int(InvenTreeSetting.get_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0))
 
             if days > 0:
                 date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
@@ -2792,7 +2788,7 @@ class PartPricing(common.models.MetaMixin):
         min_int_cost = None
         max_int_cost = None
 
-        if InvenTreeSetting.get_setting('PART_INTERNAL_PRICE', False, cache=False):
+        if InvenTreeSetting.get_setting('PART_INTERNAL_PRICE', False):
             # Only calculate internal pricing if internal pricing is enabled
             for pb in self.part.internalpricebreaks.all():
                 cost = self.convert(pb.price)
@@ -2911,12 +2907,10 @@ class PartPricing(common.models.MetaMixin):
         max_costs = [self.bom_cost_max, self.purchase_cost_max, self.internal_cost_max]
 
         purchase_history_override = InvenTreeSetting.get_setting(
-            'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER', False, cache=False
+            'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER', False
         )
 
-        if InvenTreeSetting.get_setting(
-            'PRICING_USE_SUPPLIER_PRICING', True, cache=False
-        ):
+        if InvenTreeSetting.get_setting('PRICING_USE_SUPPLIER_PRICING', True):
             # Add supplier pricing data, *unless* historical pricing information should override
             if self.purchase_cost_min is None or not purchase_history_override:
                 min_costs.append(self.supplier_price_min)
@@ -2924,9 +2918,7 @@ class PartPricing(common.models.MetaMixin):
             if self.purchase_cost_max is None or not purchase_history_override:
                 max_costs.append(self.supplier_price_max)
 
-        if InvenTreeSetting.get_setting(
-            'PRICING_USE_VARIANT_PRICING', True, cache=False
-        ):
+        if InvenTreeSetting.get_setting('PRICING_USE_VARIANT_PRICING', True):
             # Include variant pricing in overall calculations
             min_costs.append(self.variant_cost_min)
             max_costs.append(self.variant_cost_max)
@@ -2953,9 +2945,7 @@ class PartPricing(common.models.MetaMixin):
             if overall_max is None or cost > overall_max:
                 overall_max = cost
 
-        if InvenTreeSetting.get_setting(
-            'PART_BOM_USE_INTERNAL_PRICE', False, cache=False
-        ):
+        if InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False):
             # Check if internal pricing should override other pricing
             if self.internal_cost_min is not None:
                 overall_min = self.internal_cost_min
@@ -4300,7 +4290,7 @@ class BomItem(
         """Return the price-range for this BOM item."""
         # get internal price setting
         use_internal = common.models.InvenTreeSetting.get_setting(
-            'PART_BOM_USE_INTERNAL_PRICE', False, cache=False
+            'PART_BOM_USE_INTERNAL_PRICE', False
         )
         prange = self.sub_part.get_price_range(
             self.quantity, internal=use_internal and internal
