@@ -19,13 +19,13 @@ from secrets import compare_digest
 from typing import Any, Callable, TypedDict, Union
 
 from django.apps import apps
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
-from django.core.exceptions import AppRegistryNotReady, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
@@ -101,7 +101,7 @@ class BaseURLValidator(URLValidator):
         value = str(value).strip()
 
         # If a configuration level value has been specified, prevent change
-        if settings.SITE_URL and value != settings.SITE_URL:
+        if django_settings.SITE_URL and value != django_settings.SITE_URL:
             raise ValidationError(_('Site URL is locked by configuration'))
 
         if len(value) == 0:
@@ -561,7 +561,7 @@ class BaseInvenTreeSetting(models.Model):
         create = kwargs.pop('create', True)
 
         # Specify if cache lookup should be performed
-        do_cache = kwargs.pop('cache', False)
+        do_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
 
         # Prevent saving to the database during data import
         if InvenTree.ready.isImportingData():
@@ -1117,7 +1117,7 @@ def settings_group_options():
 
 def update_instance_url(setting):
     """Update the first site objects domain to url."""
-    if not settings.SITE_MULTI:
+    if not django_settings.SITE_MULTI:
         return
 
     try:
@@ -1133,7 +1133,7 @@ def update_instance_url(setting):
 
 def update_instance_name(setting):
     """Update the first site objects name to instance name."""
-    if not settings.SITE_MULTI:
+    if not django_settings.SITE_MULTI:
         return
 
     try:
@@ -2653,14 +2653,14 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
-        if not settings.STATIC_COLOR_THEMES_DIR.exists():
+        if not django_settings.STATIC_COLOR_THEMES_DIR.exists():
             logger.error('Theme directory does not exist')
             return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
 
-        for file in settings.STATIC_COLOR_THEMES_DIR.iterdir():
+        for file in django_settings.STATIC_COLOR_THEMES_DIR.iterdir():
             files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)
@@ -3011,7 +3011,7 @@ class NotificationMessage(models.Model):
         # Add timezone information if TZ is enabled (in production mode mostly)
         delta = now() - (
             self.creation.replace(tzinfo=timezone.utc)
-            if settings.USE_TZ
+            if django_settings.USE_TZ
             else self.creation
         )
         return delta.seconds
