@@ -20,7 +20,6 @@ from django.core.validators import URLValidator
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
-import moneyed
 import pytz
 from dotenv import load_dotenv
 
@@ -904,27 +903,8 @@ if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no 
     LANG_INFO = dict(django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO)
     django.conf.locale.LANG_INFO = LANG_INFO
 
-# Currencies available for use
-CURRENCIES = get_setting(
-    'INVENTREE_CURRENCIES',
-    'currencies',
-    ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD'],
-    typecast=list,
-)
-
-# Ensure that at least one currency value is available
-if len(CURRENCIES) == 0:  # pragma: no cover
-    logger.warning('No currencies selected: Defaulting to USD')
-    CURRENCIES = ['USD']
-
 # Maximum number of decimal places for currency rendering
 CURRENCY_DECIMAL_PLACES = 6
-
-# Check that each provided currency is supported
-for currency in CURRENCIES:
-    if currency not in moneyed.CURRENCIES:  # pragma: no cover
-        logger.error("Currency code '%s' is not supported", currency)
-        sys.exit(1)
 
 # Custom currency exchange backend
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'

@@ -33,6 +33,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
+import common.currency
 import common.models
 import common.settings
 import InvenTree.conversion
@@ -47,8 +48,8 @@ import report.mixins
 import users.models
 from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
+from common.currency import currency_code_default
 from common.models import InvenTreeSetting
-from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
@@ -2018,7 +2019,7 @@ class Part(
         help_text=_('Sell multiple'),
     )
 
-    get_price = common.models.get_price
+    get_price = common.currency.get_price
 
     @property
     def has_price_breaks(self):
@@ -2050,7 +2051,7 @@ class Part(
 
     def get_internal_price(self, quantity, moq=True, multiples=True, currency=None):
         """Return the internal price of this Part at the specified quantity."""
-        return common.models.get_price(
+        return common.currency.get_price(
             self, quantity, moq, multiples, currency, break_name='internal_price_breaks'
         )
 
@@ -2646,7 +2647,7 @@ class PartPricing(common.models.MetaMixin):
             # Short circuit - no further operations required
             return
 
-        currency_code = common.settings.currency_code_default()
+        currency_code = common.currency.currency_code_default()
 
         cumulative_min = Money(0, currency_code)
         cumulative_max = Money(0, currency_code)
@@ -3025,7 +3026,7 @@ class PartPricing(common.models.MetaMixin):
         max_length=10,
         verbose_name=_('Currency'),
         help_text=_('Currency used to cache pricing calculations'),
-        choices=common.settings.currency_code_mappings(),
+        choices=common.currency.currency_code_mappings(),
     )
 
     scheduled_for_update = models.BooleanField(default=False)

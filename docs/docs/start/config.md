@@ -256,19 +256,6 @@ The "sender" email address is the address from which InvenTree emails are sent (
 !!! info "Fallback"
     If `INVENTREE_EMAIL_SENDER` is not provided, the system will fall back to `INVENTREE_EMAIL_USERNAME` (if the username is a valid email address)
 
-## Supported Currencies
-
-The currencies supported by InvenTree must be specified in the [configuration file](#configuration-file).
-
-A list of currency codes (e.g. *AUD*, *CAD*, *JPY*, *USD*) can be specified using the `currencies` variable (or using the `INVENTREE_CURRENCIES` environment variable).
-
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_CURRENCIES | currencies | List of supported currencies| `AUD`, `CAD`, `CNY`, `EUR`, `GBP`, `JPY`, `NZD`, `USD` |
-
-!!! tip "More Info"
-    Read the [currencies documentation](../settings/currency.md) for more information on currency support in InvenTree
-
 ## File Storage Locations
 
 InvenTree requires some external directories for storing files:

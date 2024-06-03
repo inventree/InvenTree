@@ -1,7 +1,6 @@
 """Company database model definitions."""
 
 import os
-from datetime import datetime
 from decimal import Decimal
 
 from django.apps import apps
@@ -20,6 +19,7 @@ from moneyed import CURRENCIES
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
+import common.currency
 import common.models
 import common.settings
 import InvenTree.conversion
@@ -29,7 +29,7 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
-from common.settings import currency_code_default
+from common.currency import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
 from order.status_codes import PurchaseOrderStatusGroups
 
@@ -212,7 +212,7 @@ class Company(
         code = self.currency
 
         if code not in CURRENCIES:
-            code = common.settings.currency_code_default()
+            code = common.currency.currency_code_default()
 
         return code
 
@@ -967,7 +967,7 @@ class SupplierPart(
 
         SupplierPriceBreak.objects.create(part=self, quantity=quantity, price=price)
 
-    get_price = common.models.get_price
+    get_price = common.currency.get_price
 
     def open_orders(self):
         """Return a database query for PurchaseOrder line items for this SupplierPart, limited to purchase orders that are open / outstanding."""

@@ -185,7 +185,7 @@ class InvenTreeConfig(AppConfig):
         try:
             from djmoney.contrib.exchange.models import ExchangeBackend
 
-            from common.settings import currency_code_default
+            from common.currency import currency_code_default
             from InvenTree.tasks import update_exchange_rates
         except AppRegistryNotReady:  # pragma: no cover
             pass
