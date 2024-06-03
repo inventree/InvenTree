@@ -68,20 +68,23 @@ def currency_codes() -> list:
 
     codes = codes.split(',')
 
-    valid_codes = set()
+    valid_codes = []
 
     for code in codes:
         code = code.strip().upper()
 
+        if code in valid_codes:
+            continue
+
         if code in CURRENCIES:
-            valid_codes.add(code)
+            valid_codes.append(code)
         else:
             logger.warning(f"Invalid currency code: '{code}'")
 
     if len(valid_codes) == 0:
-        valid_codes = set(currency_codes_default_list().split(','))
+        valid_codes = list(currency_codes_default_list().split(','))
 
-    return list(valid_codes)
+    return valid_codes
 
 
 def currency_code_mappings() -> list:
