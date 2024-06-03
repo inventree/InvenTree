@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-03 11:39+0000\n"
-"PO-Revision-Date: 2024-05-27 11:54\n"
+"PO-Revision-Date: 2024-06-03 12:41\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -1915,22 +1915,16 @@ msgid "Incomplete Outputs"
 msgstr "Ufullstendige artikler"
 
 #: common/currency.py:132
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "Invalid currency code"
-msgstr "Ikke en gyldig valutakode"
+msgstr ""
 
 #: common/currency.py:134
-#, fuzzy
-#| msgid "Duplicate order"
 msgid "Duplicate currency code"
-msgstr "Dupliser ordre"
+msgstr ""
 
 #: common/currency.py:139
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "No valid currency codes provided"
-msgstr "Ikke en gyldig valutakode"
+msgstr ""
 
 #: common/currency.py:153
 msgid "No plugin"
@@ -2104,10 +2098,8 @@ msgid "Supported Currencies"
 msgstr ""
 
 #: common/models.py:1279
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "List of supported currency codes"
-msgstr "Ikke en gyldig valutakode"
+msgstr ""
 
 #: common/models.py:1285
 msgid "Currency Update Interval"
@@ -2783,10 +2775,8 @@ msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Tillat redigering av salgsordrer etter de har blitt sendt eller fullført"
 
 #: common/models.py:1851
-#, fuzzy
-#| msgid "Mark order as complete"
 msgid "Mark Shipped Orders as Complete"
-msgstr "Merk ordren som fullført"
+msgstr ""
 
 #: common/models.py:1853
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
@@ -4912,16 +4902,12 @@ msgid "shipped by"
 msgstr "sendt av"
 
 #: order/models.py:1027
-#, fuzzy
-#| msgid "Build output is already completed"
 msgid "Order is already complete"
-msgstr "Produksjonsartikkelen er allerede fullført"
+msgstr ""
 
 #: order/models.py:1030
-#, fuzzy
-#| msgid "Order cannot be cancelled"
 msgid "Order is already cancelled"
-msgstr "Ordren kan ikke kanselleres"
+msgstr ""
 
 #: order/models.py:1034
 msgid "Only an open order can be marked as complete"
@@ -14368,3 +14354,4 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
+
