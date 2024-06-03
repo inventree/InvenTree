@@ -182,6 +182,8 @@ def clean_var(value, strip_quotes=True):
     if value is None:
         return value
 
+    orig = value
+
     value = str(value).strip()
 
     if strip_quotes:
@@ -190,6 +192,8 @@ def clean_var(value, strip_quotes=True):
                 value = value[1:-1]
 
         value = value.strip()
+
+    print('clean_var:', orig, '->', value)
 
     return value
 
