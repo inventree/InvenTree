@@ -176,7 +176,7 @@ def get_price(
         return None
 
     # Check if quantity is fraction and disable multiples
-    multiples = multiples or quantity % 1 == 0
+    multiples = quantity % 1 == 0
 
     # Order multiples
     if multiples:
