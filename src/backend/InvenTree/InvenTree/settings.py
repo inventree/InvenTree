@@ -972,7 +972,7 @@ if SITE_URL:
         validator = URLValidator()
         validator(SITE_URL)
     except Exception:
-        print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
+        print(f'Invalid SITE_URL value: {SITE_URL}. InvenTree server cannot start.')
         sys.exit(-1)
 
 # Enable or disable multi-site framework
