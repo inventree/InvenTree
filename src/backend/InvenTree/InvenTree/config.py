@@ -177,7 +177,26 @@ def do_typecast(value, type, var_name=None):
     return value
 
 
-def get_setting(env_var=None, config_key=None, default_value=None, typecast=None):
+def clean_var(value, strip_quotes=True):
+    """Clean an input string value."""
+    if value is None:
+        return value
+
+    value = str(value).strip()
+
+    if strip_quotes:
+        for qc in ['"', "'"]:
+            if value.startswith(qc) and value.endswith(qc):
+                value = value[1:-1]
+
+        value = value.strip()
+
+    return value
+
+
+def get_setting(
+    env_var=None, config_key=None, default_value=None, typecast=None, strip_quotes=True
+):
     """Helper function for retrieving a configuration setting value.
 
     - First preference is to look for the environment variable
@@ -205,6 +224,8 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
     if env_var is not None:
         val = os.getenv(env_var, None)
 
+        val = clean_var(val, strip_quotes=strip_quotes)
+
         if val is not None:
             set_metadata('env')
             return do_typecast(val, typecast, var_name=env_var)
@@ -223,6 +244,8 @@ def get_setting(env_var=None, config_key=None, default_value=None, typecast=None
 
             result = cfg_data[key]
             cfg_data = cfg_data[key]
+
+        result = clean_var(result, strip_quotes=strip_quotes)
 
         if result is not None:
             set_metadata('yaml')
