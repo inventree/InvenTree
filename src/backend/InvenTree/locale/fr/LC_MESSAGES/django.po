@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-03 11:39+0000\n"
-"PO-Revision-Date: 2024-05-27 11:54\n"
+"PO-Revision-Date: 2024-06-03 12:40\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1294,7 +1294,7 @@ msgstr "Affecter automatiquement les éléments requis avec les numéros de sér
 
 #: build/serializers.py:331
 msgid "Serial numbers must be provided for trackable parts"
-msgstr ""
+msgstr "Les numéros de série doivent être fournis pour les pièces traçables"
 
 #: build/serializers.py:356 stock/api.py:1031
 msgid "The following serial numbers already exist or are invalid"
@@ -1915,22 +1915,16 @@ msgid "Incomplete Outputs"
 msgstr "Sorties incomplètes"
 
 #: common/currency.py:132
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "Invalid currency code"
 msgstr "Code de devise invalide"
 
 #: common/currency.py:134
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "Duplicate currency code"
-msgstr "Code de devise invalide"
+msgstr "Code de devise en double"
 
 #: common/currency.py:139
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "No valid currency codes provided"
-msgstr "Code de devise invalide"
+msgstr "Aucun code de devise valide fourni"
 
 #: common/currency.py:153
 msgid "No plugin"
@@ -2101,13 +2095,11 @@ msgstr "Sélectionnez la devise de base pour les calculs de prix"
 
 #: common/models.py:1278
 msgid "Supported Currencies"
-msgstr ""
+msgstr "Devises supportées"
 
 #: common/models.py:1279
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "List of supported currency codes"
-msgstr "Code de devise invalide"
+msgstr "Liste des codes de devises supportés"
 
 #: common/models.py:1285
 msgid "Currency Update Interval"
@@ -2266,7 +2258,7 @@ msgstr ""
 
 #: common/models.py:1415
 msgid "Allow deletion of parts which are used in an assembly"
-msgstr ""
+msgstr "Permettre la suppression de pièces utilisées dans un assemblage"
 
 #: common/models.py:1420
 msgid "IPN Regex"
@@ -2783,10 +2775,8 @@ msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Autoriser la modification des commandes de vente après avoir été expédiées ou complétées"
 
 #: common/models.py:1851
-#, fuzzy
-#| msgid "Mark order as complete"
 msgid "Mark Shipped Orders as Complete"
-msgstr "Marquer la commande comme complète"
+msgstr ""
 
 #: common/models.py:1853
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
@@ -4912,16 +4902,12 @@ msgid "shipped by"
 msgstr "expédié par"
 
 #: order/models.py:1027
-#, fuzzy
-#| msgid "Build output is already completed"
 msgid "Order is already complete"
-msgstr "L'ordre de production a déjà été réalisé"
+msgstr ""
 
 #: order/models.py:1030
-#, fuzzy
-#| msgid "Order cannot be cancelled"
 msgid "Order is already cancelled"
-msgstr "La commande ne peut pas être annulée"
+msgstr ""
 
 #: order/models.py:1034
 msgid "Only an open order can be marked as complete"
@@ -14368,3 +14354,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
