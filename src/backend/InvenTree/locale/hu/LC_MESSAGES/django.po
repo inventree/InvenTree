@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-03 11:39+0000\n"
-"PO-Revision-Date: 2024-05-27 11:54\n"
+"PO-Revision-Date: 2024-06-03 12:41\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1345,8 +1345,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:527
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:612
@@ -1917,22 +1916,16 @@ msgid "Incomplete Outputs"
 msgstr "Befejezetlen kimenetek"
 
 #: common/currency.py:132
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "Invalid currency code"
-msgstr "Érvénytelen pénznem kód"
+msgstr ""
 
 #: common/currency.py:134
-#, fuzzy
-#| msgid "Duplicate order"
 msgid "Duplicate currency code"
-msgstr "Rendelés másolása"
+msgstr ""
 
 #: common/currency.py:139
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "No valid currency codes provided"
-msgstr "Érvénytelen pénznem kód"
+msgstr ""
 
 #: common/currency.py:153
 msgid "No plugin"
@@ -2106,10 +2099,8 @@ msgid "Supported Currencies"
 msgstr ""
 
 #: common/models.py:1279
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "List of supported currency codes"
-msgstr "Érvénytelen pénznem kód"
+msgstr ""
 
 #: common/models.py:1285
 msgid "Currency Update Interval"
@@ -2785,10 +2776,8 @@ msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr "Vevői rendelések szerkesztésének engedélyezése szállítás vagy befejezés után"
 
 #: common/models.py:1851
-#, fuzzy
-#| msgid "Mark this order as complete?"
 msgid "Mark Shipped Orders as Complete"
-msgstr "Rendelés befejezettnek jelölése?"
+msgstr ""
 
 #: common/models.py:1853
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
@@ -4914,16 +4903,12 @@ msgid "shipped by"
 msgstr "szállította"
 
 #: order/models.py:1027
-#, fuzzy
-#| msgid "Build output is already completed"
 msgid "Order is already complete"
-msgstr "Gyártási kimenet már kész"
+msgstr ""
 
 #: order/models.py:1030
-#, fuzzy
-#| msgid "Order cannot be cancelled"
 msgid "Order is already cancelled"
-msgstr "A rendelést nem lehet törölni"
+msgstr ""
 
 #: order/models.py:1034
 msgid "Only an open order can be marked as complete"
@@ -14370,3 +14355,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
