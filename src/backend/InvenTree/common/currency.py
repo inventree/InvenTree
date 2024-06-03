@@ -84,12 +84,12 @@ def currency_codes() -> list:
     return list(valid_codes)
 
 
-def currency_code_mappings():
+def currency_code_mappings() -> list:
     """Returns the current currency choices."""
     return [(a, CURRENCIES[a].name) for a in currency_codes()]
 
 
-def after_change_currency():
+def after_change_currency(setting) -> None:
     """Callback function when base currency is changed.
 
     - Update exchange rates
