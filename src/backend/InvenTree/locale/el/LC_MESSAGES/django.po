@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-03 11:39+0000\n"
-"PO-Revision-Date: 2024-05-27 11:54\n"
+"PO-Revision-Date: 2024-06-03 12:41\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -1915,22 +1915,16 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/currency.py:132
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "Invalid currency code"
-msgstr "Μη έγκυρος κωδικός συναλλάγματος"
+msgstr ""
 
 #: common/currency.py:134
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "Duplicate currency code"
-msgstr "Μη έγκυρος κωδικός συναλλάγματος"
+msgstr ""
 
 #: common/currency.py:139
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "No valid currency codes provided"
-msgstr "Μη έγκυρος κωδικός συναλλάγματος"
+msgstr ""
 
 #: common/currency.py:153
 msgid "No plugin"
@@ -2104,10 +2098,8 @@ msgid "Supported Currencies"
 msgstr ""
 
 #: common/models.py:1279
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "List of supported currency codes"
-msgstr "Μη έγκυρος κωδικός συναλλάγματος"
+msgstr ""
 
 #: common/models.py:1285
 msgid "Currency Update Interval"
@@ -2783,10 +2775,8 @@ msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr ""
 
 #: common/models.py:1851
-#, fuzzy
-#| msgid "A build order has been completed"
 msgid "Mark Shipped Orders as Complete"
-msgstr "Η παραγγελία κατασκευής έχει ολοκληρωθεί"
+msgstr ""
 
 #: common/models.py:1853
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
@@ -4912,10 +4902,8 @@ msgid "shipped by"
 msgstr ""
 
 #: order/models.py:1027
-#, fuzzy
-#| msgid "Build output is already completed"
 msgid "Order is already complete"
-msgstr "Η παραγγελία κατασκευής έχει ολοκληρωθεί"
+msgstr ""
 
 #: order/models.py:1030
 msgid "Order is already cancelled"
@@ -14366,3 +14354,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
