@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-03 11:39+0000\n"
-"PO-Revision-Date: 2024-05-27 11:55\n"
+"PO-Revision-Date: 2024-06-03 12:41\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -1915,20 +1915,16 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/currency.py:132
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid currency code"
-msgstr "ปริมาณสินค้าไม่ถูกต้อง"
+msgstr ""
 
 #: common/currency.py:134
 msgid "Duplicate currency code"
 msgstr ""
 
 #: common/currency.py:139
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "No valid currency codes provided"
-msgstr "ปริมาณสินค้าไม่ถูกต้อง"
+msgstr ""
 
 #: common/currency.py:153
 msgid "No plugin"
@@ -14358,3 +14354,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
