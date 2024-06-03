@@ -84,8 +84,6 @@ def currency_codes() -> list:
     if len(valid_codes) == 0:
         valid_codes = list(currency_codes_default_list().split(','))
 
-    print('currency_codes:', valid_codes)
-
     return valid_codes
 
 
