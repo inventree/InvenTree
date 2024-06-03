@@ -45,13 +45,9 @@ def is_global_cache_enabled():
         return False
 
     # The cache should not be used during certain operations
-    if any((
-        InvenTree.ready.isRunningBackup(),
-        InvenTree.ready.isRunningMigrations(),
-        InvenTree.ready.isRebuildingData(),
-        InvenTree.ready.isImportingData(),
-        InvenTree.ready.isInTestMode(),
-    )):
+    if not InvenTree.ready.canAppAccessDatabase(
+        allow_test=False, allow_plugins=False, allow_shell=True
+    ):
         logger.info('Global cache bypassed for this operation')
         return False
 
