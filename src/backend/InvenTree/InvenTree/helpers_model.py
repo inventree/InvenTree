@@ -63,7 +63,7 @@ def get_base_url(request=None):
     # Check if a global InvenTree setting is provided
     try:
         if site_url := common.models.InvenTreeSetting.get_setting(
-            'INVENTREE_BASE_URL', create=False, cache=False
+            'INVENTREE_BASE_URL', create=False
         ):
             return site_url
     except (ProgrammingError, OperationalError):

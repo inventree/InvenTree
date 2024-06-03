@@ -109,6 +109,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={[
                 'INVENTREE_DEFAULT_CURRENCY',
+                'CURRENCY_CODES',
                 'PART_INTERNAL_PRICE',
                 'PART_BOM_USE_INTERNAL_PRICE',
                 'PRICING_DECIMAL_PLACES_MIN',

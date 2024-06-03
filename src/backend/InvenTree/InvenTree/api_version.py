@@ -1,14 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 203
+INVENTREE_API_VERSION = 204
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
 
-v203 - 2024-05-28 : https://github.com/inventree/InvenTree/pull/7284
+v204 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7284
     - Added model_type and model_id fields to the "NotesImage" serializer
+
+v203 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7390
+    - Adjust default currency codes
 
 v202 - 2024-05-27 : https://github.com/inventree/InvenTree/pull/7343
     - Adjust "required" attribute of Part.category field to be optional

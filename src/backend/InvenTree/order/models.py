@@ -33,8 +33,8 @@ import order.validators
 import report.mixins
 import stock.models
 import users.models as UserModels
+from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
-from common.settings import currency_code_default
 from company.models import Address, Company, Contact, SupplierPart
 from generic.states import StateTransitionMixin
 from InvenTree.exceptions import log_error

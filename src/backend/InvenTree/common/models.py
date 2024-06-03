@@ -4,12 +4,10 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
-import decimal
 import hashlib
 import hmac
 import json
 import logging
-import math
 import os
 import re
 import uuid
@@ -19,13 +17,13 @@ from secrets import compare_digest
 from typing import Any, Callable, TypedDict, Union
 
 from django.apps import apps
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
-from django.core.exceptions import AppRegistryNotReady, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
@@ -41,6 +39,7 @@ from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
 import build.validators
+import common.currency
 import common.validators
 import InvenTree.fields
 import InvenTree.helpers
@@ -102,7 +101,7 @@ class BaseURLValidator(URLValidator):
         value = str(value).strip()
 
         # If a configuration level value has been specified, prevent change
-        if settings.SITE_URL and value != settings.SITE_URL:
+        if django_settings.SITE_URL and value != django_settings.SITE_URL:
             raise ValidationError(_('Site URL is locked by configuration'))
 
         if len(value) == 0:
@@ -562,7 +561,7 @@ class BaseInvenTreeSetting(models.Model):
         create = kwargs.pop('create', True)
 
         # Specify if cache lookup should be performed
-        do_cache = kwargs.pop('cache', False)
+        do_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
 
         # Prevent saving to the database during data import
         if InvenTree.ready.isImportingData():
@@ -1118,7 +1117,7 @@ def settings_group_options():
 
 def update_instance_url(setting):
     """Update the first site objects domain to url."""
-    if not settings.SITE_MULTI:
+    if not django_settings.SITE_MULTI:
         return
 
     try:
@@ -1134,7 +1133,7 @@ def update_instance_url(setting):
 
 def update_instance_name(setting):
     """Update the first site objects name to instance name."""
-    if not settings.SITE_MULTI:
+    if not django_settings.SITE_MULTI:
         return
 
     try:
@@ -1159,39 +1158,6 @@ def validate_email_domains(setting):
             raise ValidationError(_('An empty domain is not allowed.'))
         if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
             raise ValidationError(_(f'Invalid domain name: {domain}'))
-
-
-def currency_exchange_plugins():
-    """Return a set of plugin choices which can be used for currency exchange."""
-    try:
-        from plugin import registry
-
-        plugs = registry.with_mixin('currencyexchange', active=True)
-    except Exception:
-        plugs = []
-
-    return [('', _('No plugin'))] + [(plug.slug, plug.human_name) for plug in plugs]
-
-
-def after_change_currency(setting):
-    """Callback function when base currency is changed.
-
-    - Update exchange rates
-    - Recalculate prices for all parts
-    """
-    if InvenTree.ready.isImportingData():
-        return
-
-    if not InvenTree.ready.canAppAccessDatabase():
-        return
-
-    from part import tasks as part_tasks
-
-    # Immediately update exchange rates
-    InvenTree.tasks.update_exchange_rates(force=True)
-
-    # Offload update of part prices to a background task
-    InvenTree.tasks.offload_task(part_tasks.check_missing_pricing, force_async=True)
 
 
 def reload_plugin_registry(setting):
@@ -1306,8 +1272,15 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Default Currency'),
             'description': _('Select base currency for pricing calculations'),
             'default': 'USD',
-            'choices': CURRENCY_CHOICES,
-            'after_save': after_change_currency,
+            'choices': common.currency.currency_code_mappings,
+            'after_save': common.currency.after_change_currency,
+        },
+        'CURRENCY_CODES': {
+            'name': _('Supported Currencies'),
+            'description': _('List of supported currency codes'),
+            'default': common.currency.currency_codes_default_list(),
+            'validator': common.currency.validate_currency_codes,
+            'after_save': common.currency.after_change_currency,
         },
         'CURRENCY_UPDATE_INTERVAL': {
             'name': _('Currency Update Interval'),
@@ -1321,7 +1294,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'CURRENCY_UPDATE_PLUGIN': {
             'name': _('Currency Update Plugin'),
             'description': _('Currency update plugin to use'),
-            'choices': currency_exchange_plugins,
+            'choices': common.currency.currency_exchange_plugins,
             'default': 'inventreecurrencyexchange',
         },
         'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -2568,82 +2541,6 @@ class PriceBreak(MetaMixin):
         return converted.amount
 
 
-def get_price(
-    instance,
-    quantity,
-    moq=True,
-    multiples=True,
-    currency=None,
-    break_name: str = 'price_breaks',
-):
-    """Calculate the price based on quantity price breaks.
-
-    - Don't forget to add in flat-fee cost (base_cost field)
-    - If MOQ (minimum order quantity) is required, bump quantity
-    - If order multiples are to be observed, then we need to calculate based on that, too
-    """
-    from common.settings import currency_code_default
-
-    if hasattr(instance, break_name):
-        price_breaks = getattr(instance, break_name).all()
-    else:
-        price_breaks = []
-
-    # No price break information available?
-    if len(price_breaks) == 0:
-        return None
-
-    # Check if quantity is fraction and disable multiples
-    multiples = quantity % 1 == 0
-
-    # Order multiples
-    if multiples:
-        quantity = int(math.ceil(quantity / instance.multiple) * instance.multiple)
-
-    pb_found = False
-    pb_quantity = -1
-    pb_cost = 0.0
-
-    if currency is None:
-        # Default currency selection
-        currency = currency_code_default()
-
-    pb_min = None
-    for pb in price_breaks:
-        # Store smallest price break
-        if not pb_min:
-            pb_min = pb
-
-        # Ignore this pricebreak (quantity is too high)
-        if pb.quantity > quantity:
-            continue
-
-        pb_found = True
-
-        # If this price-break quantity is the largest so far, use it!
-        if pb.quantity > pb_quantity:
-            pb_quantity = pb.quantity
-
-            # Convert everything to the selected currency
-            pb_cost = pb.convert_to(currency)
-
-    # Use smallest price break
-    if not pb_found and pb_min:
-        # Update price break information
-        pb_quantity = pb_min.quantity
-        pb_cost = pb_min.convert_to(currency)
-        # Trigger cost calculation using smallest price break
-        pb_found = True
-
-    # Convert quantity to decimal.Decimal format
-    quantity = decimal.Decimal(f'{quantity}')
-
-    if pb_found:
-        cost = pb_cost * quantity
-        return InvenTree.helpers.normalize(cost + instance.base_cost)
-    return None
-
-
 class ColorTheme(models.Model):
     """Color Theme Setting."""
 
@@ -2654,14 +2551,14 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
-        if not settings.STATIC_COLOR_THEMES_DIR.exists():
+        if not django_settings.STATIC_COLOR_THEMES_DIR.exists():
             logger.error('Theme directory does not exist')
             return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
 
-        for file in settings.STATIC_COLOR_THEMES_DIR.iterdir():
+        for file in django_settings.STATIC_COLOR_THEMES_DIR.iterdir():
             files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)
@@ -3012,7 +2909,7 @@ class NotificationMessage(models.Model):
         # Add timezone information if TZ is enabled (in production mode mostly)
         delta = now() - (
             self.creation.replace(tzinfo=timezone.utc)
-            if settings.USE_TZ
+            if django_settings.USE_TZ
             else self.creation
         )
         return delta.seconds

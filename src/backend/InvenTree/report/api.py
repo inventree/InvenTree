@@ -18,6 +18,7 @@ from rest_framework.response import Response
 import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
+import InvenTree.permissions
 import report.helpers
 import report.models
 import report.serializers
@@ -32,6 +33,16 @@ from InvenTree.mixins import (
 )
 from plugin.builtin.labels.inventree_label import InvenTreeLabelPlugin
 from plugin.registry import registry
+
+
+class TemplatePermissionMixin:
+    """Permission mixin for report and label templates."""
+
+    # Read only for non-staff users
+    permission_classes = [
+        permissions.IsAuthenticated,
+        InvenTree.permissions.IsStaffOrReadOnly,
+    ]
 
 
 @method_decorator(cache_page(5), name='dispatch')
@@ -143,6 +154,7 @@ class LabelFilter(ReportFilterBase):
 class LabelPrint(GenericAPIView):
     """API endpoint for printing labels."""
 
+    # Any authenticated user can print labels
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = report.serializers.LabelPrintSerializer
 
@@ -277,7 +289,7 @@ class LabelPrint(GenericAPIView):
         )
 
 
-class LabelTemplateList(ListCreateAPI):
+class LabelTemplateList(TemplatePermissionMixin, ListCreateAPI):
     """API endpoint for viewing list of LabelTemplate objects."""
 
     queryset = report.models.LabelTemplate.objects.all()
@@ -288,7 +300,7 @@ class LabelTemplateList(ListCreateAPI):
     ordering_fields = ['name', 'enabled']
 
 
-class LabelTemplateDetail(RetrieveUpdateDestroyAPI):
+class LabelTemplateDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for label template model."""
 
     queryset = report.models.LabelTemplate.objects.all()
@@ -298,6 +310,7 @@ class LabelTemplateDetail(RetrieveUpdateDestroyAPI):
 class ReportPrint(GenericAPIView):
     """API endpoint for printing reports."""
 
+    # Any authenticated user can print reports
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = report.serializers.ReportPrintSerializer
 
@@ -434,7 +447,7 @@ class ReportPrint(GenericAPIView):
         )
 
 
-class ReportTemplateList(ListCreateAPI):
+class ReportTemplateList(TemplatePermissionMixin, ListCreateAPI):
     """API endpoint for viewing list of ReportTemplate objects."""
 
     queryset = report.models.ReportTemplate.objects.all()
@@ -445,49 +458,49 @@ class ReportTemplateList(ListCreateAPI):
     ordering_fields = ['name', 'enabled']
 
 
-class ReportTemplateDetail(RetrieveUpdateDestroyAPI):
+class ReportTemplateDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
     """Detail API endpoint for report template model."""
 
     queryset = report.models.ReportTemplate.objects.all()
     serializer_class = report.serializers.ReportTemplateSerializer
 
 
-class ReportSnippetList(ListCreateAPI):
+class ReportSnippetList(TemplatePermissionMixin, ListCreateAPI):
     """API endpoint for listing ReportSnippet objects."""
 
     queryset = report.models.ReportSnippet.objects.all()
     serializer_class = report.serializers.ReportSnippetSerializer
 
 
-class ReportSnippetDetail(RetrieveUpdateDestroyAPI):
+class ReportSnippetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single ReportSnippet object."""
 
     queryset = report.models.ReportSnippet.objects.all()
     serializer_class = report.serializers.ReportSnippetSerializer
 
 
-class ReportAssetList(ListCreateAPI):
+class ReportAssetList(TemplatePermissionMixin, ListCreateAPI):
     """API endpoint for listing ReportAsset objects."""
 
     queryset = report.models.ReportAsset.objects.all()
     serializer_class = report.serializers.ReportAssetSerializer
 
 
-class ReportAssetDetail(RetrieveUpdateDestroyAPI):
+class ReportAssetDetail(TemplatePermissionMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for a single ReportAsset object."""
 
     queryset = report.models.ReportAsset.objects.all()
     serializer_class = report.serializers.ReportAssetSerializer
 
 
-class LabelOutputList(BulkDeleteMixin, ListAPI):
+class LabelOutputList(TemplatePermissionMixin, BulkDeleteMixin, ListAPI):
     """List endpoint for LabelOutput objects."""
 
     queryset = report.models.LabelOutput.objects.all()
     serializer_class = report.serializers.LabelOutputSerializer
 
 
-class ReportOutputList(BulkDeleteMixin, ListAPI):
+class ReportOutputList(TemplatePermissionMixin, BulkDeleteMixin, ListAPI):
     """List endpoint for ReportOutput objects."""
 
     queryset = report.models.ReportOutput.objects.all()
