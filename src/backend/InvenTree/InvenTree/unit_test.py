@@ -142,7 +142,15 @@ class UserMixin:
     def setUp(self):
         """Run setup for individual test methods."""
         if self.auto_login:
-            self.client.login(username=self.username, password=self.password)
+            self.login()
+
+    def login(self):
+        """Login with the current user credentials."""
+        self.client.login(username=self.username, password=self.password)
+
+    def logout(self):
+        """Lougout current user."""
+        self.client.logout()
 
     @classmethod
     def assignRole(cls, role=None, assign_all: bool = False, group=None):
