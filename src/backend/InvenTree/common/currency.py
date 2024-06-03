@@ -82,9 +82,11 @@ def currency_codes() -> list:
             logger.warning(f"Invalid currency code: '{code}'")
 
     if len(valid_codes) == 0:
-        valid_codes = set(currency_codes_default_list().split(','))
+        valid_codes = list(currency_codes_default_list().split(','))
 
-    return list(valid_codes)
+    print('currency_codes:', valid_codes)
+
+    return valid_codes
 
 
 def currency_code_mappings() -> list:
