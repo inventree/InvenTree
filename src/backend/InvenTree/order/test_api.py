@@ -13,8 +13,8 @@ from djmoney.money import Money
 from icalendar import Calendar
 from rest_framework import status
 
+from common.currency import currency_codes
 from common.models import InvenTreeSetting
-from common.settings import currency_codes
 from company.models import Company, SupplierPart, SupplierPriceBreak
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order import models

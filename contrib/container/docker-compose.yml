@@ -53,14 +53,9 @@ services:
         restart: unless-stopped
 
     # redis acts as database cache manager
-    # only runs under the "redis" profile : https://docs.docker.com/compose/profiles/
     inventree-cache:
         image: redis:7.0
         container_name: inventree-cache
-        depends_on:
-            - inventree-db
-        profiles:
-            - redis
         env_file:
             - .env
         expose:

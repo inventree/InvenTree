@@ -789,7 +789,7 @@ class PluginsRegistry:
 
         for k in self.plugin_settings_keys():
             try:
-                val = InvenTreeSetting.get_setting(k, False, cache=False, create=False)
+                val = InvenTreeSetting.get_setting(k, False, create=False)
                 msg = f'{k}-{val}'
 
                 data.update(msg.encode())
@@ -799,12 +799,7 @@ class PluginsRegistry:
         return str(data.hexdigest())
 
     def check_reload(self):
-        """Determine if the registry needs to be reloaded.
-
-        - If a "request" object is available, then we can cache the result and attach it.
-        - The assumption is that plugins will not change during a single request.
-
-        """
+        """Determine if the registry needs to be reloaded."""
         from common.models import InvenTreeSetting
 
         if settings.TESTING:
@@ -823,7 +818,7 @@ class PluginsRegistry:
 
         try:
             reg_hash = InvenTreeSetting.get_setting(
-                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+                '_PLUGIN_REGISTRY_HASH', '', create=False
             )
         except Exception as exc:
             logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))

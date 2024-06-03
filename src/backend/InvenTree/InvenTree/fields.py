@@ -59,7 +59,7 @@ class InvenTreeURLField(models.URLField):
 
 def money_kwargs(**kwargs):
     """Returns the database settings for MoneyFields."""
-    from common.settings import currency_code_default, currency_code_mappings
+    from common.currency import currency_code_default, currency_code_mappings
 
     # Default values (if not specified)
     if 'max_digits' not in kwargs:

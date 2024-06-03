@@ -29,8 +29,8 @@ import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
+from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
-from common.settings import currency_codes
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
