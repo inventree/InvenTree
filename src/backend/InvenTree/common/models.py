@@ -1279,6 +1279,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('List of supported currency codes'),
             'default': common.currency.currency_codes_default_list(),
             'validator': common.currency.validate_currency_codes,
+            'after_save': common.currency.after_change_currency,
         },
         'CURRENCY_UPDATE_INTERVAL': {
             'name': _('Currency Update Interval'),

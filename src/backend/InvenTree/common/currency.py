@@ -89,7 +89,7 @@ def currency_code_mappings():
     return [(a, CURRENCIES[a].name) for a in currency_codes()]
 
 
-def after_change_currency(setting):
+def after_change_currency():
     """Callback function when base currency is changed.
 
     - Update exchange rates
@@ -176,7 +176,7 @@ def get_price(
         return None
 
     # Check if quantity is fraction and disable multiples
-    multiples = quantity % 1 == 0
+    multiples = multiples or quantity % 1 == 0
 
     # Order multiples
     if multiples:
