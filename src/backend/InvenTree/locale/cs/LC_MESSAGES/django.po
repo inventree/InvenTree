@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-03 11:39+0000\n"
-"PO-Revision-Date: 2024-05-27 11:54\n"
+"PO-Revision-Date: 2024-06-03 12:40\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -325,7 +325,7 @@ msgstr "Turečtina"
 
 #: InvenTree/locales.py:48
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrajinština"
 
 #: InvenTree/locales.py:49
 msgid "Vietnamese"
@@ -1060,7 +1060,7 @@ msgstr "Kód projektu pro objednávku sestavení"
 
 #: build/models.py:593 build/models.py:658
 msgid "Failed to offload task to complete build allocations"
-msgstr ""
+msgstr "Nepodařilo se uvolnit úlohu pro dokončení přidělení sestavy"
 
 #: build/models.py:615
 #, python-brace-format
@@ -1101,7 +1101,7 @@ msgstr "Výstup sestavy {serial} neprošel všemi požadavky"
 
 #: build/models.py:1352
 msgid "Build Order Line Item"
-msgstr ""
+msgstr "Vytvořit položku řádku objednávky"
 
 #: build/models.py:1377
 msgid "Build object"
@@ -1258,7 +1258,7 @@ msgstr "Sériová čísla"
 
 #: build/serializers.py:295
 msgid "Enter serial numbers for build outputs"
-msgstr ""
+msgstr "Zadejte sériová čísla pro sestavení výstupů"
 
 #: build/serializers.py:300 build/serializers.py:441 build/serializers.py:513
 #: order/serializers.py:565 order/serializers.py:673 order/serializers.py:1679
@@ -1282,7 +1282,7 @@ msgstr "Lokace"
 
 #: build/serializers.py:301
 msgid "Stock location for build output"
-msgstr ""
+msgstr "Skladové umístění pro výstup sestavy"
 
 #: build/serializers.py:315
 msgid "Auto Allocate Serial Numbers"
@@ -1290,19 +1290,19 @@ msgstr "Automaticky zvolit sériová čísla"
 
 #: build/serializers.py:316
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr ""
+msgstr "Automaticky přidělit požadované položky s odpovídajícími sériovými čísly"
 
 #: build/serializers.py:331
 msgid "Serial numbers must be provided for trackable parts"
-msgstr ""
+msgstr "U sledovatelných dílů musí být uvedena sériová čísla"
 
 #: build/serializers.py:356 stock/api.py:1031
 msgid "The following serial numbers already exist or are invalid"
-msgstr ""
+msgstr "Následující sériová čísla již existují nebo jsou neplatná"
 
 #: build/serializers.py:403 build/serializers.py:465 build/serializers.py:554
 msgid "A list of build outputs must be provided"
-msgstr ""
+msgstr "Musí být uveden seznam výstupů sestavy"
 
 #: build/serializers.py:442
 msgid "Stock location for scrapped outputs"
@@ -1310,7 +1310,7 @@ msgstr "Umístění zásob pro seškrábnuté výstupy"
 
 #: build/serializers.py:448
 msgid "Discard Allocations"
-msgstr ""
+msgstr "Zahodit alokace"
 
 #: build/serializers.py:449
 msgid "Discard any stock allocations for scrapped outputs"
@@ -1915,22 +1915,16 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/currency.py:132
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "Invalid currency code"
-msgstr "Neplatný kód měny"
+msgstr ""
 
 #: common/currency.py:134
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "Duplicate currency code"
-msgstr "Neplatný kód měny"
+msgstr ""
 
 #: common/currency.py:139
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "No valid currency codes provided"
-msgstr "Neplatný kód měny"
+msgstr ""
 
 #: common/currency.py:153
 msgid "No plugin"
@@ -2104,10 +2098,8 @@ msgid "Supported Currencies"
 msgstr ""
 
 #: common/models.py:1279
-#, fuzzy
-#| msgid "Not a valid currency code"
 msgid "List of supported currency codes"
-msgstr "Neplatný kód měny"
+msgstr ""
 
 #: common/models.py:1285
 msgid "Currency Update Interval"
@@ -2783,10 +2775,8 @@ msgid "Allow editing of sales orders after they have been shipped or completed"
 msgstr ""
 
 #: common/models.py:1851
-#, fuzzy
-#| msgid "A build order has been completed"
 msgid "Mark Shipped Orders as Complete"
-msgstr "Příkaz k sestavení byl dokončen"
+msgstr ""
 
 #: common/models.py:1853
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
@@ -4912,10 +4902,8 @@ msgid "shipped by"
 msgstr ""
 
 #: order/models.py:1027
-#, fuzzy
-#| msgid "Build output is already completed"
 msgid "Order is already complete"
-msgstr "Výstup sestavení je již dokončen"
+msgstr ""
 
 #: order/models.py:1030
 msgid "Order is already cancelled"
@@ -14366,3 +14354,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
