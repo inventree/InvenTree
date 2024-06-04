@@ -3062,3 +3062,115 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     from InvenTree.conversion import reload_unit_registry
 
     reload_unit_registry()
+
+
+def rename_attachment(instance, filename):
+    """Callback function to rename an uploaded attachment file.
+
+    Arguments:
+        - instance: The Attachment instance
+        - filename: The original filename of the uploaded file
+
+    Returns:
+        - The new filename for the uploaded file, e.g. 'attachments/<content_type>/<object_id>/<filename>'
+    """
+    filename = os.path.basename(filename)
+
+    # Generate a new filename for the attachment
+    return os.path.join(
+        'attachments',
+        str(instance.content_type.model),
+        str(instance.object_id),
+        filename,
+    )
+
+
+class Attachment(InvenTree.models.InvenTreeModel):
+    """Class which represents an uploaded file attachment.
+
+    An attachment can be either an uploaded file, or an external URL.
+
+    Attributes:
+        attachment: The uploaded file
+        url: An external URL
+        comment: A comment or description for the attachment
+        user: The user who uploaded the attachment
+        upload_date: The date the attachment was uploaded
+        file_size: The size of the uploaded file
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        ...
+
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    attachment = models.FileField(
+        upload_to=rename_attachment,
+        verbose_name=_('Attachment'),
+        help_text=_('Select file to attach'),
+        blank=True,
+        null=True,
+    )
+
+    link = InvenTree.fields.InvenTreeURLField(
+        blank=True,
+        null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL'),
+    )
+
+    comment = models.CharField(
+        blank=True,
+        max_length=100,
+        verbose_name=_('Comment'),
+        help_text=_('Attachment comment'),
+    )
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
+
+    upload_date = models.DateField(
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        verbose_name=_('Upload date'),
+        help_text=_('Date the file was uploaded'),
+    )
+
+    file_size = models.PositiveIntegerField(
+        default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
+    )
+
+    @property
+    def basename(self):
+        """Base name/path for attachment."""
+        if self.attachment:
+            return os.path.basename(self.attachment.name)
+        return None
+
+    def fully_qualified_url(self):
+        """Return a 'fully qualified' URL for this attachment.
+
+        - If the attachment is a link to an external resource, return the link
+        - If the attachment is an uploaded file, return the fully qualified media URL
+        """
+        if self.link:
+            return self.link
+
+        if self.attachment:
+            import InvenTree.helpers_model
+
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
+
+        return ''
