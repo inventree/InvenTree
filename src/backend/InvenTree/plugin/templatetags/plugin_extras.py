@@ -4,8 +4,8 @@ from django import template
 from django.conf import settings as djangosettings
 from django.urls import reverse
 
-from common.models import InvenTreeSetting
 from common.notifications import storage
+from common.settings import get_global_setting
 from plugin.registry import registry
 
 register = template.Library()
@@ -55,7 +55,7 @@ def navigation_enabled(*args, **kwargs):
     """Is plugin navigation enabled?"""
     if djangosettings.PLUGIN_TESTING:
         return True
-    return InvenTreeSetting.get_setting('ENABLE_PLUGINS_NAVIGATION')  # pragma: no cover
+    return get_global_setting('ENABLE_PLUGINS_NAVIGATION')  # pragma: no cover
 
 
 @register.simple_tag()

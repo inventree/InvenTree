@@ -32,6 +32,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
+from common.settings import get_global_setting
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from order.status_codes import SalesOrderStatusGroups
@@ -234,9 +235,7 @@ class StockLocation(
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting(
-            'STOCK_OWNERSHIP_CONTROL'
-        )
+        ownership_enabled = get_global_setting('STOCK_OWNERSHIP_CONTROL')
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -310,9 +309,7 @@ def default_delete_on_deplete():
     Now, there is a user-configurable setting to govern default behaviour.
     """
     try:
-        return common.models.InvenTreeSetting.get_setting(
-            'STOCK_DELETE_DEPLETED_DEFAULT', True
-        )
+        return get_global_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
     except (IntegrityError, OperationalError):
         # Revert to original default behaviour
         return True
@@ -996,9 +993,7 @@ class StockItem(
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting(
-            'STOCK_OWNERSHIP_CONTROL'
-        )
+        ownership_enabled = get_global_setting('STOCK_OWNERSHIP_CONTROL')
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -1027,7 +1022,7 @@ class StockItem(
 
         today = InvenTree.helpers.current_date()
 
-        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+        stale_days = get_global_setting('STOCK_STALE_DAYS')
 
         if stale_days <= 0:
             return False
@@ -1897,7 +1892,7 @@ class StockItem(
         except InvalidOperation:
             return False
 
-        allow_out_of_stock_transfer = common.models.InvenTreeSetting.get_setting(
+        allow_out_of_stock_transfer = get_global_setting(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 

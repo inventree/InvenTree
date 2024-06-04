@@ -18,6 +18,7 @@ from django.urls import reverse
 
 import PIL
 
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
 from plugin import registry
@@ -975,17 +976,13 @@ class CommonTest(InvenTreeAPITestCase):
         from plugin import registry
 
         # set flag true
-        common.models.InvenTreeSetting.set_setting(
-            'SERVER_RESTART_REQUIRED', True, None
-        )
+        set_global_setting('SERVER_RESTART_REQUIRED', True, None)
 
         # reload the app
         registry.reload_plugins()
 
         # now it should be false again
-        self.assertFalse(
-            common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED')
-        )
+        self.assertFalse(get_global_setting('SERVER_RESTART_REQUIRED'))
 
     def test_config_api(self):
         """Test config URLs."""
