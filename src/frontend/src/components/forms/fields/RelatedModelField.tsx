@@ -65,6 +65,11 @@ export function RelatedModelField({
     ) {
       const url = `${definition.api_url}${field.value}/`;
 
+      if (!url) {
+        setPk(null);
+        return;
+      }
+
       api.get(url).then((response) => {
         let pk_field = definition.pk_field ?? 'pk';
         if (response.data && response.data[pk_field]) {
