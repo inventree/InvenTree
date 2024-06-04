@@ -9,7 +9,6 @@ import hmac
 import json
 import logging
 import os
-import re
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
@@ -35,7 +34,6 @@ from django.utils.translation import gettext_lazy as _
 
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
-from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
 import build.validators
@@ -1147,19 +1145,6 @@ def update_instance_name(setting):
     site_obj.save()
 
 
-def validate_email_domains(setting):
-    """Validate the email domains setting."""
-    if not setting.value:
-        return
-
-    domains = setting.value.split(',')
-    for domain in domains:
-        if not domain:
-            raise ValidationError(_('An empty domain is not allowed.'))
-        if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
-            raise ValidationError(_(f'Invalid domain name: {domain}'))
-
-
 def reload_plugin_registry(setting):
     """When a core plugin setting is changed, reload the plugin registry."""
     from plugin import registry
@@ -1551,7 +1536,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
                 'Minimum number of decimal places to display when rendering pricing data'
             ),
             'default': 0,
-            'validator': [int, MinValueValidator(0), MaxValueValidator(4)],
+            'validator': [
+                int,
+                MinValueValidator(0),
+                MaxValueValidator(4),
+                common.validators.validate_decimal_places_min,
+            ],
         },
         'PRICING_DECIMAL_PLACES': {
             'name': _('Maximum Pricing Decimal Places'),
@@ -1559,7 +1549,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
                 'Maximum number of decimal places to display when rendering pricing data'
             ),
             'default': 6,
-            'validator': [int, MinValueValidator(2), MaxValueValidator(6)],
+            'validator': [
+                int,
+                MinValueValidator(2),
+                MaxValueValidator(6),
+                common.validators.validate_decimal_places_max,
+            ],
         },
         'PRICING_USE_SUPPLIER_PRICING': {
             'name': _('Use Supplier Pricing'),
@@ -1945,7 +1940,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
                 'Restrict signup to certain domains (comma-separated, starting with @)'
             ),
             'default': '',
-            'before_save': validate_email_domains,
+            'before_save': common.validators.validate_email_domains,
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
