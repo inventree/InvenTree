@@ -461,7 +461,6 @@ def delete_old_notifications():
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
-        import common.models
         from common.notifications import trigger_superuser_notification
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
@@ -469,9 +468,7 @@ def check_for_updates():
         return
 
     interval = int(
-        common.models.get_global_setting(
-            'INVENTREE_UPDATE_CHECK_INTERVAL', 7, cache=False
-        )
+        get_global_setting('INVENTREE_UPDATE_CHECK_INTERVAL', 7, cache=False)
     )
 
     # Check if we should check for updates *today*
@@ -520,7 +517,7 @@ def check_for_updates():
     logger.info("Latest InvenTree version: '%s'", tag)
 
     # Save the version to the database
-    common.models.set_global_setting('_INVENTREE_LATEST_VERSION', tag, None)
+    set_global_setting('_INVENTREE_LATEST_VERSION', tag, None)
 
     # Record that this task was successful
     record_task_success('check_for_updates')
