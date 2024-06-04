@@ -52,11 +52,11 @@ def set_currencies(apps, schema_editor):
     setting = InvenTreeSetting.objects.filter(key=key).first()
 
     if setting:
-        print(f"Updating existing setting for currency codes")
+        print(f"- Updating existing setting for currency codes")
         setting.value = value
         setting.save()
     else:
-        print(f"Creating new setting for currency codes")
+        print(f"- Creating new setting for currency codes")
         setting = InvenTreeSetting(key=key, value=value)
         setting.save()
 

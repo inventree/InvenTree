@@ -18,6 +18,7 @@ from djmoney.utils import MONEY_CLASSES, get_currency_field_name
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.fields import empty
+from rest_framework.mixins import ListModelMixin
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
@@ -840,6 +841,23 @@ class DataFileExtractSerializer(serializers.Serializer):
     def save(self):
         """No "save" action for this serializer."""
         pass
+
+
+class NotesFieldMixin:
+    """Serializer mixin for handling 'notes' fields.
+
+    The 'notes' field will be hidden in a LIST serializer,
+    but available in a DETAIL serializer.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Remove 'notes' field from list views."""
+        super().__init__(*args, **kwargs)
+
+        if hasattr(self, 'context'):
+            if view := self.context.get('view', None):
+                if issubclass(view.__class__, ListModelMixin):
+                    self.fields.pop('notes', None)
 
 
 class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):

@@ -41,6 +41,7 @@ import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PartIcons } from '../../components/details/PartIcons';
+import NotesEditor from '../../components/editors/NotesEditor';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -55,7 +56,6 @@ import {
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -626,14 +626,14 @@ export default function PartDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.part_list, part.pk)}
-            data={part.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.part}
+            modelId={part.pk}
+            editable={user.hasChangeRole(UserRoles.part)}
           />
         )
       }
     ];
-  }, [id, part]);
+  }, [id, part, user]);
 
   const breadcrumbs = useMemo(
     () => [

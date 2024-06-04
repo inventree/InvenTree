@@ -580,6 +580,7 @@ class InitialSupplierSerializer(serializers.Serializer):
 
 
 class PartSerializer(
+    InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):

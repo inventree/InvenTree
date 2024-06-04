@@ -9,7 +9,6 @@ import hmac
 import json
 import logging
 import os
-import re
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
@@ -35,7 +34,6 @@ from django.utils.translation import gettext_lazy as _
 
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
-from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
 
 import build.validators
@@ -2955,7 +2953,7 @@ def rename_notes_image(instance, filename):
 class NotesImage(models.Model):
     """Model for storing uploading images for the 'notes' fields of various models.
 
-    Simply stores the image file, for use in the 'notes' field (of any models which support markdown)
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
     """
 
     image = models.ImageField(
@@ -2965,6 +2963,21 @@ class NotesImage(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     date = models.DateTimeField(auto_now_add=True)
+
+    model_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        validators=[common.validators.validate_notes_model_type],
+        help_text=_('Target model type for this image'),
+    )
+
+    model_id = models.IntegerField(
+        help_text=_('Target model ID for this image'),
+        blank=True,
+        null=True,
+        default=None,
+    )
 
 
 class CustomUnit(models.Model):

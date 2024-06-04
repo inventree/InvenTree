@@ -18,6 +18,7 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   CancelItemAction,
@@ -27,7 +28,6 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -288,14 +288,14 @@ export default function SalesOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.sales_order_list, id)}
-            data={order.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.salesorder}
+            modelId={order.pk}
+            editable={user.hasChangeRole(UserRoles.sales_order)}
           />
         )
       }
     ];
-  }, [order, id]);
+  }, [order, id, user]);
 
   const soActions = useMemo(() => {
     return [
