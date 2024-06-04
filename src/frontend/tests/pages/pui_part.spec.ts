@@ -202,6 +202,9 @@ test('PUI - Pages - Part - Notes', async ({ page }) => {
 
   await page.goto(`${baseUrl}/part/69/notes`);
 
+  // Enable editing
+  await page.getByLabel('toggle-notes-editing').click();
+
   // Enter some text
   await page
     .getByRole('textbox')
@@ -209,7 +212,7 @@ test('PUI - Pages - Part - Notes', async ({ page }) => {
     .fill('This is some data\n');
 
   // Save
-  await page.getByLabel('Notes').getByRole('button').first().click();
+  await page.getByLabel('save-notes').click();
   await page.getByText('Notes saved successfully').waitFor();
 
   // Navigate away from the page, and then back

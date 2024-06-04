@@ -200,9 +200,9 @@ export default function NotesEditor({
     let toolbar: ReactNode[] = [];
     if (editable) {
       toolbar = [
-        ...toolbar,
         <ButtonWithTooltip
           key="toggle-editing"
+          aria-label="toggle-notes-editing"
           title={editing ? t`Preview Notes` : t`Edit Notes`}
           onClick={() => setEditing(!editing)}
         >
@@ -215,26 +215,30 @@ export default function NotesEditor({
           ...toolbar,
           <ButtonWithTooltip
             key="save-notes"
+            aria-label="save-notes"
             onClick={() => saveNotes()}
             title={t`Save Notes`}
             disabled={false}
           >
             <IconDeviceFloppy />
           </ButtonWithTooltip>,
-          <Separator />,
-          <UndoRedo />,
-          <Separator />,
-          <BoldItalicUnderlineToggles />,
-          <CodeToggle />,
-          <ListsToggle />,
-          <Separator />,
-          <BlockTypeSelect />,
-          <Separator />,
-          <CreateLink />,
-          <InsertImage />,
-          <InsertTable />,
-          <InsertAdmonition />,
-          <DiffSourceToggleWrapper children={undefined} />
+          <Separator key="separator-1" />,
+          <UndoRedo key="undo-redo" />,
+          <Separator key="separator-2" />,
+          <BoldItalicUnderlineToggles key="bold-italic-underline" />,
+          <CodeToggle key="code-toggle" />,
+          <ListsToggle key="lists-toggle" />,
+          <Separator key="separator-3" />,
+          <BlockTypeSelect key="block-type" />,
+          <Separator key="separator-4" />,
+          <CreateLink key="create-link" />,
+          <InsertImage key="insert-image" />,
+          <InsertTable key="insert-table" />,
+          <InsertAdmonition key="insert-admonition" />,
+          <DiffSourceToggleWrapper
+            key="diff-source-toggle"
+            children={undefined}
+          />
         ];
       }
     }
