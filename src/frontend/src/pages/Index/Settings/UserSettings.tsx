@@ -95,7 +95,7 @@ export default function UserSettings() {
         name: 'notifications',
         label: t`Notifications`,
         icon: <IconBellCog />,
-        content: <PlaceholderPanel />
+        content: <UserSettingList keys={['NOTIFICATION_ERROR_REPORT']} />
       },
       {
         name: 'reporting',
