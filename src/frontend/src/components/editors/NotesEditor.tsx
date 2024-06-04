@@ -232,7 +232,7 @@ export default function NotesEditor({
           <BlockTypeSelect key="block-type" />,
           <Separator key="separator-4" />,
           <CreateLink key="create-link" />,
-          <InsertImage key="insert-image" />,
+          <InsertImage />,
           <InsertTable key="insert-table" />,
           <InsertAdmonition key="insert-admonition" />,
           <DiffSourceToggleWrapper
