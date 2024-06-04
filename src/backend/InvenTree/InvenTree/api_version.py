@@ -1,16 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 204
+INVENTREE_API_VERSION = 205
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v205 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7284
+    - Added model_type and model_id fields to the "NotesImage" serializer
+
 v204 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7393
     - Fixes previous API update which resulted in inconsistent ordering of currency codes
-
-v204 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7284
-    - Added model_type and model_id fields to the "NotesImage" serializer
 
 v203 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7390
     - Currency codes are now configurable as a run-time setting
