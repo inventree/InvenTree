@@ -21,6 +21,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
+import common.currency
 import common.models
 import common.settings
 import company.models
@@ -33,8 +34,8 @@ import part.stocktake
 import part.tasks
 import stock.models
 import users.models
+from build.status_codes import BuildStatusGroups
 from importer.registry import register_importer
-from InvenTree.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 
 from .models import (
@@ -1293,7 +1294,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         label=_('Minimum price currency'),
         read_only=False,
         required=False,
-        choices=common.settings.currency_code_mappings(),
+        choices=common.currency.currency_code_mappings(),
     )
 
     override_max = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1308,7 +1309,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         label=_('Maximum price currency'),
         read_only=False,
         required=False,
-        choices=common.settings.currency_code_mappings(),
+        choices=common.currency.currency_code_mappings(),
     )
 
     overall_min = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1349,7 +1350,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         override_min = data.get('override_min', None)
         override_max = data.get('override_max', None)
 
-        default_currency = common.settings.currency_code_default()
+        default_currency = common.currency.currency_code_default()
 
         if override_min is not None and override_max is not None:
             try:

@@ -52,7 +52,6 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.status_codes import StockHistoryCode, StockStatus
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder, SalesOrderAllocation
 from order.serializers import (
     PurchaseOrderSerializer,
@@ -71,6 +70,7 @@ from stock.models import (
     StockLocation,
     StockLocationType,
 )
+from stock.status_codes import StockHistoryCode, StockStatus
 
 
 class GenerateBatchCode(GenericAPIView):

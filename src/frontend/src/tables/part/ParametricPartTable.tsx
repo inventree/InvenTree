@@ -11,6 +11,7 @@ import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { usePartParameterFields } from '../../forms/PartForms';
 import { cancelEvent } from '../../functions/events';
 import {
   useCreateApiFormModal,
@@ -116,17 +117,7 @@ export default function ParametricPartTable({
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
   const [selectedParameter, setSelectedParameter] = useState<number>(0);
 
-  const partParameterFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      part: {
-        disabled: true
-      },
-      template: {
-        disabled: true
-      },
-      data: {}
-    };
-  }, []);
+  const partParameterFields: ApiFormFieldSet = usePartParameterFields();
 
   const addParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,

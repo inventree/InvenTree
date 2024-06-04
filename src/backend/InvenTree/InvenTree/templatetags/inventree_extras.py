@@ -16,7 +16,7 @@ import common.models
 import InvenTree.helpers
 import InvenTree.helpers_model
 import plugin.models
-from common.settings import currency_code_default
+from common.currency import currency_code_default
 from InvenTree import settings, version
 from plugin import registry
 from plugin.plugin import InvenTreePlugin

@@ -16,7 +16,7 @@ from importer.mixins import DataExportMixin
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from generic.states.api import StatusView
 from InvenTree.helpers import str2bool, isNull, DownloadFile
-from InvenTree.status_codes import BuildStatus, BuildStatusGroups
+from build.status_codes import BuildStatus, BuildStatusGroups
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
 import common.models

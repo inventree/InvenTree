@@ -33,8 +33,8 @@ import order.validators
 import report.mixins
 import stock.models
 import users.models as UserModels
+from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
-from common.settings import currency_code_default
 from company.models import Address, Company, Contact, SupplierPart
 from generic.states import StateTransitionMixin
 from InvenTree.exceptions import log_error
@@ -45,7 +45,7 @@ from InvenTree.fields import (
 )
 from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import getSetting, notify_responsible
-from InvenTree.status_codes import (
+from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
@@ -53,11 +53,10 @@ from InvenTree.status_codes import (
     ReturnOrderStatusGroups,
     SalesOrderStatus,
     SalesOrderStatusGroups,
-    StockHistoryCode,
-    StockStatus,
 )
 from part import models as PartModels
 from plugin.events import trigger_event
+from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = logging.getLogger('inventree')
 
@@ -1024,6 +1023,12 @@ class SalesOrder(TotalPriceMixin, Order):
         Throws a ValidationError if cannot be completed.
         """
         try:
+            if self.status == SalesOrderStatus.COMPLETE.value:
+                raise ValidationError(_('Order is already complete'))
+
+            if self.status == SalesOrderStatus.CANCELLED.value:
+                raise ValidationError(_('Order is already cancelled'))
+
             # Only an open order can be marked as shipped
             if self.is_open and not self.is_completed:
                 raise ValidationError(_('Only an open order can be marked as complete'))
@@ -1067,7 +1072,11 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_complete(**kwargs):
             return False
 
-        if self.status == SalesOrderStatus.SHIPPED:
+        bypass_shipped = InvenTree.helpers.str2bool(
+            common_models.InvenTreeSetting.get_setting('SALESORDER_SHIP_COMPLETE')
+        )
+
+        if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
             self.status = SalesOrderStatus.COMPLETE.value
         else:
             self.status = SalesOrderStatus.SHIPPED.value

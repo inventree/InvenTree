@@ -1,14 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 203
+INVENTREE_API_VERSION = 205
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
-
-v203 - 2024-05-28 : https://github.com/inventree/InvenTree/pull/6911
+v205 - 2024-06-04 : https://github.com/inventree/InvenTree/pull/6911
     - Adds API endpoints for managing data import
+
+v204 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7393
+    - Fixes previous API update which resulted in inconsistent ordering of currency codes
+
+v203 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7390
+    - Currency codes are now configurable as a run-time setting
 
 v202 - 2024-05-27 : https://github.com/inventree/InvenTree/pull/7343
     - Adjust "required" attribute of Part.category field to be optional

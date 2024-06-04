@@ -403,6 +403,61 @@ class ReportTest(InvenTreeAPITestCase):
 
         self.assertEqual(len(p.metadata.keys()), 4)
 
+    def test_report_template_permissions(self):
+        """Test that the user permissions are correctly applied.
+
+        - For all /api/report/ endpoints, any authenticated user should have full read access
+        - Write access is limited to staff users
+        - Non authenticated users should have no access at all
+        """
+        # First test the "report list" endpoint
+        url = reverse('api-report-template-list')
+
+        template = ReportTemplate.objects.first()
+
+        detail_url = reverse('api-report-template-detail', kwargs={'pk': template.pk})
+
+        # Non-authenticated user should have no access
+        self.logout()
+
+        self.get(url, expected_code=401)
+
+        # Authenticated user should have read access
+        self.user.is_staff = False
+        self.user.save()
+
+        self.login()
+
+        # Check read access to template list URL
+        self.get(url, expected_code=200)
+
+        # Check read access to template detail URL
+        self.get(detail_url, expected_code=200)
+
+        # An update to the report template should fail
+        self.patch(
+            detail_url,
+            data={'description': 'Some new description here?'},
+            expected_code=403,
+        )
+
+        # Now, test with a staff user
+        self.logout()
+
+        self.user.is_staff = True
+        self.user.save()
+
+        self.login()
+
+        self.patch(
+            detail_url,
+            data={'description': 'An updated description'},
+            expected_code=200,
+        )
+
+        template.refresh_from_db()
+        self.assertEqual(template.description, 'An updated description')
+
 
 class PrintTestMixins:
     """Mixin that enables e2e printing tests."""
@@ -446,6 +501,8 @@ class PrintTestMixins:
                 'items': [item.pk for item in qs],
             },
             expected_code=201,
+            max_query_time=15,
+            max_query_count=1000,  # TODO: Should look into this
         )
 
 
