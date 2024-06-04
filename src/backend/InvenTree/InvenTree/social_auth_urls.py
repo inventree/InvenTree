@@ -183,6 +183,12 @@ class SocialProviderListView(ListAPI):
             'password_forgotten_enabled': InvenTreeSetting.get_setting(
                 'LOGIN_ENABLE_PWD_FORGOT'
             ),
+            '2fa_urls': {
+                'setup': request.build_absolute_uri('two-factor-setup'),
+                'authenticate': request.build_absolute_uri('two-factor-authenticate'),
+                'backup_tokens': request.build_absolute_uri('two-factor-backup-tokens'),
+                'remove': request.build_absolute_uri('two-factor-remove'),
+            },
         }
         return Response(data)
 
