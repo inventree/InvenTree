@@ -54,6 +54,12 @@ export interface AuthProps {
   providers: Provider[];
   registration_enabled: boolean;
   password_forgotten_enabled: boolean;
+  mfa_urls: {
+    setup: string;
+    authenticate: string;
+    backup_tokens: string;
+    remove: string;
+  };
 }
 
 export interface Provider {
