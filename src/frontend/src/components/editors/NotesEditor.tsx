@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { ActionIcon } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
   AdmonitionDirectiveDescriptor,
@@ -8,7 +7,6 @@ import {
   ButtonWithTooltip,
   CodeToggle,
   CreateLink,
-  DiffSourceToggleWrapper,
   InsertAdmonition,
   InsertImage,
   InsertTable,
@@ -17,7 +15,6 @@ import {
   type MDXEditorMethods,
   Separator,
   UndoRedo,
-  diffSourcePlugin,
   directivesPlugin,
   headingsPlugin,
   imagePlugin,
@@ -30,12 +27,7 @@ import {
   toolbarPlugin
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
-import {
-  IconDeviceFloppy,
-  IconEdit,
-  IconEye,
-  IconUpload
-} from '@tabler/icons-react';
+import { IconDeviceFloppy, IconEdit, IconEye } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import React from 'react';
@@ -189,12 +181,7 @@ export default function NotesEditor({
       listsPlugin(),
       markdownShortcutPlugin(),
       quotePlugin(),
-      tablePlugin(),
-      diffSourcePlugin({
-        diffMarkdown: dataQuery.data,
-        viewMode: 'rich-text',
-        readOnlyDiff: true
-      })
+      tablePlugin()
     ];
 
     let toolbar: ReactNode[] = [];
@@ -232,13 +219,8 @@ export default function NotesEditor({
           <BlockTypeSelect key="block-type" />,
           <Separator key="separator-4" />,
           <CreateLink key="create-link" />,
-          <InsertImage />,
           <InsertTable key="insert-table" />,
-          <InsertAdmonition key="insert-admonition" />,
-          <DiffSourceToggleWrapper
-            key="diff-source-toggle"
-            children={undefined}
-          />
+          <InsertAdmonition key="insert-admonition" />
         ];
       }
     }
@@ -247,7 +229,12 @@ export default function NotesEditor({
     if (editable) {
       plg.push(
         toolbarPlugin({
-          toolbarContents: () => <>{toolbar.map((item, index) => item)}</>
+          toolbarContents: () => (
+            <>
+              {toolbar.map((item, index) => item)}
+              {editing && <InsertImage />}
+            </>
+          )
         })
       );
     }
