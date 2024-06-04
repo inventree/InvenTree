@@ -34,7 +34,7 @@ export type PanelType = {
   name: string;
   label: string;
   icon?: ReactNode;
-  content?: ReactNode;
+  content: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
   showHeadline?: boolean;
@@ -190,7 +190,7 @@ function BasePanelGroup({
                       </>
                     )}
                     <Boundary label={`PanelContent-${panel.name}`}>
-                      {panel.content ?? <PlaceholderPanel />}
+                      {panel.content}
                     </Boundary>
                   </Stack>
                 </Tabs.Panel>
