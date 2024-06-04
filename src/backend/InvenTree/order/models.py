@@ -45,7 +45,7 @@ from InvenTree.fields import (
     RoundingDecimalField,
 )
 from InvenTree.helpers import decimal2string, pui_url
-from InvenTree.helpers_model import getSetting, notify_responsible
+from InvenTree.helpers_model import notify_responsible
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -1228,7 +1228,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
     if created:
         # A new SalesOrder has just been created
 
-        if getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+        if get_global_setting('SALESORDER_DEFAULT_SHIPMENT'):
             # Create default shipment
             SalesOrderShipment.objects.create(order=instance, reference='1')
 
