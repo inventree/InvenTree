@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-23 11:39\n"
+"PO-Revision-Date: 2024-06-04 12:40\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -48,12 +48,12 @@ msgstr ""
 
 #: src/components/buttons/PrintingActions.tsx:107
 #: src/components/buttons/PrintingActions.tsx:144
+#: src/components/editors/NotesEditor.tsx:65
+#: src/components/editors/NotesEditor.tsx:160
 #: src/components/forms/ApiForm.tsx:506
 #: src/components/forms/fields/ApiFormField.tsx:295
 #: src/components/modals/LicenseModal.tsx:75
 #: src/components/nav/SearchDrawer.tsx:413
-#: src/components/widgets/MarkdownEditor.tsx:107
-#: src/components/widgets/MarkdownEditor.tsx:153
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 #: src/pages/part/PartPricingPanel.tsx:71
@@ -207,7 +207,7 @@ msgstr ""
 
 #: src/components/details/PartIcons.tsx:34
 #: src/components/render/Plugin.tsx:17
-#: src/pages/company/CompanyDetail.tsx:310
+#: src/pages/company/CompanyDetail.tsx:314
 #: src/pages/company/SupplierPartDetail.tsx:305
 #: src/pages/part/PartDetail.tsx:686
 msgid "Inactive"
@@ -247,6 +247,35 @@ msgstr ""
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Ảo"
+
+#: src/components/editors/NotesEditor.tsx:66
+msgid "Image upload failed"
+msgstr ""
+
+#: src/components/editors/NotesEditor.tsx:151
+#: src/components/forms/ApiForm.tsx:430
+msgid "Success"
+msgstr "Thành công"
+
+#: src/components/editors/NotesEditor.tsx:152
+msgid "Notes saved successfully"
+msgstr ""
+
+#: src/components/editors/NotesEditor.tsx:161
+msgid "Failed to save notes"
+msgstr "Không lưu được chú thích"
+
+#: src/components/editors/NotesEditor.tsx:193
+msgid "Preview Notes"
+msgstr ""
+
+#: src/components/editors/NotesEditor.tsx:193
+msgid "Edit Notes"
+msgstr ""
+
+#: src/components/editors/NotesEditor.tsx:207
+msgid "Save Notes"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
@@ -333,11 +362,6 @@ msgstr ""
 #: src/functions/forms.tsx:259
 msgid "Form Error"
 msgstr "Lỗi form"
-
-#: src/components/forms/ApiForm.tsx:430
-#: src/components/widgets/MarkdownEditor.tsx:145
-msgid "Success"
-msgstr "Thành công"
 
 #: src/components/forms/ApiForm.tsx:487
 #~ msgid "Form Errors Exist"
@@ -551,7 +575,6 @@ msgid "Add Host"
 msgstr "Thêm host"
 
 #: src/components/forms/HostOptionsForm.tsx:90
-#: src/components/widgets/MarkdownEditor.tsx:72
 msgid "Save"
 msgstr "Lưu lại"
 
@@ -1227,7 +1250,7 @@ msgid "Build Lines"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:117
-#: src/pages/company/CompanyDetail.tsx:323
+#: src/pages/company/CompanyDetail.tsx:327
 msgid "Company"
 msgstr "Công ty"
 
@@ -1844,16 +1867,12 @@ msgid "Getting started"
 msgstr "Bắt đầu"
 
 #: src/components/widgets/MarkdownEditor.tsx:108
-msgid "Failed to upload image"
-msgstr "Lỗi tải ảnh lên"
+#~ msgid "Failed to upload image"
+#~ msgstr "Failed to upload image"
 
 #: src/components/widgets/MarkdownEditor.tsx:146
-msgid "Notes saved"
-msgstr "Ghi chú đã được lưu"
-
-#: src/components/widgets/MarkdownEditor.tsx:154
-msgid "Failed to save notes"
-msgstr "Không lưu được chú thích"
+#~ msgid "Notes saved"
+#~ msgstr "Notes saved"
 
 #: src/components/widgets/WidgetLayout.tsx:166
 msgid "Layout"
@@ -3769,12 +3788,12 @@ msgstr ""
 msgid "Assigned Stock"
 msgstr ""
 
-#: src/pages/company/CompanyDetail.tsx:283
+#: src/pages/company/CompanyDetail.tsx:287
 #: src/tables/company/CompanyTable.tsx:86
 msgid "Edit Company"
 msgstr "Sửa doanh nghiệp"
 
-#: src/pages/company/CompanyDetail.tsx:292
+#: src/pages/company/CompanyDetail.tsx:296
 msgid "Company Actions"
 msgstr ""
 
@@ -6827,3 +6846,4 @@ msgstr "Đọc tài liệu"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
