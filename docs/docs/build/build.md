@@ -79,6 +79,18 @@ Each *Build Order* has an associated *Status* flag, which indicates the state of
 | `Cancelled` | Build has been cancelled |
 | `Completed` | Build has been completed |
 
+**Source Code**
+
+Refer to the source code for the Build Order status codes:
+
+::: build.status_codes.BuildStatus
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
+
 ### Stock Allocations
 
 When a *Build Order* is created, we then have the ability to *allocate* stock items against that build order. The particular parts we need to allocate against the build are specified by the BOM for the part we are assembling.

@@ -16,6 +16,7 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -29,7 +30,6 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -291,14 +291,14 @@ export default function PurchaseOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.purchase_order_list, id)}
-            data={order.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.purchaseorder}
+            modelId={order.pk}
+            editable={user.hasChangeRole(UserRoles.purchase_order)}
           />
         )
       }
     ];
-  }, [order, id]);
+  }, [order, id, user]);
 
   const poActions = useMemo(() => {
     return [

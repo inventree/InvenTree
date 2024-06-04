@@ -21,6 +21,7 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -31,11 +32,10 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -338,14 +338,14 @@ export default function StockDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.stock_item_list, id)}
-            data={stockitem.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.stockitem}
+            modelId={stockitem.pk}
+            editable={user.hasChangeRole(UserRoles.stock)}
           />
         )
       }
     ];
-  }, [stockitem, id]);
+  }, [stockitem, id, user]);
 
   const breadcrumbs = useMemo(
     () => [
@@ -501,6 +501,9 @@ export default function StockDetail() {
   );
 
   const stockBadges: ReactNode[] = useMemo(() => {
+    let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
+    available = Math.max(0, available);
+
     return instanceQuery.isLoading
       ? []
       : [
@@ -522,6 +525,12 @@ export default function StockDetail() {
             key="quantity"
           />,
           <DetailsBadge
+            color="yellow"
+            label={t`Available` + `: ${available}`}
+            visible={!stockitem.serial && available != stockitem.quantity}
+            key="available"
+          />,
+          <DetailsBadge
             color="blue"
             label={t`Batch Code` + `: ${stockitem.batch}`}
             visible={!!stockitem.batch}
@@ -539,10 +548,13 @@ export default function StockDetail() {
   return (
     <Stack>
       <LoadingOverlay visible={instanceQuery.isFetching} />
-      <StockLocationTree
+      <NavigationTree
+        title={t`Stock Locations`}
+        modelType={ModelType.stocklocation}
+        endpoint={ApiEndpoints.stock_location_tree}
         opened={treeOpen}
         onClose={() => setTreeOpen(false)}
-        selectedLocation={stockitem?.location}
+        selectedId={stockitem?.location}
       />
       <PageDetail
         title={t`Stock Item`}

@@ -758,6 +758,16 @@ class PluginsRegistry:
                 # Some other exception, we want to know about it
                 logger.exception('Failed to update plugin registry hash: %s', str(exc))
 
+    def plugin_settings_keys(self):
+        """A list of keys which are used to store plugin settings."""
+        return [
+            'ENABLE_PLUGINS_URL',
+            'ENABLE_PLUGINS_NAVIGATION',
+            'ENABLE_PLUGINS_APP',
+            'ENABLE_PLUGINS_SCHEDULE',
+            'ENABLE_PLUGINS_EVENTS',
+        ]
+
     def calculate_plugin_hash(self):
         """Calculate a 'hash' value for the current registry.
 
@@ -777,24 +787,12 @@ class PluginsRegistry:
             data.update(str(plug.version).encode())
             data.update(str(plug.is_active()).encode())
 
-        # Also hash for all config settings which define plugin behavior
-        keys = [
-            'ENABLE_PLUGINS_URL',
-            'ENABLE_PLUGINS_NAVIGATION',
-            'ENABLE_PLUGINS_APP',
-            'ENABLE_PLUGINS_SCHEDULE',
-            'ENABLE_PLUGINS_EVENTS',
-        ]
-
-        for k in keys:
+        for k in self.plugin_settings_keys():
             try:
-                data.update(
-                    str(
-                        InvenTreeSetting.get_setting(
-                            k, False, cache=False, create=False
-                        )
-                    ).encode()
-                )
+                val = InvenTreeSetting.get_setting(k, False, create=False)
+                msg = f'{k}-{val}'
+
+                data.update(msg.encode())
             except Exception:
                 pass
 
@@ -820,7 +818,7 @@ class PluginsRegistry:
 
         try:
             reg_hash = InvenTreeSetting.get_setting(
-                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+                '_PLUGIN_REGISTRY_HASH', '', create=False
             )
         except Exception as exc:
             logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))

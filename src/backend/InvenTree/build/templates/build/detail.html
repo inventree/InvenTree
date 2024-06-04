@@ -346,6 +346,8 @@ onPanelLoad('notes', function() {
         'build-notes',
         '{% url "api-build-detail" build.pk %}',
         {
+            model_type: 'build',
+            model_id: {{ build.pk }},
             {% if roles.build.change %}
             editable: true,
             {% else %}

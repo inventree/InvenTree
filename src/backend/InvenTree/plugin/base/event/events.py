@@ -23,10 +23,6 @@ def trigger_event(event, *args, **kwargs):
     """
     from common.models import InvenTreeSetting
 
-    if not settings.PLUGINS_ENABLED:
-        # Do nothing if plugins are not enabled
-        return  # pragma: no cover
-
     if not InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS', False):
         # Do nothing if plugin events are not enabled
         return

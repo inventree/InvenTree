@@ -196,3 +196,31 @@ test('PUI - Pages - Part - Parameters', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Cancel' }).click();
 });
+
+test('PUI - Pages - Part - Notes', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/69/notes`);
+
+  // Enable editing
+  await page.getByLabel('toggle-notes-editing').click();
+
+  // Enter some text
+  await page
+    .getByRole('textbox')
+    .getByRole('paragraph')
+    .fill('This is some data\n');
+
+  // Save
+  await page.getByLabel('save-notes').click();
+  await page.getByText('Notes saved successfully').waitFor();
+
+  // Navigate away from the page, and then back
+  await page.goto(`${baseUrl}/stock/location/index/`);
+  await page.waitForURL('**/platform/stock/location/**');
+  await page.getByRole('tab', { name: 'Location Details' }).waitFor();
+  await page.goto(`${baseUrl}/part/69/notes`);
+
+  // Check that the original notes are still present
+  await page.getByText('This is some data').waitFor();
+});

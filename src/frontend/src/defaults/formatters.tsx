@@ -77,8 +77,8 @@ export function formatCurrency(
   let formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
-    maximumFractionDigits: maxDigits,
-    minimumFractionDigits: minDigits
+    maximumFractionDigits: Math.max(minDigits, maxDigits),
+    minimumFractionDigits: Math.min(minDigits, maxDigits)
   });
 
   return formatter.format(value);

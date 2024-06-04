@@ -18,6 +18,7 @@ from rest_framework.response import Response
 import order.models
 import part.filters
 from build.models import Build, BuildItem
+from build.status_codes import BuildStatusGroups
 from InvenTree.api import (
     APIDownloadMixin,
     AttachmentMixin,
@@ -26,6 +27,7 @@ from InvenTree.api import (
 )
 from InvenTree.filters import (
     ORDER_FILTER,
+    ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
@@ -44,11 +46,7 @@ from InvenTree.mixins import (
 )
 from InvenTree.permissions import RolePermission
 from InvenTree.serializers import EmptySerializer
-from InvenTree.status_codes import (
-    BuildStatusGroups,
-    PurchaseOrderStatusGroups,
-    SalesOrderStatusGroups,
-)
+from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from part.admin import PartCategoryResource, PartResource
 from stock.models import StockLocation
 
@@ -303,9 +301,11 @@ class CategoryTree(ListAPI):
     queryset = PartCategory.objects.all()
     serializer_class = part_serializers.CategoryTree
 
-    filter_backends = ORDER_FILTER
+    filter_backends = ORDER_FILTER_ALIAS
 
     ordering_fields = ['level', 'name', 'subcategories']
+
+    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
@@ -1179,7 +1179,6 @@ class PartMixin:
     queryset = Part.objects.all()
 
     starred_parts = None
-
     is_create = False
 
     def get_queryset(self, *args, **kwargs):

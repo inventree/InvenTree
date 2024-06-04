@@ -23,6 +23,7 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -31,7 +32,6 @@ import {
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -268,14 +268,18 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.company_list, company.pk)}
-            data={company?.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.company}
+            modelId={company.pk}
+            editable={
+              user.hasChangeRole(UserRoles.purchase_order) ||
+              user.hasChangeRole(UserRoles.sales_order) ||
+              user.hasChangeRole(UserRoles.return_order)
+            }
           />
         )
       }
     ];
-  }, [id, company]);
+  }, [id, company, user]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
