@@ -12,7 +12,6 @@ import {
   InsertAdmonition,
   InsertImage,
   InsertTable,
-  InsertThematicBreak,
   ListsToggle,
   MDXEditor,
   type MDXEditorMethods,
@@ -28,13 +27,17 @@ import {
   markdownShortcutPlugin,
   quotePlugin,
   tablePlugin,
-  thematicBreakPlugin,
   toolbarPlugin
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
-import { IconEdit, IconUpload } from '@tabler/icons-react';
+import {
+  IconDeviceFloppy,
+  IconEdit,
+  IconEye,
+  IconUpload
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
 import { api } from '../../App';
@@ -187,7 +190,6 @@ export default function NotesEditor({
       markdownShortcutPlugin(),
       quotePlugin(),
       tablePlugin(),
-      thematicBreakPlugin(),
       diffSourcePlugin({
         diffMarkdown: dataQuery.data,
         viewMode: 'rich-text',
@@ -195,36 +197,53 @@ export default function NotesEditor({
       })
     ];
 
+    let toolbar: ReactNode[] = [];
+    if (editable) {
+      toolbar = [
+        ...toolbar,
+        <ButtonWithTooltip
+          key="toggle-editing"
+          title={editing ? t`Preview Notes` : t`Edit Notes`}
+          onClick={() => setEditing(!editing)}
+        >
+          {editing ? <IconEye /> : <IconEdit />}
+        </ButtonWithTooltip>
+      ];
+
+      if (editing) {
+        toolbar = [
+          ...toolbar,
+          <ButtonWithTooltip
+            key="save-notes"
+            onClick={() => saveNotes()}
+            title={t`Save Notes`}
+            disabled={false}
+          >
+            <IconDeviceFloppy />
+          </ButtonWithTooltip>,
+          <Separator />,
+          <UndoRedo />,
+          <Separator />,
+          <BoldItalicUnderlineToggles />,
+          <CodeToggle />,
+          <ListsToggle />,
+          <Separator />,
+          <BlockTypeSelect />,
+          <Separator />,
+          <CreateLink />,
+          <InsertImage />,
+          <InsertTable />,
+          <InsertAdmonition />,
+          <DiffSourceToggleWrapper children={undefined} />
+        ];
+      }
+    }
+
     // If the user is allowed to edit, then add the toolbar
     if (editable) {
       plg.push(
         toolbarPlugin({
-          toolbarContents: () => (
-            <>
-              <ButtonWithTooltip
-                title={t`Save Notes`}
-                onClick={() => saveNotes()}
-                disabled={false}
-              >
-                <IconUpload />
-              </ButtonWithTooltip>
-              <Separator />
-              <UndoRedo />
-              <Separator />
-              <BoldItalicUnderlineToggles />
-              <CodeToggle />
-              <ListsToggle />
-              <Separator />
-              <BlockTypeSelect />
-              <Separator />
-              <CreateLink />
-              <InsertImage />
-              <InsertTable />
-              <InsertAdmonition />
-              <InsertThematicBreak />
-              <DiffSourceToggleWrapper children={undefined} />
-            </>
-          )
+          toolbarContents: () => <>{toolbar.map((item, index) => item)}</>
         })
       );
     }
