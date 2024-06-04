@@ -24,7 +24,6 @@ import { identifierString } from '../../functions/conversion';
 import { navigateToLink } from '../../functions/navigation';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
-import { PlaceholderPanel } from '../items/Placeholder';
 import { StylishText } from '../items/StylishText';
 
 /**

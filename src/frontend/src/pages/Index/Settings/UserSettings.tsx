@@ -11,6 +11,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { UserSettingList } from '../../../components/settings/SettingList';
@@ -39,7 +40,8 @@ export default function UserSettings() {
       {
         name: 'dashboard',
         label: t`Dashboard`,
-        icon: <IconDeviceDesktopAnalytics />
+        icon: <IconDeviceDesktopAnalytics />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'display',
@@ -92,7 +94,8 @@ export default function UserSettings() {
       {
         name: 'notifications',
         label: t`Notifications`,
-        icon: <IconBellCog />
+        icon: <IconBellCog />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'reporting',
