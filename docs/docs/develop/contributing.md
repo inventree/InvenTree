@@ -83,7 +83,6 @@ Feature branches should be branched *from* the *master* branch.
 
 - One major feature per branch / pull request
 - Feature pull requests are merged back *into* the master branch
-- Features *may* also be merged into a release candidate branch
 
 ### Stable Branch
 
@@ -92,11 +91,7 @@ The HEAD of the "stable" branch represents the latest stable release code.
 - Versioned releases are merged into the "stable" branch
 - Bug fix branches are made *from* the "stable" branch
 
-#### Release Candidate Branches
 
-- Release candidate branches are made from master, and merged into stable.
-- RC branches are targeted at a major/minor version e.g. "0.5"
-- When a release candidate branch is merged into *stable*, the release is tagged
 ### Bugfix Branches
 
 - If a bug is discovered in a tagged release version of InvenTree, a "bugfix" or "hotfix" branch should be made *from* that tagged release
