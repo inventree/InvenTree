@@ -193,10 +193,14 @@ class SocialProviderListView(ListAPI):
                 'LOGIN_ENABLE_PWD_FORGOT'
             ),
             'mfa_urls': {
-                'setup': request.build_absolute_uri('two-factor-setup'),
-                'authenticate': request.build_absolute_uri('two-factor-authenticate'),
-                'backup_tokens': request.build_absolute_uri('two-factor-backup-tokens'),
-                'remove': request.build_absolute_uri('two-factor-remove'),
+                'setup': request.build_absolute_uri(reverse('two-factor-setup')),
+                'authenticate': request.build_absolute_uri(
+                    reverse('two-factor-authenticate')
+                ),
+                'backup_tokens': request.build_absolute_uri(
+                    reverse('two-factor-backup-tokens')
+                ),
+                'remove': request.build_absolute_uri(reverse('two-factor-remove')),
             },
         }
         return Response(data)
