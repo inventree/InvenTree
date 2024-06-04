@@ -59,9 +59,9 @@ export function RelatedModelField({
     if (field.value === pk) return;
 
     if (
-      field.value !== null &&
-      field.value !== undefined &&
-      field.value !== ''
+      field?.value !== null &&
+      field?.value !== undefined &&
+      field?.value !== ''
     ) {
       const url = `${definition.api_url}${field.value}/`;
 
