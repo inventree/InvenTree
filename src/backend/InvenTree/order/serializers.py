@@ -47,15 +47,16 @@ from InvenTree.serializers import (
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
+    NotesFieldMixin,
 )
-from InvenTree.status_codes import (
+from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     SalesOrderStatusGroups,
-    StockStatus,
 )
 from part.serializers import PartBriefSerializer
+from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer
 
 
@@ -198,7 +199,7 @@ class AbstractExtraLineMeta:
 
 
 class PurchaseOrderSerializer(
-    TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a PurchaseOrder object."""
 
@@ -768,7 +769,7 @@ class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
 
 
 class SalesOrderSerializer(
-    TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
 ):
     """Serializer for the SalesOrder model class."""
 
@@ -1075,7 +1076,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     )
 
 
-class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
+class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
     """Serializer for the SalesOrderShipment class."""
 
     class Meta:
@@ -1536,7 +1537,7 @@ class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
 
 
 class ReturnOrderSerializer(
-    AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
+    NotesFieldMixin, AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
 ):
     """Serializer for the ReturnOrder model class."""
 

@@ -109,6 +109,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={[
                 'INVENTREE_DEFAULT_CURRENCY',
+                'CURRENCY_CODES',
                 'PART_INTERNAL_PRICE',
                 'PART_BOM_USE_INTERNAL_PRICE',
                 'PRICING_DECIMAL_PLACES_MIN',
@@ -263,7 +264,8 @@ export default function SystemSettings() {
               'SALESORDER_REFERENCE_PATTERN',
               'SALESORDER_REQUIRE_RESPONSIBLE',
               'SALESORDER_DEFAULT_SHIPMENT',
-              'SALESORDER_EDIT_COMPLETED_ORDERS'
+              'SALESORDER_EDIT_COMPLETED_ORDERS',
+              'SALESORDER_SHIP_COMPLETE'
             ]}
           />
         )

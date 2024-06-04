@@ -372,6 +372,30 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         # Number of results should match the number of settings
         self.assertEqual(len(response.data), n_public_settings)
 
+    def test_currency_settings(self):
+        """Run tests for currency specific settings."""
+        url = reverse('api-global-setting-detail', kwargs={'key': 'CURRENCY_CODES'})
+
+        response = self.patch(url, data={'value': 'USD,XYZ'}, expected_code=400)
+
+        self.assertIn("Invalid currency code: 'XYZ'", str(response.data))
+
+        response = self.patch(
+            url, data={'value': 'AUD,USD, AUD,AUD,'}, expected_code=400
+        )
+
+        self.assertIn("Duplicate currency code: 'AUD'", str(response.data))
+
+        response = self.patch(url, data={'value': ',,,,,'}, expected_code=400)
+
+        self.assertIn('No valid currency codes provided', str(response.data))
+
+        response = self.patch(url, data={'value': 'AUD,USD,GBP'}, expected_code=200)
+
+        codes = InvenTreeSetting.get_setting('CURRENCY_CODES')
+
+        self.assertEqual(codes, 'AUD,USD,GBP')
+
     def test_company_name(self):
         """Test a settings object lifecycle e2e."""
         setting = InvenTreeSetting.get_setting_object('INVENTREE_COMPANY_NAME')
@@ -1093,7 +1117,7 @@ class CurrencyAPITests(InvenTreeAPITestCase):
 
         # Updating via the external exchange may not work every time
         for _idx in range(5):
-            self.post(reverse('api-currency-refresh'))
+            self.post(reverse('api-currency-refresh'), expected_code=200)
 
             # There should be some new exchange rate objects now
             if Rate.objects.all().exists():

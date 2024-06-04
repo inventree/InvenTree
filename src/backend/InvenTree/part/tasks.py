@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import common.currency
 import common.models
 import common.notifications
 import common.settings
@@ -110,7 +111,7 @@ def check_missing_pricing(limit=250):
             pp.schedule_for_update()
 
     # Find any pricing data which is in the wrong currency
-    currency = common.settings.currency_code_default()
+    currency = common.currency.currency_code_default()
     results = part.models.PartPricing.objects.exclude(currency=currency)
 
     if results.count() > 0:
