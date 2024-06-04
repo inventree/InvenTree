@@ -283,7 +283,10 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
         return data
 
 
-class StockItemSerializerBrief(InvenTree.serializers.InvenTreeModelSerializer):
+class StockItemSerializerBrief(
+    InvenTree.serializers.NotesFieldMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
+):
     """Brief serializers for a StockItem."""
 
     class Meta:

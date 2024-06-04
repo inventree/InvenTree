@@ -17,7 +17,7 @@ from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentS
 from InvenTree.serializers import UserSerializer
 
 import InvenTree.helpers
-from InvenTree.serializers import InvenTreeDecimalField
+from InvenTree.serializers import InvenTreeDecimalField, NotesFieldMixin
 from stock.status_codes import StockStatus
 
 from stock.generators import generate_batch_code
@@ -33,7 +33,7 @@ from users.serializers import OwnerSerializer
 from .models import Build, BuildLine, BuildItem, BuildOrderAttachment
 
 
-class BuildSerializer(InvenTreeModelSerializer):
+class BuildSerializer(NotesFieldMixin, InvenTreeModelSerializer):
     """Serializes a Build object."""
 
     class Meta:
