@@ -61,7 +61,7 @@ There are nominally 5 active branches:
 - `l10_crowdin` - Translation branch: Source from Crowdin
 - `y.y.x` - Release branch for the currently supported version (e.g. `0.5.x`)
 
-All other branches are removed periodically by maintainers or core team memders. This includes old release branches.
+All other branches are removed periodically by maintainers or core team members. This includes old release branches.
 Do not use them as base for feature development or forks as patches from them might not be accepted without rebasing.
 
 ### Version Numbering
