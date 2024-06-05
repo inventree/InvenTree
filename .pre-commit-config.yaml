@@ -27,27 +27,27 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.2.7
+    rev: 0.1.35
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt]
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, --python-version=3.9, --no-strip-extras, --generate-hashes]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [src/backend/requirements.in, -o, src/backend/requirements.txt]
+        args: [src/backend/requirements.in, -o, src/backend/requirements.txt, --python-version=3.9, --no-strip-extras, --generate-hashes]
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt]
+        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt, --python-version=3.9, --no-strip-extras, --generate-hashes]
         files: contrib/dev_reqs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [docs/requirements.in, -o, docs/requirements.txt]
+        args: [docs/requirements.in, -o, docs/requirements.txt, --python-version=3.9, --no-strip-extras, --generate-hashes]
         files: docs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11]
+        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes]
         files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.1
