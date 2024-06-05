@@ -5,7 +5,10 @@ import logging
 
 from django.contrib.auth import get_user, login, logout
 from django.contrib.auth.models import Group, User
-from django.urls import include, path, re_path
+from django.http import HttpResponseRedirect
+from django.http.response import HttpResponse
+from django.shortcuts import redirect
+from django.urls import NoReverseMatch, include, path, re_path, reverse_lazy
 from django.views.generic.base import RedirectView
 
 from allauth.account.adapter import get_adapter
@@ -218,12 +221,20 @@ class GroupList(ListCreateAPI):
 class Login(LoginView):
     """API view for logging in via API."""
 
-    def process_login(self):
-        """Process the login request, ensure that MFA is enforced if required."""
-        # Normal login process
-        ret = super().process_login()
+    def post(self, request, *args, **kwargs):
+        """Handle login attempts."""
+        self.request = request
+        self.serializer = self.get_serializer(data=self.request.data)
+        self.serializer.is_valid(raise_exception=True)
 
-        # Now check if MFA is enforced
+        self.login()
+        ret = self.check_mfa()
+        if ret is not None:
+            return ret
+        return self.get_response()
+
+    def check_mfa(self):
+        """Ensure that MFA is enforced if required."""
         user = self.request.user
         adapter = get_adapter(self.request)
 
@@ -232,8 +243,11 @@ class Login(LoginView):
             'LOGIN_ENFORCE_MFA'
         ):
             logout(self.request)
-            raise exceptions.PermissionDenied('MFA required for this user')
-        return ret
+            self.request.session['allauth_2fa_user_id'] = str(user.id)
+            ret = redirect(reverse_lazy('settings'))
+            return ret
+            # raise ImmediateHttpResponse(response=HttpResponse('MFA required for this user'))
+        return None
 
 
 @extend_schema_view(
