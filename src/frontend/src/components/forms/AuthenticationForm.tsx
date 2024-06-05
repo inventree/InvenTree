@@ -197,14 +197,14 @@ export function RegistrationForm() {
         }
       })
       .catch((err) => {
-        if (err.response.status === 400) {
+        if (err?.response.status === 400) {
           setIsRegistering(false);
-          for (const [key, value] of Object.entries(err.response.data)) {
+          for (const [key, value] of Object.entries(err?.response.data)) {
             registrationForm.setFieldError(key, value as string);
           }
           let err_msg = '';
-          if (err.response?.data?.non_field_errors) {
-            err_msg = err.response.data.non_field_errors;
+          if (err?.response?.data?.non_field_errors) {
+            err_msg = err?.response.data.non_field_errors;
           }
           showLoginNotification({
             title: t`Input error`,

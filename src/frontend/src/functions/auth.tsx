@@ -1,10 +1,11 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
+import { NavigateFunction } from 'react-router-dom';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
+import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';
@@ -50,7 +51,19 @@ export const doBasicLogin = async (username: string, password: string) => {
         }
       }
     })
-    .catch(() => {});
+    .catch((err) => {
+      if (
+        err?.response.status == 403 &&
+        err?.response.data.detail == 'MFA required for this user'
+      ) {
+        const auth_settings = useServerApiState.getState().auth_settings;
+        if (auth_settings?.mfa_urls.authenticate) {
+          window.location.href = auth_settings?.mfa_urls.authenticate;
+        } else {
+          console.log('MFA required but no redirect provided.');
+        }
+      }
+    });
 
   if (result) {
     await fetchUserState();
@@ -65,7 +78,7 @@ export const doBasicLogin = async (username: string, password: string) => {
  *
  * @arg deleteToken: If true, delete the token from the server
  */
-export const doLogout = async (navigate: any) => {
+export const doLogout = async (navigate: NavigateFunction) => {
   const { clearUserState, isLoggedIn } = useUserState.getState();
 
   // Logout from the server session
