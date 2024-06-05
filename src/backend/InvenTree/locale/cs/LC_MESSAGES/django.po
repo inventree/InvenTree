@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-04 11:54+0000\n"
-"PO-Revision-Date: 2024-06-04 12:39\n"
+"PO-Revision-Date: 2024-06-05 12:39\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -1314,15 +1314,15 @@ msgstr "Zahodit alokace"
 
 #: build/serializers.py:449
 msgid "Discard any stock allocations for scrapped outputs"
-msgstr ""
+msgstr "Vyřadit všechny přidělené zásoby pro vyřazené výstupy"
 
 #: build/serializers.py:454
 msgid "Reason for scrapping build output(s)"
-msgstr ""
+msgstr "Důvod vyřazení výstupu(ů) sestavy"
 
 #: build/serializers.py:514
 msgid "Location for completed build outputs"
-msgstr ""
+msgstr "Umístění dokončených výstupů sestavy"
 
 #: build/serializers.py:520 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:952
@@ -1341,124 +1341,124 @@ msgstr "Stav"
 
 #: build/serializers.py:526
 msgid "Accept Incomplete Allocation"
-msgstr ""
+msgstr "Přijmout neúplné přidělení"
 
 #: build/serializers.py:527
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
+msgstr "Dokončit výstupy pokud zásoby nebyly plně přiděleny"
 
 #: build/serializers.py:612
 msgid "Consume Allocated Stock"
-msgstr ""
+msgstr "Spotřebovat přidělené zásoby"
 
 #: build/serializers.py:613
 msgid "Consume any stock which has already been allocated to this build"
-msgstr ""
+msgstr "Spotřebovat všechny zásoby, které již byly přiděleny této sestavě"
 
 #: build/serializers.py:619
 msgid "Remove Incomplete Outputs"
-msgstr ""
+msgstr "Odstranit neúplné výstupy"
 
 #: build/serializers.py:620
 msgid "Delete any build outputs which have not been completed"
-msgstr ""
+msgstr "Odstranit všechny výstupy sestavy, které nebyly dokončeny"
 
 #: build/serializers.py:647
 msgid "Not permitted"
-msgstr ""
+msgstr "Není povoleno"
 
 #: build/serializers.py:648
 msgid "Accept as consumed by this build order"
-msgstr ""
+msgstr "Přijmout jako spotřebované touto objednávkou sestavy"
 
 #: build/serializers.py:649
 msgid "Deallocate before completing this build order"
-msgstr ""
+msgstr "Uvolnit před dokončením této objednávky sestavy"
 
 #: build/serializers.py:679
 msgid "Overallocated Stock"
-msgstr ""
+msgstr "Nadměrně přidělené zásoby"
 
 #: build/serializers.py:681
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr ""
+msgstr "Jak chcete zacházet s extra skladovými položkami přiřazenými k objednávce na sestavu"
 
 #: build/serializers.py:691
 msgid "Some stock items have been overallocated"
-msgstr ""
+msgstr "Některé skladové položky byly nadměrně přiděleny"
 
 #: build/serializers.py:696
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Přijmout nepřidělené"
 
 #: build/serializers.py:697
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "Přijmout, že skladové položky nebyly plně přiřazeny k této objednávce sestavy"
 
 #: build/serializers.py:707 templates/js/translated/build.js:315
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "Požadované zásoby nebyly plně přiděleny"
 
 #: build/serializers.py:712 order/serializers.py:302 order/serializers.py:1247
 msgid "Accept Incomplete"
-msgstr ""
+msgstr "Přijmout neúplné"
 
 #: build/serializers.py:713
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr ""
+msgstr "Přijmout, že nebyl dokončen požadovaný počet výstupů sestavy"
 
 #: build/serializers.py:723 templates/js/translated/build.js:319
 msgid "Required build quantity has not been completed"
-msgstr ""
+msgstr "Požadované množství sestavy nebylo dokončeno"
 
 #: build/serializers.py:732 templates/js/translated/build.js:303
 msgid "Build order has incomplete outputs"
-msgstr ""
+msgstr "Objednávka sestavy má neúplné výstupy"
 
 #: build/serializers.py:770
 msgid "Build Line"
-msgstr ""
+msgstr "Linka sestavy"
 
 #: build/serializers.py:780
 msgid "Build output"
-msgstr ""
+msgstr "Výstup sestavy"
 
 #: build/serializers.py:788
 msgid "Build output must point to the same build"
-msgstr ""
+msgstr "Výstup sestavy musí odkazovat na stejnou sestavu"
 
 #: build/serializers.py:824
 msgid "Build Line Item"
-msgstr ""
+msgstr "Řádková položka sestavy"
 
 #: build/serializers.py:838
 msgid "bom_item.part must point to the same part as the build order"
-msgstr ""
+msgstr "bom_item.part musí ukazovat na stejný díl jako objednávka sestavy"
 
 #: build/serializers.py:853 stock/serializers.py:1197
 msgid "Item must be in stock"
-msgstr ""
+msgstr "Položka musí být skladem"
 
 #: build/serializers.py:901 order/serializers.py:1238
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr ""
+msgstr "Dostupné množství ({q}) překročeno"
 
 #: build/serializers.py:907
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr ""
+msgstr "Pro přidělení sledovaných dílů musí být zadán výstup sestavy"
 
 #: build/serializers.py:914
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr ""
+msgstr "Výstup sestavy nelze zadat pro přidělení nesledovaných dílů"
 
 #: build/serializers.py:938 order/serializers.py:1490
 msgid "Allocation items must be provided"
-msgstr ""
+msgstr "Položky přidělení musí být poskytnuty"
 
 #: build/serializers.py:1001
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr ""
+msgstr "Skladové místo, odkud se mají díly odebírat (ponechte prázdné, pokud chcete odebírat z libovolného místa)"
 
 #: build/serializers.py:1009
 msgid "Exclude Location"
@@ -1466,23 +1466,23 @@ msgstr "Vynechat lokace"
 
 #: build/serializers.py:1010
 msgid "Exclude stock items from this selected location"
-msgstr ""
+msgstr "Vyloučit skladové položky z tohoto vybraného umístění"
 
 #: build/serializers.py:1015
 msgid "Interchangeable Stock"
-msgstr ""
+msgstr "Zaměnitelné zásoby"
 
 #: build/serializers.py:1016
 msgid "Stock items in multiple locations can be used interchangeably"
-msgstr ""
+msgstr "Skladové položky na více místech lze používat zaměnitelně"
 
 #: build/serializers.py:1021
 msgid "Substitute Stock"
-msgstr ""
+msgstr "Náhradní zásoby"
 
 #: build/serializers.py:1022
 msgid "Allow allocation of substitute parts"
-msgstr ""
+msgstr "Povolit přidělování náhradních dílů"
 
 #: build/serializers.py:1027
 msgid "Optional Items"
@@ -1490,20 +1490,20 @@ msgstr "Volitelné položky"
 
 #: build/serializers.py:1028
 msgid "Allocate optional BOM items to build order"
-msgstr ""
+msgstr "Přiřazení volitelných BOM položek k objednávce sestavy"
 
 #: build/serializers.py:1050
 msgid "Failed to start auto-allocation task"
-msgstr ""
+msgstr "Nepodařilo se spustit úlohu automatického přidělování"
 
 #: build/serializers.py:1140 part/models.py:3964 part/models.py:4400
 #: stock/api.py:794
 msgid "BOM Item"
-msgstr ""
+msgstr "BOM Položka"
 
 #: build/serializers.py:1149 templates/js/translated/index.js:130
 msgid "Allocated Stock"
-msgstr ""
+msgstr "Přidělené zásoby"
 
 #: build/serializers.py:1154 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:834 part/serializers.py:1508
@@ -1512,19 +1512,19 @@ msgstr ""
 #: templates/js/translated/part.js:2148
 #: templates/js/translated/table_filters.js:170
 msgid "On Order"
-msgstr ""
+msgstr "Na objednávku"
 
 #: build/serializers.py:1159 part/serializers.py:1510
 #: templates/js/translated/build.js:2617
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr ""
+msgstr "Ve výrobě"
 
 #: build/serializers.py:1164 part/bom.py:172 part/serializers.py:1533
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1929
 msgid "Available Stock"
-msgstr ""
+msgstr "Dostupné zásoby"
 
 #: build/status_codes.py:11 generic/states/tests.py:17 order/status_codes.py:12
 #: order/status_codes.py:37 order/status_codes.py:64 order/status_codes.py:82
@@ -1550,20 +1550,20 @@ msgstr "Hotovo"
 
 #: build/tasks.py:184
 msgid "Stock required for build order"
-msgstr ""
+msgstr "Zásoby potřebné pro objednávku sestavy"
 
 #: build/tasks.py:201
 msgid "Overdue Build Order"
-msgstr ""
+msgstr "Opožděná objednávka sestavy"
 
 #: build/tasks.py:206
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr ""
+msgstr "Objednávka sestavy {bo} je nyní opožděná"
 
 #: build/templates/build/build_base.html:18
 msgid "Part thumbnail"
-msgstr ""
+msgstr "Miniatura dílu"
 
 #: build/templates/build/build_base.html:38
 #: company/templates/company/supplier_part.html:35
@@ -1575,7 +1575,7 @@ msgstr ""
 #: stock/templates/stock/location.html:55
 #: templates/js/translated/filters.js:335
 msgid "Barcode actions"
-msgstr ""
+msgstr "Akce čárového kódu"
 
 #: build/templates/build/build_base.html:42
 #: company/templates/company/supplier_part.html:39
@@ -1904,52 +1904,52 @@ msgstr ""
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
-msgstr ""
+msgstr "Objednávka nové sestavy"
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
-msgstr ""
+msgstr "Podrobnosti o objednávce sestavy"
 
 #: build/templates/build/sidebar.html:10
 msgid "Incomplete Outputs"
-msgstr ""
+msgstr "Neúplné výstupy"
 
 #: common/currency.py:132
 msgid "Invalid currency code"
-msgstr ""
+msgstr "Neplatný kód měny"
 
 #: common/currency.py:134
 msgid "Duplicate currency code"
-msgstr ""
+msgstr "Duplicitní kód měny"
 
 #: common/currency.py:139
 msgid "No valid currency codes provided"
-msgstr ""
+msgstr "Nejsou uvedeny žádné platné kódy měn"
 
 #: common/currency.py:153
 msgid "No plugin"
-msgstr ""
+msgstr "Žádný plugin"
 
 #: common/files.py:63
 #, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr ""
+msgstr "Nepodporovaný formát souboru: {fmt}"
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
-msgstr ""
+msgstr "Chyba při čtení souboru (neplatné kódování)"
 
 #: common/files.py:70
 msgid "Error reading file (invalid format)"
-msgstr ""
+msgstr "Chyba při čtení souboru (neplatný formát)"
 
 #: common/files.py:72
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "Chyba při čtení souboru (nesprávný rozměr)"
 
 #: common/files.py:74
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "Chyba při čtení souboru (data mohou být poškozena)"
 
 #: common/forms.py:12
 msgid "File"
@@ -1957,108 +1957,108 @@ msgstr "Soubor"
 
 #: common/forms.py:12
 msgid "Select file to upload"
-msgstr ""
+msgstr "Vybrat soubor k nahrání"
 
 #: common/forms.py:25
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} Soubor"
 
 #: common/forms.py:26
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr ""
+msgstr "Vyberte {name} soubor k nahrání"
 
 #: common/models.py:69
 msgid "Updated"
-msgstr ""
+msgstr "Aktualizováno"
 
 #: common/models.py:70
 msgid "Timestamp of last update"
-msgstr ""
+msgstr "Časové razítko poslední aktualizace"
 
 #: common/models.py:103
 msgid "Site URL is locked by configuration"
-msgstr ""
+msgstr "Adresa URL webu je uzamčena konfigurací"
 
 #: common/models.py:128
 msgid "Unique project code"
-msgstr ""
+msgstr "Jedinečný kód projektu"
 
 #: common/models.py:135
 msgid "Project description"
-msgstr ""
+msgstr "Popis projektu"
 
 #: common/models.py:144
 msgid "User or group responsible for this project"
-msgstr ""
+msgstr "Uživatel nebo skupina odpovědná za tento projekt"
 
 #: common/models.py:764
 msgid "Settings key (must be unique - case insensitive)"
-msgstr ""
+msgstr "Klíč nastavení (musí být unikátní - rozlišuje malá a velká písmena)"
 
 #: common/models.py:768
 msgid "Settings value"
-msgstr ""
+msgstr "Hodnota nastavení"
 
 #: common/models.py:820
 msgid "Chosen value is not a valid option"
-msgstr ""
+msgstr "Zvolená hodnota není platnou možností"
 
 #: common/models.py:836
 msgid "Value must be a boolean value"
-msgstr ""
+msgstr "Hodnota musí být logická hodnota"
 
 #: common/models.py:844
 msgid "Value must be an integer value"
-msgstr ""
+msgstr "Hodnota musí být celé číslo"
 
 #: common/models.py:881
 msgid "Key string must be unique"
-msgstr ""
+msgstr "Klíčový text musí být jedinečný"
 
 #: common/models.py:1113
 msgid "No group"
-msgstr ""
+msgstr "Žádná skupina"
 
 #: common/models.py:1212
 msgid "Restart required"
-msgstr ""
+msgstr "Je vyžadován restart"
 
 #: common/models.py:1214
 msgid "A setting has been changed which requires a server restart"
-msgstr ""
+msgstr "Bylo změněno nastavení, které vyžaduje restart serveru"
 
 #: common/models.py:1221
 msgid "Pending migrations"
-msgstr ""
+msgstr "Nevyřízené migrace"
 
 #: common/models.py:1222
 msgid "Number of pending database migrations"
-msgstr ""
+msgstr "Počet nevyřízených migrací databáze"
 
 #: common/models.py:1227
 msgid "Server Instance Name"
-msgstr ""
+msgstr "Název instance serveru"
 
 #: common/models.py:1229
 msgid "String descriptor for the server instance"
-msgstr ""
+msgstr "Textový popisovač pro instanci serveru"
 
 #: common/models.py:1233
 msgid "Use instance name"
-msgstr ""
+msgstr "Použít název instance"
 
 #: common/models.py:1234
 msgid "Use the instance name in the title-bar"
-msgstr ""
+msgstr "Použít název instance v liště"
 
 #: common/models.py:1239
 msgid "Restrict showing `about`"
-msgstr ""
+msgstr "Omezit zobrazování `o aplikaci`"
 
 #: common/models.py:1240
 msgid "Show the `about` modal only to superusers"
-msgstr ""
+msgstr "Zobrazovat okno `o aplikaci` pouze superuživatelům"
 
 #: common/models.py:1245 company/models.py:108 company/models.py:109
 msgid "Company name"
@@ -2066,15 +2066,15 @@ msgstr "Jméno společnosti"
 
 #: common/models.py:1246
 msgid "Internal company name"
-msgstr ""
+msgstr "Interní název společnosti"
 
 #: common/models.py:1250
 msgid "Base URL"
-msgstr ""
+msgstr "Základní URL"
 
 #: common/models.py:1251
 msgid "Base URL for server instance"
-msgstr ""
+msgstr "Základní URL pro instanci serveru"
 
 #: common/models.py:1257
 msgid "Default Currency"
@@ -2082,38 +2082,38 @@ msgstr "Výchozí měna"
 
 #: common/models.py:1258
 msgid "Select base currency for pricing calculations"
-msgstr ""
+msgstr "Vyberte základní měnu pro cenové kalkulace"
 
 #: common/models.py:1264
 msgid "Supported Currencies"
-msgstr ""
+msgstr "Podporované měny"
 
 #: common/models.py:1265
 msgid "List of supported currency codes"
-msgstr ""
+msgstr "Seznam podporovaných kódů měn"
 
 #: common/models.py:1271
 msgid "Currency Update Interval"
-msgstr ""
+msgstr "Interval aktualizace měny"
 
 #: common/models.py:1273
 msgid "How often to update exchange rates (set to zero to disable)"
-msgstr ""
+msgstr "Jak často aktualizovat směnné kurzy (pro vypnutí nastavte na nulu)"
 
 #: common/models.py:1276 common/models.py:1332 common/models.py:1345
 #: common/models.py:1353 common/models.py:1362 common/models.py:1371
 #: common/models.py:1589 common/models.py:1611 common/models.py:1726
 #: common/models.py:2045
 msgid "days"
-msgstr ""
+msgstr "dny"
 
 #: common/models.py:1280
 msgid "Currency Update Plugin"
-msgstr ""
+msgstr "Plugin aktualizace měny"
 
 #: common/models.py:1281
 msgid "Currency update plugin to use"
-msgstr ""
+msgstr "Plugin pro aktualizaci měn k použití"
 
 #: common/models.py:1286
 msgid "Download from URL"
@@ -2121,7 +2121,7 @@ msgstr "Stáhnout z URL"
 
 #: common/models.py:1288
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "Povolit stahování vzdálených obrázků a souborů z externích URL"
 
 #: common/models.py:1294
 msgid "Download Size Limit"
@@ -2333,11 +2333,11 @@ msgstr ""
 #: common/models.py:1458 part/admin.py:95 part/models.py:1066
 #: templates/js/translated/table_filters.js:729
 msgid "Component"
-msgstr ""
+msgstr "Komponent"
 
 #: common/models.py:1459
 msgid "Parts can be used as sub-components by default"
-msgstr ""
+msgstr "Díly lze ve výchozím nastavení použít jako dílčí komponenty"
 
 #: common/models.py:1464 part/admin.py:100 part/models.py:1078
 msgid "Purchaseable"
@@ -2384,7 +2384,7 @@ msgstr "Zobrazit Import v zobrazeních"
 
 #: common/models.py:1489
 msgid "Display the import wizard in some part views"
-msgstr ""
+msgstr "Zobrazit průvodce importem v některých zobrazeních dílu"
 
 #: common/models.py:1494
 msgid "Show related parts"
@@ -2428,11 +2428,11 @@ msgstr "Výchozí ikona kategorie dílu (prázdné znamená bez ikony)"
 
 #: common/models.py:1526
 msgid "Enforce Parameter Units"
-msgstr ""
+msgstr "Vynutit jednotky parametru"
 
 #: common/models.py:1528
 msgid "If units are provided, parameter values must match the specified units"
-msgstr ""
+msgstr "Pokud jsou uvedeny jednotky, musí hodnoty parametrů odpovídat zadaným jednotkám"
 
 #: common/models.py:1534
 msgid "Minimum Pricing Decimal Places"
@@ -2456,7 +2456,7 @@ msgstr "Použít ceny dodavatele"
 
 #: common/models.py:1562
 msgid "Include supplier price breaks in overall pricing calculations"
-msgstr ""
+msgstr "Zahrnout cenová zvýhodnění dodavatelů do celkových cenových kalkulací"
 
 #: common/models.py:1568
 msgid "Purchase History Override"
@@ -2464,103 +2464,103 @@ msgstr "Přepsání historie nákupu"
 
 #: common/models.py:1570
 msgid "Historical purchase order pricing overrides supplier price breaks"
-msgstr ""
+msgstr "Historické ceny nákupních objednávek mají přednost před cenovými zvýhodněními dodavatele"
 
 #: common/models.py:1576
 msgid "Use Stock Item Pricing"
-msgstr ""
+msgstr "Použít ceny skladových položek"
 
 #: common/models.py:1578
 msgid "Use pricing from manually entered stock data for pricing calculations"
-msgstr ""
+msgstr "Použít ceny z ručně zadaných skladových údajů pro cenové kalkulace"
 
 #: common/models.py:1584
 msgid "Stock Item Pricing Age"
-msgstr ""
+msgstr "Stáří cen skladových položek"
 
 #: common/models.py:1586
 msgid "Exclude stock items older than this number of days from pricing calculations"
-msgstr ""
+msgstr "Vyloučit skladové položky starší než tento počet dní z cenových kalkulací"
 
 #: common/models.py:1593
 msgid "Use Variant Pricing"
-msgstr ""
+msgstr "Použít cenu varianty"
 
 #: common/models.py:1594
 msgid "Include variant pricing in overall pricing calculations"
-msgstr ""
+msgstr "Zahrnutí cen variant do celkových cenových kalkulací"
 
 #: common/models.py:1599
 msgid "Active Variants Only"
-msgstr ""
+msgstr "Pouze aktivní varianty"
 
 #: common/models.py:1601
 msgid "Only use active variant parts for calculating variant pricing"
-msgstr ""
+msgstr "Pro výpočet ceny varianty použijte pouze aktivní díly varianty"
 
 #: common/models.py:1607
 msgid "Pricing Rebuild Interval"
-msgstr ""
+msgstr "Interval přestavby cen"
 
 #: common/models.py:1609
 msgid "Number of days before part pricing is automatically updated"
-msgstr ""
+msgstr "Počet dní před automatickou aktualizací cen dílů"
 
 #: common/models.py:1616
 msgid "Internal Prices"
-msgstr ""
+msgstr "Interní ceny"
 
 #: common/models.py:1617
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "Povolit interní ceny pro díly"
 
 #: common/models.py:1622
 msgid "Internal Price Override"
-msgstr ""
+msgstr "Přepis interní ceny"
 
 #: common/models.py:1624
 msgid "If available, internal prices override price range calculations"
-msgstr ""
+msgstr "Pokud jsou k dispozici, interní ceny mají přednost před výpočty cenového rozpětí"
 
 #: common/models.py:1630
 msgid "Enable label printing"
-msgstr ""
+msgstr "Povolit tisk štítků"
 
 #: common/models.py:1631
 msgid "Enable label printing from the web interface"
-msgstr ""
+msgstr "Povolit tisk štítků z webového rozhraní"
 
 #: common/models.py:1636
 msgid "Label Image DPI"
-msgstr ""
+msgstr "DPI rozlišení štítků"
 
 #: common/models.py:1638
 msgid "DPI resolution when generating image files to supply to label printing plugins"
-msgstr ""
+msgstr "Rozlišení DPI při generování obrazových souborů, které se dodávají do zásuvných modulů pro tisk štítků"
 
 #: common/models.py:1644
 msgid "Enable Reports"
-msgstr ""
+msgstr "Povolit reporty"
 
 #: common/models.py:1645
 msgid "Enable generation of reports"
-msgstr ""
+msgstr "Povolit generování reportů"
 
 #: common/models.py:1650 templates/stats.html:25
 msgid "Debug Mode"
-msgstr ""
+msgstr "Režim ladění chyb"
 
 #: common/models.py:1651
 msgid "Generate reports in debug mode (HTML output)"
-msgstr ""
+msgstr "Generovat reporty v režimu ladění (HTML výstup)"
 
 #: common/models.py:1656
 msgid "Log Report Errors"
-msgstr ""
+msgstr "Zaznamenávat chyby reportů"
 
 #: common/models.py:1657
 msgid "Log errors which occur when generating reports"
-msgstr ""
+msgstr "Zaznamenávat chyby, které se vyskytnou při vytváření reportů"
 
 #: common/models.py:1662 plugin/builtin/labels/label_sheet.py:28
 #: report/models.py:301
@@ -2589,7 +2589,7 @@ msgstr "Při tisku testovacího reportu, připojte kopii reportu k přidružené
 
 #: common/models.py:1682
 msgid "Globally Unique Serials"
-msgstr ""
+msgstr "Globálně unikátní sériová čísla"
 
 #: common/models.py:1683
 msgid "Serial numbers for stock items must be globally unique"
@@ -2609,75 +2609,75 @@ msgstr "Odstranit vyčerpané zásoby"
 
 #: common/models.py:1696
 msgid "Determines default behavior when a stock item is depleted"
-msgstr ""
+msgstr "Určuje výchozí chování při vyčerpání zásoby položky"
 
 #: common/models.py:1702
 msgid "Batch Code Template"
-msgstr ""
+msgstr "Šablona kódu dávky"
 
 #: common/models.py:1704
 msgid "Template for generating default batch codes for stock items"
-msgstr ""
+msgstr "Šablona pro generování výchozích kódů dávky pro skladové položky"
 
 #: common/models.py:1709
 msgid "Stock Expiry"
-msgstr ""
+msgstr "Expirace zásob"
 
 #: common/models.py:1710
 msgid "Enable stock expiry functionality"
-msgstr ""
+msgstr "Povolit funkci expirace zásob"
 
 #: common/models.py:1715
 msgid "Sell Expired Stock"
-msgstr ""
+msgstr "Prodat prošlé zásoby"
 
 #: common/models.py:1716
 msgid "Allow sale of expired stock"
-msgstr ""
+msgstr "Povolit prodej prošlých zásob"
 
 #: common/models.py:1721
 msgid "Stock Stale Time"
-msgstr ""
+msgstr "Čas stáří zásob"
 
 #: common/models.py:1723
 msgid "Number of days stock items are considered stale before expiring"
-msgstr ""
+msgstr "Počet dnů, po které jsou skladové položky považovány za nevyužité před uplynutím doby expirace"
 
 #: common/models.py:1730
 msgid "Build Expired Stock"
-msgstr ""
+msgstr "Sestavit prošlé zásoby"
 
 #: common/models.py:1731
 msgid "Allow building with expired stock"
-msgstr ""
+msgstr "Povolit sestavování s prošlými zásobami"
 
 #: common/models.py:1736
 msgid "Stock Ownership Control"
-msgstr ""
+msgstr "Kontrola vlastnictví zásob"
 
 #: common/models.py:1737
 msgid "Enable ownership control over stock locations and items"
-msgstr ""
+msgstr "Umožnit kontrolu vlastnictví nad skladovými místy a položkami"
 
 #: common/models.py:1742
 msgid "Stock Location Default Icon"
-msgstr ""
+msgstr "Výchozí ikona umístění zásob"
 
 #: common/models.py:1743
 msgid "Stock location default icon (empty means no icon)"
-msgstr ""
+msgstr "Výchozí ikona umístění zásob (prázdné znamená bez ikony)"
 
 #: common/models.py:1747
 msgid "Show Installed Stock Items"
-msgstr ""
+msgstr "Zobrazit nainstalované skladové položky"
 
 #: common/models.py:1748
 msgid "Display installed stock items in stock tables"
-msgstr ""
+msgstr "Zobrazit nainstalované skladové položky ve skladových tabulkách"
 
 #: common/models.py:1753
 msgid "Check BOM when installing items"
-msgstr ""
+msgstr "Zkontrolovat BOM při instalaci položek"
 
 #: common/models.py:1755
 msgid "Installed stock items must exist in the BOM for the parent part"
