@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-04 11:54+0000\n"
-"PO-Revision-Date: 2024-06-04 12:39\n"
+"PO-Revision-Date: 2024-06-05 12:39\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -598,15 +598,15 @@ msgstr "有効な数字でなければなりません"
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr ""
+msgstr "通貨"
 
 #: InvenTree/serializers.py:103
 msgid "Select currency from available options"
-msgstr ""
+msgstr "利用可能なオプションから通貨を選択してください"
 
 #: InvenTree/serializers.py:442
 msgid "You do not have permission to change this user role."
-msgstr ""
+msgstr "このユーザのロールを変更する権限がありません"
 
 #: InvenTree/serializers.py:454
 msgid "Only superusers can create new users"
