@@ -37,8 +37,8 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         render: (record: any) => {
           return (
             <Text
-              weight={record.required && 700}
-              color={record.enabled ? undefined : 'red'}
+              fw={record.required && 700}
+              c={record.enabled ? undefined : 'red'}
             >
               {record.test_name}
             </Text>
@@ -76,18 +76,22 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     return [
       {
         name: 'required',
+        label: t`Required`,
         description: t`Show required tests`
       },
       {
         name: 'enabled',
+        label: t`Enabled`,
         description: t`Show enabled tests`
       },
       {
         name: 'requires_value',
+        label: t`Requires Value`,
         description: t`Show tests that require a value`
       },
       {
         name: 'requires_attachment',
+        label: t`Requires Attachment`,
         description: t`Show tests that require an attachment`
       },
       {
@@ -120,11 +124,14 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
   const newTestTemplate = useCreateApiFormModal({
     url: ApiEndpoints.part_test_template_list,
     title: t`Add Test Template`,
-    fields: partTestTemplateFields,
+    fields: useMemo(
+      () => ({ ...partTestTemplateFields }),
+      [partTestTemplateFields]
+    ),
     initialData: {
       part: partId
     },
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedTest, setSelectedTest] = useState<number>(-1);
@@ -133,8 +140,11 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
     url: ApiEndpoints.part_test_template_list,
     pk: selectedTest,
     title: t`Edit Test Template`,
-    fields: partTestTemplateFields,
-    onFormSuccess: (record: any) => table.updateRecord(record)
+    table: table,
+    fields: useMemo(
+      () => ({ ...partTestTemplateFields }),
+      [partTestTemplateFields]
+    )
   });
 
   const deleteTestTemplate = useDeleteApiFormModal({
@@ -150,7 +160,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         </Text>
       </Alert>
     ),
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(

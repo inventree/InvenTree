@@ -49,7 +49,7 @@ export default function CustomUnitsTable() {
     url: ApiEndpoints.custom_unit_list,
     title: t`Add Custom Unit`,
     fields: customUnitsFields(),
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedUnit, setSelectedUnit] = useState<number>(-1);
@@ -66,7 +66,7 @@ export default function CustomUnitsTable() {
     url: ApiEndpoints.custom_unit_list,
     pk: selectedUnit,
     title: t`Delete Custom Unit`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(

@@ -23,10 +23,6 @@ def trigger_event(event, *args, **kwargs):
     """
     from common.models import InvenTreeSetting
 
-    if not settings.PLUGINS_ENABLED:
-        # Do nothing if plugins are not enabled
-        return  # pragma: no cover
-
     if not InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS', False):
         # Do nothing if plugin events are not enabled
         return
@@ -60,6 +56,9 @@ def register_event(event, *args, **kwargs):
 
     # Determine if there are any plugins which are interested in responding
     if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting('ENABLE_PLUGINS_EVENTS'):
+        # Check if the plugin registry needs to be reloaded
+        registry.check_reload()
+
         with transaction.atomic():
             for slug, plugin in registry.plugins.items():
                 if not plugin.mixin_enabled('events'):

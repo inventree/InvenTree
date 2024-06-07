@@ -34,7 +34,7 @@ logger = logging.getLogger('inventree')
 # string representation of a user
 def user_model_str(self):
     """Function to override the default Django User __str__."""
-    if common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES'):
+    if common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES', cache=True):
         if self.first_name or self.last_name:
             return f'{self.first_name} {self.last_name}'
     return self.username
@@ -224,11 +224,12 @@ class RuleSet(models.Model):
                 'auth_permission',
                 'users_apitoken',
                 'users_ruleset',
+                'report_labeloutput',
+                'report_labeltemplate',
                 'report_reportasset',
+                'report_reportoutput',
                 'report_reportsnippet',
-                'report_billofmaterialsreport',
-                'report_purchaseorderreport',
-                'report_salesorderreport',
+                'report_reporttemplate',
                 'account_emailaddress',
                 'account_emailconfirmation',
                 'socialaccount_socialaccount',
@@ -270,22 +271,14 @@ class RuleSet(models.Model):
                 'company_manufacturerpart',
                 'company_manufacturerpartparameter',
                 'company_manufacturerpartattachment',
-                'label_partlabel',
             ],
             'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
-            'stock_location': [
-                'stock_stocklocation',
-                'stock_stocklocationtype',
-                'label_stocklocationlabel',
-                'report_stocklocationreport',
-            ],
+            'stock_location': ['stock_stocklocation', 'stock_stocklocationtype'],
             'stock': [
                 'stock_stockitem',
                 'stock_stockitemattachment',
                 'stock_stockitemtracking',
                 'stock_stockitemtestresult',
-                'report_testreport',
-                'label_stockitemlabel',
             ],
             'build': [
                 'part_part',
@@ -298,8 +291,6 @@ class RuleSet(models.Model):
                 'build_buildorderattachment',
                 'stock_stockitem',
                 'stock_stocklocation',
-                'report_buildreport',
-                'label_buildlinelabel',
             ],
             'purchase_order': [
                 'company_company',
@@ -314,7 +305,6 @@ class RuleSet(models.Model):
                 'order_purchaseorderattachment',
                 'order_purchaseorderlineitem',
                 'order_purchaseorderextraline',
-                'report_purchaseorderreport',
             ],
             'sales_order': [
                 'company_company',
@@ -327,7 +317,6 @@ class RuleSet(models.Model):
                 'order_salesorderlineitem',
                 'order_salesorderextraline',
                 'order_salesordershipment',
-                'report_salesorderreport',
             ],
             'return_order': [
                 'company_company',
@@ -338,7 +327,6 @@ class RuleSet(models.Model):
                 'order_returnorderlineitem',
                 'order_returnorderextraline',
                 'order_returnorderattachment',
-                'report_returnorderreport',
             ],
         }
 
@@ -366,7 +354,6 @@ class RuleSet(models.Model):
             'common_projectcode',
             'common_webhookendpoint',
             'common_webhookmessage',
-            'label_labeloutput',
             'users_owner',
             # Third-party tables
             'error_report_error',
@@ -626,9 +613,9 @@ def update_group_roles(group, debug=False):
                 content_type=content_type, codename=perm
             )
         except ContentType.DoesNotExist:  # pragma: no cover
-            logger.warning(
-                "Error: Could not find permission matching '%s'", permission_string
-            )
+            # logger.warning(
+            #     "Error: Could not find permission matching '%s'", permission_string
+            # )
             permission = None
 
         return permission
@@ -831,7 +818,9 @@ class Owner(models.Model):
         """Defines the owner string representation."""
         if (
             self.owner_type.name == 'user'
-            and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES')
+            and common_models.InvenTreeSetting.get_setting(
+                'DISPLAY_FULL_NAMES', cache=True
+            )
         ):
             display_name = self.owner.get_full_name()
         else:
@@ -842,7 +831,9 @@ class Owner(models.Model):
         """Return the 'name' of this owner."""
         if (
             self.owner_type.name == 'user'
-            and common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES')
+            and common_models.InvenTreeSetting.get_setting(
+                'DISPLAY_FULL_NAMES', cache=True
+            )
         ):
             return self.owner.get_full_name() or str(self.owner)
         return str(self.owner)

@@ -1,7 +1,6 @@
 import { Select } from '@mantine/core';
 import { useId } from '@mantine/hooks';
-import { useCallback } from 'react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { ApiFormFieldType } from './ApiFormField';
@@ -32,8 +31,8 @@ export function ChoiceField({
 
     return choices.map((choice) => {
       return {
-        value: choice.value,
-        label: choice.display_name
+        value: choice.value.toString(),
+        label: choice.display_name ?? choice.value
       };
     });
   }, [definition.choices]);
@@ -52,6 +51,7 @@ export function ChoiceField({
   return (
     <Select
       id={fieldId}
+      aria-label={`choice-field-${field.name}`}
       error={error?.message}
       radius="sm"
       {...field}
@@ -63,8 +63,8 @@ export function ChoiceField({
       placeholder={definition.placeholder}
       required={definition.required}
       disabled={definition.disabled}
-      icon={definition.icon}
-      withinPortal={true}
+      leftSection={definition.icon}
+      comboboxProps={{ withinPortal: true }}
     />
   );
 }

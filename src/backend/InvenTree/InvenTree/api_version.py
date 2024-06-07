@@ -1,10 +1,52 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 192
+INVENTREE_API_VERSION = 205
+
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v205 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7284
+    - Added model_type and model_id fields to the "NotesImage" serializer
+
+v204 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7393
+    - Fixes previous API update which resulted in inconsistent ordering of currency codes
+
+v203 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7390
+    - Currency codes are now configurable as a run-time setting
+
+v202 - 2024-05-27 : https://github.com/inventree/InvenTree/pull/7343
+    - Adjust "required" attribute of Part.category field to be optional
+
+v201 - 2024-05-21 : https://github.com/inventree/InvenTree/pull/7074
+    - Major refactor of the report template / report printing interface
+    - This is a *breaking change* to the report template API
+
+v200 - 2024-05-20 : https://github.com/inventree/InvenTree/pull/7000
+    - Adds API endpoint for generating custom batch codes
+    - Adds API endpoint for generating custom serial numbers
+
+v199 - 2024-05-20 : https://github.com/inventree/InvenTree/pull/7264
+    - Expose "bom_valid" filter for the Part API
+    - Expose "starred" filter for the Part API
+
+v198 - 2024-05-19 : https://github.com/inventree/InvenTree/pull/7258
+    - Fixed lookup field conflicts in the plugins API
+
+v197 - 2024-05-14 : https://github.com/inventree/InvenTree/pull/7224
+    - Refactor the plugin API endpoints to use the plugin "key" for lookup, rather than the PK value
+
+v196 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7160
+    - Adds "location" field to BuildOutputComplete API endpoint
+
+v195 - 2024-05-03 : https://github.com/inventree/InvenTree/pull/7153
+    - Fixes bug in BuildOrderCancel API endpoint
+
+v194 - 2024-05-01 : https://github.com/inventree/InvenTree/pull/7147
+    -  Adds field description to the currency_exchange_retrieve API call
+
+v193 - 2024-04-30 : https://github.com/inventree/InvenTree/pull/7144
+    - Adds "assigned_to" filter to PurchaseOrder / SalesOrder / ReturnOrder API endpoints
 
 v192 - 2024-04-23 : https://github.com/inventree/InvenTree/pull/7106
     - Adds 'trackable' ordering option to BuildLineLabel API endpoint

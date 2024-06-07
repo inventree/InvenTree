@@ -21,6 +21,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
+import common.currency
 import common.models
 import common.settings
 import company.models
@@ -33,7 +34,7 @@ import part.stocktake
 import part.tasks
 import stock.models
 import users.models
-from InvenTree.status_codes import BuildStatusGroups
+from build.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 
 from .models import (
@@ -432,6 +433,11 @@ class DuplicatePartSerializer(serializers.Serializer):
     The fields in this serializer control how the Part is duplicated.
     """
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['part', 'copy_image', 'copy_bom', 'copy_parameters', 'copy_notes']
+
     part = serializers.PrimaryKeyRelatedField(
         queryset=Part.objects.all(),
         label=_('Original Part'),
@@ -471,6 +477,11 @@ class DuplicatePartSerializer(serializers.Serializer):
 class InitialStockSerializer(serializers.Serializer):
     """Serializer for creating initial stock quantity."""
 
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['quantity', 'location']
+
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
@@ -493,6 +504,11 @@ class InitialStockSerializer(serializers.Serializer):
 
 class InitialSupplierSerializer(serializers.Serializer):
     """Serializer for adding initial supplier / manufacturer information."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['supplier', 'sku', 'manufacturer', 'mpn']
 
     supplier = serializers.PrimaryKeyRelatedField(
         queryset=company.models.Company.objects.all(),
@@ -564,6 +580,7 @@ class InitialSupplierSerializer(serializers.Serializer):
 
 
 class PartSerializer(
+    InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
@@ -836,7 +853,9 @@ class PartSerializer(
     starred = serializers.SerializerMethodField()
 
     # PrimaryKeyRelated fields (Note: enforcing field type here results in much faster queries, somehow...)
-    category = serializers.PrimaryKeyRelatedField(queryset=PartCategory.objects.all())
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all(), required=False, allow_null=True
+    )
 
     # Pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1269,7 +1288,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         label=_('Minimum price currency'),
         read_only=False,
         required=False,
-        choices=common.settings.currency_code_mappings(),
+        choices=common.currency.currency_code_mappings(),
     )
 
     override_max = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1284,7 +1303,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         label=_('Maximum price currency'),
         read_only=False,
         required=False,
-        choices=common.settings.currency_code_mappings(),
+        choices=common.currency.currency_code_mappings(),
     )
 
     overall_min = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1325,7 +1344,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         override_min = data.get('override_min', None)
         override_max = data.get('override_max', None)
 
-        default_currency = common.settings.currency_code_default()
+        default_currency = common.currency.currency_code_default()
 
         if override_min is not None and override_max is not None:
             try:

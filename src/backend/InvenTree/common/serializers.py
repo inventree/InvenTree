@@ -125,6 +125,17 @@ class UserSettingsSerializer(SettingsSerializer):
     user = serializers.PrimaryKeyRelatedField(read_only=True)
 
 
+class CurrencyExchangeSerializer(serializers.Serializer):
+    """Serializer for a Currency Exchange request.
+
+    It's only purpose is describing the results correctly in the API schema right now.
+    """
+
+    base_currency = serializers.CharField(read_only=True)
+    exchange_rates = serializers.DictField(child=serializers.FloatField())
+    updated = serializers.DateTimeField(read_only=True)
+
+
 class GenericReferencedSettingSerializer(SettingsSerializer):
     """Serializer for a GenericReferencedSetting model.
 
@@ -270,7 +281,7 @@ class NotesImageSerializer(InvenTreeModelSerializer):
         """Meta options for NotesImageSerializer."""
 
         model = common_models.NotesImage
-        fields = ['pk', 'image', 'user', 'date']
+        fields = ['pk', 'image', 'user', 'date', 'model_type', 'model_id']
 
         read_only_fields = ['date', 'user']
 

@@ -25,8 +25,8 @@ from allauth.socialaccount.views import ConnectionsView
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from user_sessions.views import SessionDeleteOtherView, SessionDeleteView
 
+import common.currency
 import common.models as common_models
-import common.settings as common_settings
 from part.models import PartCategory
 from users.models import RuleSet, check_user_role
 
@@ -506,8 +506,8 @@ class SettingsView(TemplateView):
 
         ctx['settings'] = common_models.InvenTreeSetting.objects.all().order_by('key')
 
-        ctx['base_currency'] = common_settings.currency_code_default()
-        ctx['currencies'] = common_settings.currency_codes
+        ctx['base_currency'] = common.currency.currency_code_default()
+        ctx['currencies'] = common.currency.currency_codes
 
         ctx['rates'] = Rate.objects.filter(backend='InvenTreeExchange')
 

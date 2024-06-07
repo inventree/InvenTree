@@ -172,6 +172,14 @@ InvenTree supplies the `InvenTreeLabelPlugin` out of the box, which generates a 
 
 The default plugin also features a *DEBUG* mode which generates a raw HTML output, rather than PDF. This can be handy for tracking down any template rendering errors in your labels.
 
+::: plugin.builtin.labels.inventree_label.InvenTreeLabelPlugin
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
+
 ### Available Data
 
 The *label* data are supplied to the plugin in both `PDF` and `PNG` formats. This provides compatibility with a great range of label printers "out of the box". Conversion to other formats, if required, is left as an exercise for the plugin developer.

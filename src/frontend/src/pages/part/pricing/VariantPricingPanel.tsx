@@ -81,7 +81,7 @@ export default function VariantPricingPanel({
   }, [table.records]);
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SimpleGrid cols={2}>
         <InvenTreeTable
           tableState={table}

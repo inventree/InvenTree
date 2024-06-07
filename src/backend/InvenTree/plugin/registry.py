@@ -4,12 +4,15 @@
 - Manages setup and teardown of plugin class instances
 """
 
-import imp
 import importlib
+import importlib.machinery
+import importlib.util
 import logging
 import os
+import sys
 import time
 from collections import OrderedDict
+from importlib.machinery import SourceFileLoader
 from pathlib import Path
 from threading import Lock
 from typing import Any
@@ -411,9 +414,15 @@ class PluginsRegistry:
 
             # Gather Modules
             if parent_path:
-                raw_module = imp.load_source(
-                    plugin, str(parent_obj.joinpath('__init__.py'))
-                )
+                # On python 3.12 use new loader method
+                if sys.version_info < (3, 12):
+                    raw_module = _load_source(
+                        plugin, str(parent_obj.joinpath('__init__.py'))
+                    )
+                else:
+                    raw_module = SourceFileLoader(
+                        plugin, str(parent_obj.joinpath('__init__.py'))
+                    ).load_module()
             else:
                 raw_module = importlib.import_module(plugin)
             modules = get_plugins(raw_module, InvenTreePlugin, path=parent_path)
@@ -749,6 +758,16 @@ class PluginsRegistry:
                 # Some other exception, we want to know about it
                 logger.exception('Failed to update plugin registry hash: %s', str(exc))
 
+    def plugin_settings_keys(self):
+        """A list of keys which are used to store plugin settings."""
+        return [
+            'ENABLE_PLUGINS_URL',
+            'ENABLE_PLUGINS_NAVIGATION',
+            'ENABLE_PLUGINS_APP',
+            'ENABLE_PLUGINS_SCHEDULE',
+            'ENABLE_PLUGINS_EVENTS',
+        ]
+
     def calculate_plugin_hash(self):
         """Calculate a 'hash' value for the current registry.
 
@@ -768,24 +787,12 @@ class PluginsRegistry:
             data.update(str(plug.version).encode())
             data.update(str(plug.is_active()).encode())
 
-        # Also hash for all config settings which define plugin behavior
-        keys = [
-            'ENABLE_PLUGINS_URL',
-            'ENABLE_PLUGINS_NAVIGATION',
-            'ENABLE_PLUGINS_APP',
-            'ENABLE_PLUGINS_SCHEDULE',
-            'ENABLE_PLUGINS_EVENTS',
-        ]
-
-        for k in keys:
+        for k in self.plugin_settings_keys():
             try:
-                data.update(
-                    str(
-                        InvenTreeSetting.get_setting(
-                            k, False, cache=False, create=False
-                        )
-                    ).encode()
-                )
+                val = InvenTreeSetting.get_setting(k, False, create=False)
+                msg = f'{k}-{val}'
+
+                data.update(msg.encode())
             except Exception:
                 pass
 
@@ -811,7 +818,7 @@ class PluginsRegistry:
 
         try:
             reg_hash = InvenTreeSetting.get_setting(
-                '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
+                '_PLUGIN_REGISTRY_HASH', '', create=False
             )
         except Exception as exc:
             logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
@@ -830,3 +837,18 @@ registry: PluginsRegistry = PluginsRegistry()
 def call_function(plugin_name, function_name, *args, **kwargs):
     """Global helper function to call a specific member function of a plugin."""
     return registry.call_plugin_function(plugin_name, function_name, *args, **kwargs)
+
+
+def _load_source(modname, filename):
+    """Helper function to replace deprecated & removed imp.load_source.
+
+    See https://docs.python.org/3/whatsnew/3.12.html#imp
+    """
+    loader = importlib.machinery.SourceFileLoader(modname, filename)
+    spec = importlib.util.spec_from_file_location(modname, filename, loader=loader)
+    module = importlib.util.module_from_spec(spec)
+    # The module is always executed and not cached in sys.modules.
+    # Uncomment the following line to cache the module.
+    # sys.modules[module.__name__] = module
+    loader.exec_module(module)
+    return module

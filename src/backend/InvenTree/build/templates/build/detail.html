@@ -346,6 +346,8 @@ onPanelLoad('notes', function() {
         'build-notes',
         '{% url "api-build-detail" build.pk %}',
         {
+            model_type: 'build',
+            model_id: {{ build.pk }},
             {% if roles.build.change %}
             editable: true,
             {% else %}
@@ -366,6 +368,7 @@ onPanelLoad('outputs', function() {
         source_location: {{ build.take_from.pk }},
         {% endif %}
         tracked_parts: true,
+        trackable: {% js_bool build.part.trackable %}
     };
 
     loadBuildOutputTable(build_info);

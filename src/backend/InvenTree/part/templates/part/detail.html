@@ -404,6 +404,8 @@
             'part-notes',
             '{% url "api-part-detail" part.pk %}',
             {
+                model_type: "part",
+                model_id: {{ part.pk }},
                 editable: {% js_bool roles.part.change %},
             }
         );
@@ -629,11 +631,7 @@
 
         {% if report_enabled %}
         $("#print-bom-report").click(function() {
-            printReports({
-                items: [{{ part.pk }}],
-                key: 'part',
-                url: '{% url "api-bom-report-list" %}'
-            });
+            printReports('part', [{{ part.pk }}]);
         });
         {% endif %}
     });

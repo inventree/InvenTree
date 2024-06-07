@@ -7,7 +7,7 @@ import hashlib
 import logging
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
@@ -33,6 +33,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
+import common.currency
 import common.models
 import common.settings
 import InvenTree.conversion
@@ -43,22 +44,23 @@ import InvenTree.ready
 import InvenTree.tasks
 import part.helpers as part_helpers
 import part.settings as part_settings
+import report.mixins
 import users.models
 from build import models as BuildModels
+from build.status_codes import BuildStatusGroups
+from common.currency import currency_code_default
 from common.models import InvenTreeSetting
-from common.settings import currency_code_default
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
 from InvenTree.helpers import decimal2money, decimal2string, normalize, str2bool
-from InvenTree.status_codes import (
-    BuildStatusGroups,
+from order import models as OrderModels
+from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
     SalesOrderStatus,
     SalesOrderStatusGroups,
 )
-from order import models as OrderModels
 from stock import models as StockModels
 
 logger = logging.getLogger('inventree')
@@ -281,7 +283,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Returns True if the specified user subscribes to this category."""
         return user in self.get_subscribers(**kwargs)
 
-    def set_starred(self, user, status):
+    def set_starred(self, user, status: bool) -> None:
         """Set the "subscription" status of this PartCategory against the specified user."""
         if not user:
             return
@@ -340,6 +342,7 @@ class PartManager(TreeManager):
 class Part(
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.PluginValidationMixin,
     MPTTModel,
@@ -409,8 +412,28 @@ class Part(
         """Return API query filters for limiting field results against this instance."""
         return {'variant_of': {'exclude_tree': self.pk}}
 
+    def report_context(self):
+        """Return custom report context information."""
+        return {
+            'bom_items': self.get_bom_items(),
+            'category': self.category,
+            'description': self.description,
+            'IPN': self.IPN,
+            'name': self.name,
+            'parameters': self.parameters_map(),
+            'part': self,
+            'qr_data': self.format_barcode(brief=True),
+            'qr_url': self.get_absolute_url(),
+            'revision': self.revision,
+            'test_template_list': self.getTestTemplates(),
+            'test_templates': self.getTestTemplates(),
+        }
+
     def get_context_data(self, request, **kwargs):
-        """Return some useful context data about this part for template rendering."""
+        """Return some useful context data about this part for template rendering.
+
+        TODO: 2024-04-21 - Remove this method once the legacy UI code is removed
+        """
         context = {}
 
         context['disabled'] = not self.active
@@ -447,6 +470,27 @@ class Part(
         )
 
         return context
+
+    def delete(self, **kwargs):
+        """Custom delete method for the Part model.
+
+        Prevents deletion of a Part if any of the following conditions are met:
+
+        - The part is still active
+        - The part is used in a BOM for a different part.
+        """
+        if self.active:
+            raise ValidationError(_('Cannot delete this part as it is still active'))
+
+        if not common.models.InvenTreeSetting.get_setting(
+            'PART_ALLOW_DELETE_FROM_ASSEMBLY', cache=False
+        ):
+            if BomItem.objects.filter(sub_part=self).exists():
+                raise ValidationError(
+                    _('Cannot delete this part as it is used in an assembly')
+                )
+
+        super().delete()
 
     def save(self, *args, **kwargs):
         """Overrides the save function for the Part model.
@@ -1975,7 +2019,7 @@ class Part(
         help_text=_('Sell multiple'),
     )
 
-    get_price = common.models.get_price
+    get_price = common.currency.get_price
 
     @property
     def has_price_breaks(self):
@@ -2007,7 +2051,7 @@ class Part(
 
     def get_internal_price(self, quantity, moq=True, multiples=True, currency=None):
         """Return the internal price of this Part at the specified quantity."""
-        return common.models.get_price(
+        return common.currency.get_price(
             self, quantity, moq, multiples, currency, break_name='internal_price_breaks'
         )
 
@@ -2603,7 +2647,7 @@ class PartPricing(common.models.MetaMixin):
             # Short circuit - no further operations required
             return
 
-        currency_code = common.settings.currency_code_default()
+        currency_code = common.currency.currency_code_default()
 
         cumulative_min = Money(0, currency_code)
         cumulative_max = Money(0, currency_code)
@@ -2705,15 +2749,11 @@ class PartPricing(common.models.MetaMixin):
                 purchase_max = purchase_cost
 
         # Also check if manual stock item pricing is included
-        if InvenTreeSetting.get_setting('PRICING_USE_STOCK_PRICING', True, cache=False):
+        if InvenTreeSetting.get_setting('PRICING_USE_STOCK_PRICING', True):
             items = self.part.stock_items.all()
 
             # Limit to stock items updated within a certain window
-            days = int(
-                InvenTreeSetting.get_setting(
-                    'PRICING_STOCK_ITEM_AGE_DAYS', 0, cache=False
-                )
-            )
+            days = int(InvenTreeSetting.get_setting('PRICING_STOCK_ITEM_AGE_DAYS', 0))
 
             if days > 0:
                 date_threshold = InvenTree.helpers.current_date() - timedelta(days=days)
@@ -2749,7 +2789,7 @@ class PartPricing(common.models.MetaMixin):
         min_int_cost = None
         max_int_cost = None
 
-        if InvenTreeSetting.get_setting('PART_INTERNAL_PRICE', False, cache=False):
+        if InvenTreeSetting.get_setting('PART_INTERNAL_PRICE', False):
             # Only calculate internal pricing if internal pricing is enabled
             for pb in self.part.internalpricebreaks.all():
                 cost = self.convert(pb.price)
@@ -2868,12 +2908,10 @@ class PartPricing(common.models.MetaMixin):
         max_costs = [self.bom_cost_max, self.purchase_cost_max, self.internal_cost_max]
 
         purchase_history_override = InvenTreeSetting.get_setting(
-            'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER', False, cache=False
+            'PRICING_PURCHASE_HISTORY_OVERRIDES_SUPPLIER', False
         )
 
-        if InvenTreeSetting.get_setting(
-            'PRICING_USE_SUPPLIER_PRICING', True, cache=False
-        ):
+        if InvenTreeSetting.get_setting('PRICING_USE_SUPPLIER_PRICING', True):
             # Add supplier pricing data, *unless* historical pricing information should override
             if self.purchase_cost_min is None or not purchase_history_override:
                 min_costs.append(self.supplier_price_min)
@@ -2881,9 +2919,7 @@ class PartPricing(common.models.MetaMixin):
             if self.purchase_cost_max is None or not purchase_history_override:
                 max_costs.append(self.supplier_price_max)
 
-        if InvenTreeSetting.get_setting(
-            'PRICING_USE_VARIANT_PRICING', True, cache=False
-        ):
+        if InvenTreeSetting.get_setting('PRICING_USE_VARIANT_PRICING', True):
             # Include variant pricing in overall calculations
             min_costs.append(self.variant_cost_min)
             max_costs.append(self.variant_cost_max)
@@ -2910,9 +2946,7 @@ class PartPricing(common.models.MetaMixin):
             if overall_max is None or cost > overall_max:
                 overall_max = cost
 
-        if InvenTreeSetting.get_setting(
-            'PART_BOM_USE_INTERNAL_PRICE', False, cache=False
-        ):
+        if InvenTreeSetting.get_setting('PART_BOM_USE_INTERNAL_PRICE', False):
             # Check if internal pricing should override other pricing
             if self.internal_cost_min is not None:
                 overall_min = self.internal_cost_min
@@ -2992,7 +3026,7 @@ class PartPricing(common.models.MetaMixin):
         max_length=10,
         verbose_name=_('Currency'),
         help_text=_('Currency used to cache pricing calculations'),
-        choices=common.settings.currency_code_mappings(),
+        choices=common.currency.currency_code_mappings(),
     )
 
     scheduled_for_update = models.BooleanField(default=False)
@@ -4257,7 +4291,7 @@ class BomItem(
         """Return the price-range for this BOM item."""
         # get internal price setting
         use_internal = common.models.InvenTreeSetting.get_setting(
-            'PART_BOM_USE_INTERNAL_PRICE', False, cache=False
+            'PART_BOM_USE_INTERNAL_PRICE', False
         )
         prange = self.sub_part.get_price_range(
             self.quantity, internal=use_internal and internal

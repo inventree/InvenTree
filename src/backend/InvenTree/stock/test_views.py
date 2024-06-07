@@ -5,9 +5,9 @@ from django.test import tag
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
-from InvenTree.status_codes import StockStatus
 from InvenTree.unit_test import InvenTreeTestCase
 from stock.models import StockItem, StockLocation
+from stock.status_codes import StockStatus
 from users.models import Owner
 
 
