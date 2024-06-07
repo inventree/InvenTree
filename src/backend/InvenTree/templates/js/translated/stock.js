@@ -1110,11 +1110,8 @@ function adjustStock(action, items, options={}) {
             classes: 'float-right'
         });
 
-        var quantity = item.quantity;
+        let quantityString = '';
 
-        if (item.part_detail.units != null) {
-            quantity += ` ${item.part_detail.units}`;
-        }
 
         var location = locationDetail(item, false);
 
@@ -1122,12 +1119,18 @@ function adjustStock(action, items, options={}) {
             location = item.location_detail.pathstring;
         }
 
-        if (item.serial != null) {
-            quantity = `#${item.serial}`;
+        if (!item.serial) {
+            quantityString = `${item.quantity}`;
+
+            if (item.part_detail?.units) {
+                quantityString += `<small> [${item.part_detail.units}]</small>`;
+            }
+        } else {
+            quantityString = `#${item.serial}`;
         }
 
         if (item.batch) {
-            quantity += ` - <small>{% trans "Batch" %}: ${item.batch}</small>`;
+            quantityString += ` - <small>{% trans "Batch" %}: ${item.batch}</small>`;
         }
 
         var actionInput = '';
@@ -1158,7 +1161,7 @@ function adjustStock(action, items, options={}) {
         html += `
         <tr id='stock_item_${pk}' class='stock-item-row'>
             <td id='part_${pk}'>${thumb} ${item.part_detail.full_name}</td>
-            <td id='stock_${pk}'>${quantity}${status}</td>
+            <td id='stock_${pk}'>${quantityString}${status}</td>
             <td id='location_${pk}'>${location}</td>
             <td id='action_${pk}'>
                 <div id='div_id_${pk}'>
@@ -1941,12 +1944,10 @@ function loadStockTable(table, options) {
         setupFilterList(filterKey, table, filterTarget, {
             download: true,
             report: {
-                url: '{% url "api-stockitem-testreport-list" %}',
-                key: 'item',
+                key: 'stockitem',
             },
             labels: {
-                url: '{% url "api-stockitem-label-list" %}',
-                key: 'item',
+                model_type: 'stockitem',
             },
             singular_name: '{% trans "stock item" %}',
             plural_name: '{% trans "stock items" %}',
@@ -2566,8 +2567,7 @@ function loadStockLocationTable(table, options) {
     setupFilterList(filterKey, table, filterListElement, {
         download: true,
         labels: {
-            url: '{% url "api-stocklocation-label-list" %}',
-            key: 'location'
+            model_type: 'stocklocation',
         },
         singular_name: '{% trans "stock location" %}',
         plural_name: '{% trans "stock locations" %}',

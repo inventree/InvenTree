@@ -213,6 +213,8 @@ class AddressAdmin(ImportExportModelAdmin):
 
     search_fields = ['company', 'country', 'postal_code']
 
+    autocomplete_fields = ['company']
+
 
 class ContactResource(InvenTreeResource):
     """Class for managing Contact data import/export."""
@@ -237,3 +239,5 @@ class ContactAdmin(ImportExportModelAdmin):
     list_display = ('company', 'name', 'role', 'email', 'phone')
 
     search_fields = ['company', 'name', 'email']
+
+    autocomplete_fields = ['company']

@@ -114,6 +114,7 @@ def canAppAccessDatabase(
         'wait_for_db',
         'makemessages',
         'compilemessages',
+        'spectactular',
     ]
 
     if not allow_shell:

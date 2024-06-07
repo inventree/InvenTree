@@ -1,12 +1,13 @@
-import { Anchor, Group, Text } from '@mantine/core';
-import { IconLink, IconPhoto } from '@tabler/icons-react';
+import { Anchor, Group } from '@mantine/core';
 import {
   IconFile,
   IconFileTypeCsv,
   IconFileTypeDoc,
   IconFileTypePdf,
   IconFileTypeXls,
-  IconFileTypeZip
+  IconFileTypeZip,
+  IconLink,
+  IconPhoto
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
@@ -71,7 +72,7 @@ export function AttachmentLink({
   }, [host, attachment, external]);
 
   return (
-    <Group position="left" spacing="sm">
+    <Group justify="left" gap="sm" wrap="nowrap">
       {external ? <IconLink /> : attachmentIcon(attachment)}
       <Anchor href={url} target="_blank" rel="noopener noreferrer">
         {text}

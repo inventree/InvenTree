@@ -1,3 +1,4 @@
+import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { platform, release } from 'node:os';
 import license from 'rollup-plugin-license';
@@ -19,6 +20,7 @@ export default defineConfig({
         plugins: ['macros']
       }
     }),
+    vanillaExtractPlugin(),
     splitVendorChunkPlugin(),
     license({
       sourcemap: true,

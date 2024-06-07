@@ -5,14 +5,15 @@ from django.core.exceptions import ObjectDoesNotExist
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
+import common.currency
 import common.models
 import common.settings
 import company.models
 import order.models
 import part.models
 import stock.models
-from InvenTree.status_codes import PurchaseOrderStatus
 from InvenTree.unit_test import InvenTreeTestCase
+from order.status_codes import PurchaseOrderStatus
 
 
 class PartPricingTests(InvenTreeTestCase):
@@ -179,7 +180,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.internal_cost_min)
         self.assertIsNone(pricing.internal_cost_max)
 
-        currency = common.settings.currency_code_default()
+        currency = common.currency.currency_code_default()
 
         for ii in range(5):
             # Let's add some internal price breaks

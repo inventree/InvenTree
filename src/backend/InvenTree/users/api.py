@@ -3,11 +3,12 @@
 import datetime
 import logging
 
-from django.contrib.auth import get_user, login
+from django.contrib.auth import get_user, login, logout
 from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
+from allauth.account.adapter import get_adapter
 from dj_rest_auth.views import LoginView, LogoutView
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
@@ -17,6 +18,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import InvenTree.helpers
+from common.models import InvenTreeSetting
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     ListAPI,
@@ -216,7 +218,22 @@ class GroupList(ListCreateAPI):
 class Login(LoginView):
     """API view for logging in via API."""
 
-    ...
+    def process_login(self):
+        """Process the login request, ensure that MFA is enforced if required."""
+        # Normal login process
+        ret = super().process_login()
+
+        # Now check if MFA is enforced
+        user = self.request.user
+        adapter = get_adapter(self.request)
+
+        # User requires 2FA or MFA is enforced globally - no logins via API
+        if adapter.has_2fa_enabled(user) or InvenTreeSetting.get_setting(
+            'LOGIN_ENFORCE_MFA'
+        ):
+            logout(self.request)
+            raise exceptions.PermissionDenied('MFA required for this user')
+        return ret
 
 
 @extend_schema_view(

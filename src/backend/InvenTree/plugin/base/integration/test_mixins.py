@@ -10,7 +10,7 @@ from error_report.models import Error
 
 from InvenTree.unit_test import InvenTreeTestCase
 from plugin import InvenTreePlugin
-from plugin.base.integration.mixins import PanelMixin
+from plugin.base.integration.PanelMixin import PanelMixin
 from plugin.helpers import MixinNotImplementedError
 from plugin.mixins import (
     APICallMixin,
@@ -351,7 +351,7 @@ class PanelMixinTests(InvenTreeTestCase):
         """Test that the sample panel plugin is installed."""
         plugins = registry.with_mixin('panel')
 
-        self.assertTrue(len(plugins) == 0)
+        self.assertEqual(len(plugins), 0)
 
         # Now enable the plugin
         registry.set_plugin_state('samplepanel', True)

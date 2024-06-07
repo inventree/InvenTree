@@ -1,19 +1,9 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Badge,
-  Grid,
-  Group,
-  LoadingOverlay,
-  Skeleton,
-  Stack,
-  Text
-} from '@mantine/core';
+import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
   IconChecklist,
-  IconCopy,
   IconDots,
   IconHistory,
   IconInfoCircle,
@@ -25,10 +15,13 @@ import {
 import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -39,11 +32,10 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -59,6 +51,7 @@ import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -68,6 +61,7 @@ import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
+import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -277,7 +271,12 @@ export default function StockDetail() {
       {
         name: 'tracking',
         label: t`Stock Tracking`,
-        icon: <IconHistory />
+        icon: <IconHistory />,
+        content: stockitem.pk ? (
+          <StockTrackingTable itemId={stockitem.pk} />
+        ) : (
+          <Skeleton />
+        )
       },
       {
         name: 'allocations',
@@ -313,7 +312,10 @@ export default function StockDetail() {
         icon: <IconSitemap />,
         hidden: (stockitem?.child_items ?? 0) == 0,
         content: stockitem?.pk ? (
-          <StockItemTable params={{ ancestor: stockitem.pk }} />
+          <StockItemTable
+            tableName="child-stock"
+            params={{ ancestor: stockitem.pk }}
+          />
         ) : (
           <Skeleton />
         )
@@ -336,14 +338,14 @@ export default function StockDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.stock_item_list, id)}
-            data={stockitem.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.stockitem}
+            modelId={stockitem.pk}
+            editable={user.hasChangeRole(UserRoles.stock)}
           />
         )
       }
     ];
-  }, [stockitem, id]);
+  }, [stockitem, id, user]);
 
   const breadcrumbs = useMemo(
     () => [
@@ -375,10 +377,24 @@ export default function StockDetail() {
     initialData: {
       ...stockitem
     },
-    onFormSuccess: (response: any) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.stockitem, response.pk));
-      }
+    follow: true,
+    modelType: ModelType.stockitem
+  });
+
+  const preDeleteContent = useMemo(() => {
+    // TODO: Fill this out with information on the stock item.
+    // e.g. list of child items which would be deleted, etc
+    return undefined;
+  }, [stockitem]);
+
+  const deleteStockItem = useDeleteApiFormModal({
+    url: ApiEndpoints.stock_item_list,
+    pk: stockitem.pk,
+    title: t`Delete Stock Item`,
+    preFormContent: preDeleteContent,
+    onFormSuccess: () => {
+      // Redirect to the part page
+      navigate(getDetailUrl(ModelType.part, stockitem.part));
     }
   });
 
@@ -386,7 +402,10 @@ export default function StockDetail() {
     return {
       items: stockitem,
       model: ModelType.stockitem,
-      refresh: refreshInstance
+      refresh: refreshInstance,
+      filters: {
+        in_stock: true
+      }
     };
   }, [stockitem]);
 
@@ -397,6 +416,7 @@ export default function StockDetail() {
 
   const stockActions = useMemo(
     () => [
+      <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
@@ -410,8 +430,13 @@ export default function StockDetail() {
           })
         ]}
       />,
+      <PrintingActions
+        modelType={ModelType.stockitem}
+        items={[stockitem.pk]}
+        enableReports
+        enableLabels
+      />,
       <ActionDropdown
-        key="operations"
         tooltip={t`Stock Operations`}
         icon={<IconPackages />}
         actions={[
@@ -454,7 +479,6 @@ export default function StockDetail() {
         ]}
       />,
       <ActionDropdown
-        key="stock"
         tooltip={t`Stock Item Actions`}
         icon={<IconDots />}
         actions={[
@@ -467,7 +491,8 @@ export default function StockDetail() {
             onClick: () => editStockItem.open()
           }),
           DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.stock)
+            hidden: !user.hasDeleteRole(UserRoles.stock),
+            onClick: () => deleteStockItem.open()
           })
         ]}
       />
@@ -476,28 +501,46 @@ export default function StockDetail() {
   );
 
   const stockBadges: ReactNode[] = useMemo(() => {
+    let available = (stockitem?.quantity ?? 0) - (stockitem?.allocated ?? 0);
+    available = Math.max(0, available);
+
     return instanceQuery.isLoading
       ? []
       : [
           <DetailsBadge
+            color="yellow"
+            label={t`In Production`}
+            visible={stockitem.is_building}
+          />,
+          <DetailsBadge
             color="blue"
             label={t`Serial Number` + `: ${stockitem.serial}`}
             visible={!!stockitem.serial}
+            key="serial"
           />,
           <DetailsBadge
             color="blue"
             label={t`Quantity` + `: ${stockitem.quantity}`}
             visible={!stockitem.serial}
+            key="quantity"
+          />,
+          <DetailsBadge
+            color="yellow"
+            label={t`Available` + `: ${available}`}
+            visible={!stockitem.serial && available != stockitem.quantity}
+            key="available"
           />,
           <DetailsBadge
             color="blue"
             label={t`Batch Code` + `: ${stockitem.batch}`}
             visible={!!stockitem.batch}
+            key="batch"
           />,
           <StatusRenderer
             status={stockitem.status}
             type={ModelType.stockitem}
             options={{ size: 'lg' }}
+            key="status"
           />
         ];
   }, [stockitem, instanceQuery]);
@@ -505,10 +548,13 @@ export default function StockDetail() {
   return (
     <Stack>
       <LoadingOverlay visible={instanceQuery.isFetching} />
-      <StockLocationTree
+      <NavigationTree
+        title={t`Stock Locations`}
+        modelType={ModelType.stocklocation}
+        endpoint={ApiEndpoints.stock_location_tree}
         opened={treeOpen}
         onClose={() => setTreeOpen(false)}
-        selectedLocation={stockitem?.location}
+        selectedId={stockitem?.location}
       />
       <PageDetail
         title={t`Stock Item`}
@@ -524,6 +570,7 @@ export default function StockDetail() {
       <PanelGroup pageKey="stockitem" panels={stockPanels} />
       {editStockItem.modal}
       {duplicateStockItem.modal}
+      {deleteStockItem.modal}
       {countStockItem.modal}
       {addStockItem.modal}
       {removeStockItem.modal}

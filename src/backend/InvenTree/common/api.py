@@ -127,6 +127,7 @@ class CurrencyExchangeView(APIView):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = None
 
+    @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
     def get(self, request, format=None):
         """Return information on available currency conversions."""
         # Extract a list of all available rates
@@ -356,6 +357,22 @@ class NotificationMessageMixin:
     serializer_class = common.serializers.NotificationMessageSerializer
     permission_classes = [UserSettingsPermissions]
 
+    def get_queryset(self):
+        """Return prefetched queryset."""
+        queryset = (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                'source_content_type',
+                'source_object',
+                'target_content_type',
+                'target_object',
+                'user',
+            )
+        )
+
+        return queryset
+
 
 class NotificationList(NotificationMessageMixin, BulkDeleteMixin, ListAPI):
     """List view for all notifications of the current user."""
@@ -461,6 +478,10 @@ class NotesImageList(ListCreateAPI):
     queryset = common.models.NotesImage.objects.all()
     serializer_class = common.serializers.NotesImageSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    search_fields = ['user', 'model_type', 'model_id']
 
     def perform_create(self, serializer):
         """Create (upload) a new notes image."""

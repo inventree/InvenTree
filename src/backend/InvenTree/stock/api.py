@@ -1,7 +1,8 @@
 """JSON API for the Stock app."""
 
+import json
 from collections import OrderedDict
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
@@ -13,7 +14,8 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
 from drf_spectacular.utils import extend_schema_field
-from rest_framework import status
+from rest_framework import permissions, status
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import ValidationError
 
@@ -33,7 +35,7 @@ from InvenTree.api import (
     MetadataView,
 )
 from InvenTree.filters import (
-    ORDER_FILTER,
+    ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
@@ -45,7 +47,6 @@ from InvenTree.helpers import (
     is_ajax,
     isNull,
     str2bool,
-    str2int,
 )
 from InvenTree.mixins import (
     CreateAPI,
@@ -55,7 +56,6 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.status_codes import StockHistoryCode, StockStatus
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder, SalesOrderAllocation
 from order.serializers import (
     PurchaseOrderSerializer,
@@ -65,6 +65,7 @@ from order.serializers import (
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
 from stock.admin import LocationResource, StockItemResource
+from stock.generators import generate_batch_code, generate_serial_number
 from stock.models import (
     StockItem,
     StockItemAttachment,
@@ -73,6 +74,39 @@ from stock.models import (
     StockLocation,
     StockLocationType,
 )
+from stock.status_codes import StockHistoryCode, StockStatus
+
+
+class GenerateBatchCode(GenericAPIView):
+    """API endpoint for generating batch codes."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StockSerializers.GenerateBatchCodeSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Generate a new batch code."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = {'batch_code': generate_batch_code(**serializer.validated_data)}
+
+        return Response(data, status=status.HTTP_201_CREATED)
+
+
+class GenerateSerialNumber(GenericAPIView):
+    """API endpoint for generating serial numbers."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StockSerializers.GenerateSerialNumberSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Generate a new serial number."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = {'serial_number': generate_serial_number(**serializer.validated_data)}
+
+        return Response(data, status=status.HTTP_201_CREATED)
 
 
 class StockDetail(RetrieveUpdateDestroyAPI):
@@ -395,12 +429,14 @@ class StockLocationTree(ListAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationTreeSerializer
 
-    filter_backends = ORDER_FILTER
+    filter_backends = ORDER_FILTER_ALIAS
 
     ordering_fields = ['level', 'name', 'sublocations']
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
+
+    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationTree endpoint."""
@@ -1054,36 +1090,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
         filename = f'InvenTree_StockItems_{InvenTree.helpers.current_date().strftime("%d-%b-%Y")}.{export_format}'
 
         return DownloadFile(filedata, filename)
-
-    def list(self, request, *args, **kwargs):
-        """Override the 'list' method, as the StockLocation objects are very expensive to serialize.
-
-        So, we fetch and serialize the required StockLocation objects only as required.
-        """
-        queryset = self.filter_queryset(self.get_queryset())
-
-        page = self.paginate_queryset(queryset)
-
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-        else:
-            serializer = self.get_serializer(queryset, many=True)
-
-        data = serializer.data
-
-        """
-        Determine the response type based on the request.
-        a) For HTTP requests (e.g. via the browsable API) return a DRF response
-        b) For AJAX requests, simply return a JSON rendered response.
-
-        Note: b) is about 100x quicker than a), because the DRF framework adds a lot of cruft
-        """
-
-        if page is not None:
-            return self.get_paginated_response(data)
-        elif is_ajax(request):
-            return JsonResponse(data, safe=False)
-        return Response(data)
 
     def get_queryset(self, *args, **kwargs):
         """Annotate queryset before returning."""

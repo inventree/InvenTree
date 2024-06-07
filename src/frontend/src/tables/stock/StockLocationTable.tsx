@@ -1,13 +1,11 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { stockLocationFields } from '../../forms/StockForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -28,8 +26,6 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   const table = useTable('stocklocation');
   const user = useUserState();
 
-  const navigate = useNavigate();
-
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -39,10 +35,12 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
       },
       {
         name: 'structural',
+        label: t`structural`,
         description: t`Show structural locations`
       },
       {
         name: 'external',
+        label: t`external`,
         description: t`Show external locations`
       },
       {
@@ -89,13 +87,9 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     initialData: {
       parent: parentId
     },
-    onFormSuccess(data: any) {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.stocklocation, data.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.stocklocation,
+    table: table
   });
 
   const [selectedLocation, setSelectedLocation] = useState<number>(-1);
@@ -146,7 +140,10 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
         tableState={table}
         columns={tableColumns}
         props={{
+          enableSelection: true,
           enableDownload: true,
+          enableLabels: true,
+          enableReports: true,
           params: {
             parent: parentId
           },

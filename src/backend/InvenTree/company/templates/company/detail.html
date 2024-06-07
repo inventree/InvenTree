@@ -305,6 +305,8 @@
             '{% url "api-company-detail" company.pk %}',
             {
                 editable: true,
+                model_type: "company",
+                model_id: {{ company.pk }},
             }
         );
     });

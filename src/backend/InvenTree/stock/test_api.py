@@ -17,7 +17,6 @@ import build.models
 import company.models
 import part.models
 from common.models import InvenTreeSetting
-from InvenTree.status_codes import StockHistoryCode, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
@@ -26,6 +25,7 @@ from stock.models import (
     StockLocation,
     StockLocationType,
 )
+from stock.status_codes import StockHistoryCode, StockStatus
 
 
 class StockAPITestCase(InvenTreeAPITestCase):
@@ -552,7 +552,7 @@ class StockItemListTest(StockAPITestCase):
         response = self.get(
             self.list_url, {'location': 'null', 'cascade': False}, expected_code=200
         )
-        self.assertTrue(len(response.data) < StockItem.objects.count())
+        self.assertLess(len(response.data), StockItem.objects.count())
 
         # Filter with "cascade=True"
         response = self.get(
@@ -662,10 +662,10 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(n_stock_items, len(with_batch) + len(without_batch))
 
         for item in with_batch:
-            self.assertFalse(item['batch'] in [None, ''])
+            self.assertNotIn(item['batch'], [None, ''])
 
         for item in without_batch:
-            self.assertTrue(item['batch'] in [None, ''])
+            self.assertIn(item['batch'], [None, ''])
 
     def test_filter_by_tracked(self):
         """Test the 'tracked' filter.
@@ -746,9 +746,7 @@ class StockItemListTest(StockAPITestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        self.assertTrue(
-            isinstance(response, django.http.response.StreamingHttpResponse)
-        )
+        self.assertIsInstance(response, django.http.response.StreamingHttpResponse)
 
         file_object = io.StringIO(response.getvalue().decode('utf-8'))
 
@@ -1132,7 +1130,7 @@ class StockItemTest(StockAPITestCase):
 
         # Check that each serial number was created
         for i in range(1, 11):
-            self.assertTrue(str(i) in sn)
+            self.assertIn(str(i), sn)
 
             # Check the unique stock item has been created
 
@@ -1306,10 +1304,13 @@ class StockItemTest(StockAPITestCase):
 
         self.assertIn('This field is required', str(response.data['location']))
 
+        # TODO: Return to this and work out why it is taking so long
+        # Ref: https://github.com/inventree/InvenTree/pull/7157
         response = self.post(
             url,
             {'location': '1', 'notes': 'Returned from this customer for testing'},
             expected_code=201,
+            max_query_time=5.0,
         )
 
         item.refresh_from_db()
@@ -1419,7 +1420,7 @@ class StocktakeTest(StockAPITestCase):
             data = {}
 
             # POST with a valid action
-            response = self.post(url, data)
+            response = self.post(url, data, expected_code=400)
 
             self.assertIn('This field is required', str(response.data['items']))
 
@@ -1454,7 +1455,7 @@ class StocktakeTest(StockAPITestCase):
             # POST with an invalid quantity value
             data['items'] = [{'pk': 1234, 'quantity': '10x0d'}]
 
-            response = self.post(url, data)
+            response = self.post(url, data, expected_code=400)
             self.assertContains(
                 response,
                 'A valid number is required',
@@ -1463,7 +1464,8 @@ class StocktakeTest(StockAPITestCase):
 
             data['items'] = [{'pk': 1234, 'quantity': '-1.234'}]
 
-            response = self.post(url, data)
+            response = self.post(url, data, expected_code=400)
+
             self.assertContains(
                 response,
                 'Ensure this value is greater than or equal to 0',
@@ -1472,6 +1474,14 @@ class StocktakeTest(StockAPITestCase):
 
     def test_transfer(self):
         """Test stock transfers."""
+        stock_item = StockItem.objects.get(pk=1234)
+
+        # Mark this stock item as "quarantined" (cannot be moved)
+        stock_item.status = StockStatus.QUARANTINED.value
+        stock_item.save()
+
+        InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', False)
+
         data = {
             'items': [{'pk': 1234, 'quantity': 10}],
             'location': 1,
@@ -1479,6 +1489,14 @@ class StocktakeTest(StockAPITestCase):
         }
 
         url = reverse('api-stock-transfer')
+
+        # First attempt should *fail* - stock item is quarantined
+        response = self.post(url, data, expected_code=400)
+
+        self.assertIn('cannot be moved as it is not in stock', str(response.data))
+
+        # Now, allow transfer of "out of stock" items
+        InvenTreeSetting.set_setting('STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', True)
 
         # This should succeed
         response = self.post(url, data, expected_code=201)

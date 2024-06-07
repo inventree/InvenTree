@@ -21,7 +21,6 @@ from sesame.views import LoginView
 import build.api
 import common.api
 import company.api
-import label.api
 import machine.api
 import order.api
 import part.api
@@ -86,10 +85,25 @@ apipatterns = [
     path('part/', include(part.api.part_api_urls)),
     path('bom/', include(part.api.bom_api_urls)),
     path('company/', include(company.api.company_api_urls)),
+    path(
+        'generate/',
+        include([
+            path(
+                'batch-code/',
+                stock.api.GenerateBatchCode.as_view(),
+                name='api-generate-batch-code',
+            ),
+            path(
+                'serial-number/',
+                stock.api.GenerateSerialNumber.as_view(),
+                name='api-generate-serial-number',
+            ),
+        ]),
+    ),
     path('stock/', include(stock.api.stock_api_urls)),
     path('build/', include(build.api.build_api_urls)),
     path('order/', include(order.api.order_api_urls)),
-    path('label/', include(label.api.label_api_urls)),
+    path('label/', include(report.api.label_api_urls)),
     path('report/', include(report.api.report_api_urls)),
     path('machine/', include(machine.api.machine_api_urls)),
     path('user/', include(users.api.user_urls)),

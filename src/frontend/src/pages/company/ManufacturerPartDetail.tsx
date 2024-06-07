@@ -10,6 +10,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -25,8 +26,10 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
-import { getDetailUrl } from '../../functions/urls';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -189,15 +192,30 @@ export default function ManufacturerPartDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const duplicateManufacturerPart = useCreateApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    title: t`Add Manufacturer Part`,
+    fields: editManufacturerPartFields,
+    initialData: {
+      ...manufacturerPart
+    },
+    follow: true,
+    modelType: ModelType.manufacturerpart
+  });
+
   const manufacturerPartActions = useMemo(() => {
     return [
+      <AdminButton
+        model={ModelType.manufacturerpart}
+        pk={manufacturerPart.pk}
+      />,
       <ActionDropdown
-        key="part"
         tooltip={t`Manufacturer Part Actions`}
         icon={<IconDots />}
         actions={[
           DuplicateItemAction({
-            hidden: !user.hasAddRole(UserRoles.purchase_order)
+            hidden: !user.hasAddRole(UserRoles.purchase_order),
+            onClick: () => duplicateManufacturerPart.open()
           }),
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
@@ -209,7 +227,7 @@ export default function ManufacturerPartDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, manufacturerPart]);
 
   const breadcrumbs = useMemo(() => {
     return [
@@ -227,7 +245,7 @@ export default function ManufacturerPartDetail() {
   return (
     <>
       {editManufacturerPart.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
         <PageDetail
           title={t`ManufacturerPart`}

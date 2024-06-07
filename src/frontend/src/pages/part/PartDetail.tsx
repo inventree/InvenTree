@@ -1,5 +1,13 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import {
+  Alert,
+  Divider,
+  Grid,
+  LoadingOverlay,
+  Skeleton,
+  Stack,
+  Table
+} from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -27,11 +35,14 @@ import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PartIcons } from '../../components/details/PartIcons';
+import NotesEditor from '../../components/editors/NotesEditor';
+import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -42,10 +53,9 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -60,6 +70,7 @@ import { InvenTreeIcon } from '../../functions/icons';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -85,8 +96,8 @@ import PartPricingPanel from './PartPricingPanel';
 export default function PartDetail() {
   const { id } = useParams();
 
-  const user = useUserState();
   const navigate = useNavigate();
+  const user = useUserState();
 
   const [treeOpen, setTreeOpen] = useState(false);
 
@@ -191,15 +202,16 @@ export default function PartDetail() {
     let tr: DetailsField[] = [
       {
         type: 'string',
-        name: 'unallocated_stock',
-        unit: true,
-        label: t`Available Stock`
-      },
-      {
-        type: 'string',
         name: 'total_in_stock',
         unit: true,
         label: t`In Stock`
+      },
+      {
+        type: 'string',
+        name: 'unallocated_stock',
+        unit: true,
+        label: t`Available Stock`,
+        hidden: part.total_in_stock == part.unallocated_stock
       },
       {
         type: 'string',
@@ -221,10 +233,7 @@ export default function PartDetail() {
         total: part.required_for_build_orders,
         progress: part.allocated_to_build_orders,
         label: t`Allocated to Build Orders`,
-        hidden:
-          !part.assembly ||
-          (part.allocated_to_build_orders <= 0 &&
-            part.required_for_build_orders <= 0)
+        hidden: !part.component || part.required_for_build_orders <= 0
       },
       {
         type: 'progressbar',
@@ -232,10 +241,7 @@ export default function PartDetail() {
         total: part.required_for_sales_orders,
         progress: part.allocated_to_sales_orders,
         label: t`Allocated to Sales Orders`,
-        hidden:
-          !part.salable ||
-          (part.allocated_to_sales_orders <= 0 &&
-            part.required_for_sales_orders <= 0)
+        hidden: !part.salable || part.required_for_sales_orders <= 0
       },
       {
         type: 'string',
@@ -307,7 +313,8 @@ export default function PartDetail() {
         name: 'creation_user',
         label: t`Created By`,
         badge: 'user',
-        icon: 'user'
+        icon: 'user',
+        hidden: !part.creation_user
       },
       {
         type: 'string',
@@ -447,10 +454,14 @@ export default function PartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <Stack spacing="xs">
-              <table>
-                <PartIcons part={part} />
-              </table>
+            <Stack gap="xs">
+              <Table>
+                <Table.Tbody>
+                  <Table.Tr>
+                    <PartIcons part={part} />
+                  </Table.Tr>
+                </Table.Tbody>
+              </Table>
               <DetailsTable fields={tl} item={part} />
             </Stack>
           </Grid.Col>
@@ -483,6 +494,8 @@ export default function PartDetail() {
         icon: <IconPackages />,
         content: part.pk && (
           <StockItemTable
+            tableName="part-stock"
+            allowAdd
             params={{
               part: part.pk
             }}
@@ -613,14 +626,14 @@ export default function PartDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.part_list, part.pk)}
-            data={part.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.part}
+            modelId={part.pk}
+            editable={user.hasChangeRole(UserRoles.part)}
           />
         )
       }
     ];
-  }, [id, part]);
+  }, [id, part, user]);
 
   const breadcrumbs = useMemo(
     () => [
@@ -640,26 +653,41 @@ export default function PartDetail() {
 
     return [
       <DetailsBadge
-        label={t`In Stock` + `: ${part.in_stock}`}
+        label={t`In Stock` + `: ${part.total_in_stock}`}
         color={part.in_stock >= part.minimum_stock ? 'green' : 'orange'}
         visible={part.in_stock > 0}
+        key="in_stock"
+      />,
+      <DetailsBadge
+        label={t`Available` + `: ${part.unallocated_stock}`}
+        color="yellow"
+        key="available_stock"
+        visible={part.unallocated_stock != part.total_in_stock}
       />,
       <DetailsBadge
         label={t`No Stock`}
         color="red"
         visible={part.in_stock == 0}
+        key="no_stock"
       />,
       <DetailsBadge
         label={t`On Order` + `: ${part.ordering}`}
         color="blue"
         visible={part.on_order > 0}
+        key="on_order"
       />,
       <DetailsBadge
         label={t`In Production` + `: ${part.building}`}
         color="blue"
         visible={part.building > 0}
+        key="in_production"
       />,
-      <DetailsBadge label={t`Inactive`} color="red" visible={!part.active} />
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={part.active == false}
+        key="inactive"
+      />
     ];
   }, [part, instanceQuery]);
 
@@ -680,18 +708,38 @@ export default function PartDetail() {
     initialData: {
       ...part
     },
-    onFormSuccess: (response: any) => {
-      if (response.pk) {
-        navigate(getDetailUrl(ModelType.part, response.pk));
+    follow: true,
+    modelType: ModelType.part
+  });
+
+  const deletePart = useDeleteApiFormModal({
+    url: ApiEndpoints.part_list,
+    pk: part.pk,
+    title: t`Delete Part`,
+    onFormSuccess: () => {
+      if (part.category) {
+        navigate(getDetailUrl(ModelType.partcategory, part.category));
+      } else {
+        navigate('/part/');
       }
-    }
+    },
+    preFormContent: (
+      <Alert color="red" title={t`Deleting this part cannot be reversed`}>
+        <Stack gap="xs">
+          <Thumbnail src={part.thumbnail ?? part.image} text={part.full_name} />
+        </Stack>
+      </Alert>
+    )
   });
 
   const stockActionProps: StockOperationProps = useMemo(() => {
     return {
       pk: part.pk,
       model: ModelType.part,
-      refresh: refreshInstance
+      refresh: refreshInstance,
+      filters: {
+        in_stock: true
+      }
     };
   }, [part]);
 
@@ -700,6 +748,7 @@ export default function PartDetail() {
 
   const partActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.part} pk={part.pk} />,
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
@@ -710,9 +759,9 @@ export default function PartDetail() {
             hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
           })
         ]}
+        key="action_dropdown"
       />,
       <ActionDropdown
-        key="stock"
         tooltip={t`Stock Actions`}
         icon={<IconPackages />}
         actions={[
@@ -741,7 +790,6 @@ export default function PartDetail() {
         ]}
       />,
       <ActionDropdown
-        key="part"
         tooltip={t`Part Actions`}
         icon={<IconDots />}
         actions={[
@@ -754,7 +802,9 @@ export default function PartDetail() {
             onClick: () => editPart.open()
           }),
           DeleteItemAction({
-            hidden: part?.active || !user.hasDeleteRole(UserRoles.part)
+            hidden: !user.hasDeleteRole(UserRoles.part),
+            disabled: part.active,
+            onClick: () => deletePart.open()
           })
         ]}
       />
@@ -765,14 +815,18 @@ export default function PartDetail() {
     <>
       {duplicatePart.modal}
       {editPart.modal}
-      <Stack spacing="xs">
+      {deletePart.modal}
+      <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PartCategoryTree
+        <NavigationTree
+          title={t`Part Categories`}
+          modelType={ModelType.partcategory}
+          endpoint={ApiEndpoints.category_tree}
           opened={treeOpen}
           onClose={() => {
             setTreeOpen(false);
           }}
-          selectedCategory={part?.category}
+          selectedId={part?.category}
         />
         <PageDetail
           title={t`Part` + ': ' + part.full_name}

@@ -11,7 +11,6 @@ database setup in this file.
 
 import logging
 import os
-import socket
 import sys
 from pathlib import Path
 
@@ -21,10 +20,10 @@ from django.core.validators import URLValidator
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
-import moneyed
 import pytz
 from dotenv import load_dotenv
 
+from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
@@ -193,7 +192,6 @@ INSTALLED_APPS = [
     'common.apps.CommonConfig',
     'company.apps.CompanyConfig',
     'plugin.apps.PluginAppConfig',  # Plugin app runs before all apps that depend on the isPluginRegistryLoaded function
-    'label.apps.LabelConfig',
     'order.apps.OrderConfig',
     'part.apps.PartConfig',
     'report.apps.ReportConfig',
@@ -274,17 +272,18 @@ if DEBUG and get_boolean_setting(
     'INVENTREE_DEBUG_QUERYCOUNT', 'debug_querycount', False
 ):
     MIDDLEWARE.append('querycount.middleware.QueryCountMiddleware')
+    logger.debug('Running with debug_querycount middleware enabled')
 
 QUERYCOUNT = {
     'THRESHOLDS': {
         'MEDIUM': 50,
         'HIGH': 200,
-        'MIN_TIME_TO_LOG': 0,
-        'MIN_QUERY_COUNT_TO_LOG': 0,
+        'MIN_TIME_TO_LOG': 0.1,
+        'MIN_QUERY_COUNT_TO_LOG': 25,
     },
     'IGNORE_REQUEST_PATTERNS': ['^(?!\/(api)?(plugin)?\/).*'],
     'IGNORE_SQL_PATTERNS': [],
-    'DISPLAY_DUPLICATES': 3,
+    'DISPLAY_DUPLICATES': 1,
     'RESPONSE_HEADER': 'X-Django-Query-Count',
 }
 
@@ -434,12 +433,7 @@ ROOT_URLCONF = 'InvenTree.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            BASE_DIR.joinpath('templates'),
-            # Allow templates in the reporting directory to be accessed
-            MEDIA_ROOT.joinpath('report'),
-            MEDIA_ROOT.joinpath('label'),
-        ],
+        'DIRS': [BASE_DIR.joinpath('templates'), MEDIA_ROOT.joinpath('report')],
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -809,38 +803,9 @@ if TRACING_ENABLED:  # pragma: no cover
 # endregion
 
 # Cache configuration
-cache_host = get_setting('INVENTREE_CACHE_HOST', 'cache.host', None)
-cache_port = get_setting('INVENTREE_CACHE_PORT', 'cache.port', '6379', typecast=int)
+GLOBAL_CACHE_ENABLED = is_global_cache_enabled()
 
-if cache_host:  # pragma: no cover
-    # We are going to rely upon a possibly non-localhost for our cache,
-    # so don't wait too long for the cache as nothing in the cache should be
-    # irreplaceable.
-    _cache_options = {
-        'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        'SOCKET_CONNECT_TIMEOUT': int(os.getenv('CACHE_CONNECT_TIMEOUT', '2')),
-        'SOCKET_TIMEOUT': int(os.getenv('CACHE_SOCKET_TIMEOUT', '2')),
-        'CONNECTION_POOL_KWARGS': {
-            'socket_keepalive': config.is_true(os.getenv('CACHE_TCP_KEEPALIVE', '1')),
-            'socket_keepalive_options': {
-                socket.TCP_KEEPCNT: int(os.getenv('CACHE_KEEPALIVES_COUNT', '5')),
-                socket.TCP_KEEPIDLE: int(os.getenv('CACHE_KEEPALIVES_IDLE', '1')),
-                socket.TCP_KEEPINTVL: int(os.getenv('CACHE_KEEPALIVES_INTERVAL', '1')),
-                socket.TCP_USER_TIMEOUT: int(
-                    os.getenv('CACHE_TCP_USER_TIMEOUT', '1000')
-                ),
-            },
-        },
-    }
-    CACHES = {
-        'default': {
-            'BACKEND': 'django_redis.cache.RedisCache',
-            'LOCATION': f'redis://{cache_host}:{cache_port}/0',
-            'OPTIONS': _cache_options,
-        }
-    }
-else:
-    CACHES = {'default': {'BACKEND': 'django.core.cache.backends.locmem.LocMemCache'}}
+CACHES = {'default': get_cache_config(GLOBAL_CACHE_ENABLED)}
 
 _q_worker_timeout = int(
     get_setting('INVENTREE_BACKGROUND_TIMEOUT', 'background.timeout', 90)
@@ -871,7 +836,7 @@ Q_CLUSTER = {
 if SENTRY_ENABLED and SENTRY_DSN:
     Q_CLUSTER['error_reporter'] = {'sentry': {'dsn': SENTRY_DSN}}
 
-if cache_host:  # pragma: no cover
+if GLOBAL_CACHE_ENABLED:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
     # as well
     Q_CLUSTER['django_redis'] = 'worker'
@@ -938,27 +903,8 @@ if get_boolean_setting('TEST_TRANSLATIONS', default_value=False):  # pragma: no 
     LANG_INFO = dict(django.conf.locale.LANG_INFO, **EXTRA_LANG_INFO)
     django.conf.locale.LANG_INFO = LANG_INFO
 
-# Currencies available for use
-CURRENCIES = get_setting(
-    'INVENTREE_CURRENCIES',
-    'currencies',
-    ['AUD', 'CAD', 'CNY', 'EUR', 'GBP', 'JPY', 'NZD', 'USD'],
-    typecast=list,
-)
-
-# Ensure that at least one currency value is available
-if len(CURRENCIES) == 0:  # pragma: no cover
-    logger.warning('No currencies selected: Defaulting to USD')
-    CURRENCIES = ['USD']
-
 # Maximum number of decimal places for currency rendering
 CURRENCY_DECIMAL_PLACES = 6
-
-# Check that each provided currency is supported
-for currency in CURRENCIES:
-    if currency not in moneyed.CURRENCIES:  # pragma: no cover
-        logger.error("Currency code '%s' is not supported", currency)
-        sys.exit(1)
 
 # Custom currency exchange backend
 EXCHANGE_BACKEND = 'InvenTree.exchange.InvenTreeExchange'
@@ -1022,8 +968,12 @@ if SITE_URL:
     logger.info('Using Site URL: %s', SITE_URL)
 
     # Check that the site URL is valid
-    validator = URLValidator()
-    validator(SITE_URL)
+    try:
+        validator = URLValidator()
+        validator(SITE_URL)
+    except Exception:
+        print(f"Invalid SITE_URL value: '{SITE_URL}'. InvenTree server cannot start.")
+        sys.exit(-1)
 
 # Enable or disable multi-site framework
 SITE_MULTI = get_boolean_setting('INVENTREE_SITE_MULTI', 'site_multi', False)
@@ -1090,26 +1040,44 @@ if SITE_URL and SITE_URL not in CSRF_TRUSTED_ORIGINS:
 if DEBUG:
     for origin in [
         'http://localhost',
-        'http://*.localhost' 'http://*localhost:8000',
+        'http://*.localhost',
+        'http://*localhost:8000',
         'http://*localhost:5173',
     ]:
         if origin not in CSRF_TRUSTED_ORIGINS:
             CSRF_TRUSTED_ORIGINS.append(origin)
 
-if not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0:
-    if isInMainThread():
-        # Server thread cannot run without CSRF_TRUSTED_ORIGINS
-        logger.error(
-            'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
-        )
-        sys.exit(-1)
+if (
+    not TESTING and len(CSRF_TRUSTED_ORIGINS) == 0 and isInMainThread()
+):  # pragma: no cover
+    # Server thread cannot run without CSRF_TRUSTED_ORIGINS
+    logger.error(
+        'No CSRF_TRUSTED_ORIGINS specified. Please provide a list of trusted origins, or specify INVENTREE_SITE_URL'
+    )
+    sys.exit(-1)
+
+COOKIE_MODE = (
+    str(get_setting('INVENTREE_COOKIE_SAMESITE', 'cookie.samesite', 'None'))
+    .lower()
+    .strip()
+)
+
+valid_cookie_modes = {'lax': 'Lax', 'strict': 'Strict', 'none': None, 'null': None}
+
+if COOKIE_MODE not in valid_cookie_modes.keys():
+    logger.error('Invalid cookie samesite mode: %s', COOKIE_MODE)
+    sys.exit(-1)
+
+COOKIE_MODE = valid_cookie_modes[COOKIE_MODE.lower()]
 
 # Additional CSRF settings
 CSRF_HEADER_NAME = 'HTTP_X_CSRFTOKEN'
 CSRF_COOKIE_NAME = 'csrftoken'
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SECURE = True
-SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = COOKIE_MODE
+SESSION_COOKIE_SAMESITE = COOKIE_MODE
+SESSION_COOKIE_SECURE = get_boolean_setting(
+    'INVENTREE_SESSION_COOKIE_SECURE', 'cookie.secure', False
+)
 
 USE_X_FORWARDED_HOST = get_boolean_setting(
     'INVENTREE_USE_X_FORWARDED_HOST',

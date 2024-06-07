@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from common.models import InvenTreeSetting
 from common.notifications import storage
-from plugin import registry
+from plugin.registry import registry
 
 register = template.Library()
 
