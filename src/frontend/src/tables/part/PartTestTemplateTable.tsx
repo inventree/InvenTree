@@ -117,6 +117,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       required: {},
       requires_value: {},
       requires_attachment: {},
+      choices: {},
       enabled: {}
     };
   }, [user]);
