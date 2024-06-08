@@ -150,6 +150,9 @@ def currency_exchange_plugins() -> list:
     except Exception:
         plugs = []
 
+    if len(plugs) == 0:
+        return None
+
     return [('', _('No plugin'))] + [(plug.slug, plug.human_name) for plug in plugs]
 
 

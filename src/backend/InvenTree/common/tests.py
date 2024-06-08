@@ -274,11 +274,13 @@ class SettingsTest(InvenTreeTestCase):
                 print(f"run_settings_check failed for user setting '{key}'")
                 raise exc
 
-    @override_settings(SITE_URL=None)
+    @override_settings(SITE_URL=None, PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
     def test_defaults(self):
         """Populate the settings with default values."""
         for key in InvenTreeSetting.SETTINGS.keys():
             value = InvenTreeSetting.get_setting_default(key)
+
+            print('setting:', key, '->', value)
 
             InvenTreeSetting.set_setting(key, value, self.user)
 
