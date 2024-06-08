@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-05-23 11:38\n"
+"PO-Revision-Date: 2024-06-04 12:39\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -48,12 +48,12 @@ msgstr ""
 
 #: src/components/buttons/PrintingActions.tsx:107
 #: src/components/buttons/PrintingActions.tsx:144
+#: src/components/editors/NotesEditor.tsx:65
+#: src/components/editors/NotesEditor.tsx:160
 #: src/components/forms/ApiForm.tsx:506
 #: src/components/forms/fields/ApiFormField.tsx:295
 #: src/components/modals/LicenseModal.tsx:75
 #: src/components/nav/SearchDrawer.tsx:413
-#: src/components/widgets/MarkdownEditor.tsx:107
-#: src/components/widgets/MarkdownEditor.tsx:153
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 #: src/pages/part/PartPricingPanel.tsx:71
@@ -207,7 +207,7 @@ msgstr "Az alkatrész nem aktív"
 
 #: src/components/details/PartIcons.tsx:34
 #: src/components/render/Plugin.tsx:17
-#: src/pages/company/CompanyDetail.tsx:310
+#: src/pages/company/CompanyDetail.tsx:314
 #: src/pages/company/SupplierPartDetail.tsx:305
 #: src/pages/part/PartDetail.tsx:686
 msgid "Inactive"
@@ -247,6 +247,35 @@ msgstr "Virtuális (nem kézzelfogható alkatrész)"
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Virtuális"
+
+#: src/components/editors/NotesEditor.tsx:66
+msgid "Image upload failed"
+msgstr ""
+
+#: src/components/editors/NotesEditor.tsx:151
+#: src/components/forms/ApiForm.tsx:430
+msgid "Success"
+msgstr "Siker"
+
+#: src/components/editors/NotesEditor.tsx:152
+msgid "Notes saved successfully"
+msgstr ""
+
+#: src/components/editors/NotesEditor.tsx:161
+msgid "Failed to save notes"
+msgstr "Megjegyzések mentése nem sikerült"
+
+#: src/components/editors/NotesEditor.tsx:193
+msgid "Preview Notes"
+msgstr ""
+
+#: src/components/editors/NotesEditor.tsx:193
+msgid "Edit Notes"
+msgstr ""
+
+#: src/components/editors/NotesEditor.tsx:207
+msgid "Save Notes"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
@@ -333,11 +362,6 @@ msgstr "Hiba a sablon megjelenítésekor"
 #: src/functions/forms.tsx:259
 msgid "Form Error"
 msgstr "Form hiba"
-
-#: src/components/forms/ApiForm.tsx:430
-#: src/components/widgets/MarkdownEditor.tsx:145
-msgid "Success"
-msgstr "Siker"
 
 #: src/components/forms/ApiForm.tsx:487
 #~ msgid "Form Errors Exist"
@@ -551,7 +575,6 @@ msgid "Add Host"
 msgstr "Kiszolgáló hozzáadása"
 
 #: src/components/forms/HostOptionsForm.tsx:90
-#: src/components/widgets/MarkdownEditor.tsx:72
 msgid "Save"
 msgstr "Mentés"
 
@@ -967,7 +990,7 @@ msgstr "Fiókbeállítások"
 
 #: src/components/nav/MainMenu.tsx:57
 #: src/defaults/menuItems.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:295
+#: src/pages/Index/Settings/SystemSettings.tsx:296
 msgid "System Settings"
 msgstr "Rendszerbeállítások"
 
@@ -1109,7 +1132,7 @@ msgstr "Alkatrész"
 #: src/components/render/ModelType.tsx:23
 #: src/defaults/links.tsx:28
 #: src/defaults/menuItems.tsx:33
-#: src/pages/Index/Settings/SystemSettings.tsx:167
+#: src/pages/Index/Settings/SystemSettings.tsx:168
 #: src/pages/part/CategoryDetail.tsx:110
 #: src/pages/part/CategoryDetail.tsx:235
 #: src/pages/part/CategoryDetail.tsx:265
@@ -1160,7 +1183,7 @@ msgid "Part Category"
 msgstr "Alkatrész kategória"
 
 #: src/components/render/ModelType.tsx:64
-#: src/pages/Index/Settings/SystemSettings.tsx:162
+#: src/pages/Index/Settings/SystemSettings.tsx:163
 #: src/pages/part/CategoryDetail.tsx:249
 #: src/pages/part/CategoryDetail.tsx:282
 #: src/pages/part/PartDetail.tsx:822
@@ -1227,7 +1250,7 @@ msgid "Build Lines"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:117
-#: src/pages/company/CompanyDetail.tsx:323
+#: src/pages/company/CompanyDetail.tsx:327
 msgid "Company"
 msgstr "Cég"
 
@@ -1257,7 +1280,7 @@ msgid "Purchase Order"
 msgstr "Beszerzési rendelés"
 
 #: src/components/render/ModelType.tsx:134
-#: src/pages/Index/Settings/SystemSettings.tsx:243
+#: src/pages/Index/Settings/SystemSettings.tsx:244
 #: src/pages/company/CompanyDetail.tsx:192
 #: src/pages/company/SupplierPartDetail.tsx:224
 #: src/pages/part/PartDetail.tsx:573
@@ -1282,7 +1305,7 @@ msgid "Sales Order"
 msgstr "Vevői rendelés"
 
 #: src/components/render/ModelType.tsx:148
-#: src/pages/Index/Settings/SystemSettings.tsx:258
+#: src/pages/Index/Settings/SystemSettings.tsx:259
 #: src/pages/company/CompanyDetail.tsx:212
 #: src/pages/part/PartDetail.tsx:579
 #: src/pages/sales/SalesIndex.tsx:21
@@ -1304,7 +1327,7 @@ msgid "Return Order"
 msgstr "Visszavétel"
 
 #: src/components/render/ModelType.tsx:164
-#: src/pages/Index/Settings/SystemSettings.tsx:274
+#: src/pages/Index/Settings/SystemSettings.tsx:275
 #: src/pages/company/CompanyDetail.tsx:219
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
@@ -1385,7 +1408,7 @@ msgstr "Szállítmány"
 #: src/components/render/Part.tsx:15
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
-#: src/pages/Index/Settings/SystemSettings.tsx:199
+#: src/pages/Index/Settings/SystemSettings.tsx:200
 #: src/pages/part/PartDetail.tsx:493
 #: src/pages/stock/LocationDetail.tsx:345
 #: src/pages/stock/StockDetail.tsx:352
@@ -1844,16 +1867,12 @@ msgid "Getting started"
 msgstr "Első lépések"
 
 #: src/components/widgets/MarkdownEditor.tsx:108
-msgid "Failed to upload image"
-msgstr "Nem sikerült a kép feltöltése"
+#~ msgid "Failed to upload image"
+#~ msgstr "Failed to upload image"
 
 #: src/components/widgets/MarkdownEditor.tsx:146
-msgid "Notes saved"
-msgstr "Megjegyzések elmentve"
-
-#: src/components/widgets/MarkdownEditor.tsx:154
-msgid "Failed to save notes"
-msgstr "Megjegyzések mentése nem sikerült"
+#~ msgid "Notes saved"
+#~ msgstr "Notes saved"
 
 #: src/components/widgets/WidgetLayout.tsx:166
 msgid "Layout"
@@ -3394,22 +3413,22 @@ msgstr "Árazás"
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:139
+#: src/pages/Index/Settings/SystemSettings.tsx:140
 msgid "Labels"
 msgstr "Címkék"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:145
+#: src/pages/Index/Settings/SystemSettings.tsx:146
 #: src/pages/Index/Settings/UserSettings.tsx:99
 msgid "Reporting"
 msgstr "Riportolás"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:224
+#: src/pages/Index/Settings/SystemSettings.tsx:225
 #: src/pages/part/PartDetail.tsx:591
 #: src/tables/stock/StockItemTable.tsx:221
 msgid "Stocktake"
 msgstr "Leltár"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:229
+#: src/pages/Index/Settings/SystemSettings.tsx:230
 #: src/pages/build/BuildDetail.tsx:425
 #: src/pages/build/BuildIndex.tsx:14
 #: src/pages/part/PartDetail.tsx:527
@@ -3417,7 +3436,7 @@ msgstr "Leltár"
 msgid "Build Orders"
 msgstr "Gyártási utasítások"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:298
+#: src/pages/Index/Settings/SystemSettings.tsx:299
 msgid "Switch to User Setting"
 msgstr "Felhasználói beállításra váltás"
 
@@ -3769,12 +3788,12 @@ msgstr "Szállított alkatrészek"
 msgid "Assigned Stock"
 msgstr "Hozzárendelt készlet"
 
-#: src/pages/company/CompanyDetail.tsx:283
+#: src/pages/company/CompanyDetail.tsx:287
 #: src/tables/company/CompanyTable.tsx:86
 msgid "Edit Company"
 msgstr "Cég szerkesztése"
 
-#: src/pages/company/CompanyDetail.tsx:292
+#: src/pages/company/CompanyDetail.tsx:296
 msgid "Company Actions"
 msgstr "Cég műveletek"
 
@@ -6827,3 +6846,4 @@ msgstr "Olvasd el a dokumentációt"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+

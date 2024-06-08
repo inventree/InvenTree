@@ -60,6 +60,11 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       BooleanColumn({
         accessor: 'enabled'
       }),
+      {
+        accessor: 'choices',
+        sortable: false,
+        switchable: true
+      },
       BooleanColumn({
         accessor: 'required'
       }),
@@ -117,6 +122,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       required: {},
       requires_value: {},
       requires_attachment: {},
+      choices: {},
       enabled: {}
     };
   }, [user]);

@@ -179,6 +179,7 @@ class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer)
             'requires_value',
             'requires_attachment',
             'results',
+            'choices',
         ]
 
     key = serializers.CharField(read_only=True)
