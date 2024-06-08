@@ -19,7 +19,7 @@ import order.models
 import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
-from importer.mixins import DataExportMixin
+from importer.mixins import DataExportViewMixin
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
@@ -214,7 +214,7 @@ class CategoryFilter(rest_filters.FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, DataExportMixin, ListCreateAPI):
+class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -1218,7 +1218,7 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, DataExportMixin, ListCreateAPI):
+class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     filterset_class = PartFilter

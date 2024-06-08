@@ -28,7 +28,7 @@ from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
 from generic.states.api import StatusView
-from importer.mixins import DataExportMixin
+from importer.mixins import DataExportViewMixin
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
@@ -385,7 +385,7 @@ class StockLocationFilter(rest_filters.FilterSet):
         return queryset
 
 
-class StockLocationList(DataExportMixin, ListCreateAPI):
+class StockLocationList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for list view of StockLocation objects.
 
     - GET: Return list of StockLocation objects
@@ -848,7 +848,7 @@ class StockFilter(rest_filters.FilterSet):
             return queryset.exclude(stale_filter)
 
 
-class StockList(DataExportMixin, ListCreateDestroyAPIView):
+class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Stock objects.
 
     - GET: Return a list of all StockItem objects (with optional query filters)

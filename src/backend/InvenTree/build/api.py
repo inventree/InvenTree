@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
-from importer.mixins import DataExportMixin
+from importer.mixins import DataExportViewMixin
 
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from generic.states.api import StatusView
@@ -127,7 +127,7 @@ class BuildMixin:
         return queryset
 
 
-class BuildList(DataExportMixin, BuildMixin, ListCreateAPI):
+class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)

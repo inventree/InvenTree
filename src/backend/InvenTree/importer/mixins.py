@@ -3,7 +3,7 @@
 from InvenTree.helpers import DownloadFile, GetExportFormats, current_date
 
 
-class DataExportMixin:
+class DataExportViewMixin:
     """Mixin class for exporting a dataset via the API.
 
     Adding this mixin to an API view allows the user to export the dataset to file in a variety of formats.

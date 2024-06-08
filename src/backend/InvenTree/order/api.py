@@ -20,7 +20,7 @@ from rest_framework.response import Response
 import common.models as common_models
 from company.models import SupplierPart
 from generic.states.api import StatusView
-from importer.mixins import DataExportMixin
+from importer.mixins import DataExportViewMixin
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import DownloadFile, str2bool
@@ -48,7 +48,7 @@ from part.models import Part
 from users.models import Owner
 
 
-class GeneralExtraLineList(DataExportMixin):
+class GeneralExtraLineList(DataExportViewMixin):
     """General template for ExtraLine API classes."""
 
     def get_serializer(self, *args, **kwargs):
@@ -211,7 +211,7 @@ class PurchaseOrderMixin:
         return queryset
 
 
-class PurchaseOrderList(PurchaseOrderMixin, DataExportMixin, ListCreateAPI):
+class PurchaseOrderList(PurchaseOrderMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PurchaseOrder objects.
 
     - GET: Return list of PurchaseOrder objects (with filters)
@@ -515,7 +515,7 @@ class PurchaseOrderLineItemMixin:
 
 
 class PurchaseOrderLineItemList(
-    PurchaseOrderLineItemMixin, DataExportMixin, ListCreateDestroyAPIView
+    PurchaseOrderLineItemMixin, DataExportViewMixin, ListCreateDestroyAPIView
 ):
     """API endpoint for accessing a list of PurchaseOrderLineItem objects.
 
@@ -673,7 +673,7 @@ class SalesOrderMixin:
         return queryset
 
 
-class SalesOrderList(SalesOrderMixin, DataExportMixin, ListCreateAPI):
+class SalesOrderList(SalesOrderMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of SalesOrder objects.
 
     - GET: Return list of SalesOrder objects (with filters)
@@ -845,7 +845,9 @@ class SalesOrderLineItemMixin:
         return queryset
 
 
-class SalesOrderLineItemList(SalesOrderLineItemMixin, DataExportMixin, ListCreateAPI):
+class SalesOrderLineItemList(
+    SalesOrderLineItemMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of SalesOrderLineItem objects."""
 
     filterset_class = SalesOrderLineItemFilter
@@ -1148,7 +1150,7 @@ class ReturnOrderMixin:
         return queryset
 
 
-class ReturnOrderList(ReturnOrderMixin, DataExportMixin, ListCreateAPI):
+class ReturnOrderList(ReturnOrderMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of ReturnOrder objects."""
 
     filterset_class = ReturnOrderFilter
@@ -1300,7 +1302,9 @@ class ReturnOrderLineItemMixin:
         return queryset
 
 
-class ReturnOrderLineItemList(ReturnOrderLineItemMixin, DataExportMixin, ListCreateAPI):
+class ReturnOrderLineItemList(
+    ReturnOrderLineItemMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of ReturnOrderLineItemList objects."""
 
     filterset_class = ReturnOrderLineItemFilter
