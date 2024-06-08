@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-08 04:34+0000\n"
-"PO-Revision-Date: 2024-06-04 12:39\n"
+"PO-Revision-Date: 2024-06-08 14:30\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -8710,10 +8710,8 @@ msgid "Supplier Part ID"
 msgstr "Код детали поставщика"
 
 #: stock/admin.py:185
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Supplier Part SKU"
-msgstr "Деталь поставщика"
+msgstr ""
 
 #: stock/admin.py:190
 msgid "Supplier ID"
@@ -9077,10 +9075,8 @@ msgid "Attachment must be uploaded for this test"
 msgstr ""
 
 #: stock/models.py:2404
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid value for this test"
-msgstr "Неверное значение для избытка"
+msgstr ""
 
 #: stock/models.py:2428
 msgid "Test result"
@@ -10936,10 +10932,8 @@ msgid "Scan the QR code below with a token generator of your choice (for instanc
 msgstr ""
 
 #: templates/allauth_2fa/setup.html:20
-#, fuzzy
-#| msgid "Secret"
 msgid "Secret: "
-msgstr "Секрет"
+msgstr ""
 
 #: templates/allauth_2fa/setup.html:24
 msgid "Step 2"
@@ -14392,3 +14386,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
