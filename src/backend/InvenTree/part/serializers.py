@@ -35,6 +35,7 @@ import part.tasks
 import stock.models
 import users.models
 from build.status_codes import BuildStatusGroups
+from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.tasks import offload_task
 
@@ -61,7 +62,9 @@ logger = logging.getLogger('inventree')
 
 
 @register_importer()
-class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class CategorySerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for PartCategory."""
 
     class Meta:
@@ -164,7 +167,9 @@ class PartAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializ
 
 
 @register_importer()
-class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartTestTemplateSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for the PartTestTemplate class."""
 
     class Meta:
@@ -265,7 +270,9 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 @register_importer()
-class PartParameterTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartParameterTemplateSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """JSON serializer for the PartParameterTemplate model."""
 
     class Meta:
@@ -344,7 +351,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
 
 @register_importer()
-class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class PartParameterSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """JSON serializers for the PartParameter model."""
 
     class Meta:
@@ -588,6 +597,7 @@ class InitialSupplierSerializer(serializers.Serializer):
 
 @register_importer()
 class PartSerializer(
+    DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
@@ -1427,7 +1437,9 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
 
 
 @register_importer()
-class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+class BomItemSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for BomItem object."""
 
     class Meta:

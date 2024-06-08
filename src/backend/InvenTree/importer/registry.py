@@ -4,6 +4,8 @@ import logging
 
 from rest_framework.serializers import Serializer
 
+from importer.mixins import DataImportSerializerMixin
+
 logger = logging.getLogger('inventree')
 
 
@@ -15,12 +17,14 @@ class DataImportSerializerRegister:
 
     supported_serializers: list[Serializer] = []
 
-    def register(self, serializer: Serializer):
+    def register(self, serializer) -> None:
         """Register a new serializer with the importer registry."""
-        if not isinstance(serializer, Serializer) and not issubclass(
-            serializer, Serializer
-        ):
-            logger.error('Invalid serializer type: %s', type(serializer))
+        if not issubclass(serializer, DataImportSerializerMixin):
+            logger.error('Invalid serializer class: %s', type(serializer))
+            return
+
+        if not issubclass(serializer, Serializer):
+            logger.error('Invalid serializer class: %s', type(serializer))
             return
 
         logger.debug('Registering serializer class for import: %s', type(serializer))
