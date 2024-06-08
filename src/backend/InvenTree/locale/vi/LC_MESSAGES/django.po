@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-08 04:34+0000\n"
-"PO-Revision-Date: 2024-06-04 12:40\n"
+"PO-Revision-Date: 2024-06-08 14:31\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -6510,10 +6510,8 @@ msgid "Choices"
 msgstr "Lựa chọn"
 
 #: part/models.py:3575
-#, fuzzy
-#| msgid "Valid choices for this parameter (comma-separated)"
 msgid "Valid choices for this test (comma-separated)"
-msgstr "Lựa chọn hợp lệ từ tham số này (ngăn cách bằng dấu phẩy)"
+msgstr ""
 
 #: part/models.py:3629
 msgid "Checkbox parameters cannot have units"
@@ -8712,10 +8710,8 @@ msgid "Supplier Part ID"
 msgstr "Sản phẩm nhà cung cấp"
 
 #: stock/admin.py:185
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Supplier Part SKU"
-msgstr "Sản phẩm nhà cung cấp"
+msgstr ""
 
 #: stock/admin.py:190
 msgid "Supplier ID"
@@ -9079,10 +9075,8 @@ msgid "Attachment must be uploaded for this test"
 msgstr "Phải tải liên đính kèm cho kiểm thử này"
 
 #: stock/models.py:2404
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid value for this test"
-msgstr "Giá trị không hợp lệ cho hàng hóa dư thừa"
+msgstr ""
 
 #: stock/models.py:2428
 msgid "Test result"
@@ -10938,10 +10932,8 @@ msgid "Scan the QR code below with a token generator of your choice (for instanc
 msgstr "Quét mã QR bên dưới với bộ sinh mã thông báo mà bạn chọn (cho thực thể Google Authentication)."
 
 #: templates/allauth_2fa/setup.html:20
-#, fuzzy
-#| msgid "Secret"
 msgid "Secret: "
-msgstr "Bí mật"
+msgstr ""
 
 #: templates/allauth_2fa/setup.html:24
 msgid "Step 2"
@@ -14394,3 +14386,4 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
+
