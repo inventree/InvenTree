@@ -1,5 +1,11 @@
 """Mixin classes for data import/export functionality."""
 
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+
+import tablib
+
+import importer.operations
 from InvenTree.helpers import DownloadFile, GetExportFormats, current_date
 
 
@@ -13,44 +19,42 @@ class DataExportViewMixin:
 
     EXPORT_QUERY_PARAMETER = 'export'
 
-    def get_exported_filename(self, serializer, export_format):
-        """Return the filename for the exported data file.
-
-        An implementing class can override this implementation if required.
-        """
-        model = serializer.Meta.model
-        date = current_date().isoformat()
-
-        return f'InvenTree_{model.__name__}_{date}.{export_format}'
-
-    def export_data(self, request, export_format):
+    def export_data(self, export_format):
         """Export the data in the specified format.
 
         Use the provided serializer to generate the data, and return it as a file download.
         """
-        from importer.operations import export_data_to_file
+        serializer_class = self.get_serializer_class()
 
-        serializer = self.get_serializer_class()
-
-        if not issubclass(serializer, DataExportSerializerMixin):
+        if not issubclass(serializer_class, DataExportSerializerMixin):
             raise TypeError(
                 'Serializer class must inherit from DataExportSerialierMixin'
             )
 
         queryset = self.filter_queryset(self.get_queryset())
 
-        filename = self.get_exported_filename(serializer, export_format)
+        serializer = serializer_class(exporting=True)
+        serializer.initial_data = queryset
 
-        data_file = export_data_to_file(serializer, queryset, export_format)
+        # Export dataset with a second copy of the serializer
+        # This is because when we pass many=True, the returned class is a ListSerializer
+        data = serializer_class(queryset, many=True, exporting=True).data
 
-        return DownloadFile(data_file, filename=filename)
+        filename = serializer.get_exported_filename(export_format)
+        datafile = serializer.export_to_file(data, export_format)
+
+        return DownloadFile(datafile, filename=filename)
 
     def get(self, request, *args, **kwargs):
         """Override the 'get' method to check for the export query parameter."""
         if export_format := request.query_params.get(self.EXPORT_QUERY_PARAMETER, None):
             export_format = str(export_format).strip().lower()
             if export_format in GetExportFormats():
-                return self.export_data(request, export_format)
+                return self.export_data(export_format)
+            else:
+                raise ValidationError({
+                    self.EXPORT_QUERY_PARAMETER: _('Invalid export format')
+                })
 
         # If the export query parameter is not present, return the default response
         return super().get(request, *args, **kwargs)
@@ -79,8 +83,6 @@ class DataImportSerializerMixin:
         importing = kwargs.pop('importing', False)
 
         super().__init__(*args, **kwargs)
-
-        print('DataImportSerializerMixin: importing =', importing)
 
         if importing:
             # Exclude fields which are not required for data import
@@ -116,7 +118,13 @@ class DataExportSerializerMixin:
 
         super().__init__(*args, **kwargs)
 
-        print('DataExportSerializerMixin: exporting =', exporting)
+        print(
+            'DataExportSerializerMixin:',
+            self.__class__.__name__,
+            ':',
+            'exporting =',
+            exporting,
+        )
 
         if exporting:
             # Exclude fields which are not required for data export
@@ -126,6 +134,76 @@ class DataExportSerializerMixin:
             # Exclude fields which are only used for data export
             for field in self.get_export_only_fields(**kwargs):
                 self.fields.pop(field, None)
+
+    def get_exportable_fields(self) -> dict:
+        """Return a list of fields which can be exported.
+
+        Note: Any fields which should be excluded from export have already been removed
+
+        Returns:
+            dict: A dictionary of field names and field objects
+        """
+        fields = {}
+
+        for name, field in self.fields.items():
+            if getattr(field, 'write_only', False):
+                continue
+
+            fields[name] = field
+
+        return fields
+
+    def get_exported_filename(self, export_format) -> str:
+        """Return the filename for the exported data file.
+
+        An implementing class can override this implementation if required.
+
+        Arguments:
+            export_format: The file format to be exported
+
+        Returns:
+            str: The filename for the exported file
+        """
+        model = self.Meta.model
+        date = current_date().isoformat()
+
+        return f'InvenTree_{model.__name__}_{date}.{export_format}'
+
+    @classmethod
+    def arrange_export_headers(cls, headers: list) -> list:
+        """Optional method to arrange the export headers."""
+        return headers
+
+    def export_to_file(self, data, file_format):
+        """Export the queryset to a file in the specified format.
+
+        Arguments:
+            queryset: The queryset to export
+            data: The serialized dataset to export
+            file_format: The file format to export to
+
+        Returns:
+            File object containing the exported data
+        """
+        # Extract all exportable fields from this serializer
+        fields = self.get_exportable_fields()
+
+        field_names = self.arrange_export_headers(list(fields.keys()))
+
+        # Extract human-readable field names
+        headers = []
+
+        for field_name, field in fields.items():
+            field = fields[field_name]
+
+            headers.append(importer.operations.get_field_label(field) or field_name)
+
+        dataset = tablib.Dataset(headers=headers)
+
+        for row in data:
+            dataset.append([row.get(field, None) for field in field_names])
+
+        return dataset.export(file_format)
 
 
 class DataImportExportSerializerMixin(

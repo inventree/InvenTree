@@ -22,6 +22,8 @@ def load_data_file(data_file, file_format=None):
     if file_format and file_format.startswith('.'):
         file_format = file_format[1:]
 
+    file_format = file_format.strip().lower()
+
     if file_format not in InvenTree.helpers.GetExportFormats():
         raise ValidationError(_('Unsupported data file format'))
 
@@ -37,6 +39,7 @@ def load_data_file(data_file, file_format=None):
     except (IOError, FileNotFoundError):
         raise ValidationError(_('Failed to open data file'))
 
+    # Excel formats expect binary data
     if file_format not in ['xls', 'xlsx']:
         data = data.decode()
 
@@ -123,7 +126,7 @@ def get_fields(
     return fields
 
 
-def get_field_label(serializer_class, field_name):
+def get_field_label(field) -> str:
     """Return the label for a field in a serializer class.
 
     Check for labels in the following order of descending priority:
@@ -132,47 +135,16 @@ def get_field_label(serializer_class, field_name):
     - The underlying model has a 'verbose_name' specified
     - The field name is used as the label
 
-    Args:
-        serializer_class: Serializer
+    Arguments:
+        field: Field instance from a serializer class
+
+    Returns:
+        str: Field label
     """
-    if not serializer_class:
-        return field_name
-
-    field = serializer_class().fields.get(field_name, None)
-
     if field:
         if label := getattr(field, 'label', None):
             return label
 
     # TODO: Check if the field is a model field
 
-    return field_name
-
-
-def export_data_to_file(serializer_class, queryset, file_format):
-    """Export queryset data to a file.
-
-    Args:
-        serializer_class: Serializer class to use for data export
-        queryset: Queryset of data to export
-        file_format: File format to export data to
-
-    Returns:
-        File object containing the exported data
-    """
-    # Extract all readable fields
-    fields = get_fields(serializer_class, write_only=False, exporting=True)
-
-    field_names = list(fields.keys())
-    headers = [
-        get_field_label(serializer_class, field_name) for field_name in field_names
-    ]
-
-    dataset = tablib.Dataset(headers=headers)
-
-    data = serializer_class(queryset, many=True).data
-
-    for _idx, row in enumerate(data):
-        dataset.append([row.get(field, None) for field in field_names])
-
-    return dataset.export(file_format)
+    return None
