@@ -581,7 +581,7 @@ export function InvenTreeTable<T = any>({
       <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
         <Stack gap="sm">
           <Group justify="apart" grow wrap="nowrap">
-            <Group justify="left" key="custom-actions" gap={5} wrap="norwap">
+            <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
               {tableProps.enableDownload && (
                 <DownloadAction
                   key="download-action"
