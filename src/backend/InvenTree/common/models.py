@@ -705,6 +705,8 @@ class BaseInvenTreeSetting(models.Model):
         try:
             setting = cls.objects.filter(**filters).first()
 
+            print('get_setting:', key, '->', setting)
+
             if not setting:
                 if create:
                     setting = cls(key=key, **kwargs)
@@ -865,6 +867,8 @@ class BaseInvenTreeSetting(models.Model):
         Note that sub-classes (UserSetting, PluginSetting) use other filters
         to determine if the setting is 'unique' or not
         """
+        print('validating unique', self.key)
+
         super().validate_unique(exclude)
 
         filters = {
