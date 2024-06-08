@@ -2380,23 +2380,28 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
         # If this test result corresponds to a template, check the requirements of the template
-        key = self.key
+        template = self.template
 
-        templates = self.stock_item.part.getTestTemplates()
+        if template is None:
+            # Fallback if there is no matching template
+            for template in self.stock_item.part.getTestTemplates():
+                if self.key == template.key:
+                    break
 
-        for template in templates:
-            if key == template.key:
-                if template.requires_value and not self.value:
-                    raise ValidationError({
-                        'value': _('Value must be provided for this test')
-                    })
+        if template:
+            if template.requires_value and not self.value:
+                raise ValidationError({
+                    'value': _('Value must be provided for this test')
+                })
 
-                if template.requires_attachment and not self.attachment:
-                    raise ValidationError({
-                        'attachment': _('Attachment must be uploaded for this test')
-                    })
+            if template.requires_attachment and not self.attachment:
+                raise ValidationError({
+                    'attachment': _('Attachment must be uploaded for this test')
+                })
 
-                break
+            if choices := template.get_choices():
+                if self.value not in choices:
+                    raise ValidationError({'value': _('Invalid value for this test')})
 
     @property
     def key(self):

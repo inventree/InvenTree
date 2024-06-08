@@ -183,6 +183,7 @@ class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer)
             'requires_value',
             'requires_attachment',
             'results',
+            'choices',
         ]
 
     key = serializers.CharField(read_only=True)
@@ -587,6 +588,7 @@ class InitialSupplierSerializer(serializers.Serializer):
 
 @register_importer()
 class PartSerializer(
+    InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):

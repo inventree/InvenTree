@@ -1034,6 +1034,30 @@ class InvenTreeNotesMixin(models.Model):
 
         abstract = True
 
+    def delete(self):
+        """Custom delete method for InvenTreeNotesMixin.
+
+        - Before deleting the object, check if there are any uploaded images associated with it.
+        - If so, delete the notes first
+        """
+        from common.models import NotesImage
+
+        images = NotesImage.objects.filter(
+            model_type=self.__class__.__name__.lower(), model_id=self.pk
+        )
+
+        if images.exists():
+            logger.info(
+                'Deleting %s uploaded images associated with %s <%s>',
+                images.count(),
+                self.__class__.__name__,
+                self.pk,
+            )
+
+            images.delete()
+
+        super().delete()
+
     notes = InvenTree.fields.InvenTreeNotesField(
         verbose_name=_('Notes'), help_text=_('Markdown notes (optional)')
     )

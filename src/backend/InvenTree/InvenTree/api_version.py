@@ -1,13 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 205
+INVENTREE_API_VERSION = 207
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
-v205 - 2024-06-04 : https://github.com/inventree/InvenTree/pull/6911
+v207 - 2024-06-08 : https://github.com/inventree/InvenTree/pull/6911
     - Adds API endpoints for managing data import
+
+v206 - 2024-06-08 : https://github.com/inventree/InvenTree/pull/7417
+    - Adds "choices" field to the PartTestTemplate model
+
+v205 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7284
+    - Added model_type and model_id fields to the "NotesImage" serializer
 
 v204 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7393
     - Fixes previous API update which resulted in inconsistent ordering of currency codes
