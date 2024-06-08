@@ -31,6 +31,12 @@ class DataExportViewMixin:
         from importer.operations import export_data_to_file
 
         serializer = self.get_serializer_class()
+
+        if not issubclass(serializer, DataExportSerializerMixin):
+            raise TypeError(
+                'Serializer class must inherit from DataExportSerialierMixin'
+            )
+
         queryset = self.filter_queryset(self.get_queryset())
 
         filename = self.get_exported_filename(serializer, export_format)
@@ -84,7 +90,7 @@ class DataImportSerializerMixin:
                 self.fields.pop(field, None)
 
 
-class DataExportSerialierMixin:
+class DataExportSerializerMixin:
     """Mixin class for adding data export functionality to a DRF serializer."""
 
     export_only_fields = []
@@ -119,7 +125,7 @@ class DataExportSerialierMixin:
 
 
 class DataImportExportSerializerMixin(
-    DataImportSerializerMixin, DataExportSerialierMixin
+    DataImportSerializerMixin, DataExportSerializerMixin
 ):
     """Mixin class for adding data import/export functionality to a DRF serializer."""
 
