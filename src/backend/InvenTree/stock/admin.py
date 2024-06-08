@@ -180,6 +180,11 @@ class StockItemResource(InvenTreeResource):
         column_name=_('Supplier Part ID'),
         widget=widgets.ForeignKeyWidget(SupplierPart),
     )
+    supplier_part_sku = Field(
+        attribute='supplier_part__SKU',
+        column_name=_('Supplier Part SKU'),
+        readonly=True,
+    )
     supplier = Field(
         attribute='supplier_part__supplier__id',
         column_name=_('Supplier ID'),
