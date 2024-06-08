@@ -144,6 +144,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
             part_detail: true,
             manufacturer_detail: true
           },
+          enableDownload: true,
           rowActions: rowActions,
           tableActions: tableActions,
           modelType: ModelType.manufacturerpart

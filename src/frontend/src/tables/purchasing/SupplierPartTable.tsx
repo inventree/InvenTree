@@ -259,6 +259,7 @@ export function SupplierPartTable({ params }: { params: any }): ReactNode {
             manufacturer_detail: true
           },
           rowActions: rowActions,
+          enableDownload: true,
           tableActions: tableActions,
           tableFilters: tableFilters,
           modelType: ModelType.supplierpart

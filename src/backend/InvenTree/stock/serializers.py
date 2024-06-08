@@ -327,7 +327,7 @@ class StockItemSerializer(
     - Includes serialization for the item location
     """
 
-    export_exclude_fields = ['tags', 'tracking_items']
+    export_exclude_fields = ['tracking_items']
 
     class Meta:
         """Metaclass options."""

@@ -10,6 +10,7 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import part.filters
+from importer.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializer,
     InvenTreeCurrencySerializer,
@@ -59,7 +60,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
 
-class AddressSerializer(InvenTreeModelSerializer):
+class AddressSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializer for the Address Model."""
 
     class Meta:
@@ -103,8 +104,15 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-class CompanySerializer(NotesFieldMixin, RemoteImageMixin, InvenTreeModelSerializer):
+class CompanySerializer(
+    DataImportExportSerializerMixin,
+    NotesFieldMixin,
+    RemoteImageMixin,
+    InvenTreeModelSerializer,
+):
     """Serializer for Company object (full detail)."""
+
+    export_exclude_fields = ['url', 'primary_address']
 
     class Meta:
         """Metaclass options."""
@@ -197,17 +205,23 @@ class CompanyAttachmentSerializer(InvenTreeAttachmentSerializer):
         fields = InvenTreeAttachmentSerializer.attachment_fields(['company'])
 
 
-class ContactSerializer(InvenTreeModelSerializer):
+class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializer class for the Contact model."""
 
     class Meta:
         """Metaclass options."""
 
         model = Contact
-        fields = ['pk', 'company', 'name', 'phone', 'email', 'role']
+        fields = ['pk', 'company', 'company_name', 'name', 'phone', 'email', 'role']
+
+    company_name = serializers.CharField(
+        label=_('Company Name'), source='company.name', read_only=True
+    )
 
 
-class ManufacturerPartSerializer(InvenTreeTagModelSerializer):
+class ManufacturerPartSerializer(
+    DataImportExportSerializerMixin, InvenTreeTagModelSerializer
+):
     """Serializer for ManufacturerPart object."""
 
     class Meta:
@@ -302,7 +316,9 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
     )
 
 
-class SupplierPartSerializer(InvenTreeTagModelSerializer):
+class SupplierPartSerializer(
+    DataImportExportSerializerMixin, InvenTreeTagModelSerializer
+):
     """Serializer for SupplierPart object."""
 
     class Meta:
@@ -460,7 +476,9 @@ class SupplierPartSerializer(InvenTreeTagModelSerializer):
         return supplier_part
 
 
-class SupplierPriceBreakSerializer(InvenTreeModelSerializer):
+class SupplierPriceBreakSerializer(
+    DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for SupplierPriceBreak object."""
 
     class Meta:

@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import tablib
+from rest_framework import serializers
 
 import importer.operations
 from InvenTree.helpers import DownloadFile, GetExportFormats, current_date
@@ -87,7 +88,12 @@ class DataExportSerializerMixin:
         fields = {}
 
         for name, field in self.fields.items():
+            # Skip write-only fields
             if getattr(field, 'write_only', False):
+                continue
+
+            # Skip fields which are themselves serializers
+            if issubclass(field.__class__, serializers.Serializer):
                 continue
 
             fields[name] = field
