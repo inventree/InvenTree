@@ -1,6 +1,7 @@
 """Admin site specification for the 'importer' app."""
 
 from django.contrib import admin
+from django.urls import path
 
 import importer.models
 import importer.registry
@@ -69,3 +70,11 @@ class DataImportRowAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         """Return the readonly fields for the admin interface."""
         return ['session', 'row_index', 'row_data', 'errors', 'valid']
+
+
+class DataExportAdmin(admin.ModelAdmin):
+    """Custom admin class mixin allowing for data export functionality."""
+
+    serializer_class = None
+
+    # TODO: Add custom admin action to export queryset data
