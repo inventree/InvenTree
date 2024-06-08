@@ -60,7 +60,7 @@ class DataImportSerializerMixin:
     """Mixin class for adding data import functionality to a DRF serializer."""
 
     import_only_fields = []
-    import_exlude_fields = []
+    import_exclude_fields = []
 
     def get_import_only_fields(self, **kwargs) -> list:
         """Return the list of field names which are only used during data import."""
@@ -79,6 +79,8 @@ class DataImportSerializerMixin:
         importing = kwargs.pop('importing', False)
 
         super().__init__(*args, **kwargs)
+
+        print('DataImportSerializerMixin: importing =', importing)
 
         if importing:
             # Exclude fields which are not required for data import
@@ -113,6 +115,8 @@ class DataExportSerializerMixin:
         exporting = kwargs.pop('exporting', False)
 
         super().__init__(*args, **kwargs)
+
+        print('DataExportSerializerMixin: exporting =', exporting)
 
         if exporting:
             # Exclude fields which are not required for data export

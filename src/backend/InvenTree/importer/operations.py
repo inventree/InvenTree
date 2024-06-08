@@ -85,7 +85,14 @@ def extract_rows(data_file) -> list:
     return rows
 
 
-def get_fields(serializer_class, write_only=None, read_only=None, required=None):
+def get_fields(
+    serializer_class,
+    write_only=None,
+    read_only=None,
+    required=None,
+    exporting=False,
+    importing=True,
+):
     """Extract the field names from a serializer class.
 
     Arguments:
@@ -97,7 +104,7 @@ def get_fields(serializer_class, write_only=None, read_only=None, required=None)
     if not serializer_class:
         return {}
 
-    serializer = serializer_class()
+    serializer = serializer_class(exporting=exporting, importing=importing)
 
     fields = {}
 
@@ -154,7 +161,7 @@ def export_data_to_file(serializer_class, queryset, file_format):
         File object containing the exported data
     """
     # Extract all readable fields
-    fields = get_fields(serializer_class, write_only=False)
+    fields = get_fields(serializer_class, write_only=False, exporting=True)
 
     field_names = list(fields.keys())
     headers = [
