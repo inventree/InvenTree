@@ -3,6 +3,7 @@ import { BarChart } from '@mantine/charts';
 import { SimpleGrid, Stack } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
 
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { ModelType } from '../../../enums/ModelType';
@@ -97,8 +98,7 @@ export default function VariantPricingPanel({
               { name: 'pmax', label: t`Maximum Price`, color: 'teal.6' }
             ]}
             valueFormatter={(value) =>
-              formatCurrency(value, { currency: pricing?.currency }) ??
-              value.toString()
+              tooltipFormatter(value, pricing?.currency)
             }
           />
         ) : (

@@ -190,10 +190,7 @@ export default function PricingOverviewPanel({
             { name: 'min_value', label: t`Minimum Value`, color: 'blue.6' },
             { name: 'max_value', label: t`Maximum Value`, color: 'teal.6' }
           ]}
-          valueFormatter={(value) =>
-            formatCurrency(value, { currency: pricing?.currency }) ??
-            value.toString()
-          }
+          valueFormatter={(value) => tooltipFormatter(value, pricing?.currency)}
         />
       </SimpleGrid>
     </Stack>

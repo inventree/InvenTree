@@ -11,6 +11,7 @@ import {
 import { ReactNode, useMemo, useState } from 'react';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import {
   formatCurrency,
   formatDecimal,
@@ -54,9 +55,7 @@ function BomPieChart({
         withLabelsLine={false}
         tooltipDataSource="segment"
         chartLabel={t`Total Price`}
-        valueFormatter={(value) =>
-          formatCurrency(value, { currency: currency }) ?? value.toString()
-        }
+        valueFormatter={(value) => tooltipFormatter(value, currency)}
       />
     </Center>
   );
@@ -81,9 +80,7 @@ function BomBarChart({
         { name: 'total_price_min', label: t`Minimum Price`, color: 'blue.6' },
         { name: 'total_price_max', label: t`Maximum Price`, color: 'teal.6' }
       ]}
-      valueFormatter={(value) =>
-        formatCurrency(value, { currency: currency }) ?? value.toString()
-      }
+      valueFormatter={(value) => tooltipFormatter(value, currency)}
     />
   );
 }

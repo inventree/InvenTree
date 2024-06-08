@@ -4,6 +4,7 @@ import { SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../../components/buttons/AddItemButton';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
@@ -165,9 +166,7 @@ export default function PriceBreakPanel({
             series={[{ name: 'price', label: t`Price`, color: 'blue.6' }]}
             xAxisLabel={t`Quantity`}
             yAxisLabel={t`Unit Price`}
-            valueFormatter={(value) =>
-              formatCurrency(value, { currency: currency }) ?? value.toString()
-            }
+            valueFormatter={(value) => tooltipFormatter(value, currency)}
           />
         ) : (
           <NoPricingData />
