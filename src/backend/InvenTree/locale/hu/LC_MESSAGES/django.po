@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-08 04:34+0000\n"
-"PO-Revision-Date: 2024-06-04 12:39\n"
+"PO-Revision-Date: 2024-06-08 14:30\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1345,8 +1345,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:527
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:612
@@ -6512,10 +6511,8 @@ msgid "Choices"
 msgstr "Lehetőségek"
 
 #: part/models.py:3575
-#, fuzzy
-#| msgid "Valid choices for this parameter (comma-separated)"
 msgid "Valid choices for this test (comma-separated)"
-msgstr "Választható lehetőségek (vesszővel elválasztva)"
+msgstr ""
 
 #: part/models.py:3629
 msgid "Checkbox parameters cannot have units"
@@ -8714,10 +8711,8 @@ msgid "Supplier Part ID"
 msgstr "Beszállítói cikkszám"
 
 #: stock/admin.py:185
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Supplier Part SKU"
-msgstr "Beszállítói alkatrész"
+msgstr ""
 
 #: stock/admin.py:190
 msgid "Supplier ID"
@@ -9081,10 +9076,8 @@ msgid "Attachment must be uploaded for this test"
 msgstr "Ehhez a teszthez fel kell tölteni mellékletet"
 
 #: stock/models.py:2404
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid value for this test"
-msgstr "Érvénytelen érték a túlszállításra"
+msgstr ""
 
 #: stock/models.py:2428
 msgid "Test result"
@@ -10940,10 +10933,8 @@ msgid "Scan the QR code below with a token generator of your choice (for instanc
 msgstr "Olvasd be a lenti QR kódot egy kiválaszott token generátorral (például a Google Authenticator-ral)."
 
 #: templates/allauth_2fa/setup.html:20
-#, fuzzy
-#| msgid "Secret"
 msgid "Secret: "
-msgstr "Titok"
+msgstr ""
 
 #: templates/allauth_2fa/setup.html:24
 msgid "Step 2"
@@ -14396,3 +14387,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
