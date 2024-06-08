@@ -26,6 +26,7 @@ from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
 import common.models
 from common.serializers import ProjectCodeSerializer
+from importer.mixins import DataImportExportSerializerMixin
 import part.filters
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
@@ -33,7 +34,7 @@ from users.serializers import OwnerSerializer
 from .models import Build, BuildLine, BuildItem, BuildOrderAttachment
 
 
-class BuildSerializer(NotesFieldMixin, InvenTreeModelSerializer):
+class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializes a Build object."""
 
     class Meta:
@@ -1050,7 +1051,7 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
             raise ValidationError(_("Failed to start auto-allocation task"))
 
 
-class BuildItemSerializer(InvenTreeModelSerializer):
+class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializes a BuildItem object."""
 
     class Meta:
@@ -1102,7 +1103,7 @@ class BuildItemSerializer(InvenTreeModelSerializer):
             self.fields.pop('build_detail')
 
 
-class BuildLineSerializer(InvenTreeModelSerializer):
+class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializer for a BuildItem object."""
 
     class Meta:

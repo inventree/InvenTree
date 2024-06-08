@@ -26,6 +26,7 @@ import part.models as part_models
 import stock.filters
 import stock.status_codes
 from company.serializers import SupplierPartSerializer
+from importer.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
@@ -317,12 +318,16 @@ class StockItemSerializerBrief(
         return value
 
 
-class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
+class StockItemSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+):
     """Serializer for a StockItem.
 
     - Includes serialization for the linked part
     - Includes serialization for the item location
     """
+
+    export_exclude_fields = ['tags', 'tracking_items']
 
     class Meta:
         """Metaclass options."""
@@ -357,6 +362,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'status_text',
             'stocktake_date',
             'supplier_part',
+            'sku',
             'supplier_part_detail',
             'barcode_hash',
             'updated',
@@ -500,6 +506,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
+
+    sku = serializers.CharField(source='supplier_part.SKU', read_only=True)
 
     # Optional detail fields, which can be appended via query parameters
     supplier_part_detail = SupplierPartSerializer(
@@ -1027,7 +1035,9 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset.annotate(sublocations=stock.filters.annotate_sub_locations())
 
 
-class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
+class LocationSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+):
     """Detailed information about a stock location."""
 
     class Meta:

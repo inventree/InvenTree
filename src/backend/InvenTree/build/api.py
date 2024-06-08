@@ -344,7 +344,7 @@ class BuildLineEndpoint:
         return queryset
 
 
-class BuildLineList(BuildLineEndpoint, ListCreateAPI):
+class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildLine objects"""
 
     filterset_class = BuildLineFilter
@@ -544,7 +544,7 @@ class BuildItemFilter(rest_filters.FilterSet):
         return queryset.filter(install_into=None)
 
 
-class BuildItemList(ListCreateAPI):
+class BuildItemList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildItem objects.
 
     - GET: Return list of objects

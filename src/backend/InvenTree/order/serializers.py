@@ -34,6 +34,7 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
+from importer.mixins import DataImportExportSerializerMixin
 from InvenTree.helpers import (
     current_date,
     extract_serial_numbers,
@@ -74,7 +75,7 @@ class TotalPriceMixin(serializers.Serializer):
     )
 
 
-class AbstractOrderSerializer(serializers.Serializer):
+class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Serializer):
     """Abstract serializer class which provides fields common to all order types."""
 
     # Number of line items in this order
@@ -161,7 +162,9 @@ class AbstractOrderSerializer(serializers.Serializer):
         ] + extra_fields
 
 
-class AbstractExtraLineSerializer(serializers.Serializer):
+class AbstractExtraLineSerializer(
+    DataImportExportSerializerMixin, serializers.Serializer
+):
     """Abstract Serializer for a ExtraLine object."""
 
     def __init__(self, *args, **kwargs):
@@ -340,7 +343,9 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
         order.place_order()
 
 
-class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
+class PurchaseOrderLineItemSerializer(
+    DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer class for the PurchaseOrderLineItem model."""
 
     class Meta:
@@ -927,7 +932,9 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     )
 
 
-class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
+class SalesOrderLineItemSerializer(
+    DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for a SalesOrderLineItem object."""
 
     class Meta:
@@ -1714,7 +1721,9 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
                 order.receive_line_item(line_item, location, request.user)
 
 
-class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
+class ReturnOrderLineItemSerializer(
+    DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for a ReturnOrderLineItem object."""
 
     class Meta:

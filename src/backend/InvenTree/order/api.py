@@ -23,19 +23,10 @@ from generic.states.api import StatusView
 from importer.mixins import DataExportViewMixin
 from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
-from InvenTree.helpers import DownloadFile, str2bool
+from InvenTree.helpers import str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
 from order import models, serializers
-from order.admin import (
-    PurchaseOrderExtraLineResource,
-    PurchaseOrderLineItemResource,
-    PurchaseOrderResource,
-    ReturnOrderResource,
-    SalesOrderExtraLineResource,
-    SalesOrderLineItemResource,
-    SalesOrderResource,
-)
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
