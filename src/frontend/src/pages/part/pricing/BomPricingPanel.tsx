@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { BarChart } from '@mantine/charts';
 import {
   Group,
   SegmentedControl,
@@ -7,18 +8,7 @@ import {
   Text
 } from '@mantine/core';
 import { ReactNode, useMemo, useState } from 'react';
-import {
-  Bar,
-  BarChart,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
+import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
@@ -92,32 +82,20 @@ function BomBarChart({
   readonly currency: string;
 }) {
   return (
-    <ResponsiveContainer width="100%" height={500}>
-      <BarChart data={data}>
-        <XAxis dataKey="name" />
-        <YAxis
-          tickFormatter={(value, index) =>
-            formatCurrency(value, {
-              currency: currency
-            })?.toString() ?? ''
-          }
-        />
-        <Tooltip
-          formatter={(label, payload) => tooltipFormatter(label, currency)}
-        />
-        <Legend />
-        <Bar
-          dataKey="total_price_min"
-          fill={CHART_COLORS[0]}
-          label={t`Minimum Total Price`}
-        />
-        <Bar
-          dataKey="total_price_max"
-          fill={CHART_COLORS[1]}
-          label={t`Maximum Total Price`}
-        />
-      </BarChart>
-    </ResponsiveContainer>
+    <BarChart
+      h={500}
+      dataKey="name"
+      data={data}
+      xAxisLabel={t`Component`}
+      yAxisLabel={t`Price Range`}
+      series={[
+        { name: 'total_price_min', label: t`Minimum Price`, color: 'blue.6' },
+        { name: 'total_price_max', label: t`Maximum Price`, color: 'teal.6' }
+      ]}
+      valueFormatter={(value) =>
+        formatCurrency(value, { currency: currency }) ?? value.toString()
+      }
+    />
   );
 }
 
