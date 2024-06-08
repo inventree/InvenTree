@@ -3104,9 +3104,10 @@ class Attachment(InvenTree.models.InvenTreeModel):
 
         ...
 
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    model_id = models.PositiveIntegerField()
+
+    content_object = GenericForeignKey('model_type', 'model_id')
 
     attachment = models.FileField(
         upload_to=rename_attachment,

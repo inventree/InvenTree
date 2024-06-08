@@ -12,8 +12,8 @@ class AttachmentAdmin(admin.ModelAdmin):
     """Admin interface for Attachment objects."""
 
     list_display = (
-        'content_type',
-        'object_id',
+        'model_type',
+        'model_id',
         'attachment',
         'link',
         'user',
