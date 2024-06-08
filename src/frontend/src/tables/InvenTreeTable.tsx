@@ -580,8 +580,8 @@ export function InvenTreeTable<T = any>({
       )}
       <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
         <Stack gap="sm">
-          <Group justify="apart" grow>
-            <Group justify="left" key="custom-actions" gap={5}>
+          <Group justify="apart" grow wrap="nowrap">
+            <Group justify="left" key="custom-actions" gap={5} wrap="norwap">
               {tableProps.enableDownload && (
                 <DownloadAction
                   key="download-action"
@@ -617,7 +617,7 @@ export function InvenTreeTable<T = any>({
               ))}
             </Group>
             <Space />
-            <Group justify="right" gap={5}>
+            <Group justify="right" gap={5} wrap="nowrap">
               {tableProps.enableSearch && (
                 <TableSearchInput
                   searchCallback={(term: string) =>
