@@ -187,12 +187,13 @@ export default function PricingOverviewPanel({
           dataKey="title"
           data={overviewData}
           series={[
-            { name: 'min_value', color: 'blue.6' },
-            { name: 'max_value', color: 'teal.6' }
+            { name: 'min_value', label: t`Minimum Value`, color: 'blue.6' },
+            { name: 'max_value', label: t`Maximum Value`, color: 'teal.6' }
           ]}
-          tooltipProps={{
-            formatter: tooltipFormatter
-          }}
+          valueFormatter={(value) =>
+            formatCurrency(value, { currency: pricing?.currency }) ??
+            value.toString()
+          }
         />
       </SimpleGrid>
     </Stack>
