@@ -5,56 +5,56 @@ msgstr ""
 "POT-Creation-Date: 2024-06-08 04:34+0000\n"
 "PO-Revision-Date: 2024-06-08 14:30\n"
 "Last-Translator: \n"
-"Language-Team: Chinese Simplified\n"
-"Language: zh_CN\n"
+"Language-Team: Chinese Traditional\n"
+"Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-Language: zh-TW\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
 "X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:272
 msgid "API endpoint not found"
-msgstr "未找到 API 端点"
+msgstr ""
 
 #: InvenTree/api.py:536
 msgid "User does not have permission to view this model"
-msgstr "用户没有权限查阅当前模型。"
+msgstr ""
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr "提供了无效的单位 ({unit})"
+msgstr ""
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr "没有提供数值"
+msgstr ""
 
 #: InvenTree/conversion.py:204
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr "不能将 {original} 转换到 {unit}"
+msgstr ""
 
 #: InvenTree/conversion.py:206
 msgid "Invalid quantity supplied"
-msgstr "提供的数量无效"
+msgstr ""
 
 #: InvenTree/conversion.py:220
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr "提供的数量无效 ({exc})"
+msgstr ""
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr "在管理面板中可以找到错误详细信息"
+msgstr ""
 
 #: InvenTree/fields.py:139
 msgid "Enter date"
-msgstr "输入日期"
+msgstr ""
 
 #: InvenTree/fields.py:208 InvenTree/models.py:1059 build/serializers.py:453
 #: build/serializers.py:531 build/templates/build/sidebar.html:21
@@ -77,337 +77,337 @@ msgstr "输入日期"
 #: templates/js/translated/sales_order.js:2018
 #: templates/js/translated/stock.js:1536 templates/js/translated/stock.js:2428
 msgid "Notes"
-msgstr "备注"
+msgstr ""
 
 #: InvenTree/format.py:164
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "值' {name}' 未出现在模式格式中"
+msgstr ""
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
-msgstr "提供的值与所需模式不匹配："
+msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr "输入密码"
+msgstr ""
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr "输入新密码"
+msgstr ""
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr "确认密码"
+msgstr ""
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr "确认新密码"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr "旧密码"
+msgstr ""
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr "电子邮件 (重复)"
+msgstr ""
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr "邮箱地址已确认"
+msgstr ""
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr "您必须每次输入相同的电子邮件。"
+msgstr ""
 
 #: InvenTree/forms.py:253 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr "提供的主电子邮件地址无效。"
+msgstr ""
 
 #: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
-msgstr "提供的邮箱域名未被批准。"
+msgstr ""
 
 #: InvenTree/forms.py:395
 msgid "Registration is disabled."
-msgstr "注册已禁用。"
+msgstr ""
 
 #: InvenTree/helpers.py:525 order/models.py:562 order/models.py:764
 msgid "Invalid quantity provided"
-msgstr "提供的数量无效"
+msgstr ""
 
 #: InvenTree/helpers.py:533
 msgid "Empty serial number string"
-msgstr "序號為空白"
+msgstr ""
 
 #: InvenTree/helpers.py:562
 msgid "Duplicate serial"
-msgstr "复制序列号"
+msgstr ""
 
 #: InvenTree/helpers.py:594 InvenTree/helpers.py:637
 #, python-brace-format
 msgid "Invalid group range: {group}"
-msgstr "无效的组范围: {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:625
 #, python-brace-format
 msgid "Group range {group} exceeds allowed quantity ({expected_quantity})"
-msgstr "组范围 {group} 超出了允许的数量 ({expected_quantity})"
+msgstr ""
 
 #: InvenTree/helpers.py:655 InvenTree/helpers.py:662 InvenTree/helpers.py:681
 #, python-brace-format
 msgid "Invalid group sequence: {group}"
-msgstr "无效的组序列: {group}"
+msgstr ""
 
 #: InvenTree/helpers.py:691
 msgid "No serial numbers found"
-msgstr "未找到序列号"
+msgstr ""
 
 #: InvenTree/helpers.py:696
 msgid "Number of unique serial numbers ({len(serials)}) must match quantity ({expected_quantity})"
-msgstr "唯一序列号的数量 ({len(serials)}) 必须与数量匹配 ({expected_quantity})"
+msgstr ""
 
 #: InvenTree/helpers.py:814
 msgid "Remove HTML tags from this value"
-msgstr "从这个值中删除 HTML 标签"
+msgstr ""
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr "连接错误"
+msgstr ""
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
-msgstr "服务器响应状态码无效"
+msgstr ""
 
 #: InvenTree/helpers_model.py:158
 msgid "Exception occurred"
-msgstr "发生异常"
+msgstr ""
 
 #: InvenTree/helpers_model.py:168
 msgid "Server responded with invalid Content-Length value"
-msgstr "服务器响应的内容长度值无效"
+msgstr ""
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr "图片尺寸过大"
+msgstr ""
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
-msgstr "图片下载超出最大尺寸"
+msgstr ""
 
 #: InvenTree/helpers_model.py:188
 msgid "Remote server returned empty response"
-msgstr "远程服务器返回了空响应"
+msgstr ""
 
 #: InvenTree/helpers_model.py:196
 msgid "Supplied URL is not a valid image file"
-msgstr "提供的 URL 不是一个有效的图片文件"
+msgstr ""
 
 #: InvenTree/locales.py:18
 msgid "Bulgarian"
-msgstr "Bulgarian"
+msgstr ""
 
 #: InvenTree/locales.py:19
 msgid "Czech"
-msgstr "Czech"
+msgstr ""
 
 #: InvenTree/locales.py:20
 msgid "Danish"
-msgstr "Danish"
+msgstr ""
 
 #: InvenTree/locales.py:21
 msgid "German"
-msgstr "German"
+msgstr ""
 
 #: InvenTree/locales.py:22
 msgid "Greek"
-msgstr "Greek"
+msgstr ""
 
 #: InvenTree/locales.py:23
 msgid "English"
-msgstr "English"
+msgstr ""
 
 #: InvenTree/locales.py:24
 msgid "Spanish"
-msgstr "Spanish"
+msgstr ""
 
 #: InvenTree/locales.py:25
 msgid "Spanish (Mexican)"
-msgstr "Spanish (Mexican)"
+msgstr ""
 
 #: InvenTree/locales.py:26
 msgid "Farsi / Persian"
-msgstr "Farsi / Persian"
+msgstr ""
 
 #: InvenTree/locales.py:27
 msgid "Finnish"
-msgstr "Finnish"
+msgstr ""
 
 #: InvenTree/locales.py:28
 msgid "French"
-msgstr "French"
+msgstr ""
 
 #: InvenTree/locales.py:29
 msgid "Hebrew"
-msgstr "Hebrew"
+msgstr ""
 
 #: InvenTree/locales.py:30
 msgid "Hindi"
-msgstr "Hindi"
+msgstr ""
 
 #: InvenTree/locales.py:31
 msgid "Hungarian"
-msgstr "Hungarian"
+msgstr ""
 
 #: InvenTree/locales.py:32
 msgid "Italian"
-msgstr "Italian"
+msgstr ""
 
 #: InvenTree/locales.py:33
 msgid "Japanese"
-msgstr "Japanese"
+msgstr ""
 
 #: InvenTree/locales.py:34
 msgid "Korean"
-msgstr "Korean"
+msgstr ""
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr "Latvian"
+msgstr ""
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
-msgstr "Dutch"
+msgstr ""
 
 #: InvenTree/locales.py:37
 msgid "Norwegian"
-msgstr "Norwegian"
+msgstr ""
 
 #: InvenTree/locales.py:38
 msgid "Polish"
-msgstr "Polish"
+msgstr ""
 
 #: InvenTree/locales.py:39
 msgid "Portuguese"
-msgstr "Portuguese"
+msgstr ""
 
 #: InvenTree/locales.py:40
 msgid "Portuguese (Brazilian)"
-msgstr "Portuguese (Brazilian)"
+msgstr ""
 
 #: InvenTree/locales.py:41
 msgid "Russian"
-msgstr "Russian"
+msgstr ""
 
 #: InvenTree/locales.py:42
 msgid "Slovak"
-msgstr "Slovak"
+msgstr ""
 
 #: InvenTree/locales.py:43
 msgid "Slovenian"
-msgstr "Slovenian"
+msgstr ""
 
 #: InvenTree/locales.py:44
 msgid "Serbian"
-msgstr "Serbian"
+msgstr ""
 
 #: InvenTree/locales.py:45
 msgid "Swedish"
-msgstr "Swedish"
+msgstr ""
 
 #: InvenTree/locales.py:46
 msgid "Thai"
-msgstr "Thai"
+msgstr ""
 
 #: InvenTree/locales.py:47
 msgid "Turkish"
-msgstr "Turkish"
+msgstr ""
 
 #: InvenTree/locales.py:48
 msgid "Ukrainian"
-msgstr "乌克兰语"
+msgstr ""
 
 #: InvenTree/locales.py:49
 msgid "Vietnamese"
-msgstr "Vietnamese"
+msgstr ""
 
 #: InvenTree/locales.py:50
 msgid "Chinese (Simplified)"
-msgstr "中文 (简体)"
+msgstr ""
 
 #: InvenTree/locales.py:51
 msgid "Chinese (Traditional)"
-msgstr "中文 (繁体)"
+msgstr ""
 
 #: InvenTree/magic_login.py:28
 #, python-brace-format
 msgid "[{site_name}] Log in to the app"
-msgstr "[{site_name}] 登录到应用程序"
+msgstr ""
 
 #: InvenTree/magic_login.py:38 company/models.py:133
 #: company/templates/company/company_base.html:138
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:677
 msgid "Email"
-msgstr "电子邮件"
+msgstr ""
 
 #: InvenTree/models.py:107
 msgid "Error running plugin validation"
-msgstr "驗證外掛程式時發生錯誤"
+msgstr ""
 
 #: InvenTree/models.py:176
 msgid "Metadata must be a python dict object"
-msgstr "Metadata必須是一個Python Dictionary物件"
+msgstr ""
 
 #: InvenTree/models.py:182
 msgid "Plugin Metadata"
-msgstr "外掛程式Metadata"
+msgstr ""
 
 #: InvenTree/models.py:183
 msgid "JSON metadata field, for use by external plugins"
-msgstr "外掛程式使用的JSON Metadata欄位"
+msgstr ""
 
 #: InvenTree/models.py:413
 msgid "Improperly formatted pattern"
-msgstr "格式錯誤"
+msgstr ""
 
 #: InvenTree/models.py:420
 msgid "Unknown format key specified"
-msgstr "指定了不明的格式鍵值"
+msgstr ""
 
 #: InvenTree/models.py:426
 msgid "Missing required format key"
-msgstr "缺少必須的格式鍵值"
+msgstr ""
 
 #: InvenTree/models.py:437
 msgid "Reference field cannot be empty"
-msgstr "參考欄位不能空白"
+msgstr ""
 
 #: InvenTree/models.py:445
 msgid "Reference must match required pattern"
-msgstr "參考欄位並須符合格式"
+msgstr ""
 
 #: InvenTree/models.py:476
 msgid "Reference number is too large"
-msgstr "參考編號過大"
+msgstr ""
 
 #: InvenTree/models.py:550
 msgid "Missing file"
-msgstr "缺少檔案"
+msgstr ""
 
 #: InvenTree/models.py:551
 msgid "Missing external link"
-msgstr "缺少外部連結"
+msgstr ""
 
 #: InvenTree/models.py:572 stock/models.py:2442
 #: templates/js/translated/attachment.js:119
 #: templates/js/translated/attachment.js:326
 msgid "Attachment"
-msgstr "附件"
+msgstr ""
 
 #: InvenTree/models.py:573
 msgid "Select file to attach"
-msgstr "選擇附件"
+msgstr ""
 
 #: InvenTree/models.py:581 common/models.py:2934 company/models.py:146
 #: company/models.py:457 company/models.py:514 company/models.py:831
@@ -424,21 +424,21 @@ msgstr "選擇附件"
 #: templates/js/translated/sales_order.js:1092
 #: templates/js/translated/sales_order.js:2023
 msgid "Link"
-msgstr "連結"
+msgstr ""
 
 #: InvenTree/models.py:582 build/models.py:345 part/models.py:964
 #: stock/models.py:836
 msgid "Link to external URL"
-msgstr "外部URL連結"
+msgstr ""
 
 #: InvenTree/models.py:588 templates/js/translated/attachment.js:120
 #: templates/js/translated/attachment.js:341
 msgid "Comment"
-msgstr "註解"
+msgstr ""
 
 #: InvenTree/models.py:589
 msgid "File comment"
-msgstr "檔案註解"
+msgstr ""
 
 #: InvenTree/models.py:597 InvenTree/models.py:598 common/models.py:2486
 #: common/models.py:2487 common/models.py:2635 common/models.py:2636
@@ -448,44 +448,44 @@ msgstr "檔案註解"
 #: report/templates/report/inventree_test_report.html:105
 #: templates/js/translated/stock.js:3036 users/models.py:111
 msgid "User"
-msgstr "使用者"
+msgstr ""
 
 #: InvenTree/models.py:602
 msgid "upload date"
-msgstr "上傳日期"
+msgstr ""
 
 #: InvenTree/models.py:624
 msgid "Filename must not be empty"
-msgstr "檔名不得空白"
+msgstr ""
 
 #: InvenTree/models.py:635
 msgid "Invalid attachment directory"
-msgstr "無效的附件目錄"
+msgstr ""
 
 #: InvenTree/models.py:665
 #, python-brace-format
 msgid "Filename contains illegal character '{c}'"
-msgstr "檔名內有不允許的字元 '{c}'"
+msgstr ""
 
 #: InvenTree/models.py:668
 msgid "Filename missing extension"
-msgstr "檔案名稱缺少副檔名"
+msgstr ""
 
 #: InvenTree/models.py:677
 msgid "Attachment with this filename already exists"
-msgstr "已有同檔案名稱的附件"
+msgstr ""
 
 #: InvenTree/models.py:684
 msgid "Error renaming file"
-msgstr "重新命名時發生錯誤"
+msgstr ""
 
 #: InvenTree/models.py:860
 msgid "Duplicate names cannot exist under the same parent"
-msgstr "同一個上層元件下不能有重複的名字"
+msgstr ""
 
 #: InvenTree/models.py:877
 msgid "Invalid choice"
-msgstr "無效的選項"
+msgstr ""
 
 #: InvenTree/models.py:907 common/models.py:2622 common/models.py:3035
 #: common/serializers.py:403 company/models.py:614 machine/models.py:24
@@ -505,7 +505,7 @@ msgstr "無效的選項"
 #: templates/js/translated/part.js:1475 templates/js/translated/part.js:1611
 #: templates/js/translated/part.js:2749 templates/js/translated/stock.js:2716
 msgid "Name"
-msgstr "名稱"
+msgstr ""
 
 #: InvenTree/models.py:913 build/models.py:218
 #: build/templates/build/detail.html:24 common/models.py:134
@@ -542,220 +542,220 @@ msgstr "名稱"
 #: templates/js/translated/stock.js:1515 templates/js/translated/stock.js:2058
 #: templates/js/translated/stock.js:2748 templates/js/translated/stock.js:2831
 msgid "Description"
-msgstr "描述"
+msgstr ""
 
 #: InvenTree/models.py:914 stock/models.py:79
 msgid "Description (optional)"
-msgstr "描述（選填）"
+msgstr ""
 
 #: InvenTree/models.py:923
 msgid "parent"
-msgstr "上層元素"
+msgstr ""
 
 #: InvenTree/models.py:929 templates/js/translated/part.js:2794
 #: templates/js/translated/stock.js:2757
 msgid "Path"
-msgstr "路徑"
+msgstr ""
 
 #: InvenTree/models.py:1059
 msgid "Markdown notes (optional)"
-msgstr "Markdown 註記（選填）"
+msgstr ""
 
 #: InvenTree/models.py:1088
 msgid "Barcode Data"
-msgstr "條碼資料"
+msgstr ""
 
 #: InvenTree/models.py:1089
 msgid "Third party barcode data"
-msgstr "第三方條碼資料"
+msgstr ""
 
 #: InvenTree/models.py:1095
 msgid "Barcode Hash"
-msgstr "條碼雜湊值"
+msgstr ""
 
 #: InvenTree/models.py:1096
 msgid "Unique hash of barcode data"
-msgstr "條碼資料的唯一雜湊值"
+msgstr ""
 
 #: InvenTree/models.py:1149
 msgid "Existing barcode found"
-msgstr "發現現有條碼"
+msgstr ""
 
 #: InvenTree/models.py:1192
 msgid "Server Error"
-msgstr "伺服器錯誤"
+msgstr ""
 
 #: InvenTree/models.py:1193
 msgid "An error has been logged by the server."
-msgstr "伺服器紀錄了一個錯誤。"
+msgstr ""
 
 #: InvenTree/serializers.py:63 part/models.py:4238
 msgid "Must be a valid number"
-msgstr "必須是有效的數字"
+msgstr ""
 
 #: InvenTree/serializers.py:100 company/models.py:183
 #: company/templates/company/company_base.html:112 part/models.py:3027
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr "貨幣"
+msgstr ""
 
 #: InvenTree/serializers.py:103
 msgid "Select currency from available options"
-msgstr "從可用選項中選擇貨幣"
+msgstr ""
 
 #: InvenTree/serializers.py:442
 msgid "You do not have permission to change this user role."
-msgstr "您沒有更改這個使用者角色的權限"
+msgstr ""
 
 #: InvenTree/serializers.py:454
 msgid "Only superusers can create new users"
-msgstr "只有管理員帳戶可以建立新的使用者"
+msgstr ""
 
 #: InvenTree/serializers.py:473
 msgid "Your account has been created."
-msgstr "您的帳號已經建立完成。"
+msgstr ""
 
 #: InvenTree/serializers.py:475
 msgid "Please use the password reset function to login"
-msgstr "請使用重設密碼功能來登入"
+msgstr ""
 
 #: InvenTree/serializers.py:482
 msgid "Welcome to InvenTree"
-msgstr "歡迎使用 InvenTree"
+msgstr ""
 
 #: InvenTree/serializers.py:543
 msgid "Filename"
-msgstr "檔案名稱"
+msgstr ""
 
 #: InvenTree/serializers.py:577
 msgid "Invalid value"
-msgstr "无效值"
+msgstr ""
 
 #: InvenTree/serializers.py:597
 msgid "Data File"
-msgstr "数据文件"
+msgstr ""
 
 #: InvenTree/serializers.py:598
 msgid "Select data file for upload"
-msgstr "选择要上传的数据文件"
+msgstr ""
 
 #: InvenTree/serializers.py:615
 msgid "Unsupported file type"
-msgstr "不支持的文件类型"
+msgstr ""
 
 #: InvenTree/serializers.py:621
 msgid "File is too large"
-msgstr "文件过大"
+msgstr ""
 
 #: InvenTree/serializers.py:642
 msgid "No columns found in file"
-msgstr "在文件中没有找到列"
+msgstr ""
 
 #: InvenTree/serializers.py:645
 msgid "No data rows found in file"
-msgstr "在文件中没有找到数据行"
+msgstr ""
 
 #: InvenTree/serializers.py:758
 msgid "No data rows provided"
-msgstr "没有提供数据行"
+msgstr ""
 
 #: InvenTree/serializers.py:761
 msgid "No data columns supplied"
-msgstr "没有提供数据列"
+msgstr ""
 
 #: InvenTree/serializers.py:828
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr "缺少必需的列：'{name}'"
+msgstr ""
 
 #: InvenTree/serializers.py:837
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr "重复列: '{col}'"
+msgstr ""
 
 #: InvenTree/serializers.py:877
 msgid "Remote Image"
-msgstr "远程图片"
+msgstr ""
 
 #: InvenTree/serializers.py:878
 msgid "URL of remote image file"
-msgstr "远程图片文件的 URL"
+msgstr ""
 
 #: InvenTree/serializers.py:896
 msgid "Downloading images from remote URL is not enabled"
-msgstr "未启用从远程 URL下载图片"
+msgstr ""
 
 #: InvenTree/status.py:66 part/serializers.py:1181
 msgid "Background worker check failed"
-msgstr "后台执行器检查失败"
+msgstr ""
 
 #: InvenTree/status.py:70
 msgid "Email backend not configured"
-msgstr "未配置电子邮件后端"
+msgstr ""
 
 #: InvenTree/status.py:73
 msgid "InvenTree system health checks failed"
-msgstr "InventTree 系统健康检查失败"
+msgstr ""
 
 #: InvenTree/templatetags/inventree_extras.py:183
 msgid "Unknown database"
-msgstr "未知的資料庫"
+msgstr ""
 
 #: InvenTree/validators.py:31 InvenTree/validators.py:33
 msgid "Invalid physical unit"
-msgstr "無效的物理單位"
+msgstr ""
 
 #: InvenTree/validators.py:39
 msgid "Not a valid currency code"
-msgstr "無效的貨幣代碼"
+msgstr ""
 
 #: InvenTree/validators.py:121 InvenTree/validators.py:137
 msgid "Overage value must not be negative"
-msgstr "損失值不能為負"
+msgstr ""
 
 #: InvenTree/validators.py:139
 msgid "Overage must not exceed 100%"
-msgstr "損失率不能超過100%"
+msgstr ""
 
 #: InvenTree/validators.py:145
 msgid "Invalid value for overage"
-msgstr "無效的損失值"
+msgstr ""
 
 #: InvenTree/views.py:400 templates/InvenTree/settings/user.html:23
 msgid "Edit User Information"
-msgstr "編輯使用者資訊"
+msgstr ""
 
 #: InvenTree/views.py:412 templates/InvenTree/settings/user.html:20
 msgid "Set Password"
-msgstr "設定密碼"
+msgstr ""
 
 #: InvenTree/views.py:434
 msgid "Password fields must match"
-msgstr "密碼必須相符"
+msgstr ""
 
 #: InvenTree/views.py:442
 msgid "Wrong password provided"
-msgstr "密碼錯誤"
+msgstr ""
 
 #: InvenTree/views.py:650 templates/navbar.html:160
 msgid "System Information"
-msgstr "系統資訊"
+msgstr ""
 
 #: InvenTree/views.py:657 templates/navbar.html:171
 msgid "About InvenTree"
-msgstr "關於InvenTree"
+msgstr ""
 
 #: build/api.py:255
 msgid "Build must be cancelled before it can be deleted"
-msgstr "工單必須被取消才能被刪除"
+msgstr ""
 
 #: build/api.py:299 part/models.py:4116 templates/js/translated/bom.js:997
 #: templates/js/translated/bom.js:1037 templates/js/translated/build.js:2520
 #: templates/js/translated/table_filters.js:190
 #: templates/js/translated/table_filters.js:583
 msgid "Consumable"
-msgstr "耗材"
+msgstr ""
 
 #: build/api.py:300 part/models.py:4110 part/templates/part/upload_bom.html:58
 #: templates/js/translated/bom.js:1001 templates/js/translated/bom.js:1028
@@ -764,19 +764,19 @@ msgstr "耗材"
 #: templates/js/translated/table_filters.js:215
 #: templates/js/translated/table_filters.js:587
 msgid "Optional"
-msgstr "非必須項目"
+msgstr ""
 
 #: build/api.py:301 templates/js/translated/table_filters.js:408
 #: templates/js/translated/table_filters.js:579
 msgid "Tracked"
-msgstr "追蹤中"
+msgstr ""
 
 #: build/api.py:303 part/admin.py:144 templates/js/translated/build.js:1744
 #: templates/js/translated/build.js:2629
 #: templates/js/translated/sales_order.js:1965
 #: templates/js/translated/table_filters.js:571
 msgid "Allocated"
-msgstr "已分配"
+msgstr ""
 
 #: build/api.py:311 company/models.py:904 company/serializers.py:384
 #: company/templates/company/supplier_part.html:114
@@ -790,7 +790,7 @@ msgstr "已分配"
 #: templates/js/translated/table_filters.js:340
 #: templates/js/translated/table_filters.js:575
 msgid "Available"
-msgstr "可用數量"
+msgstr ""
 
 #: build/models.py:83 build/templates/build/build_base.html:9
 #: build/templates/build/build_base.html:27
@@ -799,7 +799,7 @@ msgstr "可用數量"
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:972 templates/js/translated/stock.js:2892
 msgid "Build Order"
-msgstr "生產工單"
+msgstr ""
 
 #: build/models.py:84 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -810,23 +810,23 @@ msgstr "生產工單"
 #: templates/InvenTree/settings/sidebar.html:55
 #: templates/js/translated/search.js:186 users/models.py:207
 msgid "Build Orders"
-msgstr "生產工單"
+msgstr ""
 
 #: build/models.py:131
 msgid "Invalid choice for parent build"
-msgstr "無效的上層生產工單選擇"
+msgstr ""
 
 #: build/models.py:142 order/models.py:240
 msgid "Responsible user or group must be specified"
-msgstr "必须指定负责的用户或组"
+msgstr ""
 
 #: build/models.py:148
 msgid "Build order part cannot be changed"
-msgstr "無法更改生產工單"
+msgstr ""
 
 #: build/models.py:209
 msgid "Build Order Reference"
-msgstr "生產工單代號"
+msgstr ""
 
 #: build/models.py:210 order/models.py:463 order/models.py:928
 #: order/models.py:1325 order/models.py:2056 part/admin.py:419
@@ -842,20 +842,20 @@ msgstr "生產工單代號"
 #: templates/js/translated/return_order.js:728
 #: templates/js/translated/sales_order.js:1854
 msgid "Reference"
-msgstr "參考代號"
+msgstr ""
 
 #: build/models.py:221
 msgid "Brief description of the build (optional)"
-msgstr "關於生產工單的簡單說明（選填）"
+msgstr ""
 
 #: build/models.py:229 build/templates/build/build_base.html:183
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr "上層生產工單"
+msgstr ""
 
 #: build/models.py:230
 msgid "BuildOrder to which this build is allocated"
-msgstr "這張生產工單對應的上層生產工單"
+msgstr ""
 
 #: build/models.py:235 build/templates/build/build_base.html:97
 #: build/templates/build/detail.html:29 company/models.py:1058 order/api.py:821
@@ -906,103 +906,103 @@ msgstr "這張生產工單對應的上層生產工單"
 #: templates/js/translated/stock.js:2857 templates/js/translated/stock.js:3090
 #: templates/js/translated/stock.js:3236
 msgid "Part"
-msgstr "零件"
+msgstr ""
 
 #: build/models.py:243
 msgid "Select part to build"
-msgstr "選擇要生產的零件"
+msgstr ""
 
 #: build/models.py:248
 msgid "Sales Order Reference"
-msgstr "銷售訂單代號"
+msgstr ""
 
 #: build/models.py:252
 msgid "SalesOrder to which this build is allocated"
-msgstr "這張生產工單對應的銷售訂單"
+msgstr ""
 
 #: build/models.py:257 build/serializers.py:1000
 #: templates/js/translated/build.js:1731
 #: templates/js/translated/sales_order.js:1221
 msgid "Source Location"
-msgstr "來源倉儲地點"
+msgstr ""
 
 #: build/models.py:261
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
-msgstr "選擇領取料件的倉儲地點（留白表示可以從任何地點領取）"
+msgstr ""
 
 #: build/models.py:266
 msgid "Destination Location"
-msgstr "目標倉儲地點"
+msgstr ""
 
 #: build/models.py:270
 msgid "Select location where the completed items will be stored"
-msgstr "选择已完成项目库存地点"
+msgstr ""
 
 #: build/models.py:274
 msgid "Build Quantity"
-msgstr "生产数量"
+msgstr ""
 
 #: build/models.py:277
 msgid "Number of stock items to build"
-msgstr "要生产的项目数量"
+msgstr ""
 
 #: build/models.py:281
 msgid "Completed items"
-msgstr "已完成项目"
+msgstr ""
 
 #: build/models.py:283
 msgid "Number of stock items which have been completed"
-msgstr "已經完成的庫存品數量"
+msgstr ""
 
 #: build/models.py:287
 msgid "Build Status"
-msgstr "生產狀態"
+msgstr ""
 
 #: build/models.py:291
 msgid "Build status code"
-msgstr "生產狀態代碼"
+msgstr ""
 
 #: build/models.py:300 build/serializers.py:287 order/serializers.py:582
 #: stock/models.py:840 stock/serializers.py:75 stock/serializers.py:1465
 #: templates/js/translated/purchase_order.js:1129
 msgid "Batch Code"
-msgstr "批号"
+msgstr ""
 
 #: build/models.py:304 build/serializers.py:288
 msgid "Batch code for this build output"
-msgstr "此产出的批号"
+msgstr ""
 
 #: build/models.py:307 order/models.py:316 order/serializers.py:121
 #: part/models.py:1123 part/templates/part/part_base.html:310
 #: templates/js/translated/return_order.js:338
 #: templates/js/translated/sales_order.js:863
 msgid "Creation Date"
-msgstr "建立日期"
+msgstr ""
 
 #: build/models.py:311
 msgid "Target completion date"
-msgstr "目標完成日期"
+msgstr ""
 
 #: build/models.py:312
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr "生產的預計完成日期。若超過此日期則工單會逾期。"
+msgstr ""
 
 #: build/models.py:315 order/models.py:521 order/models.py:2101
 #: templates/js/translated/build.js:2247
 msgid "Completion Date"
-msgstr "完成日期"
+msgstr ""
 
 #: build/models.py:321
 msgid "completed by"
-msgstr "完成者"
+msgstr ""
 
 #: build/models.py:329 templates/js/translated/build.js:2207
 msgid "Issued by"
-msgstr "發布者"
+msgstr ""
 
 #: build/models.py:330
 msgid "User who issued this build order"
-msgstr "發布此生產工單的使用者"
+msgstr ""
 
 #: build/models.py:338 build/templates/build/build_base.html:204
 #: build/templates/build/detail.html:122 common/models.py:143
@@ -1017,11 +1017,11 @@ msgstr "發布此生產工單的使用者"
 #: templates/js/translated/return_order.js:358
 #: templates/js/translated/table_filters.js:531
 msgid "Responsible"
-msgstr "負責人"
+msgstr ""
 
 #: build/models.py:339
 msgid "User or group responsible for this build order"
-msgstr "負責此生產工單的使用者或群組"
+msgstr ""
 
 #: build/models.py:344 build/templates/build/detail.html:108
 #: company/templates/company/manufacturer_part.html:107
@@ -1033,15 +1033,15 @@ msgstr "負責此生產工單的使用者或群組"
 #: stock/templates/stock/item_base.html:200
 #: templates/js/translated/company.js:1019
 msgid "External Link"
-msgstr "外部連結"
+msgstr ""
 
 #: build/models.py:349
 msgid "Build Priority"
-msgstr "製造優先度"
+msgstr ""
 
 #: build/models.py:352
 msgid "Priority of this build order"
-msgstr "此生產工單的優先程度"
+msgstr ""
 
 #: build/models.py:359 common/models.py:127 order/admin.py:18
 #: order/models.py:298 templates/InvenTree/settings/settings_staff_js.html:146
@@ -1052,52 +1052,52 @@ msgstr "此生產工單的優先程度"
 #: templates/js/translated/table_filters.js:48
 #: templates/project_code_data.html:6
 msgid "Project Code"
-msgstr "專案代碼"
+msgstr ""
 
 #: build/models.py:360
 msgid "Project code for this build order"
-msgstr "此生產工單隸屬的專案代碼"
+msgstr ""
 
 #: build/models.py:593 build/models.py:658
 msgid "Failed to offload task to complete build allocations"
-msgstr "未能卸载任务以完成生产分配"
+msgstr ""
 
 #: build/models.py:615
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr "生產工單 {build} 已經完成"
+msgstr ""
 
 #: build/models.py:621
 msgid "A build order has been completed"
-msgstr "一張生產工單已經完成"
+msgstr ""
 
 #: build/models.py:847 build/models.py:932
 msgid "No build output specified"
-msgstr "未指定产出"
+msgstr ""
 
 #: build/models.py:850
 msgid "Build output is already completed"
-msgstr "产出已完成"
+msgstr ""
 
 #: build/models.py:853
 msgid "Build output does not match Build Order"
-msgstr "产出与生产订单不匹配"
+msgstr ""
 
 #: build/models.py:936 build/serializers.py:220 build/serializers.py:269
 #: build/serializers.py:867 order/models.py:559 order/serializers.py:434
 #: order/serializers.py:577 part/serializers.py:1491 part/serializers.py:1891
 #: stock/models.py:679 stock/models.py:1499 stock/serializers.py:604
 msgid "Quantity must be greater than zero"
-msgstr "數量必須大於零"
+msgstr ""
 
 #: build/models.py:941 build/serializers.py:225
 msgid "Quantity cannot be greater than the output quantity"
-msgstr "数量不能大于输出数量"
+msgstr ""
 
 #: build/models.py:1001 build/serializers.py:548
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr "产出 {serial} 未通过所有必要测试"
+msgstr ""
 
 #: build/models.py:1352
 msgid "Build Order Line Item"
@@ -1105,7 +1105,7 @@ msgstr ""
 
 #: build/models.py:1377
 msgid "Build object"
-msgstr "生产对象"
+msgstr ""
 
 #: build/models.py:1391 build/models.py:1647 build/serializers.py:207
 #: build/serializers.py:254 build/templates/build/build_base.html:102
@@ -1152,36 +1152,36 @@ msgstr "生产对象"
 #: templates/js/translated/stock.js:873 templates/js/translated/stock.js:3021
 #: templates/js/translated/stock.js:3104
 msgid "Quantity"
-msgstr "數量"
+msgstr ""
 
 #: build/models.py:1392
 msgid "Required quantity for build order"
-msgstr "生產工單所需數量"
+msgstr ""
 
 #: build/models.py:1472
 msgid "Build item must specify a build output, as master part is marked as trackable"
-msgstr "生产项必须指定产出，因为主零件已经被标记为可追踪的"
+msgstr ""
 
 #: build/models.py:1481
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr "分配的數量（{q}）不能超過可用的庫存數量（{a}）"
+msgstr ""
 
 #: build/models.py:1491 order/models.py:1918
 msgid "Stock item is over-allocated"
-msgstr "庫存品項超額分配"
+msgstr ""
 
 #: build/models.py:1497 order/models.py:1921
 msgid "Allocation quantity must be greater than zero"
-msgstr "分配的數量必須大於零"
+msgstr ""
 
 #: build/models.py:1503
 msgid "Quantity must be 1 for serialized stock"
-msgstr "有序號的品項數量必須為1"
+msgstr ""
 
 #: build/models.py:1562
 msgid "Selected stock item does not match BOM line"
-msgstr "選擇的庫存品項和BOM的項目不符"
+msgstr ""
 
 #: build/models.py:1634 build/serializers.py:847 order/serializers.py:1184
 #: order/serializers.py:1205 stock/models.py:360 stock/serializers.py:92
@@ -1199,66 +1199,66 @@ msgstr "選擇的庫存品項和BOM的項目不符"
 #: templates/js/translated/stock.js:677 templates/js/translated/stock.js:843
 #: templates/js/translated/stock.js:2977
 msgid "Stock Item"
-msgstr "庫存品項"
+msgstr ""
 
 #: build/models.py:1635
 msgid "Source stock item"
-msgstr "來源庫存項目"
+msgstr ""
 
 #: build/models.py:1648
 msgid "Stock quantity to allocate to build"
-msgstr "要分配的庫存數量"
+msgstr ""
 
 #: build/models.py:1656
 msgid "Install into"
-msgstr "安裝到"
+msgstr ""
 
 #: build/models.py:1657
 msgid "Destination stock item"
-msgstr "目的庫存品項"
+msgstr ""
 
 #: build/serializers.py:157 build/serializers.py:876
 #: templates/js/translated/build.js:1322
 msgid "Build Output"
-msgstr "产出"
+msgstr ""
 
 #: build/serializers.py:169
 msgid "Build output does not match the parent build"
-msgstr "产出与之前的生产不匹配"
+msgstr ""
 
 #: build/serializers.py:173
 msgid "Output part does not match BuildOrder part"
-msgstr "产出零件与生产订单零件不匹配"
+msgstr ""
 
 #: build/serializers.py:177
 msgid "This build output has already been completed"
-msgstr "此产出已经完成"
+msgstr ""
 
 #: build/serializers.py:188
 msgid "This build output is not fully allocated"
-msgstr "此产出尚未完全分配"
+msgstr ""
 
 #: build/serializers.py:208 build/serializers.py:255
 msgid "Enter quantity for build output"
-msgstr "输入产出数量"
+msgstr ""
 
 #: build/serializers.py:276
 msgid "Integer quantity required for trackable parts"
-msgstr "可追蹤的零件數量必須為整數"
+msgstr ""
 
 #: build/serializers.py:279
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
-msgstr "因為BOM包含可追蹤的零件，所以數量必須為整數"
+msgstr ""
 
 #: build/serializers.py:294 order/serializers.py:590 order/serializers.py:1344
 #: stock/serializers.py:615 templates/js/translated/purchase_order.js:1153
 #: templates/js/translated/stock.js:367 templates/js/translated/stock.js:565
 msgid "Serial Numbers"
-msgstr "序號"
+msgstr ""
 
 #: build/serializers.py:295
 msgid "Enter serial numbers for build outputs"
-msgstr "输出产出的序列号"
+msgstr ""
 
 #: build/serializers.py:300 build/serializers.py:441 build/serializers.py:513
 #: order/serializers.py:566 order/serializers.py:674 order/serializers.py:1680
@@ -1278,51 +1278,51 @@ msgstr "输出产出的序列号"
 #: templates/js/translated/stock.js:1060 templates/js/translated/stock.js:2201
 #: templates/js/translated/stock.js:2871
 msgid "Location"
-msgstr "地點"
+msgstr ""
 
 #: build/serializers.py:301
 msgid "Stock location for build output"
-msgstr "生产输出的库存地点"
+msgstr ""
 
 #: build/serializers.py:315
 msgid "Auto Allocate Serial Numbers"
-msgstr "自動分配序號"
+msgstr ""
 
 #: build/serializers.py:316
 msgid "Automatically allocate required items with matching serial numbers"
-msgstr "自動為需要項目分配對應的序號"
+msgstr ""
 
 #: build/serializers.py:331
 msgid "Serial numbers must be provided for trackable parts"
-msgstr "对于可跟踪的零件，必须提供序列号"
+msgstr ""
 
 #: build/serializers.py:356 stock/api.py:1031
 msgid "The following serial numbers already exist or are invalid"
-msgstr "序號已存在或無效"
+msgstr ""
 
 #: build/serializers.py:403 build/serializers.py:465 build/serializers.py:554
 msgid "A list of build outputs must be provided"
-msgstr "必须提供产出清单"
+msgstr ""
 
 #: build/serializers.py:442
 msgid "Stock location for scrapped outputs"
-msgstr "废品产出的库存位置"
+msgstr ""
 
 #: build/serializers.py:448
 msgid "Discard Allocations"
-msgstr "放棄分配"
+msgstr ""
 
 #: build/serializers.py:449
 msgid "Discard any stock allocations for scrapped outputs"
-msgstr "取消对废品产出的任何库存分配"
+msgstr ""
 
 #: build/serializers.py:454
 msgid "Reason for scrapping build output(s)"
-msgstr "废品产出的原因"
+msgstr ""
 
 #: build/serializers.py:514
 msgid "Location for completed build outputs"
-msgstr "已完成删除的库存地点"
+msgstr ""
 
 #: build/serializers.py:520 build/templates/build/build_base.html:151
 #: build/templates/build/detail.html:62 order/models.py:952
@@ -1337,120 +1337,120 @@ msgstr "已完成删除的库存地点"
 #: templates/js/translated/stock.js:2176 templates/js/translated/stock.js:2995
 #: templates/js/translated/stock.js:3120
 msgid "Status"
-msgstr "狀態"
+msgstr ""
 
 #: build/serializers.py:526
 msgid "Accept Incomplete Allocation"
-msgstr "接受不完整的分配"
+msgstr ""
 
 #: build/serializers.py:527
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "如果库存尚未全部分配，则完成产出"
+msgstr ""
 
 #: build/serializers.py:612
 msgid "Consume Allocated Stock"
-msgstr "消费已分配的库存"
+msgstr ""
 
 #: build/serializers.py:613
 msgid "Consume any stock which has already been allocated to this build"
-msgstr "消耗已分配给此生产的任何库存"
+msgstr ""
 
 #: build/serializers.py:619
 msgid "Remove Incomplete Outputs"
-msgstr "移除未完成的产出"
+msgstr ""
 
 #: build/serializers.py:620
 msgid "Delete any build outputs which have not been completed"
-msgstr "删除所有未完成的产出"
+msgstr ""
 
 #: build/serializers.py:647
 msgid "Not permitted"
-msgstr "不允许"
+msgstr ""
 
 #: build/serializers.py:648
 msgid "Accept as consumed by this build order"
-msgstr "接受作为此生产订单的消费"
+msgstr ""
 
 #: build/serializers.py:649
 msgid "Deallocate before completing this build order"
-msgstr "完成此生产订单前取消分配"
+msgstr ""
 
 #: build/serializers.py:679
 msgid "Overallocated Stock"
-msgstr "超出分配的库存"
+msgstr ""
 
 #: build/serializers.py:681
 msgid "How do you want to handle extra stock items assigned to the build order"
-msgstr "如何处理分配给生产订单的额外库存项"
+msgstr ""
 
 #: build/serializers.py:691
 msgid "Some stock items have been overallocated"
-msgstr "有库存项目已被过度分配"
+msgstr ""
 
 #: build/serializers.py:696
 msgid "Accept Unallocated"
-msgstr "接受未分配"
+msgstr ""
 
 #: build/serializers.py:697
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr "接受库存项未被完全分配至生产订单"
+msgstr ""
 
 #: build/serializers.py:707 templates/js/translated/build.js:315
 msgid "Required stock has not been fully allocated"
-msgstr "所需库存尚未完全分配"
+msgstr ""
 
 #: build/serializers.py:712 order/serializers.py:302 order/serializers.py:1247
 msgid "Accept Incomplete"
-msgstr "接受不完整"
+msgstr ""
 
 #: build/serializers.py:713
 msgid "Accept that the required number of build outputs have not been completed"
-msgstr "允许所需数量的产出未完成"
+msgstr ""
 
 #: build/serializers.py:723 templates/js/translated/build.js:319
 msgid "Required build quantity has not been completed"
-msgstr "未完成所需生产数量"
+msgstr ""
 
 #: build/serializers.py:732 templates/js/translated/build.js:303
 msgid "Build order has incomplete outputs"
-msgstr "生产订单有未完成的产出"
+msgstr ""
 
 #: build/serializers.py:770
 msgid "Build Line"
-msgstr "生产行"
+msgstr ""
 
 #: build/serializers.py:780
 msgid "Build output"
-msgstr "产出"
+msgstr ""
 
 #: build/serializers.py:788
 msgid "Build output must point to the same build"
-msgstr "生产产出必须指向相同的生产"
+msgstr ""
 
 #: build/serializers.py:824
 msgid "Build Line Item"
-msgstr "生产行项目"
+msgstr ""
 
 #: build/serializers.py:838
 msgid "bom_item.part must point to the same part as the build order"
-msgstr "bom_item.part 必须与生产订单零件相同"
+msgstr ""
 
 #: build/serializers.py:853 stock/serializers.py:1197
 msgid "Item must be in stock"
-msgstr "商品必須有庫存"
+msgstr ""
 
 #: build/serializers.py:901 order/serializers.py:1238
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
-msgstr "可用量 ({q}) 超出限制"
+msgstr ""
 
 #: build/serializers.py:907
 msgid "Build output must be specified for allocation of tracked parts"
-msgstr "对于被追踪的零件的分配，必须指定生产产出"
+msgstr ""
 
 #: build/serializers.py:914
 msgid "Build output cannot be specified for allocation of untracked parts"
-msgstr "对于未被追踪的零件，无法指定生产产出"
+msgstr ""
 
 #: build/serializers.py:938 order/serializers.py:1490
 msgid "Allocation items must be provided"
@@ -1462,7 +1462,7 @@ msgstr ""
 
 #: build/serializers.py:1009
 msgid "Exclude Location"
-msgstr "排除位置"
+msgstr ""
 
 #: build/serializers.py:1010
 msgid "Exclude stock items from this selected location"
@@ -1470,7 +1470,7 @@ msgstr ""
 
 #: build/serializers.py:1015
 msgid "Interchangeable Stock"
-msgstr "可互換庫存"
+msgstr ""
 
 #: build/serializers.py:1016
 msgid "Stock items in multiple locations can be used interchangeably"
@@ -1478,7 +1478,7 @@ msgstr ""
 
 #: build/serializers.py:1021
 msgid "Substitute Stock"
-msgstr "替代品库存"
+msgstr ""
 
 #: build/serializers.py:1022
 msgid "Allow allocation of substitute parts"
@@ -1486,7 +1486,7 @@ msgstr ""
 
 #: build/serializers.py:1027
 msgid "Optional Items"
-msgstr "可选项目"
+msgstr ""
 
 #: build/serializers.py:1028
 msgid "Allocate optional BOM items to build order"
@@ -1499,11 +1499,11 @@ msgstr ""
 #: build/serializers.py:1140 part/models.py:3999 part/models.py:4435
 #: stock/api.py:794
 msgid "BOM Item"
-msgstr "物料清单项"
+msgstr ""
 
 #: build/serializers.py:1149 templates/js/translated/index.js:130
 msgid "Allocated Stock"
-msgstr "分配库存"
+msgstr ""
 
 #: build/serializers.py:1154 part/admin.py:132 part/bom.py:173
 #: part/serializers.py:835 part/serializers.py:1509
@@ -1512,45 +1512,45 @@ msgstr "分配库存"
 #: templates/js/translated/part.js:2149
 #: templates/js/translated/table_filters.js:170
 msgid "On Order"
-msgstr "已订购"
+msgstr ""
 
 #: build/serializers.py:1159 part/serializers.py:1511
 #: templates/js/translated/build.js:2617
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
-msgstr "生产中"
+msgstr ""
 
 #: build/serializers.py:1164 part/bom.py:172 part/serializers.py:1534
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1929
 msgid "Available Stock"
-msgstr "可用库存"
+msgstr ""
 
 #: build/status_codes.py:11 generic/states/tests.py:17 order/status_codes.py:12
 #: order/status_codes.py:37 order/status_codes.py:64 order/status_codes.py:82
 #: templates/js/translated/table_filters.js:598
 msgid "Pending"
-msgstr "待定"
+msgstr ""
 
 #: build/status_codes.py:12
 msgid "Production"
-msgstr "生產"
+msgstr ""
 
 #: build/status_codes.py:13 order/status_codes.py:15 order/status_codes.py:45
 #: order/status_codes.py:70
 msgid "Cancelled"
-msgstr "已取消"
+msgstr ""
 
 #: build/status_codes.py:14 generic/states/tests.py:19 order/status_codes.py:14
 #: order/status_codes.py:44 order/status_codes.py:69
 #: order/templates/order/order_base.html:158
 #: order/templates/order/sales_order_base.html:165 report/models.py:443
 msgid "Complete"
-msgstr "完成"
+msgstr ""
 
 #: build/tasks.py:184
 msgid "Stock required for build order"
-msgstr "生产订单所需库存"
+msgstr ""
 
 #: build/tasks.py:201
 msgid "Overdue Build Order"
@@ -1559,11 +1559,11 @@ msgstr ""
 #: build/tasks.py:206
 #, python-brace-format
 msgid "Build order {bo} is now overdue"
-msgstr "生产订单 {bo} 现已逾期"
+msgstr ""
 
 #: build/templates/build/build_base.html:18
 msgid "Part thumbnail"
-msgstr "零件缩略图"
+msgstr ""
 
 #: build/templates/build/build_base.html:38
 #: company/templates/company/supplier_part.html:35
@@ -1586,7 +1586,7 @@ msgstr ""
 #: stock/templates/stock/item_base.html:44
 #: stock/templates/stock/location.html:57 templates/qr_button.html:1
 msgid "Show QR Code"
-msgstr "显示二维码"
+msgstr ""
 
 #: build/templates/build/build_base.html:45
 #: company/templates/company/supplier_part.html:41
@@ -1599,7 +1599,7 @@ msgstr "显示二维码"
 #: templates/js/translated/barcode.js:496
 #: templates/js/translated/barcode.js:501
 msgid "Unlink Barcode"
-msgstr "取消关联条形码"
+msgstr ""
 
 #: build/templates/build/build_base.html:47
 #: company/templates/company/supplier_part.html:43
@@ -1610,51 +1610,51 @@ msgstr "取消关联条形码"
 #: stock/templates/stock/item_base.html:49
 #: stock/templates/stock/location.html:61
 msgid "Link Barcode"
-msgstr "关联条形码"
+msgstr ""
 
 #: build/templates/build/build_base.html:56
 #: order/templates/order/order_base.html:46
 #: order/templates/order/return_order_base.html:55
 #: order/templates/order/sales_order_base.html:55
 msgid "Print actions"
-msgstr "打印操作"
+msgstr ""
 
 #: build/templates/build/build_base.html:60
 msgid "Print build order report"
-msgstr "打印生产订单报告"
+msgstr ""
 
 #: build/templates/build/build_base.html:67
 msgid "Build actions"
-msgstr "生产操作"
+msgstr ""
 
 #: build/templates/build/build_base.html:71
 msgid "Edit Build"
-msgstr "编辑生产操作"
+msgstr ""
 
 #: build/templates/build/build_base.html:73
 msgid "Cancel Build"
-msgstr "取消生产操作"
+msgstr ""
 
 #: build/templates/build/build_base.html:76
 msgid "Duplicate Build"
-msgstr "复制生产操作"
+msgstr ""
 
 #: build/templates/build/build_base.html:79
 msgid "Delete Build"
-msgstr "删除生产操作"
+msgstr ""
 
 #: build/templates/build/build_base.html:84
 #: build/templates/build/build_base.html:85
 msgid "Complete Build"
-msgstr "生产操作完成"
+msgstr ""
 
 #: build/templates/build/build_base.html:107
 msgid "Build Description"
-msgstr "生产操作描述"
+msgstr ""
 
 #: build/templates/build/build_base.html:117
 msgid "No build outputs have been created for this build order"
-msgstr "没有为此生产订单创建生产产出"
+msgstr ""
 
 #: build/templates/build/build_base.html:124
 msgid "Build Order is ready to mark as completed"
@@ -1662,7 +1662,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:129
 msgid "Build Order cannot be completed as outstanding outputs remain"
-msgstr "由于仍有未完成的产出，生产订单无法完成"
+msgstr ""
 
 #: build/templates/build/build_base.html:134
 msgid "Required build quantity has not yet been completed"
@@ -1686,12 +1686,12 @@ msgstr ""
 #: templates/js/translated/sales_order.js:871
 #: templates/js/translated/sales_order.js:1903
 msgid "Target Date"
-msgstr "预计日期"
+msgstr ""
 
 #: build/templates/build/build_base.html:165
 #, python-format
 msgid "This build was due on %(target)s"
-msgstr "此次生产的截止日期为 %(target)s"
+msgstr ""
 
 #: build/templates/build/build_base.html:165
 #: build/templates/build/build_base.html:222
@@ -1703,12 +1703,12 @@ msgstr "此次生产的截止日期为 %(target)s"
 #: templates/js/translated/table_filters.js:626
 #: templates/js/translated/table_filters.js:667
 msgid "Overdue"
-msgstr "逾期"
+msgstr ""
 
 #: build/templates/build/build_base.html:177
 #: build/templates/build/detail.html:67 build/templates/build/sidebar.html:13
 msgid "Completed Outputs"
-msgstr "产出已完成"
+msgstr ""
 
 #: build/templates/build/build_base.html:190
 #: build/templates/build/detail.html:101 order/api.py:1511 order/models.py:847
@@ -1724,7 +1724,7 @@ msgstr "产出已完成"
 #: templates/js/translated/sales_order.js:1028
 #: templates/js/translated/stock.js:2924
 msgid "Sales Order"
-msgstr "销售订单"
+msgstr ""
 
 #: build/templates/build/build_base.html:197
 #: build/templates/build/detail.html:115
@@ -1736,15 +1736,15 @@ msgstr ""
 #: build/templates/build/build_base.html:211
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2156
 msgid "Priority"
-msgstr "優先等級"
+msgstr ""
 
 #: build/templates/build/build_base.html:269
 msgid "Delete Build Order"
-msgstr "删除生产订单"
+msgstr ""
 
 #: build/templates/build/build_base.html:279
 msgid "Build Order QR Code"
-msgstr "生产订单二维码"
+msgstr ""
 
 #: build/templates/build/build_base.html:291
 msgid "Link Barcode to Build Order"
@@ -1752,15 +1752,15 @@ msgstr ""
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
-msgstr "生产详情"
+msgstr ""
 
 #: build/templates/build/detail.html:38
 msgid "Stock Source"
-msgstr "库存来源"
+msgstr ""
 
 #: build/templates/build/detail.html:43
 msgid "Stock can be taken from any available location."
-msgstr "库存可以从任何可用地点获得。"
+msgstr ""
 
 #: build/templates/build/detail.html:49 order/models.py:1479
 #: templates/js/translated/purchase_order.js:2189
@@ -1773,7 +1773,7 @@ msgstr ""
 
 #: build/templates/build/detail.html:73
 msgid "Allocated Parts"
-msgstr "已分配的零件"
+msgstr ""
 
 #: build/templates/build/detail.html:80 stock/admin.py:163
 #: stock/templates/stock/item_base.html:162
@@ -1793,7 +1793,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:190
 #: templates/js/translated/build.js:2199
 msgid "Created"
-msgstr "已创建"
+msgstr ""
 
 #: build/templates/build/detail.html:144
 msgid "No target date set"
@@ -1803,15 +1803,15 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:206
 #: templates/js/translated/table_filters.js:689
 msgid "Completed"
-msgstr "已完成"
+msgstr ""
 
 #: build/templates/build/detail.html:153
 msgid "Build not complete"
-msgstr "生产未完成"
+msgstr ""
 
 #: build/templates/build/detail.html:164 build/templates/build/sidebar.html:17
 msgid "Child Build Orders"
-msgstr "子生产订单"
+msgstr ""
 
 #: build/templates/build/detail.html:177
 msgid "Allocate Stock to Build"
@@ -1819,36 +1819,36 @@ msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
-msgstr "取消库存分配"
+msgstr ""
 
 #: build/templates/build/detail.html:182
 msgid "Deallocate Stock"
-msgstr "取消库存分配"
+msgstr ""
 
 #: build/templates/build/detail.html:184
 msgid "Automatically allocate stock to build"
-msgstr "自动分配库存以生产"
+msgstr ""
 
 #: build/templates/build/detail.html:185
 msgid "Auto Allocate"
-msgstr "自動分配"
+msgstr ""
 
 #: build/templates/build/detail.html:187
 msgid "Manually allocate stock to build"
-msgstr "手動分配庫存進行生產"
+msgstr ""
 
 #: build/templates/build/detail.html:188 build/templates/build/sidebar.html:8
 msgid "Allocate Stock"
-msgstr "分配庫存"
+msgstr ""
 
 #: build/templates/build/detail.html:191
 msgid "Order required parts"
-msgstr "订单所需零件"
+msgstr ""
 
 #: build/templates/build/detail.html:192
 #: templates/js/translated/purchase_order.js:795
 msgid "Order Parts"
-msgstr "订购零件"
+msgstr ""
 
 #: build/templates/build/detail.html:205
 msgid "Available stock has been filtered based on specified source location for this build order"
@@ -1856,23 +1856,23 @@ msgstr ""
 
 #: build/templates/build/detail.html:215
 msgid "Incomplete Build Outputs"
-msgstr "未完成产出"
+msgstr ""
 
 #: build/templates/build/detail.html:219
 msgid "Create new build output"
-msgstr "创建新的生产产出"
+msgstr ""
 
 #: build/templates/build/detail.html:220
 msgid "New Build Output"
-msgstr "新建生产产出"
+msgstr ""
 
 #: build/templates/build/detail.html:237 build/templates/build/sidebar.html:15
 msgid "Consumed Stock"
-msgstr "已消耗的库存"
+msgstr ""
 
 #: build/templates/build/detail.html:249
 msgid "Completed Build Outputs"
-msgstr "已完成的产出"
+msgstr ""
 
 #: build/templates/build/detail.html:261 build/templates/build/sidebar.html:19
 #: company/templates/company/detail.html:229
@@ -1888,11 +1888,11 @@ msgstr "已完成的产出"
 #: part/templates/part/part_sidebar.html:61 stock/templates/stock/item.html:110
 #: stock/templates/stock/stock_sidebar.html:23
 msgid "Attachments"
-msgstr "附件"
+msgstr ""
 
 #: build/templates/build/detail.html:276
 msgid "Build Notes"
-msgstr "生产备注"
+msgstr ""
 
 #: build/templates/build/detail.html:437
 msgid "Allocation Complete"
@@ -1904,15 +1904,15 @@ msgstr ""
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
-msgstr "新建生产订单"
+msgstr ""
 
 #: build/templates/build/sidebar.html:5
 msgid "Build Order Details"
-msgstr "生产订单详情"
+msgstr ""
 
 #: build/templates/build/sidebar.html:10
 msgid "Incomplete Outputs"
-msgstr "未完成的产出"
+msgstr ""
 
 #: common/currency.py:132
 msgid "Invalid currency code"
@@ -1928,12 +1928,12 @@ msgstr ""
 
 #: common/currency.py:153
 msgid "No plugin"
-msgstr "暂无插件"
+msgstr ""
 
 #: common/files.py:63
 #, python-brace-format
 msgid "Unsupported file format: {fmt}"
-msgstr "不支持的文件格式： {fmt}"
+msgstr ""
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
@@ -1953,11 +1953,11 @@ msgstr ""
 
 #: common/forms.py:12
 msgid "File"
-msgstr "檔案"
+msgstr ""
 
 #: common/forms.py:12
 msgid "Select file to upload"
-msgstr "選擇要上傳的檔案"
+msgstr ""
 
 #: common/forms.py:25
 msgid "{name.title()} File"
@@ -1966,19 +1966,19 @@ msgstr ""
 #: common/forms.py:26
 #, python-brace-format
 msgid "Select {name} file to upload"
-msgstr "选择 {name} 文件上传"
+msgstr ""
 
 #: common/models.py:69
 msgid "Updated"
-msgstr "已是最新"
+msgstr ""
 
 #: common/models.py:70
 msgid "Timestamp of last update"
-msgstr "最后更新时间戳"
+msgstr ""
 
 #: common/models.py:103
 msgid "Site URL is locked by configuration"
-msgstr "网站 URL 已配置为锁定"
+msgstr ""
 
 #: common/models.py:128
 msgid "Unique project code"
@@ -1986,11 +1986,11 @@ msgstr ""
 
 #: common/models.py:135
 msgid "Project description"
-msgstr "项目描述"
+msgstr ""
 
 #: common/models.py:144
 msgid "User or group responsible for this project"
-msgstr "负责此项目的用户或群组"
+msgstr ""
 
 #: common/models.py:764
 msgid "Settings key (must be unique - case insensitive)"
@@ -1998,47 +1998,47 @@ msgstr ""
 
 #: common/models.py:768
 msgid "Settings value"
-msgstr "设定值"
+msgstr ""
 
 #: common/models.py:820
 msgid "Chosen value is not a valid option"
-msgstr "所选值不是一个有效的选项"
+msgstr ""
 
 #: common/models.py:836
 msgid "Value must be a boolean value"
-msgstr "该值必须是布尔值"
+msgstr ""
 
 #: common/models.py:844
 msgid "Value must be an integer value"
-msgstr "该值必须为整数"
+msgstr ""
 
 #: common/models.py:881
 msgid "Key string must be unique"
-msgstr "键字符串必须是唯一的"
+msgstr ""
 
 #: common/models.py:1113
 msgid "No group"
-msgstr "无分组"
+msgstr ""
 
 #: common/models.py:1212
 msgid "Restart required"
-msgstr "需要重启"
+msgstr ""
 
 #: common/models.py:1214
 msgid "A setting has been changed which requires a server restart"
-msgstr "设置已更改，需要服务器重启"
+msgstr ""
 
 #: common/models.py:1221
 msgid "Pending migrations"
-msgstr "等待迁移"
+msgstr ""
 
 #: common/models.py:1222
 msgid "Number of pending database migrations"
-msgstr "待处理的数据库迁移数"
+msgstr ""
 
 #: common/models.py:1227
 msgid "Server Instance Name"
-msgstr "服务器实例名称"
+msgstr ""
 
 #: common/models.py:1229
 msgid "String descriptor for the server instance"
@@ -2046,27 +2046,27 @@ msgstr ""
 
 #: common/models.py:1233
 msgid "Use instance name"
-msgstr "使用实例名称"
+msgstr ""
 
 #: common/models.py:1234
 msgid "Use the instance name in the title-bar"
-msgstr "在标题栏中使用实例名称"
+msgstr ""
 
 #: common/models.py:1239
 msgid "Restrict showing `about`"
-msgstr "限制显示 `关于` 信息"
+msgstr ""
 
 #: common/models.py:1240
 msgid "Show the `about` modal only to superusers"
-msgstr "只向超级管理员显示关于信息"
+msgstr ""
 
 #: common/models.py:1245 company/models.py:108 company/models.py:109
 msgid "Company name"
-msgstr "公司名称"
+msgstr ""
 
 #: common/models.py:1246
 msgid "Internal company name"
-msgstr "内部公司名称"
+msgstr ""
 
 #: common/models.py:1250
 msgid "Base URL"
@@ -2078,11 +2078,11 @@ msgstr ""
 
 #: common/models.py:1257
 msgid "Default Currency"
-msgstr "默认货币单位"
+msgstr ""
 
 #: common/models.py:1258
 msgid "Select base currency for pricing calculations"
-msgstr "选择价格计算的默认货币"
+msgstr ""
 
 #: common/models.py:1264
 msgid "Supported Currencies"
@@ -2105,7 +2105,7 @@ msgstr ""
 #: common/models.py:1589 common/models.py:1611 common/models.py:1726
 #: common/models.py:2045
 msgid "days"
-msgstr "天"
+msgstr ""
 
 #: common/models.py:1280
 msgid "Currency Update Plugin"
@@ -2117,7 +2117,7 @@ msgstr ""
 
 #: common/models.py:1286
 msgid "Download from URL"
-msgstr "从URL下载"
+msgstr ""
 
 #: common/models.py:1288
 msgid "Allow download of remote images and files from external URL"
@@ -2173,15 +2173,15 @@ msgstr ""
 
 #: common/models.py:1335
 msgid "Automatic Backup"
-msgstr "自動備份"
+msgstr ""
 
 #: common/models.py:1336
 msgid "Enable automatic backup of database and media files"
-msgstr "啟動資料庫和媒體文件自動備份"
+msgstr ""
 
 #: common/models.py:1341
 msgid "Auto Backup Interval"
-msgstr "自動備份間隔"
+msgstr ""
 
 #: common/models.py:1342
 msgid "Specify number of days between automated backup events"
@@ -2313,7 +2313,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:139
 #: templates/js/translated/table_filters.js:767
 msgid "Template"
-msgstr "模板"
+msgstr ""
 
 #: common/models.py:1447
 msgid "Parts are templates by default"
@@ -2333,7 +2333,7 @@ msgstr ""
 #: common/models.py:1458 part/admin.py:95 part/models.py:1066
 #: templates/js/translated/table_filters.js:729
 msgid "Component"
-msgstr "组件"
+msgstr ""
 
 #: common/models.py:1459
 msgid "Parts can be used as sub-components by default"
@@ -2388,7 +2388,7 @@ msgstr ""
 
 #: common/models.py:1494
 msgid "Show related parts"
-msgstr "显示相关零件"
+msgstr ""
 
 #: common/models.py:1495
 msgid "Display related parts for a part"
@@ -2548,11 +2548,11 @@ msgstr ""
 
 #: common/models.py:1650 templates/stats.html:25
 msgid "Debug Mode"
-msgstr "调试模式"
+msgstr ""
 
 #: common/models.py:1651
 msgid "Generate reports in debug mode (HTML output)"
-msgstr "以调试模式生成报告（HTML 输出）"
+msgstr ""
 
 #: common/models.py:1656
 msgid "Log Report Errors"
@@ -2565,79 +2565,79 @@ msgstr ""
 #: common/models.py:1662 plugin/builtin/labels/label_sheet.py:28
 #: report/models.py:301
 msgid "Page Size"
-msgstr "页面大小"
+msgstr ""
 
 #: common/models.py:1663
 msgid "Default page size for PDF reports"
-msgstr "PDF 报告默认页面大小"
+msgstr ""
 
 #: common/models.py:1668
 msgid "Enable Test Reports"
-msgstr "启用测试报告"
+msgstr ""
 
 #: common/models.py:1669
 msgid "Enable generation of test reports"
-msgstr "启用生成测试报表"
+msgstr ""
 
 #: common/models.py:1674
 msgid "Attach Test Reports"
-msgstr "添加测试报告"
+msgstr ""
 
 #: common/models.py:1676
 msgid "When printing a Test Report, attach a copy of the Test Report to the associated Stock Item"
-msgstr "在打印测试报告时，将测试报告副本附加到相关的库存项"
+msgstr ""
 
 #: common/models.py:1682
 msgid "Globally Unique Serials"
-msgstr "全局唯一序列号"
+msgstr ""
 
 #: common/models.py:1683
 msgid "Serial numbers for stock items must be globally unique"
-msgstr "库存项的序列号必须全局唯一"
+msgstr ""
 
 #: common/models.py:1688
 msgid "Autofill Serial Numbers"
-msgstr "自动填充序列号"
+msgstr ""
 
 #: common/models.py:1689
 msgid "Autofill serial numbers in forms"
-msgstr "在表格中自动填充序列号"
+msgstr ""
 
 #: common/models.py:1694
 msgid "Delete Depleted Stock"
-msgstr "删除已耗尽的库存"
+msgstr ""
 
 #: common/models.py:1696
 msgid "Determines default behavior when a stock item is depleted"
-msgstr "设置库存耗尽时的默认行为"
+msgstr ""
 
 #: common/models.py:1702
 msgid "Batch Code Template"
-msgstr "批号模板"
+msgstr ""
 
 #: common/models.py:1704
 msgid "Template for generating default batch codes for stock items"
-msgstr "为库存项生成默认批号的模板"
+msgstr ""
 
 #: common/models.py:1709
 msgid "Stock Expiry"
-msgstr "库存过期"
+msgstr ""
 
 #: common/models.py:1710
 msgid "Enable stock expiry functionality"
-msgstr "启用库存过期功能"
+msgstr ""
 
 #: common/models.py:1715
 msgid "Sell Expired Stock"
-msgstr "销售过期库存"
+msgstr ""
 
 #: common/models.py:1716
 msgid "Allow sale of expired stock"
-msgstr "允许销售过期库存"
+msgstr ""
 
 #: common/models.py:1721
 msgid "Stock Stale Time"
-msgstr "库存过期时间"
+msgstr ""
 
 #: common/models.py:1723
 msgid "Number of days stock items are considered stale before expiring"
@@ -2653,7 +2653,7 @@ msgstr ""
 
 #: common/models.py:1736
 msgid "Stock Ownership Control"
-msgstr "库存所有权控制"
+msgstr ""
 
 #: common/models.py:1737
 msgid "Enable ownership control over stock locations and items"
@@ -2715,15 +2715,15 @@ msgstr ""
 
 #: common/models.py:1785
 msgid "Prevent build outputs from being completed until all required tests pass"
-msgstr "在所有必要的测试通过之前，阻止产出完成"
+msgstr ""
 
 #: common/models.py:1791
 msgid "Enable Return Orders"
-msgstr "启用订单退货"
+msgstr ""
 
 #: common/models.py:1792
 msgid "Enable return order functionality in the user interface"
-msgstr "在用户界面中启用订单退货功能"
+msgstr ""
 
 #: common/models.py:1797
 msgid "Return Order Reference Pattern"
@@ -3717,12 +3717,12 @@ msgstr ""
 
 #: common/validators.py:68
 msgid "An empty domain is not allowed."
-msgstr "不允许空域。"
+msgstr ""
 
 #: common/validators.py:70
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
-msgstr "无效的域名: {domain}"
+msgstr ""
 
 #: common/views.py:84 order/templates/order/order_wizard/po_upload.html:51
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:118
@@ -4350,7 +4350,7 @@ msgstr ""
 #: templates/js/translated/search.js:219 templates/navbar.html:62
 #: users/models.py:209
 msgid "Sales Orders"
-msgstr "銷售訂單"
+msgstr ""
 
 #: company/templates/company/detail.html:105
 #: order/templates/order/sales_orders.html:20
@@ -4636,7 +4636,7 @@ msgstr ""
 
 #: generic/states/tests.py:18 order/status_codes.py:13
 msgid "Placed"
-msgstr "放置"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:218
 msgid "Copies"
@@ -5031,7 +5031,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:1680
 #: templates/js/translated/sales_order.js:1993
 msgid "Shipped"
-msgstr "已配送"
+msgstr ""
 
 #: order/models.py:1616
 msgid "Shipped quantity"
@@ -5259,7 +5259,7 @@ msgstr ""
 
 #: order/serializers.py:583 templates/js/translated/purchase_order.js:1130
 msgid "Enter batch code for incoming stock items"
-msgstr "输入入库项目的批号"
+msgstr ""
 
 #: order/serializers.py:591 templates/js/translated/purchase_order.js:1154
 msgid "Enter serial numbers for incoming stock items"
@@ -5351,35 +5351,35 @@ msgstr ""
 
 #: order/status_codes.py:16 order/status_codes.py:46 stock/status_codes.py:16
 msgid "Lost"
-msgstr "丢失"
+msgstr ""
 
 #: order/status_codes.py:17 order/status_codes.py:47 stock/status_codes.py:22
 msgid "Returned"
-msgstr "已退回"
+msgstr ""
 
 #: order/status_codes.py:40 order/status_codes.py:67
 msgid "In Progress"
-msgstr "正在进行"
+msgstr ""
 
 #: order/status_codes.py:85
 msgid "Return"
-msgstr "退回"
+msgstr ""
 
 #: order/status_codes.py:88
 msgid "Repair"
-msgstr "維修"
+msgstr ""
 
 #: order/status_codes.py:91
 msgid "Replace"
-msgstr "替換"
+msgstr ""
 
 #: order/status_codes.py:94
 msgid "Refund"
-msgstr "退款"
+msgstr ""
 
 #: order/status_codes.py:97
 msgid "Reject"
-msgstr "拒絕"
+msgstr ""
 
 #: order/tasks.py:25
 msgid "Overdue Purchase Order"
@@ -5873,7 +5873,7 @@ msgstr ""
 #: templates/js/translated/part.js:2804 templates/js/translated/search.js:130
 #: templates/navbar.html:24 users/models.py:203
 msgid "Parts"
-msgstr "零件"
+msgstr ""
 
 #: part/admin.py:386
 msgid "BOM Level"
@@ -7549,7 +7549,7 @@ msgstr ""
 #: templates/js/translated/part.js:2392 templates/js/translated/stock.js:1059
 #: templates/js/translated/stock.js:2070 templates/navbar.html:31
 msgid "Stock"
-msgstr "庫存"
+msgstr ""
 
 #: part/templates/part/part_sidebar.html:30
 #: templates/InvenTree/settings/sidebar.html:39
@@ -7673,7 +7673,7 @@ msgstr ""
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:120
 msgid "Low Stock"
-msgstr "低庫存"
+msgstr ""
 
 #: part/templates/part/upload_bom.html:8
 msgid "Return to BOM"
@@ -8935,7 +8935,7 @@ msgstr ""
 
 #: stock/models.py:844 stock/serializers.py:1466
 msgid "Batch code for this stock item"
-msgstr "此库存项的批号"
+msgstr ""
 
 #: stock/models.py:849
 msgid "Stock Quantity"
@@ -9084,7 +9084,7 @@ msgstr ""
 
 #: stock/models.py:2435
 msgid "Test output value"
-msgstr "测试输出值"
+msgstr ""
 
 #: stock/models.py:2443
 msgid "Test result attachment"
@@ -9345,131 +9345,131 @@ msgstr ""
 
 #: stock/status_codes.py:11
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: stock/status_codes.py:12
 msgid "Attention needed"
-msgstr "需要关注"
+msgstr ""
 
 #: stock/status_codes.py:13
 msgid "Damaged"
-msgstr "破损"
+msgstr ""
 
 #: stock/status_codes.py:14
 msgid "Destroyed"
-msgstr "销毁"
+msgstr ""
 
 #: stock/status_codes.py:15
 msgid "Rejected"
-msgstr "拒绝"
+msgstr ""
 
 #: stock/status_codes.py:19
 msgid "Quarantined"
-msgstr "隔离"
+msgstr ""
 
 #: stock/status_codes.py:40
 msgid "Legacy stock tracking entry"
-msgstr "旧库存跟踪条目"
+msgstr ""
 
 #: stock/status_codes.py:42 templates/js/translated/stock.js:544
 msgid "Stock item created"
-msgstr "库存项已创建"
+msgstr ""
 
 #: stock/status_codes.py:45
 msgid "Edited stock item"
-msgstr "已编辑库存项"
+msgstr ""
 
 #: stock/status_codes.py:46
 msgid "Assigned serial number"
-msgstr "已分配序列号"
+msgstr ""
 
 #: stock/status_codes.py:49
 msgid "Stock counted"
-msgstr "库存计数"
+msgstr ""
 
 #: stock/status_codes.py:50
 msgid "Stock manually added"
-msgstr "已手动添加库存"
+msgstr ""
 
 #: stock/status_codes.py:51
 msgid "Stock manually removed"
-msgstr "已手动删除库存"
+msgstr ""
 
 #: stock/status_codes.py:54
 msgid "Location changed"
-msgstr "地点已更改"
+msgstr ""
 
 #: stock/status_codes.py:55
 msgid "Stock updated"
-msgstr "库存已更新"
+msgstr ""
 
 #: stock/status_codes.py:58
 msgid "Installed into assembly"
-msgstr "已安装到装配中"
+msgstr ""
 
 #: stock/status_codes.py:59
 msgid "Removed from assembly"
-msgstr "已从装配中删除"
+msgstr ""
 
 #: stock/status_codes.py:61
 msgid "Installed component item"
-msgstr "已安装组件项"
+msgstr ""
 
 #: stock/status_codes.py:62
 msgid "Removed component item"
-msgstr "已删除组件项"
+msgstr ""
 
 #: stock/status_codes.py:65
 msgid "Split from parent item"
-msgstr "从上级项拆分"
+msgstr ""
 
 #: stock/status_codes.py:66
 msgid "Split child item"
-msgstr "拆分子项"
+msgstr ""
 
 #: stock/status_codes.py:69 templates/js/translated/stock.js:1858
 msgid "Merged stock items"
-msgstr "合并的库存项"
+msgstr ""
 
 #: stock/status_codes.py:72
 msgid "Converted to variant"
-msgstr "转换为变体"
+msgstr ""
 
 #: stock/status_codes.py:75
 msgid "Build order output created"
-msgstr "已创建生产订单产出"
+msgstr ""
 
 #: stock/status_codes.py:76
 msgid "Build order output completed"
-msgstr "生产订单已出产"
+msgstr ""
 
 #: stock/status_codes.py:77
 msgid "Build order output rejected"
-msgstr "生产订单产出被拒绝"
+msgstr ""
 
 #: stock/status_codes.py:78 templates/js/translated/stock.js:1764
 msgid "Consumed by build order"
-msgstr "被工單消耗的"
+msgstr ""
 
 #: stock/status_codes.py:81
 msgid "Shipped against Sales Order"
-msgstr "按銷售訂單出貨"
+msgstr ""
 
 #: stock/status_codes.py:84
 msgid "Received against Purchase Order"
-msgstr "按採購訂單接收"
+msgstr ""
 
 #: stock/status_codes.py:87
 msgid "Returned against Return Order"
-msgstr "按退貨訂單退回"
+msgstr ""
 
 #: stock/status_codes.py:90 templates/js/translated/table_filters.js:375
 msgid "Sent to customer"
-msgstr "寄送給客戶"
+msgstr ""
 
 #: stock/status_codes.py:91
 msgid "Returned from customer"
-msgstr "從客戶端退回"
+msgstr ""
 
 #: stock/templates/stock/item.html:17
 msgid "Stock Tracking Information"
@@ -11482,7 +11482,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:244
 msgid "There are incomplete outputs remaining for this build order"
-msgstr "此生产订单还有未完成的产出"
+msgstr ""
 
 #: templates/js/translated/build.js:296
 msgid "Build order is ready to be completed"
@@ -11490,7 +11490,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:304
 msgid "This build order cannot be completed as there are incomplete outputs"
-msgstr "由于产出不完整，无法完成此生产订单"
+msgstr ""
 
 #: templates/js/translated/build.js:309
 msgid "Build Order is incomplete"
@@ -11516,7 +11516,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:380
 msgid "Build outputs must be generated individually"
-msgstr "必须单独生成生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:388
 msgid "Trackable parts can have serial numbers specified"
@@ -11524,31 +11524,31 @@ msgstr ""
 
 #: templates/js/translated/build.js:389
 msgid "Enter serial numbers to generate multiple single build outputs"
-msgstr "输入序列号来生成多个单一生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:396
 msgid "Create Build Output"
-msgstr "创建生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:427
 msgid "Allocate stock items to this build output"
-msgstr "分配库存项到此生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:435
 msgid "Deallocate stock from build output"
-msgstr "从生产输出中取消分配库存"
+msgstr ""
 
 #: templates/js/translated/build.js:444
 msgid "Complete build output"
-msgstr "完成生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:452
 msgid "Scrap build output"
-msgstr "报废生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:459
 msgid "Delete build output"
-msgstr "删除生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:479
 msgid "Are you sure you wish to deallocate the selected stock items from this build?"
@@ -11561,33 +11561,33 @@ msgstr ""
 #: templates/js/translated/build.js:583 templates/js/translated/build.js:711
 #: templates/js/translated/build.js:837
 msgid "Select Build Outputs"
-msgstr "选择生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:584 templates/js/translated/build.js:712
 #: templates/js/translated/build.js:838
 msgid "At least one build output must be selected"
-msgstr "必须选择至少一个生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:598
 msgid "Selected build outputs will be marked as complete"
-msgstr "选择的生产输出将被标记为完成"
+msgstr ""
 
 #: templates/js/translated/build.js:602 templates/js/translated/build.js:736
 #: templates/js/translated/build.js:860
 msgid "Output"
-msgstr "输出"
+msgstr ""
 
 #: templates/js/translated/build.js:630
 msgid "Complete Build Outputs"
-msgstr "完成生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:727
 msgid "Selected build outputs will be marked as scrapped"
-msgstr "选择的生产输出将被标记为已报废"
+msgstr ""
 
 #: templates/js/translated/build.js:729
 msgid "Scrapped output are marked as rejected"
-msgstr "报废的输出被标记为拒收"
+msgstr ""
 
 #: templates/js/translated/build.js:730
 msgid "Allocated stock items will no longer be available"
@@ -11599,15 +11599,15 @@ msgstr ""
 
 #: templates/js/translated/build.js:762
 msgid "Scrap Build Outputs"
-msgstr "报废生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:852
 msgid "Selected build outputs will be deleted"
-msgstr "选定的生产输出将被删除"
+msgstr ""
 
 #: templates/js/translated/build.js:854
 msgid "Build output data will be permanently deleted"
-msgstr "生产输出数据将被永久删除"
+msgstr ""
 
 #: templates/js/translated/build.js:855
 msgid "Allocated stock items will be returned to stock"
@@ -11615,7 +11615,7 @@ msgstr ""
 
 #: templates/js/translated/build.js:873
 msgid "Delete Build Outputs"
-msgstr "删除生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:960
 msgid "No build order allocations found"
@@ -11631,31 +11631,31 @@ msgstr ""
 
 #: templates/js/translated/build.js:1027
 msgid "Complete outputs"
-msgstr "已完成输出"
+msgstr ""
 
 #: templates/js/translated/build.js:1045
 msgid "Scrap outputs"
-msgstr "报废输出"
+msgstr ""
 
 #: templates/js/translated/build.js:1063
 msgid "Delete outputs"
-msgstr "删除输出"
+msgstr ""
 
 #: templates/js/translated/build.js:1116
 msgid "build output"
-msgstr "生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:1117
 msgid "build outputs"
-msgstr "生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:1121
 msgid "Build output actions"
-msgstr "生产输出操作"
+msgstr ""
 
 #: templates/js/translated/build.js:1297
 msgid "No active build outputs found"
-msgstr "未找到激活的生产输出"
+msgstr ""
 
 #: templates/js/translated/build.js:1390
 msgid "Allocated Lines"
@@ -12915,7 +12915,7 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1217
 msgid "Add batch code"
-msgstr "添加批号"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1228
 msgid "Add serial numbers"
@@ -13739,7 +13739,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:3224
 msgid "The Stock Item is tracked by either a batch code or serial number"
-msgstr "库存项被批号或序列号跟踪"
+msgstr ""
 
 #: templates/js/translated/stock.js:3237
 msgid "Select part to install"
@@ -13857,7 +13857,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:314
 #: templates/js/translated/table_filters.js:405
 msgid "Batch code"
-msgstr "批号"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:325
 #: templates/js/translated/table_filters.js:700
@@ -13923,11 +13923,11 @@ msgstr ""
 
 #: templates/js/translated/table_filters.js:400
 msgid "Has batch code"
-msgstr "有批号"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:409
 msgid "Stock item is tracked by either batch code or serial number"
-msgstr "库存项被批号或序列号追踪"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:414
 msgid "Has purchase price"
@@ -14088,11 +14088,11 @@ msgstr ""
 
 #: templates/navbar.html:45
 msgid "Buy"
-msgstr "採購"
+msgstr ""
 
 #: templates/navbar.html:57
 msgid "Sell"
-msgstr "銷售"
+msgstr ""
 
 #: templates/navbar.html:121
 msgid "Show Notifications"
@@ -14108,11 +14108,11 @@ msgstr ""
 
 #: templates/navbar.html:148
 msgid "Logout"
-msgstr "登出"
+msgstr ""
 
 #: templates/notes_buttons.html:6 templates/notes_buttons.html:7
 msgid "Save"
-msgstr "儲存"
+msgstr ""
 
 #: templates/notifications.html:9
 msgid "Show all notifications and history"
@@ -14140,7 +14140,7 @@ msgstr ""
 
 #: templates/registration/logged_out.html:7
 msgid "You were logged out successfully."
-msgstr "您已成功登出。"
+msgstr ""
 
 #: templates/registration/logged_out.html:9
 msgid "Log in again"
