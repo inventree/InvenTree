@@ -48,3 +48,79 @@ class DataExportViewMixin:
 
         # If the export query parameter is not present, return the default response
         return super().get(request, *args, **kwargs)
+
+
+class DataImportSerializerMixin:
+    """Mixin class for adding data import functionality to a DRF serializer."""
+
+    import_only_fields = []
+    import_exlude_fields = []
+
+    def get_import_only_fields(self, **kwargs) -> list:
+        """Return the list of field names which are only used during data import."""
+        return self.import_only_fields
+
+    def get_import_exclude_fields(self, **kwargs) -> list:
+        """Return the list of field names which are excluded during data import."""
+        return self.import_exclude_fields
+
+    def __init__(self, *args, **kwargs):
+        """Initialise the DataImportSerializerMixin.
+
+        Determine if the serializer is being used for data import,
+        and if so, adjust the serializer fields accordingly.
+        """
+        importing = kwargs.pop('importing', False)
+
+        super().__init__(*args, **kwargs)
+
+        if importing:
+            # Exclude fields which are not required for data import
+            for field in self.get_import_exclude_fields(**kwargs):
+                self.fields.pop(field, None)
+        else:
+            # Exclude fields which are only used for data import
+            for field in self.get_import_only_fields(**kwargs):
+                self.fields.pop(field, None)
+
+
+class DataExportSerialierMixin:
+    """Mixin class for adding data export functionality to a DRF serializer."""
+
+    export_only_fields = []
+    export_exclude_fields = []
+
+    def get_export_only_fields(self, **kwargs) -> list:
+        """Return the list of field names which are only used during data export."""
+        return self.export_only_fields
+
+    def get_export_exclude_fields(self, **kwargs) -> list:
+        """Return the list of field names which are excluded during data export."""
+        return self.export_exclude_fields
+
+    def __init__(self, *args, **kwargs):
+        """Initialise the DataExportSerializerMixin.
+
+        Determine if the serializer is being used for data export,
+        and if so, adjust the serializer fields accordingly.
+        """
+        exporting = kwargs.pop('exporting', False)
+
+        super().__init__(*args, **kwargs)
+
+        if exporting:
+            # Exclude fields which are not required for data export
+            for field in self.get_export_exclude_fields(**kwargs):
+                self.fields.pop(field, None)
+        else:
+            # Exclude fields which are only used for data export
+            for field in self.get_export_only_fields(**kwargs):
+                self.fields.pop(field, None)
+
+
+class DataImportExportSerializerMixin(
+    DataImportSerializerMixin, DataExportSerialierMixin
+):
+    """Mixin class for adding data import/export functionality to a DRF serializer."""
+
+    pass
