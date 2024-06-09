@@ -3081,10 +3081,7 @@ def rename_attachment(instance, filename):
 
     # Generate a new filename for the attachment
     return os.path.join(
-        'attachments',
-        str(instance.content_type.model),
-        str(instance.object_id),
-        filename,
+        'attachments', str(instance.model_type.model), str(instance.model_id), filename
     )
 
 
