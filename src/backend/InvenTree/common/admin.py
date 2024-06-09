@@ -16,11 +16,11 @@ class AttachmentAdmin(admin.ModelAdmin):
         'model_id',
         'attachment',
         'link',
-        'user',
+        'upload_user',
         'upload_date',
     )
 
-    readonly_fields = ['file_size', 'upload_date', 'user']
+    readonly_fields = ['file_size', 'upload_date', 'upload_user']
 
     search_fields = ('content_type', 'comment')
 

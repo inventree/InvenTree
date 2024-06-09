@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                 ('upload_date', models.DateField(auto_now_add=True, help_text='Date the file was uploaded', null=True, verbose_name='Upload date')),
                 ('file_size', models.PositiveIntegerField(default=0, help_text='File size in bytes', verbose_name='File size')),
                 ('model_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('user', models.ForeignKey(blank=True, help_text='User', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                ('upload_user', models.ForeignKey(blank=True, help_text='User', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
             bases=(InvenTree.models.PluginValidationMixin, models.Model),
         ),

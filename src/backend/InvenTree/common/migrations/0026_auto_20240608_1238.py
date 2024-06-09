@@ -54,8 +54,8 @@ def update_attachments(apps, schema_editor):
                     attachment=attachment.attachment,
                     link=attachment.link,
                     comment=attachment.comment,
-                    user=attachment.user,
                     upload_date=attachment.upload_date,
+                    upload_user=attachment.user,
                     file_size=file_size
                 )
             )

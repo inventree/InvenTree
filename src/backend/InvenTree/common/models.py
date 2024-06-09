@@ -3131,7 +3131,7 @@ class Attachment(InvenTree.models.InvenTreeModel):
         help_text=_('Attachment comment'),
     )
 
-    user = models.ForeignKey(
+    upload_user = models.ForeignKey(
         User,
         on_delete=models.SET_NULL,
         blank=True,
