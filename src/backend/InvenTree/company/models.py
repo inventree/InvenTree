@@ -97,7 +97,8 @@ class Company(
         constraints = [
             UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
         ]
-        verbose_name_plural = 'Companies'
+        verbose_name = _('Company')
+        verbose_name_plural = _('Companies')
 
     @staticmethod
     def get_api_url():
@@ -459,6 +460,7 @@ class ManufacturerPart(
     class Meta:
         """Metaclass defines extra model options."""
 
+        verbose_name = _('Manufacturer Part')
         unique_together = ('part', 'manufacturer', 'MPN')
 
     @staticmethod
@@ -642,6 +644,8 @@ class SupplierPart(
         """Metaclass defines extra model options."""
 
         unique_together = ('part', 'supplier', 'SKU')
+
+        verbose_name = _('Supplier Part')
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
