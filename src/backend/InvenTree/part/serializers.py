@@ -41,7 +41,6 @@ from .models import (
     BomItem,
     BomItemSubstitute,
     Part,
-    PartAttachment,
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
@@ -145,19 +144,6 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Annotate the queryset with the number of subcategories."""
         return queryset.annotate(subcategories=part.filters.annotate_sub_categories())
-
-
-class PartAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
-    """Serializer for the PartAttachment class."""
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartAttachment
-
-        fields = InvenTree.serializers.InvenTreeAttachmentSerializer.attachment_fields([
-            'part'
-        ])
 
 
 class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer):

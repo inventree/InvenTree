@@ -28,12 +28,7 @@ from build.serializers import BuildSerializer
 from company.models import Company, SupplierPart
 from company.serializers import CompanySerializer
 from generic.states.api import StatusView
-from InvenTree.api import (
-    APIDownloadMixin,
-    AttachmentMixin,
-    ListCreateDestroyAPIView,
-    MetadataView,
-)
+from InvenTree.api import APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
@@ -68,7 +63,6 @@ from stock.admin import LocationResource, StockItemResource
 from stock.generators import generate_batch_code, generate_serial_number
 from stock.models import (
     StockItem,
-    StockItemAttachment,
     StockItemTestResult,
     StockItemTracking,
     StockLocation,
@@ -1221,22 +1215,6 @@ class StockList(APIDownloadMixin, ListCreateDestroyAPIView):
     ]
 
 
-class StockAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing, creating and bulk deleting a StockItemAttachment (file upload)."""
-
-    queryset = StockItemAttachment.objects.all()
-    serializer_class = StockSerializers.StockItemAttachmentSerializer
-
-    filterset_fields = ['stock_item']
-
-
-class StockAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for StockItemAttachment."""
-
-    queryset = StockItemAttachment.objects.all()
-    serializer_class = StockSerializers.StockItemAttachmentSerializer
-
-
 class StockItemTestResultMixin:
     """Mixin class for the StockItemTestResult API endpoints."""
 
@@ -1641,18 +1619,6 @@ stock_api_urls = [
     path('assign/', StockAssign.as_view(), name='api-stock-assign'),
     path('merge/', StockMerge.as_view(), name='api-stock-merge'),
     path('change_status/', StockChangeStatus.as_view(), name='api-stock-change-status'),
-    # StockItemAttachment API endpoints
-    path(
-        'attachment/',
-        include([
-            path(
-                '<int:pk>/',
-                StockAttachmentDetail.as_view(),
-                name='api-stock-attachment-detail',
-            ),
-            path('', StockAttachmentList.as_view(), name='api-stock-attachment-list'),
-        ]),
-    ),
     # StockItemTestResult API endpoints
     path(
         'test/',

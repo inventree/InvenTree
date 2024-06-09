@@ -14,8 +14,10 @@ import common.models as common_models
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.serializers import (
+    InvenTreeAttachmentSerializerField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
+    UserSerializer,
 )
 from plugin import registry as plugin_registry
 from users.serializers import OwnerSerializer
@@ -474,3 +476,34 @@ class FailedTaskSerializer(InvenTreeModelSerializer):
     pk = serializers.CharField(source='id', read_only=True)
 
     result = serializers.CharField()
+
+
+class AttachmentSerializer(InvenTreeModelSerializer):
+    """Serializer class for the Attachment model."""
+
+    class Meta:
+        """Serializer metaclass."""
+
+        model = common_models.Attachment
+        fields = [
+            'pk',
+            'attachment',
+            'filename',
+            'link',
+            'comment',
+            'upload_date',
+            'upload_user',
+            'user_detail',
+            'file_size',
+        ]
+
+    user_detail = UserSerializer(source='upload_user', read_only=True, many=False)
+
+    attachment = InvenTreeAttachmentSerializerField(required=False, allow_null=True)
+
+    # The 'filename' field must be present in the serializer
+    filename = serializers.CharField(
+        label=_('Filename'), required=False, source='basename', allow_blank=False
+    )
+
+    upload_date = serializers.DateField(read_only=True)

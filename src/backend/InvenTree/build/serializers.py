@@ -13,8 +13,7 @@ from django.db.models.functions import Coalesce
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import UserSerializer
+from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer
 
 import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField, NotesFieldMixin
@@ -1311,15 +1310,3 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         )
 
         return queryset
-
-
-class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for a BuildAttachment."""
-
-    class Meta:
-        """Serializer metaclass"""
-        model = BuildOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields([
-            'build',
-        ])
