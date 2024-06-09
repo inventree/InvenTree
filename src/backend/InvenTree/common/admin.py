@@ -5,11 +5,19 @@ from django.contrib import admin
 from import_export.admin import ImportExportModelAdmin
 
 import common.models
+import common.validators
 
 
 @admin.register(common.models.Attachment)
 class AttachmentAdmin(admin.ModelAdmin):
     """Admin interface for Attachment objects."""
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        """Provide custom choices for 'model_type' field."""
+        if db_field.name == 'model_type':
+            db_field.choices = common.validators.attachment_model_options()
+
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
     list_display = (
         'model_type',
