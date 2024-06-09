@@ -22,17 +22,13 @@ def update_attachments(apps, schema_editor):
         ('stock', 'StockItemAttachment', 'stockitem', 'stock_item')
     ]
 
-    # Get the "ContentType" model
-    ContentType = apps.get_model('contenttypes', 'ContentType') 
+    N = 0
 
     for app, model, target_model, model_ref in legacy_models:
         LegacyAttachmentModel = apps.get_model(app, model)
 
         if LegacyAttachmentModel.objects.count() == 0:
             continue
-
-        # Find the ContentType model which matches the target table
-        content_type = ContentType.objects.get(app_label=app, model=target_model)
 
         to_create = []
 
@@ -49,7 +45,7 @@ def update_attachments(apps, schema_editor):
 
             to_create.append(
                 Attachment(
-                    model_type=content_type,
+                    model_type=target_model,
                     model_id=getattr(attachment, model_ref).pk,
                     attachment=attachment.attachment,
                     link=attachment.link,
@@ -63,6 +59,11 @@ def update_attachments(apps, schema_editor):
         if len(to_create) > 0:
             print(f"Migrating {len(to_create)} attachments for the legacy '{model}' model.")
             Attachment.objects.bulk_create(to_create)
+
+        N += to_create
+    
+    # Check the correct number of Attachment objects has been created
+    assert(N == Attachment.objects.count())
 
 
 def delete_attachments(apps, schema_editor):
