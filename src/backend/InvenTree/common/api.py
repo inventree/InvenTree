@@ -673,6 +673,28 @@ class ContentTypeModelDetail(ContentTypeDetail):
         raise NotFound()
 
 
+class AttachmentList(ListCreateAPI):
+    """List API endpoint for Attachment objects."""
+
+    queryset = common.models.Attachment.objects.all()
+    serializer_class = common.serializers.AttachmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = SEARCH_ORDER_FILTER
+
+    ordering_fields = ['model_id', 'model_type', 'upload_date', 'file_size']
+
+    search_fields = ['comment', 'model_id', 'model_type']
+
+
+class AttachmentDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for Attachment objects."""
+
+    queryset = common.models.Attachment.objects.all()
+    serializer_class = common.serializers.AttachmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
 settings_api_urls = [
     # User settings
     path(
@@ -739,6 +761,14 @@ common_api_urls = [
             ),
             path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
             path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
+        ]),
+    ),
+    # Attachments
+    path(
+        'attachment/',
+        include([
+            path('<int:pk>/', AttachmentDetail.as_view(), name='api-attachment-detail'),
+            path('', AttachmentList.as_view(), name='api-attachment-list'),
         ]),
     ),
     path(
