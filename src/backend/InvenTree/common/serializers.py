@@ -11,6 +11,7 @@ from flags.state import flag_state
 from rest_framework import serializers
 
 import common.models as common_models
+import common.validators
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.serializers import (
@@ -495,7 +496,20 @@ class AttachmentSerializer(InvenTreeModelSerializer):
             'upload_user',
             'user_detail',
             'file_size',
+            'model_type',
+            'model_id',
         ]
+
+        read_only_fields = ['pk', 'file_size', 'upload_date', 'upload_user', 'filename']
+
+    def __init__(self, *args, **kwargs):
+        """Override the model_type field to provide dynamic choices."""
+        super().__init__(*args, **kwargs)
+
+        if len(self.fields['model_type'].choices) == 0:
+            self.fields[
+                'model_type'
+            ].choices = common.validators.attachment_model_options()
 
     user_detail = UserSerializer(source='upload_user', read_only=True, many=False)
 
@@ -507,3 +521,12 @@ class AttachmentSerializer(InvenTreeModelSerializer):
     )
 
     upload_date = serializers.DateField(read_only=True)
+
+    # Note: The choices are overridden at run-time on class initialization
+    model_type = serializers.ChoiceField(
+        label=_('Model Type'),
+        choices=common.validators.attachment_model_options(),
+        required=True,
+        allow_blank=False,
+        allow_null=False,
+    )
