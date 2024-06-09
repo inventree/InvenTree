@@ -715,6 +715,12 @@ class AttachmentList(ListCreateAPI):
     ordering_fields = ['model_id', 'model_type', 'upload_date', 'file_size']
     search_fields = ['comment', 'model_id', 'model_type']
 
+    def perform_create(self, serializer):
+        """Save the user information when a file is uploaded."""
+        attachment = serializer.save()
+        attachment.upload_user = self.request.user
+        attachment.save()
+
 
 class AttachmentDetail(RetrieveUpdateDestroyAPI):
     """Detail API endpoint for Attachment objects."""
