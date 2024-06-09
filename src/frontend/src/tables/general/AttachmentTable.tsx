@@ -17,6 +17,7 @@ import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { formatFileSize } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -24,6 +25,7 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
@@ -97,35 +99,20 @@ export function AttachmentTable({
   model_type: ModelType;
   model_id: number;
 }): ReactNode {
+  const user = useUserState();
   const table = useTable(`${model_type}-attachments`);
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
-
-  const [allowEdit, setAllowEdit] = useState<boolean>(false);
-  const [allowDelete, setAllowDelete] = useState<boolean>(false);
 
   const url = apiUrl(ApiEndpoints.attachment_list);
 
   const validPk = useMemo(() => model_id > 0, [model_id]);
 
-  // Determine which permissions are available for this URL
-  useEffect(() => {
-    api
-      .options(url)
-      .then((response) => {
-        let actions: any = response.data?.actions ?? {};
-
-        setAllowEdit('POST' in actions);
-        setAllowDelete('DELETE' in actions);
-
-        return response;
-      })
-      .catch((error) => {
-        return error;
-      });
-  }, [url]);
-
   const [isUploading, setIsUploading] = useState<boolean>(false);
+
+  const allowDragAndDrop: boolean = useMemo(() => {
+    return user.hasAddPermission(model_type);
+  }, [user, model_type]);
 
   // Callback to upload file attachment(s)
   function uploadFiles(files: File[]) {
@@ -252,7 +239,7 @@ export function AttachmentTable({
       <ActionButton
         key="add-attachment"
         tooltip={t`Add attachment`}
-        hidden={!allowEdit}
+        hidden={!user.hasAddPermission(model_type)}
         icon={<IconFileUpload />}
         onClick={() => {
           setAttachmentType('attachment');
@@ -263,7 +250,7 @@ export function AttachmentTable({
       <ActionButton
         key="add-external-link"
         tooltip={t`Add external link`}
-        hidden={!allowEdit}
+        hidden={!user.hasAddPermission(model_type)}
         icon={<IconExternalLink />}
         onClick={() => {
           setAttachmentType('link');
@@ -272,38 +259,29 @@ export function AttachmentTable({
         }}
       />
     ];
-  }, [allowEdit]);
+  }, [user, model_type]);
 
   // Construct row actions for the attachment table
   const rowActions = useCallback(
     (record: any) => {
-      let actions: RowAction[] = [];
-
-      if (allowEdit) {
-        actions.push(
-          RowEditAction({
-            onClick: () => {
-              setSelectedAttachment(record.pk);
-              editAttachment.open();
-            }
-          })
-        );
-      }
-
-      if (allowDelete) {
-        actions.push(
-          RowDeleteAction({
-            onClick: () => {
-              setSelectedAttachment(record.pk);
-              deleteAttachment.open();
-            }
-          })
-        );
-      }
-
-      return actions;
+      return [
+        RowEditAction({
+          hidden: !user.hasChangePermission(model_type),
+          onClick: () => {
+            setSelectedAttachment(record.pk);
+            editAttachment.open();
+          }
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeletePermission(model_type),
+          onClick: () => {
+            setSelectedAttachment(record.pk);
+            deleteAttachment.open();
+          }
+        })
+      ];
     },
-    [allowEdit, allowDelete]
+    [user, model_type]
   );
 
   return (
@@ -323,7 +301,7 @@ export function AttachmentTable({
               enableSelection: true,
               tableActions: tableActions,
               tableFilters: tableFilters,
-              rowActions: allowEdit && allowDelete ? rowActions : undefined,
+              rowActions: rowActions,
               params: {
                 model_type: model_type,
                 model_id: model_id
@@ -331,7 +309,7 @@ export function AttachmentTable({
             }}
           />
         )}
-        {allowEdit && validPk && (
+        {allowDragAndDrop && validPk && (
           <Paper p="md" shadow="xs" radius="md">
             <Dropzone
               onDrop={uploadFiles}

@@ -126,8 +126,6 @@ export const useUserState = create<UserStateProps>((set, get) => ({
             user.is_staff = response.data?.is_staff ?? false;
             user.is_superuser = response.data?.is_superuser ?? false;
             set({ user: user });
-
-            console.log('permissions:', user.permissions);
           }
         } else {
           get().clearUserState();
@@ -183,8 +181,6 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   checkUserPermission: (model: ModelType, permission: UserPermissions) => {
     // Check if the user has the specified permission for the specified model
     const user: UserProps = get().user as UserProps;
-
-    console.log('checkUserPermission:', model, permission);
 
     if (!user) {
       return false;
