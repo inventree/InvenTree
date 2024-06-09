@@ -4,14 +4,12 @@ from django.db import migrations
 from django.core.files.storage import default_storage
 
 
-def update_attachments(apps, schema_editor):
-    """Migrate any existing attachment models to the new attachment table."""
-
-    Attachment = apps.get_model('common', 'attachment')
+def get_legacy_models():
+    """Return a set of legacy attachment models."""
 
     # Legacy attachment types to convert:
     # app_label, table name, target model, model ref
-    legacy_models = [
+    return [
         ('build', 'BuildOrderAttachment', 'build', 'build'),
         ('company', 'CompanyAttachment', 'company', 'company'),
         ('company', 'ManufacturerPartAttachment', 'manufacturerpart', 'manufacturer_part'),
@@ -22,9 +20,15 @@ def update_attachments(apps, schema_editor):
         ('stock', 'StockItemAttachment', 'stockitem', 'stock_item')
     ]
 
+
+def update_attachments(apps, schema_editor):
+    """Migrate any existing attachment models to the new attachment table."""
+
+    Attachment = apps.get_model('common', 'attachment')
+
     N = 0
 
-    for app, model, target_model, model_ref in legacy_models:
+    for app, model, target_model, model_ref in get_legacy_models():
         LegacyAttachmentModel = apps.get_model(app, model)
 
         if LegacyAttachmentModel.objects.count() == 0:
@@ -60,21 +64,47 @@ def update_attachments(apps, schema_editor):
             print(f"Migrating {len(to_create)} attachments for the legacy '{model}' model.")
             Attachment.objects.bulk_create(to_create)
 
-        N += to_create
+        N += len(to_create)
     
     # Check the correct number of Attachment objects has been created
     assert(N == Attachment.objects.count())
 
 
-def delete_attachments(apps, schema_editor):
-    """Reverse data migration removes any Attachment objects."""
+def reverse_attachments(apps, schema_editor):
+    """Reverse data migration, and map new Attachment model back to legacy models."""
 
     Attachment = apps.get_model('common', 'attachment')
 
-    if n := Attachment.objects.count():
-        Attachment.objects.all().delete()
-        print(f"Deleted {n} Attachments in reverse migration")
+    N = 0
 
+    for app, model, target_model, model_ref in get_legacy_models():
+        LegacyAttachmentModel = apps.get_model(app, model)
+
+        to_create = []
+
+        for attachment in Attachment.objects.filter(model_type=target_model):
+
+            TargetModel = apps.get_model(app, target_model)
+
+            data = {
+                'attachment': attachment.attachment,
+                'link': attachment.link,
+                'comment': attachment.comment,
+                'upload_date': attachment.upload_date,
+                'user': attachment.upload_user,
+                model_ref: TargetModel.objects.get(pk=attachment.model_id)
+            }
+
+            to_create.append(LegacyAttachmentModel(**data))
+
+        if len(to_create) > 0:
+            print(f"Reversing {len(to_create)} attachments for the legacy '{model}' model.")
+            LegacyAttachmentModel.objects.bulk_create(to_create)
+
+        N += len(to_create)
+
+    # Check the correct number of LegacyAttachmentModel objects has been created
+    assert(N == Attachment.objects.count())
 
 class Migration(migrations.Migration):
 
@@ -88,5 +118,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(update_attachments, reverse_code=delete_attachments)
+        migrations.RunPython(update_attachments, reverse_code=reverse_attachments),
     ]
