@@ -3126,7 +3126,7 @@ class Attachment(InvenTree.models.InvenTreeModel):
 
     comment = models.CharField(
         blank=True,
-        max_length=100,
+        max_length=250,
         verbose_name=_('Comment'),
         help_text=_('Attachment comment'),
     )

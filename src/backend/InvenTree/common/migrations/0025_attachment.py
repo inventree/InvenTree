@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('model_id', models.PositiveIntegerField()),
                 ('attachment', models.FileField(blank=True, help_text='Select file to attach', null=True, upload_to=common.models.rename_attachment, verbose_name='Attachment')),
                 ('link', InvenTree.fields.InvenTreeURLField(blank=True, help_text='Link to external URL', null=True, verbose_name='Link')),
-                ('comment', models.CharField(blank=True, help_text='Attachment comment', max_length=100, verbose_name='Comment')),
+                ('comment', models.CharField(blank=True, help_text='Attachment comment', max_length=250, verbose_name='Comment')),
                 ('upload_date', models.DateField(auto_now_add=True, help_text='Date the file was uploaded', null=True, verbose_name='Upload date')),
                 ('file_size', models.PositiveIntegerField(default=0, help_text='File size in bytes', verbose_name='File size')),
                 ('model_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
