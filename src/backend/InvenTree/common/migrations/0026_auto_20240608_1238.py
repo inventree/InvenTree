@@ -17,7 +17,7 @@ def update_attachments(apps, schema_editor):
         ('company', 'ManufacturerPartAttachment', 'manufacturerpart', 'manufacturer_part'),
         ('order', 'PurchaseOrderAttachment', 'purchaseorder', 'order'),
         ('order', 'SalesOrderAttachment', 'salesorder', 'order'),
-        ('order', 'ReturnOrderAttachment', 'order', 'order'),
+        ('order', 'ReturnOrderAttachment', 'returnorder', 'order'),
         ('part', 'PartAttachment', 'part', 'part'),
         ('stock', 'StockItemAttachment', 'stockitem', 'stock_item')
     ]
