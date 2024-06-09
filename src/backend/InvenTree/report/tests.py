@@ -15,14 +15,14 @@ from PIL import Image
 
 import report.models as report_models
 from build.models import Build
-from common.models import InvenTreeSetting
+from common.models import Attachment, InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import ReturnOrder, SalesOrder
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
-from stock.models import StockItem, StockItemAttachment
+from stock.models import StockItem
 
 
 class ReportTagTest(TestCase):
@@ -548,7 +548,9 @@ class TestReportTest(PrintTestMixins, ReportTest):
         self.assertEqual(response.data['output'].startswith('/media/report/'), True)
 
         # By default, this should *not* have created an attachment against this stockitem
-        self.assertFalse(StockItemAttachment.objects.filter(stock_item=item).exists())
+        self.assertFalse(
+            Attachment.objects.filter(model_id=item.pk, model_type='stockitem').exists()
+        )
 
         return
         # TODO @matmair - Re-add this test after https://github.com/inventree/InvenTree/pull/7074/files#r1600694356 is resolved
@@ -563,7 +565,9 @@ class TestReportTest(PrintTestMixins, ReportTest):
         self.assertEqual(response.data['output'].startswith('/media/report/'), True)
 
         # Check that a report has been uploaded
-        attachment = StockItemAttachment.objects.filter(stock_item=item).first()
+        attachment = Attachment.objects.filter(
+            model_id=item.pk, model_type='stockitem'
+        ).first()
         self.assertIsNotNone(attachment)
 
     def test_mdl_build(self):

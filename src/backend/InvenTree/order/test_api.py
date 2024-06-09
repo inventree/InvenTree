@@ -258,9 +258,9 @@ class PurchaseOrderTest(OrderTest):
 
     def test_po_attachments(self):
         """Test the list endpoint for the PurchaseOrderAttachment model."""
-        url = reverse('api-po-attachment-list')
+        url = reverse('api-attachment-list')
 
-        response = self.get(url)
+        response = self.get(url, {'model_type': 'purchaseorder'})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
