@@ -698,8 +698,8 @@ class AttachmentFilter(rest_filters.FilterSet):
     def filter_is_file(self, queryset, name, value):
         """Filter attachments based on whether they are a file or not."""
         if value:
-            return queryset.exclude(attachment=None)
-        return queryset.filter(attachment=None)
+            return queryset.exclude(attachment=None).exclude(attachment='')
+        return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
 
 class AttachmentList(ListCreateAPI):
