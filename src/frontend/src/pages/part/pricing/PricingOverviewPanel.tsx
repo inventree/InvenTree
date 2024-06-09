@@ -184,8 +184,10 @@ export default function PricingOverviewPanel({
           />
         </Stack>
         <BarChart
+          aria-label="pricing-overview-chart"
           dataKey="title"
           data={overviewData}
+          title={t`Pricing Overview`}
           series={[
             { name: 'min_value', label: t`Minimum Value`, color: 'blue.6' },
             { name: 'max_value', label: t`Maximum Value`, color: 'teal.6' }
