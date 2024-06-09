@@ -57,7 +57,6 @@ export enum ApiEndpoints {
   build_output_complete = 'build/:id/complete/',
   build_output_scrap = 'build/:id/scrap-outputs/',
   build_output_delete = 'build/:id/delete-outputs/',
-  build_order_attachment_list = 'build/attachment/',
   build_line_list = 'build/line/',
 
   bom_list = 'bom/',
@@ -76,18 +75,15 @@ export enum ApiEndpoints {
   category_tree = 'part/category/tree/',
   category_parameter_list = 'part/category/parameters/',
   related_part_list = 'part/related/',
-  part_attachment_list = 'part/attachment/',
   part_test_template_list = 'part/test-template/',
 
   // Company API endpoints
   company_list = 'company/',
   contact_list = 'company/contact/',
   address_list = 'company/address/',
-  company_attachment_list = 'company/attachment/',
   supplier_part_list = 'company/part/',
   supplier_part_pricing_list = 'company/price-break/',
   manufacturer_part_list = 'company/part/manufacturer/',
-  manufacturer_part_attachment_list = 'company/part/manufacturer/attachment/',
   manufacturer_part_parameter_list = 'company/part/manufacturer/parameter/',
 
   // Stock API endpoints
@@ -96,7 +92,6 @@ export enum ApiEndpoints {
   stock_location_list = 'stock/location/',
   stock_location_type_list = 'stock/location-type/',
   stock_location_tree = 'stock/location/tree/',
-  stock_attachment_list = 'stock/attachment/',
   stock_test_result_list = 'stock/test/',
   stock_transfer = 'stock/transfer/',
   stock_remove = 'stock/remove/',
@@ -115,16 +110,13 @@ export enum ApiEndpoints {
   // Order API endpoints
   purchase_order_list = 'order/po/',
   purchase_order_line_list = 'order/po-line/',
-  purchase_order_attachment_list = 'order/po/attachment/',
   purchase_order_receive = 'order/po/:id/receive/',
 
   sales_order_list = 'order/so/',
   sales_order_line_list = 'order/so-line/',
-  sales_order_attachment_list = 'order/so/attachment/',
   sales_order_shipment_list = 'order/so/shipment/',
 
   return_order_list = 'order/ro/',
-  return_order_attachment_list = 'order/ro/attachment/',
 
   // Template API endpoints
   label_list = 'label/template/',
@@ -155,6 +147,7 @@ export enum ApiEndpoints {
   machine_setting_detail = 'machine/:machine/settings/:config_type/',
 
   // Miscellaneous API endpoints
+  attachment_list = 'attachment/',
   error_report_list = 'error-report/',
   project_code_list = 'project-code/',
   custom_unit_list = 'units/',

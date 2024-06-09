@@ -15,6 +15,7 @@ import { ActionButton } from '../../components/buttons/ActionButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -76,24 +77,22 @@ function attachmentTableColumns(): TableColumn[] {
  * Construct a table for displaying uploaded attachments
  */
 export function AttachmentTable({
-  endpoint,
-  model,
-  pk
+  model_type,
+  model_id
 }: {
-  endpoint: ApiEndpoints;
-  pk: number;
-  model: string;
+  model_type: ModelType;
+  model_id: number;
 }): ReactNode {
-  const table = useTable(`${model}-attachments`);
+  const table = useTable(`${model_type}-attachments`);
 
   const tableColumns = useMemo(() => attachmentTableColumns(), []);
 
   const [allowEdit, setAllowEdit] = useState<boolean>(false);
   const [allowDelete, setAllowDelete] = useState<boolean>(false);
 
-  const url = useMemo(() => apiUrl(endpoint), [endpoint]);
+  const url = apiUrl(ApiEndpoints.attachment_list);
 
-  const validPk = useMemo(() => pk > 0, [pk]);
+  const validPk = useMemo(() => model_id > 0, [model_id]);
 
   // Determine which permissions are available for this URL
   useEffect(() => {
@@ -119,7 +118,8 @@ export function AttachmentTable({
     files.forEach((file) => {
       let formData = new FormData();
       formData.append('attachment', file);
-      formData.append(model, pk.toString());
+      formData.append('model_type', model_type);
+      formData.append('model_id', model_id.toString());
 
       setIsUploading(true);
 
@@ -161,8 +161,12 @@ export function AttachmentTable({
 
   const uploadFields: ApiFormFieldSet = useMemo(() => {
     let fields: ApiFormFieldSet = {
-      [model]: {
-        value: pk,
+      model_type: {
+        value: model_type,
+        hidden: true
+      },
+      model_id: {
+        value: model_id,
         hidden: true
       },
       attachment: {},
@@ -180,10 +184,10 @@ export function AttachmentTable({
     }
 
     return fields;
-  }, [endpoint, model, pk, attachmentType, selectedAttachment]);
+  }, [model_type, model_id, attachmentType, selectedAttachment]);
 
   const uploadAttachment = useCreateApiFormModal({
-    url: endpoint,
+    url: url,
     title: t`Upload Attachment`,
     fields: uploadFields,
     onFormSuccess: () => {
@@ -192,7 +196,7 @@ export function AttachmentTable({
   });
 
   const editAttachment = useEditApiFormModal({
-    url: endpoint,
+    url: url,
     pk: selectedAttachment,
     title: t`Edit Attachment`,
     fields: uploadFields,
@@ -206,7 +210,7 @@ export function AttachmentTable({
   });
 
   const deleteAttachment = useDeleteApiFormModal({
-    url: endpoint,
+    url: url,
     pk: selectedAttachment,
     title: t`Delete Attachment`,
     onFormSuccess: () => {
@@ -279,7 +283,7 @@ export function AttachmentTable({
       {editAttachment.modal}
       {deleteAttachment.modal}
       <Stack gap="xs">
-        {pk && pk > 0 && (
+        {validPk && (
           <InvenTreeTable
             key="attachment-table"
             url={url}
@@ -291,7 +295,8 @@ export function AttachmentTable({
               tableActions: tableActions,
               rowActions: allowEdit && allowDelete ? rowActions : undefined,
               params: {
-                [model]: pk
+                model_type: model_type,
+                model_id: model_id
               }
             }}
           />
