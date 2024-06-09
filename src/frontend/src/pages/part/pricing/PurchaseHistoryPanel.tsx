@@ -13,7 +13,7 @@ import {
 
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { formatCurrency, renderDate } from '../../../defaults/formatters';
+import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
@@ -50,7 +50,7 @@ export default function PurchaseHistoryPanel({
         title: t`Date`,
         sortable: true,
         switchable: true,
-        render: (record: any) => renderDate(record.order_detail.complete_date)
+        render: (record: any) => formatDate(record.order_detail.complete_date)
       },
       {
         accessor: 'purchase_price',

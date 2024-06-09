@@ -31,7 +31,7 @@ import {
 
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { formatCurrency, renderDate } from '../../../defaults/formatters';
+import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { panelOptions } from '../PartPricingPanel';
 
 interface PricingOverviewEntry {
@@ -182,7 +182,7 @@ export default function PricingOverviewPanel({
           {pricing?.updated && (
             <Paper p="xs">
               <Alert color="blue" title={t`Last Updated`}>
-                <Text>{renderDate(pricing.updated)}</Text>
+                <Text>{formatDate(pricing.updated)}</Text>
               </Alert>
             </Paper>
           )}

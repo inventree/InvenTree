@@ -14,6 +14,7 @@ import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
+import { formatFileSize } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import {
@@ -24,6 +25,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
@@ -37,7 +39,7 @@ function attachmentTableColumns(): TableColumn[] {
       sortable: false,
       switchable: false,
       noWrap: true,
-      render: function (record: any) {
+      render: (record: any) => {
         if (record.attachment) {
           return <AttachmentLink attachment={record.attachment} />;
         } else if (record.link) {
@@ -51,7 +53,7 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'comment',
       sortable: false,
 
-      render: function (record: any) {
+      render: (record: any) => {
         return record.comment;
       }
     },
@@ -59,7 +61,7 @@ function attachmentTableColumns(): TableColumn[] {
       accessor: 'upload_date',
       sortable: true,
 
-      render: function (record: any) {
+      render: (record: any) => {
         return (
           <Group justify="space-between">
             <Text>{record.upload_date}</Text>
@@ -68,6 +70,18 @@ function attachmentTableColumns(): TableColumn[] {
             )}
           </Group>
         );
+      }
+    },
+    {
+      accessor: 'file_size',
+      sortable: true,
+      switchable: true,
+      render: (record: any) => {
+        if (!record.attachment) {
+          return '-';
+        } else {
+          return formatFileSize(record.file_size);
+        }
       }
     }
   ];
@@ -218,6 +232,21 @@ export function AttachmentTable({
     }
   });
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'is_link',
+        label: t`Is Link`,
+        description: t`Show link attachments`
+      },
+      {
+        name: 'is_file',
+        label: t`Is File`,
+        description: t`Show file attachments`
+      }
+    ];
+  }, []);
+
   const tableActions: ReactNode[] = useMemo(() => {
     return [
       <ActionButton
@@ -293,6 +322,7 @@ export function AttachmentTable({
               noRecordsText: t`No attachments found`,
               enableSelection: true,
               tableActions: tableActions,
+              tableFilters: tableFilters,
               rowActions: allowEdit && allowDelete ? rowActions : undefined,
               params: {
                 model_type: model_type,
