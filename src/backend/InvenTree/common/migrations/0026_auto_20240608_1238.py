@@ -78,7 +78,12 @@ def delete_attachments(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('build', '0050_auto_20240508_0138'),
         ('common', '0025_attachment'),
+        ('company', '0069_company_active'),
+        ('order', '0099_alter_salesorder_status'),
+        ('part', '0123_parttesttemplate_choices'),
+        ('stock', '0110_alter_stockitemtestresult_finished_datetime_and_more')
     ]
 
     operations = [
