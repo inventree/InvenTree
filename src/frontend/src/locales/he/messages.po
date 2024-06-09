@@ -8,7 +8,7 @@ msgstr ""
 "Language: he\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-04 12:39\n"
+"PO-Revision-Date: 2024-06-09 22:50\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -4332,11 +4332,11 @@ msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:112
 #~ msgid "Minimum Total Price"
-#~ msgstr ""
+#~ msgstr "Minimum Total Price"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:117
 #~ msgid "Maximum Total Price"
-#~ msgstr ""
+#~ msgstr "Maximum Total Price"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:128
 #: src/pages/part/pricing/PriceBreakPanel.tsx:168
@@ -6864,3 +6864,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
