@@ -60,7 +60,9 @@ def rename_company_image(instance, filename):
 
 
 class Company(
-    InvenTree.models.InvenTreeNotesMixin, InvenTree.models.InvenTreeMetadataModel
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
 
@@ -255,26 +257,6 @@ class Company(
         ).distinct()
 
 
-class CompanyAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file or URL attachments against a Company object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with this model."""
-        return reverse('api-company-attachment-list')
-
-    def getSubdir(self):
-        """Return the subdirectory where these attachments are uploaded."""
-        return os.path.join('company_files', str(self.company.pk))
-
-    company = models.ForeignKey(
-        Company,
-        on_delete=models.CASCADE,
-        verbose_name=_('Company'),
-        related_name='attachments',
-    )
-
-
 class Contact(InvenTree.models.InvenTreeMetadataModel):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
@@ -460,7 +442,9 @@ class Address(InvenTree.models.InvenTreeModel):
 
 
 class ManufacturerPart(
-    InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeMetadataModel
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
@@ -561,26 +545,6 @@ class ManufacturerPart(
         s += f'{self.MPN}'
 
         return s
-
-
-class ManufacturerPartAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a ManufacturerPart object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the ManufacturerPartAttachment model."""
-        return reverse('api-manufacturer-part-attachment-list')
-
-    def getSubdir(self):
-        """Return the subdirectory where attachment files for the ManufacturerPart model are located."""
-        return os.path.join('manufacturer_part_files', str(self.manufacturer_part.id))
-
-    manufacturer_part = models.ForeignKey(
-        ManufacturerPart,
-        on_delete=models.CASCADE,
-        verbose_name=_('Manufacturer Part'),
-        related_name='attachments',
-    )
 
 
 class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):

@@ -340,6 +340,7 @@ class PartManager(TreeManager):
 
 @cleanup.ignore
 class Part(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
@@ -2217,24 +2218,6 @@ class Part(
             required=True, enabled=enabled, include_parent=include_parent
         )
 
-    @property
-    def attachment_count(self):
-        """Count the number of attachments for this part.
-
-        If the part is a variant of a template part,
-        include the number of attachments for the template part.
-        """
-        return self.part_attachments.count()
-
-    @property
-    def part_attachments(self):
-        """Return *all* attachments for this part, potentially including attachments for template parts above this one."""
-        ancestors = self.get_ancestors(include_self=True)
-
-        attachments = PartAttachment.objects.filter(part__in=ancestors)
-
-        return attachments
-
     def sales_orders(self):
         """Return a list of sales orders which reference this part."""
         orders = []
@@ -3305,26 +3288,6 @@ class PartStocktakeReport(models.Model):
         related_name='stocktake_reports',
         verbose_name=_('User'),
         help_text=_('User who requested this stocktake report'),
-    )
-
-
-class PartAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a Part object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the list API endpoint URL associated with the PartAttachment model."""
-        return reverse('api-part-attachment-list')
-
-    def getSubdir(self):
-        """Returns the media subdirectory where part attachments are stored."""
-        return os.path.join('part_files', str(self.part.id))
-
-    part = models.ForeignKey(
-        Part,
-        on_delete=models.CASCADE,
-        verbose_name=_('Part'),
-        related_name='attachments',
     )
 
 

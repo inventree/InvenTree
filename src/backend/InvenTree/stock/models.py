@@ -319,6 +319,7 @@ def default_delete_on_deplete():
 
 
 class StockItem(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
@@ -2253,23 +2254,6 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
 
         if InvenTree.ready.canAppAccessDatabase(allow_test=True):
             instance.part.schedule_pricing_update(create=True)
-
-
-class StockItemAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a StockItem object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return API url."""
-        return reverse('api-stock-attachment-list')
-
-    def getSubdir(self):
-        """Override attachment location."""
-        return os.path.join('stock_files', str(self.stock_item.id))
-
-    stock_item = models.ForeignKey(
-        StockItem, on_delete=models.CASCADE, related_name='attachments'
-    )
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):

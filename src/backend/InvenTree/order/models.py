@@ -183,6 +183,7 @@ class TotalPriceMixin(models.Model):
 
 class Order(
     StateTransitionMixin,
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
@@ -1239,40 +1240,6 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
         notify_responsible(instance, sender, exclude=instance.created_by)
 
 
-class PurchaseOrderAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a PurchaseOrder object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the PurchaseOrderAttachment model."""
-        return reverse('api-po-attachment-list')
-
-    def getSubdir(self):
-        """Return the directory path where PurchaseOrderAttachment files are located."""
-        return os.path.join('po_files', str(self.order.id))
-
-    order = models.ForeignKey(
-        PurchaseOrder, on_delete=models.CASCADE, related_name='attachments'
-    )
-
-
-class SalesOrderAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a SalesOrder object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the SalesOrderAttachment class."""
-        return reverse('api-so-attachment-list')
-
-    def getSubdir(self):
-        """Return the directory path where SalesOrderAttachment files are located."""
-        return os.path.join('so_files', str(self.order.id))
-
-    order = models.ForeignKey(
-        SalesOrder, on_delete=models.CASCADE, related_name='attachments'
-    )
-
-
 class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
     """Abstract model for an order line item.
 
@@ -2317,21 +2284,4 @@ class ReturnOrderExtraLine(OrderExtraLine):
         related_name='extra_lines',
         verbose_name=_('Order'),
         help_text=_('Return Order'),
-    )
-
-
-class ReturnOrderAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a ReturnOrder object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the ReturnOrderAttachment class."""
-        return reverse('api-return-order-attachment-list')
-
-    def getSubdir(self):
-        """Return the directory path where ReturnOrderAttachment files are located."""
-        return os.path.join('return_files', str(self.order.id))
-
-    order = models.ForeignKey(
-        ReturnOrder, on_delete=models.CASCADE, related_name='attachments'
     )

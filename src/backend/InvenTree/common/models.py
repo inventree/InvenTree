@@ -12,6 +12,7 @@ import os
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
+from io import BytesIO
 from secrets import compare_digest
 from typing import Any, Callable, TypedDict, Union
 
@@ -23,6 +24,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
@@ -48,6 +50,7 @@ import InvenTree.validators
 import order.validators
 import report.helpers
 import users.models
+from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
 logger = logging.getLogger('inventree')
@@ -3103,6 +3106,46 @@ class Attachment(InvenTree.models.InvenTreeModel):
         """Metaclass options."""
 
         ...
+
+    def save(self, *args, **kwargs):
+        """Custom 'save' method for the Attachment model.
+
+        - Record the file size of the uploaded attachment (if applicable)
+        - Ensure that the 'content_type' and 'object_id' fields are set
+        - Run extra validations
+        """
+        # Either 'attachment' or 'link' must be specified!
+        if not self.attachment and not self.link:
+            raise ValidationError({
+                'attachment': _('Missing file'),
+                'link': _('Missing external link'),
+            })
+
+        if self.attachment:
+            if self.attachment.name.lower().endswith('.svg'):
+                self.attachment.file.file = self.clean_svg(self.attachment)
+
+            # Get file size
+            if default_storage.exists(self.attachment.name):
+                try:
+                    self.file_size = default_storage.size(self.attachment.name)
+                except Exception:
+                    self.file_size = 0
+        else:
+            self.file_size = 0
+
+        super().save(*args, **kwargs)
+
+    def clean_svg(self, field):
+        """Sanitize SVG file before saving."""
+        cleaned = sanitize_svg(field.file.read())
+        return BytesIO(bytes(cleaned, 'utf8'))
+
+    def __str__(self):
+        """Human name for attachment."""
+        if self.attachment is not None:
+            return os.path.basename(self.attachment.name)
+        return str(self.link)
 
     model_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     model_id = models.PositiveIntegerField()

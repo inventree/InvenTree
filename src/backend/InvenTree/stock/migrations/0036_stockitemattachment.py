@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='StockItemAttachment',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('attachment', models.FileField(help_text='Select file to attach', upload_to=InvenTree.models.rename_attachment)),
+                ('attachment', models.FileField(help_text='Select file to attach', upload_to='attachments')),
                 ('comment', models.CharField(help_text='File comment', max_length=100)),
                 ('stock_item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='attachments', to='stock.StockItem')),
             ],

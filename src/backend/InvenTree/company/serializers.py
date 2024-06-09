@@ -25,10 +25,8 @@ from part.serializers import PartBriefSerializer
 from .models import (
     Address,
     Company,
-    CompanyAttachment,
     Contact,
     ManufacturerPart,
-    ManufacturerPartAttachment,
     ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,

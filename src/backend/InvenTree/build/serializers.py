@@ -29,7 +29,7 @@ import part.filters
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
-from .models import Build, BuildLine, BuildItem, BuildOrderAttachment
+from .models import Build, BuildLine, BuildItem
 
 
 class BuildSerializer(NotesFieldMixin, InvenTreeModelSerializer):
