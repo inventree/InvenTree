@@ -277,12 +277,16 @@ class SettingsTest(InvenTreeTestCase):
     @override_settings(SITE_URL=None, PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
     def test_defaults(self):
         """Populate the settings with default values."""
-        for key in InvenTreeSetting.SETTINGS.keys():
+        N = len(InvenTreeSetting.SETTINGS.keys())
+
+        print('test_defaults:')
+
+        for idx, key in enumerate(InvenTreeSetting.SETTINGS.keys()):
             value = InvenTreeSetting.get_setting_default(key)
 
-            print('setting:', key, '->', value)
+            print(f'{idx + 1}/{N}', ':', key, '->', value)
 
-            InvenTreeSetting.set_setting(key, value, self.user)
+            InvenTreeSetting.set_setting(key, value, change_user=self.user)
 
             self.assertEqual(value, InvenTreeSetting.get_setting(key))
 
