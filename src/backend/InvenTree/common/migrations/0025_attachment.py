@@ -33,5 +33,8 @@ class Migration(migrations.Migration):
                 ('upload_user', models.ForeignKey(blank=True, help_text='User', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
             bases=(InvenTree.models.PluginValidationMixin, models.Model),
+            options={
+                'verbose_name': 'Attachment',
+            }
         ),
     ]

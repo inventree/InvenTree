@@ -528,9 +528,9 @@ class InvenTreeAttachmentMixin:
         """Return all attachments for this model class."""
         from common.models import Attachment
 
-        content_type = ContentType.objects.get_for_model(self)
+        model_type = self.__class__.__name__.lower()
 
-        return Attachment.objects.filter(model_type=content_type)
+        return Attachment.objects.filter(model_type=model_type)
 
 
 class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):

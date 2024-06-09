@@ -3075,13 +3075,13 @@ def rename_attachment(instance, filename):
         - filename: The original filename of the uploaded file
 
     Returns:
-        - The new filename for the uploaded file, e.g. 'attachments/<content_type>/<object_id>/<filename>'
+        - The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'
     """
     filename = os.path.basename(filename)
 
     # Generate a new filename for the attachment
     return os.path.join(
-        'attachments', str(instance.model_type.model), str(instance.model_id), filename
+        'attachments', str(instance.model_type), str(instance.model_id), filename
     )
 
 
@@ -3102,7 +3102,7 @@ class Attachment(InvenTree.models.InvenTreeModel):
     class Meta:
         """Metaclass options."""
 
-        ...
+        verbose_name = _('Attachment')
 
     def save(self, *args, **kwargs):
         """Custom 'save' method for the Attachment model.
@@ -3121,17 +3121,22 @@ class Attachment(InvenTree.models.InvenTreeModel):
         if self.attachment:
             if self.attachment.name.lower().endswith('.svg'):
                 self.attachment.file.file = self.clean_svg(self.attachment)
+        else:
+            self.file_size = 0
 
+        super().save(*args, **kwargs)
+
+        # Update file size
+        if self.file_size == 0 and self.attachment:
             # Get file size
             if default_storage.exists(self.attachment.name):
                 try:
                     self.file_size = default_storage.size(self.attachment.name)
                 except Exception:
-                    self.file_size = 0
-        else:
-            self.file_size = 0
+                    pass
 
-        super().save(*args, **kwargs)
+            if self.file_size != 0:
+                super().save()
 
     def clean_svg(self, field):
         """Sanitize SVG file before saving."""
