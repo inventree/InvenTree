@@ -113,6 +113,15 @@ export default function ImporterDataSelector({
     title: t`Edit Data`,
     fields: selectedFields,
     initialData: selectedRow.data,
+    processFormData: (data: any) => {
+      // Construct fields back into a single object
+      return {
+        data: {
+          ...selectedRow.data,
+          ...data
+        }
+      };
+    },
     onFormSuccess: (row: any) => table.updateRecord(row)
   });
 
@@ -135,9 +144,9 @@ export default function ImporterDataSelector({
             <Group justify="left" gap="xs">
               <Text size="sm">{row.row_index}</Text>
               {row.valid ? (
-                <IconCircleCheck color="green" size={12} />
+                <IconCircleCheck color="green" size={16} />
               ) : (
-                <IconExclamationCircle color="red" size={12} />
+                <IconExclamationCircle color="red" size={16} />
               )}
             </Group>
           );

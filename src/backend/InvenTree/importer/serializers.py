@@ -102,7 +102,7 @@ class DataImportRowSerializer(InvenTreeModelSerializer):
             'pk',
             'session',
             'row_index',
-            'data',
+            'row_data',
             'errors',
             'valid',
             'complete',
