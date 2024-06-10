@@ -232,6 +232,9 @@ def plugins(c, uv=False):
         c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
         c.run(f"uv pip install -r '{plugin_file}'")
 
+    # Collect plugin static files
+    manage(c, 'collectplugins')
+
 
 @task(help={'uv': 'Use UV package manager (experimental)'})
 def install(c, uv=False):
@@ -322,8 +325,8 @@ def remove_mfa(c, mail=''):
     manage(c, f'remove_mfa {mail}')
 
 
-@task(help={'frontend': 'Build the frontend'})
-def static(c, frontend=False):
+@task(help={'frontend': 'Build the frontend', 'clear': 'Remove existing static files'})
+def static(c, frontend=False, clear=True):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, 'prerender')
 
@@ -332,7 +335,16 @@ def static(c, frontend=False):
         frontend_build(c)
 
     print('Collecting static files...')
-    manage(c, 'collectstatic --no-input --clear --verbosity 0')
+
+    cmd = 'collectstatic --no-input --verbosity 0'
+
+    if clear:
+        cmd += ' --clear'
+
+    manage(c, cmd)
+
+    # Collect plugin static files
+    manage(c, 'collectplugins')
 
 
 @task
