@@ -227,6 +227,9 @@ def plugins(c, uv=False):
         c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
         c.run(f"uv pip install -r '{plugin_file}'")
 
+    # Collect plugin static files
+    manage(c, 'collectplugins')
+
 
 @task(help={'uv': 'Use UV package manager (experimental)'})
 def install(c, uv=False):
@@ -336,7 +339,6 @@ def static(c, frontend=False, clear=True):
     manage(c, cmd)
 
     # Collect plugin static files
-    print('Collecting plugin files...')
     manage(c, 'collectplugins')
 
 
