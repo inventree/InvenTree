@@ -17,7 +17,6 @@ import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { formatFileSize } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { UserRoles } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,

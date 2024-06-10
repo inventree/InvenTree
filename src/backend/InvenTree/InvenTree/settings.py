@@ -148,7 +148,8 @@ STORAGES = {
         'BACKEND': 'django.core.files.storage.InMemoryStorage'
         if TESTING
         else 'django.core.files.storage.FileSystemStorage'
-    }
+    },
+    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
 }
 
 # Create the target directory if it does not exist
