@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('comment', models.CharField(blank=True, help_text='Attachment comment', max_length=250, verbose_name='Comment')),
                 ('upload_date', models.DateField(auto_now_add=True, help_text='Date the file was uploaded', null=True, verbose_name='Upload date')),
                 ('file_size', models.PositiveIntegerField(default=0, help_text='File size in bytes', verbose_name='File size')),
-                ('model_type', models.CharField(blank=True, help_text='Target model type for this image', max_length=100, null=True, validators=[common.validators.validate_attachment_model_type])),
+                ('model_type', models.CharField(help_text='Target model type for this image', max_length=100, validators=[common.validators.validate_attachment_model_type])),
                 ('upload_user', models.ForeignKey(blank=True, help_text='User', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='User')),
             ],
             bases=(InvenTree.models.PluginValidationMixin, models.Model),

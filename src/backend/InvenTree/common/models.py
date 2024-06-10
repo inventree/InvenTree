@@ -3151,8 +3151,6 @@ class Attachment(InvenTree.models.InvenTreeModel):
 
     model_type = models.CharField(
         max_length=100,
-        blank=True,
-        null=True,
         validators=[common.validators.validate_attachment_model_type],
         help_text=_('Target model type for this image'),
     )

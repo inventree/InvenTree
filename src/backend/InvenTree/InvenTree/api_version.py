@@ -9,6 +9,7 @@ INVENTREE_API_TEXT = """
 v207 - 2024-06-09 : https://github.com/inventree/InvenTree/pull/7420
     - Moves all "Attachment" models into a single table
     - All "Attachment" operations are now performed at /api/attachment/
+    - Add permissions information to /api/user/roles/ endpoint
 
 v206 - 2024-06-08 : https://github.com/inventree/InvenTree/pull/7417
     - Adds "choices" field to the PartTestTemplate model
