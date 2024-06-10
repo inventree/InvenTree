@@ -47,9 +47,9 @@ function ImporterDataCell({
   }, [row.errors, column.field]);
 
   return (
-    <Group grow position="apart">
+    <Group grow justify="apart">
       <Group grow style={{ flex: 1 }}>
-        <Stack spacing="xs">
+        <Stack gap="xs">
           <Text>{row.data[column.field]}</Text>
           {cellErrors.map((error: string) => (
             <Text size="xs" color="red" key={error}>
@@ -60,7 +60,7 @@ function ImporterDataCell({
       </Group>
       <div style={{ flex: 0 }}>
         <Tooltip label={t`Edit cell`}>
-          <ActionIcon size="xs" onClick={onRowEdit}>
+          <ActionIcon size="xs" onClick={onRowEdit} variant="transparent">
             <IconEdit />
           </ActionIcon>
         </Tooltip>
@@ -132,7 +132,7 @@ export default function ImporterDataSelector({
         switchable: false,
         render: (row: any) => {
           return (
-            <Group position="left" spacing="xs">
+            <Group justify="left" spacing="xs">
               <Text size="sm">{row.row_index}</Text>
               {row.valid ? (
                 <IconCircleCheck color="green" size={12} />
@@ -209,7 +209,7 @@ export default function ImporterDataSelector({
     <>
       {editRow.modal}
       {deleteRow.modal}
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <InvenTreeTable
           tableState={table}
           columns={columns}

@@ -59,7 +59,6 @@ function ImporterColumn({ column, options }: { column: any; options: any[] }) {
       data={options}
       value={selectedColumn}
       onChange={onChange}
-      withinPortal
     />
   );
 }
@@ -100,8 +99,8 @@ export default function ImporterColumnSelector({
   }, [session.columnMappings]);
 
   return (
-    <Stack spacing="xs">
-      <Group position="apart">
+    <Stack gap="xs">
+      <Group justify="apart">
         <Text>{t`Map data columns to database fields`}</Text>
         <Button
           color="green"
@@ -115,15 +114,15 @@ export default function ImporterColumnSelector({
         </Alert>
       )}
       <SimpleGrid cols={2} spacing="xs">
-        <Text weight={700}>{t`Database Field`}</Text>
-        <Text weight={700}>{t`Imported Column Name`}</Text>
+        <Text fw={700}>{t`Database Field`}</Text>
+        <Text fw={700}>{t`Imported Column Name`}</Text>
         <Divider />
         <Divider />
         {session.columnMappings.map((column: any) => {
           return [
-            <Stack spacing="xs">
+            <Stack gap="xs">
               <Text>{column.label ?? column.field}</Text>
-              <Text size="sm" italic>
+              <Text size="sm" fs="italic">
                 {column.description}
               </Text>
             </Stack>,

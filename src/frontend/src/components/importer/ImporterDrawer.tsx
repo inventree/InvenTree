@@ -70,11 +70,11 @@ export default function ImporterDrawer({
       closeOnEscape={false}
       closeOnClickOutside={false}
     >
-      <Stack spacing="xs">
-        <Group position="apart" grow>
+      <Stack gap="xs">
+        <Group justify="apart" grow>
           <StylishText size="xl">{t`Importing Data`}</StylishText>
           <StylishText size="lg">{title}</StylishText>
-          <Group position="right">
+          <Group justify="right">
             <Button color="red" variant="filled" onClick={cancelImport}>
               {t`Cancel Import`}
             </Button>
@@ -82,7 +82,7 @@ export default function ImporterDrawer({
         </Group>
         <Divider />
         <ScrollArea>
-          <Stack spacing="xs">
+          <Stack gap="xs">
             <LoadingOverlay visible={session.sessionQuery.isFetching} />
             {/* TODO: Fix the header, while the content scrolls! */}
             <Paper p="md">{session.sessionQuery.isFetching || widget}</Paper>
