@@ -132,7 +132,7 @@ export default function ImporterDataSelector({
         switchable: false,
         render: (row: any) => {
           return (
-            <Group justify="left" spacing="xs">
+            <Group justify="left" gap="xs">
               <Text size="sm">{row.row_index}</Text>
               {row.valid ? (
                 <IconCircleCheck color="green" size={12} />
