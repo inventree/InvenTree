@@ -142,13 +142,9 @@ STATICFILES_I18_SRC = BASE_DIR.joinpath('templates', 'js', 'translated')
 STATICFILES_I18_TRG = BASE_DIR.joinpath('InvenTree', 'static_i18n')
 
 # File management (static / media files)
-# In test mode, use local memory storage for files
+# TODO: In test mode, use local memory storage for files
 STORAGES = {
-    'default': {
-        'BACKEND': 'django.core.files.storage.InMemoryStorage'
-        if TESTING
-        else 'django.core.files.storage.FileSystemStorage'
-    },
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
     'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
 }
 
