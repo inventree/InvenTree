@@ -3,7 +3,7 @@ import { BarChart } from '@mantine/charts';
 import { Group, SimpleGrid, Text } from '@mantine/core';
 import { ReactNode, useCallback, useMemo } from 'react';
 
-import { formatCurrency } from '../../../defaults/formatters';
+import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
