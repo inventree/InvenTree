@@ -224,40 +224,33 @@ function loadAttachmentTable(model_type, model_id, options={}) {
         model_id: model_id,
     };
 
-    // TODO: Implement permissions properly
     let permissions = {
-        delete: true,
-        add: true,
-        change: true
+        delete: false,
+        add: false,
+        change: false,
     };
 
-    // First we determine which permissions the user has for this attachment table
-    if (false) {
-        // TODO: Fix this
-        $.ajax({
-            url: url,
-            async: false,
-            type: 'OPTIONS',
-            contentType: 'application/json',
-            dataType: 'json',
-            accepts: {
-                json: 'application/json',
-            },
-            success: function(response) {
-                if (response.actions.DELETE) {
-                    permissions.delete = true;
-                }
-
-                if (response.actions.POST) {
-                    permissions.change = true;
-                    permissions.add = true;
-                }
-            },
-            error: function(xhr) {
-                showApiError(xhr, url);
+    // Request the permissions for the current user
+    $.ajax({
+        url: '{% url "api-user-roles" %}',
+        async: false,
+        dataType: 'json',
+        contentType: 'application/json',
+        success: function(response) {
+            if (response.is_superuser) {
+                permissions.delete = true;
+                permissions.add = true;
+                permissions.change = true;
+                return;
             }
-        });
-    }
+
+            let model_permissions = response?.permissions[model_type] ?? {};
+
+            permissions.delete = "delete" in model_permissions;
+            permissions.add = "add" in model_permissions;
+            permissions.change = "change" in model_permissions;
+        }
+    });
 
     setupFilterList('attachments', $(table), '#filter-list-attachments', {
         custom_actions: [
