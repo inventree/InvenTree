@@ -318,7 +318,7 @@ def remove_mfa(c, mail=''):
 
 
 @task(help={'frontend': 'Build the frontend', 'clear': 'Remove existing static files'})
-def static(c, frontend=False, clear=False):
+def static(c, frontend=False, clear=True):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, 'prerender')
 
@@ -334,6 +334,10 @@ def static(c, frontend=False, clear=False):
         cmd += ' --clear'
 
     manage(c, cmd)
+
+    # Collect plugin static files
+    print('Collecting plugin files...')
+    manage(c, 'collectplugins')
 
 
 @task
