@@ -17,6 +17,9 @@ def clear_static_dir(path, recursive=True):
         path: The path to the directory to clear
         recursive: If True, clear the directory recursively
     """
+    if not staticfiles_storage.exists(path):
+        return
+
     dirs, files = staticfiles_storage.listdir(path)
 
     for f in files:
@@ -40,10 +43,14 @@ def collect_plugins_static_files():
 
 def copy_plugin_static_files(slug):
     """Copy static files for the specified plugin."""
+    registry.check_reload()
+
     plugin = registry.get_plugin(slug)
 
     if not plugin:
         return
+
+    logger.info("Copying static files for plugin '%s'")
 
     # Get the source path for the plugin
     source_path = plugin.path().joinpath('static')
@@ -82,4 +89,4 @@ def copy_plugin_static_files(slug):
             logger.debug(f'- copied {item} to {destination_path}')
             copied += 1
 
-    logger.info(f"Copied {copied} static files for plugin '{slug}'.")
+    logger.info(f"Copied %s static files for plugin '%s'.", copied, slug)
