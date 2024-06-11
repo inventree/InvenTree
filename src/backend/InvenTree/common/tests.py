@@ -282,7 +282,11 @@ class SettingsTest(InvenTreeTestCase):
         for key in InvenTreeSetting.SETTINGS.keys():
             value = InvenTreeSetting.get_setting_default(key)
 
-            InvenTreeSetting.set_setting(key, value, change_user=self.user)
+            try:
+                InvenTreeSetting.set_setting(key, value, change_user=self.user)
+            except Exception as exc:
+                print(f"test_defaults: Failed to set default value for setting '{key}'")
+                raise exc
 
             self.assertEqual(value, InvenTreeSetting.get_setting(key))
 
