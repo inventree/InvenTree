@@ -1809,6 +1809,11 @@
   resolved "https://registry.yarnpkg.com/@mantine/carousel/-/carousel-7.10.0.tgz#ee750504814ec4eff7523e17a0052dc86bec45c8"
   integrity sha512-+fP/hyHpXoK5nHR5mgEjPhPqjiurwMDP+aLseaE/mvmoBZEFF3vOPAqYOekNDrdyaqvtHkM82T9mnR4M3BAK0w==
 
+"@mantine/charts@^7.10.1":
+  version "7.10.1"
+  resolved "https://registry.yarnpkg.com/@mantine/charts/-/charts-7.10.1.tgz#c1b92ccac16d05b87cc103adcd79f0e0c2f87c62"
+  integrity sha512-fMy2EmgegdHVkrtnRO8ync8kqOJoXqixxc1JDmhn9tks4lSvKAKB9ui8OyaTUOWzls/Cs0VfyW51sB/HKe5faw==
+
 "@mantine/core@^7.10.0":
   version "7.10.0"
   resolved "https://registry.yarnpkg.com/@mantine/core/-/core-7.10.0.tgz#bfaafc92cf2346e5a6cbb49289f577ce3f7c05f7"
