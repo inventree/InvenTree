@@ -279,12 +279,8 @@ class SettingsTest(InvenTreeTestCase):
         """Populate the settings with default values."""
         N = len(InvenTreeSetting.SETTINGS.keys())
 
-        print('test_defaults:')
-
-        for idx, key in enumerate(InvenTreeSetting.SETTINGS.keys()):
+        for key in InvenTreeSetting.SETTINGS.keys():
             value = InvenTreeSetting.get_setting_default(key)
-
-            print(f'{idx + 1}/{N}', ':', key, '->', value)
 
             InvenTreeSetting.set_setting(key, value, change_user=self.user)
 
