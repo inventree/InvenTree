@@ -1260,9 +1260,12 @@ class SalesOrderTest(OrderTest):
 
     def test_so_attachments(self):
         """Test the list endpoint for the SalesOrderAttachment model."""
-        url = reverse('api-so-attachment-list')
+        url = reverse('api-attachment-list')
 
-        self.get(url)
+        # Filter by 'salesorder'
+        self.get(
+            url, data={'model_type': 'salesorder', 'model_id': 1}, expected_code=200
+        )
 
     def test_so_operations(self):
         """Test that we can create / edit and delete a SalesOrder via the API."""
