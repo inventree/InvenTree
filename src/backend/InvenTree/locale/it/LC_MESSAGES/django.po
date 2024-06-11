@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-11 14:05+0000\n"
-"PO-Revision-Date: 2024-06-04 12:39\n"
+"POT-Creation-Date: 2024-06-11 02:04+0000\n"
+"PO-Revision-Date: 2024-06-11 23:04\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -6514,10 +6514,8 @@ msgid "Choices"
 msgstr ""
 
 #: part/models.py:3575
-#, fuzzy
-#| msgid "Invalid choice for parent part"
 msgid "Valid choices for this test (comma-separated)"
-msgstr "Scelta non valida per l'articolo principale"
+msgstr ""
 
 #: part/models.py:3629
 msgid "Checkbox parameters cannot have units"
@@ -8716,10 +8714,8 @@ msgid "Supplier Part ID"
 msgstr "ID Articolo Fornitore"
 
 #: stock/admin.py:185
-#, fuzzy
-#| msgid "Supplier Part"
 msgid "Supplier Part SKU"
-msgstr "Articolo Fornitore"
+msgstr ""
 
 #: stock/admin.py:190
 msgid "Supplier ID"
@@ -9083,10 +9079,8 @@ msgid "Attachment must be uploaded for this test"
 msgstr "L'allegato deve essere caricato per questo test"
 
 #: stock/models.py:2404
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid value for this test"
-msgstr "Valore non valido per eccedenza"
+msgstr ""
 
 #: stock/models.py:2428
 msgid "Test result"
@@ -10942,10 +10936,8 @@ msgid "Scan the QR code below with a token generator of your choice (for instanc
 msgstr "Scansiona il codice QR qui sotto con un generatore di token di tua scelta (per esempio Google Authenticator)."
 
 #: templates/allauth_2fa/setup.html:20
-#, fuzzy
-#| msgid "Secret"
 msgid "Secret: "
-msgstr "Segreto"
+msgstr ""
 
 #: templates/allauth_2fa/setup.html:24
 msgid "Step 2"
@@ -14398,3 +14390,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
