@@ -9,6 +9,7 @@ import django_q.models
 from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
+from rest_framework.exceptions import PermissionDenied
 
 import common.models as common_models
 import common.validators
@@ -544,10 +545,8 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         if not user.has_perm(
             f'{target_model_class._meta.app_label}.change_{target_model_class._meta.model_name}'
         ):
-            raise serializers.ValidationError({
-                'non_field_errors': [
-                    _('User does not have permission to attach files to this model')
-                ]
-            })
+            raise PermissionDenied(
+                _('User does not have permission to attach files to this model')
+            )
 
         return super().save()

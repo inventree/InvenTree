@@ -296,7 +296,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
                 if hasattr(response, 'content'):
                     print('content:', response.content)
 
-            self.assertEqual(expected_code, response.status_code)
+            self.assertEqual(response.status_code, expected_code)
 
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.

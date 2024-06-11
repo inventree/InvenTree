@@ -2516,10 +2516,13 @@ class PartAttachmentTest(InvenTreeAPITestCase):
         url = reverse('api-attachment-list')
 
         # Upload without permission
-        response = self.post(url, {}, expected_code=403)
+        response = self.post(
+            url, {'model_id': 1, 'model_type': 'part'}, expected_code=403
+        )
 
         # Add required permission
         self.assignRole('part.add')
+        self.assignRole('part.change')
 
         # Upload without specifying part (will fail)
         response = self.post(url, {'comment': 'Hello world'}, expected_code=400)
