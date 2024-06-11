@@ -1992,42 +1992,46 @@ msgid "Portuguese (Brazilian)"
 msgstr ""
 
 #: src/contexts/LanguageContext.tsx:43
-msgid "Russian"
+msgid "Romanian"
 msgstr ""
 
 #: src/contexts/LanguageContext.tsx:44
-msgid "Slovak"
+msgid "Russian"
 msgstr ""
 
 #: src/contexts/LanguageContext.tsx:45
-msgid "Slovenian"
+msgid "Slovak"
 msgstr ""
 
 #: src/contexts/LanguageContext.tsx:46
-msgid "Swedish"
+msgid "Slovenian"
 msgstr ""
 
 #: src/contexts/LanguageContext.tsx:47
-msgid "Thai"
+msgid "Swedish"
 msgstr ""
 
 #: src/contexts/LanguageContext.tsx:48
+msgid "Thai"
+msgstr ""
+
+#: src/contexts/LanguageContext.tsx:49
 msgid "Turkish"
 msgstr "Turc"
 
-#: src/contexts/LanguageContext.tsx:49
+#: src/contexts/LanguageContext.tsx:50
 msgid "Ukrainian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:50
+#: src/contexts/LanguageContext.tsx:51
 msgid "Vietnamese"
 msgstr "Vietnamien"
 
-#: src/contexts/LanguageContext.tsx:51
+#: src/contexts/LanguageContext.tsx:52
 msgid "Chinese (Simplified)"
 msgstr "Chinois (Simplifié)"
 
-#: src/contexts/LanguageContext.tsx:52
+#: src/contexts/LanguageContext.tsx:53
 msgid "Chinese (Traditional)"
 msgstr "Chinois (Traditionnel)"
 
@@ -6864,4 +6868,3 @@ msgstr "Lire la documentation"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
-

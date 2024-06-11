@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-09 22:25+0000\n"
+"POT-Creation-Date: 2024-06-11 14:05+0000\n"
 "PO-Revision-Date: 2024-06-04 12:39\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
@@ -296,46 +296,50 @@ msgid "Portuguese (Brazilian)"
 msgstr "Portugees (Braziliaans)"
 
 #: InvenTree/locales.py:41
+msgid "Romanian"
+msgstr ""
+
+#: InvenTree/locales.py:42
 msgid "Russian"
 msgstr "Russisch"
 
-#: InvenTree/locales.py:42
+#: InvenTree/locales.py:43
 msgid "Slovak"
 msgstr ""
 
-#: InvenTree/locales.py:43
+#: InvenTree/locales.py:44
 msgid "Slovenian"
 msgstr "Sloveens"
 
-#: InvenTree/locales.py:44
+#: InvenTree/locales.py:45
 msgid "Serbian"
 msgstr "Servisch"
 
-#: InvenTree/locales.py:45
+#: InvenTree/locales.py:46
 msgid "Swedish"
 msgstr "Zweeds"
 
-#: InvenTree/locales.py:46
+#: InvenTree/locales.py:47
 msgid "Thai"
 msgstr "Thais"
 
-#: InvenTree/locales.py:47
+#: InvenTree/locales.py:48
 msgid "Turkish"
 msgstr "Turks"
 
-#: InvenTree/locales.py:48
+#: InvenTree/locales.py:49
 msgid "Ukrainian"
 msgstr ""
 
-#: InvenTree/locales.py:49
+#: InvenTree/locales.py:50
 msgid "Vietnamese"
 msgstr "Vietnamees"
 
-#: InvenTree/locales.py:50
+#: InvenTree/locales.py:51
 msgid "Chinese (Simplified)"
 msgstr "Chinees (vereenvoudigd)"
 
-#: InvenTree/locales.py:51
+#: InvenTree/locales.py:52
 msgid "Chinese (Traditional)"
 msgstr "Chinees (traditioneel)"
 
@@ -444,7 +448,7 @@ msgstr "Bestand opmerking"
 #: common/models.py:2487 common/models.py:2635 common/models.py:2636
 #: common/models.py:2881 common/models.py:2882 part/models.py:3219
 #: part/models.py:3306 part/models.py:3399 part/models.py:3427
-#: plugin/models.py:259 plugin/models.py:260
+#: plugin/models.py:274 plugin/models.py:275
 #: report/templates/report/inventree_test_report.html:105
 #: templates/js/translated/stock.js:3036 users/models.py:111
 msgid "User"
@@ -489,7 +493,7 @@ msgstr "Ongeldige keuze"
 
 #: InvenTree/models.py:907 common/models.py:2622 common/models.py:3035
 #: common/serializers.py:403 company/models.py:614 machine/models.py:24
-#: part/models.py:899 part/models.py:3685 plugin/models.py:50
+#: part/models.py:899 part/models.py:3685 plugin/models.py:51
 #: report/models.py:149 stock/models.py:72
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -3463,7 +3467,7 @@ msgstr "Naam van deze webhook"
 
 #: common/models.py:2627 company/models.py:160 company/models.py:814
 #: machine/models.py:39 part/admin.py:88 part/models.py:1089
-#: plugin/models.py:65 templates/js/translated/company.js:523
+#: plugin/models.py:66 templates/js/translated/company.js:523
 #: templates/js/translated/table_filters.js:135
 #: templates/js/translated/table_filters.js:219
 #: templates/js/translated/table_filters.js:492
@@ -8152,62 +8156,62 @@ msgstr ""
 msgid "Uninstalled plugin successfully"
 msgstr ""
 
-#: plugin/models.py:35
+#: plugin/models.py:36
 msgid "Plugin Configuration"
 msgstr ""
 
-#: plugin/models.py:36
+#: plugin/models.py:37
 msgid "Plugin Configurations"
 msgstr ""
 
-#: plugin/models.py:42 users/models.py:100
+#: plugin/models.py:43 users/models.py:100
 msgid "Key"
 msgstr ""
 
-#: plugin/models.py:43
+#: plugin/models.py:44
 msgid "Key of plugin"
 msgstr ""
 
-#: plugin/models.py:51
+#: plugin/models.py:52
 msgid "PluginName of the plugin"
 msgstr ""
 
-#: plugin/models.py:58 plugin/serializers.py:90
+#: plugin/models.py:59 plugin/serializers.py:90
 msgid "Package Name"
 msgstr ""
 
-#: plugin/models.py:60
+#: plugin/models.py:61
 msgid "Name of the installed package, if the plugin was installed via PIP"
 msgstr ""
 
-#: plugin/models.py:65
+#: plugin/models.py:66
 msgid "Is the plugin active"
 msgstr ""
 
-#: plugin/models.py:156 templates/js/translated/table_filters.js:370
+#: plugin/models.py:157 templates/js/translated/table_filters.js:370
 #: templates/js/translated/table_filters.js:504
 msgid "Installed"
 msgstr ""
 
-#: plugin/models.py:165
+#: plugin/models.py:166
 msgid "Sample plugin"
 msgstr ""
 
-#: plugin/models.py:173
+#: plugin/models.py:174
 msgid "Builtin Plugin"
 msgstr ""
 
-#: plugin/models.py:181
+#: plugin/models.py:182
 msgid "Package Plugin"
 msgstr ""
 
-#: plugin/models.py:205 report/models.py:474
+#: plugin/models.py:220 report/models.py:474
 #: templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
 msgid "Plugin"
 msgstr ""
 
-#: plugin/models.py:252
+#: plugin/models.py:267
 msgid "Method"
 msgstr ""
 
@@ -8340,11 +8344,11 @@ msgstr ""
 msgid "Activate this plugin"
 msgstr ""
 
-#: plugin/serializers.py:234
+#: plugin/serializers.py:226
 msgid "Delete configuration"
 msgstr ""
 
-#: plugin/serializers.py:235
+#: plugin/serializers.py:227
 msgid "Delete the plugin configuration from the database"
 msgstr ""
 
