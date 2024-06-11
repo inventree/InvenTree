@@ -1,29 +1,30 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: inventree\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-09 22:25+0000\n"
-"PO-Revision-Date: 2024-06-04 12:40\n"
-"Last-Translator: \n"
-"Language-Team: Persian\n"
-"Language: fa_IR\n"
+"POT-Creation-Date: 2024-06-11 01:26+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Crowdin-Project: inventree\n"
-"X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: fa\n"
-"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
-"X-Crowdin-File-ID: 216\n"
-
+"Plural-Forms: nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?"
+"2:1));\n"
 #: InvenTree/api.py:272
 msgid "API endpoint not found"
-msgstr "Address e API peida nashod"
+msgstr ""
 
 #: InvenTree/api.py:536
 msgid "User does not have permission to view this model"
-msgstr "کاربر سطح دسترسی نمایش این مدل را ندارد"
+msgstr ""
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
@@ -32,7 +33,7 @@ msgstr ""
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr "مقداری افزوده نشده"
+msgstr ""
 
 #: InvenTree/conversion.py:204
 #, python-brace-format
@@ -41,7 +42,7 @@ msgstr ""
 
 #: InvenTree/conversion.py:206
 msgid "Invalid quantity supplied"
-msgstr "تعداد افزوده شده اشتباه است"
+msgstr ""
 
 #: InvenTree/conversion.py:220
 #, python-brace-format
@@ -50,11 +51,11 @@ msgstr ""
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr "جزئیات خطا را می توان در پنل مدیریت پیدا کرد"
+msgstr ""
 
 #: InvenTree/fields.py:139
 msgid "Enter date"
-msgstr "تاریخ را وارد کنید"
+msgstr ""
 
 #: InvenTree/fields.py:208 InvenTree/models.py:1059 build/serializers.py:453
 #: build/serializers.py:531 build/templates/build/sidebar.html:21
@@ -77,56 +78,56 @@ msgstr "تاریخ را وارد کنید"
 #: templates/js/translated/sales_order.js:2018
 #: templates/js/translated/stock.js:1536 templates/js/translated/stock.js:2428
 msgid "Notes"
-msgstr "یادداشت"
+msgstr ""
 
 #: InvenTree/format.py:164
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr "مقدار '{name}' در قالب الگو ظاهر قرار نمی گیرد"
+msgstr ""
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
-msgstr "مقدار ارائه شده با الگوی مورد نیاز مطابقت ندارد: "
+msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr "رمز عبور را وارد کنید"
+msgstr ""
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr "گذرواژه جدید را وارد کنید"
+msgstr ""
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr "تأیید کلمه‌ی عبور"
+msgstr ""
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr "گذرواژه جدید را تایید کنید"
+msgstr ""
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr "رمز عبور قدیمی"
+msgstr ""
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr "ایمیل (دوباره وارد کنید)"
+msgstr ""
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr "تایید آدرس ایمیل"
+msgstr ""
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr "هر بار باید همان ایمیل را تایپ کنید."
+msgstr ""
 
 #: InvenTree/forms.py:253 InvenTree/forms.py:261
 msgid "The provided primary email address is not valid."
-msgstr "آدرس ایمیل اصلی ارائه شده معتبر نیست."
+msgstr ""
 
 #: InvenTree/forms.py:268
 msgid "The provided email domain is not approved."
-msgstr "دامنه ایمیل ارائه شده تایید نشده است."
+msgstr ""
 
 #: InvenTree/forms.py:395
 msgid "Registration is disabled."
@@ -173,23 +174,23 @@ msgstr ""
 
 #: InvenTree/helpers_model.py:150
 msgid "Connection error"
-msgstr "خطا در اتصال"
+msgstr ""
 
 #: InvenTree/helpers_model.py:155 InvenTree/helpers_model.py:162
 msgid "Server responded with invalid status code"
-msgstr "سرور با کد وضعیت نامعتبر پاسخ داد"
+msgstr ""
 
 #: InvenTree/helpers_model.py:158
 msgid "Exception occurred"
-msgstr "یک استثنا رخ داده است"
+msgstr ""
 
 #: InvenTree/helpers_model.py:168
 msgid "Server responded with invalid Content-Length value"
-msgstr "سرور با مقدار طول محتوا نامعتبر پاسخ داد"
+msgstr ""
 
 #: InvenTree/helpers_model.py:171
 msgid "Image size is too large"
-msgstr "اندازه عکس بسیار بزرگ است"
+msgstr ""
 
 #: InvenTree/helpers_model.py:183
 msgid "Image download exceeded maximum size"
@@ -296,46 +297,50 @@ msgid "Portuguese (Brazilian)"
 msgstr ""
 
 #: InvenTree/locales.py:41
-msgid "Russian"
+msgid "Romanian"
 msgstr ""
 
 #: InvenTree/locales.py:42
-msgid "Slovak"
+msgid "Russian"
 msgstr ""
 
 #: InvenTree/locales.py:43
-msgid "Slovenian"
+msgid "Slovak"
 msgstr ""
 
 #: InvenTree/locales.py:44
-msgid "Serbian"
+msgid "Slovenian"
 msgstr ""
 
 #: InvenTree/locales.py:45
-msgid "Swedish"
+msgid "Serbian"
 msgstr ""
 
 #: InvenTree/locales.py:46
-msgid "Thai"
+msgid "Swedish"
 msgstr ""
 
 #: InvenTree/locales.py:47
-msgid "Turkish"
+msgid "Thai"
 msgstr ""
 
 #: InvenTree/locales.py:48
-msgid "Ukrainian"
+msgid "Turkish"
 msgstr ""
 
 #: InvenTree/locales.py:49
-msgid "Vietnamese"
+msgid "Ukrainian"
 msgstr ""
 
 #: InvenTree/locales.py:50
-msgid "Chinese (Simplified)"
+msgid "Vietnamese"
 msgstr ""
 
 #: InvenTree/locales.py:51
+msgid "Chinese (Simplified)"
+msgstr ""
+
+#: InvenTree/locales.py:52
 msgid "Chinese (Traditional)"
 msgstr ""
 
@@ -444,7 +449,7 @@ msgstr ""
 #: common/models.py:2487 common/models.py:2635 common/models.py:2636
 #: common/models.py:2881 common/models.py:2882 part/models.py:3219
 #: part/models.py:3306 part/models.py:3399 part/models.py:3427
-#: plugin/models.py:259 plugin/models.py:260
+#: plugin/models.py:274 plugin/models.py:275
 #: report/templates/report/inventree_test_report.html:105
 #: templates/js/translated/stock.js:3036 users/models.py:111
 msgid "User"
@@ -489,7 +494,7 @@ msgstr ""
 
 #: InvenTree/models.py:907 common/models.py:2622 common/models.py:3035
 #: common/serializers.py:403 company/models.py:614 machine/models.py:24
-#: part/models.py:899 part/models.py:3685 plugin/models.py:50
+#: part/models.py:899 part/models.py:3685 plugin/models.py:51
 #: report/models.py:149 stock/models.py:72
 #: templates/InvenTree/settings/mixins/urls.html:13
 #: templates/InvenTree/settings/notifications.html:17
@@ -634,45 +639,45 @@ msgstr ""
 
 #: InvenTree/serializers.py:597
 msgid "Data File"
-msgstr "فایل‌های داده"
+msgstr ""
 
 #: InvenTree/serializers.py:598
 msgid "Select data file for upload"
-msgstr "فایل را برای بارگذاری انتخاب کنید"
+msgstr ""
 
 #: InvenTree/serializers.py:615
 msgid "Unsupported file type"
-msgstr "این نوع فایل پشتیبانی نمی‌شود"
+msgstr ""
 
 #: InvenTree/serializers.py:621
 msgid "File is too large"
-msgstr "حجم فایل خیلی بزرگ است"
+msgstr ""
 
 #: InvenTree/serializers.py:642
 msgid "No columns found in file"
-msgstr "هیچ ستونی در فایل یافت نشد"
+msgstr ""
 
 #: InvenTree/serializers.py:645
 msgid "No data rows found in file"
-msgstr "هیچ ردیف داده ای در فایل یافت نشد"
+msgstr ""
 
 #: InvenTree/serializers.py:758
 msgid "No data rows provided"
-msgstr "هیچ ردیف داده ای ارائه نشده است"
+msgstr ""
 
 #: InvenTree/serializers.py:761
 msgid "No data columns supplied"
-msgstr "هیچ ستون داده ای ارائه نشده است"
+msgstr ""
 
 #: InvenTree/serializers.py:828
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr "ستون مورد نیاز وجود ندارد: \"{name}\""
+msgstr ""
 
 #: InvenTree/serializers.py:837
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr "ستون تکراری: '{col}'"
+msgstr ""
 
 #: InvenTree/serializers.py:877
 msgid "Remote Image"
@@ -680,7 +685,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:878
 msgid "URL of remote image file"
-msgstr "آدرس فایل تصویری از راه دور"
+msgstr ""
 
 #: InvenTree/serializers.py:896
 msgid "Downloading images from remote URL is not enabled"
@@ -914,7 +919,7 @@ msgstr ""
 
 #: build/models.py:248
 msgid "Sales Order Reference"
-msgstr "مرجع سفارش فروش"
+msgstr ""
 
 #: build/models.py:252
 msgid "SalesOrder to which this build is allocated"
@@ -924,7 +929,7 @@ msgstr ""
 #: templates/js/translated/build.js:1731
 #: templates/js/translated/sales_order.js:1221
 msgid "Source Location"
-msgstr "منبع محل"
+msgstr ""
 
 #: build/models.py:261
 msgid "Select location to take stock from for this build (leave blank to take from any stock location)"
@@ -932,7 +937,7 @@ msgstr ""
 
 #: build/models.py:266
 msgid "Destination Location"
-msgstr "مقصد"
+msgstr ""
 
 #: build/models.py:270
 msgid "Select location where the completed items will be stored"
@@ -3463,7 +3468,7 @@ msgstr ""
 
 #: common/models.py:2627 company/models.py:160 company/models.py:814
 #: machine/models.py:39 part/admin.py:88 part/models.py:1089
-#: plugin/models.py:65 templates/js/translated/company.js:523
+#: plugin/models.py:66 templates/js/translated/company.js:523
 #: templates/js/translated/table_filters.js:135
 #: templates/js/translated/table_filters.js:219
 #: templates/js/translated/table_filters.js:492
@@ -7751,7 +7756,7 @@ msgstr ""
 
 #: plugin/base/action/api.py:32
 msgid "No action specified"
-msgstr "هیچ عملیات کاربر-محوری، مشخص نشده است"
+msgstr ""
 
 #: plugin/base/action/api.py:41
 msgid "No matching action found"
@@ -8152,62 +8157,62 @@ msgstr ""
 msgid "Uninstalled plugin successfully"
 msgstr ""
 
-#: plugin/models.py:35
+#: plugin/models.py:36
 msgid "Plugin Configuration"
 msgstr ""
 
-#: plugin/models.py:36
+#: plugin/models.py:37
 msgid "Plugin Configurations"
 msgstr ""
 
-#: plugin/models.py:42 users/models.py:100
+#: plugin/models.py:43 users/models.py:100
 msgid "Key"
 msgstr ""
 
-#: plugin/models.py:43
+#: plugin/models.py:44
 msgid "Key of plugin"
 msgstr ""
 
-#: plugin/models.py:51
+#: plugin/models.py:52
 msgid "PluginName of the plugin"
 msgstr ""
 
-#: plugin/models.py:58 plugin/serializers.py:90
+#: plugin/models.py:59 plugin/serializers.py:90
 msgid "Package Name"
 msgstr ""
 
-#: plugin/models.py:60
+#: plugin/models.py:61
 msgid "Name of the installed package, if the plugin was installed via PIP"
 msgstr ""
 
-#: plugin/models.py:65
+#: plugin/models.py:66
 msgid "Is the plugin active"
 msgstr ""
 
-#: plugin/models.py:156 templates/js/translated/table_filters.js:370
+#: plugin/models.py:157 templates/js/translated/table_filters.js:370
 #: templates/js/translated/table_filters.js:504
 msgid "Installed"
 msgstr ""
 
-#: plugin/models.py:165
+#: plugin/models.py:166
 msgid "Sample plugin"
 msgstr ""
 
-#: plugin/models.py:173
+#: plugin/models.py:174
 msgid "Builtin Plugin"
 msgstr ""
 
-#: plugin/models.py:181
+#: plugin/models.py:182
 msgid "Package Plugin"
 msgstr ""
 
-#: plugin/models.py:205 report/models.py:474
+#: plugin/models.py:220 report/models.py:474
 #: templates/InvenTree/settings/plugin_settings.html:9
 #: templates/js/translated/plugin.js:51
 msgid "Plugin"
 msgstr ""
 
-#: plugin/models.py:252
+#: plugin/models.py:267
 msgid "Method"
 msgstr ""
 
@@ -8340,11 +8345,11 @@ msgstr ""
 msgid "Activate this plugin"
 msgstr ""
 
-#: plugin/serializers.py:234
+#: plugin/serializers.py:226
 msgid "Delete configuration"
 msgstr ""
 
-#: plugin/serializers.py:235
+#: plugin/serializers.py:227
 msgid "Delete the plugin configuration from the database"
 msgstr ""
 
@@ -10074,7 +10079,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:14
 msgid "URL"
-msgstr "آدرس اینترنتی"
+msgstr ""
 
 #: templates/InvenTree/settings/mixins/urls.html:23
 msgid "Open in new tab"
@@ -10777,7 +10782,7 @@ msgstr ""
 
 #: templates/account/email_confirm.html:21 templates/js/translated/forms.js:774
 msgid "Confirm"
-msgstr "تایید"
+msgstr ""
 
 #: templates/account/email_confirm.html:29
 #, python-format
