@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-11 14:05+0000\n"
-"PO-Revision-Date: 2024-06-04 12:39\n"
+"POT-Creation-Date: 2024-06-11 02:04+0000\n"
+"PO-Revision-Date: 2024-06-11 23:04\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -9079,10 +9079,8 @@ msgid "Attachment must be uploaded for this test"
 msgstr ""
 
 #: stock/models.py:2404
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid value for this test"
-msgstr "Μη έγκυρη τιμή για υπέρβαση"
+msgstr ""
 
 #: stock/models.py:2428
 msgid "Test result"
@@ -14392,3 +14390,4 @@ msgstr ""
 #: users/models.py:413
 msgid "Permission to delete items"
 msgstr ""
+
