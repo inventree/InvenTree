@@ -221,20 +221,10 @@ class GroupList(ListCreateAPI):
 class Login(LoginView):
     """API view for logging in via API."""
 
-    def post(self, request, *args, **kwargs):
-        """Handle login attempts."""
-        self.request = request
-        self.serializer = self.get_serializer(data=self.request.data)
-        self.serializer.is_valid(raise_exception=True)
-
-        self.login()
-        ret = self.check_mfa()
-        if ret is not None:
-            return ret
-        return self.get_response()
-
-    def check_mfa(self):
-        """Ensure that MFA is enforced if required."""
+    def process_login(self):
+        """Process the login request, ensure that MFA is enforced if required."""
+        # Normal login process
+        ret = super().process_login()
         user = self.request.user
         adapter = get_adapter(self.request)
 
@@ -243,11 +233,8 @@ class Login(LoginView):
             'LOGIN_ENFORCE_MFA'
         ):
             logout(self.request)
-            self.request.session['allauth_2fa_user_id'] = str(user.id)
-            ret = redirect(reverse_lazy('settings'))
-            return ret
-            # raise ImmediateHttpResponse(response=HttpResponse('MFA required for this user'))
-        return None
+            raise exceptions.PermissionDenied('MFA required for this user')
+        return ret
 
 
 @extend_schema_view(
