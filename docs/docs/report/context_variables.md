@@ -16,7 +16,6 @@ In addition to the model-specific context variables, the following global contex
 | base_url | The base URL for the InvenTree instance |
 | date | Current date, represented as a Python datetime.date object |
 | datetime | Current datetime, represented as a Python datetime object |
-| request | The Django request object associated with the printing process |
 | template | The report template instance which is being rendered against |
 | template_description | Description of the report template |
 | template_name | Name of the report template |

@@ -18,6 +18,7 @@ from InvenTree.serializers import (
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTagModelSerializer,
+    NotesFieldMixin,
     RemoteImageMixin,
 )
 from part.serializers import PartBriefSerializer
@@ -102,7 +103,7 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
+class CompanySerializer(NotesFieldMixin, RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for Company object (full detail)."""
 
     class Meta:

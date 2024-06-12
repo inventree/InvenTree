@@ -208,6 +208,8 @@
             'stock-notes',
             '{% url "api-stock-detail" item.pk %}',
             {
+                model_type: 'stockitem',
+                model_id: {{ item.pk }},
                 {% if roles.stock.change and user_owns_item %}
                 editable: true,
                 {% else %}
@@ -233,6 +235,7 @@
 
     {% settings_value "TEST_STATION_DATA" as test_station_fields %}
 
+    {% if item.part.trackable %}
     loadStockTestResultsTable(
         $("#test-result-table"), {
             part: {{ item.part.id }},
@@ -244,6 +247,7 @@
     $("#test-report").click(function() {
         printReports('stockitem', [{{ item.pk }}]);
     });
+    {% endif %}
 
     {% if user.is_staff %}
     $("#delete-test-results").click(function() {

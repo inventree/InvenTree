@@ -48,7 +48,7 @@ const defaultLabelTemplates = {
  */
 function printLabels(options) {
 
-    let pluginId = -1;
+    let plugin_name = '';
 
     if (!options.items || options.items.length == 0) {
         showAlertDialog(
@@ -67,14 +67,13 @@ function printLabels(options) {
         items: item_string,
     };
 
-    function getPrintingFields(plugin_id, callback) {
-        let url = '{% url "api-label-print" %}' + `?plugin=${plugin_id}`;
+    function getPrintingFields(plugin_slug, callback) {
+
+        let url = '{% url "api-label-print" %}' + `?plugin=${plugin_slug}`;
 
         inventreeGet(
             url,
-            {
-                plugin: plugin_id,
-            },
+            {},
             {
                 method: 'OPTIONS',
                 success: function(response) {
@@ -88,11 +87,11 @@ function printLabels(options) {
     // Callback when a particular label printing plugin is selected
     function onPluginSelected(value, name, field, formOptions) {
 
-        if (value == pluginId) {
+        if (value == plugin_name) {
             return;
         }
 
-        pluginId = value;
+        plugin_name = value;
 
         // Request new printing options for the selected plugin
         getPrintingFields(value, function(fields) {
@@ -108,7 +107,9 @@ function printLabels(options) {
 
     const baseFields = {
         template: {},
-        plugin: {},
+        plugin: {
+            idField: 'key',
+        },
         items: {}
     };
 

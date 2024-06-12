@@ -23,9 +23,9 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { StockLocationTree } from '../../components/nav/StockLocationTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -294,6 +294,7 @@ export default function Stock() {
       <PrintingActions
         modelType={ModelType.stocklocation}
         items={[location.pk ?? 0]}
+        hidden={!location?.pk}
         enableLabels
         enableReports
       />,
@@ -356,10 +357,13 @@ export default function Stock() {
       {deleteLocation.modal}
       <Stack>
         <LoadingOverlay visible={instanceQuery.isFetching} />
-        <StockLocationTree
+        <NavigationTree
+          title={t`Stock Locations`}
+          modelType={ModelType.stocklocation}
+          endpoint={ApiEndpoints.stock_location_tree}
           opened={treeOpen}
           onClose={() => setTreeOpen(false)}
-          selectedLocation={location?.pk}
+          selectedId={location?.pk}
         />
         <PageDetail
           title={t`Stock Items`}

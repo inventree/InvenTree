@@ -40,6 +40,10 @@ def forward(apps, schema_editor):
 
             filename = template.template.path
 
+            if not os.path.exists(filename):
+                print(f"Migration error: Template file '{filename}' does not exist")
+                continue
+
             if '/report/inventree/' in filename:
                 # Do not migrate internal report templates
                 continue

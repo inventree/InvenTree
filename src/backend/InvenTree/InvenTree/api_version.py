@@ -1,11 +1,25 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 201
+INVENTREE_API_VERSION = 206
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v206 - 2024-06-08 : https://github.com/inventree/InvenTree/pull/7417
+    - Adds "choices" field to the PartTestTemplate model
+
+v205 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7284
+    - Added model_type and model_id fields to the "NotesImage" serializer
+
+v204 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7393
+    - Fixes previous API update which resulted in inconsistent ordering of currency codes
+
+v203 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7390
+    - Currency codes are now configurable as a run-time setting
+
+v202 - 2024-05-27 : https://github.com/inventree/InvenTree/pull/7343
+    - Adjust "required" attribute of Part.category field to be optional
 
 v201 - 2024-05-21 : https://github.com/inventree/InvenTree/pull/7074
     - Major refactor of the report template / report printing interface

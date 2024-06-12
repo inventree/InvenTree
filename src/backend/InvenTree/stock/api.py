@@ -35,7 +35,7 @@ from InvenTree.api import (
     MetadataView,
 )
 from InvenTree.filters import (
-    ORDER_FILTER,
+    ORDER_FILTER_ALIAS,
     SEARCH_ORDER_FILTER,
     SEARCH_ORDER_FILTER_ALIAS,
     InvenTreeDateFilter,
@@ -56,7 +56,6 @@ from InvenTree.mixins import (
     RetrieveAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.status_codes import StockHistoryCode, StockStatus
 from order.models import PurchaseOrder, ReturnOrder, SalesOrder, SalesOrderAllocation
 from order.serializers import (
     PurchaseOrderSerializer,
@@ -75,6 +74,7 @@ from stock.models import (
     StockLocation,
     StockLocationType,
 )
+from stock.status_codes import StockHistoryCode, StockStatus
 
 
 class GenerateBatchCode(GenericAPIView):
@@ -429,12 +429,14 @@ class StockLocationTree(ListAPI):
     queryset = StockLocation.objects.all()
     serializer_class = StockSerializers.LocationTreeSerializer
 
-    filter_backends = ORDER_FILTER
+    filter_backends = ORDER_FILTER_ALIAS
 
     ordering_fields = ['level', 'name', 'sublocations']
 
     # Order by tree level (top levels first) and then name
     ordering = ['level', 'name']
+
+    ordering_field_aliases = {'level': ['level', 'name'], 'name': ['name', 'level']}
 
     def get_queryset(self, *args, **kwargs):
         """Return annotated queryset for the StockLocationTree endpoint."""

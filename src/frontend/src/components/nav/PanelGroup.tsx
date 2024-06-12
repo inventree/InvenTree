@@ -10,18 +10,20 @@ import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse
 } from '@tabler/icons-react';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Navigate,
   Route,
   Routes,
+  useLocation,
   useNavigate,
   useParams
 } from 'react-router-dom';
 
+import { identifierString } from '../../functions/conversion';
+import { navigateToLink } from '../../functions/navigation';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
-import { PlaceholderPanel } from '../items/Placeholder';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -31,7 +33,7 @@ export type PanelType = {
   name: string;
   label: string;
   icon?: ReactNode;
-  content?: ReactNode;
+  content: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
   showHeadline?: boolean;
@@ -52,6 +54,7 @@ function BasePanelGroup({
   selectedPanel,
   collapsible = true
 }: Readonly<PanelProps>): ReactNode {
+  const location = useLocation();
   const navigate = useNavigate();
   const { panel } = useParams();
 
@@ -72,19 +75,27 @@ function BasePanelGroup({
   }, [setLastUsedPanel]);
 
   // Callback when the active panel changes
-  function handlePanelChange(panel: string | null) {
-    if (activePanels.findIndex((p) => p.name === panel) === -1) {
-      setLastUsedPanel('');
-      return navigate('../');
-    }
+  const handlePanelChange = useCallback(
+    (panel: string | null, event?: any) => {
+      if (activePanels.findIndex((p) => p.name === panel) === -1) {
+        setLastUsedPanel('');
+        return navigate('../');
+      }
 
-    navigate(`../${panel}`);
+      if (event && (event?.ctrlKey || event?.shiftKey)) {
+        const url = `${location.pathname}/../${panel}`;
+        navigateToLink(url, navigate, event);
+      } else {
+        navigate(`../${panel}`);
+      }
 
-    // Optionally call external callback hook
-    if (panel && onPanelChange) {
-      onPanelChange(panel);
-    }
-  }
+      // Optionally call external callback hook
+      if (panel && onPanelChange) {
+        onPanelChange(panel);
+      }
+    },
+    [activePanels, setLastUsedPanel, navigate, location, onPanelChange]
+  );
 
   // if the selected panel state changes update the current panel
   useEffect(() => {
@@ -129,6 +140,9 @@ function BasePanelGroup({
                       hidden={panel.hidden}
                       disabled={panel.disabled}
                       style={{ cursor: panel.disabled ? 'unset' : 'pointer' }}
+                      onClick={(event: any) =>
+                        handlePanelChange(panel.name, event)
+                      }
                     >
                       {expanded && panel.label}
                     </Tabs.Tab>
@@ -158,6 +172,9 @@ function BasePanelGroup({
                 <Tabs.Panel
                   key={panel.name}
                   value={panel.name}
+                  aria-label={`nav-panel-${identifierString(
+                    `${pageKey}-${panel.name}`
+                  )}`}
                   p="sm"
                   style={{
                     overflowX: 'scroll',
@@ -172,7 +189,7 @@ function BasePanelGroup({
                       </>
                     )}
                     <Boundary label={`PanelContent-${panel.name}`}>
-                      {panel.content ?? <PlaceholderPanel />}
+                      {panel.content}
                     </Boundary>
                   </Stack>
                 </Tabs.Panel>

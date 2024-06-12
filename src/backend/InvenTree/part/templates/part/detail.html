@@ -404,6 +404,8 @@
             'part-notes',
             '{% url "api-part-detail" part.pk %}',
             {
+                model_type: "part",
+                model_id: {{ part.pk }},
                 editable: {% js_bool roles.part.change %},
             }
         );

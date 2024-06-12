@@ -34,15 +34,11 @@ import report.mixins
 import report.models
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from InvenTree.status_codes import (
-    SalesOrderStatusGroups,
-    StockHistoryCode,
-    StockStatus,
-    StockStatusGroups,
-)
+from order.status_codes import SalesOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.generators import generate_batch_code
+from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
@@ -348,7 +344,7 @@ class StockItem(
         stocktake_user: User that performed the most recent stocktake
         review_needed: Flag if StockItem needs review
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
-        status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
+        status: Status of this StockItem (ref: stock.status_codes.StockStatus)
         notes: Extra notes field
         build: Link to a Build (if this stock item was created from a build)
         is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
@@ -1699,6 +1695,9 @@ class StockItem(
         - Tracking history for the *other* item is deleted
         - Any allocations (build order, sales order) are moved to this StockItem
         """
+        if isinstance(other_items, StockItem):
+            other_items = [other_items]
+
         if len(other_items) == 0:
             return
 
@@ -1706,7 +1705,7 @@ class StockItem(
         tree_ids = {self.tree_id}
 
         user = kwargs.get('user', None)
-        location = kwargs.get('location', None)
+        location = kwargs.get('location', self.location)
         notes = kwargs.get('notes', None)
 
         parent_id = self.parent.pk if self.parent else None
@@ -1714,6 +1713,9 @@ class StockItem(
         for other in other_items:
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
+                logger.warning(
+                    'Stock item <%s> could not be merge into <%s>', other.pk, self.pk
+                )
                 return
 
             tree_ids.add(other.tree_id)
@@ -1743,7 +1745,7 @@ class StockItem(
             user,
             quantity=self.quantity,
             notes=notes,
-            deltas={'location': location.pk},
+            deltas={'location': location.pk if location else None},
         )
 
         self.location = location
@@ -2158,9 +2160,9 @@ class StockItem(
 
     def testResultList(self, **kwargs):
         """Return a list of test-result objects for this StockItem."""
-        return self.testResultMap(**kwargs).values()
+        return list(self.testResultMap(**kwargs).values())
 
-    def requiredTestStatus(self):
+    def requiredTestStatus(self, required_tests=None):
         """Return the status of the tests required for this StockItem.
 
         Return:
@@ -2170,15 +2172,17 @@ class StockItem(
             - failed: Number of tests that have failed
         """
         # All the tests required by the part object
-        required = self.part.getRequiredTests()
+
+        if required_tests is None:
+            required_tests = self.part.getRequiredTests()
 
         results = self.testResultMap()
 
-        total = len(required)
+        total = len(required_tests)
         passed = 0
         failed = 0
 
-        for test in required:
+        for test in required_tests:
             key = InvenTree.helpers.generateTestKey(test.test_name)
 
             if key in results:
@@ -2200,9 +2204,9 @@ class StockItem(
         """Return True if there are any 'required tests' associated with this StockItem."""
         return self.required_test_count > 0
 
-    def passedAllRequiredTests(self):
+    def passedAllRequiredTests(self, required_tests=None):
         """Returns True if this StockItem has passed all required tests."""
-        status = self.requiredTestStatus()
+        status = self.requiredTestStatus(required_tests=required_tests)
 
         return status['passed'] >= status['total']
 
@@ -2376,23 +2380,28 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
         # If this test result corresponds to a template, check the requirements of the template
-        key = self.key
+        template = self.template
 
-        templates = self.stock_item.part.getTestTemplates()
+        if template is None:
+            # Fallback if there is no matching template
+            for template in self.stock_item.part.getTestTemplates():
+                if self.key == template.key:
+                    break
 
-        for template in templates:
-            if key == template.key:
-                if template.requires_value and not self.value:
-                    raise ValidationError({
-                        'value': _('Value must be provided for this test')
-                    })
+        if template:
+            if template.requires_value and not self.value:
+                raise ValidationError({
+                    'value': _('Value must be provided for this test')
+                })
 
-                if template.requires_attachment and not self.attachment:
-                    raise ValidationError({
-                        'attachment': _('Attachment must be uploaded for this test')
-                    })
+            if template.requires_attachment and not self.attachment:
+                raise ValidationError({
+                    'attachment': _('Attachment must be uploaded for this test')
+                })
 
-                break
+            if choices := template.get_choices():
+                if self.value not in choices:
+                    raise ValidationError({'value': _('Invalid value for this test')})
 
     @property
     def key(self):

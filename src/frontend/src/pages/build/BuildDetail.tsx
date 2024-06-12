@@ -20,6 +20,7 @@ import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   CancelItemAction,
@@ -32,7 +33,6 @@ import {
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -308,14 +308,14 @@ export default function BuildDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.build_order_list, build.pk)}
-            data={build.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.build}
+            modelId={build.pk}
+            editable={user.hasChangeRole(UserRoles.build)}
           />
         )
       }
     ];
-  }, [build, id]);
+  }, [build, id, user]);
 
   const buildOrderFields = useBuildOrderFields({ create: false });
 

@@ -19,6 +19,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
@@ -98,7 +99,8 @@ export default function SystemSettings() {
       {
         name: 'notifications',
         label: t`Notifications`,
-        icon: <IconBellCog />
+        icon: <IconBellCog />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'pricing',
@@ -109,6 +111,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={[
                 'INVENTREE_DEFAULT_CURRENCY',
+                'CURRENCY_CODES',
                 'PART_INTERNAL_PRICE',
                 'PART_BOM_USE_INTERNAL_PRICE',
                 'PRICING_DECIMAL_PLACES_MIN',
@@ -160,7 +163,8 @@ export default function SystemSettings() {
       {
         name: 'categories',
         label: t`Part Categories`,
-        icon: <IconSitemap />
+        icon: <IconSitemap />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'parts',
@@ -222,7 +226,8 @@ export default function SystemSettings() {
       {
         name: 'stocktake',
         label: t`Stocktake`,
-        icon: <IconClipboardCheck />
+        icon: <IconClipboardCheck />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'buildorders',
@@ -263,7 +268,8 @@ export default function SystemSettings() {
               'SALESORDER_REFERENCE_PATTERN',
               'SALESORDER_REQUIRE_RESPONSIBLE',
               'SALESORDER_DEFAULT_SHIPMENT',
-              'SALESORDER_EDIT_COMPLETED_ORDERS'
+              'SALESORDER_EDIT_COMPLETED_ORDERS',
+              'SALESORDER_SHIP_COMPLETE'
             ]}
           />
         )

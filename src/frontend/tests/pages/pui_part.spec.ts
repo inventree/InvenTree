@@ -29,25 +29,25 @@ test('PUI - Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
 
   // Overview Graph
-  let graph = page.locator('#pricing-overview-chart');
+  let graph = page.getByLabel('pricing-overview-chart');
   await graph.waitFor();
   await graph.getByText('$60').waitFor();
-  await graph.getByText('BOM Pricing').waitFor();
-  await graph.getByText('Overall Pricing').waitFor();
-  await graph.locator('path').nth(1).hover();
-  await page.getByText('min_value : $50').waitFor();
+  await graph.locator('tspan').filter({ hasText: 'BOM Pricing' }).waitFor();
+  await graph.locator('tspan').filter({ hasText: 'Overall Pricing' }).waitFor();
 
   // BOM Pricing
   await page.getByRole('button', { name: 'BOM Pricing' }).click();
   await page.getByText('Bar Chart').click();
-  await page.getByText('total_price_min').waitFor();
   await page.getByText('Pie Chart').click();
   await page.getByRole('button', { name: 'Quantity Not sorted' }).waitFor();
   await page.getByRole('button', { name: 'Unit Price Not sorted' }).waitFor();
 
   // BOM Pricing - linkjumping
-  await page.getByText('Wood Screw').waitFor();
-  await page.getByText('Wood Screw').click();
+  await page
+    .getByLabel('BOM Pricing')
+    .getByRole('table')
+    .getByText('Wood Screw')
+    .click();
   await page.waitForURL('**/part/98/pricing');
 });
 
@@ -195,4 +195,32 @@ test('PUI - Pages - Part - Parameters', async ({ page }) => {
     .click();
 
   await page.getByRole('button', { name: 'Cancel' }).click();
+});
+
+test('PUI - Pages - Part - Notes', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/69/notes`);
+
+  // Enable editing
+  await page.getByLabel('toggle-notes-editing').click();
+
+  // Enter some text
+  await page
+    .getByRole('textbox')
+    .getByRole('paragraph')
+    .fill('This is some data\n');
+
+  // Save
+  await page.getByLabel('save-notes').click();
+  await page.getByText('Notes saved successfully').waitFor();
+
+  // Navigate away from the page, and then back
+  await page.goto(`${baseUrl}/stock/location/index/`);
+  await page.waitForURL('**/platform/stock/location/**');
+  await page.getByRole('tab', { name: 'Location Details' }).waitFor();
+  await page.goto(`${baseUrl}/part/69/notes`);
+
+  // Check that the original notes are still present
+  await page.getByText('This is some data').waitFor();
 });
