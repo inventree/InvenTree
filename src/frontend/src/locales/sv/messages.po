@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-12 23:00\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -271,11 +271,11 @@ msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Edit Notes"
-msgstr ""
+msgstr "Redigera anteckningar"
 
 #: src/components/editors/NotesEditor.tsx:207
 msgid "Save Notes"
-msgstr ""
+msgstr "Spara anteckningar"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
@@ -1377,12 +1377,12 @@ msgstr "Användare"
 
 #: src/components/render/ModelType.tsx:200
 msgid "Label Template"
-msgstr ""
+msgstr "Etikettmall"
 
 #: src/components/render/ModelType.tsx:201
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:135
 msgid "Label Templates"
-msgstr ""
+msgstr "Etikettmallar"
 
 #: src/components/render/ModelType.tsx:207
 msgid "Report Template"
@@ -1993,7 +1993,7 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Romanian"
-msgstr ""
+msgstr "Rumänska"
 
 #: src/contexts/LanguageContext.tsx:44
 msgid "Russian"
@@ -6418,15 +6418,15 @@ msgstr ""
 #: src/tables/settings/TemplateTable.tsx:222
 #: src/tables/settings/TemplateTable.tsx:289
 msgid "Edit Template"
-msgstr ""
+msgstr "Redigera mall"
 
 #: src/tables/settings/TemplateTable.tsx:230
 msgid "Delete template"
-msgstr ""
+msgstr "Radera mall"
 
 #: src/tables/settings/TemplateTable.tsx:236
 msgid "Add Template"
-msgstr ""
+msgstr "Lägg till mall"
 
 #: src/tables/settings/TemplateTable.tsx:243
 #~ msgid "Add new"
@@ -6438,7 +6438,7 @@ msgstr ""
 
 #: src/tables/settings/TemplateTable.tsx:249
 msgid "Add template"
-msgstr ""
+msgstr "Lägg till mall"
 
 #: src/tables/settings/TemplateTable.tsx:271
 msgid "Filter by enabled status"
