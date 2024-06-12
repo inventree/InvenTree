@@ -29,25 +29,25 @@ test('PUI - Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
   await page.getByRole('button', { name: 'BOM Pricing' }).isEnabled();
 
   // Overview Graph
-  let graph = page.locator('#pricing-overview-chart');
+  let graph = page.getByLabel('pricing-overview-chart');
   await graph.waitFor();
   await graph.getByText('$60').waitFor();
-  await graph.getByText('BOM Pricing').waitFor();
-  await graph.getByText('Overall Pricing').waitFor();
-  await graph.locator('path').nth(1).hover();
-  await page.getByText('min_value : $50').waitFor();
+  await graph.locator('tspan').filter({ hasText: 'BOM Pricing' }).waitFor();
+  await graph.locator('tspan').filter({ hasText: 'Overall Pricing' }).waitFor();
 
   // BOM Pricing
   await page.getByRole('button', { name: 'BOM Pricing' }).click();
   await page.getByText('Bar Chart').click();
-  await page.getByText('total_price_min').waitFor();
   await page.getByText('Pie Chart').click();
   await page.getByRole('button', { name: 'Quantity Not sorted' }).waitFor();
   await page.getByRole('button', { name: 'Unit Price Not sorted' }).waitFor();
 
   // BOM Pricing - linkjumping
-  await page.getByText('Wood Screw').waitFor();
-  await page.getByText('Wood Screw').click();
+  await page
+    .getByLabel('BOM Pricing')
+    .getByRole('table')
+    .getByText('Wood Screw')
+    .click();
   await page.waitForURL('**/part/98/pricing');
 });
 

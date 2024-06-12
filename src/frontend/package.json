@@ -27,6 +27,7 @@
         "@lingui/core": "^4.10.0",
         "@lingui/react": "^4.10.0",
         "@mantine/carousel": "^7.8.0",
+        "@mantine/charts": "^7.10.1",
         "@mantine/core": "^7.10.0",
         "@mantine/dates": "^7.8.0",
         "@mantine/dropzone": "^7.8.0",
