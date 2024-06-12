@@ -279,14 +279,14 @@ class SettingsTest(InvenTreeTestCase):
         """Populate the settings with default values."""
         N = len(InvenTreeSetting.SETTINGS.keys())
 
-        print('test_defaults:')
-
-        for idx, key in enumerate(InvenTreeSetting.SETTINGS.keys()):
+        for key in InvenTreeSetting.SETTINGS.keys():
             value = InvenTreeSetting.get_setting_default(key)
 
-            print(f'{idx + 1}/{N}', ':', key, '->', value)
-
-            InvenTreeSetting.set_setting(key, value, change_user=self.user)
+            try:
+                InvenTreeSetting.set_setting(key, value, change_user=self.user)
+            except Exception as exc:
+                print(f"test_defaults: Failed to set default value for setting '{key}'")
+                raise exc
 
             self.assertEqual(value, InvenTreeSetting.get_setting(key))
 
@@ -294,11 +294,6 @@ class SettingsTest(InvenTreeTestCase):
             setting = InvenTreeSetting.get_setting_object(key)
 
             if setting.is_bool():
-                if setting.default_value in ['', None]:
-                    raise ValueError(
-                        f'Default value for boolean setting {key} not provided'
-                    )  # pragma: no cover
-
                 if setting.default_value not in [True, False]:
                     raise ValueError(
                         f'Non-boolean default value specified for {key}'
