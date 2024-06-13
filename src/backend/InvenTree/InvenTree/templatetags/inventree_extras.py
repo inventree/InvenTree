@@ -17,6 +17,7 @@ import InvenTree.helpers
 import InvenTree.helpers_model
 import plugin.models
 from common.currency import currency_code_default
+from common.settings import get_global_setting
 from InvenTree import settings, version
 from plugin import registry
 from plugin.plugin import InvenTreePlugin
@@ -135,7 +136,7 @@ def inventree_in_debug_mode(*args, **kwargs):
 @register.simple_tag()
 def inventree_show_about(user, *args, **kwargs):
     """Return True if the about modal should be shown."""
-    if common.models.InvenTreeSetting.get_setting('INVENTREE_RESTRICT_ABOUT'):
+    if get_global_setting('INVENTREE_RESTRICT_ABOUT'):
         # Return False if the user is not a superuser, or no user information is provided
         if not user or not user.is_superuser:
             return False
@@ -373,7 +374,7 @@ def settings_value(key, *args, **kwargs):
             return common.models.InvenTreeUserSetting.get_setting(key)
         return common.models.InvenTreeUserSetting.get_setting(key, user=kwargs['user'])
 
-    return common.models.InvenTreeSetting.get_setting(key)
+    return get_global_setting(key)
 
 
 @register.simple_tag()

@@ -36,6 +36,7 @@ import InvenTree.tasks
 
 import common.models
 from common.notifications import trigger_notification, InvenTreeNotificationBodies
+from common.settings import get_global_setting
 from plugin.events import trigger_event
 
 import part.models
@@ -137,7 +138,7 @@ class Build(
 
         super().clean()
 
-        if common.models.InvenTreeSetting.get_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
+        if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
             if not self.responsible:
                 raise ValidationError({
                     'responsible': _('Responsible user or group must be specified')

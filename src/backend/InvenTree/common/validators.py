@@ -5,7 +5,7 @@ import re
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
-import InvenTree.helpers_model
+from common.settings import get_global_setting
 
 
 def attachment_model_types():
@@ -48,6 +48,7 @@ def validate_notes_model_type(value):
 
     The provided value must map to a model which implements the 'InvenTreeNotesMixin'.
     """
+    import InvenTree.helpers_model
     import InvenTree.models
 
     if not value:
@@ -66,11 +67,9 @@ def validate_notes_model_type(value):
 
 def validate_decimal_places_min(value):
     """Validator for PRICING_DECIMAL_PLACES_MIN setting."""
-    from common.models import InvenTreeSetting
-
     try:
         value = int(value)
-        places_max = int(InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES'))
+        places_max = int(get_global_setting('PRICING_DECIMAL_PLACES', create=False))
     except Exception:
         return
 
@@ -80,11 +79,9 @@ def validate_decimal_places_min(value):
 
 def validate_decimal_places_max(value):
     """Validator for PRICING_DECIMAL_PLACES_MAX setting."""
-    from common.models import InvenTreeSetting
-
     try:
         value = int(value)
-        places_min = int(InvenTreeSetting.get_setting('PRICING_DECIMAL_PLACES_MIN'))
+        places_min = int(get_global_setting('PRICING_DECIMAL_PLACES_MIN', create=False))
     except Exception:
         return
 
