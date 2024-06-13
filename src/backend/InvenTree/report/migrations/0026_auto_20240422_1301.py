@@ -36,6 +36,8 @@ def convert_legacy_labels(table_name, model_name, template_model):
         'name', 'description', 'label', 'enabled', 'height', 'width', 'filename_pattern', 'filters'
     ]
 
+    non_null_fields = ['decription', 'filename_pattern', 'filters']
+
     fieldnames = ', '.join(fields)
 
     query = f"SELECT {fieldnames} FROM {table_name};"
@@ -55,6 +57,10 @@ def convert_legacy_labels(table_name, model_name, template_model):
         data = {
             fields[idx]: row[idx] for idx in range(len(fields))
         }
+
+        for field in non_null_fields:
+            if data[field] is None:
+                data[field] = ''
 
         # Skip any "builtin" labels
         if 'label/inventree/' in data['label']:

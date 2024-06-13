@@ -17,7 +17,7 @@ logger = logging.getLogger('inventree')
 
 def currency_code_default():
     """Returns the default currency code (or USD if not specified)."""
-    from common.models import InvenTreeSetting
+    from common.settings import get_global_setting
 
     try:
         cached_value = cache.get('currency_code_default', '')
@@ -28,7 +28,7 @@ def currency_code_default():
         return cached_value
 
     try:
-        code = InvenTreeSetting.get_setting(
+        code = get_global_setting(
             'INVENTREE_DEFAULT_CURRENCY', backup_value='', create=True, cache=True
         )
     except Exception:  # pragma: no cover
@@ -59,9 +59,9 @@ def currency_codes_default_list() -> str:
 
 def currency_codes() -> list:
     """Returns the current currency codes."""
-    from common.models import InvenTreeSetting
+    from common.settings import get_global_setting
 
-    codes = InvenTreeSetting.get_setting('CURRENCY_CODES', '', create=False).strip()
+    codes = get_global_setting('CURRENCY_CODES', '', create=False).strip()
 
     if not codes:
         codes = currency_codes_default_list()
@@ -149,6 +149,9 @@ def currency_exchange_plugins() -> list:
         plugs = registry.with_mixin('currencyexchange', active=True)
     except Exception:
         plugs = []
+
+    if len(plugs) == 0:
+        return None
 
     return [('', _('No plugin'))] + [(plug.slug, plug.human_name) for plug in plugs]
 
