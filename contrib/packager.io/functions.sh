@@ -2,6 +2,8 @@
 #
 # packager.io postinstall script functions
 #
+Color_Off='\033[0m'
+On_Red='\033[41m'
 
 function detect_docker() {
   if [ -n "$(grep docker </proc/1/cgroup)" ]; then
@@ -57,9 +59,11 @@ function detect_python() {
 
   # Ensure python can be executed - abort if not
   if [ -z "$(which ${SETUP_PYTHON})" ]; then
+    echo "${On_Red}"
     echo "# Python ${SETUP_PYTHON} not found - aborting!"
     echo "# Please ensure python can be executed with the command '$SETUP_PYTHON' by the current user '$USER'."
     echo "# If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. 'python3.10'."
+    echo "${Color_Off}"
     exit 1
   fi
 }
