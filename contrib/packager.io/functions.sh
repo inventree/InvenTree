@@ -50,9 +50,17 @@ function detect_python() {
     echo "# Python environment already present"
     # Extract earliest python version initialised from /opt/inventree/env/lib
     SETUP_PYTHON=$(ls -1 ${APP_HOME}/env/bin/python* | sort | head -n 1)
-    echo "# Found earliest version: ${SETUP_PYTHON}"
+    echo "# Found earlier used version: ${SETUP_PYTHON}"
   else
-    echo "# No python environment found - using ${SETUP_PYTHON}"
+    echo "# No python environment found - using environment variable: ${SETUP_PYTHON}"
+  fi
+
+  # Ensure python can be executed - abort if not
+  if [ -z "$(which ${SETUP_PYTHON})" ]; then
+    echo "# Python ${SETUP_PYTHON}) not found - aborting!"
+    echo "# Please ensure python can be executed with the command `${SETUP_PYTHON}` by the current user `$USER`."
+    echo "# If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. `python3.10`."
+    exit 1
   fi
 }
 
