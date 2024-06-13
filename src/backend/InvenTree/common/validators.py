@@ -34,7 +34,7 @@ def validate_decimal_places_min(value):
     """Validator for PRICING_DECIMAL_PLACES_MIN setting."""
     try:
         value = int(value)
-        places_max = int(get_global_setting('PRICING_DECIMAL_PLACES'))
+        places_max = int(get_global_setting('PRICING_DECIMAL_PLACES', create=False))
     except Exception:
         return
 
@@ -46,7 +46,7 @@ def validate_decimal_places_max(value):
     """Validator for PRICING_DECIMAL_PLACES_MAX setting."""
     try:
         value = int(value)
-        places_min = int(get_global_setting('PRICING_DECIMAL_PLACES_MIN'))
+        places_min = int(get_global_setting('PRICING_DECIMAL_PLACES_MIN', create=False))
     except Exception:
         return
 
