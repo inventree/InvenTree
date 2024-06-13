@@ -57,9 +57,9 @@ function detect_python() {
 
   # Ensure python can be executed - abort if not
   if [ -z "$(which ${SETUP_PYTHON})" ]; then
-    echo "# Python ${SETUP_PYTHON}) not found - aborting!"
-    echo "# Please ensure python can be executed with the command `${SETUP_PYTHON}` by the current user `$USER`."
-    echo "# If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. `python3.10`."
+    echo "# Python ${SETUP_PYTHON} not found - aborting!"
+    echo "# Please ensure python can be executed with the command '$SETUP_PYTHON' by the current user '$USER'."
+    echo "# If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. 'python3.10'."
     exit 1
   fi
 }
