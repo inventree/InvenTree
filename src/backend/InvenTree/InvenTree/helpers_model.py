@@ -15,7 +15,6 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
 
-import common.models
 import InvenTree
 import InvenTree.helpers_model
 import InvenTree.version
@@ -24,14 +23,10 @@ from common.notifications import (
     NotificationBody,
     trigger_notification,
 )
+from common.settings import get_global_setting
 from InvenTree.format import format_money
 
 logger = logging.getLogger('inventree')
-
-
-def getSetting(key, backup_value=None):
-    """Shortcut for reading a setting value from the database."""
-    return common.models.InvenTreeSetting.get_setting(key, backup_value=backup_value)
 
 
 def get_base_url(request=None):
@@ -44,6 +39,8 @@ def get_base_url(request=None):
     3. If settings.SITE_URL is set (e.g. in the Django settings), use that
     4. If the InvenTree setting INVENTREE_BASE_URL is set, use that
     """
+    import common.models
+
     # Check if a request is provided
     if request:
         return request.build_absolute_uri('/')
@@ -62,9 +59,7 @@ def get_base_url(request=None):
 
     # Check if a global InvenTree setting is provided
     try:
-        if site_url := common.models.InvenTreeSetting.get_setting(
-            'INVENTREE_BASE_URL', create=False
-        ):
+        if site_url := get_global_setting('INVENTREE_BASE_URL', create=False):
             return site_url
     except (ProgrammingError, OperationalError):
         pass
@@ -112,25 +107,20 @@ def download_image_from_url(remote_url, timeout=2.5):
         ValueError: Server responded with invalid 'Content-Length' value
         TypeError: Response is not a valid image
     """
+    import common.models
+
     # Check that the provided URL at least looks valid
     validator = URLValidator()
     validator(remote_url)
 
     # Calculate maximum allowable image size (in bytes)
     max_size = (
-        int(
-            common.models.InvenTreeSetting.get_setting(
-                'INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE'
-            )
-        )
-        * 1024
-        * 1024
+        int(get_global_setting('INVENTREE_DOWNLOAD_IMAGE_MAX_SIZE')) * 1024 * 1024
     )
 
     # Add user specified user-agent to request (if specified)
-    user_agent = common.models.InvenTreeSetting.get_setting(
-        'INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT'
-    )
+    user_agent = get_global_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
+
     if user_agent:
         headers = {'User-Agent': user_agent}
     else:
@@ -216,6 +206,8 @@ def render_currency(
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         include_symbol: If True, include the currency symbol in the output
     """
+    import common.models
+
     if money in [None, '']:
         return '-'
 
@@ -231,19 +223,13 @@ def render_currency(
             pass
 
     if decimal_places is None:
-        decimal_places = common.models.InvenTreeSetting.get_setting(
-            'PRICING_DECIMAL_PLACES', 6
-        )
+        decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
 
     if min_decimal_places is None:
-        min_decimal_places = common.models.InvenTreeSetting.get_setting(
-            'PRICING_DECIMAL_PLACES_MIN', 0
-        )
+        min_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES_MIN', 0)
 
     if max_decimal_places is None:
-        max_decimal_places = common.models.InvenTreeSetting.get_setting(
-            'PRICING_DECIMAL_PLACES', 6
-        )
+        max_decimal_places = get_global_setting('PRICING_DECIMAL_PLACES', 6)
 
     value = Decimal(str(money.amount)).normalize()
     value = str(value)

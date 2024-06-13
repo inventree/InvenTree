@@ -18,6 +18,7 @@ from django.urls import reverse
 
 import PIL
 
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
 from plugin import registry
@@ -273,13 +274,19 @@ class SettingsTest(InvenTreeTestCase):
                 print(f"run_settings_check failed for user setting '{key}'")
                 raise exc
 
-    @override_settings(SITE_URL=None)
+    @override_settings(SITE_URL=None, PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
     def test_defaults(self):
         """Populate the settings with default values."""
+        N = len(InvenTreeSetting.SETTINGS.keys())
+
         for key in InvenTreeSetting.SETTINGS.keys():
             value = InvenTreeSetting.get_setting_default(key)
 
-            InvenTreeSetting.set_setting(key, value, self.user)
+            try:
+                InvenTreeSetting.set_setting(key, value, change_user=self.user)
+            except Exception as exc:
+                print(f"test_defaults: Failed to set default value for setting '{key}'")
+                raise exc
 
             self.assertEqual(value, InvenTreeSetting.get_setting(key))
 
@@ -287,11 +294,6 @@ class SettingsTest(InvenTreeTestCase):
             setting = InvenTreeSetting.get_setting_object(key)
 
             if setting.is_bool():
-                if setting.default_value in ['', None]:
-                    raise ValueError(
-                        f'Default value for boolean setting {key} not provided'
-                    )  # pragma: no cover
-
                 if setting.default_value not in [True, False]:
                     raise ValueError(
                         f'Non-boolean default value specified for {key}'
@@ -975,17 +977,13 @@ class CommonTest(InvenTreeAPITestCase):
         from plugin import registry
 
         # set flag true
-        common.models.InvenTreeSetting.set_setting(
-            'SERVER_RESTART_REQUIRED', True, None
-        )
+        set_global_setting('SERVER_RESTART_REQUIRED', True, None)
 
         # reload the app
         registry.reload_plugins()
 
         # now it should be false again
-        self.assertFalse(
-            common.models.InvenTreeSetting.get_setting('SERVER_RESTART_REQUIRED')
-        )
+        self.assertFalse(get_global_setting('SERVER_RESTART_REQUIRED'))
 
     def test_config_api(self):
         """Test config URLs."""
