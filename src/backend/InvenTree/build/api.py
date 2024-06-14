@@ -380,6 +380,8 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
 
     search_fields = [
         'bom_item__sub_part__name',
+        'bom_item__sub_part__IPN',
+        'bom_item__sub_part__description',
         'bom_item__reference',
     ]
 
