@@ -11,6 +11,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.test.utils import override_settings
@@ -21,11 +22,13 @@ import PIL
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
+from part.models import Part
 from plugin import registry
 from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (
+    Attachment,
     ColorTheme,
     CustomUnit,
     InvenTreeSetting,
@@ -39,6 +42,36 @@ from .models import (
 )
 
 CONTENT_TYPE_JSON = 'application/json'
+
+
+class AttachmentTest(InvenTreeTestCase):
+    """Unit tests for the 'Attachment' model."""
+
+    fixtures = ['part', 'category', 'location']
+
+    def generate_file(self, fn: str):
+        """Generate an attachment file object."""
+        file_object = io.StringIO('Some dummy data')
+        file_object.seek(0)
+
+        return ContentFile(file_object.getvalue(), fn)
+
+    def test_mixin(self):
+        """Test that the mixin class works as expected."""
+        part = Part.objects.first()
+
+        self.assertEqual(part.attachments.count(), 0)
+
+        part.create_attachment(
+            attachment=self.generate_file('test.txt'), comment='Hello world'
+        )
+
+        self.assertEqual(part.attachments.count(), 1)
+
+        attachment = part.attachments.first()
+
+        self.assertEqual(attachment.comment, 'Hello world')
+        self.assertIn('attachments/part/1/test', attachment.attachment.name)
 
 
 class SettingsTest(InvenTreeTestCase):

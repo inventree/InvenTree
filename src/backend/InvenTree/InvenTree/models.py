@@ -532,6 +532,18 @@ class InvenTreeAttachmentMixin:
 
         return Attachment.objects.filter(model_type=model_type)
 
+    def create_attachment(self, attachment=None, link=None, comment='', **kwargs):
+        """Create an attachment / link for this model."""
+        from common.models import Attachment
+
+        kwargs['attachment'] = attachment
+        kwargs['link'] = link
+        kwargs['comment'] = comment
+        kwargs['model_type'] = self.__class__.__name__.lower()
+        kwargs['model_id'] = self.pk
+
+        Attachment.objects.create(**kwargs)
+
 
 class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     """Provides an abstracted self-referencing tree model for data categories.
