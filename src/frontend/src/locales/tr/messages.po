@@ -6868,4 +6868,3 @@ msgstr "Belgeleri okuyun"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
-

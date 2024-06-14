@@ -316,7 +316,8 @@ msgstr "Tem certeza de que deseja Guardar & Recarregar a pré-visualização?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:153
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
-msgstr "Para ver esta pré-visualização o modelo atual precisa ser substituído no servidor com as suas modificações, o que pode fazer com que \n"
+msgstr ""
+"Para ver esta pré-visualização o modelo atual precisa ser substituído no servidor com as suas modificações, o que pode fazer com que \n"
 "o modelo atual deixe de funcionar. Deseja continuar?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
@@ -538,7 +539,9 @@ msgstr "Ou use SSO"
 
 #: src/components/forms/AuthenticationForm.tsx:296
 msgid "Don't have an account?"
-msgstr "Não possui conta?\n"
+msgstr ""
+"Não possui conta?\n"
+""
 
 #: src/components/forms/AuthenticationForm.tsx:315
 msgid "Go back to login"
@@ -6869,4 +6872,3 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
-
