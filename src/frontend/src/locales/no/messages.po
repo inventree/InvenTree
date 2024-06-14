@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-09 22:50\n"
+"PO-Revision-Date: 2024-06-11 23:04\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -1992,42 +1992,46 @@ msgid "Portuguese (Brazilian)"
 msgstr "Portugisisk (Brasil)"
 
 #: src/contexts/LanguageContext.tsx:43
+msgid "Romanian"
+msgstr ""
+
+#: src/contexts/LanguageContext.tsx:44
 msgid "Russian"
 msgstr "Russisk"
 
-#: src/contexts/LanguageContext.tsx:44
+#: src/contexts/LanguageContext.tsx:45
 msgid "Slovak"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:45
+#: src/contexts/LanguageContext.tsx:46
 msgid "Slovenian"
 msgstr "Slovensk"
 
-#: src/contexts/LanguageContext.tsx:46
+#: src/contexts/LanguageContext.tsx:47
 msgid "Swedish"
 msgstr "Svensk"
 
-#: src/contexts/LanguageContext.tsx:47
+#: src/contexts/LanguageContext.tsx:48
 msgid "Thai"
 msgstr "Thailandsk"
 
-#: src/contexts/LanguageContext.tsx:48
+#: src/contexts/LanguageContext.tsx:49
 msgid "Turkish"
 msgstr "Tyrkisk"
 
-#: src/contexts/LanguageContext.tsx:49
+#: src/contexts/LanguageContext.tsx:50
 msgid "Ukrainian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:50
+#: src/contexts/LanguageContext.tsx:51
 msgid "Vietnamese"
 msgstr "Vietnamesisk"
 
-#: src/contexts/LanguageContext.tsx:51
+#: src/contexts/LanguageContext.tsx:52
 msgid "Chinese (Simplified)"
 msgstr "Kinesisk (forenklet)"
 
-#: src/contexts/LanguageContext.tsx:52
+#: src/contexts/LanguageContext.tsx:53
 msgid "Chinese (Traditional)"
 msgstr "Kinesisk (tradisjonell)"
 

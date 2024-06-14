@@ -5,16 +5,16 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: @lingui/cli\n"
-"Language: hu\n"
+"Language: ro\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-11 23:05\n"
 "Last-Translator: \n"
-"Language-Team: Hungarian\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language-Team: Romanian\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
 "X-Crowdin-Project: inventree\n"
 "X-Crowdin-Project-ID: 452300\n"
-"X-Crowdin-Language: hu\n"
+"X-Crowdin-Language: ro\n"
 "X-Crowdin-File: /[inventree.InvenTree] l10/src/frontend/src/locales/en/messages.po\n"
 "X-Crowdin-File-ID: 205\n"
 
@@ -28,7 +28,7 @@ msgstr ""
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
-msgstr "Cím"
+msgstr ""
 
 #: src/components/buttons/AdminButton.tsx:83
 msgid "Open in admin interface"
@@ -36,7 +36,7 @@ msgstr ""
 
 #: src/components/buttons/CopyButton.tsx:18
 msgid "Copy to clipboard"
-msgstr "Vágólapra másolás"
+msgstr ""
 
 #: src/components/buttons/PrintingActions.tsx:95
 msgid "Print Label"
@@ -61,7 +61,7 @@ msgstr ""
 #: src/tables/InvenTreeTable.tsx:531
 #: src/tables/stock/StockItemTestResultTable.tsx:294
 msgid "Error"
-msgstr "Hiba"
+msgstr ""
 
 #: src/components/buttons/PrintingActions.tsx:108
 msgid "The label could not be generated"
@@ -93,33 +93,33 @@ msgstr ""
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr "QR kód beolvasása"
+msgstr ""
 
 #: src/components/buttons/ScanButton.tsx:20
 msgid "Open QR code scanner"
-msgstr "QR kód olvasó megnyitása"
+msgstr ""
 
 #: src/components/buttons/SpotlightButton.tsx:14
 msgid "Open spotlight"
-msgstr "Zseblámpa megnyitása"
+msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
-msgstr "Sikeres"
+msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:17
 msgid "Fail"
-msgstr "Megbukott"
+msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:51
 msgid "Yes"
-msgstr "Igen"
+msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:52
 msgid "No"
-msgstr "Nem"
+msgstr ""
 
 #: src/components/details/Details.tsx:303
 msgid "No name defined"
@@ -127,19 +127,19 @@ msgstr ""
 
 #: src/components/details/Details.tsx:340
 msgid "Copied"
-msgstr "Másolva"
+msgstr ""
 
 #: src/components/details/Details.tsx:340
 msgid "Copy"
-msgstr "Másolás"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:65
 msgid "Remove Image"
-msgstr "Kép eltávolítása"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:68
 msgid "Remove the associated image from this item?"
-msgstr "Tételhez rendelt kép eltávolítása?"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:71
 #: src/forms/StockForms.tsx:483
@@ -147,7 +147,7 @@ msgstr "Tételhez rendelt kép eltávolítása?"
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 #: src/pages/stock/StockDetail.tsx:465
 msgid "Remove"
-msgstr "Eltávolítás"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:71
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
@@ -160,50 +160,50 @@ msgstr "Eltávolítás"
 #: src/tables/InvenTreeTable.tsx:499
 #: src/tables/build/BuildOutputTable.tsx:225
 msgid "Cancel"
-msgstr "Mégsem"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:97
 msgid "Drag and drop to upload"
-msgstr "Húzd ide a feltöltéshez"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:100
 msgid "Click to select file(s)"
-msgstr "Kattintson a file(ok) kiválasztásához"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:224
 msgid "Clear"
-msgstr "Törlés"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:227
 #: src/components/forms/ApiForm.tsx:573
 #: src/contexts/ThemeContext.tsx:43
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
 msgid "Submit"
-msgstr "Küldés"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:267
 msgid "Select from existing images"
-msgstr "Válassz a meglévő képek közül"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:275
 msgid "Select Image"
-msgstr "Válassz képet"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:287
 msgid "Upload new image"
-msgstr "Új kép feltöltése"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:294
 msgid "Upload Image"
-msgstr "Kép feltöltése"
+msgstr ""
 
 #: src/components/details/DetailsImage.tsx:307
 msgid "Delete image"
-msgstr "Kép törlése"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:28
 msgid "Part is not active"
-msgstr "Az alkatrész nem aktív"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:34
 #: src/components/render/Plugin.tsx:17
@@ -211,42 +211,42 @@ msgstr "Az alkatrész nem aktív"
 #: src/pages/company/SupplierPartDetail.tsx:305
 #: src/pages/part/PartDetail.tsx:691
 msgid "Inactive"
-msgstr "Inaktív"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
-msgstr "Sablon alkatrész (változatok létrehozhatók belőle)"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:47
 msgid "Part can be assembled from other parts"
-msgstr "Ez az alkatrész gyártható másik alkatrészekből"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:53
 msgid "Part can be used in assemblies"
-msgstr "Használható más alkatrészek gyártásához"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:59
 msgid "Part stock is tracked by serial number"
-msgstr "Készlet sorozatszám alapján követendő"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:65
 msgid "Part can be purchased from external suppliers"
-msgstr "Beszállítótól rendelhető"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:71
 msgid "Part can be sold to customers"
-msgstr "Vevő által megvehető"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:76
 msgid "Part is virtual (not a physical part)"
-msgstr "Virtuális (nem kézzelfogható alkatrész)"
+msgstr ""
 
 #: src/components/details/PartIcons.tsx:82
 #: src/tables/part/PartTable.tsx:234
 #: src/tables/part/PartTable.tsx:238
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
-msgstr "Virtuális"
+msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:66
 msgid "Image upload failed"
@@ -255,7 +255,7 @@ msgstr ""
 #: src/components/editors/NotesEditor.tsx:151
 #: src/components/forms/ApiForm.tsx:430
 msgid "Success"
-msgstr "Siker"
+msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:152
 msgid "Notes saved successfully"
@@ -263,7 +263,7 @@ msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:161
 msgid "Failed to save notes"
-msgstr "Megjegyzések mentése nem sikerült"
+msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Preview Notes"
@@ -279,7 +279,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
-msgstr "Kód"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:44
 #~ msgid "Failed to parse error response from server."
@@ -287,19 +287,19 @@ msgstr "Kód"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:81
 msgid "Preview not available, click \"Reload Preview\"."
-msgstr "Előnézet nem elérhető, kattintson az \"Előnézet Frissítés\"-re."
+msgstr ""
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr "PDF előnézet"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:104
 msgid "Error loading template"
-msgstr "Hiba a sablon betöltése közben"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:116
 msgid "Error saving template"
-msgstr "Hiba a sablon mentése közben"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:146
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:270
@@ -308,7 +308,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 msgid "Are you sure you want to Save & Reload the preview?"
-msgstr "Biztosan elmented és frissíted az előnézetet?"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 #~ msgid "Save & Reload preview?"
@@ -316,27 +316,27 @@ msgstr "Biztosan elmented és frissíted az előnézetet?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:153
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
-msgstr "Az aktuális sablon előnézetének megjelenítéséhez a módosításaid el kell küldeni a szervernek ami elronthajta a címkét ha éppen használják. Biztosan akarod?"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 msgid "Save & Reload"
-msgstr "Mentés és újratöltés"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:189
 msgid "Preview updated"
-msgstr "Előnézet frissítve"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:190
 msgid "The preview has been updated successfully."
-msgstr "A előnézet sikeresen frissitve."
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:262
 msgid "Reload preview"
-msgstr "Előnézet frissítése"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 msgid "Use the currently stored template from the server"
-msgstr "A szerveren tárolt sablon használata"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 #~ msgid "Save & Reload preview"
@@ -344,7 +344,7 @@ msgstr "A szerveren tárolt sablon használata"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:271
 msgid "Save the current template and reload the preview"
-msgstr "Aktuális sablon elmentése és előnézet frissítése"
+msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:322
 #~ msgid "to preview"
@@ -356,12 +356,12 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:373
 msgid "Error rendering template"
-msgstr "Hiba a sablon megjelenítésekor"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:149
 #: src/functions/forms.tsx:259
 msgid "Form Error"
-msgstr "Form hiba"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:487
 #~ msgid "Form Errors Exist"
@@ -370,7 +370,7 @@ msgstr "Form hiba"
 #: src/components/forms/ApiForm.tsx:611
 #: src/tables/plugin/PluginListTable.tsx:388
 msgid "Update"
-msgstr "Frissítés"
+msgstr ""
 
 #: src/components/forms/ApiForm.tsx:631
 #: src/components/items/ActionDropdown.tsx:210
@@ -382,7 +382,7 @@ msgstr "Frissítés"
 #: src/tables/RowActions.tsx:71
 #: src/tables/plugin/PluginListTable.tsx:420
 msgid "Delete"
-msgstr "Törlés"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -392,11 +392,11 @@ msgstr "Törlés"
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Login successful"
-msgstr "Sikeres bejelentkezés"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:52
 msgid "Logged in successfully"
-msgstr "Sikeres bejelentkezés"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:52
 #~ msgid "Welcome back!"
@@ -408,14 +408,14 @@ msgstr "Sikeres bejelentkezés"
 
 #: src/components/forms/AuthenticationForm.tsx:58
 msgid "Login failed"
-msgstr "Belépés sikertelen"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:59
 #: src/components/forms/AuthenticationForm.tsx:76
 #: src/components/forms/AuthenticationForm.tsx:211
 #: src/functions/auth.tsx:123
 msgid "Check your input and try again."
-msgstr "Ellenőrizd amit beírtál és próbáld újra."
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -425,45 +425,45 @@ msgstr "Ellenőrizd amit beírtál és próbáld újra."
 #: src/components/forms/AuthenticationForm.tsx:70
 #: src/functions/auth.tsx:114
 msgid "Mail delivery successful"
-msgstr "Levél kézbesítése sikeres"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:71
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr "A bejelentkezési linket keresd a bejövő email fiókodban. Ellenőrizd a spameket is."
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:75
 msgid "Mail delivery failed"
-msgstr "Sikertelen a levél kézbesítése"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:95
 msgid "Or continue with other methods"
-msgstr "Vagy próbáljon más módszert"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:106
 #: src/components/forms/AuthenticationForm.tsx:227
 msgid "Username"
-msgstr "Felhasználónév"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:107
 #: src/components/forms/AuthenticationForm.tsx:228
 msgid "Your username"
-msgstr "Felhasználónév"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:112
 #: src/components/forms/AuthenticationForm.tsx:240
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr "Jelszó"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:113
 #: src/components/forms/AuthenticationForm.tsx:241
 msgid "Your password"
-msgstr "Jelszó"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:125
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr "Jelszó visszaállítása"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -474,13 +474,13 @@ msgstr "Jelszó visszaállítása"
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:49
 msgid "Email"
-msgstr "Email"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:135
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr "Küldünk bejelentkezési linket - ha regisztrálva vagy"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:136
 #~ msgid "I will use username and password"
@@ -488,39 +488,39 @@ msgstr "Küldünk bejelentkezési linket - ha regisztrálva vagy"
 
 #: src/components/forms/AuthenticationForm.tsx:151
 msgid "Send me an email"
-msgstr "Email küldés"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:153
 msgid "Use username and password"
-msgstr "Felhasználónév és jelszó megadása"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:162
 msgid "Log In"
-msgstr "Bejelentkezés"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:164
 msgid "Send Email"
-msgstr "Email küldés"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:193
 msgid "Registration successful"
-msgstr "Regisztráció sikeres"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:194
 msgid "Please confirm your email address to complete the registration"
-msgstr "Kérjük erősítse meg az email címét a regisztráció befejezéséhez"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:210
 msgid "Input error"
-msgstr "Beviteli hiba"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:234
 msgid "This will be used for a confirmation"
-msgstr "Megerősítéshez szükséges"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:246
 msgid "Password repeat"
-msgstr "Jelszó ismét"
+msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:247
 msgid "Repeat password"
@@ -546,7 +546,7 @@ msgstr ""
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:67
 msgid "Host"
-msgstr "Kiszolgáló"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:70
@@ -564,60 +564,60 @@ msgstr "Kiszolgáló"
 #: src/tables/settings/PendingTasksTable.tsx:26
 #: src/tables/stock/LocationTypesTable.tsx:60
 msgid "Name"
-msgstr "Név"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:75
 msgid "No one here..."
-msgstr "Nincs itt senki..."
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:86
 msgid "Add Host"
-msgstr "Kiszolgáló hozzáadása"
+msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:90
 msgid "Save"
-msgstr "Mentés"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
-msgstr "Válassz cél példányt"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr "Lehetséges kiszolgáló opciók szerkesztése"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr "Verzió: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr "API:{0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
-msgstr "Név: {0}"
+msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr "Státusz: <0>worker</0> ({0}), <1>plugins</1>{1}"
+msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:320
 #: src/pages/Index/Settings/UserSettings.tsx:66
 #: src/tables/Search.tsx:23
 msgid "Search"
-msgstr "Keresés"
+msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:321
 #: src/components/modals/AboutInvenTreeModal.tsx:81
 #: src/components/widgets/WidgetLayout.tsx:120
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
-msgstr "Betöltés"
+msgstr ""
 
 #: src/components/forms/fields/RelatedModelField.tsx:323
 msgid "No results found"
-msgstr "Nincs találat"
+msgstr ""
 
 #: src/components/forms/fields/TableField.tsx:50
 msgid "modelRenderer entry required for tables"
@@ -634,72 +634,72 @@ msgstr ""
 #: src/components/images/Thumbnail.tsx:12
 #: src/components/images/Thumbnail.tsx:58
 msgid "Thumbnail"
-msgstr "Bélyegkép"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:119
 #: src/pages/build/BuildDetail.tsx:360
 msgid "Barcode Actions"
-msgstr "Vonalkód műveletek"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:136
 msgid "View"
-msgstr "Megtekintés"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:137
 msgid "View barcode"
-msgstr "Vonalkód megtekintése"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:153
 msgid "Link Barcode"
-msgstr "Vonalkód hozzárendelése"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:154
 msgid "Link custom barcode"
-msgstr "Egyedi vonalkód hozzárendelése"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:170
 #: src/forms/PurchaseOrderForms.tsx:389
 msgid "Unlink Barcode"
-msgstr "Vonalkód leválasztása"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:171
 msgid "Unlink custom barcode"
-msgstr "Egyedi vonalkód leválasztása"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:189
 #: src/tables/RowActions.tsx:51
 msgid "Edit"
-msgstr "Szerkesztés"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:211
 msgid "Delete item"
-msgstr "Tétel törlése"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:248
 #: src/tables/RowActions.tsx:31
 msgid "Duplicate"
-msgstr "Másolás"
+msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:249
 msgid "Duplicate item"
-msgstr "Elem másolása"
+msgstr ""
 
 #: src/components/items/DocTooltip.tsx:92
 msgid "Read More"
-msgstr "Tudj meg többet"
+msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/tables/InvenTreeTable.tsx:443
 msgid "Unknown error"
-msgstr "Ismeretlen hiba"
+msgstr ""
 
 #: src/components/items/ErrorItem.tsx:10
 msgid "An error occurred:"
-msgstr "Hiba történt:"
+msgstr ""
 
 #: src/components/items/GettingStartedCarousel.tsx:27
 msgid "Read more"
-msgstr "Tovább"
+msgstr ""
 
 #: src/components/items/InfoItem.tsx:27
 msgid "None"
@@ -707,101 +707,101 @@ msgstr ""
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
-msgstr "InvenTree logó"
+msgstr ""
 
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:44
 msgid "This information is only available for staff users"
-msgstr "Ez az információ csak a személyzet számára elérhető"
+msgstr ""
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr "Ez a funkció/gomb/webhely egy olyan funkció helye, amely nincs implementálva, csak részleges vagy tesztelésre szánt."
+msgstr ""
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
-msgstr "PLH"
+msgstr ""
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
-msgstr "Ez egy helykitöltő panel."
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Version Information"
-msgstr "Verzióinformáció"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:103
 msgid "Your InvenTree version status is"
-msgstr "Az Ön inventree verzió állapota"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:107
 msgid "Development Version"
-msgstr "Fejlesztői verzió"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:111
 msgid "Up to Date"
-msgstr "Naprakész"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:115
 msgid "Update Available"
-msgstr "Frissítés elérhető"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:125
 msgid "InvenTree Version"
-msgstr "InvenTree verzió"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:131
 msgid "Commit Hash"
-msgstr "Commit hash"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:136
 msgid "Commit Date"
-msgstr "Commit dátuma"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:141
 msgid "Commit Branch"
-msgstr "Commit branch"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:146
 #: src/components/modals/ServerInfoModal.tsx:133
 msgid "API Version"
-msgstr "API verzió"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Python Version"
-msgstr "Python verzió"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:152
 msgid "Django Version"
-msgstr "Django verzió"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:162
 msgid "Links"
-msgstr "Linkek"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 msgid "InvenTree Documentation"
-msgstr "InvenTree Documentáció"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 msgid "View Code on GitHub"
-msgstr "Nézz rá GitHub-on"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:170
 msgid "Credits"
-msgstr "Készítők"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Mobile App"
-msgstr "MobilApp"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:172
 msgid "Submit Bug Report"
-msgstr "Hibajegy beküldése"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:183
 msgid "Copy version information"
-msgstr "Verzió információk másolása"
+msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
@@ -830,69 +830,69 @@ msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
-msgstr "Ismeretlen válasz"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:102
 #: src/pages/Index/Scan.tsx:636
 msgid "Error while getting camera"
-msgstr "Hiba a kamera megnyitása közben"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:125
 #: src/pages/Index/Scan.tsx:659
 msgid "Error while scanning"
-msgstr "Hiba a kódolvasás közben"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:139
 #: src/pages/Index/Scan.tsx:673
 msgid "Error while stopping"
-msgstr "Hiba a leállítás közben"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/defaults/menuItems.tsx:21
 #: src/pages/Index/Scan.tsx:746
 msgid "Scanning"
-msgstr "Kódolvasás"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:154
 #: src/pages/Index/Scan.tsx:746
 msgid "Not scanning"
-msgstr "Nincs kódolvasás"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:159
 #: src/pages/Index/Scan.tsx:752
 msgid "Select Camera"
-msgstr "Kamera kiválasztása"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:169
 #: src/pages/Index/Scan.tsx:737
 msgid "Start scanning"
-msgstr "Kódolvasás indítása"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:176
 #: src/pages/Index/Scan.tsx:729
 msgid "Stop scanning"
-msgstr "Kódolvasás leállítása"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:181
 msgid "No scans yet!"
-msgstr "Még nincs meg a kód!"
+msgstr ""
 
 #: src/components/modals/QrCodeModal.tsx:201
 msgid "Close modal"
-msgstr "Felugró ablak bezárása"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:26
 #: src/pages/Index/Settings/SystemSettings.tsx:36
 msgid "Server"
-msgstr "Szerver"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:32
 msgid "Instance Name"
-msgstr "Példány neve"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:38
 msgid "Database"
-msgstr "Adatbázis"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:38
 #~ msgid "Bebug Mode"
@@ -900,69 +900,69 @@ msgstr "Adatbázis"
 
 #: src/components/modals/ServerInfoModal.tsx:47
 msgid "Debug Mode"
-msgstr "Debug mód"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:50
 msgid "Server is running in debug mode"
-msgstr "A szerver debug módban van"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:57
 msgid "Docker Mode"
-msgstr "Docker mód"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:60
 msgid "Server is deployed using docker"
-msgstr "A szerver dockerben fut"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:66
 msgid "Plugin Support"
-msgstr "Plugin támogatás"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:71
 msgid "Plugin support enabled"
-msgstr "Plugin támogatás engedélyezve"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:73
 msgid "Plugin support disabled"
-msgstr "Plugin támogatás letiltva"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:80
 msgid "Server status"
-msgstr "Szerver állapot"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:86
 msgid "Healthy"
-msgstr "Egészséges"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:88
 msgid "Issues detected"
-msgstr "Problémák észlelhetők"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:97
 msgid "Background Worker"
-msgstr "Háttér munkavégző"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:101
 msgid "Background worker not running"
-msgstr "Háttér munkavégző nem fut"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:109
 msgid "Email Settings"
-msgstr "Email beállítások"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:113
 msgid "Email settings not configured"
-msgstr "Email beállítások hiányoznak"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:121
 #: src/tables/plugin/PluginListTable.tsx:144
 #: src/tables/plugin/PluginListTable.tsx:294
 msgid "Version"
-msgstr "Verzió"
+msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:127
 msgid "Server Version"
-msgstr "Szerver verziója"
+msgstr ""
 
 #: src/components/nav/Layout.tsx:70
 #: src/tables/part/PartThumbTable.tsx:194
@@ -981,24 +981,24 @@ msgstr ""
 #: src/components/nav/MainMenu.tsx:42
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:26
 msgid "Settings"
-msgstr "Beállítások"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:49
 #: src/defaults/menuItems.tsx:15
 msgid "Account settings"
-msgstr "Fiókbeállítások"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:57
 #: src/defaults/menuItems.tsx:58
 #: src/pages/Index/Settings/SystemSettings.tsx:300
 msgid "System Settings"
-msgstr "Rendszerbeállítások"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:67
 #: src/defaults/menuItems.tsx:63
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:192
 msgid "Admin Center"
-msgstr "Admin központ"
+msgstr ""
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
@@ -1010,48 +1010,48 @@ msgstr "Admin központ"
 
 #: src/components/nav/MainMenu.tsx:77
 msgid "Logout"
-msgstr "Kijelentkezés"
+msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:65
 #: src/defaults/actions.tsx:58
 msgid "Open Navigation"
-msgstr "Navigáció megnyitása"
+msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:84
 msgid "View all"
-msgstr "Összes megtekintése"
+msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:100
 #: src/components/nav/NavHoverMenu.tsx:110
 msgid "Get started"
-msgstr "Kezdés"
+msgstr ""
 
 #: src/components/nav/NavHoverMenu.tsx:103
 msgid "Overview over high-level objects, functions and possible usecases."
-msgstr "Magas szintű objektumok, funkciók és lehetséges használati esetek áttekintése."
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:57
 msgid "Navigation"
-msgstr "Navigáció"
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:60
 msgid "Pages"
-msgstr "Oldalak"
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:65
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:153
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:41
 msgid "Plugins"
-msgstr "Pluginok"
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:75
 #: src/defaults/actions.tsx:30
 msgid "Documentation"
-msgstr "Dokumentáció"
+msgstr ""
 
 #: src/components/nav/NavigationDrawer.tsx:78
 msgid "About"
-msgstr "Névjegy"
+msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:78
 #: src/pages/Index/Settings/SystemSettings.tsx:101
@@ -1059,58 +1059,58 @@ msgstr "Névjegy"
 #: src/pages/Notifications.tsx:65
 #: src/pages/Notifications.tsx:152
 msgid "Notifications"
-msgstr "Értesítések"
+msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:95
 msgid "You have no unread notifications."
-msgstr "Nincs olvasatlan értesítésed."
+msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:111
 #: src/components/nav/NotificationDrawer.tsx:117
 #: src/tables/notifications/NotificationsTable.tsx:36
 msgid "Notification"
-msgstr "Értesítés"
+msgstr ""
 
 #: src/components/nav/NotificationDrawer.tsx:140
 #: src/pages/Notifications.tsx:73
 msgid "Mark as read"
-msgstr "Megjelölés olvasottként"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:77
 msgid "results"
-msgstr "eredmények"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:337
 msgid "Enter search text"
-msgstr "Írd be a keresett szöveget"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:364
 msgid "Search Options"
-msgstr "Keresési opciók"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:367
 msgid "Regex search"
-msgstr "Regex keresés"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:377
 msgid "Whole word search"
-msgstr "Teljes szó keresés"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:416
 msgid "An error occurred during search query"
-msgstr "Hiba történt a keresés közben"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:427
 msgid "No results"
-msgstr "Nincs találat"
+msgstr ""
 
 #: src/components/nav/SearchDrawer.tsx:430
 msgid "No results available for search query"
-msgstr "Nincs találat a keresésre"
+msgstr ""
 
 #: src/components/render/Instance.tsx:166
 msgid "Unknown model: {model}"
-msgstr "Ismeretlen model: {model}"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:22
 #: src/forms/BuildForms.tsx:201
@@ -1127,7 +1127,7 @@ msgstr "Ismeretlen model: {model}"
 #: src/tables/part/RelatedPartTable.tsx:45
 #: src/tables/stock/StockTrackingTable.tsx:74
 msgid "Part"
-msgstr "Alkatrész"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:23
 #: src/defaults/links.tsx:28
@@ -1138,15 +1138,15 @@ msgstr "Alkatrész"
 #: src/pages/part/CategoryDetail.tsx:265
 #: src/pages/part/PartDetail.tsx:645
 msgid "Parts"
-msgstr "Alkatrészek"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:31
 msgid "Part Parameter Template"
-msgstr "Alkatrész paraméter sablon"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:32
 msgid "Part Parameter Templates"
-msgstr "Alkatrész paraméter sablonok"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:38
 msgid "Part Test Template"
@@ -1162,25 +1162,25 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:163
 #: src/tables/purchasing/SupplierPartTable.tsx:68
 msgid "Supplier Part"
-msgstr "Beszállítói alkatrész"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:46
 msgid "Supplier Parts"
-msgstr "Beszállítói alkatrészek"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:54
 #: src/pages/company/ManufacturerPartDetail.tsx:125
 msgid "Manufacturer Part"
-msgstr "Gyártói alkatrész"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:55
 msgid "Manufacturer Parts"
-msgstr "Gyártói alkatrészek"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:63
 #: src/pages/part/CategoryDetail.tsx:291
 msgid "Part Category"
-msgstr "Alkatrész kategória"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:64
 #: src/pages/Index/Settings/SystemSettings.tsx:165
@@ -1188,13 +1188,13 @@ msgstr "Alkatrész kategória"
 #: src/pages/part/CategoryDetail.tsx:282
 #: src/pages/part/PartDetail.tsx:827
 msgid "Part Categories"
-msgstr "Alkatrész kategóriák"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:72
 #: src/pages/stock/StockDetail.tsx:563
 #: src/tables/stock/StockTrackingTable.tsx:45
 msgid "Stock Item"
-msgstr "Készlet tétel"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:73
 #: src/pages/company/CompanyDetail.tsx:199
@@ -1202,18 +1202,18 @@ msgstr "Készlet tétel"
 #: src/pages/stock/LocationDetail.tsx:171
 #: src/pages/stock/LocationDetail.tsx:369
 msgid "Stock Items"
-msgstr "Készlet tételek"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:81
 msgid "Stock Location"
-msgstr "Készlet hely"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:82
 #: src/pages/stock/LocationDetail.tsx:185
 #: src/pages/stock/LocationDetail.tsx:361
 #: src/pages/stock/StockDetail.tsx:555
 msgid "Stock Locations"
-msgstr "Készlethelyek"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:90
 msgid "Stock Location Type"
@@ -1225,21 +1225,21 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:95
 msgid "Stock History"
-msgstr "Készlettörténet"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:96
 msgid "Stock Histories"
-msgstr "Készlettörténet"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:100
 #: src/defaults/links.tsx:30
 #: src/defaults/menuItems.tsx:43
 msgid "Build"
-msgstr "Gyártás"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:101
 msgid "Builds"
-msgstr "Gyártások"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:109
 msgid "Build Line"
@@ -1252,11 +1252,11 @@ msgstr ""
 #: src/components/render/ModelType.tsx:117
 #: src/pages/company/CompanyDetail.tsx:327
 msgid "Company"
-msgstr "Cég"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:118
 msgid "Companies"
-msgstr "Cégek"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:126
 #: src/tables/TableHoverCard.tsx:58
@@ -1265,19 +1265,19 @@ msgstr "Cégek"
 #: src/tables/sales/ReturnOrderTable.tsx:55
 #: src/tables/sales/SalesOrderTable.tsx:61
 msgid "Project Code"
-msgstr "Projektszám"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:127
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:105
 msgid "Project Codes"
-msgstr "Projektszámok"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:133
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:32
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:362
 #: src/tables/stock/StockTrackingTable.tsx:107
 msgid "Purchase Order"
-msgstr "Beszerzési rendelés"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:134
 #: src/pages/Index/Settings/SystemSettings.tsx:248
@@ -1286,15 +1286,15 @@ msgstr "Beszerzési rendelés"
 #: src/pages/part/PartDetail.tsx:575
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
-msgstr "Beszerzési rendelések"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:142
 msgid "Purchase Order Line"
-msgstr "Beszerzési rendelés tétel"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:143
 msgid "Purchase Order Lines"
-msgstr "Beszerzési rendelés tételei"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:147
 #: src/pages/build/BuildDetail.tsx:131
@@ -1302,7 +1302,7 @@ msgstr "Beszerzési rendelés tételei"
 #: src/pages/stock/StockDetail.tsx:211
 #: src/tables/stock/StockTrackingTable.tsx:118
 msgid "Sales Order"
-msgstr "Vevői rendelés"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:148
 #: src/pages/Index/Settings/SystemSettings.tsx:263
@@ -1310,70 +1310,70 @@ msgstr "Vevői rendelés"
 #: src/pages/part/PartDetail.tsx:582
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
-msgstr "Vevői rendelések"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:156
 msgid "Sales Order Shipment"
-msgstr "Vevői rendelés szállítmány"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:157
 msgid "Sales Order Shipments"
-msgstr "Vevői rendelés szállítmányok"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:163
 #: src/pages/sales/ReturnOrderDetail.tsx:327
 #: src/tables/stock/StockTrackingTable.tsx:129
 msgid "Return Order"
-msgstr "Visszavétel"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:164
 #: src/pages/Index/Settings/SystemSettings.tsx:279
 #: src/pages/company/CompanyDetail.tsx:219
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
-msgstr "Visszavételek"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:172
 #: src/tables/company/AddressTable.tsx:47
 msgid "Address"
-msgstr "Cím"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:173
 #: src/pages/company/CompanyDetail.tsx:249
 msgid "Addresses"
-msgstr "Címek"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:179
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:191
 #: src/pages/sales/ReturnOrderDetail.tsx:160
 #: src/pages/sales/SalesOrderDetail.tsx:164
 msgid "Contact"
-msgstr "Kapcsolat"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:180
 #: src/pages/company/CompanyDetail.tsx:243
 msgid "Contacts"
-msgstr "Kapcsolatok"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:186
 msgid "Owner"
-msgstr "Tulajdonos"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:187
 msgid "Owners"
-msgstr "Tulajdonosok"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:193
 #: src/tables/stock/StockItemTestResultTable.tsx:193
 #: src/tables/stock/StockTrackingTable.tsx:195
 msgid "User"
-msgstr "Felhasználó"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:194
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:81
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
-msgstr "Felhasználók"
+msgstr ""
 
 #: src/components/render/ModelType.tsx:200
 msgid "Label Template"
@@ -1403,7 +1403,7 @@ msgstr ""
 
 #: src/components/render/Order.tsx:104
 msgid "Shipment"
-msgstr "Szállítmány"
+msgstr ""
 
 #: src/components/render/Part.tsx:15
 #: src/defaults/links.tsx:29
@@ -1414,13 +1414,13 @@ msgstr "Szállítmány"
 #: src/pages/stock/StockDetail.tsx:355
 #: src/tables/stock/StockItemTable.tsx:57
 msgid "Stock"
-msgstr "Készlet"
+msgstr ""
 
 #: src/components/render/Stock.tsx:52
 #: src/pages/stock/StockDetail.tsx:146
 #: src/pages/stock/StockDetail.tsx:520
 msgid "Serial Number"
-msgstr "Sorozatszám"
+msgstr ""
 
 #: src/components/render/Stock.tsx:54
 #: src/forms/BuildForms.tsx:206
@@ -1434,7 +1434,7 @@ msgstr "Sorozatszám"
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:73
 #: src/tables/stock/StockTrackingTable.tsx:59
 msgid "Quantity"
-msgstr "Mennyiség"
+msgstr ""
 
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
@@ -1443,7 +1443,7 @@ msgstr "Mennyiség"
 
 #: src/components/settings/SettingList.tsx:67
 msgid "Edit Setting"
-msgstr "Beállítás szerkesztése"
+msgstr ""
 
 #: src/components/settings/SettingList.tsx:78
 #: src/components/settings/SettingList.tsx:108
@@ -1452,11 +1452,11 @@ msgstr ""
 
 #: src/components/settings/SettingList.tsx:107
 msgid "Setting updated"
-msgstr "Beállítás frissítve"
+msgstr ""
 
 #: src/components/settings/SettingList.tsx:117
 msgid "Error editing setting"
-msgstr "Beállítás szerkesztési hiba"
+msgstr ""
 
 #: src/components/settings/SettingList.tsx:158
 msgid "No settings specified"
@@ -1839,33 +1839,33 @@ msgstr ""
 #: src/components/widgets/DisplayWidget.tsx:11
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:17
 msgid "Display Settings"
-msgstr "Megjelenítési beállítások"
+msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:15
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:23
 msgid "Color Mode"
-msgstr "Megjelenítési mód"
+msgstr ""
 
 #: src/components/widgets/DisplayWidget.tsx:21
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:33
 msgid "Language"
-msgstr "Nyelv"
+msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:19
 msgid "Something is new: Platform UI"
-msgstr "Újdonság: Felhasználói felület"
+msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:21
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr "Új felhasználói felületet készítünk modern alapokon. Ugyan a jelenlegi állapot nem végleges és még át is lesz alakítva, de szemlélteti a felhasználói felület és élmény jövőbeli lehetőségeit."
+msgstr ""
 
 #: src/components/widgets/FeedbackWidget.tsx:32
 msgid "Provide Feedback"
-msgstr "Visszajelzés küldése"
+msgstr ""
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
-msgstr "Első lépések"
+msgstr ""
 
 #: src/components/widgets/MarkdownEditor.tsx:108
 #~ msgid "Failed to upload image"
@@ -1877,95 +1877,95 @@ msgstr "Első lépések"
 
 #: src/components/widgets/WidgetLayout.tsx:166
 msgid "Layout"
-msgstr "Elrendezés"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:172
 msgid "Reset Layout"
-msgstr "Elrendezés visszaállítása"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:185
 msgid "Stop Edit"
-msgstr "Szerkesztés befejezése"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:185
 msgid "Edit Layout"
-msgstr "Elrendezés szerkesztése"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:191
 msgid "Appearance"
-msgstr "Megjelenítés"
+msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:203
 msgid "Show Boxes"
-msgstr "Dobozok megjelenítése"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Bulgarian"
-msgstr "Bolgár"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:21
 msgid "Czech"
-msgstr "Cseh"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:22
 msgid "Danish"
-msgstr "Dán"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:23
 msgid "German"
-msgstr "Német"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:24
 msgid "Greek"
-msgstr "Görög"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:25
 msgid "English"
-msgstr "Angol"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:26
 msgid "Spanish"
-msgstr "Spanyol"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:27
 msgid "Spanish (Mexican)"
-msgstr "Spanyol (Mexikói)"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "Farsi / Persian"
-msgstr "Fárszi/Perzsa"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Finnish"
-msgstr "Finn"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:30
 msgid "French"
-msgstr "Francia"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:31
 msgid "Hebrew"
-msgstr "Héber"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:32
 msgid "Hindi"
-msgstr "Hindi"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:33
 msgid "Hungarian"
-msgstr "Magyar"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:34
 msgid "Italian"
-msgstr "Olasz"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:35
 msgid "Japanese"
-msgstr "Japán"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:36
 msgid "Korean"
-msgstr "Koreai"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:37
 msgid "Latvian"
@@ -1973,23 +1973,23 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:38
 msgid "Dutch"
-msgstr "Holland"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:39
 msgid "Norwegian"
-msgstr "Norvég"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:40
 msgid "Polish"
-msgstr "Lengyel"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Portuguese"
-msgstr "Portugál"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:42
 msgid "Portuguese (Brazilian)"
-msgstr "Portugál (Brazíliai)"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Romanian"
@@ -1997,7 +1997,7 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:44
 msgid "Russian"
-msgstr "Orosz"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:45
 msgid "Slovak"
@@ -2005,19 +2005,19 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:46
 msgid "Slovenian"
-msgstr "Szlovén"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:47
 msgid "Swedish"
-msgstr "Svéd"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:48
 msgid "Thai"
-msgstr "Tháj"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:49
 msgid "Turkish"
-msgstr "Török"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:50
 msgid "Ukrainian"
@@ -2025,21 +2025,21 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:51
 msgid "Vietnamese"
-msgstr "Vietnámi"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:52
 msgid "Chinese (Simplified)"
-msgstr "Kínai (egyszerűsített)"
+msgstr ""
 
 #: src/contexts/LanguageContext.tsx:53
 msgid "Chinese (Traditional)"
-msgstr "Kínai (Hagyományos)"
+msgstr ""
 
 #: src/defaults/actions.tsx:16
 #: src/defaults/links.tsx:26
 #: src/defaults/menuItems.tsx:9
 msgid "Home"
-msgstr "Főoldal"
+msgstr ""
 
 #: src/defaults/actions.tsx:23
 #: src/defaults/links.tsx:27
@@ -2047,7 +2047,7 @@ msgstr "Főoldal"
 #: src/pages/Index/Dashboard.tsx:19
 #: src/pages/Index/Settings/UserSettings.tsx:42
 msgid "Dashboard"
-msgstr "Irányítópult"
+msgstr ""
 
 #: src/defaults/actions.tsx:24
 msgid "Go to the InvenTree dashboard"
@@ -2061,12 +2061,12 @@ msgstr ""
 #: src/defaults/links.tsx:92
 #: src/defaults/links.tsx:122
 msgid "About InvenTree"
-msgstr "InvenTree névjegy"
+msgstr ""
 
 #: src/defaults/actions.tsx:38
 #: src/defaults/links.tsx:123
 msgid "About the InvenTree org"
-msgstr "Az inventree.org-ról"
+msgstr ""
 
 #: src/defaults/actions.tsx:44
 msgid "Server Information"
@@ -2075,7 +2075,7 @@ msgstr ""
 #: src/defaults/actions.tsx:45
 #: src/defaults/links.tsx:117
 msgid "About this Inventree instance"
-msgstr "InvenTree példány névjegye"
+msgstr ""
 
 #: src/defaults/actions.tsx:51
 #: src/defaults/links.tsx:105
@@ -2093,72 +2093,72 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
-msgstr "Értesítésre beállított alkatrészek"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:22
 msgid "Subscribed Categories"
-msgstr "Értesítésre beállított kategóriák"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:29
 msgid "Latest Parts"
-msgstr "Legújabb alkatrészek"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:36
 msgid "BOM Waiting Validation"
-msgstr "Jóváhagyásra váró alkatrészjegyzék"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:43
 msgid "Recently Updated"
-msgstr "Nemrég frissítve"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:50
 #: src/tables/part/PartTable.tsx:216
 msgid "Low Stock"
-msgstr "Alacsony készlet"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:57
 msgid "Depleted Stock"
-msgstr "Kimerült készlet"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:64
 msgid "Required for Build Orders"
-msgstr "Gyártáshoz szükséges"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:71
 msgid "Expired Stock"
-msgstr "Lejárt készlet"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:78
 msgid "Stale Stock"
-msgstr "Állott készlet"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:85
 msgid "Build Orders In Progress"
-msgstr "Folyamatban lévő gyártások"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:92
 msgid "Overdue Build Orders"
-msgstr "Késésben lévő gyártások"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:99
 msgid "Outstanding Purchase Orders"
-msgstr "Kintlévő beszerzési rendelések"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:106
 msgid "Overdue Purchase Orders"
-msgstr "Késésben lévő beszerzések"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:113
 msgid "Outstanding Sales Orders"
-msgstr "Függő vevői rendelések"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:120
 msgid "Overdue Sales Orders"
-msgstr "Késésben lévő vevői rendelések"
+msgstr ""
 
 #: src/defaults/dashboardItems.tsx:127
 msgid "Current News"
-msgstr "Jelenlegi hírek"
+msgstr ""
 
 #: src/defaults/defaultHostList.tsx:8
 #~ msgid "InvenTree Demo"
@@ -2171,15 +2171,15 @@ msgstr "Jelenlegi hírek"
 #: src/defaults/links.tsx:11
 #: src/pages/company/CompanyDetail.tsx:92
 msgid "Website"
-msgstr "Weboldal"
+msgstr ""
 
 #: src/defaults/links.tsx:16
 msgid "GitHub"
-msgstr "GitHub"
+msgstr ""
 
 #: src/defaults/links.tsx:21
 msgid "Demo"
-msgstr "Demó"
+msgstr ""
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
@@ -2190,7 +2190,7 @@ msgstr "Demó"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:365
 #: src/pages/purchasing/PurchasingIndex.tsx:52
 msgid "Purchasing"
-msgstr "Beszerzés"
+msgstr ""
 
 #: src/defaults/links.tsx:32
 #: src/defaults/menuItems.tsx:53
@@ -2199,45 +2199,45 @@ msgstr "Beszerzés"
 #: src/pages/sales/SalesIndex.tsx:45
 #: src/pages/sales/SalesOrderDetail.tsx:356
 msgid "Sales"
-msgstr "Eladás"
+msgstr ""
 
 #: src/defaults/links.tsx:35
 #: src/defaults/menuItems.tsx:71
 #: src/pages/Index/Playground.tsx:238
 msgid "Playground"
-msgstr "Játszótér"
+msgstr ""
 
 #: src/defaults/links.tsx:49
 msgid "Getting Started"
-msgstr "Első lépések"
+msgstr ""
 
 #: src/defaults/links.tsx:50
 msgid "Getting started with InvenTree"
-msgstr "Első lépések az InvenTree-vel"
+msgstr ""
 
 #: src/defaults/links.tsx:56
 msgid "API"
-msgstr "API"
+msgstr ""
 
 #: src/defaults/links.tsx:57
 msgid "InvenTree API documentation"
-msgstr "InvenTree API dokumentáció"
+msgstr ""
 
 #: src/defaults/links.tsx:62
 msgid "Developer Manual"
-msgstr "Fejlesztői dokumentáció"
+msgstr ""
 
 #: src/defaults/links.tsx:63
 msgid "InvenTree developer manual"
-msgstr "InvenTree fejlesztői dokumentáció"
+msgstr ""
 
 #: src/defaults/links.tsx:68
 msgid "FAQ"
-msgstr "GYIK"
+msgstr ""
 
 #: src/defaults/links.tsx:69
 msgid "Frequently asked questions"
-msgstr "Gyakran ismételt kérdések"
+msgstr ""
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
@@ -2246,7 +2246,7 @@ msgstr "Gyakran ismételt kérdések"
 #: src/defaults/links.tsx:79
 #: src/defaults/links.tsx:116
 msgid "System Information"
-msgstr "Rendszerinformáció"
+msgstr ""
 
 #: src/defaults/links.tsx:83
 #~ msgid "InvenTree"
@@ -2258,7 +2258,7 @@ msgstr "Rendszerinformáció"
 
 #: src/defaults/links.tsx:128
 msgid "Licenses"
-msgstr "Licencek"
+msgstr ""
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -2286,7 +2286,7 @@ msgstr "Licencek"
 
 #: src/defaults/menuItems.tsx:17
 msgid "User attributes and design settings."
-msgstr "Felhasználói beállítások"
+msgstr ""
 
 #: src/defaults/menuItems.tsx:21
 #~ msgid "Free for everyone"
@@ -2298,7 +2298,7 @@ msgstr "Felhasználói beállítások"
 
 #: src/defaults/menuItems.tsx:23
 msgid "View for interactive scanning and multiple actions."
-msgstr "Nézet interaktív szkenneléshez és más műveletekhez."
+msgstr ""
 
 #: src/defaults/menuItems.tsx:24
 #~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
@@ -2423,7 +2423,7 @@ msgstr ""
 
 #: src/forms/PartForms.tsx:100
 msgid "Parent part category"
-msgstr "Felsőbb szintű alkatrész kategória"
+msgstr ""
 
 #: src/forms/PartForms.tsx:106
 #~ msgid "Create Part"
@@ -2492,19 +2492,19 @@ msgstr ""
 #: src/tables/ColumnRenderers.tsx:34
 #: src/tables/stock/StockTrackingTable.tsx:85
 msgid "Location"
-msgstr "Hely"
+msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:448
 msgid "Store at default location"
-msgstr "Alapértelmezett helyre tárolás"
+msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:461
 msgid "Store at line item destination"
-msgstr "Tárolás a tétel sor célhelyén"
+msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:471
 msgid "Store with already received stock"
-msgstr "Tárolás a már megérkezett készlettel"
+msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:627
 msgid "Receive Line Items"
@@ -2516,7 +2516,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:101
 msgid "Add given quantity as packs instead of individual items"
-msgstr "Mennyiség hozzáadása csomagolási egységenként egyedi tételek helyett"
+msgstr ""
 
 #: src/forms/StockForms.tsx:110
 #~ msgid "Create Stock Item"
@@ -2524,15 +2524,15 @@ msgstr "Mennyiség hozzáadása csomagolási egységenként egyedi tételek hely
 
 #: src/forms/StockForms.tsx:114
 msgid "Enter initial quantity for this stock item"
-msgstr "Add meg a kezdeti mennyiséget ehhez a készlet tételhez"
+msgstr ""
 
 #: src/forms/StockForms.tsx:121
 msgid "Serial Numbers"
-msgstr "Sorozatszámok"
+msgstr ""
 
 #: src/forms/StockForms.tsx:122
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr "Add meg az új készlet tételhez tartozó sorozatszámokat (vagy hagyd üresen)"
+msgstr ""
 
 #: src/forms/StockForms.tsx:158
 #~ msgid "Stock item updated"
@@ -2543,7 +2543,7 @@ msgstr "Add meg az új készlet tételhez tartozó sorozatszámokat (vagy hagyd 
 #: src/tables/stock/StockItemTable.tsx:382
 #: src/tables/stock/StockItemTable.tsx:499
 msgid "Add Stock Item"
-msgstr "Új készlet tétel"
+msgstr ""
 
 #: src/forms/StockForms.tsx:339
 msgid "Loading..."
@@ -2551,7 +2551,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:381
 msgid "Move to default location"
-msgstr "Mozgatás az alapértelmezett helyre"
+msgstr ""
 
 #: src/forms/StockForms.tsx:449
 #: src/forms/StockForms.tsx:483
@@ -2565,11 +2565,11 @@ msgstr "Mozgatás az alapértelmezett helyre"
 #: src/pages/part/PartDetail.tsx:661
 #: src/tables/stock/StockItemTable.tsx:290
 msgid "In Stock"
-msgstr "Készleten"
+msgstr ""
 
 #: src/forms/StockForms.tsx:449
 msgid "Move"
-msgstr "Áthelyezés"
+msgstr ""
 
 #: src/forms/StockForms.tsx:449
 #: src/forms/StockForms.tsx:483
@@ -2581,53 +2581,53 @@ msgstr "Áthelyezés"
 #: src/forms/StockForms.tsx:684
 #: src/tables/RowActions.tsx:149
 msgid "Actions"
-msgstr "Műveletek"
+msgstr ""
 
 #: src/forms/StockForms.tsx:512
 #: src/pages/stock/StockDetail.tsx:457
 #: src/tables/stock/StockItemTestResultTable.tsx:323
 msgid "Add"
-msgstr "Hozzáadás"
+msgstr ""
 
 #: src/forms/StockForms.tsx:540
 #: src/pages/Index/Scan.tsx:266
 #: src/pages/stock/StockDetail.tsx:447
 msgid "Count"
-msgstr "Mennyiség"
+msgstr ""
 
 #: src/forms/StockForms.tsx:785
 msgid "Add Stock"
-msgstr "Készlethez ad"
+msgstr ""
 
 #: src/forms/StockForms.tsx:794
 msgid "Remove Stock"
-msgstr "Készlet csökkentése"
+msgstr ""
 
 #: src/forms/StockForms.tsx:803
 #: src/pages/part/PartDetail.tsx:788
 msgid "Transfer Stock"
-msgstr "Készlet áthelyezése"
+msgstr ""
 
 #: src/forms/StockForms.tsx:812
 #: src/pages/part/PartDetail.tsx:777
 msgid "Count Stock"
-msgstr "Leltározás"
+msgstr ""
 
 #: src/forms/StockForms.tsx:821
 msgid "Change Stock Status"
-msgstr "Készlet állapot módosítása"
+msgstr ""
 
 #: src/forms/StockForms.tsx:830
 msgid "Merge Stock"
-msgstr "Készlet összevonása"
+msgstr ""
 
 #: src/forms/StockForms.tsx:849
 msgid "Delete Stock Items"
-msgstr "Készlet tétel törlése"
+msgstr ""
 
 #: src/forms/StockForms.tsx:856
 msgid "Parent stock location"
-msgstr "Szülő készlet hely"
+msgstr ""
 
 #: src/functions/auth.tsx:34
 #~ msgid "Error fetching token from server."
@@ -2651,20 +2651,20 @@ msgstr "Szülő készlet hely"
 
 #: src/functions/auth.tsx:76
 msgid "Logged Out"
-msgstr "Kijelentkezve"
+msgstr ""
 
 #: src/functions/auth.tsx:77
 msgid "Successfully logged out"
-msgstr "Sikeresen kijelentkeztél"
+msgstr ""
 
 #: src/functions/auth.tsx:115
 msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
-msgstr "Nézd meg a beérkező levelek mappájában a visszaállítási linket. Ez csak akkor működik, ha van fiókod. Ellenőrizd a spameket is."
+msgstr ""
 
 #: src/functions/auth.tsx:122
 #: src/pages/Auth/Set-Password.tsx:39
 msgid "Reset failed"
-msgstr "Visszaállítás sikertelen"
+msgstr ""
 
 #: src/functions/auth.tsx:141
 #~ msgid "Already logged in"
@@ -2680,11 +2680,11 @@ msgstr "Visszaállítás sikertelen"
 
 #: src/functions/auth.tsx:153
 msgid "Logged In"
-msgstr "Bejelentkezve"
+msgstr ""
 
 #: src/functions/auth.tsx:154
 msgid "Successfully logged in"
-msgstr "Sikeres bejelentkezés"
+msgstr ""
 
 #: src/functions/forms.tsx:50
 #~ msgid "Form method not provided"
@@ -2696,68 +2696,68 @@ msgstr "Sikeres bejelentkezés"
 
 #: src/functions/forms.tsx:182
 msgid "Invalid Form"
-msgstr "Érvénytelen űrlap"
+msgstr ""
 
 #: src/functions/forms.tsx:183
 msgid "method parameter not supplied"
-msgstr "metódus paraméter nem támogatott"
+msgstr ""
 
 #: src/functions/notifications.tsx:10
 msgid "Not implemented"
-msgstr "Nincs implementálva"
+msgstr ""
 
 #: src/functions/notifications.tsx:11
 msgid "This feature is not yet implemented"
-msgstr "Ez a funkció még nem készült el"
+msgstr ""
 
 #: src/functions/notifications.tsx:21
 msgid "Permission denied"
-msgstr "Engedély megtagadva"
+msgstr ""
 
 #: src/functions/notifications.tsx:22
 msgid "You do not have permission to perform this action"
-msgstr "Nincs jogosultságod ehhez a művelethez"
+msgstr ""
 
 #: src/functions/notifications.tsx:33
 msgid "Invalid Return Code"
-msgstr "Érvénytelen visszatérési kód"
+msgstr ""
 
 #: src/functions/notifications.tsx:34
 msgid "Server returned status {returnCode}"
-msgstr "Szerver válaszkódja {returnCode}"
+msgstr ""
 
 #: src/hooks/UseForm.tsx:88
 msgid "Item Created"
-msgstr "Elem létrehozva"
+msgstr ""
 
 #: src/hooks/UseForm.tsx:105
 msgid "Item Updated"
-msgstr "Tétel frissítve"
+msgstr ""
 
 #: src/hooks/UseForm.tsx:124
 msgid "Item Deleted"
-msgstr "Elem törölve"
+msgstr ""
 
 #: src/hooks/UseForm.tsx:128
 msgid "Are you sure you want to delete this item?"
-msgstr "Biztosan törli ezt az elemet?"
+msgstr ""
 
 #: src/pages/Auth/Logged-In.tsx:23
 msgid "Checking if you are already logged in"
-msgstr "Ellenőrzöm hogy be vagy-e már jelentkezve"
+msgstr ""
 
 #: src/pages/Auth/Login.tsx:31
 #: src/pages/Index/Scan.tsx:329
 msgid "No selection"
-msgstr "Nincs kijelölés"
+msgstr ""
 
 #: src/pages/Auth/Login.tsx:87
 msgid "Welcome, log in below"
-msgstr "Üdvözlet, bejelentkezés lent"
+msgstr ""
 
 #: src/pages/Auth/Login.tsx:89
 msgid "Register below"
-msgstr "Regisztráljon alább"
+msgstr ""
 
 #: src/pages/Auth/Login.tsx:121
 #~ msgid "Edit host options"
@@ -2765,64 +2765,64 @@ msgstr "Regisztráljon alább"
 
 #: src/pages/Auth/Logout.tsx:23
 msgid "Logging out"
-msgstr "Kijelentkezés"
+msgstr ""
 
 #: src/pages/Auth/Reset.tsx:41
 #: src/pages/Auth/Set-Password.tsx:112
 msgid "Send mail"
-msgstr "Email küldése"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:30
 msgid "Token invalid"
-msgstr "Érvénytelen token"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:31
 msgid "You need to provide a valid token to set a new password. Check your inbox for a reset link."
-msgstr "Új jelszó beállításához meg kell adnod egy érvényes tokent. Nézd meg a beérkező levelek mappájában a visszaállítási linket."
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:49
 msgid "No token provided"
-msgstr "Nincs token megadva"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:50
 msgid "You need to provide a token to set a new password. Check your inbox for a reset link."
-msgstr "Új jelszó beállításához meg kell adnod egy tokent. Nézd meg a beérkező levelek mappájában a visszaállítási linket."
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:73
 msgid "Password set"
-msgstr "Jelszó beállítva"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:74
 msgid "The password was set successfully. You can now login with your new password"
-msgstr "A jelszó beállítása sikeresen megtörtént. Most már bejelentkezhetsz az új jelszavaddal"
+msgstr ""
 
 #: src/pages/Auth/Set-Password.tsx:101
 msgid "Set new password"
-msgstr "Új jelszó beállítása"
+msgstr ""
 
 #: src/pages/ErrorPage.tsx:17
 msgid "Error: {0}"
-msgstr "Hiba: {0}"
+msgstr ""
 
 #: src/pages/ErrorPage.tsx:28
 msgid "Sorry, an unexpected error has occurred."
-msgstr "Elnézést, váratlan hiba történt."
+msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
-msgstr "Automatikus frissítés"
+msgstr ""
 
 #: src/pages/Index/Dashboard.tsx:26
 msgid "This page is a replacement for the old start page with the same information. This page will be deprecated and replaced by the home page."
-msgstr "Ez az oldal helyettesíti a régi kezdőoldalt, ugyanazokkal az információkkal. Ez az oldal hamarosan elavulttá válik, és helyébe a kezdőlap lép."
+msgstr ""
 
 #: src/pages/Index/Home.tsx:58
 msgid "Welcome to your Dashboard{0}"
-msgstr "Irányítópult: {0}"
+msgstr ""
 
 #: src/pages/Index/Playground.tsx:243
 msgid "This page is a showcase for the possibilities of Platform UI."
-msgstr "Ez az oldal a Platform UI lehetőségeit mutatja be."
+msgstr ""
 
 #: src/pages/Index/Profile/Profile.tsx:30
 #: src/pages/Index/Profile/Profile.tsx:141
@@ -2962,31 +2962,31 @@ msgstr "Ez az oldal a Platform UI lehetőségeit mutatja be."
 
 #: src/pages/Index/Scan.tsx:216
 msgid "Manual input"
-msgstr "Kézi bevitel"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:217
 msgid "Image Barcode"
-msgstr "Vonalkód képe"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:247
 msgid "Selected elements are not known"
-msgstr "Kiválasztott elemek ismeretlenek"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:254
 msgid "Multiple object types selected"
-msgstr "Többféle objektum típus lett kiválasztva"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:261
 msgid "Actions for {0}"
-msgstr "{0} műveletei"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:282
 msgid "Scan Page"
-msgstr "Kódolvasó lap"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:285
 msgid "This page can be used for continuously scanning items and taking actions on them."
-msgstr "Lap a tételek folyamatos kódolvasására és műveleteire."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:292
 msgid "Toggle Fullscreen"
@@ -2994,56 +2994,56 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:305
 msgid "Select the input method you want to use to scan items."
-msgstr "Válassz beviteli módot a tételek beolvasásához."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:307
 msgid "Input"
-msgstr "Bevitel"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:314
 msgid "Select input method"
-msgstr "Beviteli mód kiválasztása"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:315
 msgid "Nothing found"
-msgstr "Nincs találat"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:323
 msgid "Depending on the selected parts actions will be shown here. Not all barcode types are supported currently."
-msgstr "A kiválasztott alkatrészektől függő műveletek jelennek meg itt. Jelenleg nem minden vonalkód támogatott."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:325
 msgid "Action"
-msgstr "Művelet"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:334
 msgid "{0} items selected"
-msgstr "{0} kiválasztott tétel"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:337
 msgid "General Actions"
-msgstr "Általános műveletek"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:351
 msgid "Lookup part"
-msgstr "Alkatrész keresés"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:359
 msgid "Open Link"
-msgstr "Link megnyitása"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:375
 msgid "History is locally kept in this browser."
-msgstr "Az előzmények lokálisan a böngészőben tárolódnak."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:376
 msgid "The history is kept in this browser's local storage. So it won't be shared with other users or other devices but is persistent through reloads. You can select items in the history to perform actions on them. To add items, scan/enter them in the Input area."
-msgstr "Az előzmények a böngésző helyi tárhelyén tárolódnak. Így nem lesz megosztva más felhasználókkal vagy más eszközökkel, de az újratöltések során megmarad. Kijelölhetsz elemeket az előzményekből, hogy műveleteket hajts végre rajtuk. Elemek hozzáadásához szkennelje be/írja be azokat a beviteli területen."
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:378
 #: src/pages/Notifications.tsx:100
 msgid "History"
-msgstr "Előzmények"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:384
 msgid "Delete History"
@@ -3051,43 +3051,43 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:449
 msgid "No history"
-msgstr "Nincs előzmény"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:467
 msgid "Item"
-msgstr "Tétel"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:470
 msgid "Type"
-msgstr "Típus"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:473
 msgid "Source"
-msgstr "Forrás"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:476
 msgid "Scanned at"
-msgstr "Szkennelve ekkor"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:528
 msgid "Enter item serial or data"
-msgstr "Add meg a tétel szériaszámát vagy adatát"
+msgstr ""
 
 #: src/pages/Index/Scan.tsx:540
 msgid "Add dummy item"
-msgstr "Ál-tétel hozzáadása"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:37
 msgid "Account Details"
-msgstr "Felhasználó adatok"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:46
 msgid "First name"
-msgstr "Keresztnév"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:51
 msgid "Last name"
-msgstr "Vezetéknév"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:58
 #~ msgid "First name: {0}"
@@ -3099,128 +3099,128 @@ msgstr "Vezetéknév"
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:63
 msgid "First name:"
-msgstr "Keresztnév:"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:67
 msgid "Last name:"
-msgstr "Vezetéknév:"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/DisplaySettingsPanel.tsx:41
 msgid "Use pseudo language"
-msgstr "Használj pszeudo nyelvet"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:53
 msgid "Single Sign On Accounts"
-msgstr "Központi beléptetési fiókok"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:60
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:78
 msgid "Not enabled"
-msgstr "Nem engedélyezett"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:63
 msgid "Single Sign On is not enabled for this server"
-msgstr "Sso nincs engedélyezve ezen a szerveren"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:67
 msgid "Multifactor"
-msgstr "Többfaktoros"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:81
 msgid "Multifactor authentication is not configured for your account"
-msgstr "Többfaktoros autentikáció nincs beállítva a fiókodhoz"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:132
 msgid "The following email addresses are associated with your account:"
-msgstr "A következő email címek vannak hozzárendelve a felhasználódhoz:"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:144
 msgid "Primary"
-msgstr "Elsődleges"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:149
 msgid "Verified"
-msgstr "Ellenőrizve"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:153
 msgid "Unverified"
-msgstr "Nem ellenőrzött"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:166
 msgid "Add Email Address"
-msgstr "Email cím hozzáadása"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:169
 msgid "E-Mail"
-msgstr "E-mail cím"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:170
 msgid "E-Mail address"
-msgstr "Email cím"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:182
 msgid "Make Primary"
-msgstr "Legyen elsődleges"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:187
 msgid "Re-send Verification"
-msgstr "Megerősítés újraküldése"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:198
 msgid "Add Email"
-msgstr "Email hozzáadása"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:263
 msgid "Provider has not been configured"
-msgstr "A kiszolgáló nincs konfigurálva"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:273
 msgid "Not configured"
-msgstr "Nincs beállítva"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:276
 msgid "There are no social network accounts connected to this account."
-msgstr "Jelenleg nincs ehhez a fiókhoz kapcsolódó közösségi fiókod."
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:286
 msgid "You can sign in to your account using any of the following third party accounts"
-msgstr "Fiókodba a következő harmadik fél fiókjainak bármelyikével bejelentkezhetsz"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:65
 msgid "bars"
-msgstr "oszlopok"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:66
 msgid "oval"
-msgstr "ovális"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:67
 msgid "dots"
-msgstr "pontok"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:81
 msgid "Theme"
-msgstr "Téma"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:87
 msgid "Primary color"
-msgstr "Elsődleges szín"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:100
 msgid "White color"
-msgstr "Fehér szín"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:108
 msgid "Black color"
-msgstr "Fekete szín"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:116
 msgid "Border Radius"
-msgstr "Szegély sugár"
+msgstr ""
 
 #: src/pages/Index/Settings/AccountSettings/UserThemePanel.tsx:132
 msgid "Loader"
-msgstr "Betöltő"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter.tsx:30
 #~ msgid "User Management"
@@ -3232,24 +3232,24 @@ msgstr "Betöltő"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:87
 msgid "Background Tasks"
-msgstr "Háttér műveletek"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:93
 msgid "Error Reports"
-msgstr "Hibajelentések"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:99
 msgid "Currencies"
-msgstr "Pénznemek"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:117
 msgid "Custom Units"
-msgstr "Egyedi mértékegységek"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:123
 #: src/pages/part/CategoryDetail.tsx:255
 msgid "Part Parameters"
-msgstr "Alkatrész paraméterek"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:127
 #~ msgid "Templates"
@@ -3257,7 +3257,7 @@ msgstr "Alkatrész paraméterek"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:129
 msgid "Category Parameters"
-msgstr "Kategória paraméterek"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:147
 msgid "Location types"
@@ -3266,40 +3266,40 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:159
 #: src/tables/machine/MachineTypeTable.tsx:287
 msgid "Machines"
-msgstr "Berendezések"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:169
 msgid "Quick Actions"
-msgstr "Gyors műveletek"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:174
 msgid "Add a new user"
-msgstr "Új felhasználó hozzáadása"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:193
 msgid "Advanced Options"
-msgstr "További beállítások"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:43
 msgid "Machine types"
-msgstr "Berendezés típusok"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:53
 msgid "Machine Error Stack"
-msgstr "Berendezés hibatároló"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/MachineManagementPanel.tsx:62
 msgid "There are no machine registry errors."
-msgstr "Nincsenek berendezés katalógus hibák."
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:28
 #: src/tables/settings/UserTable.tsx:116
 msgid "Info"
-msgstr "Infó"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:32
 msgid "External plugins are not enabled for this InvenTree installation."
-msgstr "Külső pluginok nincsenek engedélyezve ebben az InvenTree példányban."
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:33
 #~ msgid "Plugin Error Stack"
@@ -3315,11 +3315,11 @@ msgstr "Külső pluginok nincsenek engedélyezve ebben az InvenTree példányban
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:50
 msgid "Plugin Errors"
-msgstr "Bővítmény Hibák"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/PluginManagementPanel.tsx:59
 msgid "Plugin Settings"
-msgstr "Plugin beállítások"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:53
 msgid "Background Worker Not Running"
@@ -3332,17 +3332,17 @@ msgstr ""
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:60
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:76
 msgid "Pending Tasks"
-msgstr "Folyamatban lévő feladatok"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:64
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:84
 msgid "Scheduled Tasks"
-msgstr "Ütemezett Feladatok"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:68
 #: src/pages/Index/Settings/AdminCenter/TaskManagementPanel.tsx:92
 msgid "Failed Tasks"
-msgstr "Hibás feladatok"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/TemplateManagementPanel.tsx:39
 #~ msgid "Label"
@@ -3388,27 +3388,27 @@ msgstr "Hibás feladatok"
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:18
 #: src/tables/settings/UserTable.tsx:135
 msgid "Groups"
-msgstr "Csoportok"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:30
 msgid "Select settings relevant for user lifecycle. More available in"
-msgstr "Válassza ki a felhasználói életciklusre vonatkozó beállításokat. További információ"
+msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:35
 msgid "System settings"
-msgstr "Rendszerbeállítások"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:65
 msgid "Login"
-msgstr "Bejelentkezés"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:87
 msgid "Barcodes"
-msgstr "Vonalkódok"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:107
 msgid "Pricing"
-msgstr "Árazás"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:118
 #~ msgid "Physical Units"
@@ -3420,18 +3420,18 @@ msgstr "Árazás"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:142
 msgid "Labels"
-msgstr "Címkék"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:148
 #: src/pages/Index/Settings/UserSettings.tsx:102
 msgid "Reporting"
-msgstr "Riportolás"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:228
 #: src/pages/part/PartDetail.tsx:595
 #: src/tables/stock/StockItemTable.tsx:221
 msgid "Stocktake"
-msgstr "Leltár"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:234
 #: src/pages/build/BuildDetail.tsx:425
@@ -3439,31 +3439,31 @@ msgstr "Leltár"
 #: src/pages/part/PartDetail.tsx:529
 #: src/pages/sales/SalesOrderDetail.tsx:269
 msgid "Build Orders"
-msgstr "Gyártási utasítások"
+msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:303
 msgid "Switch to User Setting"
-msgstr "Felhasználói beállításra váltás"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:30
 msgid "Account"
-msgstr "Fiók"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:36
 msgid "Security"
-msgstr "Biztonság"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:48
 msgid "Display Options"
-msgstr "Megjelenítési beállítások"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:118
 msgid "Account Settings"
-msgstr "Fiókbeállítások"
+msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:122
 msgid "Switch to System Setting"
-msgstr "Rendszer beállításra váltás"
+msgstr ""
 
 #: src/pages/Index/UserSettings.tsx:103
 #~ msgid "User Settings"
@@ -3475,23 +3475,23 @@ msgstr "Rendszer beállításra váltás"
 
 #: src/pages/NotFound.tsx:17
 msgid "Not Found"
-msgstr "Nem található"
+msgstr ""
 
 #: src/pages/NotFound.tsx:20
 msgid "Sorry, this page is not known or was moved."
-msgstr "Elnézést, ez az oldal ismeretlen vagy el lett mozgatva."
+msgstr ""
 
 #: src/pages/NotFound.tsx:27
 msgid "Go to the start page"
-msgstr "Ugrás a kezdőlapra"
+msgstr ""
 
 #: src/pages/Notifications.tsx:43
 msgid "Delete Notifications"
-msgstr "Értesítések törlése"
+msgstr ""
 
 #: src/pages/Notifications.tsx:108
 msgid "Mark as unread"
-msgstr "Megjelölés olvasatlanként"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:80
 #~ msgid "Build Status"
@@ -3509,7 +3509,7 @@ msgstr "Megjelölés olvasatlanként"
 #: src/tables/stock/StockItemTable.tsx:259
 #: src/tables/stock/StockTrackingTable.tsx:52
 msgid "Status"
-msgstr "Állapot"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:95
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:103
@@ -3518,7 +3518,7 @@ msgstr "Állapot"
 #: src/tables/ColumnRenderers.tsx:106
 #: src/tables/build/BuildLineTable.tsx:140
 msgid "Reference"
-msgstr "Hivatkozás"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:100
 #: src/pages/company/CompanyDetail.tsx:86
@@ -3540,20 +3540,20 @@ msgstr "Hivatkozás"
 #: src/tables/plugin/PluginListTable.tsx:276
 #: src/tables/stock/LocationTypesTable.tsx:65
 msgid "Description"
-msgstr "Leírás"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:107
 msgid "Parent Build"
-msgstr "Szülő gyártás"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:118
 msgid "Build Quantity"
-msgstr "Gyártási mennyiség"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:126
 #: src/pages/build/BuildDetail.tsx:256
 msgid "Completed Outputs"
-msgstr "Befejezett kimenetek"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:143
 #: src/tables/build/BuildOrderTable.tsx:142
@@ -3570,7 +3570,7 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:66
 #: src/tables/sales/SalesOrderTable.tsx:72
 msgid "Responsible"
-msgstr "Felelős"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:157
 #: src/tables/settings/PendingTasksTable.tsx:30
@@ -3583,7 +3583,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:182
 #: src/tables/ColumnRenderers.tsx:191
 msgid "Target Date"
-msgstr "Cél dátum"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:171
 msgid "Completed"
@@ -3636,7 +3636,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:229
 msgid "Build Details"
-msgstr "Gyártás részletei"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:231
 #~ msgid "Delete build order"
@@ -3645,19 +3645,19 @@ msgstr "Gyártás részletei"
 #: src/pages/build/BuildDetail.tsx:235
 #: src/tables/build/BuildLineTable.tsx:225
 msgid "Allocate Stock"
-msgstr "Készlet foglalása"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:249
 msgid "Incomplete Outputs"
-msgstr "Befejezetlen kimenetek"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:271
 msgid "Consumed Stock"
-msgstr "Felhasznált készlet"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:285
 msgid "Child Build Orders"
-msgstr "Alárendelt gyártások"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:295
 #: src/pages/company/CompanyDetail.tsx:255
@@ -3668,7 +3668,7 @@ msgstr "Alárendelt gyártások"
 #: src/pages/sales/SalesOrderDetail.tsx:279
 #: src/pages/stock/StockDetail.tsx:328
 msgid "Attachments"
-msgstr "Mellékletek"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:307
 #: src/pages/company/CompanyDetail.tsx:267
@@ -3679,11 +3679,11 @@ msgstr "Mellékletek"
 #: src/pages/stock/StockDetail.tsx:340
 #: src/tables/stock/StockTrackingTable.tsx:189
 msgid "Notes"
-msgstr "Megjegyzések"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:325
 msgid "Edit Build Order"
-msgstr "Gyártási utasítás szerkesztése"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:334
 msgid "Cancel Build Order"
@@ -3693,7 +3693,7 @@ msgstr ""
 #: src/tables/build/BuildOrderTable.tsx:167
 #: src/tables/build/BuildOrderTable.tsx:182
 msgid "Add Build Order"
-msgstr "Gyártási utasítás létrehozása"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:368
 #~ msgid "Reporting Actions"
@@ -3705,7 +3705,7 @@ msgstr "Gyártási utasítás létrehozása"
 
 #: src/pages/build/BuildDetail.tsx:378
 msgid "Build Order Actions"
-msgstr "Gyártáshoz foglalások"
+msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:386
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:333
@@ -3744,7 +3744,7 @@ msgstr ""
 #: src/tables/purchasing/PurchaseOrderTable.tsx:88
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:36
 msgid "Supplier"
-msgstr "Beszállító"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:128
 #: src/pages/company/ManufacturerDetail.tsx:8
@@ -3753,7 +3753,7 @@ msgstr "Beszállító"
 #: src/pages/company/SupplierPartDetail.tsx:122
 #: src/tables/company/CompanyTable.tsx:105
 msgid "Manufacturer"
-msgstr "Gyártó"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:134
 #: src/pages/company/CustomerDetail.tsx:8
@@ -3766,16 +3766,16 @@ msgstr "Gyártó"
 #: src/tables/sales/SalesOrderTable.tsx:107
 #: src/tables/stock/StockTrackingTable.tsx:140
 msgid "Customer"
-msgstr "Vevő"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:168
 #: src/tables/stock/StockTrackingTable.tsx:183
 msgid "Details"
-msgstr "Részletek"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:174
 msgid "Manufactured Parts"
-msgstr "Gyártott alkatrészek"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:175
 #~ msgid "Edit company"
@@ -3783,7 +3783,7 @@ msgstr "Gyártott alkatrészek"
 
 #: src/pages/company/CompanyDetail.tsx:183
 msgid "Supplied Parts"
-msgstr "Szállított alkatrészek"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:189
 #~ msgid "Delete company"
@@ -3791,16 +3791,16 @@ msgstr "Szállított alkatrészek"
 
 #: src/pages/company/CompanyDetail.tsx:228
 msgid "Assigned Stock"
-msgstr "Hozzárendelt készlet"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:287
 #: src/tables/company/CompanyTable.tsx:86
 msgid "Edit Company"
-msgstr "Cég szerkesztése"
+msgstr ""
 
 #: src/pages/company/CompanyDetail.tsx:296
 msgid "Company Actions"
-msgstr "Cég műveletek"
+msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:69
 #: src/pages/company/SupplierPartDetail.tsx:76
@@ -3830,13 +3830,13 @@ msgstr ""
 #: src/pages/company/ManufacturerPartDetail.tsx:146
 #: src/pages/part/PartDetail.tsx:488
 msgid "Parameters"
-msgstr "Paraméterek"
+msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:158
 #: src/pages/part/PartDetail.tsx:562
 #: src/pages/purchasing/PurchasingIndex.tsx:26
 msgid "Suppliers"
-msgstr "Beszállítók"
+msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:190
 #: src/tables/purchasing/ManufacturerPartTable.tsx:84
@@ -3878,7 +3878,7 @@ msgstr ""
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:143
 #: src/tables/purchasing/SupplierPartTable.tsx:131
 msgid "Pack Quantity"
-msgstr "Csomagolási mennyiség"
+msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:161
 msgid "Supplier Availability"
@@ -3899,7 +3899,7 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:210
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:265
 msgid "Received Stock"
-msgstr "Beérkezett készlet"
+msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:234
 #: src/pages/part/PartPricingPanel.tsx:115
@@ -3914,18 +3914,18 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:273
 #: src/tables/purchasing/SupplierPartTable.tsx:210
 msgid "Edit Supplier Part"
-msgstr "Beszállítói alkatrész szerkesztése"
+msgstr ""
 
 #: src/pages/company/SupplierPartDetail.tsx:280
 #: src/tables/purchasing/SupplierPartTable.tsx:163
 msgid "Add Supplier Part"
-msgstr "Beszállítói alkatrész hozzáadása"
+msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:84
 #: src/pages/stock/LocationDetail.tsx:91
 #: src/tables/settings/ErrorTable.tsx:34
 msgid "Path"
-msgstr "Elérési út"
+msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:100
 msgid "Parent Category"
@@ -3939,7 +3939,7 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:131
 #: src/tables/part/PartCategoryTable.tsx:65
 msgid "Structural"
-msgstr "Szerkezeti"
+msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:130
 msgid "Parent default location"
@@ -4001,7 +4001,7 @@ msgstr ""
 #: src/tables/notifications/NotificationsTable.tsx:31
 #: src/tables/part/PartCategoryTemplateTable.tsx:67
 msgid "Category"
-msgstr "Kategória"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:154
 msgid "Default Location"
@@ -4013,7 +4013,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:168
 msgid "IPN"
-msgstr "IPN"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:175
 msgid "Revision"
@@ -4022,7 +4022,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:182
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:44
 msgid "Units"
-msgstr "Mértékegységek"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:189
 #: src/tables/settings/PendingTasksTable.tsx:40
@@ -4034,7 +4034,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:151
 #: src/pages/sales/SalesOrderDetail.tsx:155
 msgid "Link"
-msgstr "Link"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:214
 #: src/tables/bom/BomTable.tsx:271
@@ -4050,7 +4050,7 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:212
 #: src/tables/build/BuildLineTable.tsx:95
 msgid "On order"
-msgstr "Rendelve"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:236
 msgid "Allocated to Build Orders"
@@ -4063,13 +4063,13 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:251
 #: src/tables/bom/BomTable.tsx:236
 msgid "Can Build"
-msgstr "Gyártható"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:258
 #: src/tables/bom/BomTable.tsx:220
 #: src/tables/part/PartTable.tsx:82
 msgid "Building"
-msgstr "Gyártásban"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:267
 #: src/tables/bom/UsedInTable.tsx:73
@@ -4087,7 +4087,7 @@ msgstr "Gyártásban"
 #: src/tables/purchasing/SupplierPartTable.tsx:187
 #: src/tables/stock/StockItemTable.tsx:254
 msgid "Active"
-msgstr "Aktív"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:272
 msgid "Template Part"
@@ -4096,7 +4096,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:277
 #: src/tables/bom/BomTable.tsx:266
 msgid "Assembled Part"
-msgstr "Gyártmány alkatrész"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:282
 msgid "Component Part"
@@ -4122,7 +4122,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:310
 #: src/tables/ColumnRenderers.tsx:199
 msgid "Creation Date"
-msgstr "Létrehozás dátuma"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:310
 #~ msgid "Edit part"
@@ -4130,7 +4130,7 @@ msgstr "Létrehozás dátuma"
 
 #: src/pages/part/PartDetail.tsx:315
 msgid "Created By"
-msgstr "Készítette"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:322
 #~ msgid "Duplicate part"
@@ -4142,65 +4142,65 @@ msgstr "Készítette"
 
 #: src/pages/part/PartDetail.tsx:330
 msgid "Default Supplier"
-msgstr "Alapértelmezett beszállító"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:341
 #: src/pages/part/pricing/BomPricingPanel.tsx:78
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
 #: src/tables/part/PartTable.tsx:151
 msgid "Price Range"
-msgstr "Ártartomány"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:376
 #: src/pages/stock/StockDetail.tsx:131
 msgid "Last Stocktake"
-msgstr "Utolsó leltár"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:411
 msgid "Stocktake By"
-msgstr "Leltárazta"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:482
 msgid "Part Details"
-msgstr "Alkatrész részletei"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:508
 msgid "Variants"
-msgstr "Változatok"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:515
 #: src/pages/stock/StockDetail.tsx:284
 msgid "Allocations"
-msgstr "Foglalások"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:522
 msgid "Bill of Materials"
-msgstr "Alkatrészjegyzék"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:536
 msgid "Used In"
-msgstr "Felhasználva ebben"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:543
 msgid "Part Pricing"
-msgstr "Alkatrész árak"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:549
 #: src/pages/purchasing/PurchasingIndex.tsx:37
 msgid "Manufacturers"
-msgstr "Gyártók"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:589
 msgid "Scheduling"
-msgstr "Ütemezés"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:601
 msgid "Test Templates"
-msgstr "Teszt sablonok"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:612
 msgid "Related Parts"
-msgstr "Kapcsolódó alkatrészek"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:667
 #: src/pages/stock/StockDetail.tsx:152
@@ -4210,33 +4210,33 @@ msgstr "Kapcsolódó alkatrészek"
 #: src/tables/stock/StockItemTable.tsx:166
 #: src/tables/stock/StockItemTable.tsx:275
 msgid "Available"
-msgstr "Elérhető"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:673
 msgid "No Stock"
-msgstr "Nincs készlet"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:679
 #: src/tables/bom/BomTable.tsx:276
 #: src/tables/part/PartTable.tsx:76
 msgid "On Order"
-msgstr "Rendelve"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:685
 #: src/pages/stock/StockDetail.tsx:515
 #: src/tables/stock/StockItemTable.tsx:295
 msgid "In Production"
-msgstr "Gyártásban"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:704
 msgid "Edit Part"
-msgstr "Alkatrész szerkesztése"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:711
 #: src/tables/part/PartTable.tsx:266
 #: src/tables/part/PartTable.tsx:279
 msgid "Add Part"
-msgstr "Alkatrész hozzáadása"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:723
 msgid "Delete Part"
@@ -4250,19 +4250,19 @@ msgstr ""
 #: src/pages/stock/LocationDetail.tsx:302
 #: src/tables/stock/StockItemTable.tsx:409
 msgid "Stock Actions"
-msgstr "Készlet műveletek"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:778
 msgid "Count part stock"
-msgstr "Készlet számolása"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:789
 msgid "Transfer part stock"
-msgstr "Készlet áthelyezése"
+msgstr ""
 
 #: src/pages/part/PartDetail.tsx:798
 msgid "Part Actions"
-msgstr "Alkatrész műveletek"
+msgstr ""
 
 #: src/pages/part/PartIndex.tsx:29
 #~ msgid "Categories"
@@ -4270,41 +4270,41 @@ msgstr "Alkatrész műveletek"
 
 #: src/pages/part/PartPricingPanel.tsx:72
 msgid "No pricing data found for this part."
-msgstr "Nincs árazási információ ehhez az alkatrészhez."
+msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:86
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:190
 msgid "Pricing Overview"
-msgstr "Árazás áttekintés"
+msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:92
 msgid "Purchase History"
-msgstr "Beszerzési előzmények"
+msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:106
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:100
 msgid "Internal Pricing"
-msgstr "Belső árazás"
+msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:124
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:107
 msgid "BOM Pricing"
-msgstr "Alkatrészjegyzék árazás"
+msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:131
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:128
 msgid "Variant Pricing"
-msgstr "Alkatrészváltozat árazás"
+msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:143
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:135
 msgid "Sale Pricing"
-msgstr "Eladási ár"
+msgstr ""
 
 #: src/pages/part/PartPricingPanel.tsx:150
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:142
 msgid "Sale History"
-msgstr "Eladási előzmények"
+msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:57
 #: src/pages/part/pricing/BomPricingPanel.tsx:137
@@ -4314,25 +4314,25 @@ msgstr "Eladási előzmények"
 #: src/tables/sales/ReturnOrderTable.tsx:104
 #: src/tables/sales/SalesOrderTable.tsx:134
 msgid "Total Price"
-msgstr "Teljes ár"
+msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:77
 #: src/pages/part/pricing/BomPricingPanel.tsx:101
 #: src/tables/part/PartTable.tsx:186
 msgid "Component"
-msgstr "Összetevő"
+msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:80
 #: src/pages/part/pricing/VariantPricingPanel.tsx:37
 #: src/pages/part/pricing/VariantPricingPanel.tsx:97
 msgid "Minimum Price"
-msgstr "Minimum ár"
+msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:81
 #: src/pages/part/pricing/VariantPricingPanel.tsx:45
 #: src/pages/part/pricing/VariantPricingPanel.tsx:98
 msgid "Maximum Price"
-msgstr "Maximum ár"
+msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:112
 #~ msgid "Minimum Total Price"
@@ -4351,42 +4351,42 @@ msgstr "Maximum ár"
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:170
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:88
 msgid "Unit Price"
-msgstr "Egységár"
+msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:153
 #: src/pages/part/pricing/VariantPricingPanel.tsx:53
 #: src/tables/purchasing/SupplierPartTable.tsx:148
 msgid "Updated"
-msgstr "Frissítve"
+msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:218
 msgid "Pie Chart"
-msgstr "Kördiagram"
+msgstr ""
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:219
 msgid "Bar Chart"
-msgstr "Oszlopdiagram"
+msgstr ""
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:54
 #: src/pages/part/pricing/PriceBreakPanel.tsx:106
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:138
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:164
 msgid "Add Price Break"
-msgstr "Ársáv hozzáadása"
+msgstr ""
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:67
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:149
 msgid "Edit Price Break"
-msgstr "Ársáv szerkesztése"
+msgstr ""
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:77
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:157
 msgid "Delete Price Break"
-msgstr "Ársáv törlése"
+msgstr ""
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:91
 msgid "Price Break"
-msgstr "Árlépcső"
+msgstr ""
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:166
 msgid "Price"
@@ -4394,32 +4394,32 @@ msgstr ""
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:51
 msgid "Pricing Category"
-msgstr "Árkategória"
+msgstr ""
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:70
 msgid "Minimum"
-msgstr "Minimum"
+msgstr ""
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:82
 msgid "Maximum"
-msgstr "Maximum"
+msgstr ""
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:114
 msgid "Purchase Pricing"
-msgstr "Beszerzési ár"
+msgstr ""
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:149
 msgid "Override Pricing"
-msgstr "Alkatrész árazás felülbírálása"
+msgstr ""
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:156
 msgid "Overall Pricing"
-msgstr "Általános árazás"
+msgstr ""
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:175
 #: src/pages/stock/StockDetail.tsx:125
 msgid "Last Updated"
-msgstr "Legutóbb frissítve"
+msgstr ""
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:192
 msgid "Minimum Value"
@@ -4431,15 +4431,15 @@ msgstr ""
 
 #: src/pages/part/pricing/PricingPanel.tsx:25
 msgid "No data available"
-msgstr "Nincs elérhető adat"
+msgstr ""
 
 #: src/pages/part/pricing/PricingPanel.tsx:66
 msgid "No Data"
-msgstr "Nincs adat"
+msgstr ""
 
 #: src/pages/part/pricing/PricingPanel.tsx:67
 msgid "No pricing data available"
-msgstr "Ár adatok nem elérhetőek"
+msgstr ""
 
 #: src/pages/part/pricing/PricingPanel.tsx:78
 msgid "Loading pricing data"
@@ -4450,44 +4450,44 @@ msgstr ""
 #: src/tables/ColumnRenderers.tsx:180
 #: src/tables/plugin/PluginListTable.tsx:139
 msgid "Date"
-msgstr "Dátum"
+msgstr ""
 
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:47
 msgid "Purchase Price"
-msgstr "Beszerzési ár"
+msgstr ""
 
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:22
 msgid "Sale Order"
-msgstr "Megrendelések"
+msgstr ""
 
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:42
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:92
 msgid "Sale Price"
-msgstr "Eladási ár"
+msgstr ""
 
 #: src/pages/part/pricing/SupplierPricingPanel.tsx:65
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:79
 msgid "Supplier Price"
-msgstr "Beszállítói ár"
+msgstr ""
 
 #: src/pages/part/pricing/VariantPricingPanel.tsx:30
 #: src/pages/part/pricing/VariantPricingPanel.tsx:94
 msgid "Variant Part"
-msgstr "Alkatrészváltozat"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:75
 msgid "Edit Purchase Order"
-msgstr "Beszerzési rendelés szerkesztése"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:84
 #: src/tables/purchasing/PurchaseOrderTable.tsx:128
 #: src/tables/purchasing/PurchaseOrderTable.tsx:140
 msgid "Add Purchase Order"
-msgstr "Beszerzés hozzáadása"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:109
 msgid "Supplier Reference"
-msgstr "Beszállítói azonosító"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:139
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:254
@@ -4496,20 +4496,20 @@ msgstr "Beszállítói azonosító"
 #: src/pages/sales/SalesOrderDetail.tsx:111
 #: src/pages/sales/SalesOrderDetail.tsx:251
 msgid "Line Items"
-msgstr "Sortételek"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:146
 #: src/pages/sales/ReturnOrderDetail.tsx:114
 #: src/pages/sales/SalesOrderDetail.tsx:118
 msgid "Completed Line Items"
-msgstr "Kész sortételek"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:154
 #: src/pages/sales/ReturnOrderDetail.tsx:122
 #: src/pages/sales/SalesOrderDetail.tsx:126
 #: src/pages/sales/SalesOrderDetail.tsx:263
 msgid "Completed Shipments"
-msgstr "Kész szállítmányok"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:159
 #: src/pages/sales/ReturnOrderDetail.tsx:126
@@ -4527,31 +4527,31 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:137
 #: src/pages/sales/SalesOrderDetail.tsx:141
 msgid "Total Cost"
-msgstr "Teljes költség"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:203
 #: src/pages/sales/ReturnOrderDetail.tsx:172
 #: src/pages/sales/SalesOrderDetail.tsx:176
 msgid "Created On"
-msgstr "Létrehozva"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:248
 #: src/pages/sales/ReturnOrderDetail.tsx:217
 #: src/pages/sales/SalesOrderDetail.tsx:245
 msgid "Order Details"
-msgstr "Rendelés részletei"
+msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:323
 #: src/pages/sales/ReturnOrderDetail.tsx:299
 #: src/pages/sales/SalesOrderDetail.tsx:313
 msgid "Order Actions"
-msgstr "Rendelés műveletek"
+msgstr ""
 
 #: src/pages/sales/ReturnOrderDetail.tsx:78
 #: src/pages/sales/SalesOrderDetail.tsx:82
 #: src/tables/sales/SalesOrderTable.tsx:123
 msgid "Customer Reference"
-msgstr "Vevői azonosító"
+msgstr ""
 
 #: src/pages/sales/ReturnOrderDetail.tsx:271
 msgid "Edit Return Order"
@@ -4565,7 +4565,7 @@ msgstr ""
 
 #: src/pages/sales/SalesIndex.tsx:33
 msgid "Customers"
-msgstr "Vevők"
+msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:222
 msgid "Edit Sales Order"
@@ -4579,7 +4579,7 @@ msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:257
 msgid "Pending Shipments"
-msgstr "Függő szállítmányok"
+msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:107
 msgid "Parent Location"
@@ -4642,7 +4642,7 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:104
 msgid "Base Part"
-msgstr "Kiindulási alkatrész"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:111
 msgid "Stock Status"
@@ -4683,23 +4683,23 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:274
 msgid "Stock Tracking"
-msgstr "Készlettörténet"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:293
 msgid "Test Data"
-msgstr "Teszt adatok"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:307
 msgid "Installed Items"
-msgstr "Beépített tételek"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:314
 msgid "Child Items"
-msgstr "Gyermek tételek"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:369
 msgid "Edit Stock Item"
-msgstr "Készlet tétel szerkesztése"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:396
 msgid "Delete Stock Item"
@@ -4711,30 +4711,30 @@ msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:443
 msgid "Stock Operations"
-msgstr "Készlet műveletek"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:448
 msgid "Count stock"
-msgstr "Leltározás"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:458
 #: src/tables/stock/StockItemTable.tsx:414
 msgid "Add stock"
-msgstr "Készlethez ad"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:466
 #: src/tables/stock/StockItemTable.tsx:423
 msgid "Remove stock"
-msgstr "Készlet csökkentése"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:473
 msgid "Transfer"
-msgstr "Áthelyezés"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:474
 #: src/tables/stock/StockItemTable.tsx:443
 msgid "Transfer stock"
-msgstr "Készlet áthelyezése"
+msgstr ""
 
 #: src/pages/stock/StockDetail.tsx:485
 msgid "Stock Item Actions"
@@ -4751,12 +4751,12 @@ msgstr ""
 #: src/tables/ColumnRenderers.tsx:227
 #: src/tables/settings/CurrencyTable.tsx:23
 msgid "Currency"
-msgstr "Pénznem"
+msgstr ""
 
 #: src/tables/ColumnSelect.tsx:16
 #: src/tables/ColumnSelect.tsx:23
 msgid "Select Columns"
-msgstr "Oszlopok kiválasztása"
+msgstr ""
 
 #: src/tables/DownloadAction.tsx:13
 #~ msgid "Excel"
@@ -4768,11 +4768,11 @@ msgstr "Oszlopok kiválasztása"
 
 #: src/tables/DownloadAction.tsx:22
 msgid "CSV"
-msgstr "CSV"
+msgstr ""
 
 #: src/tables/DownloadAction.tsx:23
 msgid "TSV"
-msgstr "TSV"
+msgstr ""
 
 #: src/tables/DownloadAction.tsx:24
 msgid "Excel (.xls)"
@@ -4789,7 +4789,7 @@ msgstr ""
 #: src/tables/Filter.tsx:88
 #: src/tables/build/BuildOrderTable.tsx:126
 msgid "Assigned to me"
-msgstr "Hozzám rendelt"
+msgstr ""
 
 #: src/tables/Filter.tsx:89
 #: src/tables/build/BuildOrderTable.tsx:127
@@ -4807,7 +4807,7 @@ msgstr ""
 #: src/tables/Filter.tsx:104
 #: src/tables/build/BuildOrderTable.tsx:119
 msgid "Overdue"
-msgstr "Késésben"
+msgstr ""
 
 #: src/tables/Filter.tsx:105
 msgid "Show overdue orders"
@@ -4815,25 +4815,25 @@ msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:51
 msgid "Remove filter"
-msgstr "Szűrő eltávolítása"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:136
 msgid "Select filter"
-msgstr "Szűrő kiválasztása"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:137
 msgid "Filter"
-msgstr "Szűrő"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:144
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:38
 #: src/tables/stock/StockItemTestResultTable.tsx:181
 msgid "Value"
-msgstr "Érték"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:145
 msgid "Select filter value"
-msgstr "Szűrő érték kiválasztása"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:185
 msgid "Table Filters"
@@ -4841,7 +4841,7 @@ msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:217
 msgid "Add Filter"
-msgstr "Szűrő hozzáadása"
+msgstr ""
 
 #: src/tables/FilterSelectDrawer.tsx:226
 msgid "Clear Filters"
@@ -4851,27 +4851,27 @@ msgstr ""
 #: src/tables/InvenTreeTable.tsx:390
 #: src/tables/InvenTreeTable.tsx:411
 msgid "No records found"
-msgstr "Nincs találat"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:422
 msgid "Server returned incorrect data type"
-msgstr "A szerver hibás adattípust küldött vissza"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:430
 msgid "Bad request"
-msgstr "Hibás kérés"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:433
 msgid "Unauthorized"
-msgstr "Jogosulatlan"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:436
 msgid "Forbidden"
-msgstr "Tiltott"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:439
 msgid "Not found"
-msgstr "Nem található"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:488
 #: src/tables/InvenTreeTable.tsx:611
@@ -4906,28 +4906,28 @@ msgstr ""
 #: src/tables/InvenTreeTable.tsx:601
 #: src/tables/InvenTreeTable.tsx:602
 msgid "Barcode actions"
-msgstr "Vonalkód műveletek"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:630
 msgid "Refresh data"
-msgstr "Adatok frissítése"
+msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:648
 msgid "Table filters"
-msgstr "Táblaszűrők"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:78
 msgid "This BOM item is defined for a different parent"
-msgstr "Ez a beépülő alkatrész másik szülő alkatrészhez lett felvéve"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:93
 msgid "Part Information"
-msgstr "Alkatrész információ"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:179
 #: src/tables/part/PartTable.tsx:124
 msgid "No stock"
-msgstr "Nincs készlet"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:187
 #: src/tables/build/BuildLineTable.tsx:104
@@ -4938,23 +4938,23 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:195
 #: src/tables/build/BuildLineTable.tsx:67
 msgid "Includes substitute stock"
-msgstr "Helyettesítőkkel együtt"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:204
 #: src/tables/build/BuildLineTable.tsx:77
 msgid "Includes variant stock"
-msgstr "Változatokkal együtt"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:229
 #: src/tables/part/PartTable.tsx:143
 #: src/tables/stock/StockItemTable.tsx:205
 msgid "Stock Information"
-msgstr "Készlet adatok"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:241
 #: src/tables/build/BuildLineTable.tsx:195
 msgid "Consumable item"
-msgstr "Fogyóeszköz tétel"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:262
 msgid "Show trackable items"
@@ -4994,7 +4994,7 @@ msgstr ""
 #: src/tables/bom/UsedInTable.tsx:68
 #: src/tables/build/BuildLineTable.tsx:46
 msgid "Optional"
-msgstr "Opcionális"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:292
 #: src/tables/bom/UsedInTable.tsx:69
@@ -5004,7 +5004,7 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:296
 #: src/tables/build/BuildLineTable.tsx:41
 msgid "Consumable"
-msgstr "Fogyóeszköz"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:297
 msgid "Show consumable items"
@@ -5057,7 +5057,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:343
 msgid "View BOM"
-msgstr "Alkatrészjegyzék megtekintése"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:348
 #~ msgid "Delete Bom Item"
@@ -5073,11 +5073,11 @@ msgstr "Alkatrészjegyzék megtekintése"
 
 #: src/tables/bom/BomTable.tsx:354
 msgid "Validate BOM line"
-msgstr "Alkatrészjegyzék tétel jóváhagyása"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:362
 msgid "Edit Substitutes"
-msgstr "Helyettesítő alkatrészek szerkesztése"
+msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:74
 msgid "Show active assemblies"
@@ -5087,11 +5087,11 @@ msgstr ""
 #: src/tables/part/PartTable.tsx:192
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
-msgstr "Követésre kötelezett"
+msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:79
 msgid "Show trackable assemblies"
-msgstr "Nyomonkövethető gyártmányok mutatása"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:31
 #: src/tables/stock/StockItemTable.tsx:270
@@ -5100,105 +5100,105 @@ msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:32
 msgid "Show allocated lines"
-msgstr "Lefoglalt tételek mutatása"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:37
 msgid "Show lines with available stock"
-msgstr "Elérhető készlettel rendelkező sorok mutatása"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:42
 msgid "Show consumable lines"
-msgstr "Felhasználható sorok mutatása"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:47
 msgid "Show optional lines"
-msgstr "Opcionális sorok mutatása"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:51
 #: src/tables/stock/StockItemTable.tsx:329
 msgid "Tracked"
-msgstr "Követett"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:52
 msgid "Show tracked lines"
-msgstr "Követett tételek mutatása"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:86
 msgid "In production"
-msgstr "Gyártásban"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:118
 #: src/tables/stock/StockItemTable.tsx:175
 msgid "No stock available"
-msgstr "Nincs elérhető készlet"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:157
 msgid "Unit Quantity"
-msgstr "Mennyiségi egység"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:231
 msgid "Order Stock"
-msgstr "Készlet rendelés"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:237
 msgid "Build Stock"
-msgstr "Gyártási készlet"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:109
 msgid "Show active orders"
-msgstr "Aktív megrendelések megjelenítése"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:114
 #: src/tables/purchasing/PurchaseOrderTable.tsx:56
 #: src/tables/sales/ReturnOrderTable.tsx:47
 #: src/tables/sales/SalesOrderTable.tsx:53
 msgid "Filter by order status"
-msgstr "Rendelési állapot szűrés"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:121
 msgid "Show overdue status"
-msgstr "Lejártság megjelenítése"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:132
 #: src/tables/purchasing/PurchaseOrderTable.tsx:65
 #: src/tables/sales/ReturnOrderTable.tsx:56
 #: src/tables/sales/SalesOrderTable.tsx:62
 msgid "Filter by project code"
-msgstr "Projekt kódra szűrés"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:137
 #: src/tables/purchasing/PurchaseOrderTable.tsx:70
 #: src/tables/sales/ReturnOrderTable.tsx:61
 #: src/tables/sales/SalesOrderTable.tsx:67
 msgid "Has Project Code"
-msgstr "Van projektszáma"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:138
 #: src/tables/purchasing/PurchaseOrderTable.tsx:71
 #: src/tables/sales/ReturnOrderTable.tsx:62
 #: src/tables/sales/SalesOrderTable.tsx:68
 msgid "Filter by whether the purchase order has a project code"
-msgstr "Szűrés aszerint, hogy az Értékesítési rendelésnek van-e projekt kódja"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:143
 msgid "Filter by user who issued this order"
-msgstr "Szűrés a rendelést rögzítő felhasználóra"
+msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:149
 #: src/tables/purchasing/PurchaseOrderTable.tsx:76
 #: src/tables/sales/ReturnOrderTable.tsx:67
 #: src/tables/sales/SalesOrderTable.tsx:73
 msgid "Filter by responsible owner"
-msgstr "Szűrés a felelős tulajdonosra"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:114
 #: src/tables/build/BuildOutputTable.tsx:152
 msgid "Add Build Output"
-msgstr "Gyártási kimenet hozzáadása"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:157
 msgid "Complete selected outputs"
-msgstr "Kiválasztott kimenetek befejezése"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:161
 #~ msgid "Delete build output"
@@ -5206,89 +5206,89 @@ msgstr "Kiválasztott kimenetek befejezése"
 
 #: src/tables/build/BuildOutputTable.tsx:167
 msgid "Scrap selected outputs"
-msgstr "Kiválasztott kimenetek selejtezése"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:177
 msgid "Cancel selected outputs"
-msgstr "Kiválasztott kimenetek visszavonása"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:193
 msgid "Allocate"
-msgstr "Lefoglalva"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:194
 msgid "Allocate stock to build output"
-msgstr "Készlet foglalása a gyártási kimenethez"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:199
 msgid "Deallocate"
-msgstr "Foglalás felszabadítása"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:200
 msgid "Deallocate stock from build output"
-msgstr "Készlet felszabadítása a gyártási kimenetből"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:205
 msgid "Complete"
-msgstr "Kész"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:206
 msgid "Complete build output"
-msgstr "Gyártási kimenet befejezése"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:215
 msgid "Scrap"
-msgstr "Selejt"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:216
 msgid "Scrap build output"
-msgstr "Gyártási kimenet selejtezése"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:226
 msgid "Cancel build output"
-msgstr "Gyártási kimenet visszavonása"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:253
 msgid "Build Output"
-msgstr "Gyártás kimenet"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:266
 msgid "Batch"
-msgstr "Köteg"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:280
 msgid "Allocated Items"
-msgstr "Lefoglalt sorok"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:290
 msgid "Required Tests"
-msgstr "Szükséges tesztek"
+msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:319
 #: src/tables/stock/StockItemTestResultTable.tsx:145
 msgid "Test Results"
-msgstr "Teszt eredmények"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:121
 #: src/tables/company/AddressTable.tsx:185
 msgid "Add Address"
-msgstr "Cím hozzáadása"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:126
 msgid "Address created"
-msgstr "Cím létrehozva"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:135
 msgid "Edit Address"
-msgstr "Cím szerkesztése"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:143
 msgid "Delete Address"
-msgstr "Cím törlése"
+msgstr ""
 
 #: src/tables/company/AddressTable.tsx:144
 msgid "Are you sure you want to delete this address?"
-msgstr "Biztos, hogy törli ezt a címet?"
+msgstr ""
 
 #: src/tables/company/CompanyTable.tsx:71
 #~ msgid "New Company"
@@ -5297,35 +5297,35 @@ msgstr "Biztos, hogy törli ezt a címet?"
 #: src/tables/company/CompanyTable.tsx:74
 #: src/tables/company/CompanyTable.tsx:123
 msgid "Add Company"
-msgstr "Cég hozzáadása"
+msgstr ""
 
 #: src/tables/company/CompanyTable.tsx:96
 msgid "Show active companies"
-msgstr "Aktív cégek megjelenítése"
+msgstr ""
 
 #: src/tables/company/CompanyTable.tsx:101
 msgid "Show companies which are suppliers"
-msgstr "Beszállító cégek megjelenítése"
+msgstr ""
 
 #: src/tables/company/CompanyTable.tsx:106
 msgid "Show companies which are manufacturers"
-msgstr "Gyártó cégek megjelenítése"
+msgstr ""
 
 #: src/tables/company/CompanyTable.tsx:111
 msgid "Show companies which are customers"
-msgstr "Vevő cégek megjelenítése"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:71
 msgid "Edit Contact"
-msgstr "Névjegy szerkesztése"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:78
 msgid "Add Contact"
-msgstr "Névjegy hozzáadása"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:89
 msgid "Delete Contact"
-msgstr "Névjegy törlése"
+msgstr ""
 
 #: src/tables/company/ContactTable.tsx:129
 msgid "Add contact"
@@ -5333,19 +5333,19 @@ msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:130
 msgid "File uploaded"
-msgstr "Fájl feltöltve"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:131
 msgid "File {0} uploaded successfully"
-msgstr "A {0} fájl sikeresen feltöltve"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:142
 msgid "Upload Error"
-msgstr "Feltöltési Hiba"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:143
 msgid "File could not be uploaded"
-msgstr "A fájlt nem sikerült feltölteni"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:187
 msgid "Upload Attachment"
@@ -5357,15 +5357,15 @@ msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:211
 msgid "Delete Attachment"
-msgstr "Melléklet törlése"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:221
 msgid "Add attachment"
-msgstr "Melléklet hozzáadása"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:232
 msgid "Add external link"
-msgstr "Külső hivatkozás hozzáadása"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:254
 #~ msgid "Upload attachment"
@@ -5373,7 +5373,7 @@ msgstr "Külső hivatkozás hozzáadása"
 
 #: src/tables/general/AttachmentTable.tsx:289
 msgid "No attachments found"
-msgstr "Nem találhatók mellékletek"
+msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:325
 msgid "Drag attachment file here to upload"
@@ -5505,7 +5505,7 @@ msgstr ""
 #: src/tables/plugin/PluginListTable.tsx:180
 #: src/tables/plugin/PluginListTable.tsx:568
 msgid "Builtin"
-msgstr "Beépített"
+msgstr ""
 
 #: src/tables/machine/MachineTypeTable.tsx:146
 msgid "Available drivers"
@@ -5537,12 +5537,12 @@ msgstr ""
 
 #: src/tables/notifications/NotificationsTable.tsx:26
 msgid "Age"
-msgstr "Életkor"
+msgstr ""
 
 #: src/tables/notifications/NotificationsTable.tsx:40
 #: src/tables/plugin/PluginErrorTable.tsx:37
 msgid "Message"
-msgstr "Üzenet"
+msgstr ""
 
 #: src/tables/part/ParametricPartTable.tsx:76
 #: src/tables/part/PartParameterTable.tsx:88
@@ -5561,12 +5561,12 @@ msgstr ""
 #: src/tables/part/PartParameterTable.tsx:121
 #: src/tables/part/PartParameterTable.tsx:144
 msgid "Edit Part Parameter"
-msgstr "Alkatrész paraméter szerkesztése"
+msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:60
 #: src/tables/part/PartTable.tsx:180
 msgid "Include Subcategories"
-msgstr "Alkategóriákkal együtt"
+msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:61
 msgid "Include subcategories in results"
@@ -5612,20 +5612,20 @@ msgstr ""
 #: src/tables/part/PartParameterTable.tsx:130
 #: src/tables/part/PartParameterTable.tsx:152
 msgid "Delete Part Parameter"
-msgstr "Alkatrész paraméter törlése"
+msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:170
 msgid "Add parameter"
-msgstr "Paraméter hozzáadás"
+msgstr ""
 
 #: src/tables/part/PartParameterTable.tsx:191
 #: src/tables/stock/StockItemTable.tsx:300
 msgid "Include Variants"
-msgstr "Változatok is"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:31
 msgid "Checkbox"
-msgstr "Jelölőnégyzet"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:32
 msgid "Show checkbox templates"
@@ -5642,7 +5642,7 @@ msgstr ""
 #: src/tables/part/PartParameterTemplateTable.tsx:41
 #: src/tables/part/PartTable.tsx:198
 msgid "Has Units"
-msgstr "Van mértékegysége"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:42
 msgid "Show templates with units"
@@ -5650,112 +5650,112 @@ msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:85
 msgid "Add Parameter Template"
-msgstr "Paraméter sablon létrehozás"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:100
 msgid "Edit Parameter Template"
-msgstr "Alkatrész paraméter sablon szerkesztés"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:111
 msgid "Delete Parameter Template"
-msgstr "Paraméter sablon törlés"
+msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:141
 msgid "Add parameter template"
-msgstr "Paraméter sablon létrehozás"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:67
 msgid "Minimum stock"
-msgstr "Minimális készlet"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:89
 msgid "Build Order Allocations"
-msgstr "Gyártáshoz foglalások"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:98
 msgid "Sales Order Allocations"
-msgstr "Vevői rendeléshez foglalások"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:169
 msgid "Filter by part active status"
-msgstr "Szűrés aktív státusz szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:174
 #: src/tables/stock/StockItemTable.tsx:265
 msgid "Assembly"
-msgstr "Gyártmány"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:175
 msgid "Filter by assembly attribute"
-msgstr "Szűrés szerelési tulajdonság szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:181
 msgid "Include parts in subcategories"
-msgstr "Alkategóriákkal együtt"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:187
 msgid "Filter by component attribute"
-msgstr "Szűrés összetevő tulajdonság szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:193
 msgid "Filter by trackable attribute"
-msgstr "Szűrés követésre kötelezettség szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:199
 msgid "Filter by parts which have units"
-msgstr "Szűrés meglévő mértékegység szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:204
 msgid "Has IPN"
-msgstr "Van IPN-je"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:205
 msgid "Filter by parts which have an internal part number"
-msgstr "Szűrés meglévő IPN szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:210
 msgid "Has Stock"
-msgstr "Van készlet"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:211
 msgid "Filter by parts which have stock"
-msgstr "Szűrés meglévő készlet szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:217
 msgid "Filter by parts which have low stock"
-msgstr "Szűrés alacsony készlet szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:222
 msgid "Purchaseable"
-msgstr "Beszerezhető"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:223
 msgid "Filter by parts which are purchaseable"
-msgstr "Szűrés beszerezhetőség szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:228
 msgid "Salable"
-msgstr "Értékesíthető"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:229
 msgid "Filter by parts which are salable"
-msgstr "Szűrés értékesíthetőség szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:235
 msgid "Filter by parts which are virtual"
-msgstr "Szűrés virtuális alkatrészek szerint"
+msgstr ""
 
 #: src/tables/part/PartTable.tsx:239
 msgid "Not Virtual"
-msgstr "Nem virtuális"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:52
 msgid "Results"
-msgstr "Eredmények"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:54
 msgid "No Results"
-msgstr "Nincs találat"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:84
 #: src/tables/stock/StockItemTestResultTable.tsx:360
@@ -5764,7 +5764,7 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:85
 msgid "Show required tests"
-msgstr "Szükséges tesztek megjelenítése"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:89
 #: src/tables/settings/TemplateTable.tsx:160
@@ -5774,7 +5774,7 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:90
 msgid "Show enabled tests"
-msgstr "Engedélyezett tesztek megjelenítése"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:94
 msgid "Requires Value"
@@ -5782,7 +5782,7 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:95
 msgid "Show tests that require a value"
-msgstr "Kötelező adatos tesztek megjelenítése"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:99
 msgid "Requires Attachment"
@@ -5790,84 +5790,84 @@ msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:100
 msgid "Show tests that require an attachment"
-msgstr "Kötelező mellékletes tesztek megjelenítése"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:104
 msgid "Include Inherited"
-msgstr "Örököltekkel együtt"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:105
 msgid "Show tests from inherited templates"
-msgstr "Örökölt sablonos tesztek megjelenítése"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:109
 msgid "Has Results"
-msgstr "Van eredmény"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:110
 msgid "Show tests which have recorded results"
-msgstr "Rögzített eredményes tesztek megjelenítése"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:132
 #: src/tables/part/PartTestTemplateTable.tsx:207
 msgid "Add Test Template"
-msgstr "Teszt sablon hozzáadása"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:148
 msgid "Edit Test Template"
-msgstr "Teszt sablon szerkesztése"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:159
 msgid "Delete Test Template"
-msgstr "Teszt sablon törlése"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:161
 msgid "This action cannot be reversed"
-msgstr "Ez a művelet nem vonható vissza"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:163
 msgid "Any tests results associated with this template will be deleted"
-msgstr "Minden teszt eredmény amit ehhez a sablonhoz rögzítettek elvész"
+msgstr ""
 
 #: src/tables/part/PartThumbTable.tsx:203
 msgid "Select"
-msgstr "Kiválaszt"
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:16
 msgid "Show active variants"
-msgstr "Aktív változatok megjelenítése"
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:20
 msgid "Template"
-msgstr "Sablon"
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:21
 msgid "Show template variants"
-msgstr "Sablon változatok megjelenítése"
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:26
 msgid "Show virtual variants"
-msgstr "Virtuális változatok megjelenítése"
+msgstr ""
 
 #: src/tables/part/PartVariantTable.tsx:31
 msgid "Show trackable variants"
-msgstr "Követhető változatok megjelenítése"
+msgstr ""
 
 #: src/tables/part/RelatedPartTable.tsx:84
 msgid "Add Related Part"
-msgstr "Kapcsolódó alkatrész hozzáadása"
+msgstr ""
 
 #: src/tables/part/RelatedPartTable.tsx:99
 msgid "Delete Related Part"
-msgstr "Kapcsolódó alkatrész törlése"
+msgstr ""
 
 #: src/tables/part/RelatedPartTable.tsx:106
 msgid "Add related part"
-msgstr "Kapcsolódó alkatrész hozzáadása"
+msgstr ""
 
 #: src/tables/plugin/PluginErrorTable.tsx:29
 msgid "Stage"
-msgstr "Munkafázis"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:95
 msgid "Plugin with key {pluginKey} not found"
@@ -5875,7 +5875,7 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:97
 msgid "An error occurred while fetching plugin details"
-msgstr "Hiba történt a bővítmény részleteinek letöltése közben"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:113
 #~ msgid "Plugin with id {id} not found"
@@ -5883,11 +5883,11 @@ msgstr "Hiba történt a bővítmény részleteinek letöltése közben"
 
 #: src/tables/plugin/PluginListTable.tsx:122
 msgid "Plugin information"
-msgstr "Plugin információ"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:134
 msgid "Author"
-msgstr "Szerző"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:134
 #~ msgid "Plugin Actions"
@@ -5909,51 +5909,51 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:163
 msgid "Package information"
-msgstr "Csomag információ"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:169
 msgid "Package Name"
-msgstr "Csomag neve"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:175
 msgid "Installation Path"
-msgstr "Telepítési útvonal"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:185
 msgid "Package"
-msgstr "Csomag"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:197
 msgid "Plugin settings"
-msgstr "Plugin beállítások"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:214
 msgid "Plugin is active"
-msgstr "Ez a plugin aktív"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:220
 msgid "Plugin is inactive"
-msgstr "Ez a plugin nem aktív"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:227
 msgid "Plugin is not installed"
-msgstr "Ez a plugin nincs telepítve"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:253
 msgid "Plugin"
-msgstr "Plugin"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:287
 msgid "Description not available"
-msgstr "Leírás nem elérhető"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:319
 msgid "Confirm plugin activation"
-msgstr "Plugin telepítésének megerősítése"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:320
 msgid "Confirm plugin deactivation"
-msgstr "Plugin kikapcsolásának megerősítése"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:325
 msgid "The selected plugin will be activated"
@@ -5965,7 +5965,7 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:334
 msgid "Activate Plugin"
-msgstr "Plugin aktiválása"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:338
 #~ msgid "Deactivate Plugin"
@@ -5981,7 +5981,7 @@ msgstr "Plugin aktiválása"
 
 #: src/tables/plugin/PluginListTable.tsx:362
 msgid "Deactivate"
-msgstr "Kikapcsolás"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:366
 #~ msgid "Confirm"
@@ -5989,7 +5989,7 @@ msgstr "Kikapcsolás"
 
 #: src/tables/plugin/PluginListTable.tsx:373
 msgid "Activate"
-msgstr "Bekapcsolás"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:376
 #~ msgid "Activating plugin"
@@ -6017,76 +6017,76 @@ msgstr "Bekapcsolás"
 
 #: src/tables/plugin/PluginListTable.tsx:406
 msgid "Uninstall"
-msgstr "Eltávolítás"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:438
 msgid "Install plugin"
-msgstr "Plugin telepítése"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:451
 msgid "Install"
-msgstr "Telepítés"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:452
 msgid "Plugin installed successfully"
-msgstr "A bővítmény sikeresen telepítve"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:457
 msgid "Uninstall Plugin"
-msgstr "Bővítmény eltávolítása"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:469
 msgid "Confirm plugin uninstall"
-msgstr "Bővítmény eltávolítás megerősítése"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:472
 msgid "The selected plugin will be uninstalled."
-msgstr "A kiválasztott bővítmény el lesz távolítva."
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:473
 msgid "This action cannot be undone."
-msgstr "Ez a művelet nem vonható vissza."
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:477
 msgid "Plugin uninstalled successfully"
-msgstr "A bővítmény sikeresen eltávolítva"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:484
 msgid "Delete Plugin"
-msgstr "Plugin törlése"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:485
 msgid "Deleting this plugin configuration will remove all associated settings and data. Are you sure you want to delete this plugin?"
-msgstr "A bővítmény konfiguráció törlése eltávolít minden beállítást és adatot. Biztos benne, hogy törölni akarja ezt a bővítményt?"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:498
 msgid "Plugins reloaded"
-msgstr "Bővítmények újratöltve"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:499
 msgid "Plugins were reloaded successfully"
-msgstr "Bővítmények újratöltése sikeres"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:515
 msgid "Reload Plugins"
-msgstr "Bővítmények újratöltése"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:524
 msgid "Install Plugin"
-msgstr "Bővítmény telepítése"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:544
 msgid "Plugin Detail"
-msgstr "Bővítmény részletek"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:573
 msgid "Sample"
-msgstr "Minta"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:578
 #: src/tables/stock/StockItemTable.tsx:305
 msgid "Installed"
-msgstr "Telepítve"
+msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:615
 #~ msgid "Plugin detail"
@@ -6139,39 +6139,39 @@ msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:86
 msgid "Part Description"
-msgstr "Alkatrész leírása"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:113
 msgid "Total Quantity"
-msgstr "Teljes mennyiség"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:129
 msgid "Received"
-msgstr "Fogadott"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:148
 msgid "Supplier Code"
-msgstr "Beszállítói kód"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:155
 msgid "Supplier Link"
-msgstr "Beszállítói link"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:162
 msgid "Manufacturer Code"
-msgstr "Gyártói kód"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:176
 msgid "Destination"
-msgstr "Cél"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:198
 msgid "Add Line Item"
-msgstr "Sortétel hozzáadása"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:215
 msgid "Edit Line Item"
-msgstr "Sortétel szerkesztése"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:223
 msgid "Delete Line Item"
@@ -6179,31 +6179,31 @@ msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:234
 msgid "Receive line item"
-msgstr "Sortétel bevételezése"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:272
 msgid "Add line item"
-msgstr "Sortétel hozzáadása"
+msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:282
 msgid "Receive items"
-msgstr "Bevételezés"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:93
 msgid "MPN"
-msgstr "MPN (Gyártói cikkszám)"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:122
 msgid "Base units"
-msgstr "Egység"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:170
 msgid "Supplier part created"
-msgstr "Beszállítói alkatrész létrehozva"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:176
 msgid "Add supplier part"
-msgstr "Beszállítói alkatrész hozzáadása"
+msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:188
 msgid "Show active supplier parts"
@@ -6239,23 +6239,23 @@ msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:218
 msgid "Delete Supplier Part"
-msgstr "Beszállítói alkatrész törlése"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:28
 msgid "Rate"
-msgstr "Árfolyam"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:40
 msgid "Exchange rates updated"
-msgstr "Árfolyamok frissítve"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:46
 msgid "Exchange rate update error"
-msgstr "Árfolyam frissítési hiba"
+msgstr ""
 
 #: src/tables/settings/CurrencyTable.tsx:57
 msgid "Refresh currency exchange rates"
-msgstr "Árfolyam frissítés"
+msgstr ""
 
 #: src/tables/settings/CustomUnitsTable.tsx:50
 msgid "Add Custom Unit"
@@ -6271,7 +6271,7 @@ msgstr ""
 
 #: src/tables/settings/CustomUnitsTable.tsx:100
 msgid "Add custom unit"
-msgstr "Egyedi mértékegység hozzáadása"
+msgstr ""
 
 #: src/tables/settings/ErrorTable.tsx:29
 msgid "When"
@@ -6340,24 +6340,24 @@ msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:126
 msgid "Delete group"
-msgstr "Csoport törlése"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:127
 msgid "Group deleted"
-msgstr "Csoport törölve"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:129
 msgid "Are you sure you want to delete this group?"
-msgstr "Biztos, hogy törölni szeretné ezt a csoportot?"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:134
 #: src/tables/settings/GroupTable.tsx:146
 msgid "Add group"
-msgstr "Csoport hozzáadása"
+msgstr ""
 
 #: src/tables/settings/GroupTable.tsx:158
 msgid "Edit group"
-msgstr "Csoport szerkesztése"
+msgstr ""
 
 #: src/tables/settings/PendingTasksTable.tsx:36
 msgid "Arguments"
@@ -6377,7 +6377,7 @@ msgstr ""
 
 #: src/tables/settings/ProjectCodeTable.tsx:94
 msgid "Add project code"
-msgstr "Projekt kód hozzáadása"
+msgstr ""
 
 #: src/tables/settings/ScheduledTasksTable.tsx:25
 msgid "Last Run"
@@ -6474,11 +6474,11 @@ msgstr ""
 
 #: src/tables/settings/UserTable.tsx:105
 msgid "Designates whether the user can log into the django admin site."
-msgstr "Megadja, hogy a felhasználó bejelentkezhet-e erre a django adminisztrátor webhelyre."
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:109
 msgid "Is Superuser"
-msgstr "Rendszergazda"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:110
 msgid "Designates that this user has all permissions without explicitly assigning them."
@@ -6490,32 +6490,32 @@ msgstr ""
 
 #: src/tables/settings/UserTable.tsx:151
 msgid "No groups"
-msgstr "Nincsenek csoportok"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:231
 msgid "Delete user"
-msgstr "Felhasználó törlése"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:232
 msgid "User deleted"
-msgstr "Felhasználó törölve"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:234
 msgid "Are you sure you want to delete this user?"
-msgstr "Biztosan törli ezt a felhasználót?"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:240
 #: src/tables/settings/UserTable.tsx:258
 msgid "Add user"
-msgstr "Felhasználó hozzáadása"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:248
 msgid "Added user"
-msgstr "Felhasználó hozzáadása sikeres"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:270
 msgid "Edit user"
-msgstr "Felhasználó szerkesztése"
+msgstr ""
 
 #: src/tables/stock/LocationTypesTable.tsx:36
 #: src/tables/stock/LocationTypesTable.tsx:105
@@ -6536,43 +6536,43 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:90
 msgid "This stock item is in production"
-msgstr "Ez a készlet tétel gyártásban van"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:99
 msgid "This stock item has been assigned to a sales order"
-msgstr "Készlet tétel hozzárendelve egy vevői rendeléshez"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:108
 msgid "This stock item has been assigned to a customer"
-msgstr "Készlet tétel hozzárendelve egy vevőhöz"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:117
 msgid "This stock item is installed in another stock item"
-msgstr "Készlet tétel beépült egy másikba"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:126
 msgid "This stock item has been consumed by a build order"
-msgstr "Készlet tétel fel lett használva egy gyártásban"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:135
 msgid "This stock item has expired"
-msgstr "Készlet tétel lejárt"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:139
 msgid "This stock item is stale"
-msgstr "Készlet tétel lejárt"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:150
 msgid "This stock item is fully allocated"
-msgstr "Készlet tétel teljesen foglalva"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:157
 msgid "This stock item is partially allocated"
-msgstr "Készlet tétel részlegesen foglalva"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:185
 msgid "This stock item has been depleted"
-msgstr "Készlet tétel elfogyott"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:255
 msgid "Show stock for active parts"
@@ -6855,15 +6855,15 @@ msgstr ""
 
 #: src/views/MobileAppView.tsx:22
 msgid "Mobile viewport detected"
-msgstr "Mobil kijelző érzékelve"
+msgstr ""
 
 #: src/views/MobileAppView.tsx:25
 msgid "Platform UI is optimized for Tablets and Desktops, you can use the official app for a mobile experience."
-msgstr "A platform felhasználói felülete táblagépekre és asztali számítógépekre van optimalizálva, a használd a hivatalos alkalmazást a mobilon."
+msgstr ""
 
 #: src/views/MobileAppView.tsx:31
 msgid "Read the docs"
-msgstr "Olvasd el a dokumentációt"
+msgstr ""
 
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
