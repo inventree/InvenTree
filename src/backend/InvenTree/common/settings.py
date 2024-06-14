@@ -6,6 +6,7 @@ def get_global_setting(key, backup_value=None, **kwargs):
     from common.models import InvenTreeSetting
 
     kwargs['backup_value'] = backup_value
+    kwargs['create'] = kwargs.get('create', False)
 
     return InvenTreeSetting.get_setting(key, **kwargs)
 
