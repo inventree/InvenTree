@@ -303,3 +303,17 @@ class PluginRelationSerializer(serializers.PrimaryKeyRelatedField):
     def to_representation(self, value):
         """Return the 'key' of the PluginConfig object."""
         return value.key
+
+
+class PluginPanelSerializer(serializers.Serializer):
+    """Serializer for a plugin panel."""
+
+    class Meta:
+        """Meta for serializer."""
+
+        fields = ['plugin', 'title', 'description', 'icon']
+
+    plugin = serializers.CharField(label=_('Plugin Key'))
+    title = serializers.CharField(label=_('Panel Title'))
+    description = serializers.CharField(label=_('Panel Description'))
+    icon = serializers.CharField(label=_('Panel Icon'))

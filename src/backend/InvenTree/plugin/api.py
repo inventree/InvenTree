@@ -9,6 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -410,6 +411,24 @@ class RegistryStatusView(APIView):
         return Response(result)
 
 
+class PluginPanelList(APIView):
+    """API endpoint for listing all available plugin panels."""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = PluginSerializers.PluginPanelSerializer
+
+    @extend_schema(responses={200: PluginSerializers.PluginPanelSerializer(many=True)})
+    def get(self, request):
+        """Show available plugin panels."""
+        panels = []
+
+        # Extract all plugins from the registry which provide custom panels
+        for _plugin in registry.with_mixin('panel', active=True):
+            ...
+
+        return Response(PluginSerializers.PluginPanelSerializer(panels, many=True).data)
+
+
 plugin_api_urls = [
     path('action/', ActionPluginView.as_view(), name='api-action-plugin'),
     path('barcode/', include(barcode_api_urls)),
@@ -417,6 +436,12 @@ plugin_api_urls = [
     path(
         'plugins/',
         include([
+            path(
+                'panel/',
+                include([
+                    path('', PluginPanelList.as_view(), name='api-plugin-panel-list')
+                ]),
+            ),
             # Plugin management
             path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
             path('install/', PluginInstall.as_view(), name='api-plugin-install'),
