@@ -29,7 +29,7 @@ class InvenTreeExchange(SimpleExchangeBackend):
         symbols = kwargs.get('symbols', currency_codes())
 
         # Find the selected exchange rate plugin
-        slug = get_global_setting('CURRENCY_UPDATE_PLUGIN', '', create=False)
+        slug = get_global_setting('CURRENCY_UPDATE_PLUGIN', create=False)
 
         if slug:
             plugin = registry.get_plugin(slug)
