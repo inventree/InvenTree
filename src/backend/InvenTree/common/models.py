@@ -564,13 +564,13 @@ class BaseInvenTreeSetting(models.Model):
         # Specify if cache lookup should be performed
         do_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
 
-        # Prevent saving to the database during data import
-        if InvenTree.ready.isImportingData():
-            create = False
-            do_cache = False
-
-        # Prevent saving to the database during migrations
-        if InvenTree.ready.isRunningMigrations():
+        # Prevent saving to the database during certain operations
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
             create = False
             do_cache = False
 
