@@ -12,6 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.test.utils import override_settings
@@ -56,6 +57,49 @@ class AttachmentTest(InvenTreeTestCase):
 
         return ContentFile(file_object.getvalue(), fn)
 
+    def test_filename_validation(self):
+        """Test that the filename validation works as expected.
+
+        The django file-upload mechanism should sanitize filenames correctly.
+        """
+        part = Part.objects.first()
+
+        filenames = {
+            'test.txt': 'test.txt',
+            'r####at.mp4': 'rat.mp4',
+            '../../../win32.dll': 'win32.dll',
+            'ABC!@#$%^&&&&&&&)-XYZ-(**&&&\\/QqQ.sqlite': 'QqQ.sqlite',
+            '/var/log/inventree.log': 'inventree.log',
+            'c:\\Users\\admin\\passwd.txt': 'cUsersadminpasswd.txt',
+            '8&&&8.txt': '88.txt',
+        }
+
+        for fn, expected in filenames.items():
+            attachment = Attachment.objects.create(
+                attachment=self.generate_file(fn),
+                comment=f'Testing filename: {fn}',
+                model_type='part',
+                model_id=part.pk,
+            )
+
+            expected_path = f'attachments/part/{part.pk}/{expected}'
+            self.assertEqual(attachment.attachment.name, expected_path)
+
+        self.assertEqual(part.attachments.count(), len(filenames.keys()))
+
+        # Delete any attachments after the test is completed
+        for attachment in part.attachments.all():
+            path = attachment.attachment.name
+            attachment.delete()
+
+            # Remove uploaded files to prevent them sticking around
+            if default_storage.exists(path):
+                default_storage.delete(path)
+
+        self.assertEqual(
+            Attachment.objects.filter(model_type='part', model_id=part.pk).count(), 0
+        )
+
     def test_mixin(self):
         """Test that the mixin class works as expected."""
         part = Part.objects.first()
@@ -71,7 +115,7 @@ class AttachmentTest(InvenTreeTestCase):
         attachment = part.attachments.first()
 
         self.assertEqual(attachment.comment, 'Hello world')
-        self.assertIn('attachments/part/1/test', attachment.attachment.name)
+        self.assertIn(f'attachments/part/{part.pk}/test', attachment.attachment.name)
 
 
 class SettingsTest(InvenTreeTestCase):

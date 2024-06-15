@@ -3077,6 +3077,12 @@ def rename_attachment(instance, filename):
     Returns:
         - The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'
     """
+    # Remove any illegal characters from the filename
+    illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
+
+    for c in illegal_chars:
+        filename = filename.replace(c, '')
+
     filename = os.path.basename(filename)
 
     # Generate a new filename for the attachment
