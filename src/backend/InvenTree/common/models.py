@@ -597,33 +597,21 @@ class BaseInvenTreeSetting(models.Model):
             setting = None
 
         # Setting does not exist! (Try to create it)
-        if not setting:
-            # Prevent creation of new settings objects when importing data
-            if (
-                InvenTree.ready.isImportingData()
-                or not InvenTree.ready.canAppAccessDatabase(
-                    allow_test=True, allow_shell=True
-                )
-            ):
-                create = False
+        if not setting and create:
+            # Attempt to create a new settings object
+            default_value = cls.get_setting_default(key, **kwargs)
+            setting = cls(key=key, value=default_value, **kwargs)
 
-            if create:
-                # Attempt to create a new settings object
-
-                default_value = cls.get_setting_default(key, **kwargs)
-
-                setting = cls(key=key, value=default_value, **kwargs)
-
-                try:
-                    # Wrap this statement in "atomic", so it can be rolled back if it fails
-                    with transaction.atomic():
-                        setting.save(**kwargs)
-                except (IntegrityError, OperationalError, ProgrammingError):
-                    # It might be the case that the database isn't created yet
-                    pass
-                except ValidationError:
-                    # The setting failed validation - might be due to duplicate keys
-                    pass
+            try:
+                # Wrap this statement in "atomic", so it can be rolled back if it fails
+                with transaction.atomic():
+                    setting.save(**kwargs)
+            except (IntegrityError, OperationalError, ProgrammingError):
+                # It might be the case that the database isn't created yet
+                pass
+            except ValidationError:
+                # The setting failed validation - might be due to duplicate keys
+                pass
 
         if setting and do_cache:
             # Cache this setting object
