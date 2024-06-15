@@ -552,17 +552,17 @@ class BaseInvenTreeSetting(models.Model):
         """
         key = str(key).strip().upper()
 
-        filters = {
-            'key__iexact': key,
-            # Optionally filter by other keys
-            **cls.get_filters(**kwargs),
-        }
-
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
         # Specify if cache lookup should be performed
         do_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
+
+        filters = {
+            'key__iexact': key,
+            # Optionally filter by other keys
+            **cls.get_filters(**kwargs),
+        }
 
         # Prevent saving to the database during certain operations
         if (
