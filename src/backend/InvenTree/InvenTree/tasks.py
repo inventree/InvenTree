@@ -26,6 +26,7 @@ from maintenance_mode.core import (
     set_maintenance_mode,
 )
 
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
 from plugin import registry
 
@@ -90,7 +91,6 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     Note that this function creates some *hidden* global settings (designated with the _ prefix),
     which are used to keep a running track of when the particular task was was last run.
     """
-    from common.models import InvenTreeSetting
     from InvenTree.ready import isInTestMode
 
     if n_days <= 0:
@@ -107,7 +107,7 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     success_key = f'_{task_name}_SUCCESS'
 
     # Check for recent success information
-    last_success = InvenTreeSetting.get_setting(success_key, '', cache=False)
+    last_success = get_global_setting(success_key, '', cache=False)
 
     if last_success:
         try:
@@ -125,7 +125,7 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
             return False
 
     # Check for any information we have about this task
-    last_attempt = InvenTreeSetting.get_setting(attempt_key, '', cache=False)
+    last_attempt = get_global_setting(attempt_key, '', cache=False)
 
     if last_attempt:
         try:
@@ -152,22 +152,14 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
 
 def record_task_attempt(task_name: str):
     """Record that a multi-day task has been attempted *now*."""
-    from common.models import InvenTreeSetting
-
     logger.info("Logging task attempt for '%s'", task_name)
 
-    InvenTreeSetting.set_setting(
-        f'_{task_name}_ATTEMPT', datetime.now().isoformat(), None
-    )
+    set_global_setting(f'_{task_name}_ATTEMPT', datetime.now().isoformat(), None)
 
 
 def record_task_success(task_name: str):
     """Record that a multi-day task was successful *now*."""
-    from common.models import InvenTreeSetting
-
-    InvenTreeSetting.set_setting(
-        f'_{task_name}_SUCCESS', datetime.now().isoformat(), None
-    )
+    set_global_setting(f'_{task_name}_SUCCESS', datetime.now().isoformat(), None)
 
 
 def offload_task(
@@ -380,9 +372,7 @@ def delete_successful_tasks():
     try:
         from django_q.models import Success
 
-        from common.models import InvenTreeSetting
-
-        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
+        days = get_global_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
         threshold = timezone.now() - timedelta(days=days)
 
         # Delete successful tasks
@@ -404,9 +394,7 @@ def delete_failed_tasks():
     try:
         from django_q.models import Failure
 
-        from common.models import InvenTreeSetting
-
-        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
+        days = get_global_setting('INVENTREE_DELETE_TASKS_DAYS', 30)
         threshold = timezone.now() - timedelta(days=days)
 
         # Delete failed tasks
@@ -426,9 +414,7 @@ def delete_old_error_logs():
     try:
         from error_report.models import Error
 
-        from common.models import InvenTreeSetting
-
-        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_ERRORS_DAYS', 30)
+        days = get_global_setting('INVENTREE_DELETE_ERRORS_DAYS', 30)
         threshold = timezone.now() - timedelta(days=days)
 
         errors = Error.objects.filter(when__lte=threshold)
@@ -448,13 +434,9 @@ def delete_old_error_logs():
 def delete_old_notifications():
     """Delete old notification logs."""
     try:
-        from common.models import (
-            InvenTreeSetting,
-            NotificationEntry,
-            NotificationMessage,
-        )
+        from common.models import NotificationEntry, NotificationMessage
 
-        days = InvenTreeSetting.get_setting('INVENTREE_DELETE_NOTIFICATIONS_DAYS', 30)
+        days = get_global_setting('INVENTREE_DELETE_NOTIFICATIONS_DAYS', 30)
         threshold = timezone.now() - timedelta(days=days)
 
         items = NotificationEntry.objects.filter(updated__lte=threshold)
@@ -479,7 +461,6 @@ def delete_old_notifications():
 def check_for_updates():
     """Check if there is an update for InvenTree."""
     try:
-        import common.models
         from common.notifications import trigger_superuser_notification
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
@@ -487,9 +468,7 @@ def check_for_updates():
         return
 
     interval = int(
-        common.models.InvenTreeSetting.get_setting(
-            'INVENTREE_UPDATE_CHECK_INTERVAL', 7, cache=False
-        )
+        get_global_setting('INVENTREE_UPDATE_CHECK_INTERVAL', 7, cache=False)
     )
 
     # Check if we should check for updates *today*
@@ -538,7 +517,7 @@ def check_for_updates():
     logger.info("Latest InvenTree version: '%s'", tag)
 
     # Save the version to the database
-    common.models.InvenTreeSetting.set_setting('_INVENTREE_LATEST_VERSION', tag, None)
+    set_global_setting('_INVENTREE_LATEST_VERSION', tag, None)
 
     # Record that this task was successful
     record_task_success('check_for_updates')
@@ -572,7 +551,6 @@ def update_exchange_rates(force: bool = False):
         from djmoney.contrib.exchange.models import Rate
 
         from common.currency import currency_code_default, currency_codes
-        from common.models import InvenTreeSetting
         from InvenTree.exchange import InvenTreeExchange
     except AppRegistryNotReady:  # pragma: no cover
         # Apps not yet loaded!
@@ -585,9 +563,7 @@ def update_exchange_rates(force: bool = False):
         return
 
     if not force:
-        interval = int(
-            InvenTreeSetting.get_setting('CURRENCY_UPDATE_INTERVAL', 1, cache=False)
-        )
+        interval = int(get_global_setting('CURRENCY_UPDATE_INTERVAL', 1, cache=False))
 
         if not check_daily_holdoff('update_exchange_rates', interval):
             logger.info('Skipping exchange rate update (interval not reached)')
@@ -617,15 +593,11 @@ def update_exchange_rates(force: bool = False):
 @scheduled_task(ScheduledTask.DAILY)
 def run_backup():
     """Run the backup command."""
-    from common.models import InvenTreeSetting
-
-    if not InvenTreeSetting.get_setting('INVENTREE_BACKUP_ENABLE', False, cache=False):
+    if not get_global_setting('INVENTREE_BACKUP_ENABLE', False, cache=False):
         # Backups are not enabled - exit early
         return
 
-    interval = int(
-        InvenTreeSetting.get_setting('INVENTREE_BACKUP_DAYS', 1, cache=False)
-    )
+    interval = int(get_global_setting('INVENTREE_BACKUP_DAYS', 1, cache=False))
 
     # Check if should run this task *today*
     if not check_daily_holdoff('run_backup', interval):
@@ -655,13 +627,12 @@ def check_for_migrations(force: bool = False, reload_registry: bool = True):
 
     If the setting auto_update is enabled we will start updating.
     """
-    from common.models import InvenTreeSetting
     from plugin import registry
 
     def set_pending_migrations(n: int):
         """Helper function to inform the user about pending migrations."""
         logger.info('There are %s pending migrations', n)
-        InvenTreeSetting.set_setting('_PENDING_MIGRATIONS', n, None)
+        set_global_setting('_PENDING_MIGRATIONS', n, None)
 
     logger.info('Checking for pending database migrations')
 

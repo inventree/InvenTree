@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-09 22:50\n"
+"PO-Revision-Date: 2024-06-12 23:00\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -271,11 +271,11 @@ msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Edit Notes"
-msgstr ""
+msgstr "Redigera anteckningar"
 
 #: src/components/editors/NotesEditor.tsx:207
 msgid "Save Notes"
-msgstr ""
+msgstr "Spara anteckningar"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
@@ -1377,12 +1377,12 @@ msgstr "Användare"
 
 #: src/components/render/ModelType.tsx:200
 msgid "Label Template"
-msgstr ""
+msgstr "Etikettmall"
 
 #: src/components/render/ModelType.tsx:201
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:135
 msgid "Label Templates"
-msgstr ""
+msgstr "Etikettmallar"
 
 #: src/components/render/ModelType.tsx:207
 msgid "Report Template"
@@ -1992,42 +1992,46 @@ msgid "Portuguese (Brazilian)"
 msgstr ""
 
 #: src/contexts/LanguageContext.tsx:43
+msgid "Romanian"
+msgstr "Rumänska"
+
+#: src/contexts/LanguageContext.tsx:44
 msgid "Russian"
 msgstr "Ryska"
 
-#: src/contexts/LanguageContext.tsx:44
+#: src/contexts/LanguageContext.tsx:45
 msgid "Slovak"
 msgstr "Slovakiska"
 
-#: src/contexts/LanguageContext.tsx:45
+#: src/contexts/LanguageContext.tsx:46
 msgid "Slovenian"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:46
+#: src/contexts/LanguageContext.tsx:47
 msgid "Swedish"
 msgstr "Svenska"
 
-#: src/contexts/LanguageContext.tsx:47
+#: src/contexts/LanguageContext.tsx:48
 msgid "Thai"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:48
+#: src/contexts/LanguageContext.tsx:49
 msgid "Turkish"
 msgstr "Turkiska"
 
-#: src/contexts/LanguageContext.tsx:49
+#: src/contexts/LanguageContext.tsx:50
 msgid "Ukrainian"
 msgstr "Ukrainska"
 
-#: src/contexts/LanguageContext.tsx:50
+#: src/contexts/LanguageContext.tsx:51
 msgid "Vietnamese"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:51
+#: src/contexts/LanguageContext.tsx:52
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: src/contexts/LanguageContext.tsx:52
+#: src/contexts/LanguageContext.tsx:53
 msgid "Chinese (Traditional)"
 msgstr ""
 
@@ -6414,15 +6418,15 @@ msgstr ""
 #: src/tables/settings/TemplateTable.tsx:222
 #: src/tables/settings/TemplateTable.tsx:289
 msgid "Edit Template"
-msgstr ""
+msgstr "Redigera mall"
 
 #: src/tables/settings/TemplateTable.tsx:230
 msgid "Delete template"
-msgstr ""
+msgstr "Radera mall"
 
 #: src/tables/settings/TemplateTable.tsx:236
 msgid "Add Template"
-msgstr ""
+msgstr "Lägg till mall"
 
 #: src/tables/settings/TemplateTable.tsx:243
 #~ msgid "Add new"
@@ -6434,7 +6438,7 @@ msgstr ""
 
 #: src/tables/settings/TemplateTable.tsx:249
 msgid "Add template"
-msgstr ""
+msgstr "Lägg till mall"
 
 #: src/tables/settings/TemplateTable.tsx:271
 msgid "Filter by enabled status"

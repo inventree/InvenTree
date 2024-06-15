@@ -22,6 +22,7 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
+from common.settings import get_global_setting
 from generic.states.api import AllStatusViews, StatusView
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
@@ -149,7 +150,7 @@ class CurrencyExchangeView(APIView):
             updated = None
 
         response = {
-            'base_currency': common.models.InvenTreeSetting.get_setting(
+            'base_currency': get_global_setting(
                 'INVENTREE_DEFAULT_CURRENCY', backup_value='USD'
             ),
             'exchange_rates': {},

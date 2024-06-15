@@ -1,7 +1,7 @@
 """JSON serializers for Stock app."""
 
 import logging
-from datetime import datetime, timedelta
+from datetime import timedelta
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -16,7 +16,6 @@ from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
 import build.models
-import common.models
 import company.models
 import InvenTree.helpers
 import InvenTree.serializers
@@ -25,6 +24,7 @@ import part.filters as part_filters
 import part.models as part_models
 import stock.filters
 import stock.status_codes
+from common.settings import get_global_setting
 from company.serializers import SupplierPartSerializer
 from importer.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
@@ -482,7 +482,7 @@ class StockItemSerializer(
         )
 
         # Add flag to indicate if the StockItem is stale
-        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+        stale_days = get_global_setting('STOCK_STALE_DAYS')
         stale_date = InvenTree.helpers.current_date() + timedelta(days=stale_days)
         stale_filter = (
             StockItem.IN_STOCK_FILTER
@@ -738,7 +738,7 @@ class InstallStockItemSerializer(serializers.Serializer):
         parent_item = self.context['item']
         parent_part = parent_item.part
 
-        if common.models.InvenTreeSetting.get_setting(
+        if get_global_setting(
             'STOCK_ENFORCE_BOM_INSTALLATION', backup_value=True, cache=False
         ):
             # Check if the selected part is in the Bill of Materials of the parent item

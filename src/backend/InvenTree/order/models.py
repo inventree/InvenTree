@@ -35,6 +35,7 @@ import stock.models
 import users.models as UserModels
 from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
+from common.settings import get_global_setting
 from company.models import Address, Company, Contact, SupplierPart
 from generic.states import StateTransitionMixin
 from InvenTree.exceptions import log_error
@@ -44,7 +45,7 @@ from InvenTree.fields import (
     RoundingDecimalField,
 )
 from InvenTree.helpers import decimal2string, pui_url
-from InvenTree.helpers_model import getSetting, notify_responsible
+from InvenTree.helpers_model import notify_responsible
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -232,9 +233,7 @@ class Order(
 
         # Check if a responsible owner is required for this order type
         if self.REQUIRE_RESPONSIBLE_SETTING:
-            if common_models.InvenTreeSetting.get_setting(
-                self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False
-            ):
+            if get_global_setting(self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False):
                 if not self.responsible:
                     raise ValidationError({
                         'responsible': _('Responsible user or group must be specified')
@@ -820,9 +819,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         # Has this order been completed?
         if len(self.pending_line_items()) == 0:
-            if common_models.InvenTreeSetting.get_setting(
-                'PURCHASEORDER_AUTO_COMPLETE', True
-            ):
+            if get_global_setting('PURCHASEORDER_AUTO_COMPLETE', True):
                 self.received_by = user
                 self.complete_order()  # This will save the model
 
@@ -1073,7 +1070,7 @@ class SalesOrder(TotalPriceMixin, Order):
             return False
 
         bypass_shipped = InvenTree.helpers.str2bool(
-            common_models.InvenTreeSetting.get_setting('SALESORDER_SHIP_COMPLETE')
+            get_global_setting('SALESORDER_SHIP_COMPLETE')
         )
 
         if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
@@ -1231,7 +1228,7 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
     if created:
         # A new SalesOrder has just been created
 
-        if getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+        if get_global_setting('SALESORDER_DEFAULT_SHIPMENT'):
             # Create default shipment
             SalesOrderShipment.objects.create(order=instance, reference='1')
 
