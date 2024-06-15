@@ -502,7 +502,7 @@ class PrintTestMixins:
             },
             expected_code=201,
             max_query_time=15,
-            max_query_count=1000,  # TODO: Should look into this
+            max_query_count=500 * qs.objects.count(),
         )
 
 
