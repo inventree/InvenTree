@@ -524,6 +524,23 @@ class InvenTreeAttachmentMixin:
         """Return a queryset containing all attachments for this model."""
         return self.attachments_for_model().filter(model_id=self.pk)
 
+    @classmethod
+    def check_attachment_permission(cls, permission, user) -> bool:
+        """Check if the user has permission to perform the specified action on the attachment.
+
+        The default implementation runs a permission check against *this* model class,
+        but this can be overridden in the implementing class if required.
+
+        Arguments:
+            permission: The permission to check (add / change / view / delete)
+            user: The user to check against
+
+        Returns:
+            bool: True if the user has permission, False otherwise
+        """
+        perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
+        return user.has_perm(perm)
+
     def attachments_for_model(self):
         """Return all attachments for this model class."""
         from common.models import Attachment
