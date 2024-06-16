@@ -391,6 +391,31 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         """
         extra_kwargs = {'use_pack_size': {'write_only': True}}
 
+    def __init__(self, *args, **kwargs):
+        """Add detail fields."""
+        part_detail = kwargs.pop('part_detail', False)
+        location_detail = kwargs.pop('location_detail', False)
+        supplier_part_detail = kwargs.pop('supplier_part_detail', False)
+        tests = kwargs.pop('tests', False)
+        path_detail = kwargs.pop('path_detail', False)
+
+        super(StockItemSerializer, self).__init__(*args, **kwargs)
+
+        if not part_detail:
+            self.fields.pop('part_detail')
+
+        if not location_detail:
+            self.fields.pop('location_detail')
+
+        if not supplier_part_detail:
+            self.fields.pop('supplier_part_detail')
+
+        if not tests:
+            self.fields.pop('tests')
+
+        if not path_detail:
+            self.fields.pop('location_path')
+
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
         many=False,
@@ -546,31 +571,6 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     )
 
     tags = TagListSerializerField(required=False)
-
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
-        part_detail = kwargs.pop('part_detail', False)
-        location_detail = kwargs.pop('location_detail', False)
-        supplier_part_detail = kwargs.pop('supplier_part_detail', False)
-        tests = kwargs.pop('tests', False)
-        path_detail = kwargs.pop('path_detail', False)
-
-        super(StockItemSerializer, self).__init__(*args, **kwargs)
-
-        if not part_detail:
-            self.fields.pop('part_detail')
-
-        if not location_detail:
-            self.fields.pop('location_detail')
-
-        if not supplier_part_detail:
-            self.fields.pop('supplier_part_detail')
-
-        if not tests:
-            self.fields.pop('tests')
-
-        if not path_detail:
-            self.fields.pop('location_path')
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
