@@ -1386,6 +1386,22 @@ class StockTrackingList(ListAPI):
 
         return self.serializer_class(*args, **kwargs)
 
+    def get_delta_model_map(self) -> dict:
+        """Return a mapping of delta models to their respective models and serializers.
+
+        This is used to generate additional context information for the historical data,
+        with some attempt at caching so that we can reduce the number of database hits.
+        """
+        return {
+            'part': (Part, PartBriefSerializer),
+            'location': (StockLocation, StockSerializers.LocationSerializer),
+            'customer': (Company, CompanySerializer),
+            'purchaseorder': (PurchaseOrder, PurchaseOrderSerializer),
+            'salesorder': (SalesOrder, SalesOrderSerializer),
+            'returnorder': (ReturnOrder, ReturnOrderSerializer),
+            'buildorder': (Build, BuildSerializer),
+        }
+
     def list(self, request, *args, **kwargs):
         """List all stock tracking entries."""
         queryset = self.filter_queryset(self.get_queryset())
@@ -1399,84 +1415,36 @@ class StockTrackingList(ListAPI):
 
         data = serializer.data
 
-        # Attempt to add extra context information to the historical data
+        delta_models = self.get_delta_model_map()
+
+        # Construct a set of related models we need to lookup for later
+        related_model_lookups = {key: set() for key in delta_models.keys()}
+
+        # Run a first pass through the data to determine which related models we need to lookup
         for item in data:
             deltas = item['deltas']
 
-            if not deltas:
-                deltas = {}
+            for key in delta_models.keys():
+                if key in deltas:
+                    related_model_lookups[key].add(deltas[key])
 
-            # Add part detail
-            if 'part' in deltas:
-                try:
-                    part = Part.objects.get(pk=deltas['part'])
-                    serializer = PartBriefSerializer(part)
-                    deltas['part_detail'] = serializer.data
-                except Exception:
-                    pass
+        for key in delta_models.keys():
+            model, serializer = delta_models[key]
 
-            # Add location detail
-            if 'location' in deltas:
-                try:
-                    location = StockLocation.objects.get(pk=deltas['location'])
-                    serializer = StockSerializers.LocationSerializer(location)
-                    deltas['location_detail'] = serializer.data
-                except Exception:
-                    pass
+            # Fetch all related models in one go
+            related_models = model.objects.filter(pk__in=related_model_lookups[key])
 
-            # Add stockitem detail
-            if 'stockitem' in deltas:
-                try:
-                    stockitem = StockItem.objects.get(pk=deltas['stockitem'])
-                    serializer = StockSerializers.StockItemSerializer(stockitem)
-                    deltas['stockitem_detail'] = serializer.data
-                except Exception:
-                    pass
+            # Construct a mapping of pk -> serialized data
+            related_data = {obj.pk: serializer(obj).data for obj in related_models}
 
-            # Add customer detail
-            if 'customer' in deltas:
-                try:
-                    customer = Company.objects.get(pk=deltas['customer'])
-                    serializer = CompanySerializer(customer)
-                    deltas['customer_detail'] = serializer.data
-                except Exception:
-                    pass
+            # Now, update the data with the serialized data
+            for item in data:
+                deltas = item['deltas']
 
-            # Add PurchaseOrder detail
-            if 'purchaseorder' in deltas:
-                try:
-                    order = PurchaseOrder.objects.get(pk=deltas['purchaseorder'])
-                    serializer = PurchaseOrderSerializer(order)
-                    deltas['purchaseorder_detail'] = serializer.data
-                except Exception:
-                    pass
-
-            # Add SalesOrder detail
-            if 'salesorder' in deltas:
-                try:
-                    order = SalesOrder.objects.get(pk=deltas['salesorder'])
-                    serializer = SalesOrderSerializer(order)
-                    deltas['salesorder_detail'] = serializer.data
-                except Exception:
-                    pass
-
-            # Add ReturnOrder detail
-            if 'returnorder' in deltas:
-                try:
-                    order = ReturnOrder.objects.get(pk=deltas['returnorder'])
-                    serializer = ReturnOrderSerializer(order)
-                    deltas['returnorder_detail'] = serializer.data
-                except Exception:
-                    pass
-
-            # Add BuildOrder detail
-            if 'buildorder' in deltas:
-                try:
-                    order = Build.objects.get(pk=deltas['buildorder'])
-                    serializer = BuildSerializer(order)
-                    deltas['buildorder_detail'] = serializer.data
-                except Exception:
-                    pass
+                if key in deltas:
+                    item['deltas'][f'{key}_detail'] = related_data.get(
+                        deltas[key], None
+                    )
 
         if page is not None:
             return self.get_paginated_response(data)
