@@ -59,7 +59,7 @@ def convert_legacy_labels(table_name, model_name, template_model):
         }
 
         for field in non_null_fields:
-            if data[field] is None:
+            if data.get(field, None) is None:
                 data[field] = ''
 
         # Skip any "builtin" labels
