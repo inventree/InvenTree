@@ -11,22 +11,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='returnorderattachment',
-            name='order',
-        ),
-        migrations.RemoveField(
-            model_name='returnorderattachment',
-            name='user',
-        ),
-        migrations.RemoveField(
-            model_name='salesorderattachment',
-            name='order',
-        ),
-        migrations.RemoveField(
-            model_name='salesorderattachment',
-            name='user',
-        ),
         migrations.DeleteModel(
             name='PurchaseOrderAttachment',
         ),
