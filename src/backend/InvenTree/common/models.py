@@ -685,6 +685,15 @@ class BaseInvenTreeSetting(models.Model):
         if change_user is not None and not change_user.is_staff:
             return
 
+        # Do not write to the database under certain conditions
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
+            return
+
         attempts = int(kwargs.get('attempts', 3))
 
         filters = {
