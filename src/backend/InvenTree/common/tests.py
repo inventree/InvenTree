@@ -45,7 +45,7 @@ from .models import (
 CONTENT_TYPE_JSON = 'application/json'
 
 
-class AttachmentTest(InvenTreeTestCase):
+class AttachmentTest(InvenTreeAPITestCase):
     """Unit tests for the 'Attachment' model."""
 
     fixtures = ['part', 'category', 'location']
@@ -116,6 +116,45 @@ class AttachmentTest(InvenTreeTestCase):
 
         self.assertEqual(attachment.comment, 'Hello world')
         self.assertIn(f'attachments/part/{part.pk}/test', attachment.attachment.name)
+
+    def test_upload_via_api(self):
+        """Test that we can upload attachments via the API."""
+        part = Part.objects.first()
+        url = reverse('api-attachment-list')
+
+        data = {
+            'model_type': 'part',
+            'model_id': part.pk,
+            'link': 'https://www.google.com',
+            'comment': 'Some appropriate comment',
+        }
+
+        # Start without appropriate permissions
+        # User must have 'part.change' to upload an attachment against a Part instance
+        self.logout()
+        self.user.is_staff = False
+        self.user.is_superuser = False
+        self.user.save()
+        self.clearRoles()
+
+        # Check without login (401)
+        response = self.post(url, data, expected_code=401)
+
+        self.login()
+
+        response = self.post(url, data, expected_code=403)
+
+        self.assertIn(
+            'User does not have permission to create or edit attachments for this model',
+            str(response.data['detail']),
+        )
+
+        # Add the required permission
+        self.assignRole('part.change')
+        self.logout()
+        self.login()
+
+        response = self.post(url, data, expected_code=201)
 
 
 class SettingsTest(InvenTreeTestCase):

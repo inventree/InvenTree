@@ -551,7 +551,9 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         # Check that the user has the required permissions to attach files to the target model
         if not target_model_class.check_attachment_permission('change', user):
             raise PermissionDenied(
-                _('User does not have permission to attach files to this model')
+                _(
+                    'User does not have permission to create or edit attachments for this model'
+                )
             )
 
         return super().save()

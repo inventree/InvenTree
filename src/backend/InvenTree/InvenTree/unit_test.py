@@ -153,6 +153,17 @@ class UserMixin:
         self.client.logout()
 
     @classmethod
+    def clearRoles(cls):
+        """Remove all user roles from the registered user."""
+        for ruleset in cls.group.rule_sets.all():
+            ruleset.can_view = False
+            ruleset.can_change = False
+            ruleset.can_delete = False
+            ruleset.can_add = False
+
+            ruleset.save()
+
+    @classmethod
     def assignRole(cls, role=None, assign_all: bool = False, group=None):
         """Set the user roles for the registered user.
 
