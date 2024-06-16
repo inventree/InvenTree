@@ -151,10 +151,22 @@ class AttachmentTest(InvenTreeAPITestCase):
 
         # Add the required permission
         self.assignRole('part.change')
-        self.logout()
-        self.login()
 
+        # Upload should now work!
         response = self.post(url, data, expected_code=201)
+
+        # Try to delete the attachment via API (should fail)
+        attachment = part.attachments.first()
+        url = reverse('api-attachment-detail', kwargs={'pk': attachment.pk})
+        response = self.delete(url, expected_code=403)
+        self.assertIn(
+            'User does not have permission to delete this attachment',
+            str(response.data['detail']),
+        )
+
+        # Assign 'delete' permission to 'part' model
+        self.assignRole('part.delete')
+        response = self.delete(url, expected_code=204)
 
 
 class SettingsTest(InvenTreeTestCase):

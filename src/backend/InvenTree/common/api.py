@@ -18,7 +18,7 @@ from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
 from rest_framework import permissions, serializers
-from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -729,6 +729,17 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        """Check user permissions before deleting an attachment."""
+        attachment = self.get_object()
+
+        if not attachment.check_permission('delete', request.user):
+            raise PermissionDenied(
+                _('User does not have permission to delete this attachment')
+            )
+
+        return super().destroy(request, *args, **kwargs)
 
 
 settings_api_urls = [

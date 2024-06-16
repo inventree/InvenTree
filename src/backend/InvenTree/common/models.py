@@ -3226,3 +3226,16 @@ class Attachment(InvenTree.models.InvenTreeModel):
             return InvenTree.helpers_model.construct_absolute_url(media_url)
 
         return ''
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this attachment."""
+        from InvenTree.models import InvenTreeAttachmentMixin
+
+        model_class = common.validators.attachment_model_class_from_label(
+            self.model_type
+        )
+
+        if not issubclass(model_class, InvenTreeAttachmentMixin):
+            raise ValueError(_('Invalid model type specified for attachment'))
+
+        return model_class.check_attachment_permission(permission, user)
