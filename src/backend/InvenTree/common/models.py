@@ -694,6 +694,8 @@ class BaseInvenTreeSetting(models.Model):
         ):
             return
 
+        print(cls, ':', 'writing setting:', key, '->', value)
+
         attempts = int(kwargs.get('attempts', 3))
 
         filters = {
