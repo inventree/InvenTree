@@ -783,10 +783,12 @@ def gunicorn(c, address='0.0.0.0:8000'):
 
     Note: This server will not auto-reload in response to code changes.
     """
+    here = os.path.dirname(os.path.abspath(__file__))
+    config_file = os.path.join(here, 'contrib', 'container', 'gunicorn.conf.py')
+    chdir = os.path.join(here, 'src', 'backend', 'InvenTree')
+
     c.run(
-        'gunicorn -c ./docker/gunicorn.conf.py InvenTree.wsgi -b {address} --chdir ./InvenTree'.format(
-            address=address
-        ),
+        f'gunicorn -c {config_file} InvenTree.wsgi -b {address} --chdir {chdir}',
         pty=True,
     )
 
