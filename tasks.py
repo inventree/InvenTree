@@ -777,18 +777,31 @@ def wait(c):
     return manage(c, 'wait_for_db')
 
 
-@task(pre=[wait], help={'address': 'Server address:port (default=0.0.0.0:8000)'})
-def gunicorn(c, address='0.0.0.0:8000'):
+@task(
+    pre=[wait],
+    help={
+        'address': 'Server address:port (default=0.0.0.0:8000)',
+        'workers': 'Specify number of worker threads (override config file)',
+    },
+)
+def gunicorn(c, address='0.0.0.0:8000', workers=None):
     """Launch a gunicorn webserver.
 
     Note: This server will not auto-reload in response to code changes.
     """
-    c.run(
-        'gunicorn -c ./docker/gunicorn.conf.py InvenTree.wsgi -b {address} --chdir ./InvenTree'.format(
-            address=address
-        ),
-        pty=True,
-    )
+    here = os.path.dirname(os.path.abspath(__file__))
+    config_file = os.path.join(here, 'contrib', 'container', 'gunicorn.conf.py')
+    chdir = os.path.join(here, 'src', 'backend', 'InvenTree')
+
+    cmd = f'gunicorn -c {config_file} InvenTree.wsgi -b {address} --chdir {chdir}'
+
+    if workers:
+        cmd += f' --workers={workers}'
+
+    print('Starting Gunicorn Server:')
+    print(cmd)
+
+    c.run(cmd, pty=True)
 
 
 @task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
