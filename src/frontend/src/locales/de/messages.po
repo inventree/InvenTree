@@ -6868,4 +6868,3 @@ msgstr "Dokumentation lesen"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignorieren und weiter zur Desktopansicht"
-
