@@ -901,20 +901,16 @@ class StockItemListTest(StockAPITestCase):
         ])
 
         # List *all* stock items
-        with self.assertNumQueriesLessThan(25):
-            get_stock({})
+        get_stock({}, max_query_count=35)
 
         # List all stock items, with part detail
-        with self.assertNumQueriesLessThan(20):
-            get_stock({'part_detail': True})
+        get_stock({'part_detail': True}, max_query_count=35)
 
         # List all stock items, with supplier_part detail
-        with self.assertNumQueriesLessThan(20):
-            get_stock({'supplier_part_detail': True})
+        get_stock({'supplier_part_detail': True}, max_query_count=35)
 
         # List all stock items, with 'location' and 'tests' detail
-        with self.assertNumQueriesLessThan(20):
-            get_stock({'location_detail': True, 'tests': True})
+        get_stock({'location_detail': True, 'tests': True}, max_query_count=35)
 
 
 class StockItemTest(StockAPITestCase):

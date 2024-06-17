@@ -336,6 +336,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
 
         with self.assertNumQueriesLessThan(max_queries, url=url):
             response = method(url, data, **kwargs)
+
         t2 = time.time()
         dt = t2 - t1
 
