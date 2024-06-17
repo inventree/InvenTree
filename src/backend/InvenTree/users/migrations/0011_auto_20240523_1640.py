@@ -9,6 +9,10 @@ from django.db import migrations
 def clear_sessions(apps, schema_editor):
     """Clear all user sessions."""
 
+    # Ignore in test mode
+    if not settings.TESTING:
+        return
+
     try:
         engine = import_module(settings.SESSION_ENGINE)
         engine.SessionStore.clear_expired()
