@@ -15,7 +15,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # pin@v4.1.6
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Version Check
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt
@@ -34,7 +34,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # pin@v4.1.6
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
