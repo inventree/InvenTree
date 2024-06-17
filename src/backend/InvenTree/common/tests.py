@@ -84,6 +84,7 @@ class AttachmentTest(InvenTreeAPITestCase):
 
             expected_path = f'attachments/part/{part.pk}/{expected}'
             self.assertEqual(attachment.attachment.name, expected_path)
+            self.assertEqual(attachment.file_size, 15)
 
         self.assertEqual(part.attachments.count(), len(filenames.keys()))
 

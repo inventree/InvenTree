@@ -8,8 +8,6 @@ def get_global_setting(key, backup_value=None, **kwargs):
     if backup_value is not None:
         kwargs['backup_value'] = backup_value
 
-    kwargs['create'] = kwargs.get('create', False)
-
     return InvenTreeSetting.get_setting(key, **kwargs)
 
 

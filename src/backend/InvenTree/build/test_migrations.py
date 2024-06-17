@@ -8,7 +8,7 @@ from InvenTree import unit_test
 class TestForwardMigrations(MigratorTestCase):
     """Test entire schema migration sequence for the build app."""
 
-    migrate_from = ('build', '0021_auto_20201020_0908_squashed_0026_auto_20201023_1228')
+    migrate_from = ('build', unit_test.getOldestMigrationFile('build'))
     migrate_to = ('build', unit_test.getNewestMigrationFile('build'))
 
     def prepare(self):
@@ -19,7 +19,6 @@ class TestForwardMigrations(MigratorTestCase):
             name='Widget',
             description='Buildable Part',
             active=True,
-            level=0, lft=0, rght=0, tree_id=0,
         )
 
         Build = self.old_state.apps.get_model('build', 'build')
@@ -51,7 +50,7 @@ class TestForwardMigrations(MigratorTestCase):
 class TestReferenceMigration(MigratorTestCase):
     """Test custom migration which adds 'reference' field to Build model."""
 
-    migrate_from = ('build', '0021_auto_20201020_0908_squashed_0026_auto_20201023_1228')
+    migrate_from = ('build', unit_test.getOldestMigrationFile('build'))
     migrate_to = ('build', '0018_build_reference')
 
     def prepare(self):
@@ -61,7 +60,6 @@ class TestReferenceMigration(MigratorTestCase):
         part = Part.objects.create(
             name='Part',
             description='A test part',
-            level=0, lft=0, rght=0, tree_id=0,
         )
 
         Build = self.old_state.apps.get_model('build', 'build')
