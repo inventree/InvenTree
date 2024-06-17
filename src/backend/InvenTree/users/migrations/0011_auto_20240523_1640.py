@@ -10,7 +10,7 @@ def clear_sessions(apps, schema_editor):
     """Clear all user sessions."""
 
     # Ignore in test mode
-    if not settings.TESTING:
+    if settings.TESTING:
         return
 
     try:
