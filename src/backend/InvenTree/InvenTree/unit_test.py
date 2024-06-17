@@ -278,7 +278,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
                 f'Query count exceeded at {url}: Expected < {value} queries, got {n}'
             )  # pragma: no cover
 
-        if verbose:
+        if verbose or n >= value:
             msg = '\r\n%s' % json.dumps(
                 context.captured_queries, indent=4
             )  # pragma: no cover
