@@ -144,6 +144,7 @@ export enum ApiEndpoints {
   plugin_reload = 'plugins/reload/',
   plugin_activate = 'plugins/:key/activate/',
   plugin_uninstall = 'plugins/:key/uninstall/',
+  plugin_panel_list = 'plugins/panels/',
 
   // Machine API endpoints
   machine_types_list = 'machine/types/',

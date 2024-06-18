@@ -424,7 +424,32 @@ class PluginPanelList(APIView):
 
         # Extract all plugins from the registry which provide custom panels
         for _plugin in registry.with_mixin('panel', active=True):
+            # TODO: Allow plugins to fill this data out
             ...
+
+        panels = [
+            {
+                'plugin': 'myplugin',
+                'name': 'test-plugin',
+                'label': 'My Plugin',
+                'icon': 'part',
+                'content': '<div>hello world</div>',
+            },
+            {
+                'plugin': 'myplugin',
+                'name': 'test-plugin-2',
+                'label': 'My Plugin 2',
+                'icon': 'email',
+                'content': '<div>hello world 2</div>',
+            },
+            {
+                'plugin': 'myplugin',
+                'name': 'test-plugin-3',
+                'label': 'My Plugin 3',
+                'icon': 'website',
+                'content': '<div>hello world 3</div>',
+            },
+        ]
 
         return Response(PluginSerializers.PluginPanelSerializer(panels, many=True).data)
 
@@ -437,7 +462,7 @@ plugin_api_urls = [
         'plugins/',
         include([
             path(
-                'panel/',
+                'panels/',
                 include([
                     path('', PluginPanelList.as_view(), name='api-plugin-panel-list')
                 ]),

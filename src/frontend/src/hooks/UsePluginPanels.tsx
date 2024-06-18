@@ -1,58 +1,70 @@
+import { t } from '@lingui/macro';
+import { Alert, Text } from '@mantine/core';
 import { useTimeout } from '@mantine/hooks';
 import { Icon24Hours } from '@tabler/icons-react';
+import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
+import { api } from '../App';
 import { PanelType } from '../components/nav/Panel';
+import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { identifierString } from '../functions/conversion';
+import { InvenTreeIcon } from '../functions/icons';
+import { apiUrl } from '../states/ApiState';
 
-export interface PluginPanelState extends PanelType {
-  pluginKey: string;
-  targetType: string;
-  targetId?: string | number | null;
+export type PluginPanelState = {
+  panels: PanelType[];
+};
+
+// Placeholder content for a panel with no content
+function PanelNoContent() {
+  return (
+    <Alert color="red" title={t`No Content`}>
+      <Text>{t`No content provided for this plugin`}</Text>
+    </Alert>
+  );
 }
 
-export function usePluginPanel({
-  pluginKey,
-  panelName,
+export function usePluginPanels({
   targetModel,
   targetId
 }: {
-  pluginKey: string;
-  panelName: string;
   targetModel: string;
   targetId?: string | number | null;
 }): PluginPanelState {
-  // TODO: Query to fetch the "content" for the plugin
+  const { isFetching, data } = useQuery({
+    queryKey: [targetModel, targetId],
+    queryFn: () => {
+      return api
+        .get(apiUrl(ApiEndpoints.plugin_panel_list), {
+          params: {
+            target_model: targetModel,
+            target_id: targetId
+          }
+        })
+        .then((response: any) => response.data)
+        .catch((error: any) => {
+          console.error('Failed to fetch plugin panels:', error);
+          return [];
+        });
+    }
+  });
 
-  const [loaded, setLoaded] = useState<boolean>(false);
-
-  const { start } = useTimeout(() => setLoaded(true), 5000);
-
-  useEffect(() => {
-    start();
-    console.log('starting timer!');
-  }, []);
-
-  const content = useMemo(() => {
-    return loaded ? (
-      'plugin content loaded!'
-    ) : (
-      <div>
-        <p>Plugin content goes here...</p>
-        <p>Plugin Key: {pluginKey}</p>
-        <p>Panel Name: {panelName}</p>
-        <p>Target Model: {targetModel}</p>
-        <p>Target ID: {targetId}</p>
-      </div>
+  const panels: PanelType[] = useMemo(() => {
+    return (
+      data?.map((panel: any) => {
+        const pluginKey = panel.plugin || 'plugin';
+        return {
+          name: identifierString(`${pluginKey}-${panel.name}`),
+          label: panel.label || t`Plugin Panel`,
+          icon: <InvenTreeIcon icon={panel.icon ?? 'plugin'} />,
+          content: panel.content || <PanelNoContent />
+        };
+      }) ?? []
     );
-  }, [loaded, pluginKey, panelName, targetModel, targetId]);
+  }, [data]);
 
   return {
-    content: content,
-    name: panelName,
-    pluginKey: pluginKey,
-    targetType: targetModel,
-    targetId: targetId,
-    label: 'A plugin panel',
-    icon: <Icon24Hours />
+    panels: panels
   };
 }

@@ -56,7 +56,8 @@ import {
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -75,6 +76,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
@@ -640,6 +642,15 @@ export default function PartDetail() {
     ];
   }, [id, part, user]);
 
+  const pluginPanels = usePluginPanels({
+    targetModel: ModelType.part,
+    targetId: id
+  });
+
+  const panels: PanelType[] = useMemo(() => {
+    return [...partPanels, ...pluginPanels.panels];
+  }, [partPanels, pluginPanels]);
+
   const breadcrumbs = useMemo(
     () => [
       { name: t`Parts`, url: '/part' },
@@ -844,7 +855,7 @@ export default function PartDetail() {
           }}
           actions={partActions}
         />
-        <PanelGroup pageKey="part" panels={partPanels} />
+        <PanelGroup pageKey="part" panels={panels} />
         {transferStockItems.modal}
         {countStockItems.modal}
       </Stack>
