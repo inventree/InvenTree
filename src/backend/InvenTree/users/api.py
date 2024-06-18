@@ -223,7 +223,7 @@ class Login(LoginView):
     """API view for logging in via API."""
 
     def post(self, request, *args, **kwargs):
-        """Handle POST request for login that are mfa targeted."""
+        """API view for logging in via API."""
         if not request.POST.get('mfa', None):
             return super().post(request, *args, **kwargs)
 
