@@ -1,9 +1,7 @@
 """Generic models which provide extra functionality over base Django model types."""
 
 import logging
-import os
 from datetime import datetime
-from io import BytesIO
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -20,6 +18,7 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
+import common.settings
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
@@ -303,12 +302,7 @@ class ReferenceIndexingMixin(models.Model):
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        # import at function level to prevent cyclic imports
-        from common.models import InvenTreeSetting
-
-        return InvenTreeSetting.get_setting(
-            cls.REFERENCE_PATTERN_SETTING, create=False
-        ).strip()
+        return common.settings.get_global_setting(cls.REFERENCE_PATTERN_SETTING).strip()
 
     @classmethod
     def get_reference_context(cls):

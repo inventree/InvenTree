@@ -22,7 +22,6 @@ from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
 import common.currency
-import common.models
 import common.settings
 import company.models
 import InvenTree.helpers
@@ -1157,7 +1156,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     def validate(self, data):
         """Custom validation for this serializer."""
         # Stocktake functionality must be enabled
-        if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
+        if not common.settings.get_global_setting('STOCKTAKE_ENABLE'):
             raise serializers.ValidationError(
                 _('Stocktake functionality is not enabled')
             )

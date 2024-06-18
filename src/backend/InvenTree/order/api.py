@@ -17,8 +17,8 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-import common.models as common_models
-from company.models import SupplierPart
+import common.models
+import common.settings
 from generic.states.api import StatusView
 from InvenTree.api import APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
@@ -130,7 +130,7 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
     project_code = rest_filters.ModelChoiceFilter(
-        queryset=common_models.ProjectCode.objects.all(), field_name='project_code'
+        queryset=common.models.ProjectCode.objects.all(), field_name='project_code'
     )
 
     has_project_code = rest_filters.BooleanFilter(
@@ -301,11 +301,11 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         if supplier_part is not None:
             try:
-                supplier_part = SupplierPart.objects.get(pk=supplier_part)
+                supplier_part = common.models.SupplierPart.objects.get(pk=supplier_part)
                 queryset = queryset.filter(
                     id__in=[p.id for p in supplier_part.purchase_orders()]
                 )
-            except (ValueError, SupplierPart.DoesNotExist):
+            except (ValueError, common.models.SupplierPart.DoesNotExist):
                 pass
 
         # Filter by 'date range'
@@ -444,7 +444,9 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         return queryset.exclude(order__status=PurchaseOrderStatus.COMPLETE.value)
 
     part = rest_filters.ModelChoiceFilter(
-        queryset=SupplierPart.objects.all(), field_name='part', label=_('Supplier Part')
+        queryset=common.models.SupplierPart.objects.all(),
+        field_name='part',
+        label=_('Supplier Part'),
     )
 
     base_part = rest_filters.ModelChoiceFilter(
@@ -1461,7 +1463,9 @@ class OrderCalendarExport(ICalFeed):
         else:
             ordertype_title = _('Unknown')
 
-        return f'{common_models.InvenTreeSetting.get_setting("INVENTREE_COMPANY_NAME")} {ordertype_title}'
+        company_name = common.settings.get_global_setting('INVENTREE_COMPANY_NAME')
+
+        return f'{company_name} {ordertype_title}'
 
     def product_id(self, obj):
         """Return calendar product id."""
