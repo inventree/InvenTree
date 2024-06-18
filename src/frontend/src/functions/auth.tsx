@@ -12,6 +12,35 @@ import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 
 /**
+ * sends a request to the specified url from a form. this will change the window location.
+ * @param {string} path the path to send the post request to
+ * @param {object} params the parameters to add to the url
+ * @param {string} [method=post] the method to use on the form
+ *
+ * Source https://stackoverflow.com/questions/133925/javascript-post-request-like-a-form-submit/133997#133997
+ */
+
+function post(path: string, params: any, method = 'post') {
+  const form = document.createElement('form');
+  form.method = method;
+  form.action = path;
+
+  for (const key in params) {
+    if (params.hasOwnProperty(key)) {
+      const hiddenField = document.createElement('input');
+      hiddenField.type = 'hidden';
+      hiddenField.name = key;
+      hiddenField.value = params[key];
+
+      form.appendChild(hiddenField);
+    }
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
+/**
  * Attempt to login using username:password combination.
  * If login is successful, an API token will be returned.
  * This API token is used for any future API requests.
@@ -56,12 +85,12 @@ export const doBasicLogin = async (username: string, password: string) => {
         err?.response.status == 403 &&
         err?.response.data.detail == 'MFA required for this user'
       ) {
-        const auth_settings = useServerApiState.getState().auth_settings;
-        if (auth_settings?.mfa_urls.authenticate) {
-          window.location.href = auth_settings?.mfa_urls.authenticate;
-        } else {
-          console.log('MFA required but no redirect provided.');
-        }
+        post(apiUrl(ApiEndpoints.user_login), {
+          username: username,
+          password: password,
+          csrfmiddlewaretoken: getCsrfCookie(),
+          mfa: true
+        });
       }
     });
 
