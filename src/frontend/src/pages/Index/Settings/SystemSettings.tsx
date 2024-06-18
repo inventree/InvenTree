@@ -80,7 +80,7 @@ export default function SystemSettings() {
               'LOGIN_SIGNUP_SSO_AUTO',
               'LOGIN_ENABLE_SSO_GROUP_SYNC',
               'SSO_GROUP_MAP',
-              'SSO_GROUP_MAP',
+              'SSO_GROUP_KEY',
               'SSO_REMOVE_GROUPS'
             ]}
           />
