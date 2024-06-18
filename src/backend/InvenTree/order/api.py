@@ -19,6 +19,7 @@ from rest_framework.response import Response
 
 import common.models
 import common.settings
+import company.models
 from generic.states.api import StatusView
 from InvenTree.api import APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
@@ -301,11 +302,13 @@ class PurchaseOrderList(PurchaseOrderMixin, APIDownloadMixin, ListCreateAPI):
 
         if supplier_part is not None:
             try:
-                supplier_part = common.models.SupplierPart.objects.get(pk=supplier_part)
+                supplier_part = company.models.SupplierPart.objects.get(
+                    pk=supplier_part
+                )
                 queryset = queryset.filter(
                     id__in=[p.id for p in supplier_part.purchase_orders()]
                 )
-            except (ValueError, common.models.SupplierPart.DoesNotExist):
+            except (ValueError, company.models.SupplierPart.DoesNotExist):
                 pass
 
         # Filter by 'date range'
@@ -444,7 +447,7 @@ class PurchaseOrderLineItemFilter(LineItemFilter):
         return queryset.exclude(order__status=PurchaseOrderStatus.COMPLETE.value)
 
     part = rest_filters.ModelChoiceFilter(
-        queryset=common.models.SupplierPart.objects.all(),
+        queryset=company.models.SupplierPart.objects.all(),
         field_name='part',
         label=_('Supplier Part'),
     )
