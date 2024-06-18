@@ -38,7 +38,6 @@ LOCALES = [
     ('pl', _('Polish')),
     ('pt', _('Portuguese')),
     ('pt-br', _('Portuguese (Brazilian)')),
-    ('ro', _('Romanian')),
     ('ru', _('Russian')),
     ('sk', _('Slovak')),
     ('sl', _('Slovenian')),

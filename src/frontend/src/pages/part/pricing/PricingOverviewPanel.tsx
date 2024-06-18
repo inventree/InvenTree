@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { BarChart } from '@mantine/charts';
 import {
   Alert,
   Anchor,
@@ -20,7 +19,17 @@ import {
 } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { ReactNode, useMemo } from 'react';
+import {
+  Bar,
+  BarChart,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
+import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency, renderDate } from '../../../defaults/formatters';
 import { panelOptions } from '../PartPricingPanel';
@@ -183,17 +192,34 @@ export default function PricingOverviewPanel({
             columns={columns}
           />
         </Stack>
-        <BarChart
-          aria-label="pricing-overview-chart"
-          dataKey="title"
-          data={overviewData}
-          title={t`Pricing Overview`}
-          series={[
-            { name: 'min_value', label: t`Minimum Value`, color: 'blue.6' },
-            { name: 'max_value', label: t`Maximum Value`, color: 'teal.6' }
-          ]}
-          valueFormatter={(value) => tooltipFormatter(value, pricing?.currency)}
-        />
+        <ResponsiveContainer width="100%" height={500}>
+          <BarChart data={overviewData} id="pricing-overview-chart">
+            <XAxis dataKey="title" />
+            <YAxis
+              tickFormatter={(value, index) =>
+                formatCurrency(value, {
+                  currency: pricing?.currency
+                })?.toString() ?? ''
+              }
+            />
+            <Tooltip
+              formatter={(label, payload) =>
+                tooltipFormatter(label, pricing?.currency)
+              }
+            />
+            <Legend />
+            <Bar
+              dataKey="min_value"
+              fill={CHART_COLORS[0]}
+              label={t`Minimum Price`}
+            />
+            <Bar
+              dataKey="max_value"
+              fill={CHART_COLORS[1]}
+              label={t`Maximum Price`}
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </SimpleGrid>
     </Stack>
   );

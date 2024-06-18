@@ -1,9 +1,18 @@
 import { t } from '@lingui/macro';
-import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import { AddItemButton } from '../../../components/buttons/AddItemButton';
+import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { ApiFormFieldSet } from '../../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../../defaults/formatters';
@@ -160,14 +169,29 @@ export default function PriceBreakPanel({
           }}
         />
         {table.records.length > 0 ? (
-          <BarChart
-            dataKey="quantity"
-            data={table.records}
-            series={[{ name: 'price', label: t`Price`, color: 'blue.6' }]}
-            xAxisLabel={t`Quantity`}
-            yAxisLabel={t`Unit Price`}
-            valueFormatter={(value) => tooltipFormatter(value, currency)}
-          />
+          <ResponsiveContainer width="100%" height={500}>
+            <BarChart data={table.records}>
+              <XAxis dataKey="quantity" />
+              <YAxis
+                tickFormatter={(value, index) =>
+                  formatCurrency(value, {
+                    currency: currency
+                  })?.toString() ?? ''
+                }
+              />
+              <Tooltip
+                formatter={(label, payload) =>
+                  tooltipFormatter(label, currency)
+                }
+              />
+              <Legend />
+              <Bar
+                dataKey="price"
+                fill={CHART_COLORS[0]}
+                label={t`Price Break`}
+              />
+            </BarChart>
+          </ResponsiveContainer>
         ) : (
           <NoPricingData />
         )}

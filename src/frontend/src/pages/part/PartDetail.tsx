@@ -53,7 +53,6 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -514,8 +513,7 @@ export default function PartDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmarks />,
-        hidden: !part.component && !part.salable,
-        content: <PlaceholderPanel />
+        hidden: !part.component && !part.salable
       },
       {
         name: 'bom',
@@ -574,8 +572,7 @@ export default function PartDetail() {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !part.purchaseable,
-        content: <PlaceholderPanel />
+        hidden: !part.purchaseable
       },
       {
         name: 'sales_orders',
@@ -587,14 +584,12 @@ export default function PartDetail() {
       {
         name: 'scheduling',
         label: t`Scheduling`,
-        icon: <IconCalendarStats />,
-        content: <PlaceholderPanel />
+        icon: <IconCalendarStats />
       },
       {
         name: 'stocktake',
         label: t`Stocktake`,
-        icon: <IconClipboardList />,
-        content: <PlaceholderPanel />
+        icon: <IconClipboardList />
       },
       {
         name: 'test_templates',

@@ -24,6 +24,7 @@ import { identifierString } from '../../functions/conversion';
 import { navigateToLink } from '../../functions/navigation';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
+import { PlaceholderPanel } from '../items/Placeholder';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -33,7 +34,7 @@ export type PanelType = {
   name: string;
   label: string;
   icon?: ReactNode;
-  content: ReactNode;
+  content?: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
   showHeadline?: boolean;
@@ -189,7 +190,7 @@ function BasePanelGroup({
                       </>
                     )}
                     <Boundary label={`PanelContent-${panel.name}`}>
-                      {panel.content}
+                      {panel.content ?? <PlaceholderPanel />}
                     </Boundary>
                   </Stack>
                 </Tabs.Panel>

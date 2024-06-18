@@ -1,8 +1,18 @@
 import { t } from '@lingui/macro';
-import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
+import {
+  Bar,
+  BarChart,
+  Legend,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
+import { CHART_COLORS } from '../../../components/charts/colors';
+import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
@@ -85,13 +95,27 @@ export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
         }}
       />
       {saleHistoryData.length > 0 ? (
-        <BarChart
-          data={saleHistoryData}
-          dataKey="name"
-          series={[
-            { name: 'sale_price', label: t`Sale Price`, color: 'blue.6' }
-          ]}
-        />
+        <ResponsiveContainer width="100%" height={500}>
+          <BarChart data={saleHistoryData}>
+            <XAxis dataKey="name" />
+            <YAxis
+              tickFormatter={(value, index) =>
+                formatCurrency(value, {
+                  currency: currency
+                })?.toString() ?? ''
+              }
+            />
+            <Tooltip
+              formatter={(label, payload) => tooltipFormatter(label, currency)}
+            />
+            <Legend />
+            <Bar
+              dataKey="sale_price"
+              fill={CHART_COLORS[0]}
+              label={t`Sale Price`}
+            />
+          </BarChart>
+        </ResponsiveContainer>
       ) : (
         <NoPricingData />
       )}

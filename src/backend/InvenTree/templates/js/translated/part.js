@@ -305,7 +305,6 @@ function partFields(options={}) {
 function categoryFields(options={}) {
     let fields = {
         parent: {
-            label: '{% trans "Parent" %}',
             help_text: '{% trans "Parent part category" %}',
             required: false,
             tree_picker: {
@@ -2828,7 +2827,6 @@ function partTestTemplateFields(options={}) {
         requires_value: {},
         requires_attachment: {},
         enabled: {},
-        choices: {},
         part: {
             hidden: true,
         }

@@ -32,7 +32,6 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -284,9 +283,7 @@ export default function StockDetail() {
         label: t`Allocations`,
         icon: <IconBookmark />,
         hidden:
-          !stockitem?.part_detail?.salable &&
-          !stockitem?.part_detail?.component,
-        content: <PlaceholderPanel />
+          !stockitem?.part_detail?.salable && !stockitem?.part_detail?.component
       },
       {
         name: 'testdata',

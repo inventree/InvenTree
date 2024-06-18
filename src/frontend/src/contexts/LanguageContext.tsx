@@ -40,7 +40,6 @@ export const getSupportedLanguages = (): Record<string, string> => {
     pl: t`Polish`,
     pt: t`Portuguese`,
     'pt-br': t`Portuguese (Brazilian)`,
-    ro: t`Romanian`,
     ru: t`Russian`,
     sk: t`Slovak`,
     sl: t`Slovenian`,

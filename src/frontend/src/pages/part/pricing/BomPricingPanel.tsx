@@ -1,7 +1,5 @@
 import { t } from '@lingui/macro';
-import { BarChart, DonutChart } from '@mantine/charts';
 import {
-  Center,
   Group,
   SegmentedControl,
   SimpleGrid,
@@ -9,6 +7,18 @@ import {
   Text
 } from '@mantine/core';
 import { ReactNode, useMemo, useState } from 'react';
+import {
+  Bar,
+  BarChart,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 
 import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
@@ -34,30 +44,42 @@ function BomPieChart({
   readonly data: any[];
   readonly currency: string;
 }) {
-  // Construct donut data
-  const maxPricing = useMemo(() => {
-    return data.map((entry, index) => {
-      return {
-        name: entry.name,
-        value: entry.total_price_max,
-        color: CHART_COLORS[index % CHART_COLORS.length] + '.5'
-      };
-    });
-  }, [data]);
-
   return (
-    <Center>
-      <DonutChart
-        data={maxPricing}
-        size={500}
-        thickness={80}
-        withLabels={false}
-        withLabelsLine={false}
-        tooltipDataSource="segment"
-        chartLabel={t`Total Price`}
-        valueFormatter={(value) => tooltipFormatter(value, currency)}
-      />
-    </Center>
+    <ResponsiveContainer width="100%" height={500}>
+      <PieChart>
+        <Pie
+          data={data}
+          dataKey="total_price_min"
+          nameKey="name"
+          innerRadius={20}
+          outerRadius={100}
+        >
+          {data.map((_entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={CHART_COLORS[index % CHART_COLORS.length]}
+            />
+          ))}
+        </Pie>
+        <Pie
+          data={data}
+          dataKey="total_price_max"
+          nameKey="name"
+          innerRadius={120}
+          outerRadius={240}
+        >
+          {data.map((_entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={CHART_COLORS[index % CHART_COLORS.length]}
+            />
+          ))}
+        </Pie>
+        <Tooltip
+          formatter={(label, payload) => tooltipFormatter(label, currency)}
+        />
+      </PieChart>
+    </ResponsiveContainer>
   );
 }
 
@@ -70,18 +92,32 @@ function BomBarChart({
   readonly currency: string;
 }) {
   return (
-    <BarChart
-      h={500}
-      dataKey="name"
-      data={data}
-      xAxisLabel={t`Component`}
-      yAxisLabel={t`Price Range`}
-      series={[
-        { name: 'total_price_min', label: t`Minimum Price`, color: 'blue.6' },
-        { name: 'total_price_max', label: t`Maximum Price`, color: 'teal.6' }
-      ]}
-      valueFormatter={(value) => tooltipFormatter(value, currency)}
-    />
+    <ResponsiveContainer width="100%" height={500}>
+      <BarChart data={data}>
+        <XAxis dataKey="name" />
+        <YAxis
+          tickFormatter={(value, index) =>
+            formatCurrency(value, {
+              currency: currency
+            })?.toString() ?? ''
+          }
+        />
+        <Tooltip
+          formatter={(label, payload) => tooltipFormatter(label, currency)}
+        />
+        <Legend />
+        <Bar
+          dataKey="total_price_min"
+          fill={CHART_COLORS[0]}
+          label={t`Minimum Total Price`}
+        />
+        <Bar
+          dataKey="total_price_max"
+          fill={CHART_COLORS[1]}
+          label={t`Maximum Total Price`}
+        />
+      </BarChart>
+    </ResponsiveContainer>
   );
 }
 

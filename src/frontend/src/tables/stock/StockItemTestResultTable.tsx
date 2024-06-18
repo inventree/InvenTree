@@ -19,7 +19,6 @@ import { RenderUser } from '../../components/render/User';
 import { renderDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
-import { useTestResultFields } from '../../forms/StockForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -233,10 +232,27 @@ export default function StockItemTestResultTable({
     ];
   }, [itemId]);
 
-  const resultFields: ApiFormFieldSet = useTestResultFields({
-    partId: partId,
-    itemId: itemId
-  });
+  const resultFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      template: {
+        filters: {
+          include_inherited: true,
+          part: partId
+        }
+      },
+      result: {},
+      value: {},
+      attachment: {},
+      notes: {},
+      test_station: {},
+      started_datetime: {},
+      finished_datetime: {},
+      stock_item: {
+        value: itemId,
+        hidden: true
+      }
+    };
+  }, [partId, itemId]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
     undefined
@@ -244,7 +260,7 @@ export default function StockItemTestResultTable({
 
   const newTestModal = useCreateApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
-    fields: useMemo(() => ({ ...resultFields }), [resultFields]),
+    fields: resultFields,
     initialData: {
       template: selectedTemplate,
       result: true
@@ -259,7 +275,7 @@ export default function StockItemTestResultTable({
   const editTestModal = useEditApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
     pk: selectedTest,
-    fields: useMemo(() => ({ ...resultFields }), [resultFields]),
+    fields: resultFields,
     title: t`Edit Test Result`,
     table: table,
     successMessage: t`Test result updated`

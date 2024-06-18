@@ -1715,60 +1715,6 @@ class StockTestResultTest(StockAPITestCase):
 
         self.assertEqual(StockItemTestResult.objects.count(), n)
 
-    def test_value_choices(self):
-        """Test that the 'value' field is correctly validated."""
-        url = reverse('api-stock-test-result-list')
-
-        test_template = PartTestTemplate.objects.first()
-
-        test_template.choices = 'AA, BB, CC'
-        test_template.save()
-
-        stock_item = StockItem.objects.create(
-            part=test_template.part, quantity=1, location=StockLocation.objects.first()
-        )
-
-        # Create result with invalid choice
-        response = self.post(
-            url,
-            {
-                'template': test_template.pk,
-                'stock_item': stock_item.pk,
-                'result': True,
-                'value': 'DD',
-            },
-            expected_code=400,
-        )
-
-        self.assertIn('Invalid value for this test', str(response.data['value']))
-
-        # Create result with valid choice
-        response = self.post(
-            url,
-            {
-                'template': test_template.pk,
-                'stock_item': stock_item.pk,
-                'result': True,
-                'value': 'BB',
-            },
-            expected_code=201,
-        )
-
-        # Create result with unrestricted choice
-        test_template.choices = ''
-        test_template.save()
-
-        response = self.post(
-            url,
-            {
-                'template': test_template.pk,
-                'stock_item': stock_item.pk,
-                'result': False,
-                'value': '12345',
-            },
-            expected_code=201,
-        )
-
 
 class StockAssignTest(StockAPITestCase):
     """Unit tests for the stock assignment API endpoint, where stock items are manually assigned to a customer."""

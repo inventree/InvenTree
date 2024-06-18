@@ -25,7 +25,6 @@ import {
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -249,20 +248,17 @@ export default function SalesOrderDetail() {
       {
         name: 'line-items',
         label: t`Line Items`,
-        icon: <IconList />,
-        content: <PlaceholderPanel />
+        icon: <IconList />
       },
       {
         name: 'pending-shipments',
         label: t`Pending Shipments`,
-        icon: <IconTruckLoading />,
-        content: <PlaceholderPanel />
+        icon: <IconTruckLoading />
       },
       {
         name: 'completed-shipments',
         label: t`Completed Shipments`,
-        icon: <IconTruckDelivery />,
-        content: <PlaceholderPanel />
+        icon: <IconTruckDelivery />
       },
       {
         name: 'build-orders',

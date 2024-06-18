@@ -3470,27 +3470,6 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
                 )
             })
 
-        # Check that 'choices' are in fact valid
-        if self.choices is None:
-            self.choices = ''
-        else:
-            self.choices = str(self.choices).strip()
-
-        if self.choices:
-            choice_set = set()
-
-            for choice in self.choices.split(','):
-                choice = choice.strip()
-
-                # Ignore empty choices
-                if not choice:
-                    continue
-
-                if choice in choice_set:
-                    raise ValidationError({'choices': _('Choices must be unique')})
-
-                choice_set.add(choice)
-
         self.validate_unique()
         super().clean()
 
@@ -3568,20 +3547,6 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
             'Does this test require a file attachment when adding a test result?'
         ),
     )
-
-    choices = models.CharField(
-        max_length=5000,
-        verbose_name=_('Choices'),
-        help_text=_('Valid choices for this test (comma-separated)'),
-        blank=True,
-    )
-
-    def get_choices(self):
-        """Return a list of valid choices for this test template."""
-        if not self.choices:
-            return []
-
-        return [x.strip() for x in self.choices.split(',') if x.strip()]
 
 
 def validate_template_name(name):
