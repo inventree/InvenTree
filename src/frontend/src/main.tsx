@@ -10,6 +10,7 @@ import ReactDOM from 'react-dom/client';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
+import { api } from './App';
 import { HostList } from './states/states';
 import MainView from './views/MainView';
 
@@ -24,6 +25,8 @@ declare global {
       sentry_dsn?: string;
       environment?: string;
     };
+    InvenTreeAPI: typeof api;
+    React: typeof React;
   }
 }
 
@@ -98,3 +101,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 if (window.location.pathname === '/') {
   window.location.replace(`/${base_url}`);
 }
+
+window.React = React;
+window.InvenTreeAPI = api;
