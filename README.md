@@ -66,7 +66,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
     <li><a href="https://www.djangoproject.com/">Django</a></li>
     <li><a href="https://www.django-rest-framework.org/">DRF</a></li>
     <li><a href="https://django-q.readthedocs.io/">Django Q</a></li>
-    <li><a href="https://django-allauth.readthedocs.io/">Django-Allauth</a></li>
+    <li><a href="https://docs.allauth.org/">Django-Allauth</a></li>
   </ul>
 </details>
 
