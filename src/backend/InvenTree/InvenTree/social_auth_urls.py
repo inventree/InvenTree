@@ -126,21 +126,12 @@ class SocialProviderListResponseSerializer(serializers.Serializer):
         connect = serializers.URLField()
         display_name = serializers.CharField()
 
-    class MFAUrls(serializers.Serializer):
-        """Serializer for the SocialProviderListResponseSerializer."""
-
-        setup = serializers.URLField()
-        authenticate = serializers.URLField()
-        backup_tokens = serializers.URLField()
-        remove = serializers.URLField()
-
     sso_enabled = serializers.BooleanField()
     sso_registration = serializers.BooleanField()
     mfa_required = serializers.BooleanField()
     providers = SocialProvider(many=True)
     registration_enabled = serializers.BooleanField()
     password_forgotten_enabled = serializers.BooleanField()
-    mfa_urls = MFAUrls()
 
 
 class SocialProviderListView(ListAPI):
@@ -192,16 +183,6 @@ class SocialProviderListView(ListAPI):
             'password_forgotten_enabled': InvenTreeSetting.get_setting(
                 'LOGIN_ENABLE_PWD_FORGOT'
             ),
-            'mfa_urls': {
-                'setup': request.build_absolute_uri(reverse('two-factor-setup')),
-                'authenticate': request.build_absolute_uri(
-                    reverse('two-factor-authenticate')
-                ),
-                'backup_tokens': request.build_absolute_uri(
-                    reverse('two-factor-backup-tokens')
-                ),
-                'remove': request.build_absolute_uri(reverse('two-factor-remove')),
-            },
         }
         return Response(data)
 
