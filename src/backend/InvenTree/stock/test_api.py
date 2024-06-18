@@ -885,13 +885,6 @@ class StockItemListTest(StockAPITestCase):
 
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""
-
-        def get_stock(data, expected_status=200):
-            """Helper function to fetch stock items."""
-            response = self.client.get(self.list_url, data=data)
-            self.assertEqual(response.status_code, expected_status)
-            return response.data
-
         # Create a bunch of StockItem objects
         prt = Part.objects.first()
 
@@ -901,16 +894,18 @@ class StockItemListTest(StockAPITestCase):
         ])
 
         # List *all* stock items
-        get_stock({}, max_query_count=35)
+        self.get(self.list_url, {}, max_query_count=35)
 
         # List all stock items, with part detail
-        get_stock({'part_detail': True}, max_query_count=35)
+        self.get(self.list_url, {'part_detail': True}, max_query_count=35)
 
         # List all stock items, with supplier_part detail
-        get_stock({'supplier_part_detail': True}, max_query_count=35)
+        self.get(self.list_url, {'supplier_part_detail': True}, max_query_count=35)
 
         # List all stock items, with 'location' and 'tests' detail
-        get_stock({'location_detail': True, 'tests': True}, max_query_count=35)
+        self.get(
+            self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
+        )
 
 
 class StockItemTest(StockAPITestCase):

@@ -325,12 +325,11 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         if data is None:
             data = {}
 
-        expected_code = kwargs.pop('expected_code', None)
-
         kwargs['format'] = kwargs.get('format', 'json')
 
-        max_queries = kwargs.get('max_query_count', self.MAX_QUERY_COUNT)
-        max_query_time = kwargs.get('max_query_time', self.MAX_QUERY_TIME)
+        expected_code = kwargs.pop('expected_code', None)
+        max_queries = kwargs.pop('max_query_count', self.MAX_QUERY_COUNT)
+        max_query_time = kwargs.pop('max_query_time', self.MAX_QUERY_TIME)
 
         t1 = time.time()
 
