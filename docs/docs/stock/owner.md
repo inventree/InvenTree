@@ -13,15 +13,16 @@ The stock ownership feature is disabled by default, and must be enabled via the 
 {% endwith %}
 
 ### Background
-The stock item ownership function does not change the influence the access rights that have been set
-in admin panel. It just hides buttons for edit, add, delete actions. This means that the user who
-should to have access by ownership needs to have stock item write access set in the admin panel. By
+The stock item ownership function does not change or the influence the access rights that have been set
+in admin panel. It just hides buttons for edit, add and delete actions. This means that the user who
+should have access by ownership needs to have stock item write access set in the admin panel. By
 this he also gets write access to all other items, except the item has a different owner. 
 
 !!! Example
 * Stock item 1111 has an owner called Daniel
 * Stock item 2222 has an owner called Peter
 * Stock item 3333 has no owner 
+
 Set  stock item access for Daniel and Peter to V,A,E,D in the admin panel. Now Daniel can edit
 1111 but not 2222. Peter can edit 2222 but not 1111. Both can edit 3333.
 
