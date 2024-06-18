@@ -224,31 +224,32 @@ class Login(LoginView):
 
     def post(self, request, *args, **kwargs):
         """Handle POST request for login that are mfa targeted."""
-        if request.POST.get('mfa', None):
-            # Check if login credentials valid
-            user = authenticate(
-                request,
-                username=request.POST.get('username'),
-                password=request.POST.get('password'),
-            )
-            if user is None:
-                return HttpResponse(status=401)
+        if not request.POST.get('mfa', None):
+            return super().post(request, *args, **kwargs)
+
+        # Check if login credentials valid
+        user = authenticate(
+            request,
+            username=request.POST.get('username'),
+            password=request.POST.get('password'),
+        )
+        if user is None:
+            return HttpResponse(status=401)
 
             # Check if user has mfa set up
-            if not user_has_valid_totp_device(user):
-                return super().post(request, *args, **kwargs)
+        if not user_has_valid_totp_device(user):
+            return super().post(request, *args, **kwargs)
 
             # Stage login and redirect to 2fa
-            request.session['allauth_2fa_user_id'] = str(user.id)
-            request.session['allauth_2fa_login'] = {
-                'email_verification': app_settings.EMAIL_VERIFICATION,
-                'signal_kwargs': None,
-                'signup': False,
-                'email': None,
-                'redirect_url': reverse('platform'),
-            }
-            return redirect(reverse('two-factor-authenticate'))
-        return super().post(request, *args, **kwargs)
+        request.session['allauth_2fa_user_id'] = str(user.id)
+        request.session['allauth_2fa_login'] = {
+            'email_verification': app_settings.EMAIL_VERIFICATION,
+            'signal_kwargs': None,
+            'signup': False,
+            'email': None,
+            'redirect_url': reverse('platform'),
+        }
+        return redirect(reverse('two-factor-authenticate'))
 
     def process_login(self):
         """Process the login request, ensure that MFA is enforced if required."""
