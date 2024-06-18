@@ -302,7 +302,9 @@ class ReferenceIndexingMixin(models.Model):
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        return common.settings.get_global_setting(cls.REFERENCE_PATTERN_SETTING).strip()
+        return common.settings.get_global_setting(
+            cls.REFERENCE_PATTERN_SETTING, create=False
+        ).strip()
 
     @classmethod
     def get_reference_context(cls):
