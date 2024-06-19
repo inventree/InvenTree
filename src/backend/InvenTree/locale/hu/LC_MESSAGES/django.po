@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1262,8 +1262,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:526
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:611
@@ -1834,22 +1833,16 @@ msgid "Incomplete Outputs"
 msgstr "Befejezetlen kimenetek"
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Link"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Fájl"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Nincs jogosultságod az adatok megtekintéséhez"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3601,28 +3594,20 @@ msgid "Comment"
 msgstr "Megjegyzés"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment actions"
 msgid "Attachment comment"
-msgstr "Mellékletek műveletei"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "feltöltés dátuma"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Feltöltendő fájl kiválasztása"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File Fields"
 msgid "File size"
-msgstr "Fájl mezők"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3735,10 +3720,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Nincs jogosultságod az adatok megtekintéséhez"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14417,24 +14400,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "File comment"
-#~ msgstr "Leírás, bővebb infó"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "A fájlnév nem lehet üres"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Érvénytelen melléklet mappa"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Fájlnévben érvénytelen karakter van '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Fájlnév kiterjesztése hiányzik"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Ilyen fájlnévvel már létezik melléklet"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Hiba a fájl átnevezésekor"
