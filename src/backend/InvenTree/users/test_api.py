@@ -48,6 +48,12 @@ class UserAPITests(InvenTreeAPITestCase):
 
         self.assertIn('name', response.data)
 
+    def test_logout(self):
+        """Test api logout endpoint."""
+        self.get(reverse('api-token'), expected_code=200)
+        self.post(reverse('api-logout'), expected_code=200)
+        self.get(reverse('api-token'), expected_code=401)
+
 
 class UserTokenTests(InvenTreeAPITestCase):
     """Tests for user token functionality."""
