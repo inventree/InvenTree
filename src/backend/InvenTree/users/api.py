@@ -109,10 +109,7 @@ class OwnerDetail(RetrieveAPI):
 
 
 class RoleDetails(RetrieveAPI):
-    """API endpoint which lists the available role permissions for the current user.
-
-    (Requires authentication)
-    """
+    """API endpoint which lists the available role permissions for the current user."""
 
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = RoleSerializer
