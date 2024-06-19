@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Povezava"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "Data File"
 msgid "Is File"
-msgstr "Podatki datoteke"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Uporabnik nima dovoljenja pogleda tega modela"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,22 +3593,16 @@ msgid "Comment"
 msgstr "Komentar"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Priloga"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "naloži datum"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select data file for upload"
 msgid "Date the file was uploaded"
-msgstr "Izberite datoteke za naložiti"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size"
@@ -3731,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Uporabnik nima dovoljenja pogleda tega modela"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14413,24 +14399,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "File comment"
-#~ msgstr "Komentar datoteke"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Ime ne sme biti prazno"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Neveljavna mapa prilog"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Ime datoteke vsebuje neveljavni znak '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Datoteki manjka končnica"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Priloga s tem imenom že obstaja"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Napaka pri preimenovanju datoteke"
