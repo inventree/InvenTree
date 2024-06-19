@@ -5,7 +5,7 @@ from django.contrib.auth.models import Group
 from django.test import TestCase, tag
 from django.urls import reverse
 
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 from users.models import ApiToken, Owner, RuleSet
 
 
@@ -265,3 +265,53 @@ class OwnerModelTest(InvenTreeTestCase):
             reverse('api-user-me'), {'name': 'another-token'}, 200
         )
         self.assertEqual(response['username'], self.username)
+
+
+class MFALoginTest(InvenTreeAPITestCase):
+    """Some simplistic tests to ensure that MFA is working."""
+
+    def test_cui(self):
+        """Test that the CUI is working."""
+        self.client.logout()
+        response = self.client.get(reverse('login'), follow=True)
+        self.assertEqual(response.status_code, 200)
+
+    def test_api(self):
+        """Test that the API is working."""
+        auth_data = {'username': self.username, 'password': self.password}
+        login_url = reverse('api-login')
+
+        # Normal login
+        response = self.post(login_url, auth_data, expected_code=200)
+        self.assertIn('key', response.data)
+        self.client.logout()
+
+        # Add MFA
+        totp_model = self.user.totpdevice_set.create()
+
+        # Login with MFA enabled but not provided
+        response = self.post(login_url, auth_data, expected_code=403)
+        self.assertContains(response, 'MFA required for this user', status_code=403)
+
+        # Login with MFA enabled and provided - should redirect to MFA page
+        auth_data['mfa'] = 'anything'
+        response = self.post(login_url, auth_data, expected_code=302)
+        self.assertEqual(response.url, reverse('two-factor-authenticate'))
+        # MFA not finished - no access allowed
+        self.get(reverse('api-token'), expected_code=401)
+
+        # Login with MFA enabled and provided - but incorrect pwd
+        auth_data['password'] = 'wrong'
+        self.post(login_url, auth_data, expected_code=401)
+        auth_data['password'] = self.password
+
+        # Remove MFA
+        totp_model.delete()
+
+        # Login with MFA disabled but correct credentials provided
+        response = self.post(login_url, auth_data, expected_code=200)
+        self.assertIn('key', response.data)
+
+        # Wrong login should not work
+        auth_data['password'] = 'wrong'
+        self.post(login_url, auth_data, expected_code=401)
