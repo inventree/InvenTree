@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr "Unfertige Endprodukte"
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Link"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Datei"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Benutzer hat keine Berechtigung, dieses Modell anzuzeigen"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,28 +3593,20 @@ msgid "Comment"
 msgstr "Kommentar"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment actions"
 msgid "Attachment comment"
-msgstr "Anhang-Aktionen"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "Hochladedatum"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Datei zum Hochladen auswählen"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File Fields"
 msgid "File size"
-msgstr "Datei-Felder"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3733,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Benutzer hat keine Berechtigung, dieses Modell anzuzeigen"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14415,24 +14399,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "File comment"
-#~ msgstr "Datei-Kommentar"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Dateiname darf nicht leer sein"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Ungültiges Verzeichnis für Anhang"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Dateiname enthält ungültiges Zeichen '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Dateiendung fehlt"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Anhang mit diesem Dateinamen bereits vorhanden"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Fehler beim Umbenennen"
