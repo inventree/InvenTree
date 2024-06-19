@@ -3,13 +3,17 @@
 import datetime
 import logging
 
-from django.contrib.auth import get_user, login, logout
+from django.contrib.auth import authenticate, get_user, login, logout
 from django.contrib.auth.models import Group, Permission, User
 from django.db.models import Q
-from django.urls import include, path, re_path
+from django.http.response import HttpResponse
+from django.shortcuts import redirect
+from django.urls import include, path, re_path, reverse
 from django.views.generic.base import RedirectView
 
+from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
+from allauth_2fa.utils import user_has_valid_totp_device
 from dj_rest_auth.views import LoginView, LogoutView
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
@@ -238,12 +242,40 @@ class GroupList(ListCreateAPI):
 class Login(LoginView):
     """API view for logging in via API."""
 
+    def post(self, request, *args, **kwargs):
+        """API view for logging in via API."""
+        _data = request.data.copy()
+        _data.update(request.POST.copy())
+
+        if not _data.get('mfa', None):
+            return super().post(request, *args, **kwargs)
+
+        # Check if login credentials valid
+        user = authenticate(
+            request, username=_data.get('username'), password=_data.get('password')
+        )
+        if user is None:
+            return HttpResponse(status=401)
+
+            # Check if user has mfa set up
+        if not user_has_valid_totp_device(user):
+            return super().post(request, *args, **kwargs)
+
+            # Stage login and redirect to 2fa
+        request.session['allauth_2fa_user_id'] = str(user.id)
+        request.session['allauth_2fa_login'] = {
+            'email_verification': app_settings.EMAIL_VERIFICATION,
+            'signal_kwargs': None,
+            'signup': False,
+            'email': None,
+            'redirect_url': reverse('platform'),
+        }
+        return redirect(reverse('two-factor-authenticate'))
+
     def process_login(self):
         """Process the login request, ensure that MFA is enforced if required."""
         # Normal login process
         ret = super().process_login()
-
-        # Now check if MFA is enforced
         user = self.request.user
         adapter = get_adapter(self.request)
 
