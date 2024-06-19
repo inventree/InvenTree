@@ -4,8 +4,7 @@ import datetime
 import logging
 
 from django.contrib.auth import get_user, login, logout
-from django.contrib.auth.models import Group, Permission, User
-from django.db.models import Q
+from django.contrib.auth.models import Group, User
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
@@ -30,8 +29,8 @@ from InvenTree.mixins import (
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from InvenTree.settings import FRONTEND_URL_BASE
-from users.models import ApiToken, Owner, RuleSet, check_user_role
-from users.serializers import GroupSerializer, OwnerSerializer
+from users.models import ApiToken, Owner
+from users.serializers import GroupSerializer, OwnerSerializer, RoleSerializer
 
 logger = logging.getLogger('inventree')
 
@@ -109,63 +108,18 @@ class OwnerDetail(RetrieveAPI):
     serializer_class = OwnerSerializer
 
 
-class RoleDetails(APIView):
+class RoleDetails(RetrieveAPI):
     """API endpoint which lists the available role permissions for the current user.
 
     (Requires authentication)
     """
 
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = None
+    serializer_class = RoleSerializer
 
-    def get(self, request, *args, **kwargs):
-        """Return the list of roles / permissions available to the current user."""
-        user = request.user
-
-        roles = {}
-
-        for ruleset in RuleSet.RULESET_CHOICES:
-            role, _text = ruleset
-
-            permissions = []
-
-            for permission in RuleSet.RULESET_PERMISSIONS:
-                if check_user_role(user, role, permission):
-                    permissions.append(permission)
-
-            if len(permissions) > 0:
-                roles[role] = permissions
-            else:
-                roles[role] = None  # pragma: no cover
-
-        # Extract individual permissions for the user
-        if user.is_superuser:
-            permissions = Permission.objects.all()
-        else:
-            permissions = Permission.objects.filter(
-                Q(user=user) | Q(group__user=user)
-            ).distinct()
-
-        perms = {}
-
-        for permission in permissions:
-            perm, model = permission.codename.split('_')
-
-            if model not in perms:
-                perms[model] = []
-
-            perms[model].append(perm)
-
-        data = {
-            'user': user.pk,
-            'username': user.username,
-            'roles': roles,
-            'permissions': perms,
-            'is_staff': user.is_staff,
-            'is_superuser': user.is_superuser,
-        }
-
-        return Response(data)
+    def get_object(self):
+        """Overwritten to always return current user."""
+        return self.request.user
 
 
 class UserDetail(RetrieveUpdateDestroyAPI):
@@ -280,7 +234,7 @@ class Logout(LogoutView):
                 try:
                     token = ApiToken.objects.get(key=token_key, user=request.user)
                     token.delete()
-                except ApiToken.DoesNotExist:  # pragma: no cover
+                except ApiToken.DoesNotExist:
                     pass
 
         return super().logout(request)
