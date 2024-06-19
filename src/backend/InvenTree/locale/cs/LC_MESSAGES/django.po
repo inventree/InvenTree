@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:03\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr "Neúplné výstupy"
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Odkaz"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Soubor"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Uživatel nemá právo zobrazit tento model"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,28 +3593,20 @@ msgid "Comment"
 msgstr "Komentář"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Příloha"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "datum přidání"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Vybrat soubor k nahrání"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File"
 msgid "File size"
-msgstr "Soubor"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3733,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Uživatel nemá právo zobrazit tento model"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14415,24 +14399,3 @@ msgstr "Oprávnění k úpravě položek"
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
 
-#~ msgid "File comment"
-#~ msgstr "Komentář k souboru"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Název souboru nesmí být prázdný"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Neplatný adresář přílohy"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Název souboru obsahuje nepovolený znak '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Chybějící přípona souboru"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Příloha s tímto názvem již existuje"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Chyba při přejmenování souboru"
