@@ -280,7 +280,7 @@ class Logout(LogoutView):
                 try:
                     token = ApiToken.objects.get(key=token_key, user=request.user)
                     token.delete()
-                except ApiToken.DoesNotExist:
+                except ApiToken.DoesNotExist:  # pragma: no cover
                     pass
 
         return super().logout(request)
