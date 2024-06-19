@@ -177,17 +177,7 @@ src="{% static 'img/blank_image.png' %}"
 {{ block.super }}
 
 onPanelLoad("attachments", function() {
-    loadAttachmentTable('{% url "api-manufacturer-part-attachment-list" %}', {
-        filters: {
-            manufacturer_part: {{ part.pk }},
-        },
-        fields: {
-            manufacturer_part: {
-                value: {{ part.pk }},
-                hidden: true
-            }
-        }
-    });
+    loadAttachmentTable('manufacturerpart', {{ part.pk }});
 });
 
 $('#parameter-create').click(function() {

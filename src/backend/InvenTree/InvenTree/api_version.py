@@ -1,11 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 205
+INVENTREE_API_VERSION = 207
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v207 - 2024-06-09 : https://github.com/inventree/InvenTree/pull/7420
+    - Moves all "Attachment" models into a single table
+    - All "Attachment" operations are now performed at /api/attachment/
+    - Add permissions information to /api/user/roles/ endpoint
+
+v206 - 2024-06-08 : https://github.com/inventree/InvenTree/pull/7417
+    - Adds "choices" field to the PartTestTemplate model
+
 v205 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7284
     - Added model_type and model_id fields to the "NotesImage" serializer
 

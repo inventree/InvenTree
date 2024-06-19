@@ -32,6 +32,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import { PlaceholderPanel } from '../../components/items/Placeholder';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -283,7 +284,9 @@ export default function StockDetail() {
         label: t`Allocations`,
         icon: <IconBookmark />,
         hidden:
-          !stockitem?.part_detail?.salable && !stockitem?.part_detail?.component
+          !stockitem?.part_detail?.salable &&
+          !stockitem?.part_detail?.component,
+        content: <PlaceholderPanel />
       },
       {
         name: 'testdata',
@@ -326,9 +329,8 @@ export default function StockDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.stock_attachment_list}
-            model="stock_item"
-            pk={Number(id)}
+            model_type={ModelType.stockitem}
+            model_id={stockitem.pk}
           />
         )
       },

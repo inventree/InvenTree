@@ -132,17 +132,7 @@
     });
 
     onPanelLoad('order-attachments', function() {
-        loadAttachmentTable('{% url "api-po-attachment-list" %}', {
-            filters: {
-                order: {{ order.pk }},
-            },
-            fields: {
-                order: {
-                    value: {{ order.pk }},
-                    hidden: true,
-                }
-            }
-        });
+        loadAttachmentTable('purchaseorder', {{ order.pk }});
     });
 
     loadStockTable($("#stock-table"), {

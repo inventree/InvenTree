@@ -117,7 +117,23 @@ export function formatPriceRange(
   )}`;
 }
 
-interface RenderDateOptionsInterface {
+/*
+ * Format a file size (in bytes) into a human-readable format
+ */
+export function formatFileSize(size: number) {
+  const suffixes: string[] = ['B', 'KB', 'MB', 'GB'];
+
+  let idx = 0;
+
+  while (size > 1024 && idx < suffixes.length) {
+    size /= 1024;
+    idx++;
+  }
+
+  return `${size.toFixed(2)} ${suffixes[idx]}`;
+}
+
+interface FormatDateOptionsInterface {
   showTime?: boolean;
   showSeconds?: boolean;
 }
@@ -128,9 +144,9 @@ interface RenderDateOptionsInterface {
  * The provided "date" variable is a string, nominally ISO format e.g. 2022-02-22
  * The user-configured setting DATE_DISPLAY_FORMAT determines how the date should be displayed.
  */
-export function renderDate(
+export function formatDate(
   date: string,
-  options: RenderDateOptionsInterface = {}
+  options: FormatDateOptionsInterface = {}
 ) {
   if (!date) {
     return '-';

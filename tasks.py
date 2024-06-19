@@ -227,6 +227,9 @@ def plugins(c, uv=False):
         c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
         c.run(f"uv pip install -r '{plugin_file}'")
 
+    # Collect plugin static files
+    manage(c, 'collectplugins')
+
 
 @task(help={'uv': 'Use UV package manager (experimental)'})
 def install(c, uv=False):
@@ -317,8 +320,8 @@ def remove_mfa(c, mail=''):
     manage(c, f'remove_mfa {mail}')
 
 
-@task(help={'frontend': 'Build the frontend'})
-def static(c, frontend=False):
+@task(help={'frontend': 'Build the frontend', 'clear': 'Remove existing static files'})
+def static(c, frontend=False, clear=True):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, 'prerender')
 
@@ -327,7 +330,16 @@ def static(c, frontend=False):
         frontend_build(c)
 
     print('Collecting static files...')
-    manage(c, 'collectstatic --no-input --clear --verbosity 0')
+
+    cmd = 'collectstatic --no-input --verbosity 0'
+
+    if clear:
+        cmd += ' --clear'
+
+    manage(c, cmd)
+
+    # Collect plugin static files
+    manage(c, 'collectplugins')
 
 
 @task
@@ -450,6 +462,7 @@ def migrate(c):
     manage(c, 'makemigrations')
     manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
+    manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
 
     print('========================================')
     print('InvenTree database migrations completed!')
@@ -765,18 +778,31 @@ def wait(c):
     return manage(c, 'wait_for_db')
 
 
-@task(pre=[wait], help={'address': 'Server address:port (default=0.0.0.0:8000)'})
-def gunicorn(c, address='0.0.0.0:8000'):
+@task(
+    pre=[wait],
+    help={
+        'address': 'Server address:port (default=0.0.0.0:8000)',
+        'workers': 'Specify number of worker threads (override config file)',
+    },
+)
+def gunicorn(c, address='0.0.0.0:8000', workers=None):
     """Launch a gunicorn webserver.
 
     Note: This server will not auto-reload in response to code changes.
     """
-    c.run(
-        'gunicorn -c ./docker/gunicorn.conf.py InvenTree.wsgi -b {address} --chdir ./InvenTree'.format(
-            address=address
-        ),
-        pty=True,
-    )
+    here = os.path.dirname(os.path.abspath(__file__))
+    config_file = os.path.join(here, 'contrib', 'container', 'gunicorn.conf.py')
+    chdir = os.path.join(here, 'src', 'backend', 'InvenTree')
+
+    cmd = f'gunicorn -c {config_file} InvenTree.wsgi -b {address} --chdir {chdir}'
+
+    if workers:
+        cmd += f' --workers={workers}'
+
+    print('Starting Gunicorn Server:')
+    print(cmd)
+
+    c.run(cmd, pty=True)
 
 
 @task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})

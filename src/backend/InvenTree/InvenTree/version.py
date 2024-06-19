@@ -16,6 +16,8 @@ from django.conf import settings
 
 from dulwich.repo import NotGitRepository, Repo
 
+from common.settings import get_global_setting
+
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
@@ -51,17 +53,14 @@ def checkMinPythonVersion():
 
 def inventreeInstanceName():
     """Returns the InstanceName settings for the current database."""
-    import common.models
-
-    return common.models.InvenTreeSetting.get_setting('INVENTREE_INSTANCE', '')
+    return get_global_setting('INVENTREE_INSTANCE')
 
 
 def inventreeInstanceTitle():
     """Returns the InstanceTitle for the current database."""
-    import common.models
+    if get_global_setting('INVENTREE_INSTANCE_TITLE'):
+        return get_global_setting('INVENTREE_INSTANCE')
 
-    if common.models.InvenTreeSetting.get_setting('INVENTREE_INSTANCE_TITLE', False):
-        return common.models.InvenTreeSetting.get_setting('INVENTREE_INSTANCE', '')
     return 'InvenTree'
 
 
@@ -122,9 +121,7 @@ def isInvenTreeUpToDate():
 
     A background task periodically queries GitHub for latest version, and stores it to the database as "_INVENTREE_LATEST_VERSION"
     """
-    import common.models
-
-    latest = common.models.InvenTreeSetting.get_setting(
+    latest = get_global_setting(
         '_INVENTREE_LATEST_VERSION', backup_value=None, create=False
     )
 

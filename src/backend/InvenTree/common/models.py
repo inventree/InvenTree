@@ -12,6 +12,7 @@ import os
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
+from io import BytesIO
 from secrets import compare_digest
 from typing import Any, Callable, TypedDict, Union
 
@@ -23,6 +24,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
@@ -35,6 +37,7 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
+from taggit.managers import TaggableManager
 
 import build.validators
 import common.currency
@@ -48,6 +51,7 @@ import InvenTree.validators
 import order.validators
 import report.helpers
 import users.models
+from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
 logger = logging.getLogger('inventree')
@@ -549,25 +553,25 @@ class BaseInvenTreeSetting(models.Model):
         """
         key = str(key).strip().upper()
 
-        filters = {
-            'key__iexact': key,
-            # Optionally filter by other keys
-            **cls.get_filters(**kwargs),
-        }
-
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
         # Specify if cache lookup should be performed
         do_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
 
-        # Prevent saving to the database during data import
-        if InvenTree.ready.isImportingData():
-            create = False
-            do_cache = False
+        filters = {
+            'key__iexact': key,
+            # Optionally filter by other keys
+            **cls.get_filters(**kwargs),
+        }
 
-        # Prevent saving to the database during migrations
-        if InvenTree.ready.isRunningMigrations():
+        # Prevent saving to the database during certain operations
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
             create = False
             do_cache = False
 
@@ -594,33 +598,21 @@ class BaseInvenTreeSetting(models.Model):
             setting = None
 
         # Setting does not exist! (Try to create it)
-        if not setting:
-            # Prevent creation of new settings objects when importing data
-            if (
-                InvenTree.ready.isImportingData()
-                or not InvenTree.ready.canAppAccessDatabase(
-                    allow_test=True, allow_shell=True
-                )
-            ):
-                create = False
+        if not setting and create:
+            # Attempt to create a new settings object
+            default_value = cls.get_setting_default(key, **kwargs)
+            setting = cls(key=key, value=default_value, **kwargs)
 
-            if create:
-                # Attempt to create a new settings object
-
-                default_value = cls.get_setting_default(key, **kwargs)
-
-                setting = cls(key=key, value=default_value, **kwargs)
-
-                try:
-                    # Wrap this statement in "atomic", so it can be rolled back if it fails
-                    with transaction.atomic():
-                        setting.save(**kwargs)
-                except (IntegrityError, OperationalError, ProgrammingError):
-                    # It might be the case that the database isn't created yet
-                    pass
-                except ValidationError:
-                    # The setting failed validation - might be due to duplicate keys
-                    pass
+            try:
+                # Wrap this statement in "atomic", so it can be rolled back if it fails
+                with transaction.atomic():
+                    setting.save(**kwargs)
+            except (IntegrityError, OperationalError, ProgrammingError):
+                # It might be the case that the database isn't created yet
+                pass
+            except ValidationError:
+                # The setting failed validation - might be due to duplicate keys
+                pass
 
         if setting and do_cache:
             # Cache this setting object
@@ -692,6 +684,15 @@ class BaseInvenTreeSetting(models.Model):
             )
 
         if change_user is not None and not change_user.is_staff:
+            return
+
+        # Do not write to the database under certain conditions
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
             return
 
         attempts = int(kwargs.get('attempts', 3))
@@ -3062,3 +3063,184 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     from InvenTree.conversion import reload_unit_registry
 
     reload_unit_registry()
+
+
+def rename_attachment(instance, filename):
+    """Callback function to rename an uploaded attachment file.
+
+    Arguments:
+        - instance: The Attachment instance
+        - filename: The original filename of the uploaded file
+
+    Returns:
+        - The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'
+    """
+    # Remove any illegal characters from the filename
+    illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
+
+    for c in illegal_chars:
+        filename = filename.replace(c, '')
+
+    filename = os.path.basename(filename)
+
+    # Generate a new filename for the attachment
+    return os.path.join(
+        'attachments', str(instance.model_type), str(instance.model_id), filename
+    )
+
+
+class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Class which represents an uploaded file attachment.
+
+    An attachment can be either an uploaded file, or an external URL.
+
+    Attributes:
+        attachment: The uploaded file
+        url: An external URL
+        comment: A comment or description for the attachment
+        user: The user who uploaded the attachment
+        upload_date: The date the attachment was uploaded
+        file_size: The size of the uploaded file
+        metadata: Arbitrary metadata for the attachment (inherit from MetadataMixin)
+        tags: Tags for the attachment
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        verbose_name = _('Attachment')
+
+    def save(self, *args, **kwargs):
+        """Custom 'save' method for the Attachment model.
+
+        - Record the file size of the uploaded attachment (if applicable)
+        - Ensure that the 'content_type' and 'object_id' fields are set
+        - Run extra validations
+        """
+        # Either 'attachment' or 'link' must be specified!
+        if not self.attachment and not self.link:
+            raise ValidationError({
+                'attachment': _('Missing file'),
+                'link': _('Missing external link'),
+            })
+
+        if self.attachment:
+            if self.attachment.name.lower().endswith('.svg'):
+                self.attachment.file.file = self.clean_svg(self.attachment)
+        else:
+            self.file_size = 0
+
+        super().save(*args, **kwargs)
+
+        # Update file size
+        if self.file_size == 0 and self.attachment:
+            # Get file size
+            if default_storage.exists(self.attachment.name):
+                try:
+                    self.file_size = default_storage.size(self.attachment.name)
+                except Exception:
+                    pass
+
+            if self.file_size != 0:
+                super().save()
+
+    def clean_svg(self, field):
+        """Sanitize SVG file before saving."""
+        cleaned = sanitize_svg(field.file.read())
+        return BytesIO(bytes(cleaned, 'utf8'))
+
+    def __str__(self):
+        """Human name for attachment."""
+        if self.attachment is not None:
+            return os.path.basename(self.attachment.name)
+        return str(self.link)
+
+    model_type = models.CharField(
+        max_length=100,
+        validators=[common.validators.validate_attachment_model_type],
+        help_text=_('Target model type for this image'),
+    )
+
+    model_id = models.PositiveIntegerField()
+
+    attachment = models.FileField(
+        upload_to=rename_attachment,
+        verbose_name=_('Attachment'),
+        help_text=_('Select file to attach'),
+        blank=True,
+        null=True,
+    )
+
+    link = InvenTree.fields.InvenTreeURLField(
+        blank=True,
+        null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL'),
+    )
+
+    comment = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Comment'),
+        help_text=_('Attachment comment'),
+    )
+
+    upload_user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
+
+    upload_date = models.DateField(
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        verbose_name=_('Upload date'),
+        help_text=_('Date the file was uploaded'),
+    )
+
+    file_size = models.PositiveIntegerField(
+        default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
+    )
+
+    tags = TaggableManager(blank=True)
+
+    @property
+    def basename(self):
+        """Base name/path for attachment."""
+        if self.attachment:
+            return os.path.basename(self.attachment.name)
+        return None
+
+    def fully_qualified_url(self):
+        """Return a 'fully qualified' URL for this attachment.
+
+        - If the attachment is a link to an external resource, return the link
+        - If the attachment is an uploaded file, return the fully qualified media URL
+        """
+        if self.link:
+            return self.link
+
+        if self.attachment:
+            import InvenTree.helpers_model
+
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
+
+        return ''
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this attachment."""
+        from InvenTree.models import InvenTreeAttachmentMixin
+
+        model_class = common.validators.attachment_model_class_from_label(
+            self.model_type
+        )
+
+        if not issubclass(model_class, InvenTreeAttachmentMixin):
+            raise ValueError(_('Invalid model type specified for attachment'))
+
+        return model_class.check_attachment_permission(permission, user)

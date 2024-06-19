@@ -21,9 +21,9 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework.authtoken.models import Token as AuthToken
 
-import common.models as common_models
 import InvenTree.helpers
 import InvenTree.models
+from common.settings import get_global_setting
 from InvenTree.ready import canAppAccessDatabase, isImportingData
 
 logger = logging.getLogger('inventree')
@@ -34,7 +34,7 @@ logger = logging.getLogger('inventree')
 # string representation of a user
 def user_model_str(self):
     """Function to override the default Django User __str__."""
-    if common_models.InvenTreeSetting.get_setting('DISPLAY_FULL_NAMES', cache=True):
+    if get_global_setting('DISPLAY_FULL_NAMES', cache=True):
         if self.first_name or self.last_name:
             return f'{self.first_name} {self.last_name}'
     return self.username
@@ -258,7 +258,6 @@ class RuleSet(models.Model):
                 'part_partpricing',
                 'part_bomitem',
                 'part_bomitemsubstitute',
-                'part_partattachment',
                 'part_partsellpricebreak',
                 'part_partinternalpricebreak',
                 'part_parttesttemplate',
@@ -270,13 +269,11 @@ class RuleSet(models.Model):
                 'company_supplierpart',
                 'company_manufacturerpart',
                 'company_manufacturerpartparameter',
-                'company_manufacturerpartattachment',
             ],
             'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
             'stock_location': ['stock_stocklocation', 'stock_stocklocationtype'],
             'stock': [
                 'stock_stockitem',
-                'stock_stockitemattachment',
                 'stock_stockitemtracking',
                 'stock_stockitemtestresult',
             ],
@@ -288,13 +285,11 @@ class RuleSet(models.Model):
                 'build_build',
                 'build_builditem',
                 'build_buildline',
-                'build_buildorderattachment',
                 'stock_stockitem',
                 'stock_stocklocation',
             ],
             'purchase_order': [
                 'company_company',
-                'company_companyattachment',
                 'company_contact',
                 'company_address',
                 'company_manufacturerpart',
@@ -302,31 +297,26 @@ class RuleSet(models.Model):
                 'company_supplierpart',
                 'company_supplierpricebreak',
                 'order_purchaseorder',
-                'order_purchaseorderattachment',
                 'order_purchaseorderlineitem',
                 'order_purchaseorderextraline',
             ],
             'sales_order': [
                 'company_company',
-                'company_companyattachment',
                 'company_contact',
                 'company_address',
                 'order_salesorder',
                 'order_salesorderallocation',
-                'order_salesorderattachment',
                 'order_salesorderlineitem',
                 'order_salesorderextraline',
                 'order_salesordershipment',
             ],
             'return_order': [
                 'company_company',
-                'company_companyattachment',
                 'company_contact',
                 'company_address',
                 'order_returnorder',
                 'order_returnorderlineitem',
                 'order_returnorderextraline',
-                'order_returnorderattachment',
             ],
         }
 
@@ -344,6 +334,7 @@ class RuleSet(models.Model):
             'admin_logentry',
             'contenttypes_contenttype',
             # Models which currently do not require permissions
+            'common_attachment',
             'common_colortheme',
             'common_customunit',
             'common_inventreesetting',
@@ -816,11 +807,8 @@ class Owner(models.Model):
 
     def __str__(self):
         """Defines the owner string representation."""
-        if (
-            self.owner_type.name == 'user'
-            and common_models.InvenTreeSetting.get_setting(
-                'DISPLAY_FULL_NAMES', cache=True
-            )
+        if self.owner_type.name == 'user' and get_global_setting(
+            'DISPLAY_FULL_NAMES', cache=True
         ):
             display_name = self.owner.get_full_name()
         else:
@@ -829,11 +817,8 @@ class Owner(models.Model):
 
     def name(self):
         """Return the 'name' of this owner."""
-        if (
-            self.owner_type.name == 'user'
-            and common_models.InvenTreeSetting.get_setting(
-                'DISPLAY_FULL_NAMES', cache=True
-            )
+        if self.owner_type.name == 'user' and get_global_setting(
+            'DISPLAY_FULL_NAMES', cache=True
         ):
             return self.owner.get_full_name() or str(self.owner)
         return str(self.owner)

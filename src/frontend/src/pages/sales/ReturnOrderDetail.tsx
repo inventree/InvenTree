@@ -22,6 +22,7 @@ import {
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -220,7 +221,8 @@ export default function ReturnOrderDetail() {
       {
         name: 'line-items',
         label: t`Line Items`,
-        icon: <IconList />
+        icon: <IconList />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'attachments',
@@ -228,9 +230,8 @@ export default function ReturnOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.return_order_attachment_list}
-            model="order"
-            pk={Number(id)}
+            model_type={ModelType.returnorder}
+            model_id={order.pk}
           />
         )
       },

@@ -12,6 +12,7 @@ from django.db.models import Sum
 from InvenTree import status_codes as status
 
 import common.models
+from common.settings import set_global_setting
 import build.tasks
 from build.models import Build, BuildItem, BuildLine, generate_next_build_reference
 from part.models import Part, BomItem, BomItemSubstitute, PartTestTemplate
@@ -215,7 +216,7 @@ class BuildTest(BuildTestBase):
     def test_ref_int(self):
         """Test the "integer reference" field used for natural sorting"""
         # Set build reference to new value
-        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref}-???', change_user=None)
+        set_global_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref}-???', change_user=None)
 
         refs = {
             'BO-123-456': 123,
@@ -238,7 +239,7 @@ class BuildTest(BuildTestBase):
             self.assertEqual(build.reference_int, ref_int)
 
         # Set build reference back to default value
-        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None)
+        set_global_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None)
 
     def test_ref_validation(self):
         """Test that the reference field validation works as expected"""
@@ -271,7 +272,7 @@ class BuildTest(BuildTestBase):
             )
 
         # Try a new validator pattern
-        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', '{ref}-BO', change_user=None)
+        set_global_setting('BUILDORDER_REFERENCE_PATTERN', '{ref}-BO', change_user=None)
 
         for ref in [
             '1234-BO',
@@ -285,11 +286,11 @@ class BuildTest(BuildTestBase):
             )
 
         # Set build reference back to default value
-        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None)
+        set_global_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None)
 
     def test_next_ref(self):
         """Test that the next reference is automatically generated"""
-        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'XYZ-{ref:06d}', change_user=None)
+        set_global_setting('BUILDORDER_REFERENCE_PATTERN', 'XYZ-{ref:06d}', change_user=None)
 
         build = Build.objects.create(
             part=self.assembly,
@@ -311,7 +312,7 @@ class BuildTest(BuildTestBase):
         self.assertEqual(build.reference_int, 988)
 
         # Set build reference back to default value
-        common.models.InvenTreeSetting.set_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None)
+        set_global_setting('BUILDORDER_REFERENCE_PATTERN', 'BO-{ref:04d}', change_user=None)
 
     def test_init(self):
         """Perform some basic tests before we start the ball rolling"""
@@ -647,7 +648,7 @@ class BuildTest(BuildTestBase):
         """Test the prevention completion when a required test is missing feature"""
 
         # with required tests incompleted the save should fail
-        common.models.InvenTreeSetting.set_setting('PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS', True, change_user=None)
+        set_global_setting('PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS', True, change_user=None)
 
         with self.assertRaises(ValidationError):
             self.build_w_tests_trackable.complete_build_output(self.stockitem_with_required_test, None)

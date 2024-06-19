@@ -25,6 +25,7 @@ from django.urls import clear_url_caches, path
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_plugin_dir
 from InvenTree.ready import canAppAccessDatabase
 
@@ -732,12 +733,10 @@ class PluginsRegistry:
     # region plugin registry hash calculations
     def update_plugin_hash(self):
         """When the state of the plugin registry changes, update the hash."""
-        from common.models import InvenTreeSetting
-
         self.registry_hash = self.calculate_plugin_hash()
 
         try:
-            old_hash = InvenTreeSetting.get_setting(
+            old_hash = get_global_setting(
                 '_PLUGIN_REGISTRY_HASH', '', create=False, cache=False
             )
         except Exception:
@@ -748,7 +747,7 @@ class PluginsRegistry:
                 logger.debug(
                     'Updating plugin registry hash: %s', str(self.registry_hash)
                 )
-                InvenTreeSetting.set_setting(
+                set_global_setting(
                     '_PLUGIN_REGISTRY_HASH', self.registry_hash, change_user=None
                 )
             except (OperationalError, ProgrammingError):
@@ -776,8 +775,6 @@ class PluginsRegistry:
         """
         from hashlib import md5
 
-        from common.models import InvenTreeSetting
-
         data = md5()
 
         # Hash for all loaded plugins
@@ -789,7 +786,7 @@ class PluginsRegistry:
 
         for k in self.plugin_settings_keys():
             try:
-                val = InvenTreeSetting.get_setting(k, False, create=False)
+                val = get_global_setting(k)
                 msg = f'{k}-{val}'
 
                 data.update(msg.encode())
@@ -800,8 +797,6 @@ class PluginsRegistry:
 
     def check_reload(self):
         """Determine if the registry needs to be reloaded."""
-        from common.models import InvenTreeSetting
-
         if settings.TESTING:
             # Skip if running during unit testing
             return
@@ -817,9 +812,7 @@ class PluginsRegistry:
             self.registry_hash = self.calculate_plugin_hash()
 
         try:
-            reg_hash = InvenTreeSetting.get_setting(
-                '_PLUGIN_REGISTRY_HASH', '', create=False
-            )
+            reg_hash = get_global_setting('_PLUGIN_REGISTRY_HASH', '', create=False)
         except Exception as exc:
             logger.exception('Failed to retrieve plugin registry hash: %s', str(exc))
             return
