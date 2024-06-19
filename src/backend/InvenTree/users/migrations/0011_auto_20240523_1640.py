@@ -13,7 +13,7 @@ def clear_sessions(apps, schema_editor):
     if settings.TESTING:
         return
 
-    try:
+    try:  # pragma: no cover
         engine = import_module(settings.SESSION_ENGINE)
         engine.SessionStore.clear_expired()
         print('Cleared all user sessions to deal with GHSA-2crp-q9pc-457j')
