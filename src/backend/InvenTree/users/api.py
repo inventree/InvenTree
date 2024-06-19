@@ -4,7 +4,8 @@ import datetime
 import logging
 
 from django.contrib.auth import get_user, login, logout
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group, Permission, User
+from django.db.models import Q
 from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
@@ -137,10 +138,29 @@ class RoleDetails(APIView):
             else:
                 roles[role] = None  # pragma: no cover
 
+        # Extract individual permissions for the user
+        if user.is_superuser:
+            permissions = Permission.objects.all()
+        else:
+            permissions = Permission.objects.filter(
+                Q(user=user) | Q(group__user=user)
+            ).distinct()
+
+        perms = {}
+
+        for permission in permissions:
+            perm, model = permission.codename.split('_')
+
+            if model not in perms:
+                perms[model] = []
+
+            perms[model].append(perm)
+
         data = {
             'user': user.pk,
             'username': user.username,
             'roles': roles,
+            'permissions': perms,
             'is_staff': user.is_staff,
             'is_superuser': user.is_superuser,
         }

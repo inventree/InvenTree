@@ -419,22 +419,6 @@ class APIDownloadMixin:
         raise NotImplementedError('download_queryset method not implemented!')
 
 
-class AttachmentMixin:
-    """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
-
-    permission_classes = [permissions.IsAuthenticated, RolePermission]
-
-    filter_backends = SEARCH_ORDER_FILTER
-
-    search_fields = ['attachment', 'comment', 'link']
-
-    def perform_create(self, serializer):
-        """Save the user information when a file is uploaded."""
-        attachment = serializer.save()
-        attachment.user = self.request.user
-        attachment.save()
-
-
 class APISearchViewSerializer(serializers.Serializer):
     """Serializer for the APISearchView."""
 

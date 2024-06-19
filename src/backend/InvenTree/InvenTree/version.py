@@ -53,13 +53,13 @@ def checkMinPythonVersion():
 
 def inventreeInstanceName():
     """Returns the InstanceName settings for the current database."""
-    return get_global_setting('INVENTREE_INSTANCE', '')
+    return get_global_setting('INVENTREE_INSTANCE')
 
 
 def inventreeInstanceTitle():
     """Returns the InstanceTitle for the current database."""
-    if get_global_setting('INVENTREE_INSTANCE_TITLE', False):
-        return get_global_setting('INVENTREE_INSTANCE', 'InvenTree')
+    if get_global_setting('INVENTREE_INSTANCE_TITLE'):
+        return get_global_setting('INVENTREE_INSTANCE')
 
     return 'InvenTree'
 

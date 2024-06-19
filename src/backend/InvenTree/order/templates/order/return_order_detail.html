@@ -189,17 +189,7 @@ onPanelLoad('order-notes', function() {
 // Callback function when the 'attachments' panel is loaded
 onPanelLoad('order-attachments', function() {
 
-    loadAttachmentTable('{% url "api-return-order-attachment-list" %}', {
-        filters: {
-            order: {{ order.pk }},
-        },
-        fields: {
-            order: {
-                value: {{ order.pk }},
-                hidden: true,
-            },
-        }
-    });
+    loadAttachmentTable('returnorder', {{ order.pk }});
 });
 
 enableSidebar('returnorder');

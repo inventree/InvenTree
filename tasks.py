@@ -462,6 +462,7 @@ def migrate(c):
     manage(c, 'makemigrations')
     manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
+    manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
 
     print('========================================')
     print('InvenTree database migrations completed!')

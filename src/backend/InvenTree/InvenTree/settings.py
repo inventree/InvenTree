@@ -296,6 +296,7 @@ ADMIN_SHELL_IMPORT_MODELS = False
 if (
     DEBUG
     and INVENTREE_ADMIN_ENABLED
+    and not TESTING
     and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
 ):  # noqa
     try:

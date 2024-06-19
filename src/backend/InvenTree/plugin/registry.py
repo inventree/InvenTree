@@ -786,7 +786,7 @@ class PluginsRegistry:
 
         for k in self.plugin_settings_keys():
             try:
-                val = get_global_setting(k, False, create=False)
+                val = get_global_setting(k)
                 msg = f'{k}-{val}'
 
                 data.update(msg.encode())
