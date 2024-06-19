@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr "Tamamlanmamış Çıktılar"
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Bağlantı"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Dosya"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Kullanıcının bu modeli görüntüleme izni yok"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,28 +3593,20 @@ msgid "Comment"
 msgstr "Yorum"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Ek"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "yükleme tarihi"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Yüklenecek dosyayı seç"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File Fields"
 msgid "File size"
-msgstr "Dosya Alanları"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3733,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Kullanıcının bu modeli görüntüleme izni yok"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14415,24 +14399,3 @@ msgstr "Parçaları düzenleme izni"
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
 
-#~ msgid "File comment"
-#~ msgstr "Dosya yorumu"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Dosya adı boş olamaz"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Ek dosya yolu geçersiz"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Dosya adı geçersiz karakterler içeriyor'{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Dosya uzantısı yok"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Aynı isimli başka bir dosya zaten var"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Dosya adı değiştirilirken hata"
