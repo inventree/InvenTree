@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Łącze"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Plik"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Użytkownik nie ma uprawnień do przeglądania tego modelu"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,28 +3593,20 @@ msgid "Comment"
 msgstr "Komentarz"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Załącznik"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "data przesłania"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Wybierz plik do przesłania"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File"
 msgid "File size"
-msgstr "Plik"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3733,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Użytkownik nie ma uprawnień do przeglądania tego modelu"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14415,24 +14399,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#~ msgid "File comment"
-#~ msgstr "Komentarz pliku"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Nazwa pliku nie może być pusta"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Nieprawidłowy katalog załącznika"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Nazwa pliku zawiera niedozwolony znak '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Brak rozszerzenia w nazwie pliku"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Załącznik o tej nazwie już istnieje"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Błąd zmiany nazwy pliku"
