@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:05\n"
+"PO-Revision-Date: 2024-06-19 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Tautan"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "Data File"
 msgid "Is File"
-msgstr "File data"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Pengguna tidak memiliki izin untuk melihat model ini"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,22 +3593,16 @@ msgid "Comment"
 msgstr "Komentar"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Lampiran"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "tanggal diunggah"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select data file for upload"
 msgid "Date the file was uploaded"
-msgstr "Pilih file untuk diunggah"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size"
@@ -3731,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Pengguna tidak memiliki izin untuk melihat model ini"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14413,24 +14399,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "File comment"
-#~ msgstr "Komentar file"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Nama file tidak boleh kosong"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Direktori lampiran tidak valid"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Nama file mengandung karakter yang tidak diperkenankan '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Nama file tidak memiliki ekstensi"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Lampiran dengan nama file ini sudah ada"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Kesalahan merubah nama file"
