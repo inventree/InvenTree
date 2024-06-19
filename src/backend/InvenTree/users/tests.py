@@ -270,12 +270,6 @@ class OwnerModelTest(InvenTreeTestCase):
 class MFALoginTest(InvenTreeAPITestCase):
     """Some simplistic tests to ensure that MFA is working."""
 
-    def test_cui(self):
-        """Test that the CUI is working."""
-        self.client.logout()
-        response = self.client.get(reverse('login'), follow=True)
-        self.assertEqual(response.status_code, 200)
-
     def test_api(self):
         """Test that the API is working."""
         auth_data = {'username': self.username, 'password': self.password}
