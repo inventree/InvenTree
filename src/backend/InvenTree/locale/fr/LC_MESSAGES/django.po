@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:03\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr "Sorties incomplètes"
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Lien"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Fichier"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "L'utilisateur n'a pas la permission de voir ce modèle"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,28 +3593,20 @@ msgid "Comment"
 msgstr "Commentaire"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Pièce jointe"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "date de chargement"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Sélectionner un fichier à téléverser"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File Fields"
 msgid "File size"
-msgstr "Champs fichier"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3733,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "L'utilisateur n'a pas la permission de voir ce modèle"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14415,24 +14399,3 @@ msgstr "Droit de modifier des élément"
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
 
-#~ msgid "File comment"
-#~ msgstr "Commentaire du fichier"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Le nom de fichier ne doit pas être vide"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Répertoire de pièce jointe invalide"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Le nom de fichier contient le caractère illégal '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Extension manquante du nom de fichier"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Une pièce jointe avec ce nom de fichier existe déjà"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Erreur lors du renommage du fichier"
