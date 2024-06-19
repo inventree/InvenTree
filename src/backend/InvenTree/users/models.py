@@ -678,25 +678,6 @@ def clear_user_role_cache(user):
             cache.delete(key)
 
 
-def get_user_roles(user):
-    """Return all roles available to a given user."""
-    roles = set()
-
-    for group in user.groups.all():
-        for rule in group.rule_sets.all():
-            name = rule.name
-            if rule.can_view:
-                roles.add(f'{name}.view')
-            if rule.can_add:
-                roles.add(f'{name}.add')
-            if rule.can_change:
-                roles.add(f'{name}.change')
-            if rule.can_delete:
-                roles.add(f'{name}.delete')
-
-    return roles
-
-
 def check_user_role(user, role, permission):
     """Check if a user has a particular role:permission combination.
 
