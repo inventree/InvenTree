@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:03\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
@@ -1836,16 +1836,12 @@ msgid "Is Link"
 msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "Data File"
 msgid "Is File"
-msgstr "Datafil"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Bruger har ikke tilladelse til at se denne model"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3597,22 +3593,16 @@ msgid "Comment"
 msgstr "Kommentar"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Vedhæftning"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "dato for upload"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select data file for upload"
 msgid "Date the file was uploaded"
-msgstr "Vælg datafilen til upload"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size"
@@ -3729,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Bruger har ikke tilladelse til at se denne model"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14411,24 +14399,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "File comment"
-#~ msgstr "Fil kommentar"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Filnavn må ikke være tomt"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Ugyldig vedhæftningsmappe"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Filnavn indeholder ugyldigt tegn '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Filnavn mangler filtype"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Vedhæftning med dette filnavn findes allerede"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Fejl ved omdøbning af fil"
