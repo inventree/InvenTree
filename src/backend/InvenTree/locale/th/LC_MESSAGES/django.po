@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:05\n"
+"PO-Revision-Date: 2024-06-19 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -1832,16 +1832,12 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "ลิงก์"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "Data File"
 msgid "Is File"
-msgstr "ไฟล์ข้อมูล"
+msgstr ""
 
 #: common/api.py:739
 msgid "User does not have permission to delete this attachment"
@@ -3597,22 +3593,16 @@ msgid "Comment"
 msgstr "ความคิดเห็น"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "ไฟล์แนบ"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "วันที่อัปโหลด"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select data file for upload"
 msgid "Date the file was uploaded"
-msgstr "เลือกไฟล์ข้อมูลที่จะอัปโหลด"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size"
@@ -14409,15 +14399,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "File comment"
-#~ msgstr "ความเห็นของไฟล์"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "จำเป็นต้องใส่ชื่อไฟล์"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "ชื่อไฟล์ห้ามมีตัวอักษรต้องห้าม '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "ไม่พบนามสกุลของไฟล์"
