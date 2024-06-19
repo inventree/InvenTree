@@ -224,14 +224,15 @@ class Login(LoginView):
 
     def post(self, request, *args, **kwargs):
         """API view for logging in via API."""
-        if not request.POST.get('mfa', None):
+        _data = request.data.copy()
+        _data.update(request.POST.copy())
+
+        if not _data.get('mfa', None):
             return super().post(request, *args, **kwargs)
 
         # Check if login credentials valid
         user = authenticate(
-            request,
-            username=request.POST.get('username'),
-            password=request.POST.get('password'),
+            request, username=_data.get('username'), password=_data.get('password')
         )
         if user is None:
             return HttpResponse(status=401)
