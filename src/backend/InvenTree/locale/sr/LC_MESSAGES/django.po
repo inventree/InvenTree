@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:05\n"
+"PO-Revision-Date: 2024-06-19 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -1836,16 +1836,12 @@ msgid "Is Link"
 msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "Data File"
 msgid "Is File"
-msgstr "Datoteka"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Korisnik nema dozvolu za pregled ovog modela"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3597,22 +3593,16 @@ msgid "Comment"
 msgstr "Komentar"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Prilog"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "dadajte datoteku"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select data file for upload"
 msgid "Date the file was uploaded"
-msgstr "Odaberite datoteku za učitavanje"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size"
@@ -3729,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Korisnik nema dozvolu za pregled ovog modela"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14411,24 +14399,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "File comment"
-#~ msgstr "Datoteka komentara"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Ime datoteke ne sme biti prazno"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Direktorijum nevažećih datoteka"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Ime datoteke sadrži neprihvatljivi karakter '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Imenu datoteke nedostaje ekstenzija"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Prilog s ovim nazivom datoteke već postoji"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Greška pri preimenovanju datoteke"
