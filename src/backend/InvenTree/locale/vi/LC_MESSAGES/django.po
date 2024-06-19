@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr "Đầu ra chưa hoàn thiện"
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Liên kết"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Tệp"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Người dùng không được phân quyền xem mẫu này"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,28 +3593,20 @@ msgid "Comment"
 msgstr "Bình luận"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Đính kèm"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "Ngày tải lên"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Chọn tệp để tải lên"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File Fields"
 msgid "File size"
-msgstr "Các trường tập tin"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3733,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Người dùng không được phân quyền xem mẫu này"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14415,24 +14399,3 @@ msgstr "Quyển để sửa mục"
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
 
-#~ msgid "File comment"
-#~ msgstr "Bình luận tệp tin"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Tên tập tin không được để trống"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Thư mục đính kèm không hợp lệ"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Tên tập tin chứa ký tự không hợp lệ '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Tên tệp tin thiếu phần mở rộng"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Tên của tệp đính kèm này đã tồn tại"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Lỗi khi đổi tên tệp tin"
