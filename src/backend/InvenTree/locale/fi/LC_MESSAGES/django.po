@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Linkki"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Tiedosto"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Käyttäjän oikeudet eivät riitä kohteen tarkastelemiseen"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,28 +3593,20 @@ msgid "Comment"
 msgstr "Kommentti"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Liite"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "latauspäivä"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Valitse lähetettävä tiedosto"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File"
 msgid "File size"
-msgstr "Tiedosto"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3733,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Käyttäjän oikeudet eivät riitä kohteen tarkastelemiseen"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14415,24 +14399,3 @@ msgstr "Oikeus muokata kohteita"
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
 
-#~ msgid "File comment"
-#~ msgstr "Tiedoston kommentti"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Tiedoston nimi ei saa olla tyhjä"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Virheellinen liitteen hakemisto"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Tiedostonimi sisältää kielletyn merkin '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Tiedostonimen pääte puuttuu"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Samanniminen liite on jo olemassa"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Virhe tiedoston uudelleennimeämisessä"
