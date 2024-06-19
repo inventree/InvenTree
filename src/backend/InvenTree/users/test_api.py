@@ -50,7 +50,10 @@ class UserAPITests(InvenTreeAPITestCase):
 
     def test_logout(self):
         """Test api logout endpoint."""
-        self.get(reverse('api-token'), expected_code=200)
+        token_key = self.get(url=reverse('api-token')).data['token']
+        self.client.logout()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token_key)
+
         self.post(reverse('api-logout'), expected_code=200)
         self.get(reverse('api-token'), expected_code=401)
 
