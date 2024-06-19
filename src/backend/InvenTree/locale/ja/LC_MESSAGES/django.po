@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "リンク"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "ファイル"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "ユーザーにこのモデルを表示する権限がありません"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,28 +3593,20 @@ msgid "Comment"
 msgstr "コメント："
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "添付ファイル"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "アップロード日時"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select data file for upload"
 msgid "Date the file was uploaded"
-msgstr "アップロードするファイルを選択"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File"
 msgid "File size"
-msgstr "ファイル"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3733,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "ユーザーにこのモデルを表示する権限がありません"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14415,24 +14399,3 @@ msgstr "項目を編集する権限"
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
 
-#~ msgid "File comment"
-#~ msgstr "ファイルコメント"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "ファイル名は空欄にできません"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "添付ファイルのディレクトリが正しくありません"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "ファイル名に無効な文字'{c}'が含まれています"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "ファイル名に拡張子がありません"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "この名前の貼付ファイルは既に存在します"
-
-#~ msgid "Error renaming file"
-#~ msgstr "ファイル名の変更に失敗しました"
