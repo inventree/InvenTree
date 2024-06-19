@@ -37,6 +37,7 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
+from taggit.managers import TaggableManager
 
 import build.validators
 import common.currency
@@ -3088,7 +3089,7 @@ def rename_attachment(instance, filename):
     )
 
 
-class Attachment(InvenTree.models.InvenTreeModel):
+class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
     """Class which represents an uploaded file attachment.
 
     An attachment can be either an uploaded file, or an external URL.
@@ -3100,6 +3101,8 @@ class Attachment(InvenTree.models.InvenTreeModel):
         user: The user who uploaded the attachment
         upload_date: The date the attachment was uploaded
         file_size: The size of the uploaded file
+        metadata: Arbitrary metadata for the attachment (inherit from MetadataMixin)
+        tags: Tags for the attachment
     """
 
     class Meta:
@@ -3202,6 +3205,8 @@ class Attachment(InvenTree.models.InvenTreeModel):
     file_size = models.PositiveIntegerField(
         default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
     )
+
+    tags = TaggableManager(blank=True)
 
     @property
     def basename(self):

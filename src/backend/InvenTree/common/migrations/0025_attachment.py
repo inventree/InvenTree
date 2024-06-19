@@ -3,6 +3,7 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
+import taggit.managers
 
 import common.models
 import common.validators
@@ -31,6 +32,8 @@ class Migration(migrations.Migration):
                 ('file_size', models.PositiveIntegerField(default=0, help_text='File size in bytes', verbose_name='File size')),
                 ('model_type', models.CharField(help_text='Target model type for this image', max_length=100, validators=[common.validators.validate_attachment_model_type])),
                 ('upload_user', models.ForeignKey(blank=True, help_text='User', null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, verbose_name='User')),
+                ('metadata', models.JSONField(blank=True, help_text='JSON metadata field, for use by external plugins', null=True, verbose_name='Plugin Metadata')),
+                ('tags', taggit.managers.TaggableManager(blank=True, help_text='A comma-separated list of tags.', through='taggit.TaggedItem', to='taggit.Tag', verbose_name='Tags'))
             ],
             bases=(InvenTree.models.PluginValidationMixin, models.Model),
             options={
