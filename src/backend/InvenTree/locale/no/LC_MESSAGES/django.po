@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -1832,22 +1832,16 @@ msgid "Incomplete Outputs"
 msgstr "Ufullstendige artikler"
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "Lenke"
+msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Fil"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Brukeren har ikke rettigheter til å se denne modellen"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3599,28 +3593,20 @@ msgid "Comment"
 msgstr "Kommentar"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Vedlegg"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "opplastet dato"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Velg fil å laste opp"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File Fields"
 msgid "File size"
-msgstr "Filfelter"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3733,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Brukeren har ikke rettigheter til å se denne modellen"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14415,24 +14399,3 @@ msgstr "Tillatelse til å endre elementer"
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
 
-#~ msgid "File comment"
-#~ msgstr "Kommentar til fil"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Filnavn kan ikke være tomt"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Ugyldig vedleggskatalog"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Filnavn inneholder ugyldig tegn '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Filnavn mangler filtype"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Vedlegg med dette filnavnet finnes allerede"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Feil ved endring av filnavn"
