@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1836,16 +1836,12 @@ msgid "Is Link"
 msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "File"
 msgid "Is File"
-msgstr "Bestand"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "Gebruiker heeft geen rechten om dit model te bekijken"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3597,28 +3593,20 @@ msgid "Comment"
 msgstr "Opmerking"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "Bijlage"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "uploaddatum"
+msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Date the file was uploaded"
-msgstr "Selecteer bestand om te uploaden"
+msgstr ""
 
 #: common/models.py:3206
-#, fuzzy
-#| msgid "File"
 msgid "File size"
-msgstr "Bestand"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size in bytes"
@@ -3731,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "Gebruiker heeft geen rechten om dit model te bekijken"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14413,24 +14399,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "File comment"
-#~ msgstr "Bestand opmerking"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "Bestandsnaam mag niet leeg zijn"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "Foute bijlagemap"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "Bestandsnaam bevat illegale teken '{c}'"
-
-#~ msgid "Filename missing extension"
-#~ msgstr "Bestandsnaam mist extensie"
-
-#~ msgid "Attachment with this filename already exists"
-#~ msgstr "Bijlage met deze bestandsnaam bestaat al"
-
-#~ msgid "Error renaming file"
-#~ msgstr "Fout bij hernoemen bestand"
