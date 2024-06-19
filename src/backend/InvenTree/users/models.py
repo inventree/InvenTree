@@ -691,8 +691,8 @@ def check_user_role(user, role, permission):
 
     try:
         result = cache.get(key)
-    except Exception:  # pragma: no cover
-        result = None
+    except Exception:
+        result = None  # pragma: no cover
 
     if result is not None:
         return result
@@ -722,8 +722,8 @@ def check_user_role(user, role, permission):
     # Save result to cache
     try:
         cache.set(key, result, timeout=3600)
-    except Exception:  # pragma: no cover
-        pass
+    except Exception:
+        pass  # pragma: no cover
 
     return result
 
