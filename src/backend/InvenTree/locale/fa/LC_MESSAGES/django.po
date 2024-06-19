@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:05\n"
+"PO-Revision-Date: 2024-06-19 04:50\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -1836,16 +1836,12 @@ msgid "Is Link"
 msgstr ""
 
 #: common/api.py:697
-#, fuzzy
-#| msgid "Data File"
 msgid "Is File"
-msgstr "فایل‌های داده"
+msgstr ""
 
 #: common/api.py:739
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete this attachment"
-msgstr "کاربر سطح دسترسی نمایش این مدل را ندارد"
+msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -3605,10 +3601,8 @@ msgid "Upload date"
 msgstr ""
 
 #: common/models.py:3202
-#, fuzzy
-#| msgid "Select data file for upload"
 msgid "Date the file was uploaded"
-msgstr "فایل را برای بارگذاری انتخاب کنید"
+msgstr ""
 
 #: common/models.py:3206
 msgid "File size"
@@ -3725,10 +3719,8 @@ msgid "Model Type"
 msgstr ""
 
 #: common/serializers.py:559
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr "کاربر سطح دسترسی نمایش این مدل را ندارد"
+msgstr ""
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
@@ -14406,3 +14398,4 @@ msgstr ""
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr ""
+
