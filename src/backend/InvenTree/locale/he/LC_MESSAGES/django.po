@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -1832,10 +1832,8 @@ msgid "Incomplete Outputs"
 msgstr ""
 
 #: common/api.py:689
-#, fuzzy
-#| msgid "Link"
 msgid "Is Link"
-msgstr "קישור"
+msgstr ""
 
 #: common/api.py:697
 msgid "Is File"
@@ -3595,16 +3593,12 @@ msgid "Comment"
 msgstr "הערה"
 
 #: common/models.py:3185
-#, fuzzy
-#| msgid "Attachment"
 msgid "Attachment comment"
-msgstr "קובץ מצורף"
+msgstr ""
 
 #: common/models.py:3201
-#, fuzzy
-#| msgid "upload date"
 msgid "Upload date"
-msgstr "תאריך העלאה"
+msgstr ""
 
 #: common/models.py:3202
 msgid "Date the file was uploaded"
@@ -14405,18 +14399,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "File comment"
-#~ msgstr "הערת קובץ"
-
-#~ msgid "Filename must not be empty"
-#~ msgstr "חובה למלא שם קובץ"
-
-#~ msgid "Invalid attachment directory"
-#~ msgstr "תיקיית קובץ שגויה"
-
-#, python-brace-format
-#~ msgid "Filename contains illegal character '{c}'"
-#~ msgstr "שם הקובץ מכיל תו '{c}' שאינו חוקי"
-
-#~ msgid "Error renaming file"
-#~ msgstr "שגיאה בשינוי שם פריט"
