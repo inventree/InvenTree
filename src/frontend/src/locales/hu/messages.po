@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-11 23:04\n"
+"PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -6884,3 +6884,4 @@ msgstr "Olvasd el a dokumentációt"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
