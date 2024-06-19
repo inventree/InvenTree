@@ -814,7 +814,18 @@ common_api_urls = [
     path(
         'attachment/',
         include([
-            path('<int:pk>/', AttachmentDetail.as_view(), name='api-attachment-detail'),
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': common.models.Attachment},
+                        name='api-attachment-metadata',
+                    ),
+                    path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
+                ]),
+            ),
             path('', AttachmentList.as_view(), name='api-attachment-list'),
         ]),
     ),

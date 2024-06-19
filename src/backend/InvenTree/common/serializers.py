@@ -10,6 +10,7 @@ from error_report.models import Error
 from flags.state import flag_state
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied
+from taggit.serializers import TagListSerializerField
 
 import common.models as common_models
 import common.validators
@@ -512,6 +513,8 @@ class AttachmentSerializer(InvenTreeModelSerializer):
             self.fields[
                 'model_type'
             ].choices = common.validators.attachment_model_options()
+
+    tags = TagListSerializerField(required=False)
 
     user_detail = UserSerializer(source='upload_user', read_only=True, many=False)
 
