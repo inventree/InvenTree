@@ -499,6 +499,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
             'file_size',
             'model_type',
             'model_id',
+            'tags',
         ]
 
         read_only_fields = ['pk', 'file_size', 'upload_date', 'upload_user', 'filename']
