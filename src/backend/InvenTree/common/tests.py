@@ -11,6 +11,8 @@ from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase
 from django.test.utils import override_settings
@@ -21,11 +23,13 @@ import PIL
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
+from part.models import Part
 from plugin import registry
 from plugin.models import NotificationUserSetting
 
 from .api import WebhookView
 from .models import (
+    Attachment,
     ColorTheme,
     CustomUnit,
     InvenTreeSetting,
@@ -39,6 +43,131 @@ from .models import (
 )
 
 CONTENT_TYPE_JSON = 'application/json'
+
+
+class AttachmentTest(InvenTreeAPITestCase):
+    """Unit tests for the 'Attachment' model."""
+
+    fixtures = ['part', 'category', 'location']
+
+    def generate_file(self, fn: str):
+        """Generate an attachment file object."""
+        file_object = io.StringIO('Some dummy data')
+        file_object.seek(0)
+
+        return ContentFile(file_object.getvalue(), fn)
+
+    def test_filename_validation(self):
+        """Test that the filename validation works as expected.
+
+        The django file-upload mechanism should sanitize filenames correctly.
+        """
+        part = Part.objects.first()
+
+        filenames = {
+            'test.txt': 'test.txt',
+            'r####at.mp4': 'rat.mp4',
+            '../../../win32.dll': 'win32.dll',
+            'ABC!@#$%^&&&&&&&)-XYZ-(**&&&\\/QqQ.sqlite': 'QqQ.sqlite',
+            '/var/log/inventree.log': 'inventree.log',
+            'c:\\Users\\admin\\passwd.txt': 'cUsersadminpasswd.txt',
+            '8&&&8.txt': '88.txt',
+        }
+
+        for fn, expected in filenames.items():
+            attachment = Attachment.objects.create(
+                attachment=self.generate_file(fn),
+                comment=f'Testing filename: {fn}',
+                model_type='part',
+                model_id=part.pk,
+            )
+
+            expected_path = f'attachments/part/{part.pk}/{expected}'
+            self.assertEqual(attachment.attachment.name, expected_path)
+            self.assertEqual(attachment.file_size, 15)
+
+        self.assertEqual(part.attachments.count(), len(filenames.keys()))
+
+        # Delete any attachments after the test is completed
+        for attachment in part.attachments.all():
+            path = attachment.attachment.name
+            attachment.delete()
+
+            # Remove uploaded files to prevent them sticking around
+            if default_storage.exists(path):
+                default_storage.delete(path)
+
+        self.assertEqual(
+            Attachment.objects.filter(model_type='part', model_id=part.pk).count(), 0
+        )
+
+    def test_mixin(self):
+        """Test that the mixin class works as expected."""
+        part = Part.objects.first()
+
+        self.assertEqual(part.attachments.count(), 0)
+
+        part.create_attachment(
+            attachment=self.generate_file('test.txt'), comment='Hello world'
+        )
+
+        self.assertEqual(part.attachments.count(), 1)
+
+        attachment = part.attachments.first()
+
+        self.assertEqual(attachment.comment, 'Hello world')
+        self.assertIn(f'attachments/part/{part.pk}/test', attachment.attachment.name)
+
+    def test_upload_via_api(self):
+        """Test that we can upload attachments via the API."""
+        part = Part.objects.first()
+        url = reverse('api-attachment-list')
+
+        data = {
+            'model_type': 'part',
+            'model_id': part.pk,
+            'link': 'https://www.google.com',
+            'comment': 'Some appropriate comment',
+        }
+
+        # Start without appropriate permissions
+        # User must have 'part.change' to upload an attachment against a Part instance
+        self.logout()
+        self.user.is_staff = False
+        self.user.is_superuser = False
+        self.user.save()
+        self.clearRoles()
+
+        # Check without login (401)
+        response = self.post(url, data, expected_code=401)
+
+        self.login()
+
+        response = self.post(url, data, expected_code=403)
+
+        self.assertIn(
+            'User does not have permission to create or edit attachments for this model',
+            str(response.data['detail']),
+        )
+
+        # Add the required permission
+        self.assignRole('part.change')
+
+        # Upload should now work!
+        response = self.post(url, data, expected_code=201)
+
+        # Try to delete the attachment via API (should fail)
+        attachment = part.attachments.first()
+        url = reverse('api-attachment-detail', kwargs={'pk': attachment.pk})
+        response = self.delete(url, expected_code=403)
+        self.assertIn(
+            'User does not have permission to delete this attachment',
+            str(response.data['detail']),
+        )
+
+        # Assign 'delete' permission to 'part' model
+        self.assignRole('part.delete')
+        response = self.delete(url, expected_code=204)
 
 
 class SettingsTest(InvenTreeTestCase):

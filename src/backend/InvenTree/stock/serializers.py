@@ -32,7 +32,6 @@ from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
 from .models import (
     StockItem,
-    StockItemAttachment,
     StockItemTestResult,
     StockItemTracking,
     StockLocation,
@@ -397,6 +396,31 @@ class StockItemSerializer(
         """
         extra_kwargs = {'use_pack_size': {'write_only': True}}
 
+    def __init__(self, *args, **kwargs):
+        """Add detail fields."""
+        part_detail = kwargs.pop('part_detail', False)
+        location_detail = kwargs.pop('location_detail', False)
+        supplier_part_detail = kwargs.pop('supplier_part_detail', False)
+        tests = kwargs.pop('tests', False)
+        path_detail = kwargs.pop('path_detail', False)
+
+        super(StockItemSerializer, self).__init__(*args, **kwargs)
+
+        if not part_detail:
+            self.fields.pop('part_detail')
+
+        if not location_detail:
+            self.fields.pop('location_detail')
+
+        if not supplier_part_detail:
+            self.fields.pop('supplier_part_detail')
+
+        if not tests:
+            self.fields.pop('tests')
+
+        if not path_detail:
+            self.fields.pop('location_path')
+
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
         many=False,
@@ -554,31 +578,6 @@ class StockItemSerializer(
     )
 
     tags = TagListSerializerField(required=False)
-
-    def __init__(self, *args, **kwargs):
-        """Add detail fields."""
-        part_detail = kwargs.pop('part_detail', False)
-        location_detail = kwargs.pop('location_detail', False)
-        supplier_part_detail = kwargs.pop('supplier_part_detail', False)
-        tests = kwargs.pop('tests', False)
-        path_detail = kwargs.pop('path_detail', False)
-
-        super(StockItemSerializer, self).__init__(*args, **kwargs)
-
-        if not part_detail:
-            self.fields.pop('part_detail')
-
-        if not location_detail:
-            self.fields.pop('location_detail')
-
-        if not supplier_part_detail:
-            self.fields.pop('supplier_part_detail')
-
-        if not tests:
-            self.fields.pop('tests')
-
-        if not path_detail:
-            self.fields.pop('location_path')
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
@@ -1109,21 +1108,6 @@ class LocationSerializer(
     location_type_detail = StockLocationTypeSerializer(
         source='location_type', read_only=True, many=False
     )
-
-
-class StockItemAttachmentSerializer(
-    InvenTree.serializers.InvenTreeAttachmentSerializer
-):
-    """Serializer for StockItemAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItemAttachment
-
-        fields = InvenTree.serializers.InvenTreeAttachmentSerializer.attachment_fields([
-            'stock_item'
-        ])
 
 
 class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):

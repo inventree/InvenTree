@@ -1,9 +1,7 @@
 """Generic models which provide extra functionality over base Django model types."""
 
 import logging
-import os
 from datetime import datetime
-from io import BytesIO
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -20,11 +18,11 @@ from error_report.models import Error
 from mptt.exceptions import InvalidMove
 from mptt.models import MPTTModel, TreeForeignKey
 
+import common.settings
 import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
-from InvenTree.sanitizer import sanitize_svg
 
 logger = logging.getLogger('inventree')
 
@@ -307,10 +305,7 @@ class ReferenceIndexingMixin(models.Model):
         if cls.REFERENCE_PATTERN_SETTING is None:
             return ''
 
-        # import at function level to prevent cyclic imports
-        from common.models import InvenTreeSetting
-
-        return InvenTreeSetting.get_setting(
+        return common.settings.get_global_setting(
             cls.REFERENCE_PATTERN_SETTING, create=False
         ).strip()
 
@@ -506,200 +501,64 @@ class InvenTreeMetadataModel(MetadataMixin, InvenTreeModel):
         abstract = True
 
 
-def rename_attachment(instance, filename):
-    """Function for renaming an attachment file. The subdirectory for the uploaded file is determined by the implementing class.
-
-    Args:
-        instance: Instance of a PartAttachment object
-        filename: name of uploaded file
-
-    Returns:
-        path to store file, format: '<subdir>/<id>/filename'
-    """
-    # Construct a path to store a file attachment for a given model type
-    return os.path.join(instance.getSubdir(), filename)
-
-
-class InvenTreeAttachment(InvenTreeModel):
+class InvenTreeAttachmentMixin:
     """Provides an abstracted class for managing file attachments.
 
-    An attachment can be either an uploaded file, or an external URL
+    Links the implementing model to the common.models.Attachment table,
+    and provides the following methods:
 
-    Attributes:
-        attachment: Upload file
-        link: External URL
-        comment: String descriptor for the attachment
-        user: User associated with file upload
-        upload_date: Date the file was uploaded
+    - attachments: Return a queryset containing all attachments for this model
     """
 
-    class Meta:
-        """Metaclass options. Abstract ensures no database table is created."""
+    def delete(self):
+        """Handle the deletion of a model instance.
 
-        abstract = True
-
-    def getSubdir(self):
-        """Return the subdirectory under which attachments should be stored.
-
-        Note: Re-implement this for each subclass of InvenTreeAttachment
+        Before deleting the model instance, delete any associated attachments.
         """
-        return 'attachments'
-
-    def save(self, *args, **kwargs):
-        """Provide better validation error."""
-        # Either 'attachment' or 'link' must be specified!
-        if not self.attachment and not self.link:
-            raise ValidationError({
-                'attachment': _('Missing file'),
-                'link': _('Missing external link'),
-            })
-
-        if self.attachment and self.attachment.name.lower().endswith('.svg'):
-            self.attachment.file.file = self.clean_svg(self.attachment)
-
-        super().save(*args, **kwargs)
-
-    def clean_svg(self, field):
-        """Sanitize SVG file before saving."""
-        cleaned = sanitize_svg(field.file.read())
-        return BytesIO(bytes(cleaned, 'utf8'))
-
-    def __str__(self):
-        """Human name for attachment."""
-        if self.attachment is not None:
-            return os.path.basename(self.attachment.name)
-        return str(self.link)
-
-    attachment = models.FileField(
-        upload_to=rename_attachment,
-        verbose_name=_('Attachment'),
-        help_text=_('Select file to attach'),
-        blank=True,
-        null=True,
-    )
-
-    link = InvenTree.fields.InvenTreeURLField(
-        blank=True,
-        null=True,
-        verbose_name=_('Link'),
-        help_text=_('Link to external URL'),
-    )
-
-    comment = models.CharField(
-        blank=True,
-        max_length=100,
-        verbose_name=_('Comment'),
-        help_text=_('File comment'),
-    )
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name=_('User'),
-        help_text=_('User'),
-    )
-
-    upload_date = models.DateField(
-        auto_now_add=True, null=True, blank=True, verbose_name=_('upload date')
-    )
+        self.attachments.all().delete()
+        super().delete()
 
     @property
-    def basename(self):
-        """Base name/path for attachment."""
-        if self.attachment:
-            return os.path.basename(self.attachment.name)
-        return None
+    def attachments(self):
+        """Return a queryset containing all attachments for this model."""
+        return self.attachments_for_model().filter(model_id=self.pk)
 
-    @basename.setter
-    def basename(self, fn):
-        """Function to rename the attachment file.
+    @classmethod
+    def check_attachment_permission(cls, permission, user) -> bool:
+        """Check if the user has permission to perform the specified action on the attachment.
 
-        - Filename cannot be empty
-        - Filename cannot contain illegal characters
-        - Filename must specify an extension
-        - Filename cannot match an existing file
+        The default implementation runs a permission check against *this* model class,
+        but this can be overridden in the implementing class if required.
+
+        Arguments:
+            permission: The permission to check (add / change / view / delete)
+            user: The user to check against
+
+        Returns:
+            bool: True if the user has permission, False otherwise
         """
-        fn = fn.strip()
+        perm = f'{cls._meta.app_label}.{permission}_{cls._meta.model_name}'
+        return user.has_perm(perm)
 
-        if len(fn) == 0:
-            raise ValidationError(_('Filename must not be empty'))
+    def attachments_for_model(self):
+        """Return all attachments for this model class."""
+        from common.models import Attachment
 
-        attachment_dir = settings.MEDIA_ROOT.joinpath(self.getSubdir())
-        old_file = settings.MEDIA_ROOT.joinpath(self.attachment.name)
-        new_file = settings.MEDIA_ROOT.joinpath(self.getSubdir(), fn).resolve()
+        model_type = self.__class__.__name__.lower()
 
-        # Check that there are no directory tricks going on...
-        if new_file.parent != attachment_dir:
-            logger.error(
-                "Attempted to rename attachment outside valid directory: '%s'", new_file
-            )
-            raise ValidationError(_('Invalid attachment directory'))
+        return Attachment.objects.filter(model_type=model_type)
 
-        # Ignore further checks if the filename is not actually being renamed
-        if new_file == old_file:
-            return
+    def create_attachment(self, attachment=None, link=None, comment='', **kwargs):
+        """Create an attachment / link for this model."""
+        from common.models import Attachment
 
-        forbidden = [
-            "'",
-            '"',
-            '#',
-            '@',
-            '!',
-            '&',
-            '^',
-            '<',
-            '>',
-            ':',
-            ';',
-            '/',
-            '\\',
-            '|',
-            '?',
-            '*',
-            '%',
-            '~',
-            '`',
-        ]
+        kwargs['attachment'] = attachment
+        kwargs['link'] = link
+        kwargs['comment'] = comment
+        kwargs['model_type'] = self.__class__.__name__.lower()
+        kwargs['model_id'] = self.pk
 
-        for c in forbidden:
-            if c in fn:
-                raise ValidationError(_(f"Filename contains illegal character '{c}'"))
-
-        if len(fn.split('.')) < 2:
-            raise ValidationError(_('Filename missing extension'))
-
-        if not old_file.exists():
-            logger.error(
-                "Trying to rename attachment '%s' which does not exist", old_file
-            )
-            return
-
-        if new_file.exists():
-            raise ValidationError(_('Attachment with this filename already exists'))
-
-        try:
-            os.rename(old_file, new_file)
-            self.attachment.name = os.path.join(self.getSubdir(), fn)
-            self.save()
-        except Exception:
-            raise ValidationError(_('Error renaming file'))
-
-    def fully_qualified_url(self):
-        """Return a 'fully qualified' URL for this attachment.
-
-        - If the attachment is a link to an external resource, return the link
-        - If the attachment is an uploaded file, return the fully qualified media URL
-        """
-        if self.link:
-            return self.link
-
-        if self.attachment:
-            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
-            return InvenTree.helpers_model.construct_absolute_url(media_url)
-
-        return ''
+        Attachment.objects.create(**kwargs)
 
 
 class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):

@@ -13,16 +13,16 @@ from django_filters import rest_framework as rest_filters
 
 from importer.mixins import DataExportViewMixin
 
-from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import MetadataView
 from generic.states.api import StatusView
-from InvenTree.helpers import str2bool, isNull, DownloadFile
+from InvenTree.helpers import str2bool, isNull
 from build.status_codes import BuildStatus, BuildStatusGroups
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
 import common.models
 import build.admin
 import build.serializers
-from build.models import Build, BuildLine, BuildItem, BuildOrderAttachment
+from build.models import Build, BuildLine, BuildItem
 import part.models
 from users.models import Owner
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
@@ -607,31 +607,7 @@ class BuildItemList(DataExportViewMixin, ListCreateAPI):
     ]
 
 
-class BuildAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) BuildOrderAttachment objects."""
-
-    queryset = BuildOrderAttachment.objects.all()
-    serializer_class = build.serializers.BuildAttachmentSerializer
-
-    filterset_fields = [
-        'build',
-    ]
-
-
-class BuildAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for a BuildOrderAttachment object."""
-
-    queryset = BuildOrderAttachment.objects.all()
-    serializer_class = build.serializers.BuildAttachmentSerializer
-
-
 build_api_urls = [
-
-    # Attachments
-    path('attachment/', include([
-        path('<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
-        path('', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
-    ])),
 
     # Build lines
     path('line/', include([

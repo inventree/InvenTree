@@ -295,11 +295,7 @@ export default function BuildDetail() {
         label: t`Attachments`,
         icon: <IconPaperclip />,
         content: (
-          <AttachmentTable
-            endpoint={ApiEndpoints.build_order_attachment_list}
-            model="build"
-            pk={Number(id)}
-          />
+          <AttachmentTable model_type={ModelType.build} model_id={Number(id)} />
         )
       },
       {

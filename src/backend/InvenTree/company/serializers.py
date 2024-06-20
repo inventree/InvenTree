@@ -12,7 +12,6 @@ from taggit.serializers import TagListSerializerField
 import part.filters
 from importer.mixins import DataImportExportSerializerMixin
 from InvenTree.serializers import (
-    InvenTreeAttachmentSerializer,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeImageSerializerField,
@@ -27,10 +26,8 @@ from part.serializers import PartBriefSerializer
 from .models import (
     Address,
     Company,
-    CompanyAttachment,
     Contact,
     ManufacturerPart,
-    ManufacturerPartAttachment,
     ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
@@ -194,17 +191,6 @@ class CompanySerializer(
         return self.instance
 
 
-class CompanyAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the CompanyAttachment class."""
-
-    class Meta:
-        """Metaclass defines serializer options."""
-
-        model = CompanyAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['company'])
-
-
 class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializer class for the Contact model."""
 
@@ -272,17 +258,6 @@ class ManufacturerPartSerializer(
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
     )
-
-
-class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the ManufacturerPartAttachment class."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = ManufacturerPartAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['manufacturer_part'])
 
 
 class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):

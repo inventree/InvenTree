@@ -20,7 +20,7 @@ import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
 from importer.mixins import DataExportViewMixin
-from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
+from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -52,7 +52,6 @@ from .models import (
     BomItem,
     BomItemSubstitute,
     Part,
-    PartAttachment,
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
@@ -390,22 +389,6 @@ class PartInternalPriceList(ListCreateAPI):
     filterset_fields = ['part']
     ordering_fields = ['quantity', 'price']
     ordering = 'quantity'
-
-
-class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing, creating and bulk deleting a PartAttachment (file upload)."""
-
-    queryset = PartAttachment.objects.all()
-    serializer_class = part_serializers.PartAttachmentSerializer
-
-    filterset_fields = ['part']
-
-
-class PartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for PartAttachment model."""
-
-    queryset = PartAttachment.objects.all()
-    serializer_class = part_serializers.PartAttachmentSerializer
 
 
 class PartTestTemplateFilter(rest_filters.FilterSet):
@@ -2036,18 +2019,6 @@ part_api_urls = [
             path(
                 '', PartTestTemplateList.as_view(), name='api-part-test-template-list'
             ),
-        ]),
-    ),
-    # Base URL for PartAttachment API endpoints
-    path(
-        'attachment/',
-        include([
-            path(
-                '<int:pk>/',
-                PartAttachmentDetail.as_view(),
-                name='api-part-attachment-detail',
-            ),
-            path('', PartAttachmentList.as_view(), name='api-part-attachment-list'),
         ]),
     ),
     # Base URL for part sale pricing

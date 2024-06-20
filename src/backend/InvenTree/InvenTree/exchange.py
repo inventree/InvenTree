@@ -8,6 +8,7 @@ from djmoney.contrib.exchange.backends.base import SimpleExchangeBackend
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 
 from common.currency import currency_code_default, currency_codes
+from common.settings import get_global_setting
 
 logger = logging.getLogger('inventree')
 
@@ -22,14 +23,13 @@ class InvenTreeExchange(SimpleExchangeBackend):
 
     def get_rates(self, **kwargs) -> dict:
         """Set the requested currency codes and get rates."""
-        from common.models import InvenTreeSetting
         from plugin import registry
 
         base_currency = kwargs.get('base_currency', currency_code_default())
         symbols = kwargs.get('symbols', currency_codes())
 
         # Find the selected exchange rate plugin
-        slug = InvenTreeSetting.get_setting('CURRENCY_UPDATE_PLUGIN', '', create=False)
+        slug = get_global_setting('CURRENCY_UPDATE_PLUGIN', create=False)
 
         if slug:
             plugin = registry.get_plugin(slug)

@@ -316,6 +316,7 @@ def default_delete_on_deplete():
 
 
 class StockItem(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
@@ -2224,15 +2225,16 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """Function to be executed after a StockItem object is deleted."""
     from part import tasks as part_tasks
 
-    if not InvenTree.ready.isImportingData():
+    if not InvenTree.ready.isImportingData() and InvenTree.ready.canAppAccessDatabase(
+        allow_test=True
+    ):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required, instance.part
         )
 
         # Schedule an update on parent part pricing
-        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
-            instance.part.schedule_pricing_update(create=False)
+        instance.part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2240,31 +2242,18 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if created and not InvenTree.ready.isImportingData():
+    if (
+        created
+        and not InvenTree.ready.isImportingData()
+        and InvenTree.ready.canAppAccessDatabase(allow_test=True)
+    ):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required, instance.part
         )
 
-        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
-            instance.part.schedule_pricing_update(create=True)
-
-
-class StockItemAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a StockItem object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return API url."""
-        return reverse('api-stock-attachment-list')
-
-    def getSubdir(self):
-        """Override attachment location."""
-        return os.path.join('stock_files', str(self.stock_item.id))
-
-    stock_item = models.ForeignKey(
-        StockItem, on_delete=models.CASCADE, related_name='attachments'
-    )
+        # Schedule an update on parent part pricing
+        instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):

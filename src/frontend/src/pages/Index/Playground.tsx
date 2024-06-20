@@ -58,20 +58,6 @@ function ApiFormsPlayground() {
     fields: editPartFields
   });
 
-  const newAttachment = useCreateApiFormModal({
-    url: ApiEndpoints.part_attachment_list,
-    title: 'Create Attachment',
-    fields: {
-      part: {},
-      attachment: {},
-      comment: {}
-    },
-    initialData: {
-      part: 1
-    },
-    successMessage: 'Attachment uploaded'
-  });
-
   const [active, setActive] = useState(true);
   const [name, setName] = useState('Hello');
 
@@ -131,9 +117,6 @@ function ApiFormsPlayground() {
 
         <Button onClick={() => editCategory.open()}>Edit Category</Button>
         {editCategory.modal}
-
-        <Button onClick={() => newAttachment.open()}>Create Attachment</Button>
-        {newAttachment.modal}
 
         <Button onClick={() => openCreatePart()}>Create Part new Modal</Button>
         {createPartModal}
