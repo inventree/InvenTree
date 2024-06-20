@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import {
+  ActionIcon,
   Button,
   Divider,
   Drawer,
@@ -8,14 +9,17 @@ import {
   Paper,
   ScrollArea,
   Stack,
-  Text
+  Text,
+  Tooltip
 } from '@mantine/core';
-import { useCallback, useMemo } from 'react';
+import { IconCircleX } from '@tabler/icons-react';
+import { ReactNode, useCallback, useMemo } from 'react';
 
 import {
   ImportSessionStatus,
   useImportSession
 } from '../../hooks/UseImportSession';
+import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
@@ -30,10 +34,6 @@ export default function ImporterDrawer({
   onClose: () => void;
 }) {
   const session = useImportSession({ sessionId: sessionId });
-
-  const title: any = useMemo(() => {
-    return session.sessionData?.statusText ?? t`Importing Data`;
-  }, [session.sessionData]);
 
   const widget = useMemo(() => {
     switch (session.status) {
@@ -60,34 +60,44 @@ export default function ImporterDrawer({
     onClose();
   }, [session]);
 
+  const title: ReactNode = useMemo(() => {
+    return (
+      <Stack gap="xs" style={{ width: '100%' }}>
+        <Group gap="xs" wrap="nowrap">
+          <StylishText>
+            {session.sessionData?.statusText ?? t`Importing Data`}
+          </StylishText>
+          <ProgressBar value={0} maximum={5} />
+          <Tooltip label={t`Cancel Import`}>
+            <ActionIcon color="red" onClick={cancelImport}>
+              <IconCircleX />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
+        <Divider />
+      </Stack>
+    );
+  }, []);
+
   return (
     <Drawer
       position="bottom"
       size="80%"
+      title={title}
       opened={opened}
       onClose={onClose}
       withCloseButton={false}
       closeOnEscape={false}
       closeOnClickOutside={false}
+      styles={{
+        title: {
+          width: '100%'
+        }
+      }}
     >
       <Stack gap="xs">
-        <Group justify="apart" grow>
-          <StylishText size="xl">{t`Importing Data`}</StylishText>
-          <StylishText size="lg">{title}</StylishText>
-          <Group justify="right">
-            <Button color="red" variant="filled" onClick={cancelImport}>
-              {t`Cancel Import`}
-            </Button>
-          </Group>
-        </Group>
-        <Divider />
-        <ScrollArea>
-          <Stack gap="xs">
-            <LoadingOverlay visible={session.sessionQuery.isFetching} />
-            {/* TODO: Fix the header, while the content scrolls! */}
-            <Paper p="md">{session.sessionQuery.isFetching || widget}</Paper>
-          </Stack>
-        </ScrollArea>
+        <LoadingOverlay visible={session.sessionQuery.isFetching} />
+        <Paper p="md">{session.sessionQuery.isFetching || widget}</Paper>
       </Stack>
     </Drawer>
   );
