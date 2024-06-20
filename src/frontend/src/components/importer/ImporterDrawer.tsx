@@ -1,28 +1,50 @@
 import { t } from '@lingui/macro';
 import {
   ActionIcon,
-  Button,
   Divider,
   Drawer,
   Group,
   LoadingOverlay,
   Paper,
-  ScrollArea,
   Stack,
+  Stepper,
   Text,
   Tooltip
 } from '@mantine/core';
 import { IconCircleX } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import {
   ImportSessionStatus,
   useImportSession
 } from '../../hooks/UseImportSession';
-import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
+
+/*
+ * Stepper component showing the current step of the data import process.
+ */
+function ImportDrawerStepper({ currentStep }: { currentStep: number }) {
+  /* TODO: Enhance this with:
+   * - Custom icons
+   * - Loading indicators for "background" states
+   */
+
+  return (
+    <Stepper
+      active={currentStep}
+      onStepClick={undefined}
+      allowNextStepsSelect={false}
+      size="xs"
+    >
+      <Stepper.Step label={t`Import Data`} />
+      <Stepper.Step label={t`Map Columns`} />
+      <Stepper.Step label={t`Process Data`} />
+      <Stepper.Step label={t`Complete Import`} />
+    </Stepper>
+  );
+}
 
 export default function ImporterDrawer({
   sessionId,
@@ -34,6 +56,8 @@ export default function ImporterDrawer({
   onClose: () => void;
 }) {
   const session = useImportSession({ sessionId: sessionId });
+
+  const [currentStep, setCurrentStep] = useState<number>(1);
 
   const description: string = useMemo(() => {
     switch (session.status) {
@@ -90,10 +114,7 @@ export default function ImporterDrawer({
           <StylishText>
             {session.sessionData?.statusText ?? t`Importing Data`}
           </StylishText>
-          <Stack gap="xs">
-            <Text size="sm">{description}</Text>
-            <ProgressBar value={0} maximum={5} />
-          </Stack>
+          <ImportDrawerStepper currentStep={2} />
           <Tooltip label={t`Cancel Import`}>
             <ActionIcon color="red" onClick={cancelImport}>
               <IconCircleX />
