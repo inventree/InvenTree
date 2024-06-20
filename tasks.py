@@ -454,6 +454,12 @@ def migrate(c):
     print('InvenTree database migrations completed!')
 
 
+@task(help={'app': 'Specify an app to show migrations for (leave blank for all apps)'})
+def showmigrations(c, app=''):
+    """Show the migration status of the database."""
+    manage(c, f'showmigrations {app}', pty=True)
+
+
 @task(
     post=[clean_settings, translate_stats],
     help={
