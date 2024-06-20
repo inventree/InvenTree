@@ -135,11 +135,11 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
             case 200:
               return response.data;
             default:
-              return null;
+              return undefined;
           }
         })
         .catch(() => {
-          return null;
+          return undefined;
         });
     }
   });
@@ -148,7 +148,9 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
 
   // Rendering a user's rame for the badge
   function _render_name() {
-    if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
+    if (!data) {
+      return '';
+    } else if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
       if (data.first_name || data.last_name) {
         return `${data.first_name} ${data.last_name}`;
       } else {
@@ -169,7 +171,7 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
           variant="filled"
           style={{ display: 'flex', alignItems: 'center' }}
         >
-          {data.name ?? _render_name()}
+          {data?.name ?? _render_name()}
         </Badge>
         <InvenTreeIcon icon={type === 'user' ? type : data.label} />
       </div>
