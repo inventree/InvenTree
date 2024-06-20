@@ -26,6 +26,7 @@ export type ImportSessionState = {
   sessionQuery: any;
   status: ImportSessionStatus;
   availableFields: Record<string, any>;
+  availableColumns: string[];
   mappedFields: any[];
   columnMappings: any[];
 };
@@ -61,6 +62,19 @@ export function useImportSession({
     return sessionData?.available_fields ?? [];
   }, [sessionData]);
 
+  // List of available data file columns
+  const availableColumns: string[] = useMemo(() => {
+    let cols = sessionData?.columns ?? [];
+
+    // Filter out any blank or duplicate columns
+    cols = cols.filter((col: string) => !!col);
+    cols = cols.filter(
+      (col: string, index: number) => cols.indexOf(col) === index
+    );
+
+    return cols;
+  }, [sessionData]);
+
   const columnMappings: any[] = useMemo(() => {
     return sessionData?.column_mappings ?? [];
   }, [sessionData]);
@@ -81,6 +95,7 @@ export function useImportSession({
     sessionQuery,
     status,
     availableFields,
+    availableColumns,
     columnMappings,
     mappedFields
   };

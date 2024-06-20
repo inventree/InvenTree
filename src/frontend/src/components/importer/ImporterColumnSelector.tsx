@@ -89,10 +89,10 @@ export default function ImporterColumnSelector({
   const columnOptions: any[] = useMemo(() => {
     return [
       { value: '', label: t`Ignore this field` },
-      ...session.columnMappings.map((column: any) => {
+      ...session.availableColumns.map((column: any) => {
         return {
-          value: column.column,
-          label: column.column
+          value: column,
+          label: column
         };
       })
     ];
