@@ -55,7 +55,7 @@ function ImporterColumn({ column, options }: { column: any; options: any[] }) {
       error={errorMessage}
       clearable
       placeholder={t`Select column, or leave blank to ignore this field.`}
-      label={column.column}
+      label={undefined}
       data={options}
       value={selectedColumn}
       onChange={onChange}
@@ -113,19 +113,28 @@ export default function ImporterColumnSelector({
           <Text>{errorMessage}</Text>
         </Alert>
       )}
-      <SimpleGrid cols={2} spacing="xs">
+      <SimpleGrid cols={3} spacing="xs">
         <Text fw={700}>{t`Database Field`}</Text>
+        <Text fw={700}>{t`Field Description`}</Text>
         <Text fw={700}>{t`Imported Column Name`}</Text>
+        <Divider />
         <Divider />
         <Divider />
         {session.columnMappings.map((column: any) => {
           return [
-            <Stack gap="xs">
-              <Text>{column.label ?? column.field}</Text>
-              <Text size="sm" fs="italic">
-                {column.description}
+            <Group gap="xs">
+              <Text fw={column.required ? 700 : undefined}>
+                {column.label ?? column.field}
               </Text>
-            </Stack>,
+              {column.required && (
+                <Text c="red" fw={700}>
+                  *
+                </Text>
+              )}
+            </Group>,
+            <Text size="sm" fs="italic">
+              {column.description}
+            </Text>,
             <ImporterColumn column={column} options={columnOptions} />
           ];
         })}

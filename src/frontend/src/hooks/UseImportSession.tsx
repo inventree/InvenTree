@@ -76,8 +76,14 @@ export function useImportSession({
   }, [sessionData]);
 
   const columnMappings: any[] = useMemo(() => {
-    return sessionData?.column_mappings ?? [];
-  }, [sessionData]);
+    let mapping =
+      sessionData?.column_mappings?.map((mapping: any) => ({
+        ...mapping,
+        ...(availableFields[mapping.field] ?? {})
+      })) ?? [];
+
+    return mapping;
+  }, [sessionData, availableColumns]);
 
   // List of field which have been mapped to columns
   const mappedFields: any[] = useMemo(() => {
