@@ -121,15 +121,15 @@ msgstr "Ja"
 msgid "No"
 msgstr "Nein"
 
-#: src/components/details/Details.tsx:303
+#: src/components/details/Details.tsx:305
 msgid "No name defined"
 msgstr "Kein Name festgelegt"
 
-#: src/components/details/Details.tsx:340
+#: src/components/details/Details.tsx:342
 msgid "Copied"
 msgstr "Kopiert"
 
-#: src/components/details/Details.tsx:340
+#: src/components/details/Details.tsx:342
 msgid "Copy"
 msgstr "Kopieren"
 
@@ -413,7 +413,7 @@ msgstr "Login fehlgeschlagen"
 #: src/components/forms/AuthenticationForm.tsx:59
 #: src/components/forms/AuthenticationForm.tsx:76
 #: src/components/forms/AuthenticationForm.tsx:211
-#: src/functions/auth.tsx:123
+#: src/functions/auth.tsx:165
 msgid "Check your input and try again."
 msgstr "Überprüfen Sie Ihre Eingabe und versuchen Sie es erneut."
 
@@ -423,7 +423,7 @@ msgstr "Überprüfen Sie Ihre Eingabe und versuchen Sie es erneut."
 #~ msgstr "Mail delivery successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:70
-#: src/functions/auth.tsx:114
+#: src/functions/auth.tsx:156
 msgid "Mail delivery successful"
 msgstr "Mail erfolgreich gesendet"
 
@@ -2649,22 +2649,13 @@ msgstr "Übergeordneter Lagerort"
 #~ msgid "You have been logged out"
 #~ msgstr "You have been logged out"
 
-#: src/functions/auth.tsx:76
+#: src/functions/auth.tsx:118
 msgid "Logged Out"
 msgstr "Ausgeloggt"
 
-#: src/functions/auth.tsx:77
+#: src/functions/auth.tsx:119
 msgid "Successfully logged out"
 msgstr "Erfolgreich abgemeldet"
-
-#: src/functions/auth.tsx:115
-msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
-msgstr "Prüfen Sie Ihren Posteingang für einen Link zum Zurücksetzen. Dies funktioniert nur, wenn Sie ein Konto haben. Prüfen Sie auch den Spam-Ordner."
-
-#: src/functions/auth.tsx:122
-#: src/pages/Auth/Set-Password.tsx:39
-msgid "Reset failed"
-msgstr "Zurücksetzen fehlgeschlagen"
 
 #: src/functions/auth.tsx:141
 #~ msgid "Already logged in"
@@ -2678,11 +2669,20 @@ msgstr "Zurücksetzen fehlgeschlagen"
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:153
+#: src/functions/auth.tsx:157
+msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
+msgstr "Prüfen Sie Ihren Posteingang für einen Link zum Zurücksetzen. Dies funktioniert nur, wenn Sie ein Konto haben. Prüfen Sie auch den Spam-Ordner."
+
+#: src/functions/auth.tsx:164
+#: src/pages/Auth/Set-Password.tsx:39
+msgid "Reset failed"
+msgstr "Zurücksetzen fehlgeschlagen"
+
+#: src/functions/auth.tsx:195
 msgid "Logged In"
 msgstr "Angemeldet"
 
-#: src/functions/auth.tsx:154
+#: src/functions/auth.tsx:196
 msgid "Successfully logged in"
 msgstr "Erfolgreich angemeldet"
 
@@ -6884,4 +6884,3 @@ msgstr "Dokumentation lesen"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignorieren und weiter zur Desktopansicht"
-
