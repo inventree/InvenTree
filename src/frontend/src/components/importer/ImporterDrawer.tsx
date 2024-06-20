@@ -35,6 +35,23 @@ export default function ImporterDrawer({
 }) {
   const session = useImportSession({ sessionId: sessionId });
 
+  const description: string = useMemo(() => {
+    switch (session.status) {
+      case ImportSessionStatus.INITIAL:
+        return t`Data File Upload`;
+      case ImportSessionStatus.MAPPING:
+        return t`Mapping Data Columns`;
+      case ImportSessionStatus.IMPORTING:
+        return t`Importing Data`;
+      case ImportSessionStatus.PROCESSING:
+        return t`Processing Data`;
+      case ImportSessionStatus.COMPLETE:
+        return t`Import Complete`;
+      default:
+        return t`Unknown Status` + ` - ${session.status}`;
+    }
+  }, [session]);
+
   const widget = useMemo(() => {
     switch (session.status) {
       case ImportSessionStatus.INITIAL:
@@ -63,11 +80,20 @@ export default function ImporterDrawer({
   const title: ReactNode = useMemo(() => {
     return (
       <Stack gap="xs" style={{ width: '100%' }}>
-        <Group gap="xs" wrap="nowrap">
+        <Group
+          gap="xs"
+          wrap="nowrap"
+          grow
+          justify="space-between"
+          preventGrowOverflow={false}
+        >
           <StylishText>
             {session.sessionData?.statusText ?? t`Importing Data`}
           </StylishText>
-          <ProgressBar value={0} maximum={5} />
+          <Stack gap="xs">
+            <Text size="sm">{description}</Text>
+            <ProgressBar value={0} maximum={5} />
+          </Stack>
           <Tooltip label={t`Cancel Import`}>
             <ActionIcon color="red" onClick={cancelImport}>
               <IconCircleX />
@@ -90,6 +116,9 @@ export default function ImporterDrawer({
       closeOnEscape={false}
       closeOnClickOutside={false}
       styles={{
+        header: {
+          width: '90%'
+        },
         title: {
           width: '100%'
         }

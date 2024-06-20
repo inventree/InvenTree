@@ -9,6 +9,7 @@ import { useInstance } from './UseInstance';
  * Custom hook for managing the state of a data import session
  */
 
+// TODO: Load these values from the server?
 export enum ImportSessionStatus {
   INITIAL = 0,
   MAPPING = 10,
