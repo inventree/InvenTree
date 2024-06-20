@@ -1066,19 +1066,6 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                 headers=self.get_success_headers(serializer.data),
             )
 
-    def download_queryset(self, queryset, export_format):
-        """Download this queryset as a file.
-
-        Uses the APIDownloadMixin mixin class
-        """
-        dataset = StockItemResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-
-        filename = f'InvenTree_StockItems_{InvenTree.helpers.current_date().strftime("%d-%b-%Y")}.{export_format}'
-
-        return DownloadFile(filedata, filename)
-
     def get_queryset(self, *args, **kwargs):
         """Annotate queryset before returning."""
         queryset = super().get_queryset(*args, **kwargs)

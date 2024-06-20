@@ -1224,15 +1224,6 @@ class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
     filterset_class = PartFilter
     is_create = True
 
-    def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file."""
-        dataset = PartResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-        filename = f'InvenTree_Parts.{export_format}'
-
-        return DownloadFile(filedata, filename)
-
     def filter_queryset(self, queryset):
         """Perform custom filtering of the queryset."""
         params = self.request.query_params
