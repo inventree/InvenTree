@@ -484,6 +484,9 @@ class PurchaseOrderTest(OrderTest):
 
         url = reverse('api-po-cancel', kwargs={'pk': po.pk})
 
+        # Get an OPTIONS request from the endpoint
+        self.options(url, data={'context': True}, expected_code=200)
+
         # Try to cancel the PO, but without required permissions
         self.post(url, {}, expected_code=403)
 

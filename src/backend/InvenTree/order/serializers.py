@@ -270,7 +270,7 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ([],)
+        fields = []
 
     def get_context_data(self):
         """Return custom context information about the order."""
