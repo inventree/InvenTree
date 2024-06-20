@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-19 04:50\n"
+"PO-Revision-Date: 2024-06-20 04:52\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1411,7 +1411,7 @@ msgstr "Зарезервировать необязательные позици
 
 #: build/serializers.py:1049
 msgid "Failed to start auto-allocation task"
-msgstr ""
+msgstr "Не удалось запустить задачу автораспределения"
 
 #: build/serializers.py:1139 part/models.py:3953 part/models.py:4387
 #: stock/api.py:788
@@ -1833,27 +1833,27 @@ msgstr "Незавершенная продукция"
 
 #: common/api.py:689
 msgid "Is Link"
-msgstr ""
+msgstr "Ссылка"
 
 #: common/api.py:697
 msgid "Is File"
-msgstr ""
+msgstr "Файл"
 
 #: common/api.py:739
 msgid "User does not have permission to delete this attachment"
-msgstr ""
+msgstr "У пользователя нет прав на удаление этого вложения"
 
 #: common/currency.py:130
 msgid "Invalid currency code"
-msgstr ""
+msgstr "Неверный код валюты"
 
 #: common/currency.py:132
 msgid "Duplicate currency code"
-msgstr ""
+msgstr "Код валюты дублируется"
 
 #: common/currency.py:137
 msgid "No valid currency codes provided"
-msgstr ""
+msgstr "Не указаны действительные коды валют"
 
 #: common/currency.py:154
 msgid "No plugin"
@@ -2015,11 +2015,11 @@ msgstr "Выберите базовую валюту для расчета це�
 
 #: common/models.py:1265
 msgid "Supported Currencies"
-msgstr ""
+msgstr "Поддерживаемые валюты"
 
 #: common/models.py:1266
 msgid "List of supported currency codes"
-msgstr ""
+msgstr "Список поддерживаемых кодов валют"
 
 #: common/models.py:1272
 msgid "Currency Update Interval"
@@ -2174,15 +2174,15 @@ msgstr "Включить поле ревизии для элемента"
 
 #: common/models.py:1401
 msgid "Allow Deletion from Assembly"
-msgstr ""
+msgstr "Разрешить удаление из заказа"
 
 #: common/models.py:1402
 msgid "Allow deletion of parts which are used in an assembly"
-msgstr ""
+msgstr "Разрешить удаление частей, которые используются в заказе"
 
 #: common/models.py:1407
 msgid "IPN Regex"
-msgstr ""
+msgstr "Регулярное выражение IPN"
 
 #: common/models.py:1408
 msgid "Regular expression pattern for matching Part IPN"
@@ -2313,7 +2313,7 @@ msgstr "Показать Импорт в просмотре"
 
 #: common/models.py:1490
 msgid "Display the import wizard in some part views"
-msgstr ""
+msgstr "Отобразить мастер импорта на некоторых видах деталей"
 
 #: common/models.py:1495
 msgid "Show related parts"
@@ -2329,7 +2329,7 @@ msgstr "Начальные данные о запасах"
 
 #: common/models.py:1502
 msgid "Allow creation of initial stock when adding a new part"
-msgstr ""
+msgstr "Разрешить создание начального запаса при добавлении новой детали"
 
 #: common/models.py:1507 templates/js/translated/part.js:107
 msgid "Initial Supplier Data"
@@ -2337,7 +2337,7 @@ msgstr "Исходные данные о поставщике"
 
 #: common/models.py:1509
 msgid "Allow creation of initial supplier data when adding a new part"
-msgstr ""
+msgstr "Разрешить создание исходных данных о поставщике при добавлении новой детали"
 
 #: common/models.py:1515
 msgid "Part Name Display Format"
@@ -2357,7 +2357,7 @@ msgstr "Значок категории по умолчанию (пустой о
 
 #: common/models.py:1527
 msgid "Enforce Parameter Units"
-msgstr ""
+msgstr "Принудительное применение единиц измерения параметров"
 
 #: common/models.py:1529
 msgid "If units are provided, parameter values must match the specified units"
@@ -2393,7 +2393,7 @@ msgstr "Изменить историю покупки"
 
 #: common/models.py:1571
 msgid "Historical purchase order pricing overrides supplier price breaks"
-msgstr ""
+msgstr "Ценообразование по историческим заказам на поставку отменяет различия в ценах поставщиков"
 
 #: common/models.py:1577
 msgid "Use Stock Item Pricing"
@@ -2518,7 +2518,7 @@ msgstr "При печати отчета о тестировании прило�
 
 #: common/models.py:1683
 msgid "Globally Unique Serials"
-msgstr ""
+msgstr "Глобально уникальные серийные номера"
 
 #: common/models.py:1684
 msgid "Serial numbers for stock items must be globally unique"
@@ -2526,23 +2526,23 @@ msgstr "Серийные номера для складских позиций �
 
 #: common/models.py:1689
 msgid "Autofill Serial Numbers"
-msgstr ""
+msgstr "Автоматическое заполнение серийных номеров"
 
 #: common/models.py:1690
 msgid "Autofill serial numbers in forms"
-msgstr ""
+msgstr "Автоматическое заполнение серийных номеров в формах"
 
 #: common/models.py:1695
 msgid "Delete Depleted Stock"
-msgstr ""
+msgstr "Удалить исчерпанный запас"
 
 #: common/models.py:1697
 msgid "Determines default behavior when a stock item is depleted"
-msgstr ""
+msgstr "Определяет поведение по умолчанию, когда складская позиция заканчивается"
 
 #: common/models.py:1703
 msgid "Batch Code Template"
-msgstr ""
+msgstr "Код партии Шаблона"
 
 #: common/models.py:1705
 msgid "Template for generating default batch codes for stock items"
@@ -2554,15 +2554,15 @@ msgstr "Срок годности Запасов"
 
 #: common/models.py:1711
 msgid "Enable stock expiry functionality"
-msgstr ""
+msgstr "Включить функцию истечения срока годности"
 
 #: common/models.py:1716
 msgid "Sell Expired Stock"
-msgstr ""
+msgstr "Использовать просроченные остатки в производстве"
 
 #: common/models.py:1717
 msgid "Allow sale of expired stock"
-msgstr ""
+msgstr "Разрешить продажу просроченных запасов"
 
 #: common/models.py:1722
 msgid "Stock Stale Time"
@@ -2582,19 +2582,19 @@ msgstr "Разрешить использовать просроченные о�
 
 #: common/models.py:1737
 msgid "Stock Ownership Control"
-msgstr ""
+msgstr "Контроль за собственными запасами"
 
 #: common/models.py:1738
 msgid "Enable ownership control over stock locations and items"
-msgstr ""
+msgstr "Разрешить владельцу контролировать расположение складов и номенклатуры"
 
 #: common/models.py:1743
 msgid "Stock Location Default Icon"
-msgstr ""
+msgstr "Значок местоположения по умолчанию"
 
 #: common/models.py:1744
 msgid "Stock location default icon (empty means no icon)"
-msgstr ""
+msgstr "Значок местоположения склада по умолчанию (пустой означает отсутствие значка)"
 
 #: common/models.py:1748
 msgid "Show Installed Stock Items"
@@ -2606,19 +2606,19 @@ msgstr "Отображать установленные складские по�
 
 #: common/models.py:1754
 msgid "Check BOM when installing items"
-msgstr ""
+msgstr "Проверять спецификацию при установке изделий"
 
 #: common/models.py:1756
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr ""
+msgstr "Установленные единица хранения должны присутствовать в спецификации для родительской детали"
 
 #: common/models.py:1762
 msgid "Allow Out of Stock Transfer"
-msgstr ""
+msgstr "Разрешить передачу товара, отсутствующего на складе"
 
 #: common/models.py:1764
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
-msgstr ""
+msgstr "Разрешить перемещение товаров, которых нет на складе, между складами"
 
 #: common/models.py:1770
 msgid "Build Order Reference Pattern"
@@ -2631,12 +2631,12 @@ msgstr "Поле требуемого паттерна для создания �
 #: common/models.py:1778 common/models.py:1806 common/models.py:1828
 #: common/models.py:1864
 msgid "Require Responsible Owner"
-msgstr ""
+msgstr "Требуется ответственный владелец"
 
 #: common/models.py:1779 common/models.py:1807 common/models.py:1829
 #: common/models.py:1865
 msgid "A responsible owner must be assigned to each order"
-msgstr ""
+msgstr "Ответственный владелец должен быть назначен для каждого заказа"
 
 #: common/models.py:1784
 msgid "Block Until Tests Pass"
@@ -2644,7 +2644,7 @@ msgstr ""
 
 #: common/models.py:1786
 msgid "Prevent build outputs from being completed until all required tests pass"
-msgstr ""
+msgstr "Запретить вывод сборки до тех пор, пока не пройдут все необходимые тесты"
 
 #: common/models.py:1792
 msgid "Enable Return Orders"
@@ -2652,31 +2652,31 @@ msgstr "Включить заказы на возврат"
 
 #: common/models.py:1793
 msgid "Enable return order functionality in the user interface"
-msgstr ""
+msgstr "Включите функцию заказа на возврат в пользовательском интерфейсе"
 
 #: common/models.py:1798
 msgid "Return Order Reference Pattern"
-msgstr ""
+msgstr "Шаблон заказа на возврат товара"
 
 #: common/models.py:1800
 msgid "Required pattern for generating Return Order reference field"
-msgstr ""
+msgstr "Необходимый шаблон для создания поля «Возврат заказа»"
 
 #: common/models.py:1812
 msgid "Edit Completed Return Orders"
-msgstr ""
+msgstr "Редактировать завершенные возвратные заказы"
 
 #: common/models.py:1814
 msgid "Allow editing of return orders after they have been completed"
-msgstr ""
+msgstr "Разрешить редактирование возвращенных заказов после их завершения"
 
 #: common/models.py:1820
 msgid "Sales Order Reference Pattern"
-msgstr ""
+msgstr "Шаблон заказа на возврат товара"
 
 #: common/models.py:1822
 msgid "Required pattern for generating Sales Order reference field"
-msgstr ""
+msgstr "Необходимый шаблон для создания поля «Возврат заказа»"
 
 #: common/models.py:1834
 msgid "Sales Order Default Shipment"
@@ -2896,47 +2896,47 @@ msgstr "Исключить складские позиции во внешних
 
 #: common/models.py:2033
 msgid "Automatic Stocktake Period"
-msgstr ""
+msgstr "Автоматический период инвентаризации"
 
 #: common/models.py:2035
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
-msgstr ""
+msgstr "Количество дней между автоматической записью запасов (установите нулевое значение для отключения)"
 
 #: common/models.py:2041
 msgid "Report Deletion Interval"
-msgstr ""
+msgstr "Интервал удаления журнала ошибок"
 
 #: common/models.py:2043
 msgid "Stocktake reports will be deleted after specified number of days"
-msgstr ""
+msgstr "Журналы ошибок будут удалены после указанного количества дней"
 
 #: common/models.py:2050
 msgid "Display Users full names"
-msgstr ""
+msgstr "Показывать полные имена пользователей"
 
 #: common/models.py:2051
 msgid "Display Users full names instead of usernames"
-msgstr ""
+msgstr "Отображать полные имена пользователей вместо логинов"
 
 #: common/models.py:2056
 msgid "Enable Test Station Data"
-msgstr ""
+msgstr "Включить данные тестовой станции"
 
 #: common/models.py:2057
 msgid "Enable test station data collection for test results"
-msgstr ""
+msgstr "Включить сбор данных с тестовой станции для получения результатов тестирования"
 
 #: common/models.py:2069 common/models.py:2479
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Ключ настроек (должен быть уникальным - не чувствителен к регистру)"
 
 #: common/models.py:2112
 msgid "Hide inactive parts"
-msgstr ""
+msgstr "Скрыть неактивные детали"
 
 #: common/models.py:2114
 msgid "Hide inactive parts in results displayed on the homepage"
-msgstr ""
+msgstr "Скрывать неактивные части в результатах, отображаемых на главной странице,"
 
 #: common/models.py:2120
 msgid "Show subscribed parts"
@@ -2964,7 +2964,7 @@ msgstr "Показывать последние детали на главной
 
 #: common/models.py:2138
 msgid "Show invalid BOMs"
-msgstr ""
+msgstr "Показывать недопустимые спецификации"
 
 #: common/models.py:2139
 msgid "Show BOMs that await validation on the homepage"
@@ -3036,11 +3036,11 @@ msgstr "Показывать просроченные производства �
 
 #: common/models.py:2192
 msgid "Show outstanding POs"
-msgstr ""
+msgstr "Показать невыполненные заказы"
 
 #: common/models.py:2193
 msgid "Show outstanding POs on the homepage"
-msgstr ""
+msgstr "Покажите невыполненные заказы на покупку на главной странице"
 
 #: common/models.py:2198
 msgid "Show overdue POs"
@@ -3048,15 +3048,15 @@ msgstr "Показать просроченные заказы на произв
 
 #: common/models.py:2199
 msgid "Show overdue POs on the homepage"
-msgstr ""
+msgstr "Показывать просроченные сборки на главной странице"
 
 #: common/models.py:2204
 msgid "Show outstanding SOs"
-msgstr ""
+msgstr "Показать невыполненные заказы"
 
 #: common/models.py:2205
 msgid "Show outstanding SOs on the homepage"
-msgstr ""
+msgstr "Покажите невыполненные заказы на покупку на главной странице"
 
 #: common/models.py:2210
 msgid "Show overdue SOs"
@@ -3064,7 +3064,7 @@ msgstr "Показать просроченные заказы на продаж
 
 #: common/models.py:2211
 msgid "Show overdue SOs on the homepage"
-msgstr ""
+msgstr "Показывать просроченные заказы на покупку на главной странице"
 
 #: common/models.py:2216
 msgid "Show pending SO shipments"
@@ -3088,23 +3088,23 @@ msgstr ""
 
 #: common/models.py:2230
 msgid "Display PDF labels in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "Отображение PDF-этикетки в браузере вместо загрузки в виде файла"
 
 #: common/models.py:2236
 msgid "Default label printer"
-msgstr ""
+msgstr "Принтер этикетки по умолчанию"
 
 #: common/models.py:2238
 msgid "Configure which label printer should be selected by default"
-msgstr ""
+msgstr "Настроить принтер этикеток по умолчанию"
 
 #: common/models.py:2244
 msgid "Inline report display"
-msgstr ""
+msgstr "Отображение встроенного отчета"
 
 #: common/models.py:2246
 msgid "Display PDF reports in the browser, instead of downloading as a file"
-msgstr ""
+msgstr "Отображение PDF-этикетки в браузере вместо загрузки в виде файла"
 
 #: common/models.py:2252
 msgid "Search Parts"
@@ -3112,39 +3112,39 @@ msgstr "Поиск Деталей"
 
 #: common/models.py:2253
 msgid "Display parts in search preview window"
-msgstr ""
+msgstr "Отображение деталей в окне предварительного просмотра поиска"
 
 #: common/models.py:2258
 msgid "Search Supplier Parts"
-msgstr ""
+msgstr "Поиск деталей поставщика"
 
 #: common/models.py:2259
 msgid "Display supplier parts in search preview window"
-msgstr ""
+msgstr "Отображение деталей поставщика в окне предварительного просмотра поиска"
 
 #: common/models.py:2264
 msgid "Search Manufacturer Parts"
-msgstr ""
+msgstr "Новая деталь производителя"
 
 #: common/models.py:2265
 msgid "Display manufacturer parts in search preview window"
-msgstr ""
+msgstr "Отображение деталей поставщика в окне предварительного просмотра поиска"
 
 #: common/models.py:2270
 msgid "Hide Inactive Parts"
-msgstr ""
+msgstr "Скрыть неактивные детали"
 
 #: common/models.py:2271
 msgid "Excluded inactive parts from search preview window"
-msgstr ""
+msgstr "Исключить неактивные детали из окна предварительного просмотра поиска"
 
 #: common/models.py:2276
 msgid "Search Categories"
-msgstr ""
+msgstr "Категории поиска"
 
 #: common/models.py:2277
 msgid "Display part categories in search preview window"
-msgstr ""
+msgstr "Отображение деталей в окне предварительного просмотра поиска"
 
 #: common/models.py:2282
 msgid "Search Stock"
@@ -3168,7 +3168,7 @@ msgstr "Поиск мест хранения"
 
 #: common/models.py:2297
 msgid "Display stock locations in search preview window"
-msgstr ""
+msgstr "Отображать места хранения в окне предварительного просмотра поиска"
 
 #: common/models.py:2302
 msgid "Search Companies"
@@ -3188,7 +3188,7 @@ msgstr "Отображать заказы на производство в ок�
 
 #: common/models.py:2314
 msgid "Search Purchase Orders"
-msgstr ""
+msgstr "Поиск заказов на покупку"
 
 #: common/models.py:2315
 msgid "Display purchase orders in search preview window"
