@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-19 04:50\n"
+"PO-Revision-Date: 2024-06-21 04:59\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #: src/components/Boundary.tsx:12
 msgid "Error rendering component"
-msgstr ""
+msgstr "Fel vid rendering av komponent"
 
 #: src/components/Boundary.tsx:14
 msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr ""
+msgstr "Ett fel inträffade vid rendering av denna komponent. Se konsolen för mer information."
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
@@ -32,19 +32,19 @@ msgstr "Titel"
 
 #: src/components/buttons/AdminButton.tsx:83
 msgid "Open in admin interface"
-msgstr ""
+msgstr "Öppna i administratörsgränssnittet"
 
 #: src/components/buttons/CopyButton.tsx:18
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Kopiera till urklipp"
 
 #: src/components/buttons/PrintingActions.tsx:95
 msgid "Print Label"
-msgstr ""
+msgstr "Skriv ut etikett"
 
 #: src/components/buttons/PrintingActions.tsx:101
 msgid "Label printing completed successfully"
-msgstr ""
+msgstr "Utskrift av etiketter lyckades"
 
 #: src/components/buttons/PrintingActions.tsx:107
 #: src/components/buttons/PrintingActions.tsx:144
@@ -65,31 +65,31 @@ msgstr "Fel"
 
 #: src/components/buttons/PrintingActions.tsx:108
 msgid "The label could not be generated"
-msgstr ""
+msgstr "Etiketten kunde inte genereras"
 
 #: src/components/buttons/PrintingActions.tsx:123
 msgid "Print Report"
-msgstr ""
+msgstr "Skriv ut Rapport"
 
 #: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
-msgstr ""
+msgstr "Utskrift av rapporten lyckades"
 
 #: src/components/buttons/PrintingActions.tsx:145
 msgid "The report could not be generated"
-msgstr ""
+msgstr "Rapporten kunde inte genereras"
 
 #: src/components/buttons/PrintingActions.tsx:173
 msgid "Printing Actions"
-msgstr ""
+msgstr "Utskriftsalternativ"
 
 #: src/components/buttons/PrintingActions.tsx:178
 msgid "Print Labels"
-msgstr ""
+msgstr "Skriv ut etiketter"
 
 #: src/components/buttons/PrintingActions.tsx:184
 msgid "Print Reports"
-msgstr ""
+msgstr "Skriv ut rapporter"
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
@@ -97,7 +97,7 @@ msgstr "Skanna QR-kod"
 
 #: src/components/buttons/ScanButton.tsx:20
 msgid "Open QR code scanner"
-msgstr ""
+msgstr "Öppna QR-kodsskannern"
 
 #: src/components/buttons/SpotlightButton.tsx:14
 msgid "Open spotlight"
@@ -105,11 +105,11 @@ msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
-msgstr ""
+msgstr "Lyckades"
 
 #: src/components/buttons/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Misslyckades"
 
 #: src/components/buttons/YesNoButton.tsx:32
 #: src/tables/Filter.tsx:51
@@ -123,11 +123,11 @@ msgstr "Nej"
 
 #: src/components/details/Details.tsx:305
 msgid "No name defined"
-msgstr ""
+msgstr "Inget namn definierat"
 
 #: src/components/details/Details.tsx:342
 msgid "Copied"
-msgstr ""
+msgstr "Kopierad"
 
 #: src/components/details/Details.tsx:342
 msgid "Copy"
@@ -135,11 +135,11 @@ msgstr "Kopiera"
 
 #: src/components/details/DetailsImage.tsx:65
 msgid "Remove Image"
-msgstr ""
+msgstr "Ta bort bild"
 
 #: src/components/details/DetailsImage.tsx:68
 msgid "Remove the associated image from this item?"
-msgstr ""
+msgstr "Vill du ta bort den associerade bilden från denna artikel?"
 
 #: src/components/details/DetailsImage.tsx:71
 #: src/forms/StockForms.tsx:483
@@ -147,7 +147,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 #: src/pages/stock/StockDetail.tsx:464
 msgid "Remove"
-msgstr ""
+msgstr "Ta bort"
 
 #: src/components/details/DetailsImage.tsx:71
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
@@ -164,11 +164,11 @@ msgstr "Avbryt"
 
 #: src/components/details/DetailsImage.tsx:97
 msgid "Drag and drop to upload"
-msgstr ""
+msgstr "Dra och släpp för att ladda upp"
 
 #: src/components/details/DetailsImage.tsx:100
 msgid "Click to select file(s)"
-msgstr ""
+msgstr "Klicka för att välja fil(er)"
 
 #: src/components/details/DetailsImage.tsx:224
 msgid "Clear"
@@ -183,19 +183,19 @@ msgstr "Skicka"
 
 #: src/components/details/DetailsImage.tsx:267
 msgid "Select from existing images"
-msgstr ""
+msgstr "Välj från befintliga bilder"
 
 #: src/components/details/DetailsImage.tsx:275
 msgid "Select Image"
-msgstr ""
+msgstr "Välj bild"
 
 #: src/components/details/DetailsImage.tsx:287
 msgid "Upload new image"
-msgstr ""
+msgstr "Ladda upp ny bild"
 
 #: src/components/details/DetailsImage.tsx:294
 msgid "Upload Image"
-msgstr ""
+msgstr "Ladda upp bild"
 
 #: src/components/details/DetailsImage.tsx:307
 msgid "Delete image"
@@ -203,7 +203,7 @@ msgstr "Radera bild"
 
 #: src/components/details/PartIcons.tsx:28
 msgid "Part is not active"
-msgstr ""
+msgstr "Artikeln är inte aktiv"
 
 #: src/components/details/PartIcons.tsx:34
 #: src/components/render/Plugin.tsx:17
@@ -211,35 +211,35 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:305
 #: src/pages/part/PartDetail.tsx:687
 msgid "Inactive"
-msgstr ""
+msgstr "Inaktiv"
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "Artikeln är en mall-artikel (varianter kan skapas från denna artikel)"
 
 #: src/components/details/PartIcons.tsx:47
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "Artikeln kan sammanställas från andra artiklar"
 
 #: src/components/details/PartIcons.tsx:53
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "Artikel kan användas i sammanställningar"
 
 #: src/components/details/PartIcons.tsx:59
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "Artikelns lager spåras med serienummer"
 
 #: src/components/details/PartIcons.tsx:65
 msgid "Part can be purchased from external suppliers"
-msgstr ""
+msgstr "Artikeln kan köpas av externa leverantörer"
 
 #: src/components/details/PartIcons.tsx:71
 msgid "Part can be sold to customers"
-msgstr ""
+msgstr "Artikeln kan säljas till kunder"
 
 #: src/components/details/PartIcons.tsx:76
 msgid "Part is virtual (not a physical part)"
-msgstr ""
+msgstr "Artikeln är virtuell (ej fysisk artikel)"
 
 #: src/components/details/PartIcons.tsx:82
 #: src/tables/part/PartTable.tsx:234
@@ -250,24 +250,24 @@ msgstr "Virtuell"
 
 #: src/components/editors/NotesEditor.tsx:66
 msgid "Image upload failed"
-msgstr ""
+msgstr "Bilduppladdning misslyckades"
 
 #: src/components/editors/NotesEditor.tsx:151
 #: src/components/forms/ApiForm.tsx:430
 msgid "Success"
-msgstr ""
+msgstr "Lyckades"
 
 #: src/components/editors/NotesEditor.tsx:152
 msgid "Notes saved successfully"
-msgstr ""
+msgstr "Anteckningarna sparades framgångsrikt"
 
 #: src/components/editors/NotesEditor.tsx:161
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Det gick inte att spara anteckningarna"
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Preview Notes"
-msgstr ""
+msgstr "Förhandsgranska anteckningar"
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Edit Notes"
@@ -287,28 +287,28 @@ msgstr "Kod"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:81
 msgid "Preview not available, click \"Reload Preview\"."
-msgstr ""
+msgstr "Förhandsgranska ej tillgänglig, klicka på \"Ladda om förhandsgranskning\"."
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr ""
+msgstr "Förhandsgranska PDF"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:104
 msgid "Error loading template"
-msgstr ""
+msgstr "Fel vid inläsning av mall"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:116
 msgid "Error saving template"
-msgstr ""
+msgstr "Fel vid sparande av mall"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:146
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:270
 msgid "Save & Reload Preview"
-msgstr ""
+msgstr "Spara och ladda om förhandsgranskning"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 msgid "Are you sure you want to Save & Reload the preview?"
-msgstr ""
+msgstr "Är du säker på att du vill spara och ladda om förhandsgranskningen?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 #~ msgid "Save & Reload preview?"
@@ -316,27 +316,27 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:153
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
-msgstr ""
+msgstr "För att visa förhandsgranskningen måste den aktuella mallen bytas ut på servern med dina ändringar som kan bryta etiketten om den är under aktiv användning. Vill du fortsätta?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 msgid "Save & Reload"
-msgstr ""
+msgstr "Spara och ladda om"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:189
 msgid "Preview updated"
-msgstr ""
+msgstr "Förhandsgranskningen uppdaterad"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:190
 msgid "The preview has been updated successfully."
-msgstr ""
+msgstr "Uppdateringen av förhandsgranskningen lyckades."
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:262
 msgid "Reload preview"
-msgstr ""
+msgstr "Ladda om förhandsgranskning"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 msgid "Use the currently stored template from the server"
-msgstr ""
+msgstr "Använd mallen som finns sparad på servern"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 #~ msgid "Save & Reload preview"
@@ -344,7 +344,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:271
 msgid "Save the current template and reload the preview"
-msgstr ""
+msgstr "Spara den aktuella mallen och ladda om förhandsgranskningen"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:322
 #~ msgid "to preview"
@@ -352,16 +352,16 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:329
 msgid "Select instance to preview"
-msgstr ""
+msgstr "Välj instans att förhandsgranska"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:373
 msgid "Error rendering template"
-msgstr ""
+msgstr "Fel vid rendering av mall"
 
 #: src/components/forms/ApiForm.tsx:149
 #: src/functions/forms.tsx:259
 msgid "Form Error"
-msgstr ""
+msgstr "Formulär fel"
 
 #: src/components/forms/ApiForm.tsx:487
 #~ msgid "Form Errors Exist"
@@ -370,7 +370,7 @@ msgstr ""
 #: src/components/forms/ApiForm.tsx:611
 #: src/tables/plugin/PluginListTable.tsx:388
 msgid "Update"
-msgstr ""
+msgstr "Uppdatera"
 
 #: src/components/forms/ApiForm.tsx:631
 #: src/components/items/ActionDropdown.tsx:210
@@ -396,7 +396,7 @@ msgstr "Inlogningen lyckad"
 
 #: src/components/forms/AuthenticationForm.tsx:52
 msgid "Logged in successfully"
-msgstr ""
+msgstr "Inloggningen lyckades"
 
 #: src/components/forms/AuthenticationForm.tsx:52
 #~ msgid "Welcome back!"
@@ -433,11 +433,11 @@ msgstr "Kolla din inkorg för inloggningslänken. Om du har ett konto kommer du 
 
 #: src/components/forms/AuthenticationForm.tsx:75
 msgid "Mail delivery failed"
-msgstr ""
+msgstr "E-postleverans misslyckades"
 
 #: src/components/forms/AuthenticationForm.tsx:95
 msgid "Or continue with other methods"
-msgstr ""
+msgstr "Eller fortsätt med andra metoder"
 
 #: src/components/forms/AuthenticationForm.tsx:106
 #: src/components/forms/AuthenticationForm.tsx:227
@@ -500,11 +500,11 @@ msgstr "Logga in"
 
 #: src/components/forms/AuthenticationForm.tsx:164
 msgid "Send Email"
-msgstr ""
+msgstr "Skicka e-post"
 
 #: src/components/forms/AuthenticationForm.tsx:193
 msgid "Registration successful"
-msgstr ""
+msgstr "Registreringen lyckades"
 
 #: src/components/forms/AuthenticationForm.tsx:194
 msgid "Please confirm your email address to complete the registration"
@@ -516,11 +516,11 @@ msgstr "Inmatningsfel"
 
 #: src/components/forms/AuthenticationForm.tsx:234
 msgid "This will be used for a confirmation"
-msgstr ""
+msgstr "Detta kommer att användas för en bekräftelse"
 
 #: src/components/forms/AuthenticationForm.tsx:246
 msgid "Password repeat"
-msgstr ""
+msgstr "Upprepa lösenordet"
 
 #: src/components/forms/AuthenticationForm.tsx:247
 msgid "Repeat password"
@@ -529,7 +529,7 @@ msgstr "Upprepa lösenord"
 #: src/components/forms/AuthenticationForm.tsx:259
 #: src/components/forms/AuthenticationForm.tsx:304
 msgid "Register"
-msgstr ""
+msgstr "Registrera"
 
 #: src/components/forms/AuthenticationForm.tsx:265
 msgid "Or use SSO"
@@ -541,7 +541,7 @@ msgstr "Har du inget konto?"
 
 #: src/components/forms/AuthenticationForm.tsx:315
 msgid "Go back to login"
-msgstr ""
+msgstr "Tillbaka till inloggning"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:67
@@ -600,7 +600,7 @@ msgstr "Namn: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr ""
+msgstr "Stat: <0>arbetare</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/fields/RelatedModelField.tsx:320
 #: src/pages/Index/Settings/UserSettings.tsx:66
@@ -613,7 +613,7 @@ msgstr "Sök"
 #: src/components/widgets/WidgetLayout.tsx:120
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:309
 msgid "Loading"
-msgstr ""
+msgstr "Laddar"
 
 #: src/components/forms/fields/RelatedModelField.tsx:323
 msgid "No results found"
@@ -621,11 +621,11 @@ msgstr "Inga resultat hittades"
 
 #: src/components/forms/fields/TableField.tsx:50
 msgid "modelRenderer entry required for tables"
-msgstr ""
+msgstr "modelRenderer post krävs för tabeller"
 
 #: src/components/forms/fields/TableField.tsx:74
 msgid "No entries available"
-msgstr ""
+msgstr "Inga poster tillgängliga"
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -639,32 +639,32 @@ msgstr "Miniatyrbild"
 #: src/components/items/ActionDropdown.tsx:119
 #: src/pages/build/BuildDetail.tsx:356
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Streckkods åtgärder"
 
 #: src/components/items/ActionDropdown.tsx:136
 msgid "View"
-msgstr ""
+msgstr "Visa"
 
 #: src/components/items/ActionDropdown.tsx:137
 msgid "View barcode"
-msgstr ""
+msgstr "Visa streckkod"
 
 #: src/components/items/ActionDropdown.tsx:153
 msgid "Link Barcode"
-msgstr ""
+msgstr "Länka streckkod"
 
 #: src/components/items/ActionDropdown.tsx:154
 msgid "Link custom barcode"
-msgstr ""
+msgstr "Länka anpassad streckkod"
 
 #: src/components/items/ActionDropdown.tsx:170
 #: src/forms/PurchaseOrderForms.tsx:389
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Ta bort länk för streckkod"
 
 #: src/components/items/ActionDropdown.tsx:171
 msgid "Unlink custom barcode"
-msgstr ""
+msgstr "Ta bort länk för anpassad streckkod"
 
 #: src/components/items/ActionDropdown.tsx:189
 #: src/tables/RowActions.tsx:51
@@ -673,16 +673,16 @@ msgstr "Redigera"
 
 #: src/components/items/ActionDropdown.tsx:211
 msgid "Delete item"
-msgstr ""
+msgstr "Radera objekt"
 
 #: src/components/items/ActionDropdown.tsx:248
 #: src/tables/RowActions.tsx:31
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplicera"
 
 #: src/components/items/ActionDropdown.tsx:249
 msgid "Duplicate item"
-msgstr ""
+msgstr "Duplicera objekt"
 
 #: src/components/items/DocTooltip.tsx:92
 msgid "Read More"
@@ -703,7 +703,7 @@ msgstr "Läs mer"
 
 #: src/components/items/InfoItem.tsx:27
 msgid "None"
-msgstr ""
+msgstr "Ingen"
 
 #: src/components/items/InvenTreeLogo.tsx:23
 msgid "InvenTree Logo"
@@ -712,7 +712,7 @@ msgstr "InvenTree Logotyp"
 #: src/components/items/OnlyStaff.tsx:9
 #: src/components/modals/AboutInvenTreeModal.tsx:44
 msgid "This information is only available for staff users"
-msgstr ""
+msgstr "Denna information är endast tillgänglig för personalanvändare"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
@@ -724,31 +724,31 @@ msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
-msgstr ""
+msgstr "Denna panel är en platshållare."
 
 #: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Version Information"
-msgstr ""
+msgstr "Versionsinformation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:103
 msgid "Your InvenTree version status is"
-msgstr ""
+msgstr "Din versionsstatus för InvenTree är"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:107
 msgid "Development Version"
-msgstr ""
+msgstr "Utvecklingsversion"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:111
 msgid "Up to Date"
-msgstr ""
+msgstr "Aktuell"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:115
 msgid "Update Available"
-msgstr ""
+msgstr "Uppdatering tillgänglig"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:125
 msgid "InvenTree Version"
-msgstr ""
+msgstr "InvenTree Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:131
 msgid "Commit Hash"
@@ -765,27 +765,27 @@ msgstr ""
 #: src/components/modals/AboutInvenTreeModal.tsx:146
 #: src/components/modals/ServerInfoModal.tsx:133
 msgid "API Version"
-msgstr ""
+msgstr "API Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Python Version"
-msgstr ""
+msgstr "Python Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:152
 msgid "Django Version"
-msgstr ""
+msgstr "Django Version"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:162
 msgid "Links"
-msgstr ""
+msgstr "Länkar"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "InvenTree Dokumentation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 msgid "View Code on GitHub"
-msgstr ""
+msgstr "Visa kod på GitHub"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:170
 msgid "Credits"
@@ -793,40 +793,40 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:171
 msgid "Mobile App"
-msgstr ""
+msgstr "Mobilapp"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:172
 msgid "Submit Bug Report"
-msgstr ""
+msgstr "Skicka felrapport"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:183
 msgid "Copy version information"
-msgstr ""
+msgstr "Kopiera versionsinformation"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:192
 #: src/components/modals/ServerInfoModal.tsx:147
 msgid "Dismiss"
-msgstr ""
+msgstr "Avfärda"
 
 #: src/components/modals/LicenseModal.tsx:39
 msgid "No license text available"
-msgstr ""
+msgstr "Ingen licenstext tillgänglig"
 
 #: src/components/modals/LicenseModal.tsx:46
 msgid "No Information provided - this is likely a server issue"
-msgstr ""
+msgstr "Ingen information tillhandahållen - detta är sannolikt ett serverproblem"
 
 #: src/components/modals/LicenseModal.tsx:71
 msgid "Loading license information"
-msgstr ""
+msgstr "Laddar licensinformation"
 
 #: src/components/modals/LicenseModal.tsx:77
 msgid "Failed to fetch license information"
-msgstr ""
+msgstr "Det gick inte att hämta licensinformation"
 
 #: src/components/modals/LicenseModal.tsx:85
 msgid "{key} Packages"
-msgstr ""
+msgstr "{key} Paket"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
@@ -884,15 +884,15 @@ msgstr "Stäng fönstret"
 #: src/components/modals/ServerInfoModal.tsx:26
 #: src/pages/Index/Settings/SystemSettings.tsx:36
 msgid "Server"
-msgstr ""
+msgstr "Server"
 
 #: src/components/modals/ServerInfoModal.tsx:32
 msgid "Instance Name"
-msgstr ""
+msgstr "Instansnamn"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 msgid "Database"
-msgstr ""
+msgstr "Databas"
 
 #: src/components/modals/ServerInfoModal.tsx:38
 #~ msgid "Bebug Mode"
@@ -900,15 +900,15 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:47
 msgid "Debug Mode"
-msgstr ""
+msgstr "Felsökningsläge"
 
 #: src/components/modals/ServerInfoModal.tsx:50
 msgid "Server is running in debug mode"
-msgstr ""
+msgstr "Servern körs i felsökningsläge"
 
 #: src/components/modals/ServerInfoModal.tsx:57
 msgid "Docker Mode"
-msgstr ""
+msgstr "Docker läge"
 
 #: src/components/modals/ServerInfoModal.tsx:60
 msgid "Server is deployed using docker"
@@ -916,53 +916,53 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:66
 msgid "Plugin Support"
-msgstr ""
+msgstr "Stöd för tillägg"
 
 #: src/components/modals/ServerInfoModal.tsx:71
 msgid "Plugin support enabled"
-msgstr ""
+msgstr "Stöd för tillägg aktiverat"
 
 #: src/components/modals/ServerInfoModal.tsx:73
 msgid "Plugin support disabled"
-msgstr ""
+msgstr "Stöd för tillägg inaktiverat"
 
 #: src/components/modals/ServerInfoModal.tsx:80
 msgid "Server status"
-msgstr ""
+msgstr "Serverstatus"
 
 #: src/components/modals/ServerInfoModal.tsx:86
 msgid "Healthy"
-msgstr ""
+msgstr "Frisk"
 
 #: src/components/modals/ServerInfoModal.tsx:88
 msgid "Issues detected"
-msgstr ""
+msgstr "Problem har upptäckts"
 
 #: src/components/modals/ServerInfoModal.tsx:97
 msgid "Background Worker"
-msgstr ""
+msgstr "Bakgrundsarbetare"
 
 #: src/components/modals/ServerInfoModal.tsx:101
 msgid "Background worker not running"
-msgstr ""
+msgstr "Bakgrundsarbetare körs inte"
 
 #: src/components/modals/ServerInfoModal.tsx:109
 msgid "Email Settings"
-msgstr ""
+msgstr "E-postinställningar"
 
 #: src/components/modals/ServerInfoModal.tsx:113
 msgid "Email settings not configured"
-msgstr ""
+msgstr "E-postinställningar har inte konfigurerats"
 
 #: src/components/modals/ServerInfoModal.tsx:121
 #: src/tables/plugin/PluginListTable.tsx:144
 #: src/tables/plugin/PluginListTable.tsx:294
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: src/components/modals/ServerInfoModal.tsx:127
 msgid "Server Version"
-msgstr ""
+msgstr "Serverversion"
 
 #: src/components/nav/Layout.tsx:70
 #: src/tables/part/PartThumbTable.tsx:194
@@ -971,7 +971,7 @@ msgstr "Sök..."
 
 #: src/components/nav/Layout.tsx:73
 msgid "Nothing found..."
-msgstr ""
+msgstr "Ingenting hittades..."
 
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
@@ -992,13 +992,13 @@ msgstr "Kontoinställningar"
 #: src/defaults/menuItems.tsx:58
 #: src/pages/Index/Settings/SystemSettings.tsx:300
 msgid "System Settings"
-msgstr ""
+msgstr "Systeminställningar"
 
 #: src/components/nav/MainMenu.tsx:67
 #: src/defaults/menuItems.tsx:63
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:192
 msgid "Admin Center"
-msgstr ""
+msgstr "Admin-center"
 
 #: src/components/nav/MainMenu.tsx:68
 #~ msgid "Current language {locale}"
@@ -1063,18 +1063,18 @@ msgstr "Notifikationer"
 
 #: src/components/nav/NotificationDrawer.tsx:95
 msgid "You have no unread notifications."
-msgstr ""
+msgstr "Du har inga olästa aviseringar."
 
 #: src/components/nav/NotificationDrawer.tsx:111
 #: src/components/nav/NotificationDrawer.tsx:117
 #: src/tables/notifications/NotificationsTable.tsx:36
 msgid "Notification"
-msgstr ""
+msgstr "Avisering"
 
 #: src/components/nav/NotificationDrawer.tsx:140
 #: src/pages/Notifications.tsx:73
 msgid "Mark as read"
-msgstr ""
+msgstr "Markera som läst"
 
 #: src/components/nav/SearchDrawer.tsx:77
 msgid "results"
@@ -1090,7 +1090,7 @@ msgstr "Sökalternativ"
 
 #: src/components/nav/SearchDrawer.tsx:367
 msgid "Regex search"
-msgstr ""
+msgstr "Regex sökning"
 
 #: src/components/nav/SearchDrawer.tsx:377
 msgid "Whole word search"
@@ -1110,7 +1110,7 @@ msgstr "Inga resultat tillgängliga för sökfrågan"
 
 #: src/components/render/Instance.tsx:166
 msgid "Unknown model: {model}"
-msgstr ""
+msgstr "Okänd modell: {model}"
 
 #: src/components/render/ModelType.tsx:22
 #: src/forms/BuildForms.tsx:201
@@ -1142,11 +1142,11 @@ msgstr "Artiklar"
 
 #: src/components/render/ModelType.tsx:31
 msgid "Part Parameter Template"
-msgstr ""
+msgstr "Parametermall för Artiklar"
 
 #: src/components/render/ModelType.tsx:32
 msgid "Part Parameter Templates"
-msgstr ""
+msgstr "Parametermallar för Artiklar"
 
 #: src/components/render/ModelType.tsx:38
 msgid "Part Test Template"
@@ -1221,11 +1221,11 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:91
 msgid "Stock Location Types"
-msgstr ""
+msgstr "Lagerplatstyper"
 
 #: src/components/render/ModelType.tsx:95
 msgid "Stock History"
-msgstr ""
+msgstr "Lagerhistorik"
 
 #: src/components/render/ModelType.tsx:96
 msgid "Stock Histories"
@@ -6884,3 +6884,4 @@ msgstr "Läs dokumenten"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
