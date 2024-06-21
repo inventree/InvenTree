@@ -36,7 +36,7 @@ def convert_legacy_labels(table_name, model_name, template_model):
         'name', 'description', 'label', 'enabled', 'height', 'width', 'filename_pattern', 'filters'
     ]
 
-    non_null_fields = ['decription', 'filename_pattern', 'filters']
+    non_null_fields = ['description', 'filename_pattern', 'filters']
 
     fieldnames = ', '.join(fields)
 
