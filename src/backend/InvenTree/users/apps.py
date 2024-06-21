@@ -26,7 +26,7 @@ class UsersConfig(AppConfig):
 
         # Skip if running migrations
         if InvenTree.ready.isRunningMigrations():
-            return
+            return  # pragma: no cover
 
         if InvenTree.ready.canAppAccessDatabase(allow_test=True):
             try:

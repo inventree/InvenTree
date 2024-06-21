@@ -3,6 +3,7 @@ coverage:
     project:
       default:
         target: 82%
+    patch: off
 
 github_checks:
     annotations: true

@@ -6,6 +6,8 @@ import logging
 
 from django.utils.translation import gettext_lazy as _
 
+from common.settings import get_global_setting
+
 logger = logging.getLogger('inventree')
 
 
@@ -67,10 +69,8 @@ def page_size(page_code):
 
 def report_page_size_default():
     """Returns the default page size for PDF reports."""
-    from common.models import InvenTreeSetting
-
     try:
-        page_size = InvenTreeSetting.get_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4')
+        page_size = get_global_setting('REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False)
     except Exception as exc:
         logger.exception('Error getting default page size: %s', str(exc))
         page_size = 'A4'

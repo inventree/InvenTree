@@ -1,6 +1,7 @@
 """DRF API serializers for the 'users' app."""
 
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group, Permission, User
+from django.db.models import Q
 
 from rest_framework import serializers
 
@@ -40,16 +41,21 @@ class RoleSerializer(InvenTreeModelSerializer):
         """Metaclass options."""
 
         model = User
-        fields = ['user', 'username', 'is_staff', 'is_superuser', 'roles']
+        fields = [
+            'user',
+            'username',
+            'roles',
+            'permissions',
+            'is_staff',
+            'is_superuser',
+        ]
 
     user = serializers.IntegerField(source='pk')
-    username = serializers.CharField()
-    is_staff = serializers.BooleanField()
-    is_superuser = serializers.BooleanField()
     roles = serializers.SerializerMethodField()
+    permissions = serializers.SerializerMethodField()
 
     def get_roles(self, user: User) -> dict:
-        """Return roles associated with the specified User."""
+        """Roles associated with the user."""
         roles = {}
 
         for ruleset in RuleSet.RULESET_CHOICES:
@@ -67,3 +73,24 @@ class RoleSerializer(InvenTreeModelSerializer):
                 roles[role] = None  # pragma: no cover
 
         return roles
+
+    def get_permissions(self, user: User) -> dict:
+        """Permissions associated with the user."""
+        if user.is_superuser:
+            permissions = Permission.objects.all()
+        else:
+            permissions = Permission.objects.filter(
+                Q(user=user) | Q(group__user=user)
+            ).distinct()
+
+        perms = {}
+
+        for permission in permissions:
+            perm, model = permission.codename.split('_')
+
+            if model not in perms:
+                perms[model] = []
+
+            perms[model].append(perm)
+
+        return perms

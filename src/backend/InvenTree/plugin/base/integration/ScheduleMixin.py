@@ -5,6 +5,7 @@ import logging
 from django.conf import settings
 from django.db.utils import OperationalError, ProgrammingError
 
+from common.settings import get_global_setting
 from plugin.helpers import MixinImplementationError
 
 logger = logging.getLogger('inventree')
@@ -58,16 +59,12 @@ class ScheduleMixin:
     @classmethod
     def _activate_mixin(cls, registry, plugins, *args, **kwargs):
         """Activate schedules from plugins with the ScheduleMixin."""
-        from common.models import InvenTreeSetting
-
         logger.debug('Activating plugin tasks')
 
         # List of tasks we have activated
         task_keys = []
 
-        if settings.PLUGIN_TESTING or InvenTreeSetting.get_setting(
-            'ENABLE_PLUGINS_SCHEDULE'
-        ):
+        if settings.PLUGIN_TESTING or get_global_setting('ENABLE_PLUGINS_SCHEDULE'):
             for _key, plugin in plugins:
                 if plugin.mixin_enabled('schedule') and plugin.is_active():
                     # Only active tasks for plugins which are enabled

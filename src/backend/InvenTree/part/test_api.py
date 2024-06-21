@@ -2513,22 +2513,28 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
     def test_add_attachment(self):
         """Test that we can create a new PartAttachment via the API."""
-        url = reverse('api-part-attachment-list')
+        url = reverse('api-attachment-list')
 
         # Upload without permission
-        response = self.post(url, {}, expected_code=403)
+        response = self.post(
+            url, {'model_id': 1, 'model_type': 'part'}, expected_code=403
+        )
 
         # Add required permission
         self.assignRole('part.add')
+        self.assignRole('part.change')
 
         # Upload without specifying part (will fail)
         response = self.post(url, {'comment': 'Hello world'}, expected_code=400)
 
-        self.assertIn('This field is required', str(response.data['part']))
+        self.assertIn('This field is required', str(response.data['model_id']))
+        self.assertIn('This field is required', str(response.data['model_type']))
 
         # Upload without file OR link (will fail)
         response = self.post(
-            url, {'part': 1, 'comment': 'Hello world'}, expected_code=400
+            url,
+            {'model_id': 1, 'model_type': 'part', 'comment': 'Hello world'},
+            expected_code=400,
         )
 
         self.assertIn('Missing file', str(response.data['attachment']))
@@ -2536,7 +2542,9 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
         # Upload an invalid link (will fail)
         response = self.post(
-            url, {'part': 1, 'link': 'not-a-link.py'}, expected_code=400
+            url,
+            {'model_id': 1, 'model_type': 'part', 'link': 'not-a-link.py'},
+            expected_code=400,
         )
 
         self.assertIn('Enter a valid URL', str(response.data['link']))
@@ -2545,12 +2553,20 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
         # Upload a valid link (will pass)
         response = self.post(
-            url, {'part': 1, 'link': link, 'comment': 'Hello world'}, expected_code=201
+            url,
+            {
+                'model_id': 1,
+                'model_type': 'part',
+                'link': link,
+                'comment': 'Hello world',
+            },
+            expected_code=201,
         )
 
         data = response.data
 
-        self.assertEqual(data['part'], 1)
+        self.assertEqual(data['model_type'], 'part')
+        self.assertEqual(data['model_id'], 1)
         self.assertEqual(data['link'], link)
         self.assertEqual(data['comment'], 'Hello world')
 

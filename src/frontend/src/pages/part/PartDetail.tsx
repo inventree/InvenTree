@@ -618,11 +618,7 @@ export default function PartDetail() {
         label: t`Attachments`,
         icon: <IconPaperclip />,
         content: (
-          <AttachmentTable
-            endpoint={ApiEndpoints.part_attachment_list}
-            model="part"
-            pk={part.pk ?? -1}
-          />
+          <AttachmentTable model_type={ModelType.part} model_id={part?.pk} />
         )
       },
       {

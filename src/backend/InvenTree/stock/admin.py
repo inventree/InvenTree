@@ -16,7 +16,6 @@ from part.models import Part
 
 from .models import (
     StockItem,
-    StockItemAttachment,
     StockItemTestResult,
     StockItemTracking,
     StockLocation,
@@ -299,15 +298,6 @@ class StockItemAdmin(ImportExportModelAdmin):
         'supplier_part',
         'consumed_by',
     ]
-
-
-@admin.register(StockItemAttachment)
-class StockAttachmentAdmin(admin.ModelAdmin):
-    """Admin class for StockAttachment."""
-
-    list_display = ('stock_item', 'attachment', 'comment')
-
-    autocomplete_fields = ['stock_item']
 
 
 @admin.register(StockItemTracking)

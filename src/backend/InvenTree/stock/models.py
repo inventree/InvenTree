@@ -32,6 +32,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
+from common.settings import get_global_setting
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from order.status_codes import SalesOrderStatusGroups
@@ -234,9 +235,7 @@ class StockLocation(
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting(
-            'STOCK_OWNERSHIP_CONTROL'
-        )
+        ownership_enabled = get_global_setting('STOCK_OWNERSHIP_CONTROL')
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -310,15 +309,14 @@ def default_delete_on_deplete():
     Now, there is a user-configurable setting to govern default behaviour.
     """
     try:
-        return common.models.InvenTreeSetting.get_setting(
-            'STOCK_DELETE_DEPLETED_DEFAULT', True
-        )
+        return get_global_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
     except (IntegrityError, OperationalError):
         # Revert to original default behaviour
         return True
 
 
 class StockItem(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
@@ -996,9 +994,7 @@ class StockItem(
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting(
-            'STOCK_OWNERSHIP_CONTROL'
-        )
+        ownership_enabled = get_global_setting('STOCK_OWNERSHIP_CONTROL')
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -1027,7 +1023,7 @@ class StockItem(
 
         today = InvenTree.helpers.current_date()
 
-        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+        stale_days = get_global_setting('STOCK_STALE_DAYS')
 
         if stale_days <= 0:
             return False
@@ -1897,7 +1893,7 @@ class StockItem(
         except InvalidOperation:
             return False
 
-        allow_out_of_stock_transfer = common.models.InvenTreeSetting.get_setting(
+        allow_out_of_stock_transfer = get_global_setting(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
@@ -2229,15 +2225,16 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """Function to be executed after a StockItem object is deleted."""
     from part import tasks as part_tasks
 
-    if not InvenTree.ready.isImportingData():
+    if not InvenTree.ready.isImportingData() and InvenTree.ready.canAppAccessDatabase(
+        allow_test=True
+    ):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required, instance.part
         )
 
         # Schedule an update on parent part pricing
-        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
-            instance.part.schedule_pricing_update(create=False)
+        instance.part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2245,31 +2242,18 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if created and not InvenTree.ready.isImportingData():
+    if (
+        created
+        and not InvenTree.ready.isImportingData()
+        and InvenTree.ready.canAppAccessDatabase(allow_test=True)
+    ):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required, instance.part
         )
 
-        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
-            instance.part.schedule_pricing_update(create=True)
-
-
-class StockItemAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a StockItem object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return API url."""
-        return reverse('api-stock-attachment-list')
-
-    def getSubdir(self):
-        """Override attachment location."""
-        return os.path.join('stock_files', str(self.stock_item.id))
-
-    stock_item = models.ForeignKey(
-        StockItem, on_delete=models.CASCADE, related_name='attachments'
-    )
+        # Schedule an update on parent part pricing
+        instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):
