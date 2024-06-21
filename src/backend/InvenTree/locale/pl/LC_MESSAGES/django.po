@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-06-21 04:59\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -273,7 +273,7 @@ msgstr "Koreański"
 
 #: InvenTree/locales.py:35
 msgid "Latvian"
-msgstr ""
+msgstr "Łotewski"
 
 #: InvenTree/locales.py:36
 msgid "Dutch"
@@ -297,7 +297,7 @@ msgstr "Portugalski (Brazylijski)"
 
 #: InvenTree/locales.py:41
 msgid "Romanian"
-msgstr ""
+msgstr "Rumuński"
 
 #: InvenTree/locales.py:42
 msgid "Russian"
@@ -329,7 +329,7 @@ msgstr "Turecki"
 
 #: InvenTree/locales.py:49
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukraiński"
 
 #: InvenTree/locales.py:50
 msgid "Vietnamese"
@@ -730,7 +730,7 @@ msgstr "Nieprawidłowy wybór kompilacji nadrzędnej"
 
 #: build/models.py:144 order/models.py:240
 msgid "Responsible user or group must be specified"
-msgstr ""
+msgstr "Odpowiedzialny użytkownik lub grupa muszą być określone"
 
 #: build/models.py:150
 msgid "Build order part cannot be changed"
@@ -1082,7 +1082,7 @@ msgstr ""
 #: build/models.py:1473
 #, python-brace-format
 msgid "Allocated quantity ({q}) must not exceed available stock quantity ({a})"
-msgstr ""
+msgstr "Przydzielona ilość ({q}) nie może przekraczać dostępnej ilości zapasów magazynowych ({a})"
 
 #: build/models.py:1483 order/models.py:1882
 msgid "Stock item is over-allocated"
@@ -1306,15 +1306,15 @@ msgstr ""
 
 #: build/serializers.py:695
 msgid "Accept Unallocated"
-msgstr ""
+msgstr "Zaakceptuj nieprzydzielone"
 
 #: build/serializers.py:696
 msgid "Accept that stock items have not been fully allocated to this build order"
-msgstr ""
+msgstr "Zaakceptuj, że przedmioty magazynowe nie zostały w pełni przypisane do tego zlecenia budowy"
 
 #: build/serializers.py:706 templates/js/translated/build.js:315
 msgid "Required stock has not been fully allocated"
-msgstr ""
+msgstr "Wymagany stan nie został w pełni przypisany"
 
 #: build/serializers.py:711 order/serializers.py:300 order/serializers.py:1234
 msgid "Accept Incomplete"
@@ -2317,7 +2317,7 @@ msgstr ""
 
 #: common/models.py:1495
 msgid "Show related parts"
-msgstr ""
+msgstr "Pokaż powiązane części"
 
 #: common/models.py:1496
 msgid "Display related parts for a part"
@@ -2381,7 +2381,7 @@ msgstr ""
 
 #: common/models.py:1561
 msgid "Use Supplier Pricing"
-msgstr ""
+msgstr "Użyj cennika dostawcy"
 
 #: common/models.py:1563
 msgid "Include supplier price breaks in overall pricing calculations"
@@ -2389,7 +2389,7 @@ msgstr ""
 
 #: common/models.py:1569
 msgid "Purchase History Override"
-msgstr ""
+msgstr "Nadpisanie historii zakupów"
 
 #: common/models.py:1571
 msgid "Historical purchase order pricing overrides supplier price breaks"
@@ -3652,55 +3652,55 @@ msgstr ""
 
 #: common/serializers.py:371
 msgid "Is Running"
-msgstr ""
+msgstr "Jest uruchomiony"
 
 #: common/serializers.py:377
 msgid "Pending Tasks"
-msgstr ""
+msgstr "Oczekujce zadania"
 
 #: common/serializers.py:383
 msgid "Scheduled Tasks"
-msgstr ""
+msgstr "Zaplanowane zadania"
 
 #: common/serializers.py:389
 msgid "Failed Tasks"
-msgstr ""
+msgstr "Zadania zakończone błędem"
 
 #: common/serializers.py:404
 msgid "Task ID"
-msgstr ""
+msgstr "ID zadania"
 
 #: common/serializers.py:404
 msgid "Unique task ID"
-msgstr ""
+msgstr "Unikalny identyfikator zadania"
 
 #: common/serializers.py:406
 msgid "Lock"
-msgstr ""
+msgstr "Blokada"
 
 #: common/serializers.py:406
 msgid "Lock time"
-msgstr ""
+msgstr "Czas blokady"
 
 #: common/serializers.py:408
 msgid "Task name"
-msgstr ""
+msgstr "Nazwa zadania"
 
 #: common/serializers.py:410
 msgid "Function"
-msgstr ""
+msgstr "Funkcja"
 
 #: common/serializers.py:410
 msgid "Function name"
-msgstr ""
+msgstr "Nazwa funkcji"
 
 #: common/serializers.py:412
 msgid "Arguments"
-msgstr ""
+msgstr "Argumenty"
 
 #: common/serializers.py:412
 msgid "Task arguments"
-msgstr ""
+msgstr "Argumenty zadania"
 
 #: common/serializers.py:415
 msgid "Keyword Arguments"
@@ -3764,7 +3764,7 @@ msgstr ""
 
 #: common/views.py:464
 msgid "Parts imported"
-msgstr ""
+msgstr "Komponenty zaimportowane"
 
 #: common/views.py:494 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -3779,11 +3779,11 @@ msgstr "Poprzedni krok"
 
 #: company/api.py:144
 msgid "Part is Active"
-msgstr ""
+msgstr "Komponent jest aktywny"
 
 #: company/api.py:148
 msgid "Manufacturer is Active"
-msgstr ""
+msgstr "Producent jest aktywny"
 
 #: company/api.py:281
 msgid "Supplier Part is Active"
@@ -3935,19 +3935,19 @@ msgstr ""
 
 #: company/models.py:406
 msgid "Postal code city/region"
-msgstr ""
+msgstr "Kod pocztowy miasto/region"
 
 #: company/models.py:412
 msgid "State/Province"
-msgstr ""
+msgstr "Stan/Województwo"
 
 #: company/models.py:413
 msgid "State or province"
-msgstr ""
+msgstr "Stan lub województwo"
 
 #: company/models.py:419 templates/js/translated/company.js:1001
 msgid "Country"
-msgstr ""
+msgstr "Kraj"
 
 #: company/models.py:420
 msgid "Address country"
@@ -3955,19 +3955,19 @@ msgstr ""
 
 #: company/models.py:426
 msgid "Courier shipping notes"
-msgstr ""
+msgstr "Notatki przewozowe kuriera"
 
 #: company/models.py:427
 msgid "Notes for shipping courier"
-msgstr ""
+msgstr "Notatki dla kuriera"
 
 #: company/models.py:433
 msgid "Internal shipping notes"
-msgstr ""
+msgstr "Wewnętrzne notatki przewozowe"
 
 #: company/models.py:434
 msgid "Shipping notes for internal use"
-msgstr ""
+msgstr "Notatki wysyłkowe do użytku wewnętrznego"
 
 #: company/models.py:441
 msgid "Link to address information (external)"
@@ -4031,7 +4031,7 @@ msgstr ""
 
 #: company/models.py:581
 msgid "Parameter name"
-msgstr ""
+msgstr "Nazwa parametru"
 
 #: company/models.py:587 report/templates/report/inventree_test_report.html:104
 #: stock/models.py:2418 templates/js/translated/company.js:1166
@@ -4042,7 +4042,7 @@ msgstr "Wartość"
 
 #: company/models.py:588
 msgid "Parameter value"
-msgstr ""
+msgstr "Wartość parametru"
 
 #: company/models.py:595 company/templates/company/supplier_part.html:168
 #: part/admin.py:57 part/models.py:1045 part/models.py:3646
@@ -4156,7 +4156,7 @@ msgstr "Opakowanie części"
 #: templates/js/translated/purchase_order.js:2084
 #: templates/js/translated/purchase_order.js:2101
 msgid "Pack Quantity"
-msgstr ""
+msgstr "Ilość w opakowaniu"
 
 #: company/models.py:841
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
@@ -4168,7 +4168,7 @@ msgstr "wielokrotność"
 
 #: company/models.py:861
 msgid "Order multiple"
-msgstr ""
+msgstr "Zamów wiele"
 
 #: company/models.py:873
 msgid "Quantity available from supplier"
@@ -4176,7 +4176,7 @@ msgstr ""
 
 #: company/models.py:879
 msgid "Availability Updated"
-msgstr ""
+msgstr "Dostępność zaktualizowana"
 
 #: company/models.py:880
 msgid "Date of last update of availability data"
@@ -4239,7 +4239,7 @@ msgstr "Usuń firmę"
 #: report/templates/report/inventree_test_report.html:84
 #: report/templates/report/inventree_test_report.html:163
 msgid "Part image"
-msgstr ""
+msgstr "Obraz części"
 
 #: company/templates/company/company_base.html:61
 #: part/templates/part/part_thumb.html:12
@@ -4254,7 +4254,7 @@ msgstr "Pobierz obraz z adresu URL"
 #: company/templates/company/company_base.html:66
 #: part/templates/part/part_thumb.html:16
 msgid "Delete image"
-msgstr ""
+msgstr "Usuń obraz"
 
 #: company/templates/company/company_base.html:92 order/models.py:938
 #: order/models.py:2032 order/templates/order/return_order_base.html:131
@@ -4288,28 +4288,28 @@ msgstr "Telefon"
 #: company/templates/company/company_base.html:211
 #: part/templates/part/part_base.html:527
 msgid "Remove Image"
-msgstr ""
+msgstr "Usuń obraz"
 
 #: company/templates/company/company_base.html:212
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Usuń przypisany obraz z tej firmy"
 
 #: company/templates/company/company_base.html:214
 #: part/templates/part/part_base.html:530
 #: templates/InvenTree/settings/user.html:88
 #: templates/InvenTree/settings/user_sso.html:43
 msgid "Remove"
-msgstr ""
+msgstr "Usuń"
 
 #: company/templates/company/company_base.html:243
 #: part/templates/part/part_base.html:559
 msgid "Upload Image"
-msgstr ""
+msgstr "Prześlij obraz"
 
 #: company/templates/company/company_base.html:258
 #: part/templates/part/part_base.html:613
 msgid "Download Image"
-msgstr ""
+msgstr "Pobierz obraz"
 
 #: company/templates/company/detail.html:15
 #: company/templates/company/manufacturer_part_sidebar.html:7
@@ -4427,16 +4427,16 @@ msgstr ""
 #: company/templates/company/detail.html:187
 #: company/templates/company/detail.html:188
 msgid "Add Contact"
-msgstr ""
+msgstr "Dodaj kontakt"
 
 #: company/templates/company/detail.html:206
 msgid "Company addresses"
-msgstr ""
+msgstr "Adres firmy"
 
 #: company/templates/company/detail.html:210
 #: company/templates/company/detail.html:211
 msgid "Add Address"
-msgstr ""
+msgstr "Dodaj adres"
 
 #: company/templates/company/manufacturer_part.html:15 company/views.py:37
 #: templates/InvenTree/search.html:180 templates/navbar.html:49
@@ -4656,44 +4656,44 @@ msgstr "Umieszczony"
 
 #: machine/machine_types/label_printer.py:218
 msgid "Copies"
-msgstr ""
+msgstr "Kopie"
 
 #: machine/machine_types/label_printer.py:219
 msgid "Number of copies to print for each label"
-msgstr ""
+msgstr "Liczba kopii do wydrukowania dla każdej etykiety"
 
 #: machine/machine_types/label_printer.py:234
 msgid "Connected"
-msgstr ""
+msgstr "Połączono"
 
 #: machine/machine_types/label_printer.py:235 order/api.py:1467
 #: templates/js/translated/sales_order.js:1078
 msgid "Unknown"
-msgstr ""
+msgstr "Nieznany"
 
 #: machine/machine_types/label_printer.py:236
 msgid "Printing"
-msgstr ""
+msgstr "Drukowanie"
 
 #: machine/machine_types/label_printer.py:237
 msgid "No media"
-msgstr ""
+msgstr "Brak mediów"
 
 #: machine/machine_types/label_printer.py:238
 msgid "Disconnected"
-msgstr ""
+msgstr "Rozłączono"
 
 #: machine/machine_types/label_printer.py:245
 msgid "Label Printer"
-msgstr ""
+msgstr "Drukarka etykiet"
 
 #: machine/machine_types/label_printer.py:246
 msgid "Directly print labels for various items."
-msgstr ""
+msgstr "Bezpośrednio wydrukuj etykiety dla różnych elementów."
 
 #: machine/machine_types/label_printer.py:252
 msgid "Printer Location"
-msgstr ""
+msgstr "Lokalizacja drukarki"
 
 #: machine/machine_types/label_printer.py:253
 msgid "Scope the printer to a specific location"
@@ -4701,23 +4701,23 @@ msgstr ""
 
 #: machine/models.py:25
 msgid "Name of machine"
-msgstr ""
+msgstr "Nazwa maszyny"
 
 #: machine/models.py:29
 msgid "Machine Type"
-msgstr ""
+msgstr "Typ maszyny"
 
 #: machine/models.py:29
 msgid "Type of machine"
-msgstr ""
+msgstr "Typ maszyny"
 
 #: machine/models.py:34 machine/models.py:146
 msgid "Driver"
-msgstr ""
+msgstr "Sterownik"
 
 #: machine/models.py:35
 msgid "Driver used for the machine"
-msgstr ""
+msgstr "Sterownik użyty dla tego urządzenia"
 
 #: machine/models.py:39
 msgid "Machines can be disabled"
@@ -4729,11 +4729,11 @@ msgstr ""
 
 #: machine/models.py:100
 msgid "No errors"
-msgstr ""
+msgstr "Brak błędów"
 
 #: machine/models.py:105
 msgid "Initialized"
-msgstr ""
+msgstr "Zainicjalizowany"
 
 #: machine/models.py:110
 msgid "Errors"
@@ -4774,7 +4774,7 @@ msgstr "Status zamówienia"
 #: order/api.py:161 templates/js/translated/table_filters.js:194
 #: templates/js/translated/table_filters.js:779
 msgid "Has Pricing"
-msgstr ""
+msgstr "Posiada ceny"
 
 #: order/api.py:236
 msgid "No matching purchase order found"
@@ -4793,7 +4793,7 @@ msgstr ""
 
 #: order/api.py:462
 msgid "Order Pending"
-msgstr ""
+msgstr "Zamówienie oczekujące"
 
 #: order/api.py:1461 order/models.py:380 order/models.py:1396
 #: order/models.py:1505 order/templates/order/order_base.html:9
@@ -14398,3 +14398,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
