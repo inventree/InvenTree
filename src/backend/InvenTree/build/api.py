@@ -580,6 +580,10 @@ class BuildItemList(DataExportViewMixin, ListCreateAPI):
             'stock_item',
             'stock_item__location',
             'stock_item__part',
+            'stock_item__supplier_part',
+            'stock_item__supplier_part__manufacturer_part',
+        ).prefetch_related(
+            'stock_item__location__tags',
         )
 
         return queryset

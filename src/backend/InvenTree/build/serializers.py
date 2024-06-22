@@ -1051,7 +1051,13 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
 
 class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
-    """Serializes a BuildItem object."""
+    """Serializes a BuildItem object, which is an allocation of a stock item against a build order."""
+
+    # These fields are only used for data export
+    export_only_fields = [
+        'sku',
+        'mpn',
+    ]
 
     class Meta:
         """Serializer metaclass"""
@@ -1067,7 +1073,13 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'part_detail',
             'stock_item_detail',
             'build_detail',
+            'sku',
+            'mpn',
         ]
+
+    # Export-only fields
+    sku = serializers.CharField(source='stock_item.supplier_part.SKU', label=_('Supplier Part Number'), read_only=True)
+    mpn = serializers.CharField(source='stock_item.supplier_part.manufacturer_part.MPN', label=_('Manufacturer Part Number'), read_only=True)
 
     # Annotated fields
     build = serializers.PrimaryKeyRelatedField(source='build_line.build', many=False, read_only=True)
