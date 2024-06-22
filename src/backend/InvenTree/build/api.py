@@ -576,6 +576,7 @@ class BuildItemList(DataExportViewMixin, ListCreateAPI):
         queryset = queryset.select_related(
             'build_line',
             'build_line__build',
+            'build_line__bom_item',
             'install_into',
             'stock_item',
             'stock_item__location',

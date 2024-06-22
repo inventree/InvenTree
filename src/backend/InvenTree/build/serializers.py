@@ -1055,8 +1055,11 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
     # These fields are only used for data export
     export_only_fields = [
+        'build_reference',
+        'bom_reference',
         'sku',
         'mpn',
+        'location_name',
     ]
 
     class Meta:
@@ -1069,17 +1072,28 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'install_into',
             'stock_item',
             'quantity',
+            'location',
+
+            # Detail fields, can be included or excluded
+            'build_detail',
             'location_detail',
             'part_detail',
             'stock_item_detail',
-            'build_detail',
-            'sku',
+
+            # The following fields are only used for data export
+            'bom_reference',
+            'build_reference',
+            'location_name',
             'mpn',
+            'sku',
         ]
 
     # Export-only fields
     sku = serializers.CharField(source='stock_item.supplier_part.SKU', label=_('Supplier Part Number'), read_only=True)
     mpn = serializers.CharField(source='stock_item.supplier_part.manufacturer_part.MPN', label=_('Manufacturer Part Number'), read_only=True)
+    location_name = serializers.CharField(source='stock_item.location.name', label=_('Location Name'), read_only=True)
+    build_reference = serializers.CharField(source='build.reference', label=_('Build Reference'), read_only=True)
+    bom_reference = serializers.CharField(source='build_line.bom_item.reference', label=_('BOM Reference'), read_only=True)
 
     # Annotated fields
     build = serializers.PrimaryKeyRelatedField(source='build_line.build', many=False, read_only=True)
@@ -1087,6 +1101,7 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     # Extra (optional) detail fields
     part_detail = PartBriefSerializer(source='stock_item.part', many=False, read_only=True, pricing=False)
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
+    location = serializers.PrimaryKeyRelatedField(source='stock_item.location', many=False, read_only=True)
     location_detail = LocationSerializer(source='stock_item.location', read_only=True)
     build_detail = BuildSerializer(source='build_line.build', many=False, read_only=True)
 
