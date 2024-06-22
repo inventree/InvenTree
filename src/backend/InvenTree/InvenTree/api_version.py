@@ -1,13 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 208
+INVENTREE_API_VERSION = 209
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
-v208 - 2024-06-20 : https://github.com/inventree/InvenTree/pull/6911
+v209 - 2024-06-22 : https://github.com/inventree/InvenTree/pull/6911
     - Adds API endpoints for managing data import and export
+
+v208 - 2024-06-19 : https://github.com/inventree/InvenTree/pull/7479
+    - Adds documentation for the user roles API endpoint (no functional changes)
 
 v207 - 2024-06-09 : https://github.com/inventree/InvenTree/pull/7420
     - Moves all "Attachment" models into a single table

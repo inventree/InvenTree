@@ -221,6 +221,10 @@ class OwnerModelTest(InvenTreeTestCase):
         self.client.login(username=self.username, password=self.password)
         # user list
         self.do_request(reverse('api-owner-list'), {})
+
+        # user list with 'is_active' filter
+        self.do_request(reverse('api-owner-list'), {'is_active': False})
+
         # user list with search
         self.do_request(reverse('api-owner-list'), {'search': 'user'})
 
