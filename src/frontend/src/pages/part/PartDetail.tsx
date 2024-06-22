@@ -362,9 +362,13 @@ export default function PartDetail() {
                 });
             }
           });
-          return `${formatPriceRange(data.overall_min, data.overall_max)}${
-            part.units && ' / ' + part.units
-          }`;
+
+          return (
+            data &&
+            `${formatPriceRange(data.overall_min, data.overall_max)}${
+              part.units && ' / ' + part.units
+            }`
+          );
         }
       });
 
