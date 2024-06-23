@@ -111,8 +111,7 @@ content: "{% trans 'Stock Item Test Report' %}";
             <td colspan='5'><hr></td>
         </tr>
         {% for key in test_keys %}
-        <!-- test key = {{ key }} -->
-        {% getkey test_template_map key as test_template %}
+        {% getkey test_templates key as test_template %}
         {% getkey results key as test_result %}
         <tr class='test-row'>
             <td>
