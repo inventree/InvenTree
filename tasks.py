@@ -1074,8 +1074,8 @@ API         {InvenTreeVersion.inventreeApiVersion()}
 Node        {node if node else 'N/A'}
 Yarn        {yarn if yarn else 'N/A'}
 
-Commit hash:{InvenTreeVersion.inventreeCommitHash()}
-Commit date:{InvenTreeVersion.inventreeCommitDate()}"""
+Commit hash: {InvenTreeVersion.inventreeCommitHash()}
+Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
     )
     if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
         print(
