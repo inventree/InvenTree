@@ -17,7 +17,7 @@ repos:
     -   id: check-yaml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.4.4
+    rev: v0.4.1
     hooks:
     - id: ruff-format
       args: [--preview]
@@ -27,7 +27,7 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.1.45
+    rev: 0.1.35
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
