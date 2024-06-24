@@ -33,8 +33,8 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
-from common.settings import get_global_setting
 from build import models as BuildModels
+from common.settings import get_global_setting
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from order.status_codes import SalesOrderStatusGroups
