@@ -193,13 +193,14 @@ class DataImportSession(models.Model):
         missing_fields = []
 
         for field in required_fields:
-            # An explicit mapping exists
-            if self.column_mappings.filter(field=field).exists():
-                continue
-
             # A default value exists
             if field in field_defaults:
                 continue
+
+            # The field has been mapped to a data column
+            if mapping := self.column_mappings.filter(field=field).first():
+                if mapping.column:
+                    continue
 
             missing_fields.append(field)
 
