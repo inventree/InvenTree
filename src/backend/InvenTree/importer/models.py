@@ -248,7 +248,11 @@ class DataImportSession(models.Model):
 
             row_objects.append(
                 importer.models.DataImportRow(
-                    session=self, row_data=row_data, row_index=idx
+                    session=self,
+                    row_data=row_data,
+                    row_index=idx,
+                    valid=False,
+                    complete=False,
                 )
             )
 
@@ -411,6 +415,7 @@ class DataImportRow(models.Model):
     def save(self, *args, **kwargs):
         """Save the DataImportRow object."""
         self.valid = self.validate()
+        self.complete = self.complete or False
         super().save(*args, **kwargs)
 
     session = models.ForeignKey(
@@ -466,8 +471,11 @@ class DataImportRow(models.Model):
 
         return serializer_class(data=self.serializer_data())
 
-    def validate(self) -> bool:
+    def validate(self, commit=False) -> bool:
         """Validate the data in this row against the linked serializer.
+
+        Arguments:
+            commit: If True, the data is saved to the database (if validation passes)
 
         Returns:
             True if the data is valid, False otherwise
@@ -475,6 +483,10 @@ class DataImportRow(models.Model):
         Raises:
             ValidationError: If the linked serializer is not valid
         """
+        if self.complete:
+            # Row has already been completed
+            return True
+
         serializer = self.construct_serializer()
 
         if not serializer:
@@ -492,5 +504,12 @@ class DataImportRow(models.Model):
 
         if result:
             self.errors = None
+
+            if commit:
+                try:
+                    serializer.save()
+                except Exception as e:
+                    self.errors = {'non_field_errors': str(e)}
+                    result = False
 
         return result
