@@ -107,7 +107,7 @@ class DataImportSession(models.Model):
         return mapping
 
     @property
-    def serializer(self):
+    def serializer_class(self):
         """Return the serializer class for this importer."""
         from importer.registry import supported_models
 
@@ -122,7 +122,7 @@ class DataImportSession(models.Model):
         from importer.operations import get_fields
 
         return get_fields(
-            self.serializer,
+            self.serializer_class,
             required=required,
             read_only=read_only,
             write_only=write_only,
@@ -286,8 +286,8 @@ class DataImportSession(models.Model):
         from InvenTree.metadata import InvenTreeMetadata
 
         metadata = InvenTreeMetadata()
-        if serializer := self.serializer:
-            fields = metadata.get_serializer_info(serializer(data={}))
+        if serializer := self.serializer_class:
+            fields = metadata.get_serializer_info(serializer(data={}, importing=True))
         else:
             fields = {}
 

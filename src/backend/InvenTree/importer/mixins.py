@@ -43,6 +43,27 @@ class DataImportSerializerMixin:
             for field in self.get_import_only_fields(**kwargs):
                 self.fields.pop(field, None)
 
+    def get_importable_fields(self) -> dict:
+        """Return a dict of fields which can be imported against this serializer instance.
+
+        Returns:
+            dict: A dictionary of field names and field objects
+        """
+        fields = {}
+
+        for name, field in self.fields.items():
+            # Skip read-only fields
+            if getattr(field, 'read_only', False):
+                continue
+
+            # Skip fields which are themselves serializers
+            if issubclass(field.__class__, serializers.Serializer):
+                continue
+
+            fields[name] = field
+
+        return fields
+
 
 class DataExportSerializerMixin:
     """Mixin class for adding data export functionality to a DRF serializer."""
@@ -78,7 +99,7 @@ class DataExportSerializerMixin:
                 self.fields.pop(field, None)
 
     def get_exportable_fields(self) -> dict:
-        """Return a list of fields which can be exported.
+        """Return a dict of fields which can be exported against this serializer instance.
 
         Note: Any fields which should be excluded from export have already been removed
 
