@@ -459,12 +459,8 @@ class DataImportRow(models.Model):
 
     def construct_serializer(self):
         """Construct a serializer object for this row."""
-        serializer_class = self.session.serializer
-
-        if not serializer_class:
-            return None
-
-        return serializer_class(data=self.serializer_data())
+        if serializer_class := self.session.serializer_class:
+            return serializer_class(data=self.serializer_data())
 
     def validate(self, commit=False) -> bool:
         """Validate the data in this row against the linked serializer.
@@ -503,6 +499,8 @@ class DataImportRow(models.Model):
             if commit:
                 try:
                     serializer.save()
+                    self.complete = True
+                    self.save()
                 except Exception as e:
                     self.errors = {'non_field_errors': str(e)}
                     result = False
