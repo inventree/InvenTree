@@ -82,6 +82,12 @@ export function useImportSession({
         ...(availableFields[mapping.field] ?? {})
       })) ?? [];
 
+    mapping = mapping.sort((a: any, b: any) => {
+      if (a?.required && !b?.required) return -1;
+      if (!a?.required && b?.required) return 1;
+      return 0;
+    });
+
     return mapping;
   }, [sessionData, availableColumns]);
 

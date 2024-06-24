@@ -126,10 +126,10 @@ class InvenTreeMetadata(SimpleMetadata):
         - model_value is callable, and field_value is not (this indicates that the model value is translated)
         - model_value is not a string, and field_value is a string (this indicates that the model value is translated)
         """
-        if model_value and not field_value:
+        if field_value is None and model_value is not None:
             return model_value
 
-        if field_value and not model_value:
+        if model_value is None and field_value is not None:
             return field_value
 
         if callable(model_value) and not callable(field_value):
@@ -199,6 +199,11 @@ class InvenTreeMetadata(SimpleMetadata):
                     for field_key, model_key in extra_attributes.items():
                         field_value = serializer_info[name].get(field_key, None)
                         model_value = getattr(field, model_key, None)
+
+                        if name == 'category':
+                            print('Category field:', field_key, model_key)
+                            print(' - field_value:', field_value)
+                            print(' - model_value:', model_value)
 
                         if value := self.override_value(name, field_value, model_value):
                             serializer_info[name][field_key] = value

@@ -228,8 +228,6 @@ class DataImportSession(models.Model):
 
     def import_data(self):
         """Perform the data import process for this session."""
-        # TODO: Clear any existing error messages
-
         # Clear any existing data rows
         self.rows.all().delete()
 
