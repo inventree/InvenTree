@@ -248,11 +248,7 @@ class DataImportSession(models.Model):
 
             row_objects.append(
                 importer.models.DataImportRow(
-                    session=self,
-                    row_data=row_data,
-                    row_index=idx,
-                    valid=False,
-                    complete=False,
+                    session=self, row_data=row_data, row_index=idx
                 )
             )
 
@@ -415,7 +411,6 @@ class DataImportRow(models.Model):
     def save(self, *args, **kwargs):
         """Save the DataImportRow object."""
         self.valid = self.validate()
-        self.complete = self.complete or False
         super().save(*args, **kwargs)
 
     session = models.ForeignKey(
