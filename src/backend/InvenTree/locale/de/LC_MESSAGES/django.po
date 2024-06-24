@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-19 04:39+0000\n"
+"POT-Creation-Date: 2024-06-24 00:32+0000\n"
 "PO-Revision-Date: 2024-06-19 04:49\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -1038,7 +1038,7 @@ msgstr "Objekt bauen"
 #: report/templates/report/inventree_sales_order_report.html:29
 #: report/templates/report/inventree_stock_location_report.html:104
 #: report/templates/report/inventree_test_report.html:90
-#: report/templates/report/inventree_test_report.html:170 stock/admin.py:159
+#: report/templates/report/inventree_test_report.html:169 stock/admin.py:159
 #: stock/serializers.py:125 stock/serializers.py:165 stock/serializers.py:594
 #: stock/templates/stock/item_base.html:287
 #: stock/templates/stock/item_base.html:295
@@ -4237,7 +4237,7 @@ msgstr "Firma löschen"
 #: report/templates/report/inventree_purchase_order_report.html:40
 #: report/templates/report/inventree_sales_order_report.html:40
 #: report/templates/report/inventree_test_report.html:84
-#: report/templates/report/inventree_test_report.html:163
+#: report/templates/report/inventree_test_report.html:162
 msgid "Part image"
 msgstr "Artikelbild"
 
@@ -8653,28 +8653,28 @@ msgstr "Test"
 msgid "Result"
 msgstr "Ergebnis"
 
-#: report/templates/report/inventree_test_report.html:130
+#: report/templates/report/inventree_test_report.html:129
 msgid "Pass"
 msgstr "bestanden"
 
-#: report/templates/report/inventree_test_report.html:132
+#: report/templates/report/inventree_test_report.html:131
 msgid "Fail"
 msgstr "fehlgeschlagen"
 
-#: report/templates/report/inventree_test_report.html:139
+#: report/templates/report/inventree_test_report.html:138
 msgid "No result (required)"
 msgstr "Kein Ergebnis (erforderlich)"
 
-#: report/templates/report/inventree_test_report.html:141
+#: report/templates/report/inventree_test_report.html:140
 msgid "No result"
 msgstr "Kein Ergebnis"
 
-#: report/templates/report/inventree_test_report.html:154
+#: report/templates/report/inventree_test_report.html:153
 #: stock/templates/stock/stock_sidebar.html:16
 msgid "Installed Items"
 msgstr "Verbaute Objekte"
 
-#: report/templates/report/inventree_test_report.html:168 stock/admin.py:161
+#: report/templates/report/inventree_test_report.html:167 stock/admin.py:161
 #: templates/js/translated/stock.js:700 templates/js/translated/stock.js:871
 #: templates/js/translated/stock.js:3110
 msgid "Serial"
