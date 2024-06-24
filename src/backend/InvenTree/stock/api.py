@@ -1339,10 +1339,13 @@ class TestStatistics(GenericAPIView):
         responses={200: StockSerializers.TestStatisticsSerializer(many=False)}
     )
     def get(self, request, pk, *args, **kwargs):
-        """Return test execution count matrix broken downs by test result."""
+        """Return test execution count matrix broken down by test result."""
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        serializer.context['type'] = kwargs['type']
+        if request.resolver_match.url_name == 'api-test-statistics-by-part':
+            serializer.context['type'] = 'by-part'
+        elif request.resolver_match.url_name == 'api-test-statistics-by-build':
+            serializer.context['type'] = 'by-build'
         serializer.context['finished_datetime_after'] = self.request.query_params.get(
             'finished_datetime_after'
         )
@@ -1732,9 +1735,23 @@ stock_api_urls = [
 test_statistics_api_urls = [
     # Test statistics endpoints
     path(
-        '<str:type>/',
+        'by-part/',
         include([
-            path('<int:pk>/', TestStatistics.as_view(), name='api-test-statistics')
+            path(
+                '<int:pk>/',
+                TestStatistics.as_view(),
+                name='api-test-statistics-by-part',
+            )
         ]),
-    )
+    ),
+    path(
+        'by-build/',
+        include([
+            path(
+                '<int:pk>/',
+                TestStatistics.as_view(),
+                name='api-test-statistics-by-build',
+            )
+        ]),
+    ),
 ]
