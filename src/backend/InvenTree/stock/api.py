@@ -1673,22 +1673,6 @@ stock_api_urls = [
             ),
         ]),
     ),
-    # Test statistics endpoints
-    path(
-        'test-statistics/',
-        include([
-            path(
-                '<str:type>/',
-                include([
-                    path(
-                        '<int:pk>/',
-                        TestStatistics.as_view(),
-                        name='api-stock-test-statistics',
-                    )
-                ]),
-            )
-        ]),
-    ),
     # StockItemTracking API endpoints
     path(
         'track/',
@@ -1743,4 +1727,14 @@ stock_api_urls = [
     ),
     # Anything else
     path('', StockList.as_view(), name='api-stock-list'),
+]
+
+test_statistics_api_urls = [
+    # Test statistics endpoints
+    path(
+        '<str:type>/',
+        include([
+            path('<int:pk>/', TestStatistics.as_view(), name='api-test-statistics')
+        ]),
+    )
 ]
