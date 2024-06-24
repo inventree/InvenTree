@@ -74,7 +74,7 @@ export default function ImporterDataSelector({
 }: {
   session: ImportSessionState;
 }) {
-  const table = useTable('data-importer');
+  const table = useTable('dataimporter');
 
   const [selectedFieldNames, setSelectedFieldNames] = useState<string[]>([]);
 
@@ -229,7 +229,9 @@ export default function ImporterDataSelector({
             },
             rowActions: rowActions,
             tableFilters: filters,
-            enableColumnSwitching: true
+            enableColumnSwitching: true,
+            enableColumnCaching: false,
+            enableSelection: true
           }}
         />
       </Stack>

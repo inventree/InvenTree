@@ -91,7 +91,7 @@ export default function ImporterDrawer({
       default:
         return <Text>Unknown status code: {session?.status}</Text>;
     }
-  }, [session]);
+  }, [session.status]);
 
   const cancelImport = useCallback(() => {
     // Cancel import session by deleting on the server

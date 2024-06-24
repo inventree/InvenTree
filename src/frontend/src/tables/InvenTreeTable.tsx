@@ -74,6 +74,7 @@ const defaultPageSize: number = 25;
  * @param enablePagination : boolean - Enable pagination
  * @param enableRefresh : boolean - Enable refresh actions
  * @param enableColumnSwitching : boolean - Enable column switching
+ * @param enableColumnCaching : boolean - Enable caching of column names via API
  * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
@@ -96,6 +97,7 @@ export type InvenTreeTableProps<T = any> = {
   enablePagination?: boolean;
   enableRefresh?: boolean;
   enableColumnSwitching?: boolean;
+  enableColumnCaching?: boolean;
   enableLabels?: boolean;
   enableReports?: boolean;
   pageSize?: number;
@@ -169,11 +171,14 @@ export function InvenTreeTable<T = any>({
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
     enabled: true,
-    queryKey: ['options', url, tableState.tableKey],
+    queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     queryFn: async () => {
+      if (props.enableColumnCaching == false) {
+        return null;
+      }
       return api
         .options(url, {
           params: tableProps.params
@@ -206,6 +211,10 @@ export function InvenTreeTable<T = any>({
 
   // Rebuild set of translated column names
   useEffect(() => {
+    if (props.enableColumnCaching == false) {
+      return;
+    }
+
     const cacheKey = tableState.tableKey.split('-')[0];
 
     // First check the local cache
@@ -218,8 +227,9 @@ export function InvenTreeTable<T = any>({
     }
 
     // Otherwise, fetch the data from the API
+    console.log('refacthing table options:');
     tableOptionQuery.refetch();
-  }, [url, tableState.tableKey, props.params]);
+  }, [url, tableState.tableKey, props.params, props.enableColumnCaching]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
