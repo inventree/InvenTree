@@ -769,7 +769,7 @@
         });
     });
     onPanelLoad("test-statistics", function() {
-        prepareTestStatisticsTable('part', '{% url "api-test-statistics" "by-part" part.pk %}')
+        prepareTestStatisticsTable('part', '{% url "api-test-statistics-by-part" part.pk %}')
     });
 
     onPanelLoad("part-stock", function() {
