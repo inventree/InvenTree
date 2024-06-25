@@ -351,6 +351,8 @@ class RuleSet(models.Model):
             'error_report_error',
             'exchange_rate',
             'exchange_exchangebackend',
+            'usersessions_usersession',
+            'sessions_session',
             # Django-q
             'django_q_ormq',
             'django_q_failure',
