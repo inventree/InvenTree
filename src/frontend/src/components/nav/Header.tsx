@@ -60,7 +60,7 @@ export function Header() {
             return null;
           });
         setNotificationCount(response?.data?.count ?? 0);
-        return response?.data;
+        return response?.data ?? null;
       } catch (error) {
         return error;
       }
