@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-24 00:32+0000\n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"POT-Creation-Date: 2024-06-25 02:45+0000\n"
+"PO-Revision-Date: 2024-06-25 06:02\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -3312,7 +3312,7 @@ msgstr "Longueur de la chaîne dans les Tableau"
 
 #: common/models.py:2424
 msgid "Maximum length limit for strings displayed in table views"
-msgstr ""
+msgstr "Longueur maximale des chaînes affichées dans les tableaux"
 
 #: common/models.py:2430
 msgid "Default part label template"
@@ -3722,19 +3722,27 @@ msgstr ""
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr ""
 
-#: common/validators.py:77
+#: common/validators.py:33
+msgid "No attachment model type provided"
+msgstr ""
+
+#: common/validators.py:39
+msgid "Invalid attachment model type"
+msgstr ""
+
+#: common/validators.py:80
 msgid "Minimum places cannot be greater than maximum places"
 msgstr ""
 
-#: common/validators.py:89
+#: common/validators.py:92
 msgid "Maximum places cannot be less than minimum places"
 msgstr ""
 
-#: common/validators.py:100
+#: common/validators.py:103
 msgid "An empty domain is not allowed."
 msgstr "Un domaine vide n'est pas autorisé."
 
-#: common/validators.py:102
+#: common/validators.py:105
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
 msgstr "Nom de domaine invalide : {domain}"
@@ -7079,7 +7087,7 @@ msgstr ""
 
 #: part/tasks.py:37
 msgid "Low stock notification"
-msgstr ""
+msgstr "Notification de stock faible"
 
 #: part/tasks.py:39
 #, python-brace-format
@@ -7109,11 +7117,11 @@ msgstr ""
 
 #: part/templates/part/category.html:41 part/templates/part/category.html:45
 msgid "You are subscribed to notifications for this category"
-msgstr ""
+msgstr "Vous êtes abonné aux notifications pour cette catégorie"
 
 #: part/templates/part/category.html:49
 msgid "Subscribe to notifications for this category"
-msgstr ""
+msgstr "S'abonner aux notifications de cette catégorie"
 
 #: part/templates/part/category.html:55
 msgid "Category Actions"
@@ -7366,11 +7374,11 @@ msgstr "Liste des composants"
 
 #: part/templates/part/part_base.html:25 part/templates/part/part_base.html:29
 msgid "You are subscribed to notifications for this part"
-msgstr ""
+msgstr "Vous êtes abonné aux notifications pour cette pièce"
 
 #: part/templates/part/part_base.html:33
 msgid "Subscribe to notifications for this part"
-msgstr ""
+msgstr "S'abonner aux notifications de cette pièce"
 
 #: part/templates/part/part_base.html:52
 #: stock/templates/stock/item_base.html:62
@@ -7689,7 +7697,7 @@ msgstr ""
 
 #: part/templates/part/stock_count.html:9 templates/InvenTree/index.html:120
 msgid "Low Stock"
-msgstr ""
+msgstr "Stock minimum"
 
 #: part/templates/part/upload_bom.html:8
 msgid "Return to BOM"
@@ -8231,17 +8239,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:598
+#: plugin/registry.py:534
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:601
+#: plugin/registry.py:537
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:603
+#: plugin/registry.py:539
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
@@ -8306,7 +8314,7 @@ msgstr ""
 
 #: plugin/serializers.py:101
 msgid "Version specifier for the plugin. Leave blank for latest version."
-msgstr ""
+msgstr "Identifiant de version du plugin. Laissez vide pour la dernière version."
 
 #: plugin/serializers.py:106
 msgid "Confirm plugin installation"
@@ -9911,15 +9919,15 @@ msgstr ""
 
 #: templates/InvenTree/index.html:39
 msgid "Subscribed Parts"
-msgstr ""
+msgstr "Pièces suivies"
 
 #: templates/InvenTree/index.html:52
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Catégories favorites"
 
 #: templates/InvenTree/index.html:62
 msgid "Latest Parts"
-msgstr ""
+msgstr "Dernières pièces"
 
 #: templates/InvenTree/index.html:77
 msgid "BOM Waiting Validation"
@@ -9927,7 +9935,7 @@ msgstr ""
 
 #: templates/InvenTree/index.html:106
 msgid "Recently Updated"
-msgstr ""
+msgstr "Mis à jour récemment"
 
 #: templates/InvenTree/index.html:134
 msgid "Depleted Stock"
@@ -10064,7 +10072,7 @@ msgstr ""
 #: templates/InvenTree/settings/login.html:27 templates/account/signup.html:5
 #: templates/socialaccount/signup.html:5
 msgid "Signup"
-msgstr ""
+msgstr "Inscription"
 
 #: templates/InvenTree/settings/login.html:36
 msgid "Single Sign On"
@@ -10428,11 +10436,11 @@ msgstr "Paramètres Utilisateur"
 
 #: templates/InvenTree/settings/sidebar.html:9
 msgid "Account"
-msgstr ""
+msgstr "Compte"
 
 #: templates/InvenTree/settings/sidebar.html:11
 msgid "Display"
-msgstr ""
+msgstr "Affichage"
 
 #: templates/InvenTree/settings/sidebar.html:13
 msgid "Home Page"
@@ -10826,17 +10834,17 @@ msgstr ""
 
 #: templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
-msgstr ""
+msgstr "Voulez-vous vraiment vous déconnecter ?"
 
 #: templates/account/logout.html:27 templates/allauth_2fa/backup_tokens.html:35
 #: templates/allauth_2fa/remove.html:24 templates/allauth_2fa/setup.html:45
 msgid "Return to Site"
-msgstr ""
+msgstr "Retourner au site"
 
 #: templates/account/password_reset.html:5
 #: templates/account/password_reset.html:12
 msgid "Password Reset"
-msgstr ""
+msgstr "Réinitialisation mot de passe"
 
 #: templates/account/password_reset.html:18
 msgid "Forgotten your password? Enter your email address below, and we'll send you an email allowing you to reset it."
@@ -10844,15 +10852,15 @@ msgstr ""
 
 #: templates/account/password_reset.html:23
 msgid "Reset My Password"
-msgstr ""
+msgstr "Réinitialiser mon mot de passe"
 
 #: templates/account/password_reset.html:27 templates/account/signup.html:37
 msgid "This function is currently disabled. Please contact an administrator."
-msgstr ""
+msgstr "Cette fonction est actuellement désactivée. Veuillez contacter un administrateur."
 
 #: templates/account/password_reset_from_key.html:7
 msgid "Bad Token"
-msgstr ""
+msgstr "Mauvais jeton"
 
 #: templates/account/password_reset_from_key.html:11
 #, python-format
@@ -10861,7 +10869,7 @@ msgstr ""
 
 #: templates/account/password_reset_from_key.html:18
 msgid "Change password"
-msgstr ""
+msgstr "Changer de mot de passe"
 
 #: templates/account/password_reset_from_key.html:22
 msgid "Your password is now changed."
@@ -11520,7 +11528,7 @@ msgstr ""
 #: templates/js/translated/build.js:370 templates/js/translated/stock.js:121
 #: templates/js/translated/stock.js:296
 msgid "Latest serial number"
-msgstr ""
+msgstr "Dernier numéro de série"
 
 #: templates/js/translated/build.js:379
 msgid "The Bill of Materials contains trackable parts"
@@ -14208,7 +14216,7 @@ msgstr ""
 
 #: templates/socialaccount/login.html:24
 msgid "Continue"
-msgstr ""
+msgstr "Continuer"
 
 #: templates/socialaccount/login.html:29
 msgid "Invalid SSO Provider"
@@ -14398,3 +14406,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
