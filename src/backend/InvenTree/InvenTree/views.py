@@ -479,9 +479,9 @@ class SettingsView(TemplateView):
 
         # user db sessions
         ctx['session_key'] = self.request.session.session_key
-        ctx['session_list'] = self.request.user.session_set.filter(
-            expire_date__gt=now()
-        ).order_by('-last_activity')
+        ctx['session_list'] = self.request.user.usersession_set.order_by(
+            '-last_seen_at'
+        )
 
         return ctx
 

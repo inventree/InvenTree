@@ -200,9 +200,9 @@
             {% endif %}
             <td>
                 {% if object.session_key == session_key %}
-                {% blocktrans with time=object.last_activity|timesince %}{{ time }} ago (this session){% endblocktrans %}
+                {% blocktrans with time=object.last_seen_at|timesince %}{{ time }} ago (this session){% endblocktrans %}
                 {% else %}
-                {% blocktrans with time=object.last_activity|timesince %}{{ time }} ago{% endblocktrans %}
+                {% blocktrans with time=object.last_seen_at|timesince %}{{ time }} ago{% endblocktrans %}
                 {% endif %}
             </td>
             </tr>
