@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-24 00:32+0000\n"
-"PO-Revision-Date: 2024-06-22 04:56\n"
+"POT-Creation-Date: 2024-06-25 02:45+0000\n"
+"PO-Revision-Date: 2024-06-25 06:02\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -3722,19 +3722,27 @@ msgstr "Typ modelu"
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "Uživatel nemá oprávnění k vytváření nebo úpravám příloh pro tento model"
 
-#: common/validators.py:77
+#: common/validators.py:33
+msgid "No attachment model type provided"
+msgstr ""
+
+#: common/validators.py:39
+msgid "Invalid attachment model type"
+msgstr ""
+
+#: common/validators.py:80
 msgid "Minimum places cannot be greater than maximum places"
 msgstr "Minimální počet míst nesmí být větší než maximální počet míst"
 
-#: common/validators.py:89
+#: common/validators.py:92
 msgid "Maximum places cannot be less than minimum places"
 msgstr "Maximální počet míst nesmí být menší než minimální počet míst"
 
-#: common/validators.py:100
+#: common/validators.py:103
 msgid "An empty domain is not allowed."
 msgstr "Prázdná doména není povolena."
 
-#: common/validators.py:102
+#: common/validators.py:105
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
 msgstr "Neplatný název domény: {domain}"
@@ -8231,17 +8239,17 @@ msgstr ""
 msgid "No author found"
 msgstr ""
 
-#: plugin/registry.py:598
+#: plugin/registry.py:534
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr ""
 
-#: plugin/registry.py:601
+#: plugin/registry.py:537
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr ""
 
-#: plugin/registry.py:603
+#: plugin/registry.py:539
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr ""
@@ -14398,3 +14406,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
