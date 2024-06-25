@@ -8,7 +8,7 @@ msgstr ""
 "Language: cs\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-06-23 05:23\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Plural-Forms: nplurals=4; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 3;\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #: src/components/Boundary.tsx:12
 msgid "Error rendering component"
-msgstr ""
+msgstr "Chyba při vykreslování komponenty"
 
 #: src/components/Boundary.tsx:14
 msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr ""
+msgstr "Došlo k chybě při vykreslování této komponenty. Více informací najdete v konzoli."
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
@@ -32,7 +32,7 @@ msgstr "Titulek"
 
 #: src/components/buttons/AdminButton.tsx:83
 msgid "Open in admin interface"
-msgstr ""
+msgstr "Otevřít v administrátorském rozhraní"
 
 #: src/components/buttons/CopyButton.tsx:18
 msgid "Copy to clipboard"
@@ -40,11 +40,11 @@ msgstr "Zkopírovat do schránky"
 
 #: src/components/buttons/PrintingActions.tsx:95
 msgid "Print Label"
-msgstr ""
+msgstr "Tisk štítku"
 
 #: src/components/buttons/PrintingActions.tsx:101
 msgid "Label printing completed successfully"
-msgstr ""
+msgstr "Tisk štítků byl úspěšně dokončen"
 
 #: src/components/buttons/PrintingActions.tsx:107
 #: src/components/buttons/PrintingActions.tsx:144
@@ -65,31 +65,31 @@ msgstr "Chyba"
 
 #: src/components/buttons/PrintingActions.tsx:108
 msgid "The label could not be generated"
-msgstr ""
+msgstr "Štítek nelze vygenerovat"
 
 #: src/components/buttons/PrintingActions.tsx:123
 msgid "Print Report"
-msgstr ""
+msgstr "Tisk reportu"
 
 #: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
-msgstr ""
+msgstr "Tisk reportu byl úspěšně dokončen"
 
 #: src/components/buttons/PrintingActions.tsx:145
 msgid "The report could not be generated"
-msgstr ""
+msgstr "Report se nepodařilo vytvořit"
 
 #: src/components/buttons/PrintingActions.tsx:173
 msgid "Printing Actions"
-msgstr ""
+msgstr "Tiskové akce"
 
 #: src/components/buttons/PrintingActions.tsx:178
 msgid "Print Labels"
-msgstr ""
+msgstr "Tisk štítků"
 
 #: src/components/buttons/PrintingActions.tsx:184
 msgid "Print Reports"
-msgstr ""
+msgstr "Tisk reportu"
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
@@ -97,7 +97,7 @@ msgstr "Naskenovat QR kód"
 
 #: src/components/buttons/ScanButton.tsx:20
 msgid "Open QR code scanner"
-msgstr ""
+msgstr "Otevřít skener QR kódů"
 
 #: src/components/buttons/SpotlightButton.tsx:14
 msgid "Open spotlight"
@@ -121,15 +121,15 @@ msgstr "Ano"
 msgid "No"
 msgstr "Ne"
 
-#: src/components/details/Details.tsx:303
+#: src/components/details/Details.tsx:305
 msgid "No name defined"
-msgstr ""
+msgstr "Žádný název není definován"
 
-#: src/components/details/Details.tsx:340
+#: src/components/details/Details.tsx:342
 msgid "Copied"
 msgstr "Zkopírováno"
 
-#: src/components/details/Details.tsx:340
+#: src/components/details/Details.tsx:342
 msgid "Copy"
 msgstr "Kopírovat"
 
@@ -209,25 +209,25 @@ msgstr "Součást není aktivní"
 #: src/components/render/Plugin.tsx:17
 #: src/pages/company/CompanyDetail.tsx:313
 #: src/pages/company/SupplierPartDetail.tsx:305
-#: src/pages/part/PartDetail.tsx:687
+#: src/pages/part/PartDetail.tsx:691
 msgid "Inactive"
 msgstr "Neaktivní"
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "Součástka je šablonou (z této součástky jdou vytvořit varianty)"
 
 #: src/components/details/PartIcons.tsx:47
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "Součástka může být sestavena z jiných součástek"
 
 #: src/components/details/PartIcons.tsx:53
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "Součástka může být použita v sestavách"
 
 #: src/components/details/PartIcons.tsx:59
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "Stav zásob je sledován sériovým číslem"
 
 #: src/components/details/PartIcons.tsx:65
 msgid "Part can be purchased from external suppliers"
@@ -250,7 +250,7 @@ msgstr "Virtuální"
 
 #: src/components/editors/NotesEditor.tsx:66
 msgid "Image upload failed"
-msgstr ""
+msgstr "Nahrání obrázku se nezdařilo"
 
 #: src/components/editors/NotesEditor.tsx:151
 #: src/components/forms/ApiForm.tsx:430
@@ -259,7 +259,7 @@ msgstr "Dokončeno"
 
 #: src/components/editors/NotesEditor.tsx:152
 msgid "Notes saved successfully"
-msgstr ""
+msgstr "Poznámky byly úspěšně uloženy"
 
 #: src/components/editors/NotesEditor.tsx:161
 msgid "Failed to save notes"
@@ -267,15 +267,15 @@ msgstr "Nepodařilo se uložit poznámky"
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Preview Notes"
-msgstr ""
+msgstr "Náhled poznámek"
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Edit Notes"
-msgstr ""
+msgstr "Upravit poznámky"
 
 #: src/components/editors/NotesEditor.tsx:207
 msgid "Save Notes"
-msgstr ""
+msgstr "Uložit poznámky"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
@@ -304,7 +304,7 @@ msgstr "Chyba při ukládání šablony"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:146
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:270
 msgid "Save & Reload Preview"
-msgstr ""
+msgstr "Uložit a znovu načíst náhled"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 msgid "Are you sure you want to Save & Reload the preview?"
@@ -316,7 +316,7 @@ msgstr "Opravdu chcete uložit a znovu načíst náhled?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:153
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
-msgstr ""
+msgstr "Pro zobrazení náhledu je třeba aktuální šablonu na serveru nahradit změněnou, což může poškodit štítek, je-li aktivně používán. Chcete pokračovat?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 msgid "Save & Reload"
@@ -324,11 +324,11 @@ msgstr "Uložit a znovu načíst"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:189
 msgid "Preview updated"
-msgstr ""
+msgstr "Náhled aktualizován"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:190
 msgid "The preview has been updated successfully."
-msgstr ""
+msgstr "Náhled byl úspěšně aktualizován."
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:262
 msgid "Reload preview"
@@ -336,7 +336,7 @@ msgstr "Aktualizovat náhled"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 msgid "Use the currently stored template from the server"
-msgstr ""
+msgstr "Použít aktuálně uloženou šablonu ze serveru"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 #~ msgid "Save & Reload preview"
@@ -352,11 +352,11 @@ msgstr "Uložit aktuální šablonu a znovu načíst náhled"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:329
 msgid "Select instance to preview"
-msgstr ""
+msgstr "Vyberte instanci pro náhled"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:373
 msgid "Error rendering template"
-msgstr ""
+msgstr "Chyba při načítání šablony"
 
 #: src/components/forms/ApiForm.tsx:149
 #: src/functions/forms.tsx:259
@@ -396,7 +396,7 @@ msgstr "Přihlášení úspěšné"
 
 #: src/components/forms/AuthenticationForm.tsx:52
 msgid "Logged in successfully"
-msgstr ""
+msgstr "Přihlášení proběhlo úspěšně"
 
 #: src/components/forms/AuthenticationForm.tsx:52
 #~ msgid "Welcome back!"
@@ -413,9 +413,9 @@ msgstr "Přihlášení se nezdařilo"
 #: src/components/forms/AuthenticationForm.tsx:59
 #: src/components/forms/AuthenticationForm.tsx:76
 #: src/components/forms/AuthenticationForm.tsx:211
-#: src/functions/auth.tsx:123
+#: src/functions/auth.tsx:165
 msgid "Check your input and try again."
-msgstr ""
+msgstr "Zkontrolujte vstup a zkuste to znovu."
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -423,21 +423,21 @@ msgstr ""
 #~ msgstr "Mail delivery successfull"
 
 #: src/components/forms/AuthenticationForm.tsx:70
-#: src/functions/auth.tsx:114
+#: src/functions/auth.tsx:156
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "E-mail byl doručen úspěšně"
 
 #: src/components/forms/AuthenticationForm.tsx:71
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr ""
+msgstr "Zkontrolujte doručenou poštu pro přihlašovací odkaz. Pokud máte účet, obdržíte přihlašovací odkaz. Zkontrolujte také spam."
 
 #: src/components/forms/AuthenticationForm.tsx:75
 msgid "Mail delivery failed"
-msgstr ""
+msgstr "Odeslání e-mailu se nezdařilo"
 
 #: src/components/forms/AuthenticationForm.tsx:95
 msgid "Or continue with other methods"
-msgstr ""
+msgstr "Nebo pokračovat jinými metodami"
 
 #: src/components/forms/AuthenticationForm.tsx:106
 #: src/components/forms/AuthenticationForm.tsx:227
@@ -488,11 +488,11 @@ msgstr "Zašleme vám přihlašovací odkaz - pokud jste registrováni"
 
 #: src/components/forms/AuthenticationForm.tsx:151
 msgid "Send me an email"
-msgstr ""
+msgstr "Poslat si email"
 
 #: src/components/forms/AuthenticationForm.tsx:153
 msgid "Use username and password"
-msgstr ""
+msgstr "Použijte uživatelské jméno a heslo"
 
 #: src/components/forms/AuthenticationForm.tsx:162
 msgid "Log In"
@@ -512,11 +512,11 @@ msgstr "Potvrďte, prosím, svou e-mailovou adresu pro dokončení registrace"
 
 #: src/components/forms/AuthenticationForm.tsx:210
 msgid "Input error"
-msgstr ""
+msgstr "Chyba vstupu"
 
 #: src/components/forms/AuthenticationForm.tsx:234
 msgid "This will be used for a confirmation"
-msgstr ""
+msgstr "Toto bude použito pro potvrzení"
 
 #: src/components/forms/AuthenticationForm.tsx:246
 msgid "Password repeat"
@@ -568,7 +568,7 @@ msgstr "Jméno"
 
 #: src/components/forms/HostOptionsForm.tsx:75
 msgid "No one here..."
-msgstr ""
+msgstr "Nikdo zde není..."
 
 #: src/components/forms/HostOptionsForm.tsx:86
 msgid "Add Host"
@@ -584,7 +584,7 @@ msgstr "Vyberte cílovou instanci"
 
 #: src/components/forms/InstanceOptions.tsx:71
 msgid "Edit possible host options"
-msgstr ""
+msgstr "Upravit nastavení hosta"
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
@@ -600,7 +600,7 @@ msgstr "Název: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:104
 msgid "State: <0>worker</0> ({0}), <1>plugins</1>{1}"
-msgstr ""
+msgstr "Stav: <0>worker</0> ({0}), <1>pluginy</1>{1}"
 
 #: src/components/forms/fields/RelatedModelField.tsx:320
 #: src/pages/Index/Settings/UserSettings.tsx:66
@@ -621,7 +621,7 @@ msgstr "Nebyly nalezeny žádné výsledky"
 
 #: src/components/forms/fields/TableField.tsx:50
 msgid "modelRenderer entry required for tables"
-msgstr ""
+msgstr "Položka modelRenderer je požadovaná pro tabulky"
 
 #: src/components/forms/fields/TableField.tsx:74
 msgid "No entries available"
@@ -716,7 +716,7 @@ msgstr "Tyto informace jsou dostupné pouze pro uživatele"
 
 #: src/components/items/Placeholder.tsx:14
 msgid "This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing."
-msgstr ""
+msgstr "Tato funkce/tlačítko/stránka je zástupný znak pro funkci, která není implementována, nebo je naimplementována jen částečně či je určená k testování."
 
 #: src/components/items/Placeholder.tsx:17
 msgid "PLH"
@@ -724,19 +724,19 @@ msgstr "PLH"
 
 #: src/components/items/Placeholder.tsx:31
 msgid "This panel is a placeholder."
-msgstr ""
+msgstr "Tento panel je zástupným znakem."
 
 #: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Version Information"
-msgstr ""
+msgstr "Informace o verzi"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:103
 msgid "Your InvenTree version status is"
-msgstr ""
+msgstr "Váš status InvenTree verze je"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:107
 msgid "Development Version"
-msgstr ""
+msgstr "Vývojové verze"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:111
 msgid "Up to Date"
@@ -822,7 +822,7 @@ msgstr "Načítání licenčních informací"
 
 #: src/components/modals/LicenseModal.tsx:77
 msgid "Failed to fetch license information"
-msgstr ""
+msgstr "Nepodařilo se načíst licenční informace"
 
 #: src/components/modals/LicenseModal.tsx:85
 msgid "{key} Packages"
@@ -835,7 +835,7 @@ msgstr "Neznámá odpověď"
 #: src/components/modals/QrCodeModal.tsx:102
 #: src/pages/Index/Scan.tsx:636
 msgid "Error while getting camera"
-msgstr ""
+msgstr "Chyba při spouštění kamery"
 
 #: src/components/modals/QrCodeModal.tsx:125
 #: src/pages/Index/Scan.tsx:659
@@ -1123,7 +1123,7 @@ msgstr ""
 #: src/forms/StockForms.tsx:648
 #: src/forms/StockForms.tsx:684
 #: src/pages/build/BuildDetail.tsx:83
-#: src/pages/part/PartDetail.tsx:833
+#: src/pages/part/PartDetail.tsx:837
 #: src/tables/part/RelatedPartTable.tsx:45
 #: src/tables/stock/StockTrackingTable.tsx:74
 msgid "Part"
@@ -1136,7 +1136,7 @@ msgstr "Díl"
 #: src/pages/part/CategoryDetail.tsx:110
 #: src/pages/part/CategoryDetail.tsx:235
 #: src/pages/part/CategoryDetail.tsx:265
-#: src/pages/part/PartDetail.tsx:641
+#: src/pages/part/PartDetail.tsx:645
 msgid "Parts"
 msgstr "Díly"
 
@@ -1186,7 +1186,7 @@ msgstr ""
 #: src/pages/Index/Settings/SystemSettings.tsx:165
 #: src/pages/part/CategoryDetail.tsx:249
 #: src/pages/part/CategoryDetail.tsx:282
-#: src/pages/part/PartDetail.tsx:823
+#: src/pages/part/PartDetail.tsx:827
 msgid "Part Categories"
 msgstr ""
 
@@ -1283,7 +1283,7 @@ msgstr ""
 #: src/pages/Index/Settings/SystemSettings.tsx:248
 #: src/pages/company/CompanyDetail.tsx:192
 #: src/pages/company/SupplierPartDetail.tsx:224
-#: src/pages/part/PartDetail.tsx:575
+#: src/pages/part/PartDetail.tsx:579
 #: src/pages/purchasing/PurchasingIndex.tsx:20
 msgid "Purchase Orders"
 msgstr ""
@@ -1307,7 +1307,7 @@ msgstr ""
 #: src/components/render/ModelType.tsx:148
 #: src/pages/Index/Settings/SystemSettings.tsx:263
 #: src/pages/company/CompanyDetail.tsx:212
-#: src/pages/part/PartDetail.tsx:582
+#: src/pages/part/PartDetail.tsx:586
 #: src/pages/sales/SalesIndex.tsx:21
 msgid "Sales Orders"
 msgstr ""
@@ -1409,7 +1409,7 @@ msgstr ""
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
 #: src/pages/Index/Settings/SystemSettings.tsx:203
-#: src/pages/part/PartDetail.tsx:494
+#: src/pages/part/PartDetail.tsx:498
 #: src/pages/stock/LocationDetail.tsx:345
 #: src/pages/stock/StockDetail.tsx:354
 #: src/tables/stock/StockItemTable.tsx:57
@@ -2021,7 +2021,7 @@ msgstr "Turečtina"
 
 #: src/contexts/LanguageContext.tsx:50
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrajinština"
 
 #: src/contexts/LanguageContext.tsx:51
 msgid "Vietnamese"
@@ -2029,11 +2029,11 @@ msgstr "Vietnamština"
 
 #: src/contexts/LanguageContext.tsx:52
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Čínština (zjednodušená)"
 
 #: src/contexts/LanguageContext.tsx:53
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Čínština (tradiční)"
 
 #: src/defaults/actions.tsx:16
 #: src/defaults/links.tsx:26
@@ -2051,11 +2051,11 @@ msgstr "Přehled"
 
 #: src/defaults/actions.tsx:24
 msgid "Go to the InvenTree dashboard"
-msgstr ""
+msgstr "Přejít na InvenTree nástěnku"
 
 #: src/defaults/actions.tsx:31
 msgid "Visit the documentation to learn more about InvenTree"
-msgstr ""
+msgstr "Navštivte dokumentaci pro více informací o InvenTree"
 
 #: src/defaults/actions.tsx:37
 #: src/defaults/links.tsx:92
@@ -2066,16 +2066,16 @@ msgstr "O InvenTree"
 #: src/defaults/actions.tsx:38
 #: src/defaults/links.tsx:123
 msgid "About the InvenTree org"
-msgstr ""
+msgstr "O InvenTree.org"
 
 #: src/defaults/actions.tsx:44
 msgid "Server Information"
-msgstr ""
+msgstr "Informace o serveru"
 
 #: src/defaults/actions.tsx:45
 #: src/defaults/links.tsx:117
 msgid "About this Inventree instance"
-msgstr ""
+msgstr "O této instanci Inventree"
 
 #: src/defaults/actions.tsx:51
 #: src/defaults/links.tsx:105
@@ -2089,7 +2089,7 @@ msgstr ""
 
 #: src/defaults/actions.tsx:59
 msgid "Open the main navigation menu"
-msgstr ""
+msgstr "Otevřít hlavní navigační menu"
 
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
@@ -2101,24 +2101,24 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:29
 msgid "Latest Parts"
-msgstr ""
+msgstr "Nejnovější díly"
 
 #: src/defaults/dashboardItems.tsx:36
 msgid "BOM Waiting Validation"
-msgstr ""
+msgstr "Čeká se na ověření BOM"
 
 #: src/defaults/dashboardItems.tsx:43
 msgid "Recently Updated"
-msgstr ""
+msgstr "Nedávno aktualizované"
 
 #: src/defaults/dashboardItems.tsx:50
 #: src/tables/part/PartTable.tsx:216
 msgid "Low Stock"
-msgstr ""
+msgstr "Nízké zásoby"
 
 #: src/defaults/dashboardItems.tsx:57
 msgid "Depleted Stock"
-msgstr ""
+msgstr "Vyčerpané zásoby"
 
 #: src/defaults/dashboardItems.tsx:64
 msgid "Required for Build Orders"
@@ -2562,7 +2562,7 @@ msgstr ""
 #: src/forms/StockForms.tsx:648
 #: src/forms/StockForms.tsx:684
 #: src/pages/part/PartDetail.tsx:208
-#: src/pages/part/PartDetail.tsx:657
+#: src/pages/part/PartDetail.tsx:661
 #: src/tables/stock/StockItemTable.tsx:290
 msgid "In Stock"
 msgstr "Na skladě"
@@ -2604,12 +2604,12 @@ msgid "Remove Stock"
 msgstr ""
 
 #: src/forms/StockForms.tsx:803
-#: src/pages/part/PartDetail.tsx:784
+#: src/pages/part/PartDetail.tsx:788
 msgid "Transfer Stock"
 msgstr ""
 
 #: src/forms/StockForms.tsx:812
-#: src/pages/part/PartDetail.tsx:773
+#: src/pages/part/PartDetail.tsx:777
 msgid "Count Stock"
 msgstr ""
 
@@ -2649,21 +2649,12 @@ msgstr ""
 #~ msgid "You have been logged out"
 #~ msgstr "You have been logged out"
 
-#: src/functions/auth.tsx:76
+#: src/functions/auth.tsx:118
 msgid "Logged Out"
 msgstr ""
 
-#: src/functions/auth.tsx:77
+#: src/functions/auth.tsx:119
 msgid "Successfully logged out"
-msgstr ""
-
-#: src/functions/auth.tsx:115
-msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
-msgstr ""
-
-#: src/functions/auth.tsx:122
-#: src/pages/Auth/Set-Password.tsx:39
-msgid "Reset failed"
 msgstr ""
 
 #: src/functions/auth.tsx:141
@@ -2678,11 +2669,20 @@ msgstr ""
 #~ msgid "Found an existing login - welcome back!"
 #~ msgstr "Found an existing login - welcome back!"
 
-#: src/functions/auth.tsx:153
+#: src/functions/auth.tsx:157
+msgid "Check your inbox for a reset link. This only works if you have an account. Check in spam too."
+msgstr ""
+
+#: src/functions/auth.tsx:164
+#: src/pages/Auth/Set-Password.tsx:39
+msgid "Reset failed"
+msgstr ""
+
+#: src/functions/auth.tsx:195
 msgid "Logged In"
 msgstr "Přihlášen"
 
-#: src/functions/auth.tsx:154
+#: src/functions/auth.tsx:196
 msgid "Successfully logged in"
 msgstr ""
 
@@ -3428,7 +3428,7 @@ msgid "Reporting"
 msgstr ""
 
 #: src/pages/Index/Settings/SystemSettings.tsx:228
-#: src/pages/part/PartDetail.tsx:595
+#: src/pages/part/PartDetail.tsx:599
 #: src/tables/stock/StockItemTable.tsx:221
 msgid "Stocktake"
 msgstr ""
@@ -3436,7 +3436,7 @@ msgstr ""
 #: src/pages/Index/Settings/SystemSettings.tsx:234
 #: src/pages/build/BuildDetail.tsx:421
 #: src/pages/build/BuildIndex.tsx:14
-#: src/pages/part/PartDetail.tsx:529
+#: src/pages/part/PartDetail.tsx:533
 #: src/pages/sales/SalesOrderDetail.tsx:269
 msgid "Build Orders"
 msgstr ""
@@ -3662,7 +3662,7 @@ msgstr ""
 #: src/pages/build/BuildDetail.tsx:295
 #: src/pages/company/CompanyDetail.tsx:255
 #: src/pages/company/ManufacturerPartDetail.tsx:172
-#: src/pages/part/PartDetail.tsx:618
+#: src/pages/part/PartDetail.tsx:622
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:278
 #: src/pages/sales/ReturnOrderDetail.tsx:229
 #: src/pages/sales/SalesOrderDetail.tsx:279
@@ -3672,7 +3672,7 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:303
 #: src/pages/company/CompanyDetail.tsx:266
-#: src/pages/part/PartDetail.tsx:626
+#: src/pages/part/PartDetail.tsx:630
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:289
 #: src/pages/sales/ReturnOrderDetail.tsx:240
 #: src/pages/sales/SalesOrderDetail.tsx:290
@@ -3828,12 +3828,12 @@ msgid "Manufacturer Part Details"
 msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:146
-#: src/pages/part/PartDetail.tsx:488
+#: src/pages/part/PartDetail.tsx:492
 msgid "Parameters"
 msgstr ""
 
 #: src/pages/company/ManufacturerPartDetail.tsx:158
-#: src/pages/part/PartDetail.tsx:562
+#: src/pages/part/PartDetail.tsx:566
 #: src/pages/purchasing/PurchasingIndex.tsx:26
 msgid "Suppliers"
 msgstr ""
@@ -4151,58 +4151,58 @@ msgstr ""
 msgid "Price Range"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:376
+#: src/pages/part/PartDetail.tsx:380
 #: src/pages/stock/StockDetail.tsx:131
 msgid "Last Stocktake"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:411
+#: src/pages/part/PartDetail.tsx:415
 msgid "Stocktake By"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:482
+#: src/pages/part/PartDetail.tsx:486
 msgid "Part Details"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:508
+#: src/pages/part/PartDetail.tsx:512
 msgid "Variants"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:515
+#: src/pages/part/PartDetail.tsx:519
 #: src/pages/stock/StockDetail.tsx:284
 msgid "Allocations"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:522
+#: src/pages/part/PartDetail.tsx:526
 msgid "Bill of Materials"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:536
+#: src/pages/part/PartDetail.tsx:540
 msgid "Used In"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:543
+#: src/pages/part/PartDetail.tsx:547
 msgid "Part Pricing"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:549
+#: src/pages/part/PartDetail.tsx:553
 #: src/pages/purchasing/PurchasingIndex.tsx:37
 msgid "Manufacturers"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:589
+#: src/pages/part/PartDetail.tsx:593
 msgid "Scheduling"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:601
+#: src/pages/part/PartDetail.tsx:605
 msgid "Test Templates"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:612
+#: src/pages/part/PartDetail.tsx:616
 msgid "Related Parts"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:663
+#: src/pages/part/PartDetail.tsx:667
 #: src/pages/stock/StockDetail.tsx:152
 #: src/pages/stock/StockDetail.tsx:531
 #: src/tables/build/BuildLineTable.tsx:36
@@ -4212,55 +4212,55 @@ msgstr ""
 msgid "Available"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:669
+#: src/pages/part/PartDetail.tsx:673
 msgid "No Stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:675
+#: src/pages/part/PartDetail.tsx:679
 #: src/tables/bom/BomTable.tsx:276
 #: src/tables/part/PartTable.tsx:76
 msgid "On Order"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:681
+#: src/pages/part/PartDetail.tsx:685
 #: src/pages/stock/StockDetail.tsx:514
 #: src/tables/stock/StockItemTable.tsx:295
 msgid "In Production"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:700
+#: src/pages/part/PartDetail.tsx:704
 msgid "Edit Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:707
+#: src/pages/part/PartDetail.tsx:711
 #: src/tables/part/PartTable.tsx:266
 #: src/tables/part/PartTable.tsx:279
 msgid "Add Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:719
+#: src/pages/part/PartDetail.tsx:723
 msgid "Delete Part"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:728
+#: src/pages/part/PartDetail.tsx:732
 msgid "Deleting this part cannot be reversed"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:766
+#: src/pages/part/PartDetail.tsx:770
 #: src/pages/stock/LocationDetail.tsx:302
 #: src/tables/stock/StockItemTable.tsx:409
 msgid "Stock Actions"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:774
+#: src/pages/part/PartDetail.tsx:778
 msgid "Count part stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:785
+#: src/pages/part/PartDetail.tsx:789
 msgid "Transfer part stock"
 msgstr ""
 
-#: src/pages/part/PartDetail.tsx:794
+#: src/pages/part/PartDetail.tsx:798
 msgid "Part Actions"
 msgstr ""
 

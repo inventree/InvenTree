@@ -220,51 +220,15 @@ class PluginsRegistry:
         """
         logger.info('Loading plugins')
 
-        registered_successful = False
-        blocked_plugin = None
-        retry_counter = settings.PLUGIN_RETRY
-
-        while not registered_successful:
-            try:
-                # We are using the db so for migrations etc we need to try this block
-                self._init_plugins(blocked_plugin)
-                self._activate_plugins(full_reload=full_reload)
-                registered_successful = True
-            except (OperationalError, ProgrammingError):  # pragma: no cover
-                # Exception if the database has not been migrated yet
-                logger.info('Database not accessible while loading plugins')
-                break
-            except IntegrationPluginError as error:
-                logger.exception(
-                    '[PLUGIN] Encountered an error with %s:\n%s',
-                    error.path,
-                    error.message,
-                )
-                log_error({error.path: error.message}, 'load')
-                blocked_plugin = error.path  # we will not try to load this app again
-
-                # Initialize apps without any plugins
-                self._clean_registry()
-                self._clean_installed_apps()
-                self._activate_plugins(force_reload=True, full_reload=full_reload)
-
-                # We do not want to end in an endless loop
-                retry_counter -= 1
-
-                if retry_counter <= 0:  # pragma: no cover
-                    if settings.PLUGIN_TESTING:
-                        print('[PLUGIN] Max retries, breaking loading')
-                    break
-                if settings.PLUGIN_TESTING:
-                    print(
-                        f'[PLUGIN] Above error occurred during testing - {retry_counter}/{settings.PLUGIN_RETRY} retries left'
-                    )
-
-                # now the loading will re-start up with init
-
-            # disable full reload after the first round
-            if full_reload:
-                full_reload = False
+        try:
+            self._init_plugins()
+            self._activate_plugins(full_reload=full_reload)
+        except (OperationalError, ProgrammingError, IntegrityError):
+            # Exception if the database has not been migrated yet, or is not ready
+            pass
+        except IntegrationPluginError:
+            # Plugin specific error has already been handled
+            pass
 
         # ensure plugins_loaded is True
         self.plugins_loaded = True
@@ -479,18 +443,13 @@ class PluginsRegistry:
     # endregion
 
     # region general internal loading / activating / deactivating / unloading
-    def _init_plugins(self, disabled: str = None):
-        """Initialise all found plugins.
+    def _init_plugin(self, plugin, configs: dict):
+        """Initialise a single plugin.
 
         Args:
-            disabled (str, optional): Loading path of disabled app. Defaults to None.
-
-        Raises:
-            error: IntegrationPluginError
+            plugin: Plugin module
         """
-        # Imports need to be in this level to prevent early db model imports
         from InvenTree import version
-        from plugin.models import PluginConfig
 
         def safe_reference(plugin, key: str, active: bool = True):
             """Safe reference to plugin dicts."""
@@ -504,6 +463,99 @@ class PluginsRegistry:
                 self.plugins_inactive[key] = plugin.db
             self.plugins_full[key] = plugin
 
+        # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
+        plg_name = plugin.NAME
+        plg_key = slugify(
+            plugin.SLUG if getattr(plugin, 'SLUG', None) else plg_name
+        )  # keys are slugs!
+
+        logger.info("Loading plugin '%s'", plg_key)
+
+        if plg_key in configs:
+            plg_db = configs[plg_key]
+        else:
+            plg_db = self.get_plugin_config(plg_key, plg_name)
+
+        plugin.db = plg_db
+
+        # Check if this is a 'builtin' plugin
+        builtin = plugin.check_is_builtin()
+
+        package_name = None
+
+        # Extract plugin package name
+        if getattr(plugin, 'is_package', False):
+            package_name = getattr(plugin, 'package_name', None)
+
+        # Auto-enable builtin plugins
+        if builtin and plg_db and not plg_db.active:
+            plg_db.active = True
+            plg_db.save()
+
+        # Save the package_name attribute to the plugin
+        if plg_db.package_name != package_name:
+            plg_db.package_name = package_name
+            plg_db.save()
+
+        # Determine if this plugin should be loaded:
+        # - If PLUGIN_TESTING is enabled
+        # - If this is a 'builtin' plugin
+        # - If this plugin has been explicitly enabled by the user
+        if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
+            # Initialize package - we can be sure that an admin has activated the plugin
+            logger.debug('Loading plugin `%s`', plg_name)
+
+            try:
+                t_start = time.time()
+                plg_i: InvenTreePlugin = plugin()
+                dt = time.time() - t_start
+                logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
+            except Exception as error:
+                handle_error(
+                    error, log_name='init'
+                )  # log error and raise it -> disable plugin
+
+                logger.warning('Plugin `%s` could not be loaded', plg_name)
+
+            # Safe extra attributes
+            plg_i.is_package = getattr(plg_i, 'is_package', False)
+
+            plg_i.pk = plg_db.pk if plg_db else None
+            plg_i.db = plg_db
+
+            # Run version check for plugin
+            if (plg_i.MIN_VERSION or plg_i.MAX_VERSION) and not plg_i.check_version():
+                # Disable plugin
+                safe_reference(plugin=plg_i, key=plg_key, active=False)
+
+                p = plg_name
+                v = version.inventreeVersion()
+                _msg = _(
+                    f"Plugin '{p}' is not compatible with the current InvenTree version {v}"
+                )
+                if v := plg_i.MIN_VERSION:
+                    _msg += _(f'Plugin requires at least version {v}')
+                if v := plg_i.MAX_VERSION:
+                    _msg += _(f'Plugin requires at most version {v}')
+                # Log to error stack
+                log_error(_msg, reference='init')
+            else:
+                safe_reference(plugin=plg_i, key=plg_key)
+        else:  # pragma: no cover
+            safe_reference(plugin=plugin, key=plg_key, active=False)
+
+    def _init_plugins(self):
+        """Initialise all found plugins.
+
+        Args:
+            disabled (str, optional): Loading path of disabled app. Defaults to None.
+
+        Raises:
+            error: IntegrationPluginError
+        """
+        # Imports need to be in this level to prevent early db model imports
+        from plugin.models import PluginConfig
+
         logger.debug('Starting plugin initialization')
 
         # Fetch and cache list of existing plugin configuration instances
@@ -511,102 +563,32 @@ class PluginsRegistry:
 
         # Initialize plugins
         for plg in self.plugin_modules:
-            # These checks only use attributes - never use plugin supplied functions -> that would lead to arbitrary code execution!!
-            plg_name = plg.NAME
-            plg_key = slugify(
-                plg.SLUG if getattr(plg, 'SLUG', None) else plg_name
-            )  # keys are slugs!
+            # Attempt to load each individual plugin
+            attempts = settings.PLUGIN_RETRY
 
-            try:
-                if plg_key in plugin_configs:
-                    # Configuration already exists
-                    plg_db = plugin_configs[plg_key]
-                else:
-                    # Configuration needs to be created
-                    plg_db = self.get_plugin_config(plg_key, plg_name)
-            except (OperationalError, ProgrammingError) as error:
-                # Exception if the database has not been migrated yet - check if test are running - raise if not
-                if not settings.PLUGIN_TESTING:
-                    raise error  # pragma: no cover
-                plg_db = None
-            except IntegrityError as error:  # pragma: no cover
-                logger.exception('Error initializing plugin `%s`: %s', plg_name, error)
-                handle_error(error, log_name='init')
-
-            # Append reference to plugin
-            plg.db = plg_db
-
-            # Check if this is a 'builtin' plugin
-            builtin = plg.check_is_builtin()
-
-            package_name = None
-
-            # Extract plugin package name
-            if getattr(plg, 'is_package', False):
-                package_name = getattr(plg, 'package_name', None)
-
-            # Auto-enable builtin plugins
-            if builtin and plg_db and not plg_db.active:
-                plg_db.active = True
-                plg_db.save()
-
-            # Save the package_name attribute to the plugin
-            if plg_db.package_name != package_name:
-                plg_db.package_name = package_name
-                plg_db.save()
-
-            # Determine if this plugin should be loaded:
-            # - If PLUGIN_TESTING is enabled
-            # - If this is a 'builtin' plugin
-            # - If this plugin has been explicitly enabled by the user
-            if settings.PLUGIN_TESTING or builtin or (plg_db and plg_db.active):
-                # Check if the plugin was blocked -> threw an error; option1: package, option2: file-based
-                if disabled and disabled in (plg.__name__, plg.__module__):
-                    safe_reference(plugin=plg, key=plg_key, active=False)
-                    continue  # continue -> the plugin is not loaded
-
-                # Initialize package - we can be sure that an admin has activated the plugin
-                logger.debug('Loading plugin `%s`', plg_name)
+            while attempts > 0:
+                attempts -= 1
 
                 try:
-                    t_start = time.time()
-                    plg_i: InvenTreePlugin = plg()
-                    dt = time.time() - t_start
-                    logger.debug('Loaded plugin `%s` in %.3fs', plg_name, dt)
+                    self._init_plugin(plg, plugin_configs)
+                    break
+                except IntegrationPluginError as error:
+                    # Error has been handled downstream
+                    pass
                 except Exception as error:
+                    # Handle the error, log it and try again
                     handle_error(
-                        error, log_name='init'
-                    )  # log error and raise it -> disable plugin
-                    logger.warning('Plugin `%s` could not be loaded', plg_name)
-
-                # Safe extra attributes
-                plg_i.is_package = getattr(plg_i, 'is_package', False)
-
-                plg_i.pk = plg_db.pk if plg_db else None
-                plg_i.db = plg_db
-
-                # Run version check for plugin
-                if (
-                    plg_i.MIN_VERSION or plg_i.MAX_VERSION
-                ) and not plg_i.check_version():
-                    # Disable plugin
-                    safe_reference(plugin=plg_i, key=plg_key, active=False)
-
-                    p = plg_name
-                    v = version.inventreeVersion()
-                    _msg = _(
-                        f"Plugin '{p}' is not compatible with the current InvenTree version {v}"
+                        error, log_name='init', do_raise=settings.PLUGIN_TESTING
                     )
-                    if v := plg_i.MIN_VERSION:
-                        _msg += _(f'Plugin requires at least version {v}')
-                    if v := plg_i.MAX_VERSION:
-                        _msg += _(f'Plugin requires at most version {v}')
-                    # Log to error stack
-                    log_error(_msg, reference='init')
-                else:
-                    safe_reference(plugin=plg_i, key=plg_key)
-            else:  # pragma: no cover
-                safe_reference(plugin=plg, key=plg_key, active=False)
+
+                    if attempts == 0:
+                        logger.exception(
+                            '[PLUGIN] Encountered an error with %s:\n%s',
+                            error.path,
+                            str(error),
+                        )
+
+        logger.debug('Finished plugin initialization')
 
     def __get_mixin_order(self):
         """Returns a list of mixin classes, in the order that they should be activated."""

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-19 04:39+0000\n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-06-22 04:56\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -297,7 +297,7 @@ msgstr "Portugalština (Brazilská)"
 
 #: InvenTree/locales.py:41
 msgid "Romanian"
-msgstr ""
+msgstr "Rumunština"
 
 #: InvenTree/locales.py:42
 msgid "Russian"
@@ -1833,15 +1833,15 @@ msgstr "Neúplné výstupy"
 
 #: common/api.py:689
 msgid "Is Link"
-msgstr ""
+msgstr "Je odkaz"
 
 #: common/api.py:697
 msgid "Is File"
-msgstr ""
+msgstr "Je soubor"
 
 #: common/api.py:739
 msgid "User does not have permission to delete this attachment"
-msgstr ""
+msgstr "Uživatel nemá oprávnění k odstranění této přílohy"
 
 #: common/currency.py:130
 msgid "Invalid currency code"
@@ -2054,187 +2054,187 @@ msgstr "Povolit stahování vzdálených obrázků a souborů z externích URL"
 
 #: common/models.py:1295
 msgid "Download Size Limit"
-msgstr ""
+msgstr "Limit velikosti stahování"
 
 #: common/models.py:1296
 msgid "Maximum allowable download size for remote image"
-msgstr ""
+msgstr "Maximální povolená velikost stahování vzdáleného obrázku"
 
 #: common/models.py:1302
 msgid "User-agent used to download from URL"
-msgstr ""
+msgstr "User-agent použitý ke stažení z adresy URL"
 
 #: common/models.py:1304
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
-msgstr ""
+msgstr "Povolit přepsání user-agenta používaného ke stahování obrázků a souborů z externí adresy URL (ponechte prázdné pro výchozí)"
 
 #: common/models.py:1309
 msgid "Strict URL Validation"
-msgstr ""
+msgstr "Přísná validace URL"
 
 #: common/models.py:1310
 msgid "Require schema specification when validating URLs"
-msgstr ""
+msgstr "Vyžadovat specifikaci schématu při ověřování adres URL"
 
 #: common/models.py:1315
 msgid "Require confirm"
-msgstr ""
+msgstr "Vyžadovat potvrzení"
 
 #: common/models.py:1316
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "Vyžadovat výslovné potvrzení uživatele pro určitou akci."
 
 #: common/models.py:1321
 msgid "Tree Depth"
-msgstr ""
+msgstr "Hloubka stromu"
 
 #: common/models.py:1323
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
-msgstr ""
+msgstr "Výchozí hloubka stromu pro zobrazení stromu. Hlubší úrovně lze načítat líně podle potřeby."
 
 #: common/models.py:1329
 msgid "Update Check Interval"
-msgstr ""
+msgstr "Interval kontroly aktualizací"
 
 #: common/models.py:1330
 msgid "How often to check for updates (set to zero to disable)"
-msgstr ""
+msgstr "Jak často kontrolovat aktualizace (nastavte na nulu pro vypnutí)"
 
 #: common/models.py:1336
 msgid "Automatic Backup"
-msgstr ""
+msgstr "Automatické Zálohování"
 
 #: common/models.py:1337
 msgid "Enable automatic backup of database and media files"
-msgstr ""
+msgstr "Povolit automatické zálohování databáze a mediálních souborů"
 
 #: common/models.py:1342
 msgid "Auto Backup Interval"
-msgstr ""
+msgstr "Interval automatického zálohování"
 
 #: common/models.py:1343
 msgid "Specify number of days between automated backup events"
-msgstr ""
+msgstr "Zadejte počet dní mezi automatickými zálohovými událostmi"
 
 #: common/models.py:1349
 msgid "Task Deletion Interval"
-msgstr ""
+msgstr "Interval mazání úloh"
 
 #: common/models.py:1351
 msgid "Background task results will be deleted after specified number of days"
-msgstr ""
+msgstr "Výsledky úloh na pozadí budou odstraněny po zadaném počtu dní"
 
 #: common/models.py:1358
 msgid "Error Log Deletion Interval"
-msgstr ""
+msgstr "Interval odstranění protokolu chyb"
 
 #: common/models.py:1360
 msgid "Error logs will be deleted after specified number of days"
-msgstr ""
+msgstr "Záznamy chyb budou odstraněny po zadaném počtu dní"
 
 #: common/models.py:1367
 msgid "Notification Deletion Interval"
-msgstr ""
+msgstr "Interval pro odstranění oznámení"
 
 #: common/models.py:1369
 msgid "User notifications will be deleted after specified number of days"
-msgstr ""
+msgstr "Uživatelská oznámení budou smazána po zadaném počtu dní"
 
 #: common/models.py:1376 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Podpora čárových kódů"
 
 #: common/models.py:1377
 msgid "Enable barcode scanner support in the web interface"
-msgstr ""
+msgstr "Povolit podporu pro skenování čárových kódů ve webovém rozhraní"
 
 #: common/models.py:1382
 msgid "Barcode Input Delay"
-msgstr ""
+msgstr "Zpoždění vstupu čárového kódu"
 
 #: common/models.py:1383
 msgid "Barcode input processing delay time"
-msgstr ""
+msgstr "Doba zpoždění zpracování vstupu čárového kódu"
 
 #: common/models.py:1389
 msgid "Barcode Webcam Support"
-msgstr ""
+msgstr "Podpora webové kamery pro čárové kódy"
 
 #: common/models.py:1390
 msgid "Allow barcode scanning via webcam in browser"
-msgstr ""
+msgstr "Povolit skenování čárových kódů přes webovou kameru v prohlížeči"
 
 #: common/models.py:1395
 msgid "Part Revisions"
-msgstr ""
+msgstr "Revize dílu"
 
 #: common/models.py:1396
 msgid "Enable revision field for Part"
-msgstr ""
+msgstr "Povolit pole revize pro díl"
 
 #: common/models.py:1401
 msgid "Allow Deletion from Assembly"
-msgstr ""
+msgstr "Povolit odstranění ze sestavy"
 
 #: common/models.py:1402
 msgid "Allow deletion of parts which are used in an assembly"
-msgstr ""
+msgstr "Povolit odstranění dílů, které jsou použity v sestavě"
 
 #: common/models.py:1407
 msgid "IPN Regex"
-msgstr ""
+msgstr "IPN Regex"
 
 #: common/models.py:1408
 msgid "Regular expression pattern for matching Part IPN"
-msgstr ""
+msgstr "Regulární vzorec výrazu pro odpovídající IPN dílu"
 
 #: common/models.py:1411
 msgid "Allow Duplicate IPN"
-msgstr ""
+msgstr "Povolit duplicitní IPN"
 
 #: common/models.py:1412
 msgid "Allow multiple parts to share the same IPN"
-msgstr ""
+msgstr "Povolit více dílům sdílet stejný IPN"
 
 #: common/models.py:1417
 msgid "Allow Editing IPN"
-msgstr ""
+msgstr "Povolit editaci IPN"
 
 #: common/models.py:1418
 msgid "Allow changing the IPN value while editing a part"
-msgstr ""
+msgstr "Povolit změnu IPN při úpravách dílu"
 
 #: common/models.py:1423
 msgid "Copy Part BOM Data"
-msgstr ""
+msgstr "Kopírovat data BOM dílu"
 
 #: common/models.py:1424
 msgid "Copy BOM data by default when duplicating a part"
-msgstr ""
+msgstr "Kopírovat data BOM ve výchozím nastavení při duplikování dílu"
 
 #: common/models.py:1429
 msgid "Copy Part Parameter Data"
-msgstr ""
+msgstr "Kopírovat data parametrů dílu"
 
 #: common/models.py:1430
 msgid "Copy parameter data by default when duplicating a part"
-msgstr ""
+msgstr "Kopírovat data parametrů ve výchozím nastavení při duplikování dílu"
 
 #: common/models.py:1435
 msgid "Copy Part Test Data"
-msgstr ""
+msgstr "Kopírovat zkušební data dílu"
 
 #: common/models.py:1436
 msgid "Copy test data by default when duplicating a part"
-msgstr ""
+msgstr "Kopírovat testovací data ve výchozím nastavení při duplikování dílu"
 
 #: common/models.py:1441
 msgid "Copy Category Parameter Templates"
-msgstr ""
+msgstr "Kopírovat šablony parametrů kategorie"
 
 #: common/models.py:1442
 msgid "Copy category parameter templates when creating a part"
-msgstr ""
+msgstr "Kopírování šablon parametrů kategorie při vytváření dílu"
 
 #: common/models.py:1447 part/admin.py:108 part/models.py:3795
 #: report/models.py:294 report/models.py:361 report/serializers.py:90
@@ -2242,22 +2242,22 @@ msgstr ""
 #: templates/js/translated/table_filters.js:139
 #: templates/js/translated/table_filters.js:767
 msgid "Template"
-msgstr ""
+msgstr "Šablona"
 
 #: common/models.py:1448
 msgid "Parts are templates by default"
-msgstr ""
+msgstr "Díly jsou ve výchozím nastavení šablony"
 
 #: common/models.py:1453 part/admin.py:91 part/admin.py:425 part/models.py:1052
 #: templates/js/translated/bom.js:1639
 #: templates/js/translated/table_filters.js:330
 #: templates/js/translated/table_filters.js:721
 msgid "Assembly"
-msgstr ""
+msgstr "Sestava"
 
 #: common/models.py:1454
 msgid "Parts can be assembled from other components by default"
-msgstr ""
+msgstr "Díly lze ve výchozím nastavení sestavit z jiných komponentů"
 
 #: common/models.py:1459 part/admin.py:95 part/models.py:1058
 #: templates/js/translated/table_filters.js:729
@@ -2812,203 +2812,203 @@ msgstr "Vynutit MFA"
 
 #: common/models.py:1954
 msgid "Users must use multifactor security."
-msgstr ""
+msgstr "Uživatelé musí používat vícefaktorové zabezpečení."
 
 #: common/models.py:1959
 msgid "Check plugins on startup"
-msgstr ""
+msgstr "Zkontrolovat pluginy při spuštění"
 
 #: common/models.py:1961
 msgid "Check that all plugins are installed on startup - enable in container environments"
-msgstr ""
+msgstr "Zkontrolujte, zda jsou při spuštění nainstalovány všechny pluginy - povolit v kontejnerových prostředích"
 
 #: common/models.py:1969
 msgid "Check for plugin updates"
-msgstr ""
+msgstr "Zkontrolovat aktualizace pluginů"
 
 #: common/models.py:1970
 msgid "Enable periodic checks for updates to installed plugins"
-msgstr ""
+msgstr "Povolit pravidelné kontroly aktualizací nainstalovaných pluginů"
 
 #: common/models.py:1976
 msgid "Enable URL integration"
-msgstr ""
+msgstr "Povolit integraci URL"
 
 #: common/models.py:1977
 msgid "Enable plugins to add URL routes"
-msgstr ""
+msgstr "Povolit plug-inům přidávat trasy URL"
 
 #: common/models.py:1983
 msgid "Enable navigation integration"
-msgstr ""
+msgstr "Povolit integraci navigace"
 
 #: common/models.py:1984
 msgid "Enable plugins to integrate into navigation"
-msgstr ""
+msgstr "Povolit integrování pluginů do navigace"
 
 #: common/models.py:1990
 msgid "Enable app integration"
-msgstr ""
+msgstr "Povolit integraci aplikací"
 
 #: common/models.py:1991
 msgid "Enable plugins to add apps"
-msgstr ""
+msgstr "Povolit pluginům přidávát aplikace"
 
 #: common/models.py:1997
 msgid "Enable schedule integration"
-msgstr ""
+msgstr "Povolit integraci plánu"
 
 #: common/models.py:1998
 msgid "Enable plugins to run scheduled tasks"
-msgstr ""
+msgstr "Povolit pluginům spouštění naplánovaných úloh"
 
 #: common/models.py:2004
 msgid "Enable event integration"
-msgstr ""
+msgstr "Povolit integraci událostí"
 
 #: common/models.py:2005
 msgid "Enable plugins to respond to internal events"
-msgstr ""
+msgstr "Povolit pluginům reagovat na interní události"
 
 #: common/models.py:2011
 msgid "Enable project codes"
-msgstr ""
+msgstr "Povolit kódy projektů"
 
 #: common/models.py:2012
 msgid "Enable project codes for tracking projects"
-msgstr ""
+msgstr "Povolit kódy projektů pro sledování projektů"
 
 #: common/models.py:2017
 msgid "Stocktake Functionality"
-msgstr ""
+msgstr "Funkce inventury"
 
 #: common/models.py:2019
 msgid "Enable stocktake functionality for recording stock levels and calculating stock value"
-msgstr ""
+msgstr "Povolit funkci inventury pro evidenci stavu zásob a výpočet hodnoty zásob"
 
 #: common/models.py:2025
 msgid "Exclude External Locations"
-msgstr ""
+msgstr "Vyloučit externí umístění"
 
 #: common/models.py:2027
 msgid "Exclude stock items in external locations from stocktake calculations"
-msgstr ""
+msgstr "Vyloučit skladové položky na externích místech z výpočtů inventury"
 
 #: common/models.py:2033
 msgid "Automatic Stocktake Period"
-msgstr ""
+msgstr "Perioda automatické inventury"
 
 #: common/models.py:2035
 msgid "Number of days between automatic stocktake recording (set to zero to disable)"
-msgstr ""
+msgstr "Počet dní mezi automatickým záznamem inventury (pro vypnutí nastavte nulu)"
 
 #: common/models.py:2041
 msgid "Report Deletion Interval"
-msgstr ""
+msgstr "Interval mazání reportů"
 
 #: common/models.py:2043
 msgid "Stocktake reports will be deleted after specified number of days"
-msgstr ""
+msgstr "Reporty o inventuře se po určitém počtu dní vymažou"
 
 #: common/models.py:2050
 msgid "Display Users full names"
-msgstr ""
+msgstr "Zobrazit celá jména uživatelů"
 
 #: common/models.py:2051
 msgid "Display Users full names instead of usernames"
-msgstr ""
+msgstr "Zobrazit plná jména uživatelů namísto uživatelských jmen"
 
 #: common/models.py:2056
 msgid "Enable Test Station Data"
-msgstr ""
+msgstr "Povolit data zkušební stanice"
 
 #: common/models.py:2057
 msgid "Enable test station data collection for test results"
-msgstr ""
+msgstr "Povolit sběr dat ze zkušební stanice pro výsledky testů"
 
 #: common/models.py:2069 common/models.py:2479
 msgid "Settings key (must be unique - case insensitive"
-msgstr ""
+msgstr "Klíč nastavení (musí být unikátní - rozlišuje malá a velká písmena"
 
 #: common/models.py:2112
 msgid "Hide inactive parts"
-msgstr ""
+msgstr "Skrýt neaktivní díly"
 
 #: common/models.py:2114
 msgid "Hide inactive parts in results displayed on the homepage"
-msgstr ""
+msgstr "Skrýt neaktivní díly ve výsledcích zobrazených na domovské stránce"
 
 #: common/models.py:2120
 msgid "Show subscribed parts"
-msgstr ""
+msgstr "Zobrazit odebírané díly"
 
 #: common/models.py:2121
 msgid "Show subscribed parts on the homepage"
-msgstr ""
+msgstr "Zobrazit odebírané díly na domovské stránce"
 
 #: common/models.py:2126
 msgid "Show subscribed categories"
-msgstr ""
+msgstr "Zobrazit odebírané kategorie"
 
 #: common/models.py:2127
 msgid "Show subscribed part categories on the homepage"
-msgstr ""
+msgstr "Zobrazit kategorie odebíraných dílů na hlavní stránce"
 
 #: common/models.py:2132
 msgid "Show latest parts"
-msgstr ""
+msgstr "Zobrazit nejnovější díly"
 
 #: common/models.py:2133
 msgid "Show latest parts on the homepage"
-msgstr ""
+msgstr "Zobrazit nejnovější díly na domovské stránce"
 
 #: common/models.py:2138
 msgid "Show invalid BOMs"
-msgstr ""
+msgstr "Zobrazit neplatné kusovníky (BOMy)"
 
 #: common/models.py:2139
 msgid "Show BOMs that await validation on the homepage"
-msgstr ""
+msgstr "Zobrazit kusovníky (BOMy), které čekají na ověření, na domovské stránce"
 
 #: common/models.py:2144
 msgid "Show recent stock changes"
-msgstr ""
+msgstr "Zobrazit nedávné změny zásob"
 
 #: common/models.py:2145
 msgid "Show recently changed stock items on the homepage"
-msgstr ""
+msgstr "Zobrazit nedávno změněné skladové položky na domovské stránce"
 
 #: common/models.py:2150
 msgid "Show low stock"
-msgstr ""
+msgstr "Zobrazit nízký stav zásob"
 
 #: common/models.py:2151
 msgid "Show low stock items on the homepage"
-msgstr ""
+msgstr "Zobrazit na domovské stránce položky s nízkou skladovou zásobou"
 
 #: common/models.py:2156
 msgid "Show depleted stock"
-msgstr ""
+msgstr "Zobrazit vyčerpané zásoby"
 
 #: common/models.py:2157
 msgid "Show depleted stock items on the homepage"
-msgstr ""
+msgstr "Zobrazit vyčerpané položky na domovské stránce"
 
 #: common/models.py:2162
 msgid "Show needed stock"
-msgstr ""
+msgstr "Zobrazit potřebné zásoby"
 
 #: common/models.py:2163
 msgid "Show stock items needed for builds on the homepage"
-msgstr ""
+msgstr "Zobrazit skladové položky potřebné pro sestavy na domovské stránce"
 
 #: common/models.py:2168
 msgid "Show expired stock"
-msgstr ""
+msgstr "Zobrazit expirované zásoby"
 
 #: common/models.py:2169
 msgid "Show expired stock items on the homepage"
-msgstr ""
+msgstr "Zobrazit expirované skladové položky na domovské stránce"
 
 #: common/models.py:2174
 msgid "Show stale stock"
@@ -3212,75 +3212,75 @@ msgstr "Zobrazit prodejní objednávky v náhledu hledání"
 
 #: common/models.py:2334
 msgid "Exclude Inactive Sales Orders"
-msgstr ""
+msgstr "Vyloučit neaktivní prodejní objednávky"
 
 #: common/models.py:2336
 msgid "Exclude inactive sales orders from search preview window"
-msgstr ""
+msgstr "Vyloučit neaktivní prodejní objednávky z okna náhledu vyhledávání"
 
 #: common/models.py:2342
 msgid "Search Return Orders"
-msgstr ""
+msgstr "Vyhledávání vrácených objednávek"
 
 #: common/models.py:2343
 msgid "Display return orders in search preview window"
-msgstr ""
+msgstr "Zobrazit vrácené objednávky v okně náhledu vyhledávání"
 
 #: common/models.py:2348
 msgid "Exclude Inactive Return Orders"
-msgstr ""
+msgstr "Vyloučit neaktivní vrácené objednávky"
 
 #: common/models.py:2350
 msgid "Exclude inactive return orders from search preview window"
-msgstr ""
+msgstr "Vyloučit neaktivní vrácené objednávky z okna náhledu vyhledávání"
 
 #: common/models.py:2356
 msgid "Search Preview Results"
-msgstr ""
+msgstr "Náhled výsledků vyhledávání"
 
 #: common/models.py:2358
 msgid "Number of results to show in each section of the search preview window"
-msgstr ""
+msgstr "Počet výsledků, které se mají zobrazit v každé části okna náhledu vyhledávání"
 
 #: common/models.py:2364
 msgid "Regex Search"
-msgstr ""
+msgstr "Regex hledání"
 
 #: common/models.py:2365
 msgid "Enable regular expressions in search queries"
-msgstr ""
+msgstr "Povolit regulární výrazy ve vyhledávacích dotazech"
 
 #: common/models.py:2370
 msgid "Whole Word Search"
-msgstr ""
+msgstr "Vyhledávání celého slova"
 
 #: common/models.py:2371
 msgid "Search queries return results for whole word matches"
-msgstr ""
+msgstr "Vyhledávací dotazy vracejí výsledky pro shody celých slov"
 
 #: common/models.py:2376
 msgid "Show Quantity in Forms"
-msgstr ""
+msgstr "Zobrazit množství ve formulářích"
 
 #: common/models.py:2377
 msgid "Display available part quantity in some forms"
-msgstr ""
+msgstr "Zobrazit dostupné množství dílů v některých formulářích"
 
 #: common/models.py:2382
 msgid "Escape Key Closes Forms"
-msgstr ""
+msgstr "Klávesa Escape zavře formuláře"
 
 #: common/models.py:2383
 msgid "Use the escape key to close modal forms"
-msgstr ""
+msgstr "Zavřít modální formuláře pomocí klávesy escape"
 
 #: common/models.py:2388
 msgid "Fixed Navbar"
-msgstr ""
+msgstr "Pevná navigační lišta"
 
 #: common/models.py:2389
 msgid "The navbar position is fixed to the top of the screen"
-msgstr ""
+msgstr "Pozice navigační lišty je pevně nastavena na horní okraj obrazovky"
 
 #: common/models.py:2394
 msgid "Date Format"
@@ -3288,79 +3288,79 @@ msgstr "Formát data"
 
 #: common/models.py:2395
 msgid "Preferred format for displaying dates"
-msgstr ""
+msgstr "Preferovaný formát pro zobrazení datumů"
 
 #: common/models.py:2408 part/templates/part/detail.html:41
 msgid "Part Scheduling"
-msgstr ""
+msgstr "Plánování dílů"
 
 #: common/models.py:2409
 msgid "Display part scheduling information"
-msgstr ""
+msgstr "Zobrazit informace o plánování dílů"
 
 #: common/models.py:2414 part/templates/part/detail.html:62
 msgid "Part Stocktake"
-msgstr ""
+msgstr "Inventura dílu"
 
 #: common/models.py:2416
 msgid "Display part stocktake information (if stocktake functionality is enabled)"
-msgstr ""
+msgstr "Zobrazit informace o skladových zásobách dílů (pokud je povolena funkce inventury)"
 
 #: common/models.py:2422
 msgid "Table String Length"
-msgstr ""
+msgstr "Délka textu v tabulce"
 
 #: common/models.py:2424
 msgid "Maximum length limit for strings displayed in table views"
-msgstr ""
+msgstr "Maximální délka textu v zobrazeních tabulek"
 
 #: common/models.py:2430
 msgid "Default part label template"
-msgstr ""
+msgstr "Výchozí šablona štítku dílu"
 
 #: common/models.py:2431
 msgid "The part label template to be automatically selected"
-msgstr ""
+msgstr "Automaticky vybraná šablona štítku dílu"
 
 #: common/models.py:2436
 msgid "Default stock item template"
-msgstr ""
+msgstr "Výchozí šablona skladové položky"
 
 #: common/models.py:2438
 msgid "The stock item label template to be automatically selected"
-msgstr ""
+msgstr "Automaticky vybraná šablona štítku skladové položky"
 
 #: common/models.py:2444
 msgid "Default stock location label template"
-msgstr ""
+msgstr "Výchozí šablona štítku umístění zásob"
 
 #: common/models.py:2446
 msgid "The stock location label template to be automatically selected"
-msgstr ""
+msgstr "Automaticky vybraná šablona štítku skladového umístění"
 
 #: common/models.py:2452
 msgid "Default build line label template"
-msgstr ""
+msgstr "Výchozí šablona štítku řádku sestavy"
 
 #: common/models.py:2454
 msgid "The build line label template to be automatically selected"
-msgstr ""
+msgstr "Automaticky vybraná šablona štítku řádku sestavy"
 
 #: common/models.py:2460
 msgid "Receive error reports"
-msgstr ""
+msgstr "Přijímat zprávy o chybách"
 
 #: common/models.py:2461
 msgid "Receive notifications for system errors"
-msgstr ""
+msgstr "Dostávat oznámení o systémových chybách"
 
 #: common/models.py:2466
 msgid "Last used printing machines"
-msgstr ""
+msgstr "Poslední použité tiskárny"
 
 #: common/models.py:2467
 msgid "Save the last used printing machines for a user"
-msgstr ""
+msgstr "Uložte poslední použité tiskárny pro uživatele"
 
 #: common/models.py:2487 common/models.py:2488 common/models.py:2636
 #: common/models.py:2637 common/models.py:2882 common/models.py:2883
@@ -3374,7 +3374,7 @@ msgstr "Uživatel"
 
 #: common/models.py:2510
 msgid "Price break quantity"
-msgstr ""
+msgstr "Množství cenové slevy"
 
 #: common/models.py:2517 company/serializers.py:472 order/admin.py:42
 #: order/models.py:1346 order/models.py:2265
@@ -3386,19 +3386,19 @@ msgstr "Cena"
 
 #: common/models.py:2518
 msgid "Unit price at specified quantity"
-msgstr ""
+msgstr "Jednotková cena při stanoveném množství"
 
 #: common/models.py:2613 common/models.py:2798
 msgid "Endpoint"
-msgstr ""
+msgstr "Koncový bod"
 
 #: common/models.py:2614
 msgid "Endpoint at which this webhook is received"
-msgstr ""
+msgstr "Koncový bod, ve kterém je tento webhook přijímán"
 
 #: common/models.py:2624
 msgid "Name for this webhook"
-msgstr ""
+msgstr "Název tohoto webhooku"
 
 #: common/models.py:2628 company/models.py:163 company/models.py:782
 #: machine/models.py:39 part/admin.py:88 part/models.py:1081
@@ -3410,19 +3410,19 @@ msgstr ""
 #: templates/js/translated/table_filters.js:716
 #: templates/js/translated/table_filters.js:796 users/models.py:182
 msgid "Active"
-msgstr ""
+msgstr "Aktivní"
 
 #: common/models.py:2628
 msgid "Is this webhook active"
-msgstr ""
+msgstr "Je tento webhook aktivní"
 
 #: common/models.py:2644 users/models.py:159
 msgid "Token"
-msgstr ""
+msgstr "Token"
 
 #: common/models.py:2645
 msgid "Token for access"
-msgstr ""
+msgstr "Token pro přístup"
 
 #: common/models.py:2653
 msgid "Secret"
@@ -3680,35 +3680,35 @@ msgstr ""
 
 #: common/serializers.py:406
 msgid "Lock time"
-msgstr ""
+msgstr "Čas uzamčení"
 
 #: common/serializers.py:408
 msgid "Task name"
-msgstr ""
+msgstr "Jméno úkolu"
 
 #: common/serializers.py:410
 msgid "Function"
-msgstr ""
+msgstr "Funkce"
 
 #: common/serializers.py:410
 msgid "Function name"
-msgstr ""
+msgstr "Název funkce"
 
 #: common/serializers.py:412
 msgid "Arguments"
-msgstr ""
+msgstr "Argumenty"
 
 #: common/serializers.py:412
 msgid "Task arguments"
-msgstr ""
+msgstr "Argumenty úlohy"
 
 #: common/serializers.py:415
 msgid "Keyword Arguments"
-msgstr ""
+msgstr "Argumenty klíčových slov"
 
 #: common/serializers.py:415
 msgid "Task keyword arguments"
-msgstr ""
+msgstr "Argumenty klíčových slov úlohy"
 
 #: common/serializers.py:525
 msgid "Filename"
@@ -3716,35 +3716,35 @@ msgstr "Název souboru"
 
 #: common/serializers.py:532 report/api.py:100 report/serializers.py:53
 msgid "Model Type"
-msgstr ""
+msgstr "Typ modelu"
 
 #: common/serializers.py:559
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr ""
+msgstr "Uživatel nemá oprávnění k vytváření nebo úpravám příloh pro tento model"
 
 #: common/validators.py:77
 msgid "Minimum places cannot be greater than maximum places"
-msgstr ""
+msgstr "Minimální počet míst nesmí být větší než maximální počet míst"
 
 #: common/validators.py:89
 msgid "Maximum places cannot be less than minimum places"
-msgstr ""
+msgstr "Maximální počet míst nesmí být menší než minimální počet míst"
 
 #: common/validators.py:100
 msgid "An empty domain is not allowed."
-msgstr ""
+msgstr "Prázdná doména není povolena."
 
 #: common/validators.py:102
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
-msgstr ""
+msgstr "Neplatný název domény: {domain}"
 
 #: common/views.py:84 order/templates/order/order_wizard/po_upload.html:51
 #: order/templates/order/purchase_order_detail.html:24 order/views.py:118
 #: part/templates/part/import_wizard/part_upload.html:58 part/views.py:109
 #: templates/patterns/wizard/upload.html:37
 msgid "Upload File"
-msgstr ""
+msgstr "Nahrát soubor"
 
 #: common/views.py:84 order/templates/order/order_wizard/match_fields.html:52
 #: order/views.py:119
@@ -3752,19 +3752,19 @@ msgstr ""
 #: part/templates/part/import_wizard/match_fields.html:52 part/views.py:110
 #: templates/patterns/wizard/match_fields.html:51
 msgid "Match Fields"
-msgstr ""
+msgstr "Přiřadit pole"
 
 #: common/views.py:84
 msgid "Match Items"
-msgstr ""
+msgstr "Přiřadit položky"
 
 #: common/views.py:401
 msgid "Fields matching failed"
-msgstr ""
+msgstr "Shoda polí se nezdařila"
 
 #: common/views.py:464
 msgid "Parts imported"
-msgstr ""
+msgstr "Importované díly"
 
 #: common/views.py:494 order/templates/order/order_wizard/match_fields.html:27
 #: order/templates/order/order_wizard/match_parts.html:19
@@ -3775,27 +3775,27 @@ msgstr ""
 #: templates/patterns/wizard/match_fields.html:26
 #: templates/patterns/wizard/upload.html:35
 msgid "Previous Step"
-msgstr ""
+msgstr "Předchozí krok"
 
 #: company/api.py:144
 msgid "Part is Active"
-msgstr ""
+msgstr "Díl je aktivní"
 
 #: company/api.py:148
 msgid "Manufacturer is Active"
-msgstr ""
+msgstr "Výrobce je aktivní"
 
 #: company/api.py:281
 msgid "Supplier Part is Active"
-msgstr ""
+msgstr "Díl dodavatele je aktivní"
 
 #: company/api.py:285
 msgid "Internal Part is Active"
-msgstr ""
+msgstr "Interní díl je aktivní"
 
 #: company/api.py:289
 msgid "Supplier is Active"
-msgstr ""
+msgstr "Dodavatel je aktivní"
 
 #: company/models.py:100 company/models.py:365
 #: company/templates/company/company_base.html:8
@@ -3807,15 +3807,15 @@ msgstr "Společnost"
 #: company/models.py:101 company/views.py:51
 #: templates/js/translated/search.js:192
 msgid "Companies"
-msgstr ""
+msgstr "Společnosti"
 
 #: company/models.py:117
 msgid "Company description"
-msgstr ""
+msgstr "Popis společnosti"
 
 #: company/models.py:118
 msgid "Description of the company"
-msgstr ""
+msgstr "Popis společnosti"
 
 #: company/models.py:123 company/templates/company/company_base.html:106
 #: templates/InvenTree/settings/plugin_settings.html:54
@@ -3852,11 +3852,11 @@ msgstr "Kontaktní místo"
 
 #: company/models.py:150
 msgid "Link to external company information"
-msgstr ""
+msgstr "Odkaz na externí informace o společnosti"
 
 #: company/models.py:163
 msgid "Is this company active?"
-msgstr ""
+msgstr "Je tato společnost aktivní?"
 
 #: company/models.py:168
 msgid "is customer"
@@ -3864,114 +3864,114 @@ msgstr "je zákazník"
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
-msgstr ""
+msgstr "Prodáváte zboží této společnosti?"
 
 #: company/models.py:174
 msgid "is supplier"
-msgstr ""
+msgstr "je dodavatel"
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
-msgstr ""
+msgstr "Zakupujete zboží od této společnosti?"
 
 #: company/models.py:180
 msgid "is manufacturer"
-msgstr ""
+msgstr "je výrobce"
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
-msgstr ""
+msgstr "Vyrábí tato společnost díly?"
 
 #: company/models.py:189
 msgid "Default currency used for this company"
-msgstr ""
+msgstr "Výchozí měna používaná pro tuto společnost"
 
 #: company/models.py:366
 msgid "Select company"
-msgstr ""
+msgstr "Vyberte společnost"
 
 #: company/models.py:371
 msgid "Address title"
-msgstr ""
+msgstr "Název adresy"
 
 #: company/models.py:372
 msgid "Title describing the address entry"
-msgstr ""
+msgstr "Název popisující záznam adresy"
 
 #: company/models.py:378
 msgid "Primary address"
-msgstr ""
+msgstr "Primární adresa"
 
 #: company/models.py:379
 msgid "Set as primary address"
-msgstr ""
+msgstr "Nastavit jako primární adresu"
 
 #: company/models.py:384 templates/js/translated/company.js:914
 #: templates/js/translated/company.js:971
 msgid "Line 1"
-msgstr ""
+msgstr "Řádek 1"
 
 #: company/models.py:385
 msgid "Address line 1"
-msgstr ""
+msgstr "1. řádek adresy"
 
 #: company/models.py:391 templates/js/translated/company.js:915
 #: templates/js/translated/company.js:977
 msgid "Line 2"
-msgstr ""
+msgstr "Řádek 2"
 
 #: company/models.py:392
 msgid "Address line 2"
-msgstr ""
+msgstr "2. řádek adresy"
 
 #: company/models.py:398 company/models.py:399
 #: templates/js/translated/company.js:983
 msgid "Postal code"
-msgstr ""
+msgstr "PSČ"
 
 #: company/models.py:405
 msgid "City/Region"
-msgstr ""
+msgstr "Město/Region"
 
 #: company/models.py:406
 msgid "Postal code city/region"
-msgstr ""
+msgstr "PSČ město/region"
 
 #: company/models.py:412
 msgid "State/Province"
-msgstr ""
+msgstr "Stát/kraj"
 
 #: company/models.py:413
 msgid "State or province"
-msgstr ""
+msgstr "Stát nebo provincie"
 
 #: company/models.py:419 templates/js/translated/company.js:1001
 msgid "Country"
-msgstr ""
+msgstr "Země"
 
 #: company/models.py:420
 msgid "Address country"
-msgstr ""
+msgstr "Adresovaná země"
 
 #: company/models.py:426
 msgid "Courier shipping notes"
-msgstr ""
+msgstr "Doručovací poznámky pro kurýra"
 
 #: company/models.py:427
 msgid "Notes for shipping courier"
-msgstr ""
+msgstr "Poznámky pro kurýra"
 
 #: company/models.py:433
 msgid "Internal shipping notes"
-msgstr ""
+msgstr "Interní přepravní poznámky"
 
 #: company/models.py:434
 msgid "Shipping notes for internal use"
-msgstr ""
+msgstr "Doručovací poznámky pro interní použití"
 
 #: company/models.py:441
 msgid "Link to address information (external)"
-msgstr ""
+msgstr "Odkaz na informace o adrese (externí)"
 
 #: company/models.py:463 company/models.py:574 company/models.py:792
 #: company/templates/company/manufacturer_part.html:7
@@ -4015,7 +4015,7 @@ msgstr "Vyberte výrobce"
 #: templates/js/translated/purchase_order.js:1851
 #: templates/js/translated/purchase_order.js:2053
 msgid "MPN"
-msgstr ""
+msgstr "MPN"
 
 #: company/models.py:494
 msgid "Manufacturer Part Number"
@@ -4023,7 +4023,7 @@ msgstr "Číslo dílu výrobce"
 
 #: company/models.py:501
 msgid "URL for external manufacturer part link"
-msgstr ""
+msgstr "URL pro odkaz na díl externího výrobce"
 
 #: company/models.py:510
 msgid "Manufacturer part description"
@@ -4054,7 +4054,7 @@ msgstr "Jednotky"
 
 #: company/models.py:596
 msgid "Parameter units"
-msgstr ""
+msgstr "Jednotky parametru"
 
 #: company/models.py:648 company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 order/api.py:452
@@ -4063,19 +4063,19 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:752
 #: templates/js/translated/stock.js:2280
 msgid "Supplier Part"
-msgstr ""
+msgstr "Díl dodavatele"
 
 #: company/models.py:700
 msgid "Pack units must be compatible with the base part units"
-msgstr ""
+msgstr "Jednotky balení musí být kompatibilní s jednotkami základních dílů"
 
 #: company/models.py:707
 msgid "Pack units must be greater than zero"
-msgstr ""
+msgstr "Jednotky balení musí být větší než nula"
 
 #: company/models.py:721
 msgid "Linked manufacturer part must reference the same base part"
-msgstr ""
+msgstr "Odkazovaný díl výrobce musí odkazovat na stejný základní díl"
 
 #: company/models.py:770 company/templates/company/company_base.html:87
 #: company/templates/company/supplier_part.html:129 order/models.py:486
@@ -4095,27 +4095,27 @@ msgstr "Dodavatel"
 
 #: company/models.py:771
 msgid "Select supplier"
-msgstr ""
+msgstr "Vyberte dodavatele"
 
 #: company/models.py:777 part/serializers.py:512
 msgid "Supplier stock keeping unit"
-msgstr ""
+msgstr "Skladová evidence dodavatele"
 
 #: company/models.py:783
 msgid "Is this supplier part active?"
-msgstr ""
+msgstr "Je tento díl dodavatele aktivní?"
 
 #: company/models.py:793
 msgid "Select manufacturer part"
-msgstr ""
+msgstr "Vyberte díl výrobce"
 
 #: company/models.py:800
 msgid "URL for external supplier part link"
-msgstr ""
+msgstr "Adresa URL pro odkaz na externí díl dodavatele"
 
 #: company/models.py:809
 msgid "Supplier part description"
-msgstr ""
+msgstr "Popis dílu dodavatele"
 
 #: company/models.py:816 company/templates/company/supplier_part.html:187
 #: part/admin.py:412 part/models.py:4093 part/templates/part/upload_bom.html:59
@@ -4130,11 +4130,11 @@ msgstr "Poznámka"
 
 #: company/models.py:825 part/models.py:2003
 msgid "base cost"
-msgstr ""
+msgstr "základní cena"
 
 #: company/models.py:826 part/models.py:2004
 msgid "Minimum charge (e.g. stocking fee)"
-msgstr ""
+msgstr "Minimální poplatek (např. poplatek za skladování)"
 
 #: company/models.py:833 company/templates/company/supplier_part.html:160
 #: stock/admin.py:228 stock/models.py:797 stock/serializers.py:1466
@@ -4142,11 +4142,11 @@ msgstr ""
 #: templates/js/translated/company.js:1646
 #: templates/js/translated/stock.js:2424
 msgid "Packaging"
-msgstr ""
+msgstr "Balení"
 
 #: company/models.py:834
 msgid "Part packaging"
-msgstr ""
+msgstr "Balení dílu"
 
 #: company/models.py:839 templates/js/translated/company.js:1651
 #: templates/js/translated/part.js:1822 templates/js/translated/part.js:1878
@@ -4156,42 +4156,42 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:2084
 #: templates/js/translated/purchase_order.js:2101
 msgid "Pack Quantity"
-msgstr ""
+msgstr "Počet kusů v balení"
 
 #: company/models.py:841
 msgid "Total quantity supplied in a single pack. Leave empty for single items."
-msgstr ""
+msgstr "Celkové množství dodávané v jednom balení. Pro jednotlivé položky ponechte prázdné."
 
 #: company/models.py:860 part/models.py:2010
 msgid "multiple"
-msgstr ""
+msgstr "více"
 
 #: company/models.py:861
 msgid "Order multiple"
-msgstr ""
+msgstr "Objednat více"
 
 #: company/models.py:873
 msgid "Quantity available from supplier"
-msgstr ""
+msgstr "Množství dostupné od dodavatele"
 
 #: company/models.py:879
 msgid "Availability Updated"
-msgstr ""
+msgstr "Dostupnost aktualizována"
 
 #: company/models.py:880
 msgid "Date of last update of availability data"
-msgstr ""
+msgstr "Datum poslední aktualizace údajů o dostupnosti"
 
 #: company/serializers.py:161
 msgid "Default currency used for this supplier"
-msgstr ""
+msgstr "Výchozí měna používaná pro tohoto dodavatele"
 
 #: company/serializers.py:357 part/admin.py:126
 #: part/templates/part/part_base.html:197
 #: templates/js/translated/company.js:1689
 #: templates/js/translated/table_filters.js:355
 msgid "In Stock"
-msgstr ""
+msgstr "Skladem"
 
 #: company/templates/company/company_base.html:16
 #: part/templates/part/part_base.html:146
@@ -4200,16 +4200,16 @@ msgstr ""
 #: templates/js/translated/model_renderers.js:312
 #: templates/js/translated/part.js:815 templates/js/translated/part.js:1219
 msgid "Inactive"
-msgstr ""
+msgstr "Neaktivní"
 
 #: company/templates/company/company_base.html:27
 #: templates/js/translated/purchase_order.js:242
 msgid "Create Purchase Order"
-msgstr ""
+msgstr "Vytvořit nákupní objednávku"
 
 #: company/templates/company/company_base.html:33
 msgid "Company actions"
-msgstr ""
+msgstr "Akce společnosti"
 
 #: company/templates/company/company_base.html:38
 msgid "Edit company information"
@@ -4239,7 +4239,7 @@ msgstr "Odstranit společnost"
 #: report/templates/report/inventree_test_report.html:84
 #: report/templates/report/inventree_test_report.html:163
 msgid "Part image"
-msgstr ""
+msgstr "Obrázek dílu"
 
 #: company/templates/company/company_base.html:61
 #: part/templates/part/part_thumb.html:12
@@ -4272,7 +4272,7 @@ msgstr "Zákazník"
 
 #: company/templates/company/company_base.html:117
 msgid "Uses default currency"
-msgstr ""
+msgstr "Použít výchozí měnu"
 
 #: company/templates/company/company_base.html:124 order/models.py:353
 #: order/templates/order/order_base.html:210
@@ -4288,11 +4288,11 @@ msgstr "Telefon"
 #: company/templates/company/company_base.html:211
 #: part/templates/part/part_base.html:527
 msgid "Remove Image"
-msgstr ""
+msgstr "Odstranit obrázek"
 
 #: company/templates/company/company_base.html:212
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Odstranit přidružený obrázek z této společnosti"
 
 #: company/templates/company/company_base.html:214
 #: part/templates/part/part_base.html:530
@@ -4304,12 +4304,12 @@ msgstr "Odstranit"
 #: company/templates/company/company_base.html:243
 #: part/templates/part/part_base.html:559
 msgid "Upload Image"
-msgstr ""
+msgstr "Nahrát obrázek"
 
 #: company/templates/company/company_base.html:258
 #: part/templates/part/part_base.html:613
 msgid "Download Image"
-msgstr ""
+msgstr "Stáhnout obrázek"
 
 #: company/templates/company/detail.html:15
 #: company/templates/company/manufacturer_part_sidebar.html:7
@@ -4361,12 +4361,12 @@ msgstr "Zakoupené objednávky"
 #: company/templates/company/detail.html:79
 #: order/templates/order/purchase_orders.html:17
 msgid "Create new purchase order"
-msgstr ""
+msgstr "Vytvořit novou nákupní objednávku"
 
 #: company/templates/company/detail.html:80
 #: order/templates/order/purchase_orders.html:18
 msgid "New Purchase Order"
-msgstr ""
+msgstr "Nová nákupní objednávka"
 
 #: company/templates/company/detail.html:101
 #: company/templates/company/sidebar.html:21
@@ -4379,21 +4379,21 @@ msgstr ""
 #: templates/js/translated/search.js:219 templates/navbar.html:62
 #: users/models.py:209
 msgid "Sales Orders"
-msgstr ""
+msgstr "Prodejní objednávky"
 
 #: company/templates/company/detail.html:105
 #: order/templates/order/sales_orders.html:20
 msgid "Create new sales order"
-msgstr ""
+msgstr "Vytvořit novou prodejní objednávku"
 
 #: company/templates/company/detail.html:106
 #: order/templates/order/sales_orders.html:21
 msgid "New Sales Order"
-msgstr ""
+msgstr "Nová prodejní objednávka"
 
 #: company/templates/company/detail.html:126
 msgid "Assigned Stock"
-msgstr ""
+msgstr "Přiřazené zásoby"
 
 #: company/templates/company/detail.html:142
 #: company/templates/company/sidebar.html:29
@@ -4404,17 +4404,17 @@ msgstr ""
 #: templates/js/translated/search.js:232 templates/navbar.html:65
 #: users/models.py:210
 msgid "Return Orders"
-msgstr ""
+msgstr "Návratové objednávky"
 
 #: company/templates/company/detail.html:146
 #: order/templates/order/return_orders.html:20
 msgid "Create new return order"
-msgstr ""
+msgstr "Vytvořit novou návratovou objednávku"
 
 #: company/templates/company/detail.html:147
 #: order/templates/order/return_orders.html:21
 msgid "New Return Order"
-msgstr ""
+msgstr "Nová návratová objednávka"
 
 #: company/templates/company/detail.html:168
 msgid "Company Notes"
@@ -4422,26 +4422,26 @@ msgstr "Poznámky ke společnosti"
 
 #: company/templates/company/detail.html:183
 msgid "Company Contacts"
-msgstr ""
+msgstr "Kontakty na společnost"
 
 #: company/templates/company/detail.html:187
 #: company/templates/company/detail.html:188
 msgid "Add Contact"
-msgstr ""
+msgstr "Přidat kontakt"
 
 #: company/templates/company/detail.html:206
 msgid "Company addresses"
-msgstr ""
+msgstr "Adresy společnosti"
 
 #: company/templates/company/detail.html:210
 #: company/templates/company/detail.html:211
 msgid "Add Address"
-msgstr ""
+msgstr "Přidat adresu"
 
 #: company/templates/company/manufacturer_part.html:15 company/views.py:37
 #: templates/InvenTree/search.html:180 templates/navbar.html:49
 msgid "Manufacturers"
-msgstr ""
+msgstr "Výrobci"
 
 #: company/templates/company/manufacturer_part.html:35
 #: company/templates/company/supplier_part.html:227
@@ -4452,21 +4452,21 @@ msgstr "Objednávka dílů"
 #: company/templates/company/manufacturer_part.html:39
 #: templates/js/translated/company.js:1343
 msgid "Edit manufacturer part"
-msgstr ""
+msgstr "Upravit díl výrobce"
 
 #: company/templates/company/manufacturer_part.html:43
 #: templates/js/translated/company.js:1344
 msgid "Delete manufacturer part"
-msgstr ""
+msgstr "Odstranit díl výrobce"
 
 #: company/templates/company/manufacturer_part.html:65
 #: company/templates/company/supplier_part.html:97 order/api.py:458
 msgid "Internal Part"
-msgstr ""
+msgstr "Interní díl"
 
 #: company/templates/company/manufacturer_part.html:95
 msgid "No manufacturer information available"
-msgstr ""
+msgstr "Nejsou k dispozici žádné informace o výrobci"
 
 #: company/templates/company/manufacturer_part.html:119
 #: company/templates/company/supplier_part.html:15 company/views.py:31
@@ -4474,55 +4474,55 @@ msgstr ""
 #: part/templates/part/part_sidebar.html:33 templates/InvenTree/search.html:190
 #: templates/navbar.html:48
 msgid "Suppliers"
-msgstr ""
+msgstr "Dodavatelé"
 
 #: company/templates/company/manufacturer_part.html:156
 #: company/templates/company/manufacturer_part_sidebar.html:5
 #: part/templates/part/category_sidebar.html:20
 #: part/templates/part/detail.html:195 part/templates/part/part_sidebar.html:8
 msgid "Parameters"
-msgstr ""
+msgstr "Parametry"
 
 #: company/templates/company/manufacturer_part.html:160
 #: part/templates/part/detail.html:200
 #: templates/InvenTree/settings/category.html:12
 #: templates/InvenTree/settings/part_parameters.html:24
 msgid "New Parameter"
-msgstr ""
+msgstr "Nový parametr"
 
 #: company/templates/company/manufacturer_part.html:196
 #: templates/js/translated/part.js:1423
 msgid "Add Parameter"
-msgstr ""
+msgstr "Přidat parametr"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
-msgstr ""
+msgstr "Vyrobené díly"
 
 #: company/templates/company/sidebar.html:10
 msgid "Supplied Parts"
-msgstr ""
+msgstr "Dodané díly"
 
 #: company/templates/company/sidebar.html:16
 msgid "Supplied Stock Items"
-msgstr ""
+msgstr "Dodané skladové položky"
 
 #: company/templates/company/sidebar.html:25
 msgid "Assigned Stock Items"
-msgstr ""
+msgstr "Přiřazené skladové položky"
 
 #: company/templates/company/sidebar.html:33
 msgid "Contacts"
-msgstr ""
+msgstr "Kontakty"
 
 #: company/templates/company/sidebar.html:35
 msgid "Addresses"
-msgstr ""
+msgstr "Adresy"
 
 #: company/templates/company/supplier_part.html:50
 #: templates/js/translated/company.js:1526
 msgid "Supplier part actions"
-msgstr ""
+msgstr "Akce týkající se dílu dodavatele"
 
 #: company/templates/company/supplier_part.html:55
 #: company/templates/company/supplier_part.html:56
@@ -4534,7 +4534,7 @@ msgstr "Objednávka dílů"
 #: company/templates/company/supplier_part.html:60
 #: company/templates/company/supplier_part.html:61
 msgid "Update Availability"
-msgstr ""
+msgstr "Aktualizovat dostupnost"
 
 #: company/templates/company/supplier_part.html:63
 #: company/templates/company/supplier_part.html:64
@@ -4558,7 +4558,7 @@ msgstr "Vymazat dodavatele dílu"
 
 #: company/templates/company/supplier_part.html:133
 msgid "No supplier information available"
-msgstr ""
+msgstr "Nejsou k dispozici žádné informace o dodavateli"
 
 #: company/templates/company/supplier_part.html:139 part/bom.py:279
 #: part/bom.py:311 part/serializers.py:511
@@ -4567,7 +4567,7 @@ msgstr ""
 #: templates/js/translated/purchase_order.js:1850
 #: templates/js/translated/purchase_order.js:2028
 msgid "SKU"
-msgstr ""
+msgstr "Číslo zboží (SKU)"
 
 #: company/templates/company/supplier_part.html:206
 msgid "Supplier Part Stock"
@@ -4576,39 +4576,39 @@ msgstr "Sklad dílu dodavatele"
 #: company/templates/company/supplier_part.html:209
 #: part/templates/part/detail.html:24 stock/templates/stock/location.html:207
 msgid "Create new stock item"
-msgstr ""
+msgstr "Vytvořit novou položku skladu"
 
 #: company/templates/company/supplier_part.html:210
 #: part/templates/part/detail.html:25 stock/templates/stock/location.html:208
 #: templates/js/translated/stock.js:537
 msgid "New Stock Item"
-msgstr ""
+msgstr "Nová skladová položka"
 
 #: company/templates/company/supplier_part.html:223
 msgid "Supplier Part Orders"
-msgstr ""
+msgstr "Objednávky dílu dodavatele"
 
 #: company/templates/company/supplier_part.html:246
 msgid "Pricing Information"
-msgstr ""
+msgstr "Informace o cenách"
 
 #: company/templates/company/supplier_part.html:251
 #: templates/js/translated/company.js:398
 #: templates/js/translated/pricing.js:684
 msgid "Add Price Break"
-msgstr ""
+msgstr "Přidat cenovou slevu"
 
 #: company/templates/company/supplier_part.html:276
 msgid "Supplier Part QR Code"
-msgstr ""
+msgstr "QR kód dílu dodavatele"
 
 #: company/templates/company/supplier_part.html:287
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Propojit čárový kód s dílem dodavatele"
 
 #: company/templates/company/supplier_part.html:359
 msgid "Update Part Availability"
-msgstr ""
+msgstr "Aktualizovat dostupnost dílu"
 
 #: company/templates/company/supplier_part_sidebar.html:5
 #: part/serializers.py:823 part/stocktake.py:224
@@ -4623,32 +4623,32 @@ msgstr ""
 #: templates/js/translated/search.js:172 templates/js/translated/stock.js:2766
 #: users/models.py:206
 msgid "Stock Items"
-msgstr ""
+msgstr "Skladové položky"
 
 #: company/templates/company/supplier_part_sidebar.html:9
 msgid "Supplier Part Pricing"
-msgstr ""
+msgstr "Ceny dílu dodavatele"
 
 #: company/views.py:32
 msgid "New Supplier"
-msgstr ""
+msgstr "Nový dodavatel"
 
 #: company/views.py:38
 msgid "New Manufacturer"
-msgstr ""
+msgstr "Nový výrobce"
 
 #: company/views.py:43 templates/InvenTree/search.html:210
 #: templates/navbar.html:60
 msgid "Customers"
-msgstr ""
+msgstr "Zákazníci"
 
 #: company/views.py:44
 msgid "New Customer"
-msgstr ""
+msgstr "Nový zákazník"
 
 #: company/views.py:52
 msgid "New Company"
-msgstr ""
+msgstr "Nová společnost"
 
 #: generic/states/tests.py:18 order/status_codes.py:13
 msgid "Placed"
@@ -4656,48 +4656,48 @@ msgstr "Umístěno"
 
 #: machine/machine_types/label_printer.py:218
 msgid "Copies"
-msgstr ""
+msgstr "Kopie"
 
 #: machine/machine_types/label_printer.py:219
 msgid "Number of copies to print for each label"
-msgstr ""
+msgstr "Počet kopií, které se mají tisknout pro každý štítek"
 
 #: machine/machine_types/label_printer.py:234
 msgid "Connected"
-msgstr ""
+msgstr "Připojeno"
 
 #: machine/machine_types/label_printer.py:235 order/api.py:1467
 #: templates/js/translated/sales_order.js:1078
 msgid "Unknown"
-msgstr ""
+msgstr "Neznámý"
 
 #: machine/machine_types/label_printer.py:236
 msgid "Printing"
-msgstr ""
+msgstr "Tisk"
 
 #: machine/machine_types/label_printer.py:237
 msgid "No media"
-msgstr ""
+msgstr "Žádná média"
 
 #: machine/machine_types/label_printer.py:238
 msgid "Disconnected"
-msgstr ""
+msgstr "Odpojeno"
 
 #: machine/machine_types/label_printer.py:245
 msgid "Label Printer"
-msgstr ""
+msgstr "Tiskárna štítků"
 
 #: machine/machine_types/label_printer.py:246
 msgid "Directly print labels for various items."
-msgstr ""
+msgstr "Přímo vytisknout štítky pro různé položky."
 
 #: machine/machine_types/label_printer.py:252
 msgid "Printer Location"
-msgstr ""
+msgstr "Umístění tiskárny"
 
 #: machine/machine_types/label_printer.py:253
 msgid "Scope the printer to a specific location"
-msgstr ""
+msgstr "Určení rozsahu tiskárny na konkrétní místo"
 
 #: machine/models.py:25
 msgid "Name of machine"
@@ -4931,71 +4931,71 @@ msgstr ""
 
 #: order/models.py:976
 msgid "shipped by"
-msgstr ""
+msgstr "odesláno společností"
 
 #: order/models.py:1025
 msgid "Order is already complete"
-msgstr ""
+msgstr "Objednávka je již dokončena"
 
 #: order/models.py:1028
 msgid "Order is already cancelled"
-msgstr ""
+msgstr "Objednávka je již zrušena"
 
 #: order/models.py:1032
 msgid "Only an open order can be marked as complete"
-msgstr ""
+msgstr "Pouze otevřená objednávka může být označena jako kompletní"
 
 #: order/models.py:1036
 msgid "Order cannot be completed as there are incomplete shipments"
-msgstr ""
+msgstr "Objednávku nelze dokončit, protože dodávky jsou nekompletní"
 
 #: order/models.py:1041
 msgid "Order cannot be completed as there are incomplete line items"
-msgstr ""
+msgstr "Objednávka nemůže být dokončena, protože jsou neúplné řádkové položky"
 
 #: order/models.py:1273
 msgid "Item quantity"
-msgstr ""
+msgstr "Množství položky"
 
 #: order/models.py:1290
 msgid "Line item reference"
-msgstr ""
+msgstr "Odkaz na řádkovou položku"
 
 #: order/models.py:1297
 msgid "Line item notes"
-msgstr ""
+msgstr "Poznámky k řádkovým položkám"
 
 #: order/models.py:1309
 msgid "Target date for this line item (leave blank to use the target date from the order)"
-msgstr ""
+msgstr "Cílové datum pro tuto řádkovou položku (pro použití cílového data z objednávky ponechte prázdné)"
 
 #: order/models.py:1330
 msgid "Line item description (optional)"
-msgstr ""
+msgstr "Popis řádkové položky (nepovinné)"
 
 #: order/models.py:1336
 msgid "Context"
-msgstr ""
+msgstr "Kontext"
 
 #: order/models.py:1337
 msgid "Additional context for this line"
-msgstr ""
+msgstr "Dodatečný kontext pro tento řádek"
 
 #: order/models.py:1347
 msgid "Unit price"
-msgstr ""
+msgstr "Cena za jednotku"
 
 #: order/models.py:1380
 msgid "Supplier part must match supplier"
-msgstr ""
+msgstr "Dodavatelský díl musí odpovídat dodavateli"
 
 #: order/models.py:1387
 msgid "deleted"
-msgstr ""
+msgstr "smazáno"
 
 #: order/models.py:1415
 msgid "Supplier part"
-msgstr ""
+msgstr "Díl dodavatele"
 
 #: order/models.py:1422 order/templates/order/order_base.html:196
 #: templates/js/translated/part.js:1870 templates/js/translated/part.js:1902
@@ -5005,42 +5005,42 @@ msgstr ""
 #: templates/js/translated/table_filters.js:120
 #: templates/js/translated/table_filters.js:602
 msgid "Received"
-msgstr ""
+msgstr "Doručeno"
 
 #: order/models.py:1423
 msgid "Number of items received"
-msgstr ""
+msgstr "Počet přijatých položek"
 
 #: order/models.py:1431 stock/models.py:938 stock/serializers.py:556
 #: stock/templates/stock/item_base.html:183
 #: templates/js/translated/stock.js:2311
 msgid "Purchase Price"
-msgstr ""
+msgstr "Nákupní cena"
 
 #: order/models.py:1432
 msgid "Unit purchase price"
-msgstr ""
+msgstr "Jednotková nákupní cena"
 
 #: order/models.py:1447
 msgid "Where does the Purchaser want this item to be stored?"
-msgstr ""
+msgstr "Kde si kupující přeje, aby byla tato položka uložena?"
 
 #: order/models.py:1538
 msgid "Virtual part cannot be assigned to a sales order"
-msgstr ""
+msgstr "Virtuální díl nelze přiřadit k prodejní objednávce"
 
 #: order/models.py:1543
 msgid "Only salable parts can be assigned to a sales order"
-msgstr ""
+msgstr "K prodejní objednávce lze přiřadit pouze prodejné díly"
 
 #: order/models.py:1569 part/templates/part/part_pricing.html:107
 #: part/templates/part/prices.html:139 templates/js/translated/pricing.js:957
 msgid "Sale Price"
-msgstr ""
+msgstr "Prodejní cena"
 
 #: order/models.py:1570
 msgid "Unit sale price"
-msgstr ""
+msgstr "Jednotková prodejní cena"
 
 #: order/models.py:1579 order/status_codes.py:43
 #: templates/js/translated/sales_order.js:1559
@@ -5051,109 +5051,109 @@ msgstr "Odesláno"
 
 #: order/models.py:1580
 msgid "Shipped quantity"
-msgstr ""
+msgstr "Odeslané množství"
 
 #: order/models.py:1672
 msgid "Date of shipment"
-msgstr ""
+msgstr "Datum odeslání"
 
 #: order/models.py:1678 templates/js/translated/sales_order.js:1072
 msgid "Delivery Date"
-msgstr ""
+msgstr "Datum doručení"
 
 #: order/models.py:1679
 msgid "Date of delivery of shipment"
-msgstr ""
+msgstr "Datum doručení zásilky"
 
 #: order/models.py:1687
 msgid "Checked By"
-msgstr ""
+msgstr "Kontroloval(a)"
 
 #: order/models.py:1688
 msgid "User who checked this shipment"
-msgstr ""
+msgstr "Uživatel, který zkontroloval tuto zásilku"
 
 #: order/models.py:1695 order/models.py:1908 order/serializers.py:1342
 #: order/serializers.py:1452 templates/js/translated/model_renderers.js:454
 msgid "Shipment"
-msgstr ""
+msgstr "Doprava"
 
 #: order/models.py:1696
 msgid "Shipment number"
-msgstr ""
+msgstr "Číslo zásilky"
 
 #: order/models.py:1704
 msgid "Tracking Number"
-msgstr ""
+msgstr "Sledovací číslo"
 
 #: order/models.py:1705
 msgid "Shipment tracking information"
-msgstr ""
+msgstr "Informace o sledování zásilky"
 
 #: order/models.py:1712
 msgid "Invoice Number"
-msgstr ""
+msgstr "Číslo faktury"
 
 #: order/models.py:1713
 msgid "Reference number for associated invoice"
-msgstr ""
+msgstr "Referenční číslo přiřazené faktury"
 
 #: order/models.py:1733
 msgid "Shipment has already been sent"
-msgstr ""
+msgstr "Zásilka již byla odeslána"
 
 #: order/models.py:1736
 msgid "Shipment has no allocated stock items"
-msgstr ""
+msgstr "Zásilka nemá žádné přidělené skladové položky"
 
 #: order/models.py:1854 order/models.py:1856
 msgid "Stock item has not been assigned"
-msgstr ""
+msgstr "Zásobní položka nebyla přiřazena"
 
 #: order/models.py:1863
 msgid "Cannot allocate stock item to a line with a different part"
-msgstr ""
+msgstr "Nelze přidělit skladovou položku na řádek s jiným dílem"
 
 #: order/models.py:1866
 msgid "Cannot allocate stock to a line without a part"
-msgstr ""
+msgstr "Nelze přidělit skladovou položku na řádek bez dílu"
 
 #: order/models.py:1869
 msgid "Allocation quantity cannot exceed stock quantity"
-msgstr ""
+msgstr "Přidělené množství nesmí překročit množství zásob"
 
 #: order/models.py:1888 order/serializers.py:1219
 msgid "Quantity must be 1 for serialized stock item"
-msgstr ""
+msgstr "Množství musí být 1 pro serializovanou skladovou položku"
 
 #: order/models.py:1891
 msgid "Sales order does not match shipment"
-msgstr ""
+msgstr "Prodejní objednávka neodpovídá zásilce"
 
 #: order/models.py:1892 plugin/base/barcodes/api.py:481
 msgid "Shipment does not match sales order"
-msgstr ""
+msgstr "Zásilka neodpovídá prodejní objednávce"
 
 #: order/models.py:1900
 msgid "Line"
-msgstr ""
+msgstr "Řádek"
 
 #: order/models.py:1909
 msgid "Sales order shipment reference"
-msgstr ""
+msgstr "Odkaz na zásilku z prodejní objednávky"
 
 #: order/models.py:1922 order/models.py:2239
 #: templates/js/translated/return_order.js:721
 msgid "Item"
-msgstr ""
+msgstr "Položka"
 
 #: order/models.py:1923
 msgid "Select stock item to allocate"
-msgstr ""
+msgstr "Vyberte skladovou položku pro přidělení"
 
 #: order/models.py:1932
 msgid "Enter stock allocation quantity"
-msgstr ""
+msgstr "Zadejte množství pro přidělení zásob"
 
 #: order/models.py:2021
 msgid "Return Order reference"

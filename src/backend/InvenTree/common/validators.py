@@ -29,11 +29,14 @@ def attachment_model_options():
 
 def attachment_model_class_from_label(label: str):
     """Return the model class for the given label."""
+    if not label:
+        raise ValidationError(_('No attachment model type provided'))
+
     for model in attachment_model_types():
         if model.__name__.lower() == label.lower():
             return model
 
-    raise ValueError(f'Invalid attachment model label: {label}')
+    raise ValidationError(_('Invalid attachment model type') + f": '{label}'")
 
 
 def validate_attachment_model_type(value):
