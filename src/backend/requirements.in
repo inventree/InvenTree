@@ -2,7 +2,7 @@
 Django<5.0                              # Django package
 coreapi                                 # API documentation for djangorestframework
 cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
-django-allauth[mfa,socialaccount]       # SSO for external providers via OpenID
+django-allauth[mfa,socialaccount,saml,openid]       # SSO for external providers via OpenID
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
 django-crispy-forms<2.0                 # Form helpers # FIXED 2023-02-18 due to required updates in the new version
