@@ -313,9 +313,7 @@ cssselect2==0.7.0 \
 defusedxml==0.7.1 \
     --hash=sha256:1bb3032db185915b62d7c6209c5a8792be6a32ab2fedacc84e01b52c51aa3e69 \
     --hash=sha256:a352e7e428770286cc899e2542b6cdaedb2b4953ff269a210103ec58f6198a61
-    # via
-    #   odfpy
-    #   python3-openid
+    # via odfpy
 deprecated==1.2.14 \
     --hash=sha256:6fac8b097794a90302bdbb17b9b815e732d3c4720583ff1b198499d78470466c \
     --hash=sha256:e5323eb936458dccc2582dc6f9c322c852a775a27065ff2b0c4970b9d53d01b3
@@ -359,8 +357,8 @@ django==4.2.12 \
     #   djangorestframework
     #   djangorestframework-simplejwt
     #   drf-spectacular
-django-allauth[mfa]==0.61.1 \
-    --hash=sha256:5b4ae515ea74f54f0041210692eee10c309ad15ddbbd03d3620693c75e3f7945
+django-allauth[mfa, socialaccount]==0.63.3 \
+    --hash=sha256:2374164c468a309e6badf70bc3405136df6036f24a20a13387f2a063066bdaa9
 django-cleanup==8.1.0 \
     --hash=sha256:70df905076a44e7a111b31198199af633dee08876e199e6dce36ca8dd6b8b10f \
     --hash=sha256:7903873ea73b3f7e61e055340d27dba49b70634f60c87a573ad748e172836458
@@ -964,10 +962,6 @@ python-fsutil==0.14.1 \
     --hash=sha256:0d45e623f0f4403f674bdd8ae7aa7d24a4b3132ea45c65416bd2865e6b20b035 \
     --hash=sha256:8fb204fa8059f37bdeee8a1dc0fff010170202ea47c4225ee71bb3c26f3997be
     # via django-maintenance-mode
-python3-openid==3.2.0 \
-    --hash=sha256:33fbf6928f401e0b790151ed2b5290b02545e8775f982485205a066f874aaeaf \
-    --hash=sha256:6626f771e0417486701e0b4daff762e7212e820ca5b29fcc0d05f6f8736dfa6b
-    # via django-allauth
 pytz==2024.1 \
     --hash=sha256:2a29735ea9c18baf14b448846bde5a48030ed267578472d8955cd0e7443a9812 \
     --hash=sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319

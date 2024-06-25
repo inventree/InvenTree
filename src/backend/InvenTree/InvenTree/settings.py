@@ -204,7 +204,7 @@ INSTALLED_APPS = [
     # Core django modules
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'user_sessions',  # db user sessions
+    'django.contrib.humanize',
     'whitenoise.runserver_nostatic',
     'django.contrib.messages',
     'django.contrib.staticfiles',
@@ -232,6 +232,7 @@ INSTALLED_APPS = [
     'allauth.account',  # Extend user with accounts
     'allauth.socialaccount',  # Use 'social' providers
     'allauth.mfa',  # MFA for for allauth
+    'allauth.usersessions',  # DB sessions
     'django_otp',  # OTP is needed for MFA - base package
     'django_otp.plugins.otp_totp',  # Time based OTP
     'django_otp.plugins.otp_static',  # Backup codes
@@ -244,7 +245,7 @@ MIDDLEWARE = CONFIG.get(
     [
         'django.middleware.security.SecurityMiddleware',
         'x_forwarded_for.middleware.XForwardedForMiddleware',
-        'user_sessions.middleware.SessionMiddleware',  # db user sessions
+        'allauth.usersessions.middleware.UserSessionsMiddleware',  # DB user sessions
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
         'corsheaders.middleware.CorsMiddleware',
