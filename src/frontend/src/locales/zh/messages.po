@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-24 05:58\n"
+"PO-Revision-Date: 2024-06-25 06:02\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -5164,41 +5164,41 @@ msgstr "显示逾期状态"
 #: src/tables/sales/ReturnOrderTable.tsx:56
 #: src/tables/sales/SalesOrderTable.tsx:62
 msgid "Filter by project code"
-msgstr ""
+msgstr "按项目编码筛选"
 
 #: src/tables/build/BuildOrderTable.tsx:137
 #: src/tables/purchasing/PurchaseOrderTable.tsx:70
 #: src/tables/sales/ReturnOrderTable.tsx:61
 #: src/tables/sales/SalesOrderTable.tsx:67
 msgid "Has Project Code"
-msgstr ""
+msgstr "有项目编码"
 
 #: src/tables/build/BuildOrderTable.tsx:138
 #: src/tables/purchasing/PurchaseOrderTable.tsx:71
 #: src/tables/sales/ReturnOrderTable.tsx:62
 #: src/tables/sales/SalesOrderTable.tsx:68
 msgid "Filter by whether the purchase order has a project code"
-msgstr ""
+msgstr "根据采购订单是否有项目编码进行筛选"
 
 #: src/tables/build/BuildOrderTable.tsx:143
 msgid "Filter by user who issued this order"
-msgstr ""
+msgstr "按发布此订单的用户筛选"
 
 #: src/tables/build/BuildOrderTable.tsx:149
 #: src/tables/purchasing/PurchaseOrderTable.tsx:76
 #: src/tables/sales/ReturnOrderTable.tsx:67
 #: src/tables/sales/SalesOrderTable.tsx:73
 msgid "Filter by responsible owner"
-msgstr ""
+msgstr "根据负责人进行筛选"
 
 #: src/tables/build/BuildOutputTable.tsx:114
 #: src/tables/build/BuildOutputTable.tsx:152
 msgid "Add Build Output"
-msgstr ""
+msgstr "添加生成输出"
 
 #: src/tables/build/BuildOutputTable.tsx:157
 msgid "Complete selected outputs"
-msgstr ""
+msgstr "完成选定的输出"
 
 #: src/tables/build/BuildOutputTable.tsx:161
 #~ msgid "Delete build output"
@@ -5206,55 +5206,55 @@ msgstr ""
 
 #: src/tables/build/BuildOutputTable.tsx:167
 msgid "Scrap selected outputs"
-msgstr ""
+msgstr "报废选定的输出"
 
 #: src/tables/build/BuildOutputTable.tsx:177
 msgid "Cancel selected outputs"
-msgstr ""
+msgstr "取消选定的输出"
 
 #: src/tables/build/BuildOutputTable.tsx:193
 msgid "Allocate"
-msgstr ""
+msgstr "分配"
 
 #: src/tables/build/BuildOutputTable.tsx:194
 msgid "Allocate stock to build output"
-msgstr ""
+msgstr "为生产产出分配库存"
 
 #: src/tables/build/BuildOutputTable.tsx:199
 msgid "Deallocate"
-msgstr ""
+msgstr "取消分配"
 
 #: src/tables/build/BuildOutputTable.tsx:200
 msgid "Deallocate stock from build output"
-msgstr ""
+msgstr "从生产输出中取消分配库存"
 
 #: src/tables/build/BuildOutputTable.tsx:205
 msgid "Complete"
-msgstr ""
+msgstr "完成"
 
 #: src/tables/build/BuildOutputTable.tsx:206
 msgid "Complete build output"
-msgstr ""
+msgstr "完成生产输出"
 
 #: src/tables/build/BuildOutputTable.tsx:215
 msgid "Scrap"
-msgstr ""
+msgstr "报废件"
 
 #: src/tables/build/BuildOutputTable.tsx:216
 msgid "Scrap build output"
-msgstr ""
+msgstr "报废生产输出"
 
 #: src/tables/build/BuildOutputTable.tsx:226
 msgid "Cancel build output"
-msgstr ""
+msgstr "取消生产输出"
 
 #: src/tables/build/BuildOutputTable.tsx:253
 msgid "Build Output"
-msgstr ""
+msgstr "生产产出"
 
 #: src/tables/build/BuildOutputTable.tsx:266
 msgid "Batch"
-msgstr ""
+msgstr "批次"
 
 #: src/tables/build/BuildOutputTable.tsx:280
 msgid "Allocated Items"
