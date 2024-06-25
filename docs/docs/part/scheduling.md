@@ -5,7 +5,7 @@ title: Part Scheduling
 ## Part Scheduling
 
 
-The *Scheduling* tab provides an overview of the *predicted* future availabile quantity of a particular part.
+The *Scheduling* tab provides an overview of the *predicted* future available quantity of a particular part.
 
 The *Scheduling* tab displays a chart of estimated future part stock levels. It begins at the current date, with the current stock level. It then projects into the "future", taking information from:
 
