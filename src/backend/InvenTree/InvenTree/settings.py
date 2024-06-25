@@ -1179,6 +1179,7 @@ ACCOUNT_FORMS = {
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
+ACCOUNT_LOGOUT_ON_PASSWORD_CHANGE = True
 
 HEADLESS_FRONTEND_URLS = {
     'account_confirm_email': 'https://app.project.org/account/verify-email/{key}',
