@@ -1184,6 +1184,7 @@ HEADLESS_FRONTEND_URLS = {
     'account_reset_password_from_key': 'https://app.org/account/password/reset/key/{key}',
     'account_signup': 'https://app.org/account/signup',
 }
+HEADLESS_ONLY = not ENABLE_CLASSIC_FRONTEND
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html

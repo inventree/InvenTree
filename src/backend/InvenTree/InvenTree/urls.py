@@ -370,7 +370,6 @@ classic_frontendpatterns = [
     ),
     # Override login page
     path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
-    path('accounts/', include('allauth.urls')),  # included urlpatterns
 ]
 
 urlpatterns = []
@@ -392,6 +391,12 @@ frontendpatterns = []
 
 if settings.ENABLE_CLASSIC_FRONTEND:
     frontendpatterns += classic_frontendpatterns
+
+# Add auth
+frontendpatterns += [
+    path('accounts/', include('allauth.urls'))  # Always needed as we need providers
+]
+
 if settings.ENABLE_PLATFORM_FRONTEND:
     frontendpatterns += platform_urls
     if not settings.ENABLE_CLASSIC_FRONTEND:
