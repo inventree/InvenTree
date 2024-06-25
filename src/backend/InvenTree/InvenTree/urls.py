@@ -57,7 +57,6 @@ from .views import (
     IndexView,
     NotificationsView,
     SearchView,
-    SetPasswordView,
     SettingsView,
     auth_request,
 )
