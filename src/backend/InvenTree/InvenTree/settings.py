@@ -230,6 +230,7 @@ INSTALLED_APPS = [
     'flags',  # Flagging - django-flags
     'allauth',  # Base app for SSO
     'allauth.account',  # Extend user with accounts
+    'allauth.headless',  # APIs for auth
     'allauth.socialaccount',  # Use 'social' providers
     'allauth.mfa',  # MFA for for allauth
     'allauth.usersessions',  # DB sessions
@@ -1181,6 +1182,12 @@ ACCOUNT_FORMS = {
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
+
+HEADLESS_FRONTEND_URLS = {
+    'account_confirm_email': 'https://app.project.org/account/verify-email/{key}',
+    'account_reset_password_from_key': 'https://app.org/account/password/reset/key/{key}',
+    'account_signup': 'https://app.org/account/signup',
+}
 
 # Markdownify configuration
 # Ref: https://django-markdownify.readthedocs.io/en/latest/settings.html

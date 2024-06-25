@@ -124,6 +124,7 @@ apipatterns = [
             ),
         ]),
     ),
+    path('_allauth/', include('allauth.headless.urls')),
     # Magic login URLs
     path(
         'email/generate/',
