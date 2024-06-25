@@ -405,58 +405,6 @@ class EditUserView(AjaxUpdateView):
         return self.request.user
 
 
-class SetPasswordView(AjaxUpdateView):
-    """View for setting user password."""
-
-    ajax_template_name = 'InvenTree/password.html'
-    ajax_form_title = _('Set Password')
-    form_class = SetPasswordForm
-
-    def get_object(self):
-        """Set form to edit current user."""
-        return self.request.user
-
-    def post(self, request, *args, **kwargs):
-        """Validate inputs and change password."""
-        form = self.get_form()
-
-        valid = form.is_valid()
-
-        p1 = request.POST.get('enter_password', '')
-        p2 = request.POST.get('confirm_password', '')
-        old_password = request.POST.get('old_password', '')
-        user = self.request.user
-
-        if valid:
-            # Passwords must match
-
-            if p1 != p2:
-                error = _('Password fields must match')
-                form.add_error('enter_password', error)
-                form.add_error('confirm_password', error)
-                valid = False
-
-        if valid:
-            # Old password must be correct
-            if user.has_usable_password() and not user.check_password(old_password):
-                form.add_error('old_password', _('Wrong password provided'))
-                valid = False
-
-        if valid:
-            try:
-                # Validate password
-                password_validation.validate_password(p1, user)
-
-                # Update the user
-                user.set_password(p1)
-                user.save()
-            except ValidationError as error:
-                form.add_error('confirm_password', str(error))
-                valid = False
-
-        return self.renderJsonResponse(request, form, data={'form_valid': valid})
-
-
 class IndexView(TemplateView):
     """View for InvenTree index page."""
 

@@ -15,8 +15,6 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from crispy_forms.bootstrap import AppendedText, PrependedAppendedText, PrependedText
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Field, Layout
-from dj_rest_auth.registration.serializers import RegisterSerializer
-from rest_framework import serializers
 
 import InvenTree.helpers_model
 import InvenTree.sso
@@ -341,21 +339,3 @@ class CustomSocialAccountAdapter(
         # Log the error to the database
         log_error(path, error_name=error, error_data=exception)
         logger.error("SSO error for provider '%s' - check admin error log", provider_id)
-
-
-# override dj-rest-auth
-class CustomRegisterSerializer(RegisterSerializer):
-    """Override of serializer to use dynamic settings."""
-
-    email = serializers.EmailField()
-
-    def __init__(self, instance=None, data=..., **kwargs):
-        """Check settings to influence which fields are needed."""
-        kwargs['email_required'] = get_global_setting('LOGIN_MAIL_REQUIRED')
-        super().__init__(instance, data, **kwargs)
-
-    def save(self, request):
-        """Override to check if registration is open."""
-        if registration_enabled():
-            return super().save(request)
-        raise forms.ValidationError(_('Registration is disabled.'))

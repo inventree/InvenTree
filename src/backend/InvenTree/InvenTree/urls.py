@@ -10,11 +10,6 @@ from django.urls import include, path, re_path
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic.base import RedirectView
 
-from dj_rest_auth.registration.views import (
-    ConfirmEmailView,
-    SocialAccountDisconnectView,
-    SocialAccountListView,
-)
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
 from sesame.views import LoginView
 
@@ -47,14 +42,6 @@ from .api import (
     VersionView,
 )
 from .magic_login import GetSimpleLoginView
-from .social_auth_urls import (
-    EmailListView,
-    EmailPrimaryView,
-    EmailRemoveView,
-    EmailVerifyView,
-    SocialProviderListView,
-    social_auth_urlpatterns,
-)
 from .views import (
     AboutView,
     AppearanceSelectView,
@@ -130,58 +117,12 @@ apipatterns = [
     path(
         'auth/',
         include([
-            re_path(
-                r'^registration/account-confirm-email/(?P<key>[-:\w]+)/$',
-                ConfirmEmailView.as_view(),
-                name='account_confirm_email',
-            ),
-            path('registration/', include('dj_rest_auth.registration.urls')),
-            path(
-                'providers/', SocialProviderListView.as_view(), name='social_providers'
-            ),
-            path(
-                'emails/',
-                include([
-                    path(
-                        '<int:pk>/',
-                        include([
-                            path(
-                                'primary/',
-                                EmailPrimaryView.as_view(),
-                                name='email-primary',
-                            ),
-                            path(
-                                'verify/',
-                                EmailVerifyView.as_view(),
-                                name='email-verify',
-                            ),
-                            path(
-                                'remove/',
-                                EmailRemoveView().as_view(),
-                                name='email-remove',
-                            ),
-                        ]),
-                    ),
-                    path('', EmailListView.as_view(), name='email-list'),
-                ]),
-            ),
-            path('social/', include(social_auth_urlpatterns)),
-            path(
-                'social/', SocialAccountListView.as_view(), name='social_account_list'
-            ),
-            path(
-                'social/<int:pk>/disconnect/',
-                SocialAccountDisconnectView.as_view(),
-                name='social_account_disconnect',
-            ),
-            path('login/', users.api.Login.as_view(), name='api-login'),
             path('logout/', users.api.Logout.as_view(), name='api-logout'),
             path(
                 'login-redirect/',
                 users.api.LoginRedirect.as_view(),
                 name='api-login-redirect',
             ),
-            path('', include('dj_rest_auth.urls')),
         ]),
     ),
     # Magic login URLs
@@ -410,7 +351,6 @@ classic_frontendpatterns = [
     path('stock/', include(stock_urls)),
     path('supplier-part/', include(supplier_part_urls)),
     path('edit-user/', EditUserView.as_view(), name='edit-user'),
-    path('set-password/', SetPasswordView.as_view(), name='set-password'),
     path('index/', IndexView.as_view(), name='index'),
     path('notifications/', include(notifications_urls)),
     path('search/', SearchView.as_view(), name='search'),

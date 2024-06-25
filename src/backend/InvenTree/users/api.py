@@ -3,26 +3,17 @@
 import datetime
 import logging
 
-from django.contrib.auth import authenticate, get_user, login, logout
+from django.contrib.auth import get_user, login
 from django.contrib.auth.models import Group, User
-from django.http.response import HttpResponse
-from django.shortcuts import redirect
-from django.urls import include, path, re_path, reverse
+from django.urls import include, path, re_path
 from django.views.generic.base import RedirectView
 
-from allauth.account import app_settings
-from allauth.account.adapter import get_adapter
-from allauth_2fa.utils import user_has_valid_totp_device
-from dj_rest_auth.views import LoginView, LogoutView
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
-from rest_framework.authentication import BasicAuthentication
-from rest_framework.decorators import authentication_classes
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 import InvenTree.helpers
-from common.models import InvenTreeSetting
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     ListAPI,
@@ -184,67 +175,12 @@ class GroupList(ListCreateAPI):
     ordering_fields = ['name']
 
 
-@authentication_classes([BasicAuthentication])
-@extend_schema_view(
-    post=extend_schema(
-        responses={200: OpenApiResponse(description='User successfully logged in')}
-    )
-)
-class Login(LoginView):
-    """API view for logging in via API."""
-
-    def post(self, request, *args, **kwargs):
-        """API view for logging in via API."""
-        _data = request.data.copy()
-        _data.update(request.POST.copy())
-
-        if not _data.get('mfa', None):
-            return super().post(request, *args, **kwargs)
-
-        # Check if login credentials valid
-        user = authenticate(
-            request, username=_data.get('username'), password=_data.get('password')
-        )
-        if user is None:
-            return HttpResponse(status=401)
-
-            # Check if user has mfa set up
-        if not user_has_valid_totp_device(user):
-            return super().post(request, *args, **kwargs)
-
-            # Stage login and redirect to 2fa
-        request.session['allauth_2fa_user_id'] = str(user.id)
-        request.session['allauth_2fa_login'] = {
-            'email_verification': app_settings.EMAIL_VERIFICATION,
-            'signal_kwargs': None,
-            'signup': False,
-            'email': None,
-            'redirect_url': reverse('platform'),
-        }
-        return redirect(reverse('two-factor-authenticate'))
-
-    def process_login(self):
-        """Process the login request, ensure that MFA is enforced if required."""
-        # Normal login process
-        ret = super().process_login()
-        user = self.request.user
-        adapter = get_adapter(self.request)
-
-        # User requires 2FA or MFA is enforced globally - no logins via API
-        if adapter.has_2fa_enabled(user) or InvenTreeSetting.get_setting(
-            'LOGIN_ENFORCE_MFA'
-        ):
-            logout(self.request)
-            raise exceptions.PermissionDenied('MFA required for this user')
-        return ret
-
-
 @extend_schema_view(
     post=extend_schema(
         responses={200: OpenApiResponse(description='User successfully logged out')}
     )
 )
-class Logout(LogoutView):
+class Logout(APIView):
     """API view for logging out via API."""
 
     serializer_class = None

@@ -53,15 +53,6 @@ def check_provider(provider):
     return True
 
 
-def provider_display_name(provider):
-    """Return the 'display name' for the given provider."""
-    if app := get_provider_app(provider):
-        return app.name
-
-    # Fallback value if app not found
-    return provider.name
-
-
 def login_enabled() -> bool:
     """Return True if SSO login is enabled."""
     return str2bool(get_global_setting('LOGIN_ENABLE_SSO'))

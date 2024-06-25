@@ -235,8 +235,6 @@ INSTALLED_APPS = [
     'django_otp',  # OTP is needed for MFA - base package
     'django_otp.plugins.otp_totp',  # Time based OTP
     'django_otp.plugins.otp_static',  # Backup codes
-    'dj_rest_auth',  # Authentication APIs - dj-rest-auth
-    'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
 ]
@@ -483,33 +481,6 @@ if DEBUG:
     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'].append(
         'rest_framework.renderers.BrowsableAPIRenderer'
     )
-
-# JWT switch
-USE_JWT = get_boolean_setting('INVENTREE_USE_JWT', 'use_jwt', False)
-REST_USE_JWT = USE_JWT
-
-# dj-rest-auth
-REST_AUTH = {
-    'SESSION_LOGIN': True,
-    'TOKEN_MODEL': 'users.models.ApiToken',
-    'TOKEN_CREATOR': 'users.models.default_create_token',
-    'USE_JWT': USE_JWT,
-}
-
-OLD_PASSWORD_FIELD_ENABLED = True
-REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'InvenTree.forms.CustomRegisterSerializer'
-}
-
-# JWT settings - rest_framework_simplejwt
-if USE_JWT:
-    JWT_AUTH_COOKIE = 'inventree-auth'
-    JWT_AUTH_REFRESH_COOKIE = 'inventree-token'
-    REST_FRAMEWORK['DEFAULT_AUTHENTICATION_CLASSES'].append(
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication'
-    )
-    INSTALLED_APPS.append('rest_framework_simplejwt')
-
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
