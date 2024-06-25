@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-24 00:32+0000\n"
-"PO-Revision-Date: 2024-06-20 04:52\n"
+"POT-Creation-Date: 2024-06-25 02:45+0000\n"
+"PO-Revision-Date: 2024-06-25 06:02\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -711,7 +711,7 @@ msgstr "Disponível"
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:972 templates/js/translated/stock.js:2892
 msgid "Build Order"
-msgstr "Ondem de Produção"
+msgstr "Ordem de Produção"
 
 #: build/models.py:86 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -2538,7 +2538,7 @@ msgstr "Excluir Estoque Esgotado"
 
 #: common/models.py:1697
 msgid "Determines default behavior when a stock item is depleted"
-msgstr ""
+msgstr "Determina o comportamento padrão quando um item de estoque é esgotado"
 
 #: common/models.py:1703
 msgid "Batch Code Template"
@@ -2606,19 +2606,19 @@ msgstr "Exibir itens de estoque instalados nas tabelas de estoque"
 
 #: common/models.py:1754
 msgid "Check BOM when installing items"
-msgstr ""
+msgstr "Verificar BOM ao instalar itens"
 
 #: common/models.py:1756
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr ""
+msgstr "Itens de estoque instalados devem existir na BOM para a peça parente"
 
 #: common/models.py:1762
 msgid "Allow Out of Stock Transfer"
-msgstr ""
+msgstr "Permitir Transferência Fora do Estoque"
 
 #: common/models.py:1764
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
-msgstr ""
+msgstr "Permitir que os itens que não estão em estoque sejam transferidos entre locais de estoque"
 
 #: common/models.py:1770
 msgid "Build Order Reference Pattern"
@@ -2631,20 +2631,20 @@ msgstr "Modelo necessário para gerar campo de referência do Pedido de Produç�
 #: common/models.py:1778 common/models.py:1806 common/models.py:1828
 #: common/models.py:1864
 msgid "Require Responsible Owner"
-msgstr ""
+msgstr "Requer Proprietário Responsável"
 
 #: common/models.py:1779 common/models.py:1807 common/models.py:1829
 #: common/models.py:1865
 msgid "A responsible owner must be assigned to each order"
-msgstr ""
+msgstr "Um proprietário responsável deve ser atribuído a cada ordem"
 
 #: common/models.py:1784
 msgid "Block Until Tests Pass"
-msgstr ""
+msgstr "Bloquear até os Testes serem Aprovados"
 
 #: common/models.py:1786
 msgid "Prevent build outputs from being completed until all required tests pass"
-msgstr ""
+msgstr "Impedir que as saídas da produção sejam concluídas até que todos os testes sejam aprovados"
 
 #: common/models.py:1792
 msgid "Enable Return Orders"
@@ -3722,19 +3722,27 @@ msgstr ""
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr ""
 
-#: common/validators.py:77
+#: common/validators.py:33
+msgid "No attachment model type provided"
+msgstr ""
+
+#: common/validators.py:39
+msgid "Invalid attachment model type"
+msgstr ""
+
+#: common/validators.py:80
 msgid "Minimum places cannot be greater than maximum places"
 msgstr ""
 
-#: common/validators.py:89
+#: common/validators.py:92
 msgid "Maximum places cannot be less than minimum places"
 msgstr ""
 
-#: common/validators.py:100
+#: common/validators.py:103
 msgid "An empty domain is not allowed."
 msgstr "Um domínio vazio não é permitido."
 
-#: common/validators.py:102
+#: common/validators.py:105
 #, python-brace-format
 msgid "Invalid domain name: {domain}"
 msgstr "Nome de domínio inválido: {domain}"
@@ -8231,17 +8239,17 @@ msgstr "Método"
 msgid "No author found"
 msgstr "Nenhum autor encontrado"
 
-#: plugin/registry.py:598
+#: plugin/registry.py:534
 #, python-brace-format
 msgid "Plugin '{p}' is not compatible with the current InvenTree version {v}"
 msgstr "A extensão '{p}' não é compatível com a versão atual do InvenTree {v}"
 
-#: plugin/registry.py:601
+#: plugin/registry.py:537
 #, python-brace-format
 msgid "Plugin requires at least version {v}"
 msgstr "Extensão requer pelo menos a versão {v}"
 
-#: plugin/registry.py:603
+#: plugin/registry.py:539
 #, python-brace-format
 msgid "Plugin requires at most version {v}"
 msgstr "Extensão requer no máximo a versão {v}"
@@ -14398,3 +14406,4 @@ msgstr "Permissões para editar itens"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Permissão para excluir itens"
+
