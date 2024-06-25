@@ -220,8 +220,16 @@ class PluginsRegistry:
         """
         logger.info('Loading plugins')
 
-        self._init_plugins()
-        self._activate_plugins(full_reload=full_reload)
+        try:
+            self._init_plugins()
+            self._activate_plugins(full_reload=full_reload)
+        except (OperationalError, ProgrammingError, IntegrityError):
+            # Exception if the database has not been migrated yet, or is not ready
+            pass
+        except IntegrationPluginError:
+            # Plugin specific error has already been handled
+            pass
+
         # ensure plugins_loaded is True
         self.plugins_loaded = True
 
