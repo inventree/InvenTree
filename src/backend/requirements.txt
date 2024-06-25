@@ -353,7 +353,6 @@ django==4.2.12 \
     #   django-sslserver
     #   django-stdimage
     #   django-taggit
-    #   django-user-sessions
     #   django-weasyprint
     #   django-xforwardedfor-middleware
     #   djangorestframework
@@ -440,9 +439,6 @@ django-stdimage==6.0.2 \
 django-taggit==5.0.1 \
     --hash=sha256:a0ca8a28b03c4b26c2630fd762cb76ec39b5e41abf727a7b66f897a625c5e647 \
     --hash=sha256:edcd7db1e0f35c304e082a2f631ddac2e16ef5296029524eb792af7430cab4cc
-django-user-sessions==2.0.0 \
-    --hash=sha256:0965554279f556b47062965609fa08b3ae45bbc581001dbe84b2ea599cc67748 \
-    --hash=sha256:41b8b1ebeb4736065efbc96437c9cfbf491c39e10fd547a76b98f2312e11fa3e
 django-weasyprint==2.3.0 \
     --hash=sha256:2f849e15bfd6c1b2a58512097b9042eddf3533651d37d2e096cd6f7d8be6442b \
     --hash=sha256:807cb3b16332123d97c8bbe2ac9c70286103fe353235351803ffd33b67284735

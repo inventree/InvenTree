@@ -85,7 +85,6 @@ def content_excludes(
         'exchange.exchangebackend',
         'common.notificationentry',
         'common.notificationmessage',
-        'user_sessions.session',
         'report.labeloutput',
         'report.reportoutput',
     ]

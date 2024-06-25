@@ -49,8 +49,6 @@ from .views import (
     CustomEmailView,
     CustomLoginView,
     CustomPasswordResetFromKeyView,
-    CustomSessionDeleteOtherView,
-    CustomSessionDeleteView,
     DatabaseStatsView,
     DynamicJsView,
     EditUserView,
@@ -357,17 +355,6 @@ classic_frontendpatterns = [
     path('settings/', include(settings_urls)),
     path('about/', AboutView.as_view(), name='about'),
     path('stats/', DatabaseStatsView.as_view(), name='stats'),
-    # DB user sessions
-    path(
-        'accounts/sessions/other/delete/',
-        view=CustomSessionDeleteOtherView.as_view(),
-        name='session_delete_other',
-    ),
-    re_path(
-        r'^accounts/sessions/(?P<pk>\w+)/delete/$',
-        view=CustomSessionDeleteView.as_view(),
-        name='session_delete',
-    ),
     # Single Sign On / allauth
     # overrides of urlpatterns
     path('accounts/email/', CustomEmailView.as_view(), name='account_email'),

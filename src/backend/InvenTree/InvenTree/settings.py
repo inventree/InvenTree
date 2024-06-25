@@ -204,6 +204,7 @@ INSTALLED_APPS = [
     # Core django modules
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sessions',
     'django.contrib.humanize',
     'whitenoise.runserver_nostatic',
     'django.contrib.messages',
@@ -246,6 +247,7 @@ MIDDLEWARE = CONFIG.get(
     [
         'django.middleware.security.SecurityMiddleware',
         'x_forwarded_for.middleware.XForwardedForMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
         'allauth.usersessions.middleware.UserSessionsMiddleware',  # DB user sessions
         'django.middleware.locale.LocaleMiddleware',
         'django.middleware.csrf.CsrfViewMiddleware',
@@ -812,13 +814,7 @@ if GLOBAL_CACHE_ENABLED:  # pragma: no cover
     # as well
     Q_CLUSTER['django_redis'] = 'worker'
 
-# database user sessions
-SESSION_ENGINE = 'user_sessions.backends.db'
-LOGOUT_REDIRECT_URL = get_setting(
-    'INVENTREE_LOGOUT_REDIRECT_URL', 'logout_redirect_url', 'index'
-)
-
-SILENCED_SYSTEM_CHECKS = ['admin.E410', 'templates.E003', 'templates.W003']
+SILENCED_SYSTEM_CHECKS = ['templates.E003', 'templates.W003']
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
