@@ -16,6 +16,8 @@ export function ScanButton() {
           innerProps: {}
         })
       }
+      variant="transparent"
+      title={t`Open QR code scanner`}
     >
       <IconQrcode />
     </ActionIcon>

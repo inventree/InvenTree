@@ -36,7 +36,8 @@ export default function Login() {
   const [searchParams] = useSearchParams();
 
   // Data manipulation functions
-  function ChangeHost(newHost: string): void {
+  function ChangeHost(newHost: string | null): void {
+    if (newHost === null) return;
     setHost(hostList[newHost]?.host, newHost);
     setApiDefaults();
     fetchServerApiState();
@@ -81,7 +82,7 @@ export default function Login() {
         ) : (
           <>
             <Paper radius="md" p="xl" withBorder>
-              <Text size="lg" weight={500}>
+              <Text size="lg" fw={500}>
                 {loginMode ? (
                   <Trans>Welcome, log in below</Trans>
                 ) : (

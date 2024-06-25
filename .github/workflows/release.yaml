@@ -5,20 +5,20 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: read
-
 jobs:
   stable:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     env:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout Code
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+        uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Version Check
         run: |
-          pip install --require-hashes -r .github/requirements.txt
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt
           python3 .github/scripts/version_check.py
       - name: Push to Stable Branch
         uses: ad-m/github-push-action@d91a481090679876dfc4178fef17f286781251df # pin@v0.8.0
@@ -30,8 +30,11 @@ jobs:
 
   publish-build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Environment Setup
         uses: ./.github/actions/setup
         with:
@@ -43,7 +46,7 @@ jobs:
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static/web
-          zip -r ../frontend-build.zip *
+          zip -r ../frontend-build.zip * .vite
       - uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,5 +1,5 @@
 import { randomId, useLocalStorage } from '@mantine/hooks';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { TableFilter } from '../tables/Filter';
 
@@ -17,11 +17,15 @@ export type TableState = {
   tableKey: string;
   refreshTable: () => void;
   activeFilters: TableFilter[];
+  isLoading: boolean;
+  setIsLoading: (value: boolean) => void;
   setActiveFilters: (filters: TableFilter[]) => void;
   clearActiveFilters: () => void;
   expandedRecords: any[];
   setExpandedRecords: (records: any[]) => void;
   selectedRecords: any[];
+  selectedIds: number[];
+  hasSelectedRecords: boolean;
   setSelectedRecords: (records: any[]) => void;
   clearSelectedRecords: () => void;
   hiddenColumns: string[];
@@ -74,9 +78,19 @@ export function useTable(tableName: string): TableState {
   // Array of selected records
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
+  // Array of selected primary key values
+  const selectedIds = useMemo(
+    () => selectedRecords.map((r) => r.pk ?? r.id),
+    [selectedRecords]
+  );
+
   const clearSelectedRecords = useCallback(() => {
     setSelectedRecords([]);
   }, []);
+
+  const hasSelectedRecords = useMemo(() => {
+    return selectedRecords.length > 0;
+  }, [selectedRecords]);
 
   // Total record count
   const [recordCount, setRecordCount] = useState<number>(0);
@@ -115,17 +129,23 @@ export function useTable(tableName: string): TableState {
     [records]
   );
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   return {
     tableKey,
     refreshTable,
+    isLoading,
+    setIsLoading,
     activeFilters,
     setActiveFilters,
     clearActiveFilters,
     expandedRecords,
     setExpandedRecords,
     selectedRecords,
+    selectedIds,
     setSelectedRecords,
     clearSelectedRecords,
+    hasSelectedRecords,
     hiddenColumns,
     setHiddenColumns,
     searchTerm,

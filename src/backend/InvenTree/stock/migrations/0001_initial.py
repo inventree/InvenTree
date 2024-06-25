@@ -35,6 +35,9 @@ class Migration(migrations.Migration):
                 ('belongs_to', models.ForeignKey(blank=True, help_text='Is this item installed in another item?', null=True, on_delete=django.db.models.deletion.DO_NOTHING, related_name='owned_parts', to='stock.StockItem')),
                 ('customer', models.ForeignKey(blank=True, help_text='Item assigned to customer?', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='stockitems', to='company.Company')),
             ],
+            options={
+                'verbose_name': 'Stock Item',
+            }
         ),
         migrations.CreateModel(
             name='StockLocation',

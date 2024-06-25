@@ -22,7 +22,7 @@ export default function Logged_In() {
               <Text size="lg">
                 <Trans>Checking if you are already logged in</Trans>
               </Text>
-              <Group position="center">
+              <Group justify="center">
                 <Loader />
               </Group>
             </Stack>

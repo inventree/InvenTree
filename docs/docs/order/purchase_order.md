@@ -22,6 +22,20 @@ Each Purchase Order has a specific status code which indicates the current state
 | In Progress | The purchase order has been issued to the supplier, and is in progress |
 | Complete | The purchase order has been completed, and is now closed |
 | Cancelled | The purchase order was cancelled, and is now closed |
+| Lost | The purchase order was lost, and is now closed |
+| Returned | The purchase order was returned, and is now closed |
+
+**Source Code**
+
+Refer to the source code for the Purchase Order status codes:
+
+::: order.status_codes.PurchaseOrderStatus
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
 
 ### Purchase Order Currency
 

@@ -7,6 +7,7 @@ import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
+import { usePartParameterFields } from '../../forms/PartForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -49,7 +50,11 @@ export function PartParameterTable({ partId }: { partId: any }) {
         render: (record) => {
           let variant = String(partId) != String(record.part);
 
-          return <Text italic={variant}>{record.template_detail?.name}</Text>;
+          return (
+            <Text style={{ fontStyle: variant ? 'italic' : 'inherit' }}>
+              {record.template_detail?.name}
+            </Text>
+          );
         }
       },
       DescriptionColumn({
@@ -93,25 +98,17 @@ export function PartParameterTable({ partId }: { partId: any }) {
     ];
   }, [partId]);
 
-  const partParameterFields: ApiFormFieldSet = useMemo(() => {
-    return {
-      part: {
-        disabled: true
-      },
-      template: {},
-      data: {}
-    };
-  }, []);
+  const partParameterFields: ApiFormFieldSet = usePartParameterFields();
 
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
     title: t`New Part Parameter`,
-    fields: partParameterFields,
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
     focus: 'template',
     initialData: {
       part: partId
     },
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedParameter, setSelectedParameter] = useState<
@@ -122,15 +119,16 @@ export function PartParameterTable({ partId }: { partId: any }) {
     url: ApiEndpoints.part_parameter_list,
     pk: selectedParameter,
     title: t`Edit Part Parameter`,
-    fields: partParameterFields,
-    onFormSuccess: table.refreshTable
+    focus: 'data',
+    fields: useMemo(() => ({ ...partParameterFields }), [partParameterFields]),
+    table: table
   });
 
   const deleteParameter = useDeleteApiFormModal({
     url: ApiEndpoints.part_parameter_list,
     pk: selectedParameter,
     title: t`Delete Part Parameter`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   // Callback for row actions
@@ -167,6 +165,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
+        key="add-parameter"
         hidden={!user.hasAddRole(UserRoles.part)}
         tooltip={t`Add parameter`}
         onClick={() => newParameter.open()}

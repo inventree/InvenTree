@@ -40,11 +40,8 @@ from sql_util.utils import SubquerySum
 
 import part.models
 import stock.models
-from InvenTree.status_codes import (
-    BuildStatusGroups,
-    PurchaseOrderStatusGroups,
-    SalesOrderStatusGroups,
-)
+from build.status_codes import BuildStatusGroups
+from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 
 
 def annotate_in_production_quantity(reference=''):

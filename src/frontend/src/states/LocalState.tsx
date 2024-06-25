@@ -1,8 +1,7 @@
-import { MantineNumberSize } from '@mantine/core';
-import { LoaderType } from '@mantine/styles/lib/theme/types/MantineTheme';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+import { UiSizeType } from '../defaults/formatters';
 import { HostList } from './states';
 
 interface LocalStateProps {
@@ -19,8 +18,9 @@ interface LocalStateProps {
   primaryColor: string;
   whiteColor: string;
   blackColor: string;
-  radius: MantineNumberSize;
-  loader: LoaderType;
+  radius: UiSizeType;
+  loader: string;
+  setLoader: (value: string) => void;
   lastUsedPanels: Record<string, string>;
   setLastUsedPanel: (panelKey: string) => (value: string) => void;
   tableColumnNames: Record<string, Record<string, string>>;
@@ -57,6 +57,9 @@ export const useLocalState = create<LocalStateProps>()(
       blackColor: '#000',
       radius: 'xs',
       loader: 'oval',
+      setLoader(value) {
+        set({ loader: value });
+      },
       // panels
       lastUsedPanels: {},
       setLastUsedPanel: (panelKey) => (value) => {

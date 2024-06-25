@@ -108,5 +108,6 @@ src/backend/InvenTree/web/static
 InvenTree/web/static
 
 # Generated docs files
+docs/schema.yml
 docs/docs/api/*.yml
 docs/docs/api/schema/*.yml

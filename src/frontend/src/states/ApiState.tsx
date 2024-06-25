@@ -26,7 +26,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
             set({ server: response.data });
           })
           .catch(() => {
-            console.error('Error fetching server info');
+            console.error('ERR: Error fetching server info');
           });
 
         // Fetch login/SSO behaviour
@@ -38,7 +38,7 @@ export const useServerApiState = create<ServerApiStateProps>()(
             set({ auth_settings: response.data });
           })
           .catch(() => {
-            console.error('Error fetching SSO information');
+            console.error('ERR: Error fetching SSO information');
           });
       },
       status: undefined

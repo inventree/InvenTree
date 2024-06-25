@@ -9,7 +9,6 @@ export const doLogin = async (page, username?: string, password?: string) => {
   password = password ?? user.password;
 
   await page.goto(logoutUrl);
-  await page.goto(loginUrl);
   await expect(page).toHaveTitle(RegExp('^InvenTree.*$'));
   await page.waitForURL('**/platform/login');
   await page.getByLabel('username').fill(username);
@@ -35,5 +34,7 @@ export const doQuickLogin = async (
   // await page.goto(logoutUrl);
   await page.goto(`${url}/login/?login=${username}&password=${password}`);
   await page.waitForURL('**/platform/home');
-  await page.waitForTimeout(250);
+  await page
+    .getByRole('heading', { name: 'Welcome to your Dashboard,' })
+    .waitFor();
 };

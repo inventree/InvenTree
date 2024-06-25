@@ -2,6 +2,8 @@
 #
 # packager.io postinstall script functions
 #
+Color_Off='\033[0m'
+On_Red='\033[41m'
 
 function detect_docker() {
   if [ -n "$(grep docker </proc/1/cgroup)" ]; then
@@ -42,6 +44,28 @@ function detect_ip() {
   fi
 
   echo "IP address is ${INVENTREE_IP}"
+}
+
+function detect_python() {
+  # Detect if there is already a python version installed in /opt/inventree/env/lib
+  if test -f "${APP_HOME}/env/bin/python"; then
+    echo "# Python environment already present"
+    # Extract earliest python version initialised from /opt/inventree/env/lib
+    SETUP_PYTHON=$(ls -1 ${APP_HOME}/env/bin/python* | sort | head -n 1)
+    echo "# Found earlier used version: ${SETUP_PYTHON}"
+  else
+    echo "# No python environment found - using environment variable: ${SETUP_PYTHON}"
+  fi
+
+  # Ensure python can be executed - abort if not
+  if [ -z "$(which ${SETUP_PYTHON})" ]; then
+    echo "${On_Red}"
+    echo "# Python ${SETUP_PYTHON} not found - aborting!"
+    echo "# Please ensure python can be executed with the command '$SETUP_PYTHON' by the current user '$USER'."
+    echo "# If you are using a different python version, please set the environment variable SETUP_PYTHON to the correct command - eg. 'python3.10'."
+    echo "${Color_Off}"
+    exit 1
+  fi
 }
 
 function get_env() {
@@ -90,7 +114,7 @@ function detect_envs() {
     echo "# Using existing config file: ${INVENTREE_CONFIG_FILE}"
 
     # Install parser
-    pip install jc==1.25.2 -q
+    pip install --require-hashes -r ${APP_HOME}/contrib/dev_reqs/requirements.txt -q
 
     # Load config
     local CONF=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
@@ -163,12 +187,20 @@ function create_initscripts() {
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && ${SETUP_PYTHON} -m venv env"
     sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install invoke wheel"
 
+    # Check INSTALLER_EXTRA exists and load it
+    if test -f "${APP_HOME}/INSTALLER_EXTRA"; then
+      echo "# Loading extra packages from INSTALLER_EXTRA"
+      source ${APP_HOME}/INSTALLER_EXTRA
+    fi
+
     if [ -n "${SETUP_EXTRA_PIP}" ]; then
       echo "# Installing extra pip packages"
       if [ -n "${SETUP_DEBUG}" ]; then
         echo "# Extra pip packages: ${SETUP_EXTRA_PIP}"
       fi
       sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && env/bin/pip install ${SETUP_EXTRA_PIP}"
+      # Write extra packages to INSTALLER_EXTRA
+      echo "SETUP_EXTRA_PIP='${SETUP_EXTRA_PIP}'" >>${APP_HOME}/INSTALLER_EXTRA
     fi
   fi
 
@@ -281,6 +313,20 @@ function set_env() {
 
   # Fixing the permissions
   chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} ${INVENTREE_CONFIG_FILE}
+}
+
+function set_site() {
+  # Ensure IP is known
+  if [ -z "${INVENTREE_IP}" ]; then
+    echo "# No IP address found - skipping"
+    return
+  fi
+
+  # Check if INVENTREE_SITE_URL in inventree config
+  if [ -z "$(inventree config:get INVENTREE_SITE_URL)" ]; then
+    echo "# Setting up InvenTree site URL"
+    inventree config:set INVENTREE_SITE_URL=http://${INVENTREE_IP}
+  fi
 }
 
 function final_message() {

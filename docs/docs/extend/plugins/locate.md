@@ -28,4 +28,16 @@ If a locate plugin is installed and activated, the [InvenTree mobile app](../../
 
 ### Implementation
 
-Refer to the [InvenTree source code](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/plugin/samples/locate/locate_sample.py) for a simple implementation example.
+Refer to the [InvenTree source code]({{ sourcefile("src/backend/InvenTree/plugin/samples/locate/locate_sample.py") }}) for a simple implementation example.
+
+### Sample Plugin
+
+A simple example is provided in the InvenTree code base:
+
+::: plugin.samples.locate.locate_sample.SampleLocatePlugin
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []

@@ -49,9 +49,10 @@ runs:
         shell: bash
         run: |
           python3 -m pip install -U pip
-          pip3 install invoke wheel uv
-      - name: Set the VIRTUAL_ENV variable for uv to work
-        run: echo "VIRTUAL_ENV=${Python_ROOT_DIR}" >> $GITHUB_ENV
+          pip3 install -U invoke wheel
+          pip3 install 'uv<0.3.0'
+      - name: Allow uv to use the system Python by default
+        run: echo "UV_SYSTEM_PYTHON=1" >> $GITHUB_ENV
         shell: bash
       - name: Install Specific Python Dependencies
         if: ${{ inputs.pip-dependency }}
@@ -82,7 +83,7 @@ runs:
 
       # Invoke commands
       - name: Install dev requirements
-        if: ${{ inputs.dev-install == 'true' ||inputs.install == 'true' }}
+        if: ${{ inputs.dev-install == 'true' || inputs.install == 'true' }}
         shell: bash
         run: uv pip install --require-hashes -r src/backend/requirements-dev.txt
       - name: Run invoke install

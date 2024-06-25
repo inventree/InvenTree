@@ -9,7 +9,7 @@ export function PlaceholderPill() {
   return (
     <Tooltip
       multiline
-      width={220}
+      w={220}
       withArrow
       label={t`This feature/button/site is a placeholder for a feature that is not implemented, only partial or intended for testing.`}
     >
@@ -31,7 +31,7 @@ export function PlaceholderPanel() {
         title={t`This panel is a placeholder.`}
         icon={<IconInfoCircle />}
       >
-        <Text color="gray">This panel has not yet been implemented</Text>
+        <Text c="gray">This panel has not yet been implemented</Text>
       </Alert>
     </Stack>
   );

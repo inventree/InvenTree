@@ -47,7 +47,6 @@ def apps():
         'build',
         'common',
         'company',
-        'label',
         'order',
         'part',
         'report',
@@ -87,6 +86,8 @@ def content_excludes(
         'common.notificationentry',
         'common.notificationmessage',
         'user_sessions.session',
+        'report.labeloutput',
+        'report.reportoutput',
     ]
 
     # Optionally exclude user auth data
@@ -226,23 +227,33 @@ def plugins(c, uv=False):
         c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
         c.run(f"uv pip install -r '{plugin_file}'")
 
+    # Collect plugin static files
+    manage(c, 'collectplugins')
+
 
 @task(help={'uv': 'Use UV package manager (experimental)'})
 def install(c, uv=False):
     """Installs required python packages."""
-    print("Installing required python packages from 'src/backend/requirements.txt'")
+    INSTALL_FILE = 'src/backend/requirements.txt'
+
+    print(f"Installing required python packages from '{INSTALL_FILE}'")
+
+    if not Path(INSTALL_FILE).is_file():
+        raise FileNotFoundError(f"Requirements file '{INSTALL_FILE}' not found")
 
     # Install required Python packages with PIP
     if not uv:
-        c.run('pip3 install --upgrade pip')
-        c.run('pip3 install --upgrade setuptools')
         c.run(
-            'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r src/backend/requirements.txt'
+            'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools'
+        )
+        c.run(
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}'
         )
     else:
-        c.run('pip3 install --upgrade uv')
-        c.run('uv pip install --upgrade setuptools')
-        c.run('uv pip install -U --require-hashes  -r src/backend/requirements.txt')
+        c.run(
+            'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools'
+        )
+        c.run(f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
 
     # Run plugins install
     plugins(c, uv=uv)
@@ -309,8 +320,8 @@ def remove_mfa(c, mail=''):
     manage(c, f'remove_mfa {mail}')
 
 
-@task(help={'frontend': 'Build the frontend'})
-def static(c, frontend=False):
+@task(help={'frontend': 'Build the frontend', 'clear': 'Remove existing static files'})
+def static(c, frontend=False, clear=True):
     """Copies required static files to the STATIC_ROOT directory, as per Django requirements."""
     manage(c, 'prerender')
 
@@ -319,7 +330,16 @@ def static(c, frontend=False):
         frontend_build(c)
 
     print('Collecting static files...')
-    manage(c, 'collectstatic --no-input --clear --verbosity 0')
+
+    cmd = 'collectstatic --no-input --verbosity 0'
+
+    if clear:
+        cmd += ' --clear'
+
+    manage(c, cmd)
+
+    # Collect plugin static files
+    manage(c, 'collectplugins')
 
 
 @task
@@ -401,7 +421,7 @@ def restore(
     ignore_database=False,
 ):
     """Restore the database and media files."""
-    base_cmd = '--no-input --uncompress -v 2'
+    base_cmd = '--noinput --uncompress -v 2'
 
     if path:
         base_cmd += f' -I {path}'
@@ -442,9 +462,16 @@ def migrate(c):
     manage(c, 'makemigrations')
     manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
+    manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
 
     print('========================================')
     print('InvenTree database migrations completed!')
+
+
+@task(help={'app': 'Specify an app to show migrations for (leave blank for all apps)'})
+def showmigrations(c, app=''):
+    """Show the migration status of the database."""
+    manage(c, f'showmigrations {app}', pty=True)
 
 
 @task(
@@ -757,18 +784,31 @@ def wait(c):
     return manage(c, 'wait_for_db')
 
 
-@task(pre=[wait], help={'address': 'Server address:port (default=0.0.0.0:8000)'})
-def gunicorn(c, address='0.0.0.0:8000'):
+@task(
+    pre=[wait],
+    help={
+        'address': 'Server address:port (default=0.0.0.0:8000)',
+        'workers': 'Specify number of worker threads (override config file)',
+    },
+)
+def gunicorn(c, address='0.0.0.0:8000', workers=None):
     """Launch a gunicorn webserver.
 
     Note: This server will not auto-reload in response to code changes.
     """
-    c.run(
-        'gunicorn -c ./docker/gunicorn.conf.py InvenTree.wsgi -b {address} --chdir ./InvenTree'.format(
-            address=address
-        ),
-        pty=True,
-    )
+    here = os.path.dirname(os.path.abspath(__file__))
+    config_file = os.path.join(here, 'contrib', 'container', 'gunicorn.conf.py')
+    chdir = os.path.join(here, 'src', 'backend', 'InvenTree')
+
+    cmd = f'gunicorn -c {config_file} InvenTree.wsgi -b {address} --chdir {chdir}'
+
+    if workers:
+        cmd += f' --workers={workers}'
+
+    print('Starting Gunicorn Server:')
+    print(cmd)
+
+    c.run(cmd, pty=True)
 
 
 @task(pre=[wait], help={'address': 'Server address:port (default=127.0.0.1:8000)'})
@@ -1029,8 +1069,8 @@ API         {InvenTreeVersion.inventreeApiVersion()}
 Node        {node if node else 'N/A'}
 Yarn        {yarn if yarn else 'N/A'}
 
-Commit hash:{InvenTreeVersion.inventreeCommitHash()}
-Commit date:{InvenTreeVersion.inventreeCommitDate()}"""
+Commit hash: {InvenTreeVersion.inventreeCommitHash()}
+Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
     )
     if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
         print(
@@ -1271,3 +1311,19 @@ via your signed in browser, or consider using a point release download via invok
     Download: https://github.com/{repo}/suites/{qc_run['check_suite_id']}/artifacts/{frontend_artifact['id']} manually and
     continue by running: invoke frontend-download --file <path-to-downloaded-zip-file>"""
         )
+
+
+@task(
+    help={
+        'address': 'Host and port to run the server on (default: localhost:8080)',
+        'compile_schema': 'Compile the schema documentation first (default: False)',
+    }
+)
+def docs_server(c, address='localhost:8080', compile_schema=False):
+    """Start a local mkdocs server to view the documentation."""
+    if compile_schema:
+        # Build the schema docs first
+        schema(c, ignore_warnings=True, overwrite=True, filename='docs/schema.yml')
+        c.run('python docs/extract_schema.py docs/schema.yml')
+
+    c.run(f'mkdocs serve -a {address} -f docs/mkdocs.yml')

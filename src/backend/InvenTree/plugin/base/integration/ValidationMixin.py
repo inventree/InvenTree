@@ -1,6 +1,7 @@
 """Validation mixin class definition."""
 
 from django.core.exceptions import ValidationError
+from django.db.models import Model
 
 import part.models
 import stock.models
@@ -49,7 +50,24 @@ class ValidationMixin:
         """Raise a ValidationError with the given message."""
         raise ValidationError(message)
 
-    def validate_model_instance(self, instance, deltas=None):
+    def validate_model_deletion(self, instance: Model) -> None:
+        """Run custom validation when a model instance is being deleted.
+
+        This method is called when a model instance is being deleted.
+        It allows the plugin to raise a ValidationError if the instance cannot be deleted.
+
+        Arguments:
+            instance: The model instance to validate
+
+        Returns:
+            None: or True (refer to class docstring)
+
+        Raises:
+            ValidationError: if the instance cannot be deleted
+        """
+        return None
+
+    def validate_model_instance(self, instance: Model, deltas: dict = None) -> None:
         """Run custom validation on a database model instance.
 
         This method is called when a model instance is being validated.
@@ -60,10 +78,10 @@ class ValidationMixin:
             deltas: A dictionary of field names and updated values (if the instance is being updated)
 
         Returns:
-            None or True (refer to class docstring)
+            None: or True (refer to class docstring)
 
         Raises:
-            ValidationError if the instance is invalid
+            ValidationError: if the instance is invalid
         """
         return None
 
@@ -112,8 +130,13 @@ class ValidationMixin:
         """
         return None
 
-    def generate_batch_code(self):
+    def generate_batch_code(self, **kwargs):
         """Generate a new batch code.
+
+        This method is called when a new batch code is required.
+
+        kwargs:
+            Any additional keyword arguments which are passed through to the plugin, based on the context of the caller
 
         Returns:
             A new batch code (string) or None

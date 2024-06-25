@@ -187,6 +187,8 @@ class BomItemTest(TestCase):
         self.assertEqual(bom_item.substitutes.count(), 4)
 
         for sub in subs:
+            sub.active = False
+            sub.save()
             sub.delete()
 
         # The substitution links should have been automatically removed

@@ -115,16 +115,57 @@ class InvenTreeMetadata(SimpleMetadata):
 
         return metadata
 
+    def override_value(self, field_name, field_value, model_value):
+        """Override a value on the serializer with a matching value for the model.
+
+        This is used to override the serializer values with model values,
+        if (and *only* if) the model value should take precedence.
+
+        The values are overridden under the following conditions:
+        - field_value is None
+        - model_value is callable, and field_value is not (this indicates that the model value is translated)
+        - model_value is not a string, and field_value is a string (this indicates that the model value is translated)
+        """
+        if model_value and not field_value:
+            return model_value
+
+        if field_value and not model_value:
+            return field_value
+
+        if callable(model_value) and not callable(field_value):
+            return model_value
+
+        if type(model_value) is not str and type(field_value) is str:
+            return model_value
+
+        return field_value
+
     def get_serializer_info(self, serializer):
         """Override get_serializer_info so that we can add 'default' values to any fields whose Meta.model specifies a default value."""
         self.serializer = serializer
 
         serializer_info = super().get_serializer_info(serializer)
 
+        # Look for any dynamic fields which were not available when the serializer was instantiated
+        if hasattr(serializer, 'Meta'):
+            for field_name in serializer.Meta.fields:
+                if field_name in serializer_info:
+                    # Already know about this one
+                    continue
+
+                if hasattr(serializer, field_name):
+                    field = getattr(serializer, field_name)
+                    serializer_info[field_name] = self.get_field_info(field)
+
         model_class = None
 
         # Attributes to copy extra attributes from the model to the field (if they don't exist)
-        extra_attributes = ['help_text', 'max_length']
+        # Note that the attributes may be named differently on the underlying model!
+        extra_attributes = {
+            'help_text': 'help_text',
+            'max_length': 'max_length',
+            'label': 'verbose_name',
+        }
 
         try:
             model_class = serializer.Meta.model
@@ -155,10 +196,12 @@ class InvenTreeMetadata(SimpleMetadata):
                     elif name in model_default_values:
                         serializer_info[name]['default'] = model_default_values[name]
 
-                    for attr in extra_attributes:
-                        if attr not in serializer_info[name]:
-                            if hasattr(field, attr):
-                                serializer_info[name][attr] = getattr(field, attr)
+                    for field_key, model_key in extra_attributes.items():
+                        field_value = serializer_info[name].get(field_key, None)
+                        model_value = getattr(field, model_key, None)
+
+                        if value := self.override_value(name, field_value, model_value):
+                            serializer_info[name][field_key] = value
 
             # Iterate through relations
             for name, relation in model_fields.relations.items():
@@ -176,13 +219,12 @@ class InvenTreeMetadata(SimpleMetadata):
                     relation.model_field.get_limit_choices_to()
                 )
 
-                for attr in extra_attributes:
-                    if attr not in serializer_info[name] and hasattr(
-                        relation.model_field, attr
-                    ):
-                        serializer_info[name][attr] = getattr(
-                            relation.model_field, attr
-                        )
+                for field_key, model_key in extra_attributes.items():
+                    field_value = serializer_info[name].get(field_key, None)
+                    model_value = getattr(relation.model_field, model_key, None)
+
+                    if value := self.override_value(name, field_value, model_value):
+                        serializer_info[name][field_key] = value
 
                 if name in model_default_values:
                     serializer_info[name]['default'] = model_default_values[name]
@@ -264,7 +306,9 @@ class InvenTreeMetadata(SimpleMetadata):
         # Introspect writable related fields
         if field_info['type'] == 'field' and not field_info['read_only']:
             # If the field is a PrimaryKeyRelatedField, we can extract the model from the queryset
-            if isinstance(field, serializers.PrimaryKeyRelatedField):
+            if isinstance(field, serializers.PrimaryKeyRelatedField) or issubclass(
+                field.__class__, serializers.PrimaryKeyRelatedField
+            ):
                 model = field.queryset.model
             else:
                 logger.debug(
@@ -284,6 +328,9 @@ class InvenTreeMetadata(SimpleMetadata):
                     field_info['api_url'] = '/api/contenttype/'
                 else:
                     field_info['api_url'] = model.get_api_url()
+
+                # Handle custom 'primary key' field
+                field_info['pk_field'] = getattr(field, 'pk_field', 'pk') or 'pk'
 
         # Add more metadata about dependent fields
         if field_info['type'] == 'dependent field':

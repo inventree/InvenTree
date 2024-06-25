@@ -14,7 +14,7 @@ export function TitleWithDoc({
   size,
   text,
   detail
-}: DocTitleProps) {
+}: Readonly<DocTitleProps>) {
   return (
     <Group>
       <Title variant={variant} order={order} size={size}>

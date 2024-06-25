@@ -10,7 +10,7 @@ export const InvenTreeLogoHomeButton = forwardRef<HTMLDivElement>(
     return (
       <div ref={ref} {...props}>
         <NavLink to={'/'}>
-          <ActionIcon size={28}>
+          <ActionIcon size={28} variant="transparent">
             <InvenTreeLogo />
           </ActionIcon>
         </NavLink>

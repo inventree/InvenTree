@@ -30,10 +30,12 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import report.mixins
 import stock.models
 import users.models as UserModels
+from common.currency import currency_code_default
 from common.notifications import InvenTreeNotificationBodies
-from common.settings import currency_code_default
+from common.settings import get_global_setting
 from company.models import Address, Company, Contact, SupplierPart
 from generic.states import StateTransitionMixin
 from InvenTree.exceptions import log_error
@@ -43,8 +45,8 @@ from InvenTree.fields import (
     RoundingDecimalField,
 )
 from InvenTree.helpers import decimal2string, pui_url
-from InvenTree.helpers_model import getSetting, notify_responsible
-from InvenTree.status_codes import (
+from InvenTree.helpers_model import notify_responsible
+from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
@@ -52,11 +54,10 @@ from InvenTree.status_codes import (
     ReturnOrderStatusGroups,
     SalesOrderStatus,
     SalesOrderStatusGroups,
-    StockHistoryCode,
-    StockStatus,
 )
 from part import models as PartModels
 from plugin.events import trigger_event
+from stock.status_codes import StockHistoryCode, StockStatus
 
 logger = logging.getLogger('inventree')
 
@@ -183,8 +184,10 @@ class TotalPriceMixin(models.Model):
 
 class Order(
     StateTransitionMixin,
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
+    report.mixins.InvenTreeReportMixin,
     InvenTree.models.MetadataMixin,
     InvenTree.models.ReferenceIndexingMixin,
     InvenTree.models.InvenTreeModel,
@@ -231,9 +234,7 @@ class Order(
 
         # Check if a responsible owner is required for this order type
         if self.REQUIRE_RESPONSIBLE_SETTING:
-            if common_models.InvenTreeSetting.get_setting(
-                self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False
-            ):
+            if get_global_setting(self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False):
                 if not self.responsible:
                     raise ValidationError({
                         'responsible': _('Responsible user or group must be specified')
@@ -245,6 +246,17 @@ class Order(
                 raise ValidationError({
                     'contact': _('Contact does not match selected company')
                 })
+
+    def report_context(self):
+        """Generate context data for the reporting interface."""
+        return {
+            'description': self.description,
+            'extra_lines': self.extra_lines,
+            'lines': self.lines,
+            'order': self,
+            'reference': self.reference,
+            'title': str(self),
+        }
 
     @classmethod
     def overdue_filter(cls):
@@ -361,6 +373,15 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'PURCHASEORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'PURCHASEORDER_REQUIRE_RESPONSIBLE'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Purchase Order')
+
+    def report_context(self):
+        """Return report context data for this PurchaseOrder."""
+        return {**super().report_context(), 'supplier': self.supplier}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -799,9 +820,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         # Has this order been completed?
         if len(self.pending_line_items()) == 0:
-            if common_models.InvenTreeSetting.get_setting(
-                'PURCHASEORDER_AUTO_COMPLETE', True
-            ):
+            if get_global_setting('PURCHASEORDER_AUTO_COMPLETE', True):
                 self.received_by = user
                 self.complete_order()  # This will save the model
 
@@ -819,6 +838,15 @@ class SalesOrder(TotalPriceMixin, Order):
 
     REFERENCE_PATTERN_SETTING = 'SALESORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'SALESORDER_REQUIRE_RESPONSIBLE'
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order')
+
+    def report_context(self):
+        """Generate report context data for this SalesOrder."""
+        return {**super().report_context(), 'customer': self.customer}
 
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
@@ -993,22 +1021,22 @@ class SalesOrder(TotalPriceMixin, Order):
         Throws a ValidationError if cannot be completed.
         """
         try:
-            # Order without line items cannot be completed
-            if self.lines.count() == 0:
-                raise ValidationError(
-                    _('Order cannot be completed as no parts have been assigned')
-                )
+            if self.status == SalesOrderStatus.COMPLETE.value:
+                raise ValidationError(_('Order is already complete'))
+
+            if self.status == SalesOrderStatus.CANCELLED.value:
+                raise ValidationError(_('Order is already cancelled'))
 
             # Only an open order can be marked as shipped
-            elif not self.is_open:
+            if self.is_open and not self.is_completed:
                 raise ValidationError(_('Only an open order can be marked as complete'))
 
-            elif self.pending_shipment_count > 0:
+            if self.pending_shipment_count > 0:
                 raise ValidationError(
                     _('Order cannot be completed as there are incomplete shipments')
                 )
 
-            elif not allow_incomplete_lines and self.pending_line_count > 0:
+            if not allow_incomplete_lines and self.pending_line_count > 0:
                 raise ValidationError(
                     _('Order cannot be completed as there are incomplete line items')
                 )
@@ -1042,9 +1070,16 @@ class SalesOrder(TotalPriceMixin, Order):
         if not self.can_complete(**kwargs):
             return False
 
-        self.status = SalesOrderStatus.SHIPPED.value
-        self.shipped_by = user
-        self.shipment_date = InvenTree.helpers.current_date()
+        bypass_shipped = InvenTree.helpers.str2bool(
+            get_global_setting('SALESORDER_SHIP_COMPLETE')
+        )
+
+        if bypass_shipped or self.status == SalesOrderStatus.SHIPPED:
+            self.status = SalesOrderStatus.COMPLETE.value
+        else:
+            self.status = SalesOrderStatus.SHIPPED.value
+            self.shipped_by = user
+            self.shipment_date = InvenTree.helpers.current_date()
 
         self.save()
 
@@ -1098,11 +1133,23 @@ class SalesOrder(TotalPriceMixin, Order):
         )
 
     @transaction.atomic
-    def complete_order(self, user, **kwargs):
+    def ship_order(self, user, **kwargs):
         """Attempt to transition to SHIPPED status."""
         return self.handle_transition(
             self.status,
             SalesOrderStatus.SHIPPED.value,
+            self,
+            self._action_complete,
+            user=user,
+            **kwargs,
+        )
+
+    @transaction.atomic
+    def complete_order(self, user, **kwargs):
+        """Attempt to transition to COMPLETED status."""
+        return self.handle_transition(
+            self.status,
+            SalesOrderStatus.COMPLETED.value,
             self,
             self._action_complete,
             user=user,
@@ -1182,46 +1229,12 @@ def after_save_sales_order(sender, instance: SalesOrder, created: bool, **kwargs
     if created:
         # A new SalesOrder has just been created
 
-        if getSetting('SALESORDER_DEFAULT_SHIPMENT'):
+        if get_global_setting('SALESORDER_DEFAULT_SHIPMENT'):
             # Create default shipment
             SalesOrderShipment.objects.create(order=instance, reference='1')
 
         # Notify the responsible users that the sales order has been created
         notify_responsible(instance, sender, exclude=instance.created_by)
-
-
-class PurchaseOrderAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a PurchaseOrder object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the PurchaseOrderAttachment model."""
-        return reverse('api-po-attachment-list')
-
-    def getSubdir(self):
-        """Return the directory path where PurchaseOrderAttachment files are located."""
-        return os.path.join('po_files', str(self.order.id))
-
-    order = models.ForeignKey(
-        PurchaseOrder, on_delete=models.CASCADE, related_name='attachments'
-    )
-
-
-class SalesOrderAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a SalesOrder object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the SalesOrderAttachment class."""
-        return reverse('api-so-attachment-list')
-
-    def getSubdir(self):
-        """Return the directory path where SalesOrderAttachment files are located."""
-        return os.path.join('so_files', str(self.order.id))
-
-    order = models.ForeignKey(
-        SalesOrder, on_delete=models.CASCADE, related_name='attachments'
-    )
 
 
 class OrderLineItem(InvenTree.models.InvenTreeMetadataModel):
@@ -1962,6 +1975,15 @@ class ReturnOrder(TotalPriceMixin, Order):
     REFERENCE_PATTERN_SETTING = 'RETURNORDER_REFERENCE_PATTERN'
     REQUIRE_RESPONSIBLE_SETTING = 'RETURNORDER_REQUIRE_RESPONSIBLE'
 
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Return Order')
+
+    def report_context(self):
+        """Generate report context data for this ReturnOrder."""
+        return {**super().report_context(), 'customer': self.customer}
+
     def get_absolute_url(self):
         """Get the 'web' URL for this order."""
         if settings.ENABLE_CLASSIC_FRONTEND:
@@ -2259,21 +2281,4 @@ class ReturnOrderExtraLine(OrderExtraLine):
         related_name='extra_lines',
         verbose_name=_('Order'),
         help_text=_('Return Order'),
-    )
-
-
-class ReturnOrderAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a ReturnOrder object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the ReturnOrderAttachment class."""
-        return reverse('api-return-order-attachment-list')
-
-    def getSubdir(self):
-        """Return the directory path where ReturnOrderAttachment files are located."""
-        return os.path.join('return_files', str(self.order.id))
-
-    order = models.ForeignKey(
-        ReturnOrder, on_delete=models.CASCADE, related_name='attachments'
     )

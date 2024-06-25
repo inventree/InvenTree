@@ -28,6 +28,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
     return [
       {
         name: 'allocated',
+        label: t`Allocated`,
         description: t`Show allocated lines`
       },
       {
@@ -111,7 +112,10 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
           available > 0 ? (
             available
           ) : (
-            <Text color="red" italic>{t`No stock available`}</Text>
+            <Text
+              c="red"
+              style={{ fontStyle: 'italic' }}
+            >{t`No stock available`}</Text>
           )
         }
         title={t`Available Stock`}
@@ -154,7 +158,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         ordering: 'unit_quantity',
         render: (record: any) => {
           return (
-            <Group position="apart">
+            <Group justify="space-between">
               <Text>{record.bom_item_detail?.quantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>
@@ -168,7 +172,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         sortable: true,
         render: (record: any) => {
           return (
-            <Group position="apart">
+            <Group justify="space-between">
               <Text>{record.quantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>
@@ -188,7 +192,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         switchable: false,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
-            <Text italic>{t`Consumable item`}</Text>
+            <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}

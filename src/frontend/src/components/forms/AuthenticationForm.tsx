@@ -17,9 +17,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { doBasicLogin, doSimpleLogin, isLoggedIn } from '../../functions/auth';
+import { doBasicLogin, doSimpleLogin } from '../../functions/auth';
 import { showLoginNotification } from '../../functions/notifications';
 import { apiUrl, useServerApiState } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { SsoButton } from '../buttons/SSOButton';
 
 export function AuthenticationForm() {
@@ -31,6 +32,7 @@ export function AuthenticationForm() {
   const [auth_settings] = useServerApiState((state) => [state.auth_settings]);
   const navigate = useNavigate();
   const location = useLocation();
+  const { isLoggedIn } = useUserState();
 
   const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false);
 
@@ -98,7 +100,7 @@ export function AuthenticationForm() {
       ) : null}
       <form onSubmit={classicForm.onSubmit(() => {})}>
         {classicLoginMode ? (
-          <Stack spacing={0}>
+          <Stack gap={0}>
             <TextInput
               required
               label={t`Username`}
@@ -112,7 +114,7 @@ export function AuthenticationForm() {
               {...classicForm.getInputProps('password')}
             />
             {auth_settings?.password_forgotten_enabled === true && (
-              <Group position="apart" mt="0">
+              <Group justify="space-between" mt="0">
                 <Anchor
                   component="button"
                   type="button"
@@ -137,7 +139,7 @@ export function AuthenticationForm() {
           </Stack>
         )}
 
-        <Group position="apart" mt="xl">
+        <Group justify="space-between" mt="xl">
           <Anchor
             component="button"
             type="button"
@@ -219,7 +221,7 @@ export function RegistrationForm() {
     <>
       {auth_settings?.registration_enabled && (
         <form onSubmit={registrationForm.onSubmit(() => {})}>
-          <Stack spacing={0}>
+          <Stack gap={0}>
             <TextInput
               required
               label={t`Username`}
@@ -247,7 +249,7 @@ export function RegistrationForm() {
             />
           </Stack>
 
-          <Group position="apart" mt="xl">
+          <Group justify="space-between" mt="xl">
             <Button
               type="submit"
               disabled={isRegistering}

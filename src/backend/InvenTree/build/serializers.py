@@ -1,7 +1,5 @@
 """JSON serializers for Build API."""
 
-from decimal import Decimal
-
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
@@ -15,16 +13,14 @@ from django.db.models.functions import Coalesce
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from sql_util.utils import SubquerySum
-
-from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import UserSerializer
+from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer
 
 import InvenTree.helpers
-from InvenTree.serializers import InvenTreeDecimalField
-from InvenTree.status_codes import BuildStatusGroups, StockStatus
+from InvenTree.serializers import InvenTreeDecimalField, NotesFieldMixin
+from stock.status_codes import StockStatus
 
-from stock.models import generate_batch_code, StockItem, StockLocation
+from stock.generators import generate_batch_code
+from stock.models import StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationSerializer
 
 import common.models
@@ -33,10 +29,10 @@ import part.filters
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
-from .models import Build, BuildLine, BuildItem, BuildOrderAttachment
+from .models import Build, BuildLine, BuildItem
 
 
-class BuildSerializer(InvenTreeModelSerializer):
+class BuildSerializer(NotesFieldMixin, InvenTreeModelSerializer):
     """Serializes a Build object."""
 
     class Meta:
@@ -239,6 +235,16 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     The Build object is provided to the serializer context.
     """
 
+    class Meta:
+        """Serializer metaclass."""
+        fields = [
+            'quantity',
+            'batch_code',
+            'serial_numbers',
+            'location',
+            'auto_allocate',
+        ]
+
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
@@ -288,6 +294,13 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         help_text=_('Enter serial numbers for build outputs'),
     )
 
+    location = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        label=_('Location'),
+        help_text=_('Stock location for build output'),
+        required=False, allow_null=True
+    )
+
     def validate_serial_numbers(self, serial_numbers):
         """Clean the provided serial number string"""
         serial_numbers = serial_numbers.strip()
@@ -311,6 +324,11 @@ class BuildOutputCreateSerializer(serializers.Serializer):
 
         quantity = data['quantity']
         serial_numbers = data.get('serial_numbers', '')
+
+        if part.trackable and not serial_numbers:
+            raise ValidationError({
+                'serial_numbers': _('Serial numbers must be provided for trackable parts')
+            })
 
         if serial_numbers:
 
@@ -348,19 +366,15 @@ class BuildOutputCreateSerializer(serializers.Serializer):
         """Generate the new build output(s)"""
         data = self.validated_data
 
-        quantity = data['quantity']
-        batch_code = data.get('batch_code', '')
-        auto_allocate = data.get('auto_allocate', False)
-
         build = self.get_build()
-        user = self.context['request'].user
 
         build.create_build_output(
-            quantity,
+            data['quantity'],
             serials=self.serials,
-            batch=batch_code,
-            auto_allocate=auto_allocate,
-            user=user,
+            batch=data.get('batch_code', ''),
+            location=data.get('location', None),
+            auto_allocate=data.get('auto_allocate', False),
+            user=self.context['request'].user,
         )
 
 
@@ -553,10 +567,13 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
         outputs = data.get('outputs', [])
 
+        # Cache some calculated values which can be passed to each output
+        required_tests = outputs[0]['output'].part.getRequiredTests()
+        prevent_on_incomplete = common.settings.prevent_build_output_complete_on_incompleted_tests()
+
         # Mark the specified build outputs as "complete"
         with transaction.atomic():
             for item in outputs:
-
                 output = item['output']
 
                 build.complete_build_output(
@@ -565,6 +582,8 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
                     location=location,
                     status=status,
                     notes=notes,
+                    required_tests=required_tests,
+                    prevent_on_incomplete=prevent_on_incomplete,
                 )
 
 
@@ -589,8 +608,8 @@ class BuildCancelSerializer(serializers.Serializer):
         }
 
     remove_allocated_stock = serializers.BooleanField(
-        label=_('Remove Allocated Stock'),
-        help_text=_('Subtract any stock which has already been allocated to this build'),
+        label=_('Consume Allocated Stock'),
+        help_text=_('Consume any stock which has already been allocated to this build'),
         required=False,
         default=False,
     )
@@ -611,7 +630,7 @@ class BuildCancelSerializer(serializers.Serializer):
 
         build.cancel_build(
             request.user,
-            remove_allocated_stock=data.get('remove_unallocated_stock', False),
+            remove_allocated_stock=data.get('remove_allocated_stock', False),
             remove_incomplete_outputs=data.get('remove_incomplete_outputs', False),
         )
 
@@ -632,6 +651,14 @@ class OverallocationChoice():
 
 class BuildCompleteSerializer(serializers.Serializer):
     """DRF serializer for marking a BuildOrder as complete."""
+
+    class Meta:
+        """Serializer metaclass"""
+        fields = [
+            'accept_overallocated',
+            'accept_unallocated',
+            'accept_incomplete',
+        ]
 
     def get_context_data(self):
         """Retrieve extra context data for this serializer.
@@ -711,10 +738,11 @@ class BuildCompleteSerializer(serializers.Serializer):
         build = self.context['build']
 
         data = self.validated_data
-        if data.get('accept_overallocated', OverallocationChoice.REJECT) == OverallocationChoice.TRIM:
-            build.trim_allocated_stock()
 
-        build.complete_build(request.user)
+        build.complete_build(
+            request.user,
+            trim_allocated_stock=data.get('accept_overallocated', OverallocationChoice.REJECT) == OverallocationChoice.TRIM
+        )
 
 
 class BuildUnallocationSerializer(serializers.Serializer):
@@ -725,6 +753,13 @@ class BuildUnallocationSerializer(serializers.Serializer):
     - output: Filter against a particular build output (blank = untracked stock)
     - bom_item: Filter against a particular BOM line item
     """
+
+    class Meta:
+        """Serializer metaclass"""
+        fields = [
+            'build_line',
+            'output',
+        ]
 
     build_line = serializers.PrimaryKeyRelatedField(
         queryset=BuildLine.objects.all(),
@@ -994,17 +1029,24 @@ class BuildAutoAllocationSerializer(serializers.Serializer):
 
     def save(self):
         """Perform the auto-allocation step"""
+
+        import build.tasks
+        import InvenTree.tasks
+
         data = self.validated_data
 
-        build = self.context['build']
+        build_order = self.context['build']
 
-        build.auto_allocate_stock(
+        if not InvenTree.tasks.offload_task(
+            build.tasks.auto_allocate_build,
+            build_order.pk,
             location=data.get('location', None),
             exclude_location=data.get('exclude_location', None),
             interchangeable=data['interchangeable'],
             substitutes=data['substitutes'],
-            optional_items=data['optional_items'],
-        )
+            optional_items=data['optional_items']
+        ):
+            raise ValidationError(_("Failed to start auto-allocation task"))
 
 
 class BuildItemSerializer(InvenTreeModelSerializer):
@@ -1268,15 +1310,3 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         )
 
         return queryset
-
-
-class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for a BuildAttachment."""
-
-    class Meta:
-        """Serializer metaclass"""
-        model = BuildOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields([
-            'build',
-        ])

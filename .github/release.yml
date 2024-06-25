@@ -31,6 +31,9 @@ changelog:
         - setup
         - demo
         - CI
+    - title: Dependencies
+      labels:
+        - dependency
     - title: Other Changes
       labels:
         - "*"

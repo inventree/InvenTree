@@ -11,6 +11,7 @@ from django.urls import include, path, resolve, reverse_lazy
 
 from error_report.middleware import ExceptionProcessor
 
+from common.settings import get_global_setting
 from InvenTree.urls import frontendpatterns
 from users.models import ApiToken
 
@@ -69,7 +70,8 @@ class AuthRequiredMiddleware(object):
 
         # API requests are handled by the DRF library
         if request.path_info.startswith('/api/'):
-            return self.get_response(request)
+            response = self.get_response(request)
+            return response
 
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
@@ -141,9 +143,6 @@ class AuthRequiredMiddleware(object):
         response = self.get_response(request)
 
         return response
-
-
-url_matcher = path('', include(frontendpatterns))
 
 
 class InvenTreeRemoteUserMiddleware(PersistentRemoteUserMiddleware):

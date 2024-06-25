@@ -1,3 +1,4 @@
+import '@mantine/core/styles.css';
 import { useViewportSize } from '@mantine/hooks';
 import { lazy, useEffect } from 'react';
 

@@ -18,12 +18,13 @@ from djmoney.utils import MONEY_CLASSES, get_currency_field_name
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.fields import empty
+from rest_framework.mixins import ListModelMixin
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
-from common.settings import currency_code_default, currency_code_mappings
+from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
 
@@ -508,43 +509,6 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
         return os.path.join(str(settings.MEDIA_URL), str(value))
 
 
-class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
-    """Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
-
-    The only real addition here is that we support "renaming" of the attachment file.
-    """
-
-    @staticmethod
-    def attachment_fields(extra_fields=None):
-        """Default set of fields for an attachment serializer."""
-        fields = [
-            'pk',
-            'attachment',
-            'filename',
-            'link',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        if extra_fields:
-            fields += extra_fields
-
-        return fields
-
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
-
-    attachment = InvenTreeAttachmentSerializerField(required=False, allow_null=False)
-
-    # The 'filename' field must be present in the serializer
-    filename = serializers.CharField(
-        label=_('Filename'), required=False, source='basename', allow_blank=False
-    )
-
-    upload_date = serializers.DateField(read_only=True)
-
-
 class InvenTreeImageSerializerField(serializers.ImageField):
     """Custom image serializer.
 
@@ -840,6 +804,23 @@ class DataFileExtractSerializer(serializers.Serializer):
     def save(self):
         """No "save" action for this serializer."""
         pass
+
+
+class NotesFieldMixin:
+    """Serializer mixin for handling 'notes' fields.
+
+    The 'notes' field will be hidden in a LIST serializer,
+    but available in a DETAIL serializer.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Remove 'notes' field from list views."""
+        super().__init__(*args, **kwargs)
+
+        if hasattr(self, 'context'):
+            if view := self.context.get('view', None):
+                if issubclass(view.__class__, ListModelMixin):
+                    self.fields.pop('notes', None)
 
 
 class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
