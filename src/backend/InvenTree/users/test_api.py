@@ -12,6 +12,29 @@ from users.models import ApiToken
 class UserAPITests(InvenTreeAPITestCase):
     """Tests for user API endpoints."""
 
+    def test_user_options(self):
+        """Tests for the User OPTIONS request."""
+        self.assignRole('admin.add')
+        response = self.options(reverse('api-user-list'), expected_code=200)
+
+        fields = response.data['actions']['POST']
+
+        # Check some of the field values
+        self.assertEqual(fields['username']['label'], 'Username')
+
+        self.assertEqual(fields['email']['label'], 'Email')
+        self.assertEqual(fields['email']['help_text'], 'Email address of the user')
+
+        self.assertEqual(fields['is_active']['label'], 'Active')
+        self.assertEqual(
+            fields['is_active']['help_text'], 'Is this user account active'
+        )
+
+        self.assertEqual(fields['is_staff']['label'], 'Staff')
+        self.assertEqual(
+            fields['is_staff']['help_text'], 'Does this user have staff permissions'
+        )
+
     def test_user_api(self):
         """Tests for User API endpoints."""
         response = self.get(reverse('api-user-list'), expected_code=200)
