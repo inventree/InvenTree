@@ -46,11 +46,15 @@ function ImporterDataCell({
     return row?.errors[column.field] ?? [];
   }, [row.errors, column.field]);
 
+  const cellValue = useMemo(() => {
+    return row.data ? row.data[column.field] : '';
+  }, [row.data, column.field]);
+
   return (
     <Group grow justify="apart">
       <Group grow style={{ flex: 1 }}>
         <Stack gap="xs">
-          <Text>{row.data[column.field]}</Text>
+          <Text>{cellValue}</Text>
           {cellErrors.map((error: string) => (
             <Text size="xs" color="red" key={error}>
               {error}
