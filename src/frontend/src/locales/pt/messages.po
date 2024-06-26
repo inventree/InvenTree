@@ -156,7 +156,7 @@ msgstr "Eliminar"
 #: src/contexts/ThemeContext.tsx:43
 #: src/functions/forms.tsx:196
 #: src/hooks/UseForm.tsx:40
-#: src/tables/FilterSelectDrawer.tsx:207
+#: src/tables/FilterSelectDrawer.tsx:204
 #: src/tables/InvenTreeTable.tsx:499
 #: src/tables/build/BuildOutputTable.tsx:225
 msgid "Cancel"
@@ -4821,33 +4821,33 @@ msgstr "Mostrar pedidos atrasados"
 msgid "Remove filter"
 msgstr "Remover filtro"
 
-#: src/tables/FilterSelectDrawer.tsx:136
+#: src/tables/FilterSelectDrawer.tsx:130
 msgid "Select filter"
 msgstr "Selecionar filtro"
 
-#: src/tables/FilterSelectDrawer.tsx:137
+#: src/tables/FilterSelectDrawer.tsx:131
 msgid "Filter"
 msgstr "Filtro"
 
-#: src/tables/FilterSelectDrawer.tsx:144
+#: src/tables/FilterSelectDrawer.tsx:138
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:38
 #: src/tables/stock/StockItemTestResultTable.tsx:181
 msgid "Value"
 msgstr "Valor"
 
-#: src/tables/FilterSelectDrawer.tsx:145
+#: src/tables/FilterSelectDrawer.tsx:139
 msgid "Select filter value"
 msgstr "Selecionar valor do filtro"
 
-#: src/tables/FilterSelectDrawer.tsx:185
+#: src/tables/FilterSelectDrawer.tsx:182
 msgid "Table Filters"
 msgstr "Filtros de tabela"
 
-#: src/tables/FilterSelectDrawer.tsx:217
+#: src/tables/FilterSelectDrawer.tsx:214
 msgid "Add Filter"
 msgstr "Adicionar Filtro"
 
-#: src/tables/FilterSelectDrawer.tsx:226
+#: src/tables/FilterSelectDrawer.tsx:223
 msgid "Clear Filters"
 msgstr "Limpar Filtros"
 
@@ -4916,7 +4916,7 @@ msgstr "Ações de código de barras"
 msgid "Refresh data"
 msgstr "Atualizar dados"
 
-#: src/tables/InvenTreeTable.tsx:648
+#: src/tables/InvenTreeTable.tsx:651
 msgid "Table filters"
 msgstr "Filtros de tabela"
 

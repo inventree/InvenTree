@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-26 03:18+0000\n"
+"POT-Creation-Date: 2024-06-26 13:12+0000\n"
 "PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -348,8 +348,8 @@ msgstr "Китайский (Традиционный)"
 msgid "[{site_name}] Log in to the app"
 msgstr "[{site_name}] Войти в приложение"
 
-#: InvenTree/magic_login.py:38 company/models.py:136
-#: company/templates/company/company_base.html:138
+#: InvenTree/magic_login.py:38 InvenTree/serializers.py:415
+#: company/models.py:136 company/templates/company/company_base.html:138
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:677
 msgid "Email"
@@ -516,81 +516,144 @@ msgstr "Валюта"
 msgid "Select currency from available options"
 msgstr "Выберите валюту из доступных вариантов"
 
+#: InvenTree/serializers.py:407 templates/InvenTree/settings/user.html:33
+msgid "Username"
+msgstr "Имя пользователя"
+
+#: InvenTree/serializers.py:409 templates/InvenTree/settings/user.html:37
+msgid "First Name"
+msgstr "Имя"
+
+#: InvenTree/serializers.py:409
+msgid "First name of the user"
+msgstr ""
+
+#: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
+msgid "Last Name"
+msgstr "Фамилия"
+
+#: InvenTree/serializers.py:412
+#, fuzzy
+#| msgid "Enter a name for the test"
+msgid "Last name of the user"
+msgstr "Введите имя для теста"
+
+#: InvenTree/serializers.py:415
+#, fuzzy
+#| msgid "Email address confirmation"
+msgid "Email address of the user"
+msgstr "Подтверждение адреса электронной почты"
+
+#: InvenTree/serializers.py:439
+msgid "Staff"
+msgstr ""
+
+#: InvenTree/serializers.py:439
+msgid "Does this user have staff permissions"
+msgstr ""
+
 #: InvenTree/serializers.py:442
+msgid "Superuser"
+msgstr ""
+
+#: InvenTree/serializers.py:442
+msgid "Is this user a superuser"
+msgstr ""
+
+#: InvenTree/serializers.py:445 common/models.py:2628 company/models.py:163
+#: company/models.py:782 machine/models.py:39 part/admin.py:88
+#: part/models.py:1081 plugin/models.py:66
+#: templates/js/translated/company.js:523
+#: templates/js/translated/table_filters.js:135
+#: templates/js/translated/table_filters.js:219
+#: templates/js/translated/table_filters.js:492
+#: templates/js/translated/table_filters.js:520
+#: templates/js/translated/table_filters.js:716
+#: templates/js/translated/table_filters.js:796 users/models.py:182
+msgid "Active"
+msgstr "Активный"
+
+#: InvenTree/serializers.py:445
+#, fuzzy
+#| msgid "Is this part active?"
+msgid "Is this user account active"
+msgstr "Эта деталь активна?"
+
+#: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
 msgstr "У вас недостаточно прав для изменения роли этого пользователя."
 
-#: InvenTree/serializers.py:454
+#: InvenTree/serializers.py:475
 msgid "Only superusers can create new users"
 msgstr "Только суперпользователи могут создавать новых пользователей"
 
-#: InvenTree/serializers.py:473
+#: InvenTree/serializers.py:494
 msgid "Your account has been created."
 msgstr "Ваша учётная запись была успешно создана."
 
-#: InvenTree/serializers.py:475
+#: InvenTree/serializers.py:496
 msgid "Please use the password reset function to login"
 msgstr "Пожалуйста, используйте функцию сброса пароля для входа"
 
-#: InvenTree/serializers.py:482
+#: InvenTree/serializers.py:503
 msgid "Welcome to InvenTree"
 msgstr "Добро пожаловать в InvenTree"
 
-#: InvenTree/serializers.py:540
+#: InvenTree/serializers.py:561
 msgid "Invalid value"
 msgstr "Неверное значение"
 
-#: InvenTree/serializers.py:560
+#: InvenTree/serializers.py:581
 msgid "Data File"
 msgstr "Файл данных"
 
-#: InvenTree/serializers.py:561
+#: InvenTree/serializers.py:582
 msgid "Select data file for upload"
 msgstr "Выберите файл данных для загрузки"
 
-#: InvenTree/serializers.py:578
+#: InvenTree/serializers.py:599
 msgid "Unsupported file type"
 msgstr "Неподдерживаемый тип файла"
 
-#: InvenTree/serializers.py:584
+#: InvenTree/serializers.py:605
 msgid "File is too large"
 msgstr "Файл слишком большой"
 
-#: InvenTree/serializers.py:605
+#: InvenTree/serializers.py:626
 msgid "No columns found in file"
 msgstr "Столбцы в файле не найдены"
 
-#: InvenTree/serializers.py:608
+#: InvenTree/serializers.py:629
 msgid "No data rows found in file"
 msgstr "Строки данных в файле не найдены"
 
-#: InvenTree/serializers.py:721
+#: InvenTree/serializers.py:742
 msgid "No data rows provided"
 msgstr "Строки данных в файле не найдены"
 
-#: InvenTree/serializers.py:724
+#: InvenTree/serializers.py:745
 msgid "No data columns supplied"
 msgstr "Столбцы данных не предоставлены"
 
-#: InvenTree/serializers.py:791
+#: InvenTree/serializers.py:812
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Отсутствует обязательный столбец: '{name}'"
 
-#: InvenTree/serializers.py:800
+#: InvenTree/serializers.py:821
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Повторяющийся столбец: '{col}'"
 
-#: InvenTree/serializers.py:840
+#: InvenTree/serializers.py:861
 msgid "Remote Image"
 msgstr "Удаленное изображение"
 
-#: InvenTree/serializers.py:841
+#: InvenTree/serializers.py:862
 msgid "URL of remote image file"
 msgstr "ССЫЛКА файла изображения на удаленном сервере"
 
-#: InvenTree/serializers.py:859
+#: InvenTree/serializers.py:880
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Загрузка изображений с удаленного URL-адреса не включена"
 
@@ -3395,18 +3458,6 @@ msgstr ""
 #: common/models.py:2624
 msgid "Name for this webhook"
 msgstr ""
-
-#: common/models.py:2628 company/models.py:163 company/models.py:782
-#: machine/models.py:39 part/admin.py:88 part/models.py:1081
-#: plugin/models.py:66 templates/js/translated/company.js:523
-#: templates/js/translated/table_filters.js:135
-#: templates/js/translated/table_filters.js:219
-#: templates/js/translated/table_filters.js:492
-#: templates/js/translated/table_filters.js:520
-#: templates/js/translated/table_filters.js:716
-#: templates/js/translated/table_filters.js:796 users/models.py:182
-msgid "Active"
-msgstr "Активный"
 
 #: common/models.py:2628
 msgid "Is this webhook active"
@@ -10516,18 +10567,6 @@ msgstr "Настройки учётной записи"
 msgid "Change Password"
 msgstr "Изменить пароль"
 
-#: templates/InvenTree/settings/user.html:33
-msgid "Username"
-msgstr "Имя пользователя"
-
-#: templates/InvenTree/settings/user.html:37
-msgid "First Name"
-msgstr "Имя"
-
-#: templates/InvenTree/settings/user.html:41
-msgid "Last Name"
-msgstr "Фамилия"
-
 #: templates/InvenTree/settings/user.html:55
 msgid "The following email addresses are associated with your account:"
 msgstr "Следующие адреса электронной почты связаны с вашей учётной записью:"
@@ -14418,4 +14457,3 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
-
