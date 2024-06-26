@@ -53,6 +53,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import { PlaceholderPanel } from '../../components/items/Placeholder';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -361,9 +362,13 @@ export default function PartDetail() {
                 });
             }
           });
-          return `${formatPriceRange(data.overall_min, data.overall_max)}${
-            part.units && ' / ' + part.units
-          }`;
+
+          return (
+            data &&
+            `${formatPriceRange(data.overall_min, data.overall_max)}${
+              part.units && ' / ' + part.units
+            }`
+          );
         }
       });
 
@@ -513,7 +518,8 @@ export default function PartDetail() {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmarks />,
-        hidden: !part.component && !part.salable
+        hidden: !part.component && !part.salable,
+        content: <PlaceholderPanel />
       },
       {
         name: 'bom',
@@ -572,7 +578,8 @@ export default function PartDetail() {
         name: 'purchase_orders',
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
-        hidden: !part.purchaseable
+        hidden: !part.purchaseable,
+        content: <PlaceholderPanel />
       },
       {
         name: 'sales_orders',
@@ -584,12 +591,14 @@ export default function PartDetail() {
       {
         name: 'scheduling',
         label: t`Scheduling`,
-        icon: <IconCalendarStats />
+        icon: <IconCalendarStats />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'stocktake',
         label: t`Stocktake`,
-        icon: <IconClipboardList />
+        icon: <IconClipboardList />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'test_templates',
@@ -613,11 +622,7 @@ export default function PartDetail() {
         label: t`Attachments`,
         icon: <IconPaperclip />,
         content: (
-          <AttachmentTable
-            endpoint={ApiEndpoints.part_attachment_list}
-            model="part"
-            pk={part.pk ?? -1}
-          />
+          <AttachmentTable model_type={ModelType.part} model_id={part?.pk} />
         )
       },
       {

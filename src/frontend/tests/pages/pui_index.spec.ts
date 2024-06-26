@@ -56,12 +56,6 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
     .getByRole('button', { name: 'Cancel' })
     .click();
 
-  // Create Attachment
-  await page.getByRole('button', { name: 'Create Attachment' }).click();
-  await page.getByLabel('Attachment *').waitFor();
-  await page.getByRole('button', { name: 'Cancel' }).click();
-  // TODO: actually create an attachment
-
   // Create Part new Modal
   await page.getByRole('button', { name: 'Create Part new Modal' }).click();
   await page.locator('.css-fehojk-Input2').first().click();

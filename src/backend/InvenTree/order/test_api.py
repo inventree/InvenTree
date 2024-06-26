@@ -258,9 +258,9 @@ class PurchaseOrderTest(OrderTest):
 
     def test_po_attachments(self):
         """Test the list endpoint for the PurchaseOrderAttachment model."""
-        url = reverse('api-po-attachment-list')
+        url = reverse('api-attachment-list')
 
-        response = self.get(url)
+        response = self.get(url, {'model_type': 'purchaseorder'})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -483,6 +483,9 @@ class PurchaseOrderTest(OrderTest):
         self.assertEqual(po.status, PurchaseOrderStatus.PENDING)
 
         url = reverse('api-po-cancel', kwargs={'pk': po.pk})
+
+        # Get an OPTIONS request from the endpoint
+        self.options(url, data={'context': True}, expected_code=200)
 
         # Try to cancel the PO, but without required permissions
         self.post(url, {}, expected_code=403)
@@ -1260,9 +1263,12 @@ class SalesOrderTest(OrderTest):
 
     def test_so_attachments(self):
         """Test the list endpoint for the SalesOrderAttachment model."""
-        url = reverse('api-so-attachment-list')
+        url = reverse('api-attachment-list')
 
-        self.get(url)
+        # Filter by 'salesorder'
+        self.get(
+            url, data={'model_type': 'salesorder', 'model_id': 1}, expected_code=200
+        )
 
     def test_so_operations(self):
         """Test that we can create / edit and delete a SalesOrder via the API."""

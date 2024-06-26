@@ -57,12 +57,6 @@ function FilterItem({
   );
 }
 
-interface FilterProps extends React.ComponentPropsWithoutRef<'div'> {
-  name: string;
-  label: string;
-  description?: string;
-}
-
 function FilterAddGroup({
   tableState,
   availableFilters
@@ -182,6 +176,9 @@ export function FilterSelectDrawer({
       withCloseButton={true}
       opened={opened}
       onClose={onClose}
+      closeButtonProps={{
+        'aria-label': 'filter-drawer-close'
+      }}
       title={<StylishText size="lg">{t`Table Filters`}</StylishText>}
     >
       <Stack gap="xs">

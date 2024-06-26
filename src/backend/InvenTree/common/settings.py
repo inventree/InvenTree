@@ -1,6 +1,47 @@
 """User-configurable settings for the common app."""
 
 
+def get_global_setting(key, backup_value=None, **kwargs):
+    """Return the value of a global setting using the provided key."""
+    from common.models import InvenTreeSetting
+
+    if backup_value is not None:
+        kwargs['backup_value'] = backup_value
+
+    return InvenTreeSetting.get_setting(key, **kwargs)
+
+
+def set_global_setting(key, value, change_user=None, create=True, **kwargs):
+    """Set the value of a global setting using the provided key."""
+    from common.models import InvenTreeSetting
+
+    kwargs['change_user'] = change_user
+    kwargs['create'] = create
+
+    return InvenTreeSetting.set_setting(key, value, **kwargs)
+
+
+def get_user_setting(key, user, backup_value=None, **kwargs):
+    """Return the value of a user-specific setting using the provided key."""
+    from common.models import InvenTreeUserSetting
+
+    kwargs['user'] = user
+
+    if backup_value is not None:
+        kwargs['backup_value'] = backup_value
+
+    return InvenTreeUserSetting.get_setting(key, **kwargs)
+
+
+def set_user_setting(key, value, user, **kwargs):
+    """Set the value of a user-specific setting using the provided key."""
+    from common.models import InvenTreeUserSetting
+
+    kwargs['user'] = user
+
+    return InvenTreeUserSetting.set_setting(key, value, **kwargs)
+
+
 def stock_expiry_enabled():
     """Returns True if the stock expiry feature is enabled."""
     from common.models import InvenTreeSetting

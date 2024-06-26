@@ -2248,11 +2248,12 @@ function initializeRelatedField(field, fields, options={}) {
  */
 function setRelatedFieldData(name, data, options={}) {
 
-    var select = getFormFieldElement(name, options);
+    let select = getFormFieldElement(name, options);
 
-    const pkField = options?.fields[name]?.pk_field ?? 'pk';
+    let fields = options?.fields ?? {};
+    let pkField = fields[name]?.pk_field ?? 'pk';
 
-    var option = new Option(name, data[pkField], true, true);
+    let option = new Option(name, data[pkField], true, true);
 
     // Assign the JSON data to the 'instance' attribute,
     // so we can access and render it later

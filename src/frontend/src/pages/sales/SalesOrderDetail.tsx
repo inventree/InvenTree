@@ -25,6 +25,7 @@ import {
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -248,17 +249,20 @@ export default function SalesOrderDetail() {
       {
         name: 'line-items',
         label: t`Line Items`,
-        icon: <IconList />
+        icon: <IconList />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'pending-shipments',
         label: t`Pending Shipments`,
-        icon: <IconTruckLoading />
+        icon: <IconTruckLoading />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'completed-shipments',
         label: t`Completed Shipments`,
-        icon: <IconTruckDelivery />
+        icon: <IconTruckDelivery />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'build-orders',
@@ -276,9 +280,8 @@ export default function SalesOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.sales_order_attachment_list}
-            model="order"
-            pk={Number(id)}
+            model_type={ModelType.salesorder}
+            model_id={order.pk}
           />
         )
       },

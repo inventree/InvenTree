@@ -1,17 +1,8 @@
 import { t } from '@lingui/macro';
+import { BarChart } from '@mantine/charts';
 import { SimpleGrid, Stack } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import {
-  Bar,
-  BarChart,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
 
-import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
 import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
@@ -97,34 +88,19 @@ export default function VariantPricingPanel({
           }}
         />
         {variantPricingData.length > 0 ? (
-          <ResponsiveContainer width="100%" height={500}>
-            <BarChart data={variantPricingData}>
-              <XAxis dataKey="name" />
-              <YAxis
-                tickFormatter={(value, index) =>
-                  formatCurrency(value, {
-                    currency: pricing?.currency
-                  })?.toString() ?? ''
-                }
-              />
-              <Tooltip
-                formatter={(label, payload) =>
-                  tooltipFormatter(label, pricing?.currency)
-                }
-              />
-              <Legend />
-              <Bar
-                dataKey="pmin"
-                fill={CHART_COLORS[0]}
-                label={t`Minimum Price`}
-              />
-              <Bar
-                dataKey="pmax"
-                fill={CHART_COLORS[1]}
-                label={t`Maximum Price`}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+          <BarChart
+            dataKey="name"
+            data={variantPricingData}
+            xAxisLabel={t`Variant Part`}
+            yAxisLabel={t`Price Range`}
+            series={[
+              { name: 'pmin', label: t`Minimum Price`, color: 'blue.6' },
+              { name: 'pmax', label: t`Maximum Price`, color: 'teal.6' }
+            ]}
+            valueFormatter={(value) =>
+              tooltipFormatter(value, pricing?.currency)
+            }
+          />
         ) : (
           <NoPricingData />
         )}

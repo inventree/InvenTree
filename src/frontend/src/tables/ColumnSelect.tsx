@@ -12,7 +12,7 @@ export function TableColumnSelect({
   return (
     <Menu shadow="xs" closeOnItemClick={false}>
       <Menu.Target>
-        <ActionIcon variant="transparent">
+        <ActionIcon variant="transparent" aria-label="table-select-columns">
           <Tooltip label={t`Select Columns`}>
             <IconAdjustments />
           </Tooltip>
