@@ -227,7 +227,6 @@ export function InvenTreeTable<T = any>({
     }
 
     // Otherwise, fetch the data from the API
-    console.log('refacthing table options:');
     tableOptionQuery.refetch();
   }, [url, tableState.tableKey, props.params, props.enableColumnCaching]);
 
