@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-20 04:52\n"
+"PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1014,7 +1014,7 @@ msgstr "产出 {serial} 未通过所有必要测试"
 
 #: build/models.py:1344
 msgid "Build Order Line Item"
-msgstr ""
+msgstr "生产订单行项目"
 
 #: build/models.py:1369
 msgid "Build object"
@@ -1367,11 +1367,11 @@ msgstr "对于未被追踪的零件，无法指定生产产出"
 
 #: build/serializers.py:937 order/serializers.py:1477
 msgid "Allocation items must be provided"
-msgstr ""
+msgstr "必须提供分配项目"
 
 #: build/serializers.py:1000
 msgid "Stock location where parts are to be sourced (leave blank to take from any location)"
-msgstr ""
+msgstr "零件来源的库存地点(留空则可来源于任何库存地点)"
 
 #: build/serializers.py:1008
 msgid "Exclude Location"
@@ -1379,7 +1379,7 @@ msgstr "排除位置"
 
 #: build/serializers.py:1009
 msgid "Exclude stock items from this selected location"
-msgstr ""
+msgstr "从该选定的库存地点排除库存项"
 
 #: build/serializers.py:1014
 msgid "Interchangeable Stock"
@@ -1387,7 +1387,7 @@ msgstr "可互換庫存"
 
 #: build/serializers.py:1015
 msgid "Stock items in multiple locations can be used interchangeably"
-msgstr ""
+msgstr "在多个位置的库存项目可以互换使用"
 
 #: build/serializers.py:1020
 msgid "Substitute Stock"
@@ -1395,7 +1395,7 @@ msgstr "替代品库存"
 
 #: build/serializers.py:1021
 msgid "Allow allocation of substitute parts"
-msgstr ""
+msgstr "允许分配可替换的零件"
 
 #: build/serializers.py:1026
 msgid "Optional Items"
@@ -1403,11 +1403,11 @@ msgstr "可选项目"
 
 #: build/serializers.py:1027
 msgid "Allocate optional BOM items to build order"
-msgstr ""
+msgstr "分配可选的物料清单给生产订单"
 
 #: build/serializers.py:1049
 msgid "Failed to start auto-allocation task"
-msgstr ""
+msgstr "启动自动分配任务失败"
 
 #: build/serializers.py:1139 part/models.py:3953 part/models.py:4387
 #: stock/api.py:804
@@ -1467,7 +1467,7 @@ msgstr "生产订单所需库存"
 
 #: build/tasks.py:201
 msgid "Overdue Build Order"
-msgstr ""
+msgstr "逾期的生产订单"
 
 #: build/tasks.py:206
 #, python-brace-format
@@ -1488,7 +1488,7 @@ msgstr "零件缩略图"
 #: stock/templates/stock/location.html:55
 #: templates/js/translated/filters.js:335
 msgid "Barcode actions"
-msgstr ""
+msgstr "条形码操作"
 
 #: build/templates/build/build_base.html:42
 #: company/templates/company/supplier_part.html:39
@@ -1571,7 +1571,7 @@ msgstr "没有为此生产订单创建生产产出"
 
 #: build/templates/build/build_base.html:124
 msgid "Build Order is ready to mark as completed"
-msgstr ""
+msgstr "生产订单已准备好标记为已完成"
 
 #: build/templates/build/build_base.html:129
 msgid "Build Order cannot be completed as outstanding outputs remain"
@@ -1579,11 +1579,11 @@ msgstr "由于仍有未完成的产出，生产订单无法完成"
 
 #: build/templates/build/build_base.html:134
 msgid "Required build quantity has not yet been completed"
-msgstr ""
+msgstr "未完成所需生产数量"
 
 #: build/templates/build/build_base.html:139
 msgid "Stock has not been fully allocated to this Build Order"
-msgstr ""
+msgstr "库存尚未被完全分配到此生产订单"
 
 #: build/templates/build/build_base.html:160
 #: build/templates/build/detail.html:138 order/models.py:309
@@ -1644,7 +1644,7 @@ msgstr "销售订单"
 #: report/templates/report/inventree_build_order_report.html:152
 #: templates/js/translated/table_filters.js:24
 msgid "Issued By"
-msgstr ""
+msgstr "发布者"
 
 #: build/templates/build/build_base.html:211
 #: build/templates/build/detail.html:94 templates/js/translated/build.js:2156
@@ -1661,7 +1661,7 @@ msgstr "生产订单二维码"
 
 #: build/templates/build/build_base.html:291
 msgid "Link Barcode to Build Order"
-msgstr ""
+msgstr "将条形码链接到生产订单"
 
 #: build/templates/build/detail.html:15
 msgid "Build Details"
@@ -1678,11 +1678,11 @@ msgstr "库存可以从任何可用地点获得。"
 #: build/templates/build/detail.html:49 order/models.py:1443
 #: templates/js/translated/purchase_order.js:2189
 msgid "Destination"
-msgstr ""
+msgstr "目的地"
 
 #: build/templates/build/detail.html:56
 msgid "Destination location not specified"
-msgstr ""
+msgstr "未指定目的地"
 
 #: build/templates/build/detail.html:73
 msgid "Allocated Parts"
@@ -1698,7 +1698,7 @@ msgstr "已分配的零件"
 #: templates/js/translated/table_filters.js:313
 #: templates/js/translated/table_filters.js:404
 msgid "Batch"
-msgstr ""
+msgstr "队列"
 
 #: build/templates/build/detail.html:133
 #: order/templates/order/order_base.html:173
@@ -1710,7 +1710,7 @@ msgstr "已创建"
 
 #: build/templates/build/detail.html:144
 msgid "No target date set"
-msgstr ""
+msgstr "未设置目标日期"
 
 #: build/templates/build/detail.html:149
 #: order/templates/order/sales_order_base.html:206
@@ -1728,7 +1728,7 @@ msgstr "子生产订单"
 
 #: build/templates/build/detail.html:177
 msgid "Allocate Stock to Build"
-msgstr ""
+msgstr "为生产分配库存"
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -1765,7 +1765,7 @@ msgstr "订购零件"
 
 #: build/templates/build/detail.html:205
 msgid "Available stock has been filtered based on specified source location for this build order"
-msgstr ""
+msgstr "可用库存已根据此生产订单指定的来源位置进行筛选"
 
 #: build/templates/build/detail.html:215
 msgid "Incomplete Build Outputs"
@@ -1809,11 +1809,11 @@ msgstr "生产备注"
 
 #: build/templates/build/detail.html:426
 msgid "Allocation Complete"
-msgstr ""
+msgstr "分配完成"
 
 #: build/templates/build/detail.html:427
 msgid "All lines have been fully allocated"
-msgstr ""
+msgstr "所有行项目已全部分配"
 
 #: build/templates/build/index.html:18 part/templates/part/detail.html:319
 msgid "New Build Order"
@@ -1829,27 +1829,27 @@ msgstr "未完成的产出"
 
 #: common/api.py:689
 msgid "Is Link"
-msgstr ""
+msgstr "是否链接"
 
 #: common/api.py:697
 msgid "Is File"
-msgstr ""
+msgstr "是否为文件"
 
 #: common/api.py:739
 msgid "User does not have permission to delete this attachment"
-msgstr ""
+msgstr "用户没有权限删除此附件"
 
 #: common/currency.py:130
 msgid "Invalid currency code"
-msgstr ""
+msgstr "无效的货币代码"
 
 #: common/currency.py:132
 msgid "Duplicate currency code"
-msgstr ""
+msgstr "重复的货币代码"
 
 #: common/currency.py:137
 msgid "No valid currency codes provided"
-msgstr ""
+msgstr "未提供有效的货币代码"
 
 #: common/currency.py:154
 msgid "No plugin"
@@ -1862,19 +1862,19 @@ msgstr "不支持的文件格式： {fmt}"
 
 #: common/files.py:65
 msgid "Error reading file (invalid encoding)"
-msgstr ""
+msgstr "读取文件时发生错误 (无效编码)"
 
 #: common/files.py:70
 msgid "Error reading file (invalid format)"
-msgstr ""
+msgstr "读取文件时发生错误 (无效格式)"
 
 #: common/files.py:72
 msgid "Error reading file (incorrect dimension)"
-msgstr ""
+msgstr "读取文件时发生错误 (尺寸错误)"
 
 #: common/files.py:74
 msgid "Error reading file (data could be corrupted)"
-msgstr ""
+msgstr "读取文件时发生错误 (数据可能已损坏)"
 
 #: common/forms.py:12
 msgid "File"
@@ -1886,7 +1886,7 @@ msgstr "選擇要上傳的檔案"
 
 #: common/forms.py:25
 msgid "{name.title()} File"
-msgstr ""
+msgstr "{name.title()} 文件"
 
 #: common/forms.py:26
 #, python-brace-format
@@ -1907,7 +1907,7 @@ msgstr "网站 URL 已配置为锁定"
 
 #: common/models.py:132
 msgid "Unique project code"
-msgstr ""
+msgstr "唯一项目编码"
 
 #: common/models.py:139
 msgid "Project description"
@@ -1967,7 +1967,7 @@ msgstr "服务器实例名称"
 
 #: common/models.py:1230
 msgid "String descriptor for the server instance"
-msgstr ""
+msgstr "服务器实例的字符串描述符"
 
 #: common/models.py:1234
 msgid "Use instance name"
@@ -1995,11 +1995,11 @@ msgstr "内部公司名称"
 
 #: common/models.py:1251
 msgid "Base URL"
-msgstr ""
+msgstr "基本 URL"
 
 #: common/models.py:1252
 msgid "Base URL for server instance"
-msgstr ""
+msgstr "服务器实例的基准 URL"
 
 #: common/models.py:1258
 msgid "Default Currency"
@@ -2011,7 +2011,7 @@ msgstr "选择价格计算的默认货币"
 
 #: common/models.py:1265
 msgid "Supported Currencies"
-msgstr ""
+msgstr "支持币种"
 
 #: common/models.py:1266
 msgid "List of supported currency codes"
@@ -2023,7 +2023,7 @@ msgstr "货币更新间隔时间"
 
 #: common/models.py:1274
 msgid "How often to update exchange rates (set to zero to disable)"
-msgstr ""
+msgstr "检查更新的频率(设置为零以禁用)"
 
 #: common/models.py:1277 common/models.py:1333 common/models.py:1346
 #: common/models.py:1354 common/models.py:1363 common/models.py:1372
@@ -2038,7 +2038,7 @@ msgstr "币种更新插件"
 
 #: common/models.py:1282
 msgid "Currency update plugin to use"
-msgstr ""
+msgstr "使用货币更新插件"
 
 #: common/models.py:1287
 msgid "Download from URL"
@@ -2046,7 +2046,7 @@ msgstr "从URL下载"
 
 #: common/models.py:1289
 msgid "Allow download of remote images and files from external URL"
-msgstr ""
+msgstr "允许从外部 URL 下载远程图片和文件"
 
 #: common/models.py:1295
 msgid "Download Size Limit"
@@ -2054,23 +2054,23 @@ msgstr "下载大小限制"
 
 #: common/models.py:1296
 msgid "Maximum allowable download size for remote image"
-msgstr ""
+msgstr "远程图片的最大允许下载大小"
 
 #: common/models.py:1302
 msgid "User-agent used to download from URL"
-msgstr ""
+msgstr "用于从 URL 下载的 User-agent"
 
 #: common/models.py:1304
 msgid "Allow to override the user-agent used to download images and files from external URL (leave blank for the default)"
-msgstr ""
+msgstr "允许覆盖用于从外部 URL 下载图片和文件的 user-agent(留空为默认值)"
 
 #: common/models.py:1309
 msgid "Strict URL Validation"
-msgstr ""
+msgstr "严格的 URL 验证"
 
 #: common/models.py:1310
 msgid "Require schema specification when validating URLs"
-msgstr ""
+msgstr "验证 URL 时需要 schema 规范"
 
 #: common/models.py:1315
 msgid "Require confirm"
@@ -2078,23 +2078,23 @@ msgstr "需要确认"
 
 #: common/models.py:1316
 msgid "Require explicit user confirmation for certain action."
-msgstr ""
+msgstr "对某些操作需要用户明确确认。"
 
 #: common/models.py:1321
 msgid "Tree Depth"
-msgstr ""
+msgstr "树深度"
 
 #: common/models.py:1323
 msgid "Default tree depth for treeview. Deeper levels can be lazy loaded as they are needed."
-msgstr ""
+msgstr "树视图的默认树深度。更深的层级可以在需要时延迟加载。"
 
 #: common/models.py:1329
 msgid "Update Check Interval"
-msgstr ""
+msgstr "更新检查间隔"
 
 #: common/models.py:1330
 msgid "How often to check for updates (set to zero to disable)"
-msgstr ""
+msgstr "检查更新的频率(设置为零以禁用)"
 
 #: common/models.py:1336
 msgid "Automatic Backup"
@@ -2110,91 +2110,91 @@ msgstr "自動備份間隔"
 
 #: common/models.py:1343
 msgid "Specify number of days between automated backup events"
-msgstr ""
+msgstr "指定自动备份之间的间隔天数"
 
 #: common/models.py:1349
 msgid "Task Deletion Interval"
-msgstr ""
+msgstr "任务删除间隔"
 
 #: common/models.py:1351
 msgid "Background task results will be deleted after specified number of days"
-msgstr ""
+msgstr "后台任务结果将在指定天数后删除"
 
 #: common/models.py:1358
 msgid "Error Log Deletion Interval"
-msgstr ""
+msgstr "错误日志删除间隔"
 
 #: common/models.py:1360
 msgid "Error logs will be deleted after specified number of days"
-msgstr ""
+msgstr "错误日志将在指定天数后被删除"
 
 #: common/models.py:1367
 msgid "Notification Deletion Interval"
-msgstr ""
+msgstr "通知删除间隔"
 
 #: common/models.py:1369
 msgid "User notifications will be deleted after specified number of days"
-msgstr ""
+msgstr "用户通知将在指定天数后被删除"
 
 #: common/models.py:1376 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "条形码支持"
 
 #: common/models.py:1377
 msgid "Enable barcode scanner support in the web interface"
-msgstr ""
+msgstr "在网页界面启用条形码扫描器支持"
 
 #: common/models.py:1382
 msgid "Barcode Input Delay"
-msgstr ""
+msgstr "条形码扫描延迟设置"
 
 #: common/models.py:1383
 msgid "Barcode input processing delay time"
-msgstr ""
+msgstr "条形码输入处理延迟时间"
 
 #: common/models.py:1389
 msgid "Barcode Webcam Support"
-msgstr ""
+msgstr "条码摄像头支持"
 
 #: common/models.py:1390
 msgid "Allow barcode scanning via webcam in browser"
-msgstr ""
+msgstr "允许通过网络摄像头扫描条形码"
 
 #: common/models.py:1395
 msgid "Part Revisions"
-msgstr ""
+msgstr "零件修订"
 
 #: common/models.py:1396
 msgid "Enable revision field for Part"
-msgstr ""
+msgstr "启用零件修订字段"
 
 #: common/models.py:1401
 msgid "Allow Deletion from Assembly"
-msgstr ""
+msgstr "允许从装配中删除"
 
 #: common/models.py:1402
 msgid "Allow deletion of parts which are used in an assembly"
-msgstr ""
+msgstr "允许删除已在装配中使用的零件"
 
 #: common/models.py:1407
 msgid "IPN Regex"
-msgstr ""
+msgstr "IPN 内部零件号"
 
 #: common/models.py:1408
 msgid "Regular expression pattern for matching Part IPN"
-msgstr ""
+msgstr "匹配零件 IPN（内部零件号）的正则表达式模式"
 
 #: common/models.py:1411
 msgid "Allow Duplicate IPN"
-msgstr ""
+msgstr "允许重复的 IPN（内部零件号）"
 
 #: common/models.py:1412
 msgid "Allow multiple parts to share the same IPN"
-msgstr ""
+msgstr "允许多个零件共享相同的 IPN（内部零件号）"
 
 #: common/models.py:1417
 msgid "Allow Editing IPN"
-msgstr ""
+msgstr "允许编辑 IPN（内部零件号）"
 
 #: common/models.py:1418
 msgid "Allow changing the IPN value while editing a part"
@@ -2417,59 +2417,59 @@ msgstr ""
 
 #: common/models.py:1600
 msgid "Active Variants Only"
-msgstr ""
+msgstr "仅限活跃变体"
 
 #: common/models.py:1602
 msgid "Only use active variant parts for calculating variant pricing"
-msgstr ""
+msgstr "仅使用活跃变体零件计算变体价格"
 
 #: common/models.py:1608
 msgid "Pricing Rebuild Interval"
-msgstr ""
+msgstr "价格重建间隔"
 
 #: common/models.py:1610
 msgid "Number of days before part pricing is automatically updated"
-msgstr ""
+msgstr "零件价格自动更新前的天数"
 
 #: common/models.py:1617
 msgid "Internal Prices"
-msgstr ""
+msgstr "内部价格"
 
 #: common/models.py:1618
 msgid "Enable internal prices for parts"
-msgstr ""
+msgstr "启用内部零件价格"
 
 #: common/models.py:1623
 msgid "Internal Price Override"
-msgstr ""
+msgstr "覆盖内部价格"
 
 #: common/models.py:1625
 msgid "If available, internal prices override price range calculations"
-msgstr ""
+msgstr "如果有内部价格，内部价格将覆盖价格范围计算"
 
 #: common/models.py:1631
 msgid "Enable label printing"
-msgstr ""
+msgstr "启用标签打印功能"
 
 #: common/models.py:1632
 msgid "Enable label printing from the web interface"
-msgstr ""
+msgstr "启用从网络界面打印标签"
 
 #: common/models.py:1637
 msgid "Label Image DPI"
-msgstr ""
+msgstr "标签图片 DPI"
 
 #: common/models.py:1639
 msgid "DPI resolution when generating image files to supply to label printing plugins"
-msgstr ""
+msgstr "生成图像文件以供标签打印插件使用时的 DPI 分辨率"
 
 #: common/models.py:1645
 msgid "Enable Reports"
-msgstr ""
+msgstr "启用报告"
 
 #: common/models.py:1646
 msgid "Enable generation of reports"
-msgstr ""
+msgstr "启用报告生成"
 
 #: common/models.py:1651 templates/stats.html:25
 msgid "Debug Mode"
@@ -2481,11 +2481,11 @@ msgstr "以调试模式生成报告（HTML 输出）"
 
 #: common/models.py:1657
 msgid "Log Report Errors"
-msgstr ""
+msgstr "日志错误报告"
 
 #: common/models.py:1658
 msgid "Log errors which occur when generating reports"
-msgstr ""
+msgstr "记录生成报告时出现的错误"
 
 #: common/models.py:1663 plugin/builtin/labels/label_sheet.py:28
 #: report/models.py:302
@@ -2566,15 +2566,15 @@ msgstr "库存过期时间"
 
 #: common/models.py:1724
 msgid "Number of days stock items are considered stale before expiring"
-msgstr ""
+msgstr "库存项在到期前被视为过期的天数"
 
 #: common/models.py:1731
 msgid "Build Expired Stock"
-msgstr ""
+msgstr "生产过期库存"
 
 #: common/models.py:1732
 msgid "Allow building with expired stock"
-msgstr ""
+msgstr "允许用过期的库存生产"
 
 #: common/models.py:1737
 msgid "Stock Ownership Control"
@@ -2582,61 +2582,61 @@ msgstr "库存所有权控制"
 
 #: common/models.py:1738
 msgid "Enable ownership control over stock locations and items"
-msgstr ""
+msgstr "启用库存地点和项目的所有权控制"
 
 #: common/models.py:1743
 msgid "Stock Location Default Icon"
-msgstr ""
+msgstr "库存地点默认图标"
 
 #: common/models.py:1744
 msgid "Stock location default icon (empty means no icon)"
-msgstr ""
+msgstr "库存地点默认图标 (空表示没有图标)"
 
 #: common/models.py:1748
 msgid "Show Installed Stock Items"
-msgstr ""
+msgstr "显示已安装的库存项"
 
 #: common/models.py:1749
 msgid "Display installed stock items in stock tables"
-msgstr ""
+msgstr "在库存表中显示已安装的库存项"
 
 #: common/models.py:1754
 msgid "Check BOM when installing items"
-msgstr ""
+msgstr "在安装项目时检查物料清单"
 
 #: common/models.py:1756
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr ""
+msgstr "已安装的库存项目必须存在于上级零件的物料清单中"
 
 #: common/models.py:1762
 msgid "Allow Out of Stock Transfer"
-msgstr ""
+msgstr "允许超出库存转移"
 
 #: common/models.py:1764
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
-msgstr ""
+msgstr "允许非库存的库存项目在库存位置之间转移"
 
 #: common/models.py:1770
 msgid "Build Order Reference Pattern"
-msgstr ""
+msgstr "生产订单参考模式"
 
 #: common/models.py:1772
 msgid "Required pattern for generating Build Order reference field"
-msgstr ""
+msgstr "生成生产订单参考字段所需的模式"
 
 #: common/models.py:1778 common/models.py:1806 common/models.py:1828
 #: common/models.py:1864
 msgid "Require Responsible Owner"
-msgstr ""
+msgstr "要求负责人"
 
 #: common/models.py:1779 common/models.py:1807 common/models.py:1829
 #: common/models.py:1865
 msgid "A responsible owner must be assigned to each order"
-msgstr ""
+msgstr "必须为每个订单分配一个负责人"
 
 #: common/models.py:1784
 msgid "Block Until Tests Pass"
-msgstr ""
+msgstr "阻止直到测试通过"
 
 #: common/models.py:1786
 msgid "Prevent build outputs from being completed until all required tests pass"
@@ -2652,71 +2652,71 @@ msgstr "在用户界面中启用订单退货功能"
 
 #: common/models.py:1798
 msgid "Return Order Reference Pattern"
-msgstr ""
+msgstr "退货订单参考模式"
 
 #: common/models.py:1800
 msgid "Required pattern for generating Return Order reference field"
-msgstr ""
+msgstr "生成退货订单参考字段所需的模式"
 
 #: common/models.py:1812
 msgid "Edit Completed Return Orders"
-msgstr ""
+msgstr "编辑已完成的退货订单"
 
 #: common/models.py:1814
 msgid "Allow editing of return orders after they have been completed"
-msgstr ""
+msgstr "允许编辑已完成的退货订单"
 
 #: common/models.py:1820
 msgid "Sales Order Reference Pattern"
-msgstr ""
+msgstr "销售订单参考模式"
 
 #: common/models.py:1822
 msgid "Required pattern for generating Sales Order reference field"
-msgstr ""
+msgstr "生成销售订单参考字段所需参照模式"
 
 #: common/models.py:1834
 msgid "Sales Order Default Shipment"
-msgstr ""
+msgstr "销售订单默认配送方式"
 
 #: common/models.py:1835
 msgid "Enable creation of default shipment with sales orders"
-msgstr ""
+msgstr "启用创建销售订单的默认配送功能"
 
 #: common/models.py:1840
 msgid "Edit Completed Sales Orders"
-msgstr ""
+msgstr "编辑已完成的销售订单"
 
 #: common/models.py:1842
 msgid "Allow editing of sales orders after they have been shipped or completed"
-msgstr ""
+msgstr "允许在订单配送或完成后编辑销售订单"
 
 #: common/models.py:1848
 msgid "Mark Shipped Orders as Complete"
-msgstr ""
+msgstr "标记该订单为已完成？"
 
 #: common/models.py:1850
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
-msgstr ""
+msgstr "标记为已发货的销售订单将自动完成，绕过“已发货”状态"
 
 #: common/models.py:1856
 msgid "Purchase Order Reference Pattern"
-msgstr ""
+msgstr "采购订单参考模式"
 
 #: common/models.py:1858
 msgid "Required pattern for generating Purchase Order reference field"
-msgstr ""
+msgstr "生成采购订单参考字段所需的模式"
 
 #: common/models.py:1870
 msgid "Edit Completed Purchase Orders"
-msgstr ""
+msgstr "编辑已完成的采购订单"
 
 #: common/models.py:1872
 msgid "Allow editing of purchase orders after they have been shipped or completed"
-msgstr ""
+msgstr "允许在采购订单已配送或完成后编辑订单"
 
 #: common/models.py:1878
 msgid "Auto Complete Purchase Orders"
-msgstr ""
+msgstr "自动完成采购订单"
 
 #: common/models.py:1880
 msgid "Automatically mark purchase orders as complete when all line items are received"
@@ -3719,10 +3719,8 @@ msgid "User does not have permission to create or edit attachments for this mode
 msgstr ""
 
 #: common/validators.py:33
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No attachment model type provided"
-msgstr "没有提供数据行"
+msgstr ""
 
 #: common/validators.py:39
 msgid "Invalid attachment model type"
@@ -14421,5 +14419,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "parent"
-#~ msgstr "上層元素"
