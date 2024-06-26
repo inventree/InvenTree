@@ -111,6 +111,14 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         return queryset
 
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all(),
+        required=False,
+        allow_null=True,
+        label=_('Parent Category'),
+        help_text=_('Parent part category'),
+    )
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     part_count = serializers.IntegerField(read_only=True, label=_('Parts'))
