@@ -145,7 +145,8 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
           enableLabels: true,
           enableReports: true,
           params: {
-            parent: parentId
+            parent: parentId,
+            top_level: parentId === undefined ? true : undefined
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
