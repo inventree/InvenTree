@@ -135,8 +135,8 @@ class InvenTreeMetadata(SimpleMetadata):
         if callable(model_value) and not callable(field_value):
             return model_value
 
-        if type(model_value) is not str and type(field_value) is str:
-            return model_value
+        if callable(field_value) and not callable(model_value):
+            return field_value
 
         return field_value
 
