@@ -200,11 +200,6 @@ class InvenTreeMetadata(SimpleMetadata):
                         field_value = serializer_info[name].get(field_key, None)
                         model_value = getattr(field, model_key, None)
 
-                        if name == 'category':
-                            print('Category field:', field_key, model_key)
-                            print(' - field_value:', field_value)
-                            print(' - model_value:', model_value)
-
                         if value := self.override_value(name, field_value, model_value):
                             serializer_info[name][field_key] = value
 
