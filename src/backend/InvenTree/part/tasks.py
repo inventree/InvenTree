@@ -9,15 +9,14 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import common.currency
-import common.models
 import common.notifications
-import common.settings
 import company.models
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
 import part.models
 import part.stocktake
+from common.settings import get_global_setting
 from InvenTree.tasks import (
     ScheduledTask,
     check_daily_holdoff,
@@ -99,7 +98,7 @@ def check_missing_pricing(limit=250):
             pp.schedule_for_update()
 
     # Find any parts which have 'old' pricing information
-    days = int(common.models.InvenTreeSetting.get_setting('PRICING_UPDATE_DAYS', 30))
+    days = int(get_global_setting('PRICING_UPDATE_DAYS', 30))
     stale_date = datetime.now().date() - timedelta(days=days)
 
     results = part.models.PartPricing.objects.filter(updated__lte=stale_date)[:limit]
@@ -146,9 +145,7 @@ def scheduled_stocktake_reports():
 
     # First let's delete any old stocktake reports
     delete_n_days = int(
-        common.models.InvenTreeSetting.get_setting(
-            'STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False
-        )
+        get_global_setting('STOCKTAKE_DELETE_REPORT_DAYS', 30, cache=False)
     )
     threshold = datetime.now() - timedelta(days=delete_n_days)
     old_reports = part.models.PartStocktakeReport.objects.filter(date__lt=threshold)
@@ -158,17 +155,11 @@ def scheduled_stocktake_reports():
         old_reports.delete()
 
     # Next, check if stocktake functionality is enabled
-    if not common.models.InvenTreeSetting.get_setting(
-        'STOCKTAKE_ENABLE', False, cache=False
-    ):
+    if not get_global_setting('STOCKTAKE_ENABLE', False, cache=False):
         logger.info('Stocktake functionality is not enabled - exiting')
         return
 
-    report_n_days = int(
-        common.models.InvenTreeSetting.get_setting(
-            'STOCKTAKE_AUTO_DAYS', 0, cache=False
-        )
-    )
+    report_n_days = int(get_global_setting('STOCKTAKE_AUTO_DAYS', 0, cache=False))
 
     if report_n_days < 1:
         logger.info('Stocktake auto reports are disabled, exiting')

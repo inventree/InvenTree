@@ -173,9 +173,8 @@ export default function ManufacturerPartDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.manufacturer_part_attachment_list}
-            model="manufacturer_part"
-            pk={manufacturerPart?.pk}
+            model_type={ModelType.manufacturerpart}
+            model_id={manufacturerPart?.pk}
           />
         )
       }

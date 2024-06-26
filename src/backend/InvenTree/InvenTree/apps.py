@@ -14,6 +14,7 @@ from django.db.utils import IntegrityError, OperationalError
 import InvenTree.conversion
 import InvenTree.ready
 import InvenTree.tasks
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.config import get_setting
 
 logger = logging.getLogger('inventree')
@@ -238,8 +239,6 @@ class InvenTreeConfig(AppConfig):
         - If a fixed SITE_URL is specified (via configuration), it should override the INVENTREE_BASE_URL setting
         - If multi-site support is enabled, update the site URL for the current site
         """
-        import common.models
-
         if not InvenTree.ready.canAppAccessDatabase():
             return
 
@@ -248,13 +247,8 @@ class InvenTreeConfig(AppConfig):
 
         if settings.SITE_URL:
             try:
-                if (
-                    common.models.InvenTreeSetting.get_setting('INVENTREE_BASE_URL')
-                    != settings.SITE_URL
-                ):
-                    common.models.InvenTreeSetting.set_setting(
-                        'INVENTREE_BASE_URL', settings.SITE_URL
-                    )
+                if get_global_setting('INVENTREE_BASE_URL') != settings.SITE_URL:
+                    set_global_setting('INVENTREE_BASE_URL', settings.SITE_URL)
                     logger.info('Updated INVENTREE_SITE_URL to %s', settings.SITE_URL)
             except Exception:
                 pass

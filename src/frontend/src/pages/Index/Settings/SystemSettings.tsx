@@ -19,6 +19,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
@@ -98,7 +99,8 @@ export default function SystemSettings() {
       {
         name: 'notifications',
         label: t`Notifications`,
-        icon: <IconBellCog />
+        icon: <IconBellCog />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'pricing',
@@ -161,7 +163,8 @@ export default function SystemSettings() {
       {
         name: 'categories',
         label: t`Part Categories`,
-        icon: <IconSitemap />
+        icon: <IconSitemap />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'parts',
@@ -223,7 +226,8 @@ export default function SystemSettings() {
       {
         name: 'stocktake',
         label: t`Stocktake`,
-        icon: <IconClipboardCheck />
+        icon: <IconClipboardCheck />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'buildorders',

@@ -893,51 +893,6 @@ class PartAPITest(PartAPITestBase):
         # Now there should be 5 total parts
         self.assertEqual(len(response.data), 3)
 
-    def test_test_templates(self):
-        """Test the PartTestTemplate API."""
-        url = reverse('api-part-test-template-list')
-
-        # List ALL items
-        response = self.get(url)
-        self.assertEqual(len(response.data), 9)
-
-        # Request for a particular part
-        response = self.get(url, data={'part': 10000})
-        self.assertEqual(len(response.data), 5)
-
-        response = self.get(url, data={'part': 10004})
-        self.assertEqual(len(response.data), 6)
-
-        # Try to post a new object (missing description)
-        response = self.post(
-            url,
-            data={'part': 10000, 'test_name': 'My very first test', 'required': False},
-            expected_code=400,
-        )
-
-        # Try to post a new object (should succeed)
-        response = self.post(
-            url,
-            data={
-                'part': 10000,
-                'test_name': 'New Test',
-                'required': True,
-                'description': 'a test description',
-            },
-        )
-
-        # Try to post a new test with the same name (should fail)
-        response = self.post(
-            url,
-            data={'part': 10004, 'test_name': '   newtest', 'description': 'dafsdf'},
-            expected_code=400,
-        )
-
-        # Try to post a new test against a non-trackable part (should fail)
-        response = self.post(
-            url, data={'part': 1, 'test_name': 'A simple test'}, expected_code=400
-        )
-
     def test_get_thumbs(self):
         """Return list of part thumbnails."""
         url = reverse('api-part-thumbs')
@@ -2558,22 +2513,28 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
     def test_add_attachment(self):
         """Test that we can create a new PartAttachment via the API."""
-        url = reverse('api-part-attachment-list')
+        url = reverse('api-attachment-list')
 
         # Upload without permission
-        response = self.post(url, {}, expected_code=403)
+        response = self.post(
+            url, {'model_id': 1, 'model_type': 'part'}, expected_code=403
+        )
 
         # Add required permission
         self.assignRole('part.add')
+        self.assignRole('part.change')
 
         # Upload without specifying part (will fail)
         response = self.post(url, {'comment': 'Hello world'}, expected_code=400)
 
-        self.assertIn('This field is required', str(response.data['part']))
+        self.assertIn('This field is required', str(response.data['model_id']))
+        self.assertIn('This field is required', str(response.data['model_type']))
 
         # Upload without file OR link (will fail)
         response = self.post(
-            url, {'part': 1, 'comment': 'Hello world'}, expected_code=400
+            url,
+            {'model_id': 1, 'model_type': 'part', 'comment': 'Hello world'},
+            expected_code=400,
         )
 
         self.assertIn('Missing file', str(response.data['attachment']))
@@ -2581,7 +2542,9 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
         # Upload an invalid link (will fail)
         response = self.post(
-            url, {'part': 1, 'link': 'not-a-link.py'}, expected_code=400
+            url,
+            {'model_id': 1, 'model_type': 'part', 'link': 'not-a-link.py'},
+            expected_code=400,
         )
 
         self.assertIn('Enter a valid URL', str(response.data['link']))
@@ -2590,12 +2553,20 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
         # Upload a valid link (will pass)
         response = self.post(
-            url, {'part': 1, 'link': link, 'comment': 'Hello world'}, expected_code=201
+            url,
+            {
+                'model_id': 1,
+                'model_type': 'part',
+                'link': link,
+                'comment': 'Hello world',
+            },
+            expected_code=201,
         )
 
         data = response.data
 
-        self.assertEqual(data['part'], 1)
+        self.assertEqual(data['model_type'], 'part')
+        self.assertEqual(data['model_id'], 1)
         self.assertEqual(data['link'], link)
         self.assertEqual(data['comment'], 'Hello world')
 
@@ -2904,3 +2875,96 @@ class PartSchedulingTest(PartAPITestBase):
             for entry in data:
                 for k in ['date', 'quantity', 'label']:
                     self.assertIn(k, entry)
+
+
+class PartTestTemplateTest(PartAPITestBase):
+    """API unit tests for the PartTestTemplate model."""
+
+    def test_test_templates(self):
+        """Test the PartTestTemplate API."""
+        url = reverse('api-part-test-template-list')
+
+        # List ALL items
+        response = self.get(url)
+        self.assertEqual(len(response.data), 9)
+
+        # Request for a particular part
+        response = self.get(url, data={'part': 10000})
+        self.assertEqual(len(response.data), 5)
+
+        response = self.get(url, data={'part': 10004})
+        self.assertEqual(len(response.data), 6)
+
+        # Try to post a new object (missing description)
+        response = self.post(
+            url,
+            data={'part': 10000, 'test_name': 'My very first test', 'required': False},
+            expected_code=400,
+        )
+
+        # Try to post a new object (should succeed)
+        response = self.post(
+            url,
+            data={
+                'part': 10000,
+                'test_name': 'New Test',
+                'required': True,
+                'description': 'a test description',
+            },
+        )
+
+        # Try to post a new test with the same name (should fail)
+        response = self.post(
+            url,
+            data={'part': 10004, 'test_name': '   newtest', 'description': 'dafsdf'},
+            expected_code=400,
+        )
+
+        # Try to post a new test against a non-trackable part (should fail)
+        response = self.post(
+            url, data={'part': 1, 'test_name': 'A simple test'}, expected_code=400
+        )
+
+    def test_choices(self):
+        """Test the 'choices' field for the PartTestTemplate model."""
+        template = PartTestTemplate.objects.first()
+
+        url = reverse('api-part-test-template-detail', kwargs={'pk': template.pk})
+
+        # Check OPTIONS response
+        response = self.options(url)
+        options = response.data['actions']['PUT']
+
+        self.assertTrue(options['pk']['read_only'])
+        self.assertTrue(options['pk']['required'])
+        self.assertEqual(options['part']['api_url'], '/api/part/')
+        self.assertTrue(options['test_name']['required'])
+        self.assertFalse(options['test_name']['read_only'])
+        self.assertFalse(options['choices']['required'])
+        self.assertFalse(options['choices']['read_only'])
+        self.assertEqual(
+            options['choices']['help_text'],
+            'Valid choices for this test (comma-separated)',
+        )
+
+        # Check data endpoint
+        response = self.get(url)
+        data = response.data
+
+        for key in [
+            'pk',
+            'key',
+            'part',
+            'test_name',
+            'description',
+            'enabled',
+            'required',
+            'results',
+            'choices',
+        ]:
+            self.assertIn(key, data)
+
+        # Patch with invalid choices
+        response = self.patch(url, {'choices': 'a,b,c,d,e,f,f'}, expected_code=400)
+
+        self.assertIn('Choices must be unique', str(response.data['choices']))

@@ -580,8 +580,8 @@ export function InvenTreeTable<T = any>({
       )}
       <Boundary label={`InvenTreeTable-${tableState.tableKey}`}>
         <Stack gap="sm">
-          <Group justify="apart" grow>
-            <Group justify="left" key="custom-actions" gap={5}>
+          <Group justify="apart" grow wrap="nowrap">
+            <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
               {tableProps.enableDownload && (
                 <DownloadAction
                   key="download-action"
@@ -617,7 +617,7 @@ export function InvenTreeTable<T = any>({
               ))}
             </Group>
             <Space />
-            <Group justify="right" gap={5}>
+            <Group justify="right" gap={5} wrap="nowrap">
               {tableProps.enableSearch && (
                 <TableSearchInput
                   searchCallback={(term: string) =>
@@ -626,7 +626,7 @@ export function InvenTreeTable<T = any>({
                 />
               )}
               {tableProps.enableRefresh && (
-                <ActionIcon variant="transparent">
+                <ActionIcon variant="transparent" aria-label="table-refresh">
                   <Tooltip label={t`Refresh data`}>
                     <IconRefresh onClick={() => refetch()} />
                   </Tooltip>
@@ -644,7 +644,10 @@ export function InvenTreeTable<T = any>({
                   label={tableState.activeFilters?.length ?? 0}
                   disabled={tableState.activeFilters?.length == 0}
                 >
-                  <ActionIcon variant="transparent">
+                  <ActionIcon
+                    variant="transparent"
+                    aria-label="table-select-filters"
+                  >
                     <Tooltip label={t`Table filters`}>
                       <IconFilter
                         onClick={() => setFiltersVisible(!filtersVisible)}
