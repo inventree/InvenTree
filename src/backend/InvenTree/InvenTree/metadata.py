@@ -138,6 +138,11 @@ class InvenTreeMetadata(SimpleMetadata):
         if callable(field_value) and not callable(model_value):
             return field_value
 
+        # If the "field value" is the same as the field name, likely it is just a placeholder
+        # e.g. DRF uses the field name as the default label value
+        if field_value == field_name:
+            return model_value
+
         return field_value
 
     def get_serializer_info(self, serializer):
