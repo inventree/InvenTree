@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1258,8 +1258,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:526
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:611
@@ -3721,16 +3720,12 @@ msgid "User does not have permission to create or edit attachments for this mode
 msgstr ""
 
 #: common/validators.py:33
-#, fuzzy
-#| msgid "No shipment details provided"
 msgid "No attachment model type provided"
-msgstr "Nincsenek szállítmány részletek megadva"
+msgstr ""
 
 #: common/validators.py:39
-#, fuzzy
-#| msgid "Invalid barcode data"
 msgid "Invalid attachment model type"
-msgstr "Érvénytelen vonalkód adat"
+msgstr ""
 
 #: common/validators.py:80
 msgid "Minimum places cannot be greater than maximum places"
@@ -5946,16 +5941,12 @@ msgid "Filter by category depth"
 msgstr "Kategória mélységre szűrés"
 
 #: part/api.py:141 stock/api.py:330
-#, fuzzy
-#| msgid "Level"
 msgid "Top Level"
-msgstr "Szint"
+msgstr ""
 
 #: part/api.py:143
-#, fuzzy
-#| msgid "Filter by starred categories"
 msgid "Filter by top-level categories"
-msgstr "Csillagozottra szűrés"
+msgstr ""
 
 #: part/api.py:156 stock/api.py:345
 msgid "Cascade"
@@ -6758,10 +6749,8 @@ msgid "Duplicate relationship already exists"
 msgstr "Már létezik duplikált alkatrész kapcsolat"
 
 #: part/serializers.py:118
-#, fuzzy
-#| msgid "Part Category"
 msgid "Parent Category"
-msgstr "Alkatrész kategória"
+msgstr ""
 
 #: part/serializers.py:119 templates/js/translated/part.js:309
 msgid "Parent part category"
@@ -8805,10 +8794,8 @@ msgid "Filter by location depth"
 msgstr "Hely mélységre szűrés"
 
 #: stock/api.py:332
-#, fuzzy
-#| msgid "Filter by parent location"
 msgid "Filter by top-level locations"
-msgstr "Szülő helyre szűrés"
+msgstr ""
 
 #: stock/api.py:347
 msgid "Include sub-locations in filtered results"
@@ -14433,5 +14420,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "parent"
-#~ msgstr "szülő"
