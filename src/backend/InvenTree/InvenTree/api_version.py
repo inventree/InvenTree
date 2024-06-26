@@ -1,13 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 209
+INVENTREE_API_VERSION = 210
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
-v209 - 2024-06-22 : https://github.com/inventree/InvenTree/pull/6911
+v210 - 2024-06-22 : https://github.com/inventree/InvenTree/pull/6911
     - Adds API endpoints for managing data import and export
+
+v209 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7514
+    - Add "top_level" filter to PartCategory API endpoint
+    - Add "top_level" filter to StockLocation API endpoint
 
 v208 - 2024-06-19 : https://github.com/inventree/InvenTree/pull/7479
     - Adds documentation for the user roles API endpoint (no functional changes)
@@ -122,7 +126,7 @@ v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
     - Adds "external_stock" field to the Part API endpoint
     - Adds "external_stock" field to the BomItem API endpoint
     - Adds "external_stock" field to the BuildLine API endpoint
-    - Stock quantites represented in the BuildLine API endpoint are now filtered by Build.source_location
+    - Stock quantities represented in the BuildLine API endpoint are now filtered by Build.source_location
 
 v177 - 2024-02-27 : https://github.com/inventree/InvenTree/pull/6581
     - Adds "subcategoies" count to PartCategoryTree serializer

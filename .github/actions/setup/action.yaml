@@ -44,6 +44,11 @@ runs:
         with:
           python-version: ${{ env.python_version }}
           cache: pip
+          cache-dependency-path: |
+            src/backend/requirements.txt
+            src/backend/requirements-dev.txt
+            contrib/container/requirements.txt
+            contrib/dev_reqs/requirements.txt
       - name: Install Base Python Dependencies
         if: ${{ inputs.python == 'true' }}
         shell: bash
