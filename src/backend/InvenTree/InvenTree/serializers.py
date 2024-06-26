@@ -404,6 +404,17 @@ class UserSerializer(InvenTreeModelSerializer):
 
         read_only_fields = ['username']
 
+    username = serializers.CharField(label=_('Username'), help_text=_('Username'))
+    first_name = serializers.CharField(
+        label=_('First Name'), help_text=_('First name of the user')
+    )
+    last_name = serializers.CharField(
+        label=_('Last Name'), help_text=_('Last name of the user')
+    )
+    email = serializers.EmailField(
+        label=_('Email'), help_text=_('Email address of the user')
+    )
+
 
 class ExendedUserSerializer(UserSerializer):
     """Serializer for a User with a bit more info."""
@@ -423,6 +434,16 @@ class ExendedUserSerializer(UserSerializer):
         ]
 
         read_only_fields = UserSerializer.Meta.read_only_fields + ['groups']
+
+    is_staff = serializers.BooleanField(
+        label=_('Staff'), help_text=_('Does this user have staff permissions')
+    )
+    is_superuser = serializers.BooleanField(
+        label=_('Superuser'), help_text=_('Is this user a superuser')
+    )
+    is_active = serializers.BooleanField(
+        label=_('Active'), help_text=_('Is this user account active')
+    )
 
     def validate(self, attrs):
         """Expanded validation for changing user role."""
