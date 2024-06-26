@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-21 04:59\n"
+"PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -3719,10 +3719,8 @@ msgid "User does not have permission to create or edit attachments for this mode
 msgstr ""
 
 #: common/validators.py:33
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No attachment model type provided"
-msgstr "Nie podano wierszy danych"
+msgstr ""
 
 #: common/validators.py:39
 msgid "Invalid attachment model type"
@@ -5942,10 +5940,8 @@ msgid "Filter by category depth"
 msgstr ""
 
 #: part/api.py:141 stock/api.py:330
-#, fuzzy
-#| msgid "Level"
 msgid "Top Level"
-msgstr "Poziom"
+msgstr ""
 
 #: part/api.py:143
 msgid "Filter by top-level categories"
@@ -6752,10 +6748,8 @@ msgid "Duplicate relationship already exists"
 msgstr ""
 
 #: part/serializers.py:118
-#, fuzzy
-#| msgid "Part Category"
 msgid "Parent Category"
-msgstr "Kategoria komponentu"
+msgstr ""
 
 #: part/serializers.py:119 templates/js/translated/part.js:309
 msgid "Parent part category"
@@ -14425,5 +14419,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#~ msgid "parent"
-#~ msgstr "nadrzędny"
