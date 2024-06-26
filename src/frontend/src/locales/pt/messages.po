@@ -53,7 +53,7 @@ msgstr "Impressão da etiqueta concluída com sucesso"
 #: src/components/forms/ApiForm.tsx:506
 #: src/components/forms/fields/ApiFormField.tsx:295
 #: src/components/modals/LicenseModal.tsx:75
-#: src/components/nav/SearchDrawer.tsx:413
+#: src/components/nav/SearchDrawer.tsx:427
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 #: src/pages/part/PartPricingPanel.tsx:71
@@ -1080,35 +1080,35 @@ msgstr "Notificação"
 msgid "Mark as read"
 msgstr "Marcar como lida"
 
-#: src/components/nav/SearchDrawer.tsx:77
+#: src/components/nav/SearchDrawer.tsx:78
 msgid "results"
 msgstr "resultados"
 
-#: src/components/nav/SearchDrawer.tsx:337
+#: src/components/nav/SearchDrawer.tsx:349
 msgid "Enter search text"
 msgstr "Introduzir texto de pesquisa"
 
-#: src/components/nav/SearchDrawer.tsx:364
+#: src/components/nav/SearchDrawer.tsx:376
 msgid "Search Options"
 msgstr "Opções de Pesquisa"
 
-#: src/components/nav/SearchDrawer.tsx:367
+#: src/components/nav/SearchDrawer.tsx:379
 msgid "Regex search"
 msgstr "Busca por Regex"
 
-#: src/components/nav/SearchDrawer.tsx:377
+#: src/components/nav/SearchDrawer.tsx:389
 msgid "Whole word search"
 msgstr "Pesquisar palavras inteiras"
 
-#: src/components/nav/SearchDrawer.tsx:416
+#: src/components/nav/SearchDrawer.tsx:430
 msgid "An error occurred during search query"
 msgstr "Ocorreu um erro durante a busca"
 
-#: src/components/nav/SearchDrawer.tsx:427
+#: src/components/nav/SearchDrawer.tsx:441
 msgid "No results"
 msgstr "Sem resultados"
 
-#: src/components/nav/SearchDrawer.tsx:430
+#: src/components/nav/SearchDrawer.tsx:444
 msgid "No results available for search query"
 msgstr "Não há resultados disponíveis para a pesquisa"
 
