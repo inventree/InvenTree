@@ -15,7 +15,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 import InvenTree.sso
-from common.models import InvenTreeSetting
+from common.settings import get_global_setting
 from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI
 from InvenTree.serializers import EmptySerializer, InvenTreeModelSerializer
 
@@ -177,12 +177,10 @@ class SocialProviderListView(ListAPI):
         data = {
             'sso_enabled': InvenTree.sso.login_enabled(),
             'sso_registration': InvenTree.sso.registration_enabled(),
-            'mfa_required': InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA'),
+            'mfa_required': get_global_setting('LOGIN_ENFORCE_MFA'),
             'providers': provider_list,
-            'registration_enabled': InvenTreeSetting.get_setting('LOGIN_ENABLE_REG'),
-            'password_forgotten_enabled': InvenTreeSetting.get_setting(
-                'LOGIN_ENABLE_PWD_FORGOT'
-            ),
+            'registration_enabled': get_global_setting('LOGIN_ENABLE_REG'),
+            'password_forgotten_enabled': get_global_setting('LOGIN_ENABLE_PWD_FORGOT'),
         }
         return Response(data)
 

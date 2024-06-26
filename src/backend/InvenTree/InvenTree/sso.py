@@ -2,7 +2,7 @@
 
 import logging
 
-from common.models import InvenTreeSetting
+from common.settings import get_global_setting
 from InvenTree.helpers import str2bool
 
 logger = logging.getLogger('inventree')
@@ -64,14 +64,14 @@ def provider_display_name(provider):
 
 def login_enabled() -> bool:
     """Return True if SSO login is enabled."""
-    return str2bool(InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO'))
+    return str2bool(get_global_setting('LOGIN_ENABLE_SSO'))
 
 
 def registration_enabled() -> bool:
     """Return True if SSO registration is enabled."""
-    return str2bool(InvenTreeSetting.get_setting('LOGIN_ENABLE_SSO_REG'))
+    return str2bool(get_global_setting('LOGIN_ENABLE_SSO_REG'))
 
 
 def auto_registration_enabled() -> bool:
     """Return True if SSO auto-registration is enabled."""
-    return str2bool(InvenTreeSetting.get_setting('LOGIN_SIGNUP_SSO_AUTO'))
+    return str2bool(get_global_setting('LOGIN_SIGNUP_SSO_AUTO'))

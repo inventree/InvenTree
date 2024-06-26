@@ -12,6 +12,7 @@ from django.urls import Resolver404, include, path, resolve, reverse_lazy
 from allauth_2fa.middleware import AllauthTwoFactorMiddleware, BaseRequire2FAMiddleware
 from error_report.middleware import ExceptionProcessor
 
+from common.settings import get_global_setting
 from InvenTree.urls import frontendpatterns
 from users.models import ApiToken
 
@@ -70,7 +71,8 @@ class AuthRequiredMiddleware(object):
 
         # API requests are handled by the DRF library
         if request.path_info.startswith('/api/'):
-            return self.get_response(request)
+            response = self.get_response(request)
+            return response
 
         # Is the function exempt from auth requirements?
         path_func = resolve(request.path).func
@@ -152,11 +154,9 @@ class Check2FAMiddleware(BaseRequire2FAMiddleware):
 
     def require_2fa(self, request):
         """Use setting to check if MFA should be enforced for frontend page."""
-        from common.models import InvenTreeSetting
-
         try:
             if url_matcher.resolve(request.path[1:]):
-                return InvenTreeSetting.get_setting('LOGIN_ENFORCE_MFA')
+                return get_global_setting('LOGIN_ENFORCE_MFA')
         except Resolver404:
             pass
         return False

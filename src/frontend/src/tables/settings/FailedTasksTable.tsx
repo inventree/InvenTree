@@ -57,8 +57,12 @@ export default function FailedTasksTable() {
         title={<StylishText>{t`Error Details`}</StylishText>}
         onClose={close}
       >
-        {error.split('\n').map((line: string) => {
-          return <Text size="sm">{line}</Text>;
+        {error.split('\n').map((line: string, index: number) => {
+          return (
+            <Text key={`error-${index}`} size="sm">
+              {line}
+            </Text>
+          );
         })}
       </Drawer>
       <InvenTreeTable

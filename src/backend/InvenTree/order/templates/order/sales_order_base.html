@@ -89,6 +89,10 @@ src="{% static 'img/blank_image.png' %}"
         <span class='fas fa-truck'></span> {% trans "Ship Items" %}
     </button>
     {% endif %}
+    <button type='button' class='btn btn-success' id='ship-order' title='{% trans "Mark As Shipped" %}'>
+        <span class='fas fa-check-circle'></span> {% trans "Mark As Shipped" %}
+    </button>
+    {% elif order.status == SalesOrderStatus.SHIPPED %}
     <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Complete Sales Order" %}'>
         <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
     </button>
@@ -286,6 +290,15 @@ $("#cancel-order").click(function() {
     );
 });
 
+$("#ship-order").click(function() {
+    shipSalesOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+});
+
 $("#complete-order").click(function() {
     completeSalesOrder(
         {{ order.pk }},
@@ -297,11 +310,7 @@ $("#complete-order").click(function() {
 
 {% if report_enabled %}
 $('#print-order-report').click(function() {
-    printReports({
-        items: [{{ order.pk }}],
-        key: 'order',
-        url: '{% url "api-so-report-list" %}',
-    });
+    printReports('salesorder', [{{ order.pk }}]);
 });
 {% endif %}
 

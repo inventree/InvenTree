@@ -244,17 +244,7 @@
 {{ block.super }}
 
     onPanelLoad("attachments", function() {
-        loadAttachmentTable('{% url "api-company-attachment-list" %}', {
-            filters: {
-                company: {{ company.pk }},
-            },
-            fields: {
-                company: {
-                    value: {{ company.pk }},
-                    hidden: true
-                }
-            }
-        });
+        loadAttachmentTable('company', {{ company.pk }});
     });
 
     // Callback function when the 'contacts' panel is loaded
@@ -305,6 +295,8 @@
             '{% url "api-company-detail" company.pk %}',
             {
                 editable: true,
+                model_type: "company",
+                model_id: {{ company.pk }},
             }
         );
     });

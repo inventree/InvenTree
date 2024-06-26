@@ -7,11 +7,8 @@ from plugin.base.event.mixins import EventMixin
 from plugin.base.integration.APICallMixin import APICallMixin
 from plugin.base.integration.AppMixin import AppMixin
 from plugin.base.integration.CurrencyExchangeMixin import CurrencyExchangeMixin
-from plugin.base.integration.mixins import (
-    NavigationMixin,
-    PanelMixin,
-    SettingsContentMixin,
-)
+from plugin.base.integration.mixins import NavigationMixin, SettingsContentMixin
+from plugin.base.integration.PanelMixin import PanelMixin
 from plugin.base.integration.ReportMixin import ReportMixin
 from plugin.base.integration.ScheduleMixin import ScheduleMixin
 from plugin.base.integration.SettingsMixin import SettingsMixin

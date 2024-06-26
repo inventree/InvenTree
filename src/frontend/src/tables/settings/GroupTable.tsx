@@ -125,7 +125,7 @@ export function GroupTable() {
     pk: selectedGroup,
     title: t`Delete group`,
     successMessage: t`Group deleted`,
-    onFormSuccess: table.refreshTable,
+    table: table,
     preFormWarning: t`Are you sure you want to delete this group?`
   });
 
@@ -133,7 +133,7 @@ export function GroupTable() {
     url: ApiEndpoints.group_list,
     title: t`Add group`,
     fields: { name: {} },
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const tableActions = useMemo(() => {

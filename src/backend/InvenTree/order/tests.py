@@ -14,7 +14,7 @@ from djmoney.money import Money
 import common.models
 import order.tasks
 from company.models import Company, SupplierPart
-from InvenTree.status_codes import PurchaseOrderStatus
+from order.status_codes import PurchaseOrderStatus
 from part.models import Part
 from stock.models import StockItem, StockLocation
 from users.models import Owner

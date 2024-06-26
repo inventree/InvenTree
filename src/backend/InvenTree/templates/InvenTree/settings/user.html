@@ -162,6 +162,9 @@
     </div>
 </div>
 
+{% inventree_customize 'hide_active_sessions' as hide_active_sessions %}
+
+{% if not hide_active_sessions %}
 <div class="row">
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
@@ -211,6 +214,8 @@
         </table>
     </div>
 </div>
+{% endif %}
+
 {% endblock content %}
 
 {% block js_ready %}

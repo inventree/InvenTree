@@ -15,6 +15,14 @@ wget -qO install.sh https://get.inventree.org && bash install.sh
 
 This script does all manual steps without any input. The installation might take up to 5-10 minutes to finish.
 
+#### Permission Denied Error
+
+The above command may need to be run with `sudo` permissions, depending on the system configuration. So, if the script fails with a permission error, try:
+
+```bash
+sudo wget -qO install.sh https://get.inventree.org && sudo bash install.sh
+```
+
 ### File Locations
 
 The installer creates the following directories:
@@ -171,4 +179,4 @@ The packages are provided by [packager.io](https://packager.io/). They are built
 
 The package sets up [services](#controlling-inventree) that run the needed processes as the unprivileged user `inventree`. This keeps the privileges of InvenTree as low as possible.
 
-A CLI is provided to interface with low-level management functions like [variable management](#enviroment-variables), log access, commands, process scaling, etc.
+A CLI is provided to interface with low-level management functions like [variable management](#environment-variables), log access, commands, process scaling, etc.

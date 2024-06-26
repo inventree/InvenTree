@@ -114,9 +114,9 @@ function loadPluginTable(table, options={}) {
                     // Check if custom plugins are enabled for this instance
                     if (options.custom && !row.is_builtin && row.is_installed) {
                         if (row.active) {
-                            buttons += makeIconButton('fa-stop-circle icon-red', 'btn-plugin-disable', row.pk, '{% trans "Disable Plugin" %}');
+                            buttons += makeIconButton('fa-stop-circle icon-red', 'btn-plugin-disable', row.key, '{% trans "Disable Plugin" %}');
                         } else {
-                            buttons += makeIconButton('fa-play-circle icon-green', 'btn-plugin-enable', row.pk, '{% trans "Enable Plugin" %}');
+                            buttons += makeIconButton('fa-play-circle icon-green', 'btn-plugin-enable', row.key, '{% trans "Enable Plugin" %}');
                         }
                     }
 

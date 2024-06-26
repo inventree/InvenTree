@@ -242,8 +242,7 @@ function loadReturnOrderTable(table, options={}) {
     setupFilterList('returnorder', $(table), '#filter-list-returnorder', {
         download: true,
         report: {
-            url: '{% url "api-return-order-report-list" %}',
-            key: 'order',
+            key: 'returnorder',
         }
     });
 

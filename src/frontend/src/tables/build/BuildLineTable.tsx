@@ -6,13 +6,11 @@ import {
   IconTool
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { PartHoverCard } from '../../components/images/Thumbnail';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
-import { getDetailUrl } from '../../functions/urls';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -25,12 +23,12 @@ import { TableHoverCard } from '../TableHoverCard';
 export default function BuildLineTable({ params = {} }: { params?: any }) {
   const table = useTable('buildline');
   const user = useUserState();
-  const navigate = useNavigate();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
         name: 'allocated',
+        label: t`Allocated`,
         description: t`Show allocated lines`
       },
       {
@@ -47,6 +45,11 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         name: 'optional',
         label: t`Optional`,
         description: t`Show optional lines`
+      },
+      {
+        name: 'tracked',
+        label: t`Tracked`,
+        description: t`Show tracked lines`
       }
     ];
   }, []);
@@ -109,7 +112,10 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
           available > 0 ? (
             available
           ) : (
-            <Text color="red" italic>{t`No stock available`}</Text>
+            <Text
+              c="red"
+              style={{ fontStyle: 'italic' }}
+            >{t`No stock available`}</Text>
           )
         }
         title={t`Available Stock`}
@@ -122,18 +128,28 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
     return [
       {
         accessor: 'bom_item',
+        ordering: 'part',
         sortable: true,
         switchable: false,
         render: (record: any) => <PartHoverCard part={record.part_detail} />
       },
       {
-        accessor: 'bom_item_detail.reference'
+        accessor: 'bom_item_detail.reference',
+        ordering: 'reference',
+        sortable: true,
+        title: t`Reference`
       },
       BooleanColumn({
-        accessor: 'bom_item_detail.consumable'
+        accessor: 'bom_item_detail.consumable',
+        ordering: 'consumable'
       }),
       BooleanColumn({
-        accessor: 'bom_item_detail.optional'
+        accessor: 'bom_item_detail.optional',
+        ordering: 'optional'
+      }),
+      BooleanColumn({
+        accessor: 'part_detail.trackable',
+        ordering: 'trackable'
       }),
       {
         accessor: 'bom_item_detail.quantity',
@@ -142,7 +158,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         ordering: 'unit_quantity',
         render: (record: any) => {
           return (
-            <Group position="apart">
+            <Group justify="space-between">
               <Text>{record.bom_item_detail?.quantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>
@@ -156,7 +172,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         sortable: true,
         render: (record: any) => {
           return (
-            <Group position="apart">
+            <Group justify="space-between">
               <Text>{record.quantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>
@@ -176,7 +192,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         switchable: false,
         render: (record: any) => {
           return record?.bom_item_detail?.consumable ? (
-            <Text italic>{t`Consumable item`}</Text>
+            <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
           ) : (
             <ProgressBar
               progressLabel={true}
@@ -195,6 +211,11 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
 
       // Consumable items have no appropriate actions
       if (record?.bom_item_detail?.consumable) {
+        return [];
+      }
+
+      // Tracked items must be allocated to a particular output
+      if (record?.part_detail?.trackable) {
         return [];
       }
 
@@ -234,11 +255,8 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         },
         tableFilters: tableFilters,
         rowActions: rowActions,
-        onRowClick: (row: any) => {
-          if (row?.part_detail?.pk) {
-            navigate(getDetailUrl(ModelType.part, row.part_detail.pk));
-          }
-        }
+        modelType: ModelType.part,
+        modelField: 'part_detail.pk'
       }}
     />
   );

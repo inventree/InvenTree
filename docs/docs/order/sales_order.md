@@ -20,8 +20,23 @@ Each Sales Order has a specific status code, which represents the state of the o
 | --- | --- |
 | Pending | The sales order has been created, but has not been finalized or submitted |
 | In Progress | The sales order has been issued, and is in progress |
-| Shipped | The sales order has been completed, and is now closed |
+| Shipped | The sales order has been shipped, but is not yet complete |
+| Complete | The sales order is fully completed, and is now closed |
 | Cancelled | The sales order was cancelled, and is now closed |
+| Lost | The sales order was lost, and is now closed |
+| Returned | The sales order was returned, and is now closed |
+
+**Source Code**
+
+Refer to the source code for the Sales Order status codes:
+
+::: order.status_codes.SalesOrderStatus
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
 
 ### Sales Order Currency
 
@@ -83,7 +98,7 @@ To view all the completed shipment, click on the <span class="badge inventree na
 
 ### Complete Order
 
-Once all items in the sales order have been shipped, click on <span class="badge inventree add"><span class='fas fa-check-circle'></span> Complete Order</span> to mark the sales order as complete.
+Once all items in the sales order have been shipped, click on <span class="badge inventree add"><span class='fas fa-check-circle'></span> Complete Order</span> to mark the sales order as shipped. Confirm then click on <span class="badge inventree confirm">Submit</span> to complete the order.
 
 ### Cancel Order
 

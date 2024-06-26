@@ -18,12 +18,13 @@ You need to make sure that you have the following tools installed before continu
 
 #### Docker Containers
 
-The InvenTree devcontainer setup will install two docker containers:
+The InvenTree devcontainer setup will install the following docker containers:
 
 | Container | Description |
 | --- | --- |
+| inventree | InvenTree host server |
 | db | InvenTree database (postgresql) |
-| inventree | InvenTree server |
+| redis | Redis server for caching |
 
 #### Setup/Installation
 
@@ -119,3 +120,9 @@ If you are running a devcontainer in Windows, you may experience some performanc
 For a significant improvement in performance, the source code should be installed into the **WSL 2** filesystem (not on your "Windows" filesystem). This will greatly improve file access performance, and also make the devcontainer much more responsive to file system changes.
 
 You can also refer to the [Improve disk performance guide](https://code.visualstudio.com/remote/advancedcontainers/improve-performance) for more information.
+
+### Redis Caching
+
+The devcontainer setup provides a [redis](https://redis.io/) container which can be used for managing global cache. By default this is disabled, but it can be easily enabled for testing or developing with the [redis cache](../start/config.md#caching) enabled.
+
+To enable the cache, locate the InvenTree configuration file (`./dev/config.yaml`) and set the `cache.enabled` setting to `True`.

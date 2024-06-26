@@ -6,8 +6,8 @@ import { StatusCodeListInterface } from '../components/render/StatusRenderer';
 import { statusCodeList } from '../defaults/backendMappings';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
-import { isLoggedIn } from '../functions/auth';
 import { apiUrl } from './ApiState';
+import { useUserState } from './UserState';
 
 type StatusLookup = Record<ModelType | string, StatusCodeListInterface>;
 
@@ -23,6 +23,8 @@ export const useGlobalStatusState = create<ServerStateProps>()(
       status: undefined,
       setStatus: (newStatus: StatusLookup) => set({ status: newStatus }),
       fetchStatus: async () => {
+        const { isLoggedIn } = useUserState.getState();
+
         // Fetch status data for rendering labels
         if (!isLoggedIn()) {
           return;
@@ -39,7 +41,7 @@ export const useGlobalStatusState = create<ServerStateProps>()(
             set({ status: newStatusLookup });
           })
           .catch(() => {
-            console.error('Error fetching global status information');
+            console.error('ERR: Error fetching global status information');
           });
       }
     }),

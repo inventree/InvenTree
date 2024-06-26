@@ -305,6 +305,7 @@ function partFields(options={}) {
 function categoryFields(options={}) {
     let fields = {
         parent: {
+            label: '{% trans "Parent" %}',
             help_text: '{% trans "Parent part category" %}',
             required: false,
             tree_picker: {
@@ -2281,8 +2282,7 @@ function loadPartTable(table, url, options={}) {
         setupFilterList('parts', $(table), options.filterTarget, {
             download: true,
             labels: {
-                url: '{% url "api-part-label-list" %}',
-                key: 'part',
+                model_type: 'part',
             },
             singular_name: '{% trans "part" %}',
             plural_name: '{% trans "parts" %}',
@@ -2828,6 +2828,7 @@ function partTestTemplateFields(options={}) {
         requires_value: {},
         requires_attachment: {},
         enabled: {},
+        choices: {},
         part: {
             hidden: true,
         }

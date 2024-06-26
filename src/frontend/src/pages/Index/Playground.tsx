@@ -1,14 +1,21 @@
 import { Trans } from '@lingui/macro';
-import { Button, Card, Stack, TextInput } from '@mantine/core';
-import { Group, Text } from '@mantine/core';
-import { Accordion } from '@mantine/core';
-import { spotlight } from '@mantine/spotlight';
+import {
+  Accordion,
+  Button,
+  Card,
+  Group,
+  Stack,
+  Text,
+  TextInput
+} from '@mantine/core';
+import { SpotlightActionData } from '@mantine/spotlight';
 import { IconAlien } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
 import { OptionsApiForm } from '../../components/forms/ApiForm';
 import { PlaceholderPill } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
+import { firstSpotlight } from '../../components/nav/Layout';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -47,20 +54,6 @@ function ApiFormsPlayground() {
     pk: 1,
     title: 'Edit Part',
     fields: editPartFields
-  });
-
-  const newAttachment = useCreateApiFormModal({
-    url: ApiEndpoints.part_attachment_list,
-    title: 'Create Attachment',
-    fields: {
-      part: {},
-      attachment: {},
-      comment: {}
-    },
-    initialData: {
-      part: 1
-    },
-    successMessage: 'Attachment uploaded'
   });
 
   const [active, setActive] = useState(true);
@@ -123,13 +116,10 @@ function ApiFormsPlayground() {
         <Button onClick={() => editCategory.open()}>Edit Category</Button>
         {editCategory.modal}
 
-        <Button onClick={() => newAttachment.open()}>Create Attachment</Button>
-        {newAttachment.modal}
-
         <Button onClick={() => openCreatePart()}>Create Part new Modal</Button>
         {createPartModal}
       </Group>
-      <Card sx={{ padding: '30px' }}>
+      <Card style={{ padding: '30px' }}>
         <OptionsApiForm
           props={{
             url: ApiEndpoints.part_list,
@@ -175,25 +165,27 @@ function SpotlighPlayground() {
     <Button
       variant="outline"
       onClick={() => {
-        spotlight.registerActions([
+        const setAdditionalActions = (value: SpotlightActionData[]) => {
+          console.log('would add', value);
+        };
+        setAdditionalActions([
           {
             id: 'secret-action-1',
             title: 'Secret action',
             description: 'It was registered with a button click',
-            icon: <IconAlien size="1.2rem" />,
-            onTrigger: () => console.log('Secret')
+            leftSection: <IconAlien size="1.2rem" />,
+            onClick: () => console.log('Secret')
           },
           {
             id: 'secret-action-2',
             title: 'Another secret action',
             description:
               'You can register multiple actions with just one command',
-            icon: <IconAlien size="1.2rem" />,
-            onTrigger: () => console.log('Secret')
+            leftSection: <IconAlien size="1.2rem" />,
+            onClick: () => console.log('Secret')
           }
         ]);
-        console.log('registed');
-        spotlight.open();
+        firstSpotlight.open();
       }}
     >
       Register extra actions

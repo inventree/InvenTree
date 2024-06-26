@@ -15,7 +15,7 @@ The dict must be formatted similar to the following sample that shows how to use
 
 Take a look at the settings defined in `InvenTree.common.models.InvenTreeSetting` for all possible parameters.
 
-### Example
+### Example Plugin
 
 Below is a simple example of how a plugin can implement settings:
 

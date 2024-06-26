@@ -527,7 +527,7 @@ function barcodeCheckInStockItems(location_id, options={}) {
     var modal = options.modal || createNewModal();
     options.modal = modal;
 
-    // List of items we are going to checkin
+    // List of items we are going to check in
     var items = [];
 
     function reloadTable() {

@@ -92,6 +92,12 @@ function getModelRenderer(model) {
         return renderGroup;
     case 'projectcode':
         return renderProjectCode;
+    case 'labeltemplate':
+        return renderLabelTemplate;
+    case 'reporttemplate':
+        return renderReportTemplate;
+    case 'pluginconfig':
+        return renderPluginConfig;
     default:
         // Un-handled model type
         console.error(`Rendering not implemented for model '${model}'`);
@@ -536,6 +542,45 @@ function renderProjectCode(data, parameters={}) {
         {
             text: data.code,
             textSecondary: data.description,
+        },
+        parameters
+    );
+}
+
+
+// Renderer for "LabelTemplate" model
+function renderLabelTemplate(data, parameters={}) {
+
+    return renderModel(
+        {
+            text: data.name,
+            textSecondary: data.description,
+        },
+        parameters
+    );
+}
+
+
+// Renderer for "ReportTemplate" model
+function renderReportTemplate(data, parameters={}) {
+
+    return renderModel(
+        {
+            text: data.name,
+            textSecondary: data.description,
+        },
+        parameters
+    );
+}
+
+
+// Renderer for "PluginConfig" model
+function renderPluginConfig(data, parameters={}) {
+
+    return renderModel(
+        {
+            text: data.name,
+            textSecondary: data.meta?.description,
         },
         parameters
     );

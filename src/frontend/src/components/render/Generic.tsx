@@ -1,8 +1,10 @@
 import { ReactNode } from 'react';
 
-import { RenderInlineModel } from './Instance';
+import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
-export function RenderProjectCode({ instance }: { instance: any }): ReactNode {
+export function RenderProjectCode({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
   return (
     instance && (
       <RenderInlineModel

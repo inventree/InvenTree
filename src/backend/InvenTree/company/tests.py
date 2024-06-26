@@ -286,7 +286,11 @@ class ManufacturerPartSimpleTest(TestCase):
 
     def test_delete(self):
         """Test deletion of a ManufacturerPart."""
-        Part.objects.get(pk=self.part.id).delete()
+        part = Part.objects.get(pk=self.part.id)
+        part.active = False
+        part.save()
+        part.delete()
+
         # Check that ManufacturerPart was deleted
         self.assertEqual(ManufacturerPart.objects.count(), 3)
 

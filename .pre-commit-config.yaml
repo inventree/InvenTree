@@ -10,14 +10,14 @@ exclude: |
     )$
 repos:
 -   repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v4.6.0
     hooks:
     -   id: trailing-whitespace
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.3.5
+    rev: v0.4.1
     hooks:
     - id: ruff-format
       args: [--preview]
@@ -27,16 +27,28 @@ repos:
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.1.29
+    rev: 0.1.35
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, --python-version=3.9, --no-strip-extras]
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [src/backend/requirements.in, -o, src/backend/requirements.txt,--python-version=3.9, --no-strip-extras]
+        args: [src/backend/requirements.in, -o, src/backend/requirements.txt]
         files: src/backend/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt]
+        files: contrib/dev_reqs/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [docs/requirements.in, -o, docs/requirements.txt]
+        files: docs/requirements\.(in|txt)$
+      - id: pip-compile
+        name: pip-compile requirements.txt
+        args: [contrib/container/requirements.in, -o, contrib/container/requirements.txt, --python-version=3.11, --no-strip-extras, --generate-hashes]
+        files: contrib/container/requirements\.(in|txt)$
 -   repo: https://github.com/Riverside-Healthcare/djLint
     rev: v1.34.1
     hooks:
@@ -51,6 +63,8 @@ repos:
           docs/docs/javascripts/.*|
           docs/docs/webfonts/.* |
           src/frontend/src/locales/.* |
+          pyproject.toml |
+          src/frontend/vite.config.ts |
       )$
 - repo: https://github.com/pre-commit/mirrors-prettier
   rev: "v4.0.0-alpha.8"
@@ -61,7 +75,7 @@ repos:
       - "prettier@^2.4.1"
       - "@trivago/prettier-plugin-sort-imports"
 - repo: https://github.com/pre-commit/mirrors-eslint
-  rev: "v9.0.0"
+  rev: "v9.4.0"
   hooks:
   - id: eslint
     additional_dependencies:
@@ -73,10 +87,14 @@ repos:
       - "@typescript-eslint/parser"
     files: ^src/frontend/.*\.(js|jsx|ts|tsx)$
 -   repo: https://github.com/gitleaks/gitleaks
-    rev: v8.18.2
+    rev: v8.18.3
     hooks:
     -   id: gitleaks
 #-   repo: https://github.com/jumanjihouse/pre-commit-hooks
 #    rev: 3.0.0
 #    hooks:
 #    -   id: shellcheck
+-   repo: https://github.com/isidentical/teyit
+    rev: 0.4.3
+    hooks:
+    -   id: teyit

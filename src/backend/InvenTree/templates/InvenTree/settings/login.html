@@ -16,6 +16,8 @@
 </div>
 {% endif %}
 
+{% include "pui_banner.html" with mode='admin' %}
+
 <table class='table table-striped table-condensed'>
     <tbody>
         {% include "InvenTree/settings/setting.html" with key="LOGIN_ENABLE_PWD_FORGOT" icon="fa-user-lock" %}

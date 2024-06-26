@@ -19,7 +19,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { StylishText } from '../../../components/items/StylishText';
+import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
@@ -99,7 +99,8 @@ export default function SystemSettings() {
       {
         name: 'notifications',
         label: t`Notifications`,
-        icon: <IconBellCog />
+        icon: <IconBellCog />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'pricing',
@@ -110,6 +111,7 @@ export default function SystemSettings() {
             <GlobalSettingList
               keys={[
                 'INVENTREE_DEFAULT_CURRENCY',
+                'CURRENCY_CODES',
                 'PART_INTERNAL_PRICE',
                 'PART_BOM_USE_INTERNAL_PRICE',
                 'PRICING_DECIMAL_PLACES_MIN',
@@ -161,7 +163,8 @@ export default function SystemSettings() {
       {
         name: 'categories',
         label: t`Part Categories`,
-        icon: <IconSitemap />
+        icon: <IconSitemap />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'parts',
@@ -174,6 +177,7 @@ export default function SystemSettings() {
               'PART_IPN_REGEX',
               'PART_ALLOW_DUPLICATE_IPN',
               'PART_ALLOW_EDIT_IPN',
+              'PART_ALLOW_DELETE_FROM_ASSEMBLY',
               'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',
@@ -213,6 +217,7 @@ export default function SystemSettings() {
               'STOCK_LOCATION_DEFAULT_ICON',
               'STOCK_SHOW_INSTALLED_ITEMS',
               'STOCK_ENFORCE_BOM_INSTALLATION',
+              'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER',
               'TEST_STATION_DATA'
             ]}
           />
@@ -221,7 +226,8 @@ export default function SystemSettings() {
       {
         name: 'stocktake',
         label: t`Stocktake`,
-        icon: <IconClipboardCheck />
+        icon: <IconClipboardCheck />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'buildorders',
@@ -262,7 +268,8 @@ export default function SystemSettings() {
               'SALESORDER_REFERENCE_PATTERN',
               'SALESORDER_REQUIRE_RESPONSIBLE',
               'SALESORDER_DEFAULT_SHIPMENT',
-              'SALESORDER_EDIT_COMPLETED_ORDERS'
+              'SALESORDER_EDIT_COMPLETED_ORDERS',
+              'SALESORDER_SHIP_COMPLETE'
             ]}
           />
         )
@@ -288,7 +295,7 @@ export default function SystemSettings() {
 
   return (
     <>
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <SettingsHeader
           title={t`System Settings`}
           subtitle={server.instance || ''}

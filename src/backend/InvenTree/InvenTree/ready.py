@@ -114,6 +114,7 @@ def canAppAccessDatabase(
         'wait_for_db',
         'makemessages',
         'compilemessages',
+        'spectactular',
     ]
 
     if not allow_shell:
@@ -124,7 +125,7 @@ def canAppAccessDatabase(
         excluded_commands.append('test')
 
     if not allow_plugins:
-        excluded_commands.extend(['collectstatic'])
+        excluded_commands.extend(['collectstatic', 'collectplugins'])
 
     for cmd in excluded_commands:
         if cmd in sys.argv:

@@ -1,13 +1,44 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
+import { NavigateFunction } from 'react-router-dom';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
+import { apiUrl, useServerApiState } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
+import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
+
+/**
+ * sends a request to the specified url from a form. this will change the window location.
+ * @param {string} path the path to send the post request to
+ * @param {object} params the parameters to add to the url
+ * @param {string} [method=post] the method to use on the form
+ *
+ * Source https://stackoverflow.com/questions/133925/javascript-post-request-like-a-form-submit/133997#133997
+ */
+
+function post(path: string, params: any, method = 'post') {
+  const form = document.createElement('form');
+  form.method = method;
+  form.action = path;
+
+  for (const key in params) {
+    if (params.hasOwnProperty(key)) {
+      const hiddenField = document.createElement('input');
+      hiddenField.type = 'hidden';
+      hiddenField.name = key;
+      hiddenField.value = params[key];
+
+      form.appendChild(hiddenField);
+    }
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+}
 
 /**
  * Attempt to login using username:password combination.
@@ -16,7 +47,8 @@ import { showLoginNotification } from './notifications';
  */
 export const doBasicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
-  // const apiState = useServerApiState.getState();
+  const { clearUserState, setToken, fetchUserState, isLoggedIn } =
+    useUserState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -25,6 +57,8 @@ export const doBasicLogin = async (username: string, password: string) => {
   clearCsrfCookie();
 
   const login_url = apiUrl(ApiEndpoints.user_login);
+
+  let result: boolean = false;
 
   // Attempt login with
   await api
@@ -39,18 +73,33 @@ export const doBasicLogin = async (username: string, password: string) => {
       }
     )
     .then((response) => {
-      switch (response.status) {
-        case 200:
-          fetchGlobalStates();
-          break;
-        default:
-          clearCsrfCookie();
-          break;
+      if (response.status == 200) {
+        if (response.data.key) {
+          setToken(response.data.key);
+          result = true;
+        }
       }
     })
-    .catch(() => {
-      clearCsrfCookie();
+    .catch((err) => {
+      if (
+        err?.response?.status == 403 &&
+        err?.response?.data?.detail == 'MFA required for this user'
+      ) {
+        post(apiUrl(ApiEndpoints.user_login), {
+          username: username,
+          password: password,
+          csrfmiddlewaretoken: getCsrfCookie(),
+          mfa: true
+        });
+      }
     });
+
+  if (result) {
+    await fetchUserState();
+    await fetchGlobalStates();
+  } else {
+    clearUserState();
+  }
 };
 
 /**
@@ -58,17 +107,22 @@ export const doBasicLogin = async (username: string, password: string) => {
  *
  * @arg deleteToken: If true, delete the token from the server
  */
-export const doLogout = async (navigate: any) => {
+export const doLogout = async (navigate: NavigateFunction) => {
+  const { clearUserState, isLoggedIn } = useUserState.getState();
+
   // Logout from the server session
-  await api.post(apiUrl(ApiEndpoints.user_logout)).finally(() => {
-    clearCsrfCookie();
-    navigate('/login');
+  if (isLoggedIn() || !!getCsrfCookie()) {
+    await api.post(apiUrl(ApiEndpoints.user_logout)).catch(() => {});
 
     showLoginNotification({
       title: t`Logged Out`,
       message: t`Successfully logged out`
     });
-  });
+  }
+
+  clearUserState();
+  clearCsrfCookie();
+  navigate('/login');
 };
 
 export const doSimpleLogin = async (email: string) => {
@@ -122,16 +176,18 @@ export function handleReset(navigate: any, values: { email: string }) {
  * - An existing API token is stored in the session
  * - An existing CSRF cookie is stored in the browser
  */
-export function checkLoginState(
+export const checkLoginState = async (
   navigate: any,
   redirect?: string,
   no_redirect?: boolean
-) {
+) => {
   setApiDefaults();
 
   if (redirect == '/') {
     redirect = '/home';
   }
+
+  const { isLoggedIn, fetchUserState } = useUserState.getState();
 
   // Callback function when login is successful
   const loginSuccess = () => {
@@ -139,6 +195,8 @@ export function checkLoginState(
       title: t`Logged In`,
       message: t`Successfully logged in`
     });
+
+    fetchGlobalStates();
 
     navigate(redirect ?? '/home');
   };
@@ -150,24 +208,22 @@ export function checkLoginState(
     }
   };
 
-  // Check the 'user_me' endpoint to see if the user is logged in
   if (isLoggedIn()) {
-    api
-      .get(apiUrl(ApiEndpoints.user_me))
-      .then((response) => {
-        if (response.status == 200) {
-          loginSuccess();
-        } else {
-          loginFailure();
-        }
-      })
-      .catch(() => {
-        loginFailure();
-      });
+    // Already logged in
+    loginSuccess();
+    return;
+  }
+
+  // Not yet logged in, but we might have a valid session cookie
+  // Attempt to login
+  await fetchUserState();
+
+  if (isLoggedIn()) {
+    loginSuccess();
   } else {
     loginFailure();
   }
-}
+};
 
 /*
  * Return the value of the CSRF cookie, if available
@@ -179,10 +235,6 @@ export function getCsrfCookie() {
     ?.split('=')[1];
 
   return cookieValue;
-}
-
-export function isLoggedIn() {
-  return !!getCsrfCookie();
 }
 
 /*

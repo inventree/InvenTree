@@ -22,7 +22,7 @@ export default function Logout() {
               <Text size="lg">
                 <Trans>Logging out</Trans>
               </Text>
-              <Group position="center">
+              <Group justify="center">
                 <Loader />
               </Group>
             </Stack>

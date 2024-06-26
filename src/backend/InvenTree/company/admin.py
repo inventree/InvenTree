@@ -14,7 +14,6 @@ from .models import (
     Company,
     Contact,
     ManufacturerPart,
-    ManufacturerPartAttachment,
     ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
@@ -120,15 +119,6 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
     autocomplete_fields = ('part', 'manufacturer')
 
 
-@admin.register(ManufacturerPartAttachment)
-class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
-    """Admin class for ManufacturerPartAttachment model."""
-
-    list_display = ('manufacturer_part', 'attachment', 'comment')
-
-    autocomplete_fields = ('manufacturer_part',)
-
-
 class ManufacturerPartParameterResource(InvenTreeResource):
     """Class for managing ManufacturerPartParameter data import/export."""
 
@@ -213,6 +203,8 @@ class AddressAdmin(ImportExportModelAdmin):
 
     search_fields = ['company', 'country', 'postal_code']
 
+    autocomplete_fields = ['company']
+
 
 class ContactResource(InvenTreeResource):
     """Class for managing Contact data import/export."""
@@ -237,3 +229,5 @@ class ContactAdmin(ImportExportModelAdmin):
     list_display = ('company', 'name', 'role', 'email', 'phone')
 
     search_fields = ['company', 'name', 'email']
+
+    autocomplete_fields = ['company']

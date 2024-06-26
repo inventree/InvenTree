@@ -124,7 +124,7 @@ export function AddressTable({
       company: companyId
     },
     successMessage: t`Address created`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const [selectedAddress, setSelectedAddress] = useState<number>(-1);
@@ -134,15 +134,15 @@ export function AddressTable({
     pk: selectedAddress,
     title: t`Edit Address`,
     fields: addressFields,
-    onFormSuccess: (record: any) => table.updateRecord(record)
+    table: table
   });
 
   const deleteAddress = useDeleteApiFormModal({
     url: ApiEndpoints.address_list,
     pk: selectedAddress,
     title: t`Delete Address`,
-    onFormSuccess: table.refreshTable,
-    preFormWarning: t`Are you sure you want to delete this address?`
+    preFormWarning: t`Are you sure you want to delete this address?`,
+    table: table
   });
 
   const rowActions = useCallback(

@@ -1,4 +1,4 @@
-import { Trans, t } from '@lingui/macro';
+import { Trans } from '@lingui/macro';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { api } from '../../../../App';
@@ -13,54 +13,53 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
         code,
         previewItem,
         saveTemplate,
-        { uploadKey, uploadUrl, preview: { itemKey }, templateType }
+        { templateUrl, printingUrl, template }
       ) => {
         if (saveTemplate) {
           const formData = new FormData();
-          formData.append(uploadKey, new File([code], 'template.html'));
 
-          const res = await api.patch(uploadUrl, formData);
+          const filename =
+            template.template?.split('/').pop() ?? 'template.html';
+
+          formData.append('template', new File([code], filename));
+
+          const res = await api.patch(templateUrl, formData);
           if (res.status !== 200) {
             throw new Error(res.data);
           }
         }
 
-        // ---- TODO: Fix this when implementing the new API ----
-        let preview = await api.get(
-          uploadUrl + `print/?plugin=inventreelabel&${itemKey}=${previewItem}`,
+        let preview = await api.post(
+          printingUrl,
           {
-            responseType: templateType === 'label' ? 'json' : 'blob',
+            items: [previewItem],
+            template: template.pk
+          },
+          {
+            responseType: 'json',
             timeout: 30000,
             validateStatus: () => true
           }
         );
 
-        if (preview.status !== 200) {
-          if (templateType === 'report') {
-            let data;
-            try {
-              data = JSON.parse(await preview.data.text());
-            } catch (err) {
-              throw new Error(t`Failed to parse error response from server.`);
-            }
-
-            throw new Error(data.detail?.join(', '));
-          } else if (preview.data?.non_field_errors) {
+        if (preview.status !== 200 && preview.status !== 201) {
+          if (preview.data?.non_field_errors) {
             throw new Error(preview.data?.non_field_errors.join(', '));
           }
 
           throw new Error(preview.data);
         }
 
-        if (templateType === 'label') {
-          preview = await api.get(preview.data.file, {
+        if (preview?.data?.output) {
+          preview = await api.get(preview.data.output, {
             responseType: 'blob'
           });
         }
-        // ----
+
         let pdf = new Blob([preview.data], {
           type: preview.headers['content-type']
         });
+
         let srcUrl = URL.createObjectURL(pdf);
 
         setPdfUrl(srcUrl + '#view=fitH');

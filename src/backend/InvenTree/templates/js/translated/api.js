@@ -60,7 +60,7 @@ function inventreeGet(url, filters={}, options={}) {
             xhr.setRequestHeader('X-CSRFToken', csrftoken);
         },
         url: url,
-        type: 'GET',
+        type: options.method ?? 'GET',
         data: filters,
         dataType: options.dataType || 'json',
         contentType: options.contentType || 'application/json',

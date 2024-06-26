@@ -84,6 +84,12 @@ To display a list of the available InvenTree administration actions, run the fol
 invoke --list
 ```
 
+This provides a list of the available invoke commands - also displayed below:
+
+```
+{{ invoke_commands() }}
+```
+
 ### Virtual Environment
 
 Installing the required Python packages inside a virtual environment allows a local install separate to the system-wide Python installation. While not strictly necessary, using a virtual environment is **highly recommended** as it prevents conflicts between the different Python installations.

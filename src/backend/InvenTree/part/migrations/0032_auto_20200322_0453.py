@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='partattachment',
             name='attachment',
-            field=models.FileField(help_text='Select file to attach', upload_to=InvenTree.models.rename_attachment),
+            field=models.FileField(help_text='Select file to attach', upload_to='attachments'),
         ),
     ]

@@ -7,6 +7,8 @@ from django.conf import settings
 
 from jinja2 import Environment, select_autoescape
 
+from common.settings import get_global_setting
+
 logger = logging.getLogger('inventree')
 
 
@@ -20,14 +22,10 @@ def compile_full_name_template(*args, **kwargs):
 
     This function is called whenever the 'PART_NAME_FORMAT' setting is changed.
     """
-    from common.models import InvenTreeSetting
-
     global _part_full_name_template
     global _part_full_name_template_string
 
-    template_string = InvenTreeSetting.get_setting(
-        'PART_NAME_FORMAT', backup_value='', cache=True
-    )
+    template_string = get_global_setting('PART_NAME_FORMAT', cache=True)
 
     # Skip if the template string has not changed
     if (

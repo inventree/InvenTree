@@ -11,17 +11,6 @@ Custom labels can be generated using simple HTML templates, with support for QR-
 
 Simple (generic) label templates are supplied 'out of the box' with InvenTree - however support is provided for generation of extremely specific custom labels, to meet any particular requirement.
 
-## Label Types
-
-The following types of labels are available
-
-| Label Type | Description |
-| --- | --- |
-| [Part Labels](./labels/part_labels.md) | Print labels for individual parts |
-| [Stock Labels](./labels/stock_labels.md) | Print labels for individual stock items |
-| [Location Labels](./labels/location_labels.md) | Print labels for individual stock locations
-| [Build Labels](./labels/build_labels.md) | Print labels for individual build order line items |
-
 ## Label Templates
 
 Label templates are written using a mixture of [HTML](https://www.w3schools.com/html/) and [CSS](https://www.w3schools.com/css). [Weasyprint](https://weasyprint.org/) templates support a *subset* of HTML and CSS features. In addition to supporting HTML and CSS formatting, the label templates support the Django templating engine, allowing conditional formatting of the label data.

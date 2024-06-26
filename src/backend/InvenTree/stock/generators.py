@@ -2,6 +2,8 @@
 
 from inspect import signature
 
+from django.core.exceptions import ValidationError
+
 from jinja2 import Template
 
 import common.models
@@ -70,3 +72,42 @@ def generate_batch_code(**kwargs):
     )
 
     return Template(batch_template).render(context)
+
+
+def generate_serial_number(part=None, quantity=1, **kwargs) -> str:
+    """Generate a default 'serial number' for a new StockItem."""
+    from plugin.registry import registry
+
+    quantity = quantity or 1
+
+    if part is None:
+        # Cannot generate a serial number without a part
+        return None
+
+    try:
+        quantity = int(quantity)
+    except Exception:
+        raise ValidationError({'quantity': 'Invalid quantity value'})
+
+    if quantity < 1:
+        raise ValidationError({'quantity': 'Quantity must be greater than zero'})
+
+    # If we are here, no plugins were available to generate a serial number
+    # In this case, we will generate a simple serial number based on the provided part
+    sn = part.get_latest_serial_number()
+
+    serials = []
+
+    # Generate the required quantity of serial numbers
+    # Note that this call gets passed through to the plugin system
+    while quantity > 0:
+        sn = InvenTree.helpers.increment_serial_number(sn)
+
+        # Exit if an empty or duplicated serial is generated
+        if not sn or sn in serials:
+            break
+
+        serials.append(sn)
+        quantity -= 1
+
+    return ','.join(serials)

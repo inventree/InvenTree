@@ -18,7 +18,7 @@ export function ButtonMenu({
   return (
     <Menu shadow="xs">
       <Menu.Target>
-        <ActionIcon>
+        <ActionIcon variant="default">
           <Tooltip label={tooltip}>{icon}</Tooltip>
         </ActionIcon>
       </Menu.Target>

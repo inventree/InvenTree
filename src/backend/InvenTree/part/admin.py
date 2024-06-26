@@ -250,6 +250,8 @@ class PartAdmin(ImportExportModelAdmin):
         'category',
         'default_location',
         'default_supplier',
+        'bom_checked_by',
+        'creation_user',
     ]
 
     inlines = [PartParameterInline]
@@ -260,7 +262,7 @@ class PartPricingAdmin(admin.ModelAdmin):
 
     list_display = ('part', 'overall_min', 'overall_max')
 
-    autcomplete_fields = ['part']
+    autocomplete_fields = ['part']
 
 
 class PartStocktakeAdmin(admin.ModelAdmin):
@@ -349,14 +351,6 @@ class PartRelatedAdmin(admin.ModelAdmin):
     """Class to manage PartRelated objects."""
 
     autocomplete_fields = ('part_1', 'part_2')
-
-
-class PartAttachmentAdmin(admin.ModelAdmin):
-    """Admin class for the PartAttachment model."""
-
-    list_display = ('part', 'attachment', 'comment')
-
-    autocomplete_fields = ('part',)
 
 
 class PartTestTemplateAdmin(admin.ModelAdmin):
@@ -605,7 +599,6 @@ class PartInternalPriceBreakAdmin(admin.ModelAdmin):
 admin.site.register(models.Part, PartAdmin)
 admin.site.register(models.PartCategory, PartCategoryAdmin)
 admin.site.register(models.PartRelated, PartRelatedAdmin)
-admin.site.register(models.PartAttachment, PartAttachmentAdmin)
 admin.site.register(models.BomItem, BomItemAdmin)
 admin.site.register(models.PartParameterTemplate, ParameterTemplateAdmin)
 admin.site.register(models.PartParameter, ParameterAdmin)

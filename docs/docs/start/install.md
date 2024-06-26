@@ -23,7 +23,7 @@ Install required system packages (as superuser):
     The following packages are required on a debian system. A different distribution may require a slightly different set of packages
 
 !!! info "Python Version"
-    InvenTree requires a modern Python version check [here](https://github.com/inventree/InvenTree/blob/master/CONTRIBUTING.md#target-version) for the current minimums.
+    InvenTree requires a modern Python version [check here]({{ sourcefile("CONTRIBUTING.md") }}) for the current minimums.
 
 ```
 sudo apt-get update
@@ -107,7 +107,7 @@ source ./env/bin/activate
 The Python packages required by the InvenTree server must be installed into the virtual environment.
 
 ```
-pip install -U -r src/requirements.txt
+pip install --require-hashes -U -r src/backend/requirements.txt
 ```
 
 This installs all required Python packages using pip package manager. It also creates a (default) database configuration file which needs to be edited to meet user needs before proceeding (see next step below).

@@ -22,7 +22,11 @@ The InvenTree server tries to locate the `config.yaml` configuration file on sta
 !!! tip "Config File Location"
     When the InvenTree server boots, it will report the location where it expects to find the configuration file
 
-The configuration file *template* can be found on [GitHub](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/config_template.yaml)
+#### Configuration File Template
+
+The configuration file *template* can be found on [GitHub]({{ sourcefile("src/backend/InvenTree/config_template.yaml") }}), and is shown below:
+
+{{ includefile("src/backend/InvenTree/config_template.yaml", "Configuration File Template", format="yaml") }}
 
 !!! info "Template File"
     The default configuration file (as defined by the template linked above) will be copied to the specified configuration file location on first run, if a configuration file is not found in that location.
@@ -94,12 +98,14 @@ Depending on how your InvenTree installation is configured, you will need to pay
 | --- | --- | --- | --- |
 | INVENTREE_ALLOWED_HOSTS | allowed_hosts | List of allowed hosts | `*` |
 | INVENTREE_TRUSTED_ORIGINS | trusted_origins | List of trusted origins. Refer to the [django documentation]({% include "django.html" %}/ref/settings/#csrf-trusted-origins) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
-| INVENTREE_CORS_ORIGIN_ALLOW_ALL | cors.allow_all | Allow all remote URLS for CORS checks | False |
+| INVENTREE_CORS_ORIGIN_ALLOW_ALL | cors.allow_all | Allow all remote URLS for CORS checks | `False` |
 | INVENTREE_CORS_ORIGIN_WHITELIST | cors.whitelist | List of whitelisted CORS URLs. Refer to the [django-cors-headers documentation](https://github.com/adamchainz/django-cors-headers#cors_allowed_origins-sequencestr) | Uses the *INVENTREE_SITE_URL* parameter, if set. Otherwise, an empty list. |
 | INVENTREE_CORS_ORIGIN_REGEX | cors.regex | List of regular expressions for CORS whitelisted URL patterns | *Empty list* |
-| INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | False |
-| INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | False |
-| INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | True |
+| INVENTREE_CORS_ALLOW_CREDENTIALS | cors.allow_credentials | Allow cookies in cross-site requests | `True` |
+| INVENTREE_USE_X_FORWARDED_HOST | use_x_forwarded_host | Use forwarded host header | `False` |
+| INVENTREE_USE_X_FORWARDED_PORT | use_x_forwarded_port | Use forwarded port header | `False` |
+| INVENTREE_SESSION_COOKIE_SECURE | cookie.secure | Enforce secure session cookies | `False` |
+| INVENTREE_COOKIE_SAMESITE | cookie.samesite | Session cookie mode. Must be one of `Strict | Lax | None`. Refer to the [mozilla developer docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie) for more information. | `None` |
 
 ### Proxy Settings
 
@@ -196,6 +202,35 @@ If running with a MySQL database backend, the following additional options are a
 | --- | --- | --- | --- |
 | INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
 
+## Caching
+
+InvenTree can be configured to use [redis](https://redis.io) as a global cache backend.
+Enabling a global cache can provide significant performance improvements for InvenTree.
+
+### Cache Server
+
+Enabling global caching requires connection to a redis server (which is separate from the InvenTree database and web server). Setup and configuration of this server is outside the scope of this documentation. It is assumed that if you are configuring a cache server, you have already set one up, and are comfortable configuring it.
+
+!!! tip "Docker Support"
+    If you are running [InvenTree under docker](./docker.md), we provide a redis container as part of our docker compose file - so redis caching works out of the box.
+
+### Cache Settings
+
+The following cache settings are available:
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_CACHE_ENABLED | cache.enabled | Enable redis caching | False |
+| INVENTREE_CACHE_HOST | cache.host | Cache server host | *Not specified* |
+| INVENTREE_CACHE_PORT | cache.port | Cache server port | 6379 |
+| INVENTREE_CACHE_CONNECT_TIMEOUT | cache.connect_timeout | Cache connection timeout (seconds) | 3 |
+| INVENTREE_CACHE_TIMEOUT | cache.timeout | Cache timeout (seconds) | 3 |
+| INVENTREE_CACHE_TCP_KEEPALIVE | cache.tcp_keepalive | Cache TCP keepalive | True |
+| INVENTREE_CACHE_KEEPALIVE_COUNT | cache.keepalive_count | Cache keepalive count | 5 |
+| INVENTREE_CACHE_KEEPALIVE_IDLE | cache.keepalive_idle | Cache keepalive idle | 1 |
+| INVENTREE_CACHE_KEEPALIVE_INTERVAL | cache.keepalive_interval | Cache keepalive interval | 1 |
+| INVENTREE_CACHE_USER_TIMEOUT | cache.user_timeout | Cache user timeout | 1000 |
+
 ## Email Settings
 
 To enable [email functionality](../settings/email.md), email settings must be configured here, either via environment variables or within the configuration file.
@@ -220,19 +255,6 @@ The "sender" email address is the address from which InvenTree emails are sent (
 
 !!! info "Fallback"
     If `INVENTREE_EMAIL_SENDER` is not provided, the system will fall back to `INVENTREE_EMAIL_USERNAME` (if the username is a valid email address)
-
-## Supported Currencies
-
-The currencies supported by InvenTree must be specified in the [configuration file](#configuration-file).
-
-A list of currency codes (e.g. *AUD*, *CAD*, *JPY*, *USD*) can be specified using the `currencies` variable (or using the `INVENTREE_CURRENCIES` environment variable).
-
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_CURRENCIES | currencies | List of supported currencies| `AUD`, `CAD`, `CNY`, `EUR`, `GBP`, `JPY`, `NZD`, `USD` |
-
-!!! tip "More Info"
-    Read the [currencies documentation](../settings/currency.md) for more information on currency support in InvenTree
 
 ## File Storage Locations
 
@@ -324,6 +346,7 @@ The logo and custom messages can be changed/set:
 | INVENTREE_CUSTOM_SPLASH | customize.splash | Path to custom splash screen in the static files directory | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.login_message | Custom message for login page | *Not specified* |
 | INVENTREE_CUSTOMIZE | customize.navbar_message | Custom message for navbar | *Not specified* |
+| INVENTREE_CUSTOMIZE | customize.hide_pui_banner | Disable PUI banner | False |
 
 If you want to remove the InvenTree branding as far as possible from your end-user also check the [global server settings](../settings/global.md#server-settings).
 

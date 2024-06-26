@@ -1,17 +1,19 @@
 import { t } from '@lingui/macro';
 import {
   Alert,
+  Button,
   DefaultMantineColor,
+  Divider,
+  Group,
   LoadingOverlay,
   Paper,
+  Stack,
   Text
 } from '@mantine/core';
-import { Button, Divider, Group, Stack } from '@mantine/core';
 import { useId } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FieldValues,
   FormProvider,
@@ -19,9 +21,11 @@ import {
   SubmitHandler,
   useForm
 } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 
 import { api, queryClient } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   NestedDict,
   constructField,
@@ -30,7 +34,10 @@ import {
   mapFields
 } from '../../functions/forms';
 import { invalidResponse } from '../../functions/notifications';
+import { getDetailUrl } from '../../functions/urls';
+import { TableState } from '../../hooks/UseTable';
 import { PathParams } from '../../states/ApiState';
+import { Boundary } from '../Boundary';
 import {
   ApiFormField,
   ApiFormFieldSet,
@@ -48,6 +55,7 @@ export interface ApiFormAction {
  * Properties for the ApiForm component
  * @param url : The API endpoint to fetch the form data from
  * @param pk : Optional primary-key value when editing an existing object
+ * @param pk_field : Optional primary-key field name (default: pk)
  * @param pathParams : Optional path params for the url
  * @param method : Optional HTTP method to use when submitting the form (default: GET)
  * @param fields : The fields to render in the form
@@ -59,10 +67,14 @@ export interface ApiFormAction {
  * @param successMessage : Optional message to display on successful form submission
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
+ * @param modelType : Define a model type for this form
+ * @param follow : Boolean, follow the result of the form (if possible)
+ * @param table : Table to update on success (if provided)
  */
 export interface ApiFormProps {
   url: ApiEndpoints | string;
   pk?: number | string | undefined;
+  pk_field?: string;
   pathParams?: PathParams;
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   fields?: ApiFormFieldSet;
@@ -79,6 +91,9 @@ export interface ApiFormProps {
   successMessage?: string;
   onFormSuccess?: (data: any) => void;
   onFormError?: () => void;
+  table?: TableState;
+  modelType?: ModelType;
+  follow?: boolean;
   actions?: ApiFormAction[];
   timeout?: number;
 }
@@ -129,10 +144,12 @@ export function OptionsApiForm({
       if (error.response) {
         invalidResponse(error.response.status);
       } else {
+        notifications.hide('form-error');
         notifications.show({
           title: t`Form Error`,
           message: error.message,
-          color: 'red'
+          color: 'red',
+          id: 'form-error'
         });
       }
       return false;
@@ -183,6 +200,8 @@ export function ApiForm({
   props: ApiFormProps;
   optionsLoading: boolean;
 }) {
+  const navigate = useNavigate();
+
   const fields: ApiFormFieldSet = useMemo(() => {
     return props.fields ?? {};
   }, [props.fields]);
@@ -260,6 +279,10 @@ export function ApiForm({
               res[k] = processFields(field.children, dataValue);
             } else {
               res[k] = dataValue;
+
+              if (field.onValueChange) {
+                field.onValueChange(dataValue, data);
+              }
             }
           }
 
@@ -379,9 +402,23 @@ export function ApiForm({
           case 204:
             // Form was submitted successfully
 
-            // Optionally call the onFormSuccess callback
             if (props.onFormSuccess) {
+              // A custom callback hook is provided
               props.onFormSuccess(response.data);
+            }
+
+            if (props.follow && props.modelType && response.data?.pk) {
+              // If we want to automatically follow the returned data
+              navigate(getDetailUrl(props.modelType, response.data?.pk));
+            } else if (props.table) {
+              // If we want to automatically update or reload a linked table
+              let pk_field = props.pk_field ?? 'pk';
+
+              if (props.pk && response?.data[pk_field]) {
+                props.table.updateRecord(response.data);
+              } else {
+                props.table.refreshTable();
+              }
             }
 
             // Optionally show a success message
@@ -455,81 +492,89 @@ export function ApiForm({
 
   return (
     <Stack>
-      {/* Show loading overlay while fetching fields */}
-      {/* zIndex used to force overlay on top of modal header bar */}
-      <LoadingOverlay visible={isLoading} zIndex={1010} />
+      <Boundary label={`ApiForm-${id}`}>
+        {/* Show loading overlay while fetching fields */}
+        {/* zIndex used to force overlay on top of modal header bar */}
+        <LoadingOverlay visible={isLoading} zIndex={1010} />
 
-      {/* Attempt at making fixed footer with scroll area */}
-      <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
-        <div>
-          {/* Form Fields */}
-          <Stack spacing="sm">
-            {(!isValid || nonFieldErrors.length > 0) && (
-              <Alert radius="sm" color="red" title={t`Form Errors Exist`}>
-                {nonFieldErrors.length > 0 && (
-                  <Stack spacing="xs">
-                    {nonFieldErrors.map((message) => (
-                      <Text key={message}>{message}</Text>
-                    ))}
-                  </Stack>
+        {/* Attempt at making fixed footer with scroll area */}
+        <Paper mah={'65vh'} style={{ overflowY: 'auto' }}>
+          <div>
+            {/* Form Fields */}
+            <Stack gap="sm">
+              {(!isValid || nonFieldErrors.length > 0) && (
+                <Alert radius="sm" color="red" title={t`Error`}>
+                  {nonFieldErrors.length > 0 && (
+                    <Stack gap="xs">
+                      {nonFieldErrors.map((message) => (
+                        <Text key={message}>{message}</Text>
+                      ))}
+                    </Stack>
+                  )}
+                </Alert>
+              )}
+              <Boundary label={`ApiForm-${id}-PreFormContent`}>
+                {props.preFormContent}
+                {props.preFormSuccess && (
+                  <Alert color="green" radius="sm">
+                    {props.preFormSuccess}
+                  </Alert>
                 )}
-              </Alert>
-            )}
-            {props.preFormContent}
-            {props.preFormSuccess && (
-              <Alert color="green" radius="sm">
-                {props.preFormSuccess}
-              </Alert>
-            )}
-            {props.preFormWarning && (
-              <Alert color="orange" radius="sm">
-                {props.preFormWarning}
-              </Alert>
-            )}
-            <FormProvider {...form}>
-              <Stack spacing="xs">
-                {!optionsLoading &&
-                  Object.entries(fields).map(([fieldName, field]) => (
-                    <ApiFormField
-                      key={fieldName}
-                      fieldName={fieldName}
-                      definition={field}
-                      control={form.control}
-                    />
-                  ))}
-              </Stack>
-            </FormProvider>
-            {props.postFormContent}
-          </Stack>
-        </div>
-      </Paper>
+                {props.preFormWarning && (
+                  <Alert color="orange" radius="sm">
+                    {props.preFormWarning}
+                  </Alert>
+                )}
+              </Boundary>
+              <Boundary label={`ApiForm-${id}-FormContent`}>
+                <FormProvider {...form}>
+                  <Stack gap="xs">
+                    {!optionsLoading &&
+                      Object.entries(fields).map(([fieldName, field]) => (
+                        <ApiFormField
+                          key={fieldName}
+                          fieldName={fieldName}
+                          definition={field}
+                          control={form.control}
+                        />
+                      ))}
+                  </Stack>
+                </FormProvider>
+              </Boundary>
+              <Boundary label={`ApiForm-${id}-PostFormContent`}>
+                {props.postFormContent}
+              </Boundary>
+            </Stack>
+          </div>
+        </Paper>
 
-      {/* Footer with Action Buttons */}
-      <Divider />
-      <div>
-        <Group position="right">
-          {props.actions?.map((action, i) => (
+        {/* Footer with Action Buttons */}
+        <Divider />
+        <div>
+          <Group justify="right">
+            {props.actions?.map((action, i) => (
+              <Button
+                key={i}
+                onClick={action.onClick}
+                variant={action.variant ?? 'outline'}
+                radius="sm"
+                color={action.color}
+              >
+                {action.text}
+              </Button>
+            ))}
             <Button
-              key={i}
-              onClick={action.onClick}
-              variant={action.variant ?? 'outline'}
+              onClick={form.handleSubmit(submitForm, onFormError)}
+              variant="filled"
               radius="sm"
-              color={action.color}
+              color={props.submitColor ?? 'green'}
+              disabled={isLoading || (props.fetchInitialData && !isDirty)}
             >
-              {action.text}
+              {props.submitText ?? t`Submit`}
             </Button>
-          ))}
-          <Button
-            onClick={form.handleSubmit(submitForm, onFormError)}
-            variant="filled"
-            radius="sm"
-            color={props.submitColor ?? 'green'}
-            disabled={isLoading || (props.fetchInitialData && !isDirty)}
-          >
-            {props.submitText ?? t`Submit`}
-          </Button>
-        </Group>
-      </div>
+          </Group>
+        </div>
+      </Boundary>
     </Stack>
   );
 }

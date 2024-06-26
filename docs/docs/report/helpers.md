@@ -12,13 +12,13 @@ Some common functions are provided for use in custom report and label templates.
 ```
 
 !!! tip "Use the Source, Luke"
-    To see the full range of available helper functions, refer to the source file [report.py](https://github.com/inventree/InvenTree/blob/master/src/backend/InvenTree/report/templatetags/report.py) where these functions are defined!
+    To see the full range of available helper functions, refer to the source file [report.py]({{ sourcefile("src/backend/InvenTree/report/templatetags/report.py") }}) where these functions are defined!
 
 ## Assigning Variables
 
 When making use of helper functions within a template, it can be useful to store the result of the function to a variable, rather than immediately rendering the output.
 
-For example, using the [render_currency](#rendering-currency) helper function, we can store the output to a variable which can be used at a later point in the template:
+For example, using the [render_currency](#currency-formatting) helper function, we can store the output to a variable which can be used at a later point in the template:
 
 ```html
 {% raw %}
@@ -272,7 +272,7 @@ A template tag is provided to load the InvenTree logo image into a report. You c
 
 ### Custom Logo
 
-If the system administrator has enabled a [custom logo](../start/config.md#customisation-options), then this logo will be used instead of the base InvenTree logo.
+If the system administrator has enabled a [custom logo](../start/config.md#customization-options) then this logo will be used instead of the base InvenTree logo.
 
 This is a useful way to get a custom company logo into your reports.
 
@@ -287,7 +287,7 @@ If you have a custom logo, but explicitly wish to load the InvenTree logo itself
 
 ## Report Assets
 
-[Report Assets](./report.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
+[Report Assets](./templates.md#report-assets) are files specifically uploaded by the user for inclusion in generated reports and labels.
 
 You can add asset images to the reports and labels by using the `{% raw %}{% asset ... %}{% endraw %}` template tag:
 

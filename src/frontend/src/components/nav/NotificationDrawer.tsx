@@ -2,17 +2,21 @@ import { t } from '@lingui/macro';
 import {
   ActionIcon,
   Alert,
+  Center,
   Divider,
   Drawer,
+  Group,
+  Loader,
   LoadingOverlay,
   Space,
+  Stack,
+  Text,
   Tooltip
 } from '@mantine/core';
-import { Group, Stack, Text } from '@mantine/core';
 import { IconBellCheck, IconBellPlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -50,6 +54,10 @@ export function NotificationDrawer({
     refetchOnWindowFocus: false
   });
 
+  const hasNotifications: boolean = useMemo(() => {
+    return (notificationQuery.data?.results?.length ?? 0) > 0;
+  }, [notificationQuery.data]);
+
   return (
     <Drawer
       opened={opened}
@@ -66,74 +74,80 @@ export function NotificationDrawer({
         }
       }}
       title={
-        <Group position="apart" noWrap={true}>
+        <Group justify="space-between" wrap="nowrap">
           <StylishText size="lg">{t`Notifications`}</StylishText>
           <ActionIcon
             onClick={() => {
               onClose();
               navigate('/notifications/unread');
             }}
+            variant="transparent"
           >
             <IconBellPlus />
           </ActionIcon>
         </Group>
       }
     >
-      <Stack spacing="xs">
+      <Stack gap="xs">
         <Divider />
-        <LoadingOverlay visible={notificationQuery.isFetching} />
-        {(notificationQuery.data?.results?.length ?? 0) == 0 && (
+        {!hasNotifications && (
           <Alert color="green">
             <Text size="sm">{t`You have no unread notifications.`}</Text>
           </Alert>
         )}
-        {notificationQuery.data?.results?.map((notification: any) => (
-          <Group position="apart" key={notification.pk}>
-            <Stack spacing="3">
-              {notification?.target?.link ? (
-                <Text
-                  size="sm"
-                  component={Link}
-                  to={notification?.target?.link}
-                  target="_blank"
-                >
-                  {notification.target?.name ??
-                    notification.name ??
-                    t`Notification`}
-                </Text>
-              ) : (
-                <Text size="sm">
-                  {notification.target?.name ??
-                    notification.name ??
-                    t`Notification`}
-                </Text>
-              )}
-              <Text size="xs">{notification.age_human ?? ''}</Text>
-            </Stack>
-            <Space />
-            <ActionIcon
-              color="gray"
-              variant="hover"
-              onClick={() => {
-                let url = apiUrl(
-                  ApiEndpoints.notifications_list,
-                  notification.pk
-                );
-                api
-                  .patch(url, {
-                    read: true
-                  })
-                  .then((response) => {
-                    notificationQuery.refetch();
-                  });
-              }}
-            >
-              <Tooltip label={t`Mark as read`}>
-                <IconBellCheck />
-              </Tooltip>
-            </ActionIcon>
-          </Group>
-        ))}
+        {hasNotifications &&
+          notificationQuery.data?.results?.map((notification: any) => (
+            <Group justify="space-between" key={notification.pk}>
+              <Stack gap="3">
+                {notification?.target?.link ? (
+                  <Text
+                    size="sm"
+                    component={Link}
+                    to={notification?.target?.link}
+                    target="_blank"
+                  >
+                    {notification.target?.name ??
+                      notification.name ??
+                      t`Notification`}
+                  </Text>
+                ) : (
+                  <Text size="sm">
+                    {notification.target?.name ??
+                      notification.name ??
+                      t`Notification`}
+                  </Text>
+                )}
+                <Text size="xs">{notification.age_human ?? ''}</Text>
+              </Stack>
+              <Space />
+              <ActionIcon
+                color="gray"
+                variant="hover"
+                onClick={() => {
+                  let url = apiUrl(
+                    ApiEndpoints.notifications_list,
+                    notification.pk
+                  );
+                  api
+                    .patch(url, {
+                      read: true
+                    })
+                    .then((response) => {
+                      notificationQuery.refetch();
+                    });
+                }}
+              >
+                <Tooltip label={t`Mark as read`}>
+                  <IconBellCheck />
+                </Tooltip>
+              </ActionIcon>
+            </Group>
+          ))}
+        {notificationQuery.isFetching && (
+          <Center>
+            <Loader size="sm" />
+          </Center>
+        )}
       </Stack>
     </Drawer>
   );

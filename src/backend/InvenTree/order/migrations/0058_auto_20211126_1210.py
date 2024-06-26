@@ -2,7 +2,7 @@
 
 from django.db import migrations
 
-from InvenTree.status_codes import SalesOrderStatus
+from order.status_codes import SalesOrderStatus
 
 
 def calculate_shipped_quantity(apps, schema_editor):

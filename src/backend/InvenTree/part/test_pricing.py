@@ -5,14 +5,16 @@ from django.core.exceptions import ObjectDoesNotExist
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
+import common.currency
 import common.models
 import common.settings
 import company.models
 import order.models
 import part.models
 import stock.models
-from InvenTree.status_codes import PurchaseOrderStatus
+from common.settings import get_global_setting, set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
+from order.status_codes import PurchaseOrderStatus
 
 
 class PartPricingTests(InvenTreeTestCase):
@@ -171,7 +173,7 @@ class PartPricingTests(InvenTreeTestCase):
     def test_internal_pricing(self):
         """Tests for internal price breaks."""
         # Ensure internal pricing is enabled
-        common.models.InvenTreeSetting.set_setting('PART_INTERNAL_PRICE', True, None)
+        set_global_setting('PART_INTERNAL_PRICE', True, None)
 
         pricing = self.part.pricing
 
@@ -179,7 +181,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.internal_cost_min)
         self.assertIsNone(pricing.internal_cost_max)
 
-        currency = common.settings.currency_code_default()
+        currency = common.currency.currency_code_default()
 
         for ii in range(5):
             # Let's add some internal price breaks
@@ -220,9 +222,7 @@ class PartPricingTests(InvenTreeTestCase):
             )
 
         # Ensure that initially, stock item pricing is disabled
-        common.models.InvenTreeSetting.set_setting(
-            'PRICING_USE_STOCK_PRICING', False, None
-        )
+        set_global_setting('PRICING_USE_STOCK_PRICING', False, None)
 
         pricing = p.pricing
         pricing.update_pricing()
@@ -234,9 +234,7 @@ class PartPricingTests(InvenTreeTestCase):
         self.assertIsNone(pricing.overall_max)
 
         # Turn on stock pricing
-        common.models.InvenTreeSetting.set_setting(
-            'PRICING_USE_STOCK_PRICING', True, None
-        )
+        set_global_setting('PRICING_USE_STOCK_PRICING', True, None)
 
         pricing.update_pricing()
 

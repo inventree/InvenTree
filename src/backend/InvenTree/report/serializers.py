@@ -1,102 +1,208 @@
 """API serializers for the reporting models."""
 
+from django.utils.translation import gettext_lazy as _
+
 from rest_framework import serializers
 
+import plugin.models
+import plugin.serializers
+import report.helpers
 import report.models
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
+    UserSerializer,
 )
 
 
 class ReportSerializerBase(InvenTreeModelSerializer):
-    """Base class for report serializer."""
+    """Base serializer class for report and label templates."""
 
-    template = InvenTreeAttachmentSerializerField(required=True)
+    def __init__(self, *args, **kwargs):
+        """Override the constructor for the ReportSerializerBase.
+
+        The primary goal here is to ensure that the 'choices' attribute
+        is set correctly for the 'model_type' field.
+        """
+        super().__init__(*args, **kwargs)
+
+        if len(self.fields['model_type'].choices) == 0:
+            self.fields['model_type'].choices = report.helpers.report_model_options()
 
     @staticmethod
-    def report_fields():
-        """Generic serializer fields for a report template."""
+    def base_fields():
+        """Base serializer field set."""
         return [
             'pk',
             'name',
             'description',
+            'model_type',
             'template',
             'filters',
-            'page_size',
-            'landscape',
+            'filename_pattern',
             'enabled',
+            'revision',
         ]
 
+    template = InvenTreeAttachmentSerializerField(required=True)
 
-class TestReportSerializer(ReportSerializerBase):
-    """Serializer class for the TestReport model."""
+    revision = serializers.IntegerField(read_only=True)
 
-    class Meta:
-        """Metaclass options."""
-
-        model = report.models.TestReport
-        fields = ReportSerializerBase.report_fields()
-
-
-class BuildReportSerializer(ReportSerializerBase):
-    """Serializer class for the BuildReport model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = report.models.BuildReport
-        fields = ReportSerializerBase.report_fields()
+    # Note: The choices are overridden at run-time
+    model_type = serializers.ChoiceField(
+        label=_('Model Type'),
+        choices=report.helpers.report_model_options(),
+        required=True,
+        allow_blank=False,
+        allow_null=False,
+    )
 
 
-class BOMReportSerializer(ReportSerializerBase):
-    """Serializer class for the BillOfMaterialsReport model."""
+class ReportTemplateSerializer(ReportSerializerBase):
+    """Serializer class for report template model."""
 
     class Meta:
         """Metaclass options."""
 
-        model = report.models.BillOfMaterialsReport
-        fields = ReportSerializerBase.report_fields()
+        model = report.models.ReportTemplate
+        fields = [*ReportSerializerBase.base_fields(), 'page_size', 'landscape']
+
+    page_size = serializers.ChoiceField(
+        required=False,
+        default=report.helpers.report_page_size_default(),
+        choices=report.helpers.report_page_size_options(),
+    )
 
 
-class PurchaseOrderReportSerializer(ReportSerializerBase):
-    """Serializer class for the PurchaseOrdeReport model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = report.models.PurchaseOrderReport
-        fields = ReportSerializerBase.report_fields()
-
-
-class SalesOrderReportSerializer(ReportSerializerBase):
-    """Serializer class for the SalesOrderReport model."""
+class ReportPrintSerializer(serializers.Serializer):
+    """Serializer class for printing a report."""
 
     class Meta:
         """Metaclass options."""
 
-        model = report.models.SalesOrderReport
-        fields = ReportSerializerBase.report_fields()
+        fields = ['template', 'items']
+
+    template = serializers.PrimaryKeyRelatedField(
+        queryset=report.models.ReportTemplate.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Template'),
+        help_text=_('Select report template'),
+    )
+
+    items = serializers.ListField(
+        child=serializers.IntegerField(),
+        required=True,
+        allow_empty=False,
+        label=_('Items'),
+        help_text=_('List of item primary keys to include in the report'),
+    )
 
 
-class ReturnOrderReportSerializer(ReportSerializerBase):
-    """Serializer class for the ReturnOrderReport model."""
+class LabelPrintSerializer(serializers.Serializer):
+    """Serializer class for printing a label."""
+
+    # List of extra plugin field names
+    plugin_fields = []
 
     class Meta:
         """Metaclass options."""
 
-        model = report.models.ReturnOrderReport
-        fields = ReportSerializerBase.report_fields()
+        fields = ['template', 'items', 'plugin']
+
+    def __init__(self, *args, **kwargs):
+        """Override the constructor to add the extra plugin fields."""
+        # Reset to a known state
+        self.Meta.fields = ['template', 'items', 'plugin']
+
+        if plugin_serializer := kwargs.pop('plugin_serializer', None):
+            for key, field in plugin_serializer.fields.items():
+                self.Meta.fields.append(key)
+                setattr(self, key, field)
+
+        super().__init__(*args, **kwargs)
+
+    template = serializers.PrimaryKeyRelatedField(
+        queryset=report.models.LabelTemplate.objects.all(),
+        many=False,
+        required=True,
+        allow_null=False,
+        label=_('Template'),
+        help_text=_('Select label template'),
+    )
+
+    # Plugin field - note that we use the 'key' (not the pk) for lookup
+    plugin = plugin.serializers.PluginRelationSerializer(
+        many=False,
+        required=False,
+        allow_null=False,
+        label=_('Printing Plugin'),
+        help_text=_('Select plugin to use for label printing'),
+    )
+
+    items = serializers.ListField(
+        child=serializers.IntegerField(),
+        required=True,
+        allow_empty=False,
+        label=_('Items'),
+        help_text=_('List of item primary keys to include in the report'),
+    )
 
 
-class StockLocationReportSerializer(ReportSerializerBase):
-    """Serializer class for the StockLocationReport model."""
+class LabelTemplateSerializer(ReportSerializerBase):
+    """Serializer class for label template model."""
 
     class Meta:
         """Metaclass options."""
 
-        model = report.models.StockLocationReport
-        fields = ReportSerializerBase.report_fields()
+        model = report.models.LabelTemplate
+        fields = [*ReportSerializerBase.base_fields(), 'width', 'height']
+
+
+class BaseOutputSerializer(InvenTreeModelSerializer):
+    """Base serializer class for template output."""
+
+    @staticmethod
+    def base_fields():
+        """Basic field set."""
+        return [
+            'pk',
+            'created',
+            'user',
+            'user_detail',
+            'model_type',
+            'items',
+            'complete',
+            'progress',
+            'output',
+            'template',
+        ]
+
+    output = InvenTreeAttachmentSerializerField()
+    model_type = serializers.CharField(source='template.model_type', read_only=True)
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
+
+
+class LabelOutputSerializer(BaseOutputSerializer):
+    """Serializer class for the LabelOutput model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = report.models.LabelOutput
+        fields = [*BaseOutputSerializer.base_fields(), 'plugin']
+
+
+class ReportOutputSerializer(BaseOutputSerializer):
+    """Serializer class for the ReportOutput model."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = report.models.ReportOutput
+        fields = BaseOutputSerializer.base_fields()
 
 
 class ReportSnippetSerializer(InvenTreeModelSerializer):

@@ -2,7 +2,6 @@
 
 import django.core.validators
 from django.db import migrations, models
-import report.models
 
 
 class Migration(migrations.Migration):
@@ -20,7 +19,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='testreport',
             name='filters',
-            field=models.CharField(blank=True, help_text='Part query filters (comma-separated list of key=value pairs)', max_length=250, validators=[report.models.validate_stock_item_report_filters], verbose_name='Filters'),
+            field=models.CharField(blank=True, help_text='Part query filters (comma-separated list of key=value pairs)', max_length=250, verbose_name='Filters'),
         ),
         migrations.AlterField(
             model_name='testreport',
@@ -30,6 +29,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='testreport',
             name='template',
-            field=models.FileField(help_text='Report template file', upload_to=report.models.rename_template, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])], verbose_name='Template'),
+            field=models.FileField(help_text='Report template file', upload_to='report', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm', 'tex'])], verbose_name='Template'),
         ),
     ]

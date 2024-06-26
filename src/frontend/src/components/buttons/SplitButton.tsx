@@ -5,13 +5,14 @@ import {
   Menu,
   Text,
   Tooltip,
-  createStyles,
   useMantineTheme
 } from '@mantine/core';
 import { IconChevronDown } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { identifierString } from '../../functions/conversion';
 import { TablerIconType } from '../../functions/icons';
+import * as classes from './SplitButton.css';
 
 interface SplitButtonOption {
   key: string;
@@ -25,36 +26,21 @@ interface SplitButtonOption {
 interface SplitButtonProps {
   options: SplitButtonOption[];
   defaultSelected: string;
+  name: string;
   selected?: string;
   setSelected?: (value: string) => void;
   loading?: boolean;
 }
 
-const useStyles = createStyles((theme) => ({
-  button: {
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-    '&::before': {
-      borderRadius: '0 !important'
-    }
-  },
-  icon: {
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
-    border: 0,
-    borderLeft: `1px solid ${theme.primaryShade}`
-  }
-}));
-
 export function SplitButton({
   options,
   defaultSelected,
   selected,
+  name,
   setSelected,
   loading
-}: SplitButtonProps) {
+}: Readonly<SplitButtonProps>) {
   const [current, setCurrent] = useState<string>(defaultSelected);
-  const { classes } = useStyles();
 
   useEffect(() => {
     setSelected?.(current);
@@ -72,12 +58,13 @@ export function SplitButton({
   const theme = useMantineTheme();
 
   return (
-    <Group noWrap style={{ gap: 0 }}>
+    <Group wrap="nowrap" style={{ gap: 0 }}>
       <Button
         onClick={currentOption?.onClick}
         disabled={loading ? false : currentOption?.disabled}
         className={classes.button}
         loading={loading}
+        aria-label={`split-button-${name}`}
       >
         {currentOption?.name}
       </Button>
@@ -92,6 +79,7 @@ export function SplitButton({
             color={theme.primaryColor}
             size={36}
             className={classes.icon}
+            aria-label={`split-button-${name}-action`}
           >
             <IconChevronDown size={16} />
           </ActionIcon>
@@ -105,8 +93,11 @@ export function SplitButton({
                 setCurrent(option.key);
                 option.onClick();
               }}
+              aria-label={`split-button-${name}-item-${identifierString(
+                option.key
+              )}`}
               disabled={option.disabled}
-              icon={<option.icon />}
+              leftSection={<option.icon />}
             >
               <Tooltip label={option.tooltip} position="right">
                 <Text>{option.name}</Text>

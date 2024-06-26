@@ -19,7 +19,7 @@ If the `invoke` command does not work, it means that the [invoke](https://pypi.o
 Update the installed python packages with PIP:
 
 ```
-pip3 install -U -r requirements.txt
+pip3 install -U --require-hashes -r requirements.txt
 ```
 
 ### Invoke Version

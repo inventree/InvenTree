@@ -1,45 +1,10 @@
 import { Trans } from '@lingui/macro';
 import { Carousel } from '@mantine/carousel';
-import {
-  Anchor,
-  Button,
-  Paper,
-  Text,
-  Title,
-  createStyles,
-  rem
-} from '@mantine/core';
+import { Anchor, Button, Paper, Text, Title, rem } from '@mantine/core';
 
 import { DocumentationLinkItem } from './DocumentationLinks';
+import * as classes from './GettingStartedCarousel.css';
 import { PlaceholderPill } from './Placeholder';
-
-const useStyles = createStyles((theme) => ({
-  card: {
-    height: rem(170),
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center'
-  },
-
-  title: {
-    fontWeight: 900,
-    color:
-      theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
-    lineHeight: 1.2,
-    fontSize: rem(32),
-    marginTop: 0
-  },
-
-  category: {
-    color:
-      theme.colorScheme === 'dark' ? theme.colors.white : theme.colors.dark,
-    opacity: 0.7,
-    fontWeight: 700
-  }
-}));
 
 function StartedCard({
   title,
@@ -47,8 +12,6 @@ function StartedCard({
   link,
   placeholder
 }: DocumentationLinkItem) {
-  const { classes } = useStyles();
-
   return (
     <Paper shadow="md" p="xl" radius="md" className={classes.card}>
       <div>
@@ -81,10 +44,11 @@ export function GettingStartedCarousel({
 
   return (
     <Carousel
-      slideSize="50%"
-      breakpoints={[{ maxWidth: 'sm', slideSize: '100%', slideGap: rem(2) }]}
-      slideGap="xl"
+      slideSize={{ base: '100%', sm: '50%', md: '33.333333%' }}
+      slideGap={{ base: 0, sm: 'md' }}
+      slidesToScroll={3}
       align="start"
+      loop
     >
       {slides}
     </Carousel>

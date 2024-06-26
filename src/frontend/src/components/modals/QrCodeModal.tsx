@@ -150,7 +150,7 @@ export function QrCodeModal({
     <Stack>
       <Group>
         <Text size="sm">{camId?.label}</Text>
-        <Space sx={{ flex: 1 }} />
+        <Space style={{ flex: 1 }} />
         <Badge>{ScanningEnabled ? t`Scanning` : t`Not scanning`}</Badge>
       </Group>
       <Container px={0} id="reader" w={'100%'} mih="300px" />
@@ -162,14 +162,14 @@ export function QrCodeModal({
         <>
           <Group>
             <Button
-              sx={{ flex: 1 }}
+              style={{ flex: 1 }}
               onClick={() => startScanning()}
               disabled={camId != undefined && ScanningEnabled}
             >
               <Trans>Start scanning</Trans>
             </Button>
             <Button
-              sx={{ flex: 1 }}
+              style={{ flex: 1 }}
               onClick={() => stopScanning()}
               disabled={!ScanningEnabled}
             >
@@ -177,11 +177,11 @@ export function QrCodeModal({
             </Button>
           </Group>
           {values.length == 0 ? (
-            <Text color={'grey'}>
+            <Text c={'grey'}>
               <Trans>No scans yet!</Trans>
             </Text>
           ) : (
-            <ScrollArea sx={{ height: 200 }} type="auto" offsetScrollbars>
+            <ScrollArea style={{ height: 200 }} type="auto" offsetScrollbars>
               {values.map((value, index) => (
                 <div key={index}>{value}</div>
               ))}

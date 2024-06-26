@@ -40,12 +40,14 @@ export const getSupportedLanguages = (): Record<string, string> => {
     pl: t`Polish`,
     pt: t`Portuguese`,
     'pt-br': t`Portuguese (Brazilian)`,
+    ro: t`Romanian`,
     ru: t`Russian`,
     sk: t`Slovak`,
     sl: t`Slovenian`,
     sv: t`Swedish`,
     th: t`Thai`,
     tr: t`Turkish`,
+    uk: t`Ukrainian`,
     vi: t`Vietnamese`,
     'zh-hans': t`Chinese (Simplified)`,
     'zh-hant': t`Chinese (Traditional)`
@@ -103,7 +105,7 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
       })
       /* istanbul ignore next */
       .catch((err) => {
-        console.error('Failed loading translations', err);
+        console.error('ERR: Failed loading translations', err);
         if (isMounted.current) setLoadedState('error');
       });
 

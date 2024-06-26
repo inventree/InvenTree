@@ -19,11 +19,12 @@ from rest_framework.test import APIClient
 import build.models
 import company.models
 import order.models
+from build.status_codes import BuildStatus
 from common.models import InvenTreeSetting
 from company.models import Company, SupplierPart
 from InvenTree.settings import BASE_DIR
-from InvenTree.status_codes import BuildStatus, PurchaseOrderStatusGroups, StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
+from order.status_codes import PurchaseOrderStatusGroups
 from part.models import (
     BomItem,
     BomItemSubstitute,
@@ -37,6 +38,7 @@ from part.models import (
     PartTestTemplate,
 )
 from stock.models import StockItem, StockLocation
+from stock.status_codes import StockStatus
 
 
 class PartCategoryAPITest(InvenTreeAPITestCase):
@@ -371,8 +373,6 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 params['delete_child_categories'] = '1'
             response = self.delete(url, params, expected_code=204)
 
-            self.assertEqual(response.status_code, 204)
-
             if delete_parts:
                 if i == Target.delete_subcategories_delete_parts:
                     # Check if all parts deleted
@@ -463,12 +463,12 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         response = self.get(url, {'path_detail': False}, expected_code=200)
 
         # Check that the path detail information is not included
-        self.assertFalse('path' in response.data.keys())
+        self.assertNotIn('path', response.data.keys())
 
         # Now, request *with* path detail
         response = self.get(url, {'path_detail': True}, expected_code=200)
 
-        self.assertTrue('path' in response.data.keys())
+        self.assertIn('path', response.data.keys())
 
         path = response.data['path']
 
@@ -520,7 +520,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
 
         # Check that a bunch o' fields are contained
         for f in ['assembly', 'component', 'description', 'image', 'IPN']:
-            self.assertTrue(f in actions.keys())
+            self.assertIn(f, actions.keys())
 
         # Active is a 'boolean' field
         active = actions['active']
@@ -541,19 +541,64 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
         category = actions['category']
 
         self.assertEqual(category['type'], 'related field')
-        self.assertTrue(category['required'])
+        self.assertFalse(category['required'])
         self.assertFalse(category['read_only'])
         self.assertEqual(category['label'], 'Category')
         self.assertEqual(category['model'], 'partcategory')
         self.assertEqual(category['api_url'], reverse('api-part-category-list'))
         self.assertEqual(category['help_text'], 'Part category')
 
+    def test_part_label_translation(self):
+        """Test that 'label' values are correctly translated."""
+        response = self.options(reverse('api-part-list'))
+
+        labels = {
+            'IPN': 'IPN',
+            'category': 'Category',
+            'assembly': 'Assembly',
+            'ordering': 'On Order',
+            'stock_item_count': 'Stock Items',
+        }
+
+        help_text = {
+            'IPN': 'Internal Part Number',
+            'active': 'Is this part active?',
+            'barcode_hash': 'Unique hash of barcode data',
+            'category': 'Part category',
+        }
+
+        # Check basic return values
+        for field, value in labels.items():
+            self.assertEqual(response.data['actions']['POST'][field]['label'], value)
+
+        for field, value in help_text.items():
+            self.assertEqual(
+                response.data['actions']['POST'][field]['help_text'], value
+            )
+
+        # Check again, with a different locale
+        response = self.options(
+            reverse('api-part-list'), headers={'Accept-Language': 'de'}
+        )
+
+        translated = {
+            'IPN': 'IPN (Interne Produktnummer)',
+            'category': 'Kategorie',
+            'assembly': 'Baugruppe',
+            'ordering': 'Bestellt',
+            'stock_item_count': 'Lagerartikel',
+        }
+
+        for field, value in translated.items():
+            label = response.data['actions']['POST'][field]['label']
+            self.assertEqual(label, value)
+
     def test_category(self):
         """Test the PartCategory API OPTIONS endpoint."""
         actions = self.getActions(reverse('api-part-category-list'))
 
         # actions should *not* contain 'POST' as we do not have the correct role
-        self.assertFalse('POST' in actions)
+        self.assertNotIn('POST', actions)
 
         self.assignRole('part_category.add')
 
@@ -640,7 +685,6 @@ class PartAPITest(PartAPITestBase):
         # Request *all* part categories
         response = self.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 8)
 
         # Request top-level part categories only
@@ -664,7 +708,6 @@ class PartAPITest(PartAPITestBase):
 
         url = reverse('api-part-category-list')
         response = self.post(url, data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         parent = response.data['pk']
 
@@ -672,7 +715,6 @@ class PartAPITest(PartAPITestBase):
         for animal in ['cat', 'dog', 'zebra']:
             data = {'name': animal, 'description': 'A sort of animal', 'parent': parent}
             response = self.post(url, data)
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
             self.assertEqual(response.data['parent'], parent)
             self.assertEqual(response.data['name'], animal)
             self.assertEqual(response.data['pathstring'], 'Animals/' + animal)
@@ -696,7 +738,6 @@ class PartAPITest(PartAPITestBase):
         data['parent'] = None
         data['description'] = 'Changing the description'
         response = self.patch(url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['description'], 'Changing the description')
         self.assertIsNone(response.data['parent'])
 
@@ -705,13 +746,11 @@ class PartAPITest(PartAPITestBase):
         url = reverse('api-part-list')
         data = {'cascade': True}
         response = self.get(url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), Part.objects.count())
 
         # Test filtering parts by category
         data = {'category': 2}
         response = self.get(url, data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # There should only be 2 objects in category C
         self.assertEqual(len(response.data), 2)
@@ -746,6 +785,50 @@ class PartAPITest(PartAPITestBase):
 
         response = self.get(url, {'related': 1}, expected_code=200)
         self.assertEqual(len(response.data), 2)
+
+    def test_filter_by_bom_valid(self):
+        """Test the 'bom_valid' Part API filter."""
+        url = reverse('api-part-list')
+
+        n = Part.objects.filter(active=True, assembly=True).count()
+
+        # Initially, there are no parts with a valid BOM
+        response = self.get(url, {'bom_valid': False}, expected_code=200)
+        n1 = len(response.data)
+
+        for item in response.data:
+            self.assertTrue(item['assembly'])
+            self.assertTrue(item['active'])
+
+        response = self.get(url, {'bom_valid': True}, expected_code=200)
+        n2 = len(response.data)
+
+        self.assertEqual(n1 + n2, n)
+
+    def test_filter_by_starred(self):
+        """Test by 'starred' filter."""
+        url = reverse('api-part-list')
+
+        # All parts
+        n = Part.objects.count()
+
+        # Initially, there are no starred parts
+        response = self.get(url, {'starred': True}, expected_code=200)
+        self.assertEqual(len(response.data), 0)
+
+        response = self.get(url, {'starred': False, 'limit': 1}, expected_code=200)
+        self.assertEqual(response.data['count'], n)
+
+        # Star a part
+        part = Part.objects.first()
+        part.set_starred(self.user, True)
+
+        # Fetch data again
+        response = self.get(url, {'starred': True}, expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        response = self.get(url, {'starred': False, 'limit': 1}, expected_code=200)
+        self.assertEqual(response.data['count'], n - 1)
 
     def test_filter_by_convert(self):
         """Test that we can correctly filter the Part list by conversion options."""
@@ -808,67 +891,13 @@ class PartAPITest(PartAPITestBase):
         response = self.get(url, data)
 
         # Now there should be 5 total parts
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
-
-    def test_test_templates(self):
-        """Test the PartTestTemplate API."""
-        url = reverse('api-part-test-template-list')
-
-        # List ALL items
-        response = self.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 9)
-
-        # Request for a particular part
-        response = self.get(url, data={'part': 10000})
-        self.assertEqual(len(response.data), 5)
-
-        response = self.get(url, data={'part': 10004})
-        self.assertEqual(len(response.data), 6)
-
-        # Try to post a new object (missing description)
-        response = self.post(
-            url,
-            data={'part': 10000, 'test_name': 'My very first test', 'required': False},
-        )
-
-        self.assertEqual(response.status_code, 400)
-
-        # Try to post a new object (should succeed)
-        response = self.post(
-            url,
-            data={
-                'part': 10000,
-                'test_name': 'New Test',
-                'required': True,
-                'description': 'a test description',
-            },
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-
-        # Try to post a new test with the same name (should fail)
-        response = self.post(
-            url,
-            data={'part': 10004, 'test_name': '   newtest', 'description': 'dafsdf'},
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-        # Try to post a new test against a non-trackable part (should fail)
-        response = self.post(url, data={'part': 1, 'test_name': 'A simple test'})
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_get_thumbs(self):
         """Return list of part thumbnails."""
         url = reverse('api-part-thumbs')
 
         response = self.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_paginate(self):
         """Test pagination of the Part list API."""
@@ -1055,8 +1084,8 @@ class PartAPITest(PartAPITestBase):
         # Filter by creation date
         response = self.get(url, {'created_before': '2019-01-01'}, expected_code=200)
 
-        self.assertTrue(len(response.data) < n)
-        self.assertTrue(len(response.data) > 0)
+        self.assertLess(len(response.data), n)
+        self.assertGreater(len(response.data), 0)
 
         for item in response.data:
             self.assertIsNotNone(item['creation_date'])
@@ -1066,14 +1095,31 @@ class PartAPITest(PartAPITestBase):
 
         response = self.get(url, {'created_after': '2019-01-01'}, expected_code=200)
 
-        self.assertTrue(len(response.data) < n)
-        self.assertTrue(len(response.data) > 0)
+        self.assertLess(len(response.data), n)
+        self.assertGreater(len(response.data), 0)
 
         for item in response.data:
             self.assertIsNotNone(item['creation_date'])
 
             date = datetime.fromisoformat(item['creation_date'])
             self.assertGreaterEqual(date, date_compare)
+
+    def test_part_notes(self):
+        """Test the 'notes' field."""
+        # First test the 'LIST' endpoint - no notes information provided
+        url = reverse('api-part-list')
+
+        response = self.get(url, {'limit': 1}, expected_code=200)
+        data = response.data['results'][0]
+
+        self.assertNotIn('notes', data)
+
+        # Second, test the 'DETAIL' endpoint - notes information provided
+        url = reverse('api-part-detail', kwargs={'pk': data['pk']})
+
+        response = self.get(url, expected_code=200)
+
+        self.assertIn('notes', response.data)
 
 
 class PartCreationTests(PartAPITestBase):
@@ -1361,8 +1407,6 @@ class PartDetailTests(PartAPITestBase):
             },
         )
 
-        self.assertEqual(response.status_code, 201)
-
         pk = response.data['pk']
 
         # Check that a new part has been added
@@ -1381,7 +1425,6 @@ class PartDetailTests(PartAPITestBase):
 
         response = self.patch(url, {'name': 'a new better name'})
 
-        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['pk'], pk)
         self.assertEqual(response.data['name'], 'a new better name')
 
@@ -1397,24 +1440,17 @@ class PartDetailTests(PartAPITestBase):
         # 2021-06-22 this test is to check that the "duplicate part" checks don't do strange things
         response = self.patch(url, {'name': 'a new better name'})
 
-        self.assertEqual(response.status_code, 200)
-
         # Try to remove a tag
         response = self.patch(url, {'tags': ['tag1']})
-        self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['tags'], ['tag1'])
 
         # Try to remove the part
-        response = self.delete(url)
-
-        # As the part is 'active' we cannot delete it
-        self.assertEqual(response.status_code, 405)
+        response = self.delete(url, expected_code=400)
 
         # So, let's make it not active
         response = self.patch(url, {'active': False}, expected_code=200)
 
         response = self.delete(url)
-        self.assertEqual(response.status_code, 204)
 
         # Part count should have reduced
         self.assertEqual(Part.objects.count(), n)
@@ -1433,8 +1469,6 @@ class PartDetailTests(PartAPITestBase):
             },
         )
 
-        self.assertEqual(response.status_code, 201)
-
         n = Part.objects.count()
 
         # Check that we cannot create a duplicate in a different category
@@ -1447,9 +1481,8 @@ class PartDetailTests(PartAPITestBase):
                 'category': 2,
                 'revision': 'A',
             },
+            expected_code=400,
         )
-
-        self.assertEqual(response.status_code, 400)
 
         # Check that only 1 matching part exists
         parts = Part.objects.filter(
@@ -1471,9 +1504,9 @@ class PartDetailTests(PartAPITestBase):
                 'category': 2,
                 'revision': 'B',
             },
+            expected_code=201,
         )
 
-        self.assertEqual(response.status_code, 201)
         self.assertEqual(Part.objects.count(), n + 1)
 
         # Now, check that we cannot *change* an existing part to conflict
@@ -1482,14 +1515,10 @@ class PartDetailTests(PartAPITestBase):
         url = reverse('api-part-detail', kwargs={'pk': pk})
 
         # Attempt to alter the revision code
-        response = self.patch(url, {'revision': 'A'})
-
-        self.assertEqual(response.status_code, 400)
+        response = self.patch(url, {'revision': 'A'}, expected_code=400)
 
         # But we *can* change it to a unique revision code
-        response = self.patch(url, {'revision': 'C'})
-
-        self.assertEqual(response.status_code, 200)
+        response = self.patch(url, {'revision': 'C'}, expected_code=200)
 
     def test_image_upload(self):
         """Test that we can upload an image to the part API."""
@@ -1519,10 +1548,9 @@ class PartDetailTests(PartAPITestBase):
 
         with open(f'{test_path}.txt', 'rb') as dummy_image:
             response = self.upload_client.patch(
-                url, {'image': dummy_image}, format='multipart'
+                url, {'image': dummy_image}, format='multipart', expected_code=400
             )
 
-            self.assertEqual(response.status_code, 400)
             self.assertIn('Upload a valid image', str(response.data))
 
         # Now try to upload a valid image file, in multiple formats
@@ -1534,10 +1562,8 @@ class PartDetailTests(PartAPITestBase):
 
             with open(fn, 'rb') as dummy_image:
                 response = self.upload_client.patch(
-                    url, {'image': dummy_image}, format='multipart'
+                    url, {'image': dummy_image}, format='multipart', expected_code=200
                 )
-
-                self.assertEqual(response.status_code, 200)
 
             # And now check that the image has been set
             p = Part.objects.get(pk=pk)
@@ -1555,10 +1581,11 @@ class PartDetailTests(PartAPITestBase):
 
         with open(fn, 'rb') as img_file:
             response = self.upload_client.patch(
-                reverse('api-part-detail', kwargs={'pk': p.pk}), {'image': img_file}
+                reverse('api-part-detail', kwargs={'pk': p.pk}),
+                {'image': img_file},
+                expected_code=200,
             )
 
-            self.assertEqual(response.status_code, 200)
             image_name = response.data['image']
             self.assertTrue(image_name.startswith('/media/part_images/part_image'))
 
@@ -1601,10 +1628,11 @@ class PartDetailTests(PartAPITestBase):
         # Upload the image to a part
         with open(fn, 'rb') as img_file:
             response = self.upload_client.patch(
-                reverse('api-part-detail', kwargs={'pk': p.pk}), {'image': img_file}
+                reverse('api-part-detail', kwargs={'pk': p.pk}),
+                {'image': img_file},
+                expected_code=200,
             )
 
-            self.assertEqual(response.status_code, 200)
             image_name = response.data['image']
             self.assertTrue(image_name.startswith('/media/part_images/part_image'))
 
@@ -1859,8 +1887,6 @@ class PartAPIAggregationTest(InvenTreeAPITestCase):
         url = reverse('api-part-list')
 
         response = self.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         for part in response.data:
             if part['pk'] == self.part.pk:
@@ -2153,7 +2179,7 @@ class BomItemTest(InvenTreeAPITestCase):
         response = self.get(url, data={'validated': False}, expected_code=200)
 
         # There should be at least one non-validated item
-        self.assertTrue(len(response.data) > 0)
+        self.assertGreater(len(response.data), 0)
 
         # Now, let's validate an item
         bom_item = BomItem.objects.first()
@@ -2169,7 +2195,7 @@ class BomItemTest(InvenTreeAPITestCase):
         # Each item in response should contain expected keys
         for el in response.data:
             for key in ['available_stock', 'available_substitute_stock']:
-                self.assertTrue(key in el)
+                self.assertIn(key, el)
 
     def test_bom_list_search(self):
         """Test that we can search the BOM list API endpoint."""
@@ -2208,7 +2234,7 @@ class BomItemTest(InvenTreeAPITestCase):
         q1 = response.data[0]['quantity']
         q2 = response.data[-1]['quantity']
 
-        self.assertTrue(q1 < q2)
+        self.assertLess(q1, q2)
 
         # Order by decreasing quantity
         response = self.get(f'{url}?ordering=-quantity', expected_code=200)
@@ -2255,7 +2281,7 @@ class BomItemTest(InvenTreeAPITestCase):
         ]
 
         for key in expected_values:
-            self.assertTrue(key in response.data)
+            self.assertIn(key, response.data)
 
         self.assertEqual(int(float(response.data['quantity'])), 25)
 
@@ -2487,22 +2513,28 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
     def test_add_attachment(self):
         """Test that we can create a new PartAttachment via the API."""
-        url = reverse('api-part-attachment-list')
+        url = reverse('api-attachment-list')
 
         # Upload without permission
-        response = self.post(url, {}, expected_code=403)
+        response = self.post(
+            url, {'model_id': 1, 'model_type': 'part'}, expected_code=403
+        )
 
         # Add required permission
         self.assignRole('part.add')
+        self.assignRole('part.change')
 
         # Upload without specifying part (will fail)
         response = self.post(url, {'comment': 'Hello world'}, expected_code=400)
 
-        self.assertIn('This field is required', str(response.data['part']))
+        self.assertIn('This field is required', str(response.data['model_id']))
+        self.assertIn('This field is required', str(response.data['model_type']))
 
         # Upload without file OR link (will fail)
         response = self.post(
-            url, {'part': 1, 'comment': 'Hello world'}, expected_code=400
+            url,
+            {'model_id': 1, 'model_type': 'part', 'comment': 'Hello world'},
+            expected_code=400,
         )
 
         self.assertIn('Missing file', str(response.data['attachment']))
@@ -2510,7 +2542,9 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
         # Upload an invalid link (will fail)
         response = self.post(
-            url, {'part': 1, 'link': 'not-a-link.py'}, expected_code=400
+            url,
+            {'model_id': 1, 'model_type': 'part', 'link': 'not-a-link.py'},
+            expected_code=400,
         )
 
         self.assertIn('Enter a valid URL', str(response.data['link']))
@@ -2519,12 +2553,20 @@ class PartAttachmentTest(InvenTreeAPITestCase):
 
         # Upload a valid link (will pass)
         response = self.post(
-            url, {'part': 1, 'link': link, 'comment': 'Hello world'}, expected_code=201
+            url,
+            {
+                'model_id': 1,
+                'model_type': 'part',
+                'link': link,
+                'comment': 'Hello world',
+            },
+            expected_code=201,
         )
 
         data = response.data
 
-        self.assertEqual(data['part'], 1)
+        self.assertEqual(data['model_type'], 'part')
+        self.assertEqual(data['model_id'], 1)
         self.assertEqual(data['link'], link)
         self.assertEqual(data['comment'], 'Hello world')
 
@@ -2586,8 +2628,9 @@ class PartInternalPriceBreakTest(InvenTreeAPITestCase):
         p.active = False
         p.save()
 
-        response = self.delete(reverse('api-part-detail', kwargs={'pk': 1}))
-        self.assertEqual(response.status_code, 204)
+        InvenTreeSetting.set_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', True)
+
+        self.delete(reverse('api-part-detail', kwargs={'pk': 1}))
 
         with self.assertRaises(Part.DoesNotExist):
             p.refresh_from_db()
@@ -2832,3 +2875,96 @@ class PartSchedulingTest(PartAPITestBase):
             for entry in data:
                 for k in ['date', 'quantity', 'label']:
                     self.assertIn(k, entry)
+
+
+class PartTestTemplateTest(PartAPITestBase):
+    """API unit tests for the PartTestTemplate model."""
+
+    def test_test_templates(self):
+        """Test the PartTestTemplate API."""
+        url = reverse('api-part-test-template-list')
+
+        # List ALL items
+        response = self.get(url)
+        self.assertEqual(len(response.data), 9)
+
+        # Request for a particular part
+        response = self.get(url, data={'part': 10000})
+        self.assertEqual(len(response.data), 5)
+
+        response = self.get(url, data={'part': 10004})
+        self.assertEqual(len(response.data), 6)
+
+        # Try to post a new object (missing description)
+        response = self.post(
+            url,
+            data={'part': 10000, 'test_name': 'My very first test', 'required': False},
+            expected_code=400,
+        )
+
+        # Try to post a new object (should succeed)
+        response = self.post(
+            url,
+            data={
+                'part': 10000,
+                'test_name': 'New Test',
+                'required': True,
+                'description': 'a test description',
+            },
+        )
+
+        # Try to post a new test with the same name (should fail)
+        response = self.post(
+            url,
+            data={'part': 10004, 'test_name': '   newtest', 'description': 'dafsdf'},
+            expected_code=400,
+        )
+
+        # Try to post a new test against a non-trackable part (should fail)
+        response = self.post(
+            url, data={'part': 1, 'test_name': 'A simple test'}, expected_code=400
+        )
+
+    def test_choices(self):
+        """Test the 'choices' field for the PartTestTemplate model."""
+        template = PartTestTemplate.objects.first()
+
+        url = reverse('api-part-test-template-detail', kwargs={'pk': template.pk})
+
+        # Check OPTIONS response
+        response = self.options(url)
+        options = response.data['actions']['PUT']
+
+        self.assertTrue(options['pk']['read_only'])
+        self.assertTrue(options['pk']['required'])
+        self.assertEqual(options['part']['api_url'], '/api/part/')
+        self.assertTrue(options['test_name']['required'])
+        self.assertFalse(options['test_name']['read_only'])
+        self.assertFalse(options['choices']['required'])
+        self.assertFalse(options['choices']['read_only'])
+        self.assertEqual(
+            options['choices']['help_text'],
+            'Valid choices for this test (comma-separated)',
+        )
+
+        # Check data endpoint
+        response = self.get(url)
+        data = response.data
+
+        for key in [
+            'pk',
+            'key',
+            'part',
+            'test_name',
+            'description',
+            'enabled',
+            'required',
+            'results',
+            'choices',
+        ]:
+            self.assertIn(key, data)
+
+        # Patch with invalid choices
+        response = self.patch(url, {'choices': 'a,b,c,d,e,f,f'}, expected_code=400)
+
+        self.assertIn('Choices must be unique', str(response.data['choices']))

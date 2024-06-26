@@ -41,7 +41,7 @@ export default function InstalledItemsTable({
         accessor: 'batch',
         switchable: false
       },
-      StatusColumn(ModelType.stockitem)
+      StatusColumn({ model: ModelType.stockitem })
     ];
   }, []);
 

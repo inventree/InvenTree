@@ -14,7 +14,7 @@ Navigate to the "Settings" page and click on the "Display" tab, you should see t
 {% include 'img.html' %}
 {% endwith %}
 
-The drop-down list let's you select any other color theme found in your static folder (see next section to find out how to [add color themes](#add-color-themes)). Once selected, click on the "Apply Theme" button for the new color theme to be activated.
+The drop-down list let's you select any other color theme found in your static folder (see next section to find out how to [add color themes](#add-color-theme)). Once selected, click on the "Apply Theme" button for the new color theme to be activated.
 
 !!! info "Per-user Setting"
 	Color themes are "user specific" which means that changing the color theme in your own settings won't affect other users.

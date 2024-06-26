@@ -47,3 +47,16 @@ class ReportMixin:
             context: The context dictionary to add to
         """
         pass
+
+    def report_callback(self, template, instance, report, request):
+        """Callback function called after a report is generated.
+
+        Arguments:
+            template: The ReportTemplate model
+            instance: The instance of the target model
+            report: The generated report object
+            request: The initiating request object
+
+        The default implementation does nothing.
+        """
+        pass

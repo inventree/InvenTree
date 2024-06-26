@@ -27,18 +27,18 @@ export function TableHoverCard({
   }
 
   return (
-    <HoverCard withinPortal={true}>
+    <HoverCard withinPortal={true} closeDelay={20} openDelay={250}>
       <HoverCard.Target>
-        <Group spacing="xs" position="apart" noWrap={true}>
+        <Group gap="xs" justify="space-between" wrap="nowrap">
           {value}
           <IconInfoCircle size="16" color="blue" />
         </Group>
       </HoverCard.Target>
       <HoverCard.Dropdown>
-        <Stack spacing="xs">
-          <Group spacing="xs" position="left">
+        <Stack gap="xs">
+          <Group gap="xs" justify="left">
             <IconInfoCircle size="16" color="blue" />
-            <Text weight="bold">{title}</Text>
+            <Text fw="bold">{title}</Text>
           </Group>
           <Divider />
           {extra}

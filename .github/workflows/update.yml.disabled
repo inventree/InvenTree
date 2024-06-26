@@ -11,7 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # pin@v4.1.1
       - name: Setup
-        run: pip install -r requirements-dev.txt
+        run: pip install --require-hashes -r requirements-dev.txt
       - name: Update requirements.txt
         run: pip-compile --output-file=requirements.txt requirements.in -U
       - name: Update requirements-dev.txt

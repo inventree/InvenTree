@@ -5,21 +5,15 @@ export type DetailsBadgeProps = {
   label: string;
   size?: string;
   visible?: boolean;
-  key?: any;
 };
 
-export default function DetailsBadge(props: DetailsBadgeProps) {
+export default function DetailsBadge(props: Readonly<DetailsBadgeProps>) {
   if (props.visible == false) {
     return null;
   }
 
   return (
-    <Badge
-      key={props.key}
-      color={props.color}
-      variant="filled"
-      size={props.size ?? 'lg'}
-    >
+    <Badge color={props.color} variant="filled" size={props.size ?? 'lg'}>
       {props.label}
     </Badge>
   );

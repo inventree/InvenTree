@@ -494,19 +494,14 @@ $('#stock-uninstall').click(function() {
 });
 
 $("#stock-test-report").click(function() {
-    printReports({
-        items: [{{ item.pk }}],
-        key: 'item',
-        url: '{% url "api-stockitem-testreport-list" %}',
-    });
+    printReports('stockitem', [{{ item.pk }}]);
 });
 
 $("#print-label").click(function() {
     printLabels({
         items: [{{ item.pk }}],
+        model_type: 'stockitem',
         singular_name: '{% trans "stock item" escape %}',
-        url: '{% url "api-stockitem-label-list" %}',
-        key: 'item',
     });
 });
 

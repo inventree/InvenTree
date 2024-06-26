@@ -52,6 +52,18 @@ Or to add a template file that will be rendered as javascript code, from the plu
 
 Note : see convention for template directory above.
 
+## Sample Plugin
+
+A sample plugin is provided in the InvenTree code base:
+
+::: plugin.samples.integration.custom_panel_sample.CustomPanelSample
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
+
 ## Example Implementations
 
 Refer to the `CustomPanelSample` example class in the `./plugin/samples/integration/` directory, for a fully worked example of how custom UI panels can be implemented.

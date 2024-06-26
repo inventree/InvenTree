@@ -1,5 +1,7 @@
 import {
+  Icon,
   Icon123,
+  IconArrowBigDownLineFilled,
   IconArrowMerge,
   IconBinaryTree2,
   IconBookmarks,
@@ -10,24 +12,28 @@ import {
   IconBusinessplan,
   IconCalendar,
   IconCalendarStats,
-  IconCategory,
+  IconCalendarTime,
   IconCheck,
+  IconCircleCheck,
   IconCircleMinus,
   IconCirclePlus,
+  IconCircleX,
   IconClipboardList,
   IconClipboardText,
   IconCopy,
   IconCornerDownLeft,
+  IconCornerDownRight,
   IconCornerUpRightDouble,
   IconCurrencyDollar,
   IconDots,
-  IconDotsCircleHorizontal,
   IconExternalLink,
   IconFileUpload,
+  IconFlag,
   IconFlagShare,
   IconGitBranch,
   IconGridDots,
   IconHash,
+  IconInfoCircle,
   IconLayersLinked,
   IconLink,
   IconList,
@@ -44,14 +50,18 @@ import {
   IconPaperclip,
   IconPhone,
   IconPhoto,
+  IconPoint,
   IconPrinter,
   IconProgressCheck,
+  IconProps,
   IconQrcode,
   IconQuestionMark,
   IconRulerMeasure,
   IconShoppingCart,
   IconShoppingCartHeart,
+  IconShoppingCartPlus,
   IconSitemap,
+  IconSquareXFilled,
   IconStack2,
   IconStatusChange,
   IconTag,
@@ -59,9 +69,11 @@ import {
   IconTool,
   IconTools,
   IconTransfer,
+  IconTransitionRight,
   IconTrash,
   IconTruck,
   IconTruckDelivery,
+  IconTruckReturn,
   IconUnlink,
   IconUser,
   IconUserStar,
@@ -71,17 +83,10 @@ import {
   IconWorldCode,
   IconX
 } from '@tabler/icons-react';
-import { IconFlag } from '@tabler/icons-react';
-import { IconSquareXFilled } from '@tabler/icons-react';
-import { IconShoppingCartPlus } from '@tabler/icons-react';
-import { IconArrowBigDownLineFilled } from '@tabler/icons-react';
-import { IconTruckReturn } from '@tabler/icons-react';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { IconCalendarTime } from '@tabler/icons-react';
-import { Icon, IconProps } from '@tabler/icons-react';
 import React from 'react';
 
 const icons = {
+  name: IconPoint,
   description: IconInfoCircle,
   variant_of: IconStatusChange,
   unallocated_stock: IconPackage,
@@ -130,6 +135,10 @@ const icons = {
   delete: IconTrash,
   packaging: IconPackage,
   packages: IconPackages,
+  install: IconTransitionRight,
+  plus: IconCirclePlus,
+  minus: IconCircleMinus,
+  cancel: IconCircleX,
 
   // Part Icons
   active: IconCheck,
@@ -155,6 +164,7 @@ const icons = {
   link: IconLink,
   responsible: IconUserStar,
   pricing: IconCurrencyDollar,
+  total_price: IconCurrencyDollar,
   currency: IconCurrencyDollar,
   stocktake: IconClipboardList,
   user: IconUser,
@@ -181,12 +191,15 @@ const icons = {
   phone: IconPhone,
   sitemap: IconSitemap,
   downleft: IconCornerDownLeft,
+  downright: IconCornerDownRight,
   barcode: IconQrcode,
   barLine: IconMinusVertical,
+  batch: IconClipboardText,
   batch_code: IconClipboardText,
   destination: IconFlag,
   repeat_destination: IconFlagShare,
-  unlink: IconUnlink
+  unlink: IconUnlink,
+  success: IconCircleCheck
 };
 
 export type InvenTreeIconType = keyof typeof icons;
@@ -210,7 +223,7 @@ type InvenTreeIconProps = {
   iconProps?: TablerIconProps;
 };
 
-export function InvenTreeIcon(props: InvenTreeIconProps) {
+export function InvenTreeIcon(props: Readonly<InvenTreeIconProps>) {
   let Icon: React.ForwardRefExoticComponent<React.RefAttributes<any>>;
 
   if (props.icon in icons) {

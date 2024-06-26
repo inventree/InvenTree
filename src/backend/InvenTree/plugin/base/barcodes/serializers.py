@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 import order.models
 import stock.models
-from InvenTree.status_codes import PurchaseOrderStatus, SalesOrderStatus
+from order.status_codes import PurchaseOrderStatus, SalesOrderStatus
 from plugin.builtin.barcodes.inventree_barcode import InvenTreeInternalBarcodePlugin
 
 

@@ -7,8 +7,8 @@ from django.utils.translation import gettext_lazy as _
 import common.notifications
 import InvenTree.helpers_model
 import order.models
-from InvenTree.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from InvenTree.tasks import ScheduledTask, scheduled_task
+from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
 from plugin.events import trigger_event
 
 

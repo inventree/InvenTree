@@ -482,6 +482,10 @@ function setupNotesField(element, url, options={}) {
 
             form_data.append('image', imageFile);
 
+            // Add model type and ID to the form data
+            form_data.append('model_type', options.model_type);
+            form_data.append('model_id', options.model_id);
+
             inventreeFormDataUpload('{% url "api-notes-image-list" %}', form_data, {
                 success: function(response) {
                     onSuccess(response.image);

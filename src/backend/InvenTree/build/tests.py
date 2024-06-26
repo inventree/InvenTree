@@ -11,7 +11,7 @@ from InvenTree.unit_test import InvenTreeTestCase
 from .models import Build
 from stock.models import StockItem
 
-from InvenTree.status_codes import BuildStatus
+from build.status_codes import BuildStatus
 
 
 class BuildTestSimple(InvenTreeTestCase):

@@ -2,7 +2,7 @@
 
 from django_test_migrations.contrib.unittest_case import MigratorTestCase
 
-from InvenTree.status_codes import SalesOrderStatus
+from order.status_codes import SalesOrderStatus
 
 
 class TestRefIntMigrations(MigratorTestCase):

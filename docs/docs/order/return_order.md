@@ -48,6 +48,18 @@ Each Return Order has a specific status code, as follows:
 | Complete | The return order was marked as complete, and is now closed |
 | Cancelled | The return order was cancelled, and is now closed |
 
+**Source Code**
+
+Refer to the source code for the Return Order status codes:
+
+::: order.status_codes.ReturnOrderStatus
+    options:
+        show_bases: False
+        show_root_heading: False
+        show_root_toc_entry: False
+        show_source: True
+        members: []
+
 ## Create a Return Order
 
 From the Return Order index, click on <span class='badge inventree add'><span class='fas fa-plus-circle'></span> New Return Order</span> which opens the "Create Return Order" form.
@@ -98,7 +110,7 @@ While [line items](#line-items) must reference a particular stock item, extra li
 
 ## Return Order Reports
 
-Custom [reports](../report/return_order.md) can be generated against each Return Order.
+Custom [reports](../report/templates.md) can be generated against each Return Order.
 
 ### Calendar view
 
