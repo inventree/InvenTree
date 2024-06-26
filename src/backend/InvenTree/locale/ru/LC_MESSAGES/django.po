@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-20 04:52\n"
+"PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -3719,16 +3719,12 @@ msgid "User does not have permission to create or edit attachments for this mode
 msgstr ""
 
 #: common/validators.py:33
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No attachment model type provided"
-msgstr "Строки данных в файле не найдены"
+msgstr ""
 
 #: common/validators.py:39
-#, fuzzy
-#| msgid "Invalid currency code"
 msgid "Invalid attachment model type"
-msgstr "Неверный код валюты"
+msgstr ""
 
 #: common/validators.py:80
 msgid "Minimum places cannot be greater than maximum places"
@@ -5944,10 +5940,8 @@ msgid "Filter by category depth"
 msgstr ""
 
 #: part/api.py:141 stock/api.py:330
-#, fuzzy
-#| msgid "Level"
 msgid "Top Level"
-msgstr "Уровень"
+msgstr ""
 
 #: part/api.py:143
 msgid "Filter by top-level categories"
@@ -6754,10 +6748,8 @@ msgid "Duplicate relationship already exists"
 msgstr ""
 
 #: part/serializers.py:118
-#, fuzzy
-#| msgid "Part Category"
 msgid "Parent Category"
-msgstr "Категория детали"
+msgstr ""
 
 #: part/serializers.py:119 templates/js/translated/part.js:309
 msgid "Parent part category"
@@ -8801,10 +8793,8 @@ msgid "Filter by location depth"
 msgstr ""
 
 #: stock/api.py:332
-#, fuzzy
-#| msgid "Top level stock location"
 msgid "Filter by top-level locations"
-msgstr "Склад верхнего уровня"
+msgstr ""
 
 #: stock/api.py:347
 msgid "Include sub-locations in filtered results"
@@ -14429,5 +14419,3 @@ msgstr "Разрешение на редактирование элементо�
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
 
-#~ msgid "parent"
-#~ msgstr "родитель"
