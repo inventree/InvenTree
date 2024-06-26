@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -3719,10 +3719,8 @@ msgid "User does not have permission to create or edit attachments for this mode
 msgstr ""
 
 #: common/validators.py:33
-#, fuzzy
-#| msgid "No shipment details provided"
 msgid "No attachment model type provided"
-msgstr "Geen verzenddetails opgegeven"
+msgstr ""
 
 #: common/validators.py:39
 msgid "Invalid attachment model type"
@@ -6750,10 +6748,8 @@ msgid "Duplicate relationship already exists"
 msgstr ""
 
 #: part/serializers.py:118
-#, fuzzy
-#| msgid "Part Category"
 msgid "Parent Category"
-msgstr "Onderdeel Categorie"
+msgstr ""
 
 #: part/serializers.py:119 templates/js/translated/part.js:309
 msgid "Parent part category"
@@ -14423,5 +14419,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "parent"
-#~ msgstr "bovenliggende"
