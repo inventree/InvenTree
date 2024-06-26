@@ -72,8 +72,8 @@ export function StatusFilterOptions(
       return Object.keys(codes).map((key) => {
         const entry = codes[key];
         return {
-          value: entry.key,
-          label: entry.label ?? entry.key
+          value: entry.key.toString(),
+          label: entry.label?.toString() ?? entry.key.toString()
         };
       });
     }
