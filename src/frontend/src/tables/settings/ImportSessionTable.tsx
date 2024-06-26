@@ -1,12 +1,19 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
+import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import { useFilters, useUserFilters } from '../../hooks/UseFilter';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -14,11 +21,35 @@ import { TableColumn } from '../Column';
 import { DateColumn, StatusColumn } from '../ColumnRenderers';
 import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction } from '../RowActions';
 
 export default function ImportSesssionTable() {
   const table = useTable('importsession');
   const user = useUserState();
+
+  const [opened, setOpened] = useState<boolean>(false);
+
+  const [selectedSession, setSelectedSession] = useState<number | undefined>(
+    undefined
+  );
+
+  const deleteSession = useDeleteApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    pk: selectedSession,
+    title: t`Delete Import Session`,
+    table: table
+  });
+
+  const newImportSession = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Create Import Session`,
+    fields: dataImporterSessionFields(),
+    onFormSuccess: (response: any) => {
+      setSelectedSession(response.pk);
+      setOpened(true);
+      table.refreshTable();
+    }
+  });
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -96,15 +127,29 @@ export default function ImportSesssionTable() {
   }, [modelTypeFilters.choices, userFilter.choices]);
 
   const tableActions = useMemo(() => {
-    return [];
+    return [
+      <AddItemButton
+        tooltip={t`Create Import Session`}
+        onClick={() => newImportSession.open()}
+      />
+    ];
   }, []);
 
   const rowActions = useCallback((record: any): RowAction[] => {
-    return [];
+    return [
+      RowDeleteAction({
+        onClick: () => {
+          setSelectedSession(record.pk);
+          deleteSession.open();
+        }
+      })
+    ];
   }, []);
 
   return (
     <>
+      {newImportSession.modal}
+      {deleteSession.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.import_session_list)}
         tableState={table}
@@ -113,6 +158,14 @@ export default function ImportSesssionTable() {
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters
+        }}
+      />
+      <ImporterDrawer
+        sessionId={selectedSession ?? -1}
+        opened={selectedSession !== undefined && opened}
+        onClose={() => {
+          setSelectedSession(undefined);
+          setOpened(false);
         }}
       />
     </>
