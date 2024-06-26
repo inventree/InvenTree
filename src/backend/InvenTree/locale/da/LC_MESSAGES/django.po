@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
@@ -3719,10 +3719,8 @@ msgid "User does not have permission to create or edit attachments for this mode
 msgstr ""
 
 #: common/validators.py:33
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No attachment model type provided"
-msgstr "Ingen data-rækker angivet"
+msgstr ""
 
 #: common/validators.py:39
 msgid "Invalid attachment model type"
@@ -14421,5 +14419,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "parent"
-#~ msgstr "overordnet"
