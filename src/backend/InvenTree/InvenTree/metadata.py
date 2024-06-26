@@ -150,11 +150,9 @@ class InvenTreeMetadata(SimpleMetadata):
         if callable(field_value) and not callable(model_value):
             return field_value
 
-        # If the "field value" is the same as the field name, likely it is just a placeholder
-        # e.g. DRF uses the field name as the default label value
-        if field_value == field_name or field_value == field_name.capitalize():
-            if type(model_value) is not str:
-                return model_value
+        # Prioritize translated text over raw string values
+        if type(field_value) is str and type(model_value) is not str:
+            return model_value
 
         return field_value
 
@@ -215,7 +213,7 @@ class InvenTreeMetadata(SimpleMetadata):
                         serializer_info[name]['default'] = model_default_values[name]
 
                     for field_key, model_key in extra_attributes.items():
-                        field_value = serializer_info[name].get(field_key, None)
+                        field_value = getattr(serializer.fields[name], field_key, None)
                         model_value = getattr(field, model_key, None)
 
                         if value := self.override_value(
@@ -240,7 +238,7 @@ class InvenTreeMetadata(SimpleMetadata):
                 )
 
                 for field_key, model_key in extra_attributes.items():
-                    field_value = serializer_info[name].get(field_key, None)
+                    field_value = getattr(serializer.fields[name], field_key, None)
                     model_value = getattr(relation.model_field, model_key, None)
 
                     if value := self.override_value(
