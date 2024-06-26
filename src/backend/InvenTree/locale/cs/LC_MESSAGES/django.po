@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-22 04:56\n"
+"PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -3719,16 +3719,12 @@ msgid "User does not have permission to create or edit attachments for this mode
 msgstr "Uživatel nemá oprávnění k vytváření nebo úpravám příloh pro tento model"
 
 #: common/validators.py:33
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No attachment model type provided"
-msgstr "Nebyly zadány žádné řádky s daty"
+msgstr ""
 
 #: common/validators.py:39
-#, fuzzy
-#| msgid "Invalid currency code"
 msgid "Invalid attachment model type"
-msgstr "Neplatný kód měny"
+msgstr ""
 
 #: common/validators.py:80
 msgid "Minimum places cannot be greater than maximum places"
@@ -6752,10 +6748,8 @@ msgid "Duplicate relationship already exists"
 msgstr ""
 
 #: part/serializers.py:118
-#, fuzzy
-#| msgid "Part Category"
 msgid "Parent Category"
-msgstr "Kategorie dílu"
+msgstr ""
 
 #: part/serializers.py:119 templates/js/translated/part.js:309
 msgid "Parent part category"
@@ -14425,5 +14419,3 @@ msgstr "Oprávnění k úpravě položek"
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
 
-#~ msgid "parent"
-#~ msgstr "nadřazený"
