@@ -168,7 +168,7 @@
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if session_list.count > 1 %}
-                <form method="post" action="{% url 'session_delete_other' %}">
+                <form method="post" action="{% url 'usersessions_list' %}">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-sm btn-default btn-danger" title='{% trans "Log out active sessions (except this one)" %}'>
                         <span class='fas fa-sign-out-alt'></span> {% trans "Log Out Active Sessions" %}

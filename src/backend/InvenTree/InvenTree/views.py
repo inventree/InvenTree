@@ -20,6 +20,7 @@ from allauth.account.models import EmailAddress
 from allauth.account.views import EmailView, LoginView, PasswordResetFromKeyView
 from allauth.socialaccount.forms import DisconnectForm
 from allauth.socialaccount.views import ConnectionsView
+from allauth.usersessions.views import ListUserSessionsView
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 
 import common.currency
@@ -580,6 +581,15 @@ class AboutView(AjaxView):
 
     ajax_template_name = 'about.html'
     ajax_form_title = _('About InvenTree')
+
+
+class CustomListUserSessionsView(ListUserSessionsView):
+    """A view to delete all other sessions."""
+
+    def form_valid(self, form):
+        """Delete all other sessions."""
+        super().form_valid(form)
+        return HttpResponseRedirect(reverse_lazy('settings'))
 
 
 class NotificationsView(TemplateView):

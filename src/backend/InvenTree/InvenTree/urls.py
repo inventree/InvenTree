@@ -47,6 +47,7 @@ from .views import (
     AppearanceSelectView,
     CustomConnectionsView,
     CustomEmailView,
+    CustomListUserSessionsView,
     CustomLoginView,
     CustomPasswordResetFromKeyView,
     DatabaseStatsView,
@@ -356,6 +357,12 @@ classic_frontendpatterns = [
     path('about/', AboutView.as_view(), name='about'),
     path('stats/', DatabaseStatsView.as_view(), name='stats'),
     # Single Sign On / allauth
+    path(
+        'accounts/sessions/',
+        view=CustomListUserSessionsView.as_view(),
+        name='usersessions_list',
+    ),
+    path('accounts/', include('allauth.urls')),
     # overrides of urlpatterns
     path('accounts/email/', CustomEmailView.as_view(), name='account_email'),
     path(
@@ -392,21 +399,19 @@ frontendpatterns = []
 if settings.ENABLE_CLASSIC_FRONTEND:
     frontendpatterns += classic_frontendpatterns
 
-# Add auth
-frontendpatterns += [
-    path('accounts/', include('allauth.urls'))  # Always needed as we need providers
-]
-
 if settings.ENABLE_PLATFORM_FRONTEND:
     frontendpatterns += platform_urls
     if not settings.ENABLE_CLASSIC_FRONTEND:
         # Add a redirect for login views
         frontendpatterns += [
             path(
+                'accounts/', include('allauth.urls')
+            ),  # Still needed for provider login
+            path(
                 'accounts/login/',
                 RedirectView.as_view(url=settings.FRONTEND_URL_BASE, permanent=False),
                 name='account_login',
-            )
+            ),
         ]
 
 urlpatterns += frontendpatterns
