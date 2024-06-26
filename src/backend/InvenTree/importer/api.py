@@ -48,6 +48,12 @@ class DataImportSessionList(ListCreateAPI):
     queryset = importer.models.DataImportSession.objects.all()
     serializer_class = importer.serializers.DataImportSessionSerializer
 
+    filter_backends = SEARCH_ORDER_FILTER
+
+    filterset_fields = ['model_type', 'status']
+
+    ordering_fields = ['timestamp', 'status', 'model_type']
+
 
 class DataImportSessionDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single DataImportSession object."""

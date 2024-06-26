@@ -58,7 +58,7 @@ export function useTable(tableName: string): TableState {
   // Callback used to refresh (reload) the table
   const refreshTable = useCallback(() => {
     setTableKey(generateTableName());
-  }, []);
+  }, [generateTableName]);
 
   // Array of active filters (saved to local storage)
   const [activeFilters, setActiveFilters] = useLocalStorage<TableFilter[]>({

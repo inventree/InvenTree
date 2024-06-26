@@ -9,6 +9,7 @@ import importer.registry
 from InvenTree.serializers import (
     InvenTreeAttachmentSerializerField,
     InvenTreeModelSerializer,
+    UserSerializer,
 )
 
 
@@ -41,6 +42,7 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'available_fields',
             'status',
             'user',
+            'user_detail',
             'columns',
             'column_mappings',
             'field_defaults',
@@ -63,6 +65,8 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
     completed_row_count = serializers.IntegerField(read_only=True)
 
     column_mappings = DataImportColumnMapSerializer(many=True, read_only=True)
+
+    user_detail = UserSerializer(source='user', read_only=True, many=False)
 
     def create(self, validated_data):
         """Override create method for this serializer.
