@@ -13,7 +13,7 @@ django-filter                           # Extended filtering options
 django-flags                            # Feature flags
 django-formtools                        # Form wizard tools
 django-ical                             # iCal export for calendar views
-django-import-export                    # Data import / export for admin interface
+django-import-export<4.0                # Data import / export for admin interface
 django-maintenance-mode                 # Shut down application while reloading etc.
 django-markdownify                      # Markdown rendering
 django-mptt                             # Modified Preorder Tree Traversal
