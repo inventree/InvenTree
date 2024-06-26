@@ -157,7 +157,11 @@ export default function ImportSesssionTable() {
         props={{
           rowActions: rowActions,
           tableActions: tableActions,
-          tableFilters: tableFilters
+          tableFilters: tableFilters,
+          onRowClick: (record: any) => {
+            setSelectedSession(record.pk);
+            setOpened(true);
+          }
         }}
       />
       <ImporterDrawer

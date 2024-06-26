@@ -21,7 +21,6 @@ export enum ImportSessionStatus {
 export type ImportSessionState = {
   sessionId: number;
   sessionData: any;
-  cancelSession: () => void;
   refreshSession: () => void;
   sessionQuery: any;
   status: ImportSessionStatus;
@@ -46,11 +45,6 @@ export function useImportSession({
     pk: sessionId,
     defaultValue: {}
   });
-
-  // Cancel the importer session (by deleting it)
-  const cancelSession = useCallback(() => {
-    api.delete(apiUrl(ApiEndpoints.import_session_list, sessionId));
-  }, [sessionId]);
 
   // Current step of the import process
   const status: ImportSessionStatus = useMemo(() => {
@@ -102,7 +96,6 @@ export function useImportSession({
   return {
     sessionData,
     sessionId,
-    cancelSession,
     refreshSession,
     sessionQuery,
     status,

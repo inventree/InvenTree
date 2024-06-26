@@ -93,14 +93,6 @@ export default function ImporterDrawer({
     }
   }, [session.status]);
 
-  const cancelImport = useCallback(() => {
-    // Cancel import session by deleting on the server
-    session.cancelSession();
-
-    // Close the modal
-    onClose();
-  }, [session]);
-
   const title: ReactNode = useMemo(() => {
     return (
       <Stack gap="xs" style={{ width: '100%' }}>
@@ -116,7 +108,7 @@ export default function ImporterDrawer({
           </StylishText>
           <ImportDrawerStepper currentStep={2} />
           <Tooltip label={t`Cancel Import`}>
-            <ActionIcon color="red" onClick={cancelImport}>
+            <ActionIcon color="red" onClick={onClose}>
               <IconCircleX />
             </ActionIcon>
           </Tooltip>
