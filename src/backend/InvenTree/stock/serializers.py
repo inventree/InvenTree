@@ -1087,6 +1087,15 @@ class LocationSerializer(
 
         return queryset
 
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Parent Location'),
+        help_text=_('Parent stock location'),
+    )
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     items = serializers.IntegerField(read_only=True, label=_('Stock Items'))

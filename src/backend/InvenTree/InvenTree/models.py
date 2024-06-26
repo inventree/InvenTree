@@ -565,7 +565,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     """Provides an abstracted self-referencing tree model for data categories.
 
     - Each Category has one parent Category, which can be blank (for a top-level Category).
-    - Each Category can have zero-or-more child Categor(y/ies)
+    - Each Category can have zero-or-more child Category(y/ies)
 
     Attributes:
         name: brief name
@@ -782,7 +782,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         on_delete=models.DO_NOTHING,
         blank=True,
         null=True,
-        verbose_name=_('parent'),
+        verbose_name='parent',
         related_name='children',
     )
 
