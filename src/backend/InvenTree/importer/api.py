@@ -50,7 +50,7 @@ class DataImportSessionList(ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    filterset_fields = ['model_type', 'status']
+    filterset_fields = ['model_type', 'status', 'user']
 
     ordering_fields = ['timestamp', 'status', 'model_type']
 
