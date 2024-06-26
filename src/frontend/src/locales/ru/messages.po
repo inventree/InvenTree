@@ -53,7 +53,7 @@ msgstr ""
 #: src/components/forms/ApiForm.tsx:506
 #: src/components/forms/fields/ApiFormField.tsx:295
 #: src/components/modals/LicenseModal.tsx:75
-#: src/components/nav/SearchDrawer.tsx:413
+#: src/components/nav/SearchDrawer.tsx:427
 #: src/pages/ErrorPage.tsx:12
 #: src/pages/ErrorPage.tsx:25
 #: src/pages/part/PartPricingPanel.tsx:71
@@ -1076,35 +1076,35 @@ msgstr ""
 msgid "Mark as read"
 msgstr "Пометить как прочитанное"
 
-#: src/components/nav/SearchDrawer.tsx:77
+#: src/components/nav/SearchDrawer.tsx:78
 msgid "results"
 msgstr "результаты"
 
-#: src/components/nav/SearchDrawer.tsx:337
+#: src/components/nav/SearchDrawer.tsx:349
 msgid "Enter search text"
 msgstr "Введите слова для поиска"
 
-#: src/components/nav/SearchDrawer.tsx:364
+#: src/components/nav/SearchDrawer.tsx:376
 msgid "Search Options"
 msgstr "Параметры поиска"
 
-#: src/components/nav/SearchDrawer.tsx:367
+#: src/components/nav/SearchDrawer.tsx:379
 msgid "Regex search"
 msgstr "Поиск по выражению"
 
-#: src/components/nav/SearchDrawer.tsx:377
+#: src/components/nav/SearchDrawer.tsx:389
 msgid "Whole word search"
 msgstr ""
 
-#: src/components/nav/SearchDrawer.tsx:416
+#: src/components/nav/SearchDrawer.tsx:430
 msgid "An error occurred during search query"
 msgstr "Произошла ошибка во время поиска запроса"
 
-#: src/components/nav/SearchDrawer.tsx:427
+#: src/components/nav/SearchDrawer.tsx:441
 msgid "No results"
 msgstr "Нет результатов"
 
-#: src/components/nav/SearchDrawer.tsx:430
+#: src/components/nav/SearchDrawer.tsx:444
 msgid "No results available for search query"
 msgstr "Нет доступных результатов для поискового запроса"
 

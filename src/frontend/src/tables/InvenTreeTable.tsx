@@ -641,7 +641,7 @@ export function InvenTreeTable<T = any>({
                 />
               )}
               {tableProps.enableRefresh && (
-                <ActionIcon variant="transparent">
+                <ActionIcon variant="transparent" aria-label="table-refresh">
                   <Tooltip label={t`Refresh data`}>
                     <IconRefresh onClick={() => refetch()} />
                   </Tooltip>
@@ -659,7 +659,10 @@ export function InvenTreeTable<T = any>({
                   label={tableState.activeFilters?.length ?? 0}
                   disabled={tableState.activeFilters?.length == 0}
                 >
-                  <ActionIcon variant="transparent">
+                  <ActionIcon
+                    variant="transparent"
+                    aria-label="table-select-filters"
+                  >
                     <Tooltip label={t`Table filters`}>
                       <IconFilter
                         onClick={() => setFiltersVisible(!filtersVisible)}

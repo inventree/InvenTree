@@ -1418,7 +1418,7 @@ class StockTrackingList(ListAPI):
 
         # Run a first pass through the data to determine which related models we need to lookup
         for item in data:
-            deltas = item['deltas']
+            deltas = item['deltas'] or {}
 
             for key in delta_models.keys():
                 if key in deltas:
@@ -1435,7 +1435,7 @@ class StockTrackingList(ListAPI):
 
             # Now, update the data with the serialized data
             for item in data:
-                deltas = item['deltas']
+                deltas = item['deltas'] or {}
 
                 if key in deltas:
                     item['deltas'][f'{key}_detail'] = related_data.get(
