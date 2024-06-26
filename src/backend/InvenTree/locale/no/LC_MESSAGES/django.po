@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -3719,10 +3719,8 @@ msgid "User does not have permission to create or edit attachments for this mode
 msgstr ""
 
 #: common/validators.py:33
-#, fuzzy
-#| msgid "No shipment details provided"
 msgid "No attachment model type provided"
-msgstr "Ingen forsendelsesopplysninger oppgitt"
+msgstr ""
 
 #: common/validators.py:39
 msgid "Invalid attachment model type"
@@ -5942,10 +5940,8 @@ msgid "Filter by category depth"
 msgstr ""
 
 #: part/api.py:141 stock/api.py:330
-#, fuzzy
-#| msgid "Level"
 msgid "Top Level"
-msgstr "Nivå"
+msgstr ""
 
 #: part/api.py:143
 msgid "Filter by top-level categories"
@@ -6752,10 +6748,8 @@ msgid "Duplicate relationship already exists"
 msgstr "Duplikatforhold eksisterer allerede"
 
 #: part/serializers.py:118
-#, fuzzy
-#| msgid "Part Category"
 msgid "Parent Category"
-msgstr "Delkategori"
+msgstr ""
 
 #: part/serializers.py:119 templates/js/translated/part.js:309
 msgid "Parent part category"
@@ -8799,10 +8793,8 @@ msgid "Filter by location depth"
 msgstr ""
 
 #: stock/api.py:332
-#, fuzzy
-#| msgid "Top level stock location"
 msgid "Filter by top-level locations"
-msgstr "Toppnivå-lagerplassering"
+msgstr ""
 
 #: stock/api.py:347
 msgid "Include sub-locations in filtered results"
@@ -14427,5 +14419,3 @@ msgstr "Tillatelse til å endre elementer"
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
 
-#~ msgid "parent"
-#~ msgstr "overkategori"
