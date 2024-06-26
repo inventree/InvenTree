@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-20 04:52\n"
+"PO-Revision-Date: 2024-06-26 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -707,7 +707,7 @@ msgstr "Disponível"
 #: templates/email/overdue_build_order.html:15
 #: templates/js/translated/build.js:972 templates/js/translated/stock.js:2892
 msgid "Build Order"
-msgstr "Ondem de Produção"
+msgstr "Ordem de Produção"
 
 #: build/models.py:86 build/templates/build/build_base.html:13
 #: build/templates/build/index.html:8 build/templates/build/index.html:12
@@ -2534,7 +2534,7 @@ msgstr "Excluir Estoque Esgotado"
 
 #: common/models.py:1697
 msgid "Determines default behavior when a stock item is depleted"
-msgstr ""
+msgstr "Determina o comportamento padrão quando um item de estoque é esgotado"
 
 #: common/models.py:1703
 msgid "Batch Code Template"
@@ -2602,19 +2602,19 @@ msgstr "Exibir itens de estoque instalados nas tabelas de estoque"
 
 #: common/models.py:1754
 msgid "Check BOM when installing items"
-msgstr ""
+msgstr "Verificar BOM ao instalar itens"
 
 #: common/models.py:1756
 msgid "Installed stock items must exist in the BOM for the parent part"
-msgstr ""
+msgstr "Itens de estoque instalados devem existir na BOM para a peça parente"
 
 #: common/models.py:1762
 msgid "Allow Out of Stock Transfer"
-msgstr ""
+msgstr "Permitir Transferência Fora do Estoque"
 
 #: common/models.py:1764
 msgid "Allow stock items which are not in stock to be transferred between stock locations"
-msgstr ""
+msgstr "Permitir que os itens que não estão em estoque sejam transferidos entre locais de estoque"
 
 #: common/models.py:1770
 msgid "Build Order Reference Pattern"
@@ -2627,20 +2627,20 @@ msgstr "Modelo necessário para gerar campo de referência do Pedido de Produç�
 #: common/models.py:1778 common/models.py:1806 common/models.py:1828
 #: common/models.py:1864
 msgid "Require Responsible Owner"
-msgstr ""
+msgstr "Requer Proprietário Responsável"
 
 #: common/models.py:1779 common/models.py:1807 common/models.py:1829
 #: common/models.py:1865
 msgid "A responsible owner must be assigned to each order"
-msgstr ""
+msgstr "Um proprietário responsável deve ser atribuído a cada ordem"
 
 #: common/models.py:1784
 msgid "Block Until Tests Pass"
-msgstr ""
+msgstr "Bloquear até os Testes serem Aprovados"
 
 #: common/models.py:1786
 msgid "Prevent build outputs from being completed until all required tests pass"
-msgstr ""
+msgstr "Impedir que as saídas da produção sejam concluídas até que todos os testes sejam aprovados"
 
 #: common/models.py:1792
 msgid "Enable Return Orders"
@@ -3719,16 +3719,12 @@ msgid "User does not have permission to create or edit attachments for this mode
 msgstr ""
 
 #: common/validators.py:33
-#, fuzzy
-#| msgid "No shipment details provided"
 msgid "No attachment model type provided"
-msgstr "Nenhum detalhe da remessa fornecido"
+msgstr ""
 
 #: common/validators.py:39
-#, fuzzy
-#| msgid "Invalid barcode data"
 msgid "Invalid attachment model type"
-msgstr "Dados do código de barras inválido"
+msgstr ""
 
 #: common/validators.py:80
 msgid "Minimum places cannot be greater than maximum places"
@@ -5944,10 +5940,8 @@ msgid "Filter by category depth"
 msgstr ""
 
 #: part/api.py:141 stock/api.py:330
-#, fuzzy
-#| msgid "Level"
 msgid "Top Level"
-msgstr "Nível"
+msgstr ""
 
 #: part/api.py:143
 msgid "Filter by top-level categories"
@@ -6754,10 +6748,8 @@ msgid "Duplicate relationship already exists"
 msgstr "Relação duplicada já existe"
 
 #: part/serializers.py:118
-#, fuzzy
-#| msgid "Part Category"
 msgid "Parent Category"
-msgstr "Categoria da Peça"
+msgstr ""
 
 #: part/serializers.py:119 templates/js/translated/part.js:309
 msgid "Parent part category"
@@ -8801,10 +8793,8 @@ msgid "Filter by location depth"
 msgstr ""
 
 #: stock/api.py:332
-#, fuzzy
-#| msgid "Top level stock location"
 msgid "Filter by top-level locations"
-msgstr "Local de estoque de alto nível"
+msgstr ""
 
 #: stock/api.py:347
 msgid "Include sub-locations in filtered results"
@@ -14429,5 +14419,3 @@ msgstr "Permissões para editar itens"
 msgid "Permission to delete items"
 msgstr "Permissão para excluir itens"
 
-#~ msgid "parent"
-#~ msgstr "parente"
