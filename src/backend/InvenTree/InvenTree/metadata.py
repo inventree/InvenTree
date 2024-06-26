@@ -115,8 +115,13 @@ class InvenTreeMetadata(SimpleMetadata):
 
         return metadata
 
-    def override_value(self, field_name, field_value, model_value):
+    def override_value(self, field_name: str, field_key: str, field_value, model_value):
         """Override a value on the serializer with a matching value for the model.
+
+        Often, the serializer field will point to an underlying model field,
+        which contains extra information (which is translated already).
+
+        Rather than duplicating this information in the serializer, we can extract it from the model.
 
         This is used to override the serializer values with model values,
         if (and *only* if) the model value should take precedence.
@@ -125,6 +130,12 @@ class InvenTreeMetadata(SimpleMetadata):
         - field_value is None
         - model_value is callable, and field_value is not (this indicates that the model value is translated)
         - model_value is not a string, and field_value is a string (this indicates that the model value is translated)
+
+        Arguments:
+            - field_name: The name of the field
+            - field_key: The property key to override
+            - field_value: The value of the field (if available)
+            - model_value: The equivalent value of the model (if available)
         """
         if model_value and not field_value:
             return model_value
@@ -132,6 +143,7 @@ class InvenTreeMetadata(SimpleMetadata):
         if field_value and not model_value:
             return field_value
 
+        # Callable values will be evaluated later
         if callable(model_value) and not callable(field_value):
             return model_value
 
@@ -140,8 +152,9 @@ class InvenTreeMetadata(SimpleMetadata):
 
         # If the "field value" is the same as the field name, likely it is just a placeholder
         # e.g. DRF uses the field name as the default label value
-        if field_value == field_name:
-            return model_value
+        if field_value == field_name or field_value == field_name.capitalize():
+            if type(model_value) is not str:
+                return model_value
 
         return field_value
 
@@ -205,7 +218,9 @@ class InvenTreeMetadata(SimpleMetadata):
                         field_value = serializer_info[name].get(field_key, None)
                         model_value = getattr(field, model_key, None)
 
-                        if value := self.override_value(name, field_value, model_value):
+                        if value := self.override_value(
+                            name, field_key, field_value, model_value
+                        ):
                             serializer_info[name][field_key] = value
 
             # Iterate through relations
@@ -228,7 +243,9 @@ class InvenTreeMetadata(SimpleMetadata):
                     field_value = serializer_info[name].get(field_key, None)
                     model_value = getattr(relation.model_field, model_key, None)
 
-                    if value := self.override_value(name, field_value, model_value):
+                    if value := self.override_value(
+                        name, field_key, field_value, model_value
+                    ):
                         serializer_info[name][field_key] = value
 
                 if name in model_default_values:
