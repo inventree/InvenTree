@@ -815,6 +815,10 @@ function makePartIcons(part) {
         html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `;
     }
 
+    if (part.locked) {
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Locked" %}</span>`;
+    }
+
     return html;
 }
 
