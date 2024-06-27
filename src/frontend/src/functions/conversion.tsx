@@ -35,5 +35,8 @@ export function resolveItem(obj: any, path: string): any {
 
 export function identifierString(value: string): string {
   // Convert an input string e.g. "Hello World" into a string that can be used as an identifier, e.g. "hello-world"
+
+  value = value || '-';
+
   return value.toLowerCase().replace(/[^a-z0-9]/g, '-');
 }

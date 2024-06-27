@@ -1,6 +1,5 @@
 """JSON serializers for the Order API."""
 
-from datetime import datetime
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -42,20 +41,20 @@ from InvenTree.helpers import (
     str2bool,
 )
 from InvenTree.serializers import (
-    InvenTreeAttachmentSerializer,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
+    NotesFieldMixin,
 )
-from InvenTree.status_codes import (
+from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     SalesOrderStatusGroups,
-    StockStatus,
 )
 from part.serializers import PartBriefSerializer
+from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer
 
 
@@ -198,7 +197,7 @@ class AbstractExtraLineMeta:
 
 
 class PurchaseOrderSerializer(
-    TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a PurchaseOrder object."""
 
@@ -282,7 +281,7 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ([],)
+        fields = []
 
     def get_context_data(self):
         """Return custom context information about the order."""
@@ -861,19 +860,8 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
-class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializers for the PurchaseOrderAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.PurchaseOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['order'])
-
-
 class SalesOrderSerializer(
-    TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
 ):
     """Serializer for the SalesOrder model class."""
 
@@ -1180,7 +1168,7 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     )
 
 
-class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
+class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
     """Serializer for the SalesOrderShipment class."""
 
     class Meta:
@@ -1629,19 +1617,8 @@ class SalesOrderExtraLineSerializer(
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
 
-class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializers for the SalesOrderAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.SalesOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['order'])
-
-
 class ReturnOrderSerializer(
-    AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
+    NotesFieldMixin, AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
 ):
     """Serializer for the ReturnOrder model class."""
 
@@ -1882,14 +1859,3 @@ class ReturnOrderExtraLineSerializer(
         model = order.models.ReturnOrderExtraLine
 
     order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
-
-
-class ReturnOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the ReturnOrderAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.ReturnOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['order'])

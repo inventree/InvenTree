@@ -11,13 +11,13 @@ from taggit.serializers import TagListSerializerField
 
 import part.filters
 from InvenTree.serializers import (
-    InvenTreeAttachmentSerializer,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeImageSerializerField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
     InvenTreeTagModelSerializer,
+    NotesFieldMixin,
     RemoteImageMixin,
 )
 from part.serializers import PartBriefSerializer
@@ -25,10 +25,8 @@ from part.serializers import PartBriefSerializer
 from .models import (
     Address,
     Company,
-    CompanyAttachment,
     Contact,
     ManufacturerPart,
-    ManufacturerPartAttachment,
     ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
@@ -102,7 +100,7 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
-class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
+class CompanySerializer(NotesFieldMixin, RemoteImageMixin, InvenTreeModelSerializer):
     """Serializer for Company object (full detail)."""
 
     class Meta:
@@ -185,17 +183,6 @@ class CompanySerializer(RemoteImageMixin, InvenTreeModelSerializer):
         return self.instance
 
 
-class CompanyAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the CompanyAttachment class."""
-
-    class Meta:
-        """Metaclass defines serializer options."""
-
-        model = CompanyAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['company'])
-
-
 class ContactSerializer(InvenTreeModelSerializer):
     """Serializer class for the Contact model."""
 
@@ -257,17 +244,6 @@ class ManufacturerPartSerializer(InvenTreeTagModelSerializer):
     manufacturer = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.filter(is_manufacturer=True)
     )
-
-
-class ManufacturerPartAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the ManufacturerPartAttachment class."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = ManufacturerPartAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['manufacturer_part'])
 
 
 class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):

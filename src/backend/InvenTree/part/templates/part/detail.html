@@ -404,6 +404,8 @@
             'part-notes',
             '{% url "api-part-detail" part.pk %}',
             {
+                model_type: "part",
+                model_id: {{ part.pk }},
                 editable: {% js_bool roles.part.change %},
             }
         );
@@ -801,17 +803,7 @@
     });
 
     onPanelLoad("part-attachments", function() {
-        loadAttachmentTable('{% url "api-part-attachment-list" %}', {
-            filters: {
-                part: {{ part.pk }},
-            },
-            fields: {
-                part: {
-                    value: {{ part.pk }},
-                    hidden: true
-                }
-            }
-        });
+        loadAttachmentTable('part', {{ part.pk }});
     });
 
     onPanelLoad('pricing', function() {

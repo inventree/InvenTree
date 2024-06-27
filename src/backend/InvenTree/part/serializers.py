@@ -21,7 +21,7 @@ from rest_framework import serializers
 from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
-import common.models
+import common.currency
 import common.settings
 import company.models
 import InvenTree.helpers
@@ -33,14 +33,13 @@ import part.stocktake
 import part.tasks
 import stock.models
 import users.models
-from InvenTree.status_codes import BuildStatusGroups
+from build.status_codes import BuildStatusGroups
 from InvenTree.tasks import offload_task
 
 from .models import (
     BomItem,
     BomItemSubstitute,
     Part,
-    PartAttachment,
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
@@ -112,6 +111,14 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         return queryset
 
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all(),
+        required=False,
+        allow_null=True,
+        label=_('Parent Category'),
+        help_text=_('Parent part category'),
+    )
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     part_count = serializers.IntegerField(read_only=True, label=_('Parts'))
@@ -146,19 +153,6 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset.annotate(subcategories=part.filters.annotate_sub_categories())
 
 
-class PartAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
-    """Serializer for the PartAttachment class."""
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartAttachment
-
-        fields = InvenTree.serializers.InvenTreeAttachmentSerializer.attachment_fields([
-            'part'
-        ])
-
-
 class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     """Serializer for the PartTestTemplate class."""
 
@@ -178,6 +172,7 @@ class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer)
             'requires_value',
             'requires_attachment',
             'results',
+            'choices',
         ]
 
     key = serializers.CharField(read_only=True)
@@ -579,6 +574,7 @@ class InitialSupplierSerializer(serializers.Serializer):
 
 
 class PartSerializer(
+    InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
@@ -1168,7 +1164,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     def validate(self, data):
         """Custom validation for this serializer."""
         # Stocktake functionality must be enabled
-        if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
+        if not common.settings.get_global_setting('STOCKTAKE_ENABLE'):
             raise serializers.ValidationError(
                 _('Stocktake functionality is not enabled')
             )
@@ -1286,7 +1282,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         label=_('Minimum price currency'),
         read_only=False,
         required=False,
-        choices=common.settings.currency_code_mappings(),
+        choices=common.currency.currency_code_mappings(),
     )
 
     override_max = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1301,7 +1297,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         label=_('Maximum price currency'),
         read_only=False,
         required=False,
-        choices=common.settings.currency_code_mappings(),
+        choices=common.currency.currency_code_mappings(),
     )
 
     overall_min = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1342,7 +1338,7 @@ class PartPricingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         override_min = data.get('override_min', None)
         override_max = data.get('override_max', None)
 
-        default_currency = common.settings.currency_code_default()
+        default_currency = common.currency.currency_code_default()
 
         if override_min is not None and override_max is not None:
             try:

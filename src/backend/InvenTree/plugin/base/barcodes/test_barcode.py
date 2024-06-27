@@ -27,25 +27,19 @@ class BarcodeAPITest(InvenTreeAPITestCase):
     def postBarcode(self, url, barcode, expected_code=None):
         """Post barcode and return results."""
         return self.post(
-            url,
-            format='json',
-            data={'barcode': str(barcode)},
-            expected_code=expected_code,
+            url, data={'barcode': str(barcode)}, expected_code=expected_code
         )
 
     def test_invalid(self):
         """Test that invalid requests fail."""
         # test scan url
-        self.post(self.scan_url, format='json', data={}, expected_code=400)
+        self.post(self.scan_url, data={}, expected_code=400)
 
         # test wrong assign urls
-        self.post(self.assign_url, format='json', data={}, expected_code=400)
-        self.post(
-            self.assign_url, format='json', data={'barcode': '123'}, expected_code=400
-        )
+        self.post(self.assign_url, data={}, expected_code=400)
+        self.post(self.assign_url, data={'barcode': '123'}, expected_code=400)
         self.post(
             self.assign_url,
-            format='json',
             data={'barcode': '123', 'stockitem': '123'},
             expected_code=400,
         )
@@ -163,7 +157,6 @@ class BarcodeAPITest(InvenTreeAPITestCase):
 
         response = self.post(
             self.assign_url,
-            format='json',
             data={'barcode': barcode_data, 'stockitem': item.pk},
             expected_code=200,
         )
@@ -183,7 +176,6 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         # Ensure that the same barcode hash cannot be assigned to a different stock item!
         response = self.post(
             self.assign_url,
-            format='json',
             data={'barcode': barcode_data, 'stockitem': 521},
             expected_code=400,
         )

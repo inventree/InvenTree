@@ -95,3 +95,20 @@ test('PUI - Purchasing', async ({ page }) => {
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('tab', { name: 'Details' }).waitFor();
 });
+
+test('PUI - Stock Location Tree', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/stock/location/index/`);
+  await page.waitForURL('**/platform/stock/location/**');
+  await page.getByRole('tab', { name: 'Location Details' }).click();
+
+  await page.getByLabel('nav-breadcrumb-action').click();
+  await page.getByLabel('nav-tree-toggle-1}').click();
+  await page.getByLabel('nav-tree-item-2').click();
+
+  await page.getByLabel('breadcrumb-2-storage-room-a').waitFor();
+  await page.getByLabel('breadcrumb-1-factory').click();
+
+  await page.getByRole('cell', { name: 'Factory' }).first().waitFor();
+});

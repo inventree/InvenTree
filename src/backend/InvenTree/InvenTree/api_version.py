@@ -1,13 +1,12 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 203
+INVENTREE_API_VERSION = 211
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
-
-v203 - 2024-05-28 : https://github.com/inventree/InvenTree/pull/6989
+v211 - 2024-06-28 : https://github.com/inventree/InvenTree/pull/6989
     - Adds new API endpoints for PurchaseOrder state transitions
         - Request Approval
         - Reject order
@@ -19,6 +18,33 @@ v203 - 2024-05-28 : https://github.com/inventree/InvenTree/pull/6989
         - created_by
         - approved_by
         - placed_by
+
+v210 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7518
+    - Adds translateable text to User API fields
+
+v209 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7514
+    - Add "top_level" filter to PartCategory API endpoint
+    - Add "top_level" filter to StockLocation API endpoint
+
+v208 - 2024-06-19 : https://github.com/inventree/InvenTree/pull/7479
+    - Adds documentation for the user roles API endpoint (no functional changes)
+
+v207 - 2024-06-09 : https://github.com/inventree/InvenTree/pull/7420
+    - Moves all "Attachment" models into a single table
+    - All "Attachment" operations are now performed at /api/attachment/
+    - Add permissions information to /api/user/roles/ endpoint
+
+v206 - 2024-06-08 : https://github.com/inventree/InvenTree/pull/7417
+    - Adds "choices" field to the PartTestTemplate model
+
+v205 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7284
+    - Added model_type and model_id fields to the "NotesImage" serializer
+
+v204 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7393
+    - Fixes previous API update which resulted in inconsistent ordering of currency codes
+
+v203 - 2024-06-03 : https://github.com/inventree/InvenTree/pull/7390
+    - Currency codes are now configurable as a run-time setting
 
 v202 - 2024-05-27 : https://github.com/inventree/InvenTree/pull/7343
     - Adjust "required" attribute of Part.category field to be optional
@@ -113,7 +139,7 @@ v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
     - Adds "external_stock" field to the Part API endpoint
     - Adds "external_stock" field to the BomItem API endpoint
     - Adds "external_stock" field to the BuildLine API endpoint
-    - Stock quantites represented in the BuildLine API endpoint are now filtered by Build.source_location
+    - Stock quantities represented in the BuildLine API endpoint are now filtered by Build.source_location
 
 v177 - 2024-02-27 : https://github.com/inventree/InvenTree/pull/6581
     - Adds "subcategoies" count to PartCategoryTree serializer

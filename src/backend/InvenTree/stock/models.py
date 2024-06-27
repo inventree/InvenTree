@@ -32,17 +32,14 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
+from common.settings import get_global_setting
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from InvenTree.status_codes import (
-    SalesOrderStatusGroups,
-    StockHistoryCode,
-    StockStatus,
-    StockStatusGroups,
-)
+from order.status_codes import SalesOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock.generators import generate_batch_code
+from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
@@ -238,9 +235,7 @@ class StockLocation(
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting(
-            'STOCK_OWNERSHIP_CONTROL'
-        )
+        ownership_enabled = get_global_setting('STOCK_OWNERSHIP_CONTROL')
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -314,15 +309,14 @@ def default_delete_on_deplete():
     Now, there is a user-configurable setting to govern default behaviour.
     """
     try:
-        return common.models.InvenTreeSetting.get_setting(
-            'STOCK_DELETE_DEPLETED_DEFAULT', True
-        )
+        return get_global_setting('STOCK_DELETE_DEPLETED_DEFAULT', True)
     except (IntegrityError, OperationalError):
         # Revert to original default behaviour
         return True
 
 
 class StockItem(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
@@ -348,7 +342,7 @@ class StockItem(
         stocktake_user: User that performed the most recent stocktake
         review_needed: Flag if StockItem needs review
         delete_on_deplete: If True, StockItem will be deleted when the stock level gets to zero
-        status: Status of this StockItem (ref: InvenTree.status_codes.StockStatus)
+        status: Status of this StockItem (ref: stock.status_codes.StockStatus)
         notes: Extra notes field
         build: Link to a Build (if this stock item was created from a build)
         is_building: Boolean field indicating if this stock item is currently being built (or is "in production")
@@ -1000,9 +994,7 @@ class StockItem(
         if user.is_superuser:
             return True
 
-        ownership_enabled = common.models.InvenTreeSetting.get_setting(
-            'STOCK_OWNERSHIP_CONTROL'
-        )
+        ownership_enabled = get_global_setting('STOCK_OWNERSHIP_CONTROL')
 
         if not ownership_enabled:
             # Location ownership function is not enabled, so return True
@@ -1031,7 +1023,7 @@ class StockItem(
 
         today = InvenTree.helpers.current_date()
 
-        stale_days = common.models.InvenTreeSetting.get_setting('STOCK_STALE_DAYS')
+        stale_days = get_global_setting('STOCK_STALE_DAYS')
 
         if stale_days <= 0:
             return False
@@ -1699,6 +1691,9 @@ class StockItem(
         - Tracking history for the *other* item is deleted
         - Any allocations (build order, sales order) are moved to this StockItem
         """
+        if isinstance(other_items, StockItem):
+            other_items = [other_items]
+
         if len(other_items) == 0:
             return
 
@@ -1706,7 +1701,7 @@ class StockItem(
         tree_ids = {self.tree_id}
 
         user = kwargs.get('user', None)
-        location = kwargs.get('location', None)
+        location = kwargs.get('location', self.location)
         notes = kwargs.get('notes', None)
 
         parent_id = self.parent.pk if self.parent else None
@@ -1714,6 +1709,9 @@ class StockItem(
         for other in other_items:
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
+                logger.warning(
+                    'Stock item <%s> could not be merge into <%s>', other.pk, self.pk
+                )
                 return
 
             tree_ids.add(other.tree_id)
@@ -1743,7 +1741,7 @@ class StockItem(
             user,
             quantity=self.quantity,
             notes=notes,
-            deltas={'location': location.pk},
+            deltas={'location': location.pk if location else None},
         )
 
         self.location = location
@@ -1895,7 +1893,7 @@ class StockItem(
         except InvalidOperation:
             return False
 
-        allow_out_of_stock_transfer = common.models.InvenTreeSetting.get_setting(
+        allow_out_of_stock_transfer = get_global_setting(
             'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER', backup_value=False, cache=False
         )
 
@@ -2160,7 +2158,7 @@ class StockItem(
         """Return a list of test-result objects for this StockItem."""
         return list(self.testResultMap(**kwargs).values())
 
-    def requiredTestStatus(self):
+    def requiredTestStatus(self, required_tests=None):
         """Return the status of the tests required for this StockItem.
 
         Return:
@@ -2170,15 +2168,17 @@ class StockItem(
             - failed: Number of tests that have failed
         """
         # All the tests required by the part object
-        required = self.part.getRequiredTests()
+
+        if required_tests is None:
+            required_tests = self.part.getRequiredTests()
 
         results = self.testResultMap()
 
-        total = len(required)
+        total = len(required_tests)
         passed = 0
         failed = 0
 
-        for test in required:
+        for test in required_tests:
             key = InvenTree.helpers.generateTestKey(test.test_name)
 
             if key in results:
@@ -2200,9 +2200,9 @@ class StockItem(
         """Return True if there are any 'required tests' associated with this StockItem."""
         return self.required_test_count > 0
 
-    def passedAllRequiredTests(self):
+    def passedAllRequiredTests(self, required_tests=None):
         """Returns True if this StockItem has passed all required tests."""
-        status = self.requiredTestStatus()
+        status = self.requiredTestStatus(required_tests=required_tests)
 
         return status['passed'] >= status['total']
 
@@ -2225,15 +2225,16 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
     """Function to be executed after a StockItem object is deleted."""
     from part import tasks as part_tasks
 
-    if not InvenTree.ready.isImportingData():
+    if not InvenTree.ready.isImportingData() and InvenTree.ready.canAppAccessDatabase(
+        allow_test=True
+    ):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required, instance.part
         )
 
         # Schedule an update on parent part pricing
-        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
-            instance.part.schedule_pricing_update(create=False)
+        instance.part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2241,31 +2242,18 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
     """Hook function to be executed after StockItem object is saved/updated."""
     from part import tasks as part_tasks
 
-    if created and not InvenTree.ready.isImportingData():
+    if (
+        created
+        and not InvenTree.ready.isImportingData()
+        and InvenTree.ready.canAppAccessDatabase(allow_test=True)
+    ):
         # Run this check in the background
         InvenTree.tasks.offload_task(
             part_tasks.notify_low_stock_if_required, instance.part
         )
 
-        if InvenTree.ready.canAppAccessDatabase(allow_test=True):
-            instance.part.schedule_pricing_update(create=True)
-
-
-class StockItemAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a StockItem object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return API url."""
-        return reverse('api-stock-attachment-list')
-
-    def getSubdir(self):
-        """Override attachment location."""
-        return os.path.join('stock_files', str(self.stock_item.id))
-
-    stock_item = models.ForeignKey(
-        StockItem, on_delete=models.CASCADE, related_name='attachments'
-    )
+        # Schedule an update on parent part pricing
+        instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):
@@ -2376,23 +2364,28 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
         # If this test result corresponds to a template, check the requirements of the template
-        key = self.key
+        template = self.template
 
-        templates = self.stock_item.part.getTestTemplates()
+        if template is None:
+            # Fallback if there is no matching template
+            for template in self.stock_item.part.getTestTemplates():
+                if self.key == template.key:
+                    break
 
-        for template in templates:
-            if key == template.key:
-                if template.requires_value and not self.value:
-                    raise ValidationError({
-                        'value': _('Value must be provided for this test')
-                    })
+        if template:
+            if template.requires_value and not self.value:
+                raise ValidationError({
+                    'value': _('Value must be provided for this test')
+                })
 
-                if template.requires_attachment and not self.attachment:
-                    raise ValidationError({
-                        'attachment': _('Attachment must be uploaded for this test')
-                    })
+            if template.requires_attachment and not self.attachment:
+                raise ValidationError({
+                    'attachment': _('Attachment must be uploaded for this test')
+                })
 
-                break
+            if choices := template.get_choices():
+                if self.value not in choices:
+                    raise ValidationError({'value': _('Invalid value for this test')})
 
     @property
     def key(self):

@@ -20,10 +20,10 @@ import {
   useParams
 } from 'react-router-dom';
 
+import { identifierString } from '../../functions/conversion';
 import { navigateToLink } from '../../functions/navigation';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
-import { PlaceholderPanel } from '../items/Placeholder';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -33,7 +33,7 @@ export type PanelType = {
   name: string;
   label: string;
   icon?: ReactNode;
-  content?: ReactNode;
+  content: ReactNode;
   hidden?: boolean;
   disabled?: boolean;
   showHeadline?: boolean;
@@ -172,6 +172,9 @@ function BasePanelGroup({
                 <Tabs.Panel
                   key={panel.name}
                   value={panel.name}
+                  aria-label={`nav-panel-${identifierString(
+                    `${pageKey}-${panel.name}`
+                  )}`}
                   p="sm"
                   style={{
                     overflowX: 'scroll',
@@ -186,7 +189,7 @@ function BasePanelGroup({
                       </>
                     )}
                     <Boundary label={`PanelContent-${panel.name}`}>
-                      {panel.content ?? <PlaceholderPanel />}
+                      {panel.content}
                     </Boundary>
                   </Stack>
                 </Tabs.Panel>

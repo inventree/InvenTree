@@ -13,12 +13,11 @@ from django.db.models.functions import Coalesce
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from InvenTree.serializers import InvenTreeModelSerializer, InvenTreeAttachmentSerializer
-from InvenTree.serializers import UserSerializer
+from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer
 
 import InvenTree.helpers
-from InvenTree.serializers import InvenTreeDecimalField
-from InvenTree.status_codes import StockStatus
+from InvenTree.serializers import InvenTreeDecimalField, NotesFieldMixin
+from stock.status_codes import StockStatus
 
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
@@ -30,10 +29,10 @@ import part.filters
 from part.serializers import BomItemSerializer, PartSerializer, PartBriefSerializer
 from users.serializers import OwnerSerializer
 
-from .models import Build, BuildLine, BuildItem, BuildOrderAttachment
+from .models import Build, BuildLine, BuildItem
 
 
-class BuildSerializer(InvenTreeModelSerializer):
+class BuildSerializer(NotesFieldMixin, InvenTreeModelSerializer):
     """Serializes a Build object."""
 
     class Meta:
@@ -568,10 +567,13 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
 
         outputs = data.get('outputs', [])
 
+        # Cache some calculated values which can be passed to each output
+        required_tests = outputs[0]['output'].part.getRequiredTests()
+        prevent_on_incomplete = common.settings.prevent_build_output_complete_on_incompleted_tests()
+
         # Mark the specified build outputs as "complete"
         with transaction.atomic():
             for item in outputs:
-
                 output = item['output']
 
                 build.complete_build_output(
@@ -580,6 +582,8 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
                     location=location,
                     status=status,
                     notes=notes,
+                    required_tests=required_tests,
+                    prevent_on_incomplete=prevent_on_incomplete,
                 )
 
 
@@ -734,10 +738,11 @@ class BuildCompleteSerializer(serializers.Serializer):
         build = self.context['build']
 
         data = self.validated_data
-        if data.get('accept_overallocated', OverallocationChoice.REJECT) == OverallocationChoice.TRIM:
-            build.trim_allocated_stock()
 
-        build.complete_build(request.user)
+        build.complete_build(
+            request.user,
+            trim_allocated_stock=data.get('accept_overallocated', OverallocationChoice.REJECT) == OverallocationChoice.TRIM
+        )
 
 
 class BuildUnallocationSerializer(serializers.Serializer):
@@ -1305,15 +1310,3 @@ class BuildLineSerializer(InvenTreeModelSerializer):
         )
 
         return queryset
-
-
-class BuildAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for a BuildAttachment."""
-
-    class Meta:
-        """Serializer metaclass"""
-        model = BuildOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields([
-            'build',
-        ])

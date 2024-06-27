@@ -18,9 +18,9 @@ import {
   DeleteItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
-import { PartCategoryTree } from '../../components/nav/PartCategoryTree';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -277,12 +277,15 @@ export default function CategoryDetail({}: {}) {
       {deleteCategory.modal}
       <Stack gap="xs">
         <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PartCategoryTree
+        <NavigationTree
+          modelType={ModelType.partcategory}
+          title={t`Part Categories`}
+          endpoint={ApiEndpoints.category_tree}
           opened={treeOpen}
           onClose={() => {
             setTreeOpen(false);
           }}
-          selectedCategory={category?.pk}
+          selectedId={category?.pk}
         />
         <PageDetail
           title={t`Part Category`}

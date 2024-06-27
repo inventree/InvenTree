@@ -13,6 +13,7 @@ import tablib
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
+import common.currency
 import common.models
 import InvenTree.helpers
 import part.models
@@ -67,7 +68,7 @@ def perform_stocktake(
         pricing.update_pricing(cascade=False)
         pricing.refresh_from_db()
 
-    base_currency = common.settings.currency_code_default()
+    base_currency = common.currency.currency_code_default()
 
     # Keep track of total quantity and cost for this part
     total_quantity = 0
@@ -210,7 +211,7 @@ def generate_stocktake_report(**kwargs):
 
     logger.info('Generating new stocktake report for %s parts', n_parts)
 
-    base_currency = common.settings.currency_code_default()
+    base_currency = common.currency.currency_code_default()
 
     # Construct an initial dataset for the stocktake report
     dataset = tablib.Dataset(

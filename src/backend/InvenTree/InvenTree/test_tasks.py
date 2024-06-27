@@ -122,6 +122,7 @@ class InvenTreeTaskTests(TestCase):
     def test_task_check_for_updates(self):
         """Test the task check_for_updates."""
         # Check that setting should be empty
+        InvenTreeSetting.set_setting('_INVENTREE_LATEST_VERSION', '')
         self.assertEqual(InvenTreeSetting.get_setting('_INVENTREE_LATEST_VERSION'), '')
 
         # Get new version

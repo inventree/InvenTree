@@ -10,10 +10,10 @@ from django.test import override_settings
 from build.models import Build
 from common.models import InvenTreeSetting
 from company.models import Company
-from InvenTree.status_codes import StockHistoryCode
 from InvenTree.unit_test import InvenTreeTestCase
 from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
+from stock.status_codes import StockHistoryCode
 
 from .models import StockItem, StockItemTestResult, StockItemTracking, StockLocation
 

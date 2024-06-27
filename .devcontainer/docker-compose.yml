@@ -13,6 +13,12 @@ services:
       POSTGRES_USER: inventree_user
       POSTGRES_PASSWORD: inventree_password
 
+  redis:
+    image: redis:7.0
+    restart: always
+    expose:
+      - 6379
+
   inventree:
     build:
       context: ..
@@ -31,6 +37,8 @@ services:
       INVENTREE_DB_HOST: db
       INVENTREE_DB_USER: inventree_user
       INVENTREE_DB_PASSWORD: inventree_password
+      INVENTREE_CACHE_HOST: redis
+      INVENTREE_CACHE_PORT: 6379
       INVENTREE_PLUGINS_ENABLED: True
       INVENTREE_SITE_URL: http://localhost:8000
       INVENTREE_CORS_ORIGIN_ALLOW_ALL: True

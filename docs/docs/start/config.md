@@ -202,6 +202,35 @@ If running with a MySQL database backend, the following additional options are a
 | --- | --- | --- | --- |
 | INVENTREE_DB_ISOLATION_SERIALIZABLE | database.serializable | Database isolation level configured to "serializable" | False |
 
+## Caching
+
+InvenTree can be configured to use [redis](https://redis.io) as a global cache backend.
+Enabling a global cache can provide significant performance improvements for InvenTree.
+
+### Cache Server
+
+Enabling global caching requires connection to a redis server (which is separate from the InvenTree database and web server). Setup and configuration of this server is outside the scope of this documentation. It is assumed that if you are configuring a cache server, you have already set one up, and are comfortable configuring it.
+
+!!! tip "Docker Support"
+    If you are running [InvenTree under docker](./docker.md), we provide a redis container as part of our docker compose file - so redis caching works out of the box.
+
+### Cache Settings
+
+The following cache settings are available:
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_CACHE_ENABLED | cache.enabled | Enable redis caching | False |
+| INVENTREE_CACHE_HOST | cache.host | Cache server host | *Not specified* |
+| INVENTREE_CACHE_PORT | cache.port | Cache server port | 6379 |
+| INVENTREE_CACHE_CONNECT_TIMEOUT | cache.connect_timeout | Cache connection timeout (seconds) | 3 |
+| INVENTREE_CACHE_TIMEOUT | cache.timeout | Cache timeout (seconds) | 3 |
+| INVENTREE_CACHE_TCP_KEEPALIVE | cache.tcp_keepalive | Cache TCP keepalive | True |
+| INVENTREE_CACHE_KEEPALIVE_COUNT | cache.keepalive_count | Cache keepalive count | 5 |
+| INVENTREE_CACHE_KEEPALIVE_IDLE | cache.keepalive_idle | Cache keepalive idle | 1 |
+| INVENTREE_CACHE_KEEPALIVE_INTERVAL | cache.keepalive_interval | Cache keepalive interval | 1 |
+| INVENTREE_CACHE_USER_TIMEOUT | cache.user_timeout | Cache user timeout | 1000 |
+
 ## Email Settings
 
 To enable [email functionality](../settings/email.md), email settings must be configured here, either via environment variables or within the configuration file.
@@ -226,19 +255,6 @@ The "sender" email address is the address from which InvenTree emails are sent (
 
 !!! info "Fallback"
     If `INVENTREE_EMAIL_SENDER` is not provided, the system will fall back to `INVENTREE_EMAIL_USERNAME` (if the username is a valid email address)
-
-## Supported Currencies
-
-The currencies supported by InvenTree must be specified in the [configuration file](#configuration-file).
-
-A list of currency codes (e.g. *AUD*, *CAD*, *JPY*, *USD*) can be specified using the `currencies` variable (or using the `INVENTREE_CURRENCIES` environment variable).
-
-| Environment Variable | Configuration File | Description | Default |
-| --- | --- | --- | --- |
-| INVENTREE_CURRENCIES | currencies | List of supported currencies| `AUD`, `CAD`, `CNY`, `EUR`, `GBP`, `JPY`, `NZD`, `USD` |
-
-!!! tip "More Info"
-    Read the [currencies documentation](../settings/currency.md) for more information on currency support in InvenTree
 
 ## File Storage Locations
 

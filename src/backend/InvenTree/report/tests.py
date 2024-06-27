@@ -15,14 +15,14 @@ from PIL import Image
 
 import report.models as report_models
 from build.models import Build
-from common.models import InvenTreeSetting
+from common.models import Attachment, InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import ReturnOrder, SalesOrder
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
-from stock.models import StockItem, StockItemAttachment
+from stock.models import StockItem
 
 
 class ReportTagTest(TestCase):
@@ -403,6 +403,61 @@ class ReportTest(InvenTreeAPITestCase):
 
         self.assertEqual(len(p.metadata.keys()), 4)
 
+    def test_report_template_permissions(self):
+        """Test that the user permissions are correctly applied.
+
+        - For all /api/report/ endpoints, any authenticated user should have full read access
+        - Write access is limited to staff users
+        - Non authenticated users should have no access at all
+        """
+        # First test the "report list" endpoint
+        url = reverse('api-report-template-list')
+
+        template = ReportTemplate.objects.first()
+
+        detail_url = reverse('api-report-template-detail', kwargs={'pk': template.pk})
+
+        # Non-authenticated user should have no access
+        self.logout()
+
+        self.get(url, expected_code=401)
+
+        # Authenticated user should have read access
+        self.user.is_staff = False
+        self.user.save()
+
+        self.login()
+
+        # Check read access to template list URL
+        self.get(url, expected_code=200)
+
+        # Check read access to template detail URL
+        self.get(detail_url, expected_code=200)
+
+        # An update to the report template should fail
+        self.patch(
+            detail_url,
+            data={'description': 'Some new description here?'},
+            expected_code=403,
+        )
+
+        # Now, test with a staff user
+        self.logout()
+
+        self.user.is_staff = True
+        self.user.save()
+
+        self.login()
+
+        self.patch(
+            detail_url,
+            data={'description': 'An updated description'},
+            expected_code=200,
+        )
+
+        template.refresh_from_db()
+        self.assertEqual(template.description, 'An updated description')
+
 
 class PrintTestMixins:
     """Mixin that enables e2e printing tests."""
@@ -446,6 +501,8 @@ class PrintTestMixins:
                 'items': [item.pk for item in qs],
             },
             expected_code=201,
+            max_query_time=15,
+            max_query_count=500 * len(qs),
         )
 
 
@@ -491,7 +548,9 @@ class TestReportTest(PrintTestMixins, ReportTest):
         self.assertEqual(response.data['output'].startswith('/media/report/'), True)
 
         # By default, this should *not* have created an attachment against this stockitem
-        self.assertFalse(StockItemAttachment.objects.filter(stock_item=item).exists())
+        self.assertFalse(
+            Attachment.objects.filter(model_id=item.pk, model_type='stockitem').exists()
+        )
 
         return
         # TODO @matmair - Re-add this test after https://github.com/inventree/InvenTree/pull/7074/files#r1600694356 is resolved
@@ -506,7 +565,9 @@ class TestReportTest(PrintTestMixins, ReportTest):
         self.assertEqual(response.data['output'].startswith('/media/report/'), True)
 
         # Check that a report has been uploaded
-        attachment = StockItemAttachment.objects.filter(stock_item=item).first()
+        attachment = Attachment.objects.filter(
+            model_id=item.pk, model_type='stockitem'
+        ).first()
         self.assertIsNotNone(attachment)
 
     def test_mdl_build(self):
