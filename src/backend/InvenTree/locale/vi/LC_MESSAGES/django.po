@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 13:12+0000\n"
-"PO-Revision-Date: 2024-06-26 06:04\n"
+"PO-Revision-Date: 2024-06-27 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -525,26 +525,20 @@ msgid "First Name"
 msgstr "Tên"
 
 #: InvenTree/serializers.py:409
-#, fuzzy
-#| msgid "PluginName of the plugin"
 msgid "First name of the user"
-msgstr "Tên của phần bổ sung"
+msgstr ""
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
 msgstr "Họ"
 
 #: InvenTree/serializers.py:412
-#, fuzzy
-#| msgid "Last time the token was used"
 msgid "Last name of the user"
-msgstr "Lần cuối mã thông báo được sử dụng"
+msgstr ""
 
 #: InvenTree/serializers.py:415
-#, fuzzy
-#| msgid "Email address confirmation"
 msgid "Email address of the user"
-msgstr "Xác nhận địa chỉ email"
+msgstr ""
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
@@ -576,10 +570,8 @@ msgid "Active"
 msgstr "Hoạt động"
 
 #: InvenTree/serializers.py:445
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this user account active"
-msgstr "Sản phẩm này đang hoạt động?"
+msgstr ""
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
@@ -14459,3 +14451,4 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
+
