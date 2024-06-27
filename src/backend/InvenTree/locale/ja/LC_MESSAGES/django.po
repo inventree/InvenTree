@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 13:12+0000\n"
-"PO-Revision-Date: 2024-06-26 06:04\n"
+"PO-Revision-Date: 2024-06-27 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -537,10 +537,8 @@ msgid "Last name of the user"
 msgstr ""
 
 #: InvenTree/serializers.py:415
-#, fuzzy
-#| msgid "Email address confirmation"
 msgid "Email address of the user"
-msgstr "メールアドレスの確認"
+msgstr ""
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
@@ -14453,3 +14451,4 @@ msgstr "項目を編集する権限"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
+
