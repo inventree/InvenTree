@@ -268,6 +268,11 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
+        name: 'locked',
+        label: t`Locked`
+      },
+      {
+        type: 'boolean',
         name: 'template',
         label: t`Template Part`
       },
