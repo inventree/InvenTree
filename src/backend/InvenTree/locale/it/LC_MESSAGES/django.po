@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 13:12+0000\n"
-"PO-Revision-Date: 2024-06-26 06:04\n"
+"PO-Revision-Date: 2024-06-27 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -525,26 +525,20 @@ msgid "First Name"
 msgstr "Nome"
 
 #: InvenTree/serializers.py:409
-#, fuzzy
-#| msgid "PluginName of the plugin"
 msgid "First name of the user"
-msgstr "PluginName del plugin"
+msgstr ""
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
 msgstr "Cognome"
 
 #: InvenTree/serializers.py:412
-#, fuzzy
-#| msgid "Enter a name for the test"
 msgid "Last name of the user"
-msgstr "Inserisci un nome per la prova"
+msgstr ""
 
 #: InvenTree/serializers.py:415
-#, fuzzy
-#| msgid "Email address confirmation"
 msgid "Email address of the user"
-msgstr "Conferma indirizzo email"
+msgstr ""
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
@@ -576,10 +570,8 @@ msgid "Active"
 msgstr "Attivo"
 
 #: InvenTree/serializers.py:445
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this user account active"
-msgstr "Quest'articolo è attivo?"
+msgstr ""
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
@@ -14459,3 +14451,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
