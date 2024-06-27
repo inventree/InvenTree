@@ -25,6 +25,7 @@ function partTableColumns(): TableColumn[] {
   return [
     {
       accessor: 'name',
+      title: t`Part`,
       sortable: true,
       noWrap: true,
       render: (record: any) => PartColumn(record)
