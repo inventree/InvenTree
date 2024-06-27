@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 13:12+0000\n"
-"PO-Revision-Date: 2024-06-26 06:04\n"
+"PO-Revision-Date: 2024-06-27 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -533,16 +533,12 @@ msgid "Last Name"
 msgstr "Фамилия"
 
 #: InvenTree/serializers.py:412
-#, fuzzy
-#| msgid "Enter a name for the test"
 msgid "Last name of the user"
-msgstr "Введите имя для теста"
+msgstr ""
 
 #: InvenTree/serializers.py:415
-#, fuzzy
-#| msgid "Email address confirmation"
 msgid "Email address of the user"
-msgstr "Подтверждение адреса электронной почты"
+msgstr ""
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
@@ -574,10 +570,8 @@ msgid "Active"
 msgstr "Активный"
 
 #: InvenTree/serializers.py:445
-#, fuzzy
-#| msgid "Is this part active?"
 msgid "Is this user account active"
-msgstr "Эта деталь активна?"
+msgstr ""
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
@@ -14457,3 +14451,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
