@@ -377,6 +377,7 @@ class Part(
         purchaseable: Can this part be purchased from suppliers?
         trackable: Trackable parts can have unique serial numbers assigned, etc, etc
         active: Is this part active? Parts are deactivated instead of being deleted
+        locked: This part is locked and cannot be edited
         virtual: Is this part "virtual"? e.g. a software product or similar
         notes: Additional notes field for this part
         creation_date: Date that this part was added to the database
@@ -1079,6 +1080,12 @@ class Part(
 
     active = models.BooleanField(
         default=True, verbose_name=_('Active'), help_text=_('Is this part active?')
+    )
+
+    locked = models.BooleanField(
+        default=False,
+        verbose_name=_('Locked'),
+        help_text=_('Locked parts cannot be edited'),
     )
 
     virtual = models.BooleanField(
