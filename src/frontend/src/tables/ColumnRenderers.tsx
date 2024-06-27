@@ -25,7 +25,7 @@ export function PartColumn(part: any, full_name?: boolean) {
         src={part?.thumbnail ?? part?.image}
         text={full_name ? part?.full_name : part?.name}
       />
-      <Group justify="flex-end" wrap="nowrap">
+      <Group justify="flex-end" wrap="nowrap" gap="xs">
         {part?.active == false && (
           <Tooltip label={t`Part is not active`}>
             <IconExclamationCircle color="red" size={16} />
