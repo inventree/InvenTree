@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 13:12+0000\n"
-"PO-Revision-Date: 2024-06-26 06:04\n"
+"PO-Revision-Date: 2024-06-27 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -537,10 +537,8 @@ msgid "Last name of the user"
 msgstr ""
 
 #: InvenTree/serializers.py:415
-#, fuzzy
-#| msgid "Email address confirmation"
 msgid "Email address of the user"
-msgstr "E-mailadres bevestiging"
+msgstr ""
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
@@ -572,10 +570,8 @@ msgid "Active"
 msgstr "Actief"
 
 #: InvenTree/serializers.py:445
-#, fuzzy
-#| msgid "Is this webhook active"
 msgid "Is this user account active"
-msgstr "Is deze webhook actief"
+msgstr ""
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
@@ -14455,3 +14451,4 @@ msgstr ""
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr ""
+
