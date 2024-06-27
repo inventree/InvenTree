@@ -170,6 +170,12 @@ function partTableFilters(): TableFilter[] {
       type: 'boolean'
     },
     {
+      name: 'locked',
+      label: t`Locked`,
+      description: t`Filter by part locked status`,
+      type: 'boolean'
+    },
+    {
       name: 'assembly',
       label: t`Assembly`,
       description: t`Filter by assembly attribute`,
