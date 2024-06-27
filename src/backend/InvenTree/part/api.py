@@ -1151,6 +1151,8 @@ class PartFilter(rest_filters.FilterSet):
 
     active = rest_filters.BooleanFilter()
 
+    locked = rest_filters.BooleanFilter()
+
     virtual = rest_filters.BooleanFilter()
 
     tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')

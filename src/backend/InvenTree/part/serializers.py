@@ -611,6 +611,7 @@ class PartSerializer(
             'keywords',
             'last_stocktake',
             'link',
+            'locked',
             'minimum_stock',
             'name',
             'notes',
