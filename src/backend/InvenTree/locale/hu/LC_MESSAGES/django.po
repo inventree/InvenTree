@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 13:12+0000\n"
-"PO-Revision-Date: 2024-06-26 06:04\n"
+"PO-Revision-Date: 2024-06-27 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -525,26 +525,20 @@ msgid "First Name"
 msgstr "Keresztnév"
 
 #: InvenTree/serializers.py:409
-#, fuzzy
-#| msgid "PluginName of the plugin"
 msgid "First name of the user"
-msgstr "PluginNeve a pluginnak"
+msgstr ""
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
 msgstr "Vezetéknév"
 
 #: InvenTree/serializers.py:412
-#, fuzzy
-#| msgid "Last time the token was used"
 msgid "Last name of the user"
-msgstr "Token utolsó használata"
+msgstr ""
 
 #: InvenTree/serializers.py:415
-#, fuzzy
-#| msgid "Email address confirmation"
 msgid "Email address of the user"
-msgstr "Email cím megerősítés"
+msgstr ""
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
@@ -576,10 +570,8 @@ msgid "Active"
 msgstr "Aktív"
 
 #: InvenTree/serializers.py:445
-#, fuzzy
-#| msgid "Is this supplier part active?"
 msgid "Is this user account active"
-msgstr "Ez a szállítói termék aktív?"
+msgstr ""
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
@@ -1323,8 +1315,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:526
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:611
@@ -14461,3 +14452,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
