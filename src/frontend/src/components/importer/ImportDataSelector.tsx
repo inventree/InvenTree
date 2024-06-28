@@ -1,5 +1,12 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Stack, Text, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Group,
+  HoverCard,
+  Stack,
+  Text,
+  Tooltip
+} from '@mantine/core';
 import {
   IconCircleCheck,
   IconEdit,
@@ -50,26 +57,37 @@ function ImporterDataCell({
     return row.data ? row.data[column.field] : '';
   }, [row.data, column.field]);
 
+  const cellValid: boolean = useMemo(
+    () => cellErrors.length == 0,
+    [cellErrors]
+  );
+
   return (
-    <Group grow justify="apart">
-      <Group grow style={{ flex: 1 }}>
+    <HoverCard disabled={cellValid} openDelay={100} closeDelay={100}>
+      <HoverCard.Target>
+        <Group grow justify="apart">
+          <Group grow style={{ flex: 1 }}>
+            <Text c={cellValid ? undefined : 'red'}>{cellValue}</Text>
+          </Group>
+          <div style={{ flex: 0 }}>
+            <Tooltip label={t`Edit cell`}>
+              <ActionIcon size="xs" onClick={onRowEdit} variant="transparent">
+                <IconEdit />
+              </ActionIcon>
+            </Tooltip>
+          </div>
+        </Group>
+      </HoverCard.Target>
+      <HoverCard.Dropdown>
         <Stack gap="xs">
-          <Text>{cellValue}</Text>
           {cellErrors.map((error: string) => (
             <Text size="xs" color="red" key={error}>
               {error}
             </Text>
           ))}
         </Stack>
-      </Group>
-      <div style={{ flex: 0 }}>
-        <Tooltip label={t`Edit cell`}>
-          <ActionIcon size="xs" onClick={onRowEdit} variant="transparent">
-            <IconEdit />
-          </ActionIcon>
-        </Tooltip>
-      </div>
-    </Group>
+      </HoverCard.Dropdown>
+    </HoverCard>
   );
 }
 
