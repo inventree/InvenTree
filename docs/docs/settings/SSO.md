@@ -148,7 +148,8 @@ InvenTree has the ability to synchronize groups assigned to each user directly f
 
 ### Keycloak OIDC example configuration
 
-The main challenge in enabling the SSO group sync feature is for the SSO admin to configure the IdP such that the groups are correctly represented in in the Django allauth `extra_data` attribute. The SSO group sync feature has been developed and tested using integrated Keycloak users/groups and OIDC. If you are utilizing this feature using another IdP, kindly consider documenting your configuration steps as well.
+!!! tip "Configuration for different IdPs"
+    The main challenge in enabling the SSO group sync feature is for the SSO admin to configure the IdP such that the groups are correctly represented in in the Django allauth `extra_data` attribute. The SSO group sync feature has been developed and tested using integrated Keycloak users/groups and OIDC. If you are utilizing this feature using another IdP, kindly consider documenting your configuration steps as well.
 
 Keycloak groups are not sent to the OIDC client by default. To enable such functionality, create a new client scope named `groups` in the Keycloak admin console. For this scope, add a new mapper ('By Configuration') and select 'Group Membership'. Give it a descriptive name and set the token claim name to `groups`.
 
