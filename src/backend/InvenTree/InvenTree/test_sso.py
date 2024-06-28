@@ -113,3 +113,10 @@ class TestSsoGroupSync(TransactionTestCase):
         # second ensure_sso_groups will be called by signal if social account changes
         sso.ensure_sso_groups(None, self.sociallogin)
         self.assertEqual(user.groups.count(), 0)
+
+    def test_sso_group_created_if_not_exists(self):
+        """If the mapped group does not exist, a new group with the same name should be created."""
+        self.group.delete()
+        self.assertEqual(Group.objects.filter(name='inventree_group').count(), 0)
+        sso.ensure_sso_groups(None, self.sociallogin)
+        self.assertEqual(Group.objects.filter(name='inventree_group').count(), 1)

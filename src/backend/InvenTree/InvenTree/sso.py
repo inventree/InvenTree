@@ -108,12 +108,13 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
         except Group.DoesNotExist:
             # user not in group yet
             try:
-                user.groups.add(Group.objects.get(name=group_name))
-                logger.info(f'Adding group {group_name} to user {user}')
+                group = Group.objects.get(name=group_name)
             except Group.DoesNotExist:
-                logger.error(
-                    f'Failed to add group {group_name} to user {user}: Group does not exist'
-                )
+                logger.info(f'Creating group {group_name} as it did not exist')
+                group = Group(name=group_name)
+                group.save()
+            logger.info(f'Adding group {group_name} to user {user}')
+            user.groups.add(group)
 
     # remove groups not listed by SSO if not disabled
     if get_global_setting('SSO_REMOVE_GROUPS'):
