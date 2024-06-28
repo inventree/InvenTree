@@ -482,6 +482,9 @@ class Part(
         - The part is still active
         - The part is used in a BOM for a different part.
         """
+        if self.locked:
+            raise ValidationError(_('Cannot delete this part as it is locked'))
+
         if self.active:
             raise ValidationError(_('Cannot delete this part as it is still active'))
 
