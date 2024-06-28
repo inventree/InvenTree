@@ -4025,14 +4025,52 @@ class BomItem(
         """
         return Q(part__in=self.get_valid_parts_for_allocation())
 
+    def delete(self):
+        """Check if this item can be deleted."""
+        self.check_part_lock()
+        super().delete()
+
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a BomItem instance."""
         self.clean()
+
+        self.check_part_lock(self.part)
+
+        # Check if the part was changed
+        deltas = self.get_field_deltas()
+
+        if 'part' in deltas:
+            if old_part := deltas['part'].get('old', None):
+                self.check_part_lock(old_part)
 
         # Update the 'validated' field based on checksum calculation
         self.validated = self.is_line_valid
 
         super().save(*args, **kwargs)
+
+    def check_part_lock(self, assembly):
+        """When editing or deleting a BOM item, check if the assembly is locked.
+
+        If locked, raise an exception.
+
+        Arguments:
+            assembly: The assembly part
+
+        Raises:
+            ValidationError: If the assembly is locked
+        """
+        # TODO: Perhaps control this with a global setting?
+
+        if assembly.locked:
+            raise ValidationError(_('BOM item cannot be edited - assembly is locked'))
+
+        # If this BOM item is inherited, check all variants of the assembly
+        if self.inherited:
+            for part in assembly.get_descendants(include_self=False):
+                if part.locked:
+                    raise ValidationError(
+                        _('BOM item cannot be edited - assembly variant is locked')
+                    )
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
