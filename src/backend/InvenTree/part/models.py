@@ -3718,10 +3718,28 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
         """String representation of a PartParameter (used in the admin interface)."""
         return f'{self.part.full_name} : {self.template.name} = {self.data} ({self.template.units})'
 
+    def delete(self):
+        """Custom delete handler for the PartParameter model.
+
+        - Check if the parameter can be deleted
+        """
+        self.check_part_lock()
+        super().delete()
+
+    def check_part_lock(self):
+        """Check if the referenced part is locked."""
+        # TODO: Potentially control this behaviour via a global setting
+
+        if self.part.locked:
+            raise ValidationError(_('Parameter cannot be modified - part is locked'))
+
     def save(self, *args, **kwargs):
         """Custom save method for the PartParameter model."""
         # Validate the PartParameter before saving
         self.calculate_numeric_value()
+
+        # Check if the part is locked
+        self.check_part_lock()
 
         # Convert 'boolean' values to 'True' / 'False'
         if self.template.checkbox:
@@ -4027,7 +4045,7 @@ class BomItem(
 
     def delete(self):
         """Check if this item can be deleted."""
-        self.check_part_lock()
+        self.check_part_lock(self.part)
         super().delete()
 
     def save(self, *args, **kwargs):
@@ -4061,16 +4079,16 @@ class BomItem(
         """
         # TODO: Perhaps control this with a global setting?
 
+        msg = _('BOM item cannot be modified - assembly is locked')
+
         if assembly.locked:
-            raise ValidationError(_('BOM item cannot be edited - assembly is locked'))
+            raise ValidationError(msg)
 
         # If this BOM item is inherited, check all variants of the assembly
         if self.inherited:
             for part in assembly.get_descendants(include_self=False):
                 if part.locked:
-                    raise ValidationError(
-                        _('BOM item cannot be edited - assembly variant is locked')
-                    )
+                    raise ValidationError(msg)
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
