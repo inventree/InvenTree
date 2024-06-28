@@ -96,7 +96,7 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
     group_map = json.loads(get_global_setting('SSO_GROUP_MAP'))
     # map SSO groups to InvenTree groups
     group_names = []
-    for sso_group in sociallogin.account.extra_data[group_key]:
+    for sso_group in sociallogin.account.extra_data.get(group_key, []):
         group_names.append(group_map[sso_group])
 
     # ensure user has groups
@@ -118,7 +118,7 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
     if get_global_setting('SSO_REMOVE_GROUPS'):
         for group in user.groups.all():
             if not group.name in group_names:
-                logger.warning(f'Removing group {group.name} from {user}')
+                logger.info(f'Removing group {group.name} from {user}')
                 user.groups.remove(group)
 
 
