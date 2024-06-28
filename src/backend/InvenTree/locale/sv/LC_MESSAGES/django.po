@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-06-26 13:12+0000\n"
-"PO-Revision-Date: 2024-06-27 06:04\n"
+"PO-Revision-Date: 2024-06-28 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -1898,7 +1898,7 @@ msgstr ""
 
 #: common/currency.py:130
 msgid "Invalid currency code"
-msgstr ""
+msgstr "Ogiltig valutakod"
 
 #: common/currency.py:132
 msgid "Duplicate currency code"
@@ -3647,7 +3647,7 @@ msgstr ""
 
 #: common/models.py:3206
 msgid "File size"
-msgstr ""
+msgstr "Filstorlek"
 
 #: common/models.py:3206
 msgid "File size in bytes"
