@@ -1926,7 +1926,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'SSO_GROUP_MAP': {
             'name': _('SSO group map'),
-            'description': _('A mapping from SSO groups to local InvenTree groups'),
+            'description': _(
+                'A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created.'
+            ),
             'validator': json.loads,
             'default': '{}',
         },

@@ -140,7 +140,7 @@ InvenTree has the ability to synchronize groups assigned to each user directly f
 | --- | --- |
 | Enable SSO group sync | Enable synchronizing InvenTree groups with groups provided by the IdP |
 | SSO group key | The name of the claim containing all groups, e.g. `groups` or `roles` |
-| SSO group map | A mapping from SSO groups to InvenTree groups as JSON, e.g. `{"/inventree/admins": "admin"}` |
+| SSO group map | A mapping from SSO groups to InvenTree groups as JSON, e.g. `{"/inventree/admins": "admin"}`. If the mapped group does not exist once a user signs up, a new group without assigned permissions will be created. |
 | Remove groups outside of SSO | Whether groups should be removed from the user if they are not present in the IdP data |
 
 !!! warning "Remove groups outside of SSO"
