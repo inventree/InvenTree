@@ -97,7 +97,8 @@ def ensure_sso_groups(sender, sociallogin: SocialLogin, **kwargs):
     # map SSO groups to InvenTree groups
     group_names = []
     for sso_group in sociallogin.account.extra_data.get(group_key, []):
-        group_names.append(group_map[sso_group])
+        if mapped_name := group_map.get(sso_group):
+            group_names.append(mapped_name)
 
     # ensure user has groups
     user = sociallogin.account.user
