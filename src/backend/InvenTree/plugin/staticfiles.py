@@ -50,7 +50,7 @@ def copy_plugin_static_files(slug):
     if not plugin:
         return
 
-    logger.info("Copying static files for plugin '%s'")
+    logger.info("Copying static files for plugin '%s'", slug)
 
     # Get the source path for the plugin
     source_path = plugin.path().joinpath('static')
