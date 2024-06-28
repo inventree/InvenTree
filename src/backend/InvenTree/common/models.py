@@ -1974,7 +1974,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
-            'description': _('Group to which new users are assigned on registration'),
+            'description': _(
+                'Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP.'
+            ),
             'default': '',
             'choices': settings_group_options,
         },
