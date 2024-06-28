@@ -1888,6 +1888,14 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'pricing_updated': 'sub_part__pricing_data__updated',
     }
 
+    def filter_delete_queryset(self, queryset, request):
+        """Ensure that there are no 'locked' items."""
+        for bom_item in queryset:
+            # Note: Calling check_part_lock may raise a ValidationError
+            bom_item.check_part_lock(bom_item.part)
+
+        return super().filter_delete_queryset(queryset, request)
+
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
