@@ -215,9 +215,8 @@ function partFields(options={}) {
 
     // If editing a part, we can set the "active" status
     if (options.edit) {
-        fields.active = {
-            group: 'attributes'
-        };
+        fields.active = {};
+        fields.locked = {};
     }
 
     // Pop 'expiry' field
