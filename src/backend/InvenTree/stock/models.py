@@ -1721,6 +1721,7 @@ class StockItem(
                 )
                 return
 
+        for other in other_items:
             tree_ids.add(other.tree_id)
 
             self.quantity += other.quantity
