@@ -4,18 +4,21 @@ import json
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.db.models import Q
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
+from django.utils.translation import gettext_lazy as _
 from django.views.decorators.csrf import csrf_exempt
 
 import django_q.models
+from django_filters import rest_framework as rest_filters
 from django_q.tasks import async_task
 from djmoney.contrib.exchange.models import ExchangeBackend, Rate
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from error_report.models import Error
 from rest_framework import permissions, serializers
-from rest_framework.exceptions import NotAcceptable, NotFound
+from rest_framework.exceptions import NotAcceptable, NotFound, PermissionDenied
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -674,6 +677,71 @@ class ContentTypeModelDetail(ContentTypeDetail):
         raise NotFound()
 
 
+class AttachmentFilter(rest_filters.FilterSet):
+    """Filterset for the AttachmentList API endpoint."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = common.models.Attachment
+        fields = ['model_type', 'model_id', 'upload_user']
+
+    is_link = rest_filters.BooleanFilter(label=_('Is Link'), method='filter_is_link')
+
+    def filter_is_link(self, queryset, name, value):
+        """Filter attachments based on whether they are a link or not."""
+        if value:
+            return queryset.exclude(link=None).exclude(link='')
+        return queryset.filter(Q(link=None) | Q(link='')).distinct()
+
+    is_file = rest_filters.BooleanFilter(label=_('Is File'), method='filter_is_file')
+
+    def filter_is_file(self, queryset, name, value):
+        """Filter attachments based on whether they are a file or not."""
+        if value:
+            return queryset.exclude(attachment=None).exclude(attachment='')
+        return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
+
+
+class AttachmentList(ListCreateAPI):
+    """List API endpoint for Attachment objects."""
+
+    queryset = common.models.Attachment.objects.all()
+    serializer_class = common.serializers.AttachmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    filter_backends = SEARCH_ORDER_FILTER
+    filterset_class = AttachmentFilter
+
+    ordering_fields = ['model_id', 'model_type', 'upload_date', 'file_size']
+    search_fields = ['comment', 'model_id', 'model_type']
+
+    def perform_create(self, serializer):
+        """Save the user information when a file is uploaded."""
+        attachment = serializer.save()
+        attachment.upload_user = self.request.user
+        attachment.save()
+
+
+class AttachmentDetail(RetrieveUpdateDestroyAPI):
+    """Detail API endpoint for Attachment objects."""
+
+    queryset = common.models.Attachment.objects.all()
+    serializer_class = common.serializers.AttachmentSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        """Check user permissions before deleting an attachment."""
+        attachment = self.get_object()
+
+        if not attachment.check_permission('delete', request.user):
+            raise PermissionDenied(
+                _('User does not have permission to delete this attachment')
+            )
+
+        return super().destroy(request, *args, **kwargs)
+
+
 settings_api_urls = [
     # User settings
     path(
@@ -740,6 +808,25 @@ common_api_urls = [
             ),
             path('failed/', FailedTaskList.as_view(), name='api-failed-task-list'),
             path('', BackgroundTaskOverview.as_view(), name='api-task-overview'),
+        ]),
+    ),
+    # Attachments
+    path(
+        'attachment/',
+        include([
+            path(
+                '<int:pk>/',
+                include([
+                    path(
+                        'metadata/',
+                        MetadataView.as_view(),
+                        {'model': common.models.Attachment},
+                        name='api-attachment-metadata',
+                    ),
+                    path('', AttachmentDetail.as_view(), name='api-attachment-detail'),
+                ]),
+            ),
+            path('', AttachmentList.as_view(), name='api-attachment-list'),
         ]),
     ),
     path(

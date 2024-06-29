@@ -220,17 +220,7 @@
     });
 
     onPanelLoad('attachments', function() {
-        loadAttachmentTable('{% url "api-stock-attachment-list" %}', {
-            filters: {
-                stock_item: {{ item.pk }},
-            },
-            fields: {
-                stock_item: {
-                    value: {{ item.pk }},
-                    hidden: true,
-                }
-            }
-        });
+        loadAttachmentTable('stockitem', {{ item.pk }});
     });
 
     {% settings_value "TEST_STATION_DATA" as test_station_fields %}

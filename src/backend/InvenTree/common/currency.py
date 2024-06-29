@@ -28,9 +28,7 @@ def currency_code_default():
         return cached_value
 
     try:
-        code = get_global_setting(
-            'INVENTREE_DEFAULT_CURRENCY', backup_value='', create=True, cache=True
-        )
+        code = get_global_setting('INVENTREE_DEFAULT_CURRENCY', create=True, cache=True)
     except Exception:  # pragma: no cover
         # Database may not yet be ready, no need to throw an error here
         code = ''
@@ -61,7 +59,7 @@ def currency_codes() -> list:
     """Returns the current currency codes."""
     from common.settings import get_global_setting
 
-    codes = get_global_setting('CURRENCY_CODES', '', create=False).strip()
+    codes = get_global_setting('CURRENCY_CODES', create=False).strip()
 
     if not codes:
         codes = currency_codes_default_list()

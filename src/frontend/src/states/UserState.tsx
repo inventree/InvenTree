@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
 import { UserPermissions, UserRoles } from '../enums/Roles';
 import { clearCsrfCookie } from '../functions/auth';
 import { apiUrl } from './ApiState';
@@ -22,6 +23,14 @@ interface UserStateProps {
   hasChangeRole: (role: UserRoles) => boolean;
   hasAddRole: (role: UserRoles) => boolean;
   hasViewRole: (role: UserRoles) => boolean;
+  checkUserPermission: (
+    model: ModelType,
+    permission: UserPermissions
+  ) => boolean;
+  hasDeletePermission: (model: ModelType) => boolean;
+  hasChangePermission: (model: ModelType) => boolean;
+  hasAddPermission: (model: ModelType) => boolean;
+  hasViewPermission: (model: ModelType) => boolean;
   isLoggedIn: () => boolean;
   isStaff: () => boolean;
   isSuperuser: () => boolean;
@@ -113,6 +122,7 @@ export const useUserState = create<UserStateProps>((set, get) => ({
           // Update user with role data
           if (user) {
             user.roles = response.data?.roles ?? {};
+            user.permissions = response.data?.permissions ?? {};
             user.is_staff = response.data?.is_staff ?? false;
             user.is_superuser = response.data?.is_superuser ?? false;
             set({ user: user });
@@ -125,21 +135,6 @@ export const useUserState = create<UserStateProps>((set, get) => ({
         console.error('ERR: Error fetching user roles');
         get().clearUserState();
       });
-  },
-  checkUserRole: (role: UserRoles, permission: UserPermissions) => {
-    // Check if the user has the specified permission for the specified role
-    const user: UserProps = get().user as UserProps;
-
-    if (!user) {
-      return false;
-    }
-
-    if (user?.is_superuser) return true;
-    if (user?.roles === undefined) return false;
-    if (user?.roles[role] === undefined) return false;
-    if (user?.roles[role] === null) return false;
-
-    return user?.roles[role]?.includes(permission) ?? false;
   },
   isLoggedIn: () => {
     if (!get().token) {
@@ -156,6 +151,21 @@ export const useUserState = create<UserStateProps>((set, get) => ({
     const user: UserProps = get().user as UserProps;
     return user?.is_superuser ?? false;
   },
+  checkUserRole: (role: UserRoles, permission: UserPermissions) => {
+    // Check if the user has the specified permission for the specified role
+    const user: UserProps = get().user as UserProps;
+
+    if (!user) {
+      return false;
+    }
+
+    if (user?.is_superuser) return true;
+    if (user?.roles === undefined) return false;
+    if (user?.roles[role] === undefined) return false;
+    if (user?.roles[role] === null) return false;
+
+    return user?.roles[role]?.includes(permission) ?? false;
+  },
   hasDeleteRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.delete);
   },
@@ -167,5 +177,33 @@ export const useUserState = create<UserStateProps>((set, get) => ({
   },
   hasViewRole: (role: UserRoles) => {
     return get().checkUserRole(role, UserPermissions.view);
+  },
+  checkUserPermission: (model: ModelType, permission: UserPermissions) => {
+    // Check if the user has the specified permission for the specified model
+    const user: UserProps = get().user as UserProps;
+
+    if (!user) {
+      return false;
+    }
+
+    if (user?.is_superuser) return true;
+
+    if (user?.permissions === undefined) return false;
+    if (user?.permissions[model] === undefined) return false;
+    if (user?.permissions[model] === null) return false;
+
+    return user?.permissions[model]?.includes(permission) ?? false;
+  },
+  hasDeletePermission: (model: ModelType) => {
+    return get().checkUserPermission(model, UserPermissions.delete);
+  },
+  hasChangePermission: (model: ModelType) => {
+    return get().checkUserPermission(model, UserPermissions.change);
+  },
+  hasAddPermission: (model: ModelType) => {
+    return get().checkUserPermission(model, UserPermissions.add);
+  },
+  hasViewPermission: (model: ModelType) => {
+    return get().checkUserPermission(model, UserPermissions.view);
   }
 }));

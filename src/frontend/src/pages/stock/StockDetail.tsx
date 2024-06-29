@@ -329,9 +329,8 @@ export default function StockDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.stock_attachment_list}
-            model="stock_item"
-            pk={Number(id)}
+            model_type={ModelType.stockitem}
+            model_id={stockitem.pk}
           />
         )
       },

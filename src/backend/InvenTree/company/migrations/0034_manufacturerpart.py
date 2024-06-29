@@ -22,6 +22,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'unique_together': {('part', 'manufacturer', 'MPN')},
+                'verbose_name': 'Manufacturer Part',
             },
         ),
     ]

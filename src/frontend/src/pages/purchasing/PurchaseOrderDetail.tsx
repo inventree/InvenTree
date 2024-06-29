@@ -279,9 +279,8 @@ export default function PurchaseOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.purchase_order_attachment_list}
-            model="order"
-            pk={Number(id)}
+            model_type={ModelType.purchaseorder}
+            model_id={order.pk}
           />
         )
       },

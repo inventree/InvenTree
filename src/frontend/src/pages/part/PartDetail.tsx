@@ -362,9 +362,13 @@ export default function PartDetail() {
                 });
             }
           });
-          return `${formatPriceRange(data.overall_min, data.overall_max)}${
-            part.units && ' / ' + part.units
-          }`;
+
+          return (
+            data &&
+            `${formatPriceRange(data.overall_min, data.overall_max)}${
+              part.units && ' / ' + part.units
+            }`
+          );
         }
       });
 
@@ -618,11 +622,7 @@ export default function PartDetail() {
         label: t`Attachments`,
         icon: <IconPaperclip />,
         content: (
-          <AttachmentTable
-            endpoint={ApiEndpoints.part_attachment_list}
-            model="part"
-            pk={part.pk ?? -1}
-          />
+          <AttachmentTable model_type={ModelType.part} model_id={part?.pk} />
         )
       },
       {

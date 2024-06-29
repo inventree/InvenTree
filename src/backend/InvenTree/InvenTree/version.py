@@ -3,6 +3,7 @@
 Provides information on the current InvenTree version
 """
 
+import logging
 import os
 import pathlib
 import platform
@@ -14,20 +15,29 @@ from datetime import timedelta as td
 import django
 from django.conf import settings
 
-from dulwich.repo import NotGitRepository, Repo
-
-from common.settings import get_global_setting
-
 from .api_version import INVENTREE_API_TEXT, INVENTREE_API_VERSION
 
 # InvenTree software version
 INVENTREE_SW_VERSION = '0.16.0 dev'
 
+
+logger = logging.getLogger('inventree')
+
+
 # Discover git
 try:
+    from dulwich.repo import Repo
+
     main_repo = Repo(pathlib.Path(__file__).parent.parent.parent.parent.parent)
     main_commit = main_repo[main_repo.head()]
-except (NotGitRepository, FileNotFoundError):
+except (ImportError, ModuleNotFoundError):
+    logger.warning(
+        'Warning: Dulwich module not found, git information will not be available.'
+    )
+    main_repo = None
+    main_commit = None
+except Exception:
+    main_repo = None
     main_commit = None
 
 
@@ -53,13 +63,17 @@ def checkMinPythonVersion():
 
 def inventreeInstanceName():
     """Returns the InstanceName settings for the current database."""
-    return get_global_setting('INVENTREE_INSTANCE', '')
+    from common.settings import get_global_setting
+
+    return get_global_setting('INVENTREE_INSTANCE')
 
 
 def inventreeInstanceTitle():
     """Returns the InstanceTitle for the current database."""
-    if get_global_setting('INVENTREE_INSTANCE_TITLE', False):
-        return get_global_setting('INVENTREE_INSTANCE', 'InvenTree')
+    from common.settings import get_global_setting
+
+    if get_global_setting('INVENTREE_INSTANCE_TITLE'):
+        return get_global_setting('INVENTREE_INSTANCE')
 
     return 'InvenTree'
 
@@ -121,6 +135,8 @@ def isInvenTreeUpToDate():
 
     A background task periodically queries GitHub for latest version, and stores it to the database as "_INVENTREE_LATEST_VERSION"
     """
+    from common.settings import get_global_setting
+
     latest = get_global_setting(
         '_INVENTREE_LATEST_VERSION', backup_value=None, create=False
     )
