@@ -233,17 +233,17 @@ class StockItemResource(InvenTreeResource):
     is_building = Field(
         attribute='is_building',
         column_name=_('Building'),
-        widget=widgets.IntegerWidget(),
+        widget=widgets.BooleanWidget(),
     )
     review_needed = Field(
         attribute='review_needed',
         column_name=_('Review Needed'),
-        widget=widgets.IntegerWidget(),
+        widget=widgets.BooleanWidget(),
     )
     delete_on_deplete = Field(
         attribute='delete_on_deplete',
         column_name=_('Delete on Deplete'),
-        widget=widgets.IntegerWidget(),
+        widget=widgets.BooleanWidget(),
     )
 
     # Date management

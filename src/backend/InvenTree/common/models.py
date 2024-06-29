@@ -1909,6 +1909,38 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'LOGIN_ENABLE_SSO_GROUP_SYNC': {
+            'name': _('Enable SSO group sync'),
+            'description': _(
+                'Enable synchronizing InvenTree groups with groups provided by the IdP'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'SSO_GROUP_KEY': {
+            'name': _('SSO group key'),
+            'description': _(
+                'The name of the groups claim attribute provided by the IdP'
+            ),
+            'default': 'groups',
+            'validator': str,
+        },
+        'SSO_GROUP_MAP': {
+            'name': _('SSO group map'),
+            'description': _(
+                'A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created.'
+            ),
+            'validator': json.loads,
+            'default': '{}',
+        },
+        'SSO_REMOVE_GROUPS': {
+            'name': _('Remove groups outside of SSO'),
+            'description': _(
+                'Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues'
+            ),
+            'default': True,
+            'validator': bool,
+        },
         'LOGIN_MAIL_REQUIRED': {
             'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
@@ -1945,7 +1977,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
-            'description': _('Group to which new users are assigned on registration'),
+            'description': _(
+                'Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP.'
+            ),
             'default': '',
             'choices': settings_group_options,
         },

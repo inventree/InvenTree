@@ -137,6 +137,21 @@ class CategoryFilter(rest_filters.FilterSet):
 
         return queryset
 
+    top_level = rest_filters.BooleanFilter(
+        label=_('Top Level'),
+        method='filter_top_level',
+        help_text=_('Filter by top-level categories'),
+    )
+
+    def filter_top_level(self, queryset, name, value):
+        """Filter by top-level categories."""
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if value and not cascade:
+            return queryset.filter(parent=None)
+
+        return queryset
+
     cascade = rest_filters.BooleanFilter(
         label=_('Cascade'),
         method='filter_cascade',
@@ -148,10 +163,11 @@ class CategoryFilter(rest_filters.FilterSet):
 
         Note: If the "parent" filter is provided, we offload the logic to that method.
         """
-        parent = self.data.get('parent', None)
+        parent = str2bool(self.data.get('parent', None))
+        top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
-        if not parent:
+        if not parent or top_level:
             if not value:
                 # If "cascade" is False, only return top-level categories
                 queryset = queryset.filter(parent=None)

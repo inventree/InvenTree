@@ -779,7 +779,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         on_delete=models.DO_NOTHING,
         blank=True,
         null=True,
-        verbose_name=_('parent'),
+        verbose_name='parent',
         related_name='children',
     )
 

@@ -326,6 +326,21 @@ class StockLocationFilter(rest_filters.FilterSet):
 
         return queryset
 
+    top_level = rest_filters.BooleanFilter(
+        label=_('Top Level'),
+        method='filter_top_level',
+        help_text=_('Filter by top-level locations'),
+    )
+
+    def filter_top_level(self, queryset, name, value):
+        """Filter by top-level locations."""
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if value and not cascade:
+            return queryset.filter(parent=None)
+
+        return queryset
+
     cascade = rest_filters.BooleanFilter(
         label=_('Cascade'),
         method='filter_cascade',
@@ -338,9 +353,10 @@ class StockLocationFilter(rest_filters.FilterSet):
         Note: If the "parent" filter is provided, we offload the logic to that method.
         """
         parent = self.data.get('parent', None)
+        top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
-        if not parent:
+        if not parent or top_level:
             if not value:
                 # If "cascade" is False, only return top-level location
                 queryset = queryset.filter(parent=None)
@@ -1470,7 +1486,7 @@ class StockTrackingList(ListAPI):
 
         # Run a first pass through the data to determine which related models we need to lookup
         for item in data:
-            deltas = item['deltas']
+            deltas = item['deltas'] or {}
 
             for key in delta_models.keys():
                 if key in deltas:
@@ -1487,7 +1503,7 @@ class StockTrackingList(ListAPI):
 
             # Now, update the data with the serialized data
             for item in data:
-                deltas = item['deltas']
+                deltas = item['deltas'] or {}
 
                 if key in deltas:
                     item['deltas'][f'{key}_detail'] = related_data.get(

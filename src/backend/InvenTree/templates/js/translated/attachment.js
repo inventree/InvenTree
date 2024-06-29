@@ -246,9 +246,9 @@ function loadAttachmentTable(model_type, model_id, options={}) {
 
             let model_permissions = response?.permissions[model_type] ?? {};
 
-            permissions.delete = "delete" in model_permissions;
-            permissions.add = "add" in model_permissions;
-            permissions.change = "change" in model_permissions;
+            permissions.delete = model_permissions.includes("delete");
+            permissions.add = model_permissions.includes("add");
+            permissions.change = model_permissions.includes("change");
         }
     });
 

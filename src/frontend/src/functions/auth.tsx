@@ -82,8 +82,8 @@ export const doBasicLogin = async (username: string, password: string) => {
     })
     .catch((err) => {
       if (
-        err?.response.status == 403 &&
-        err?.response.data.detail == 'MFA required for this user'
+        err?.response?.status == 403 &&
+        err?.response?.data?.detail == 'MFA required for this user'
       ) {
         post(apiUrl(ApiEndpoints.user_login), {
           username: username,
