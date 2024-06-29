@@ -1777,7 +1777,8 @@ class StockItem(
                     # Skip this entry, cannot convert to base currency
                     continue
 
-            self.purchase_price = total_price / quantity
+            if quantity > 0:
+                self.purchase_price = total_price / quantity
 
         self.save()
 
