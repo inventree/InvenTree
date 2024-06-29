@@ -1132,6 +1132,10 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializer for a BuildItem object."""
 
+    export_exclude_fields = [
+        'allocations',
+    ]
+
     class Meta:
         """Serializer metaclass"""
 
@@ -1144,6 +1148,11 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'part_detail',
             'quantity',
             'allocations',
+
+            # Part detail fields
+            'part',
+            'part_name',
+            'part_IPN',
 
             # Annotated fields
             'allocated',
@@ -1161,6 +1170,10 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'bom_item',
             'allocations',
         ]
+
+    part = serializers.PrimaryKeyRelatedField(source='bom_item.sub_part', many=False, read_only=True)
+    part_name = serializers.CharField(source='bom_item.sub_part.full_name', read_only=True)
+    part_IPN = serializers.CharField(source='bom_item.sub_part.IPN', read_only=True)
 
     quantity = serializers.FloatField()
 
@@ -1192,10 +1205,10 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         read_only=True
     )
 
-    available_substitute_stock = serializers.FloatField(read_only=True)
-    available_variant_stock = serializers.FloatField(read_only=True)
-    total_available_stock = serializers.FloatField(read_only=True)
-    external_stock = serializers.FloatField(read_only=True)
+    available_substitute_stock = serializers.FloatField(read_only=True, label=_('Available Substitute Stock'))
+    available_variant_stock = serializers.FloatField(read_only=True, label=_('Available Variant Stock'))
+    total_available_stock = serializers.FloatField(read_only=True, label=_('Total Available Stock'))
+    external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
 
     @staticmethod
     def annotate_queryset(queryset, build=None):
