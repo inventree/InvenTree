@@ -1149,6 +1149,12 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'quantity',
             'allocations',
 
+            # BOM item detail fields
+            'reference',
+            'consumable',
+            'optional',
+            'trackable',
+
             # Part detail fields
             'part',
             'part_name',
@@ -1171,11 +1177,18 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'allocations',
         ]
 
-    part = serializers.PrimaryKeyRelatedField(source='bom_item.sub_part', many=False, read_only=True)
-    part_name = serializers.CharField(source='bom_item.sub_part.full_name', read_only=True)
-    part_IPN = serializers.CharField(source='bom_item.sub_part.IPN', read_only=True)
+    # Part info fields
+    part = serializers.PrimaryKeyRelatedField(source='bom_item.sub_part', label=_('Part'), many=False, read_only=True)
+    part_name = serializers.CharField(source='bom_item.sub_part.name', label=_('Part Name'), read_only=True)
+    part_IPN = serializers.CharField(source='bom_item.sub_part.IPN', label=_('Part IPN'), read_only=True)
 
-    quantity = serializers.FloatField()
+    # BOM item info fields
+    reference = serializers.CharField(source='bom_item.reference', label=_('Reference'), read_only=True)
+    consumable = serializers.BooleanField(source='bom_item.consumable', label=_('Consumable'), read_only=True)
+    optional = serializers.BooleanField(source='bom_item.optional', label=_('Optional'), read_only=True)
+    trackable = serializers.BooleanField(source='bom_item.sub_part.trackable', label=_('Trackable'), read_only=True)
+
+    quantity = serializers.FloatField(label=_('Quantity'))
 
     bom_item = serializers.PrimaryKeyRelatedField(label=_('BOM Item'), read_only=True)
 
