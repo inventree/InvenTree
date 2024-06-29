@@ -1707,8 +1707,11 @@ class StockItem(
 
         parent_id = self.parent.pk if self.parent else None
 
-        # Keep track of the total cost of the items, to update the average cost
-        total_price = self.purchase_price * self.quantity
+        # Keep track of pricing data for the merged data
+        pricing_data = []
+
+        if self.purchase_price:
+            pricing_data.append([self.purchase_price, self.quantity])
 
         for other in other_items:
             # If the stock item cannot be merged, return
@@ -1722,16 +1725,9 @@ class StockItem(
 
             self.quantity += other.quantity
 
-            try:
-                # Update the total price (and try to account for differences in currency)
-                item_price = other.purchase_price * other.quantity
-                item_price = convert_money(item_price, self.purchase_price.currency)
-            except Exception:
-                # In the case where we cannot convert, use this item's price
-                item_price = self.purchase_price * other.quantity
-
-            # Update total price
-            total_price += item_price
+            if other.purchase_price:
+                # Only add pricing data if it is available
+                pricing_data.append([other.purchase_price, other.quantity])
 
             # Any "build order allocations" for the other item must be assigned to this one
             for allocation in other.allocations.all():
@@ -1761,8 +1757,26 @@ class StockItem(
         # Update the location of the item
         self.location = location
 
-        # Update the unit price
-        self.purchase_price = total_price / self.quantity
+        # Update the unit price - calculate weighted average of available pricing data
+        if len(pricing_data) > 0:
+            unit_price, quantity = pricing_data[0]
+
+            # Use the first currency as the base currency
+            base_currency = unit_price.currency
+
+            total_price = unit_price * quantity
+
+            for price, qty in pricing_data[1:]:
+                # Attempt to convert the price to the base currency
+                try:
+                    price = convert_money(price, base_currency)
+                    total_price += price * qty
+                    quantity += qty
+                except:
+                    # Skip this entry, cannot convert to base currency
+                    continue
+
+            self.purchase_price = total_price / quantity
 
         self.save()
 
