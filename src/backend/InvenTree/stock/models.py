@@ -20,6 +20,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from taggit.managers import TaggableManager
@@ -1706,6 +1707,12 @@ class StockItem(
 
         parent_id = self.parent.pk if self.parent else None
 
+        # Keep track of pricing data for the merged data
+        pricing_data = []
+
+        if self.purchase_price:
+            pricing_data.append([self.purchase_price, self.quantity])
+
         for other in other_items:
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
@@ -1714,10 +1721,14 @@ class StockItem(
                 )
                 return
 
+        for other in other_items:
             tree_ids.add(other.tree_id)
 
-        for other in other_items:
             self.quantity += other.quantity
+
+            if other.purchase_price:
+                # Only add pricing data if it is available
+                pricing_data.append([other.purchase_price, other.quantity])
 
             # Any "build order allocations" for the other item must be assigned to this one
             for allocation in other.allocations.all():
@@ -1744,7 +1755,31 @@ class StockItem(
             deltas={'location': location.pk if location else None},
         )
 
+        # Update the location of the item
         self.location = location
+
+        # Update the unit price - calculate weighted average of available pricing data
+        if len(pricing_data) > 0:
+            unit_price, quantity = pricing_data[0]
+
+            # Use the first currency as the base currency
+            base_currency = unit_price.currency
+
+            total_price = unit_price * quantity
+
+            for price, qty in pricing_data[1:]:
+                # Attempt to convert the price to the base currency
+                try:
+                    price = convert_money(price, base_currency)
+                    total_price += price * qty
+                    quantity += qty
+                except:
+                    # Skip this entry, cannot convert to base currency
+                    continue
+
+            if quantity > 0:
+                self.purchase_price = total_price / quantity
+
         self.save()
 
         # Rebuild stock trees as required
