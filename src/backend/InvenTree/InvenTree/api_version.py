@@ -1,11 +1,14 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 209
+INVENTREE_API_VERSION = 210
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 INVENTREE_API_TEXT = """
+v210 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7518
+    - Adds translateable text to User API fields
+
 v209 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7514
     - Add "top_level" filter to PartCategory API endpoint
     - Add "top_level" filter to StockLocation API endpoint
