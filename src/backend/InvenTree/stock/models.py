@@ -20,6 +20,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from taggit.managers import TaggableManager
@@ -1706,6 +1707,9 @@ class StockItem(
 
         parent_id = self.parent.pk if self.parent else None
 
+        # Keep track of the total cost of the items, to update the average cost
+        total_price = self.purchase_price * self.quantity
+
         for other in other_items:
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
@@ -1716,8 +1720,18 @@ class StockItem(
 
             tree_ids.add(other.tree_id)
 
-        for other in other_items:
             self.quantity += other.quantity
+
+            try:
+                # Update the total price (and try to account for differences in currency)
+                item_price = other.purchase_price * other.quantity
+                item_price = convert_money(item_price, self.purchase_price.currency)
+            except Exception:
+                # In the case where we cannot convert, use this item's price
+                item_price = self.purchase_price * other.quantity
+
+            # Update total price
+            total_price += item_price
 
             # Any "build order allocations" for the other item must be assigned to this one
             for allocation in other.allocations.all():
@@ -1744,7 +1758,12 @@ class StockItem(
             deltas={'location': location.pk if location else None},
         )
 
+        # Update the location of the item
         self.location = location
+
+        # Update the unit price
+        self.purchase_price = total_price / self.quantity
+
         self.save()
 
         # Rebuild stock trees as required
