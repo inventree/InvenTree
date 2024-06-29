@@ -1,6 +1,7 @@
 """Static files management for InvenTree plugins."""
 
 import logging
+from pathlib import Path
 
 from django.contrib.staticfiles.storage import staticfiles_storage
 
