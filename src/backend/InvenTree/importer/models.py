@@ -152,6 +152,10 @@ class DataImportSession(models.Model):
             column_name = ''
 
             for column in self.columns:
+                # No title provided for the column
+                if not column:
+                    continue
+
                 # Ignore if we have already matched this column to a field
                 if column in matched_columns:
                     continue
@@ -288,6 +292,7 @@ class DataImportSession(models.Model):
         from InvenTree.metadata import InvenTreeMetadata
 
         metadata = InvenTreeMetadata()
+
         if serializer := self.serializer_class:
             fields = metadata.get_serializer_info(serializer(data={}, importing=True))
         else:

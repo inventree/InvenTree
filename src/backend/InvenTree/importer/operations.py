@@ -68,7 +68,17 @@ def extract_column_names(data_file) -> list:
         ValidationError: If the data file is not in a valid format
     """
     data = load_data_file(data_file)
-    return data.headers
+
+    headers = []
+
+    for idx, header in enumerate(data.headers):
+        if header:
+            headers.append(header)
+        else:
+            # If the header is empty, generate a default header
+            headers.append(f'Column {idx + 1}')
+
+    return headers
 
 
 def extract_rows(data_file) -> list:
