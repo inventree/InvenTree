@@ -23,6 +23,7 @@ export interface UserProps {
   is_staff?: boolean;
   is_superuser?: boolean;
   roles?: Record<string, string[]>;
+  permissions?: Record<string, string[]>;
 }
 
 // Type interface fully defining the current server

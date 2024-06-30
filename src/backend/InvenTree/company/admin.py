@@ -14,7 +14,6 @@ from .models import (
     Company,
     Contact,
     ManufacturerPart,
-    ManufacturerPartAttachment,
     ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
@@ -118,15 +117,6 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
     search_fields = ['manufacturer__name', 'part__name', 'MPN']
 
     autocomplete_fields = ('part', 'manufacturer')
-
-
-@admin.register(ManufacturerPartAttachment)
-class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
-    """Admin class for ManufacturerPartAttachment model."""
-
-    list_display = ('manufacturer_part', 'attachment', 'comment')
-
-    autocomplete_fields = ('manufacturer_part',)
 
 
 class ManufacturerPartParameterResource(InvenTreeResource):

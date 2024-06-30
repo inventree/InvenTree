@@ -16,7 +16,6 @@ from part.models import Part
 
 from .models import (
     StockItem,
-    StockItemAttachment,
     StockItemTestResult,
     StockItemTracking,
     StockLocation,
@@ -234,17 +233,17 @@ class StockItemResource(InvenTreeResource):
     is_building = Field(
         attribute='is_building',
         column_name=_('Building'),
-        widget=widgets.IntegerWidget(),
+        widget=widgets.BooleanWidget(),
     )
     review_needed = Field(
         attribute='review_needed',
         column_name=_('Review Needed'),
-        widget=widgets.IntegerWidget(),
+        widget=widgets.BooleanWidget(),
     )
     delete_on_deplete = Field(
         attribute='delete_on_deplete',
         column_name=_('Delete on Deplete'),
-        widget=widgets.IntegerWidget(),
+        widget=widgets.BooleanWidget(),
     )
 
     # Date management
@@ -299,15 +298,6 @@ class StockItemAdmin(ImportExportModelAdmin):
         'supplier_part',
         'consumed_by',
     ]
-
-
-@admin.register(StockItemAttachment)
-class StockAttachmentAdmin(admin.ModelAdmin):
-    """Admin class for StockAttachment."""
-
-    list_display = ('stock_item', 'attachment', 'comment')
-
-    autocomplete_fields = ['stock_item']
 
 
 @admin.register(StockItemTracking)

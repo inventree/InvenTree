@@ -33,6 +33,7 @@ import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
@@ -58,7 +59,7 @@ function QueryResultGroup({
 }: {
   query: SearchQuery;
   onRemove: (query: ModelType) => void;
-  onResultClick: (query: ModelType, pk: number) => void;
+  onResultClick: (query: ModelType, pk: number, event: any) => void;
 }) {
   if (query.results.count == 0) {
     return null;
@@ -92,7 +93,9 @@ function QueryResultGroup({
         <Stack>
           {query.results.results.map((result: any) => (
             <Anchor
-              onClick={() => onResultClick(query.model, result.pk)}
+              onClick={(event: any) =>
+                onResultClick(query.model, result.pk, event)
+              }
               key={result.pk}
             >
               <RenderInstance instance={result} model={query.model} />
@@ -316,11 +319,20 @@ export function SearchDrawer({
   const navigate = useNavigate();
 
   // Callback when one of the search results is clicked
-  function onResultClick(query: ModelType, pk: number) {
-    closeDrawer();
+  function onResultClick(query: ModelType, pk: number, event: any) {
     const targetModel = ModelInformationDict[query];
-    if (targetModel.url_detail == undefined) return;
-    navigate(targetModel.url_detail.replace(':pk', pk.toString()));
+    if (targetModel.url_detail == undefined) {
+      return;
+    }
+
+    if (event?.ctrlKey || event?.shiftKey) {
+      // Keep the drawer open in this condition
+    } else {
+      closeDrawer();
+    }
+
+    let url = targetModel.url_detail.replace(':pk', pk.toString());
+    navigateToLink(url, navigate, event);
   }
 
   return (
@@ -400,7 +412,9 @@ export function SearchDrawer({
                 key={idx}
                 query={query}
                 onRemove={(query) => removeResults(query)}
-                onResultClick={(query, pk) => onResultClick(query, pk)}
+                onResultClick={(query, pk, event) =>
+                  onResultClick(query, pk, event)
+                }
               />
             ))}
           </Stack>

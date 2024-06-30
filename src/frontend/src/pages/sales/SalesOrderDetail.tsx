@@ -280,9 +280,8 @@ export default function SalesOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.sales_order_attachment_list}
-            model="order"
-            pk={Number(id)}
+            model_type={ModelType.salesorder}
+            model_id={order.pk}
           />
         )
       },

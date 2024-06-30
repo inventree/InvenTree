@@ -9,7 +9,7 @@ import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner } from '../components/render/User';
-import { formatCurrency, renderDate } from '../defaults/formatters';
+import { formatCurrency, formatDate } from '../defaults/formatters';
 import { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
@@ -180,7 +180,7 @@ export function DateColumn(props: TableColumnProps): TableColumn {
     title: t`Date`,
     switchable: true,
     render: (record: any) =>
-      renderDate(resolveItem(record, props.accessor ?? 'date')),
+      formatDate(resolveItem(record, props.accessor ?? 'date')),
     ...props
   };
 }

@@ -755,23 +755,14 @@ class StockTest(StockTestBase):
         # First, we will create a stock location structure
 
         A = StockLocation.objects.create(name='A', description='Top level location')
-
         B1 = StockLocation.objects.create(name='B1', parent=A)
-
         B2 = StockLocation.objects.create(name='B2', parent=A)
-
         B3 = StockLocation.objects.create(name='B3', parent=A)
-
         C11 = StockLocation.objects.create(name='C11', parent=B1)
-
         C12 = StockLocation.objects.create(name='C12', parent=B1)
-
         C21 = StockLocation.objects.create(name='C21', parent=B2)
-
         C22 = StockLocation.objects.create(name='C22', parent=B2)
-
         C31 = StockLocation.objects.create(name='C31', parent=B3)
-
         C32 = StockLocation.objects.create(name='C32', parent=B3)
 
         # Check that the tree_id is correct for each sublocation
@@ -894,6 +885,62 @@ class StockTest(StockTestBase):
                 p.set_metadata(k, k)
 
             self.assertEqual(len(p.metadata.keys()), 4)
+
+    def test_merge(self):
+        """Test merging of multiple stock items."""
+        from djmoney.money import Money
+
+        part = Part.objects.first()
+        part.stock_items.all().delete()
+
+        # Test simple merge without any pricing information
+        s1 = StockItem.objects.create(part=part, quantity=10)
+        s2 = StockItem.objects.create(part=part, quantity=20)
+        s3 = StockItem.objects.create(part=part, quantity=30)
+
+        self.assertEqual(part.stock_items.count(), 3)
+        s1.merge_stock_items([s2, s3])
+        self.assertEqual(part.stock_items.count(), 1)
+        s1.refresh_from_db()
+        self.assertEqual(s1.quantity, 60)
+        self.assertIsNone(s1.purchase_price)
+
+        part.stock_items.all().delete()
+
+        # Create some stock items with pricing information
+        s1 = StockItem.objects.create(part=part, quantity=10, purchase_price=None)
+        s2 = StockItem.objects.create(
+            part=part, quantity=15, purchase_price=Money(10, 'USD')
+        )
+        s3 = StockItem.objects.create(part=part, quantity=30)
+
+        self.assertEqual(part.stock_items.count(), 3)
+        s1.merge_stock_items([s2, s3])
+        self.assertEqual(part.stock_items.count(), 1)
+        s1.refresh_from_db()
+        self.assertEqual(s1.quantity, 55)
+        self.assertEqual(s1.purchase_price, Money(10, 'USD'))
+
+        part.stock_items.all().delete()
+
+        s1 = StockItem.objects.create(
+            part=part, quantity=10, purchase_price=Money(5, 'USD')
+        )
+        s2 = StockItem.objects.create(
+            part=part, quantity=25, purchase_price=Money(10, 'USD')
+        )
+        s3 = StockItem.objects.create(
+            part=part, quantity=5, purchase_price=Money(75, 'USD')
+        )
+
+        self.assertEqual(part.stock_items.count(), 3)
+        s1.merge_stock_items([s2, s3])
+        self.assertEqual(part.stock_items.count(), 1)
+        s1.refresh_from_db()
+        self.assertEqual(s1.quantity, 40)
+
+        # Final purchase price should be the weighted average
+        self.assertAlmostEqual(s1.purchase_price.amount, 16.875, places=3)
 
 
 class StockBarcodeTest(StockTestBase):

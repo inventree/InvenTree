@@ -22,7 +22,6 @@ from sql_util.utils import SubqueryCount, SubquerySum
 from taggit.serializers import TagListSerializerField
 
 import common.currency
-import common.models
 import common.settings
 import company.models
 import InvenTree.helpers
@@ -41,7 +40,6 @@ from .models import (
     BomItem,
     BomItemSubstitute,
     Part,
-    PartAttachment,
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
@@ -113,6 +111,14 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
 
         return queryset
 
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=PartCategory.objects.all(),
+        required=False,
+        allow_null=True,
+        label=_('Parent Category'),
+        help_text=_('Parent part category'),
+    )
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     part_count = serializers.IntegerField(read_only=True, label=_('Parts'))
@@ -145,19 +151,6 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
     def annotate_queryset(queryset):
         """Annotate the queryset with the number of subcategories."""
         return queryset.annotate(subcategories=part.filters.annotate_sub_categories())
-
-
-class PartAttachmentSerializer(InvenTree.serializers.InvenTreeAttachmentSerializer):
-    """Serializer for the PartAttachment class."""
-
-    class Meta:
-        """Metaclass defining serializer fields."""
-
-        model = PartAttachment
-
-        fields = InvenTree.serializers.InvenTreeAttachmentSerializer.attachment_fields([
-            'part'
-        ])
 
 
 class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
@@ -1171,7 +1164,7 @@ class PartStocktakeReportGenerateSerializer(serializers.Serializer):
     def validate(self, data):
         """Custom validation for this serializer."""
         # Stocktake functionality must be enabled
-        if not common.models.InvenTreeSetting.get_setting('STOCKTAKE_ENABLE', False):
+        if not common.settings.get_global_setting('STOCKTAKE_ENABLE'):
             raise serializers.ValidationError(
                 _('Stocktake functionality is not enabled')
             )

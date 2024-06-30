@@ -31,6 +31,9 @@ class Migration(migrations.Migration):
                 ('is_customer', models.BooleanField(default=False, help_text='Do you sell items to this company?')),
                 ('is_supplier', models.BooleanField(default=True, help_text='Do you purchase items from this company?')),
             ],
+            options={
+                'verbose_name': 'Company',
+            }
         ),
         migrations.CreateModel(
             name='Contact',
@@ -60,6 +63,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'part_supplierpart',
+                'verbose_name': 'Supplier Part',
             },
         ),
         migrations.CreateModel(

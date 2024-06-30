@@ -6,8 +6,12 @@ from django.conf import settings
 from django.db import migrations
 
 
-def clear_sessions(apps, schema_editor):
+def clear_sessions(apps, schema_editor):  # pragma: no cover
     """Clear all user sessions."""
+
+    # Ignore in test mode
+    if settings.TESTING:
+        return
 
     try:
         engine = import_module(settings.SESSION_ENGINE)
@@ -16,6 +20,7 @@ def clear_sessions(apps, schema_editor):
     except Exception:
         # Database may not be ready yet, so this does not matter anyhow
         pass
+
 class Migration(migrations.Migration):
 
     atomic = False

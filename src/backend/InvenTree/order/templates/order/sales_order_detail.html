@@ -203,17 +203,7 @@
 
     onPanelLoad('order-attachments', function() {
 
-        loadAttachmentTable('{% url "api-so-attachment-list" %}', {
-            filters: {
-                order: {{ order.pk }},
-            },
-            fields: {
-            order: {
-                    value: {{ order.pk }},
-                    hidden: true,
-                },
-            }
-        });
+        loadAttachmentTable('salesorder', {{ order.pk }});
     });
 
     loadBuildTable($("#builds-table"), {

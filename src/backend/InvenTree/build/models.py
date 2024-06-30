@@ -50,6 +50,7 @@ logger = logging.getLogger('inventree')
 
 class Build(
     report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.MetadataMixin,
@@ -1320,16 +1321,6 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
         else:
             # Update BuildLine objects if the Build quantity has changed
             instance.update_build_line_items()
-
-
-class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a BuildOrder object."""
-
-    def getSubdir(self):
-        """Return the media file subdirectory for storing BuildOrder attachments"""
-        return os.path.join('bo_files', str(self.build.id))
-
-    build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
 
 
 class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):

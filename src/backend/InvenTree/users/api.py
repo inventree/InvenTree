@@ -3,12 +3,16 @@
 import datetime
 import logging
 
-from django.contrib.auth import get_user, login, logout
+from django.contrib.auth import authenticate, get_user, login, logout
 from django.contrib.auth.models import Group, User
-from django.urls import include, path, re_path
+from django.http.response import HttpResponse
+from django.shortcuts import redirect
+from django.urls import include, path, re_path, reverse
 from django.views.generic.base import RedirectView
 
+from allauth.account import app_settings
 from allauth.account.adapter import get_adapter
+from allauth_2fa.utils import user_has_valid_totp_device
 from dj_rest_auth.views import LoginView, LogoutView
 from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_view
 from rest_framework import exceptions, permissions
@@ -29,8 +33,8 @@ from InvenTree.mixins import (
 )
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from InvenTree.settings import FRONTEND_URL_BASE
-from users.models import ApiToken, Owner, RuleSet, check_user_role
-from users.serializers import GroupSerializer, OwnerSerializer
+from users.models import ApiToken, Owner
+from users.serializers import GroupSerializer, OwnerSerializer, RoleSerializer
 
 logger = logging.getLogger('inventree')
 
@@ -108,44 +112,15 @@ class OwnerDetail(RetrieveAPI):
     serializer_class = OwnerSerializer
 
 
-class RoleDetails(APIView):
-    """API endpoint which lists the available role permissions for the current user.
-
-    (Requires authentication)
-    """
+class RoleDetails(RetrieveAPI):
+    """API endpoint which lists the available role permissions for the current user."""
 
     permission_classes = [permissions.IsAuthenticated]
-    serializer_class = None
+    serializer_class = RoleSerializer
 
-    def get(self, request, *args, **kwargs):
-        """Return the list of roles / permissions available to the current user."""
-        user = request.user
-
-        roles = {}
-
-        for ruleset in RuleSet.RULESET_CHOICES:
-            role, _text = ruleset
-
-            permissions = []
-
-            for permission in RuleSet.RULESET_PERMISSIONS:
-                if check_user_role(user, role, permission):
-                    permissions.append(permission)
-
-            if len(permissions) > 0:
-                roles[role] = permissions
-            else:
-                roles[role] = None  # pragma: no cover
-
-        data = {
-            'user': user.pk,
-            'username': user.username,
-            'roles': roles,
-            'is_staff': user.is_staff,
-            'is_superuser': user.is_superuser,
-        }
-
-        return Response(data)
+    def get_object(self):
+        """Overwritten to always return current user."""
+        return self.request.user
 
 
 class UserDetail(RetrieveUpdateDestroyAPI):
@@ -218,12 +193,40 @@ class GroupList(ListCreateAPI):
 class Login(LoginView):
     """API view for logging in via API."""
 
+    def post(self, request, *args, **kwargs):
+        """API view for logging in via API."""
+        _data = request.data.copy()
+        _data.update(request.POST.copy())
+
+        if not _data.get('mfa', None):
+            return super().post(request, *args, **kwargs)
+
+        # Check if login credentials valid
+        user = authenticate(
+            request, username=_data.get('username'), password=_data.get('password')
+        )
+        if user is None:
+            return HttpResponse(status=401)
+
+            # Check if user has mfa set up
+        if not user_has_valid_totp_device(user):
+            return super().post(request, *args, **kwargs)
+
+            # Stage login and redirect to 2fa
+        request.session['allauth_2fa_user_id'] = str(user.id)
+        request.session['allauth_2fa_login'] = {
+            'email_verification': app_settings.EMAIL_VERIFICATION,
+            'signal_kwargs': None,
+            'signup': False,
+            'email': None,
+            'redirect_url': reverse('platform'),
+        }
+        return redirect(reverse('two-factor-authenticate'))
+
     def process_login(self):
         """Process the login request, ensure that MFA is enforced if required."""
         # Normal login process
         ret = super().process_login()
-
-        # Now check if MFA is enforced
         user = self.request.user
         adapter = get_adapter(self.request)
 
@@ -260,7 +263,7 @@ class Logout(LogoutView):
                 try:
                     token = ApiToken.objects.get(key=token_key, user=request.user)
                     token.delete()
-                except ApiToken.DoesNotExist:
+                except ApiToken.DoesNotExist:  # pragma: no cover
                     pass
 
         return super().logout(request)

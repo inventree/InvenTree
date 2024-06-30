@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='ManufacturerPartAttachment',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('attachment', models.FileField(blank=True, help_text='Select file to attach', null=True, upload_to=InvenTree.models.rename_attachment, verbose_name='Attachment')),
+                ('attachment', models.FileField(blank=True, help_text='Select file to attach', null=True, upload_to='attachments', verbose_name='Attachment')),
                 ('link', InvenTree.fields.InvenTreeURLField(blank=True, help_text='Link to external URL', null=True, verbose_name='Link')),
                 ('comment', models.CharField(blank=True, help_text='File comment', max_length=100, verbose_name='Comment')),
                 ('upload_date', models.DateField(auto_now_add=True, null=True, verbose_name='upload date')),

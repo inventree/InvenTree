@@ -230,9 +230,8 @@ export default function ReturnOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.return_order_attachment_list}
-            model="order"
-            pk={Number(id)}
+            model_type={ModelType.returnorder}
+            model_id={order.pk}
           />
         )
       },

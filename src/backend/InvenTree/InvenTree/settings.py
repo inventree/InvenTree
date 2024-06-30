@@ -296,6 +296,7 @@ ADMIN_SHELL_IMPORT_MODELS = False
 if (
     DEBUG
     and INVENTREE_ADMIN_ENABLED
+    and not TESTING
     and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
 ):  # noqa
     try:
@@ -1272,7 +1273,7 @@ PLUGIN_TESTING_SETUP = get_setting(
 )  # Load plugins from setup hooks in testing?
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_RETRY = get_setting(
-    'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5
+    'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
 )  # How often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 

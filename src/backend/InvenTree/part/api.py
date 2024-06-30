@@ -19,12 +19,7 @@ import order.models
 import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
-from InvenTree.api import (
-    APIDownloadMixin,
-    AttachmentMixin,
-    ListCreateDestroyAPIView,
-    MetadataView,
-)
+from InvenTree.api import APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -56,7 +51,6 @@ from .models import (
     BomItem,
     BomItemSubstitute,
     Part,
-    PartAttachment,
     PartCategory,
     PartCategoryParameterTemplate,
     PartInternalPriceBreak,
@@ -143,6 +137,21 @@ class CategoryFilter(rest_filters.FilterSet):
 
         return queryset
 
+    top_level = rest_filters.BooleanFilter(
+        label=_('Top Level'),
+        method='filter_top_level',
+        help_text=_('Filter by top-level categories'),
+    )
+
+    def filter_top_level(self, queryset, name, value):
+        """Filter by top-level categories."""
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if value and not cascade:
+            return queryset.filter(parent=None)
+
+        return queryset
+
     cascade = rest_filters.BooleanFilter(
         label=_('Cascade'),
         method='filter_cascade',
@@ -154,10 +163,11 @@ class CategoryFilter(rest_filters.FilterSet):
 
         Note: If the "parent" filter is provided, we offload the logic to that method.
         """
-        parent = self.data.get('parent', None)
+        parent = str2bool(self.data.get('parent', None))
+        top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
-        if not parent:
+        if not parent or top_level:
             if not value:
                 # If "cascade" is False, only return top-level categories
                 queryset = queryset.filter(parent=None)
@@ -402,22 +412,6 @@ class PartInternalPriceList(ListCreateAPI):
     filterset_fields = ['part']
     ordering_fields = ['quantity', 'price']
     ordering = 'quantity'
-
-
-class PartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing, creating and bulk deleting a PartAttachment (file upload)."""
-
-    queryset = PartAttachment.objects.all()
-    serializer_class = part_serializers.PartAttachmentSerializer
-
-    filterset_fields = ['part']
-
-
-class PartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for PartAttachment model."""
-
-    queryset = PartAttachment.objects.all()
-    serializer_class = part_serializers.PartAttachmentSerializer
 
 
 class PartTestTemplateFilter(rest_filters.FilterSet):
@@ -2057,18 +2051,6 @@ part_api_urls = [
             path(
                 '', PartTestTemplateList.as_view(), name='api-part-test-template-list'
             ),
-        ]),
-    ),
-    # Base URL for PartAttachment API endpoints
-    path(
-        'attachment/',
-        include([
-            path(
-                '<int:pk>/',
-                PartAttachmentDetail.as_view(),
-                name='api-part-attachment-detail',
-            ),
-            path('', PartAttachmentList.as_view(), name='api-part-attachment-list'),
         ]),
     ),
     # Base URL for part sale pricing

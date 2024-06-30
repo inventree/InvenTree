@@ -20,7 +20,7 @@ The *Stock Item* detail view shows information regarding the particular stock it
 
 **Quantity** - How many items are in stock?
 
-**Supplier** - If this part was purcahsed from a *Supplier*, which *Supplier* did it come from?
+**Supplier** - If this part was purchased from a *Supplier*, which *Supplier* did it come from?
 
 **Supplier Part** - Link to the particular *Supplier Part*, if appropriate.
 

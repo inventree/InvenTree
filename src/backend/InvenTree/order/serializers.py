@@ -1,6 +1,5 @@
 """JSON serializers for the Order API."""
 
-from datetime import datetime
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -42,7 +41,6 @@ from InvenTree.helpers import (
     str2bool,
 )
 from InvenTree.serializers import (
-    InvenTreeAttachmentSerializer,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
@@ -272,7 +270,7 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ([],)
+        fields = []
 
     def get_context_data(self):
         """Return custom context information about the order."""
@@ -755,17 +753,6 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
-
-
-class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializers for the PurchaseOrderAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.PurchaseOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['order'])
 
 
 class SalesOrderSerializer(
@@ -1525,17 +1512,6 @@ class SalesOrderExtraLineSerializer(
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
 
-class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializers for the SalesOrderAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.SalesOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['order'])
-
-
 class ReturnOrderSerializer(
     NotesFieldMixin, AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
 ):
@@ -1778,14 +1754,3 @@ class ReturnOrderExtraLineSerializer(
         model = order.models.ReturnOrderExtraLine
 
     order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
-
-
-class ReturnOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the ReturnOrderAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.ReturnOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['order'])

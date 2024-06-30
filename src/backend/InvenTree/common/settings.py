@@ -5,7 +5,8 @@ def get_global_setting(key, backup_value=None, **kwargs):
     """Return the value of a global setting using the provided key."""
     from common.models import InvenTreeSetting
 
-    kwargs['backup_value'] = backup_value
+    if backup_value is not None:
+        kwargs['backup_value'] = backup_value
 
     return InvenTreeSetting.get_setting(key, **kwargs)
 
@@ -25,7 +26,9 @@ def get_user_setting(key, user, backup_value=None, **kwargs):
     from common.models import InvenTreeUserSetting
 
     kwargs['user'] = user
-    kwargs['backup_value'] = backup_value
+
+    if backup_value is not None:
+        kwargs['backup_value'] = backup_value
 
     return InvenTreeUserSetting.get_setting(key, **kwargs)
 

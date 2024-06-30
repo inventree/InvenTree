@@ -256,9 +256,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.company_attachment_list}
-            model="company"
-            pk={company.pk ?? -1}
+            model_type={ModelType.company}
+            model_id={company.pk}
           />
         )
       },

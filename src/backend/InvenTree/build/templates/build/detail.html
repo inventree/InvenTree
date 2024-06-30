@@ -326,18 +326,7 @@ onPanelLoad('children', function() {
 });
 
 onPanelLoad('attachments', function() {
-
-    loadAttachmentTable('{% url "api-build-attachment-list" %}', {
-        filters: {
-            build: {{ build.pk }},
-        },
-        fields: {
-            build: {
-                value: {{ build.pk }},
-                hidden: true,
-            }
-        }
-    });
+    loadAttachmentTable('build', {{ build.pk }});
 });
 
 onPanelLoad('notes', function() {

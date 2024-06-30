@@ -26,7 +26,7 @@ database:
 # Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
 debug: True
 
-# Set to False to disable the admin interfac, or use the environment variable INVENTREE_ADMIN_ENABLED
+# Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
 #admin_enabled: True
 
 # Set the admin URL, or use the environment variable INVENTREE_ADMIN_URL

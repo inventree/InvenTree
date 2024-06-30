@@ -21,6 +21,7 @@ import InvenTree.helpers
 import InvenTree.models
 import report.helpers
 import report.validators
+from common.settings import get_global_setting
 from InvenTree.helpers_model import get_base_url
 from InvenTree.models import MetadataMixin
 from plugin.registry import registry
@@ -311,8 +312,8 @@ class ReportTemplate(TemplateUploadMixin, ReportTemplateBase):
     def get_report_size(self):
         """Return the printable page size for this report."""
         try:
-            page_size_default = common.models.InvenTreeSetting.get_setting(
-                'REPORT_DEFAULT_PAGE_SIZE', 'A4'
+            page_size_default = get_global_setting(
+                'REPORT_DEFAULT_PAGE_SIZE', 'A4', create=False
             )
         except Exception:
             page_size_default = 'A4'

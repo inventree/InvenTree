@@ -462,9 +462,16 @@ def migrate(c):
     manage(c, 'makemigrations')
     manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
+    manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
 
     print('========================================')
     print('InvenTree database migrations completed!')
+
+
+@task(help={'app': 'Specify an app to show migrations for (leave blank for all apps)'})
+def showmigrations(c, app=''):
+    """Show the migration status of the database."""
+    manage(c, f'showmigrations {app}', pty=True)
 
 
 @task(
@@ -1062,8 +1069,8 @@ API         {InvenTreeVersion.inventreeApiVersion()}
 Node        {node if node else 'N/A'}
 Yarn        {yarn if yarn else 'N/A'}
 
-Commit hash:{InvenTreeVersion.inventreeCommitHash()}
-Commit date:{InvenTreeVersion.inventreeCommitDate()}"""
+Commit hash: {InvenTreeVersion.inventreeCommitHash()}
+Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
     )
     if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
         print(

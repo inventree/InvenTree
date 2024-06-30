@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='BuildOrderAttachment',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('attachment', models.FileField(help_text='Select file to attach', upload_to=InvenTree.models.rename_attachment)),
+                ('attachment', models.FileField(help_text='Select file to attach', upload_to='attachments')),
                 ('comment', models.CharField(blank=True, help_text='File comment', max_length=100)),
                 ('upload_date', models.DateField(auto_now_add=True, null=True)),
                 ('build', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='attachments', to='build.Build')),

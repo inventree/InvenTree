@@ -307,7 +307,8 @@ export function PurchaseOrderLineItemTable({
           },
           rowActions: rowActions,
           tableActions: tableActions,
-          modelType: ModelType.supplierpart
+          modelType: ModelType.supplierpart,
+          modelField: 'part'
         }}
       />
     </>

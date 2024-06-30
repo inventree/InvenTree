@@ -16,7 +16,7 @@ import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
-import { renderDate } from '../../defaults/formatters';
+import { formatDate } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import { useTestResultFields } from '../../forms/StockForms';
@@ -207,7 +207,7 @@ export default function StockItemTestResultTable({
         render: (record: any) => {
           return (
             <Group justify="space-between">
-              {renderDate(record.started_datetime, {
+              {formatDate(record.started_datetime, {
                 showTime: true,
                 showSeconds: true
               })}
@@ -222,7 +222,7 @@ export default function StockItemTestResultTable({
         render: (record: any) => {
           return (
             <Group justify="space-between">
-              {renderDate(record.finished_datetime, {
+              {formatDate(record.finished_datetime, {
                 showTime: true,
                 showSeconds: true
               })}

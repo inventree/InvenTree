@@ -31,7 +31,6 @@ from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
 from .models import (
     StockItem,
-    StockItemAttachment,
     StockItemTestResult,
     StockItemTracking,
     StockLocation,
@@ -1078,6 +1077,15 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
 
         return queryset
 
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset=StockLocation.objects.all(),
+        many=False,
+        allow_null=True,
+        required=False,
+        label=_('Parent Location'),
+        help_text=_('Parent stock location'),
+    )
+
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
     items = serializers.IntegerField(read_only=True, label=_('Stock Items'))
@@ -1099,21 +1107,6 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     location_type_detail = StockLocationTypeSerializer(
         source='location_type', read_only=True, many=False
     )
-
-
-class StockItemAttachmentSerializer(
-    InvenTree.serializers.InvenTreeAttachmentSerializer
-):
-    """Serializer for StockItemAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = StockItemAttachment
-
-        fields = InvenTree.serializers.InvenTreeAttachmentSerializer.attachment_fields([
-            'stock_item'
-        ])
 
 
 class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
