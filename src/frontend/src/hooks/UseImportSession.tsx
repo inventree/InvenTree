@@ -67,7 +67,7 @@ export function useImportSession({
     );
 
     return cols;
-  }, [sessionData]);
+  }, [sessionData.columns]);
 
   const columnMappings: any[] = useMemo(() => {
     let mapping =
