@@ -96,7 +96,7 @@ class CategorySerializer(
         super().__init__(*args, **kwargs)
 
         if not path_detail:
-            self.fields.pop('path')
+            self.fields.pop('path', None)
 
     def get_starred(self, category) -> bool:
         """Return True if the category is directly "starred" by the current user."""
@@ -326,8 +326,8 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if not pricing:
-            self.fields.pop('pricing_min')
-            self.fields.pop('pricing_max')
+            self.fields.pop('pricing_min', None)
+            self.fields.pop('pricing_max', None)
 
     category_default_location = serializers.IntegerField(read_only=True)
 
@@ -374,10 +374,10 @@ class PartParameterSerializer(
         super().__init__(*args, **kwargs)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if not template_detail:
-            self.fields.pop('template_detail')
+            self.fields.pop('template_detail', None)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     template_detail = PartParameterTemplateSerializer(
@@ -688,13 +688,13 @@ class PartSerializer(
         super().__init__(*args, **kwargs)
 
         if not category_detail:
-            self.fields.pop('category_detail')
+            self.fields.pop('category_detail', None)
 
         if not parameters:
-            self.fields.pop('parameters')
+            self.fields.pop('parameters', None)
 
         if not path_detail:
-            self.fields.pop('category_path')
+            self.fields.pop('category_path', None)
 
         if not create:
             # These fields are only used for the LIST API endpoint
@@ -705,9 +705,9 @@ class PartSerializer(
                 self.fields.pop(f)
 
         if not pricing:
-            self.fields.pop('pricing_min')
-            self.fields.pop('pricing_max')
-            self.fields.pop('pricing_updated')
+            self.fields.pop('pricing_min', None)
+            self.fields.pop('pricing_max', None)
+            self.fields.pop('pricing_updated', None)
 
     def get_api_url(self):
         """Return the API url associated with this serializer."""
@@ -1484,17 +1484,17 @@ class BomItemSerializer(
         super().__init__(*args, **kwargs)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if not sub_part_detail:
-            self.fields.pop('sub_part_detail')
+            self.fields.pop('sub_part_detail', None)
 
         if not pricing:
-            self.fields.pop('pricing_min')
-            self.fields.pop('pricing_max')
-            self.fields.pop('pricing_min_total')
-            self.fields.pop('pricing_max_total')
-            self.fields.pop('pricing_updated')
+            self.fields.pop('pricing_min', None)
+            self.fields.pop('pricing_max', None)
+            self.fields.pop('pricing_min_total', None)
+            self.fields.pop('pricing_max_total', None)
+            self.fields.pop('pricing_updated', None)
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 

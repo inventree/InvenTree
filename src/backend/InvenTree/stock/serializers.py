@@ -217,10 +217,10 @@ class StockItemTestResultSerializer(
         super().__init__(*args, **kwargs)
 
         if user_detail is not True:
-            self.fields.pop('user_detail')
+            self.fields.pop('user_detail', None)
 
         if template_detail is not True:
-            self.fields.pop('template_detail')
+            self.fields.pop('template_detail', None)
 
     user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
 
@@ -412,19 +412,19 @@ class StockItemSerializer(
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if not location_detail:
-            self.fields.pop('location_detail')
+            self.fields.pop('location_detail', None)
 
         if not supplier_part_detail:
-            self.fields.pop('supplier_part_detail')
+            self.fields.pop('supplier_part_detail', None)
 
         if not tests:
-            self.fields.pop('tests')
+            self.fields.pop('tests', None)
 
         if not path_detail:
-            self.fields.pop('location_path')
+            self.fields.pop('location_path', None)
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
@@ -1080,7 +1080,7 @@ class LocationSerializer(
         super().__init__(*args, **kwargs)
 
         if not path_detail:
-            self.fields.pop('path')
+            self.fields.pop('path', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1158,10 +1158,10 @@ class StockTrackingSerializer(
         super().__init__(*args, **kwargs)
 
         if item_detail is not True:
-            self.fields.pop('item_detail')
+            self.fields.pop('item_detail', None)
 
         if user_detail is not True:
-            self.fields.pop('user_detail')
+            self.fields.pop('user_detail', None)
 
     label = serializers.CharField(read_only=True)
 

@@ -125,7 +125,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
         super().__init__(*args, **kwargs)
 
         if part_detail is not True:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
     reference = serializers.CharField(required=True)
 
@@ -1117,16 +1117,16 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         super().__init__(*args, **kwargs)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if not location_detail:
-            self.fields.pop('location_detail')
+            self.fields.pop('location_detail', None)
 
         if not stock_detail:
-            self.fields.pop('stock_item_detail')
+            self.fields.pop('stock_item_detail', None)
 
         if not build_detail:
-            self.fields.pop('build_detail')
+            self.fields.pop('build_detail', None)
 
 
 class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):

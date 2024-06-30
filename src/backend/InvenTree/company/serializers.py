@@ -246,13 +246,13 @@ class ManufacturerPartSerializer(
         super().__init__(*args, **kwargs)
 
         if part_detail is not True:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if manufacturer_detail is not True:
-            self.fields.pop('manufacturer_detail')
+            self.fields.pop('manufacturer_detail', None)
 
         if prettify is not True:
-            self.fields.pop('pretty_name')
+            self.fields.pop('pretty_name', None)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
@@ -294,7 +294,7 @@ class ManufacturerPartParameterSerializer(
         super().__init__(*args, **kwargs)
 
         if not man_detail:
-            self.fields.pop('manufacturer_part_detail')
+            self.fields.pop('manufacturer_part_detail', None)
 
     manufacturer_part_detail = ManufacturerPartSerializer(
         source='manufacturer_part', many=False, read_only=True
@@ -368,17 +368,17 @@ class SupplierPartSerializer(
         super().__init__(*args, **kwargs)
 
         if part_detail is not True:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if supplier_detail is not True:
-            self.fields.pop('supplier_detail')
+            self.fields.pop('supplier_detail', None)
 
         if manufacturer_detail is not True:
-            self.fields.pop('manufacturer_detail')
-            self.fields.pop('manufacturer_part_detail')
+            self.fields.pop('manufacturer_detail', None)
+            self.fields.pop('manufacturer_part_detail', None)
 
         if prettify is not True:
-            self.fields.pop('pretty_name')
+            self.fields.pop('pretty_name', None)
 
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))
@@ -492,10 +492,10 @@ class SupplierPriceBreakSerializer(
         super().__init__(*args, **kwargs)
 
         if not supplier_detail:
-            self.fields.pop('supplier_detail')
+            self.fields.pop('supplier_detail', None)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
     quantity = InvenTreeDecimalField()
 

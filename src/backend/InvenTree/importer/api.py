@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 import importer.models
 import importer.registry
 import importer.serializers
+from InvenTree.api import BulkDeleteMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
     ListAPI,
@@ -42,7 +43,7 @@ class DataImporterModelList(APIView):
         return Response(models)
 
 
-class DataImportSessionList(ListCreateAPI):
+class DataImportSessionList(BulkDeleteMixin, ListCreateAPI):
     """API endpoint for accessing a list of DataImportSession objects."""
 
     queryset = importer.models.DataImportSession.objects.all()
@@ -98,7 +99,7 @@ class DataImportColumnMappingDetail(RetrieveUpdateAPI):
     serializer_class = importer.serializers.DataImportColumnMapSerializer
 
 
-class DataImportRowList(ListAPI):
+class DataImportRowList(BulkDeleteMixin, ListAPI):
     """API endpoint for accessing a list of DataImportRow objects."""
 
     queryset = importer.models.DataImportRow.objects.all()

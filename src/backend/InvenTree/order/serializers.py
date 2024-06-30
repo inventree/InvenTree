@@ -187,7 +187,7 @@ class AbstractExtraLineSerializer(
         super().__init__(*args, **kwargs)
 
         if order_detail is not True:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
     quantity = serializers.FloatField()
 
@@ -249,7 +249,7 @@ class PurchaseOrderSerializer(
         super().__init__(*args, **kwargs)
 
         if supplier_detail is not True:
-            self.fields.pop('supplier_detail')
+            self.fields.pop('supplier_detail', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -407,11 +407,11 @@ class PurchaseOrderLineItemSerializer(
         super().__init__(*args, **kwargs)
 
         if part_detail is not True:
-            self.fields.pop('part_detail')
-            self.fields.pop('supplier_part_detail')
+            self.fields.pop('part_detail', None)
+            self.fields.pop('supplier_part_detail', None)
 
         if order_detail is not True:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
@@ -835,7 +835,7 @@ class SalesOrderSerializer(
         super().__init__(*args, **kwargs)
 
         if customer_detail is not True:
-            self.fields.pop('customer_detail')
+            self.fields.pop('customer_detail', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -922,19 +922,19 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if not order_detail:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if not item_detail:
-            self.fields.pop('item_detail')
+            self.fields.pop('item_detail', None)
 
         if not location_detail:
-            self.fields.pop('location_detail')
+            self.fields.pop('location_detail', None)
 
         if not customer_detail:
-            self.fields.pop('customer_detail')
+            self.fields.pop('customer_detail', None)
 
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(
@@ -1012,16 +1012,16 @@ class SalesOrderLineItemSerializer(
         super().__init__(*args, **kwargs)
 
         if part_detail is not True:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if order_detail is not True:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
         if allocations is not True:
-            self.fields.pop('allocations')
+            self.fields.pop('allocations', None)
 
         if customer_detail is not True:
-            self.fields.pop('customer_detail')
+            self.fields.pop('customer_detail', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1597,7 +1597,7 @@ class ReturnOrderSerializer(
         super().__init__(*args, **kwargs)
 
         if customer_detail is not True:
-            self.fields.pop('customer_detail')
+            self.fields.pop('customer_detail', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1788,13 +1788,13 @@ class ReturnOrderLineItemSerializer(
         super().__init__(*args, **kwargs)
 
         if not order_detail:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
         if not item_detail:
-            self.fields.pop('item_detail')
+            self.fields.pop('item_detail', None)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
     order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
     item_detail = stock.serializers.StockItemSerializer(
