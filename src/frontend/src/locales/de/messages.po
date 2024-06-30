@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-06-30 06:57\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -259,7 +259,7 @@ msgstr "Abgeschlossen"
 
 #: src/components/editors/NotesEditor.tsx:152
 msgid "Notes saved successfully"
-msgstr ""
+msgstr "Notizen erfolgreich gespeichert"
 
 #: src/components/editors/NotesEditor.tsx:161
 msgid "Failed to save notes"
@@ -271,11 +271,11 @@ msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Edit Notes"
-msgstr ""
+msgstr "Notizen bearbeiten"
 
 #: src/components/editors/NotesEditor.tsx:207
 msgid "Save Notes"
-msgstr ""
+msgstr "Notizen speichern"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
@@ -1395,11 +1395,11 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:214
 msgid "Plugin Configuration"
-msgstr ""
+msgstr "Plugin-Konfiguration"
 
 #: src/components/render/ModelType.tsx:215
 msgid "Plugin Configurations"
-msgstr ""
+msgstr "Plugin-Konfigurationen"
 
 #: src/components/render/Order.tsx:104
 msgid "Shipment"
@@ -1993,7 +1993,7 @@ msgstr "Portugiesisch (Brasilien)"
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Romanian"
-msgstr ""
+msgstr "Rumänisch"
 
 #: src/contexts/LanguageContext.tsx:44
 msgid "Russian"
@@ -4390,7 +4390,7 @@ msgstr "Preisstaffel"
 
 #: src/pages/part/pricing/PriceBreakPanel.tsx:166
 msgid "Price"
-msgstr ""
+msgstr "Preis"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:51
 msgid "Pricing Category"
@@ -4423,11 +4423,11 @@ msgstr "Zuletzt aktualisiert"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:192
 msgid "Minimum Value"
-msgstr ""
+msgstr "Minimaler Wert"
 
 #: src/pages/part/pricing/PricingOverviewPanel.tsx:193
 msgid "Maximum Value"
-msgstr ""
+msgstr "Maximaler Wert"
 
 #: src/pages/part/pricing/PricingPanel.tsx:25
 msgid "No data available"
@@ -4776,15 +4776,15 @@ msgstr "TSV"
 
 #: src/tables/DownloadAction.tsx:24
 msgid "Excel (.xls)"
-msgstr ""
+msgstr "Excel (.xls)"
 
 #: src/tables/DownloadAction.tsx:25
 msgid "Excel (.xlsx)"
-msgstr ""
+msgstr "Excel (.xlsx)"
 
 #: src/tables/DownloadAction.tsx:39
 msgid "Download Data"
-msgstr ""
+msgstr "Daten herunterladen"
 
 #: src/tables/Filter.tsx:88
 #: src/tables/build/BuildOrderTable.tsx:126
@@ -6425,7 +6425,7 @@ msgstr ""
 
 #: src/tables/settings/TemplateTable.tsx:170
 msgid "Modify"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: src/tables/settings/TemplateTable.tsx:171
 msgid "Modify template file"
@@ -6859,15 +6859,15 @@ msgstr "Lagerort hinzufügen"
 
 #: src/tables/stock/StockTrackingTable.tsx:64
 msgid "Added"
-msgstr ""
+msgstr "Hinzugefügt"
 
 #: src/tables/stock/StockTrackingTable.tsx:69
 msgid "Removed"
-msgstr ""
+msgstr "Entfernt"
 
 #: src/tables/stock/StockTrackingTable.tsx:198
 msgid "No user information"
-msgstr ""
+msgstr "Keine Benutzerinformation"
 
 #: src/views/MobileAppView.tsx:22
 msgid "Mobile viewport detected"
@@ -6884,3 +6884,4 @@ msgstr "Dokumentation lesen"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignorieren und weiter zur Desktopansicht"
+
