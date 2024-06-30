@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-29 12:03+0000\n"
-"PO-Revision-Date: 2024-06-29 06:40\n"
+"POT-Creation-Date: 2024-06-29 10:44+0000\n"
+"PO-Revision-Date: 2024-06-30 06:57\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -2812,10 +2812,8 @@ msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Povolit samoregistraci uživatelů prostřednictvím SSO na přihlašovacích stránkách"
 
 #: common/models.py:1913
-#, fuzzy
-#| msgid "Enable SSO registration"
 msgid "Enable SSO group sync"
-msgstr "Povolit SSO registraci"
+msgstr ""
 
 #: common/models.py:1915
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
@@ -14486,5 +14484,3 @@ msgstr "Oprávnění k úpravě položek"
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
 
-#~ msgid "Group to which new users are assigned on registration"
-#~ msgstr "Skupina, ke které jsou přiděleni noví uživatelé při registraci"
