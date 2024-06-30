@@ -34,6 +34,7 @@ from company.serializers import (
     SupplierPartSerializer,
 )
 from importer.mixins import DataImportExportSerializerMixin
+from importer.registry import register_importer
 from InvenTree.helpers import (
     current_date,
     extract_serial_numbers,
@@ -199,6 +200,7 @@ class AbstractExtraLineMeta:
     ]
 
 
+@register_importer()
 class PurchaseOrderSerializer(
     NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
 ):
@@ -341,6 +343,7 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
         order.place_order()
 
 
+@register_importer()
 class PurchaseOrderLineItemSerializer(
     DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
@@ -518,6 +521,7 @@ class PurchaseOrderLineItemSerializer(
         return data
 
 
+@register_importer()
 class PurchaseOrderExtraLineSerializer(
     AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
@@ -760,6 +764,7 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
+@register_importer()
 class SalesOrderSerializer(
     NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
 ):
@@ -919,6 +924,7 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     )
 
 
+@register_importer()
 class SalesOrderLineItemSerializer(
     DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
@@ -1070,6 +1076,7 @@ class SalesOrderLineItemSerializer(
     )
 
 
+@register_importer()
 class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
     """Serializer for the SalesOrderShipment class."""
 
@@ -1506,6 +1513,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
                 allocation.save()
 
 
+@register_importer()
 class SalesOrderExtraLineSerializer(
     AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
@@ -1519,6 +1527,7 @@ class SalesOrderExtraLineSerializer(
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
 
+@register_importer()
 class ReturnOrderSerializer(
     NotesFieldMixin, AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
 ):
@@ -1697,6 +1706,7 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
                 order.receive_line_item(line_item, location, request.user)
 
 
+@register_importer()
 class ReturnOrderLineItemSerializer(
     DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
@@ -1752,6 +1762,7 @@ class ReturnOrderLineItemSerializer(
     price_currency = InvenTreeCurrencySerializer(help_text=_('Line price currency'))
 
 
+@register_importer()
 class ReturnOrderExtraLineSerializer(
     AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
