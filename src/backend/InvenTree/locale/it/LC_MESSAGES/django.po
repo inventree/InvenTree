@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-29 12:03+0000\n"
-"PO-Revision-Date: 2024-06-27 06:04\n"
+"POT-Creation-Date: 2024-06-29 10:44+0000\n"
+"PO-Revision-Date: 2024-06-30 06:57\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -2812,10 +2812,8 @@ msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Abilita l'auto-registrazione tramite SSO per gli utenti nelle pagine di accesso"
 
 #: common/models.py:1913
-#, fuzzy
-#| msgid "Enable SSO registration"
 msgid "Enable SSO group sync"
-msgstr "Abilita registrazione SSO"
+msgstr ""
 
 #: common/models.py:1915
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
@@ -14486,5 +14484,3 @@ msgstr "Permessi per modificare gli elementi"
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
 
-#~ msgid "Group to which new users are assigned on registration"
-#~ msgstr "Gruppo a cui i nuovi utenti vengono assegnati al momento della registrazione"
