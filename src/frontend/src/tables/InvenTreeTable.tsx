@@ -54,6 +54,7 @@ import { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
 import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
+import { UploadAction } from './UploadAction';
 
 const defaultPageSize: number = 25;
 
@@ -66,6 +67,7 @@ const defaultPageSize: number = 25;
  * @param noRecordsText : string - Text to display when no records are found
  * @param enableBulkDelete : boolean - Enable bulk deletion of records
  * @param enableDownload : boolean - Enable download actions
+ * @param enableUpload : boolean - Enable upload actions
  * @param enableFilters : boolean - Enable filter actions
  * @param enableSelection : boolean - Enable row selection
  * @param enableSearch : boolean - Enable search actions
@@ -91,6 +93,7 @@ export type InvenTreeTableProps<T = any> = {
   noRecordsText?: string;
   enableBulkDelete?: boolean;
   enableDownload?: boolean;
+  enableUpload?: boolean;
   enableFilters?: boolean;
   enableSelection?: boolean;
   enableSearch?: boolean;
@@ -122,6 +125,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
   noRecordsText: t`No records found`,
   enableDownload: false,
+  enableUpload: false,
   enableLabels: false,
   enableReports: false,
   enableFilters: true,
@@ -603,6 +607,7 @@ export function InvenTreeTable<T = any>({
                   downloadCallback={downloadData}
                 />
               )}
+              {tableProps.enableUpload && <UploadAction key="upload-action" />}
               <PrintingActions
                 items={tableState.selectedIds}
                 modelType={tableProps.modelType}

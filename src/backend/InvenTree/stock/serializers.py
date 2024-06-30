@@ -333,6 +333,8 @@ class StockItemSerializer(
 
     export_exclude_fields = ['tracking_items']
 
+    import_exclude_fields = ['use_pack_size', 'tags']
+
     class Meta:
         """Metaclass options."""
 
@@ -1044,6 +1046,8 @@ class LocationSerializer(
     DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
 ):
     """Detailed information about a stock location."""
+
+    import_exclude_fields = ['tags']
 
     class Meta:
         """Metaclass options."""
