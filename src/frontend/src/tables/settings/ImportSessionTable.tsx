@@ -158,6 +158,8 @@ export default function ImportSesssionTable() {
           rowActions: rowActions,
           tableActions: tableActions,
           tableFilters: tableFilters,
+          enableBulkDelete: true,
+          enableSelection: true,
           onRowClick: (record: any) => {
             setSelectedSession(record.pk);
             setOpened(true);

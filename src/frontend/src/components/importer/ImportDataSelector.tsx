@@ -1,7 +1,11 @@
 import { t } from '@lingui/macro';
 import { Group, HoverCard, Stack, Text } from '@mantine/core';
-import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
-import { useCallback, useMemo, useState } from 'react';
+import {
+  IconCircleCheck,
+  IconExclamationCircle,
+  IconSquareArrowRight
+} from '@tabler/icons-react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { cancelEvent } from '../../functions/events';
@@ -16,6 +20,7 @@ import { TableColumn } from '../../tables/Column';
 import { TableFilter } from '../../tables/Filter';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
+import { YesNoButton } from '../buttons/YesNoButton';
 import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 
 function ImporterDataCell({
@@ -44,8 +49,19 @@ function ImporterDataCell({
     return row?.errors[column.field] ?? [];
   }, [row.errors, column.field]);
 
-  const cellValue = useMemo(() => {
+  const cellValue: ReactNode = useMemo(() => {
     // TODO: Render inline models, rather than raw PK values
+
+    let field_def = session.availableFields[column.field];
+
+    switch (field_def?.type) {
+      case 'boolean':
+        return (
+          <YesNoButton value={row.data ? row.data[column.field] : false} />
+        );
+      default:
+        break;
+    }
 
     let value = row.data ? row.data[column.field] ?? '' : '';
 
@@ -184,8 +200,9 @@ export default function ImporterDataSelector({
                   </HoverCard.Target>
                   <HoverCard.Dropdown>
                     <Stack gap="xs">
+                      <Text>{t`Row contains errors`}:</Text>
                       {rowErrors(row).map((error: string) => (
-                        <Text size="xs" c="red" key={error}>
+                        <Text size="sm" c="red" key={error}>
                           {error}
                         </Text>
                       ))}
@@ -223,7 +240,14 @@ export default function ImporterDataSelector({
   const rowActions = useCallback(
     (record: any) => {
       return [
+        {
+          title: t`Accept`,
+          icon: <IconSquareArrowRight />,
+          color: 'green',
+          hidden: record.complete
+        },
         RowEditAction({
+          hidden: record.complete,
           onClick: () => {
             setSelectedRow(record);
             setSelectedFieldNames(
@@ -277,7 +301,8 @@ export default function ImporterDataSelector({
             tableFilters: filters,
             enableColumnSwitching: true,
             enableColumnCaching: false,
-            enableSelection: true
+            enableSelection: true,
+            enableBulkDelete: true
           }}
         />
       </Stack>
