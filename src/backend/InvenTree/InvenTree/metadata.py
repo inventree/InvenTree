@@ -169,8 +169,7 @@ class InvenTreeMetadata(SimpleMetadata):
                     # Already know about this one
                     continue
 
-                if hasattr(serializer, field_name):
-                    field = getattr(serializer, field_name)
+                if field := getattr(serializer, field_name, None):
                     serializer_info[field_name] = self.get_field_info(field)
 
         model_class = None

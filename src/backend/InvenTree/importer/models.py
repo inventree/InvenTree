@@ -146,8 +146,8 @@ class DataImportSession(models.Model):
             # Generate a list of possible column names for this field
             field_options = [
                 field,
-                field_def.get('label', None),
-                field_def.get('help_text', None),
+                field_def.get('label', field),
+                field_def.get('help_text', field),
             ]
             column_name = ''
 
@@ -293,8 +293,9 @@ class DataImportSession(models.Model):
 
         metadata = InvenTreeMetadata()
 
-        if serializer := self.serializer_class:
-            fields = metadata.get_serializer_info(serializer(data={}, importing=True))
+        if serializer_class := self.serializer_class:
+            serializer = serializer_class(data={}, importing=True)
+            fields = metadata.get_serializer_info(serializer)
         else:
             fields = {}
 
