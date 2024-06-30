@@ -77,6 +77,8 @@ class TotalPriceMixin(serializers.Serializer):
 class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Serializer):
     """Abstract serializer class which provides fields common to all order types."""
 
+    export_exclude_fields = ['notes']
+
     # Number of line items in this order
     line_items = serializers.IntegerField(read_only=True, label=_('Line Items'))
 
@@ -100,6 +102,10 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
     # Detail for responsible field
     responsible_detail = OwnerSerializer(
         source='responsible', read_only=True, many=False
+    )
+
+    project_code = serializers.CharField(
+        source='project_code.code', label=_('Project Code'), read_only=True
     )
 
     # Detail for project code field
@@ -375,6 +381,11 @@ class PurchaseOrderLineItemSerializer(
             'total_price',
             'link',
             'merge_items',
+            'sku',
+            'mpn',
+            'ipn',
+            'internal_part',
+            'internal_part_name',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -488,6 +499,25 @@ class PurchaseOrderLineItemSerializer(
             'Merge items with the same part, destination and target date into one line item'
         ),
         default=True,
+        write_only=True,
+    )
+
+    sku = serializers.CharField(source='part.SKU', read_only=True, label=_('SKU'))
+
+    mpn = serializers.CharField(
+        source='part.manufacturer_part.MPN', read_only=True, label=_('MPN')
+    )
+
+    ipn = serializers.CharField(
+        source='part.part.IPN', read_only=True, label=_('Internal Part Number')
+    )
+
+    internal_part = serializers.PrimaryKeyRelatedField(
+        source='part.part', read_only=True, many=False, label=_('Internal Part')
+    )
+
+    internal_part_name = serializers.CharField(
+        source='part.part.name', read_only=True, label=_('Internal Part Name')
     )
 
     def validate(self, data):
