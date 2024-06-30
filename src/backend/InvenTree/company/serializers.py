@@ -114,6 +114,8 @@ class CompanySerializer(
 
     export_exclude_fields = ['url', 'primary_address']
 
+    import_exclude_fields = ['image']
+
     class Meta:
         """Metaclass options."""
 

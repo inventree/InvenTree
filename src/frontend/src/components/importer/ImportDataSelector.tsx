@@ -60,7 +60,9 @@ function ImporterDataCell({
       <HoverCard.Target>
         <Group grow justify="apart" onClick={onRowEdit}>
           <Group grow style={{ flex: 1 }}>
-            <Text c={cellValid ? undefined : 'red'}>{cellValue}</Text>
+            <Text size="xs" c={cellValid ? undefined : 'red'}>
+              {cellValue}
+            </Text>
           </Group>
         </Group>
       </HoverCard.Target>

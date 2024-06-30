@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 import tablib
-from rest_framework import serializers
+from rest_framework import fields, serializers
 
 import importer.operations
 from InvenTree.helpers import DownloadFile, GetExportFormats, current_date
@@ -35,9 +35,18 @@ class DataImportSerializerMixin:
         super().__init__(*args, **kwargs)
 
         if importing:
-            # Exclude fields which are not required for data import
+            # Exclude any fields which are not able to be imported
+            importable_field_names = list(self.get_importable_fields().keys())
+            field_names = list(self.fields.keys())
+
+            for field in field_names:
+                if field not in importable_field_names:
+                    self.fields.pop(field, None)
+
+            # Exclude fields which are excluded for data import
             for field in self.get_import_exclude_fields(**kwargs):
                 self.fields.pop(field, None)
+
         else:
             # Exclude fields which are only used for data import
             for field in self.get_import_only_fields(**kwargs):
@@ -49,7 +58,7 @@ class DataImportSerializerMixin:
         Returns:
             dict: A dictionary of field names and field objects
         """
-        fields = {}
+        importable_fields = {}
 
         for name, field in self.fields.items():
             # Skip read-only fields
@@ -60,9 +69,13 @@ class DataImportSerializerMixin:
             if issubclass(field.__class__, serializers.Serializer):
                 continue
 
-            fields[name] = field
+            # Skip file fields
+            if issubclass(field.__class__, fields.FileField):
+                continue
 
-        return fields
+            importable_fields[name] = field
+
+        return importable_fields
 
 
 class DataExportSerializerMixin:

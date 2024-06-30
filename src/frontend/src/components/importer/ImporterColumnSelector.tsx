@@ -96,7 +96,7 @@ export default function ImporterColumnSelector({
         };
       })
     ];
-  }, [session.columnMappings]);
+  }, [session.availableColumns]);
 
   return (
     <Stack gap="xs">

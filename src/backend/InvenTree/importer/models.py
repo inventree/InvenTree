@@ -121,21 +121,6 @@ class DataImportSession(models.Model):
 
         return supported_models().get(self.model_type, None)
 
-    def serializer_fields(self, required=None, read_only=False, write_only=None):
-        """Return the writeable serializers fields for this importer.
-
-        Arguments:
-            required: If True, only return required fields
-        """
-        from importer.operations import get_fields
-
-        return get_fields(
-            self.serializer_class,
-            required=required,
-            read_only=read_only,
-            write_only=write_only,
-        )
-
     def extract_columns(self):
         """Run initial column extraction and mapping.
 
@@ -147,7 +132,7 @@ class DataImportSession(models.Model):
         # Extract list of column names from the file
         self.columns = importer.operations.extract_column_names(self.data_file)
 
-        serializer_fields = self.serializer_fields(read_only=False)
+        serializer_fields = self.available_fields()
 
         # Remove any existing mappings
         self.column_mappings.all().delete()
@@ -159,8 +144,11 @@ class DataImportSession(models.Model):
         # Create a default mapping for each available field in the database
         for field, field_def in serializer_fields.items():
             # Generate a list of possible column names for this field
-            field_options = [field, getattr(field_def, 'label', field)]
-
+            field_options = [
+                field,
+                field_def.get('label', None),
+                field_def.get('help_text', None),
+            ]
             column_name = ''
 
             for column in self.columns:
@@ -195,12 +183,18 @@ class DataImportSession(models.Model):
         - Trigger the data import process
         """
         # First, we need to ensure that all the *required* columns have been mapped
-        required_fields = self.serializer_fields(required=True).keys()
+        required_fields = self.required_fields()
+
+        field_overrides = self.field_overrides or {}
         field_defaults = self.field_defaults or {}
 
         missing_fields = []
 
-        for field in required_fields:
+        for field in required_fields.keys():
+            # An override value exists
+            if field in field_overrides:
+                continue
+
             # A default value exists
             if field in field_defaults:
                 continue
@@ -299,12 +293,19 @@ class DataImportSession(models.Model):
         else:
             fields = {}
 
-        # Remove any read-only fields (they are of no use here)
-        for key in list(fields.keys()):
-            if fields[key].get('read_only', False):
-                del fields[key]
-
         return fields
+
+    def required_fields(self):
+        """Returns information on which fields are *required* for import."""
+        fields = self.available_fields()
+
+        required = {}
+
+        for field, info in fields.items():
+            if info.get('required', False):
+                required[field] = info
+
+        return required
 
 
 class DataImportColumnMap(models.Model):
@@ -367,7 +368,7 @@ class DataImportColumnMap(models.Model):
                 'field': _('Field does not exist in the target model')
             })
 
-        if field_def.read_only:
+        if field_def.get('read_only', False):
             raise DjangoValidationError({'field': _('Selected field is read-only')})
 
     session = models.ForeignKey(
@@ -384,7 +385,7 @@ class DataImportColumnMap(models.Model):
     @property
     def field_definition(self):
         """Return the field definition associated with this column mapping."""
-        fields = self.session.serializer_fields(read_only=None)
+        fields = self.session.available_fields()
         return fields.get(self.field, None)
 
     @property

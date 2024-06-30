@@ -165,19 +165,19 @@ class Company(
 
     is_customer = models.BooleanField(
         default=False,
-        verbose_name=_('is customer'),
+        verbose_name=_('Is customer'),
         help_text=_('Do you sell items to this company?'),
     )
 
     is_supplier = models.BooleanField(
         default=True,
-        verbose_name=_('is supplier'),
+        verbose_name=_('Is supplier'),
         help_text=_('Do you purchase items from this company?'),
     )
 
     is_manufacturer = models.BooleanField(
         default=False,
-        verbose_name=_('is manufacturer'),
+        verbose_name=_('Is manufacturer'),
         help_text=_('Does this company manufacture parts?'),
     )
 

@@ -88,44 +88,6 @@ def extract_rows(data_file) -> list:
     return rows
 
 
-def get_fields(
-    serializer_class,
-    write_only=None,
-    read_only=None,
-    required=None,
-    exporting=False,
-    importing=True,
-):
-    """Extract the field names from a serializer class.
-
-    Arguments:
-        serializer_class: Serializer
-        write_only: Filter fields based on write_only attribute
-        read_only: Filter fields based on read_only attribute
-        required: Filter fields based on required attribute
-    """
-    if not serializer_class:
-        return {}
-
-    serializer = serializer_class(exporting=exporting, importing=importing)
-
-    fields = {}
-
-    for field_name, field in serializer.fields.items():
-        if read_only is not None and getattr(field, 'read_only', None) != read_only:
-            continue
-
-        if write_only is not None and getattr(field, 'write_only', None) != write_only:
-            continue
-
-        if required is not None and getattr(field, 'required', None) != required:
-            continue
-
-        fields[field_name] = field
-
-    return fields
-
-
 def get_field_label(field) -> str:
     """Return the label for a field in a serializer class.
 
