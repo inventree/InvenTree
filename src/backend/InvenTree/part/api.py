@@ -29,7 +29,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import DownloadFile, increment_serial_number, isNull, str2bool
+from InvenTree.helpers import increment_serial_number, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,

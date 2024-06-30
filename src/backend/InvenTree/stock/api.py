@@ -37,7 +37,6 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
 )
 from InvenTree.helpers import (
-    DownloadFile,
     extract_serial_numbers,
     generateTestKey,
     is_ajax,
@@ -1350,7 +1349,7 @@ class StockTrackingDetail(RetrieveAPI):
     serializer_class = StockSerializers.StockTrackingSerializer
 
 
-class StockTrackingList(ListAPI):
+class StockTrackingList(DataExportViewMixin, ListAPI):
     """API endpoint for list view of StockItemTracking objects.
 
     StockItemTracking objects are read-only
