@@ -11,6 +11,7 @@ from taggit.serializers import TagListSerializerField
 
 import part.filters
 from importer.mixins import DataImportExportSerializerMixin
+from importer.registry import register_importer
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
@@ -57,6 +58,7 @@ class CompanyBriefSerializer(InvenTreeModelSerializer):
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
 
+@register_importer()
 class AddressSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializer for the Address Model."""
 
@@ -101,6 +103,7 @@ class AddressBriefSerializer(InvenTreeModelSerializer):
         ]
 
 
+@register_importer()
 class CompanySerializer(
     DataImportExportSerializerMixin,
     NotesFieldMixin,
@@ -191,6 +194,7 @@ class CompanySerializer(
         return self.instance
 
 
+@register_importer()
 class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializer class for the Contact model."""
 
@@ -205,6 +209,7 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
     )
 
 
+@register_importer()
 class ManufacturerPartSerializer(
     DataImportExportSerializerMixin, InvenTreeTagModelSerializer
 ):
@@ -260,7 +265,10 @@ class ManufacturerPartSerializer(
     )
 
 
-class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
+@register_importer()
+class ManufacturerPartParameterSerializer(
+    DataImportExportSerializerMixin, InvenTreeModelSerializer
+):
     """Serializer for the ManufacturerPartParameter model."""
 
     class Meta:
@@ -291,6 +299,7 @@ class ManufacturerPartParameterSerializer(InvenTreeModelSerializer):
     )
 
 
+@register_importer()
 class SupplierPartSerializer(
     DataImportExportSerializerMixin, InvenTreeTagModelSerializer
 ):
@@ -451,6 +460,7 @@ class SupplierPartSerializer(
         return supplier_part
 
 
+@register_importer()
 class SupplierPriceBreakSerializer(
     DataImportExportSerializerMixin, InvenTreeModelSerializer
 ):
