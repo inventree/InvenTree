@@ -1,17 +1,6 @@
 import { t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Group,
-  HoverCard,
-  Stack,
-  Text,
-  Tooltip
-} from '@mantine/core';
-import {
-  IconCircleCheck,
-  IconEdit,
-  IconExclamationCircle
-} from '@tabler/icons-react';
+import { Group, HoverCard, Stack, Text } from '@mantine/core';
+import { IconCircleCheck, IconExclamationCircle } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -30,10 +19,12 @@ import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 
 function ImporterDataCell({
+  session,
   column,
   row,
   onEdit
 }: {
+  session: ImportSessionState;
   column: any;
   row: any;
   onEdit?: () => void;
@@ -54,8 +45,10 @@ function ImporterDataCell({
   }, [row.errors, column.field]);
 
   const cellValue = useMemo(() => {
+    // TODO: Render inline models, rather than raw PK values
+
     return row.data ? row.data[column.field] : '';
-  }, [row.data, column.field]);
+  }, [row.data, column.field, session.availableFields]);
 
   const cellValid: boolean = useMemo(
     () => cellErrors.length == 0,
@@ -155,7 +148,6 @@ export default function ImporterDataSelector({
     let errors: string[] = [];
 
     for (const k of Object.keys(row.errors)) {
-      console.log('errors:', k, row.errors[k]);
       row.errors[k].forEach((e: string) => {
         errors.push(`${k}: ${e}`);
       });
@@ -206,6 +198,7 @@ export default function ImporterDataSelector({
           render: (row: any) => {
             return (
               <ImporterDataCell
+                session={session}
                 column={column}
                 row={row}
                 onEdit={() => editCell(row, column)}
