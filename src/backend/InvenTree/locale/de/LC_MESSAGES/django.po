@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-29 12:03+0000\n"
-"PO-Revision-Date: 2024-06-27 06:04\n"
+"POT-Creation-Date: 2024-06-29 10:44+0000\n"
+"PO-Revision-Date: 2024-06-30 06:57\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -297,7 +297,7 @@ msgstr "Portugiesisch (Brasilien)"
 
 #: InvenTree/locales.py:41
 msgid "Romanian"
-msgstr ""
+msgstr "Rumänisch"
 
 #: InvenTree/locales.py:42
 msgid "Russian"
@@ -526,7 +526,7 @@ msgstr "Vorname"
 
 #: InvenTree/serializers.py:409
 msgid "First name of the user"
-msgstr ""
+msgstr "Vorname des Benutzers"
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
@@ -534,15 +534,15 @@ msgstr "Nachname"
 
 #: InvenTree/serializers.py:412
 msgid "Last name of the user"
-msgstr ""
+msgstr "Nachname des Benutzers"
 
 #: InvenTree/serializers.py:415
 msgid "Email address of the user"
-msgstr ""
+msgstr "E-Mailadresse des Benutzers"
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
-msgstr ""
+msgstr "Mitarbeiter"
 
 #: InvenTree/serializers.py:439
 msgid "Does this user have staff permissions"
@@ -2812,10 +2812,8 @@ msgid "Enable self-registration via SSO for users on the login pages"
 msgstr "Selbstregistrierung über SSO für Benutzer auf den Anmeldeseiten aktivieren"
 
 #: common/models.py:1913
-#, fuzzy
-#| msgid "Enable SSO registration"
 msgid "Enable SSO group sync"
-msgstr "SSO Selbstregistrierung aktivieren"
+msgstr ""
 
 #: common/models.py:1915
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
@@ -3673,7 +3671,7 @@ msgstr ""
 
 #: common/models.py:3235
 msgid "Upload date"
-msgstr ""
+msgstr "Upload Datum"
 
 #: common/models.py:3236
 msgid "Date the file was uploaded"
@@ -3681,11 +3679,11 @@ msgstr ""
 
 #: common/models.py:3240
 msgid "File size"
-msgstr ""
+msgstr "Dateigröße"
 
 #: common/models.py:3240
 msgid "File size in bytes"
-msgstr ""
+msgstr "Dateigröße in Bytes"
 
 #: common/models.py:3278 common/serializers.py:553
 msgid "Invalid model type specified for attachment"
@@ -6828,7 +6826,7 @@ msgstr "Doppelte Beziehung existiert bereits"
 
 #: part/serializers.py:118
 msgid "Parent Category"
-msgstr ""
+msgstr "Übergeordnete Kategorie"
 
 #: part/serializers.py:119 templates/js/translated/part.js:309
 msgid "Parent part category"
@@ -8477,11 +8475,11 @@ msgstr "Teile"
 
 #: report/api.py:180
 msgid "Plugin not found"
-msgstr ""
+msgstr "Plugin nicht gefunden"
 
 #: report/api.py:182
 msgid "Plugin is not active"
-msgstr ""
+msgstr "Plugin ist nicht aktiv"
 
 #: report/api.py:184
 msgid "Plugin does not support label printing"
@@ -8610,7 +8608,7 @@ msgstr ""
 
 #: report/models.py:464 report/models.py:487
 msgid "Output File"
-msgstr ""
+msgstr "Ausgabedatei"
 
 #: report/models.py:465 report/models.py:488
 msgid "Generated output file"
@@ -14486,5 +14484,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Group to which new users are assigned on registration"
-#~ msgstr "Gruppe der neue Benutzer bei der Registrierung zugewiesen werden"
