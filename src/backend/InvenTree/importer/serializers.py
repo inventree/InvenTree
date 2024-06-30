@@ -51,6 +51,12 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
         ]
         read_only_fields = ['pk', 'user', 'status', 'columns']
 
+    def __init__(self, *args, **kwargs):
+        """Override the constructor for the DataImportSession serializer."""
+        super().__init__(*args, **kwargs)
+
+        self.fields['model_type'].choices = importer.registry.supported_model_options()
+
     data_file = InvenTreeAttachmentSerializerField()
 
     model_type = serializers.ChoiceField(
