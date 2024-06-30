@@ -46,6 +46,7 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'columns',
             'column_mappings',
             'field_defaults',
+            'field_overrides',
             'row_count',
             'completed_row_count',
         ]
