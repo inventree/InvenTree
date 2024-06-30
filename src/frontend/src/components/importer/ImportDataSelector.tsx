@@ -65,17 +65,10 @@ function ImporterDataCell({
   return (
     <HoverCard disabled={cellValid} openDelay={100} closeDelay={100}>
       <HoverCard.Target>
-        <Group grow justify="apart">
+        <Group grow justify="apart" onClick={onRowEdit}>
           <Group grow style={{ flex: 1 }}>
             <Text c={cellValid ? undefined : 'red'}>{cellValue}</Text>
           </Group>
-          <div style={{ flex: 0 }}>
-            <Tooltip label={t`Edit cell`}>
-              <ActionIcon size="xs" onClick={onRowEdit} variant="transparent">
-                <IconEdit />
-              </ActionIcon>
-            </Tooltip>
-          </div>
         </Group>
       </HoverCard.Target>
       <HoverCard.Dropdown>
@@ -154,6 +147,23 @@ export default function ImporterDataSelector({
     onFormSuccess: () => table.refreshTable()
   });
 
+  const rowErrors = useCallback((row: any) => {
+    if (!row.errors) {
+      return [];
+    }
+
+    let errors: string[] = [];
+
+    for (const k of Object.keys(row.errors)) {
+      console.log('errors:', k, row.errors[k]);
+      row.errors[k].forEach((e: string) => {
+        errors.push(`${k}: ${e}`);
+      });
+    }
+
+    return errors;
+  }, []);
+
   const columns: TableColumn[] = useMemo(() => {
     let columns: TableColumn[] = [
       {
@@ -168,7 +178,20 @@ export default function ImporterDataSelector({
               {row.valid ? (
                 <IconCircleCheck color="green" size={16} />
               ) : (
-                <IconExclamationCircle color="red" size={16} />
+                <HoverCard openDelay={50} closeDelay={100}>
+                  <HoverCard.Target>
+                    <IconExclamationCircle color="red" size={16} />
+                  </HoverCard.Target>
+                  <HoverCard.Dropdown>
+                    <Stack gap="xs">
+                      {rowErrors(row).map((error: string) => (
+                        <Text size="xs" c="red" key={error}>
+                          {error}
+                        </Text>
+                      ))}
+                    </Stack>
+                  </HoverCard.Dropdown>
+                </HoverCard>
               )}
             </Group>
           );

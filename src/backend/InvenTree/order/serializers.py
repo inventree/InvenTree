@@ -167,6 +167,14 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         ] + extra_fields
 
 
+class AbstractLineItemSerializer:
+    """Abstract serializer for LineItem object."""
+
+    target_date = serializers.DateField(
+        required=False, allow_null=True, label=_('Target Date')
+    )
+
+
 class AbstractExtraLineSerializer(
     DataImportExportSerializerMixin, serializers.Serializer
 ):
@@ -351,7 +359,9 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
 
 @register_importer()
 class PurchaseOrderLineItemSerializer(
-    DataImportExportSerializerMixin, InvenTreeModelSerializer
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer class for the PurchaseOrderLineItem model."""
 
@@ -956,7 +966,9 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
 
 @register_importer()
 class SalesOrderLineItemSerializer(
-    DataImportExportSerializerMixin, InvenTreeModelSerializer
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for a SalesOrderLineItem object."""
 
@@ -1738,7 +1750,9 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class ReturnOrderLineItemSerializer(
-    DataImportExportSerializerMixin, InvenTreeModelSerializer
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for a ReturnOrderLineItem object."""
 
