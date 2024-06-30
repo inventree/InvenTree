@@ -45,7 +45,7 @@ from InvenTree.fields import (
     RoundingDecimalField,
 )
 from InvenTree.helpers import decimal2string, pui_url
-from InvenTree.helpers_model import getSetting, notify_responsible, notify_users
+from InvenTree.helpers_model import notify_responsible, notify_users
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -678,7 +678,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         if self.approved_by:
             raise ValidationError(_('Cannot request approval of approved order'))
 
-        master_group_name = getSetting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
+        master_group_name = get_global_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
         master_users = master_group_name and Group.objects.get(name=master_group_name)
         approver = None
         user = kwargs.pop('user', None)
@@ -712,7 +712,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must currently be IN_APPROVAL
         """
-        master_approvers = getSetting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
+        master_approvers = get_global_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
 
         if not self.requires_approval:
             raise ValidationError(_('Approvals are not active'))
@@ -763,7 +763,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
             user = kwargs.pop('user', None)
 
-            purchaser_group_name = getSetting('PURCHASE_ORDER_PURCHASER_GROUP')
+            purchaser_group_name = get_global_setting('PURCHASE_ORDER_PURCHASER_GROUP')
             if purchaser_group_name:
                 purchasers_group = Group.objects.filter(
                     name=purchaser_group_name
@@ -793,7 +793,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
-        purchaser_group = getSetting('PURCHASE_ORDER_PURCHASER_GROUP')
+        purchaser_group = get_global_setting('PURCHASE_ORDER_PURCHASER_GROUP')
         if self.is_pending or self.is_ready:
             user = kwargs.pop('user', None)
             if (
@@ -941,12 +941,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
     @property
     def requires_approval(self):
         """Return state of ENABLE_PURCHASE_ORDER_APPROVAL setting."""
-        return getSetting('ENABLE_PURCHASE_ORDER_APPROVAL')
+        return get_global_setting('ENABLE_PURCHASE_ORDER_APPROVAL')
 
     @property
     def can_be_ready(self):
         """Return state of ENABLE_PURCHASE_ORDER_READY_STATUS setting."""
-        return getSetting('ENABLE_PURCHASE_ORDER_READY_STATUS')
+        return get_global_setting('ENABLE_PURCHASE_ORDER_READY_STATUS')
 
     def _action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
@@ -966,8 +966,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def approval_allowed(self, user):
         """Check that the given user is allowed to approve the order."""
-        active = getSetting('ENABLE_PURCHASE_ORDER_APPROVAL')
-        master_approvers = getSetting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
+        active = get_global_setting('ENABLE_PURCHASE_ORDER_APPROVAL')
+        master_approvers = get_global_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
 
         if not active:
             return False
@@ -984,7 +984,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
     def allowed_to_issue(self, user):
         """Check that the given user is allowed to issue the order."""
-        purchasers = getSetting('PURCHASE_ORDER_PURCHASER_GROUP')
+        purchasers = get_global_setting('PURCHASE_ORDER_PURCHASER_GROUP')
 
         user_has_permission = True
 
