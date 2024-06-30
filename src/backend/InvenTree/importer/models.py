@@ -32,7 +32,8 @@ class DataImportSession(models.Model):
         data_file: FileField for the data file to import
         status: IntegerField for the status of the import session
         user: ForeignKey to the User who initiated the import
-        field_defaults: JSONField for field overrides (e.g. custom field values)
+        field_defaults: JSONField for field default values
+        field_overrides: JSONField for field overrides
     """
 
     @staticmethod
@@ -90,6 +91,13 @@ class DataImportSession(models.Model):
         blank=True,
         null=True,
         verbose_name=_('Field Defaults'),
+        validators=[importer.validators.validate_field_defaults],
+    )
+
+    field_overrides = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Field Overrides'),
         validators=[importer.validators.validate_field_defaults],
     )
 

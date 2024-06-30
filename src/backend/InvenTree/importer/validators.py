@@ -46,4 +46,4 @@ def validate_field_defaults(value):
         return
 
     if type(value) is not dict:
-        raise ValidationError(_('Field defaults must be a dictionary'))
+        raise ValidationError(_('Value must be a valid dictionary object'))
