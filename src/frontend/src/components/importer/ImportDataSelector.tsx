@@ -47,7 +47,13 @@ function ImporterDataCell({
   const cellValue = useMemo(() => {
     // TODO: Render inline models, rather than raw PK values
 
-    return row.data ? row.data[column.field] : '';
+    let value = row.data ? row.data[column.field] ?? '' : '';
+
+    if (!value) {
+      value = '-';
+    }
+
+    return value;
   }, [row.data, column.field, session.availableFields]);
 
   const cellValid: boolean = useMemo(

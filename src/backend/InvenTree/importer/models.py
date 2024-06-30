@@ -457,11 +457,18 @@ class DataImportRow(models.Model):
         for field, col in field_mapping.items():
             # If an override value exists, use that
             if field in override_values:
-                value = override_values[field]
-            else:
-                value = self.row_data.get(col, None)
-                if value is None and field in default_values:
-                    value = default_values[field]
+                data[field] = override_values[field]
+                continue
+
+            # If this field is *not* mapped to any column, skip
+            if not col:
+                continue
+
+            value = self.row_data.get(col, None)
+
+            # Use the default value, if provided
+            if value in [None, ''] and field in default_values:
+                value = default_values[field]
 
             data[field] = value
 
@@ -477,7 +484,10 @@ class DataImportRow(models.Model):
         session_defaults = self.session.field_defaults or {}
         session_overrides = self.session.field_overrides or {}
 
-        return {**session_defaults, **self.data, **session_overrides}
+        # Construct data
+        data = {**session_defaults, **self.data, **session_overrides}
+
+        return data
 
     def construct_serializer(self):
         """Construct a serializer object for this row."""
