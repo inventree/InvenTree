@@ -448,11 +448,22 @@ class DataImportRow(models.Model):
         if not field_mapping:
             field_mapping = self.session.field_mapping
 
+        override_values = self.session.field_overrides or {}
+        default_values = self.session.field_defaults or {}
+
         data = {}
 
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
-            data[field] = self.row_data.get(col, None)
+            # If an override value exists, use that
+            if field in override_values:
+                value = override_values[field]
+            else:
+                value = self.row_data.get(col, None)
+                if value is None and field in default_values:
+                    value = default_values[field]
+
+            data[field] = value
 
         self.data = data
         self.save()
@@ -460,11 +471,13 @@ class DataImportRow(models.Model):
     def serializer_data(self):
         """Construct data object to be sent to the serializer.
 
-        Note that we also use the "default" values provided by the import session
+        - If available, we use the "default" values provided by the import session
+        - If available, we use the "override" values provided by the import session
         """
         session_defaults = self.session.field_defaults or {}
+        session_overrides = self.session.field_overrides or {}
 
-        return {**session_defaults, **self.data}
+        return {**session_defaults, **self.data, **session_overrides}
 
     def construct_serializer(self):
         """Construct a serializer object for this row."""
