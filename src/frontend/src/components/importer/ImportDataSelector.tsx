@@ -81,7 +81,7 @@ function ImporterDataCell({
       <HoverCard.Dropdown>
         <Stack gap="xs">
           {cellErrors.map((error: string) => (
-            <Text size="xs" color="red" key={error}>
+            <Text size="xs" c="red" key={error}>
               {error}
             </Text>
           ))}

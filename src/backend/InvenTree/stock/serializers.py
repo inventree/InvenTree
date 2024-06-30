@@ -27,6 +27,7 @@ import stock.status_codes
 from common.settings import get_global_setting
 from company.serializers import SupplierPartSerializer
 from importer.mixins import DataImportExportSerializerMixin
+from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
@@ -178,7 +179,10 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         fields = ['pk', 'name', 'pathstring']
 
 
-class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class StockItemTestResultSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for the StockItemTestResult model."""
 
     class Meta:
@@ -317,6 +321,7 @@ class StockItemSerializerBrief(
         return value
 
 
+@register_importer()
 class StockItemSerializer(
     DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
 ):
@@ -1034,6 +1039,7 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset.annotate(sublocations=stock.filters.annotate_sub_locations())
 
 
+@register_importer()
 class LocationSerializer(
     DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
 ):
@@ -1119,7 +1125,10 @@ class LocationSerializer(
     )
 
 
-class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class StockTrackingSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for StockItemTracking model."""
 
     class Meta:
