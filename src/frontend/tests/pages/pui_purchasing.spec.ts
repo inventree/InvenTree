@@ -8,30 +8,24 @@ async function enableReady(page: Page) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Enable Ready Status').waitFor();
-  await page
-    .locator('div', { hasText: 'Enable Ready Status' })
-    .getByRole('switch')
-    .click();
+  const setting = page.locator('div', { hasText: 'Enable Ready Status' });
+  await setting.getByRole('switch').click();
 }
 
 async function enableApprovals(page: Page) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Purchase Order Approvals').waitFor();
-  await page
-    .locator('div', { hasText: 'Purchase Order Approvals' })
-    .getByRole('switch')
-    .click();
+  const setting = page.locator('div', { hasText: 'Purchase Order Approvals' });
+  await setting.getByRole('switch').click();
 }
 
 async function setApprover(page: Page) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Master approval group').waitFor();
-  await page
-    .locator('div', { hasText: 'Master approval group' })
-    .getByRole('button')
-    .click();
+  const setting = page.locator('div', { hasText: 'Master approval group' });
+  await setting.getByRole('button').click();
   await page.getByLabel('Master approval group').fill('all access');
   await page.getByRole('button', { name: 'Submit' }).click();
 }
@@ -44,7 +38,7 @@ test('PUI - Pages - Purchasing - Pending transitions', async ({ page }) => {
   await page.getByText('Purchase Order: PO0012').waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).isEnabled();
 
-  enableReady(page);
+  await enableReady(page);
 
   // Check that Ready Button is present
   await page.goto(`${baseUrl}/purchasing/purchase-order/12/detail`);
