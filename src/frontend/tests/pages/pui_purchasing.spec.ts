@@ -3,29 +3,26 @@ import { Page } from '@playwright/test';
 import { expect, test } from '../baseFixtures';
 import { adminuser, baseUrl } from '../defaults';
 import { doLogin, doQuickLogin } from '../login';
+import { TestSetting, setGlobalSetting, setGlobalSettings } from '../settings';
 
 async function toggleReady(page: Page, disable = false) {
   await doLogin(page, adminuser.username, adminuser.password);
-  await page.goto(`${baseUrl}/settings/system/purchaseorders`);
-  await page.getByText('Enable Ready Status').waitFor();
-  await expect(
-    page.getByTestId('ENABLE_PURCHASE_ORDER_READY_STATUS')
-  ).toBeVisible();
-  await expect(
-    page.getByTestId('ENABLE_PURCHASE_ORDER_READY_STATUS').getByRole('checkbox')
-  ).toBeVisible();
+  await setGlobalSetting(page, {
+    slug: 'purchaseorders',
+    key: 'ENABLE_PURCHASE_ORDER_READY_STATUS',
+    state: !disable,
+    isToggle: true
+  });
 }
 
-async function toggleApprovals(page: Page) {
+async function toggleApprovals(page: Page, disable = false) {
   await doLogin(page, adminuser.username, adminuser.password);
-  await page.goto(`${baseUrl}/settings/system/purchaseorders`);
-  await page.getByText('Purchase Order Approvals').waitFor();
-  await expect(
-    page.getByTestId('ENABLE_PURCHASE_ORDER_APPROVALS')
-  ).toBeVisible();
-  await expect(
-    page.getByTestId('ENABLE_PURCHASE_ORDER_APPROVALS').getByRole('checkbox')
-  ).toBeVisible();
+  await setGlobalSetting(page, {
+    slug: 'purchaseorders',
+    key: 'ENABLE_PURCHASE_ORDER_APPROVAL',
+    state: !disable,
+    isToggle: true
+  });
 }
 
 async function setApprover(page: Page) {
@@ -42,6 +39,39 @@ async function setApprover(page: Page) {
   //  await page.getByLabel('Master approval group').fill('all access');
   //  await page.getByRole('button', { name: 'Submit' }).click();
 }
+
+async function disableAllSettings(page: Page) {
+  const settings: TestSetting[] = [
+    {
+      slug: 'purchaseorders',
+      key: 'ENABLE_PURCHASE_ORDER_APPROVAL',
+      state: false,
+      isToggle: true
+    },
+    {
+      slug: 'purchaseorders',
+      key: 'ENABLE_PURCHASE_ORDER_READY_STATUS',
+      state: false,
+      isToggle: true
+    },
+    {
+      slug: 'purchaseorders',
+      key: 'PURCHASE_ORDER_APPROVE_ALL_GROUP',
+      state: ''
+    },
+    {
+      slug: 'purchaseorders',
+      key: 'PURCHASE_ORDER_PURCHASER_GROUP',
+      state: ''
+    }
+  ];
+
+  await setGlobalSettings(page, settings);
+}
+
+test.afterEach(async ({ page }) => {
+  await disableAllSettings(page);
+});
 
 test('PUI - Pages - Purchasing - Pending transitions', async ({ page }) => {
   await doQuickLogin(page);
