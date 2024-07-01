@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-27 06:03\n"
+"PO-Revision-Date: 2024-07-01 13:11\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -336,7 +336,7 @@ msgstr "Recharger l’aperçu"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 msgid "Use the currently stored template from the server"
-msgstr ""
+msgstr "Utiliser le modèle actuellement stocké sur le serveur"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 #~ msgid "Save & Reload preview"
@@ -344,7 +344,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:271
 msgid "Save the current template and reload the preview"
-msgstr ""
+msgstr "Enregistrer le modèle actuel et recharger l'aperçu"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:322
 #~ msgid "to preview"
@@ -352,7 +352,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:329
 msgid "Select instance to preview"
-msgstr ""
+msgstr "Sélectionner l'instance à prévisualiser"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:373
 msgid "Error rendering template"
@@ -6884,3 +6884,4 @@ msgstr "Lire la documentation"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
