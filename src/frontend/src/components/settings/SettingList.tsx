@@ -49,12 +49,12 @@ export function SettingList({
 
   // Determine the field type of the setting
   const fieldType = useMemo(() => {
-    if (setting?.type != undefined) {
-      return setting.type;
+    if (setting?.choices?.length) {
+      return 'choice';
     }
 
-    if (setting?.choices != undefined && setting.choices.length > 0) {
-      return 'choice';
+    if (setting?.type != undefined) {
+      return setting.type;
     }
 
     return 'string';
