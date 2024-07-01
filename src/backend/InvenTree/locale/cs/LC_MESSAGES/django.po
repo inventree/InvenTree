@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-26 06:04\n"
+"POT-Creation-Date: 2024-06-26 13:12+0000\n"
+"PO-Revision-Date: 2024-06-29 06:40\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -348,8 +348,8 @@ msgstr "Čínština (tradiční)"
 msgid "[{site_name}] Log in to the app"
 msgstr "[{site_name}] Přihlásit se do aplikace"
 
-#: InvenTree/magic_login.py:38 company/models.py:136
-#: company/templates/company/company_base.html:138
+#: InvenTree/magic_login.py:38 InvenTree/serializers.py:415
+#: company/models.py:136 company/templates/company/company_base.html:138
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:677
 msgid "Email"
@@ -516,81 +516,138 @@ msgstr "Měna"
 msgid "Select currency from available options"
 msgstr "Vyberte měnu z dostupných možností"
 
+#: InvenTree/serializers.py:407 templates/InvenTree/settings/user.html:33
+msgid "Username"
+msgstr "Uživatelské jméno"
+
+#: InvenTree/serializers.py:409 templates/InvenTree/settings/user.html:37
+msgid "First Name"
+msgstr "Křestní jméno"
+
+#: InvenTree/serializers.py:409
+msgid "First name of the user"
+msgstr "Křestní jméno uživatele"
+
+#: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
+msgid "Last Name"
+msgstr "Příjmení"
+
+#: InvenTree/serializers.py:412
+msgid "Last name of the user"
+msgstr "Příjmení uživatele"
+
+#: InvenTree/serializers.py:415
+msgid "Email address of the user"
+msgstr "Emailová adresa uživatele"
+
+#: InvenTree/serializers.py:439
+msgid "Staff"
+msgstr "Personál"
+
+#: InvenTree/serializers.py:439
+msgid "Does this user have staff permissions"
+msgstr "Má tento uživatel oprávnění personálu"
+
 #: InvenTree/serializers.py:442
+msgid "Superuser"
+msgstr "Super-uživatel"
+
+#: InvenTree/serializers.py:442
+msgid "Is this user a superuser"
+msgstr "Je tento uživatel superuživatel"
+
+#: InvenTree/serializers.py:445 common/models.py:2628 company/models.py:163
+#: company/models.py:782 machine/models.py:39 part/admin.py:88
+#: part/models.py:1081 plugin/models.py:66
+#: templates/js/translated/company.js:523
+#: templates/js/translated/table_filters.js:135
+#: templates/js/translated/table_filters.js:219
+#: templates/js/translated/table_filters.js:492
+#: templates/js/translated/table_filters.js:520
+#: templates/js/translated/table_filters.js:716
+#: templates/js/translated/table_filters.js:796 users/models.py:182
+msgid "Active"
+msgstr "Aktivní"
+
+#: InvenTree/serializers.py:445
+msgid "Is this user account active"
+msgstr "Je tento uživatelský účet aktivní"
+
+#: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
 msgstr "Nemáte oprávnění měnit tuto uživatelskou roli."
 
-#: InvenTree/serializers.py:454
+#: InvenTree/serializers.py:475
 msgid "Only superusers can create new users"
 msgstr "Pouze superuživatelé mohou vytvářet nové uživatele"
 
-#: InvenTree/serializers.py:473
+#: InvenTree/serializers.py:494
 msgid "Your account has been created."
 msgstr "Váš účet byl vytvořen."
 
-#: InvenTree/serializers.py:475
+#: InvenTree/serializers.py:496
 msgid "Please use the password reset function to login"
 msgstr "Pro přihlášení použijte funkci obnovení hesla"
 
-#: InvenTree/serializers.py:482
+#: InvenTree/serializers.py:503
 msgid "Welcome to InvenTree"
 msgstr "Vítejte v InvenTree"
 
-#: InvenTree/serializers.py:540
+#: InvenTree/serializers.py:561
 msgid "Invalid value"
 msgstr "Neplatná hodnota"
 
-#: InvenTree/serializers.py:560
+#: InvenTree/serializers.py:581
 msgid "Data File"
 msgstr "Datový soubor"
 
-#: InvenTree/serializers.py:561
+#: InvenTree/serializers.py:582
 msgid "Select data file for upload"
 msgstr "Vyberte datový soubor k nahrání"
 
-#: InvenTree/serializers.py:578
+#: InvenTree/serializers.py:599
 msgid "Unsupported file type"
 msgstr "Nepodporovaný typ souboru"
 
-#: InvenTree/serializers.py:584
+#: InvenTree/serializers.py:605
 msgid "File is too large"
 msgstr "Soubor je příliš velký"
 
-#: InvenTree/serializers.py:605
+#: InvenTree/serializers.py:626
 msgid "No columns found in file"
 msgstr "V souboru nebyly nalezeny žádné sloupce"
 
-#: InvenTree/serializers.py:608
+#: InvenTree/serializers.py:629
 msgid "No data rows found in file"
 msgstr "V souboru nebyly nalezeny žádné řádky s daty"
 
-#: InvenTree/serializers.py:721
+#: InvenTree/serializers.py:742
 msgid "No data rows provided"
 msgstr "Nebyly zadány žádné řádky s daty"
 
-#: InvenTree/serializers.py:724
+#: InvenTree/serializers.py:745
 msgid "No data columns supplied"
 msgstr "Nebyly zadány žádné sloupce s daty"
 
-#: InvenTree/serializers.py:791
+#: InvenTree/serializers.py:812
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Chybí povinný sloupec: '{name}'"
 
-#: InvenTree/serializers.py:800
+#: InvenTree/serializers.py:821
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Duplicitní sloupec: '{col}'"
 
-#: InvenTree/serializers.py:840
+#: InvenTree/serializers.py:861
 msgid "Remote Image"
 msgstr "Vzdálený obraz"
 
-#: InvenTree/serializers.py:841
+#: InvenTree/serializers.py:862
 msgid "URL of remote image file"
 msgstr "URL souboru vzdáleného obrázku"
 
-#: InvenTree/serializers.py:859
+#: InvenTree/serializers.py:880
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Stahování obrázků ze vzdálené URL není povoleno"
 
@@ -3396,18 +3453,6 @@ msgstr "Koncový bod, ve kterém je tento webhook přijímán"
 msgid "Name for this webhook"
 msgstr "Název tohoto webhooku"
 
-#: common/models.py:2628 company/models.py:163 company/models.py:782
-#: machine/models.py:39 part/admin.py:88 part/models.py:1081
-#: plugin/models.py:66 templates/js/translated/company.js:523
-#: templates/js/translated/table_filters.js:135
-#: templates/js/translated/table_filters.js:219
-#: templates/js/translated/table_filters.js:492
-#: templates/js/translated/table_filters.js:520
-#: templates/js/translated/table_filters.js:716
-#: templates/js/translated/table_filters.js:796 users/models.py:182
-msgid "Active"
-msgstr "Aktivní"
-
 #: common/models.py:2628
 msgid "Is this webhook active"
 msgstr "Je tento webhook aktivní"
@@ -3422,64 +3467,64 @@ msgstr "Token pro přístup"
 
 #: common/models.py:2653
 msgid "Secret"
-msgstr ""
+msgstr "Tajný klíč"
 
 #: common/models.py:2654
 msgid "Shared secret for HMAC"
-msgstr ""
+msgstr "Sdílený tajný klíč pro HMAC"
 
 #: common/models.py:2762
 msgid "Message ID"
-msgstr ""
+msgstr "ID zprávy"
 
 #: common/models.py:2763
 msgid "Unique identifier for this message"
-msgstr ""
+msgstr "Unikátní identifikátor pro tuto zprávu"
 
 #: common/models.py:2771
 msgid "Host"
-msgstr ""
+msgstr "Hostitel"
 
 #: common/models.py:2772
 msgid "Host from which this message was received"
-msgstr ""
+msgstr "Hostitel, od kterého byla tato zpráva přijata"
 
 #: common/models.py:2780
 msgid "Header"
-msgstr ""
+msgstr "Záhlaví"
 
 #: common/models.py:2781
 msgid "Header of this message"
-msgstr ""
+msgstr "Záhlaví této zprávy"
 
 #: common/models.py:2788
 msgid "Body"
-msgstr ""
+msgstr "Tělo"
 
 #: common/models.py:2789
 msgid "Body of this message"
-msgstr ""
+msgstr "Tělo zprávy"
 
 #: common/models.py:2799
 msgid "Endpoint on which this message was received"
-msgstr ""
+msgstr "Koncový bod, na kterém byla zpráva přijata"
 
 #: common/models.py:2804
 msgid "Worked on"
-msgstr ""
+msgstr "Pracoval na"
 
 #: common/models.py:2805
 msgid "Was the work on this message finished?"
-msgstr ""
+msgstr "Byla práce na této zprávě dokončena?"
 
 #: common/models.py:2931
 msgid "Id"
-msgstr ""
+msgstr "ID"
 
 #: common/models.py:2933 templates/js/translated/company.js:965
 #: templates/js/translated/news.js:44
 msgid "Title"
-msgstr ""
+msgstr "Název"
 
 #: common/models.py:2935 common/models.py:3177 company/models.py:149
 #: company/models.py:440 company/models.py:500 company/models.py:799
@@ -3500,24 +3545,24 @@ msgstr "Odkaz"
 
 #: common/models.py:2937 templates/js/translated/news.js:60
 msgid "Published"
-msgstr ""
+msgstr "Zveřejněno"
 
 #: common/models.py:2939 templates/InvenTree/settings/plugin_settings.html:32
 #: templates/js/translated/news.js:56 templates/js/translated/plugin.js:103
 msgid "Author"
-msgstr ""
+msgstr "Autor"
 
 #: common/models.py:2941 templates/js/translated/news.js:52
 msgid "Summary"
-msgstr ""
+msgstr "Souhrn"
 
 #: common/models.py:2944
 msgid "Read"
-msgstr ""
+msgstr "Přečteno"
 
 #: common/models.py:2944
 msgid "Was this news item read?"
-msgstr ""
+msgstr "Byla tato novinka přečtena?"
 
 #: common/models.py:2961 company/models.py:159 part/models.py:965
 #: report/templates/report/inventree_bill_of_materials_report.html:126
@@ -3531,39 +3576,39 @@ msgstr "Obrazek"
 
 #: common/models.py:2961
 msgid "Image file"
-msgstr ""
+msgstr "Soubor obrázku"
 
 #: common/models.py:2973 common/models.py:3161
 msgid "Target model type for this image"
-msgstr ""
+msgstr "Cílový typ modelu pro tento obrázek"
 
 #: common/models.py:2977
 msgid "Target model ID for this image"
-msgstr ""
+msgstr "Cílové ID modelu pro tento obrázek"
 
 #: common/models.py:3018
 msgid "Unit name must be a valid identifier"
-msgstr ""
+msgstr "Název jednotky musí být platný identifikátor"
 
 #: common/models.py:3037
 msgid "Unit name"
-msgstr ""
+msgstr "Název jednotky"
 
 #: common/models.py:3044 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
-msgstr ""
+msgstr "Symbol"
 
 #: common/models.py:3045
 msgid "Optional unit symbol"
-msgstr ""
+msgstr "Volitelný symbol jednotky"
 
 #: common/models.py:3052 templates/InvenTree/settings/settings_staff_js.html:71
 msgid "Definition"
-msgstr ""
+msgstr "Definice"
 
 #: common/models.py:3053
 msgid "Unit definition"
-msgstr ""
+msgstr "Definice jednotky"
 
 #: common/models.py:3111 common/models.py:3168 stock/models.py:2426
 #: templates/js/translated/attachment.js:119
@@ -3590,45 +3635,45 @@ msgstr "Komentář"
 
 #: common/models.py:3185
 msgid "Attachment comment"
-msgstr ""
+msgstr "Komentář přílohy"
 
 #: common/models.py:3201
 msgid "Upload date"
-msgstr ""
+msgstr "Datum nahrání"
 
 #: common/models.py:3202
 msgid "Date the file was uploaded"
-msgstr ""
+msgstr "Datum, kdy byl soubor nahrán"
 
 #: common/models.py:3206
 msgid "File size"
-msgstr ""
+msgstr "Velikost souboru"
 
 #: common/models.py:3206
 msgid "File size in bytes"
-msgstr ""
+msgstr "Velikost souboru v bytech"
 
 #: common/models.py:3244 common/serializers.py:553
 msgid "Invalid model type specified for attachment"
-msgstr ""
+msgstr "Uveden neplatný typ modelu pro přílohu"
 
 #: common/notifications.py:314
 #, python-brace-format
 msgid "New {verbose_name}"
-msgstr ""
+msgstr "Nový {verbose_name}"
 
 #: common/notifications.py:316
 msgid "A new order has been created and assigned to you"
-msgstr ""
+msgstr "Byla vytvořena nová objednávka a přiřazena k vám"
 
 #: common/notifications.py:322
 #, python-brace-format
 msgid "{verbose_name} canceled"
-msgstr ""
+msgstr "{verbose_name} zrušeno"
 
 #: common/notifications.py:324
 msgid "A order that is assigned to you was canceled"
-msgstr ""
+msgstr "Objednávka, která je vám přidělena, byla zrušena"
 
 #: common/notifications.py:330 common/notifications.py:337 order/api.py:472
 msgid "Items Received"
@@ -4880,58 +4925,58 @@ msgstr ""
 
 #: order/models.py:487
 msgid "Company from which the items are being ordered"
-msgstr ""
+msgstr "Společnost, od které se položky objednávají"
 
 #: order/models.py:498 order/templates/order/order_base.html:148
 #: templates/js/translated/purchase_order.js:1702
 msgid "Supplier Reference"
-msgstr ""
+msgstr "Reference dodavatele"
 
 #: order/models.py:499
 msgid "Supplier order reference code"
-msgstr ""
+msgstr "Referenční kód objednávky dodavatele"
 
 #: order/models.py:508
 msgid "received by"
-msgstr ""
+msgstr "přijal"
 
 #: order/models.py:514 order/models.py:2058
 msgid "Issue Date"
-msgstr ""
+msgstr "Datum vystavení"
 
 #: order/models.py:515 order/models.py:2059
 msgid "Date order was issued"
-msgstr ""
+msgstr "Datum vystavení objednávky"
 
 #: order/models.py:522 order/models.py:2066
 msgid "Date order was completed"
-msgstr ""
+msgstr "Datum dokončení objednávky"
 
 #: order/models.py:566
 msgid "Part supplier must match PO supplier"
-msgstr ""
+msgstr "Dodavatel dílu se musí shodovat s dodavatelem PO"
 
 #: order/models.py:760
 msgid "Quantity must be a positive number"
-msgstr ""
+msgstr "Množství musí být kladné"
 
 #: order/models.py:939
 msgid "Company to which the items are being sold"
-msgstr ""
+msgstr "Společnost, jíž se položky prodávají"
 
 #: order/models.py:962 order/models.py:2051
 msgid "Customer Reference "
-msgstr ""
+msgstr "Reference zákazníka "
 
 #: order/models.py:963 order/models.py:2052
 msgid "Customer order reference code"
-msgstr ""
+msgstr "Referenční kód objednávky zákazníka"
 
 #: order/models.py:967 order/models.py:1671
 #: templates/js/translated/sales_order.js:879
 #: templates/js/translated/sales_order.js:1060
 msgid "Shipment Date"
-msgstr ""
+msgstr "Datum odeslání"
 
 #: order/models.py:976
 msgid "shipped by"
@@ -5161,44 +5206,44 @@ msgstr "Zadejte množství pro přidělení zásob"
 
 #: order/models.py:2021
 msgid "Return Order reference"
-msgstr ""
+msgstr "Reference návratové objednávky"
 
 #: order/models.py:2033
 msgid "Company from which items are being returned"
-msgstr ""
+msgstr "Společnost, od které se vrací položky"
 
 #: order/models.py:2045
 msgid "Return order status"
-msgstr ""
+msgstr "Stav návratové objednávky"
 
 #: order/models.py:2224
 msgid "Only serialized items can be assigned to a Return Order"
-msgstr ""
+msgstr "K návratové objednávce lze přiřadit pouze serializované položky"
 
 #: order/models.py:2240
 msgid "Select item to return from customer"
-msgstr ""
+msgstr "Vyberte položku pro vrácení od zákazníka"
 
 #: order/models.py:2246
 msgid "Received Date"
-msgstr ""
+msgstr "Datum přijetí"
 
 #: order/models.py:2247
 msgid "The date this this return item was received"
-msgstr ""
+msgstr "Datum přijetí této vrácené položky"
 
 #: order/models.py:2258 templates/js/translated/return_order.js:732
 #: templates/js/translated/table_filters.js:123
 msgid "Outcome"
-msgstr ""
+msgstr "Výsledek"
 
 #: order/models.py:2259
 msgid "Outcome for this line item"
-msgstr ""
+msgstr "Výsledky pro tuto položku"
 
 #: order/models.py:2266
 msgid "Cost associated with return or repair for this line item"
-msgstr ""
+msgstr "Náklady spojené s návratem nebo opravou této položky"
 
 #: order/serializers.py:79 order/templates/order/po_sidebar.html:5
 #: order/templates/order/return_order_detail.html:18
@@ -5207,111 +5252,111 @@ msgstr ""
 #: report/templates/report/inventree_return_order_report.html:19
 #: report/templates/report/inventree_sales_order_report.html:22
 msgid "Line Items"
-msgstr ""
+msgstr "Řádkové položky"
 
 #: order/serializers.py:83
 msgid "Completed Lines"
-msgstr ""
+msgstr "Dokončené řádky"
 
 #: order/serializers.py:286
 msgid "Order cannot be cancelled"
-msgstr ""
+msgstr "Objednávku nelze zrušit"
 
 #: order/serializers.py:301 order/serializers.py:1235
 msgid "Allow order to be closed with incomplete line items"
-msgstr ""
+msgstr "Povolit uzavření objednávky s neúplnými řádkovými položkami"
 
 #: order/serializers.py:311 order/serializers.py:1245
 msgid "Order has incomplete line items"
-msgstr ""
+msgstr "Objednávka má nedokončené řádkové položky"
 
 #: order/serializers.py:439
 msgid "Order is not open"
-msgstr ""
+msgstr "Objednávka není otevřena"
 
 #: order/serializers.py:460
 msgid "Auto Pricing"
-msgstr ""
+msgstr "Automatická cena"
 
 #: order/serializers.py:462
 msgid "Automatically calculate purchase price based on supplier part data"
-msgstr ""
+msgstr "Automaticky vypočítat nákupní cenu na základě údajů o dílech dodavatele"
 
 #: order/serializers.py:472
 msgid "Purchase price currency"
-msgstr ""
+msgstr "Měna nákupní ceny"
 
 #: order/serializers.py:478
 msgid "Merge Items"
-msgstr ""
+msgstr "Sloučit položky"
 
 #: order/serializers.py:480
 msgid "Merge items with the same part, destination and target date into one line item"
-msgstr ""
+msgstr "Sloučit položky se stejným dílem, místem určení a cílovým datem do jedné řádkové položky"
 
 #: order/serializers.py:498
 msgid "Supplier part must be specified"
-msgstr ""
+msgstr "Musí být uveden díl dodavatele"
 
 #: order/serializers.py:501
 msgid "Purchase order must be specified"
-msgstr ""
+msgstr "Objednávka musí být zadána"
 
 #: order/serializers.py:509
 msgid "Supplier must match purchase order"
-msgstr ""
+msgstr "Dodavatel musí odpovídat objednávce"
 
 #: order/serializers.py:510
 msgid "Purchase order must match supplier"
-msgstr ""
+msgstr "Objednávka musí odpovídat dodavateli"
 
 #: order/serializers.py:549 order/serializers.py:1313
 msgid "Line Item"
-msgstr ""
+msgstr "Řádková položka"
 
 #: order/serializers.py:555
 msgid "Line item does not match purchase order"
-msgstr ""
+msgstr "Řádková položka neodpovídá nákupní objednávce"
 
 #: order/serializers.py:565 order/serializers.py:673 order/serializers.py:1657
 msgid "Select destination location for received items"
-msgstr ""
+msgstr "Vyberte cílové umístění pro přijaté položky"
 
 #: order/serializers.py:581 templates/js/translated/purchase_order.js:1130
 msgid "Enter batch code for incoming stock items"
-msgstr ""
+msgstr "Zadat kód dávky pro příchozí položky skladu"
 
 #: order/serializers.py:589 templates/js/translated/purchase_order.js:1154
 msgid "Enter serial numbers for incoming stock items"
-msgstr ""
+msgstr "Zadat sériová čísla pro příchozí skladové položky"
 
 #: order/serializers.py:600 templates/js/translated/barcode.js:52
 msgid "Barcode"
-msgstr ""
+msgstr "Čárový kód"
 
 #: order/serializers.py:601
 msgid "Scanned barcode"
-msgstr ""
+msgstr "Naskenovaný čárový kód"
 
 #: order/serializers.py:617
 msgid "Barcode is already in use"
-msgstr ""
+msgstr "Tento čárový kód se již používá"
 
 #: order/serializers.py:641
 msgid "An integer quantity must be provided for trackable parts"
-msgstr ""
+msgstr "U sledovatelných dílů musí být uvedeno celočíselné množství"
 
 #: order/serializers.py:689 order/serializers.py:1673
 msgid "Line items must be provided"
-msgstr ""
+msgstr "Musí být uvedeny řádkové položky"
 
 #: order/serializers.py:705
 msgid "Destination location must be specified"
-msgstr ""
+msgstr "Místo určení musí být specifikováno"
 
 #: order/serializers.py:716
 msgid "Supplied barcode values must be unique"
-msgstr ""
+msgstr "Hodnoty dodaných čárových kódů musí být unikátní"
 
 #: order/serializers.py:1062
 msgid "Sale price currency"
@@ -5612,7 +5657,7 @@ msgstr ""
 
 #: order/templates/order/order_wizard/po_upload.html:14
 msgid "Order is already processed. Files cannot be uploaded."
-msgstr ""
+msgstr "Objednávka je již zpracována. Soubory nelze nahrát."
 
 #: order/templates/order/order_wizard/po_upload.html:27
 #: part/templates/part/import_wizard/ajax_part_upload.html:10
@@ -5620,15 +5665,15 @@ msgstr ""
 #: templates/patterns/wizard/upload.html:13
 #, python-format
 msgid "Step %(step)s of %(count)s"
-msgstr ""
+msgstr "Krok %(step)s z %(count)s"
 
 #: order/templates/order/po_sidebar.html:7
 msgid "Received Stock"
-msgstr ""
+msgstr "Přijaté skladové zásoby"
 
 #: order/templates/order/purchase_order_detail.html:18
 msgid "Purchase Order Items"
-msgstr ""
+msgstr "Položky nákupní objednávky"
 
 #: order/templates/order/purchase_order_detail.html:27
 #: order/templates/order/return_order_detail.html:24
@@ -5637,41 +5682,41 @@ msgstr ""
 #: templates/js/translated/return_order.js:458
 #: templates/js/translated/sales_order.js:237
 msgid "Add Line Item"
-msgstr ""
+msgstr "Přidat řádkovou položku"
 
 #: order/templates/order/purchase_order_detail.html:31
 #: order/templates/order/purchase_order_detail.html:32
 #: order/templates/order/return_order_detail.html:28
 #: order/templates/order/return_order_detail.html:29
 msgid "Receive Line Items"
-msgstr ""
+msgstr "Přijmout řádkové položky"
 
 #: order/templates/order/purchase_order_detail.html:50
 #: order/templates/order/return_order_detail.html:45
 #: order/templates/order/sales_order_detail.html:41
 msgid "Extra Lines"
-msgstr ""
+msgstr "Extra řádky"
 
 #: order/templates/order/purchase_order_detail.html:56
 #: order/templates/order/return_order_detail.html:51
 #: order/templates/order/sales_order_detail.html:47
 msgid "Add Extra Line"
-msgstr ""
+msgstr "Přidání dalšího řádku"
 
 #: order/templates/order/purchase_order_detail.html:74
 msgid "Received Items"
-msgstr ""
+msgstr "Přijaté položky"
 
 #: order/templates/order/purchase_order_detail.html:99
 #: order/templates/order/return_order_detail.html:85
 #: order/templates/order/sales_order_detail.html:139
 msgid "Order Notes"
-msgstr ""
+msgstr "Poznámky k objednávce"
 
 #: order/templates/order/return_order_base.html:18
 #: order/templates/order/sales_order_base.html:18
 msgid "Customer logo thumbnail"
-msgstr ""
+msgstr "Náhled loga zákazníka"
 
 #: order/templates/order/return_order_base.html:60
 msgid "Print return order report"
@@ -10514,18 +10559,6 @@ msgstr ""
 #: templates/account/password_reset_from_key.html:4
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:33
-msgid "Username"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:37
-msgid "First Name"
-msgstr ""
-
-#: templates/InvenTree/settings/user.html:41
-msgid "Last Name"
 msgstr ""
 
 #: templates/InvenTree/settings/user.html:55
