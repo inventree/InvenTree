@@ -8,29 +8,31 @@ async function toggleReady(page: Page, disable = false) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Enable Ready Status').waitFor();
-  const settingText = page.locator('text=Enable Ready Status');
-  const settingParent = settingText.locator('..').locator('..');
-  const toggle = settingParent.getByRole('button');
-  const state = await toggle.isChecked();
-  await settingParent.getByRole('button').click();
+  await page
+    .getByTestId('ENABLE_PURCHASE_ORDER_READY_STATUS')
+    .getByRole('checkbox')
+    .click();
 }
 
 async function toggleApprovals(page: Page) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Purchase Order Approvals').waitFor();
-  const settingText = page.locator('text=Purchase Order Approvals');
-  const settingParent = settingText.locator('..');
-  await settingParent.getByRole('switch').click();
+  await page
+    .getByTestId('ENABLE_PURCHASE_ORDER_APPROVALS')
+    .getByRole('checkbox')
+    .click();
 }
 
 async function setApprover(page: Page) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Master approval group').waitFor();
-  const settingText = page.locator('text=Master approval group');
-  const settingParent = settingText.locator('..');
-  await settingParent.getByRole('switch').click();
+  await page
+    .getByTestId('PURCHASE_ORDER_PURCHASER_GROUP')
+    .getByRole('button')
+    .click();
+  await page.getByText('Edit Setting').waitFor();
   await page.getByLabel('Master approval group').fill('all access');
   await page.getByRole('button', { name: 'Submit' }).click();
 }
