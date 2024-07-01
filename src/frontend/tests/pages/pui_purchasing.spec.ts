@@ -8,24 +8,27 @@ async function enableReady(page: Page) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Enable Ready Status').waitFor();
-  const setting = page.locator('div', { hasText: 'Enable Ready Status' });
-  await setting.getByRole('switch').click();
+  const settingText = page.locator('text=Enable Ready Status');
+  const settingParent = settingText.locator('..');
+  await settingParent.getByRole('switch').click();
 }
 
 async function enableApprovals(page: Page) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Purchase Order Approvals').waitFor();
-  const setting = page.locator('div', { hasText: 'Purchase Order Approvals' });
-  await setting.getByRole('switch').click();
+  const settingText = page.locator('text=Purchase Order Approvals');
+  const settingParent = settingText.locator('..');
+  await settingParent.getByRole('switch').click();
 }
 
 async function setApprover(page: Page) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Master approval group').waitFor();
-  const setting = page.locator('div', { hasText: 'Master approval group' });
-  await setting.getByRole('button').click();
+  const settingText = page.locator('text=Master approval group');
+  const settingParent = settingText.locator('..');
+  await settingParent.getByRole('switch').click();
   await page.getByLabel('Master approval group').fill('all access');
   await page.getByRole('button', { name: 'Submit' }).click();
 }
