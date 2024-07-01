@@ -4,16 +4,18 @@ import { test } from '../baseFixtures';
 import { adminuser, baseUrl } from '../defaults';
 import { doLogin, doQuickLogin } from '../login';
 
-async function enableReady(page: Page) {
+async function toggleReady(page: Page, disable = false) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Enable Ready Status').waitFor();
   const settingText = page.locator('text=Enable Ready Status');
-  const settingParent = settingText.locator('..');
-  await settingParent.getByRole('switch').click();
+  const settingParent = settingText.locator('..').locator('..');
+  const toggle = settingParent.getByRole('button');
+  const state = await toggle.isChecked();
+  await settingParent.getByRole('button').click();
 }
 
-async function enableApprovals(page: Page) {
+async function toggleApprovals(page: Page) {
   await doLogin(page, adminuser.username, adminuser.password);
   await page.goto(`${baseUrl}/settings/system/purchaseorders`);
   await page.getByText('Purchase Order Approvals').waitFor();
@@ -41,14 +43,14 @@ test('PUI - Pages - Purchasing - Pending transitions', async ({ page }) => {
   await page.getByText('Purchase Order: PO0012').waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).isEnabled();
 
-  await enableReady(page);
+  await toggleReady(page);
 
   // Check that Ready Button is present
   await page.goto(`${baseUrl}/purchasing/purchase-order/12/detail`);
   await page.getByText('Purchase Order: PO0012').waitFor();
   await page.getByRole('button', { name: 'Ready' }).isEnabled();
 
-  await enableApprovals(page);
+  await toggleApprovals(page);
 
   await page.goto(`${baseUrl}/purchasing/purchase-order/12/detail`);
   await page.getByText('Purchase Order: PO0012').waitFor();
@@ -56,7 +58,7 @@ test('PUI - Pages - Purchasing - Pending transitions', async ({ page }) => {
 });
 
 test('PUI - Pages - Purchasing - In Approval transitions', async ({ page }) => {
-  await enableApprovals(page);
+  await toggleApprovals(page);
 
   await page.goto(`${baseUrl}/purchasing/purchase-order/12/detail`);
   await page.getByText('Purchase Order: PO0012').waitFor();
