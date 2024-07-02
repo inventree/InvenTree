@@ -288,7 +288,12 @@ class DataImportSession(models.Model):
 
         - This method is designed to be introspected by the frontend, for rendering the various fields.
         - We make use of the InvenTree.metadata module to provide extra information about the fields.
+
+        Note that we cache these fields, as they are expensive to compute.
         """
+        if fields := getattr(self, '_available_fields', None):
+            return fields
+
         from InvenTree.metadata import InvenTreeMetadata
 
         metadata = InvenTreeMetadata()
@@ -299,6 +304,7 @@ class DataImportSession(models.Model):
         else:
             fields = {}
 
+        self._available_fields = fields
         return fields
 
     def required_fields(self):
@@ -389,9 +395,22 @@ class DataImportColumnMap(models.Model):
     column = models.CharField(blank=True, max_length=100, verbose_name=_('Column'))
 
     @property
+    def available_fields(self):
+        """Return a list of available fields for this import session.
+
+        These fields get cached, as they are expensive to compute.
+        """
+        if fields := getattr(self, '_available_fields', None):
+            return fields
+
+        self._available_fields = self.session.available_fields()
+
+        return self._available_fields
+
+    @property
     def field_definition(self):
         """Return the field definition associated with this column mapping."""
-        fields = self.session.available_fields()
+        fields = self.available_fields
         return fields.get(self.field, None)
 
     @property
