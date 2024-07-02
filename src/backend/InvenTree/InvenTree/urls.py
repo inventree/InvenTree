@@ -480,7 +480,7 @@ if settings.ENABLE_PLATFORM_FRONTEND:
 
 urlpatterns += frontendpatterns
 
-# Append custom plugin URLs (if plugin support is enabled)
+# Append custom plugin URLs (if custom plugin support is enabled)
 if settings.PLUGINS_ENABLED:
     urlpatterns.append(get_plugin_urls())
 

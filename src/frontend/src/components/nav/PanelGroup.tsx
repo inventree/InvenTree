@@ -25,19 +25,7 @@ import { navigateToLink } from '../../functions/navigation';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
-
-/**
- * Type used to specify a single panel in a panel group
- */
-export type PanelType = {
-  name: string;
-  label: string;
-  icon?: ReactNode;
-  content: ReactNode;
-  hidden?: boolean;
-  disabled?: boolean;
-  showHeadline?: boolean;
-};
+import { PanelType } from './Panel';
 
 export type PanelProps = {
   pageKey: string;
