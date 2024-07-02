@@ -178,7 +178,7 @@ class OrderTest(TestCase):
         with self.assertRaises(django_exceptions.ValidationError):
             order.receive_line_item(line, loc, 50, user=None)
 
-        order.place_order()
+        order.place_order(get_user_model().objects.get(pk=4))
 
         self.assertEqual(order.status, PurchaseOrderStatus.PLACED)
 
@@ -261,7 +261,7 @@ class OrderTest(TestCase):
             purchase_price=Money(10, 'USD'),  # "Unit price" should be $100USD
         )
 
-        po.place_order()
+        po.place_order(get_user_model().objects.get(pk=4))
 
         # The 'on_order' quantity should have been increased by 31.3
         self.assertEqual(prt.on_order, round(on_order + Decimal(31.3), 1))
@@ -368,7 +368,7 @@ class OrderTest(TestCase):
         self.assertEqual(messages.count(), 0)
 
         # Place the order
-        po.place_order()
+        po.place_order(get_user_model().objects.get(pk=4))
 
         # A notification should have been generated for user 4 (who is a member of group 3)
         self.assertTrue(messages.filter(user__pk=4).exists())

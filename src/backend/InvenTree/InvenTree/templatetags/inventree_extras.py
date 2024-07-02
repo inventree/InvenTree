@@ -664,3 +664,25 @@ def admin_url(user, table, pk):
             pass
 
     return url
+
+
+@register.simple_tag()
+def approval_allowed(user, order):
+    """Check that the given user is allowed to approve the order."""
+    return order.approval_allowed(user)
+
+
+@register.simple_tag()
+def can_issue_order(user):
+    """Check if purchasing is limited to a group.
+
+    Checks if the user is part of the purchaser group
+    """
+    purchaser_group = common.models.InvenTreeSetting.get_setting(
+        'PURCHASE_ORDER_PURCHASER_GROUP'
+    )
+
+    if purchaser_group:
+        return user.groups.filter(name=purchaser_group).exists()
+    else:
+        return True

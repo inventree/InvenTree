@@ -25,7 +25,13 @@ from InvenTree.api import APIDownloadMixin, ListCreateDestroyAPIView, MetadataVi
 from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import DownloadFile, str2bool
 from InvenTree.helpers_model import construct_absolute_url, get_base_url
-from InvenTree.mixins import CreateAPI, ListAPI, ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.mixins import (
+    CreateAPI,
+    ListAPI,
+    ListCreateAPI,
+    RetrieveAPI,
+    RetrieveUpdateDestroyAPI,
+)
 from order import models, serializers
 from order.admin import (
     PurchaseOrderExtraLineResource,
@@ -391,6 +397,36 @@ class PurchaseOrderComplete(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to 'complete' a purchase order."""
 
     serializer_class = serializers.PurchaseOrderCompleteSerializer
+
+
+class PurchaseOrderRequestApproval(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to request approval a PurchaseOrder."""
+
+    serializer_class = serializers.PurchaseOrderRequestApprovalSerializer
+
+
+class PurchaseOrderReject(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to reject a PurchaseOrder that was requested approval for."""
+
+    serializer_class = serializers.PurchaseOrderRejectSerializer
+
+
+class PurchaseOrderReady(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to mark a PurchaseOrder as ready to issue."""
+
+    serializer_class = serializers.PurchaseOrderReadySerializer
+
+
+class PurchaseOrderStatePermissions(PurchaseOrderContextMixin, RetrieveAPI):
+    """API endpoint indicating what limited-permission states the user is allowed to perform."""
+
+    serializer_class = serializers.PurchaseOrderStatePermissionsSerializer
+
+
+class PurchaseOrderRecall(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to recall an open PurchaseOrder to Pending."""
+
+    serializer_class = serializers.PurchaseOrderRecallSerializer
 
 
 class PurchaseOrderIssue(PurchaseOrderContextMixin, CreateAPI):
@@ -1555,6 +1591,23 @@ order_api_urls = [
             path(
                 '<int:pk>/',
                 include([
+                    path(
+                        'request_approval/',
+                        PurchaseOrderRequestApproval.as_view(),
+                        name='api-po-req-approval',
+                    ),
+                    path(
+                        'reject/', PurchaseOrderReject.as_view(), name='api-po-reject'
+                    ),
+                    path('ready/', PurchaseOrderReady.as_view(), name='api-po-ready'),
+                    path(
+                        'permissions/',
+                        PurchaseOrderStatePermissions.as_view(),
+                        name='api-po-permissions',
+                    ),
+                    path(
+                        'recall/', PurchaseOrderRecall.as_view(), name='api-po-recall'
+                    ),
                     path(
                         'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
                     ),

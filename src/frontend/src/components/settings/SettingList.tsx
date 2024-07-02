@@ -144,6 +144,7 @@ export function SettingList({
                   shaded={i % 2 === 0}
                   onEdit={onValueEdit}
                   onToggle={onValueToggle}
+                  id={key}
                 />
               ) : (
                 <Text size="sm" style={{ fontStyle: 'italic' }} color="red">

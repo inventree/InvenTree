@@ -340,6 +340,34 @@ class InvenTreeNotificationBodies:
         template='email/return_order_received.html',
     )
 
+    PurchaseOrderApprovalRequested = NotificationBody(
+        name=_('Approval requested'),
+        slug=_('purchase_order.approval_request'),
+        message=_('You have been requested to approve a Purchase Order'),
+        template='email/new_order_assigned.html',
+    )
+
+    PurchaseOrderRejected = NotificationBody(
+        name=_('Purchase order was rejected'),
+        slug=_('purchase_order.approval_rejected'),
+        message=_('Your approval request was rejected'),
+        template='email/new_order_assigned.html',
+    )
+
+    PurchaseOrderApproved = NotificationBody(
+        name=_('Purchase order was approved'),
+        slug=_('purchase_order.approved'),
+        message=_('Your approval request was accepted'),
+        template='email/new_order_assigned.html',
+    )
+
+    PurchaseOrderReady = NotificationBody(
+        name=_('Purchase order is ready to issue'),
+        slug=_('purchase_order.ready_to_issue'),
+        message=_('A Purchase order was just marked ready to issue.'),
+        template='email/new_order_assigned.html',
+    )
+
 
 def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     """Send out a notification."""
@@ -350,6 +378,7 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
     target_exclude = kwargs.get('target_exclude', None)
     context = kwargs.get('context', {})
     delivery_methods = kwargs.get('delivery_methods', None)
+    override_delta = kwargs.get('delta', None)
 
     # Check if data is importing currently
     if isImportingData():
@@ -369,9 +398,11 @@ def trigger_notification(obj, category=None, obj_ref='pk', **kwargs):
         )
 
     # Check if we have notified recently...
-    delta = timedelta(days=1)
+    delta = override_delta or timedelta(days=1)
 
-    if common.models.NotificationEntry.check_recent(category, obj_ref_value, delta):
+    if common.models.NotificationEntry.check_recent(
+        category, obj_ref_value, delta, override_delta and True or False
+    ):
         logger.info(
             "Notification '%s' has recently been sent for '%s' - SKIPPING",
             category,

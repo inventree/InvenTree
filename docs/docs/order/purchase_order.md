@@ -19,6 +19,8 @@ Each Purchase Order has a specific status code which indicates the current state
 | Status | Description |
 | --- | --- |
 | Pending | The purchase order has been created, but has not been submitted to the supplier |
+| Approval Needed | The purchase order is awaiting approval |
+| Ready | The purchase order is ready to issue |
 | In Progress | The purchase order has been issued to the supplier, and is in progress |
 | Complete | The purchase order has been completed, and is now closed |
 | Cancelled | The purchase order was cancelled, and is now closed |
@@ -36,6 +38,12 @@ Refer to the source code for the Purchase Order status codes:
         show_root_toc_entry: False
         show_source: True
         members: []
+
+### Status flow chart
+
+Purchase orders support a varied workflow with ability for approvals, limiting issuing permissions, and enabling a ready state. The below chart illustrates the default flow of purchase orders with no plugins in the loop.
+
+![Status flow](../assets/images/order/po_state_flow.png)
 
 ### Purchase Order Currency
 
@@ -74,7 +82,55 @@ It is possible to upload an exported purchase order from the supplier instead of
 !!! info "Supported Formats"
 	This process only supports tabular data and the following formats are supported: CSV, TSV, XLS, XLSX, JSON and YAML
 
+### Approvals
+
+Purchase orders have the ability to enable an approval process. Enabling approvals activates the "Approval needed" and "Ready" states in the workflow, as illustrated in the [workflow chart](#status-flow-chart).
+
+Approval settings can be found under System Settings -> Purchase Orders.
+|Setting|Description|
+|-|-|
+|Purchase Order Approvals|This setting enables approvals for purchase orders. This setting will enable the Ready state even if the "Enable Ready Status" setting is not enabled|
+|Master approval group|All members of the group name defined here will have permission to approve _all_ purchase orders, regardless or project codes|
+
+When active, all purchase orders will require approval from a user before being ready to issue. By default, the purchase order's Project Code responsible will be allowed to approve the order. In addition, all members of the "Master approval group" will be able to approve _all_ orders.
+
+Valid approvers for a given purchase order are given two choices.
+- Approve: Transitions the order to "Ready", and marks the user's name as the approver on the order.
+- Reject: Transitions the order back to "Pending". An optional reason may be given. This reason will be displayed on the Details panel.
+
+For anyone else, the Approve option is disabled, and the Reject option is replaced with the [Recall](#recall-order) option
+
+### Recall Order
+
+Recalling an order returns it to "Pending". Any order state before "Placed" in the [workflow chart](#status-flow-chart) allows for users to recall the order.
+
+The only exception is when an order is at the "Approval Needed" stage, and the user is a valid approver for the order. In this case, the Recall option is replaced with Reject.
+
+### Purchaser role
+
+For use cases where there are dedicated people that do purchasing, the "Purchaser Group" setting allows limiting issuing purchase orders to members of this defined group.
+
+- "Purchaser Group" is not defined: All users can hit "Issue order"
+- "Purchaser Group" is set to a group called "buying": The "Issue order" button will be disabled for any user not in the group named "buying"
+
+### Ready state
+
+This state is enabled by the "Enable Ready Status" setting found in: System Settings -> Purchase Orders.
+
+This setting inserts the "Ready" state between "Pending" and "Placed" as shown in the [workflow chart](#status-flow-chart).
+
+!!! info "With approvals"
+    This setting will be enabled even if turned off if the setting "Purchase Order Approvals" is active
+
 ### Issue Order
+
+The requirements to issue an order varies depending on some global settings.
+
+|Setting|Description|
+|-|-|
+|Enable Ready Status|With this setting enabled, an order can only be issued after it has transitioned from "Pending" to "Ready"|
+|Purchaser Group|If a group name is defined here, only members of this permission group is permitted to issue orders|
+|None|Anyone can issue an order|
 
 Once all the line items were added, click on the <span class='fas fa-paper-plane'></span> button on the main purchase order detail panel and confirm the order has been submitted.
 

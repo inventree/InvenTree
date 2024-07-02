@@ -214,9 +214,20 @@ class PurchaseOrderSerializer(
             'supplier_reference',
             'total_price',
             'order_currency',
+            'reject_reason',
+            'created_by',
+            'approved_by',
+            'placed_by',
         ])
 
-        read_only_fields = ['issue_date', 'complete_date', 'creation_date']
+        read_only_fields = [
+            'issue_date',
+            'complete_date',
+            'creation_date',
+            'created_by',
+            'approved_by',
+            'placed_by',
+        ]
 
         extra_kwargs = {
             'supplier': {'required': True},
@@ -324,6 +335,99 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
         order.complete_order()
 
 
+class PurchaseOrderRequestApprovalSerializer(serializers.Serializer):
+    """Serializer for requesting approval of a purchase order by eligible users."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = []
+
+    def save(self):
+        """Save the serializer to request approval of the order."""
+        order = self.context['order']
+        request = self.context['request']
+        order.request_approval(request.user)
+
+
+class PurchaseOrderStatePermissionsSerializer(serializers.Serializer):
+    """Serializer indicating what permissions the user has for limited-permission states."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = order.models.PurchaseOrder
+        fields = ['can_approve', 'can_issue']
+
+    def get_can_approve(self, instance):
+        """Run model method to check approval permission."""
+        request = self.context['request']
+
+        return instance.approval_allowed(request.user)
+
+    def get_can_issue(self, instance):
+        """Run model method to check issue permission."""
+        request = self.context['request']
+
+        return instance.allowed_to_issue(request.user)
+
+    can_approve = serializers.SerializerMethodField()
+
+    can_issue = serializers.SerializerMethodField()
+
+
+class PurchaseOrderReadySerializer(serializers.Serializer):
+    """Serializer to mark a purchase order as ready to issue."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = []
+
+    def save(self):
+        """Save the serializer mark the order as ready."""
+        order = self.context['order']
+        request = self.context['request']
+        order.mark_order_ready(request.user)
+
+
+class PurchaseOrderRejectSerializer(serializers.Serializer):
+    """Serializer for rejecting a purchase order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = ['reject_reason']
+
+    reject_reason = serializers.CharField(
+        label=_('Reason for rejection'),
+        help_text=_('Message outlining the reason for rejecting the order'),
+        default='',
+        required=False,
+        allow_blank=True,
+    )
+
+    def save(self):
+        """Save the serializer to 'reject' the order."""
+        order = self.context['order']
+        reason = self.data['reject_reason']
+        order.mark_order_pending(reason)
+
+
+class PurchaseOrderRecallSerializer(serializers.Serializer):
+    """Serializer for recalling a purchase order."""
+
+    class Meta:
+        """Metaclass options."""
+
+        fields = []
+
+    def save(self):
+        """Save the serializer to recall the order, returning it to 'pending'."""
+        order = self.context['order']
+        order.mark_order_pending()
+
+
 class PurchaseOrderIssueSerializer(serializers.Serializer):
     """Serializer for issuing (sending) a purchase order."""
 
@@ -335,7 +439,8 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to 'place' the order."""
         order = self.context['order']
-        order.place_order()
+        request = self.context['request']
+        order.place_order(request.user)
 
 
 class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):

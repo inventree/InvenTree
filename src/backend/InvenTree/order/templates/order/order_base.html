@@ -21,6 +21,8 @@
 {% block actions %}
 
 {% admin_url user "order.purchaseorder" order.pk as url %}
+{% approval_allowed user order as has_approval_permission %}
+{% can_issue_order user as is_purchaser %}
 {% include "admin_button.html" with url=url %}
 
 {% if barcodes %}
@@ -53,7 +55,7 @@
         <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
     </ul>
 </div>
-{% if roles.purchase_order.change %}
+{% if roles.purchase_order.add %}
 <!-- order actions -->
 <div class='btn-group'>
     <button id='order-options' title='{% trans "Order actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>
@@ -75,9 +77,37 @@
         {% endif %}
     </ul>
 </div>
-{% if order.is_pending %}
+{% if order.is_pending and order.requires_approval %}
+<button type='button' class='btn btn-primary' id='req-order-approval' title='{% trans "Request approval of order" %}'>
+    <span class='fas fa-file-signature'></span> {% trans "Request Approval" %}
+</button>
+{% elif order.is_pending and order.can_be_ready %}
+<button type='button' class='btn btn-primary' id='ready-order' title='{% trans "Mark Order Ready" %}'>
+    <span class='fas fa-paper-plane'></span> {% trans "Ready" %}
+</button>
+{% elif order.is_pending %}
 <button type='button' class='btn btn-primary' id='place-order' title='{% trans "Issue Order" %}'>
     <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
+</button>
+{% elif order.is_ready %}
+<button type='button' class='btn btn-secondary' id='order-recall' title='{% trans "Recall order" %}'>
+    <span class='fas fa-undo'></span> {% trans "Recall" %}
+</button>
+<button {% if not is_purchaser %} disabled {% endif %} type='button' class='btn btn-{% if is_purchaser %}primary{% else %}secondary{% endif %}' id='place-order' title='{% trans "Issue Order" %}'>
+    <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
+</button>
+{% elif order.is_pending_approval %}
+{% if has_approval_permission %}
+<button type='button' class='btn btn-danger' id='reject-order' {% if not has_approval_permission %} disabled {% endif %} title='{% trans "Reject Order" %}'>
+    <span class='fas fa-times'></span> {% trans "Reject Order" %}
+</button>
+{% else %}
+<button type='button' class='btn btn-secondary' id='recall-order' title='{% trans "Recall Order" %}'>
+    <span class='fas fa-undo'></span> {% trans "Recall" %}
+</button>
+{% endif %}
+<button type='button' class='btn btn-{% if has_approval_permission %}success{% else %}secondary{% endif %}' id='approve-order' {% if not has_approval_permission %} disabled {% endif %} title='{% trans "Approve Order" %}'>
+    <span class='fas fa-check-circle'></span> {% trans "Approve Order" %}
 </button>
 {% elif order.is_open %}
 <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
@@ -123,7 +153,6 @@ src="{% static 'img/blank_image.png' %}"
             {% endif %}
         </td>
     </tr>
-
 </table>
 
 {% endblock details %}
@@ -173,11 +202,24 @@ src="{% static 'img/blank_image.png' %}"
         <td>{% trans "Created" %}</td>
         <td>{% render_date order.creation_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.created_by }}</span></td>
     </tr>
+    {% if order.approved_date %}
+    <tr>
+        <td><span class='fas fa-file-signature'></span></td>
+        <td>{% trans "Approved" %}</td>
+        <td>{% render_date order.approved_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.approved_by }}</span></td>
+    </tr>
+    {% elif order.reject_reason %}
+    <tr style="color: var(--label-red); font-weight: bold;">
+        <td><span class='fas fa-times'></span></td>
+        <td >{% trans "Rejected reason" %}</td>
+        <td>{{ order.reject_reason }}</td>
+    </tr>
+    {% endif %}
     {% if order.issue_date %}
     <tr>
         <td><span class='fas fa-calendar-alt'></span></td>
         <td>{% trans "Issued" %}</td>
-        <td>{% render_date order.issue_date %}</td>
+        <td>{% render_date order.issue_date %}<span class='badge badge-right rounded-pill bg-dark'>{{ order.placed_by }}</span></td>
     </tr>
     {% endif %}
     {% if order.target_date %}
@@ -238,7 +280,31 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-{% if order.status == PurchaseOrderStatus.PENDING %}
+{% if order.status == PurchaseOrderStatus.PENDING and order.requires_approval %}
+$("#req-order-approval").click(function() {
+
+    requestPurchaseOrderApproval(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+
+});
+
+{% elif order.status == PurchaseOrderStatus.PENDING and order.can_be_ready %}
+$("#ready-order").click(function() {
+
+    readyPurchaseOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+
+});
+
+{% elif order.status == PurchaseOrderStatus.PENDING or order.status == PurchaseOrderStatus.READY %}
 $("#place-order").click(function() {
 
     issuePurchaseOrder(
@@ -254,6 +320,43 @@ $("#place-order").click(function() {
 {% if report_enabled %}
 $('#print-order-report').click(function() {
     printReports('purchaseorder', [{{ order.pk }}]);
+});
+{% endif %}
+
+{% if order.status == PurchaseOrderStatus.IN_APPROVAL %}
+$("#approve-order").click(function() {
+
+    approvePurchaseOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+
+});
+
+$("#reject-order").click(function() {
+
+    rejectPurchaseOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+
+});
+{% endif %}
+
+{% if order.status == PurchaseOrderStatus.READY or order.status == PurchaseOrderStatus.IN_APPROVAL %}
+$("#order-recall").click(function() {
+
+    pendingPurchaseOrder(
+        {{ order.pk }},
+        {
+            reload: true,
+        }
+    );
+
 });
 {% endif %}
 

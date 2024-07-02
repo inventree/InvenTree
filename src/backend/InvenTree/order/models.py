@@ -3,12 +3,12 @@
 import logging
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 
 from django.conf import settings
-from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
+from django.contrib.auth.models import Group, User
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import F, Q, Sum
@@ -45,7 +45,7 @@ from InvenTree.fields import (
     RoundingDecimalField,
 )
 from InvenTree.helpers import decimal2string, pui_url
-from InvenTree.helpers_model import notify_responsible
+from InvenTree.helpers_model import notify_responsible, notify_users
 from order.status_codes import (
     PurchaseOrderStatus,
     PurchaseOrderStatusGroups,
@@ -522,6 +522,37 @@ class PurchaseOrder(TotalPriceMixin, Order):
         help_text=_('Date order was completed'),
     )
 
+    approved_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Approved by'),
+    )
+
+    approved_date = models.DateField(
+        blank=True,
+        null=True,
+        verbose_name=_('Approve Date'),
+        help_text=_('Date order was approved'),
+    )
+
+    reject_reason = models.CharField(
+        max_length=250,
+        blank=True,
+        verbose_name=_('Reason for rejection'),
+        help_text=_('The reason for rejecting this order'),
+    )
+
+    placed_by = models.ForeignKey(
+        User,
+        related_name='purchase_orders_placed',
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('Placed by'),
+    )
+
     @transaction.atomic
     def add_line_item(
         self,
@@ -598,13 +629,181 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return line
 
     # region state changes
+
+    def _action_pending(self, *args, **kwargs):
+        """Marks the PurchaseOrder as PENDING.
+
+        Order must be IN_APPROVAL or READY
+        """
+        # Raise validation error if the order is in a wrong state
+        if not self.is_ready and not self.is_pending_approval:
+            raise ValidationError('Order must be Ready or In approval')
+
+        # If approvals are active, reset all approval data.
+        if self.requires_approval:
+            self.approved_by = None
+            self.approved_date = None
+
+            # If the order comes from an IN_APPROVAL state, the order was rejected.
+            # Populate fields and notify users of the rejection.
+            if self.status == PurchaseOrderStatus.IN_APPROVAL.value:
+                rejected = kwargs.pop('reject_reason', '')
+                self.reject_reason = rejected
+                users = [self.created_by]
+                if self.responsible:
+                    users.append(self.responsible)
+                notify_users(
+                    users,
+                    self,
+                    PurchaseOrder,
+                    content=InvenTreeNotificationBodies.PurchaseOrderRejected,
+                    delta=timedelta(seconds=60),
+                )
+                trigger_event('purchaseorder.rejected')
+
+        self.status = PurchaseOrderStatus.PENDING.value
+        self.save()
+
+        trigger_event('purchaseorder.pending')
+
+    def _action_request_approval(self, *args, **kwargs):
+        """Marks the PurchaseOrder as IN_APPROVAL.
+
+        Order must currently be PENDING
+        """
+        if not self.requires_approval:
+            raise ValidationError(_('Approvals not active'))
+        if not self.is_pending:
+            raise ValidationError(_('Order must be pending to request approval'))
+        if self.approved_by:
+            raise ValidationError(_('Cannot request approval of approved order'))
+
+        master_group_name = get_global_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
+        master_users = master_group_name and Group.objects.get(name=master_group_name)
+        approver = None
+        user = kwargs.pop('user', None)
+
+        if self.project_code and hasattr(self.project_code.responsible, 'owner'):
+            approver = [self.project_code.responsible.owner]
+
+        if not approver and not master_users:
+            extra_info = ''
+            if self.project_code:
+                extra_info = _(f'Please add a responsible to {self.project_code} or ')
+            extra_info += _('set a master approver group in settings.')
+
+            raise ValidationError(_(f'No eligible approvers. {extra_info}'))
+        else:
+            self.status = PurchaseOrderStatus.IN_APPROVAL.value
+            self.save()
+
+            trigger_event('purchaseorder.request_approval')
+            notify_users(
+                approver or [master_users],
+                self,
+                PurchaseOrder,
+                content=InvenTreeNotificationBodies.PurchaseOrderApprovalRequested,
+                delta=timedelta(seconds=60),
+                exclude=user,
+            )
+
+    def _action_approve(self, *args, **kwargs):
+        """Marks the PurchaseOrder as READY.
+
+        Order must currently be IN_APPROVAL
+        """
+        master_approvers = get_global_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
+
+        if not self.requires_approval:
+            raise ValidationError(_('Approvals are not active'))
+        if not self.is_pending_approval:
+            raise ValidationError(_('Order needs to be in "Pending approval" state'))
+
+        if not self.approved_by:
+            permitted = False
+            approver = kwargs.pop('user', None)
+
+            if approver.groups.filter(name=master_approvers).exists():
+                permitted = True
+            elif hasattr(self.project_code, 'responsible'):
+                if self.project_code.responsible.is_user_allowed(approver):
+                    permitted = True
+
+            if permitted:
+                self.approved_by = approver
+                self.approved_date = InvenTree.helpers.current_date()
+                self.reject_reason = ''
+                self._action_ready()
+                trigger_event('purchaseorder.approved')
+                notify_users(
+                    [self.created_by, self.responsible],
+                    self,
+                    PurchaseOrder,
+                    InvenTreeNotificationBodies.PurchaseOrderApproved,
+                    exclude=approver,
+                    delta=timedelta(seconds=60),
+                )
+            else:
+                raise PermissionDenied()
+
+        else:
+            self._action_ready()
+
+    def _action_ready(self, *args, **kwargs):
+        """Marks the PurchaseOrder as READY.
+
+        Order must currently be PENDING or IN_APPROVAL
+        """
+        if not self.requires_approval and not self.can_be_ready:
+            raise ValidationError(_('Ready state setting not active'))
+
+        if self.is_pending or (self.is_pending_approval and self.approved_by):
+            self.status = PurchaseOrderStatus.READY.value
+            self.save()
+
+            user = kwargs.pop('user', None)
+
+            purchaser_group_name = get_global_setting('PURCHASE_ORDER_PURCHASER_GROUP')
+            if purchaser_group_name:
+                purchasers_group = Group.objects.filter(
+                    name=purchaser_group_name
+                ).first()
+                targets = [purchasers_group, self.created_by]
+                if self.responsible:
+                    targets.append(self.responsible)
+                exclude = []
+                user and exclude.append(user)
+                self.approved_by and exclude.extend([
+                    self.approved_by,
+                    self.created_by,
+                    self.responsible,
+                ])
+
+                notify_users(
+                    targets,
+                    self,
+                    PurchaseOrder,
+                    InvenTreeNotificationBodies.PurchaseOrderReady,
+                    delta=timedelta(seconds=60),
+                    exclude=exclude,
+                )
+
     def _action_place(self, *args, **kwargs):
         """Marks the PurchaseOrder as PLACED.
 
         Order must be currently PENDING.
         """
-        if self.is_pending:
+        purchaser_group = get_global_setting('PURCHASE_ORDER_PURCHASER_GROUP')
+        if self.is_pending or self.is_ready:
+            user = kwargs.pop('user', None)
+            if (
+                purchaser_group
+                and not user.groups.filter(name=purchaser_group).exists()
+            ):
+                raise PermissionDenied()
+
             self.status = PurchaseOrderStatus.PLACED.value
+            self.placed_by = user
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
@@ -617,6 +816,8 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.NewOrder,
             )
+        else:
+            raise ValidationError(_('Order must be Pending or Ready'))
 
     def _action_complete(self, *args, **kwargs):
         """Marks the PurchaseOrder as COMPLETE.
@@ -637,10 +838,58 @@ class PurchaseOrder(TotalPriceMixin, Order):
             trigger_event('purchaseorder.completed', id=self.pk)
 
     @transaction.atomic
-    def place_order(self):
+    def mark_order_pending(self, reason=''):
+        """Attempt to transition to PENDING status."""
+        return self.handle_transition(
+            self.status,
+            PurchaseOrderStatus.PENDING.value,
+            self,
+            self._action_pending,
+            reject_reason=reason,
+        )
+
+    @transaction.atomic
+    def request_approval(self, user=None):
+        """Attempt to transition to IN_APPROVAL status."""
+        return self.handle_transition(
+            self.status,
+            PurchaseOrderStatus.READY.value,
+            self,
+            self._action_request_approval,
+            user=user,
+        )
+
+    @transaction.atomic
+    def mark_order_ready(self, user):
+        """Attempt to transition to READY status."""
+        if self.requires_approval:
+            return self.handle_transition(
+                self.status,
+                PurchaseOrderStatus.READY,
+                self,
+                self._action_approve,
+                user=user,
+            )
+        elif self.can_be_ready:
+            return self.handle_transition(
+                self.status,
+                PurchaseOrderStatus.READY,
+                self,
+                self._action_ready,
+                user=user,
+            )
+        else:
+            raise ValidationError('Ready state setting not active')
+
+    @transaction.atomic
+    def place_order(self, user=None):
         """Attempt to transition to PLACED status."""
         return self.handle_transition(
-            self.status, PurchaseOrderStatus.PLACED.value, self, self._action_place
+            self.status,
+            PurchaseOrderStatus.PLACED.value,
+            self,
+            self._action_place,
+            user=user,
         )
 
     @transaction.atomic
@@ -663,6 +912,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return self.status == PurchaseOrderStatus.PENDING.value
 
     @property
+    def is_pending_approval(self):
+        """Return True if the PurchaseOrder is awaiting approval."""
+        return self.status == PurchaseOrderStatus.IN_APPROVAL.value
+
+    @property
+    def is_ready(self):
+        """Return True if the PurchaseOrder is ready to issue."""
+        return self.status == PurchaseOrderStatus.READY.value
+
+    @property
     def is_open(self):
         """Return True if the PurchaseOrder is 'open'."""
         return self.status in PurchaseOrderStatusGroups.OPEN
@@ -679,6 +938,16 @@ class PurchaseOrder(TotalPriceMixin, Order):
             PurchaseOrderStatus.PENDING.value,
         ]
 
+    @property
+    def requires_approval(self):
+        """Return state of ENABLE_PURCHASE_ORDER_APPROVAL setting."""
+        return get_global_setting('ENABLE_PURCHASE_ORDER_APPROVAL')
+
+    @property
+    def can_be_ready(self):
+        """Return state of ENABLE_PURCHASE_ORDER_READY_STATUS setting."""
+        return get_global_setting('ENABLE_PURCHASE_ORDER_READY_STATUS')
+
     def _action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
         if self.can_cancel:
@@ -694,6 +963,35 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.OrderCanceled,
             )
+
+    def approval_allowed(self, user):
+        """Check that the given user is allowed to approve the order."""
+        active = get_global_setting('ENABLE_PURCHASE_ORDER_APPROVAL')
+        master_approvers = get_global_setting('PURCHASE_ORDER_APPROVE_ALL_GROUP')
+
+        if not active:
+            return False
+
+        user_has_permission = False
+
+        if master_approvers:
+            user_has_permission = user.groups.filter(name=master_approvers).exists()
+
+        if self.project_code and self.project_code.responsible:
+            user_has_permission = order.project_code.responsible.is_user_allowed(user)
+
+        return user_has_permission
+
+    def allowed_to_issue(self, user):
+        """Check that the given user is allowed to issue the order."""
+        purchasers = get_global_setting('PURCHASE_ORDER_PURCHASER_GROUP')
+
+        user_has_permission = True
+
+        if purchasers:
+            user_has_permission = user.groups.filter(name=purchasers).exists()
+
+        return user_has_permission
 
     # endregion
 
