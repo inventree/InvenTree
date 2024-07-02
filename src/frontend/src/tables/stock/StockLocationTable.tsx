@@ -6,6 +6,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { stockLocationFields } from '../../forms/StockForms';
+import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -26,6 +27,14 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   const table = useTable('stocklocation');
   const user = useUserState();
 
+  const locationTypeFilters = useFilters({
+    url: apiUrl(ApiEndpoints.stock_location_type_list),
+    transform: (item) => ({
+      value: item.pk,
+      label: item.name
+    })
+  });
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -35,21 +44,26 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
       },
       {
         name: 'structural',
-        label: t`structural`,
+        label: t`Structural`,
         description: t`Show structural locations`
       },
       {
         name: 'external',
-        label: t`external`,
+        label: t`External`,
         description: t`Show external locations`
       },
       {
         name: 'has_location_type',
         label: t`Has location type`
+      },
+      {
+        name: 'location_type',
+        label: t`Location Type`,
+        description: t`Filter by location type`,
+        choices: locationTypeFilters.choices
       }
-      // TODO: location_type
     ];
-  }, []);
+  }, [locationTypeFilters.choices]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
