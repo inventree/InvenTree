@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-29 10:44+0000\n"
+"POT-Creation-Date: 2024-07-02 13:06+0000\n"
 "PO-Revision-Date: 2024-06-30 06:57\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
@@ -1315,7 +1315,8 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:526
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr ""
+"Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:611
@@ -4736,48 +4737,48 @@ msgstr "Új cég"
 msgid "Placed"
 msgstr "Kiküldve"
 
-#: machine/machine_types/label_printer.py:218
+#: machine/machine_types/label_printer.py:212
 msgid "Copies"
 msgstr "Másolatok"
 
-#: machine/machine_types/label_printer.py:219
+#: machine/machine_types/label_printer.py:213
 msgid "Number of copies to print for each label"
 msgstr "Címkénkénti nyomtatandó mennyiség"
 
-#: machine/machine_types/label_printer.py:234
+#: machine/machine_types/label_printer.py:228
 msgid "Connected"
 msgstr "Csatlakoztatba"
 
-#: machine/machine_types/label_printer.py:235 order/api.py:1467
+#: machine/machine_types/label_printer.py:229 order/api.py:1467
 #: templates/js/translated/sales_order.js:1078
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: machine/machine_types/label_printer.py:236
+#: machine/machine_types/label_printer.py:230
 msgid "Printing"
 msgstr "Nyomtatás"
 
-#: machine/machine_types/label_printer.py:237
+#: machine/machine_types/label_printer.py:231
 msgid "No media"
 msgstr "Nincs papír"
 
-#: machine/machine_types/label_printer.py:238
+#: machine/machine_types/label_printer.py:232
 msgid "Disconnected"
 msgstr "Nincs kapcsolat"
 
-#: machine/machine_types/label_printer.py:245
+#: machine/machine_types/label_printer.py:239
 msgid "Label Printer"
 msgstr "Címkenyomtató"
 
-#: machine/machine_types/label_printer.py:246
+#: machine/machine_types/label_printer.py:240
 msgid "Directly print labels for various items."
 msgstr "Közvetlen címkenyomtatás különféle tételekre."
 
-#: machine/machine_types/label_printer.py:252
+#: machine/machine_types/label_printer.py:246
 msgid "Printer Location"
 msgstr "Nyomtató helye"
 
-#: machine/machine_types/label_printer.py:253
+#: machine/machine_types/label_printer.py:247
 msgid "Scope the printer to a specific location"
 msgstr "Nyomtató korlátozása egy készlethelyhez"
 
@@ -14484,4 +14485,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
-

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-29 12:03+0000\n"
+"POT-Creation-Date: 2024-07-02 13:06+0000\n"
 "PO-Revision-Date: 2023-02-28 22:38\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -4985,62 +4985,62 @@ msgstr "新建公司信息"
 msgid "Placed"
 msgstr "已添加"
 
-#: machine/machine_types/label_printer.py:218
+#: machine/machine_types/label_printer.py:212
 msgid "Copies"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:219
+#: machine/machine_types/label_printer.py:213
 #, fuzzy
 #| msgid "Number of stock items to build"
 msgid "Number of copies to print for each label"
 msgstr "要生产的项目数量"
 
-#: machine/machine_types/label_printer.py:234
+#: machine/machine_types/label_printer.py:228
 #, fuzzy
 #| msgid "Connection error"
 msgid "Connected"
 msgstr "连接错误"
 
-#: machine/machine_types/label_printer.py:235 order/api.py:1467
+#: machine/machine_types/label_printer.py:229 order/api.py:1467
 #: templates/js/translated/sales_order.js:1078
 msgid "Unknown"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:236
+#: machine/machine_types/label_printer.py:230
 #, fuzzy
 #| msgid "Print Label"
 msgid "Printing"
 msgstr "打印标签"
 
-#: machine/machine_types/label_printer.py:237
+#: machine/machine_types/label_printer.py:231
 msgid "No media"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:238
+#: machine/machine_types/label_printer.py:232
 #, fuzzy
 #| msgid "Rejected"
 msgid "Disconnected"
 msgstr "已拒绝"
 
-#: machine/machine_types/label_printer.py:245
+#: machine/machine_types/label_printer.py:239
 #, fuzzy
 #| msgid "Label name"
 msgid "Label Printer"
 msgstr "标签名称"
 
-#: machine/machine_types/label_printer.py:246
+#: machine/machine_types/label_printer.py:240
 #, fuzzy
 #| msgid "Allocate selected items"
 msgid "Directly print labels for various items."
 msgstr "分配选定项目"
 
-#: machine/machine_types/label_printer.py:252
+#: machine/machine_types/label_printer.py:246
 #, fuzzy
 #| msgid "Print actions"
 msgid "Printer Location"
 msgstr "打印操作"
 
-#: machine/machine_types/label_printer.py:253
+#: machine/machine_types/label_printer.py:247
 msgid "Scope the printer to a specific location"
 msgstr ""
 

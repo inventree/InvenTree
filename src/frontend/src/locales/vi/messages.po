@@ -1494,10 +1494,6 @@ msgstr ""
 #~ msgid "Substitutes"
 #~ msgstr "Substitutes"
 
-#: src/components/tables/bom/BomTable.tsx:135
-#~ msgid "Allow Variants"
-#~ msgstr "Allow Variants"
-
 #: src/components/tables/bom/BomTable.tsx:139
 #: src/components/tables/bom/BomTable.tsx:265
 #: src/components/tables/bom/UsedInTable.tsx:64
@@ -3938,6 +3934,7 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:124
 #: src/pages/stock/LocationDetail.tsx:131
 #: src/tables/part/PartCategoryTable.tsx:65
+#: src/tables/stock/StockLocationTable.tsx:47
 msgid "Structural"
 msgstr "Cấu trúc"
 
@@ -3955,7 +3952,7 @@ msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:158
 #: src/pages/part/CategoryDetail.tsx:212
-#: src/tables/part/PartCategoryTable.tsx:88
+#: src/tables/part/PartCategoryTable.tsx:93
 msgid "Edit Part Category"
 msgstr ""
 
@@ -4039,6 +4036,7 @@ msgstr "Liên kết"
 #: src/pages/part/PartDetail.tsx:214
 #: src/tables/bom/BomTable.tsx:271
 #: src/tables/build/BuildLineTable.tsx:121
+#: src/tables/part/PartTable.tsx:256
 msgid "Available Stock"
 msgstr ""
 
@@ -4233,8 +4231,8 @@ msgid "Edit Part"
 msgstr "Sửa phụ kiện"
 
 #: src/pages/part/PartDetail.tsx:711
-#: src/tables/part/PartTable.tsx:266
-#: src/tables/part/PartTable.tsx:279
+#: src/tables/part/PartTable.tsx:289
+#: src/tables/part/PartTable.tsx:302
 msgid "Add Part"
 msgstr ""
 
@@ -4590,10 +4588,12 @@ msgid "Sublocations"
 msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:137
+#: src/tables/stock/StockLocationTable.tsx:52
 msgid "External"
 msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:143
+#: src/tables/stock/StockLocationTable.tsx:61
 msgid "Location Type"
 msgstr ""
 
@@ -4611,7 +4611,7 @@ msgstr ""
 
 #: src/pages/stock/LocationDetail.tsx:210
 #: src/pages/stock/LocationDetail.tsx:329
-#: src/tables/stock/StockLocationTable.tsx:100
+#: src/tables/stock/StockLocationTable.tsx:114
 msgid "Edit Stock Location"
 msgstr ""
 
@@ -4991,27 +4991,27 @@ msgid "Show inherited items"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:291
+msgid "Allow Variants"
+msgstr "Allow Variants"
+
+#: src/tables/bom/BomTable.tsx:292
+msgid "Show items which allow variant substitution"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:296
 #: src/tables/bom/UsedInTable.tsx:68
 #: src/tables/build/BuildLineTable.tsx:46
 msgid "Optional"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:292
+#: src/tables/bom/BomTable.tsx:297
 #: src/tables/bom/UsedInTable.tsx:69
 msgid "Show optional items"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:296
+#: src/tables/bom/BomTable.tsx:301
 #: src/tables/build/BuildLineTable.tsx:41
 msgid "Consumable"
-msgstr ""
-
-#: src/tables/bom/BomTable.tsx:297
-msgid "Show consumable items"
-msgstr ""
-
-#: src/tables/bom/BomTable.tsx:301
-msgid "Has Pricing"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:301
@@ -5019,23 +5019,32 @@ msgstr ""
 #~ msgstr "Create BOM Item"
 
 #: src/tables/bom/BomTable.tsx:302
+msgid "Show consumable items"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:306
+#: src/tables/part/PartTable.tsx:250
+msgid "Has Pricing"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:307
 msgid "Show items with pricing"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:311
-#: src/tables/bom/BomTable.tsx:399
+#: src/tables/bom/BomTable.tsx:316
+#: src/tables/bom/BomTable.tsx:404
 msgid "Add BOM Item"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:316
+#: src/tables/bom/BomTable.tsx:321
 msgid "BOM item created"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:323
+#: src/tables/bom/BomTable.tsx:328
 msgid "Edit BOM Item"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:325
+#: src/tables/bom/BomTable.tsx:330
 msgid "BOM item updated"
 msgstr ""
 
@@ -5043,19 +5052,19 @@ msgstr ""
 #~ msgid "Edit Bom Item"
 #~ msgstr "Edit Bom Item"
 
-#: src/tables/bom/BomTable.tsx:332
-msgid "Delete BOM Item"
-msgstr ""
-
-#: src/tables/bom/BomTable.tsx:333
-msgid "BOM item deleted"
-msgstr ""
-
 #: src/tables/bom/BomTable.tsx:333
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
-#: src/tables/bom/BomTable.tsx:343
+#: src/tables/bom/BomTable.tsx:337
+msgid "Delete BOM Item"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:338
+msgid "BOM item deleted"
+msgstr ""
+
+#: src/tables/bom/BomTable.tsx:348
 msgid "View BOM"
 msgstr ""
 
@@ -5071,11 +5080,11 @@ msgstr ""
 #~ msgid "Are you sure you want to remove this BOM item?"
 #~ msgstr "Are you sure you want to remove this BOM item?"
 
-#: src/tables/bom/BomTable.tsx:354
+#: src/tables/bom/BomTable.tsx:359
 msgid "Validate BOM line"
 msgstr ""
 
-#: src/tables/bom/BomTable.tsx:362
+#: src/tables/bom/BomTable.tsx:367
 msgid "Edit Substitutes"
 msgstr ""
 
@@ -5592,11 +5601,20 @@ msgstr ""
 msgid "Show structural categories"
 msgstr ""
 
-#: src/tables/part/PartCategoryTable.tsx:73
+#: src/tables/part/PartCategoryTable.tsx:70
+#: src/tables/part/PartTable.tsx:262
+msgid "Subscribed"
+msgstr ""
+
+#: src/tables/part/PartCategoryTable.tsx:71
+msgid "Show categories to which the user is subscribed"
+msgstr ""
+
+#: src/tables/part/PartCategoryTable.tsx:78
 msgid "New Part Category"
 msgstr ""
 
-#: src/tables/part/PartCategoryTable.tsx:98
+#: src/tables/part/PartCategoryTable.tsx:103
 msgid "Add Part Category"
 msgstr ""
 
@@ -5764,6 +5782,34 @@ msgstr "Lọc theo sản phẩm ảo"
 #: src/tables/part/PartTable.tsx:239
 msgid "Not Virtual"
 msgstr "Không ảo"
+
+#: src/tables/part/PartTable.tsx:244
+msgid "Is Template"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:245
+msgid "Filter by parts which are templates"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:251
+msgid "Filter by parts which have pricing information"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:257
+msgid "Filter by parts which have available stock"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:263
+msgid "Filter by parts to which the user is subscribed"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:268
+msgid "Has Stocktake"
+msgstr ""
+
+#: src/tables/part/PartTable.tsx:269
+msgid "Filter by parts which have stocktake information"
+msgstr ""
 
 #: src/tables/part/PartTestTemplateTable.tsx:52
 msgid "Results"
@@ -6611,7 +6657,7 @@ msgid "Show items which are available"
 msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:280
-#: src/tables/stock/StockLocationTable.tsx:33
+#: src/tables/stock/StockLocationTable.tsx:42
 msgid "Include Sublocations"
 msgstr ""
 
@@ -6828,32 +6874,36 @@ msgstr ""
 msgid "Show only passed tests"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:34
+#: src/tables/stock/StockLocationTable.tsx:38
+#~ msgid "structural"
+#~ msgstr ""
+
+#: src/tables/stock/StockLocationTable.tsx:43
 msgid "Include sublocations in results"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:38
-msgid "structural"
-msgstr ""
+#: src/tables/stock/StockLocationTable.tsx:43
+#~ msgid "external"
+#~ msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:39
+#: src/tables/stock/StockLocationTable.tsx:48
 msgid "Show structural locations"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:43
-msgid "external"
-msgstr ""
-
-#: src/tables/stock/StockLocationTable.tsx:44
+#: src/tables/stock/StockLocationTable.tsx:53
 msgid "Show external locations"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:48
+#: src/tables/stock/StockLocationTable.tsx:57
 msgid "Has location type"
 msgstr ""
 
-#: src/tables/stock/StockLocationTable.tsx:85
-#: src/tables/stock/StockLocationTable.tsx:110
+#: src/tables/stock/StockLocationTable.tsx:62
+msgid "Filter by location type"
+msgstr ""
+
+#: src/tables/stock/StockLocationTable.tsx:99
+#: src/tables/stock/StockLocationTable.tsx:124
 msgid "Add Stock Location"
 msgstr ""
 

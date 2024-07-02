@@ -1489,10 +1489,6 @@ msgstr "No settings specified"
 #~ msgid "Substitutes"
 #~ msgstr "Substitutes"
 
-#: src/components/tables/bom/BomTable.tsx:135
-#~ msgid "Allow Variants"
-#~ msgstr "Allow Variants"
-
 #: src/components/tables/bom/BomTable.tsx:139
 #: src/components/tables/bom/BomTable.tsx:265
 #: src/components/tables/bom/UsedInTable.tsx:64
@@ -3933,6 +3929,7 @@ msgstr "Subcategories"
 #: src/pages/part/CategoryDetail.tsx:124
 #: src/pages/stock/LocationDetail.tsx:131
 #: src/tables/part/PartCategoryTable.tsx:65
+#: src/tables/stock/StockLocationTable.tsx:47
 msgid "Structural"
 msgstr "Structural"
 
@@ -3950,7 +3947,7 @@ msgstr "Top level part category"
 
 #: src/pages/part/CategoryDetail.tsx:158
 #: src/pages/part/CategoryDetail.tsx:212
-#: src/tables/part/PartCategoryTable.tsx:88
+#: src/tables/part/PartCategoryTable.tsx:93
 msgid "Edit Part Category"
 msgstr "Edit Part Category"
 
@@ -4034,6 +4031,7 @@ msgstr "Link"
 #: src/pages/part/PartDetail.tsx:214
 #: src/tables/bom/BomTable.tsx:271
 #: src/tables/build/BuildLineTable.tsx:121
+#: src/tables/part/PartTable.tsx:256
 msgid "Available Stock"
 msgstr "Available Stock"
 
@@ -4228,8 +4226,8 @@ msgid "Edit Part"
 msgstr "Edit Part"
 
 #: src/pages/part/PartDetail.tsx:711
-#: src/tables/part/PartTable.tsx:266
-#: src/tables/part/PartTable.tsx:279
+#: src/tables/part/PartTable.tsx:289
+#: src/tables/part/PartTable.tsx:302
 msgid "Add Part"
 msgstr "Add Part"
 
@@ -4585,10 +4583,12 @@ msgid "Sublocations"
 msgstr "Sublocations"
 
 #: src/pages/stock/LocationDetail.tsx:137
+#: src/tables/stock/StockLocationTable.tsx:52
 msgid "External"
 msgstr "External"
 
 #: src/pages/stock/LocationDetail.tsx:143
+#: src/tables/stock/StockLocationTable.tsx:61
 msgid "Location Type"
 msgstr "Location Type"
 
@@ -4606,7 +4606,7 @@ msgstr "Default Parts"
 
 #: src/pages/stock/LocationDetail.tsx:210
 #: src/pages/stock/LocationDetail.tsx:329
-#: src/tables/stock/StockLocationTable.tsx:100
+#: src/tables/stock/StockLocationTable.tsx:114
 msgid "Edit Stock Location"
 msgstr "Edit Stock Location"
 
@@ -4986,51 +4986,60 @@ msgid "Show inherited items"
 msgstr "Show inherited items"
 
 #: src/tables/bom/BomTable.tsx:291
+msgid "Allow Variants"
+msgstr "Allow Variants"
+
+#: src/tables/bom/BomTable.tsx:292
+msgid "Show items which allow variant substitution"
+msgstr "Show items which allow variant substitution"
+
+#: src/tables/bom/BomTable.tsx:296
 #: src/tables/bom/UsedInTable.tsx:68
 #: src/tables/build/BuildLineTable.tsx:46
 msgid "Optional"
 msgstr "Optional"
 
-#: src/tables/bom/BomTable.tsx:292
+#: src/tables/bom/BomTable.tsx:297
 #: src/tables/bom/UsedInTable.tsx:69
 msgid "Show optional items"
 msgstr "Show optional items"
 
-#: src/tables/bom/BomTable.tsx:296
+#: src/tables/bom/BomTable.tsx:301
 #: src/tables/build/BuildLineTable.tsx:41
 msgid "Consumable"
 msgstr "Consumable"
-
-#: src/tables/bom/BomTable.tsx:297
-msgid "Show consumable items"
-msgstr "Show consumable items"
-
-#: src/tables/bom/BomTable.tsx:301
-msgid "Has Pricing"
-msgstr "Has Pricing"
 
 #: src/tables/bom/BomTable.tsx:301
 #~ msgid "Create BOM Item"
 #~ msgstr "Create BOM Item"
 
 #: src/tables/bom/BomTable.tsx:302
+msgid "Show consumable items"
+msgstr "Show consumable items"
+
+#: src/tables/bom/BomTable.tsx:306
+#: src/tables/part/PartTable.tsx:250
+msgid "Has Pricing"
+msgstr "Has Pricing"
+
+#: src/tables/bom/BomTable.tsx:307
 msgid "Show items with pricing"
 msgstr "Show items with pricing"
 
-#: src/tables/bom/BomTable.tsx:311
-#: src/tables/bom/BomTable.tsx:399
+#: src/tables/bom/BomTable.tsx:316
+#: src/tables/bom/BomTable.tsx:404
 msgid "Add BOM Item"
 msgstr "Add BOM Item"
 
-#: src/tables/bom/BomTable.tsx:316
+#: src/tables/bom/BomTable.tsx:321
 msgid "BOM item created"
 msgstr "BOM item created"
 
-#: src/tables/bom/BomTable.tsx:323
+#: src/tables/bom/BomTable.tsx:328
 msgid "Edit BOM Item"
 msgstr "Edit BOM Item"
 
-#: src/tables/bom/BomTable.tsx:325
+#: src/tables/bom/BomTable.tsx:330
 msgid "BOM item updated"
 msgstr "BOM item updated"
 
@@ -5038,19 +5047,19 @@ msgstr "BOM item updated"
 #~ msgid "Edit Bom Item"
 #~ msgstr "Edit Bom Item"
 
-#: src/tables/bom/BomTable.tsx:332
-msgid "Delete BOM Item"
-msgstr "Delete BOM Item"
-
-#: src/tables/bom/BomTable.tsx:333
-msgid "BOM item deleted"
-msgstr "BOM item deleted"
-
 #: src/tables/bom/BomTable.tsx:333
 #~ msgid "Bom item updated"
 #~ msgstr "Bom item updated"
 
-#: src/tables/bom/BomTable.tsx:343
+#: src/tables/bom/BomTable.tsx:337
+msgid "Delete BOM Item"
+msgstr "Delete BOM Item"
+
+#: src/tables/bom/BomTable.tsx:338
+msgid "BOM item deleted"
+msgstr "BOM item deleted"
+
+#: src/tables/bom/BomTable.tsx:348
 msgid "View BOM"
 msgstr "View BOM"
 
@@ -5066,11 +5075,11 @@ msgstr "View BOM"
 #~ msgid "Are you sure you want to remove this BOM item?"
 #~ msgstr "Are you sure you want to remove this BOM item?"
 
-#: src/tables/bom/BomTable.tsx:354
+#: src/tables/bom/BomTable.tsx:359
 msgid "Validate BOM line"
 msgstr "Validate BOM line"
 
-#: src/tables/bom/BomTable.tsx:362
+#: src/tables/bom/BomTable.tsx:367
 msgid "Edit Substitutes"
 msgstr "Edit Substitutes"
 
@@ -5587,11 +5596,20 @@ msgstr "Include subcategories in results"
 msgid "Show structural categories"
 msgstr "Show structural categories"
 
-#: src/tables/part/PartCategoryTable.tsx:73
+#: src/tables/part/PartCategoryTable.tsx:70
+#: src/tables/part/PartTable.tsx:262
+msgid "Subscribed"
+msgstr "Subscribed"
+
+#: src/tables/part/PartCategoryTable.tsx:71
+msgid "Show categories to which the user is subscribed"
+msgstr "Show categories to which the user is subscribed"
+
+#: src/tables/part/PartCategoryTable.tsx:78
 msgid "New Part Category"
 msgstr "New Part Category"
 
-#: src/tables/part/PartCategoryTable.tsx:98
+#: src/tables/part/PartCategoryTable.tsx:103
 msgid "Add Part Category"
 msgstr "Add Part Category"
 
@@ -5759,6 +5777,34 @@ msgstr "Filter by parts which are virtual"
 #: src/tables/part/PartTable.tsx:239
 msgid "Not Virtual"
 msgstr "Not Virtual"
+
+#: src/tables/part/PartTable.tsx:244
+msgid "Is Template"
+msgstr "Is Template"
+
+#: src/tables/part/PartTable.tsx:245
+msgid "Filter by parts which are templates"
+msgstr "Filter by parts which are templates"
+
+#: src/tables/part/PartTable.tsx:251
+msgid "Filter by parts which have pricing information"
+msgstr "Filter by parts which have pricing information"
+
+#: src/tables/part/PartTable.tsx:257
+msgid "Filter by parts which have available stock"
+msgstr "Filter by parts which have available stock"
+
+#: src/tables/part/PartTable.tsx:263
+msgid "Filter by parts to which the user is subscribed"
+msgstr "Filter by parts to which the user is subscribed"
+
+#: src/tables/part/PartTable.tsx:268
+msgid "Has Stocktake"
+msgstr "Has Stocktake"
+
+#: src/tables/part/PartTable.tsx:269
+msgid "Filter by parts which have stocktake information"
+msgstr "Filter by parts which have stocktake information"
 
 #: src/tables/part/PartTestTemplateTable.tsx:52
 msgid "Results"
@@ -6606,7 +6652,7 @@ msgid "Show items which are available"
 msgstr "Show items which are available"
 
 #: src/tables/stock/StockItemTable.tsx:280
-#: src/tables/stock/StockLocationTable.tsx:33
+#: src/tables/stock/StockLocationTable.tsx:42
 msgid "Include Sublocations"
 msgstr "Include Sublocations"
 
@@ -6823,32 +6869,36 @@ msgstr "Passed"
 msgid "Show only passed tests"
 msgstr "Show only passed tests"
 
-#: src/tables/stock/StockLocationTable.tsx:34
+#: src/tables/stock/StockLocationTable.tsx:38
+#~ msgid "structural"
+#~ msgstr "structural"
+
+#: src/tables/stock/StockLocationTable.tsx:43
 msgid "Include sublocations in results"
 msgstr "Include sublocations in results"
 
-#: src/tables/stock/StockLocationTable.tsx:38
-msgid "structural"
-msgstr "structural"
+#: src/tables/stock/StockLocationTable.tsx:43
+#~ msgid "external"
+#~ msgstr "external"
 
-#: src/tables/stock/StockLocationTable.tsx:39
+#: src/tables/stock/StockLocationTable.tsx:48
 msgid "Show structural locations"
 msgstr "Show structural locations"
 
-#: src/tables/stock/StockLocationTable.tsx:43
-msgid "external"
-msgstr "external"
-
-#: src/tables/stock/StockLocationTable.tsx:44
+#: src/tables/stock/StockLocationTable.tsx:53
 msgid "Show external locations"
 msgstr "Show external locations"
 
-#: src/tables/stock/StockLocationTable.tsx:48
+#: src/tables/stock/StockLocationTable.tsx:57
 msgid "Has location type"
 msgstr "Has location type"
 
-#: src/tables/stock/StockLocationTable.tsx:85
-#: src/tables/stock/StockLocationTable.tsx:110
+#: src/tables/stock/StockLocationTable.tsx:62
+msgid "Filter by location type"
+msgstr "Filter by location type"
+
+#: src/tables/stock/StockLocationTable.tsx:99
+#: src/tables/stock/StockLocationTable.tsx:124
 msgid "Add Stock Location"
 msgstr "Add Stock Location"
 

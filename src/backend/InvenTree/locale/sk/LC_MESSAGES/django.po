@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-29 10:44+0000\n"
+"POT-Creation-Date: 2024-07-02 13:06+0000\n"
 "PO-Revision-Date: 2024-06-30 06:57\n"
 "Last-Translator: \n"
 "Language-Team: Slovak\n"
@@ -4735,48 +4735,48 @@ msgstr ""
 msgid "Placed"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:218
+#: machine/machine_types/label_printer.py:212
 msgid "Copies"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:219
+#: machine/machine_types/label_printer.py:213
 msgid "Number of copies to print for each label"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:234
+#: machine/machine_types/label_printer.py:228
 msgid "Connected"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:235 order/api.py:1467
+#: machine/machine_types/label_printer.py:229 order/api.py:1467
 #: templates/js/translated/sales_order.js:1078
 msgid "Unknown"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:236
+#: machine/machine_types/label_printer.py:230
 msgid "Printing"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:237
+#: machine/machine_types/label_printer.py:231
 msgid "No media"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:238
+#: machine/machine_types/label_printer.py:232
 msgid "Disconnected"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:245
+#: machine/machine_types/label_printer.py:239
 msgid "Label Printer"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:246
+#: machine/machine_types/label_printer.py:240
 msgid "Directly print labels for various items."
 msgstr ""
 
-#: machine/machine_types/label_printer.py:252
+#: machine/machine_types/label_printer.py:246
 msgid "Printer Location"
 msgstr ""
 
-#: machine/machine_types/label_printer.py:253
+#: machine/machine_types/label_printer.py:247
 msgid "Scope the printer to a specific location"
 msgstr ""
 
@@ -14483,4 +14483,3 @@ msgstr ""
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr ""
-
