@@ -13,7 +13,7 @@ import {
   RenderManufacturerPart,
   RenderSupplierPart
 } from './Company';
-import { RenderProjectCode } from './Generic';
+import { RenderImportSession, RenderProjectCode } from './Generic';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -75,6 +75,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,
   [ModelType.user]: RenderUser,
+  [ModelType.importsession]: RenderImportSession,
   [ModelType.reporttemplate]: RenderReportTemplate,
   [ModelType.labeltemplate]: RenderLabelTemplate,
   [ModelType.pluginconfig]: RenderPlugin

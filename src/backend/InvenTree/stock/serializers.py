@@ -26,6 +26,8 @@ import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
 from company.serializers import SupplierPartSerializer
+from importer.mixins import DataImportExportSerializerMixin
+from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
 from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
@@ -177,7 +179,10 @@ class LocationBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         fields = ['pk', 'name', 'pathstring']
 
 
-class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class StockItemTestResultSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for the StockItemTestResult model."""
 
     class Meta:
@@ -212,10 +217,10 @@ class StockItemTestResultSerializer(InvenTree.serializers.InvenTreeModelSerializ
         super().__init__(*args, **kwargs)
 
         if user_detail is not True:
-            self.fields.pop('user_detail')
+            self.fields.pop('user_detail', None)
 
         if template_detail is not True:
-            self.fields.pop('template_detail')
+            self.fields.pop('template_detail', None)
 
     user_detail = InvenTree.serializers.UserSerializer(source='user', read_only=True)
 
@@ -316,12 +321,19 @@ class StockItemSerializerBrief(
         return value
 
 
-class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
+@register_importer()
+class StockItemSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+):
     """Serializer for a StockItem.
 
     - Includes serialization for the linked part
     - Includes serialization for the item location
     """
+
+    export_exclude_fields = ['tracking_items']
+
+    import_exclude_fields = ['use_pack_size', 'tags']
 
     class Meta:
         """Metaclass options."""
@@ -356,6 +368,7 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'status_text',
             'stocktake_date',
             'supplier_part',
+            'sku',
             'supplier_part_detail',
             'barcode_hash',
             'updated',
@@ -401,19 +414,19 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         super(StockItemSerializer, self).__init__(*args, **kwargs)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if not location_detail:
-            self.fields.pop('location_detail')
+            self.fields.pop('location_detail', None)
 
         if not supplier_part_detail:
-            self.fields.pop('supplier_part_detail')
+            self.fields.pop('supplier_part_detail', None)
 
         if not tests:
-            self.fields.pop('tests')
+            self.fields.pop('tests', None)
 
         if not path_detail:
-            self.fields.pop('location_path')
+            self.fields.pop('location_path', None)
 
     part = serializers.PrimaryKeyRelatedField(
         queryset=part_models.Part.objects.all(),
@@ -524,6 +537,8 @@ class StockItemSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         return queryset
 
     status_text = serializers.CharField(source='get_status_display', read_only=True)
+
+    sku = serializers.CharField(source='supplier_part.SKU', read_only=True)
 
     # Optional detail fields, which can be appended via query parameters
     supplier_part_detail = SupplierPartSerializer(
@@ -1026,8 +1041,13 @@ class LocationTreeSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset.annotate(sublocations=stock.filters.annotate_sub_locations())
 
 
-class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
+@register_importer()
+class LocationSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+):
     """Detailed information about a stock location."""
+
+    import_exclude_fields = ['tags']
 
     class Meta:
         """Metaclass options."""
@@ -1055,7 +1075,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
             'tags',
         ]
 
-        read_only_fields = ['barcode_hash', 'icon']
+        read_only_fields = ['barcode_hash', 'icon', 'level', 'pathstring']
 
     def __init__(self, *args, **kwargs):
         """Optionally add or remove extra fields."""
@@ -1064,7 +1084,7 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
         super().__init__(*args, **kwargs)
 
         if not path_detail:
-            self.fields.pop('path')
+            self.fields.pop('path', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1109,7 +1129,10 @@ class LocationSerializer(InvenTree.serializers.InvenTreeTagModelSerializer):
     )
 
 
-class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class StockTrackingSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for StockItemTracking model."""
 
     class Meta:
@@ -1139,10 +1162,10 @@ class StockTrackingSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if item_detail is not True:
-            self.fields.pop('item_detail')
+            self.fields.pop('item_detail', None)
 
         if user_detail is not True:
-            self.fields.pop('user_detail')
+            self.fields.pop('user_detail', None)
 
     label = serializers.CharField(read_only=True)
 

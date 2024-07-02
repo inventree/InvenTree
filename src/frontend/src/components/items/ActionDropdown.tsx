@@ -66,7 +66,7 @@ export function ActionDropdown({
             <ActionIcon
               size="lg"
               radius="sm"
-              variant="outline"
+              variant="transparent"
               disabled={disabled}
               aria-label={menuName}
             >

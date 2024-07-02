@@ -47,6 +47,8 @@ def apps():
         'build',
         'common',
         'company',
+        'importer',
+        'machine',
         'order',
         'part',
         'report',
@@ -86,6 +88,9 @@ def content_excludes(
         'common.notificationentry',
         'common.notificationmessage',
         'user_sessions.session',
+        'importer.dataimportsession',
+        'importer.dataimportcolumnmap',
+        'importer.dataimportrow',
         'report.labeloutput',
         'report.reportoutput',
     ]

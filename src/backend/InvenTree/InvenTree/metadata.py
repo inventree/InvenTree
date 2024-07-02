@@ -137,10 +137,10 @@ class InvenTreeMetadata(SimpleMetadata):
             - field_value: The value of the field (if available)
             - model_value: The equivalent value of the model (if available)
         """
-        if model_value and not field_value:
+        if field_value is None and model_value is not None:
             return model_value
 
-        if field_value and not model_value:
+        if model_value is None and field_value is not None:
             return field_value
 
         # Callable values will be evaluated later
@@ -169,8 +169,7 @@ class InvenTreeMetadata(SimpleMetadata):
                     # Already know about this one
                     continue
 
-                if hasattr(serializer, field_name):
-                    field = getattr(serializer, field_name)
+                if field := getattr(serializer, field_name, None):
                     serializer_info[field_name] = self.get_field_info(field)
 
         model_class = None
@@ -261,7 +260,8 @@ class InvenTreeMetadata(SimpleMetadata):
 
         if instance is None and model_class is not None:
             # Attempt to find the instance based on kwargs lookup
-            kwargs = getattr(self.view, 'kwargs', None)
+            view = getattr(self, 'view', None)
+            kwargs = getattr(view, 'kwargs', None) if view else None
 
             if kwargs:
                 pk = None
@@ -318,8 +318,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
         # Force non-nullable fields to read as "required"
         # (even if there is a default value!)
-        if not field.allow_null and not (
-            hasattr(field, 'allow_blank') and field.allow_blank
+        if (
+            'required' not in field_info
+            and not field.allow_null
+            and not (hasattr(field, 'allow_blank') and field.allow_blank)
         ):
             field_info['required'] = True
 
@@ -346,8 +348,11 @@ class InvenTreeMetadata(SimpleMetadata):
                     field_info['api_url'] = '/api/user/'
                 elif field_info['model'] == 'contenttype':
                     field_info['api_url'] = '/api/contenttype/'
-                else:
+                elif hasattr(model, 'get_api_url'):
                     field_info['api_url'] = model.get_api_url()
+                else:
+                    logger.warning("'get_api_url' method not defined for %s", model)
+                    field_info['api_url'] = getattr(model, 'api_url', None)
 
                 # Handle custom 'primary key' field
                 field_info['pk_field'] = getattr(field, 'pk_field', 'pk') or 'pk'

@@ -65,6 +65,7 @@ export function ChoiceField({
       disabled={definition.disabled}
       leftSection={definition.icon}
       comboboxProps={{ withinPortal: true }}
+      searchable
     />
   );
 }

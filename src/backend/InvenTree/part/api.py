@@ -19,7 +19,8 @@ import order.models
 import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
-from InvenTree.api import APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
+from importer.mixins import DataExportViewMixin
+from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -28,7 +29,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import DownloadFile, increment_serial_number, isNull, str2bool
+from InvenTree.helpers import increment_serial_number, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -228,7 +229,7 @@ class CategoryFilter(rest_filters.FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
+class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -236,14 +237,6 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
     """
 
     filterset_class = CategoryFilter
-
-    def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file."""
-        dataset = PartCategoryResource().export(queryset=queryset)
-        filedata = dataset.export(export_format)
-        filename = f'InvenTree_Categories.{export_format}'
-
-        return DownloadFile(filedata, filename)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -1224,20 +1217,11 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
+class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     filterset_class = PartFilter
     is_create = True
-
-    def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file."""
-        dataset = PartResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-        filename = f'InvenTree_Parts.{export_format}'
-
-        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
         """Perform custom filtering of the queryset."""

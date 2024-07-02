@@ -59,6 +59,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'abstract': False,
+                'verbose_name': 'Sales Order Line Item',
             },
         ),
         migrations.CreateModel(

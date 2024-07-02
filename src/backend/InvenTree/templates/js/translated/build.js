@@ -2449,6 +2449,7 @@ function loadBuildLineTable(table, build_id, options={}) {
     // If data is passed directly to this function, do not setup filters
     if (!options.data) {
         setupFilterList('buildlines', $(table), filterTarget, {
+            download: true,
             labels: {
                 modeltype: 'buildline',
             },

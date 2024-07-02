@@ -7,12 +7,9 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 
 import part.models
+from importer.mixins import DataExportViewMixin
 from InvenTree.api import ListCreateDestroyAPIView, MetadataView
-from InvenTree.filters import (
-    ORDER_FILTER,
-    SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
-)
+from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
@@ -36,7 +33,7 @@ from .serializers import (
 )
 
 
-class CompanyList(ListCreateAPI):
+class CompanyList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Company objects.
 
     Provides two methods:
@@ -84,7 +81,7 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
-class ContactList(ListCreateDestroyAPIView):
+class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Company model."""
 
     queryset = Contact.objects.all()
@@ -108,7 +105,7 @@ class ContactDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ContactSerializer
 
 
-class AddressList(ListCreateDestroyAPIView):
+class AddressList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Address model."""
 
     queryset = Address.objects.all()
@@ -149,7 +146,7 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
     )
 
 
-class ManufacturerPartList(ListCreateDestroyAPIView):
+class ManufacturerPartList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of ManufacturerPart object.
 
     - GET: Return list of ManufacturerPart objects
@@ -297,7 +294,7 @@ class SupplierPartFilter(rest_filters.FilterSet):
     )
 
 
-class SupplierPartList(ListCreateDestroyAPIView):
+class SupplierPartList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of SupplierPart object.
 
     - GET: Return list of SupplierPart objects

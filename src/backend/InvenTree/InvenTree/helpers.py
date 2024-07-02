@@ -429,7 +429,7 @@ def MakeBarcode(cls_name, object_pk: int, object_data=None, **kwargs):
 
 
 def GetExportFormats():
-    """Return a list of allowable file formats for exporting data."""
+    """Return a list of allowable file formats for importing or exporting tabular data."""
     return ['csv', 'tsv', 'xls', 'xlsx', 'json', 'yaml']
 
 
