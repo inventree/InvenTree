@@ -34,6 +34,7 @@ from company.urls import company_urls, manufacturer_part_urls, supplier_part_url
 from order.urls import order_urls
 from part.urls import part_urls
 from plugin.urls import get_plugin_urls
+from stock.api import test_statistics_api_urls
 from stock.urls import stock_urls
 from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
@@ -101,6 +102,7 @@ apipatterns = [
         ]),
     ),
     path('stock/', include(stock.api.stock_api_urls)),
+    path('test-statistics/', include(test_statistics_api_urls)),
     path('build/', include(build.api.build_api_urls)),
     path('order/', include(order.api.order_api_urls)),
     path('label/', include(report.api.label_api_urls)),
