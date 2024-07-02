@@ -216,7 +216,7 @@ class MetadataMixin(models.Model):
             self.save()
 
 
-class DataImportMixin(object):
+class DataImportMixin:
     """Model mixin class which provides support for 'data import' functionality.
 
     Models which implement this mixin should provide information on the fields available for import

@@ -215,9 +215,8 @@ function partFields(options={}) {
 
     // If editing a part, we can set the "active" status
     if (options.edit) {
-        fields.active = {
-            group: 'attributes'
-        };
+        fields.active = {};
+        fields.locked = {};
     }
 
     // Pop 'expiry' field
@@ -813,6 +812,10 @@ function makePartIcons(part) {
 
     if (!part.active) {
         html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `;
+    }
+
+    if (part.locked) {
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Locked" %}</span>`;
     }
 
     return html;

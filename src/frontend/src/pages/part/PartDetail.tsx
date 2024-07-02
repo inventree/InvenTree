@@ -268,6 +268,11 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
+        name: 'locked',
+        label: t`Locked`
+      },
+      {
+        type: 'boolean',
         name: 'template',
         label: t`Template Part`
       },
@@ -686,6 +691,12 @@ export default function PartDetail() {
         color="blue"
         visible={part.building > 0}
         key="in_production"
+      />,
+      <DetailsBadge
+        label={t`Locked`}
+        color="black"
+        visible={part.locked}
+        key="locked"
       />,
       <DetailsBadge
         label={t`Inactive`}

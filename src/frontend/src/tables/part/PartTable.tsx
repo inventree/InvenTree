@@ -25,6 +25,7 @@ function partTableColumns(): TableColumn[] {
   return [
     {
       accessor: 'name',
+      title: t`Part`,
       sortable: true,
       noWrap: true,
       render: (record: any) => PartColumn(record)
@@ -167,6 +168,12 @@ function partTableFilters(): TableFilter[] {
       name: 'active',
       label: t`Active`,
       description: t`Filter by part active status`,
+      type: 'boolean'
+    },
+    {
+      name: 'locked',
+      label: t`Locked`,
+      description: t`Filter by part locked status`,
       type: 'boolean'
     },
     {

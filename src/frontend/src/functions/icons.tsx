@@ -38,6 +38,7 @@ import {
   IconLink,
   IconList,
   IconListTree,
+  IconLock,
   IconMail,
   IconMapPin,
   IconMapPinHeart,
@@ -152,6 +153,8 @@ const icons = {
   inactive: IconX,
   part: IconBox,
   supplier_part: IconPackageImport,
+  lock: IconLock,
+  locked: IconLock,
 
   calendar: IconCalendar,
   external: IconExternalLink,

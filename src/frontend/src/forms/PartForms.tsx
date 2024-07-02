@@ -46,6 +46,7 @@ export function usePartFields({
       purchaseable: {},
       salable: {},
       virtual: {},
+      locked: {},
       active: {}
     };
 
