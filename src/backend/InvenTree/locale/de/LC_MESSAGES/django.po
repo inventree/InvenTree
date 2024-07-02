@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-02 13:06+0000\n"
-"PO-Revision-Date: 2024-06-30 06:57\n"
+"PO-Revision-Date: 2024-07-02 13:19\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -546,15 +546,15 @@ msgstr "Mitarbeiter"
 
 #: InvenTree/serializers.py:439
 msgid "Does this user have staff permissions"
-msgstr ""
+msgstr "Hat der Benutzer die Mitarbeiter Berechtigung"
 
 #: InvenTree/serializers.py:442
 msgid "Superuser"
-msgstr ""
+msgstr "Administrator"
 
 #: InvenTree/serializers.py:442
 msgid "Is this user a superuser"
-msgstr ""
+msgstr "Ist dieser Benutzer ein Adminstrator"
 
 #: InvenTree/serializers.py:445 common/models.py:2662 company/models.py:163
 #: company/models.py:782 machine/models.py:39 part/admin.py:88
@@ -571,7 +571,7 @@ msgstr "Aktiv"
 
 #: InvenTree/serializers.py:445
 msgid "Is this user account active"
-msgstr ""
+msgstr "Ist dieses Benutzerkonto aktiv"
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
@@ -1886,23 +1886,23 @@ msgstr "Unfertige Endprodukte"
 
 #: common/api.py:689
 msgid "Is Link"
-msgstr ""
+msgstr "Link"
 
 #: common/api.py:697
 msgid "Is File"
-msgstr ""
+msgstr "Datei"
 
 #: common/api.py:739
 msgid "User does not have permission to delete this attachment"
-msgstr ""
+msgstr "Benutzer hat keine Berechtigung zum Löschen des Anhangs"
 
 #: common/currency.py:130
 msgid "Invalid currency code"
-msgstr ""
+msgstr "Ungültiges Währungskürzel"
 
 #: common/currency.py:132
 msgid "Duplicate currency code"
-msgstr ""
+msgstr "Doppeltes Währungskürzel"
 
 #: common/currency.py:137
 msgid "No valid currency codes provided"
@@ -2068,11 +2068,11 @@ msgstr "Wählen Sie die Basiswährung für Preisberechnungen aus"
 
 #: common/models.py:1265
 msgid "Supported Currencies"
-msgstr ""
+msgstr "Verfügbare Währungen"
 
 #: common/models.py:1266
 msgid "List of supported currency codes"
-msgstr ""
+msgstr "Liste der unterstützten Währungskürzel"
 
 #: common/models.py:1272
 msgid "Currency Update Interval"
@@ -2227,11 +2227,11 @@ msgstr "Revisions-Feld für Artikel aktivieren"
 
 #: common/models.py:1401
 msgid "Allow Deletion from Assembly"
-msgstr ""
+msgstr "Löschen aus Baugruppe erlauben"
 
 #: common/models.py:1402
 msgid "Allow deletion of parts which are used in an assembly"
-msgstr ""
+msgstr "Erlaube das Löschen von Teilen, die in einer Baugruppe verwendet werden"
 
 #: common/models.py:1407
 msgid "IPN Regex"
@@ -2749,11 +2749,11 @@ msgstr "Bearbeitung von Aufträgen nach Versand oder Abschluss erlauben"
 
 #: common/models.py:1848
 msgid "Mark Shipped Orders as Complete"
-msgstr ""
+msgstr "Versendete Bestellungen als abgeschlossen markieren"
 
 #: common/models.py:1850
 msgid "Sales orders marked as shipped will automatically be completed, bypassing the \"shipped\" status"
-msgstr ""
+msgstr "Als versendet markierte Aufträge werden automatisch abgeschlossen und überspringen den Status \"Versandt\""
 
 #: common/models.py:1856
 msgid "Purchase Order Reference Pattern"
@@ -2813,7 +2813,7 @@ msgstr "Selbstregistrierung über SSO für Benutzer auf den Anmeldeseiten aktivi
 
 #: common/models.py:1913
 msgid "Enable SSO group sync"
-msgstr ""
+msgstr "SSO Gruppensynchronisation aktivieren"
 
 #: common/models.py:1915
 msgid "Enable synchronizing InvenTree groups with groups provided by the IdP"
@@ -2821,7 +2821,7 @@ msgstr ""
 
 #: common/models.py:1921
 msgid "SSO group key"
-msgstr ""
+msgstr "SSO Gruppenschlüssel"
 
 #: common/models.py:1923
 msgid "The name of the groups claim attribute provided by the IdP"
@@ -3675,7 +3675,7 @@ msgstr "Upload Datum"
 
 #: common/models.py:3236
 msgid "Date the file was uploaded"
-msgstr ""
+msgstr "Datum der hochgeladenen Datei"
 
 #: common/models.py:3240
 msgid "File size"
@@ -3687,7 +3687,7 @@ msgstr "Dateigröße in Bytes"
 
 #: common/models.py:3278 common/serializers.py:553
 msgid "Invalid model type specified for attachment"
-msgstr ""
+msgstr "Ungültiger Modelltyp für Anhang angegeben"
 
 #: common/notifications.py:314
 #, python-brace-format
@@ -3789,11 +3789,11 @@ msgstr "Dateiname"
 
 #: common/serializers.py:532 report/api.py:100 report/serializers.py:53
 msgid "Model Type"
-msgstr ""
+msgstr "Modelltyp"
 
 #: common/serializers.py:559
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr ""
+msgstr "Benutzer hat keine Berechtigung, Anhänge für dieses Modell zu erstellen oder zu bearbeiten"
 
 #: common/validators.py:33
 msgid "No attachment model type provided"
@@ -5016,11 +5016,11 @@ msgstr "Versand von"
 
 #: order/models.py:1025
 msgid "Order is already complete"
-msgstr ""
+msgstr "Bestellung ist bereits abgeschlossen"
 
 #: order/models.py:1028
 msgid "Order is already cancelled"
-msgstr ""
+msgstr "Bestellung ist bereits storniert"
 
 #: order/models.py:1032
 msgid "Only an open order can be marked as complete"
@@ -6018,7 +6018,7 @@ msgstr "Filter nach Kategorietiefe"
 
 #: part/api.py:141 stock/api.py:330
 msgid "Top Level"
-msgstr ""
+msgstr "Oberste Ebene"
 
 #: part/api.py:143
 msgid "Filter by top-level categories"
@@ -6160,11 +6160,11 @@ msgstr "Sie können diese Teilekategorie nicht als strukturell festlegen, da ihr
 
 #: part/models.py:485
 msgid "Cannot delete this part as it is still active"
-msgstr ""
+msgstr "Dieses Teil kann nicht gelöscht werden, da es noch aktiv ist"
 
 #: part/models.py:490
 msgid "Cannot delete this part as it is used in an assembly"
-msgstr ""
+msgstr "Dieses Teil kann nicht gelöscht werden, da es in einem Bauauftrag verwendet wird"
 
 #: part/models.py:528
 msgid "Invalid choice for parent part"
@@ -6616,7 +6616,7 @@ msgstr "Auswahlmöglichkeiten"
 
 #: part/models.py:3529
 msgid "Valid choices for this test (comma-separated)"
-msgstr ""
+msgstr "Gültige Optionen für diesen Test (durch Komma getrennt)"
 
 #: part/models.py:3583
 msgid "Checkbox parameters cannot have units"
@@ -8033,7 +8033,7 @@ msgstr "Fehler beim Rendern des Etikett als HTML"
 
 #: plugin/base/label/mixins.py:151
 msgid "No items provided to print"
-msgstr ""
+msgstr "Keine Elemente zum Drucken übergeben"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:25
 msgid "InvenTree Barcodes"
@@ -14483,3 +14483,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+

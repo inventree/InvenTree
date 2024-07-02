@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-01 13:11\n"
+"PO-Revision-Date: 2024-07-02 13:19\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -356,7 +356,7 @@ msgstr "Sélectionner l'instance à prévisualiser"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:373
 msgid "Error rendering template"
-msgstr ""
+msgstr "Erreur de rendu du modèle"
 
 #: src/components/forms/ApiForm.tsx:149
 #: src/functions/forms.tsx:259
@@ -822,7 +822,7 @@ msgstr "Chargement des informations de licence"
 
 #: src/components/modals/LicenseModal.tsx:77
 msgid "Failed to fetch license information"
-msgstr ""
+msgstr "Impossible de récupérer les informations de licence"
 
 #: src/components/modals/LicenseModal.tsx:85
 msgid "{key} Packages"
@@ -1150,11 +1150,11 @@ msgstr "Modèles de paramètres de pièce"
 
 #: src/components/render/ModelType.tsx:38
 msgid "Part Test Template"
-msgstr ""
+msgstr "Modèle de test de pièce"
 
 #: src/components/render/ModelType.tsx:39
 msgid "Part Test Templates"
-msgstr ""
+msgstr "Modèles de test de pièces"
 
 #: src/components/render/ModelType.tsx:45
 #: src/pages/company/SupplierPartDetail.tsx:190
@@ -1414,13 +1414,13 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:354
 #: src/tables/stock/StockItemTable.tsx:57
 msgid "Stock"
-msgstr ""
+msgstr "Stock"
 
 #: src/components/render/Stock.tsx:52
 #: src/pages/stock/StockDetail.tsx:146
 #: src/pages/stock/StockDetail.tsx:519
 msgid "Serial Number"
-msgstr ""
+msgstr "Numéro de série"
 
 #: src/components/render/Stock.tsx:54
 #: src/forms/BuildForms.tsx:206
@@ -1443,16 +1443,16 @@ msgstr "Quantité"
 
 #: src/components/settings/SettingList.tsx:67
 msgid "Edit Setting"
-msgstr ""
+msgstr "Éditer le paramétrage"
 
 #: src/components/settings/SettingList.tsx:78
 #: src/components/settings/SettingList.tsx:108
 msgid "Setting {0} updated successfully"
-msgstr ""
+msgstr "Paramètre {0} mis à jour avec succès"
 
 #: src/components/settings/SettingList.tsx:107
 msgid "Setting updated"
-msgstr ""
+msgstr "Paramètre mis à jour"
 
 #: src/components/settings/SettingList.tsx:117
 msgid "Error editing setting"
@@ -4992,7 +4992,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:291
 msgid "Allow Variants"
-msgstr "Allow Variants"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:292
 msgid "Show items which allow variant substitution"
@@ -6876,7 +6876,7 @@ msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:38
 #~ msgid "structural"
-#~ msgstr ""
+#~ msgstr "structural"
 
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Include sublocations in results"
@@ -6884,7 +6884,7 @@ msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:43
 #~ msgid "external"
-#~ msgstr ""
+#~ msgstr "external"
 
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "Show structural locations"
@@ -6934,3 +6934,4 @@ msgstr "Lire la documentation"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+

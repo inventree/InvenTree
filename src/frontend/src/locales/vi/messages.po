@@ -8,7 +8,7 @@ msgstr ""
 "Language: vi\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-19 04:50\n"
+"PO-Revision-Date: 2024-07-02 13:19\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -4992,7 +4992,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:291
 msgid "Allow Variants"
-msgstr "Allow Variants"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:292
 msgid "Show items which allow variant substitution"
@@ -6876,7 +6876,7 @@ msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:38
 #~ msgid "structural"
-#~ msgstr ""
+#~ msgstr "structural"
 
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Include sublocations in results"
@@ -6884,7 +6884,7 @@ msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:43
 #~ msgid "external"
-#~ msgstr ""
+#~ msgstr "external"
 
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "Show structural locations"
@@ -6934,3 +6934,4 @@ msgstr "Đọc tài liệu"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
