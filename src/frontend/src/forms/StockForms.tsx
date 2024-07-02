@@ -2,7 +2,8 @@ import { t } from '@lingui/macro';
 import { Flex, Group, NumberInput, Skeleton, Table, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { Suspense, useCallback, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';

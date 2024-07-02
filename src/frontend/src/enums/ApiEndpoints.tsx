@@ -102,6 +102,7 @@ export enum ApiEndpoints {
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
   stock_install = 'stock/:id/install',
+  stock_generate_batch_code = 'stock/generate/batch-code/',
 
   // Generator API endpoints
   generate_batch_code = 'generate/batch-code/',

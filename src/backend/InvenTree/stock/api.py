@@ -103,6 +103,22 @@ class GenerateSerialNumber(GenericAPIView):
         return Response(data, status=status.HTTP_201_CREATED)
 
 
+class GenerateBatchCode(GenericAPIView):
+    """API endpoint for generating batch codes."""
+
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = StockSerializers.GenerateBatchCodeSerializer
+
+    def post(self, request, *args, **kwargs):
+        """Generate a new batch code."""
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        data = {'batch_code': generate_batch_code(**serializer.validated_data)}
+
+        return Response(data, status=status.HTTP_201_CREATED)
+
+
 class StockDetail(RetrieveUpdateDestroyAPI):
     """API detail endpoint for Stock object.
 
@@ -1679,6 +1695,16 @@ stock_api_urls = [
         StatusView.as_view(),
         {StatusView.MODEL_REF: StockStatus},
         name='api-stock-status-codes',
+    ),
+    path(
+        'generate/',
+        include([
+            path(
+                'batch-code/',
+                GenerateBatchCode.as_view(),
+                name='api-generate-batch-code',
+            )
+        ]),
     ),
     # Anything else
     path('', StockList.as_view(), name='api-stock-list'),
