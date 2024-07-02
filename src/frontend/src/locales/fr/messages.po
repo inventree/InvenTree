@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-06-27 06:03\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -156,7 +156,7 @@ msgstr "Supprimer"
 #: src/contexts/ThemeContext.tsx:43
 #: src/functions/forms.tsx:196
 #: src/hooks/UseForm.tsx:40
-#: src/tables/FilterSelectDrawer.tsx:207
+#: src/tables/FilterSelectDrawer.tsx:204
 #: src/tables/InvenTreeTable.tsx:499
 #: src/tables/build/BuildOutputTable.tsx:225
 msgid "Cancel"
@@ -215,31 +215,31 @@ msgstr "Inactif"
 
 #: src/components/details/PartIcons.tsx:41
 msgid "Part is a template part (variants can be made from this part)"
-msgstr ""
+msgstr "La pièce est une pièce modèle (des variantes peuvent être faites à partir de cette pièce)"
 
 #: src/components/details/PartIcons.tsx:47
 msgid "Part can be assembled from other parts"
-msgstr ""
+msgstr "La pièce peut être assemblée à partir d'autres pièces"
 
 #: src/components/details/PartIcons.tsx:53
 msgid "Part can be used in assemblies"
-msgstr ""
+msgstr "La pièce peut être utilisée dans des assemblages"
 
 #: src/components/details/PartIcons.tsx:59
 msgid "Part stock is tracked by serial number"
-msgstr ""
+msgstr "Le stock de la pièce est suivi par numéro de série"
 
 #: src/components/details/PartIcons.tsx:65
 msgid "Part can be purchased from external suppliers"
-msgstr ""
+msgstr "La pièce peut être achetée auprès de fournisseurs externes"
 
 #: src/components/details/PartIcons.tsx:71
 msgid "Part can be sold to customers"
-msgstr ""
+msgstr "La pièce peut être vendue aux clients"
 
 #: src/components/details/PartIcons.tsx:76
 msgid "Part is virtual (not a physical part)"
-msgstr ""
+msgstr "La pièce est virtuelle (pas une partie physique)"
 
 #: src/components/details/PartIcons.tsx:82
 #: src/tables/part/PartTable.tsx:234
@@ -250,7 +250,7 @@ msgstr "Virtuel"
 
 #: src/components/editors/NotesEditor.tsx:66
 msgid "Image upload failed"
-msgstr ""
+msgstr "Le téléchargement de l'image a échoué"
 
 #: src/components/editors/NotesEditor.tsx:151
 #: src/components/forms/ApiForm.tsx:430
@@ -259,23 +259,23 @@ msgstr "Succès"
 
 #: src/components/editors/NotesEditor.tsx:152
 msgid "Notes saved successfully"
-msgstr ""
+msgstr "Notes enregistrées avec succès"
 
 #: src/components/editors/NotesEditor.tsx:161
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Échec de l'enregistrement des notes"
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Preview Notes"
-msgstr ""
+msgstr "Aperçu des Notes"
 
 #: src/components/editors/NotesEditor.tsx:193
 msgid "Edit Notes"
-msgstr ""
+msgstr "Modifier les notes"
 
 #: src/components/editors/NotesEditor.tsx:207
 msgid "Save Notes"
-msgstr ""
+msgstr "Enregistrer les notes"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
@@ -320,11 +320,11 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 msgid "Save & Reload"
-msgstr ""
+msgstr "Sauvegarder et Actualiser"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:189
 msgid "Preview updated"
-msgstr ""
+msgstr "Aperçu mis à jour"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:190
 msgid "The preview has been updated successfully."
@@ -396,7 +396,7 @@ msgstr "Connexion réussie"
 
 #: src/components/forms/AuthenticationForm.tsx:52
 msgid "Logged in successfully"
-msgstr ""
+msgstr "Connexion réussie"
 
 #: src/components/forms/AuthenticationForm.tsx:52
 #~ msgid "Welcome back!"
@@ -433,7 +433,7 @@ msgstr "Vérifiez votre boîte de réception pour le lien de connexion. Si vous 
 
 #: src/components/forms/AuthenticationForm.tsx:75
 msgid "Mail delivery failed"
-msgstr ""
+msgstr "L'envoi du mail a échoué"
 
 #: src/components/forms/AuthenticationForm.tsx:95
 msgid "Or continue with other methods"
@@ -625,7 +625,7 @@ msgstr ""
 
 #: src/components/forms/fields/TableField.tsx:74
 msgid "No entries available"
-msgstr ""
+msgstr "Aucune entrée n'est disponible"
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -810,15 +810,15 @@ msgstr "Abandonner"
 
 #: src/components/modals/LicenseModal.tsx:39
 msgid "No license text available"
-msgstr ""
+msgstr "Aucun texte de licence disponible"
 
 #: src/components/modals/LicenseModal.tsx:46
 msgid "No Information provided - this is likely a server issue"
-msgstr ""
+msgstr "Aucune information fournie - il s'agit probablement d'un problème de serveur"
 
 #: src/components/modals/LicenseModal.tsx:71
 msgid "Loading license information"
-msgstr ""
+msgstr "Chargement des informations de licence"
 
 #: src/components/modals/LicenseModal.tsx:77
 msgid "Failed to fetch license information"
@@ -967,11 +967,11 @@ msgstr "Version du serveur"
 #: src/components/nav/Layout.tsx:70
 #: src/tables/part/PartThumbTable.tsx:194
 msgid "Search..."
-msgstr ""
+msgstr "Rechercher..."
 
 #: src/components/nav/Layout.tsx:73
 msgid "Nothing found..."
-msgstr ""
+msgstr "Aucun résultat trouvé..."
 
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
@@ -1373,7 +1373,7 @@ msgstr "Utilisateur"
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:81
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:13
 msgid "Users"
-msgstr ""
+msgstr "Utilisateurs"
 
 #: src/components/render/ModelType.tsx:200
 msgid "Label Template"
@@ -1434,7 +1434,7 @@ msgstr ""
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:73
 #: src/tables/stock/StockTrackingTable.tsx:59
 msgid "Quantity"
-msgstr ""
+msgstr "Quantité"
 
 #: src/components/settings/SettingItem.tsx:47
 #: src/components/settings/SettingItem.tsx:100
@@ -2382,7 +2382,7 @@ msgstr ""
 
 #: src/forms/BuildForms.tsx:150
 msgid "Latest serial number"
-msgstr ""
+msgstr "Dernier numéro de série"
 
 #: src/forms/BuildForms.tsx:222
 msgid "Remove output"
@@ -3447,7 +3447,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:30
 msgid "Account"
-msgstr ""
+msgstr "Compte"
 
 #: src/pages/Index/Settings/UserSettings.tsx:36
 msgid "Security"
@@ -3455,11 +3455,11 @@ msgstr ""
 
 #: src/pages/Index/Settings/UserSettings.tsx:48
 msgid "Display Options"
-msgstr ""
+msgstr "Options d’affichage"
 
 #: src/pages/Index/Settings/UserSettings.tsx:118
 msgid "Account Settings"
-msgstr ""
+msgstr "Paramètres du compte"
 
 #: src/pages/Index/Settings/UserSettings.tsx:122
 msgid "Switch to System Setting"
@@ -4817,33 +4817,33 @@ msgstr "Afficher les commandes en retard"
 msgid "Remove filter"
 msgstr "Supprimer le filtre"
 
-#: src/tables/FilterSelectDrawer.tsx:136
+#: src/tables/FilterSelectDrawer.tsx:130
 msgid "Select filter"
 msgstr "Sélection du filtre"
 
-#: src/tables/FilterSelectDrawer.tsx:137
+#: src/tables/FilterSelectDrawer.tsx:131
 msgid "Filter"
 msgstr "Filtrer"
 
-#: src/tables/FilterSelectDrawer.tsx:144
+#: src/tables/FilterSelectDrawer.tsx:138
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:38
 #: src/tables/stock/StockItemTestResultTable.tsx:181
 msgid "Value"
 msgstr "Valeur"
 
-#: src/tables/FilterSelectDrawer.tsx:145
+#: src/tables/FilterSelectDrawer.tsx:139
 msgid "Select filter value"
 msgstr "Sélection de la valeur du filtre"
 
-#: src/tables/FilterSelectDrawer.tsx:185
+#: src/tables/FilterSelectDrawer.tsx:182
 msgid "Table Filters"
 msgstr "Filtres des tables"
 
-#: src/tables/FilterSelectDrawer.tsx:217
+#: src/tables/FilterSelectDrawer.tsx:214
 msgid "Add Filter"
 msgstr "Ajouter un filtre"
 
-#: src/tables/FilterSelectDrawer.tsx:226
+#: src/tables/FilterSelectDrawer.tsx:223
 msgid "Clear Filters"
 msgstr "Effacer filtres"
 
@@ -4912,7 +4912,7 @@ msgstr "Actions de code-barres"
 msgid "Refresh data"
 msgstr "Actualiser les données"
 
-#: src/tables/InvenTreeTable.tsx:648
+#: src/tables/InvenTreeTable.tsx:651
 msgid "Table filters"
 msgstr "Filtres de tableau"
 
@@ -6884,3 +6884,4 @@ msgstr "Lire la documentation"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+

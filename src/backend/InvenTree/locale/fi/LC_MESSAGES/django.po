@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-06-26 03:18+0000\n"
-"PO-Revision-Date: 2024-06-26 06:04\n"
+"POT-Creation-Date: 2024-06-26 13:12+0000\n"
+"PO-Revision-Date: 2024-06-27 06:04\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -348,8 +348,8 @@ msgstr ""
 msgid "[{site_name}] Log in to the app"
 msgstr ""
 
-#: InvenTree/magic_login.py:38 company/models.py:136
-#: company/templates/company/company_base.html:138
+#: InvenTree/magic_login.py:38 InvenTree/serializers.py:415
+#: company/models.py:136 company/templates/company/company_base.html:138
 #: templates/InvenTree/settings/user.html:49
 #: templates/js/translated/company.js:677
 msgid "Email"
@@ -516,81 +516,138 @@ msgstr "Valuutta"
 msgid "Select currency from available options"
 msgstr "Valitse valuutta käytettävissä olevista vaihtoehdoista"
 
+#: InvenTree/serializers.py:407 templates/InvenTree/settings/user.html:33
+msgid "Username"
+msgstr "Käyttäjätunnus"
+
+#: InvenTree/serializers.py:409 templates/InvenTree/settings/user.html:37
+msgid "First Name"
+msgstr "Etunimi"
+
+#: InvenTree/serializers.py:409
+msgid "First name of the user"
+msgstr ""
+
+#: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
+msgid "Last Name"
+msgstr "Sukunimi"
+
+#: InvenTree/serializers.py:412
+msgid "Last name of the user"
+msgstr ""
+
+#: InvenTree/serializers.py:415
+msgid "Email address of the user"
+msgstr ""
+
+#: InvenTree/serializers.py:439
+msgid "Staff"
+msgstr ""
+
+#: InvenTree/serializers.py:439
+msgid "Does this user have staff permissions"
+msgstr ""
+
 #: InvenTree/serializers.py:442
+msgid "Superuser"
+msgstr ""
+
+#: InvenTree/serializers.py:442
+msgid "Is this user a superuser"
+msgstr ""
+
+#: InvenTree/serializers.py:445 common/models.py:2628 company/models.py:163
+#: company/models.py:782 machine/models.py:39 part/admin.py:88
+#: part/models.py:1081 plugin/models.py:66
+#: templates/js/translated/company.js:523
+#: templates/js/translated/table_filters.js:135
+#: templates/js/translated/table_filters.js:219
+#: templates/js/translated/table_filters.js:492
+#: templates/js/translated/table_filters.js:520
+#: templates/js/translated/table_filters.js:716
+#: templates/js/translated/table_filters.js:796 users/models.py:182
+msgid "Active"
+msgstr "Aktiivinen"
+
+#: InvenTree/serializers.py:445
+msgid "Is this user account active"
+msgstr ""
+
+#: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
 msgstr ""
 
-#: InvenTree/serializers.py:454
+#: InvenTree/serializers.py:475
 msgid "Only superusers can create new users"
 msgstr ""
 
-#: InvenTree/serializers.py:473
+#: InvenTree/serializers.py:494
 msgid "Your account has been created."
 msgstr ""
 
-#: InvenTree/serializers.py:475
+#: InvenTree/serializers.py:496
 msgid "Please use the password reset function to login"
 msgstr ""
 
-#: InvenTree/serializers.py:482
+#: InvenTree/serializers.py:503
 msgid "Welcome to InvenTree"
 msgstr ""
 
-#: InvenTree/serializers.py:540
+#: InvenTree/serializers.py:561
 msgid "Invalid value"
 msgstr "Virheellinen arvo"
 
-#: InvenTree/serializers.py:560
+#: InvenTree/serializers.py:581
 msgid "Data File"
 msgstr "Datatiedosto"
 
-#: InvenTree/serializers.py:561
+#: InvenTree/serializers.py:582
 msgid "Select data file for upload"
 msgstr "Valitse lähetettävä datatiedosto"
 
-#: InvenTree/serializers.py:578
+#: InvenTree/serializers.py:599
 msgid "Unsupported file type"
 msgstr "Tiedostotyyppiä ei tueta"
 
-#: InvenTree/serializers.py:584
+#: InvenTree/serializers.py:605
 msgid "File is too large"
 msgstr "Tiedosto on liian suuri"
 
-#: InvenTree/serializers.py:605
+#: InvenTree/serializers.py:626
 msgid "No columns found in file"
 msgstr ""
 
-#: InvenTree/serializers.py:608
+#: InvenTree/serializers.py:629
 msgid "No data rows found in file"
 msgstr ""
 
-#: InvenTree/serializers.py:721
+#: InvenTree/serializers.py:742
 msgid "No data rows provided"
 msgstr "Datarivejä ei annettu"
 
-#: InvenTree/serializers.py:724
+#: InvenTree/serializers.py:745
 msgid "No data columns supplied"
 msgstr "Datasarakkeita ei annettu"
 
-#: InvenTree/serializers.py:791
+#: InvenTree/serializers.py:812
 #, python-brace-format
 msgid "Missing required column: '{name}'"
 msgstr "Vaadittu sarake puuttuu: '{name}'"
 
-#: InvenTree/serializers.py:800
+#: InvenTree/serializers.py:821
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
 msgstr "Duplikaatti sarake: '{col}'"
 
-#: InvenTree/serializers.py:840
+#: InvenTree/serializers.py:861
 msgid "Remote Image"
 msgstr ""
 
-#: InvenTree/serializers.py:841
+#: InvenTree/serializers.py:862
 msgid "URL of remote image file"
 msgstr "Kuvatiedoston URL"
 
-#: InvenTree/serializers.py:859
+#: InvenTree/serializers.py:880
 msgid "Downloading images from remote URL is not enabled"
 msgstr "Kuvien lataaminen ei ole käytössä"
 
@@ -3395,18 +3452,6 @@ msgstr ""
 #: common/models.py:2624
 msgid "Name for this webhook"
 msgstr ""
-
-#: common/models.py:2628 company/models.py:163 company/models.py:782
-#: machine/models.py:39 part/admin.py:88 part/models.py:1081
-#: plugin/models.py:66 templates/js/translated/company.js:523
-#: templates/js/translated/table_filters.js:135
-#: templates/js/translated/table_filters.js:219
-#: templates/js/translated/table_filters.js:492
-#: templates/js/translated/table_filters.js:520
-#: templates/js/translated/table_filters.js:716
-#: templates/js/translated/table_filters.js:796 users/models.py:182
-msgid "Active"
-msgstr "Aktiivinen"
 
 #: common/models.py:2628
 msgid "Is this webhook active"
@@ -10515,18 +10560,6 @@ msgstr ""
 #: templates/account/password_reset_from_key.html:7
 msgid "Change Password"
 msgstr ""
-
-#: templates/InvenTree/settings/user.html:33
-msgid "Username"
-msgstr "Käyttäjätunnus"
-
-#: templates/InvenTree/settings/user.html:37
-msgid "First Name"
-msgstr "Etunimi"
-
-#: templates/InvenTree/settings/user.html:41
-msgid "Last Name"
-msgstr "Sukunimi"
 
 #: templates/InvenTree/settings/user.html:55
 msgid "The following email addresses are associated with your account:"
