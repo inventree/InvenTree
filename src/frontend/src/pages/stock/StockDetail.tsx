@@ -33,6 +33,7 @@ import {
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -63,7 +64,6 @@ import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
-import InstanceDetail from '../InstanceDetail';
 
 export default function StockDetail() {
   const { id } = useParams();

@@ -23,6 +23,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -46,7 +47,6 @@ import { useUserState } from '../../states/UserState';
 import { PartListTable } from '../../tables/part/PartTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { StockLocationTable } from '../../tables/stock/StockLocationTable';
-import InstanceDetail from '../InstanceDetail';
 
 export default function Stock() {
   const { id: _id } = useParams();

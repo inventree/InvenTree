@@ -26,6 +26,7 @@ import {
   EditItemAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -42,7 +43,6 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
-import InstanceDetail from '../InstanceDetail';
 
 /**
  * Detail page for a single SalesOrder

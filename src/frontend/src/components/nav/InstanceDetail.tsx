@@ -1,7 +1,7 @@
 import { LoadingOverlay } from '@mantine/core';
 
-import ClientError from './errors/ClientError';
-import ServerError from './errors/ServerError';
+import ClientError from '../errors/ClientError';
+import ServerError from '../errors/ServerError';
 
 export default function InstanceDetail({
   status,

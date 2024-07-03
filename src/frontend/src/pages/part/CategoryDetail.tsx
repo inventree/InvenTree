@@ -18,6 +18,7 @@ import {
   DeleteItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -35,7 +36,6 @@ import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
 import { PartListTable } from '../../tables/part/PartTable';
-import InstanceDetail from '../InstanceDetail';
 
 /**
  * Detail view for a single PartCategory instance.

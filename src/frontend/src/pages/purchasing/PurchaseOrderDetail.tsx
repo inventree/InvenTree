@@ -27,6 +27,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -44,7 +45,6 @@ import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import InstanceDetail from '../InstanceDetail';
 
 /**
  * Detail page for a single PurchaseOrder

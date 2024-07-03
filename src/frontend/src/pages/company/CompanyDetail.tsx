@@ -30,6 +30,7 @@ import {
   EditItemAction
 } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -49,7 +50,6 @@ import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import InstanceDetail from '../InstanceDetail';
 
 export type CompanyDetailProps = {
   title: string;

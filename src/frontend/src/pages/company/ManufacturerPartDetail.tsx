@@ -20,6 +20,7 @@ import {
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -36,7 +37,6 @@ import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ManufacturerPartParameterTable from '../../tables/purchasing/ManufacturerPartParameterTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
-import InstanceDetail from '../InstanceDetail';
 
 export default function ManufacturerPartDetail() {
   const { id } = useParams();

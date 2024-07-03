@@ -17,13 +17,13 @@ import {
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
+import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
-import PermissionDenied from '../../../errors/PermissionDenied';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))

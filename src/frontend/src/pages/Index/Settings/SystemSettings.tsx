@@ -19,13 +19,13 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import PermissionDenied from '../../../components/errors/PermissionDenied';
 import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
-import PermissionDenied from '../../errors/PermissionDenied';
 
 /**
  * System settings page

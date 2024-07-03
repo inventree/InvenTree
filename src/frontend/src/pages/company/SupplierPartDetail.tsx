@@ -21,6 +21,7 @@ import {
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -37,7 +38,6 @@ import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import InstanceDetail from '../InstanceDetail';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();

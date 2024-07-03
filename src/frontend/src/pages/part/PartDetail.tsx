@@ -46,6 +46,7 @@ import {
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -81,7 +82,6 @@ import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartT
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
-import InstanceDetail from '../InstanceDetail';
 import PartPricingPanel from './PartPricingPanel';
 
 /**

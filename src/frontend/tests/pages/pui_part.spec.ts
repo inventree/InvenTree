@@ -229,5 +229,5 @@ test('PUI - Pages - Part - 404', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/part/99999/`);
-  await page.getByText('Page Not Found').waitFor();
+  await page.getByText('Page Not Found', { exact: true }).waitFor();
 });
