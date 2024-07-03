@@ -6,12 +6,10 @@ import {
   IconExclamationCircle,
   IconSquareArrowRight
 } from '@tabler/icons-react';
-import { useSuspenseQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { cancelEvent } from '../../functions/events';
 import {
   useDeleteApiFormModal,
@@ -27,8 +25,7 @@ import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 import { ActionButton } from '../buttons/ActionButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
-import { RenderInstance, RenderSuspendedInstance } from '../render/Instance';
-import { ModelInformationDict } from '../render/ModelType';
+import { RenderSuspendedInstance } from '../render/Instance';
 
 function ImporterDataCell({
   session,
@@ -44,9 +41,12 @@ function ImporterDataCell({
   const onRowEdit = useCallback(
     (event: any) => {
       cancelEvent(event);
-      onEdit?.();
+
+      if (!row.complete) {
+        onEdit?.();
+      }
     },
-    [onEdit]
+    [onEdit, row]
   );
 
   const cellErrors: string[] = useMemo(() => {
@@ -57,8 +57,6 @@ function ImporterDataCell({
   }, [row.errors, column.field]);
 
   const cellValue: ReactNode = useMemo(() => {
-    // TODO: Render inline models, rather than raw PK values
-
     let field_def = session.availableFields[column.field];
 
     switch (field_def?.type) {
@@ -164,15 +162,6 @@ export default function ImporterDataSelector({
 
   const [selectedRow, setSelectedRow] = useState<any>({});
 
-  const editCell = useCallback(
-    (row: any, col: any) => {
-      setSelectedRow(row);
-      setSelectedFieldNames([col.field]);
-      editRow.open();
-    },
-    [session]
-  );
-
   const editRow = useEditApiFormModal({
     url: ApiEndpoints.import_session_row_list,
     pk: selectedRow.pk,
@@ -190,6 +179,15 @@ export default function ImporterDataSelector({
     },
     onFormSuccess: (row: any) => table.updateRecord(row)
   });
+
+  const editCell = useCallback(
+    (row: any, col: any) => {
+      setSelectedRow(row);
+      setSelectedFieldNames([col.field]);
+      editRow.open();
+    },
+    [session, editRow]
+  );
 
   const deleteRow = useDeleteApiFormModal({
     url: ApiEndpoints.import_session_row_list,

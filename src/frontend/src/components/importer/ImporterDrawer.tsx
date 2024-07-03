@@ -14,11 +14,14 @@ import {
 import { IconCircleX } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { ModelType } from '../../enums/ModelType';
 import {
   ImportSessionStatus,
   useImportSession
 } from '../../hooks/UseImportSession';
+import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
+import { StatusRenderer } from '../render/StatusRenderer';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
 
@@ -57,25 +60,6 @@ export default function ImporterDrawer({
 }) {
   const session = useImportSession({ sessionId: sessionId });
 
-  const [currentStep, setCurrentStep] = useState<number>(1);
-
-  const description: string = useMemo(() => {
-    switch (session.status) {
-      case ImportSessionStatus.INITIAL:
-        return t`Data File Upload`;
-      case ImportSessionStatus.MAPPING:
-        return t`Mapping Data Columns`;
-      case ImportSessionStatus.IMPORTING:
-        return t`Importing Data`;
-      case ImportSessionStatus.PROCESSING:
-        return t`Processing Data`;
-      case ImportSessionStatus.COMPLETE:
-        return t`Import Complete`;
-      default:
-        return t`Unknown Status` + ` - ${session.status}`;
-    }
-  }, [session]);
-
   const widget = useMemo(() => {
     switch (session.status) {
       case ImportSessionStatus.INITIAL:
@@ -99,16 +83,19 @@ export default function ImporterDrawer({
         <Group
           gap="xs"
           wrap="nowrap"
+          justify="space-apart"
           grow
-          justify="space-between"
           preventGrowOverflow={false}
         >
           <StylishText>
             {session.sessionData?.statusText ?? t`Importing Data`}
           </StylishText>
-          <ImportDrawerStepper currentStep={2} />
-          <Tooltip label={t`Cancel Import`}>
-            <ActionIcon color="red" onClick={onClose}>
+          {StatusRenderer({
+            status: session.status,
+            type: ModelType.importsession
+          })}
+          <Tooltip label={t`Cancel import session`}>
+            <ActionIcon color="red" variant="transparent" onClick={onClose}>
               <IconCircleX />
             </ActionIcon>
           </Tooltip>
@@ -116,7 +103,7 @@ export default function ImporterDrawer({
         <Divider />
       </Stack>
     );
-  }, []);
+  }, [session.sessionData]);
 
   return (
     <Drawer
@@ -130,7 +117,7 @@ export default function ImporterDrawer({
       closeOnClickOutside={false}
       styles={{
         header: {
-          width: '90%'
+          width: '100%'
         },
         title: {
           width: '100%'
