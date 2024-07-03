@@ -49,6 +49,7 @@ export enum ApiEndpoints {
   // Data import endpoints
   import_session_list = 'importer/session/',
   import_session_accept_fields = 'importer/session/:id/accept_fields/',
+  import_session_accept_rows = 'importer/session/:id/accept_rows/',
   import_session_column_mapping_list = 'importer/column-mapping/',
   import_session_row_list = 'importer/row/',
 

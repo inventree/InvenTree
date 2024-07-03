@@ -555,6 +555,7 @@ class DataImportRow(models.Model):
                     serializer.save()
                     self.complete = True
                     self.save()
+
                 except Exception as e:
                     self.errors = {'non_field_errors': str(e)}
                     result = False

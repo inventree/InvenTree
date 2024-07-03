@@ -1,12 +1,15 @@
 import { t } from '@lingui/macro';
 import { Group, HoverCard, Stack, Text } from '@mantine/core';
 import {
+  IconCircle,
   IconCircleCheck,
+  IconCircleDashedCheck,
   IconExclamationCircle,
   IconSquareArrowRight
 } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { cancelEvent } from '../../functions/events';
 import {
@@ -128,6 +131,23 @@ export default function ImporterDataSelector({
     return fields;
   }, [selectedFieldNames, session.availableFields]);
 
+  const importData = useCallback(
+    (rows: number[]) => {
+      api
+        .post(
+          apiUrl(ApiEndpoints.import_session_accept_rows, session.sessionId),
+          {
+            rows: rows
+          }
+        )
+        .catch(() => {})
+        .finally(() => {
+          table.refreshTable();
+        });
+    },
+    [session.sessionId, table.refreshTable]
+  );
+
   const [selectedRow, setSelectedRow] = useState<any>({});
 
   const editCell = useCallback(
@@ -191,9 +211,11 @@ export default function ImporterDataSelector({
           return (
             <Group justify="left" gap="xs">
               <Text size="sm">{row.row_index}</Text>
-              {row.valid ? (
-                <IconCircleCheck color="green" size={16} />
-              ) : (
+              {row.complete && <IconCircleCheck color="green" size={16} />}
+              {!row.complete && row.valid && (
+                <IconCircleDashedCheck color="blue" size={16} />
+              )}
+              {!row.complete && !row.valid && (
                 <HoverCard openDelay={50} closeDelay={100}>
                   <HoverCard.Target>
                     <IconExclamationCircle color="red" size={16} />
@@ -244,7 +266,10 @@ export default function ImporterDataSelector({
           title: t`Accept`,
           icon: <IconSquareArrowRight />,
           color: 'green',
-          hidden: record.complete
+          hidden: record.complete,
+          onClick: () => {
+            importData([record.pk]);
+          }
         },
         RowEditAction({
           hidden: record.complete,
@@ -264,7 +289,7 @@ export default function ImporterDataSelector({
         })
       ];
     },
-    [session]
+    [session, importData]
   );
 
   const filters: TableFilter[] = useMemo(() => {

@@ -1,5 +1,6 @@
 """API serializers for the importer app."""
 
+from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
@@ -118,3 +119,53 @@ class DataImportRowSerializer(InvenTreeModelSerializer):
             'valid',
             'complete',
         ]
+
+
+class DataImportAcceptRowSerializer(serializers.Serializer):
+    """Serializer for accepting rows of data."""
+
+    class Meta:
+        """Serializer meta options."""
+
+        fields = ['rows']
+
+    rows = serializers.PrimaryKeyRelatedField(
+        queryset=importer.models.DataImportRow.objects.all(),
+        many=True,
+        required=True,
+        label=_('Rows'),
+        help_text=_('List of row IDs to accept'),
+    )
+
+    def validate_rows(self, rows):
+        """Ensure that the provided rows are valid.
+
+        - Row must point to the same import session
+        - Row must contain valid data
+        - Row must not have already been completed
+        """
+        session = self.context.get('session', None)
+
+        if not rows or len(rows) == 0:
+            raise ValidationError(_('No rows provided'))
+
+        for row in rows:
+            if row.session != session:
+                raise ValidationError(_('Row does not belong to this session'))
+
+            if not row.valid:
+                raise ValidationError(_('Row contains invalid data'))
+
+            if row.complete:
+                raise ValidationError(_('Row has already been completed'))
+
+        return rows
+
+    def save(self):
+        """Complete the provided rows."""
+        rows = self.validated_data['rows']
+
+        for row in rows:
+            row.validate(commit=True)
+
+        return rows

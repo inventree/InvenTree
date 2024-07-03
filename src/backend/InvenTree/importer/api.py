@@ -14,6 +14,7 @@ import importer.serializers
 from InvenTree.api import BulkDeleteMixin
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
+    CreateAPI,
     ListAPI,
     ListCreateAPI,
     RetrieveUpdateAPI,
@@ -81,6 +82,27 @@ class DataImportSessionAcceptFields(APIView):
         return Response(importer.serializers.DataImportSessionSerializer(session).data)
 
 
+class DataImportSessionAcceptRows(CreateAPI):
+    """API endpoint to accept the rows for a DataImportSession."""
+
+    queryset = importer.models.DataImportSession.objects.all()
+    serializer_class = importer.serializers.DataImportAcceptRowSerializer
+
+    def get_serializer_context(self):
+        """Add the import session object to the serializer context."""
+        ctx = super().get_serializer_context()
+
+        try:
+            ctx['session'] = importer.models.DataImportSession.objects.get(
+                pk=self.kwargs.get('pk', None)
+            )
+        except Exception:
+            pass
+
+        ctx['request'] = self.request
+        return ctx
+
+
 class DataImportColumnMappingList(ListAPI):
     """API endpoint for accessing a list of DataImportColumnMap objects."""
 
@@ -133,6 +155,11 @@ importer_api_urls = [
                         'accept_fields/',
                         DataImportSessionAcceptFields.as_view(),
                         name='api-import-session-accept-fields',
+                    ),
+                    path(
+                        'accept_rows/',
+                        DataImportSessionAcceptRows.as_view(),
+                        name='api-import-session-accept-rows',
                     ),
                     path(
                         '',
