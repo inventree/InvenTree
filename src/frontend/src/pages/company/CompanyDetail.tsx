@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -49,6 +49,7 @@ import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import InstanceDetail from '../InstanceDetail';
 
 export type CompanyDetailProps = {
   title: string;
@@ -66,7 +67,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const {
     instance: company,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: id,
@@ -320,18 +322,19 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   return (
     <>
       {editCompany.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Company` + `: ${company.name}`}
-          subtitle={company.description}
-          actions={companyActions}
-          imageUrl={company.image}
-          breadcrumbs={props.breadcrumbs}
-          badges={badges}
-        />
-        <PanelGroup pageKey="company" panels={companyPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Company` + `: ${company.name}`}
+            subtitle={company.description}
+            actions={companyActions}
+            imageUrl={company.image}
+            breadcrumbs={props.breadcrumbs}
+            badges={badges}
+          />
+          <PanelGroup pageKey="company" panels={companyPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

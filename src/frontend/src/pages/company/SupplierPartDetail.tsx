@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
   IconDots,
@@ -37,6 +37,7 @@ import { useUserState } from '../../states/UserState';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 import SupplierPriceBreakTable from '../../tables/purchasing/SupplierPriceBreakTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import InstanceDetail from '../InstanceDetail';
 
 export default function SupplierPartDetail() {
   const { id } = useParams();
@@ -46,7 +47,8 @@ export default function SupplierPartDetail() {
   const {
     instance: supplierPart,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
@@ -312,18 +314,19 @@ export default function SupplierPartDetail() {
   return (
     <>
       {editSuppliertPart.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Supplier Part`}
-          subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
-          breadcrumbs={breadcrumbs}
-          badges={badges}
-          actions={supplierPartActions}
-          imageUrl={supplierPart?.part_detail?.thumbnail}
-        />
-        <PanelGroup pageKey="supplierpart" panels={panels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Supplier Part`}
+            subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
+            breadcrumbs={breadcrumbs}
+            badges={badges}
+            actions={supplierPartActions}
+            imageUrl={supplierPart?.part_detail?.thumbnail}
+          />
+          <PanelGroup pageKey="supplierpart" panels={panels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

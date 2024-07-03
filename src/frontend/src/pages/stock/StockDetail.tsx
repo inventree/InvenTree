@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
@@ -63,6 +63,7 @@ import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import StockItemTestResultTable from '../../tables/stock/StockItemTestResultTable';
 import { StockTrackingTable } from '../../tables/stock/StockTrackingTable';
+import InstanceDetail from '../InstanceDetail';
 
 export default function StockDetail() {
   const { id } = useParams();
@@ -76,7 +77,8 @@ export default function StockDetail() {
   const {
     instance: stockitem,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.stock_item_list,
     pk: id,
@@ -548,35 +550,36 @@ export default function StockDetail() {
   }, [stockitem, instanceQuery]);
 
   return (
-    <Stack>
-      <LoadingOverlay visible={instanceQuery.isFetching} />
-      <NavigationTree
-        title={t`Stock Locations`}
-        modelType={ModelType.stocklocation}
-        endpoint={ApiEndpoints.stock_location_tree}
-        opened={treeOpen}
-        onClose={() => setTreeOpen(false)}
-        selectedId={stockitem?.location}
-      />
-      <PageDetail
-        title={t`Stock Item`}
-        subtitle={stockitem.part_detail?.full_name}
-        imageUrl={stockitem.part_detail?.thumbnail}
-        badges={stockBadges}
-        breadcrumbs={breadcrumbs}
-        breadcrumbAction={() => {
-          setTreeOpen(true);
-        }}
-        actions={stockActions}
-      />
-      <PanelGroup pageKey="stockitem" panels={stockPanels} />
-      {editStockItem.modal}
-      {duplicateStockItem.modal}
-      {deleteStockItem.modal}
-      {countStockItem.modal}
-      {addStockItem.modal}
-      {removeStockItem.modal}
-      {transferStockItem.modal}
-    </Stack>
+    <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+      <Stack>
+        <NavigationTree
+          title={t`Stock Locations`}
+          modelType={ModelType.stocklocation}
+          endpoint={ApiEndpoints.stock_location_tree}
+          opened={treeOpen}
+          onClose={() => setTreeOpen(false)}
+          selectedId={stockitem?.location}
+        />
+        <PageDetail
+          title={t`Stock Item`}
+          subtitle={stockitem.part_detail?.full_name}
+          imageUrl={stockitem.part_detail?.thumbnail}
+          badges={stockBadges}
+          breadcrumbs={breadcrumbs}
+          breadcrumbAction={() => {
+            setTreeOpen(true);
+          }}
+          actions={stockActions}
+        />
+        <PanelGroup pageKey="stockitem" panels={stockPanels} />
+        {editStockItem.modal}
+        {duplicateStockItem.modal}
+        {deleteStockItem.modal}
+        {countStockItem.modal}
+        {addStockItem.modal}
+        {removeStockItem.modal}
+        {transferStockItem.modal}
+      </Stack>
+    </InstanceDetail>
   );
 }
