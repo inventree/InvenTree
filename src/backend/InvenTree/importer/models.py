@@ -1,7 +1,6 @@
 """Model definitions for the 'importer' app."""
 
 import logging
-from typing import Collection
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -414,13 +413,20 @@ class DataImportColumnMap(models.Model):
     def label(self):
         """Extract the 'label' associated with the mapped field."""
         if field_def := self.field_definition:
-            return field_def.label
+            return field_def.get('label', None)
 
     @property
     def description(self):
         """Extract the 'description' associated with the mapped field."""
+        description = None
+
         if field_def := self.field_definition:
-            return field_def.help_text
+            description = field_def.get('help_text', None)
+
+        if not description:
+            description = self.label
+
+        return description
 
 
 class DataImportRow(models.Model):

@@ -400,7 +400,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return PurchaseOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': order.validators.generate_next_purchase_order_reference()
@@ -865,7 +865,7 @@ class SalesOrder(TotalPriceMixin, Order):
         return SalesOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
@@ -2027,7 +2027,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         return ReturnOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': order.validators.generate_next_return_order_reference()

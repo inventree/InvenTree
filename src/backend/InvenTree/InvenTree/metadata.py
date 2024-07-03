@@ -160,6 +160,8 @@ class InvenTreeMetadata(SimpleMetadata):
         """Override get_serializer_info so that we can add 'default' values to any fields whose Meta.model specifies a default value."""
         self.serializer = serializer
 
+        request = getattr(self, 'request', None)
+
         serializer_info = super().get_serializer_info(serializer)
 
         # Look for any dynamic fields which were not available when the serializer was instantiated
@@ -187,10 +189,8 @@ class InvenTreeMetadata(SimpleMetadata):
 
             model_fields = model_meta.get_field_info(model_class)
 
-            model_default_func = getattr(model_class, 'api_defaults', None)
-
-            if model_default_func:
-                model_default_values = model_class.api_defaults(self.request)
+            if model_default_func := getattr(model_class, 'api_defaults', None):
+                model_default_values = model_default_func(request=request) or {}
             else:
                 model_default_values = {}
 
