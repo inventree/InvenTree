@@ -278,10 +278,7 @@ class DataImportSession(models.Model):
     @property
     def completed_row_count(self):
         """Return the number of completed rows for this session."""
-        if self.row_count == 0:
-            return 0
-
-        return self.rows.filter(complete=True).count() / self.row_count * 100
+        return self.rows.filter(complete=True).count()
 
     def available_fields(self):
         """Returns information on the available fields.
