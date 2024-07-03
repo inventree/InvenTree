@@ -3,9 +3,9 @@ import { Button, Center, Container, Stack, Text, Title } from '@mantine/core';
 import { IconArrowBack } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 
-import { LanguageContext } from '../contexts/LanguageContext';
+import { LanguageContext } from '../../contexts/LanguageContext';
 
-export default function NotFound() {
+export default function PermissionDenied() {
   const navigate = useNavigate();
 
   return (
@@ -14,10 +14,10 @@ export default function NotFound() {
         <Container w="md" miw={400}>
           <Stack>
             <Title>
-              <Trans>Not Found</Trans>
+              <Trans>Permission Denied</Trans>
             </Title>
             <Text>
-              <Trans>Sorry, this page is not known or was moved.</Trans>
+              <Trans>You do not have permission to view this page.</Trans>
             </Text>
             <Button
               variant="outline"

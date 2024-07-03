@@ -23,7 +23,7 @@ import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
-import PermissionDenied from '../../../PermissionDenied';
+import PermissionDenied from '../../../errors/PermissionDenied';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))

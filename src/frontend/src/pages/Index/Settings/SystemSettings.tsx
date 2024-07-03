@@ -25,7 +25,7 @@ import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
-import PermissionDenied from '../../PermissionDenied';
+import PermissionDenied from '../../errors/PermissionDenied';
 
 /**
  * System settings page
