@@ -77,7 +77,7 @@ export function useInstance<T = any>({
         .catch((error) => {
           setRequestStatus(error.response?.status || 0);
           setInstance(defaultValue);
-          console.error(`Error fetching instance ${url}:`, error);
+          console.error(`ERR: Error fetching instance ${url}:`, error);
 
           if (throwError) throw error;
 
