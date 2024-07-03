@@ -168,7 +168,7 @@ export default function NotesEditor({
           id: 'notes'
         });
       });
-  }, [api, noteUrl, ref.current]);
+  }, [noteUrl, ref.current]);
 
   const plugins: any[] = useMemo(() => {
     let plg = [
