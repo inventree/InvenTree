@@ -156,7 +156,7 @@ msgstr "Usuń"
 #: src/contexts/ThemeContext.tsx:43
 #: src/functions/forms.tsx:196
 #: src/hooks/UseForm.tsx:40
-#: src/tables/FilterSelectDrawer.tsx:207
+#: src/tables/FilterSelectDrawer.tsx:204
 #: src/tables/InvenTreeTable.tsx:499
 #: src/tables/build/BuildOutputTable.tsx:225
 msgid "Cancel"
@@ -990,7 +990,7 @@ msgstr "Ustawienia konta"
 
 #: src/components/nav/MainMenu.tsx:57
 #: src/defaults/menuItems.tsx:58
-#: src/pages/Index/Settings/SystemSettings.tsx:300
+#: src/pages/Index/Settings/SystemSettings.tsx:304
 msgid "System Settings"
 msgstr "Ustawienia systemowe"
 
@@ -1054,7 +1054,7 @@ msgid "About"
 msgstr "O nas"
 
 #: src/components/nav/NotificationDrawer.tsx:78
-#: src/pages/Index/Settings/SystemSettings.tsx:101
+#: src/pages/Index/Settings/SystemSettings.tsx:105
 #: src/pages/Index/Settings/UserSettings.tsx:96
 #: src/pages/Notifications.tsx:65
 #: src/pages/Notifications.tsx:152
@@ -1132,7 +1132,7 @@ msgstr "Komponent"
 #: src/components/render/ModelType.tsx:23
 #: src/defaults/links.tsx:28
 #: src/defaults/menuItems.tsx:33
-#: src/pages/Index/Settings/SystemSettings.tsx:171
+#: src/pages/Index/Settings/SystemSettings.tsx:175
 #: src/pages/part/CategoryDetail.tsx:110
 #: src/pages/part/CategoryDetail.tsx:235
 #: src/pages/part/CategoryDetail.tsx:265
@@ -1183,7 +1183,7 @@ msgid "Part Category"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:64
-#: src/pages/Index/Settings/SystemSettings.tsx:165
+#: src/pages/Index/Settings/SystemSettings.tsx:169
 #: src/pages/part/CategoryDetail.tsx:249
 #: src/pages/part/CategoryDetail.tsx:282
 #: src/pages/part/PartDetail.tsx:827
@@ -1280,7 +1280,7 @@ msgid "Purchase Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:134
-#: src/pages/Index/Settings/SystemSettings.tsx:248
+#: src/pages/Index/Settings/SystemSettings.tsx:252
 #: src/pages/company/CompanyDetail.tsx:192
 #: src/pages/company/SupplierPartDetail.tsx:224
 #: src/pages/part/PartDetail.tsx:579
@@ -1305,7 +1305,7 @@ msgid "Sales Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:148
-#: src/pages/Index/Settings/SystemSettings.tsx:263
+#: src/pages/Index/Settings/SystemSettings.tsx:267
 #: src/pages/company/CompanyDetail.tsx:212
 #: src/pages/part/PartDetail.tsx:586
 #: src/pages/sales/SalesIndex.tsx:21
@@ -1327,7 +1327,7 @@ msgid "Return Order"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:164
-#: src/pages/Index/Settings/SystemSettings.tsx:279
+#: src/pages/Index/Settings/SystemSettings.tsx:283
 #: src/pages/company/CompanyDetail.tsx:219
 #: src/pages/sales/SalesIndex.tsx:27
 msgid "Return Orders"
@@ -1408,7 +1408,7 @@ msgstr "Wysyłka"
 #: src/components/render/Part.tsx:15
 #: src/defaults/links.tsx:29
 #: src/defaults/menuItems.tsx:38
-#: src/pages/Index/Settings/SystemSettings.tsx:203
+#: src/pages/Index/Settings/SystemSettings.tsx:207
 #: src/pages/part/PartDetail.tsx:498
 #: src/pages/stock/LocationDetail.tsx:345
 #: src/pages/stock/StockDetail.tsx:354
@@ -3402,11 +3402,11 @@ msgstr ""
 msgid "Login"
 msgstr "Zaloguj się"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:87
+#: src/pages/Index/Settings/SystemSettings.tsx:91
 msgid "Barcodes"
 msgstr "Kody kreskowe"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:107
+#: src/pages/Index/Settings/SystemSettings.tsx:111
 msgid "Pricing"
 msgstr "Cennik"
 
@@ -3418,22 +3418,22 @@ msgstr "Cennik"
 #~ msgid "Exchange Rates"
 #~ msgstr "Exchange Rates"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:142
+#: src/pages/Index/Settings/SystemSettings.tsx:146
 msgid "Labels"
 msgstr "Etykiety"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:148
+#: src/pages/Index/Settings/SystemSettings.tsx:152
 #: src/pages/Index/Settings/UserSettings.tsx:102
 msgid "Reporting"
 msgstr "Raportowanie"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:228
+#: src/pages/Index/Settings/SystemSettings.tsx:232
 #: src/pages/part/PartDetail.tsx:599
 #: src/tables/stock/StockItemTable.tsx:221
 msgid "Stocktake"
 msgstr ""
 
-#: src/pages/Index/Settings/SystemSettings.tsx:234
+#: src/pages/Index/Settings/SystemSettings.tsx:238
 #: src/pages/build/BuildDetail.tsx:421
 #: src/pages/build/BuildIndex.tsx:14
 #: src/pages/part/PartDetail.tsx:533
@@ -3441,7 +3441,7 @@ msgstr ""
 msgid "Build Orders"
 msgstr "Zlecenia wykonania"
 
-#: src/pages/Index/Settings/SystemSettings.tsx:303
+#: src/pages/Index/Settings/SystemSettings.tsx:307
 msgid "Switch to User Setting"
 msgstr "Przełącz na ustawienie użytkownika"
 
@@ -4817,33 +4817,33 @@ msgstr ""
 msgid "Remove filter"
 msgstr ""
 
-#: src/tables/FilterSelectDrawer.tsx:136
+#: src/tables/FilterSelectDrawer.tsx:130
 msgid "Select filter"
 msgstr ""
 
-#: src/tables/FilterSelectDrawer.tsx:137
+#: src/tables/FilterSelectDrawer.tsx:131
 msgid "Filter"
 msgstr ""
 
-#: src/tables/FilterSelectDrawer.tsx:144
+#: src/tables/FilterSelectDrawer.tsx:138
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:38
 #: src/tables/stock/StockItemTestResultTable.tsx:181
 msgid "Value"
 msgstr ""
 
-#: src/tables/FilterSelectDrawer.tsx:145
+#: src/tables/FilterSelectDrawer.tsx:139
 msgid "Select filter value"
 msgstr ""
 
-#: src/tables/FilterSelectDrawer.tsx:185
+#: src/tables/FilterSelectDrawer.tsx:182
 msgid "Table Filters"
 msgstr ""
 
-#: src/tables/FilterSelectDrawer.tsx:217
+#: src/tables/FilterSelectDrawer.tsx:214
 msgid "Add Filter"
 msgstr ""
 
-#: src/tables/FilterSelectDrawer.tsx:226
+#: src/tables/FilterSelectDrawer.tsx:223
 msgid "Clear Filters"
 msgstr ""
 
@@ -4912,7 +4912,7 @@ msgstr ""
 msgid "Refresh data"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:648
+#: src/tables/InvenTreeTable.tsx:651
 msgid "Table filters"
 msgstr ""
 
