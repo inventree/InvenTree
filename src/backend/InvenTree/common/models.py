@@ -1391,6 +1391,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'BARCODE_SHOW_TEXT': {
+            'name': _('Barcode Show Data'),
+            'description': _('Display barcode data in browser as text'),
+            'default': False,
+            'validator': bool,
+        },
         'PART_ENABLE_REVISION': {
             'name': _('Part Revisions'),
             'description': _('Enable revision field for Part'),
