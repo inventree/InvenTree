@@ -340,3 +340,47 @@ function final_message() {
   echo -e "   Password: ${INVENTREE_ADMIN_PASSWORD}"
   echo -e "####################################################################################"
 }
+
+
+function update_checks() {
+  # Check if we are updating
+  if [ -z "$2" ]; then
+    echo "# Normal install - no need for checks"
+    return
+  fi
+
+  echo "# Running upgrade"
+  old_version = $2
+  old_version_rev = $(echo $old_version | cut -d' ' -f2)
+  echo "# Old version is: ${old_version} - release: ${old_version_rev}"
+
+  local ABORT=false
+  function check_config_value() {
+    local config_key=$1
+    local env_key=$2
+    local name=$3
+
+    local value=$(inventree config:get ${config_key})
+    if [ -z "${value}" ]; then
+      value=$(jq -r '.[].${env_key}' <<< ${INVENTREE_CONF_DATA})
+    fi
+    if [ -z "${value}" ]; then
+      echo "# No setting for ${name} found - please set it manually either in ${INVENTREE_CONFIG_FILE} under '${config_key}' or with 'inventree config:set ${config_key}=value'"
+      ABORT=true
+    fi
+  }
+
+  # Custom checks if old version is below 0.8.0
+  if [ "${old_version_rev}" -lt "9" ]; then
+    echo "# Old version is below 0.9.0 - You might be missing some configs"
+
+    # Check for BACKUP_DIR and SITE_URL in INVENTREE_CONF_DATA and config
+    check_config_value "INVENTREE_SITE_URL" "site_url" "site URL"
+    check_config_value "INVENTREE_BACKUP_DIR" "backup_dir" "backup dir"
+
+    if [ "${ABORT}" = true ]; then
+      echo "# Aborting - please set the missing values and run the update again"
+      exit 1
+    fi
+  fi
+}

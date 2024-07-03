@@ -35,6 +35,9 @@ detect_initcmd
 detect_ip
 detect_python
 
+# Check if we are updating and need to alert
+update_checks
+
 # create processes
 create_initscripts
 create_admin
