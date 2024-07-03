@@ -1190,6 +1190,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
         'updated',
         'stocktake_date',
         'expiry_date',
+        'packaging',
         'quantity',
         'stock',
         'status',
