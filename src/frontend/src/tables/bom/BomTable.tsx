@@ -287,6 +287,11 @@ export function BomTable({
         description: t`Show inherited items`
       },
       {
+        name: 'allow_variants',
+        label: t`Allow Variants`,
+        description: t`Show items which allow variant substitution`
+      },
+      {
         name: 'optional',
         label: t`Optional`,
         description: t`Show optional items`
