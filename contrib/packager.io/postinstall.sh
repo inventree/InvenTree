@@ -36,11 +36,10 @@ detect_ip
 detect_python
 
 # Check if we are updating and need to alert
-echo "$1" "$2"
 if [ -z "$2" ]; then
   echo "# Normal install - no need for checks"
 else
-  update_checks
+  update_checks $2
 
 # create processes
 create_initscripts
