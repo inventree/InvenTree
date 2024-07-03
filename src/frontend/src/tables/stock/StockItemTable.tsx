@@ -253,7 +253,10 @@ function stockItemTableColumns(): TableColumn[] {
           record.purchase_price || record.part_detail?.pricing_max;
         let currency = record.purchase_price_currency || undefined;
 
-        return formatPriceRange(min_price, max_price, currency);
+        return formatPriceRange(min_price, max_price, {
+          currency: currency,
+          multiplier: record.quantity
+        });
       }
     },
     {
