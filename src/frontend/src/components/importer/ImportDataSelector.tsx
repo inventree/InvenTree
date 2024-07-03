@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, HoverCard, Stack, Text } from '@mantine/core';
 import {
-  IconCircle,
   IconCircleCheck,
   IconCircleDashedCheck,
   IconExclamationCircle,
@@ -23,6 +22,7 @@ import { TableColumn } from '../../tables/Column';
 import { TableFilter } from '../../tables/Filter';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
+import { ActionButton } from '../buttons/ActionButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
 
@@ -309,6 +309,25 @@ export default function ImporterDataSelector({
     ];
   }, []);
 
+  const tableActions = useMemo(() => {
+    // Can only "import" valid (and incomplete) rows
+    const canImport: boolean =
+      table.hasSelectedRecords &&
+      table.selectedRecords.every((row: any) => row.valid && !row.complete);
+
+    return [
+      <ActionButton
+        disabled={!canImport}
+        icon={<IconSquareArrowRight />}
+        color="green"
+        tooltip={t`Import selected rows`}
+        onClick={() => {
+          importData(table.selectedRecords.map((row: any) => row.pk));
+        }}
+      />
+    ];
+  }, [table.hasSelectedRecords, table.selectedRecords]);
+
   return (
     <>
       {editRow.modal}
@@ -323,6 +342,7 @@ export default function ImporterDataSelector({
               session: session.sessionId
             },
             rowActions: rowActions,
+            tableActions: tableActions,
             tableFilters: filters,
             enableColumnSwitching: true,
             enableColumnCaching: false,

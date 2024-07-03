@@ -172,6 +172,7 @@ export default function ImportSesssionTable() {
         onClose={() => {
           setSelectedSession(undefined);
           setOpened(false);
+          table.refreshTable();
         }}
       />
     </>
