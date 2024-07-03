@@ -24,6 +24,8 @@ import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
+import { useUserState } from '../../../states/UserState';
+import PermissionDenied from '../../PermissionDenied';
 
 /**
  * System settings page
@@ -295,19 +297,26 @@ export default function SystemSettings() {
       }
     ];
   }, []);
+
+  const user = useUserState();
+
   const [server] = useServerApiState((state) => [state.server]);
 
   return (
     <>
-      <Stack gap="xs">
-        <SettingsHeader
-          title={t`System Settings`}
-          subtitle={server.instance || ''}
-          switch_link="/settings/user"
-          switch_text={<Trans>Switch to User Setting</Trans>}
-        />
-        <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
-      </Stack>
+      {user.isStaff() ? (
+        <Stack gap="xs">
+          <SettingsHeader
+            title={t`System Settings`}
+            subtitle={server.instance || ''}
+            switch_link="/settings/user"
+            switch_text={<Trans>Switch to User Setting</Trans>}
+          />
+          <PanelGroup pageKey="system-settings" panels={systemSettingsPanels} />
+        </Stack>
+      ) : (
+        <PermissionDenied />
+      )}
     </>
   );
 }
