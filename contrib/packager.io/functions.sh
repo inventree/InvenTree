@@ -343,12 +343,6 @@ function final_message() {
 
 
 function update_checks() {
-  # Check if we are updating
-  if [ -z "$2" ]; then
-    echo "# Normal install - no need for checks"
-    return
-  fi
-
   echo "# Running upgrade"
   old_version = $2
   old_version_rev = $(echo $old_version | cut -d' ' -f2)
