@@ -117,22 +117,22 @@ function detect_envs() {
     pip install --require-hashes -r ${APP_HOME}/contrib/dev_reqs/requirements.txt -q
 
     # Load config
-    local CONF=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
+    export INVENTREE_CONF_DATA=$(cat ${INVENTREE_CONFIG_FILE} | jc --yaml)
 
     # Parse the config file
-    export INVENTREE_MEDIA_ROOT=$(jq -r '.[].media_root' <<< ${CONF})
-    export INVENTREE_STATIC_ROOT=$(jq -r '.[].static_root' <<< ${CONF})
-    export INVENTREE_BACKUP_DIR=$(jq -r '.[].backup_dir' <<< ${CONF})
-    export INVENTREE_PLUGINS_ENABLED=$(jq -r '.[].plugins_enabled' <<< ${CONF})
-    export INVENTREE_PLUGIN_FILE=$(jq -r '.[].plugin_file' <<< ${CONF})
-    export INVENTREE_SECRET_KEY_FILE=$(jq -r '.[].secret_key_file' <<< ${CONF})
+    export INVENTREE_MEDIA_ROOT=$(jq -r '.[].media_root' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_STATIC_ROOT=$(jq -r '.[].static_root' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_BACKUP_DIR=$(jq -r '.[].backup_dir' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_PLUGINS_ENABLED=$(jq -r '.[].plugins_enabled' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_PLUGIN_FILE=$(jq -r '.[].plugin_file' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_SECRET_KEY_FILE=$(jq -r '.[].secret_key_file' <<< ${INVENTREE_CONF_DATA})
 
-    export INVENTREE_DB_ENGINE=$(jq -r '.[].database.ENGINE' <<< ${CONF})
-    export INVENTREE_DB_NAME=$(jq -r '.[].database.NAME' <<< ${CONF})
-    export INVENTREE_DB_USER=$(jq -r '.[].database.USER' <<< ${CONF})
-    export INVENTREE_DB_PASSWORD=$(jq -r '.[].database.PASSWORD' <<< ${CONF})
-    export INVENTREE_DB_HOST=$(jq -r '.[].database.HOST' <<< ${CONF})
-    export INVENTREE_DB_PORT=$(jq -r '.[].database.PORT' <<< ${CONF})
+    export INVENTREE_DB_ENGINE=$(jq -r '.[].database.ENGINE' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_DB_NAME=$(jq -r '.[].database.NAME' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_DB_USER=$(jq -r '.[].database.USER' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_DB_PASSWORD=$(jq -r '.[].database.PASSWORD' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_DB_HOST=$(jq -r '.[].database.HOST' <<< ${INVENTREE_CONF_DATA})
+    export INVENTREE_DB_PORT=$(jq -r '.[].database.PORT' <<< ${INVENTREE_CONF_DATA})
   else
     echo "# No config file found: ${INVENTREE_CONFIG_FILE}, using envs or defaults"
 
