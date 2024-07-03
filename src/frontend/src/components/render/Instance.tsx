@@ -1,9 +1,12 @@
 import { t } from '@lingui/macro';
 import { Alert, Anchor, Group, Space, Text } from '@mantine/core';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback } from 'react';
 
+import { api } from '../../App';
 import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
+import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -14,6 +17,7 @@ import {
   RenderSupplierPart
 } from './Company';
 import { RenderImportSession, RenderProjectCode } from './Generic';
+import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -102,6 +106,28 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
   }
 
   return <RenderComponent {...props} />;
+}
+
+export function RenderSuspendedInstance({
+  model,
+  pk
+}: {
+  model: ModelType;
+  pk: number;
+}): ReactNode {
+  const { data } = useSuspenseQuery({
+    queryKey: ['model', model, pk],
+    queryFn: async () => {
+      const url = apiUrl(ModelInformationDict[model].api_endpoint, pk);
+
+      return api
+        .get(url)
+        .then((response) => response.data)
+        .catch(() => null);
+    }
+  });
+
+  return <RenderInstance model={model} instance={data} />;
 }
 
 /**

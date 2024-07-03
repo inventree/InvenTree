@@ -6,10 +6,12 @@ import {
   IconExclamationCircle,
   IconSquareArrowRight
 } from '@tabler/icons-react';
+import { useSuspenseQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { cancelEvent } from '../../functions/events';
 import {
   useDeleteApiFormModal,
@@ -25,6 +27,8 @@ import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 import { ActionButton } from '../buttons/ActionButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
+import { RenderInstance, RenderSuspendedInstance } from '../render/Instance';
+import { ModelInformationDict } from '../render/ModelType';
 
 function ImporterDataCell({
   session,
@@ -62,6 +66,16 @@ function ImporterDataCell({
         return (
           <YesNoButton value={row.data ? row.data[column.field] : false} />
         );
+      case 'related field':
+        if (field_def.model && row.data[column.field]) {
+          return (
+            <RenderSuspendedInstance
+              model={field_def.model}
+              pk={row.data[column.field]}
+            />
+          );
+        }
+        break;
       default:
         break;
     }
