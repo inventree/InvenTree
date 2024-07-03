@@ -1,6 +1,7 @@
 {% load i18n %}
 
 /* globals
+    global_settings,
     inventreeGet,
     QRCode,
     showAlertOrCache,
@@ -648,6 +649,10 @@ function showQRDialog(title, data, options={}) {
     <div id='qrcode-container' style='margin: auto; width: 256px; padding: 25px;'>
         <div id='qrcode'></div>
     </div>`;
+
+    if (global_settings.BARCODE_SHOW_TEXT) {
+        content += `<div style='text-align: center; margin-top: 10px;' id='qrcode-text'>${data}</div>`;
+    }
 
     options.after_render = function(modal) {
         let qrcode = new QRCode('qrcode', {
