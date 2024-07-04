@@ -7,7 +7,7 @@ from django.utils.translation import gettext_lazy as _
 
 # Define maximum limits for imported file data
 IMPORTER_MAX_FILE_SIZE = 32 * 1024 * 1042
-IMPORTER_MAX_ROWS = 1000
+IMPORTER_MAX_ROWS = 5000
 IMPORTER_MAX_COLS = 1000
 
 
