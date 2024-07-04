@@ -1018,9 +1018,12 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     help={
         'filename': "Output filename (default = 'schema.yml')",
         'overwrite': 'Overwrite existing files without asking first (default = off/False)',
+        'no_default': 'Do not use default settings for schema (default = off/False)',
     }
 )
-def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
+def schema(
+    c, filename='schema.yml', overwrite=False, ignore_warnings=False, no_default=False
+):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
 
@@ -1033,7 +1036,13 @@ def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
     if not ignore_warnings:
         cmd += ' --fail-on-warn'
 
-    manage(c, cmd, pty=True)
+    envs = {}
+    if not no_default:
+        envs['INVENTREE_SITE_URL'] = (
+            'http://localhost:8000'  # Default site URL - to ensure server field is stable
+        )
+
+    manage(c, cmd, pty=True, env=envs)
 
     assert os.path.exists(filename)
 
