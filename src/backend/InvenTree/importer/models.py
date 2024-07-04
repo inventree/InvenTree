@@ -476,6 +476,8 @@ class DataImportRow(models.Model):
         if not field_mapping:
             field_mapping = self.session.field_mapping
 
+        available_fields = self.session.available_fields()
+
         override_values = self.session.field_overrides or {}
         default_values = self.session.field_defaults or {}
 
@@ -492,7 +494,17 @@ class DataImportRow(models.Model):
             if not col:
                 continue
 
+            # Extract field type
+            field_def = available_fields.get(field, {})
+
+            field_type = field_def.get('type', None)
+
             value = self.row_data.get(col, None)
+
+            if field_type == 'boolean':
+                value = InvenTree.helpers.str2bool(value)
+            elif field_type == 'date':
+                value = value or None
 
             # Use the default value, if provided
             if value in [None, ''] and field in default_values:

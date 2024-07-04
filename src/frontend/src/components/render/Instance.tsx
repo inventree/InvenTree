@@ -127,6 +127,10 @@ export function RenderSuspendedInstance({
     }
   });
 
+  if (!data) {
+    return <Text>${pk}</Text>;
+  }
+
   return <RenderInstance model={model} instance={data} />;
 }
 
