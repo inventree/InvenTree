@@ -320,7 +320,7 @@ class CategoryTree(ListAPI):
         return queryset
 
 
-class CategoryParameterList(ListCreateAPI):
+class CategoryParameterList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategoryParameterTemplate objects.
 
     - GET: Return a list of PartCategoryParameterTemplate objects
@@ -375,7 +375,7 @@ class PartSalePriceDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartSalePriceSerializer
 
 
-class PartSalePriceList(ListCreateAPI):
+class PartSalePriceList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for list view of PartSalePriceBreak model."""
 
     queryset = PartSellPriceBreak.objects.all()
@@ -394,7 +394,7 @@ class PartInternalPriceDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartInternalPriceSerializer
 
 
-class PartInternalPriceList(ListCreateAPI):
+class PartInternalPriceList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for list view of PartInternalPriceBreak model."""
 
     queryset = PartInternalPriceBreak.objects.all()
@@ -470,7 +470,7 @@ class PartTestTemplateDetail(PartTestTemplateMixin, RetrieveUpdateDestroyAPI):
     pass
 
 
-class PartTestTemplateList(PartTestTemplateMixin, ListCreateAPI):
+class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for listing (and creating) a PartTestTemplate."""
 
     filterset_class = PartTestTemplateFilter
@@ -1518,7 +1518,9 @@ class PartParameterTemplateMixin:
         return queryset
 
 
-class PartParameterTemplateList(PartParameterTemplateMixin, ListCreateAPI):
+class PartParameterTemplateList(
+    PartParameterTemplateMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of PartParameterTemplate objects.
 
     - GET: Return list of PartParameterTemplate objects
@@ -1599,7 +1601,7 @@ class PartParameterFilter(rest_filters.FilterSet):
             return queryset.filter(part=part)
 
 
-class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
+class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartParameter objects.
 
     - GET: Return list of PartParameter objects
@@ -1827,7 +1829,7 @@ class BomMixin:
         return queryset
 
 
-class BomList(BomMixin, ListCreateDestroyAPIView):
+class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects

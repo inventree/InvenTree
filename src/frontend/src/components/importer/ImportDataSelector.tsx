@@ -227,9 +227,15 @@ export default function ImporterDataSelector({
     let errors: string[] = [];
 
     for (const k of Object.keys(row.errors)) {
-      row.errors[k].forEach((e: string) => {
-        errors.push(`${k}: ${e}`);
-      });
+      if (row.errors[k]) {
+        if (Array.isArray(row.errors[k])) {
+          row.errors[k].forEach((e: string) => {
+            errors.push(`${k}: ${e}`);
+          });
+        } else {
+          errors.push(row.errors[k].toString());
+        }
+      }
     }
 
     return errors;

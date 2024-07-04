@@ -604,12 +604,6 @@ export function InvenTreeTable<T = any>({
         <Stack gap="sm">
           <Group justify="apart" grow wrap="nowrap">
             <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
-              {tableProps.enableDownload && (
-                <DownloadAction
-                  key="download-action"
-                  downloadCallback={downloadData}
-                />
-              )}
               {tableProps.enableUpload && <UploadAction key="upload-action" />}
               <PrintingActions
                 items={tableState.selectedIds}
@@ -678,6 +672,12 @@ export function InvenTreeTable<T = any>({
                     </Tooltip>
                   </ActionIcon>
                 </Indicator>
+              )}
+              {tableProps.enableDownload && (
+                <DownloadAction
+                  key="download-action"
+                  downloadCallback={downloadData}
+                />
               )}
             </Group>
           </Group>

@@ -105,7 +105,8 @@ export default function ProjectCodeTable() {
         columns={columns}
         props={{
           rowActions: rowActions,
-          tableActions: tableActions
+          tableActions: tableActions,
+          enableDownload: true
         }}
       />
     </>

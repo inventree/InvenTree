@@ -197,7 +197,10 @@ class PartTestTemplateSerializer(
         return queryset.annotate(results=SubqueryCount('test_results'))
 
 
-class PartSalePriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class PartSalePriceSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for sale prices for Part model."""
 
     class Meta:
@@ -1699,8 +1702,9 @@ class BomItemSerializer(
         return queryset
 
 
+@register_importer()
 class CategoryParameterTemplateSerializer(
-    InvenTree.serializers.InvenTreeModelSerializer
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
 ):
     """Serializer for the PartCategoryParameterTemplate model."""
 
