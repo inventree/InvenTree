@@ -333,6 +333,8 @@ class StockItemSerializer(
 
     export_exclude_fields = ['tracking_items']
 
+    export_only_fields = ['part_pricing_min', 'part_pricing_max']
+
     import_exclude_fields = ['use_pack_size', 'tags']
 
     class Meta:
@@ -384,6 +386,9 @@ class StockItemSerializer(
             'stale',
             'tracking_items',
             'tags',
+            # Export only fields
+            'part_pricing_min',
+            'part_pricing_max',
         ]
 
         """
@@ -595,6 +600,18 @@ class StockItemSerializer(
     )
 
     tags = TagListSerializerField(required=False)
+
+    part_pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
+        source='part.pricing_data.overall_min',
+        read_only=True,
+        label=_('Minimum Pricing'),
+    )
+
+    part_pricing_max = InvenTree.serializers.InvenTreeMoneySerializer(
+        source='part.pricing_data.overall_max',
+        read_only=True,
+        label=_('Maximum Pricing'),
+    )
 
 
 class SerializeStockItemSerializer(serializers.Serializer):
