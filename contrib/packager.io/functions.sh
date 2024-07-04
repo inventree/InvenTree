@@ -344,8 +344,8 @@ function final_message() {
 
 function update_checks() {
   echo "# Running upgrade"
-  old_version = $1
-  old_version_rev = $(echo $old_version | cut -d' ' -f2)
+  local old_version = $1
+  local old_version_rev = $(echo $old_version | cut -d' ' -f2)
   echo "# Old version is: ${old_version} - release: ${old_version_rev}"
 
   local ABORT=false
