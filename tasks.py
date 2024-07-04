@@ -131,17 +131,20 @@ def managePyPath():
     return managePyDir().joinpath('manage.py')
 
 
-def manage(c, cmd, pty: bool = False):
+def manage(c, cmd, pty: bool = False, env=None):
     """Runs a given command against django's "manage.py" script.
 
     Args:
         c: Command line context.
         cmd: Django command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
+        env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
+    env = env or {}
     c.run(
         'cd "{path}" && python3 manage.py {cmd}'.format(path=managePyDir(), cmd=cmd),
         pty=pty,
+        env=env,
     )
 
 
