@@ -355,10 +355,10 @@ function update_checks() {
     local name=$3
 
     local value=$(inventree config:get ${config_key})
-    if [ -z "${value}" ]; then
+    if [ -z "${value}" ] || [ "$value" == "null" ]; then
       value=$(jq -r ".[].${env_key}" <<< ${INVENTREE_CONF_DATA})
     fi
-    if [ -z "${value}" ]; then
+    if [ -z "${value}" ] || [ "$value" == "null" ]; then
       echo "# No setting for ${name} found - please set it manually either in ${INVENTREE_CONFIG_FILE} under '${config_key}' or with 'inventree config:set ${config_key}=value'"
       ABORT=true
     else
