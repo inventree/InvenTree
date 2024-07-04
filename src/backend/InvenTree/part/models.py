@@ -3288,6 +3288,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
     class Meta:
         """Metaclass providing extra model definition."""
 
+        verbose_name = _('Part Sale Price Break')
         unique_together = ('part', 'quantity')
 
     @staticmethod
