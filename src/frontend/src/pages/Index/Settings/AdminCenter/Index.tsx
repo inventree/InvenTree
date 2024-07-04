@@ -18,11 +18,13 @@ import {
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
 
+import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
+import { useUserState } from '../../../../states/UserState';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))
@@ -79,6 +81,8 @@ const CurrencyTable = Loadable(
 );
 
 export default function AdminCenter() {
+  const user = useUserState();
+
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -198,19 +202,25 @@ export default function AdminCenter() {
   );
 
   return (
-    <Stack gap="xs">
-      <SettingsHeader
-        title={t`Admin Center`}
-        subtitle={t`Advanced Options`}
-        switch_link="/settings/system"
-        switch_text="System Settings"
-      />
-      <QuickAction />
-      <PanelGroup
-        pageKey="admin-center"
-        panels={adminCenterPanels}
-        collapsible={true}
-      />
-    </Stack>
+    <>
+      {user.isStaff() ? (
+        <Stack gap="xs">
+          <SettingsHeader
+            title={t`Admin Center`}
+            subtitle={t`Advanced Options`}
+            switch_link="/settings/system"
+            switch_text="System Settings"
+          />
+          <QuickAction />
+          <PanelGroup
+            pageKey="admin-center"
+            panels={adminCenterPanels}
+            collapsible={true}
+          />
+        </Stack>
+      ) : (
+        <PermissionDenied />
+      )}
+    </>
   );
 }

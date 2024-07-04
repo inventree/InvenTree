@@ -310,7 +310,7 @@ export function ApiForm({
 
         return response;
       } catch (error) {
-        console.error('Error fetching initial data:', error);
+        console.error('ERR: Error fetching initial data:', error);
         // Re-throw error to allow react-query to handle error
         throw error;
       }

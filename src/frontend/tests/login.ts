@@ -31,10 +31,14 @@ export const doQuickLogin = async (
   password = password ?? user.password;
   url = url ?? baseUrl;
 
-  // await page.goto(logoutUrl);
   await page.goto(`${url}/login/?login=${username}&password=${password}`);
   await page.waitForURL('**/platform/home');
   await page
     .getByRole('heading', { name: 'Welcome to your Dashboard,' })
     .waitFor();
+};
+
+export const doLogout = async (page) => {
+  await page.goto(`${baseUrl}/logout/`);
+  await page.waitForURL('**/platform/login');
 };
