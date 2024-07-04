@@ -229,7 +229,7 @@ class DataImportSession(models.Model):
         self.status = DataImportStatusCode.IMPORTING.value
         self.save()
 
-        offload_task(importer.tasks.import_data, self.pk, force_async=True)
+        offload_task(importer.tasks.import_data, self.pk)
 
     def import_data(self):
         """Perform the data import process for this session."""
@@ -245,25 +245,34 @@ class DataImportSession(models.Model):
 
         headers = df.headers
 
-        row_objects = []
+        imported_rows = []
+
+        field_mapping = self.field_mapping
+        available_fields = self.available_fields()
 
         # Iterate through each "row" in the data file, and create a new DataImportRow object
         for idx, row in enumerate(df):
             row_data = dict(zip(headers, row))
 
-            row_objects.append(
-                importer.models.DataImportRow(
-                    session=self, row_data=row_data, row_index=idx
-                )
+            # Skip completely empty rows
+            if not any(row_data.values()):
+                continue
+
+            row = importer.models.DataImportRow(
+                session=self, row_data=row_data, row_index=idx
             )
 
-        # Create the DataImportRow objects
-        importer.models.DataImportRow.objects.bulk_create(row_objects)
+            row.extract_data(
+                field_mapping=field_mapping,
+                available_fields=available_fields,
+                commit=False,
+            )
+            row.validate(commit=False)
 
-        # Set initial data and errors for each row
-        for row in self.rows.all():
-            row.extract_data(field_mapping=self.field_mapping)
-            row.validate()
+            imported_rows.append(row)
+
+        # Perform database writes as a single operation
+        importer.models.DataImportRow.objects.bulk_create(imported_rows)
 
         # Mark the import task as "PROCESSING"
         self.status = DataImportStatusCode.PROCESSING.value
@@ -471,12 +480,15 @@ class DataImportRow(models.Model):
 
     complete = models.BooleanField(default=False, verbose_name=_('Complete'))
 
-    def extract_data(self, field_mapping: dict = None):
+    def extract_data(
+        self, available_fields: dict = None, field_mapping: dict = None, commit=True
+    ):
         """Extract row data from the provided data dictionary."""
         if not field_mapping:
             field_mapping = self.session.field_mapping
 
-        available_fields = self.session.available_fields()
+        if not available_fields:
+            available_fields = self.session.available_fields()
 
         override_values = self.session.field_overrides or {}
         default_values = self.session.field_defaults or {}
@@ -513,7 +525,9 @@ class DataImportRow(models.Model):
             data[field] = value
 
         self.data = data
-        self.save()
+
+        if commit:
+            self.save()
 
     def serializer_data(self):
         """Construct data object to be sent to the serializer.
@@ -521,11 +535,13 @@ class DataImportRow(models.Model):
         - If available, we use the "default" values provided by the import session
         - If available, we use the "override" values provided by the import session
         """
-        session_defaults = self.session.field_defaults or {}
-        session_overrides = self.session.field_overrides or {}
+        data = self.session.field_defaults or {}
 
-        # Construct data
-        data = {**session_defaults, **self.data, **session_overrides}
+        if self.data:
+            data.update(self.data)
+
+        if self.session.field_overrides:
+            data.update(self.session.field_overrides)
 
         return data
 
