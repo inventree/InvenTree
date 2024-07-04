@@ -455,6 +455,9 @@ def get_user_color_theme(user):
     """Get current user color theme."""
     from common.models import ColorTheme
 
+    if not user.is_authenticated:
+        return 'default'
+
     try:
         user_theme = ColorTheme.objects.filter(user_obj=user).get()
         user_theme_name = user_theme.name
