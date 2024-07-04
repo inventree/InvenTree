@@ -2583,6 +2583,7 @@ class ColorTheme(models.Model):
     name = models.CharField(max_length=20, default='', blank=True)
 
     user = models.CharField(max_length=150, unique=True)
+    user_obj = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     @classmethod
     def get_color_themes_choices(cls):
