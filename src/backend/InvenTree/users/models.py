@@ -674,7 +674,7 @@ def clear_user_role_cache(user):
     """
     for role in RuleSet.get_ruleset_models().keys():
         for perm in ['add', 'change', 'view', 'delete']:
-            key = f'role_{user.id}_{role}_{perm}'
+            key = f'role_{user.pk}_{role}_{perm}'
             cache.delete(key)
 
 
@@ -687,7 +687,7 @@ def check_user_role(user, role, permission):
         return True
 
     # First, check the cache
-    key = f'role_{user.id}_{role}_{permission}'
+    key = f'role_{user.pk}_{role}_{permission}'
 
     try:
         result = cache.get(key)
