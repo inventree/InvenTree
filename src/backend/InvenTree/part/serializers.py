@@ -702,7 +702,7 @@ class PartSerializer(
                 # Fields required for certain operations, but are not part of the model
                 if f in ['remote_image', 'existing_image']:
                     continue
-                self.fields.pop(f)
+                self.fields.pop(f, None)
 
         if not pricing:
             self.fields.pop('pricing_min', None)

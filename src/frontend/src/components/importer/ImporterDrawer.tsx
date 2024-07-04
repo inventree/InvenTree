@@ -19,11 +19,11 @@ import {
   ImportSessionStatus,
   useImportSession
 } from '../../hooks/UseImportSession';
-import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
 import { StatusRenderer } from '../render/StatusRenderer';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
+import ImporterImportProgress from './ImporterImportProgress';
 
 /*
  * Stepper component showing the current step of the data import process.
@@ -67,7 +67,7 @@ export default function ImporterDrawer({
       case ImportSessionStatus.MAPPING:
         return <ImporterColumnSelector session={session} />;
       case ImportSessionStatus.IMPORTING:
-        return <Text>Importing...</Text>;
+        return <ImporterImportProgress session={session} />;
       case ImportSessionStatus.PROCESSING:
         return <ImporterDataSelector session={session} />;
       case ImportSessionStatus.COMPLETE:

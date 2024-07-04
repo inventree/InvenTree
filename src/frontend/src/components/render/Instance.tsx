@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
-import { Alert, Anchor, Group, Space, Text } from '@mantine/core';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback } from 'react';
 
 import { api } from '../../App';
@@ -115,7 +115,7 @@ export function RenderSuspendedInstance({
   model: ModelType;
   pk: number;
 }): ReactNode {
-  const { data } = useSuspenseQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ['model', model, pk],
     queryFn: async () => {
       const url = apiUrl(ModelInformationDict[model].api_endpoint, pk);
@@ -126,6 +126,10 @@ export function RenderSuspendedInstance({
         .catch(() => null);
     }
   });
+
+  if (isLoading || isFetching) {
+    return <Skeleton />;
+  }
 
   if (!data) {
     return <Text>${pk}</Text>;

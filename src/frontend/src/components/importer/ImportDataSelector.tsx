@@ -1,10 +1,11 @@
 import { t } from '@lingui/macro';
 import { Group, HoverCard, Stack, Text } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
+  IconArrowRight,
   IconCircleCheck,
   IconCircleDashedCheck,
-  IconExclamationCircle,
-  IconSquareArrowRight
+  IconExclamationCircle
 } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
@@ -145,6 +146,15 @@ export default function ImporterDataSelector({
 
   const importData = useCallback(
     (rows: number[]) => {
+      notifications.show({
+        title: t`Importing Rows`,
+        message: t`Please wait while the data is imported`,
+        autoClose: false,
+        color: 'blue',
+        id: 'importing-rows',
+        icon: <IconArrowRight />
+      });
+
       api
         .post(
           apiUrl(ApiEndpoints.import_session_accept_rows, session.sessionId),
@@ -152,8 +162,17 @@ export default function ImporterDataSelector({
             rows: rows
           }
         )
-        .catch(() => {})
+        .catch(() => {
+          notifications.show({
+            title: t`Error`,
+            message: t`An error occurred while importing data`,
+            color: 'red',
+            autoClose: true
+          });
+        })
         .finally(() => {
+          table.clearSelectedRecords();
+          notifications.hide('importing-rows');
           table.refreshTable();
         });
     },
@@ -276,9 +295,9 @@ export default function ImporterDataSelector({
       return [
         {
           title: t`Accept`,
-          icon: <IconSquareArrowRight />,
+          icon: <IconArrowRight />,
           color: 'green',
-          hidden: record.complete,
+          hidden: record.complete || !record.valid,
           onClick: () => {
             importData([record.pk]);
           }
@@ -330,7 +349,7 @@ export default function ImporterDataSelector({
     return [
       <ActionButton
         disabled={!canImport}
-        icon={<IconSquareArrowRight />}
+        icon={<IconArrowRight />}
         color="green"
         tooltip={t`Import selected rows`}
         onClick={() => {
