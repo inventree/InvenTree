@@ -38,19 +38,20 @@ def collect_plugins_static_files():
     logger.info('Collecting static files for all installed plugins.')
 
     for slug in registry.plugins.keys():
-        copy_plugin_static_files(slug)
+        copy_plugin_static_files(slug, check_reload=False)
 
 
-def copy_plugin_static_files(slug):
+def copy_plugin_static_files(slug, check_reload=True):
     """Copy static files for the specified plugin."""
-    registry.check_reload()
+    if check_reload:
+        registry.check_reload()
 
     plugin = registry.get_plugin(slug)
 
     if not plugin:
         return
 
-    logger.info("Copying static files for plugin '%s'")
+    logger.info("Copying static files for plugin '%s'", slug)
 
     # Get the source path for the plugin
     source_path = plugin.path().joinpath('static')
@@ -86,7 +87,7 @@ def copy_plugin_static_files(slug):
             with item.open('rb') as src:
                 staticfiles_storage.save(destination_path, src)
 
-            logger.debug(f'- copied {item} to {destination_path}')
+            logger.debug('- copied %s to %s', str(item), str(destination_path))
             copied += 1
 
     logger.info(f"Copied %s static files for plugin '%s'.", copied, slug)

@@ -4,6 +4,8 @@
 #
 Color_Off='\033[0m'
 On_Red='\033[41m'
+PYTHON_FROM=9
+PYTHON_TO=12
 
 function detect_docker() {
   if [ -n "$(grep docker </proc/1/cgroup)" ]; then
@@ -55,6 +57,19 @@ function detect_python() {
     echo "# Found earlier used version: ${SETUP_PYTHON}"
   else
     echo "# No python environment found - using environment variable: ${SETUP_PYTHON}"
+  fi
+
+  # Try to detect a python between 3.9 and 3.12 in reverse order
+  if [ -z "${SETUP_PYTHON}" ]; then
+    echo "# Trying to detecting python3.${PYTHON_FROM} to python3.${PYTHON_TO} - using newest version"
+    for i in $(seq $PYTHON_TO -1 $PYTHON_FROM); do
+      echo "# Checking for python3.${i}"
+      if [ -n "$(which python3.${i})" ]; then
+        SETUP_PYTHON="python3.${i}"
+        echo "# Found python3.${i} installed - using for setup ${SETUP_PYTHON}"
+        break
+      fi
+    done
   fi
 
   # Ensure python can be executed - abort if not
