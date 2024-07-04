@@ -3083,7 +3083,6 @@ class CustomUnit(models.Model):
         max_length=10,
         verbose_name=_('Symbol'),
         help_text=_('Optional unit symbol'),
-        unique=True,
         blank=True,
     )
 
