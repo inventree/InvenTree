@@ -1041,6 +1041,9 @@ def schema(
         envs['INVENTREE_SITE_URL'] = (
             'http://localhost:8000'  # Default site URL - to ensure server field is stable
         )
+        envs['INVENTREE_PLUGINS_ENABLED'] = (
+            False  # Disable plugins to ensure they are kep out of schema
+        )
 
     manage(c, cmd, pty=True, env=envs)
 
