@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ("common", "0026_auto_20240608_1238"),
+        ("common", "0027_alter_customunit_symbol"),
     ]
 
     operations = [
