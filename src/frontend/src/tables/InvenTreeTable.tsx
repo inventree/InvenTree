@@ -551,6 +551,9 @@ export function InvenTreeTable<T = any>({
               message: t`Failed to delete records`,
               color: 'red'
             });
+          })
+          .finally(() => {
+            tableState.clearSelectedRecords();
           });
       }
     });

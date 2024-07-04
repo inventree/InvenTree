@@ -60,6 +60,10 @@ function ImporterDataCell({
   const cellValue: ReactNode = useMemo(() => {
     let field_def = session.availableFields[column.field];
 
+    if (!row?.data) {
+      return '-';
+    }
+
     switch (field_def?.type) {
       case 'boolean':
         return (

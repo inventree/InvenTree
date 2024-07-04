@@ -257,17 +257,17 @@ class DataImportSession(models.Model):
                 )
             )
 
-        # Finally, create the DataImportRow objects
+        # Create the DataImportRow objects
         importer.models.DataImportRow.objects.bulk_create(row_objects)
-
-        # Mark the import task as "PROCESSING"
-        self.status = DataImportStatusCode.PROCESSING.value
-        self.save()
 
         # Set initial data and errors for each row
         for row in self.rows.all():
             row.extract_data(field_mapping=self.field_mapping)
             row.validate()
+
+        # Mark the import task as "PROCESSING"
+        self.status = DataImportStatusCode.PROCESSING.value
+        self.save()
 
     @property
     def row_count(self):
