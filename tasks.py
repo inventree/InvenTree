@@ -1044,6 +1044,9 @@ def schema(
         envs['INVENTREE_PLUGINS_ENABLED'] = (
             False  # Disable plugins to ensure they are kep out of schema
         )
+        envs['INVENTREE_CURRENCY_CODES'] = (
+            'AUD,CNY,EUR,USD'  # Default currency codes to ensure they are stable
+        )
 
     manage(c, cmd, pty=True, env=envs)
 
