@@ -345,7 +345,7 @@ function final_message() {
 function update_checks() {
   echo "# Running upgrade"
   local old_version=$1
-  local old_version_rev=$(echo $old_version | cut -d' ' -f2)
+  local old_version_rev=$(echo ${old_version} | cut -d'-' -f1 | cut -d'.' -f2)
   echo "# Old version is: ${old_version} - release: ${old_version_rev}"
 
   local ABORT=false
@@ -356,7 +356,7 @@ function update_checks() {
 
     local value=$(inventree config:get ${config_key})
     if [ -z "${value}" ]; then
-      value=$(jq -r '.[].${env_key}' <<< ${INVENTREE_CONF_DATA})
+      value=$(jq -r ".[].${env_key}" <<< ${INVENTREE_CONF_DATA})
     fi
     if [ -z "${value}" ]; then
       echo "# No setting for ${name} found - please set it manually either in ${INVENTREE_CONFIG_FILE} under '${config_key}' or with 'inventree config:set ${config_key}=value'"
@@ -376,5 +376,6 @@ function update_checks() {
       echo "# Aborting - please set the missing values and run the update again"
       exit 1
     fi
+    echo "# All checks passed - continuing with the update"
   fi
 }
