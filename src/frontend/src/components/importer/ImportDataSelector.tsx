@@ -26,7 +26,7 @@ import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 import { ActionButton } from '../buttons/ActionButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
-import { RenderSuspendedInstance } from '../render/Instance';
+import { RenderRemoteInstance } from '../render/Instance';
 
 function ImporterDataCell({
   session,
@@ -72,7 +72,7 @@ function ImporterDataCell({
       case 'related field':
         if (field_def.model && row.data[column.field]) {
           return (
-            <RenderSuspendedInstance
+            <RenderRemoteInstance
               model={field_def.model}
               pk={row.data[column.field]}
             />

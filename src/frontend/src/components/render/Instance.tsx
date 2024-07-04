@@ -108,7 +108,7 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
   return <RenderComponent {...props} />;
 }
 
-export function RenderSuspendedInstance({
+export function RenderRemoteInstance({
   model,
   pk
 }: {
