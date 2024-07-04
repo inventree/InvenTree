@@ -560,12 +560,22 @@ class StockItemSerializer(
     quantity = InvenTreeDecimalField()
 
     # Annotated fields
-    allocated = serializers.FloatField(required=False)
-    expired = serializers.BooleanField(required=False, read_only=True)
-    installed_items = serializers.IntegerField(read_only=True, required=False)
-    child_items = serializers.IntegerField(read_only=True, required=False)
-    stale = serializers.BooleanField(required=False, read_only=True)
-    tracking_items = serializers.IntegerField(read_only=True, required=False)
+    allocated = serializers.FloatField(
+        required=False, read_only=True, label=_('Allocated Quantity')
+    )
+    expired = serializers.BooleanField(
+        required=False, read_only=True, label=_('Expired')
+    )
+    installed_items = serializers.IntegerField(
+        read_only=True, required=False, label=_('Installed Items')
+    )
+    child_items = serializers.IntegerField(
+        read_only=True, required=False, label=_('Child Items')
+    )
+    stale = serializers.BooleanField(required=False, read_only=True, label=_('Stale'))
+    tracking_items = serializers.IntegerField(
+        read_only=True, required=False, label=_('Tracking Items')
+    )
 
     purchase_price = InvenTree.serializers.InvenTreeMoneySerializer(
         label=_('Purchase Price'),

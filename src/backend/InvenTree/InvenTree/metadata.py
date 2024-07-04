@@ -176,6 +176,14 @@ class InvenTreeMetadata(SimpleMetadata):
 
         model_class = None
 
+        # Extract read_only_fields and write_only_fields from the Meta class (if available)
+        if meta := getattr(serializer, 'Meta', None):
+            read_only_fields = getattr(meta, 'read_only_fields', [])
+            write_only_fields = getattr(meta, 'write_only_fields', [])
+        else:
+            read_only_fields = []
+            write_only_fields = []
+
         # Attributes to copy extra attributes from the model to the field (if they don't exist)
         # Note that the attributes may be named differently on the underlying model!
         extra_attributes = {
@@ -197,6 +205,12 @@ class InvenTreeMetadata(SimpleMetadata):
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
                 if name in serializer_info.keys():
+                    if name in read_only_fields:
+                        serializer_info[name]['read_only'] = True
+
+                    if name in write_only_fields:
+                        serializer_info[name]['write_only'] = True
+
                     if field.has_default():
                         default = field.default
 
@@ -229,6 +243,12 @@ class InvenTreeMetadata(SimpleMetadata):
                 if relation.reverse:
                     # Ignore reverse relations
                     continue
+
+                if name in read_only_fields:
+                    serializer_info[name]['read_only'] = True
+
+                if name in write_only_fields:
+                    serializer_info[name]['write_only'] = True
 
                 # Extract and provide the "limit_choices_to" filters
                 # This is used to automatically filter AJAX requests

@@ -60,9 +60,17 @@ class DataImportSerializerMixin:
         """
         importable_fields = {}
 
+        if meta := getattr(self, 'Meta', None):
+            read_only_fields = getattr(meta, 'read_only_fields', [])
+        else:
+            read_only_fields = []
+
         for name, field in self.fields.items():
             # Skip read-only fields
             if getattr(field, 'read_only', False):
+                continue
+
+            if name in read_only_fields:
                 continue
 
             # Skip fields which are themselves serializers
@@ -121,9 +129,17 @@ class DataExportSerializerMixin:
         """
         fields = {}
 
+        if meta := getattr(self, 'Meta', None):
+            write_only_fields = getattr(meta, 'write_only_fields', [])
+        else:
+            write_only_fields = []
+
         for name, field in self.fields.items():
             # Skip write-only fields
             if getattr(field, 'write_only', False):
+                continue
+
+            if name in write_only_fields:
                 continue
 
             # Skip fields which are themselves serializers
