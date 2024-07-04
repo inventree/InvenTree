@@ -350,8 +350,8 @@ function update_checks() {
 
   local ABORT=false
   function check_config_value() {
-    local config_key=$1
-    local env_key=$2
+    local config_key=$2
+    local env_key=$1
     local name=$3
 
     local value=$(inventree config:get ${config_key})
@@ -361,6 +361,8 @@ function update_checks() {
     if [ -z "${value}" ]; then
       echo "# No setting for ${name} found - please set it manually either in ${INVENTREE_CONFIG_FILE} under '${config_key}' or with 'inventree config:set ${config_key}=value'"
       ABORT=true
+    else
+      echo "# Found setting for ${name} - ${value}"
     fi
   }
 
