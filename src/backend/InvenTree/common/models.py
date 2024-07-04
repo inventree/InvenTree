@@ -14,7 +14,7 @@ from datetime import timedelta, timezone
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Callable, TypedDict, Union
+from typing import Any, Callable, Collection, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -3043,6 +3043,18 @@ class CustomUnit(models.Model):
 
         return fmt
 
+    def validate_unique(self, exclude=None) -> None:
+        """Ensure that the custom unit is unique."""
+        super().validate_unique(exclude)
+
+        if self.symbol:
+            if (
+                CustomUnit.objects.filter(symbol=self.symbol)
+                .exclude(pk=self.pk)
+                .exists()
+            ):
+                raise ValidationError({'symbol': _('Unit symbol must be unique')})
+
     def clean(self):
         """Validate that the provided custom unit is indeed valid."""
         super().clean()
@@ -3084,7 +3096,6 @@ class CustomUnit(models.Model):
         max_length=10,
         verbose_name=_('Symbol'),
         help_text=_('Optional unit symbol'),
-        unique=True,
         blank=True,
     )
 
