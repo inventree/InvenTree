@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 06:40+0000\n"
-"PO-Revision-Date: 2024-06-30 06:57\n"
+"POT-Creation-Date: 2024-07-05 02:47+0000\n"
+"PO-Revision-Date: 2024-07-05 14:57\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -2226,10 +2226,8 @@ msgid "Allow barcode scanning via webcam in browser"
 msgstr "Povolit skenování čárových kódů přes webovou kameru v prohlížeči"
 
 #: common/models.py:1395
-#, fuzzy
-#| msgid "Barcode Data"
 msgid "Barcode Show Data"
-msgstr "Data čárového kódu"
+msgstr ""
 
 #: common/models.py:1396
 msgid "Display barcode data in browser as text"
@@ -2710,16 +2708,12 @@ msgid "A responsible owner must be assigned to each order"
 msgstr "Ke každé objednávce musí být přiřazen odpovědný vlastník"
 
 #: common/models.py:1790
-#, fuzzy
-#| msgid "Hide Inactive Parts"
 msgid "Require Active Part"
-msgstr "Skrýt neaktivní díly"
+msgstr ""
 
 #: common/models.py:1791
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Prevent build order creation for inactive parts"
-msgstr "Tisk reportu o objednávce sestavy"
+msgstr ""
 
 #: common/models.py:1796
 msgid "Require Valid BOM"
@@ -3657,10 +3651,8 @@ msgid "Target model ID for this image"
 msgstr "Cílové ID modelu pro tento obrázek"
 
 #: common/models.py:3070
-#, fuzzy
-#| msgid "Key string must be unique"
 msgid "Unit symbol must be unique"
-msgstr "Klíčový text musí být jedinečný"
+msgstr ""
 
 #: common/models.py:3085
 msgid "Unit name must be a valid identifier"
@@ -14523,3 +14515,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
