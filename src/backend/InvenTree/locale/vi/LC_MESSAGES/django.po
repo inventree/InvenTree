@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 06:40+0000\n"
-"PO-Revision-Date: 2024-06-30 06:58\n"
+"POT-Creation-Date: 2024-07-05 02:47+0000\n"
+"PO-Revision-Date: 2024-07-05 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -778,10 +778,8 @@ msgid "Build Orders"
 msgstr "Tạo đơn hàng"
 
 #: build/models.py:127
-#, fuzzy
-#| msgid "This BOM item has been validated"
 msgid "Assembly BOM has not been validated"
-msgstr "Mục BOM này là hợp lệ"
+msgstr ""
 
 #: build/models.py:134 part/templates/part/part_base.html:145
 msgid "Part is not active"
@@ -2228,10 +2226,8 @@ msgid "Allow barcode scanning via webcam in browser"
 msgstr "Cho phép quét mã vạch qua webcam bên trong trình duyệt"
 
 #: common/models.py:1395
-#, fuzzy
-#| msgid "Barcode Data"
 msgid "Barcode Show Data"
-msgstr "Dữ liệu mã vạch"
+msgstr ""
 
 #: common/models.py:1396
 msgid "Display barcode data in browser as text"
@@ -2712,22 +2708,16 @@ msgid "A responsible owner must be assigned to each order"
 msgstr ""
 
 #: common/models.py:1790
-#, fuzzy
-#| msgid "Hide Inactive Parts"
 msgid "Require Active Part"
-msgstr "Ẩn sản phẩm ngừng hoạt động"
+msgstr ""
 
 #: common/models.py:1791
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Prevent build order creation for inactive parts"
-msgstr "Báo cáo in đơn đặt bản dựng"
+msgstr ""
 
 #: common/models.py:1796
-#, fuzzy
-#| msgid "Requires Value"
 msgid "Require Valid BOM"
-msgstr "Giá trị bắt buộc"
+msgstr ""
 
 #: common/models.py:1798
 msgid "Prevent build order creation unless BOM has been validated"
@@ -3661,10 +3651,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3070
-#, fuzzy
-#| msgid "Choices must be unique"
 msgid "Unit symbol must be unique"
-msgstr "Lựa chọn phải duy nhất"
+msgstr ""
 
 #: common/models.py:3085
 msgid "Unit name must be a valid identifier"
@@ -14527,3 +14515,4 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
+
