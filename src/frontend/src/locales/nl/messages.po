@@ -8,7 +8,7 @@ msgstr ""
 "Language: nl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-19 04:49\n"
+"PO-Revision-Date: 2024-07-05 14:57\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -2855,7 +2855,7 @@ msgstr ""
 
 #: src/pages/ErrorPage.tsx:28
 #~ msgid "Sorry, an unexpected error has occurred."
-#~ msgstr ""
+#~ msgstr "Sorry, an unexpected error has occurred."
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
@@ -3524,15 +3524,15 @@ msgstr ""
 
 #: src/pages/NotFound.tsx:17
 #~ msgid "Not Found"
-#~ msgstr ""
+#~ msgstr "Not Found"
 
 #: src/pages/NotFound.tsx:20
 #~ msgid "Sorry, this page is not known or was moved."
-#~ msgstr ""
+#~ msgstr "Sorry, this page is not known or was moved."
 
 #: src/pages/NotFound.tsx:27
 #~ msgid "Go to the start page"
-#~ msgstr ""
+#~ msgstr "Go to the start page"
 
 #: src/pages/Notifications.tsx:43
 msgid "Delete Notifications"
@@ -5045,7 +5045,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:296
 msgid "Allow Variants"
-msgstr "Allow Variants"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:297
 msgid "Show items which allow variant substitution"
@@ -5131,7 +5131,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:354
 #~ msgid "Validate BOM line"
-#~ msgstr ""
+#~ msgstr "Validate BOM line"
 
 #: src/tables/bom/BomTable.tsx:355
 msgid "BOM item validated"
@@ -6941,7 +6941,7 @@ msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:38
 #~ msgid "structural"
-#~ msgstr ""
+#~ msgstr "structural"
 
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Include sublocations in results"
@@ -6949,7 +6949,7 @@ msgstr ""
 
 #: src/tables/stock/StockLocationTable.tsx:43
 #~ msgid "external"
-#~ msgstr ""
+#~ msgstr "external"
 
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "Show structural locations"
@@ -6999,3 +6999,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
