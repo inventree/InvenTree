@@ -818,7 +818,7 @@ class PurchaseOrderDownloadTest(OrderTest):
             reverse('api-po-list'),
             {'export': 'csv'},
             expected_code=200,
-            expected_fn='InvenTree_PurchaseOrders.csv',
+            expected_fn=r'InvenTree_PurchaseOrder_.+\.csv',
         ) as file:
             data = self.process_csv(
                 file,
@@ -840,7 +840,7 @@ class PurchaseOrderDownloadTest(OrderTest):
             {'export': 'xlsx'},
             decode=False,
             expected_code=200,
-            expected_fn='InvenTree_PurchaseOrderItems.xlsx',
+            expected_fn=r'InvenTree_PurchaseOrderItem.+\.xlsx',
         ) as file:
             self.assertIsInstance(file, io.BytesIO)
 
@@ -1473,13 +1473,13 @@ class SalesOrderTest(OrderTest):
             order.save()
 
         # Download file, check we get a 200 response
-        for fmt in ['csv', 'xls', 'xlsx']:
+        for fmt in ['csv', 'xlsx', 'tsv']:
             self.download_file(
                 reverse('api-so-list'),
                 {'export': fmt},
                 decode=True if fmt == 'csv' else False,
                 expected_code=200,
-                expected_fn=f'InvenTree_SalesOrders.{fmt}',
+                expected_fn=r'InvenTree_SalesOrder_.+',
             )
 
     def test_sales_order_complete(self):

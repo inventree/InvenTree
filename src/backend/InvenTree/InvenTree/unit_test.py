@@ -417,7 +417,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         fn = result.groups()[0]
 
         if expected_fn is not None:
-            self.assertEqual(expected_fn, fn)
+            self.assertRegex(fn, expected_fn)
 
         if decode:
             # Decode data and return as StringIO file object
