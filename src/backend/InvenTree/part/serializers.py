@@ -1486,7 +1486,7 @@ class BomItemSerializer(
         - This saves a bunch of database requests
         """
         part_detail = kwargs.pop('part_detail', False)
-        sub_part_detail = kwargs.pop('sub_part_detail', False)
+        sub_part_detail = kwargs.pop('sub_part_detail', True)
         pricing = kwargs.pop('pricing', True)
 
         super().__init__(*args, **kwargs)

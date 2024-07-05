@@ -245,6 +245,8 @@ export default function SystemSettings() {
             keys={[
               'BUILDORDER_REFERENCE_PATTERN',
               'BUILDORDER_REQUIRE_RESPONSIBLE',
+              'BUILDORDER_REQUIRE_ACTIVE_PART',
+              'BUILDORDER_REQUIRE_VALID_BOM',
               'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
             ]}
           />

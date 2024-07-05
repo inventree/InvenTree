@@ -1791,6 +1791,20 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'BUILDORDER_REQUIRE_ACTIVE_PART': {
+            'name': _('Require Active Part'),
+            'description': _('Prevent build order creation for inactive parts'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_VALID_BOM': {
+            'name': _('Require Valid BOM'),
+            'description': _(
+                'Prevent build order creation unless BOM has been validated'
+            ),
+            'default': False,
+            'validator': bool,
+        },
         'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
             'name': _('Block Until Tests Pass'),
             'description': _(
@@ -2588,6 +2602,7 @@ class ColorTheme(models.Model):
     name = models.CharField(max_length=20, default='', blank=True)
 
     user = models.CharField(max_length=150, unique=True)
+    user_obj = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     @classmethod
     def get_color_themes_choices(cls):
