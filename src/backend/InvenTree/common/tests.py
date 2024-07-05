@@ -1376,7 +1376,7 @@ class ProjectCodesTest(InvenTreeAPITestCase):
         )
 
         self.assertIn(
-            'project code with this Project Code already exists',
+            'Project code with this Project Code already exists',
             str(response.data['code']),
         )
 

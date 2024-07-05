@@ -615,6 +615,7 @@ class PartSerializer(
             'category',
             'category_detail',
             'category_path',
+            'category_name',
             'component',
             'creation_date',
             'creation_user',
@@ -829,6 +830,10 @@ class PartSerializer(
         child=serializers.DictField(), source='category.get_path', read_only=True
     )
 
+    category_name = serializers.CharField(
+        source='category.name', read_only=True, label=_('Category Name')
+    )
+
     responsible = serializers.PrimaryKeyRelatedField(
         queryset=users.models.Owner.objects.all(),
         required=False,
@@ -843,8 +848,8 @@ class PartSerializer(
     # Annotated fields
     allocated_to_build_orders = serializers.FloatField(read_only=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
-    building = serializers.FloatField(read_only=True)
-    in_stock = serializers.FloatField(read_only=True)
+    building = serializers.FloatField(read_only=True, label=_('Building'))
+    in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))
     ordering = serializers.FloatField(read_only=True, label=_('On Order'))
     required_for_build_orders = serializers.IntegerField(read_only=True)
     required_for_sales_orders = serializers.IntegerField(read_only=True)

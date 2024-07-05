@@ -412,7 +412,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         # Extract filename
         disposition = response.headers['Content-Disposition']
 
-        result = re.search(r'attachment; filename="([\w.]+)"', disposition)
+        result = re.search(r'attachment; filename="([\w\d\-.]+)"', disposition)
 
         fn = result.groups()[0]
 
