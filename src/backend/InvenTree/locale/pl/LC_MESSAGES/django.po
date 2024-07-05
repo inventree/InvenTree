@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 06:40+0000\n"
-"PO-Revision-Date: 2024-06-30 06:57\n"
+"POT-Creation-Date: 2024-07-05 02:47+0000\n"
+"PO-Revision-Date: 2024-07-05 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -778,10 +778,8 @@ msgid "Build Orders"
 msgstr "Zlecenia budowy"
 
 #: build/models.py:127
-#, fuzzy
-#| msgid "Purchase order has not been placed"
 msgid "Assembly BOM has not been validated"
-msgstr "Zlecenie zakupu nie zostało złożone"
+msgstr ""
 
 #: build/models.py:134 part/templates/part/part_base.html:145
 msgid "Part is not active"
@@ -2228,10 +2226,8 @@ msgid "Allow barcode scanning via webcam in browser"
 msgstr ""
 
 #: common/models.py:1395
-#, fuzzy
-#| msgid "Barcode Data"
 msgid "Barcode Show Data"
-msgstr "Dane kodu kreskowego"
+msgstr ""
 
 #: common/models.py:1396
 msgid "Display barcode data in browser as text"
@@ -2712,20 +2708,16 @@ msgid "A responsible owner must be assigned to each order"
 msgstr ""
 
 #: common/models.py:1790
-#, fuzzy
-#| msgid "Hide Inactive Parts"
 msgid "Require Active Part"
-msgstr "Ukryj nieaktywne części"
+msgstr ""
 
 #: common/models.py:1791
 msgid "Prevent build order creation for inactive parts"
 msgstr ""
 
 #: common/models.py:1796
-#, fuzzy
-#| msgid "Requires Value"
 msgid "Require Valid BOM"
-msgstr "Wymaga wartości"
+msgstr ""
 
 #: common/models.py:1798
 msgid "Prevent build order creation unless BOM has been validated"
@@ -3659,10 +3651,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3070
-#, fuzzy
-#| msgid "Key string must be unique"
 msgid "Unit symbol must be unique"
-msgstr "Ciąg musi być unikatowy"
+msgstr ""
 
 #: common/models.py:3085
 msgid "Unit name must be a valid identifier"
@@ -14525,3 +14515,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
