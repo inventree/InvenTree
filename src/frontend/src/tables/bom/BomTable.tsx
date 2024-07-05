@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
@@ -8,6 +9,7 @@ import {
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -33,7 +35,7 @@ import {
 } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -342,6 +344,29 @@ export function BomTable({
     table: table
   });
 
+  const validateBomItem = useCallback((record: any) => {
+    const url = apiUrl(ApiEndpoints.bom_item_validate, record.pk);
+
+    api
+      .patch(url, { valid: true })
+      .then((_response) => {
+        showNotification({
+          title: t`Success`,
+          message: t`BOM item validated`,
+          color: 'green'
+        });
+
+        table.refreshTable();
+      })
+      .catch((_error) => {
+        showNotification({
+          title: t`Error`,
+          message: t`Failed to validate BOM item`,
+          color: 'red'
+        });
+      });
+  }, []);
+
   const rowActions = useCallback(
     (record: any) => {
       // If this BOM item is defined for a *different* parent, then it cannot be edited
@@ -360,13 +385,8 @@ export function BomTable({
           title: t`Validate BOM Line`,
           color: 'green',
           hidden: record.validated || !user.hasChangeRole(UserRoles.part),
-          icon: <IconCircleCheck />
-        },
-        {
-          title: t`Edit Substitutes`,
-          color: 'blue',
-          hidden: !user.hasChangeRole(UserRoles.part),
-          icon: <IconSwitch3 />
+          icon: <IconCircleCheck />,
+          onClick: () => validateBomItem(record)
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),
@@ -375,6 +395,12 @@ export function BomTable({
             editBomItem.open();
           }
         }),
+        {
+          title: t`Edit Substitutes`,
+          color: 'blue',
+          hidden: !user.hasChangeRole(UserRoles.part),
+          icon: <IconSwitch3 />
+        },
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
