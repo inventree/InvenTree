@@ -55,7 +55,7 @@
         <li><a class='dropdown-item' href='#' id='export-order'><span class='fas fa-file-download'></span> {% trans "Export order to file" %}</a></li>
     </ul>
 </div>
-{% if roles.purchase_order.add %}
+{% if roles.purchase_order.change %}
 <!-- order actions -->
 <div class='btn-group'>
     <button id='order-options' title='{% trans "Order actions" %}' class='btn btn-outline-secondary dropdown-toggle' type='button' data-bs-toggle='dropdown'>

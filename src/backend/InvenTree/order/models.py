@@ -800,7 +800,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 purchaser_group
                 and not user.groups.filter(name=purchaser_group).exists()
             ):
-                raise PermissionDenied()
+                raise PermissionDenied(
+                    _(f'User {user.username} does not have permission to issue orders')
+                )
 
             self.status = PurchaseOrderStatus.PLACED.value
             self.placed_by = user
