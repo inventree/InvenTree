@@ -254,8 +254,8 @@ class DataImportSession(models.Model):
                 available_fields=available_fields,
                 commit=False,
             )
-            row.validate(commit=False)
 
+            row.valid = row.validate(commit=False)
             imported_rows.append(row)
 
         # Perform database writes as a single operation
