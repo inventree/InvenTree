@@ -146,6 +146,9 @@ export function BomTable({
         // TODO: Custom renderer for this column
         // TODO: See bom.js for existing implementation
       }),
+      BooleanColumn({
+        accessor: 'validated'
+      }),
       {
         accessor: 'price_range',
         title: t`Unit Price`,
