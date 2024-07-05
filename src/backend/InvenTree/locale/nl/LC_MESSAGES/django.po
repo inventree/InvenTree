@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 06:40+0000\n"
-"PO-Revision-Date: 2024-06-30 06:57\n"
+"POT-Creation-Date: 2024-07-05 02:47+0000\n"
+"PO-Revision-Date: 2024-07-05 14:57\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -778,10 +778,8 @@ msgid "Build Orders"
 msgstr "Productieorders"
 
 #: build/models.py:127
-#, fuzzy
-#| msgid "This Sales Order has not been fully allocated"
 msgid "Assembly BOM has not been validated"
-msgstr "Deze Verkooporder is niet volledig toegewezen"
+msgstr ""
 
 #: build/models.py:134 part/templates/part/part_base.html:145
 msgid "Part is not active"
@@ -2228,10 +2226,8 @@ msgid "Allow barcode scanning via webcam in browser"
 msgstr "Barcode via webcam scannen in browser toestaan"
 
 #: common/models.py:1395
-#, fuzzy
-#| msgid "Barcode Data"
 msgid "Barcode Show Data"
-msgstr "Streepjescode gegevens"
+msgstr ""
 
 #: common/models.py:1396
 msgid "Display barcode data in browser as text"
@@ -2712,22 +2708,16 @@ msgid "A responsible owner must be assigned to each order"
 msgstr ""
 
 #: common/models.py:1790
-#, fuzzy
-#| msgid "Hide Inactive Parts"
 msgid "Require Active Part"
-msgstr "Inactieve Onderdelen Verbergen"
+msgstr ""
 
 #: common/models.py:1791
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Prevent build order creation for inactive parts"
-msgstr "Print productieorderrapport"
+msgstr ""
 
 #: common/models.py:1796
-#, fuzzy
-#| msgid "Required For"
 msgid "Require Valid BOM"
-msgstr "Vereist Voor"
+msgstr ""
 
 #: common/models.py:1798
 msgid "Prevent build order creation unless BOM has been validated"
@@ -3661,10 +3651,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3070
-#, fuzzy
-#| msgid "Key string must be unique"
 msgid "Unit symbol must be unique"
-msgstr "Sleutelreeks moet uniek zijn"
+msgstr ""
 
 #: common/models.py:3085
 msgid "Unit name must be a valid identifier"
@@ -14527,3 +14515,4 @@ msgstr ""
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr ""
+
