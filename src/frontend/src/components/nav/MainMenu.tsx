@@ -27,7 +27,13 @@ export function MainMenu() {
         <UnstyledButton className={classes.layoutHeaderUser}>
           <Group gap={7}>
             {username() ? (
-              <Text fw={500} size="sm" style={{ lineHeight: 1 }} mr={3}>
+              <Text
+                fw={500}
+                size="sm"
+                style={{ lineHeight: 1 }}
+                mr={3}
+                aria-label="username"
+              >
                 {username()}
               </Text>
             ) : (
