@@ -478,8 +478,8 @@ export function InvenTreeTable<T = any>({
   }, [data]);
 
   // Callback function to delete the selected records in the table
-  const deleteSelectedRecords = useCallback(() => {
-    if (tableState.selectedRecords.length == 0) {
+  const deleteSelectedRecords = useCallback((ids: number[]) => {
+    if (ids.length == 0) {
       // Ignore if no records are selected
       return;
     }
@@ -502,15 +502,10 @@ export function InvenTreeTable<T = any>({
         color: 'red'
       },
       onConfirm: () => {
-        // Delete the selected records
-        let selection = tableState.selectedRecords.map(
-          (record) => record.pk ?? record.id
-        );
-
         api
           .delete(url, {
             data: {
-              items: selection
+              items: ids
             }
           })
           .then((_response) => {
@@ -535,7 +530,7 @@ export function InvenTreeTable<T = any>({
           });
       }
     });
-  }, [tableState.selectedRecords]);
+  }, []);
 
   // Callback when a row is clicked
   const handleRowClick = useCallback(
@@ -609,7 +604,7 @@ export function InvenTreeTable<T = any>({
                   icon={<IconTrash />}
                   color="red"
                   tooltip={t`Delete selected records`}
-                  onClick={deleteSelectedRecords}
+                  onClick={() => deleteSelectedRecords(tableState.selectedIds)}
                 />
               )}
               {tableProps.tableActions?.map((group, idx) => (

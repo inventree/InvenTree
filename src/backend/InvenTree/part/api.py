@@ -1872,6 +1872,7 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'inherited',
         'optional',
         'consumable',
+        'validated',
         'pricing_min',
         'pricing_max',
         'pricing_min_total',
