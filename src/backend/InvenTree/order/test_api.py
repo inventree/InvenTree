@@ -1635,8 +1635,8 @@ class SalesOrderDownloadTest(OrderTest):
         with self.assertRaises(ValueError):
             self.download_file(url, {}, expected_code=200)
 
-    def test_download_xls(self):
-        """Test xls file download."""
+    def test_download_xlsx(self):
+        """Test xlsx file download."""
         url = reverse('api-so-list')
 
         # Download .xls file
@@ -1650,25 +1650,22 @@ class SalesOrderDownloadTest(OrderTest):
         url = reverse('api-so-list')
 
         required_cols = [
-            'line_items',
-            'id',
-            'reference',
-            'customer',
-            'status',
-            'shipment_date',
-            'notes',
-            'description',
+            'Line Items',
+            'ID',
+            'Reference',
+            'Customer',
+            'Order Status',
+            'Shipment Date',
+            'Description',
+            'Project Code',
+            'Responsible',
         ]
 
         excluded_cols = ['metadata']
 
         # Download .xls file
         with self.download_file(
-            url,
-            {'export': 'csv'},
-            expected_code=200,
-            expected_fn='InvenTree_SalesOrders.csv',
-            decode=True,
+            url, {'export': 'csv'}, expected_code=200, decode=True
         ) as file:
             data = self.process_csv(
                 file,
@@ -1678,18 +1675,14 @@ class SalesOrderDownloadTest(OrderTest):
             )
 
             for line in data:
-                order = models.SalesOrder.objects.get(pk=line['id'])
+                order = models.SalesOrder.objects.get(pk=line['ID'])
 
                 self.assertEqual(line['description'], order.description)
                 self.assertEqual(line['status'], str(order.status))
 
         # Download only outstanding sales orders
         with self.download_file(
-            url,
-            {'export': 'tsv', 'outstanding': True},
-            expected_code=200,
-            expected_fn='InvenTree_SalesOrders.tsv',
-            decode=True,
+            url, {'export': 'tsv', 'outstanding': True}, expected_code=200, decode=True
         ) as file:
             self.process_csv(
                 file,
