@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 06:40+0000\n"
-"PO-Revision-Date: 2024-06-30 06:57\n"
+"POT-Creation-Date: 2024-07-05 02:47+0000\n"
+"PO-Revision-Date: 2024-07-05 14:57\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -297,7 +297,7 @@ msgstr "Portugál (Brazíliai)"
 
 #: InvenTree/locales.py:41
 msgid "Romanian"
-msgstr ""
+msgstr "Román"
 
 #: InvenTree/locales.py:42
 msgid "Russian"
@@ -526,7 +526,7 @@ msgstr "Keresztnév"
 
 #: InvenTree/serializers.py:409
 msgid "First name of the user"
-msgstr ""
+msgstr "A felhasználó keresztneve"
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
@@ -534,15 +534,15 @@ msgstr "Vezetéknév"
 
 #: InvenTree/serializers.py:412
 msgid "Last name of the user"
-msgstr ""
+msgstr "A felhasználó vezetékneve"
 
 #: InvenTree/serializers.py:415
 msgid "Email address of the user"
-msgstr ""
+msgstr "A felhasználó e-mail címe"
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
-msgstr ""
+msgstr "Személyzet"
 
 #: InvenTree/serializers.py:439
 msgid "Does this user have staff permissions"
@@ -550,7 +550,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:442
 msgid "Superuser"
-msgstr ""
+msgstr "Rendszergazda"
 
 #: InvenTree/serializers.py:442
 msgid "Is this user a superuser"
@@ -778,10 +778,8 @@ msgid "Build Orders"
 msgstr "Gyártási utasítások"
 
 #: build/models.py:127
-#, fuzzy
-#| msgid "This BOM has not been validated."
 msgid "Assembly BOM has not been validated"
-msgstr "Ez az alkatrészjegyzék még nincs jóváhagyva."
+msgstr ""
 
 #: build/models.py:134 part/templates/part/part_base.html:145
 msgid "Part is not active"
@@ -1325,8 +1323,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:526
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:611
@@ -2230,16 +2227,12 @@ msgid "Allow barcode scanning via webcam in browser"
 msgstr "Webkamerás kódolvasás engedélyezése a böngészőből"
 
 #: common/models.py:1395
-#, fuzzy
-#| msgid "Barcode Data"
 msgid "Barcode Show Data"
-msgstr "Vonalkód adat"
+msgstr ""
 
 #: common/models.py:1396
-#, fuzzy
-#| msgid "Scan barcode data here using barcode scanner"
 msgid "Display barcode data in browser as text"
-msgstr "Vonalkód beolvasása ide a kódolvasó használatával"
+msgstr ""
 
 #: common/models.py:1401
 msgid "Part Revisions"
@@ -2716,22 +2709,16 @@ msgid "A responsible owner must be assigned to each order"
 msgstr "Minden rendeléshez felelőst kell rendelni"
 
 #: common/models.py:1790
-#, fuzzy
-#| msgid "Required Part"
 msgid "Require Active Part"
-msgstr "Szükséges alkatrész"
+msgstr ""
 
 #: common/models.py:1791
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Prevent build order creation for inactive parts"
-msgstr "Gyártási riport nyomtatása"
+msgstr ""
 
 #: common/models.py:1796
-#, fuzzy
-#| msgid "Requires Value"
 msgid "Require Valid BOM"
-msgstr "Kötelező érték"
+msgstr ""
 
 #: common/models.py:1798
 msgid "Prevent build order creation unless BOM has been validated"
@@ -3665,10 +3652,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3070
-#, fuzzy
-#| msgid "Choices must be unique"
 msgid "Unit symbol must be unique"
-msgstr "A lehetőségek egyediek kell legyenek"
+msgstr ""
 
 #: common/models.py:3085
 msgid "Unit name must be a valid identifier"
@@ -3731,11 +3716,11 @@ msgstr ""
 
 #: common/models.py:3272
 msgid "File size"
-msgstr ""
+msgstr "Fájl mérete"
 
 #: common/models.py:3272
 msgid "File size in bytes"
-msgstr ""
+msgstr "Fájlméret bájtban"
 
 #: common/models.py:3310 common/serializers.py:553
 msgid "Invalid model type specified for attachment"
@@ -3841,7 +3826,7 @@ msgstr "Fájlnév"
 
 #: common/serializers.py:532 report/api.py:100 report/serializers.py:53
 msgid "Model Type"
-msgstr ""
+msgstr "Modell típusa"
 
 #: common/serializers.py:559
 msgid "User does not have permission to create or edit attachments for this model"
@@ -6070,7 +6055,7 @@ msgstr "Kategória mélységre szűrés"
 
 #: part/api.py:141 stock/api.py:330
 msgid "Top Level"
-msgstr ""
+msgstr "Felső szint"
 
 #: part/api.py:143
 msgid "Filter by top-level categories"
@@ -8656,7 +8641,7 @@ msgstr ""
 
 #: report/models.py:464 report/models.py:487
 msgid "Output File"
-msgstr ""
+msgstr "Kimeneti Fájl"
 
 #: report/models.py:465 report/models.py:488
 msgid "Generated output file"
@@ -14531,3 +14516,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
