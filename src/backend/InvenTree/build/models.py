@@ -122,6 +122,14 @@ class Build(
 
         # On first save (i.e. creation), run some extra checks
         if self.pk is None:
+
+            if get_global_setting('BUILDORDER_REQUIRE_VALID_BOM'):
+                # Check that the BOM is valid
+                if not self.part.is_bom_valid():
+                    raise ValidationError({
+                        'part': _('Assembly BOM has not been validated')
+                    })
+
             # Set the destination location (if not specified)
             if not self.destination:
                 self.destination = self.part.get_default_location()
