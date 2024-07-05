@@ -352,11 +352,13 @@ class StockItemSerializer(
             'is_building',
             'link',
             'location',
+            'location_name',
             'location_detail',
             'location_path',
             'notes',
             'owner',
             'packaging',
+            'parent',
             'part',
             'part_detail',
             'purchase_order',
@@ -441,6 +443,17 @@ class StockItemSerializer(
         label=_('Part'),
     )
 
+    parent = serializers.PrimaryKeyRelatedField(
+        many=False,
+        read_only=True,
+        label=_('Parent Item'),
+        help_text=_('Parent stock item'),
+    )
+
+    location_name = serializers.CharField(
+        source='location.name', read_only=True, label=_('Location Name')
+    )
+
     location_path = serializers.ListField(
         child=serializers.DictField(), source='location.get_path', read_only=True
     )
@@ -486,6 +499,7 @@ class StockItemSerializer(
                     )
                 ).prefetch_related(None),
             ),
+            'parent',
             'part__category',
             'part__pricing_data',
             'supplier_part',
@@ -555,9 +569,11 @@ class StockItemSerializer(
         read_only=True,
     )
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
     location_detail = LocationBriefSerializer(
         source='location', many=False, read_only=True
     )
+
     tests = StockItemTestResultSerializer(
         source='test_results', many=True, read_only=True
     )
