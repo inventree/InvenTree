@@ -355,37 +355,26 @@ export function BomTable({
         ];
       }
 
-      let actions: RowAction[] = [];
-
-      // TODO: Enable BomItem validation
-      actions.push({
-        title: t`Validate BOM line`,
-        color: 'green',
-        hidden: record.validated || !user.hasChangeRole(UserRoles.part),
-        icon: <IconCircleCheck />
-      });
-
-      // TODO: Enable editing of substitutes
-      actions.push({
-        title: t`Edit Substitutes`,
-        color: 'blue',
-        hidden: !user.hasChangeRole(UserRoles.part),
-        icon: <IconSwitch3 />
-      });
-
-      // Action on edit
-      actions.push(
+      return [
+        {
+          title: t`Validate BOM Line`,
+          color: 'green',
+          hidden: record.validated || !user.hasChangeRole(UserRoles.part),
+          icon: <IconCircleCheck />
+        },
+        {
+          title: t`Edit Substitutes`,
+          color: 'blue',
+          hidden: !user.hasChangeRole(UserRoles.part),
+          icon: <IconSwitch3 />
+        },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             setSelectedBomItem(record.pk);
             editBomItem.open();
           }
-        })
-      );
-
-      // Action on delete
-      actions.push(
+        }),
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
@@ -393,9 +382,7 @@ export function BomTable({
             deleteBomItem.open();
           }
         })
-      );
-
-      return actions;
+      ];
     },
     [partId, user]
   );
