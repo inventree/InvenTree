@@ -443,7 +443,9 @@ export function BomTable({
           tableFilters: tableFilters,
           modelType: ModelType.part,
           modelField: 'sub_part',
-          rowActions: rowActions
+          rowActions: rowActions,
+          enableSelection: true,
+          enableBulkDelete: true
         }}
       />
     </>
