@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -28,6 +28,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -41,7 +42,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
@@ -58,7 +58,8 @@ export default function PurchaseOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
@@ -392,18 +393,19 @@ export default function PurchaseOrderDetail() {
   return (
     <>
       {editPurchaseOrder.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Purchase Order` + `: ${order.reference}`}
-          subtitle={order.description}
-          imageUrl={order.supplier_detail?.image}
-          breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
-          actions={poActions}
-          badges={orderBadges}
-        />
-        <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Purchase Order` + `: ${order.reference}`}
+            subtitle={order.description}
+            imageUrl={order.supplier_detail?.image}
+            breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
+            actions={poActions}
+            badges={orderBadges}
+          />
+          <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

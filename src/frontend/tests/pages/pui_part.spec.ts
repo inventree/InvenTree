@@ -224,3 +224,13 @@ test('PUI - Pages - Part - Notes', async ({ page }) => {
   // Check that the original notes are still present
   await page.getByText('This is some data').waitFor();
 });
+
+test('PUI - Pages - Part - 404', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/99999/`);
+  await page.getByText('Page Not Found', { exact: true }).waitFor();
+
+  // Clear out any console error messages
+  await page.evaluate(() => console.clear());
+});
