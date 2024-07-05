@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 06:40+0000\n"
-"PO-Revision-Date: 2024-06-30 06:57\n"
+"POT-Creation-Date: 2024-07-05 02:47+0000\n"
+"PO-Revision-Date: 2024-07-05 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -2226,10 +2226,8 @@ msgid "Allow barcode scanning via webcam in browser"
 msgstr ""
 
 #: common/models.py:1395
-#, fuzzy
-#| msgid "Barcode Data"
 msgid "Barcode Show Data"
-msgstr "Barkod Verisi"
+msgstr ""
 
 #: common/models.py:1396
 msgid "Display barcode data in browser as text"
@@ -2718,10 +2716,8 @@ msgid "Prevent build order creation for inactive parts"
 msgstr ""
 
 #: common/models.py:1796
-#, fuzzy
-#| msgid "Required"
 msgid "Require Valid BOM"
-msgstr "Gerekli"
+msgstr ""
 
 #: common/models.py:1798
 msgid "Prevent build order creation unless BOM has been validated"
@@ -3655,10 +3651,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3070
-#, fuzzy
-#| msgid "Key string must be unique"
 msgid "Unit symbol must be unique"
-msgstr "Anahtar dizesi benzersiz olmalı"
+msgstr ""
 
 #: common/models.py:3085
 msgid "Unit name must be a valid identifier"
@@ -14521,3 +14515,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
