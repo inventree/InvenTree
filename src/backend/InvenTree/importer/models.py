@@ -32,7 +32,6 @@ class DataImportSession(models.Model):
         status: IntegerField for the status of the import session
         user: ForeignKey to the User who initiated the import
         field_defaults: JSONField for field default values
-        field_overrides: JSONField for field overrides
     """
 
     @staticmethod
@@ -83,20 +82,13 @@ class DataImportSession(models.Model):
     )
 
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, blank=True, null=True, verbose_name=_('User')
+        User, on_delete=models.SET_NULL, blank=True, null=True, verbose_name=_('User')
     )
 
     field_defaults = models.JSONField(
         blank=True,
         null=True,
         verbose_name=_('Field Defaults'),
-        validators=[importer.validators.validate_field_defaults],
-    )
-
-    field_overrides = models.JSONField(
-        blank=True,
-        null=True,
-        verbose_name=_('Field Overrides'),
         validators=[importer.validators.validate_field_defaults],
     )
 
@@ -188,18 +180,13 @@ class DataImportSession(models.Model):
         # First, we need to ensure that all the *required* columns have been mapped
         required_fields = self.required_fields()
 
-        field_overrides = self.field_overrides or {}
         field_defaults = self.field_defaults or {}
 
         missing_fields = []
 
         for field in required_fields.keys():
-            # An override value exists
-            if field in field_overrides:
-                continue
-
             # A default value exists
-            if field in field_defaults:
+            if field in field_defaults and field_defaults[field]:
                 continue
 
             # The field has been mapped to a data column
@@ -490,18 +477,12 @@ class DataImportRow(models.Model):
         if not available_fields:
             available_fields = self.session.available_fields()
 
-        override_values = self.session.field_overrides or {}
         default_values = self.session.field_defaults or {}
 
         data = {}
 
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
-            # If an override value exists, use that
-            if field in override_values:
-                data[field] = override_values[field]
-                continue
-
             # If this field is *not* mapped to any column, skip
             if not col:
                 continue
@@ -539,9 +520,6 @@ class DataImportRow(models.Model):
 
         if self.data:
             data.update(self.data)
-
-        if self.session.field_overrides:
-            data.update(self.session.field_overrides)
 
         return data
 
