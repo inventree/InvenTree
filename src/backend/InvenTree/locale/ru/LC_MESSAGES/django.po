@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-05 06:40+0000\n"
-"PO-Revision-Date: 2024-06-30 06:57\n"
+"POT-Creation-Date: 2024-07-05 02:47+0000\n"
+"PO-Revision-Date: 2024-07-05 14:58\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -2226,10 +2226,8 @@ msgid "Allow barcode scanning via webcam in browser"
 msgstr "Разрешить сканирование штрих-кода через веб-камеру в браузере"
 
 #: common/models.py:1395
-#, fuzzy
-#| msgid "Barcode Data"
 msgid "Barcode Show Data"
-msgstr "Данные штрих-кода"
+msgstr ""
 
 #: common/models.py:1396
 msgid "Display barcode data in browser as text"
@@ -2710,22 +2708,16 @@ msgid "A responsible owner must be assigned to each order"
 msgstr "Ответственный владелец должен быть назначен для каждого заказа"
 
 #: common/models.py:1790
-#, fuzzy
-#| msgid "Required Part"
 msgid "Require Active Part"
-msgstr "Необходимая деталь"
+msgstr ""
 
 #: common/models.py:1791
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Prevent build order creation for inactive parts"
-msgstr "Печать отчета о заказе на производство"
+msgstr ""
 
 #: common/models.py:1796
-#, fuzzy
-#| msgid "Requires Value"
 msgid "Require Valid BOM"
-msgstr "Требуется значение"
+msgstr ""
 
 #: common/models.py:1798
 msgid "Prevent build order creation unless BOM has been validated"
@@ -3659,10 +3651,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3070
-#, fuzzy
-#| msgid "Key string must be unique"
 msgid "Unit symbol must be unique"
-msgstr "Строка ключа должна быть уникальной"
+msgstr ""
 
 #: common/models.py:3085
 msgid "Unit name must be a valid identifier"
@@ -14525,3 +14515,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:404
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
