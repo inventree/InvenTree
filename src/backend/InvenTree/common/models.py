@@ -1780,6 +1780,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'BUILDORDER_REQUIRE_ACTIVE_PART': {
+            'name': _('Require Active Part'),
+            'description': _('Prevent build order creation for inactive parts'),
+            'default': False,
+            'validator': bool,
+        },
         'BUILDORDER_REQUIRE_VALID_BOM': {
             'name': _('Require Valid BOM'),
             'description': _(
