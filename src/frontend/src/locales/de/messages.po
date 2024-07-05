@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-06-30 06:57\n"
+"PO-Revision-Date: 2024-07-05 14:57\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -40,11 +40,11 @@ msgstr "In die Zwischenablage kopieren"
 
 #: src/components/buttons/PrintingActions.tsx:95
 msgid "Print Label"
-msgstr ""
+msgstr "Etiketten Drucken"
 
 #: src/components/buttons/PrintingActions.tsx:101
 msgid "Label printing completed successfully"
-msgstr ""
+msgstr "Etikettendruck erfolgreich abgeschlossen"
 
 #: src/components/buttons/PrintingActions.tsx:107
 #: src/components/buttons/PrintingActions.tsx:144
@@ -65,19 +65,19 @@ msgstr "Fehler"
 
 #: src/components/buttons/PrintingActions.tsx:108
 msgid "The label could not be generated"
-msgstr ""
+msgstr "Das Etikett konnte nicht generiert werden"
 
 #: src/components/buttons/PrintingActions.tsx:123
 msgid "Print Report"
-msgstr ""
+msgstr "Bericht drucken"
 
 #: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
-msgstr ""
+msgstr "Berichtsdruck erfolgreich abgeschlossen"
 
 #: src/components/buttons/PrintingActions.tsx:145
 msgid "The report could not be generated"
-msgstr ""
+msgstr "Der Bericht konnte nicht erstellt werden"
 
 #: src/components/buttons/PrintingActions.tsx:173
 msgid "Printing Actions"
@@ -2855,7 +2855,7 @@ msgstr ""
 
 #: src/pages/ErrorPage.tsx:28
 #~ msgid "Sorry, an unexpected error has occurred."
-#~ msgstr "Es ist ein unerwarteter Fehler aufgetreten."
+#~ msgstr "Sorry, an unexpected error has occurred."
 
 #: src/pages/Index/Dashboard.tsx:22
 msgid "Autoupdate"
@@ -3524,15 +3524,15 @@ msgstr "Zu Systemeinstellungen wechseln"
 
 #: src/pages/NotFound.tsx:17
 #~ msgid "Not Found"
-#~ msgstr "Nicht gefunden"
+#~ msgstr "Not Found"
 
 #: src/pages/NotFound.tsx:20
 #~ msgid "Sorry, this page is not known or was moved."
-#~ msgstr "Diese Seite ist nicht bekannt oder wurde verschoben."
+#~ msgstr "Sorry, this page is not known or was moved."
 
 #: src/pages/NotFound.tsx:27
 #~ msgid "Go to the start page"
-#~ msgstr "Zur Startseite"
+#~ msgstr "Go to the start page"
 
 #: src/pages/Notifications.tsx:43
 msgid "Delete Notifications"
@@ -5045,7 +5045,7 @@ msgstr "Vererbte Elemente anzeigen"
 
 #: src/tables/bom/BomTable.tsx:296
 msgid "Allow Variants"
-msgstr "Allow Variants"
+msgstr ""
 
 #: src/tables/bom/BomTable.tsx:297
 msgid "Show items which allow variant substitution"
@@ -5131,7 +5131,7 @@ msgstr "Stücklisten-Position gelöscht"
 
 #: src/tables/bom/BomTable.tsx:354
 #~ msgid "Validate BOM line"
-#~ msgstr "Stücklisten-Position bestätigen"
+#~ msgstr "Validate BOM line"
 
 #: src/tables/bom/BomTable.tsx:355
 msgid "BOM item validated"
@@ -5435,7 +5435,7 @@ msgstr "Anhang löschen"
 
 #: src/tables/general/AttachmentTable.tsx:225
 msgid "Is Link"
-msgstr ""
+msgstr "Link"
 
 #: src/tables/general/AttachmentTable.tsx:226
 msgid "Show link attachments"
@@ -6545,15 +6545,15 @@ msgstr ""
 #: src/tables/settings/TemplateTable.tsx:222
 #: src/tables/settings/TemplateTable.tsx:289
 msgid "Edit Template"
-msgstr ""
+msgstr "Vorlage bearbeiten"
 
 #: src/tables/settings/TemplateTable.tsx:230
 msgid "Delete template"
-msgstr ""
+msgstr "Vorlage entfernen"
 
 #: src/tables/settings/TemplateTable.tsx:236
 msgid "Add Template"
-msgstr ""
+msgstr "Vorlage hinzufügen"
 
 #: src/tables/settings/TemplateTable.tsx:243
 #~ msgid "Add new"
@@ -6565,7 +6565,7 @@ msgstr ""
 
 #: src/tables/settings/TemplateTable.tsx:249
 msgid "Add template"
-msgstr ""
+msgstr "Vorlage hinzufügen"
 
 #: src/tables/settings/TemplateTable.tsx:271
 msgid "Filter by enabled status"
@@ -6573,11 +6573,11 @@ msgstr "Nach aktiviertem Status filtern"
 
 #: src/tables/settings/TemplateTable.tsx:276
 msgid "Model Type"
-msgstr ""
+msgstr "Modelltyp"
 
 #: src/tables/settings/TemplateTable.tsx:277
 msgid "Filter by target model type"
-msgstr ""
+msgstr "Nach Modelltyp filtern"
 
 #: src/tables/settings/UserTable.tsx:79
 msgid "User with id {id} not found"
@@ -6941,7 +6941,7 @@ msgstr "Nur bestandene Tests anzeigen"
 
 #: src/tables/stock/StockLocationTable.tsx:38
 #~ msgid "structural"
-#~ msgstr "strukturell"
+#~ msgstr "structural"
 
 #: src/tables/stock/StockLocationTable.tsx:43
 msgid "Include sublocations in results"
@@ -6949,7 +6949,7 @@ msgstr "Unterorte in Ergebnissen einbeziehen"
 
 #: src/tables/stock/StockLocationTable.tsx:43
 #~ msgid "external"
-#~ msgstr "extern"
+#~ msgstr "external"
 
 #: src/tables/stock/StockLocationTable.tsx:48
 msgid "Show structural locations"
@@ -6999,3 +6999,4 @@ msgstr "Dokumentation lesen"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignorieren und weiter zur Desktopansicht"
+
