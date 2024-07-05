@@ -793,14 +793,14 @@ class PurchaseOrderDownloadTest(OrderTest):
     """Unit tests for downloading PurchaseOrder data via the API endpoint."""
 
     required_cols = [
-        'id',
-        'line_items',
-        'description',
-        'issue_date',
-        'notes',
-        'reference',
-        'status',
-        'supplier_reference',
+        'ID',
+        'Line Items',
+        'Description',
+        'Issue Date',
+        'Order Currency',
+        'Reference',
+        'Order Status',
+        'Supplier Reference',
     ]
 
     excluded_cols = ['metadata']
@@ -828,7 +828,7 @@ class PurchaseOrderDownloadTest(OrderTest):
             )
 
             for row in data:
-                order = models.PurchaseOrder.objects.get(pk=row['id'])
+                order = models.PurchaseOrder.objects.get(pk=row['ID'])
 
                 self.assertEqual(order.description, row['Description'])
                 self.assertEqual(order.reference, row['Reference'])
