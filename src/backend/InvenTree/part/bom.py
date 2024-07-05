@@ -124,7 +124,7 @@ def ExportBom(
                     substitute_cols[name].update({col_index: value})
                 except KeyError:
                     substitute_cols[name] = {col_index: value}
-                    
+
                 """Create substitute part name column"""
                 name = f'{_("Substitute Part")}{s_idx + 1}'
                 value = substitute.part.name
