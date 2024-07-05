@@ -28,7 +28,10 @@ test('PUI - Basic Login Test', async ({ page }) => {
   await page.waitForURL('**/platform');
 
   // Logout (via menu)
-  await page.getByRole('button', { name: 'Ally Access' }).click();
+  await expect(
+    page.locator('button', { hasText: 'Ally Access' })
+  ).toBeVisible();
+  await page.locator('button', { hasText: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
 
   await page.waitForURL('**/platform/login');

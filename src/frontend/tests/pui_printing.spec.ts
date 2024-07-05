@@ -1,4 +1,4 @@
-import { test } from './baseFixtures.js';
+import { expect, test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
@@ -85,7 +85,8 @@ test('PUI - Report Editing', async ({ page }) => {
   await doQuickLogin(page, 'admin', 'inventree');
 
   // Navigate to the admin center
-  await page.getByRole('button', { name: 'admin' }).click();
+  await expect(page.locator('button', { hasText: 'admin' })).toBeVisible();
+  await page.locator('button', { hasText: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
   await page.getByRole('tab', { name: 'Label Templates' }).click();
   await page
