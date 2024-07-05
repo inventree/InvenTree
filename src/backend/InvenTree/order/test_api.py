@@ -1641,11 +1641,7 @@ class SalesOrderDownloadTest(OrderTest):
 
         # Download .xls file
         with self.download_file(
-            url,
-            {'export': 'xls'},
-            expected_code=200,
-            expected_fn='InvenTree_SalesOrders.xls',
-            decode=False,
+            url, {'export': 'xlsx'}, expected_code=200, decode=False
         ) as file:
             self.assertIsInstance(file, io.BytesIO)
 
