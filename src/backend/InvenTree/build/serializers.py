@@ -51,6 +51,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'destination',
             'parent',
             'part',
+            'part_name',
             'part_detail',
             'project_code',
             'project_code_detail',
@@ -84,6 +85,8 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+
+    part_name = serializers.CharField(source='part.name', read_only=True, label=_('Part Name'))
 
     quantity = InvenTreeDecimalField()
 

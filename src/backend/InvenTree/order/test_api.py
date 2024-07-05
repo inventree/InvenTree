@@ -830,8 +830,8 @@ class PurchaseOrderDownloadTest(OrderTest):
             for row in data:
                 order = models.PurchaseOrder.objects.get(pk=row['id'])
 
-                self.assertEqual(order.description, row['description'])
-                self.assertEqual(order.reference, row['reference'])
+                self.assertEqual(order.description, row['Description'])
+                self.assertEqual(order.reference, row['Reference'])
 
     def test_download_line_items(self):
         """Test that the PurchaseOrderLineItems can be downloaded to a file."""
@@ -840,7 +840,7 @@ class PurchaseOrderDownloadTest(OrderTest):
             {'export': 'xlsx'},
             decode=False,
             expected_code=200,
-            expected_fn=r'InvenTree_PurchaseOrderItem.+\.xlsx',
+            expected_fn=r'InvenTree_PurchaseOrderLineItem.+\.xlsx',
         ) as file:
             self.assertIsInstance(file, io.BytesIO)
 
@@ -1677,8 +1677,8 @@ class SalesOrderDownloadTest(OrderTest):
             for line in data:
                 order = models.SalesOrder.objects.get(pk=line['ID'])
 
-                self.assertEqual(line['description'], order.description)
-                self.assertEqual(line['status'], str(order.status))
+                self.assertEqual(line['Description'], order.description)
+                self.assertEqual(line['Order Status'], str(order.status))
 
         # Download only outstanding sales orders
         with self.download_file(
