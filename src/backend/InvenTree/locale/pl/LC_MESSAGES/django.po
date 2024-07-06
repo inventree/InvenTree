@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-06 12:22+0000\n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-06 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -1485,10 +1485,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Supplier Part ID"
 msgid "Supplier Part Number"
-msgstr "ID części dostawcy"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1500,16 +1498,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Odwołanie do zamówienia wykonania"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "Referencja"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3965
 msgid "Part IPN"
@@ -1553,22 +1547,16 @@ msgid "Available Stock"
 msgstr "Dostępna ilość"
 
 #: build/serializers.py:1224
-#, fuzzy
-#| msgid "Substitute Stock"
 msgid "Available Substitute Stock"
-msgstr "Zastępczy magazyn"
+msgstr ""
 
 #: build/serializers.py:1225
-#, fuzzy
-#| msgid "Available Stock"
 msgid "Available Variant Stock"
-msgstr "Dostępna ilość"
+msgstr ""
 
 #: build/serializers.py:1226
-#, fuzzy
-#| msgid "Available Stock"
 msgid "Total Available Stock"
-msgstr "Dostępna ilość"
+msgstr ""
 
 #: build/serializers.py:1227 part/serializers.py:859
 msgid "External Stock"
@@ -3716,10 +3704,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3059
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom Unit"
-msgstr "Klient"
+msgstr ""
 
 #: common/models.py:3080
 msgid "Unit symbol must be unique"
@@ -4048,30 +4034,24 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "is customer"
 msgid "Is customer"
-msgstr "jest klientem"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
 msgstr "Czy sprzedajesz produkty tej firmie?"
 
 #: company/models.py:174
-#, fuzzy
-#| msgid "is supplier"
 msgid "Is supplier"
-msgstr "jest dostawcą"
+msgstr ""
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
 msgstr "Czy kupujesz przedmioty od tej firmy?"
 
 #: company/models.py:180
-#, fuzzy
-#| msgid "is manufacturer"
 msgid "Is manufacturer"
-msgstr "jest producentem"
+msgstr ""
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4232,10 +4212,8 @@ msgid "Manufacturer part description"
 msgstr ""
 
 #: company/models.py:569
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Manufacturer Part Parameter"
-msgstr "Numer producenta komponentu"
+msgstr ""
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4391,20 +4369,16 @@ msgid "Date of last update of availability data"
 msgstr ""
 
 #: company/models.py:1015
-#, fuzzy
-#| msgid "Supplier Pricing"
 msgid "Supplier Price Break"
-msgstr "Cennik dostawcy"
+msgstr ""
 
 #: company/serializers.py:174
 msgid "Default currency used for this supplier"
 msgstr "Domyślna waluta używana dla tego dostawcy"
 
 #: company/serializers.py:210
-#, fuzzy
-#| msgid "Company name"
 msgid "Company Name"
-msgstr "Nazwa firmy"
+msgstr ""
 
 #: company/serializers.py:384 part/admin.py:126 part/serializers.py:852
 #: part/templates/part/part_base.html:197
@@ -4865,36 +4839,28 @@ msgid "Placed"
 msgstr "Umieszczony"
 
 #: importer/mixins.py:263
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid export format"
-msgstr "Nieprawidłowa wartość przedawnienia"
+msgstr ""
 
 #: importer/models.py:56
 msgid "Timestamp"
 msgstr ""
 
 #: importer/models.py:61
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Data file to import"
-msgstr "Wybierz plik do przesłania"
+msgstr ""
 
 #: importer/models.py:70 templates/js/translated/tables.js:558
 msgid "Columns"
 msgstr ""
 
 #: importer/models.py:81
-#, fuzzy
-#| msgid "Import Parts"
 msgid "Import status"
-msgstr "Importuj Części"
+msgstr ""
 
 #: importer/models.py:91
-#, fuzzy
-#| msgid "Build Details"
 msgid "Field Defaults"
-msgstr "Szczegóły budowy"
+msgstr ""
 
 #: importer/models.py:201
 msgid "Some required fields have not been mapped"
@@ -4917,20 +4883,16 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Użytkownik nie ma uprawnień do przeglądania tego modelu"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
 msgstr ""
 
 #: importer/models.py:381 importer/models.py:452
-#, fuzzy
-#| msgid "Active Sessions"
 msgid "Import Session"
-msgstr "Aktywne sesje"
+msgstr ""
 
 #: importer/models.py:385
 msgid "Field"
@@ -4941,10 +4903,8 @@ msgid "Column"
 msgstr ""
 
 #: importer/models.py:456
-#, fuzzy
-#| msgid "Index"
 msgid "Row Index"
-msgstr "Indeks"
+msgstr ""
 
 #: importer/models.py:459
 msgid "Original row data"
@@ -4963,10 +4923,8 @@ msgid "Valid"
 msgstr "Ważny"
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported data file format"
-msgstr "Nieobsługiwany typ pliku"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4985,10 +4943,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Nie podano wierszy danych"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4999,38 +4955,28 @@ msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "Shipment has already been sent"
 msgid "Row has already been completed"
-msgstr "Przesyłka została już wysłana"
+msgstr ""
 
 #: importer/status_codes.py:11
-#, fuzzy
-#| msgid "Initialized"
 msgid "Initializing"
-msgstr "Zainicjalizowany"
+msgstr ""
 
 #: importer/status_codes.py:12
 msgid "Mapping Columns"
 msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Import Part"
 msgid "Importing Data"
-msgstr "Import części"
+msgstr ""
 
 #: importer/status_codes.py:16
-#, fuzzy
-#| msgid "Remove Existing Data"
 msgid "Processing Data"
-msgstr "Usuń istniejące dane"
+msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Przekroczono maksymalny rozmiar pobieranego obrazu"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -5045,10 +4991,8 @@ msgid "Data file contains too many rows"
 msgstr ""
 
 #: importer/validators.py:49
-#, fuzzy
-#| msgid "Metadata must be a python dict object"
 msgid "Value must be a valid dictionary object"
-msgstr "Metadane muszą być obiektem typu dict w Python"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
@@ -5378,10 +5322,8 @@ msgid "Unit price"
 msgstr ""
 
 #: order/models.py:1361
-#, fuzzy
-#| msgid "Purchase Order Items"
 msgid "Purchase Order Line Item"
-msgstr "Pozycje zlecenia zakupu"
+msgstr ""
 
 #: order/models.py:1385
 msgid "Supplier part must match supplier"
@@ -5424,16 +5366,12 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr "Gdzie kupujący chce przechowywać ten przedmiot?"
 
 #: order/models.py:1503
-#, fuzzy
-#| msgid "Purchase Order Items"
 msgid "Purchase Order Extra Line"
-msgstr "Pozycje zlecenia zakupu"
+msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Line Item"
-msgstr "Zamówienie zakupu"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5464,10 +5402,8 @@ msgid "Shipped quantity"
 msgstr "Wysłana ilość"
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Shipment"
-msgstr "Zamówienie zakupu"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5523,16 +5459,12 @@ msgid "Shipment has no allocated stock items"
 msgstr ""
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Extra Line"
-msgstr "Odwołanie do zamówienia sprzedaży"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Discard Allocations"
 msgid "Sales Order Allocation"
-msgstr "Odrzuć przydziały"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -5596,10 +5528,8 @@ msgid "Return order status"
 msgstr ""
 
 #: order/models.py:2237
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Return Order Line Item"
-msgstr "Wróć do zamówień"
+msgstr ""
 
 #: order/models.py:2251
 msgid "Only serialized items can be assigned to a Return Order"
@@ -5631,10 +5561,8 @@ msgid "Cost associated with return or repair for this line item"
 msgstr ""
 
 #: order/models.py:2303
-#, fuzzy
-#| msgid "Add Extra Line"
 msgid "Return Order Extra Line"
-msgstr "Dodaj dodatkową linię"
+msgstr ""
 
 #: order/serializers.py:83 order/templates/order/po_sidebar.html:5
 #: order/templates/order/return_order_detail.html:18
@@ -5690,10 +5618,8 @@ msgid "Internal Part Number"
 msgstr ""
 
 #: order/serializers.py:530
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Part Name"
-msgstr "Komponent wewnętrzny"
+msgstr ""
 
 #: order/serializers.py:546
 msgid "Supplier part must be specified"
@@ -6890,16 +6816,12 @@ msgid "User who requested this stocktake report"
 msgstr ""
 
 #: part/models.py:3291
-#, fuzzy
-#| msgid "Sale Price"
 msgid "Part Sale Price Break"
-msgstr "Cena sprzedaży"
+msgstr ""
 
 #: part/models.py:3403
-#, fuzzy
-#| msgid "Test Templates"
 msgid "Part Test Template"
-msgstr "Szablony testowe"
+msgstr ""
 
 #: part/models.py:3429
 msgid "Invalid template name - must include at least one alphanumeric character"
@@ -6985,10 +6907,8 @@ msgid "Valid choices for this test (comma-separated)"
 msgstr ""
 
 #: part/models.py:3567
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Part Parameter Template"
-msgstr "Parametry części"
+msgstr ""
 
 #: part/models.py:3594
 msgid "Checkbox parameters cannot have units"
@@ -7028,10 +6948,8 @@ msgid "Valid choices for this parameter (comma-separated)"
 msgstr ""
 
 #: part/models.py:3713
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Part Parameter"
-msgstr "Parametry części"
+msgstr ""
 
 #: part/models.py:3757
 msgid "Invalid choice for parameter value"
@@ -9543,20 +9461,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock Item Tracking"
-msgstr "Element magazynowy"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr "Notatki do wpisu"
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock Items"
 msgid "Stock Item Test Result"
-msgstr "Towary"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9671,10 +9585,8 @@ msgid "Parent Item"
 msgstr "Element nadrzędny"
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Parent Stock Item"
 msgid "Parent stock item"
-msgstr "Nadrzędny towar"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -9695,26 +9607,20 @@ msgid "Child Items"
 msgstr "Elementy podrzędne"
 
 #: stock/serializers.py:598
-#, fuzzy
-#| msgid "Tracking Number"
 msgid "Tracking Items"
-msgstr "Numer śledzenia"
+msgstr ""
 
 #: stock/serializers.py:604
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr ""
 
 #: stock/serializers.py:623
-#, fuzzy
-#| msgid "Minimum Stock"
 msgid "Minimum Pricing"
-msgstr "Minimalny stan magazynowy"
+msgstr ""
 
 #: stock/serializers.py:629
-#, fuzzy
-#| msgid "Has Pricing"
 msgid "Maximum Pricing"
-msgstr "Posiada ceny"
+msgstr ""
 
 #: stock/serializers.py:653
 msgid "Enter number of stock items to serialize"
@@ -14883,3 +14789,4 @@ msgstr "Uprawnienie do edycji przedmiotów"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
+
