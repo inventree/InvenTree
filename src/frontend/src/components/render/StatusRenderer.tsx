@@ -42,7 +42,9 @@ function renderStatusLabel(
   }
 
   if (!text) {
-    console.error(`renderStatusLabel could not find match for code ${key}`);
+    console.error(
+      `ERR: renderStatusLabel could not find match for code ${key}`
+    );
   }
 
   // Fallbacks
