@@ -490,7 +490,12 @@ export default function PartDetail() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconList />,
-        content: <PartParameterTable partId={id ?? -1} />
+        content: (
+          <PartParameterTable
+            partId={id ?? -1}
+            partLocked={part?.locked == true}
+          />
+        )
       },
       {
         name: 'stock',

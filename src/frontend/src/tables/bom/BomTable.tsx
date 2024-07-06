@@ -61,7 +61,7 @@ export function BomTable({
   params = {}
 }: {
   partId: number;
-  partLocked: boolean;
+  partLocked?: boolean;
   params?: any;
 }) {
   const user = useUserState();
