@@ -136,17 +136,20 @@ def managePyPath():
     return managePyDir().joinpath('manage.py')
 
 
-def manage(c, cmd, pty: bool = False):
+def manage(c, cmd, pty: bool = False, env=None):
     """Runs a given command against django's "manage.py" script.
 
     Args:
         c: Command line context.
         cmd: Django command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
+        env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
+    env = env or {}
     c.run(
         'cd "{path}" && python3 manage.py {cmd}'.format(path=managePyDir(), cmd=cmd),
         pty=pty,
+        env=env,
     )
 
 
@@ -1020,9 +1023,12 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     help={
         'filename': "Output filename (default = 'schema.yml')",
         'overwrite': 'Overwrite existing files without asking first (default = off/False)',
+        'no_default': 'Do not use default settings for schema (default = off/False)',
     }
 )
-def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
+def schema(
+    c, filename='schema.yml', overwrite=False, ignore_warnings=False, no_default=False
+):
     """Export current API schema."""
     check_file_existance(filename, overwrite)
 
@@ -1035,7 +1041,19 @@ def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
     if not ignore_warnings:
         cmd += ' --fail-on-warn'
 
-    manage(c, cmd, pty=True)
+    envs = {}
+    if not no_default:
+        envs['INVENTREE_SITE_URL'] = (
+            'http://localhost:8000'  # Default site URL - to ensure server field is stable
+        )
+        envs['INVENTREE_PLUGINS_ENABLED'] = (
+            'False'  # Disable plugins to ensure they are kep out of schema
+        )
+        envs['INVENTREE_CURRENCY_CODES'] = (
+            'AUD,CNY,EUR,USD'  # Default currency codes to ensure they are stable
+        )
+
+    manage(c, cmd, pty=True, env=envs)
 
     assert os.path.exists(filename)
 
