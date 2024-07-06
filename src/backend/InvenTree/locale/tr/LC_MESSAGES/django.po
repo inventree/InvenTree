@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-06 12:22+0000\n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-06 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1485,10 +1485,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Supplier Part Orders"
 msgid "Supplier Part Number"
-msgstr "Tedarikçi Parçası Emirleri"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1500,16 +1498,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Yapım İşi Emri Referansı"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "Referans"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3965
 msgid "Part IPN"
@@ -1561,10 +1555,8 @@ msgid "Available Variant Stock"
 msgstr ""
 
 #: build/serializers.py:1226
-#, fuzzy
-#| msgid "Available"
 msgid "Total Available Stock"
-msgstr "Mevcut"
+msgstr ""
 
 #: build/serializers.py:1227 part/serializers.py:859
 msgid "External Stock"
@@ -3712,10 +3704,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3059
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom Unit"
-msgstr "Müşteri"
+msgstr ""
 
 #: common/models.py:3080
 msgid "Unit symbol must be unique"
@@ -4044,30 +4034,24 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "is customer"
 msgid "Is customer"
-msgstr "müşteri mi"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
 msgstr "Bu şirkete ürün satıyor musunuz?"
 
 #: company/models.py:174
-#, fuzzy
-#| msgid "is supplier"
 msgid "Is supplier"
-msgstr "tedarikçi mi"
+msgstr ""
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
 msgstr "Bu şirketten ürün satın alıyor musunuz?"
 
 #: company/models.py:180
-#, fuzzy
-#| msgid "is manufacturer"
 msgid "Is manufacturer"
-msgstr "üretici mi"
+msgstr ""
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4228,10 +4212,8 @@ msgid "Manufacturer part description"
 msgstr ""
 
 #: company/models.py:569
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Manufacturer Part Parameter"
-msgstr "Üretici Parça Numarası"
+msgstr ""
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4387,20 +4369,16 @@ msgid "Date of last update of availability data"
 msgstr ""
 
 #: company/models.py:1015
-#, fuzzy
-#| msgid "Supplier Part Orders"
 msgid "Supplier Price Break"
-msgstr "Tedarikçi Parçası Emirleri"
+msgstr ""
 
 #: company/serializers.py:174
 msgid "Default currency used for this supplier"
 msgstr ""
 
 #: company/serializers.py:210
-#, fuzzy
-#| msgid "Company name"
 msgid "Company Name"
-msgstr "Şirket adı"
+msgstr ""
 
 #: company/serializers.py:384 part/admin.py:126 part/serializers.py:852
 #: part/templates/part/part_base.html:197
@@ -4869,32 +4847,24 @@ msgid "Timestamp"
 msgstr ""
 
 #: importer/models.py:61
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Data file to import"
-msgstr "Yüklenecek dosyayı seç"
+msgstr ""
 
 #: importer/models.py:70 templates/js/translated/tables.js:558
 msgid "Columns"
 msgstr ""
 
 #: importer/models.py:81
-#, fuzzy
-#| msgid "Important dates"
 msgid "Import status"
-msgstr "Önemli tarihler"
+msgstr ""
 
 #: importer/models.py:91
-#, fuzzy
-#| msgid "Build Details"
 msgid "Field Defaults"
-msgstr "Yapım İşi Detayları"
+msgstr ""
 
 #: importer/models.py:201
-#, fuzzy
-#| msgid "Required build quantity has not been completed"
 msgid "Some required fields have not been mapped"
-msgstr "Gerekli yapım işi miktarı tamamlanmadı"
+msgstr ""
 
 #: importer/models.py:346
 msgid "Column is already mapped to a database field"
@@ -4913,26 +4883,20 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Kullanıcının bu modeli görüntüleme izni yok"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
 msgstr ""
 
 #: importer/models.py:381 importer/models.py:452
-#, fuzzy
-#| msgid "Important dates"
 msgid "Import Session"
-msgstr "Önemli tarihler"
+msgstr ""
 
 #: importer/models.py:385
-#, fuzzy
-#| msgid "File Fields"
 msgid "Field"
-msgstr "Dosya Alanları"
+msgstr ""
 
 #: importer/models.py:387
 msgid "Column"
@@ -4959,10 +4923,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported data file format"
-msgstr "Desteklenmeyen dsoya tipi"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4981,10 +4943,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Dosyada satır bulunamadı"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4995,10 +4955,8 @@ msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "Build output is already completed"
 msgid "Row has already been completed"
-msgstr "Yapım işi çıktısı zaten tamamlanmış"
+msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
@@ -5009,20 +4967,16 @@ msgid "Mapping Columns"
 msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Important dates"
 msgid "Importing Data"
-msgstr "Önemli tarihler"
+msgstr ""
 
 #: importer/status_codes.py:16
 msgid "Processing Data"
 msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Resim indirme boyutu izin verilenden büyük"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -5037,10 +4991,8 @@ msgid "Data file contains too many rows"
 msgstr ""
 
 #: importer/validators.py:49
-#, fuzzy
-#| msgid "Metadata must be a python dict object"
 msgid "Value must be a valid dictionary object"
-msgstr "Metadata, bir python dict nesnesi olmalıdır"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
@@ -5370,10 +5322,8 @@ msgid "Unit price"
 msgstr ""
 
 #: order/models.py:1361
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Purchase Order Line Item"
-msgstr "Satın Alma Emirleri"
+msgstr ""
 
 #: order/models.py:1385
 msgid "Supplier part must match supplier"
@@ -5416,16 +5366,12 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr ""
 
 #: order/models.py:1503
-#, fuzzy
-#| msgid "Purchase Orders"
 msgid "Purchase Order Extra Line"
-msgstr "Satın Alma Emirleri"
+msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Line Item"
-msgstr "Sipariş Emri"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5456,10 +5402,8 @@ msgid "Shipped quantity"
 msgstr ""
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Shipment"
-msgstr "Sipariş Emri"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5515,16 +5459,12 @@ msgid "Shipment has no allocated stock items"
 msgstr ""
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Extra Line"
-msgstr "Satış Emri Referansı"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Allocation"
-msgstr "Sipariş Emri"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -5678,10 +5618,8 @@ msgid "Internal Part Number"
 msgstr ""
 
 #: order/serializers.py:530
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Internal Part Name"
-msgstr "Üretici Parça Numarası"
+msgstr ""
 
 #: order/serializers.py:546
 msgid "Supplier part must be specified"
@@ -6882,10 +6820,8 @@ msgid "Part Sale Price Break"
 msgstr ""
 
 #: part/models.py:3403
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Template"
-msgstr "Parça Test Şablonları"
+msgstr ""
 
 #: part/models.py:3429
 msgid "Invalid template name - must include at least one alphanumeric character"
@@ -6971,10 +6907,8 @@ msgid "Valid choices for this test (comma-separated)"
 msgstr ""
 
 #: part/models.py:3567
-#, fuzzy
-#| msgid "Part Parameter Templates"
 msgid "Part Parameter Template"
-msgstr "Parça Parametre Şablonu"
+msgstr ""
 
 #: part/models.py:3594
 msgid "Checkbox parameters cannot have units"
@@ -7014,10 +6948,8 @@ msgid "Valid choices for this parameter (comma-separated)"
 msgstr ""
 
 #: part/models.py:3713
-#, fuzzy
-#| msgid "Part Parameter Templates"
 msgid "Part Parameter"
-msgstr "Parça Parametre Şablonu"
+msgstr ""
 
 #: part/models.py:3757
 msgid "Invalid choice for parameter value"
@@ -7037,10 +6969,8 @@ msgid "Parameter Value"
 msgstr ""
 
 #: part/models.py:3864
-#, fuzzy
-#| msgid "Copy Category Parameter Templates"
 msgid "Part Category Parameter Template"
-msgstr "Kategori Paremetre Sablonu Kopyala"
+msgstr ""
 
 #: part/models.py:3923 templates/InvenTree/settings/settings_staff_js.html:304
 msgid "Default Value"
@@ -9531,20 +9461,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Stok kalemi stokta olmadığı için taşınamaz"
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock Item Tracking"
-msgstr "Stok Kalemi"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr ""
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock Items"
 msgid "Stock Item Test Result"
-msgstr "Stok Kalemleri"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9659,10 +9585,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Parent Stock Item"
 msgid "Parent stock item"
-msgstr "Üst Stok Kalemi"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -9683,26 +9607,20 @@ msgid "Child Items"
 msgstr ""
 
 #: stock/serializers.py:598
-#, fuzzy
-#| msgid "Stock Items"
 msgid "Tracking Items"
-msgstr "Stok Kalemleri"
+msgstr ""
 
 #: stock/serializers.py:604
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr ""
 
 #: stock/serializers.py:623
-#, fuzzy
-#| msgid "Minimum Stock"
 msgid "Minimum Pricing"
-msgstr "Minimum Stok"
+msgstr ""
 
 #: stock/serializers.py:629
-#, fuzzy
-#| msgid "Pricing"
 msgid "Maximum Pricing"
-msgstr "Fiyatlandırma"
+msgstr ""
 
 #: stock/serializers.py:653
 msgid "Enter number of stock items to serialize"
@@ -14871,3 +14789,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
