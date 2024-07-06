@@ -1797,6 +1797,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'BUILDORDER_REQUIRE_LOCKED_PART': {
+            'name': _('Require Locked Part'),
+            'description': _('Prevent build order creation for unlocked parts'),
+            'default': False,
+            'validator': bool,
+        },
         'BUILDORDER_REQUIRE_VALID_BOM': {
             'name': _('Require Valid BOM'),
             'description': _(
