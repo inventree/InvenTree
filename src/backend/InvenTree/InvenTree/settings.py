@@ -198,6 +198,7 @@ INSTALLED_APPS = [
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
+    'importer.apps.ImporterConfig',
     'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',  # InvenTree app runs last

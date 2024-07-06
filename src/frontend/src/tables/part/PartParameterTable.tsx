@@ -184,6 +184,7 @@ export function PartParameterTable({ partId }: { partId: any }) {
         columns={tableColumns}
         props={{
           rowActions: rowActions,
+          enableDownload: true,
           tableActions: tableActions,
           tableFilters: [
             {

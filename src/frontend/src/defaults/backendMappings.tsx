@@ -13,7 +13,8 @@ export const statusCodeList: Record<string, ModelType> = {
   ReturnOrderStatus: ModelType.returnorder,
   SalesOrderStatus: ModelType.salesorder,
   StockHistoryCode: ModelType.stockhistory,
-  StockStatus: ModelType.stockitem
+  StockStatus: ModelType.stockitem,
+  DataImportStatusCode: ModelType.importsession
 };
 
 /*

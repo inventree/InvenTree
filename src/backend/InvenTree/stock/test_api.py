@@ -765,11 +765,11 @@ class StockItemListTest(StockAPITestCase):
 
         # Expected headers
         headers = [
-            'Part ID',
-            'Customer ID',
-            'Location ID',
+            'Part',
+            'Customer',
+            'Stock Location',
             'Location Name',
-            'Parent ID',
+            'Parent Item',
             'Quantity',
             'Status',
         ]

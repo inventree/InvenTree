@@ -21,6 +21,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { StylishText } from '../items/StylishText';
 
 /**
@@ -33,10 +34,12 @@ export function NotificationDrawer({
   opened: boolean;
   onClose: () => void;
 }) {
+  const { isLoggedIn } = useUserState();
+
   const navigate = useNavigate();
 
   const notificationQuery = useQuery({
-    enabled: opened,
+    enabled: opened && isLoggedIn(),
     queryKey: ['notifications', opened],
     queryFn: async () =>
       api
