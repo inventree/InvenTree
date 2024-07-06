@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-06 12:22+0000\n"
-"PO-Revision-Date: 2024-07-05 14:57\n"
+"PO-Revision-Date: 2024-07-06 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1333,8 +1333,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:530
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:615
@@ -1487,10 +1486,8 @@ msgid "Failed to start auto-allocation task"
 msgstr "Nem sikerült az automatikus lefoglalás feladatot elindítani"
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Supplier Part Orders"
 msgid "Supplier Part Number"
-msgstr "Beszállítói alkatrész rendelések"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1502,16 +1499,12 @@ msgid "Location Name"
 msgstr "Hely neve"
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Gyártási utasítás azonosító"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "Azonosító"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3965
 msgid "Part IPN"
@@ -1555,22 +1548,16 @@ msgid "Available Stock"
 msgstr "Elérhető készlet"
 
 #: build/serializers.py:1224
-#, fuzzy
-#| msgid "Substitute Stock"
 msgid "Available Substitute Stock"
-msgstr "Készlet helyettesítés"
+msgstr ""
 
 #: build/serializers.py:1225
-#, fuzzy
-#| msgid "Allow Variant Stock"
 msgid "Available Variant Stock"
-msgstr "Készlet változatok engedélyezése"
+msgstr ""
 
 #: build/serializers.py:1226
-#, fuzzy
-#| msgid "Has Available Stock"
 msgid "Total Available Stock"
-msgstr "Van elérhető készlete"
+msgstr ""
 
 #: build/serializers.py:1227 part/serializers.py:859
 msgid "External Stock"
@@ -3718,10 +3705,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3059
-#, fuzzy
-#| msgid "New Custom Unit"
 msgid "Custom Unit"
-msgstr "Új egyedi mértékegység"
+msgstr ""
 
 #: common/models.py:3080
 msgid "Unit symbol must be unique"
@@ -4050,30 +4035,24 @@ msgid "Is this company active?"
 msgstr "Ez a vállalat aktív?"
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "is customer"
 msgid "Is customer"
-msgstr "vevő-e"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
 msgstr "Értékesítesz alkatrészeket ennek a cégnek?"
 
 #: company/models.py:174
-#, fuzzy
-#| msgid "is supplier"
 msgid "Is supplier"
-msgstr "beszállító-e"
+msgstr ""
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
 msgstr "Vásárolsz alkatrészeket ettől a cégtől?"
 
 #: company/models.py:180
-#, fuzzy
-#| msgid "is manufacturer"
 msgid "Is manufacturer"
-msgstr "gyártó-e"
+msgstr ""
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4234,10 +4213,8 @@ msgid "Manufacturer part description"
 msgstr "Gyártói alkatrész leírása"
 
 #: company/models.py:569
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Manufacturer Part Parameter"
-msgstr "Gyártói cikkszám"
+msgstr ""
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4393,20 +4370,16 @@ msgid "Date of last update of availability data"
 msgstr "Utolsó elérhetőségi adat frissítés"
 
 #: company/models.py:1015
-#, fuzzy
-#| msgid "Delete Price Break"
 msgid "Supplier Price Break"
-msgstr "Ársáv törlése"
+msgstr ""
 
 #: company/serializers.py:174
 msgid "Default currency used for this supplier"
 msgstr "Beszállító által használt alapértelmezett pénznem"
 
 #: company/serializers.py:210
-#, fuzzy
-#| msgid "Company name"
 msgid "Company Name"
-msgstr "Cég neve"
+msgstr ""
 
 #: company/serializers.py:384 part/admin.py:126 part/serializers.py:852
 #: part/templates/part/part_base.html:197
@@ -4867,42 +4840,32 @@ msgid "Placed"
 msgstr "Kiküldve"
 
 #: importer/mixins.py:263
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid export format"
-msgstr "Érvénytelen érték a túlszállításra"
+msgstr ""
 
 #: importer/models.py:56
 msgid "Timestamp"
 msgstr ""
 
 #: importer/models.py:61
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Data file to import"
-msgstr "Feltöltendő fájl kiválasztása"
+msgstr ""
 
 #: importer/models.py:70 templates/js/translated/tables.js:558
 msgid "Columns"
 msgstr "Oszlopok"
 
 #: importer/models.py:81
-#, fuzzy
-#| msgid "Import Parts"
 msgid "Import status"
-msgstr "Alkatrészek importálása"
+msgstr ""
 
 #: importer/models.py:91
-#, fuzzy
-#| msgid "Build Details"
 msgid "Field Defaults"
-msgstr "Gyártás részletei"
+msgstr ""
 
 #: importer/models.py:201
-#, fuzzy
-#| msgid "Required build quantity has not been completed"
 msgid "Some required fields have not been mapped"
-msgstr "Szükséges gyártási mennyiség nem lett elérve"
+msgstr ""
 
 #: importer/models.py:346
 msgid "Column is already mapped to a database field"
@@ -4921,44 +4884,32 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Nincs jogosultságod az adatok megtekintéséhez"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
 msgstr ""
 
 #: importer/models.py:381 importer/models.py:452
-#, fuzzy
-#| msgid "Active Sessions"
 msgid "Import Session"
-msgstr "Aktív kapcsolatok"
+msgstr ""
 
 #: importer/models.py:385
-#, fuzzy
-#| msgid "Field Name"
 msgid "Field"
-msgstr "Mező név"
+msgstr ""
 
 #: importer/models.py:387
-#, fuzzy
-#| msgid "Columns"
 msgid "Column"
-msgstr "Oszlopok"
+msgstr ""
 
 #: importer/models.py:456
-#, fuzzy
-#| msgid "Index"
 msgid "Row Index"
-msgstr "Index"
+msgstr ""
 
 #: importer/models.py:459
-#, fuzzy
-#| msgid "Original Part"
 msgid "Original row data"
-msgstr "Eredeti alkatrész"
+msgstr ""
 
 #: importer/models.py:462 part/models.py:3813
 msgid "Data"
@@ -4973,10 +4924,8 @@ msgid "Valid"
 msgstr "Érvényes"
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file format: {fmt}"
 msgid "Unsupported data file format"
-msgstr "Nem támogatott fájl formátum: {fmt}"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4995,62 +4944,44 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Nincs adatsor megadva"
+msgstr ""
 
 #: importer/serializers.py:153
-#, fuzzy
-#| msgid "Item cannot belong to itself"
 msgid "Row does not belong to this session"
-msgstr "A tétel nem tartozhat saját magához"
+msgstr ""
 
 #: importer/serializers.py:156
 msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "This build output has already been completed"
 msgid "Row has already been completed"
-msgstr "Ez a gyártási kimenet már elkészült"
+msgstr ""
 
 #: importer/status_codes.py:11
-#, fuzzy
-#| msgid "Initialized"
 msgid "Initializing"
-msgstr "Inicializálva"
+msgstr ""
 
 #: importer/status_codes.py:12
-#, fuzzy
-#| msgid "Columns"
 msgid "Mapping Columns"
-msgstr "Oszlopok"
+msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Import Part"
 msgid "Importing Data"
-msgstr "Alkatrész importálása"
+msgstr ""
 
 #: importer/status_codes.py:16
-#, fuzzy
-#| msgid "Loading Data"
 msgid "Processing Data"
-msgstr "Adatok betöltése"
+msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "A kép letöltés meghaladja a maximális méretet"
+msgstr ""
 
 #: importer/validators.py:26
-#, fuzzy
-#| msgid "Stock item contains other items"
 msgid "Data file contains no headers"
-msgstr "A készlet tétel más tételeket tartalmaz"
+msgstr ""
 
 #: importer/validators.py:29
 msgid "Data file contains too many columns"
@@ -5061,10 +4992,8 @@ msgid "Data file contains too many rows"
 msgstr ""
 
 #: importer/validators.py:49
-#, fuzzy
-#| msgid "Metadata must be a python dict object"
 msgid "Value must be a valid dictionary object"
-msgstr "A meta adatnak egy python dict objektumnak kell lennie"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
@@ -5394,10 +5323,8 @@ msgid "Unit price"
 msgstr "Egységár"
 
 #: order/models.py:1361
-#, fuzzy
-#| msgid "Purchase Order Items"
 msgid "Purchase Order Line Item"
-msgstr "Beszerzési rendelés tételei"
+msgstr ""
 
 #: order/models.py:1385
 msgid "Supplier part must match supplier"
@@ -5440,16 +5367,12 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr "Mit szeretne a vevő hol tároljuk ezt az alkatrészt?"
 
 #: order/models.py:1503
-#, fuzzy
-#| msgid "Purchase Order Items"
 msgid "Purchase Order Extra Line"
-msgstr "Beszerzési rendelés tételei"
+msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order Items"
 msgid "Sales Order Line Item"
-msgstr "Vevői rendelés tételek"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5480,10 +5403,8 @@ msgid "Shipped quantity"
 msgstr "Szállított mennyiség"
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order Default Shipment"
 msgid "Sales Order Shipment"
-msgstr "Vevői rendeléshez alapértelmezett szállítmány"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5539,16 +5460,12 @@ msgid "Shipment has no allocated stock items"
 msgstr "Szállítmány nem tartalmaz foglalt készlet tételeket"
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Items"
 msgid "Sales Order Extra Line"
-msgstr "Vevői rendelés tételek"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Sales Order Allocations"
 msgid "Sales Order Allocation"
-msgstr "Vevői rendeléshez foglalások"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -5612,10 +5529,8 @@ msgid "Return order status"
 msgstr "Visszavétel állapota"
 
 #: order/models.py:2237
-#, fuzzy
-#| msgid "Return order line item"
 msgid "Return Order Line Item"
-msgstr "Visszavétel sortétel"
+msgstr ""
 
 #: order/models.py:2251
 msgid "Only serialized items can be assigned to a Return Order"
@@ -5647,10 +5562,8 @@ msgid "Cost associated with return or repair for this line item"
 msgstr "Sortétel visszaküldésének vagy javításának költsége"
 
 #: order/models.py:2303
-#, fuzzy
-#| msgid "Return Order Settings"
 msgid "Return Order Extra Line"
-msgstr "Visszavétel bellításai"
+msgstr ""
 
 #: order/serializers.py:83 order/templates/order/po_sidebar.html:5
 #: order/templates/order/return_order_detail.html:18
@@ -5706,10 +5619,8 @@ msgid "Internal Part Number"
 msgstr "Belső cikkszám"
 
 #: order/serializers.py:530
-#, fuzzy
-#| msgid "Internal Part Number"
 msgid "Internal Part Name"
-msgstr "Belső cikkszám"
+msgstr ""
 
 #: order/serializers.py:546
 msgid "Supplier part must be specified"
@@ -6906,16 +6817,12 @@ msgid "User who requested this stocktake report"
 msgstr "Felhasználó aki a leltár riportot kérte"
 
 #: part/models.py:3291
-#, fuzzy
-#| msgid "Add Sell Price Break"
 msgid "Part Sale Price Break"
-msgstr "Eladási ársáv hozzáadása"
+msgstr ""
 
 #: part/models.py:3403
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Template"
-msgstr "Alkatrész teszt sablonok"
+msgstr ""
 
 #: part/models.py:3429
 msgid "Invalid template name - must include at least one alphanumeric character"
@@ -7001,10 +6908,8 @@ msgid "Valid choices for this test (comma-separated)"
 msgstr ""
 
 #: part/models.py:3567
-#, fuzzy
-#| msgid "Part Parameter Templates"
 msgid "Part Parameter Template"
-msgstr "Alkatrész paraméter sablonok"
+msgstr ""
 
 #: part/models.py:3594
 msgid "Checkbox parameters cannot have units"
@@ -7044,10 +6949,8 @@ msgid "Valid choices for this parameter (comma-separated)"
 msgstr "Választható lehetőségek (vesszővel elválasztva)"
 
 #: part/models.py:3713
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Part Parameter"
-msgstr "Alkatrész paraméterek"
+msgstr ""
 
 #: part/models.py:3757
 msgid "Invalid choice for parameter value"
@@ -7067,10 +6970,8 @@ msgid "Parameter Value"
 msgstr "Paraméter értéke"
 
 #: part/models.py:3864
-#, fuzzy
-#| msgid "Create Category Parameter Template"
 msgid "Part Category Parameter Template"
-msgstr "Kategória paraméter sablon létrehozása"
+msgstr ""
 
 #: part/models.py:3923 templates/InvenTree/settings/settings_staff_js.html:304
 msgid "Default Value"
@@ -9561,20 +9462,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Készlet tétel nem mozgatható mivel nincs készleten"
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Tracking"
 msgid "Stock Item Tracking"
-msgstr "Készlettörténet"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr "Bejegyzés megjegyzései"
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock Item Test Report"
 msgid "Stock Item Test Result"
-msgstr "Készlet tétel teszt riport"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9689,10 +9586,8 @@ msgid "Parent Item"
 msgstr "Szülő tétel"
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Parent Stock Item"
 msgid "Parent stock item"
-msgstr "Szülő készlet tétel"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -9713,26 +9608,20 @@ msgid "Child Items"
 msgstr "Gyermek tételek"
 
 #: stock/serializers.py:598
-#, fuzzy
-#| msgid "Tracking"
 msgid "Tracking Items"
-msgstr "Nyomkövetés"
+msgstr ""
 
 #: stock/serializers.py:604
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr "Készlet tétel beszerzési ára, per darab vagy csomag"
 
 #: stock/serializers.py:623
-#, fuzzy
-#| msgid "Minimum Price"
 msgid "Minimum Pricing"
-msgstr "Minimum ár"
+msgstr ""
 
 #: stock/serializers.py:629
-#, fuzzy
-#| msgid "Maximum Price"
 msgid "Maximum Pricing"
-msgstr "Maximum ár"
+msgstr ""
 
 #: stock/serializers.py:653
 msgid "Enter number of stock items to serialize"
@@ -14901,3 +14790,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
