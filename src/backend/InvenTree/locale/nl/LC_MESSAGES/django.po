@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-06 12:22+0000\n"
-"PO-Revision-Date: 2024-07-05 14:57\n"
+"PO-Revision-Date: 2024-07-06 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1485,10 +1485,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Supplier Part Orders"
 msgid "Supplier Part Number"
-msgstr "Leverancier Onderdelenorders"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1500,16 +1498,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Productieorderreferentie"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "Referentie"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3965
 msgid "Part IPN"
@@ -1553,22 +1547,16 @@ msgid "Available Stock"
 msgstr "Beschikbare Voorraad"
 
 #: build/serializers.py:1224
-#, fuzzy
-#| msgid "Substitute Stock"
 msgid "Available Substitute Stock"
-msgstr "Vervangende Voorraad"
+msgstr ""
 
 #: build/serializers.py:1225
-#, fuzzy
-#| msgid "Available Stock"
 msgid "Available Variant Stock"
-msgstr "Beschikbare Voorraad"
+msgstr ""
 
 #: build/serializers.py:1226
-#, fuzzy
-#| msgid "Available Stock"
 msgid "Total Available Stock"
-msgstr "Beschikbare Voorraad"
+msgstr ""
 
 #: build/serializers.py:1227 part/serializers.py:859
 msgid "External Stock"
@@ -3716,10 +3704,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3059
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom Unit"
-msgstr "Klant"
+msgstr ""
 
 #: common/models.py:3080
 msgid "Unit symbol must be unique"
@@ -4048,30 +4034,24 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "is customer"
 msgid "Is customer"
-msgstr "is klant"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
 msgstr ""
 
 #: company/models.py:174
-#, fuzzy
-#| msgid "is supplier"
 msgid "Is supplier"
-msgstr "is leverancier"
+msgstr ""
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
 msgstr ""
 
 #: company/models.py:180
-#, fuzzy
-#| msgid "is manufacturer"
 msgid "Is manufacturer"
-msgstr "is fabrikant"
+msgstr ""
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4232,10 +4212,8 @@ msgid "Manufacturer part description"
 msgstr "Omschrijving onderdeel fabrikant"
 
 #: company/models.py:569
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Manufacturer Part Parameter"
-msgstr "Fabrikant artikel nummer (MPN)"
+msgstr ""
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4391,20 +4369,16 @@ msgid "Date of last update of availability data"
 msgstr ""
 
 #: company/models.py:1015
-#, fuzzy
-#| msgid "Supplier Part Orders"
 msgid "Supplier Price Break"
-msgstr "Leverancier Onderdelenorders"
+msgstr ""
 
 #: company/serializers.py:174
 msgid "Default currency used for this supplier"
 msgstr ""
 
 #: company/serializers.py:210
-#, fuzzy
-#| msgid "Company name"
 msgid "Company Name"
-msgstr "Bedrijfsnaam"
+msgstr ""
 
 #: company/serializers.py:384 part/admin.py:126 part/serializers.py:852
 #: part/templates/part/part_base.html:197
@@ -4865,20 +4839,16 @@ msgid "Placed"
 msgstr "Geplaatst"
 
 #: importer/mixins.py:263
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid export format"
-msgstr "Ongeldige waarde voor overschot"
+msgstr ""
 
 #: importer/models.py:56
 msgid "Timestamp"
 msgstr ""
 
 #: importer/models.py:61
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Data file to import"
-msgstr "Selecteer bestand om te uploaden"
+msgstr ""
 
 #: importer/models.py:70 templates/js/translated/tables.js:558
 msgid "Columns"
@@ -4889,16 +4859,12 @@ msgid "Import status"
 msgstr ""
 
 #: importer/models.py:91
-#, fuzzy
-#| msgid "Build Details"
 msgid "Field Defaults"
-msgstr "Productie details"
+msgstr ""
 
 #: importer/models.py:201
-#, fuzzy
-#| msgid "Required build quantity has not been completed"
 msgid "Some required fields have not been mapped"
-msgstr "Vereiste productiehoeveelheid is voltooid"
+msgstr ""
 
 #: importer/models.py:346
 msgid "Column is already mapped to a database field"
@@ -4917,10 +4883,8 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Gebruiker heeft geen rechten om dit model te bekijken"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
@@ -4959,10 +4923,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file format: {fmt}"
 msgid "Unsupported data file format"
-msgstr "Niet-ondersteunde bestandsindeling: {fmt}"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4981,10 +4943,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Geen data rijen opgegeven"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4995,10 +4955,8 @@ msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "This build output has already been completed"
 msgid "Row has already been completed"
-msgstr "Deze productieuitvoer is al voltooid"
+msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
@@ -5009,20 +4967,16 @@ msgid "Mapping Columns"
 msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Importing Data"
-msgstr "Opleveringsdatum"
+msgstr ""
 
 #: importer/status_codes.py:16
 msgid "Processing Data"
 msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Beelddownload overschrijdt de maximale grootte"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -5037,10 +4991,8 @@ msgid "Data file contains too many rows"
 msgstr ""
 
 #: importer/validators.py:49
-#, fuzzy
-#| msgid "Metadata must be a python dict object"
 msgid "Value must be a valid dictionary object"
-msgstr "Metadata moeten een python dict object zijn"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
@@ -5370,10 +5322,8 @@ msgid "Unit price"
 msgstr "Stukprijs"
 
 #: order/models.py:1361
-#, fuzzy
-#| msgid "Purchase Order Items"
 msgid "Purchase Order Line Item"
-msgstr "Inkooporder Artikelen"
+msgstr ""
 
 #: order/models.py:1385
 msgid "Supplier part must match supplier"
@@ -5416,16 +5366,12 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr "Waar wil de inkoper dat dit artikel opgeslagen wordt?"
 
 #: order/models.py:1503
-#, fuzzy
-#| msgid "Purchase Order Items"
 msgid "Purchase Order Extra Line"
-msgstr "Inkooporder Artikelen"
+msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order Items"
 msgid "Sales Order Line Item"
-msgstr "Verkooporder Artikelen"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5456,10 +5402,8 @@ msgid "Shipped quantity"
 msgstr "Verzonden hoeveelheid"
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order Default Shipment"
 msgid "Sales Order Shipment"
-msgstr "Standaard Verzending Verkooporder"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5515,16 +5459,12 @@ msgid "Shipment has no allocated stock items"
 msgstr "Zending heeft geen toegewezen voorraadartikelen"
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Items"
 msgid "Sales Order Extra Line"
-msgstr "Verkooporder Artikelen"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Sales Order Allocations"
 msgid "Sales Order Allocation"
-msgstr "Verkoopordertoewijzingen"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -5588,10 +5528,8 @@ msgid "Return order status"
 msgstr ""
 
 #: order/models.py:2237
-#, fuzzy
-#| msgid "Return Order Reference Pattern"
 msgid "Return Order Line Item"
-msgstr "Retourorder referentie patroon"
+msgstr ""
 
 #: order/models.py:2251
 msgid "Only serialized items can be assigned to a Return Order"
@@ -5623,10 +5561,8 @@ msgid "Cost associated with return or repair for this line item"
 msgstr ""
 
 #: order/models.py:2303
-#, fuzzy
-#| msgid "Add Extra Line"
 msgid "Return Order Extra Line"
-msgstr "Extra Regel Toevoegen"
+msgstr ""
 
 #: order/serializers.py:83 order/templates/order/po_sidebar.html:5
 #: order/templates/order/return_order_detail.html:18
@@ -5682,10 +5618,8 @@ msgid "Internal Part Number"
 msgstr "Intern Onderdeelnummer"
 
 #: order/serializers.py:530
-#, fuzzy
-#| msgid "Internal Part Number"
 msgid "Internal Part Name"
-msgstr "Intern Onderdeelnummer"
+msgstr ""
 
 #: order/serializers.py:546
 msgid "Supplier part must be specified"
@@ -6882,16 +6816,12 @@ msgid "User who requested this stocktake report"
 msgstr ""
 
 #: part/models.py:3291
-#, fuzzy
-#| msgid "Sale Price"
 msgid "Part Sale Price Break"
-msgstr "Verkoopprijs"
+msgstr ""
 
 #: part/models.py:3403
-#, fuzzy
-#| msgid "Batch Code Template"
 msgid "Part Test Template"
-msgstr "Batchcode Sjabloon"
+msgstr ""
 
 #: part/models.py:3429
 msgid "Invalid template name - must include at least one alphanumeric character"
@@ -6977,10 +6907,8 @@ msgid "Valid choices for this test (comma-separated)"
 msgstr ""
 
 #: part/models.py:3567
-#, fuzzy
-#| msgid "Copy Category Parameter Templates"
 msgid "Part Parameter Template"
-msgstr "Kopiëer Categorieparameter Sjablonen"
+msgstr ""
 
 #: part/models.py:3594
 msgid "Checkbox parameters cannot have units"
@@ -7020,10 +6948,8 @@ msgid "Valid choices for this parameter (comma-separated)"
 msgstr ""
 
 #: part/models.py:3713
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Part Parameter"
-msgstr "Onderdeel Parameters"
+msgstr ""
 
 #: part/models.py:3757
 msgid "Invalid choice for parameter value"
@@ -7043,10 +6969,8 @@ msgid "Parameter Value"
 msgstr "Parameterwaarde"
 
 #: part/models.py:3864
-#, fuzzy
-#| msgid "Copy Category Parameter Templates"
 msgid "Part Category Parameter Template"
-msgstr "Kopiëer Categorieparameter Sjablonen"
+msgstr ""
 
 #: part/models.py:3923 templates/InvenTree/settings/settings_staff_js.html:304
 msgid "Default Value"
@@ -9537,20 +9461,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Use Stock Item Pricing"
 msgid "Stock Item Tracking"
-msgstr "Gebruik voorraaditem prijzen"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr ""
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock Items"
 msgid "Stock Item Test Result"
-msgstr "Voorraadartikelen"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9665,10 +9585,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Parent stock item"
-msgstr "Bron voorraadartikel"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -9689,26 +9607,20 @@ msgid "Child Items"
 msgstr ""
 
 #: stock/serializers.py:598
-#, fuzzy
-#| msgid "Tracking Number"
 msgid "Tracking Items"
-msgstr "Volgnummer"
+msgstr ""
 
 #: stock/serializers.py:604
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr ""
 
 #: stock/serializers.py:623
-#, fuzzy
-#| msgid "Minimum Pricing Decimal Places"
 msgid "Minimum Pricing"
-msgstr "Minimaal aantal prijs decimalen"
+msgstr ""
 
 #: stock/serializers.py:629
-#, fuzzy
-#| msgid "Maximum Pricing Decimal Places"
 msgid "Maximum Pricing"
-msgstr "Maximum prijs decimalen"
+msgstr ""
 
 #: stock/serializers.py:653
 msgid "Enter number of stock items to serialize"
@@ -14877,3 +14789,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
