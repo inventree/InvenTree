@@ -525,7 +525,9 @@ export default function PartDetail() {
         label: t`Bill of Materials`,
         icon: <IconListTree />,
         hidden: !part.assembly,
-        content: <BomTable partId={part.pk ?? -1} />
+        content: (
+          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+        )
       },
       {
         name: 'builds',
