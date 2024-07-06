@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -39,6 +39,8 @@ export function useInstance<T = any>({
 }) {
   const [instance, setInstance] = useState<T | undefined>(defaultValue);
 
+  const [requestStatus, setRequestStatus] = useState<number>(0);
+
   const instanceQuery = useQuery<T>({
     queryKey: ['instance', endpoint, pk, params, pathParams],
     queryFn: async () => {
@@ -62,6 +64,7 @@ export function useInstance<T = any>({
           params: params
         })
         .then((response) => {
+          setRequestStatus(response.status);
           switch (response.status) {
             case 200:
               setInstance(response.data);
@@ -72,8 +75,9 @@ export function useInstance<T = any>({
           }
         })
         .catch((error) => {
+          setRequestStatus(error.response?.status || 0);
           setInstance(defaultValue);
-          console.error(`Error fetching instance ${url}:`, error);
+          console.error(`ERR: Error fetching instance ${url}:`, error);
 
           if (throwError) throw error;
 
@@ -89,5 +93,5 @@ export function useInstance<T = any>({
     instanceQuery.refetch();
   }, []);
 
-  return { instance, refreshInstance, instanceQuery };
+  return { instance, refreshInstance, instanceQuery, requestStatus };
 }

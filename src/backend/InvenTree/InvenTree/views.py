@@ -614,7 +614,7 @@ class AppearanceSelectView(RedirectView):
         """Get current user color theme."""
         try:
             user_theme = common_models.ColorTheme.objects.filter(
-                user=self.request.user
+                user_obj=self.request.user
             ).get()
         except common_models.ColorTheme.DoesNotExist:
             user_theme = None
@@ -631,7 +631,7 @@ class AppearanceSelectView(RedirectView):
         # Create theme entry if user did not select one yet
         if not user_theme:
             user_theme = common_models.ColorTheme()
-            user_theme.user = request.user
+            user_theme.user_obj = request.user
 
         if theme:
             try:

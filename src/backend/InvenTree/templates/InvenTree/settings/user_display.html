@@ -41,7 +41,7 @@
             <div class='form-group input-group mb-3'>
                 <select id='theme' name='theme' class='select form-control'>
                     {% get_available_themes as themes %}
-                    {% get_user_color_theme request.user.username as user_theme %}
+                    {% get_user_color_theme request.user as user_theme %}
                     {% for theme in themes %}
                     <option value='{{ theme.key }}'{% if theme.key == user_theme %} selected{% endif %}>{{ theme.name }}</option>
                     {% endfor %}
