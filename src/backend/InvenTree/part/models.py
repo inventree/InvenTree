@@ -3288,6 +3288,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
     class Meta:
         """Metaclass providing extra model definition."""
 
+        verbose_name = _('Part Sale Price Break')
         unique_together = ('part', 'quantity')
 
     @staticmethod
@@ -3395,6 +3396,11 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     To enable generation of unique lookup-keys for each test, there are some validation tests
     run on the model (refer to the validate_unique function).
     """
+
+    class Meta:
+        """Metaclass options for the PartTestTemplate model."""
+
+        verbose_name = _('Part Test Template')
 
     def __str__(self):
         """Format a string representation of this PartTestTemplate."""
@@ -3555,6 +3561,11 @@ class PartParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
         choices: List of valid choices for the parameter [string]
     """
 
+    class Meta:
+        """Metaclass options for the PartParameterTemplate model."""
+
+        verbose_name = _('Part Parameter Template')
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the PartParameterTemplate model."""
@@ -3699,6 +3710,7 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
     class Meta:
         """Metaclass providing extra model definition."""
 
+        verbose_name = _('Part Parameter')
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
@@ -3841,8 +3853,15 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
                        category
     """
 
+    @staticmethod
+    def get_api_url():
+        """Return the API endpoint URL associated with the PartCategoryParameterTemplate model."""
+        return reverse('api-part-category-parameter-list')
+
     class Meta:
         """Metaclass providing extra model definition."""
+
+        verbose_name = _('Part Category Parameter Template')
 
         constraints = [
             UniqueConstraint(

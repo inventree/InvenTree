@@ -116,6 +116,11 @@ class BaseURLValidator(URLValidator):
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
+    class Meta:
+        """Class options for the ProjectCode model."""
+
+        verbose_name = _('Project Code')
+
     @staticmethod
     def get_api_url():
         """Return the API URL for this model."""
@@ -3047,6 +3052,11 @@ class CustomUnit(models.Model):
     Refer to the pint documentation for further information on unit definitions.
     https://pint.readthedocs.io/en/stable/advanced/defining.html
     """
+
+    class Meta:
+        """Class meta options."""
+
+        verbose_name = _('Custom Unit')
 
     def fmt_string(self):
         """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'."""

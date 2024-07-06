@@ -196,6 +196,13 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/user/:pk/',
     api_endpoint: ApiEndpoints.user_list
   },
+  importsession: {
+    label: t`Import Session`,
+    label_multiple: t`Import Sessions`,
+    url_overview: '/import',
+    url_detail: '/import/:pk/',
+    api_endpoint: ApiEndpoints.import_session_list
+  },
   labeltemplate: {
     label: t`Label Template`,
     label_multiple: t`Label Templates`,
