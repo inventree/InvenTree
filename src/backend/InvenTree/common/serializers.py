@@ -14,6 +14,8 @@ from taggit.serializers import TagListSerializerField
 
 import common.models as common_models
 import common.validators
+from importer.mixins import DataImportExportSerializerMixin
+from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
 from InvenTree.helpers_model import construct_absolute_url
 from InvenTree.serializers import (
@@ -293,7 +295,8 @@ class NotesImageSerializer(InvenTreeModelSerializer):
     image = InvenTreeImageSerializerField(required=True)
 
 
-class ProjectCodeSerializer(InvenTreeModelSerializer):
+@register_importer()
+class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """Serializer for the ProjectCode model."""
 
     class Meta:
@@ -341,7 +344,8 @@ class ContentTypeSerializer(serializers.Serializer):
         return obj.app_label in plugin_registry.installed_apps
 
 
-class CustomUnitSerializer(InvenTreeModelSerializer):
+@register_importer()
+class CustomUnitSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
     """DRF serializer for CustomUnit model."""
 
     class Meta:

@@ -1,13 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Divider,
-  Grid,
-  LoadingOverlay,
-  Skeleton,
-  Stack,
-  Table
-} from '@mantine/core';
+import { Alert, Grid, Skeleton, Stack, Table } from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -31,7 +23,7 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -54,6 +46,7 @@ import {
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -105,7 +98,8 @@ export default function PartDetail() {
   const {
     instance: part,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.part_list,
     pk: id,
@@ -832,33 +826,34 @@ export default function PartDetail() {
       {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <NavigationTree
-          title={t`Part Categories`}
-          modelType={ModelType.partcategory}
-          endpoint={ApiEndpoints.category_tree}
-          opened={treeOpen}
-          onClose={() => {
-            setTreeOpen(false);
-          }}
-          selectedId={part?.category}
-        />
-        <PageDetail
-          title={t`Part` + ': ' + part.full_name}
-          subtitle={part.description}
-          imageUrl={part.image}
-          badges={badges}
-          breadcrumbs={breadcrumbs}
-          breadcrumbAction={() => {
-            setTreeOpen(true);
-          }}
-          actions={partActions}
-        />
-        <PanelGroup pageKey="part" panels={partPanels} />
-        {transferStockItems.modal}
-        {countStockItems.modal}
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <NavigationTree
+            title={t`Part Categories`}
+            modelType={ModelType.partcategory}
+            endpoint={ApiEndpoints.category_tree}
+            opened={treeOpen}
+            onClose={() => {
+              setTreeOpen(false);
+            }}
+            selectedId={part?.category}
+          />
+          <PageDetail
+            title={t`Part` + ': ' + part.full_name}
+            subtitle={part.description}
+            imageUrl={part.image}
+            badges={badges}
+            breadcrumbs={breadcrumbs}
+            breadcrumbAction={() => {
+              setTreeOpen(true);
+            }}
+            actions={partActions}
+          />
+          <PanelGroup pageKey="part" panels={partPanels} />
+          {transferStockItems.modal}
+          {countStockItems.modal}
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

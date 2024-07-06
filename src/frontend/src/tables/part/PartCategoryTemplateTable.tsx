@@ -147,7 +147,8 @@ export default function PartCategoryTemplateTable({}: {}) {
         props={{
           rowActions: rowActions,
           tableFilters: tableFilters,
-          tableActions: tableActions
+          tableActions: tableActions,
+          enableDownload: true
         }}
       />
     </>

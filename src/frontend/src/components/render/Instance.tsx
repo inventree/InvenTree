@@ -1,9 +1,12 @@
 import { t } from '@lingui/macro';
-import { Alert, Anchor, Group, Space, Text } from '@mantine/core';
+import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback } from 'react';
 
+import { api } from '../../App';
 import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
+import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
 import { RenderBuildLine, RenderBuildOrder } from './Build';
 import {
@@ -13,7 +16,8 @@ import {
   RenderManufacturerPart,
   RenderSupplierPart
 } from './Company';
-import { RenderProjectCode } from './Generic';
+import { RenderImportSession, RenderProjectCode } from './Generic';
+import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
@@ -75,6 +79,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,
   [ModelType.user]: RenderUser,
+  [ModelType.importsession]: RenderImportSession,
   [ModelType.reporttemplate]: RenderReportTemplate,
   [ModelType.labeltemplate]: RenderLabelTemplate,
   [ModelType.pluginconfig]: RenderPlugin
@@ -101,6 +106,36 @@ export function RenderInstance(props: RenderInstanceProps): ReactNode {
   }
 
   return <RenderComponent {...props} />;
+}
+
+export function RenderRemoteInstance({
+  model,
+  pk
+}: {
+  model: ModelType;
+  pk: number;
+}): ReactNode {
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ['model', model, pk],
+    queryFn: async () => {
+      const url = apiUrl(ModelInformationDict[model].api_endpoint, pk);
+
+      return api
+        .get(url)
+        .then((response) => response.data)
+        .catch(() => null);
+    }
+  });
+
+  if (isLoading || isFetching) {
+    return <Skeleton />;
+  }
+
+  if (!data) {
+    return <Text>${pk}</Text>;
+  }
+
+  return <RenderInstance model={model} instance={data} />;
 }
 
 /**

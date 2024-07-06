@@ -34,6 +34,8 @@ import part.tasks
 import stock.models
 import users.models
 from build.status_codes import BuildStatusGroups
+from importer.mixins import DataImportExportSerializerMixin
+from importer.registry import register_importer
 from InvenTree.tasks import offload_task
 
 from .models import (
@@ -57,7 +59,10 @@ from .models import (
 logger = logging.getLogger('inventree')
 
 
-class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class CategorySerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for PartCategory."""
 
     class Meta:
@@ -82,6 +87,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'icon',
             'parent_default_location',
         ]
+        read_only_fields = ['level', 'pathstring']
 
     def __init__(self, *args, **kwargs):
         """Optionally add or remove extra fields."""
@@ -90,7 +96,7 @@ class CategorySerializer(InvenTree.serializers.InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if not path_detail:
-            self.fields.pop('path')
+            self.fields.pop('path', None)
 
     def get_starred(self, category) -> bool:
         """Return True if the category is directly "starred" by the current user."""
@@ -153,7 +159,10 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset.annotate(subcategories=part.filters.annotate_sub_categories())
 
 
-class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class PartTestTemplateSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for the PartTestTemplate class."""
 
     class Meta:
@@ -188,7 +197,10 @@ class PartTestTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer)
         return queryset.annotate(results=SubqueryCount('test_results'))
 
 
-class PartSalePriceSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class PartSalePriceSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for sale prices for Part model."""
 
     class Meta:
@@ -253,7 +265,10 @@ class PartThumbSerializerUpdate(InvenTree.serializers.InvenTreeModelSerializer):
     image = InvenTree.serializers.InvenTreeAttachmentSerializerField(required=True)
 
 
-class PartParameterTemplateSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class PartParameterTemplateSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """JSON serializer for the PartParameterTemplate model."""
 
     class Meta:
@@ -314,8 +329,8 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if not pricing:
-            self.fields.pop('pricing_min')
-            self.fields.pop('pricing_max')
+            self.fields.pop('pricing_min', None)
+            self.fields.pop('pricing_max', None)
 
     category_default_location = serializers.IntegerField(read_only=True)
 
@@ -331,7 +346,10 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     )
 
 
-class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class PartParameterSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """JSON serializers for the PartParameter model."""
 
     class Meta:
@@ -359,10 +377,10 @@ class PartParameterSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if not template_detail:
-            self.fields.pop('template_detail')
+            self.fields.pop('template_detail', None)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
     template_detail = PartParameterTemplateSerializer(
@@ -573,7 +591,9 @@ class InitialSupplierSerializer(serializers.Serializer):
         return data
 
 
+@register_importer()
 class PartSerializer(
+    DataImportExportSerializerMixin,
     InvenTree.serializers.NotesFieldMixin,
     InvenTree.serializers.RemoteImageMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
@@ -595,6 +615,7 @@ class PartSerializer(
             'category',
             'category_detail',
             'category_path',
+            'category_name',
             'component',
             'creation_date',
             'creation_user',
@@ -672,13 +693,13 @@ class PartSerializer(
         super().__init__(*args, **kwargs)
 
         if not category_detail:
-            self.fields.pop('category_detail')
+            self.fields.pop('category_detail', None)
 
         if not parameters:
-            self.fields.pop('parameters')
+            self.fields.pop('parameters', None)
 
         if not path_detail:
-            self.fields.pop('category_path')
+            self.fields.pop('category_path', None)
 
         if not create:
             # These fields are only used for the LIST API endpoint
@@ -686,12 +707,12 @@ class PartSerializer(
                 # Fields required for certain operations, but are not part of the model
                 if f in ['remote_image', 'existing_image']:
                     continue
-                self.fields.pop(f)
+                self.fields.pop(f, None)
 
         if not pricing:
-            self.fields.pop('pricing_min')
-            self.fields.pop('pricing_max')
-            self.fields.pop('pricing_updated')
+            self.fields.pop('pricing_min', None)
+            self.fields.pop('pricing_max', None)
+            self.fields.pop('pricing_updated', None)
 
     def get_api_url(self):
         """Return the API url associated with this serializer."""
@@ -810,6 +831,10 @@ class PartSerializer(
         child=serializers.DictField(), source='category.get_path', read_only=True
     )
 
+    category_name = serializers.CharField(
+        source='category.name', read_only=True, label=_('Category Name')
+    )
+
     responsible = serializers.PrimaryKeyRelatedField(
         queryset=users.models.Owner.objects.all(),
         required=False,
@@ -824,8 +849,8 @@ class PartSerializer(
     # Annotated fields
     allocated_to_build_orders = serializers.FloatField(read_only=True)
     allocated_to_sales_orders = serializers.FloatField(read_only=True)
-    building = serializers.FloatField(read_only=True)
-    in_stock = serializers.FloatField(read_only=True)
+    building = serializers.FloatField(read_only=True, label=_('Building'))
+    in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))
     ordering = serializers.FloatField(read_only=True, label=_('On Order'))
     required_for_build_orders = serializers.IntegerField(read_only=True)
     required_for_sales_orders = serializers.IntegerField(read_only=True)
@@ -1413,7 +1438,10 @@ class BomItemSubstituteSerializer(InvenTree.serializers.InvenTreeModelSerializer
     )
 
 
-class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+@register_importer()
+class BomItemSerializer(
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+):
     """Serializer for BomItem object."""
 
     class Meta:
@@ -1459,23 +1487,23 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         - This saves a bunch of database requests
         """
         part_detail = kwargs.pop('part_detail', False)
-        sub_part_detail = kwargs.pop('sub_part_detail', False)
+        sub_part_detail = kwargs.pop('sub_part_detail', True)
         pricing = kwargs.pop('pricing', True)
 
         super().__init__(*args, **kwargs)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if not sub_part_detail:
-            self.fields.pop('sub_part_detail')
+            self.fields.pop('sub_part_detail', None)
 
         if not pricing:
-            self.fields.pop('pricing_min')
-            self.fields.pop('pricing_max')
-            self.fields.pop('pricing_min_total')
-            self.fields.pop('pricing_max_total')
-            self.fields.pop('pricing_updated')
+            self.fields.pop('pricing_min', None)
+            self.fields.pop('pricing_max', None)
+            self.fields.pop('pricing_min_total', None)
+            self.fields.pop('pricing_max_total', None)
+            self.fields.pop('pricing_updated', None)
 
     quantity = InvenTree.serializers.InvenTreeDecimalField(required=True)
 
@@ -1680,8 +1708,9 @@ class BomItemSerializer(InvenTree.serializers.InvenTreeModelSerializer):
         return queryset
 
 
+@register_importer()
 class CategoryParameterTemplateSerializer(
-    InvenTree.serializers.InvenTreeModelSerializer
+    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
 ):
     """Serializer for the PartCategoryParameterTemplate model."""
 
@@ -1772,7 +1801,10 @@ class PartCopyBOMSerializer(serializers.Serializer):
 
 
 class BomImportUploadSerializer(InvenTree.serializers.DataFileUploadSerializer):
-    """Serializer for uploading a file and extracting data from it."""
+    """Serializer for uploading a file and extracting data from it.
+
+    TODO: Delete this entirely once the new importer process is working
+    """
 
     TARGET_MODEL = BomItem
 
@@ -1805,6 +1837,8 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
     """Serializer class for exatracting BOM data from an uploaded file.
 
     The parent class DataFileExtractSerializer does most of the heavy lifting here.
+
+    TODO: Delete this entirely once the new importer process is working
     """
 
     TARGET_MODEL = BomItem
@@ -1892,7 +1926,9 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
 class BomImportSubmitSerializer(serializers.Serializer):
     """Serializer for uploading a BOM against a specified part.
 
-    A "BOM" is a set of BomItem objects which are to be validated together as a set
+    A "BOM" is a set of BomItem objects which are to be validated together as a set.
+
+    TODO: Delete this entirely once the new importer process is working
     """
 
     items = BomItemSerializer(many=True, required=True)

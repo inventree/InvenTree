@@ -64,6 +64,11 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         name: 'structural',
         label: t`Structural`,
         description: t`Show structural categories`
+      },
+      {
+        name: 'starred',
+        label: t`Subscribed`,
+        description: t`Show categories to which the user is subscribed`
       }
     ];
   }, []);
