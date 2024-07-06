@@ -132,9 +132,7 @@ class LabelPrinterBaseDriver(BaseDriver):
             item: The item to render the label with
             request: The HTTP request object which triggered this print job
         """
-        label.object_to_print = item
-        response = self.machine_plugin.render_to_pdf(label, request, **kwargs)
-        label.object_to_print = None
+        response = self.machine_plugin.render_to_pdf(label, item, request, **kwargs)
         return response
 
     def render_to_pdf_data(
@@ -163,9 +161,7 @@ class LabelPrinterBaseDriver(BaseDriver):
             item: The item to render the label with
             request: The HTTP request object which triggered this print job
         """
-        label.object_to_print = item
-        html = self.machine_plugin.render_to_html(label, request, **kwargs)
-        label.object_to_print = None
+        html = self.machine_plugin.render_to_html(label, item, request, **kwargs)
         return html
 
     def render_to_png(
@@ -186,9 +182,7 @@ class LabelPrinterBaseDriver(BaseDriver):
             pdf2image_kwargs (dict): Additional keyword arguments to pass to the
                 [`pdf2image.convert_from_bytes`](https://pdf2image.readthedocs.io/en/latest/reference.html#pdf2image.pdf2image.convert_from_bytes) method (optional)
         """
-        label.object_to_print = item
-        png = self.machine_plugin.render_to_png(label, request, **kwargs)
-        label.object_to_print = None
+        png = self.machine_plugin.render_to_png(label, item, request, **kwargs)
         return png
 
     required_overrides = [[print_label, print_labels]]

@@ -44,6 +44,9 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(blank=True, max_length=254)),
                 ('role', models.CharField(blank=True, max_length=100)),
             ],
+            options={
+                'verbose_name': 'Contact',
+            }
         ),
         migrations.CreateModel(
             name='SupplierPart',
@@ -75,6 +78,7 @@ class Migration(migrations.Migration):
                 ('part', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pricebreaks', to='company.SupplierPart')),
             ],
             options={
+                'verbose_name': 'Supplier Price Break',
                 'db_table': 'part_supplierpricebreak',
             },
         ),
