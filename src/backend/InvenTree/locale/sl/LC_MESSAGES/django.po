@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-06 12:22+0000\n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-06 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -1498,16 +1498,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Referenca naloga izgradnje"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "Referenca"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3965
 msgid "Part IPN"
@@ -4038,10 +4034,8 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "Sent to customer"
 msgid "Is customer"
-msgstr "Posalno stranki"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
@@ -4845,10 +4839,8 @@ msgid "Placed"
 msgstr "Postavljeno"
 
 #: importer/mixins.py:263
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid export format"
-msgstr "Neveljavna vrednost za prestarost"
+msgstr ""
 
 #: importer/models.py:56
 msgid "Timestamp"
@@ -4891,10 +4883,8 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Uporabnik nima dovoljenja pogleda tega modela"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
@@ -4933,10 +4923,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported data file format"
-msgstr "Nepodprta vrsta datotek"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4955,10 +4943,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Niso bile podane vrste s podatki"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4969,10 +4955,8 @@ msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "This build output has already been completed"
 msgid "Row has already been completed"
-msgstr "Ta sestava je že zaključena"
+msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
@@ -4983,20 +4967,16 @@ msgid "Mapping Columns"
 msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Importing Data"
-msgstr "Datom končanja"
+msgstr ""
 
 #: importer/status_codes.py:16
 msgid "Processing Data"
 msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Prenos slike presegel največjo velikost"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -5011,10 +4991,8 @@ msgid "Data file contains too many rows"
 msgstr ""
 
 #: importer/validators.py:49
-#, fuzzy
-#| msgid "Metadata must be a python dict object"
 msgid "Value must be a valid dictionary object"
-msgstr "Metapodatki morajo biti objekt tipa python dict"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
@@ -5392,10 +5370,8 @@ msgid "Purchase Order Extra Line"
 msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Line Item"
-msgstr "Referenca dobavnica"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5426,10 +5402,8 @@ msgid "Shipped quantity"
 msgstr ""
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Shipment"
-msgstr "Referenca dobavnica"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5485,16 +5459,12 @@ msgid "Shipment has no allocated stock items"
 msgstr ""
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Extra Line"
-msgstr "Referenca dobavnica"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Allocation"
-msgstr "Referenca dobavnica"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -9491,20 +9461,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock Item Tracking"
-msgstr "Postavka zaloge"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr ""
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock Item Test Result"
-msgstr "Postavka zaloge ustvarjena"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9619,10 +9585,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Parent stock item"
-msgstr "Izvorna postavka zaloge"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -14825,3 +14789,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
