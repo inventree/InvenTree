@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-06 12:22+0000\n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-06 14:57\n"
 "Last-Translator: \n"
 "Language-Team: Latvian\n"
 "Language: lv_LV\n"
@@ -4883,10 +4883,8 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Lietotājam nav atļaujas, lai apskatītu šo modeli"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
@@ -4945,10 +4943,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No value provided"
 msgid "No rows provided"
-msgstr "Nav norādīta vērtība"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4979,10 +4975,8 @@ msgid "Processing Data"
 msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Attēla lejupielāde pārsniedz maksimālo izmēru"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -14795,3 +14789,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
