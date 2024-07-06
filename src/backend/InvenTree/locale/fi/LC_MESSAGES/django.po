@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-06 12:22+0000\n"
-"PO-Revision-Date: 2024-07-05 14:57\n"
+"PO-Revision-Date: 2024-07-06 14:55\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -1485,10 +1485,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Supplier Part Number"
-msgstr "Valmistajan osanumero"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1500,16 +1498,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Order reference"
 msgid "Build Reference"
-msgstr "Tilauksen viite"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Order reference"
 msgid "BOM Reference"
-msgstr "Tilauksen viite"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3965
 msgid "Part IPN"
@@ -1561,10 +1555,8 @@ msgid "Available Variant Stock"
 msgstr ""
 
 #: build/serializers.py:1226
-#, fuzzy
-#| msgid "Available"
 msgid "Total Available Stock"
-msgstr "Saatavilla"
+msgstr ""
 
 #: build/serializers.py:1227 part/serializers.py:859
 msgid "External Stock"
@@ -3712,10 +3704,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3059
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom Unit"
-msgstr "Asiakas"
+msgstr ""
 
 #: common/models.py:3080
 msgid "Unit symbol must be unique"
@@ -4044,30 +4034,24 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "is customer"
 msgid "Is customer"
-msgstr "on asiakas"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
 msgstr ""
 
 #: company/models.py:174
-#, fuzzy
-#| msgid "is supplier"
 msgid "Is supplier"
-msgstr "on toimittaja"
+msgstr ""
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
 msgstr ""
 
 #: company/models.py:180
-#, fuzzy
-#| msgid "is manufacturer"
 msgid "Is manufacturer"
-msgstr "on valmistaja"
+msgstr ""
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4228,10 +4212,8 @@ msgid "Manufacturer part description"
 msgstr ""
 
 #: company/models.py:569
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Manufacturer Part Parameter"
-msgstr "Valmistajan osanumero"
+msgstr ""
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4395,10 +4377,8 @@ msgid "Default currency used for this supplier"
 msgstr ""
 
 #: company/serializers.py:210
-#, fuzzy
-#| msgid "Company name"
 msgid "Company Name"
-msgstr "Yrityksen nimi"
+msgstr ""
 
 #: company/serializers.py:384 part/admin.py:126 part/serializers.py:852
 #: part/templates/part/part_base.html:197
@@ -4867,20 +4847,16 @@ msgid "Timestamp"
 msgstr ""
 
 #: importer/models.py:61
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Data file to import"
-msgstr "Valitse lähetettävä tiedosto"
+msgstr ""
 
 #: importer/models.py:70 templates/js/translated/tables.js:558
 msgid "Columns"
 msgstr ""
 
 #: importer/models.py:81
-#, fuzzy
-#| msgid "Server status"
 msgid "Import status"
-msgstr "Palvelimen tila"
+msgstr ""
 
 #: importer/models.py:91
 msgid "Field Defaults"
@@ -4907,20 +4883,16 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Käyttäjän oikeudet eivät riitä kohteen tarkastelemiseen"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
 msgstr ""
 
 #: importer/models.py:381 importer/models.py:452
-#, fuzzy
-#| msgid "Active Sessions"
 msgid "Import Session"
-msgstr "Aktiiviset istunnot"
+msgstr ""
 
 #: importer/models.py:385
 msgid "Field"
@@ -4951,10 +4923,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file format: {fmt}"
 msgid "Unsupported data file format"
-msgstr "Tiedostomuotoa ei tueta: {fmt}"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4973,10 +4943,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Datarivejä ei annettu"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4987,10 +4955,8 @@ msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "Some languages are not complete"
 msgid "Row has already been completed"
-msgstr "Jotkin kielet eivät ole valmiita"
+msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
@@ -5009,10 +4975,8 @@ msgid "Processing Data"
 msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Kuvan lataus ylitti enimmäiskoon"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -5027,10 +4991,8 @@ msgid "Data file contains too many rows"
 msgstr ""
 
 #: importer/validators.py:49
-#, fuzzy
-#| msgid "Metadata must be a python dict object"
 msgid "Value must be a valid dictionary object"
-msgstr "Metatietojen tulee olla python dict objekti"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
@@ -5501,10 +5463,8 @@ msgid "Sales Order Extra Line"
 msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Delete location"
 msgid "Sales Order Allocation"
-msgstr "Poista sijainti"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -5658,10 +5618,8 @@ msgid "Internal Part Number"
 msgstr ""
 
 #: order/serializers.py:530
-#, fuzzy
-#| msgid "Internal Prices"
 msgid "Internal Part Name"
-msgstr "Sisäiset hinnat"
+msgstr ""
 
 #: order/serializers.py:546
 msgid "Supplier part must be specified"
@@ -9503,20 +9461,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock Item Tracking"
-msgstr "Varastotuote"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr ""
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock Item Test Result"
-msgstr "Varastotuote luotu"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9653,10 +9607,8 @@ msgid "Child Items"
 msgstr ""
 
 #: stock/serializers.py:598
-#, fuzzy
-#| msgid "Tracking Number"
 msgid "Tracking Items"
-msgstr "Seurantakoodi"
+msgstr ""
 
 #: stock/serializers.py:604
 msgid "Purchase price of this stock item, per unit or pack"
@@ -14837,3 +14789,4 @@ msgstr "Oikeus muokata kohteita"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
+
