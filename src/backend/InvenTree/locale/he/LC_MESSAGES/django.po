@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-06 12:22+0000\n"
-"PO-Revision-Date: 2024-07-05 14:57\n"
+"PO-Revision-Date: 2024-07-06 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -1485,10 +1485,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Serial Numbers"
 msgid "Supplier Part Number"
-msgstr "מספרים סידוריים"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1500,16 +1498,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Reference"
 msgid "Build Reference"
-msgstr "מקט"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "מקט"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3965
 msgid "Part IPN"
@@ -4040,10 +4034,8 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "Sent to customer"
 msgid "Is customer"
-msgstr "נשלח ללקוח"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
@@ -14797,3 +14789,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
