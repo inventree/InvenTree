@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-06 12:22+0000\n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-06 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Language: fa_IR\n"
@@ -1498,16 +1498,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Build Reference"
-msgstr "مرجع سفارش فروش"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "BOM Reference"
-msgstr "مرجع سفارش فروش"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3965
 msgid "Part IPN"
@@ -4887,10 +4883,8 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "کاربر سطح دسترسی نمایش این مدل را ندارد"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
@@ -4929,10 +4923,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported data file format"
-msgstr "این نوع فایل پشتیبانی نمی‌شود"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4951,10 +4943,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "هیچ ردیف داده ای ارائه نشده است"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -5380,10 +5370,8 @@ msgid "Purchase Order Extra Line"
 msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Line Item"
-msgstr "مرجع سفارش فروش"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5414,10 +5402,8 @@ msgid "Shipped quantity"
 msgstr ""
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Shipment"
-msgstr "مرجع سفارش فروش"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5473,16 +5459,12 @@ msgid "Shipment has no allocated stock items"
 msgstr ""
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Extra Line"
-msgstr "مرجع سفارش فروش"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Allocation"
-msgstr "مرجع سفارش فروش"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -14807,3 +14789,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
