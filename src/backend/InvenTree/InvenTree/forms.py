@@ -190,7 +190,7 @@ class CustomSignupForm(SignupForm):
 
         # check for two password fields
         if not get_global_setting('LOGIN_SIGNUP_PWD_TWICE'):
-            self.fields.pop('password2')
+            self.fields.pop('password2', None)
 
         # reorder fields
         set_form_field_order(

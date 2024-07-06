@@ -104,7 +104,7 @@ class Build(
         }
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': generate_next_build_reference(),

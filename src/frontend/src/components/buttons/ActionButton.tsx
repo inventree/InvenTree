@@ -43,7 +43,7 @@ export function ActionButton(props: ActionButtonProps) {
             props.tooltip ?? props.text ?? ''
           )}`}
           onClick={props.onClick ?? notYetImplemented}
-          variant={props.variant ?? 'light'}
+          variant={props.variant ?? 'transparent'}
         >
           <Group gap="xs" wrap="nowrap">
             {props.icon}
