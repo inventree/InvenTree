@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='part',
             name='revision_of',
-            field=models.ForeignKey(help_text='Is this part a revision of another part?', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='revisions', to='part.part', verbose_name='Revision Of'),
+            field=models.ForeignKey(help_text='Is this part a revision of another part?', null=True, blank=True, on_delete=django.db.models.deletion.SET_NULL, related_name='revisions', to='part.part', verbose_name='Revision Of'),
         ),
     ]
