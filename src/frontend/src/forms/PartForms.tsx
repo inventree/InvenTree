@@ -57,7 +57,9 @@ export function usePartFields({
       fields.initial_stock = {
         icon: <IconPackages />,
         children: {
-          quantity: {},
+          quantity: {
+            value: 0
+          },
           location: {}
         }
       };
