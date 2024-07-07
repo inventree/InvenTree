@@ -46,6 +46,7 @@ export function usePartFields({
       purchaseable: {},
       salable: {},
       virtual: {},
+      locked: {},
       active: {}
     };
 
@@ -56,7 +57,9 @@ export function usePartFields({
       fields.initial_stock = {
         icon: <IconPackages />,
         children: {
-          quantity: {},
+          quantity: {
+            value: 0
+          },
           location: {}
         }
       };

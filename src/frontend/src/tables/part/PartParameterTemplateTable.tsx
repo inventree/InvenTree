@@ -157,7 +157,8 @@ export default function PartParameterTemplateTable() {
         props={{
           rowActions: rowActions,
           tableFilters: tableFilters,
-          tableActions: tableActions
+          tableActions: tableActions,
+          enableDownload: true
         }}
       />
     </>

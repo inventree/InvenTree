@@ -143,6 +143,7 @@ export function ContactTable({
         tableState={table}
         columns={columns}
         props={{
+          enableDownload: true,
           rowActions: rowActions,
           tableActions: tableActions,
           params: {

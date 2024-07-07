@@ -77,6 +77,43 @@ class TestParams(TestCase):
         param = prt.get_parameter('Not a parameter')
         self.assertIsNone(param)
 
+    def test_locked_part(self):
+        """Test parameter editing for a locked part."""
+        part = Part.objects.create(
+            name='Test Part 3',
+            description='A part for testing',
+            category=PartCategory.objects.first(),
+            IPN='TEST-PART',
+        )
+
+        parameter = PartParameter.objects.create(
+            part=part, template=PartParameterTemplate.objects.first(), data='123'
+        )
+
+        # Lock the part
+        part.locked = True
+        part.save()
+
+        # Attempt to edit the parameter
+        with self.assertRaises(django_exceptions.ValidationError):
+            parameter.data = '456'
+            parameter.save()
+
+        # Attempt to delete the parameter
+        with self.assertRaises(django_exceptions.ValidationError):
+            parameter.delete()
+
+        # Unlock the part
+        part.locked = False
+        part.save()
+
+        # Now we can edit the parameter
+        parameter.data = '456'
+        parameter.save()
+
+        # And we can delete the parameter
+        parameter.delete()
+
 
 class TestCategoryTemplates(TransactionTestCase):
     """Test class for PartCategoryParameterTemplate model."""

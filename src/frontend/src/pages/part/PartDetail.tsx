@@ -1,13 +1,5 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  Divider,
-  Grid,
-  LoadingOverlay,
-  Skeleton,
-  Stack,
-  Table
-} from '@mantine/core';
+import { Alert, Grid, Skeleton, Stack, Table } from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -31,7 +23,7 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -42,6 +34,7 @@ import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import { PartIcons } from '../../components/details/PartIcons';
 import NotesEditor from '../../components/editors/NotesEditor';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -54,6 +47,7 @@ import {
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -105,7 +99,8 @@ export default function PartDetail() {
   const {
     instance: part,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.part_list,
     pk: id,
@@ -265,6 +260,11 @@ export default function PartDetail() {
         type: 'boolean',
         name: 'active',
         label: t`Active`
+      },
+      {
+        type: 'boolean',
+        name: 'locked',
+        label: t`Locked`
       },
       {
         type: 'boolean',
@@ -491,7 +491,12 @@ export default function PartDetail() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconList />,
-        content: <PartParameterTable partId={id ?? -1} />
+        content: (
+          <PartParameterTable
+            partId={id ?? -1}
+            partLocked={part?.locked == true}
+          />
+        )
       },
       {
         name: 'stock',
@@ -526,7 +531,9 @@ export default function PartDetail() {
         label: t`Bill of Materials`,
         icon: <IconListTree />,
         hidden: !part.assembly,
-        content: <BomTable partId={part.pk ?? -1} />
+        content: (
+          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+        )
       },
       {
         name: 'builds',
@@ -688,6 +695,12 @@ export default function PartDetail() {
         key="in_production"
       />,
       <DetailsBadge
+        label={t`Locked`}
+        color="black"
+        visible={part.locked}
+        key="locked"
+      />,
+      <DetailsBadge
         label={t`Inactive`}
         color="red"
         visible={part.active == false}
@@ -706,12 +719,34 @@ export default function PartDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const createPartFields = usePartFields({ create: true });
+
+  const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      ...createPartFields,
+      duplicate: {
+        children: {
+          part: {
+            value: part.pk,
+            hidden: true
+          },
+          copy_image: {},
+          copy_bom: {},
+          copy_notes: {},
+          copy_parameters: {}
+        }
+      }
+    };
+  }, [createPartFields, part]);
+
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
     title: t`Add Part`,
-    fields: partFields,
+    fields: duplicatePartFields,
     initialData: {
-      ...part
+      ...part,
+      active: true,
+      locked: false
     },
     follow: true,
     modelType: ModelType.part
@@ -821,33 +856,34 @@ export default function PartDetail() {
       {duplicatePart.modal}
       {editPart.modal}
       {deletePart.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <NavigationTree
-          title={t`Part Categories`}
-          modelType={ModelType.partcategory}
-          endpoint={ApiEndpoints.category_tree}
-          opened={treeOpen}
-          onClose={() => {
-            setTreeOpen(false);
-          }}
-          selectedId={part?.category}
-        />
-        <PageDetail
-          title={t`Part` + ': ' + part.full_name}
-          subtitle={part.description}
-          imageUrl={part.image}
-          badges={badges}
-          breadcrumbs={breadcrumbs}
-          breadcrumbAction={() => {
-            setTreeOpen(true);
-          }}
-          actions={partActions}
-        />
-        <PanelGroup pageKey="part" panels={partPanels} />
-        {transferStockItems.modal}
-        {countStockItems.modal}
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <NavigationTree
+            title={t`Part Categories`}
+            modelType={ModelType.partcategory}
+            endpoint={ApiEndpoints.category_tree}
+            opened={treeOpen}
+            onClose={() => {
+              setTreeOpen(false);
+            }}
+            selectedId={part?.category}
+          />
+          <PageDetail
+            title={t`Part` + ': ' + part.full_name}
+            subtitle={part.description}
+            imageUrl={part.image}
+            badges={badges}
+            breadcrumbs={breadcrumbs}
+            breadcrumbAction={() => {
+              setTreeOpen(true);
+            }}
+            actions={partActions}
+          />
+          <PanelGroup pageKey="part" panels={partPanels} />
+          {transferStockItems.modal}
+          {countStockItems.modal}
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }
