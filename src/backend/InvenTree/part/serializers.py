@@ -656,6 +656,7 @@ class PartSerializer(
             'purchaseable',
             'revision',
             'revision_of',
+            'revision_count',
             'salable',
             'starred',
             'thumbnail',
@@ -754,6 +755,9 @@ class PartSerializer(
 
         Performing database queries as efficiently as possible, to reduce database trips.
         """
+        # Annotate with the total number of revisions
+        queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
+
         # Annotate with the total number of stock items
         queryset = queryset.annotate(stock_item_count=SubqueryCount('stock_items'))
 
@@ -887,6 +891,7 @@ class PartSerializer(
     required_for_build_orders = serializers.IntegerField(read_only=True)
     required_for_sales_orders = serializers.IntegerField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True, label=_('Stock Items'))
+    revision_count = serializers.IntegerField(read_only=True, label=_('Revisions'))
     suppliers = serializers.IntegerField(read_only=True, label=_('Suppliers'))
     total_in_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
     external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
