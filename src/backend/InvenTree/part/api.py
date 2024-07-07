@@ -1144,6 +1144,8 @@ class PartFilter(rest_filters.FilterSet):
 
     active = rest_filters.BooleanFilter()
 
+    locked = rest_filters.BooleanFilter()
+
     virtual = rest_filters.BooleanFilter()
 
     tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
@@ -1872,6 +1874,14 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
         'pricing_max': 'sub_part__pricing_data__overall_max',
         'pricing_updated': 'sub_part__pricing_data__updated',
     }
+
+    def filter_delete_queryset(self, queryset, request):
+        """Ensure that there are no 'locked' items."""
+        for bom_item in queryset:
+            # Note: Calling check_part_lock may raise a ValidationError
+            bom_item.check_part_lock(bom_item.part)
+
+        return super().filter_delete_queryset(queryset, request)
 
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):

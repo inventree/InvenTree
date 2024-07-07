@@ -377,6 +377,7 @@ class Part(
         purchaseable: Can this part be purchased from suppliers?
         trackable: Trackable parts can have unique serial numbers assigned, etc, etc
         active: Is this part active? Parts are deactivated instead of being deleted
+        locked: This part is locked and cannot be edited
         virtual: Is this part "virtual"? e.g. a software product or similar
         notes: Additional notes field for this part
         creation_date: Date that this part was added to the database
@@ -481,6 +482,9 @@ class Part(
         - The part is still active
         - The part is used in a BOM for a different part.
         """
+        if self.locked:
+            raise ValidationError(_('Cannot delete this part as it is locked'))
+
         if self.active:
             raise ValidationError(_('Cannot delete this part as it is still active'))
 
@@ -1079,6 +1083,12 @@ class Part(
 
     active = models.BooleanField(
         default=True, verbose_name=_('Active'), help_text=_('Is this part active?')
+    )
+
+    locked = models.BooleanField(
+        default=False,
+        verbose_name=_('Locked'),
+        help_text=_('Locked parts cannot be edited'),
     )
 
     virtual = models.BooleanField(
@@ -3723,10 +3733,28 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
         """String representation of a PartParameter (used in the admin interface)."""
         return f'{self.part.full_name} : {self.template.name} = {self.data} ({self.template.units})'
 
+    def delete(self):
+        """Custom delete handler for the PartParameter model.
+
+        - Check if the parameter can be deleted
+        """
+        self.check_part_lock()
+        super().delete()
+
+    def check_part_lock(self):
+        """Check if the referenced part is locked."""
+        # TODO: Potentially control this behaviour via a global setting
+
+        if self.part.locked:
+            raise ValidationError(_('Parameter cannot be modified - part is locked'))
+
     def save(self, *args, **kwargs):
         """Custom save method for the PartParameter model."""
         # Validate the PartParameter before saving
         self.calculate_numeric_value()
+
+        # Check if the part is locked
+        self.check_part_lock()
 
         # Convert 'boolean' values to 'True' / 'False'
         if self.template.checkbox:
@@ -4037,14 +4065,52 @@ class BomItem(
         """
         return Q(part__in=self.get_valid_parts_for_allocation())
 
+    def delete(self):
+        """Check if this item can be deleted."""
+        self.check_part_lock(self.part)
+        super().delete()
+
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a BomItem instance."""
         self.clean()
+
+        self.check_part_lock(self.part)
+
+        # Check if the part was changed
+        deltas = self.get_field_deltas()
+
+        if 'part' in deltas:
+            if old_part := deltas['part'].get('old', None):
+                self.check_part_lock(old_part)
 
         # Update the 'validated' field based on checksum calculation
         self.validated = self.is_line_valid
 
         super().save(*args, **kwargs)
+
+    def check_part_lock(self, assembly):
+        """When editing or deleting a BOM item, check if the assembly is locked.
+
+        If locked, raise an exception.
+
+        Arguments:
+            assembly: The assembly part
+
+        Raises:
+            ValidationError: If the assembly is locked
+        """
+        # TODO: Perhaps control this with a global setting?
+
+        msg = _('BOM item cannot be modified - assembly is locked')
+
+        if assembly.locked:
+            raise ValidationError(msg)
+
+        # If this BOM item is inherited, check all variants of the assembly
+        if self.inherited:
+            for part in assembly.get_descendants(include_self=False):
+                if part.locked:
+                    raise ValidationError(msg)
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
