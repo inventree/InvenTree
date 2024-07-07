@@ -2,7 +2,8 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/macro';
-import { Anchor, Skeleton, Text } from '@mantine/core';
+import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
+import { IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
@@ -19,10 +20,24 @@ import { ProjectCodeHoverCard } from './TableHoverCard';
 // Render a Part instance within a table
 export function PartColumn(part: any, full_name?: boolean) {
   return part ? (
-    <Thumbnail
-      src={part?.thumbnail ?? part?.image}
-      text={full_name ? part?.full_name : part?.name}
-    />
+    <Group justify="space-between" wrap="nowrap">
+      <Thumbnail
+        src={part?.thumbnail ?? part?.image}
+        text={full_name ? part?.full_name : part?.name}
+      />
+      <Group justify="flex-end" wrap="nowrap" gap="xs">
+        {part?.active == false && (
+          <Tooltip label={t`Part is not active`}>
+            <IconExclamationCircle color="red" size={16} />
+          </Tooltip>
+        )}
+        {part?.locked && (
+          <Tooltip label={t`Part is locked`}>
+            <IconLock size={16} />
+          </Tooltip>
+        )}
+      </Group>
+    </Group>
   ) : (
     <Skeleton />
   );

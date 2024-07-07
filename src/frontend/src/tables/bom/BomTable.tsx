@@ -1,9 +1,10 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { Alert, Group, Stack, Text } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
+  IconLock,
   IconSwitch3
 } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
@@ -56,9 +57,11 @@ function availableStockQuantity(record: any): number {
 
 export function BomTable({
   partId,
+  partLocked,
   params = {}
 }: {
   partId: number;
+  partLocked?: boolean;
   params?: any;
 }) {
   const user = useUserState();
@@ -384,12 +387,15 @@ export function BomTable({
         {
           title: t`Validate BOM Line`,
           color: 'green',
-          hidden: record.validated || !user.hasChangeRole(UserRoles.part),
+          hidden:
+            partLocked ||
+            record.validated ||
+            !user.hasChangeRole(UserRoles.part),
           icon: <IconCircleCheck />,
           onClick: () => validateBomItem(record)
         },
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.part),
+          hidden: partLocked || !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             setSelectedBomItem(record.pk);
             editBomItem.open();
@@ -398,11 +404,11 @@ export function BomTable({
         {
           title: t`Edit Substitutes`,
           color: 'blue',
-          hidden: !user.hasChangeRole(UserRoles.part),
+          hidden: partLocked || !user.hasChangeRole(UserRoles.part),
           icon: <IconSwitch3 />
         },
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.part),
+          hidden: partLocked || !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             setSelectedBomItem(record.pk);
             deleteBomItem.open();
@@ -410,44 +416,56 @@ export function BomTable({
         })
       ];
     },
-    [partId, user]
+    [partId, partLocked, user]
   );
 
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        hidden={!user.hasAddRole(UserRoles.part)}
+        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add BOM Item`}
         onClick={() => newBomItem.open()}
       />
     ];
-  }, [user]);
+  }, [partLocked, user]);
 
   return (
     <>
       {newBomItem.modal}
       {editBomItem.modal}
       {deleteBomItem.modal}
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.bom_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          params: {
-            ...params,
-            part: partId,
-            part_detail: true,
-            sub_part_detail: true
-          },
-          tableActions: tableActions,
-          tableFilters: tableFilters,
-          modelType: ModelType.part,
-          modelField: 'sub_part',
-          rowActions: rowActions,
-          enableSelection: true,
-          enableBulkDelete: true
-        }}
-      />
+      <Stack gap="xs">
+        {partLocked && (
+          <Alert
+            title={t`Part is Locked`}
+            color="red"
+            icon={<IconLock />}
+            p="xs"
+          >
+            <Text>{t`Bill of materials cannot be edited, as the part is locked`}</Text>
+          </Alert>
+        )}
+        <InvenTreeTable
+          url={apiUrl(ApiEndpoints.bom_list)}
+          tableState={table}
+          columns={tableColumns}
+          props={{
+            params: {
+              ...params,
+              part: partId,
+              part_detail: true,
+              sub_part_detail: true
+            },
+            tableActions: tableActions,
+            tableFilters: tableFilters,
+            modelType: ModelType.part,
+            modelField: 'sub_part',
+            rowActions: rowActions,
+            enableSelection: !partLocked,
+            enableBulkDelete: !partLocked
+          }}
+        />
+      </Stack>
     </>
   );
 }

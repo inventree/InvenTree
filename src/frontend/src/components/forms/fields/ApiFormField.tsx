@@ -192,8 +192,8 @@ export function ApiFormField({
   }, [value]);
 
   // Coerce the value to a (stringified) boolean value
-  const booleanValue: string = useMemo(() => {
-    return isTrue(value).toString();
+  const booleanValue: boolean = useMemo(() => {
+    return isTrue(value);
   }, [value]);
 
   // Construct the individual field
@@ -232,13 +232,12 @@ export function ApiFormField({
         return (
           <Switch
             {...reducedDefinition}
-            value={booleanValue}
+            checked={booleanValue}
             ref={ref}
             id={fieldId}
             aria-label={`boolean-field-${field.name}`}
             radius="lg"
             size="sm"
-            checked={isTrue(reducedDefinition.value)}
             error={error?.message}
             onChange={(event) => onChange(event.currentTarget.checked)}
           />

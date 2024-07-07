@@ -262,6 +262,11 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
+        name: 'locked',
+        label: t`Locked`
+      },
+      {
+        type: 'boolean',
         name: 'template',
         label: t`Template Part`
       },
@@ -485,7 +490,12 @@ export default function PartDetail() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconList />,
-        content: <PartParameterTable partId={id ?? -1} />
+        content: (
+          <PartParameterTable
+            partId={id ?? -1}
+            partLocked={part?.locked == true}
+          />
+        )
       },
       {
         name: 'stock',
@@ -520,7 +530,9 @@ export default function PartDetail() {
         label: t`Bill of Materials`,
         icon: <IconListTree />,
         hidden: !part.assembly,
-        content: <BomTable partId={part.pk ?? -1} />
+        content: (
+          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+        )
       },
       {
         name: 'builds',
@@ -680,6 +692,12 @@ export default function PartDetail() {
         color="blue"
         visible={part.building > 0}
         key="in_production"
+      />,
+      <DetailsBadge
+        label={t`Locked`}
+        color="black"
+        visible={part.locked}
+        key="locked"
       />,
       <DetailsBadge
         label={t`Inactive`}
