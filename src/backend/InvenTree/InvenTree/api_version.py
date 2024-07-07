@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 213
+INVENTREE_API_VERSION = 214
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v214 - 2024-07-07 : https://github.com/inventree/InvenTree/pull/7520
+    - Documented pagination fields (no functional changes)
+
 v213 - 2024-07-06 : https://github.com/inventree/InvenTree/pull/7527
     - Adds 'locked' field to Part API
 

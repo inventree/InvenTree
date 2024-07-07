@@ -615,7 +615,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     quantity = serializers.DecimalField(
-        max_digits=15, decimal_places=5, min_value=0, required=True
+        max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
     )
 
     def validate_quantity(self, quantity):
@@ -1249,7 +1249,7 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
     )
 
     quantity = serializers.DecimalField(
-        max_digits=15, decimal_places=5, min_value=0, required=True
+        max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
     )
 
     def validate_quantity(self, quantity):

@@ -57,14 +57,14 @@ class CompanyTest(InvenTreeAPITestCase):
     def test_company_detail(self):
         """Tests for the Company detail endpoint."""
         url = reverse('api-company-detail', kwargs={'pk': self.acme.pk})
-        response = self.get(url)
+        response = self.get(url, expected_code=200)
 
         self.assertEqual(response.data['name'], 'ACME')
 
         # Change the name of the company
         # Note we should not have the correct permissions (yet)
         data = response.data
-        response = self.client.patch(url, data, format='json', expected_code=400)
+        response = self.patch(url, data, expected_code=400)
 
         self.assignRole('company.change')
 
@@ -72,7 +72,10 @@ class CompanyTest(InvenTreeAPITestCase):
         data['name'] = 'ACMOO'
         data['currency'] = 'NZD'
 
-        response = self.client.patch(url, data, format='json', expected_code=200)
+        response = self.patch(url, data, expected_code=200)
+
+        print('PATCH response:')
+        print(response.data)
 
         self.assertEqual(response.data['name'], 'ACMOO')
         self.assertEqual(response.data['currency'], 'NZD')
@@ -396,8 +399,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
 
         # Create manufacturer part
         data = {'part': 1, 'manufacturer': 7, 'MPN': 'MPN_TEST'}
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(url, data, expected_code=201)
         self.assertEqual(response.data['MPN'], 'MPN_TEST')
 
         # Filter by manufacturer
@@ -420,9 +422,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
         # Change the MPN
         data = {'MPN': 'MPN-TEST-123'}
 
-        response = self.client.patch(url, data, format='json')
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.patch(url, data)
         self.assertEqual(response.data['MPN'], 'MPN-TEST-123')
 
     def test_manufacturer_part_search(self):
@@ -459,8 +459,7 @@ class ManufacturerTest(InvenTreeAPITestCase):
             'link': 'https://www.axel-larsson.se/Exego.aspx?p_id=341&ArtNr=0804020E',
         }
 
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.post(url, data)
 
         # Check link is not modified
         self.assertEqual(
