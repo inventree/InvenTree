@@ -200,6 +200,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        name: Checkout Code
         with:
           repository: inventree/schema
           token: ${{ secrets.SCHEMA_PAT }}
@@ -213,8 +214,9 @@ jobs:
           mkdir export/${version}
           mv schema.yml export/${version}/api.yaml
       - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
+        name: Commit schema changes
         with:
-          commit_message: "Update API schema for ${version}"
+          commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
 
   python:
     name: Tests - inventree-python
@@ -267,7 +269,8 @@ jobs:
     continue-on-error: true # continue if a step fails so that coverage gets pushed
     strategy:
       matrix:
-        python_version: [3.9, 3.12]
+        python_version: [3.9]
+        # python_version: [3.9, 3.12]  # Disabled due to requirement issues
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite

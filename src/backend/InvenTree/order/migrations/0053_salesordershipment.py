@@ -23,5 +23,8 @@ class Migration(migrations.Migration):
                 ('checked_by', models.ForeignKey(blank=True, help_text='User who checked this shipment', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL, verbose_name='Checked By')),
                 ('order', models.ForeignKey(help_text='Sales Order', on_delete=django.db.models.deletion.CASCADE, related_name='shipments', to='order.salesorder', verbose_name='Order')),
             ],
+            options={
+                'verbose_name': 'Sales Order Shipment',
+            },
         ),
     ]

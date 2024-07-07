@@ -5,6 +5,7 @@ import {
   IconCpu,
   IconDevicesPc,
   IconExclamationCircle,
+  IconFileUpload,
   IconList,
   IconListDetails,
   IconPackages,
@@ -51,6 +52,10 @@ const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
 
+const ImportSesssionTable = Loadable(
+  lazy(() => import('../../../../tables/settings/ImportSessionTable'))
+);
+
 const ProjectCodeTable = Loadable(
   lazy(() => import('../../../../tables/settings/ProjectCodeTable'))
 );
@@ -85,6 +90,12 @@ export default function AdminCenter() {
         label: t`Users`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />
+      },
+      {
+        name: 'import',
+        label: t`Data Import`,
+        icon: <IconFileUpload />,
+        content: <ImportSesssionTable />
       },
       {
         name: 'background',

@@ -104,7 +104,7 @@ class Build(
         }
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': generate_next_build_reference(),
@@ -131,7 +131,14 @@ class Build(
             # Check that the part is active
             if not self.part.active:
                 raise ValidationError({
-                    'part': _('Part is not active')
+                    'part': _('Build order cannot be created for an inactive part')
+                })
+
+        if get_global_setting('BUILDORDER_REQUIRE_LOCKED_PART'):
+            # Check that the part is locked
+            if not self.part.locked:
+                raise ValidationError({
+                    'part': _('Build order cannot be created for an unlocked part')
                 })
 
         # On first save (i.e. creation), run some extra checks

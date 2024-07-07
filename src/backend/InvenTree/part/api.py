@@ -19,7 +19,8 @@ import order.models
 import part.filters
 from build.models import Build, BuildItem
 from build.status_codes import BuildStatusGroups
-from InvenTree.api import APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
+from importer.mixins import DataExportViewMixin
+from InvenTree.api import ListCreateDestroyAPIView, MetadataView
 from InvenTree.filters import (
     ORDER_FILTER,
     ORDER_FILTER_ALIAS,
@@ -28,7 +29,7 @@ from InvenTree.filters import (
     InvenTreeDateFilter,
     InvenTreeSearchFilter,
 )
-from InvenTree.helpers import DownloadFile, increment_serial_number, isNull, str2bool
+from InvenTree.helpers import increment_serial_number, isNull, str2bool
 from InvenTree.mixins import (
     CreateAPI,
     CustomRetrieveUpdateDestroyAPI,
@@ -228,7 +229,7 @@ class CategoryFilter(rest_filters.FilterSet):
         return queryset
 
 
-class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
+class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategory objects.
 
     - GET: Return a list of PartCategory objects
@@ -236,14 +237,6 @@ class CategoryList(CategoryMixin, APIDownloadMixin, ListCreateAPI):
     """
 
     filterset_class = CategoryFilter
-
-    def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file."""
-        dataset = PartCategoryResource().export(queryset=queryset)
-        filedata = dataset.export(export_format)
-        filename = f'InvenTree_Categories.{export_format}'
-
-        return DownloadFile(filedata, filename)
 
     filter_backends = SEARCH_ORDER_FILTER
 
@@ -327,7 +320,7 @@ class CategoryTree(ListAPI):
         return queryset
 
 
-class CategoryParameterList(ListCreateAPI):
+class CategoryParameterList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartCategoryParameterTemplate objects.
 
     - GET: Return a list of PartCategoryParameterTemplate objects
@@ -382,7 +375,7 @@ class PartSalePriceDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartSalePriceSerializer
 
 
-class PartSalePriceList(ListCreateAPI):
+class PartSalePriceList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for list view of PartSalePriceBreak model."""
 
     queryset = PartSellPriceBreak.objects.all()
@@ -401,7 +394,7 @@ class PartInternalPriceDetail(RetrieveUpdateDestroyAPI):
     serializer_class = part_serializers.PartInternalPriceSerializer
 
 
-class PartInternalPriceList(ListCreateAPI):
+class PartInternalPriceList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for list view of PartInternalPriceBreak model."""
 
     queryset = PartInternalPriceBreak.objects.all()
@@ -477,7 +470,7 @@ class PartTestTemplateDetail(PartTestTemplateMixin, RetrieveUpdateDestroyAPI):
     pass
 
 
-class PartTestTemplateList(PartTestTemplateMixin, ListCreateAPI):
+class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for listing (and creating) a PartTestTemplate."""
 
     filterset_class = PartTestTemplateFilter
@@ -1151,6 +1144,8 @@ class PartFilter(rest_filters.FilterSet):
 
     active = rest_filters.BooleanFilter()
 
+    locked = rest_filters.BooleanFilter()
+
     virtual = rest_filters.BooleanFilter()
 
     tags_name = rest_filters.CharFilter(field_name='tags__name', lookup_expr='iexact')
@@ -1224,20 +1219,11 @@ class PartMixin:
         return context
 
 
-class PartList(PartMixin, APIDownloadMixin, ListCreateAPI):
+class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Part objects, or creating a new Part instance."""
 
     filterset_class = PartFilter
     is_create = True
-
-    def download_queryset(self, queryset, export_format):
-        """Download the filtered queryset as a data file."""
-        dataset = PartResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-        filename = f'InvenTree_Parts.{export_format}'
-
-        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
         """Perform custom filtering of the queryset."""
@@ -1534,7 +1520,9 @@ class PartParameterTemplateMixin:
         return queryset
 
 
-class PartParameterTemplateList(PartParameterTemplateMixin, ListCreateAPI):
+class PartParameterTemplateList(
+    PartParameterTemplateMixin, DataExportViewMixin, ListCreateAPI
+):
     """API endpoint for accessing a list of PartParameterTemplate objects.
 
     - GET: Return list of PartParameterTemplate objects
@@ -1615,7 +1603,7 @@ class PartParameterFilter(rest_filters.FilterSet):
             return queryset.filter(part=part)
 
 
-class PartParameterList(PartParameterAPIMixin, ListCreateAPI):
+class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of PartParameter objects.
 
     - GET: Return list of PartParameter objects
@@ -1843,7 +1831,7 @@ class BomMixin:
         return queryset
 
 
-class BomList(BomMixin, ListCreateDestroyAPIView):
+class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for accessing a list of BomItem objects.
 
     - GET: Return list of BomItem objects
@@ -1886,6 +1874,14 @@ class BomList(BomMixin, ListCreateDestroyAPIView):
         'pricing_max': 'sub_part__pricing_data__overall_max',
         'pricing_updated': 'sub_part__pricing_data__updated',
     }
+
+    def filter_delete_queryset(self, queryset, request):
+        """Ensure that there are no 'locked' items."""
+        for bom_item in queryset:
+            # Note: Calling check_part_lock may raise a ValidationError
+            bom_item.check_part_lock(bom_item.part)
+
+        return super().filter_delete_queryset(queryset, request)
 
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):

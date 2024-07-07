@@ -256,7 +256,8 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         tableFilters: tableFilters,
         rowActions: rowActions,
         modelType: ModelType.part,
-        modelField: 'part_detail.pk'
+        modelField: 'part_detail.pk',
+        enableDownload: true
       }}
     />
   );

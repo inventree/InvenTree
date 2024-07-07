@@ -99,6 +99,10 @@ class BuildTestSimple(InvenTreeTestCase):
         # Find an assembly part
         assembly = Part.objects.filter(assembly=True).first()
 
+        assembly.active = True
+        assembly.locked = False
+        assembly.save()
+
         self.assertEqual(assembly.get_bom_items().count(), 0)
 
         # Let's create some BOM items for this assembly
@@ -121,6 +125,7 @@ class BuildTestSimple(InvenTreeTestCase):
         # Create a build for an assembly with an *invalid* BOM
         set_global_setting('BUILDORDER_REQUIRE_VALID_BOM', False)
         set_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART', True)
+        set_global_setting('BUILDORDER_REQUIRE_LOCKED_PART', False)
 
         bo = Build.objects.create(part=assembly, quantity=10, reference='BO-9990')
         bo.save()
@@ -147,8 +152,18 @@ class BuildTestSimple(InvenTreeTestCase):
         set_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART', False)
         Build.objects.create(part=assembly, quantity=10, reference='BO-9994')
 
+        # Check that the "locked" requirement works
+        set_global_setting('BUILDORDER_REQUIRE_LOCKED_PART', True)
+        with self.assertRaises(ValidationError):
+            Build.objects.create(part=assembly, quantity=10, reference='BO-9995')
+
+        assembly.locked = True
+        assembly.save()
+
+        Build.objects.create(part=assembly, quantity=10, reference='BO-9996')
+
         # Check that expected quantity of new builds is created
-        self.assertEqual(Build.objects.count(), n + 3)
+        self.assertEqual(Build.objects.count(), n + 4)
 
 class TestBuildViews(InvenTreeTestCase):
     """Tests for Build app views."""
