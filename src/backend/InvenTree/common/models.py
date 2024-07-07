@@ -14,7 +14,7 @@ from datetime import timedelta, timezone
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Callable, TypedDict, Union
+from typing import Any, Callable, Collection, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -115,6 +115,11 @@ class BaseURLValidator(URLValidator):
 
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
+
+    class Meta:
+        """Class options for the ProjectCode model."""
+
+        verbose_name = _('Project Code')
 
     @staticmethod
     def get_api_url():
@@ -1391,6 +1396,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'BARCODE_SHOW_TEXT': {
+            'name': _('Barcode Show Data'),
+            'description': _('Display barcode data in browser as text'),
+            'default': False,
+            'validator': bool,
+        },
         'PART_ENABLE_REVISION': {
             'name': _('Part Revisions'),
             'description': _('Enable revision field for Part'),
@@ -1780,6 +1791,26 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'BUILDORDER_REQUIRE_ACTIVE_PART': {
+            'name': _('Require Active Part'),
+            'description': _('Prevent build order creation for inactive parts'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_LOCKED_PART': {
+            'name': _('Require Locked Part'),
+            'description': _('Prevent build order creation for unlocked parts'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_VALID_BOM': {
+            'name': _('Require Valid BOM'),
+            'description': _(
+                'Prevent build order creation unless BOM has been validated'
+            ),
+            'default': False,
+            'validator': bool,
+        },
         'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
             'name': _('Block Until Tests Pass'),
             'description': _(
@@ -1909,6 +1940,38 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'LOGIN_ENABLE_SSO_GROUP_SYNC': {
+            'name': _('Enable SSO group sync'),
+            'description': _(
+                'Enable synchronizing InvenTree groups with groups provided by the IdP'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'SSO_GROUP_KEY': {
+            'name': _('SSO group key'),
+            'description': _(
+                'The name of the groups claim attribute provided by the IdP'
+            ),
+            'default': 'groups',
+            'validator': str,
+        },
+        'SSO_GROUP_MAP': {
+            'name': _('SSO group map'),
+            'description': _(
+                'A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created.'
+            ),
+            'validator': json.loads,
+            'default': '{}',
+        },
+        'SSO_REMOVE_GROUPS': {
+            'name': _('Remove groups outside of SSO'),
+            'description': _(
+                'Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues'
+            ),
+            'default': True,
+            'validator': bool,
+        },
         'LOGIN_MAIL_REQUIRED': {
             'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
@@ -1945,7 +2008,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
-            'description': _('Group to which new users are assigned on registration'),
+            'description': _(
+                'Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP.'
+            ),
             'default': '',
             'choices': settings_group_options,
         },
@@ -2426,36 +2491,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(0)],
             'default': 100,
         },
-        'DEFAULT_PART_LABEL_TEMPLATE': {
-            'name': _('Default part label template'),
-            'description': _('The part label template to be automatically selected'),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_ITEM_LABEL_TEMPLATE': {
-            'name': _('Default stock item template'),
-            'description': _(
-                'The stock item label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LOCATION_LABEL_TEMPLATE': {
-            'name': _('Default stock location label template'),
-            'description': _(
-                'The stock location label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LINE_LABEL_TEMPLATE': {
-            'name': _('Default build line label template'),
-            'description': _(
-                'The build line label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
         'NOTIFICATION_ERROR_REPORT': {
             'name': _('Receive error reports'),
             'description': _('Receive notifications for system errors'),
@@ -2543,6 +2578,7 @@ class ColorTheme(models.Model):
     name = models.CharField(max_length=20, default='', blank=True)
 
     user = models.CharField(max_length=150, unique=True)
+    user_obj = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     @classmethod
     def get_color_themes_choices(cls):
@@ -2993,6 +3029,11 @@ class CustomUnit(models.Model):
     https://pint.readthedocs.io/en/stable/advanced/defining.html
     """
 
+    class Meta:
+        """Class meta options."""
+
+        verbose_name = _('Custom Unit')
+
     def fmt_string(self):
         """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'."""
         fmt = f'{self.name} = {self.definition}'
@@ -3001,6 +3042,18 @@ class CustomUnit(models.Model):
             fmt += f' = {self.symbol}'
 
         return fmt
+
+    def validate_unique(self, exclude=None) -> None:
+        """Ensure that the custom unit is unique."""
+        super().validate_unique(exclude)
+
+        if self.symbol:
+            if (
+                CustomUnit.objects.filter(symbol=self.symbol)
+                .exclude(pk=self.pk)
+                .exists()
+            ):
+                raise ValidationError({'symbol': _('Unit symbol must be unique')})
 
     def clean(self):
         """Validate that the provided custom unit is indeed valid."""
@@ -3043,7 +3096,6 @@ class CustomUnit(models.Model):
         max_length=10,
         verbose_name=_('Symbol'),
         help_text=_('Optional unit symbol'),
-        unique=True,
         blank=True,
     )
 
