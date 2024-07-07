@@ -70,6 +70,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
@@ -95,6 +96,8 @@ export default function PartDetail() {
   const user = useUserState();
 
   const [treeOpen, setTreeOpen] = useState(false);
+
+  const globalSettings = useGlobalSettingsState();
 
   const {
     instance: part,
@@ -136,6 +139,20 @@ export default function PartDetail() {
         label: t`Variant of`,
         model: ModelType.part,
         hidden: !part.variant_of
+      },
+      {
+        type: 'link',
+        name: 'revision_of',
+        label: t`Revision of`,
+        model: ModelType.part,
+        hidden: !part.revision_of
+      },
+      {
+        type: 'string',
+        name: 'revision',
+        label: t`Revision`,
+        hidden: !part.revision,
+        copy: true
       },
       {
         type: 'link',
@@ -730,14 +747,22 @@ export default function PartDetail() {
             value: part.pk,
             hidden: true
           },
-          copy_image: {},
-          copy_bom: {},
-          copy_notes: {},
-          copy_parameters: {}
+          copy_image: {
+            value: true
+          },
+          copy_bom: {
+            value: globalSettings.isSet('PART_COPY_BOM')
+          },
+          copy_notes: {
+            value: true
+          },
+          copy_parameters: {
+            value: globalSettings.isSet('PART_COPY_PARAMETERS')
+          }
         }
       }
     };
-  }, [createPartFields, part]);
+  }, [createPartFields, globalSettings, part]);
 
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,

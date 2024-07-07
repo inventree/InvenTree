@@ -3,6 +3,7 @@ import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
@@ -23,8 +24,17 @@ export function usePartFields({
       IPN: {},
       description: {},
       revision: {},
-      revision_of: {},
-      variant_of: {},
+      revision_of: {
+        filters: {
+          is_revision: false,
+          is_template: false
+        }
+      },
+      variant_of: {
+        filters: {
+          is_template: true
+        }
+      },
       keywords: {},
       units: {},
       link: {},
@@ -86,10 +96,11 @@ export function usePartFields({
     // TODO: pop 'expiry' field if expiry not enabled
     delete fields['default_expiry'];
 
-    // TODO: pop 'revision' field if PART_ENABLE_REVISION is False
-    delete fields['revision'];
-
-    // TODO: handle part duplications
+    // Pop 'revision' field if PART_ENABLE_REVISION is False
+    if (!useGlobalSettingsState.getState().isSet('PART_ENABLE_REVISION')) {
+      delete fields['revision'];
+      delete fields['revision_of'];
+    }
 
     return fields;
   }, [create]);
