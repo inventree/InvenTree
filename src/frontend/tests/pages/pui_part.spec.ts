@@ -247,6 +247,7 @@ test('PUI - Pages - Part - Notes', async ({ page }) => {
     .fill('This is some data\n');
 
   // Save
+  await page.waitForTimeout(1000);
   await page.getByLabel('save-notes').click();
   await page.getByText('Notes saved successfully').waitFor();
 
