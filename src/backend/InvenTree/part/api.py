@@ -1379,6 +1379,8 @@ class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
         'pricing_min',
         'pricing_max',
         'pricing_updated',
+        'revision',
+        'revision_count',
     ]
 
     ordering_field_aliases = {
