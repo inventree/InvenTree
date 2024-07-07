@@ -661,6 +661,41 @@ class Part(
             if match is None:
                 raise ValidationError(_(f'IPN must match regex pattern {pattern}'))
 
+    def validate_revision(self):
+        """Check the 'revision' and 'revision_of' fields."""
+        # Part cannot be a revision of itself
+        if self.revision_of:
+            if self.revision_of == self:
+                raise ValidationError({
+                    'revision_of': _('Part cannot be a revision of itself')
+                })
+
+            # Part cannot be a revision of a part which is itself a revision
+            if self.revision_of.revision_of:
+                raise ValidationError({
+                    'revision_of': _(
+                        'Cannot make a revision of a part which is already a revision'
+                    )
+                })
+
+            # Cannot have a revision of a "template" part
+            if self.revision_of.is_template:
+                raise ValidationError({
+                    'revision_of': _('Cannot make a revision of a template part')
+                })
+
+            # If this part is a revision, it must have a revision code
+            if not self.revision:
+                raise ValidationError({
+                    'revision': _('Revision code must be specified')
+                })
+
+            # parent part must point to the same template (via variant_of)
+            if self.variant_of != self.revision_of.variant_of:
+                raise ValidationError({
+                    'revision_of': _('Parent part must point to the same template')
+                })
+
     def validate_serial_number(
         self,
         serial: str,
@@ -865,6 +900,9 @@ class Part(
             raise ValidationError({
                 'category': _('Parts cannot be assigned to structural part categories!')
             })
+
+        # Check the 'revision' and 'revision_of' fields
+        self.validate_revision()
 
         super().clean()
 
