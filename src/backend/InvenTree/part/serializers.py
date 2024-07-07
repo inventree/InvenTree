@@ -863,13 +863,16 @@ class PartSerializer(
 
     IPN = serializers.CharField(
         required=False,
-        allow_null=True,
+        default='',
+        allow_blank=True,
         help_text=_('Internal Part Number'),
         max_length=100,
     )
+
     revision = serializers.CharField(
         required=False,
-        allow_null=True,
+        default='',
+        allow_blank=True,
         help_text=_('Part revision or version number'),
         max_length=100,
     )
