@@ -4,37 +4,23 @@ import { doQuickLogin } from '../login';
 
 test('PUI - Pages - Part - Locking', async ({ page }) => {
   await doQuickLogin(page);
-  await page.goto(`${baseUrl}/part/87/bom`);
+
+  // Navigate to a known assembly which is *not* locked
+  await page.goto(`${baseUrl}/part/104/bom`);
   await page.getByRole('tab', { name: 'Bill of Materials' }).click();
   await page.getByLabel('action-button-add-bom-item').waitFor();
+  await page.getByRole('tab', { name: 'Parameters' }).click();
+  await page.getByLabel('action-button-add-parameter').waitFor();
 
-  // Edit the part, set "locked" attribute
-  await page.getByLabel('action-menu-part-actions').click();
-  await page.getByLabel('action-menu-part-actions-edit').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'LockedLocked parts cannot be' })
-    .click();
-  await page.getByRole('button', { name: 'Submit' }).click();
-
+  // Navigate to a known assembly which *is* locked
+  await page.goto(`${baseUrl}/part/100/bom`);
+  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
   await page.getByText('Locked', { exact: true }).waitFor();
   await page.getByText('Part is Locked', { exact: true }).waitFor();
 
   // Check the "parameters" tab also
   await page.getByRole('tab', { name: 'Parameters' }).click();
   await page.getByText('Part parameters cannot be').waitFor();
-
-  // Edit the part, clear "locked" attribute
-  await page.getByLabel('action-menu-part-actions').click();
-  await page.getByLabel('action-menu-part-actions-edit').click();
-  await page
-    .locator('label')
-    .filter({ hasText: 'LockedLocked parts cannot be' })
-    .click();
-  await page.getByRole('button', { name: 'Submit' }).click();
-
-  // Now user can add parameters
-  await page.getByLabel('action-button-add-parameter').click();
 });
 
 test('PUI - Pages - Part - Pricing (Nothing, BOM)', async ({ page }) => {
