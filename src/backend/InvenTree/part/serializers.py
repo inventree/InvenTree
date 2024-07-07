@@ -655,6 +655,7 @@ class PartSerializer(
             'pk',
             'purchaseable',
             'revision',
+            'revision_of',
             'salable',
             'starred',
             'thumbnail',

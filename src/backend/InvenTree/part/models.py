@@ -953,6 +953,15 @@ class Part(
         verbose_name=_('Revision'),
     )
 
+    revision_of = models.ForeignKey(
+        'part.Part',
+        related_name='revisions',
+        null=True,
+        on_delete=models.SET_NULL,
+        help_text=_('Is this part a revision of another part?'),
+        verbose_name=_('Revision Of'),
+    )
+
     link = InvenTreeURLField(
         blank=True,
         null=True,
