@@ -678,16 +678,16 @@ class Part(
                     )
                 })
 
-            # Cannot have a revision of a "template" part
-            if self.revision_of.is_template:
-                raise ValidationError({
-                    'revision_of': _('Cannot make a revision of a template part')
-                })
-
             # If this part is a revision, it must have a revision code
             if not self.revision:
                 raise ValidationError({
                     'revision': _('Revision code must be specified')
+                })
+
+            # Cannot have a revision of a "template" part
+            if self.revision_of.is_template:
+                raise ValidationError({
+                    'revision_of': _('Cannot make a revision of a template part')
                 })
 
             # parent part must point to the same template (via variant_of)
@@ -877,14 +877,13 @@ class Part(
                 })
 
         # Ensure unique across (Name, revision, IPN) (as specified)
-        if (
-            Part.objects.exclude(pk=self.pk)
-            .filter(name=self.name, revision=self.revision, IPN=self.IPN)
-            .exists()
-        ):
-            raise ValidationError(
-                _('Part with this Name, IPN and Revision already exists.')
-            )
+        if self.revision_of or self.revision:
+            if (
+                Part.objects.exclude(pk=self.pk)
+                .filter(revision_of=self.revision_of, revision=self.revision)
+                .exists()
+            ):
+                raise ValidationError(_('Duplicate part revision already exists.'))
 
     def clean(self):
         """Perform cleaning operations for the Part model.
