@@ -2491,36 +2491,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(0)],
             'default': 100,
         },
-        'DEFAULT_PART_LABEL_TEMPLATE': {
-            'name': _('Default part label template'),
-            'description': _('The part label template to be automatically selected'),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_ITEM_LABEL_TEMPLATE': {
-            'name': _('Default stock item template'),
-            'description': _(
-                'The stock item label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LOCATION_LABEL_TEMPLATE': {
-            'name': _('Default stock location label template'),
-            'description': _(
-                'The stock location label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LINE_LABEL_TEMPLATE': {
-            'name': _('Default build line label template'),
-            'description': _(
-                'The build line label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
         'NOTIFICATION_ERROR_REPORT': {
             'name': _('Receive error reports'),
             'description': _('Receive notifications for system errors'),
