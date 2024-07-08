@@ -163,14 +163,16 @@ jobs:
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
-      - name: Download public schema
+      - name: Determine version
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
           echo "Version: $version"
+      - name: Download public schema
+        run: |
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
-          curl -s -o api.yaml $url
+          curl -s -o api.yaml $url --fail
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
@@ -178,8 +180,9 @@ jobs:
         with:
           base: 'api.yaml'
           revision: 'src/backend/InvenTree/schema.yml'
-      - name: Echoing diff
+      - name: Echoing diff to step
         run: echo "${{ steps.breaking_changes.outputs.diff }}" >> $GITHUB_STEP_SUMMARY
+        hidden: true
 
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
