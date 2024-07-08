@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Grid, Skeleton, Stack, Table, Text } from '@mantine/core';
+import { Alert, Grid, Skeleton, Space, Stack, Text } from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -971,7 +971,7 @@ export default function PartDetail() {
             }}
             actions={partActions}
             detail={
-              partRevisionOptions.length > 0 && (
+              partRevisionOptions.length > 0 ? (
                 <Stack gap="xs">
                   <Text>{t`Select Part Revision`}</Text>
                   <Select
@@ -997,6 +997,8 @@ export default function PartDetail() {
                     }}
                   />
                 </Stack>
+              ) : (
+                <Space />
               )
             }
           />
