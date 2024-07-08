@@ -171,9 +171,8 @@ jobs:
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
           code=$(curl -s -o api.yaml $url --write-out '%{http_code}' --silent)
-          if [ $code!="200" ]
-          then
-              exit 1
+          if [ "$code" != "200" ]; then
+            exit 1
           fi
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
