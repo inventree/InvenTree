@@ -161,7 +161,7 @@ def yarn(c, cmd, pty: bool = False):
         cmd: Yarn command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
     """
-    path = localDir().joinpath('src').joinpath('frontend')
+    path = localDir().joinpath('src', 'frontend')
     c.run(f'cd "{path}" && {cmd}', pty=pty)
 
 
@@ -363,7 +363,7 @@ def translate_stats(c):
     except Exception:
         print('WARNING: Translation files could not be compiled:')
 
-    path = Path('src', 'backend', 'InvenTree', 'script', 'translation_stats.py')
+    path = managePyDir().joinpath('script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
 
@@ -804,11 +804,10 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
 
     Note: This server will not auto-reload in response to code changes.
     """
-    here = os.path.dirname(os.path.abspath(__file__))
-    config_file = os.path.join(here, 'contrib', 'container', 'gunicorn.conf.py')
-    chdir = os.path.join(here, 'src', 'backend', 'InvenTree')
-
-    cmd = f'gunicorn -c {config_file} InvenTree.wsgi -b {address} --chdir {chdir}'
+    config_file = localDir().joinpath('contrib', 'container', 'gunicorn.conf.py')
+    cmd = (
+        f'gunicorn -c {config_file} InvenTree.wsgi -b {address} --chdir {managePyDir()}'
+    )
 
     if workers:
         cmd += f' --workers={workers}'
@@ -1227,7 +1226,7 @@ def frontend_download(
         if not extract:
             return
 
-        dest_path = Path(__file__).parent / 'src/backend' / 'InvenTree/web/static/web'
+        dest_path = managePyDir().joinpath('web', 'static', 'web')
 
         # if clean, delete static/web directory
         if clean:
