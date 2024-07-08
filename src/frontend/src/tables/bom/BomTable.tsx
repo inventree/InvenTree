@@ -11,6 +11,7 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -20,6 +21,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
 import {
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -347,6 +349,26 @@ export function BomTable({
     table: table
   });
 
+  const validateBom = useApiFormModal({
+    url: ApiEndpoints.bom_validate,
+    method: 'PUT',
+    fields: {
+      valid: {
+        hidden: true,
+        value: true
+      }
+    },
+    title: t`Validate BOM`,
+    pk: partId,
+    preFormContent: (
+      <Alert color="green" icon={<IconCircleCheck />} title={t`Validate BOM`}>
+        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
+      </Alert>
+    ),
+    successMessage: t`BOM validated`,
+    onFormSuccess: () => table.refreshTable()
+  });
+
   const validateBomItem = useCallback((record: any) => {
     const url = apiUrl(ApiEndpoints.bom_item_validate, record.pk);
 
@@ -421,6 +443,12 @@ export function BomTable({
 
   const tableActions = useMemo(() => {
     return [
+      <ActionButton
+        hidden={partLocked || !user.hasChangeRole(UserRoles.part)}
+        tooltip={t`Validate BOM`}
+        icon={<IconCircleCheck />}
+        onClick={() => validateBom.open()}
+      />,
       <AddItemButton
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add BOM Item`}
@@ -433,6 +461,7 @@ export function BomTable({
     <>
       {newBomItem.modal}
       {editBomItem.modal}
+      {validateBom.modal}
       {deleteBomItem.modal}
       <Stack gap="xs">
         {partLocked && (

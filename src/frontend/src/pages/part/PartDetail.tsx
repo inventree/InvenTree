@@ -997,7 +997,10 @@ export default function PartDetail() {
                     }}
                     isSearchable={false}
                     formatOptionLabel={(option: any) =>
-                      RenderPart({ instance: option.part })
+                      RenderPart({
+                        instance: option.part,
+                        showSecondary: false
+                      })
                     }
                     onChange={(value: any) => {
                       navigate(getDetailUrl(ModelType.part, value.value));
