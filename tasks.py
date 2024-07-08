@@ -136,6 +136,20 @@ def managePyPath():
     return managePyDir().joinpath('manage.py')
 
 
+def run(c, cmd, path: Path = None, pty=False, env=None):
+    """Runs a given command a given path.
+
+    Args:
+        c: Command line context.
+        cmd: Command to run.
+        path: Path to run the command in.
+        pty (bool, optional): Run an interactive session. Defaults to False.
+    """
+    env = env or {}
+    path = path or localDir()
+    c.run(f'cd "{path}" && {cmd}', pty=pty, env=env)
+
+
 def manage(c, cmd, pty: bool = False, env=None):
     """Runs a given command against django's "manage.py" script.
 
@@ -230,10 +244,10 @@ def plugins(c, uv=False):
 
     # Install the plugins
     if not uv:
-        c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
+        run(c, f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
     else:
         c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
-        c.run(f"uv pip install -r '{plugin_file}'")
+        run(c, f"uv pip install -r '{plugin_file}'")
 
     # Collect plugin static files
     manage(c, 'collectplugins')
@@ -254,22 +268,24 @@ def install(c, uv=False):
         c.run(
             'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools'
         )
-        c.run(
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}'
+        run(
+            c,
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}',
         )
     else:
         c.run(
             'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools'
         )
-        c.run(f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
+        run(c, f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
 
     # Run plugins install
     plugins(c, uv=uv)
 
     # Compile license information
     lic_path = managePyDir().joinpath('InvenTree', 'licenses.txt')
-    c.run(
-        f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}'
+    run(
+        c,
+        f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}',
     )
 
 
@@ -279,14 +295,14 @@ def setup_dev(c, tests=False):
     print("Installing required python packages from 'src/backend/requirements-dev.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
+    run(c, 'pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
 
     # Install pre-commit hook
     print('Installing pre-commit for checks before git commits...')
-    c.run('pre-commit install')
+    run(c, 'pre-commit install')
 
     # Update all the hooks
-    c.run('pre-commit autoupdate')
+    run(c, 'pre-commit autoupdate')
     print('pre-commit set up is done...')
 
     # Set up test-data if flag is set
@@ -1347,20 +1363,20 @@ def docs_server(c, address='localhost:8080', compile_schema=False):
     if compile_schema:
         # Build the schema docs first
         schema(c, ignore_warnings=True, overwrite=True, filename='docs/schema.yml')
-        c.run('python docs/extract_schema.py docs/schema.yml')
+        run(c, 'python docs/extract_schema.py docs/schema.yml')
 
-    c.run(f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+    run(c, f'mkdocs serve -a {address} -f docs/mkdocs.yml')
 
 
 @task
 def clear_generated(c):
     """Clear generated files from `inv update`."""
     # pyc/pyo files
-    c.run('find . -name "*.pyc" -exec rm -f {} +')
-    c.run('find . -name "*.pyo" -exec rm -f {} +')
+    run(c, 'find . -name "*.pyc" -exec rm -f {} +')
+    run(c, 'find . -name "*.pyo" -exec rm -f {} +')
     # cache folders
-    c.run('find . -name "__pycache__" -exec rm -rf {} +')
+    run(c, 'find . -name "__pycache__" -exec rm -rf {} +')
 
     # Generated translations
-    c.run('find . -name "django.mo" -exec rm -f {} +')
-    c.run('find . -name "messages.mo" -exec rm -f {} +')
+    run(c, 'find . -name "django.mo" -exec rm -f {} +')
+    run(c, 'find . -name "messages.mo" -exec rm -f {} +')
