@@ -684,6 +684,14 @@ class Part(
                     'revision': _('Revision code must be specified')
                 })
 
+            if get_global_setting('PART_REVISION_ASSEMBLY_ONLY'):
+                if not self.assembly or not self.revision_of.assembly:
+                    raise ValidationError({
+                        'revision_of': _(
+                            'Revisions are only allowed for assembly parts'
+                        )
+                    })
+
             # Cannot have a revision of a "template" part
             if self.revision_of.is_template:
                 raise ValidationError({

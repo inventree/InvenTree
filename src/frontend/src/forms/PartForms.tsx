@@ -93,13 +93,21 @@ export function usePartFields({
       };
     }
 
-    // TODO: pop 'expiry' field if expiry not enabled
-    delete fields['default_expiry'];
+    const settings = useGlobalSettingsState.getState();
+
+    if (settings.isSet('PART_REVISION_ASSEMBLY_ONLY')) {
+      fields.revision_of.filters['assembly'] = true;
+    }
 
     // Pop 'revision' field if PART_ENABLE_REVISION is False
-    if (!useGlobalSettingsState.getState().isSet('PART_ENABLE_REVISION')) {
+    if (!settings.isSet('PART_ENABLE_REVISION')) {
       delete fields['revision'];
       delete fields['revision_of'];
+    }
+
+    // Pop 'expiry' field if expiry not enabled
+    if (!settings.isSet('STOCK_ENABLE_EXPIRY')) {
+      delete fields['default_expiry'];
     }
 
     return fields;
