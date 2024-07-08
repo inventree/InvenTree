@@ -943,6 +943,13 @@ export default function PartDetail() {
     ];
   }, [id, part, user]);
 
+  const enableRevisionSelection: boolean = useMemo(() => {
+    return (
+      partRevisionOptions.length > 0 &&
+      globalSettings.isSet('PART_ENABLE_REVISION')
+    );
+  }, [partRevisionOptions, globalSettings]);
+
   return (
     <>
       {duplicatePart.modal}
@@ -971,7 +978,7 @@ export default function PartDetail() {
             }}
             actions={partActions}
             detail={
-              partRevisionOptions.length > 0 ? (
+              enableRevisionSelection ? (
                 <Stack gap="xs">
                   <Text>{t`Select Part Revision`}</Text>
                   <Select
