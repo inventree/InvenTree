@@ -163,20 +163,12 @@ jobs:
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
-      - name: Extract version for publishing
-        id: version
-        run: |
-          pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
-          version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
-          echo "Version: $version"
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-      - name: Decrease download version if api_version is changed
-        id: download-version
-        if: needs.paths-filter.outputs.api == 'false'
-        run: echo "version=$((${{ steps.version.outputs.version }}-1))" >> "$GITHUB_OUTPUT"
       - name: Download public schema
         run: |
-          url="https://raw.githubusercontent.com/inventree/schema/main/export/${{ steps.download-version.outputs.version }}/api.yaml"
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
+          version="$(python3 .github/scripts/version_check.py only_version ${{ needs.paths-filter.outputs.api }} 2>&1)"
+          echo "Version: $version"
+          url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
           code=$(curl -s -o api.yaml $url --write-out '%{http_code}' --silent)
           if [ $code!="200" ]
@@ -201,6 +193,14 @@ jobs:
       - name: Check schema - including warnings
         run: invoke schema
         continue-on-error: true
+      - name: Extract version for publishing
+        id: version
+        if: github.ref == 'refs/heads/master' && needs.paths-filter.outputs.api == 'true'
+        run: |
+          pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
+          version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
+          echo "Version: $version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
 
   schema-push:
     name: Push new schema
