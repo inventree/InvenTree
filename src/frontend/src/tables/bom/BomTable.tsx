@@ -467,7 +467,7 @@ export function BomTable({
         {partLocked && (
           <Alert
             title={t`Part is Locked`}
-            color="red"
+            color="orange"
             icon={<IconLock />}
             p="xs"
           >

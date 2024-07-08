@@ -733,7 +733,9 @@ export default function PartDetail() {
       });
     }
 
-    return options;
+    return options.sort((a, b) => {
+      return ('' + a.part.revision).localeCompare(b.part.revision);
+    });
   }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
 
   const breadcrumbs = useMemo(
