@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-08 14:46+0000\n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-08 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -783,16 +783,12 @@ msgid "Assembly BOM has not been validated"
 msgstr ""
 
 #: build/models.py:134
-#, fuzzy
-#| msgid "Build output cannot be specified for allocation of untracked parts"
 msgid "Build order cannot be created for an inactive part"
-msgstr "Hasil produksi tidak dapat ditentukan untuk alokasi barang yang tidak terlacak"
+msgstr ""
 
 #: build/models.py:141
-#, fuzzy
-#| msgid "Build output cannot be specified for allocation of untracked parts"
 msgid "Build order cannot be created for an unlocked part"
-msgstr "Hasil produksi tidak dapat ditentukan untuk alokasi barang yang tidak terlacak"
+msgstr ""
 
 #: build/models.py:155
 msgid "Invalid choice for parent build"
@@ -1493,10 +1489,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Serial Numbers"
 msgid "Supplier Part Number"
-msgstr "Nomor Seri"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1508,16 +1502,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Referensi Order Produksi"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "Referensi"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3993
 msgid "Part IPN"
@@ -1561,10 +1551,8 @@ msgid "Available Stock"
 msgstr ""
 
 #: build/serializers.py:1224
-#, fuzzy
-#| msgid "Substitute Stock"
 msgid "Available Substitute Stock"
-msgstr "Stok pengganti"
+msgstr ""
 
 #: build/serializers.py:1225
 msgid "Available Variant Stock"
@@ -2789,10 +2777,8 @@ msgid "Require Locked Part"
 msgstr ""
 
 #: common/models.py:1802
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Prevent build order creation for unlocked parts"
-msgstr "Cetak laporan order produksi"
+msgstr ""
 
 #: common/models.py:1807
 msgid "Require Valid BOM"
@@ -4028,10 +4014,8 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "Sent to customer"
 msgid "Is customer"
-msgstr "Terkirim ke pelanggan"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
@@ -4835,10 +4819,8 @@ msgid "Placed"
 msgstr "Diletakkan"
 
 #: importer/mixins.py:263
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid export format"
-msgstr "Nilai kelebihan tidak valid"
+msgstr ""
 
 #: importer/models.py:56
 msgid "Timestamp"
@@ -4861,10 +4843,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:201
-#, fuzzy
-#| msgid "Required build quantity has not been completed"
 msgid "Some required fields have not been mapped"
-msgstr "Jumlah produksi yang diperlukan masih belum cukup"
+msgstr ""
 
 #: importer/models.py:346
 msgid "Column is already mapped to a database field"
@@ -4883,10 +4863,8 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Pengguna tidak memiliki izin untuk melihat model ini"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
@@ -4925,10 +4903,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported data file format"
-msgstr "Jenis file tidak didukung"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4947,10 +4923,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Tidak ada barisan data tersedia"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4961,10 +4935,8 @@ msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "This build output has already been completed"
 msgid "Row has already been completed"
-msgstr "Hasil produksi ini sudah diselesaikan"
+msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
@@ -4975,10 +4947,8 @@ msgid "Mapping Columns"
 msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Importing Data"
-msgstr "Tanggal selesai"
+msgstr ""
 
 #: importer/status_codes.py:16
 msgid "Processing Data"
@@ -5380,10 +5350,8 @@ msgid "Purchase Order Extra Line"
 msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Line Item"
-msgstr "Referensi Order Penjualan"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5414,10 +5382,8 @@ msgid "Shipped quantity"
 msgstr ""
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Shipment"
-msgstr "Referensi Order Penjualan"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5473,16 +5439,12 @@ msgid "Shipment has no allocated stock items"
 msgstr ""
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Extra Line"
-msgstr "Referensi Order Penjualan"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Allocation"
-msgstr "Referensi Order Penjualan"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -9508,20 +9470,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock Item Tracking"
-msgstr "Stok Item"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr ""
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock Item Test Result"
-msgstr "Item stok dibuat"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9636,10 +9594,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Parent stock item"
-msgstr "Sumber stok item"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -14846,3 +14802,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
