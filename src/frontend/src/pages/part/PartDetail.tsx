@@ -661,6 +661,8 @@ export default function PartDetail() {
 
   // Fetch information on part revision
   const partRevisionQuery = useQuery({
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
     queryKey: [
       'part_revisions',
       part.pk,
