@@ -7,8 +7,18 @@ INVENTREE_API_VERSION = 214
 
 
 INVENTREE_API_TEXT = """
-v211 - 2024-06-27 : https://github.com/inventree/InvenTree/pull/7520
-    - Documented pagination fields (no functional changes)
+v214 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7585
+    - Adds "revision_of" field to Part serializer
+    - Adds new API filters for "revision" status
+
+v213 - 2024-07-06 : https://github.com/inventree/InvenTree/pull/7527
+    - Adds 'locked' field to Part API
+
+v212 - 2024-07-06 : https://github.com/inventree/InvenTree/pull/7562
+    - Makes API generation more robust (no functional changes)
+
+v211 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/6911
+    - Adds API endpoints for managing data import and export
 
 v210 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7518
     - Adds translateable text to User API fields
