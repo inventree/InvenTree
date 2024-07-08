@@ -159,24 +159,18 @@ def manage(c, cmd, pty: bool = False, env=None):
         pty (bool, optional): Run an interactive session. Defaults to False.
         env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
-    env = env or {}
-    c.run(
-        'cd "{path}" && python3 manage.py {cmd}'.format(path=managePyDir(), cmd=cmd),
-        pty=pty,
-        env=env,
-    )
+    run(c, f'python3 manage.py {cmd}', managePyDir(), pty, env)
 
 
-def yarn(c, cmd, pty: bool = False):
+def yarn(c, cmd):
     """Runs a given command against the yarn package manager.
 
     Args:
         c: Command line context.
         cmd: Yarn command to run.
-        pty (bool, optional): Run an interactive session. Defaults to False.
     """
     path = localDir().joinpath('src').joinpath('frontend')
-    c.run(f'cd "{path}" && {cmd}', pty=pty)
+    run(c, cmd, path, False)
 
 
 def node_available(versions: bool = False, bypass_yarn: bool = False):
