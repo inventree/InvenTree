@@ -48,6 +48,10 @@ class GroupSerializer(InvenTreeModelSerializer):
 
     permissions = serializers.SerializerMethodField()
 
+    def get_permissions(self, group: Group):
+        """Return a list of permissions associated with the group."""
+        return generate_permission_dict(group.permissions.all())
+
 
 class RoleSerializer(InvenTreeModelSerializer):
     """Serializer for a roles associated with a given user."""
@@ -98,14 +102,19 @@ class RoleSerializer(InvenTreeModelSerializer):
                 Q(user=user) | Q(group__user=user)
             ).distinct()
 
-        perms = {}
+        return generate_permission_dict(permissions)
 
-        for permission in permissions:
-            perm, model = permission.codename.split('_')
 
-            if model not in perms:
-                perms[model] = []
+def generate_permission_dict(permissions):
+    """Generate a dictionary of permissions for a given set of permissions."""
+    perms = {}
 
-            perms[model].append(perm)
+    for permission in permissions:
+        perm, model = permission.codename.split('_')
 
-        return perms
+        if model not in perms:
+            perms[model] = []
+
+        perms[model].append(perm)
+
+    return perms
