@@ -30,17 +30,6 @@ import { StylishText } from '../items/StylishText';
 import { getModelInfo } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
 
-export type PartIconsType = {
-  assembly: boolean;
-  template: boolean;
-  component: boolean;
-  trackable: boolean;
-  purchaseable: boolean;
-  saleable: boolean;
-  virtual: boolean;
-  active: boolean;
-};
-
 export type DetailsField =
   | {
       hidden?: boolean;

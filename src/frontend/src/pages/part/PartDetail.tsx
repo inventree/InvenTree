@@ -33,7 +33,6 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { PartIcons } from '../../components/details/PartIcons';
 import NotesEditor from '../../components/editors/NotesEditor';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -471,16 +470,7 @@ export default function PartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <Stack gap="xs">
-              <Table>
-                <Table.Tbody>
-                  <Table.Tr>
-                    <PartIcons part={part} />
-                  </Table.Tr>
-                </Table.Tbody>
-              </Table>
-              <DetailsTable fields={tl} item={part} />
-            </Stack>
+            <DetailsTable fields={tl} item={part} />
           </Grid.Col>
         </Grid>
         <DetailsTable fields={tr} item={part} />
