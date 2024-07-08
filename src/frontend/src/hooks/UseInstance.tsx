@@ -85,7 +85,7 @@ export function useInstance<T = any>({
         });
     },
     refetchOnMount: refetchOnMount,
-    refetchOnWindowFocus: refetchOnWindowFocus,
+    refetchOnWindowFocus: refetchOnWindowFocus ?? false,
     refetchInterval: updateInterval
   });
 

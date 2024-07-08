@@ -352,7 +352,6 @@ export default function PartDetail() {
         label: t`Price Range`,
         value_formatter: () => {
           const { data } = useSuspenseQuery({
-            refetchOnWindowFocus: false,
             queryKey: ['pricing', id],
             queryFn: async () => {
               const url = apiUrl(ApiEndpoints.part_pricing_get, null, {
@@ -393,7 +392,6 @@ export default function PartDetail() {
         unit: true,
         value_formatter: () => {
           const { data } = useSuspenseQuery({
-            refetchOnWindowFocus: false,
             queryKey: ['stocktake', id],
             queryFn: async () => {
               const url = apiUrl(ApiEndpoints.part_stocktake_list);
@@ -430,7 +428,6 @@ export default function PartDetail() {
         icon: 'user',
         value_formatter: () => {
           const { data } = useSuspenseQuery({
-            refetchOnWindowFocus: false,
             queryKey: ['stocktake', id],
             queryFn: async () => {
               const url = apiUrl(ApiEndpoints.part_stocktake_list);
@@ -656,7 +653,6 @@ export default function PartDetail() {
 
   // Fetch information on part revision
   const partRevisionQuery = useQuery({
-    refetchOnWindowFocus: false,
     refetchOnMount: true,
     queryKey: [
       'part_revisions',
