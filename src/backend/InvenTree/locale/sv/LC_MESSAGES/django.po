@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-08 14:46+0000\n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-08 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -1489,10 +1489,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Supplier Name"
 msgid "Supplier Part Number"
-msgstr "Leverantörsnamn"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1504,16 +1502,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Byggorderreferens"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "Referens"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3993
 msgid "Part IPN"
@@ -3690,10 +3684,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3035
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom Unit"
-msgstr "Kund"
+msgstr ""
 
 #: common/models.py:3056
 msgid "Unit symbol must be unique"
@@ -4022,30 +4014,24 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "is customer"
 msgid "Is customer"
-msgstr "är kund"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
 msgstr ""
 
 #: company/models.py:174
-#, fuzzy
-#| msgid "Supplier"
 msgid "Is supplier"
-msgstr "Leverantör"
+msgstr ""
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
 msgstr ""
 
 #: company/models.py:180
-#, fuzzy
-#| msgid "Manufacturer"
 msgid "Is manufacturer"
-msgstr "Tillverkare"
+msgstr ""
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4206,10 +4192,8 @@ msgid "Manufacturer part description"
 msgstr ""
 
 #: company/models.py:569
-#, fuzzy
-#| msgid "Search Manufacturer Parts"
 msgid "Manufacturer Part Parameter"
-msgstr "Sök efter tillverkarartikel"
+msgstr ""
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4365,20 +4349,16 @@ msgid "Date of last update of availability data"
 msgstr ""
 
 #: company/models.py:1015
-#, fuzzy
-#| msgid "Supplier Name"
 msgid "Supplier Price Break"
-msgstr "Leverantörsnamn"
+msgstr ""
 
 #: company/serializers.py:174
 msgid "Default currency used for this supplier"
 msgstr ""
 
 #: company/serializers.py:210
-#, fuzzy
-#| msgid "Company name"
 msgid "Company Name"
-msgstr "Företagsnamn"
+msgstr ""
 
 #: company/serializers.py:384 part/admin.py:126 part/serializers.py:855
 #: part/templates/part/part_base.html:197
@@ -4839,30 +4819,24 @@ msgid "Placed"
 msgstr "Placerad"
 
 #: importer/mixins.py:263
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid export format"
-msgstr "Ogiltigt värde för överskott"
+msgstr ""
 
 #: importer/models.py:56
 msgid "Timestamp"
 msgstr ""
 
 #: importer/models.py:61
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Data file to import"
-msgstr "Välj en fil att ladda upp"
+msgstr ""
 
 #: importer/models.py:70 templates/js/translated/tables.js:558
 msgid "Columns"
 msgstr "Kolumner"
 
 #: importer/models.py:81
-#, fuzzy
-#| msgid "Stock status"
 msgid "Import status"
-msgstr "Lagerstatus"
+msgstr ""
 
 #: importer/models.py:91
 msgid "Field Defaults"
@@ -4889,30 +4863,24 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Användaren har inte behörighet att se denna modell"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
 msgstr ""
 
 #: importer/models.py:381 importer/models.py:452
-#, fuzzy
-#| msgid "Active Sessions"
 msgid "Import Session"
-msgstr "Aktiva sessioner"
+msgstr ""
 
 #: importer/models.py:385
 msgid "Field"
 msgstr ""
 
 #: importer/models.py:387
-#, fuzzy
-#| msgid "Columns"
 msgid "Column"
-msgstr "Kolumner"
+msgstr ""
 
 #: importer/models.py:456
 msgid "Row Index"
@@ -4935,10 +4903,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported data file format"
-msgstr "Filtypen stöds inte"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4957,10 +4923,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Inga rader angivna"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4971,36 +4935,28 @@ msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "Build output is already completed"
 msgid "Row has already been completed"
-msgstr "Byggutgång är redan slutförd"
+msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
 msgstr ""
 
 #: importer/status_codes.py:12
-#, fuzzy
-#| msgid "Columns"
 msgid "Mapping Columns"
-msgstr "Kolumner"
+msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Importing Data"
-msgstr "Slutförandedatum"
+msgstr ""
 
 #: importer/status_codes.py:16
 msgid "Processing Data"
 msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Nedladdning av bilder överskred maximal storlek"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -5394,10 +5350,8 @@ msgid "Purchase Order Extra Line"
 msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Line Item"
-msgstr "Försäljningsorder"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5428,10 +5382,8 @@ msgid "Shipped quantity"
 msgstr ""
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Shipment"
-msgstr "Försäljningsorder"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5487,16 +5439,12 @@ msgid "Shipment has no allocated stock items"
 msgstr ""
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Extra Line"
-msgstr "Försäljningsorderreferens"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Allocation"
-msgstr "Försäljningsorder"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -5650,10 +5598,8 @@ msgid "Internal Part Number"
 msgstr ""
 
 #: order/serializers.py:530
-#, fuzzy
-#| msgid "Internal Prices"
 msgid "Internal Part Name"
-msgstr "Interna priser"
+msgstr ""
 
 #: order/serializers.py:546
 msgid "Supplier part must be specified"
@@ -6867,10 +6813,8 @@ msgid "Part Sale Price Break"
 msgstr ""
 
 #: part/models.py:3413
-#, fuzzy
-#| msgid "Delete Template"
 msgid "Part Test Template"
-msgstr "Radera mall"
+msgstr ""
 
 #: part/models.py:3439
 msgid "Invalid template name - must include at least one alphanumeric character"
@@ -6956,10 +6900,8 @@ msgid "Valid choices for this test (comma-separated)"
 msgstr ""
 
 #: part/models.py:3577
-#, fuzzy
-#| msgid "Delete Template"
 msgid "Part Parameter Template"
-msgstr "Radera mall"
+msgstr ""
 
 #: part/models.py:3604
 msgid "Checkbox parameters cannot have units"
@@ -6999,10 +6941,8 @@ msgid "Valid choices for this parameter (comma-separated)"
 msgstr ""
 
 #: part/models.py:3723
-#, fuzzy
-#| msgid "Parameters"
 msgid "Part Parameter"
-msgstr "Parametrar"
+msgstr ""
 
 #: part/models.py:3749
 msgid "Parameter cannot be modified - part is locked"
@@ -9530,20 +9470,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock Item Tracking"
-msgstr "Artikel i lager"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr ""
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock Item Test Result"
-msgstr "Lagerpost skapad"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9658,10 +9594,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Parent stock item"
-msgstr "Källa lagervara"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -14456,10 +14390,8 @@ msgid "Show active parts"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:722
-#, fuzzy
-#| msgid "Show related parts"
 msgid "Show locked parts"
-msgstr "Visa relaterade delar"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:730
 msgid "Available stock"
@@ -14870,3 +14802,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
