@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Grid, Skeleton, Stack, Table } from '@mantine/core';
+import { Alert, Grid, Skeleton, Stack, Table, Text } from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -22,9 +22,10 @@ import {
   IconTruckDelivery,
   IconVersions
 } from '@tabler/icons-react';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Select from 'react-select';
 
 import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -51,6 +52,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { RenderPart } from '../../components/render/Part';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -180,13 +182,6 @@ export default function PartDetail() {
         label: t`IPN`,
         copy: true,
         hidden: !part.IPN
-      },
-      {
-        type: 'string',
-        name: 'revision',
-        label: t`Revision`,
-        copy: true,
-        hidden: !part.revision
       },
       {
         type: 'string',
@@ -664,6 +659,86 @@ export default function PartDetail() {
     ];
   }, [id, part, user]);
 
+  // Fetch information on part revision
+  const partRevisionQuery = useQuery({
+    queryKey: [
+      'part_revisions',
+      part.pk,
+      part.revision_of,
+      part.revision_count
+    ],
+    queryFn: async () => {
+      if (!part.revision_of && !part.revision_count) {
+        return [];
+      }
+
+      let revisions = [];
+
+      // First, fetch information for the top-level part
+      if (part.revision_of) {
+        await api
+          .get(apiUrl(ApiEndpoints.part_list, part.revision_of))
+          .then((response) => {
+            revisions.push(response.data);
+          });
+      } else {
+        revisions.push(part);
+      }
+
+      const url = apiUrl(ApiEndpoints.part_list);
+
+      await api
+        .get(url, {
+          params: {
+            revision_of: part.revision_of || part.pk
+          }
+        })
+        .then((response) => {
+          switch (response.status) {
+            case 200:
+              response.data.forEach((r: any) => {
+                revisions.push(r);
+              });
+              break;
+            default:
+              break;
+          }
+        })
+        .catch(() => {});
+
+      return revisions;
+    }
+  });
+
+  const partRevisionOptions: any[] = useMemo(() => {
+    if (partRevisionQuery.isFetching || !partRevisionQuery.data) {
+      return [];
+    }
+
+    if (!part.revision_of && !part.revision_count) {
+      return [];
+    }
+
+    let options: any[] = partRevisionQuery.data.map((revision: any) => {
+      return {
+        value: revision.pk,
+        label: revision.full_name,
+        part: revision
+      };
+    });
+
+    // Add this part if not already available
+    if (!options.find((o) => o.value == part.pk)) {
+      options.push({
+        value: part.pk,
+        label: part.full_name,
+        part: part
+      });
+    }
+
+    return options;
+  }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
+
   const breadcrumbs = useMemo(
     () => [
       { name: t`Parts`, url: '/part' },
@@ -695,7 +770,7 @@ export default function PartDetail() {
       />,
       <DetailsBadge
         label={t`No Stock`}
-        color="red"
+        color="orange"
         visible={part.in_stock == 0}
         key="no_stock"
       />,
@@ -714,7 +789,7 @@ export default function PartDetail() {
       <DetailsBadge
         label={t`Locked`}
         color="black"
-        visible={part.locked}
+        visible={part.locked == true}
         key="locked"
       />,
       <DetailsBadge
@@ -903,6 +978,29 @@ export default function PartDetail() {
               setTreeOpen(true);
             }}
             actions={partActions}
+            detail={
+              partRevisionOptions.length > 0 && (
+                <Stack gap="xs">
+                  <Text>{t`Select Part Revision`}</Text>
+                  <Select
+                    id="part-revision-select"
+                    aria-label="part-revision-select"
+                    options={partRevisionOptions}
+                    value={{
+                      value: part.pk,
+                      label: part.full_name,
+                      part: part
+                    }}
+                    formatOptionLabel={(option: any) =>
+                      RenderPart({ instance: option.part })
+                    }
+                    onChange={(value: any) => {
+                      navigate(getDetailUrl(ModelType.part, value.value));
+                    }}
+                  />
+                </Stack>
+              )
+            }
           />
           <PanelGroup pageKey="part" panels={partPanels} />
           {transferStockItems.modal}

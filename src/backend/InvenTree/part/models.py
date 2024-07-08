@@ -876,8 +876,7 @@ class Part(
                     'IPN': _('Duplicate IPN not allowed in part settings')
                 })
 
-        # Ensure unique across (Name, revision, IPN) (as specified)
-        if self.revision_of or self.revision:
+        if self.revision_of and self.revision:
             if (
                 Part.objects.exclude(pk=self.pk)
                 .filter(revision_of=self.revision_of, revision=self.revision)
