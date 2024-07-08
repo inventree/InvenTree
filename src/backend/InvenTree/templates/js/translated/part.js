@@ -2276,6 +2276,7 @@ function loadPartTable(table, url, options={}) {
 
     // Ensure category detail is included
     options.params['category_detail'] = true;
+    options.params['location_detail'] = true;
 
     let filters = {};
 
@@ -2389,6 +2390,19 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    columns.push({
+        field: 'default_location',
+        title: '{% trans "Default Location" %}',
+        sortable: true,
+        formatter: function(value, row) {
+            if (row.default_location && row.default_location_detail) {
+                let text = shortenString(row.default_location_detail.pathstring);
+                return withTitle(renderLink(text, `/stock/location/${row.default_location}/`), row.default_location_detail.pathstring);
+            } else {
+                return '-';
+            }
+        }
+    });
 
     columns.push({
         field: 'total_in_stock',
