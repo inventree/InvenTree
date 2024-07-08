@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-08 14:46+0000\n"
-"PO-Revision-Date: 2024-07-05 14:57\n"
+"PO-Revision-Date: 2024-07-08 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Language: da_DK\n"
@@ -783,16 +783,12 @@ msgid "Assembly BOM has not been validated"
 msgstr ""
 
 #: build/models.py:134
-#, fuzzy
-#| msgid "Build order part cannot be changed"
 msgid "Build order cannot be created for an inactive part"
-msgstr "Byggeordre enhed kan ikke ændres"
+msgstr ""
 
 #: build/models.py:141
-#, fuzzy
-#| msgid "Build order part cannot be changed"
 msgid "Build order cannot be created for an unlocked part"
-msgstr "Byggeordre enhed kan ikke ændres"
+msgstr ""
 
 #: build/models.py:155
 msgid "Invalid choice for parent build"
@@ -1506,16 +1502,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Produktionsordre reference"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "BOM Reference"
-msgstr "Produktionsordre reference"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3993
 msgid "Part IPN"
@@ -1567,10 +1559,8 @@ msgid "Available Variant Stock"
 msgstr ""
 
 #: build/serializers.py:1226
-#, fuzzy
-#| msgid "Available"
 msgid "Total Available Stock"
-msgstr "Tilgængelig"
+msgstr ""
 
 #: build/serializers.py:1227 part/serializers.py:862
 msgid "External Stock"
@@ -4024,10 +4014,8 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "Sent to customer"
 msgid "Is customer"
-msgstr "Sendt til kunde"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
@@ -4831,10 +4819,8 @@ msgid "Placed"
 msgstr "Placeret"
 
 #: importer/mixins.py:263
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid export format"
-msgstr "Ugyldig værdi for overskud"
+msgstr ""
 
 #: importer/models.py:56
 msgid "Timestamp"
@@ -4877,10 +4863,8 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Bruger har ikke tilladelse til at se denne model"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
@@ -4919,10 +4903,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported data file format"
-msgstr "Filtype ikke understøttet"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4941,10 +4923,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Ingen data-rækker angivet"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4955,10 +4935,8 @@ msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "A build order has been completed"
 msgid "Row has already been completed"
-msgstr "En byggeordre er fuldført"
+msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
@@ -4969,20 +4947,16 @@ msgid "Mapping Columns"
 msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Importing Data"
-msgstr "Dato for afslutning"
+msgstr ""
 
 #: importer/status_codes.py:16
 msgid "Processing Data"
 msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Billeddownload overskred maksimumstørrelsen"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -4997,10 +4971,8 @@ msgid "Data file contains too many rows"
 msgstr ""
 
 #: importer/validators.py:49
-#, fuzzy
-#| msgid "Metadata must be a python dict object"
 msgid "Value must be a valid dictionary object"
-msgstr "Metadata skal være et python dict objekt"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
@@ -5378,10 +5350,8 @@ msgid "Purchase Order Extra Line"
 msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Line Item"
-msgstr "Salgsordrereference"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5412,10 +5382,8 @@ msgid "Shipped quantity"
 msgstr ""
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Shipment"
-msgstr "Salgsordrereference"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5471,16 +5439,12 @@ msgid "Shipment has no allocated stock items"
 msgstr ""
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Extra Line"
-msgstr "Salgsordrereference"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Allocation"
-msgstr "Salgsordrereference"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -6591,16 +6555,12 @@ msgstr ""
 
 #: part/models.py:1090 templates/js/translated/part.js:818
 #: templates/js/translated/table_filters.js:721
-#, fuzzy
-#| msgid "Tracked"
 msgid "Locked"
-msgstr "Sporet"
+msgstr ""
 
 #: part/models.py:1091
-#, fuzzy
-#| msgid "Build order part cannot be changed"
 msgid "Locked parts cannot be edited"
-msgstr "Byggeordre enhed kan ikke ændres"
+msgstr ""
 
 #: part/models.py:1097
 msgid "Is this a virtual part, such as a software product or license?"
@@ -9510,20 +9470,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock Item Tracking"
-msgstr "Lager-element oprettet"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr ""
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock Item Test Result"
-msgstr "Lager-element oprettet"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9638,10 +9594,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Merged stock items"
 msgid "Parent stock item"
-msgstr "Flettede lagervarer"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -14848,3 +14802,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
