@@ -99,6 +99,7 @@ type FieldProps = {
  */
 function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
   const { data } = useSuspenseQuery({
+    refetchOnWindowFocus: false,
     queryKey: ['badge', type, pk],
     queryFn: async () => {
       let path: string = '';
@@ -218,6 +219,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   const navigate = useNavigate();
 
   const { data } = useSuspenseQuery({
+    refetchOnWindowFocus: false,
     queryKey: ['detail', props.field_data.model, props.field_value],
     queryFn: async () => {
       if (!props.field_data?.model) {
