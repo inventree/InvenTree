@@ -186,7 +186,6 @@ jobs:
           revision: 'src/backend/InvenTree/schema.yml'
       - name: Echoing diff to step
         run: echo "${{ steps.breaking_changes.outputs.diff }}" >> $GITHUB_STEP_SUMMARY
-        hidden: true
 
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
