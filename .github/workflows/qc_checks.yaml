@@ -178,6 +178,7 @@ jobs:
         with:
           base: 'api.yaml'
           revision: 'src/backend/InvenTree/schema.yml'
+          output_to_file: $GITHUB_STEP_SUMMARY
 
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
