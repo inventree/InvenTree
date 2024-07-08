@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-08 14:46+0000\n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-08 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -783,16 +783,12 @@ msgid "Assembly BOM has not been validated"
 msgstr ""
 
 #: build/models.py:134
-#, fuzzy
-#| msgid "Stock item cannot be created for virtual parts"
 msgid "Build order cannot be created for an inactive part"
-msgstr "Không thể tạo hàng hóa trong kho cho sản phẩm ảo"
+msgstr ""
 
 #: build/models.py:141
-#, fuzzy
-#| msgid "Build output cannot be specified for allocation of untracked parts"
 msgid "Build order cannot be created for an unlocked part"
-msgstr "Đầu ra bản dựng không thể chỉ định cho việc phân sản phẩm chưa được theo dõi"
+msgstr ""
 
 #: build/models.py:155
 msgid "Invalid choice for parent build"
@@ -1493,10 +1489,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Supplier Part Orders"
 msgid "Supplier Part Number"
-msgstr "Đơn đặt hàng nhà cung cấp"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1508,16 +1502,12 @@ msgid "Location Name"
 msgstr "Tên địa điểm"
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Tham chiếu đơn đặt bản dựng"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "Tham chiếu"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3993
 msgid "Part IPN"
@@ -1561,22 +1551,16 @@ msgid "Available Stock"
 msgstr "Số hàng tồn"
 
 #: build/serializers.py:1224
-#, fuzzy
-#| msgid "Substitute Stock"
 msgid "Available Substitute Stock"
-msgstr "Kho thay thế"
+msgstr ""
 
 #: build/serializers.py:1225
-#, fuzzy
-#| msgid "Available Stock"
 msgid "Available Variant Stock"
-msgstr "Số hàng tồn"
+msgstr ""
 
 #: build/serializers.py:1226
-#, fuzzy
-#| msgid "Available Stock"
 msgid "Total Available Stock"
-msgstr "Số hàng tồn"
+msgstr ""
 
 #: build/serializers.py:1227 part/serializers.py:862
 msgid "External Stock"
@@ -2789,16 +2773,12 @@ msgid "Prevent build order creation for inactive parts"
 msgstr ""
 
 #: common/models.py:1801
-#, fuzzy
-#| msgid "Return to Parts"
 msgid "Require Locked Part"
-msgstr "Quay lại sản phẩm"
+msgstr ""
 
 #: common/models.py:1802
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Prevent build order creation for unlocked parts"
-msgstr "Báo cáo in đơn đặt bản dựng"
+msgstr ""
 
 #: common/models.py:1807
 msgid "Require Valid BOM"
@@ -3704,10 +3684,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3035
-#, fuzzy
-#| msgid "Customer ID"
 msgid "Custom Unit"
-msgstr "ID Khách hàng"
+msgstr ""
 
 #: common/models.py:3056
 msgid "Unit symbol must be unique"
@@ -4036,30 +4014,24 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "is customer"
 msgid "Is customer"
-msgstr "là khách hàng"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
 msgstr "Bạn có bán hàng cho công ty này?"
 
 #: company/models.py:174
-#, fuzzy
-#| msgid "is supplier"
 msgid "Is supplier"
-msgstr "là nhà cung cấp"
+msgstr ""
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
 msgstr "Bạn có mua hàng từ công ty này?"
 
 #: company/models.py:180
-#, fuzzy
-#| msgid "is manufacturer"
 msgid "Is manufacturer"
-msgstr "là nhà sản xuất"
+msgstr ""
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4220,10 +4192,8 @@ msgid "Manufacturer part description"
 msgstr "Mô tả sản phẩm của nhà sản xuất"
 
 #: company/models.py:569
-#, fuzzy
-#| msgid "Manufacturer Part Number"
 msgid "Manufacturer Part Parameter"
-msgstr "Mã số nhà sản xuất"
+msgstr ""
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4379,20 +4349,16 @@ msgid "Date of last update of availability data"
 msgstr "Ngày cập nhật cuối thông tin tồn kho"
 
 #: company/models.py:1015
-#, fuzzy
-#| msgid "Supplier Pricing"
 msgid "Supplier Price Break"
-msgstr "Giá bán nhà cung cấp"
+msgstr ""
 
 #: company/serializers.py:174
 msgid "Default currency used for this supplier"
 msgstr "Tiền tệ mặc định được sử dụng cho nhà cung cấp này"
 
 #: company/serializers.py:210
-#, fuzzy
-#| msgid "Company name"
 msgid "Company Name"
-msgstr "Tên công ty"
+msgstr ""
 
 #: company/serializers.py:384 part/admin.py:126 part/serializers.py:855
 #: part/templates/part/part_base.html:197
@@ -4853,42 +4819,32 @@ msgid "Placed"
 msgstr "Đã đặt"
 
 #: importer/mixins.py:263
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid export format"
-msgstr "Giá trị không hợp lệ cho hàng hóa dư thừa"
+msgstr ""
 
 #: importer/models.py:56
 msgid "Timestamp"
 msgstr ""
 
 #: importer/models.py:61
-#, fuzzy
-#| msgid "Select file to upload"
 msgid "Data file to import"
-msgstr "Chọn tệp để tải lên"
+msgstr ""
 
 #: importer/models.py:70 templates/js/translated/tables.js:558
 msgid "Columns"
 msgstr ""
 
 #: importer/models.py:81
-#, fuzzy
-#| msgid "Import Parts"
 msgid "Import status"
-msgstr "Nhập sản phẩm"
+msgstr ""
 
 #: importer/models.py:91
-#, fuzzy
-#| msgid "Build Details"
 msgid "Field Defaults"
-msgstr "Chi tiết bản dựng"
+msgstr ""
 
 #: importer/models.py:201
-#, fuzzy
-#| msgid "Required build quantity has not been completed"
 msgid "Some required fields have not been mapped"
-msgstr "Số lượng bản dựng được yêu cầu chưa được hoàn thành"
+msgstr ""
 
 #: importer/models.py:346
 msgid "Column is already mapped to a database field"
@@ -4907,42 +4863,32 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Người dùng không được phân quyền xem mẫu này"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
 msgstr ""
 
 #: importer/models.py:381 importer/models.py:452
-#, fuzzy
-#| msgid "Active Sessions"
 msgid "Import Session"
-msgstr "Các phiên hoạt động"
+msgstr ""
 
 #: importer/models.py:385
-#, fuzzy
-#| msgid "File Fields"
 msgid "Field"
-msgstr "Các trường tập tin"
+msgstr ""
 
 #: importer/models.py:387
 msgid "Column"
 msgstr ""
 
 #: importer/models.py:456
-#, fuzzy
-#| msgid "Index"
 msgid "Row Index"
-msgstr "Chỉ số"
+msgstr ""
 
 #: importer/models.py:459
-#, fuzzy
-#| msgid "Original Part"
 msgid "Original row data"
-msgstr "Sản phẩm gốc"
+msgstr ""
 
 #: importer/models.py:462 part/models.py:3841
 msgid "Data"
@@ -4957,10 +4903,8 @@ msgid "Valid"
 msgstr "Hợp lệ"
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file format: {fmt}"
 msgid "Unsupported data file format"
-msgstr "Định dạng tệp không được hỗ trợ {fmt}"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4979,26 +4923,20 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Chưa có dữ liệu"
+msgstr ""
 
 #: importer/serializers.py:153
-#, fuzzy
-#| msgid "Item cannot belong to itself"
 msgid "Row does not belong to this session"
-msgstr "Hàng hóa không thể thuộc về chính nó"
+msgstr ""
 
 #: importer/serializers.py:156
 msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "This build output has already been completed"
 msgid "Row has already been completed"
-msgstr "Đầu ra bản dựng này đã được hoàn thành"
+msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
@@ -5009,28 +4947,20 @@ msgid "Mapping Columns"
 msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Import Part"
 msgid "Importing Data"
-msgstr "Nhập sản phẩm"
+msgstr ""
 
 #: importer/status_codes.py:16
-#, fuzzy
-#| msgid "Remove Existing Data"
 msgid "Processing Data"
-msgstr "Xóa dữ liệu đã tồn tại"
+msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Tải xuống hình ảnh vượt quá kích thước tối đa"
+msgstr ""
 
 #: importer/validators.py:26
-#, fuzzy
-#| msgid "Stock item contains other items"
 msgid "Data file contains no headers"
-msgstr "Hàng trong kho chứa hàng hóa khác"
+msgstr ""
 
 #: importer/validators.py:29
 msgid "Data file contains too many columns"
@@ -5041,10 +4971,8 @@ msgid "Data file contains too many rows"
 msgstr ""
 
 #: importer/validators.py:49
-#, fuzzy
-#| msgid "Metadata must be a python dict object"
 msgid "Value must be a valid dictionary object"
-msgstr "Siêu dữ liệu phải là đối tượng từ điển của python"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
@@ -5374,10 +5302,8 @@ msgid "Unit price"
 msgstr "Đơn giá"
 
 #: order/models.py:1361
-#, fuzzy
-#| msgid "Purchase Order Items"
 msgid "Purchase Order Line Item"
-msgstr "Hàng hóa đặt mua"
+msgstr ""
 
 #: order/models.py:1385
 msgid "Supplier part must match supplier"
@@ -5420,16 +5346,12 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr "Có phải người mua hàng muốn mặt hàng này được tích trữ?"
 
 #: order/models.py:1503
-#, fuzzy
-#| msgid "Purchase Order Items"
 msgid "Purchase Order Extra Line"
-msgstr "Hàng hóa đặt mua"
+msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order Items"
 msgid "Sales Order Line Item"
-msgstr "Hàng hóa đơn hàng bán"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5460,10 +5382,8 @@ msgid "Shipped quantity"
 msgstr "Số lượng đã vận chuyển"
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order Default Shipment"
 msgid "Sales Order Shipment"
-msgstr "Vận chuyển mặc định đơn đặt hàng"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5519,16 +5439,12 @@ msgid "Shipment has no allocated stock items"
 msgstr "Vận đơn chưa có hàng hóa được phân bổ"
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Items"
 msgid "Sales Order Extra Line"
-msgstr "Hàng hóa đơn hàng bán"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Sales Order Allocations"
 msgid "Sales Order Allocation"
-msgstr "Phân bổ đơn hàng bán"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -5592,10 +5508,8 @@ msgid "Return order status"
 msgstr "Trạng thái đơn hàng trả lại"
 
 #: order/models.py:2237
-#, fuzzy
-#| msgid "Return order line item"
 msgid "Return Order Line Item"
-msgstr "Dòng riêng biệt đơn hàng trả lại"
+msgstr ""
 
 #: order/models.py:2251
 msgid "Only serialized items can be assigned to a Return Order"
@@ -5627,10 +5541,8 @@ msgid "Cost associated with return or repair for this line item"
 msgstr "Chi phí gắn với hàng trả lại hoặc sửa chữa cho dòng hàng hóa này"
 
 #: order/models.py:2303
-#, fuzzy
-#| msgid "Return Order Settings"
 msgid "Return Order Extra Line"
-msgstr "Cài đặt đơn trả hàng"
+msgstr ""
 
 #: order/serializers.py:83 order/templates/order/po_sidebar.html:5
 #: order/templates/order/return_order_detail.html:18
@@ -5686,10 +5598,8 @@ msgid "Internal Part Number"
 msgstr "Mã sản phẩm nội bộ"
 
 #: order/serializers.py:530
-#, fuzzy
-#| msgid "Internal Part Number"
 msgid "Internal Part Name"
-msgstr "Mã sản phẩm nội bộ"
+msgstr ""
 
 #: order/serializers.py:546
 msgid "Supplier part must be specified"
@@ -6645,16 +6555,12 @@ msgstr "Sản phẩm này đang hoạt động?"
 
 #: part/models.py:1090 templates/js/translated/part.js:818
 #: templates/js/translated/table_filters.js:721
-#, fuzzy
-#| msgid "Lock"
 msgid "Locked"
-msgstr "Khoá"
+msgstr ""
 
 #: part/models.py:1091
-#, fuzzy
-#| msgid "Build order part cannot be changed"
 msgid "Locked parts cannot be edited"
-msgstr "Sản phẩm đơn đặt bản dựng không thể thay đổi được"
+msgstr ""
 
 #: part/models.py:1097
 msgid "Is this a virtual part, such as a software product or license?"
@@ -6903,16 +6809,12 @@ msgid "User who requested this stocktake report"
 msgstr "Người dùng đã yêu cầu báo cáo kiểm kê này"
 
 #: part/models.py:3301
-#, fuzzy
-#| msgid "Add Sell Price Break"
 msgid "Part Sale Price Break"
-msgstr "Thêm định giá bán hàng"
+msgstr ""
 
 #: part/models.py:3413
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Template"
-msgstr "Mẫu kiểm thử sản phẩm"
+msgstr ""
 
 #: part/models.py:3439
 msgid "Invalid template name - must include at least one alphanumeric character"
@@ -6998,10 +6900,8 @@ msgid "Valid choices for this test (comma-separated)"
 msgstr ""
 
 #: part/models.py:3577
-#, fuzzy
-#| msgid "Part Parameter Templates"
 msgid "Part Parameter Template"
-msgstr "Mẫu tham số sản phẩm"
+msgstr ""
 
 #: part/models.py:3604
 msgid "Checkbox parameters cannot have units"
@@ -7041,10 +6941,8 @@ msgid "Valid choices for this parameter (comma-separated)"
 msgstr "Lựa chọn hợp lệ từ tham số này (ngăn cách bằng dấu phẩy)"
 
 #: part/models.py:3723
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Part Parameter"
-msgstr "Thông số phụ tùng"
+msgstr ""
 
 #: part/models.py:3749
 msgid "Parameter cannot be modified - part is locked"
@@ -7068,10 +6966,8 @@ msgid "Parameter Value"
 msgstr "Giá trị tham số"
 
 #: part/models.py:3892
-#, fuzzy
-#| msgid "Copy Category Parameter Templates"
 msgid "Part Category Parameter Template"
-msgstr "Sao chéo mẫu tham số danh mục"
+msgstr ""
 
 #: part/models.py:3951 templates/InvenTree/settings/settings_staff_js.html:304
 msgid "Default Value"
@@ -9574,20 +9470,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr "Không thể xóa mặt hàng không ở trong kho"
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Tracking"
 msgid "Stock Item Tracking"
-msgstr "Theo dõi tồn kho"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr "Ghi chú đầu vào"
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock Item Test Report"
 msgid "Stock Item Test Result"
-msgstr "Báo cáo kiểm thử mặt hàng"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9702,10 +9594,8 @@ msgid "Parent Item"
 msgstr "Mục cha"
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Parent Stock Item"
 msgid "Parent stock item"
-msgstr "Hàng trong kho cha"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -9726,26 +9616,20 @@ msgid "Child Items"
 msgstr "Mục con"
 
 #: stock/serializers.py:598
-#, fuzzy
-#| msgid "Tracking Number"
 msgid "Tracking Items"
-msgstr "Số theo dõi"
+msgstr ""
 
 #: stock/serializers.py:604
 msgid "Purchase price of this stock item, per unit or pack"
 msgstr "Giá mua của mặt hàng, theo đơn vị hoặc gói"
 
 #: stock/serializers.py:623
-#, fuzzy
-#| msgid "Minimum Price"
 msgid "Minimum Pricing"
-msgstr "Giá thấp nhất"
+msgstr ""
 
 #: stock/serializers.py:629
-#, fuzzy
-#| msgid "Maximum Price"
 msgid "Maximum Pricing"
-msgstr "Giá cao nhất"
+msgstr ""
 
 #: stock/serializers.py:653
 msgid "Enter number of stock items to serialize"
@@ -14506,10 +14390,8 @@ msgid "Show active parts"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:722
-#, fuzzy
-#| msgid "Show related parts"
 msgid "Show locked parts"
-msgstr "Hiển thị sản phẩm liên quan"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:730
 msgid "Available stock"
@@ -14921,20 +14803,3 @@ msgstr "Quyển để sửa mục"
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
 
-#~ msgid "Default part label template"
-#~ msgstr "Mẫu nhãn sản phẩm mặc định"
-
-#~ msgid "The part label template to be automatically selected"
-#~ msgstr "Mẫu nhãn sản phẩm mặc định được chọn tự động"
-
-#~ msgid "Default stock item template"
-#~ msgstr "Mẫu hàng hóa trong khi mặc định"
-
-#~ msgid "The stock item label template to be automatically selected"
-#~ msgstr "Mẫu nhãn hàng hóa trong kho tự động được chọn"
-
-#~ msgid "Default stock location label template"
-#~ msgstr "Mẫu nhãn vị trí kho mặc định"
-
-#~ msgid "The stock location label template to be automatically selected"
-#~ msgstr "Mẫu nhãn vị trí kho được chọn tự động"
