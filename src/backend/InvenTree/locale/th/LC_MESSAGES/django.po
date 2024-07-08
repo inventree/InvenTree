@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-08 14:46+0000\n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-08 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -4014,10 +4014,8 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "Sent to customer"
 msgid "Is customer"
-msgstr "จัดส่งให้ลูกค้าแล้ว"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
@@ -4925,10 +4923,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "Wrong password provided"
 msgid "No rows provided"
-msgstr "ป้อนรหัสผ่านไม่ถูกต้อง"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -14806,3 +14802,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
