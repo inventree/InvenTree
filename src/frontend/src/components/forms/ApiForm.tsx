@@ -207,7 +207,7 @@ export function ApiForm({
   const [fields, setFields] = useState<ApiFormFieldSet>(
     () => props.fields ?? {}
   );
-  useMemo(() => {
+  useEffect(() => {
     setFields(props.fields ?? {});
   }, [props.fields]);
 
