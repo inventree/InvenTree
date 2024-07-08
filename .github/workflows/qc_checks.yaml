@@ -172,7 +172,11 @@ jobs:
         run: |
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
-          curl -s -o api.yaml $url --fail
+          code=curl -s -o api.yaml $url --write-out '%{http_code}' --silent
+          if [ $code!="200" ]
+          then
+              exit 1
+          fi
           echo "Downloaded api.yaml"
       - name: Running OpenAPI Spec diff action
         id: breaking_changes
