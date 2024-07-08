@@ -999,6 +999,11 @@ export default function PartDetail() {
                     onChange={(value: any) => {
                       navigate(getDetailUrl(ModelType.part, value.value));
                     }}
+                    styles={{
+                      menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                      menu: (base: any) => ({ ...base, zIndex: 9999 }),
+                      menuList: (base: any) => ({ ...base, zIndex: 9999 })
+                    }}
                   />
                 </Stack>
               )
