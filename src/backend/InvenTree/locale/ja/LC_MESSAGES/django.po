@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-08 14:46+0000\n"
-"PO-Revision-Date: 2024-07-05 14:57\n"
+"PO-Revision-Date: 2024-07-08 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -1489,10 +1489,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplier Part Number"
-msgstr "サプライヤー・パーツ"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1504,10 +1502,8 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Line"
 msgid "Build Reference"
-msgstr "組立ライン"
+msgstr ""
 
 #: build/serializers.py:1099
 msgid "BOM Reference"
@@ -3688,10 +3684,8 @@ msgid "Target model ID for this image"
 msgstr ""
 
 #: common/models.py:3035
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom Unit"
-msgstr "顧客"
+msgstr ""
 
 #: common/models.py:3056
 msgid "Unit symbol must be unique"
@@ -4020,30 +4014,24 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "Customer"
 msgid "Is customer"
-msgstr "顧客"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
 msgstr ""
 
 #: company/models.py:174
-#, fuzzy
-#| msgid "Supplier"
 msgid "Is supplier"
-msgstr "仕入先"
+msgstr ""
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
 msgstr ""
 
 #: company/models.py:180
-#, fuzzy
-#| msgid "Manufacturer"
 msgid "Is manufacturer"
-msgstr "製造元"
+msgstr ""
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4204,10 +4192,8 @@ msgid "Manufacturer part description"
 msgstr ""
 
 #: company/models.py:569
-#, fuzzy
-#| msgid "Manufacturer Part"
 msgid "Manufacturer Part Parameter"
-msgstr "メーカー・パーツ"
+msgstr ""
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4363,20 +4349,16 @@ msgid "Date of last update of availability data"
 msgstr ""
 
 #: company/models.py:1015
-#, fuzzy
-#| msgid "Supplier Parts"
 msgid "Supplier Price Break"
-msgstr "サプライヤー・パーツ"
+msgstr ""
 
 #: company/serializers.py:174
 msgid "Default currency used for this supplier"
 msgstr ""
 
 #: company/serializers.py:210
-#, fuzzy
-#| msgid "Category Name"
 msgid "Company Name"
-msgstr "カテゴリ名"
+msgstr ""
 
 #: company/serializers.py:384 part/admin.py:126 part/serializers.py:855
 #: part/templates/part/part_base.html:197
@@ -4853,10 +4835,8 @@ msgid "Columns"
 msgstr ""
 
 #: importer/models.py:81
-#, fuzzy
-#| msgid "Import Parts"
 msgid "Import status"
-msgstr "パーツをインポート"
+msgstr ""
 
 #: importer/models.py:91
 msgid "Field Defaults"
@@ -4883,20 +4863,16 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "ユーザーにこのモデルを表示する権限がありません"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
 msgstr ""
 
 #: importer/models.py:381 importer/models.py:452
-#, fuzzy
-#| msgid "Important dates"
 msgid "Import Session"
-msgstr "重要な日付"
+msgstr ""
 
 #: importer/models.py:385
 msgid "Field"
@@ -4927,10 +4903,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported data file format"
-msgstr "サポートされていないファイル形式"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4949,10 +4923,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "データが入力されていません"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4975,20 +4947,16 @@ msgid "Mapping Columns"
 msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Import Parts"
 msgid "Importing Data"
-msgstr "パーツをインポート"
+msgstr ""
 
 #: importer/status_codes.py:16
 msgid "Processing Data"
 msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "画像のダウンロードが最大サイズを超えました"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -5334,10 +5302,8 @@ msgid "Unit price"
 msgstr ""
 
 #: order/models.py:1361
-#, fuzzy
-#| msgid "Purchase Price"
 msgid "Purchase Order Line Item"
-msgstr "購入金額"
+msgstr ""
 
 #: order/models.py:1385
 msgid "Supplier part must match supplier"
@@ -5380,10 +5346,8 @@ msgid "Where does the Purchaser want this item to be stored?"
 msgstr ""
 
 #: order/models.py:1503
-#, fuzzy
-#| msgid "Purchase Price"
 msgid "Purchase Order Extra Line"
-msgstr "購入金額"
+msgstr ""
 
 #: order/models.py:1532
 msgid "Sales Order Line Item"
@@ -5634,10 +5598,8 @@ msgid "Internal Part Number"
 msgstr ""
 
 #: order/serializers.py:530
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Part Name"
-msgstr "内部パーツ"
+msgstr ""
 
 #: order/serializers.py:546
 msgid "Supplier part must be specified"
@@ -6851,10 +6813,8 @@ msgid "Part Sale Price Break"
 msgstr ""
 
 #: part/models.py:3413
-#, fuzzy
-#| msgid "Part must be salable"
 msgid "Part Test Template"
-msgstr "パーツは販売可能でなければなりません"
+msgstr ""
 
 #: part/models.py:3439
 msgid "Invalid template name - must include at least one alphanumeric character"
@@ -6940,10 +6900,8 @@ msgid "Valid choices for this test (comma-separated)"
 msgstr ""
 
 #: part/models.py:3577
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Part Parameter Template"
-msgstr "パーツパラメータ"
+msgstr ""
 
 #: part/models.py:3604
 msgid "Checkbox parameters cannot have units"
@@ -6983,10 +6941,8 @@ msgid "Valid choices for this parameter (comma-separated)"
 msgstr ""
 
 #: part/models.py:3723
-#, fuzzy
-#| msgid "Part Parameters"
 msgid "Part Parameter"
-msgstr "パーツパラメータ"
+msgstr ""
 
 #: part/models.py:3749
 msgid "Parameter cannot be modified - part is locked"
@@ -9514,20 +9470,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock Item Tracking"
-msgstr "在庫商品"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr ""
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock Items"
 msgid "Stock Item Test Result"
-msgstr "在庫商品"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9642,10 +9594,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Merged stock items"
 msgid "Parent stock item"
-msgstr "商品在庫をマージしました"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -9666,10 +9616,8 @@ msgid "Child Items"
 msgstr ""
 
 #: stock/serializers.py:598
-#, fuzzy
-#| msgid "Stock Items"
 msgid "Tracking Items"
-msgstr "在庫商品"
+msgstr ""
 
 #: stock/serializers.py:604
 msgid "Purchase price of this stock item, per unit or pack"
@@ -14442,10 +14390,8 @@ msgid "Show active parts"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:722
-#, fuzzy
-#| msgid "Show subscribed parts"
 msgid "Show locked parts"
-msgstr "購読中の部品を表示"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:730
 msgid "Available stock"
@@ -14856,3 +14802,4 @@ msgstr "項目を編集する権限"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
+
