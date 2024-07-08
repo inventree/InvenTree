@@ -1,6 +1,7 @@
 """DRF API serializers for the 'users' app."""
 
 from django.contrib.auth.models import Group, Permission, User
+from django.core.exceptions import AppRegistryNotReady
 from django.db.models import Q
 
 from rest_framework import serializers
@@ -31,7 +32,21 @@ class GroupSerializer(InvenTreeModelSerializer):
         """Metaclass defines serializer fields."""
 
         model = Group
-        fields = ['pk', 'name']
+        fields = ['pk', 'name', 'permissions']
+
+    def __init__(self, *args, **kwargs):
+        """Initialize this serializer with extra fields as required."""
+        permission_detail = kwargs.pop('permission_detail', False)
+
+        super().__init__(*args, **kwargs)
+
+        try:
+            if not permission_detail:
+                self.fields.pop('permissions', None)
+        except AppRegistryNotReady:
+            pass
+
+    permissions = serializers.SerializerMethodField()
 
 
 class RoleSerializer(InvenTreeModelSerializer):
