@@ -1350,3 +1350,17 @@ def docs_server(c, address='localhost:8080', compile_schema=False):
         c.run('python docs/extract_schema.py docs/schema.yml')
 
     c.run(f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+
+
+@task
+def clear_generated(c):
+    """Clear generated files from `inv update`."""
+    # pyc/pyo files
+    c.run('find . -name "*.pyc" -exec rm -f {} +')
+    c.run('find . -name "*.pyo" -exec rm -f {} +')
+    # cache folders
+    c.run('find . -name "__pycache__" -exec rm -rf {} +')
+
+    # Generated translations
+    c.run('find . -name "django.mo" -exec rm -f {} +')
+    c.run('find . -name "messages.mo" -exec rm -f {} +')
