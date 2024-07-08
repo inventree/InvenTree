@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-08 14:46+0000\n"
-"PO-Revision-Date: 2024-07-05 14:57\n"
+"PO-Revision-Date: 2024-07-08 14:56\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -783,16 +783,12 @@ msgid "Assembly BOM has not been validated"
 msgstr ""
 
 #: build/models.py:134
-#, fuzzy
-#| msgid "Build Order cannot be completed as outstanding outputs remain"
 msgid "Build order cannot be created for an inactive part"
-msgstr "Η Εντολή Κατασκευής δεν μπορεί να ολοκληρωθεί καθώς υπάρχουν εκκρεμή προϊόντα"
+msgstr ""
 
 #: build/models.py:141
-#, fuzzy
-#| msgid "Build order part cannot be changed"
 msgid "Build order cannot be created for an unlocked part"
-msgstr "Εξάρτημα από εντολή κατασκευής δεν μπορεί να αλλάξει"
+msgstr ""
 
 #: build/models.py:155
 msgid "Invalid choice for parent build"
@@ -1493,10 +1489,8 @@ msgid "Failed to start auto-allocation task"
 msgstr ""
 
 #: build/serializers.py:1095
-#, fuzzy
-#| msgid "Serial Numbers"
 msgid "Supplier Part Number"
-msgstr "Σειριακοί αριθμοί"
+msgstr ""
 
 #: build/serializers.py:1096 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1508,16 +1502,12 @@ msgid "Location Name"
 msgstr ""
 
 #: build/serializers.py:1098
-#, fuzzy
-#| msgid "Build Order Reference"
 msgid "Build Reference"
-msgstr "Αναφορά Παραγγελίας Κατασκευής"
+msgstr ""
 
 #: build/serializers.py:1099
-#, fuzzy
-#| msgid "Reference"
 msgid "BOM Reference"
-msgstr "Αναφορά"
+msgstr ""
 
 #: build/serializers.py:1186 part/admin.py:402 part/models.py:3993
 msgid "Part IPN"
@@ -1569,10 +1559,8 @@ msgid "Available Variant Stock"
 msgstr ""
 
 #: build/serializers.py:1226
-#, fuzzy
-#| msgid "Available"
 msgid "Total Available Stock"
-msgstr "Διαθέσιμο"
+msgstr ""
 
 #: build/serializers.py:1227 part/serializers.py:862
 msgid "External Stock"
@@ -2789,10 +2777,8 @@ msgid "Require Locked Part"
 msgstr ""
 
 #: common/models.py:1802
-#, fuzzy
-#| msgid "Print build order report"
 msgid "Prevent build order creation for unlocked parts"
-msgstr "Εκτύπωση αναφοράς εντολών κατασκευής"
+msgstr ""
 
 #: common/models.py:1807
 msgid "Require Valid BOM"
@@ -4028,10 +4014,8 @@ msgid "Is this company active?"
 msgstr ""
 
 #: company/models.py:168
-#, fuzzy
-#| msgid "Sent to customer"
 msgid "Is customer"
-msgstr "Απεστάλη στον πελάτη"
+msgstr ""
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
@@ -4835,10 +4819,8 @@ msgid "Placed"
 msgstr "Τοποθετήθηκε"
 
 #: importer/mixins.py:263
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid export format"
-msgstr "Μη έγκυρη τιμή για υπέρβαση"
+msgstr ""
 
 #: importer/models.py:56
 msgid "Timestamp"
@@ -4857,16 +4839,12 @@ msgid "Import status"
 msgstr ""
 
 #: importer/models.py:91
-#, fuzzy
-#| msgid "Build Details"
 msgid "Field Defaults"
-msgstr "Λεπτομέρειες Κατασκευής"
+msgstr ""
 
 #: importer/models.py:201
-#, fuzzy
-#| msgid "Required build quantity has not been completed"
 msgid "Some required fields have not been mapped"
-msgstr "Ο απαιτούμενος αριθμός προϊόντων δεν έχει ολοκληρωθεί"
+msgstr ""
 
 #: importer/models.py:346
 msgid "Column is already mapped to a database field"
@@ -4885,10 +4863,8 @@ msgid "Column does not exist in the data file"
 msgstr ""
 
 #: importer/models.py:372
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "Field does not exist in the target model"
-msgstr "Δεν έχετε δικαιώματα να το δείτε αυτό"
+msgstr ""
 
 #: importer/models.py:376
 msgid "Selected field is read-only"
@@ -4927,10 +4903,8 @@ msgid "Valid"
 msgstr ""
 
 #: importer/operations.py:28 importer/operations.py:49
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported data file format"
-msgstr "Μη υποστηριζόμενος τύπος αρχείου"
+msgstr ""
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
@@ -4949,10 +4923,8 @@ msgid "List of row IDs to accept"
 msgstr ""
 
 #: importer/serializers.py:149
-#, fuzzy
-#| msgid "No data rows provided"
 msgid "No rows provided"
-msgstr "Δεν παρασχέθηκαν σειρές δεδομένων"
+msgstr ""
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -4963,10 +4935,8 @@ msgid "Row contains invalid data"
 msgstr ""
 
 #: importer/serializers.py:159
-#, fuzzy
-#| msgid "This build output has already been completed"
 msgid "Row has already been completed"
-msgstr "Η παραγγελία κατασκευής έχει ολοκληρωθεί"
+msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
@@ -4977,20 +4947,16 @@ msgid "Mapping Columns"
 msgstr ""
 
 #: importer/status_codes.py:13
-#, fuzzy
-#| msgid "Completion Date"
 msgid "Importing Data"
-msgstr "Ημερομηνία ολοκλήρωσης"
+msgstr ""
 
 #: importer/status_codes.py:16
 msgid "Processing Data"
 msgstr ""
 
 #: importer/validators.py:21
-#, fuzzy
-#| msgid "Image download exceeded maximum size"
 msgid "Data file exceeds maximum size limit"
-msgstr "Η λήψη εικόνας ξεπέρασε το μέγιστο μέγεθος"
+msgstr ""
 
 #: importer/validators.py:26
 msgid "Data file contains no headers"
@@ -5005,10 +4971,8 @@ msgid "Data file contains too many rows"
 msgstr ""
 
 #: importer/validators.py:49
-#, fuzzy
-#| msgid "Metadata must be a python dict object"
 msgid "Value must be a valid dictionary object"
-msgstr "Τα μεταδεδομένα πρέπει να είναι ένα αντικείμενο dict python"
+msgstr ""
 
 #: machine/machine_types/label_printer.py:212
 msgid "Copies"
@@ -5338,10 +5302,8 @@ msgid "Unit price"
 msgstr ""
 
 #: order/models.py:1361
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Purchase Order Line Item"
-msgstr "Αντικείμενο Γραμμής Κατασκευής"
+msgstr ""
 
 #: order/models.py:1385
 msgid "Supplier part must match supplier"
@@ -5388,10 +5350,8 @@ msgid "Purchase Order Extra Line"
 msgstr ""
 
 #: order/models.py:1532
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Line Item"
-msgstr "Εντολές Πώλησης"
+msgstr ""
 
 #: order/models.py:1553
 msgid "Virtual part cannot be assigned to a sales order"
@@ -5422,10 +5382,8 @@ msgid "Shipped quantity"
 msgstr ""
 
 #: order/models.py:1667
-#, fuzzy
-#| msgid "Sales Order"
 msgid "Sales Order Shipment"
-msgstr "Εντολές Πώλησης"
+msgstr ""
 
 #: order/models.py:1688
 msgid "Date of shipment"
@@ -5481,16 +5439,12 @@ msgid "Shipment has no allocated stock items"
 msgstr ""
 
 #: order/models.py:1828
-#, fuzzy
-#| msgid "Sales Order Reference"
 msgid "Sales Order Extra Line"
-msgstr "Κωδικός Παραγγελίας Πωλήσεων"
+msgstr ""
 
 #: order/models.py:1857
-#, fuzzy
-#| msgid "Discard Allocations"
 msgid "Sales Order Allocation"
-msgstr "Απόρριψη Κατανομών"
+msgstr ""
 
 #: order/models.py:1880 order/models.py:1882
 msgid "Stock item has not been assigned"
@@ -5554,10 +5508,8 @@ msgid "Return order status"
 msgstr ""
 
 #: order/models.py:2237
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Return Order Line Item"
-msgstr "Αντικείμενο Γραμμής Κατασκευής"
+msgstr ""
 
 #: order/models.py:2251
 msgid "Only serialized items can be assigned to a Return Order"
@@ -6603,16 +6555,12 @@ msgstr ""
 
 #: part/models.py:1090 templates/js/translated/part.js:818
 #: templates/js/translated/table_filters.js:721
-#, fuzzy
-#| msgid "Tracked"
 msgid "Locked"
-msgstr "Υπό παρακολούθηση"
+msgstr ""
 
 #: part/models.py:1091
-#, fuzzy
-#| msgid "Build order part cannot be changed"
 msgid "Locked parts cannot be edited"
-msgstr "Εξάρτημα από εντολή κατασκευής δεν μπορεί να αλλάξει"
+msgstr ""
 
 #: part/models.py:1097
 msgid "Is this a virtual part, such as a software product or license?"
@@ -9522,20 +9470,16 @@ msgid "StockItem cannot be moved as it is not in stock"
 msgstr ""
 
 #: stock/models.py:2317
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock Item Tracking"
-msgstr "Στοιχείο Αποθέματος"
+msgstr ""
 
 #: stock/models.py:2350
 msgid "Entry notes"
 msgstr ""
 
 #: stock/models.py:2390
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock Item Test Result"
-msgstr "Το αντικείμενο αποθεμάτων δημιουργήθηκε"
+msgstr ""
 
 #: stock/models.py:2423
 msgid "Value must be provided for this test"
@@ -9650,10 +9594,8 @@ msgid "Parent Item"
 msgstr ""
 
 #: stock/serializers.py:450
-#, fuzzy
-#| msgid "Source stock item"
 msgid "Parent stock item"
-msgstr "Στοιχείο πηγαίου αποθέματος"
+msgstr ""
 
 #: stock/serializers.py:469
 msgid "Use pack size when adding: the quantity defined is the number of packs"
@@ -14860,3 +14802,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
