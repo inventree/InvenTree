@@ -1,11 +1,19 @@
 import { Trans, t } from '@lingui/macro';
-import { Group, LoadingOverlay, Stack, Text, Title } from '@mantine/core';
+import {
+  Accordion,
+  Group,
+  LoadingOverlay,
+  Pill,
+  PillGroup,
+  Stack,
+  Text,
+  Title
+} from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
-import { PlaceholderPill } from '../../components/items/Placeholder';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import {
@@ -44,6 +52,30 @@ export function GroupDrawer({
     }
   });
 
+  const permissionsAccordion = useMemo(() => {
+    if (!instance?.permissions) return null;
+
+    const data = instance.permissions;
+    return (
+      <Accordion w={'100%'}>
+        {Object.keys(data).map((key) => (
+          <Accordion.Item key={key} value={key}>
+            <Accordion.Control>
+              <Pill>{instance.permissions[key].length}</Pill> {key}
+            </Accordion.Control>
+            <Accordion.Panel>
+              <PillGroup>
+                {data[key].map((perm: string) => (
+                  <Pill key={perm}>{perm}</Pill>
+                ))}
+              </PillGroup>
+            </Accordion.Panel>
+          </Accordion.Item>
+        ))}
+      </Accordion>
+    );
+  }, [instance]);
+
   if (isFetching) {
     return <LoadingOverlay visible={true} />;
   }
@@ -80,9 +112,7 @@ export function GroupDrawer({
       <Title order={5}>
         <Trans>Permission set</Trans>
       </Title>
-      <Group>
-        {instance?.permissions && JSON.stringify(instance.permissions)}
-      </Group>
+      <Group>{permissionsAccordion}</Group>
     </Stack>
   );
 }
