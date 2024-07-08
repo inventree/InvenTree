@@ -49,6 +49,11 @@ function partTableColumns(): TableColumn[] {
       render: (record: any) => record.category_detail?.pathstring
     },
     {
+      accessor: 'default_location',
+      sortable: true,
+      render: (record: any) => record.default_location_detail?.pathstring
+    },
+    {
       accessor: 'total_in_stock',
       sortable: true,
 
@@ -341,7 +346,8 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
           tableActions: tableActions,
           params: {
             ...props.params,
-            category_detail: true
+            category_detail: true,
+            location_detail: true
           }
         }}
       />

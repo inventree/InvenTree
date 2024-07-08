@@ -10,6 +10,7 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import part.filters
+import part.serializers as part_serializers
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import (
@@ -22,7 +23,6 @@ from InvenTree.serializers import (
     NotesFieldMixin,
     RemoteImageMixin,
 )
-from part.serializers import PartBriefSerializer
 
 from .models import (
     Address,
@@ -256,7 +256,9 @@ class ManufacturerPartSerializer(
         if prettify is not True:
             self.fields.pop('pretty_name', None)
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part_detail = part_serializers.PartBriefSerializer(
+        source='part', many=False, read_only=True
+    )
 
     manufacturer_detail = CompanyBriefSerializer(
         source='manufacturer', many=False, read_only=True
@@ -389,7 +391,9 @@ class SupplierPartSerializer(
 
     pack_quantity_native = serializers.FloatField(read_only=True)
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part_detail = part_serializers.PartBriefSerializer(
+        source='part', many=False, read_only=True
+    )
 
     supplier_detail = CompanyBriefSerializer(
         source='supplier', many=False, read_only=True

@@ -604,6 +604,21 @@ class InitialSupplierSerializer(serializers.Serializer):
         return data
 
 
+class DefaultLocationSerializer(InvenTree.serializers.InvenTreeModelSerializer):
+    """Brief serializer for a StockLocation object.
+
+    Defined here, rather than stock.serializers, to negotiate circular imports.
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        import stock.models as stock_models
+
+        model = stock_models.StockLocation
+        fields = ['pk', 'name', 'pathstring']
+
+
 @register_importer()
 class PartSerializer(
     DataImportExportSerializerMixin,
@@ -636,6 +651,7 @@ class PartSerializer(
             'creation_user',
             'default_expiry',
             'default_location',
+            'default_location_detail',
             'default_supplier',
             'description',
             'full_name',
@@ -702,6 +718,7 @@ class PartSerializer(
         """
         self.starred_parts = kwargs.pop('starred_parts', [])
         category_detail = kwargs.pop('category_detail', False)
+        location_detail = kwargs.pop('location_detail', False)
         parameters = kwargs.pop('parameters', False)
         create = kwargs.pop('create', False)
         pricing = kwargs.pop('pricing', True)
@@ -711,6 +728,9 @@ class PartSerializer(
 
         if not category_detail:
             self.fields.pop('category_detail', None)
+
+        if not location_detail:
+            self.fields.pop('default_location_detail', None)
 
         if not parameters:
             self.fields.pop('parameters', None)
@@ -755,6 +775,8 @@ class PartSerializer(
 
         Performing database queries as efficiently as possible, to reduce database trips.
         """
+        queryset = queryset.prefetch_related('category', 'default_location')
+
         # Annotate with the total number of revisions
         queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
 
@@ -849,6 +871,10 @@ class PartSerializer(
 
     category_path = serializers.ListField(
         child=serializers.DictField(), source='category.get_path', read_only=True
+    )
+
+    default_location_detail = DefaultLocationSerializer(
+        source='default_location', many=False, read_only=True
     )
 
     category_name = serializers.CharField(

@@ -4155,16 +4155,16 @@ class BomItem(
         """
         # TODO: Perhaps control this with a global setting?
 
-        msg = _('BOM item cannot be modified - assembly is locked')
-
         if assembly.locked:
-            raise ValidationError(msg)
+            raise ValidationError(_('BOM item cannot be modified - assembly is locked'))
 
         # If this BOM item is inherited, check all variants of the assembly
         if self.inherited:
             for part in assembly.get_descendants(include_self=False):
                 if part.locked:
-                    raise ValidationError(msg)
+                    raise ValidationError(
+                        _('BOM item cannot be modified - variant assembly is locked')
+                    )
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
