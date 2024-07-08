@@ -204,8 +204,11 @@ export function ApiForm({
 }) {
   const navigate = useNavigate();
 
-  const fields: ApiFormFieldSet = useMemo(() => {
-    return props.fields ?? {};
+  const [fields, setFields] = useState<ApiFormFieldSet>(
+    () => props.fields ?? {}
+  );
+  useEffect(() => {
+    setFields(props.fields ?? {});
   }, [props.fields]);
 
   const defaultValues: FieldValues = useMemo(() => {
@@ -543,6 +546,8 @@ export function ApiForm({
                           fieldName={fieldName}
                           definition={field}
                           control={form.control}
+                          url={url}
+                          setFields={setFields}
                         />
                       ))}
                   </Stack>
