@@ -1355,6 +1355,7 @@ class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
         'total_in_stock',
         'unallocated_stock',
         'category',
+        'default_location',
         'last_stocktake',
         'units',
         'pricing_min',
