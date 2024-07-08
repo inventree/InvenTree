@@ -7,6 +7,9 @@ INVENTREE_API_VERSION = 214
 
 
 INVENTREE_API_TEXT = """
+v214 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7002
+    - Moves API endpoint for contenttype lookup by model name
+
 v213 - 2024-07-06 : https://github.com/inventree/InvenTree/pull/7527
     - Adds 'locked' field to Part API
 
