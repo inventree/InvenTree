@@ -1877,11 +1877,13 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
 
     def filter_delete_queryset(self, queryset, request):
         """Ensure that there are no 'locked' items."""
+        queryset = super().filter_delete_queryset(queryset, request)
+
         for bom_item in queryset:
             # Note: Calling check_part_lock may raise a ValidationError
             bom_item.check_part_lock(bom_item.part)
 
-        return super().filter_delete_queryset(queryset, request)
+        return queryset
 
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
