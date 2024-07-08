@@ -138,7 +138,6 @@ export function PrintingActions({
       }
     },
     submitText: t`Generate`,
-
     successMessage: t`Report printing completed successfully`,
     onFormSuccess: (response: any) => {
       if (!response.complete) {
