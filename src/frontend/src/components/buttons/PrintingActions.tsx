@@ -98,6 +98,7 @@ export function PrintingActions({
     onClose: () => {
       setPluginKey('');
     },
+    submitText: t`Print`,
     successMessage: t`Label printing completed successfully`,
     onFormSuccess: (response: any) => {
       setPluginKey('');
