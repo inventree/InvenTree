@@ -291,6 +291,18 @@ function update_or_install() {
   chown ${APP_USER}:${APP_GROUP} ${CONF_DIR} -R
 }
 
+function clear_precompiled() {
+  # Check if we already have an env in APP_HOME/env
+  if test -f "${APP_HOME}/env/bin/pip"; then
+    echo "# Clearing precompiled files"
+  else
+    echo "# No python environment found - skipping"
+    return
+  fi
+
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke clear-generated"
+}
+
 function set_env() {
   echo "# Setting up InvenTree config values"
 
