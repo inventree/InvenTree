@@ -200,14 +200,14 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
     return ret(yarn_passes and node_version, node_version, yarn_version)
 
 
-def check_file_existance(filename: str, overwrite: bool = False):
+def check_file_existance(filename: Path, overwrite: bool = False):
     """Checks if a file exists and asks the user if it should be overwritten.
 
     Args:
         filename (str): Name of the file to check.
         overwrite (bool, optional): Overwrite the file without asking. Defaults to False.
     """
-    if Path(filename).is_file() and overwrite is False:
+    if filename.is_file() and overwrite is False:
         response = input(
             'Warning: file already exists. Do you want to overwrite? [y/N]: '
         )
@@ -584,14 +584,15 @@ def export_records(
     If you want only one file, with permissions, then additionally add argument -i / --include-permissions
     """
     # Get an absolute path to the file
-    if not os.path.isabs(filename):
-        filename = localDir().joinpath(filename).resolve()
+    target = Path(filename)
+    if not target.is_absolute():
+        target = localDir().joinpath(filename).resolve()
 
-    print(f"Exporting database records to file '{filename}'")
+    print(f"Exporting database records to file '{target}'")
 
-    check_file_existance(filename, overwrite)
+    check_file_existance(target, overwrite)
 
-    tmpfile = f'{filename}.tmp'
+    tmpfile = f'{target}.tmp'
 
     excludes = content_excludes(
         allow_tokens=include_tokens,
@@ -630,7 +631,7 @@ def export_records(
             data_out.append(entry)
 
     # Write the processed data to file
-    with open(filename, 'w') as f_out:
+    with open(target, 'w') as f_out:
         f_out.write(json.dumps(data_out, indent=2))
 
     print('Data export completed')
@@ -653,26 +654,27 @@ def import_records(
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
-    if not os.path.isabs(filename):
-        filename = localDir().joinpath(filename)
+    target = Path(filename)
+    if not target.is_absolute():
+        target = localDir().joinpath(filename)
 
-    if not os.path.exists(filename):
-        print(f"Error: File '{filename}' does not exist")
+    if not target.exists():
+        print(f"Error: File '{target}' does not exist")
         sys.exit(1)
 
     if clear:
         delete_data(c, force=True)
 
-    print(f"Importing database records from '{filename}'")
+    print(f"Importing database records from '{target}'")
 
     # We need to load 'auth' data (users / groups) *first*
     # This is due to the users.owner model, which has a ContentType foreign key
-    authfile = f'{filename}.auth.json'
+    authfile = f'{target}.auth.json'
 
     # Pre-process the data, to remove any "permissions" specified for a user or group
-    datafile = f'{filename}.data.json'
+    datafile = f'{target}.data.json'
 
-    with open(filename, 'r') as f_in:
+    with open(target, 'r') as f_in:
         try:
             data = json.loads(f_in.read())
         except json.JSONDecodeError as exc:
@@ -1033,9 +1035,8 @@ def schema(
     c, filename='schema.yml', overwrite=False, ignore_warnings=False, no_default=False
 ):
     """Export current API schema."""
+    filename = Path(filename).resolve()
     check_file_existance(filename, overwrite)
-
-    filename = os.path.abspath(filename)
 
     print(f"Exporting schema file to '{filename}'")
 
@@ -1058,7 +1059,7 @@ def schema(
 
     manage(c, cmd, pty=True, env=envs)
 
-    assert os.path.exists(filename)
+    assert filename.exists()
 
     print('Schema export completed:', filename)
 
