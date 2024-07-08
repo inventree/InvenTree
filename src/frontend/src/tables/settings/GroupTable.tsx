@@ -32,12 +32,16 @@ export function GroupDrawer({
   refreshTable: () => void;
 }) {
   const {
+    instance,
     refreshInstance,
     instanceQuery: { isFetching, error }
   } = useInstance({
     endpoint: ApiEndpoints.group_list,
     pk: id,
-    throwError: true
+    throwError: true,
+    params: {
+      permission_detail: true
+    }
   });
 
   if (isFetching) {
@@ -77,7 +81,7 @@ export function GroupDrawer({
         <Trans>Permission set</Trans>
       </Title>
       <Group>
-        <PlaceholderPill />
+        {instance?.permissions && JSON.stringify(instance.permissions)}
       </Group>
     </Stack>
   );
