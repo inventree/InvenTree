@@ -984,14 +984,18 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     if not ignore_update:
         update(c)
 
+    template_dir = localDir().joinpath(path)
+
     # Remove old data directory
-    if os.path.exists(path):
+    if template_dir.exists():
         print('Removing old data ...')
-        c.run(f'rm {path} -r')
+        c.run(f'rm {template_dir} -r')
 
     # Get test data
     print('Cloning demo dataset ...')
-    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v --depth=1')
+    c.run(
+        f'git clone https://github.com/inventree/demo-dataset {template_dir} -v --depth=1'
+    )
     print('========================================')
 
     # Make sure migrations are done - might have just deleted sqlite database
@@ -1000,11 +1004,11 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
 
     # Load data
     print('Loading database records ...')
-    import_records(c, filename=f'{path}/inventree_data.json', clear=True)
+    import_records(c, filename=template_dir.joinpath('inventree_data.json'), clear=True)
 
     # Copy media files
     print('Copying media files ...')
-    src = Path(path).joinpath('media').resolve()
+    src = template_dir.joinpath('media')
     dst = get_media_dir()
 
     print(f'Copying media files - "{src}" to "{dst}"')
