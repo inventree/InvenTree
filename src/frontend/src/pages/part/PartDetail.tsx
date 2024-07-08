@@ -993,6 +993,7 @@ export default function PartDetail() {
                       label: part.full_name,
                       part: part
                     }}
+                    isSearchable={false}
                     formatOptionLabel={(option: any) =>
                       RenderPart({ instance: option.part })
                     }
