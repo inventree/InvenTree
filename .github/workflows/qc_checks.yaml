@@ -164,7 +164,6 @@ jobs:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
       - name: Download public schema
-        if: needs.paths-filter.outputs.api == 'false'
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
           version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
