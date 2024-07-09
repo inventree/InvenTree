@@ -140,9 +140,8 @@ class LabelPrinterBaseDriver(BaseDriver):
             label: The LabelTemplate object to render
             item: The item to render the label with
         """
-        request = self._get_dummy_request()
         return (
-            self.render_to_pdf(label, item, request, **kwargs)
+            self.render_to_pdf(label, item, **kwargs)
             .get_document()  # type: ignore
             .write_pdf()
         )
@@ -159,7 +158,7 @@ class LabelPrinterBaseDriver(BaseDriver):
 
     def render_to_png(
         self, label: LabelTemplate, item: models.Model, **kwargs
-    ) -> Image:
+    ) -> Image | None:
         """Helper method to render a label to PNG format for a specific item.
 
         Arguments:
