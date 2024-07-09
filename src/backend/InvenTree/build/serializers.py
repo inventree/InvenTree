@@ -54,6 +54,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'part_name',
             'part_detail',
             'project_code',
+            'project_code_label',
             'project_code_detail',
             'overdue',
             'reference',
@@ -97,6 +98,8 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
     responsible_detail = OwnerSerializer(source='responsible', read_only=True)
 
     barcode_hash = serializers.CharField(read_only=True)
+
+    project_code_label = serializers.CharField(source='project_code.code', read_only=True, label=_('Project Code Label'))
 
     project_code_detail = ProjectCodeSerializer(source='project_code', many=False, read_only=True)
 
