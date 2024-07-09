@@ -48,6 +48,11 @@ echo "SIGNATURE='$SIGNATURE'" >> VERSION
 echo "Written VERSION information"
 cat VERSION
 
+echo "ALL"
+echo "##############"
+printenv
+echo "##############"
+
 # Try to get frontend
 # Check if tag sha is the same as the commit sha
 TAG_SHA=$(jq -r '.sha' tag.json)
