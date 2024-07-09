@@ -104,10 +104,6 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         source='responsible', read_only=True, many=False
     )
 
-    project_code = serializers.CharField(
-        source='project_code.code', label=_('Project Code'), read_only=True
-    )
-
     # Detail for project code field
     project_code_detail = ProjectCodeSerializer(
         source='project_code', read_only=True, many=False
