@@ -59,12 +59,18 @@ export const test = baseTest.extend({
       if (
         msg.type() === 'error' &&
         !msg.text().startsWith('ERR: ') &&
+        msg
+          .text()
+          .indexOf(
+            'Support for defaultProps will be removed from function components in a future major release'
+          ) < 0 &&
         url != 'http://localhost:8000/api/user/me/' &&
         url != 'http://localhost:8000/api/user/token/' &&
         url != 'http://localhost:8000/api/barcode/' &&
         url != 'http://localhost:8000/api/news/?search=&offset=0&limit=25' &&
         url != 'https://docs.inventree.org/en/versions.json' &&
-        !url.startsWith('chrome://')
+        !url.startsWith('chrome://') &&
+        url.indexOf('99999') < 0
       )
         messages.push(msg);
     });

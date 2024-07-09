@@ -38,7 +38,7 @@
 <link rel="stylesheet" href="{% static 'select2/css/select2-bootstrap-5-theme.css' %}">
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
 
-<link rel="stylesheet" href="{% get_color_theme_css user.get_username %}">
+<link rel="stylesheet" href="{% get_color_theme_css request.user %}">
 
 <title>
     {% inventree_title %} | {% block head_title %}{% endblock head_title %}

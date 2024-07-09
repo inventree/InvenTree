@@ -2,7 +2,7 @@
 Django<5.0                              # Django package
 coreapi                                 # API documentation for djangorestframework
 cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
-django-allauth                          # SSO for external providers via OpenID
+django-allauth[openid,saml]               # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
@@ -13,7 +13,7 @@ django-filter                           # Extended filtering options
 django-flags                            # Feature flags
 django-formtools                        # Form wizard tools
 django-ical                             # iCal export for calendar views
-django-import-export                    # Data import / export for admin interface
+django-import-export<4.0                # Data import / export for admin interface  # FIXED 2024-06-26 see https://github.com/inventree/InvenTree/pull/7521
 django-maintenance-mode                 # Shut down application while reloading etc.
 django-markdownify                      # Markdown rendering
 django-mptt                             # Modified Preorder Tree Traversal
@@ -30,7 +30,7 @@ django-stdimage                         # Advanced ImageField management
 django-taggit                           # Tagging support
 django-user-sessions                    # user sessions in DB
 django-weasyprint                       # django weasyprint integration
-djangorestframework                     # DRF framework
+djangorestframework<3.15                # DRF framework  # FIXED 2024-06-26 see https://github.com/inventree/InvenTree/pull/7521
 djangorestframework-simplejwt[crypto]   # JWT authentication
 django-xforwardedfor-middleware         # IP forwarding metadata
 dj-rest-auth                            # Authentication API endpoints

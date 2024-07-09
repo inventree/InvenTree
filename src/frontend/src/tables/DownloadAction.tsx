@@ -21,7 +21,6 @@ export function DownloadAction({
   const formatOptions = [
     { value: 'csv', label: t`CSV`, icon: <IconFileTypeCsv /> },
     { value: 'tsv', label: t`TSV`, icon: <IconFileText /> },
-    { value: 'xls', label: t`Excel (.xls)`, icon: <IconFileSpreadsheet /> },
     { value: 'xlsx', label: t`Excel (.xlsx)`, icon: <IconFileSpreadsheet /> }
   ];
 

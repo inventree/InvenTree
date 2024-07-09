@@ -165,19 +165,19 @@ class Company(
 
     is_customer = models.BooleanField(
         default=False,
-        verbose_name=_('is customer'),
+        verbose_name=_('Is customer'),
         help_text=_('Do you sell items to this company?'),
     )
 
     is_supplier = models.BooleanField(
         default=True,
-        verbose_name=_('is supplier'),
+        verbose_name=_('Is supplier'),
         help_text=_('Do you purchase items from this company?'),
     )
 
     is_manufacturer = models.BooleanField(
         default=False,
-        verbose_name=_('is manufacturer'),
+        verbose_name=_('Is manufacturer'),
         help_text=_('Does this company manufacture parts?'),
     )
 
@@ -269,6 +269,11 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
         role: position in company
     """
 
+    class Meta:
+        """Metaclass defines extra model options."""
+
+        verbose_name = _('Contact')
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the Contcat model."""
@@ -306,7 +311,8 @@ class Address(InvenTree.models.InvenTreeModel):
     class Meta:
         """Metaclass defines extra model options."""
 
-        verbose_name_plural = 'Addresses'
+        verbose_name = _('Address')
+        verbose_name_plural = _('Addresses')
 
     def __init__(self, *args, **kwargs):
         """Custom init function."""
@@ -560,6 +566,7 @@ class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
     class Meta:
         """Metaclass defines extra model options."""
 
+        verbose_name = _('Manufacturer Part Parameter')
         unique_together = ('manufacturer_part', 'name')
 
     @staticmethod
@@ -1005,6 +1012,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
     class Meta:
         """Metaclass defines extra model options."""
 
+        verbose_name = _('Supplier Price Break')
         unique_together = ('part', 'quantity')
 
         # This model was moved from the 'Part' app

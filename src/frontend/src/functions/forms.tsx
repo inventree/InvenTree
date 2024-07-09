@@ -64,32 +64,41 @@ export function extractAvailableFields(
     return null;
   }
 
+  const processField = (field: any, fieldName: string) => {
+    const resField: ApiFormFieldType = {
+      ...field,
+      name: fieldName,
+      field_type: field.type,
+      description: field.help_text,
+      value: field.value ?? field.default,
+      disabled: field.read_only ?? false
+    };
+
+    // Remove the 'read_only' field - plays havoc with react components
+    delete resField.read_only;
+
+    if (resField.field_type === 'nested object' && resField.children) {
+      resField.children = processFields(resField.children, fieldName);
+    }
+
+    if (resField.field_type === 'dependent field' && resField.child) {
+      resField.child = processField(resField.child, fieldName);
+
+      // copy over the label from the dependent field to the child field
+      if (!resField.child.label) {
+        resField.child.label = resField.label;
+      }
+    }
+
+    return resField;
+  };
+
   const processFields = (fields: any, _path?: string) => {
     const _fields: ApiFormFieldSet = {};
 
     for (const [fieldName, field] of Object.entries(fields) as any) {
       const path = _path ? `${_path}.${fieldName}` : fieldName;
-      _fields[fieldName] = {
-        ...field,
-        name: path,
-        field_type: field.type,
-        description: field.help_text,
-        value: field.value ?? field.default,
-        disabled: field.read_only ?? false
-      };
-
-      // Remove the 'read_only' field - plays havoc with react components
-      delete _fields[fieldName].read_only;
-
-      if (
-        _fields[fieldName].field_type === 'nested object' &&
-        _fields[fieldName].children
-      ) {
-        _fields[fieldName].children = processFields(
-          _fields[fieldName].children,
-          path
-        );
-      }
+      _fields[fieldName] = processField(field, path);
     }
 
     return _fields;
@@ -152,6 +161,14 @@ export function constructField({
           definition: definition?.children?.[k] ?? {}
         });
       }
+      break;
+    case 'dependent field':
+      if (!definition?.child) break;
+
+      def.child = constructField({
+        // use the raw definition here as field, since a dependent field cannot be influenced by the frontend
+        field: definition.child ?? {}
+      });
       break;
     default:
       break;

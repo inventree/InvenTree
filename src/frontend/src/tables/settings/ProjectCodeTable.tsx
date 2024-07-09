@@ -86,16 +86,12 @@ export default function ProjectCodeTable() {
   );
 
   const tableActions = useMemo(() => {
-    let actions = [];
-
-    actions.push(
+    return [
       <AddItemButton
         onClick={() => newProjectCode.open()}
         tooltip={t`Add project code`}
       />
-    );
-
-    return actions;
+    ];
   }, []);
 
   return (
@@ -109,7 +105,8 @@ export default function ProjectCodeTable() {
         columns={columns}
         props={{
           rowActions: rowActions,
-          tableActions: tableActions
+          tableActions: tableActions,
+          enableDownload: true
         }}
       />
     </>

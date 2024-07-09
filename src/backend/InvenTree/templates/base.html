@@ -55,7 +55,7 @@
 
 <link rel="stylesheet" href="{% static 'css/inventree.css' %}">
 
-<link rel="stylesheet" href="{% get_color_theme_css user.get_username %}">
+<link rel="stylesheet" href="{% get_color_theme_css request.user %}">
 
 <style>
     {% block css %}

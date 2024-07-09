@@ -54,6 +54,7 @@ import { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
 import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
+import { UploadAction } from './UploadAction';
 
 const defaultPageSize: number = 25;
 
@@ -66,6 +67,7 @@ const defaultPageSize: number = 25;
  * @param noRecordsText : string - Text to display when no records are found
  * @param enableBulkDelete : boolean - Enable bulk deletion of records
  * @param enableDownload : boolean - Enable download actions
+ * @param enableUpload : boolean - Enable upload actions
  * @param enableFilters : boolean - Enable filter actions
  * @param enableSelection : boolean - Enable row selection
  * @param enableSearch : boolean - Enable search actions
@@ -73,6 +75,8 @@ const defaultPageSize: number = 25;
  * @param enableReports : boolean - Enable printing of reports against selected items
  * @param enablePagination : boolean - Enable pagination
  * @param enableRefresh : boolean - Enable refresh actions
+ * @param enableColumnSwitching : boolean - Enable column switching
+ * @param enableColumnCaching : boolean - Enable caching of column names via API
  * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
@@ -89,11 +93,14 @@ export type InvenTreeTableProps<T = any> = {
   noRecordsText?: string;
   enableBulkDelete?: boolean;
   enableDownload?: boolean;
+  enableUpload?: boolean;
   enableFilters?: boolean;
   enableSelection?: boolean;
   enableSearch?: boolean;
   enablePagination?: boolean;
   enableRefresh?: boolean;
+  enableColumnSwitching?: boolean;
+  enableColumnCaching?: boolean;
   enableLabels?: boolean;
   enableReports?: boolean;
   pageSize?: number;
@@ -118,6 +125,7 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
   noRecordsText: t`No records found`,
   enableDownload: false,
+  enableUpload: false,
   enableLabels: false,
   enableReports: false,
   enableFilters: true,
@@ -167,11 +175,14 @@ export function InvenTreeTable<T = any>({
   // Request OPTIONS data from the API, before we load the table
   const tableOptionQuery = useQuery({
     enabled: true,
-    queryKey: ['options', url, tableState.tableKey],
+    queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
     refetchOnWindowFocus: false,
     queryFn: async () => {
+      if (props.enableColumnCaching == false) {
+        return null;
+      }
       return api
         .options(url, {
           params: tableProps.params
@@ -204,6 +215,10 @@ export function InvenTreeTable<T = any>({
 
   // Rebuild set of translated column names
   useEffect(() => {
+    if (props.enableColumnCaching == false) {
+      return;
+    }
+
     const cacheKey = tableState.tableKey.split('-')[0];
 
     // First check the local cache
@@ -217,7 +232,7 @@ export function InvenTreeTable<T = any>({
 
     // Otherwise, fetch the data from the API
     tableOptionQuery.refetch();
-  }, [url, tableState.tableKey, props.params]);
+  }, [url, tableState.tableKey, props.params, props.enableColumnCaching]);
 
   // Build table properties based on provided props (and default props)
   const tableProps: InvenTreeTableProps<T> = useMemo(() => {
@@ -229,8 +244,12 @@ export function InvenTreeTable<T = any>({
 
   // Check if any columns are switchable (can be hidden)
   const hasSwitchableColumns: boolean = useMemo(() => {
-    return columns.some((col: TableColumn) => col.switchable ?? true);
-  }, [columns]);
+    if (props.enableColumnSwitching == false) {
+      return false;
+    } else {
+      return columns.some((col: TableColumn) => col.switchable ?? true);
+    }
+  }, [columns, props.enableColumnSwitching]);
 
   const onSelectedRecordsChange = useCallback(
     (records: any[]) => {
@@ -478,8 +497,8 @@ export function InvenTreeTable<T = any>({
   }, [data]);
 
   // Callback function to delete the selected records in the table
-  const deleteSelectedRecords = useCallback(() => {
-    if (tableState.selectedRecords.length == 0) {
+  const deleteSelectedRecords = useCallback((ids: number[]) => {
+    if (ids.length == 0) {
       // Ignore if no records are selected
       return;
     }
@@ -502,15 +521,10 @@ export function InvenTreeTable<T = any>({
         color: 'red'
       },
       onConfirm: () => {
-        // Delete the selected records
-        let selection = tableState.selectedRecords.map(
-          (record) => record.pk ?? record.id
-        );
-
         api
           .delete(url, {
             data: {
-              items: selection
+              items: ids
             }
           })
           .then((_response) => {
@@ -532,10 +546,13 @@ export function InvenTreeTable<T = any>({
               message: t`Failed to delete records`,
               color: 'red'
             });
+          })
+          .finally(() => {
+            tableState.clearSelectedRecords();
           });
       }
     });
-  }, [tableState.selectedRecords]);
+  }, []);
 
   // Callback when a row is clicked
   const handleRowClick = useCallback(
@@ -582,12 +599,7 @@ export function InvenTreeTable<T = any>({
         <Stack gap="sm">
           <Group justify="apart" grow wrap="nowrap">
             <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
-              {tableProps.enableDownload && (
-                <DownloadAction
-                  key="download-action"
-                  downloadCallback={downloadData}
-                />
-              )}
+              {tableProps.enableUpload && <UploadAction key="upload-action" />}
               <PrintingActions
                 items={tableState.selectedIds}
                 modelType={tableProps.modelType}
@@ -609,7 +621,7 @@ export function InvenTreeTable<T = any>({
                   icon={<IconTrash />}
                   color="red"
                   tooltip={t`Delete selected records`}
-                  onClick={deleteSelectedRecords}
+                  onClick={() => deleteSelectedRecords(tableState.selectedIds)}
                 />
               )}
               {tableProps.tableActions?.map((group, idx) => (
@@ -655,6 +667,12 @@ export function InvenTreeTable<T = any>({
                     </Tooltip>
                   </ActionIcon>
                 </Indicator>
+              )}
+              {tableProps.enableDownload && (
+                <DownloadAction
+                  key="download-action"
+                  downloadCallback={downloadData}
+                />
               )}
             </Group>
           </Group>

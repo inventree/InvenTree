@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconDots,
@@ -20,6 +20,7 @@ import {
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -44,7 +45,8 @@ export default function ManufacturerPartDetail() {
   const {
     instance: manufacturerPart,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
@@ -244,17 +246,18 @@ export default function ManufacturerPartDetail() {
   return (
     <>
       {editManufacturerPart.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`ManufacturerPart`}
-          subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
-          breadcrumbs={breadcrumbs}
-          actions={manufacturerPartActions}
-          imageUrl={manufacturerPart?.part_detail?.thumbnail}
-        />
-        <PanelGroup pageKey="manufacturerpart" panels={panels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`ManufacturerPart`}
+            subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
+            breadcrumbs={breadcrumbs}
+            actions={manufacturerPartActions}
+            imageUrl={manufacturerPart?.part_detail?.thumbnail}
+          />
+          <PanelGroup pageKey="manufacturerpart" panels={panels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

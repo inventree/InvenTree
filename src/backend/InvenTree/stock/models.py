@@ -2311,6 +2311,11 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
         deltas: The changes associated with this history item
     """
 
+    class Meta:
+        """Meta data for the StockItemTracking class."""
+
+        verbose_name = _('Stock Item Tracking')
+
     @staticmethod
     def get_api_url():
         """Return API url."""
@@ -2378,6 +2383,11 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         user: User who uploaded the test result
         date: Date the test result was recorded
     """
+
+    class Meta:
+        """Meta data for the StockItemTestResult class."""
+
+        verbose_name = _('Stock Item Test Result')
 
     def __str__(self):
         """Return string representation."""

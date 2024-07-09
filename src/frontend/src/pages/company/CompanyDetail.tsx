@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -30,6 +30,7 @@ import {
   EditItemAction
 } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -66,7 +67,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const {
     instance: company,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: id,
@@ -320,18 +322,19 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   return (
     <>
       {editCompany.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Company` + `: ${company.name}`}
-          subtitle={company.description}
-          actions={companyActions}
-          imageUrl={company.image}
-          breadcrumbs={props.breadcrumbs}
-          badges={badges}
-        />
-        <PanelGroup pageKey="company" panels={companyPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Company` + `: ${company.name}`}
+            subtitle={company.description}
+            actions={companyActions}
+            imageUrl={company.image}
+            breadcrumbs={props.breadcrumbs}
+            badges={badges}
+          />
+          <PanelGroup pageKey="company" panels={companyPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

@@ -25,6 +25,7 @@ function partTableColumns(): TableColumn[] {
   return [
     {
       accessor: 'name',
+      title: t`Part`,
       sortable: true,
       noWrap: true,
       render: (record: any) => PartColumn(record)
@@ -42,6 +43,11 @@ function partTableColumns(): TableColumn[] {
       accessor: 'category',
       sortable: true,
       render: (record: any) => record.category_detail?.pathstring
+    },
+    {
+      accessor: 'default_location',
+      sortable: true,
+      render: (record: any) => record.default_location_detail?.pathstring
     },
     {
       accessor: 'total_in_stock',
@@ -170,6 +176,12 @@ function partTableFilters(): TableFilter[] {
       type: 'boolean'
     },
     {
+      name: 'locked',
+      label: t`Locked`,
+      description: t`Filter by part locked status`,
+      type: 'boolean'
+    },
+    {
       name: 'assembly',
       label: t`Assembly`,
       description: t`Filter by assembly attribute`,
@@ -238,14 +250,37 @@ function partTableFilters(): TableFilter[] {
         { value: 'true', label: t`Virtual` },
         { value: 'false', label: t`Not Virtual` }
       ]
+    },
+    {
+      name: 'is_template',
+      label: t`Is Template`,
+      description: t`Filter by parts which are templates`,
+      type: 'boolean'
+    },
+    {
+      name: 'has_pricing',
+      label: t`Has Pricing`,
+      description: t`Filter by parts which have pricing information`,
+      type: 'boolean'
+    },
+    {
+      name: 'unallocated_stock',
+      label: t`Available Stock`,
+      description: t`Filter by parts which have available stock`,
+      type: 'boolean'
+    },
+    {
+      name: 'starred',
+      label: t`Subscribed`,
+      description: t`Filter by parts to which the user is subscribed`,
+      type: 'boolean'
+    },
+    {
+      name: 'stocktake',
+      label: t`Has Stocktake`,
+      description: t`Filter by parts which have stocktake information`,
+      type: 'boolean'
     }
-    // unallocated_stock
-    // starred
-    // stocktake
-    // is_template
-    // virtual
-    // has_pricing
-    // TODO: Any others from table_filters.js?
   ];
 }
 
@@ -297,7 +332,8 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
           tableActions: tableActions,
           params: {
             ...props.params,
-            category_detail: true
+            category_detail: true,
+            location_detail: true
           }
         }}
       />

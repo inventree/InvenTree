@@ -19,5 +19,8 @@ class Migration(migrations.Migration):
                 ('required', models.BooleanField(default=True, help_text='Is this test required to pass?', verbose_name='Required')),
                 ('part', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='test_templates', to='part.Part')),
             ],
+            options={
+                'verbose_name': 'Part Test Template',
+            },
         ),
     ]

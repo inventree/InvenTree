@@ -856,7 +856,7 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
     remote_image = serializers.URLField(
         required=False,
-        allow_blank=False,
+        allow_blank=True,
         write_only=True,
         label=_('Remote Image'),
         help_text=_('URL of remote image file'),

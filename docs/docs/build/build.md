@@ -246,3 +246,19 @@ Build orders may (optionally) have a target complete date specified. If this dat
 
 - Builds can be filtered by overdue status in the build list
 - Overdue builds will be displayed on the home page
+
+## Build Order Restrictions
+
+There are a number of optional restrictions which can be applied to build orders, which may be enabled or disabled in the system settings:
+
+### Require Active Part
+
+If this option is enabled, build orders can only be created for parts which are marked as [Active](../part/part.md#active-parts).
+
+### Require Locked Part
+
+If this option is enabled, build orders can only be created for parts which are marked as [Locked](../part/part.md#locked-parts).
+
+### Require Valid BOM
+
+If this option is enabled, build orders can only be created for parts which have a valid [Bill of Materials](./bom.md) defined.

@@ -1,0 +1,13 @@
+ID,Company name,Company description,Website,Phone number,Address,Email,Currency,Contact,Link,Image,Active,Is customer,Is manufacturer,Is supplier,Notes,Parts supplied,Parts manufactured,Address count
+3,Arrow,Arrow Electronics,https://www.arrow.com/,,"70680 Shannon Rapid Apt. 570, 96124, Jenniferport, Arkansas, Holy See (Vatican City State)",,AUD,,,/media/company_images/company_3_img.jpg,True,False,False,True,,60,0,2
+1,DigiKey,DigiKey Electronics,https://www.digikey.com/,,"04964 Cox View Suite 815, 94832, Wesleyport, Delaware, Bolivia",,USD,,,/media/company_images/company_1_img.jpg,True,False,False,True,,200,0,2
+41,Future,Electronic components distributor,https://www.futureelectronics.com/,,"Wogan Terrace 79, 20157, Teasdale, Lebanon",,USD,,,/media/company_images/company_41_img.png,True,False,False,True,,60,0,4
+39,LCSC,Electronic components distributor,https://lcsc.com/,,"77673 Bishop Turnpike, 74969, North Cheryl, Hawaii, Portugal",,USD,,,/media/company_images/company_39_img.webp,True,False,False,True,,60,0,2
+38,McMaster-Carr,Supplier of mechanical components,https://www.mcmaster.com/,,"Schroeders Avenue 56, 8014, Sylvanite, Cayman Islands",,USD,,,/media/company_images/company_38_img.png,True,False,False,True,,240,0,1
+2,Mouser,Mouser Electronics,https://mouser.com/,,"Ashford Street 71, 24165, Leland, Jamaica",,AUD,,,/media/company_images/company_2_img.jpg,True,False,False,True,,61,0,2
+40,Newark,Online distributor of electronic components,https://www.newark.com/,,"Dekoven Court 3, 18301, Emison, Tuvalu",,USD,,,/media/company_images/company_40_img.png,True,False,False,True,,60,0,1
+36,Paint by Numbers,Supplier of high quality paint,,,"Orient Avenue 59, 18609, Corinne, Alabama, France, Metropolitan",,EUR,Pippy Painter,,/media/company_images/company_36_img.jpg,True,False,False,True,,15,0,1
+43,PCBWOY,PCB fabricator / supplier,,,"McKibben Street 77, 12370, Russellville, Benin",,USD,,,/media/company_images/company_43_img.png,True,False,False,True,,1,0,2
+29,Texas Instruments,,https://www.ti.com/,,"264 David Villages, 97718, Lake Michael, New Mexico, Kenya",,USD,,,/media/company_images/company_29_img.jpg,True,False,True,True,,0,1,2
+44,Wire-E-Coyote,American wire supplier,,,"Fountain Avenue 74, 12115, Gulf, Seychelles",,USD,,,,True,False,False,True,,5,0,3
+42,Wirey,Supplier of wire,,,"Preston Court 80, 4462, Manila, Russian Federation",,USD,,,/media/company_images/company_42_img.jpg,True,False,False,True,,11,0,2

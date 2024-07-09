@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -26,6 +26,7 @@ import {
   EditItemAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -39,7 +40,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
@@ -55,7 +55,8 @@ export default function SalesOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_list,
     pk: id,
@@ -344,18 +345,19 @@ export default function SalesOrderDetail() {
   return (
     <>
       {editSalesOrder.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Sales Order` + `: ${order.reference}`}
-          subtitle={order.description}
-          imageUrl={order.customer_detail?.image}
-          badges={orderBadges}
-          actions={soActions}
-          breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
-        />
-        <PanelGroup pageKey="salesorder" panels={orderPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Sales Order` + `: ${order.reference}`}
+            subtitle={order.description}
+            imageUrl={order.customer_detail?.image}
+            badges={orderBadges}
+            actions={soActions}
+            breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+          />
+          <PanelGroup pageKey="salesorder" panels={orderPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

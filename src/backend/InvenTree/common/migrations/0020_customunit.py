@@ -18,5 +18,8 @@ class Migration(migrations.Migration):
                 ('symbol', models.CharField(blank=True, help_text='Optional unit symbol', max_length=10, unique=True, verbose_name='Symbol')),
                 ('definition', models.CharField(help_text='Unit definition', max_length=50, verbose_name='Definition')),
             ],
+            options={
+                'verbose_name': 'Custom Unit',
+            },
         ),
     ]

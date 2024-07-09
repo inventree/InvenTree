@@ -1,11 +1,33 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 210
+INVENTREE_API_VERSION = 217
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
+
 INVENTREE_API_TEXT = """
+v217 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7599
+    - Fixes bug in "project_code" field for order API endpoints
+
+v216 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7595
+    - Moves API endpoint for contenttype lookup by model name
+
+v215 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7591
+    - Adds additional fields to the BuildLine serializer
+
+v214 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7587
+    - Adds "default_location_detail" field to the Part API
+
+v213 - 2024-07-06 : https://github.com/inventree/InvenTree/pull/7527
+    - Adds 'locked' field to Part API
+
+v212 - 2024-07-06 : https://github.com/inventree/InvenTree/pull/7562
+    - Makes API generation more robust (no functional changes)
+
+v211 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/6911
+    - Adds API endpoints for managing data import and export
+
 v210 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7518
     - Adds translateable text to User API fields
 

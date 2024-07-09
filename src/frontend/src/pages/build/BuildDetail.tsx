@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
@@ -30,6 +30,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -61,7 +62,8 @@ export default function BuildDetail() {
   const {
     instance: build,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.build_order_list,
     pk: id,
@@ -410,21 +412,22 @@ export default function BuildDetail() {
       {editBuild.modal}
       {duplicateBuild.modal}
       {cancelBuild.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={build.reference}
-          subtitle={build.title}
-          badges={buildBadges}
-          imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
-          breadcrumbs={[
-            { name: t`Build Orders`, url: '/build' },
-            { name: build.reference, url: `/build/${build.pk}` }
-          ]}
-          actions={buildActions}
-        />
-        <PanelGroup pageKey="build" panels={buildPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={build.reference}
+            subtitle={build.title}
+            badges={buildBadges}
+            imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
+            breadcrumbs={[
+              { name: t`Build Orders`, url: '/build' },
+              { name: build.reference, url: `/build/${build.pk}` }
+            ]}
+            actions={buildActions}
+          />
+          <PanelGroup pageKey="build" panels={buildPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

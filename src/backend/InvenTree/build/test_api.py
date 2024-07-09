@@ -564,16 +564,16 @@ class BuildTest(BuildAPITest):
     def test_download_build_orders(self):
         """Test that we can download a list of build orders via the API"""
         required_cols = [
-            'reference',
-            'status',
-            'completed',
-            'batch',
-            'notes',
-            'title',
-            'part',
-            'part_name',
-            'id',
-            'quantity',
+            'Reference',
+            'Build Status',
+            'Completed items',
+            'Batch Code',
+            'Notes',
+            'Description',
+            'Part',
+            'Part Name',
+            'ID',
+            'Quantity',
         ]
 
         excluded_cols = [
@@ -597,13 +597,13 @@ class BuildTest(BuildAPITest):
 
             for row in data:
 
-                build = Build.objects.get(pk=row['id'])
+                build = Build.objects.get(pk=row['ID'])
 
-                self.assertEqual(str(build.part.pk), row['part'])
-                self.assertEqual(build.part.full_name, row['part_name'])
+                self.assertEqual(str(build.part.pk), row['Part'])
+                self.assertEqual(build.part.name, row['Part Name'])
 
-                self.assertEqual(build.reference, row['reference'])
-                self.assertEqual(build.title, row['title'])
+                self.assertEqual(build.reference, row['Reference'])
+                self.assertEqual(build.title, row['Description'])
 
 
 class BuildAllocationTest(BuildAPITest):

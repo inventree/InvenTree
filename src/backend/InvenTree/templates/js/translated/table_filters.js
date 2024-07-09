@@ -716,6 +716,11 @@ function getPartTableFilters() {
             title: '{% trans "Active" %}',
             description: '{% trans "Show active parts" %}',
         },
+        locked: {
+            type: 'bool',
+            title: '{% trans "Locked" %}',
+            description: '{% trans "Show locked parts" %}',
+        },
         assembly: {
             type: 'bool',
             title: '{% trans "Assembly" %}',

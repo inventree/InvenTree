@@ -409,7 +409,7 @@ class LabelTemplate(TemplateUploadMixin, ReportTemplateBase):
 
         for plugin in plugins:
             # Let each plugin add its own context data
-            plugin.add_label_context(self, self.object_to_print, request, context)
+            plugin.add_label_context(self, instance, request, context)
 
         return context
 

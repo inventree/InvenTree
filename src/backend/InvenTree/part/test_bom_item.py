@@ -303,3 +303,50 @@ class BomItemTest(TestCase):
 
         with self.assertRaises(django_exceptions.ValidationError):
             BomItem.objects.create(part=part_v, sub_part=part_a, quantity=10)
+
+    def test_locked_assembly(self):
+        """Test that BomItem objects work correctly for a 'locked' assembly."""
+        assembly = Part.objects.create(
+            name='Assembly2', description='An assembly part', assembly=True
+        )
+
+        sub_part = Part.objects.create(
+            name='SubPart1', description='A sub-part', component=True
+        )
+
+        # Initially, the assembly is not locked
+        self.assertFalse(assembly.locked)
+
+        # Create a BOM item for the assembly
+        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=1)
+
+        # Lock the assembly
+        assembly.locked = True
+        assembly.save()
+
+        # Try to edit the BOM item
+        with self.assertRaises(django_exceptions.ValidationError):
+            bom_item.quantity = 10
+            bom_item.save()
+
+        # Try to delete the BOM item
+        with self.assertRaises(django_exceptions.ValidationError):
+            bom_item.delete()
+
+        # Try to create a new BOM item
+        with self.assertRaises(django_exceptions.ValidationError):
+            BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=1)
+
+        # Unlock the part and try again
+        assembly.locked = False
+        assembly.save()
+
+        # Create a new BOM item
+        bom_item = BomItem.objects.create(part=assembly, sub_part=sub_part, quantity=1)
+
+        # Edit the new BOM item
+        bom_item.quantity = 10
+        bom_item.save()
+
+        # Delete the new BOM item
+        bom_item.delete()

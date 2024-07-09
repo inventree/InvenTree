@@ -7,6 +7,7 @@ import { useGlobalStatusState } from '../../states/StatusState';
 interface StatusCodeInterface {
   key: string;
   label: string;
+  name: string;
   color: string;
 }
 
@@ -41,7 +42,9 @@ function renderStatusLabel(
   }
 
   if (!text) {
-    console.error(`renderStatusLabel could not find match for code ${key}`);
+    console.error(
+      `ERR: renderStatusLabel could not find match for code ${key}`
+    );
   }
 
   // Fallbacks
@@ -59,6 +62,49 @@ function renderStatusLabel(
     </Badge>
   );
 }
+
+export function getStatusCodes(type: ModelType | string) {
+  const statusCodeList = useGlobalStatusState.getState().status;
+
+  if (statusCodeList === undefined) {
+    console.log('StatusRenderer: statusCodeList is undefined');
+    return null;
+  }
+
+  const statusCodes = statusCodeList[type];
+
+  if (statusCodes === undefined) {
+    console.log('StatusRenderer: statusCodes is undefined');
+    return null;
+  }
+
+  return statusCodes;
+}
+
+/*
+ * Return the name of a status code, based on the key
+ */
+export function getStatusCodeName(
+  type: ModelType | string,
+  key: string | number
+) {
+  const statusCodes = getStatusCodes(type);
+
+  if (!statusCodes) {
+    return null;
+  }
+
+  for (let name in statusCodes) {
+    let entry = statusCodes[name];
+
+    if (entry.key == key) {
+      return entry.name;
+    }
+  }
+
+  return null;
+}
+
 /*
  * Render the status for a object.
  * Uses the values specified in "status_codes.py"
@@ -72,14 +118,9 @@ export const StatusRenderer = ({
   type: ModelType | string;
   options?: RenderStatusLabelOptionsInterface;
 }) => {
-  const statusCodeList = useGlobalStatusState.getState().status;
+  const statusCodes = getStatusCodes(type);
 
-  if (status === undefined || statusCodeList === undefined) {
-    return null;
-  }
-
-  const statusCodes = statusCodeList[type];
-  if (statusCodes === undefined) {
+  if (statusCodes === undefined || statusCodes === null) {
     console.warn('StatusRenderer: statusCodes is undefined');
     return null;
   }

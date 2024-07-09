@@ -54,4 +54,5 @@ test('PUI - Quick Login Test', async ({ page }) => {
   // Logout (via URL)
   await page.goto(`${baseUrl}/logout/`);
   await page.waitForURL('**/platform/login');
+  await page.getByLabel('username');
 });

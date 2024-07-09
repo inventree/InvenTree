@@ -101,7 +101,9 @@ export const AdminCenter = Loadable(
   lazy(() => import('./pages/Index/Settings/AdminCenter/Index'))
 );
 
-export const NotFound = Loadable(lazy(() => import('./pages/NotFound')));
+export const NotFound = Loadable(
+  lazy(() => import('./components/errors/NotFound'))
+);
 export const Login = Loadable(lazy(() => import('./pages/Auth/Login')));
 export const Logout = Loadable(lazy(() => import('./pages/Auth/Logout')));
 export const Logged_In = Loadable(lazy(() => import('./pages/Auth/Logged-In')));

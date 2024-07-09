@@ -1,9 +1,16 @@
 """User-configurable settings for the common app."""
 
+from os import environ
 
-def get_global_setting(key, backup_value=None, **kwargs):
+
+def get_global_setting(key, backup_value=None, enviroment_key=None, **kwargs):
     """Return the value of a global setting using the provided key."""
     from common.models import InvenTreeSetting
+
+    if enviroment_key:
+        value = environ.get(enviroment_key)
+        if value:
+            return value
 
     if backup_value is not None:
         kwargs['backup_value'] = backup_value

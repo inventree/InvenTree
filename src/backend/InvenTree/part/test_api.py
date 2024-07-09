@@ -1033,25 +1033,26 @@ class PartAPITest(PartAPITestBase):
         url = reverse('api-part-list')
 
         required_cols = [
-            'Part ID',
-            'Part Name',
-            'Part Description',
-            'In Stock',
+            'ID',
+            'Name',
+            'Description',
+            'Total Stock',
             'Category Name',
             'Keywords',
-            'Template',
+            'Is Template',
             'Virtual',
             'Trackable',
             'Active',
             'Notes',
-            'creation_date',
+            'Creation Date',
+            'On Order',
+            'In Stock',
+            'Link',
         ]
 
         excluded_cols = ['lft', 'rght', 'level', 'tree_id', 'metadata']
 
-        with self.download_file(
-            url, {'export': 'csv'}, expected_fn='InvenTree_Parts.csv'
-        ) as file:
+        with self.download_file(url, {'export': 'csv'}) as file:
             data = self.process_csv(
                 file,
                 excluded_cols=excluded_cols,
@@ -1060,13 +1061,13 @@ class PartAPITest(PartAPITestBase):
             )
 
             for row in data:
-                part = Part.objects.get(pk=row['Part ID'])
+                part = Part.objects.get(pk=row['ID'])
 
                 if part.IPN:
                     self.assertEqual(part.IPN, row['IPN'])
 
-                self.assertEqual(part.name, row['Part Name'])
-                self.assertEqual(part.description, row['Part Description'])
+                self.assertEqual(part.name, row['Name'])
+                self.assertEqual(part.description, row['Description'])
 
                 if part.category:
                     self.assertEqual(part.category.name, row['Category Name'])
@@ -2936,7 +2937,7 @@ class PartTestTemplateTest(PartAPITestBase):
         options = response.data['actions']['PUT']
 
         self.assertTrue(options['pk']['read_only'])
-        self.assertTrue(options['pk']['required'])
+        self.assertFalse(options['pk']['required'])
         self.assertEqual(options['part']['api_url'], '/api/part/')
         self.assertTrue(options['test_name']['required'])
         self.assertFalse(options['test_name']['read_only'])

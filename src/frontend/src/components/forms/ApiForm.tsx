@@ -67,6 +67,7 @@ export interface ApiFormAction {
  * @param successMessage : Optional message to display on successful form submission
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
+ * @param processFormData : A callback function to process the form data before submission
  * @param modelType : Define a model type for this form
  * @param follow : Boolean, follow the result of the form (if possible)
  * @param table : Table to update on success (if provided)
@@ -91,6 +92,7 @@ export interface ApiFormProps {
   successMessage?: string;
   onFormSuccess?: (data: any) => void;
   onFormError?: () => void;
+  processFormData?: (data: any) => any;
   table?: TableState;
   modelType?: ModelType;
   follow?: boolean;
@@ -202,8 +204,11 @@ export function ApiForm({
 }) {
   const navigate = useNavigate();
 
-  const fields: ApiFormFieldSet = useMemo(() => {
-    return props.fields ?? {};
+  const [fields, setFields] = useState<ApiFormFieldSet>(
+    () => props.fields ?? {}
+  );
+  useEffect(() => {
+    setFields(props.fields ?? {});
   }, [props.fields]);
 
   const defaultValues: FieldValues = useMemo(() => {
@@ -308,7 +313,7 @@ export function ApiForm({
 
         return response;
       } catch (error) {
-        console.error('Error fetching initial data:', error);
+        console.error('ERR: Error fetching initial data:', error);
         // Re-throw error to allow react-query to handle error
         throw error;
       }
@@ -385,6 +390,11 @@ export function ApiForm({
         hasFiles = true;
       }
     });
+
+    // Optionally pre-process the data before submitting it
+    if (props.processFormData) {
+      data = props.processFormData(data);
+    }
 
     return api({
       method: method,
@@ -536,6 +546,8 @@ export function ApiForm({
                           fieldName={fieldName}
                           definition={field}
                           control={form.control}
+                          url={url}
+                          setFields={setFields}
                         />
                       ))}
                   </Stack>

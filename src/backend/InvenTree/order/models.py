@@ -400,7 +400,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         return PurchaseOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': order.validators.generate_next_purchase_order_reference()
@@ -865,7 +865,7 @@ class SalesOrder(TotalPriceMixin, Order):
         return SalesOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
@@ -1355,6 +1355,11 @@ class PurchaseOrderLineItem(OrderLineItem):
         order: Reference to a PurchaseOrder object
     """
 
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Purchase Order Line Item')
+
     # Filter for determining if a particular PurchaseOrderLineItem is overdue
     OVERDUE_FILTER = (
         Q(received__lt=F('quantity'))
@@ -1492,6 +1497,11 @@ class PurchaseOrderExtraLine(OrderExtraLine):
         price: The unit price for this OrderLine
     """
 
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Purchase Order Extra Line')
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the PurchaseOrderExtraLine model."""
@@ -1515,6 +1525,11 @@ class SalesOrderLineItem(OrderLineItem):
         sale_price: The unit sale price for this OrderLineItem
         shipped: The number of items which have actually shipped against this line item
     """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order Line Item')
 
     # Filter for determining if a particular SalesOrderLineItem is overdue
     OVERDUE_FILTER = (
@@ -1649,6 +1664,7 @@ class SalesOrderShipment(
 
         # Shipment reference must be unique for a given sales order
         unique_together = ['order', 'reference']
+        verbose_name = _('Sales Order Shipment')
 
     @staticmethod
     def get_api_url():
@@ -1806,6 +1822,11 @@ class SalesOrderExtraLine(OrderExtraLine):
         price: The unit price for this OrderLine
     """
 
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order Extra Line')
+
     @staticmethod
     def get_api_url():
         """Return the API URL associated with the SalesOrderExtraLine model."""
@@ -1829,6 +1850,11 @@ class SalesOrderAllocation(models.Model):
         item: StockItem reference
         quantity: Quantity to take from the StockItem
     """
+
+    class Meta:
+        """Model meta options."""
+
+        verbose_name = _('Sales Order Allocation')
 
     @staticmethod
     def get_api_url():
@@ -2001,7 +2027,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         return ReturnOrderStatusGroups
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': order.validators.generate_next_return_order_reference()
@@ -2208,6 +2234,7 @@ class ReturnOrderLineItem(OrderLineItem):
     class Meta:
         """Metaclass options for this model."""
 
+        verbose_name = _('Return Order Line Item')
         unique_together = [('order', 'item')]
 
     @staticmethod
@@ -2269,6 +2296,11 @@ class ReturnOrderLineItem(OrderLineItem):
 
 class ReturnOrderExtraLine(OrderExtraLine):
     """Model for a single ExtraLine in a ReturnOrder."""
+
+    class Meta:
+        """Metaclass options for this model."""
+
+        verbose_name = _('Return Order Extra Line')
 
     @staticmethod
     def get_api_url():

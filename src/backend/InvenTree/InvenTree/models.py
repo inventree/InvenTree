@@ -216,11 +216,14 @@ class MetadataMixin(models.Model):
             self.save()
 
 
-class DataImportMixin(object):
+class DataImportMixin:
     """Model mixin class which provides support for 'data import' functionality.
 
     Models which implement this mixin should provide information on the fields available for import
     """
+
+    # TODO: This mixin should be removed after https://github.com/inventree/InvenTree/pull/6911 is implemented
+    # TODO: This approach to data import functionality is *outdated*
 
     # Define a map of fields available for import
     IMPORT_FIELDS = {}

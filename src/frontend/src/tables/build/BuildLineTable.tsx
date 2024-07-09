@@ -140,12 +140,21 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         title: t`Reference`
       },
       BooleanColumn({
+        accessor: 'bom_item_detail.optional',
+        ordering: 'optional'
+      }),
+      BooleanColumn({
         accessor: 'bom_item_detail.consumable',
         ordering: 'consumable'
       }),
       BooleanColumn({
-        accessor: 'bom_item_detail.optional',
-        ordering: 'optional'
+        accessor: 'bom_item_detail.allow_variants',
+        ordering: 'allow_variants'
+      }),
+      BooleanColumn({
+        accessor: 'bom_item_detail.inherited',
+        ordering: 'inherited',
+        title: t`Gets Inherited`
       }),
       BooleanColumn({
         accessor: 'part_detail.trackable',
@@ -256,7 +265,8 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         tableFilters: tableFilters,
         rowActions: rowActions,
         modelType: ModelType.part,
-        modelField: 'part_detail.pk'
+        modelField: 'part_detail.pk',
+        enableDownload: true
       }}
     />
   );

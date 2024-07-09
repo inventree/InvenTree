@@ -27,6 +27,7 @@ import common.models
 import common.serializers
 from common.settings import get_global_setting
 from generic.states.api import AllStatusViews, StatusView
+from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
 from InvenTree.filters import ORDER_FILTER, SEARCH_ORDER_FILTER
@@ -494,7 +495,7 @@ class NotesImageList(ListCreateAPI):
         image.save()
 
 
-class ProjectCodeList(ListCreateAPI):
+class ProjectCodeList(DataExportViewMixin, ListCreateAPI):
     """List view for all project codes."""
 
     queryset = common.models.ProjectCode.objects.all()
@@ -515,7 +516,7 @@ class ProjectCodeDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
 
 
-class CustomUnitList(ListCreateAPI):
+class CustomUnitList(DataExportViewMixin, ListCreateAPI):
     """List view for custom units."""
 
     queryset = common.models.CustomUnit.objects.all()
@@ -949,7 +950,7 @@ common_api_urls = [
                 '<int:pk>/', ContentTypeDetail.as_view(), name='api-contenttype-detail'
             ),
             path(
-                '<str:model>/',
+                'model/<str:model>/',
                 ContentTypeModelDetail.as_view(),
                 name='api-contenttype-detail-modelname',
             ),

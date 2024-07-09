@@ -73,7 +73,15 @@ A [Purchase Order](../order/purchase_order.md) allows parts to be ordered from a
 
 If a part is designated as *Salable* it can be sold to external customers. Setting this flag allows parts to be added to sales orders.
 
-### Active
+## Locked Parts
+
+Parts can be locked to prevent them from being modified. This is useful for parts which are in production and should not be changed. The following restrictions apply to parts which are locked:
+
+- Locked parts cannot be deleted
+- BOM items cannot be created, edited, or deleted when they are part of a locked assembly
+- Part parameters linked to a locked part cannot be created, edited or deleted
+
+## Active Parts
 
 By default, all parts are *Active*. Marking a part as inactive means it is not available for many actions, but the part remains in the database. If a part becomes obsolete, it is recommended that it is marked as inactive, rather than deleting it from the database.
 

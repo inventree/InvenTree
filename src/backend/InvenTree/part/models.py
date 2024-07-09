@@ -5,6 +5,7 @@ from __future__ import annotations
 import decimal
 import hashlib
 import logging
+import math
 import os
 import re
 from datetime import timedelta
@@ -377,6 +378,7 @@ class Part(
         purchaseable: Can this part be purchased from suppliers?
         trackable: Trackable parts can have unique serial numbers assigned, etc, etc
         active: Is this part active? Parts are deactivated instead of being deleted
+        locked: This part is locked and cannot be edited
         virtual: Is this part "virtual"? e.g. a software product or similar
         notes: Additional notes field for this part
         creation_date: Date that this part was added to the database
@@ -481,6 +483,9 @@ class Part(
         - The part is still active
         - The part is used in a BOM for a different part.
         """
+        if self.locked:
+            raise ValidationError(_('Cannot delete this part as it is locked'))
+
         if self.active:
             raise ValidationError(_('Cannot delete this part as it is still active'))
 
@@ -1079,6 +1084,12 @@ class Part(
 
     active = models.BooleanField(
         default=True, verbose_name=_('Active'), help_text=_('Is this part active?')
+    )
+
+    locked = models.BooleanField(
+        default=False,
+        verbose_name=_('Locked'),
+        help_text=_('Locked parts cannot be edited'),
     )
 
     virtual = models.BooleanField(
@@ -3288,6 +3299,7 @@ class PartSellPriceBreak(common.models.PriceBreak):
     class Meta:
         """Metaclass providing extra model definition."""
 
+        verbose_name = _('Part Sale Price Break')
         unique_together = ('part', 'quantity')
 
     @staticmethod
@@ -3395,6 +3407,11 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
     To enable generation of unique lookup-keys for each test, there are some validation tests
     run on the model (refer to the validate_unique function).
     """
+
+    class Meta:
+        """Metaclass options for the PartTestTemplate model."""
+
+        verbose_name = _('Part Test Template')
 
     def __str__(self):
         """Format a string representation of this PartTestTemplate."""
@@ -3555,6 +3572,11 @@ class PartParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
         choices: List of valid choices for the parameter [string]
     """
 
+    class Meta:
+        """Metaclass options for the PartParameterTemplate model."""
+
+        verbose_name = _('Part Parameter Template')
+
     @staticmethod
     def get_api_url():
         """Return the list API endpoint URL associated with the PartParameterTemplate model."""
@@ -3699,6 +3721,7 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
     class Meta:
         """Metaclass providing extra model definition."""
 
+        verbose_name = _('Part Parameter')
         # Prevent multiple instances of a parameter for a single part
         unique_together = ('part', 'template')
 
@@ -3711,10 +3734,28 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
         """String representation of a PartParameter (used in the admin interface)."""
         return f'{self.part.full_name} : {self.template.name} = {self.data} ({self.template.units})'
 
+    def delete(self):
+        """Custom delete handler for the PartParameter model.
+
+        - Check if the parameter can be deleted
+        """
+        self.check_part_lock()
+        super().delete()
+
+    def check_part_lock(self):
+        """Check if the referenced part is locked."""
+        # TODO: Potentially control this behaviour via a global setting
+
+        if self.part.locked:
+            raise ValidationError(_('Parameter cannot be modified - part is locked'))
+
     def save(self, *args, **kwargs):
         """Custom save method for the PartParameter model."""
         # Validate the PartParameter before saving
         self.calculate_numeric_value()
+
+        # Check if the part is locked
+        self.check_part_lock()
 
         # Convert 'boolean' values to 'True' / 'False'
         if self.template.checkbox:
@@ -3780,6 +3821,12 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
             except ValueError:
                 self.data_numeric = None
 
+        if self.data_numeric is not None and type(self.data_numeric) is float:
+            # Prevent out of range numbers, etc
+            # Ref: https://github.com/inventree/InvenTree/issues/7593
+            if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
+                self.data_numeric = None
+
     part = models.ForeignKey(
         Part,
         on_delete=models.CASCADE,
@@ -3841,8 +3888,15 @@ class PartCategoryParameterTemplate(InvenTree.models.InvenTreeMetadataModel):
                        category
     """
 
+    @staticmethod
+    def get_api_url():
+        """Return the API endpoint URL associated with the PartCategoryParameterTemplate model."""
+        return reverse('api-part-category-parameter-list')
+
     class Meta:
         """Metaclass providing extra model definition."""
+
+        verbose_name = _('Part Category Parameter Template')
 
         constraints = [
             UniqueConstraint(
@@ -4018,14 +4072,52 @@ class BomItem(
         """
         return Q(part__in=self.get_valid_parts_for_allocation())
 
+    def delete(self):
+        """Check if this item can be deleted."""
+        self.check_part_lock(self.part)
+        super().delete()
+
     def save(self, *args, **kwargs):
         """Enforce 'clean' operation when saving a BomItem instance."""
         self.clean()
+
+        self.check_part_lock(self.part)
+
+        # Check if the part was changed
+        deltas = self.get_field_deltas()
+
+        if 'part' in deltas:
+            if old_part := deltas['part'].get('old', None):
+                self.check_part_lock(old_part)
 
         # Update the 'validated' field based on checksum calculation
         self.validated = self.is_line_valid
 
         super().save(*args, **kwargs)
+
+    def check_part_lock(self, assembly):
+        """When editing or deleting a BOM item, check if the assembly is locked.
+
+        If locked, raise an exception.
+
+        Arguments:
+            assembly: The assembly part
+
+        Raises:
+            ValidationError: If the assembly is locked
+        """
+        # TODO: Perhaps control this with a global setting?
+
+        if assembly.locked:
+            raise ValidationError(_('BOM item cannot be modified - assembly is locked'))
+
+        # If this BOM item is inherited, check all variants of the assembly
+        if self.inherited:
+            for part in assembly.get_descendants(include_self=False):
+                if part.locked:
+                    raise ValidationError(
+                        _('BOM item cannot be modified - variant assembly is locked')
+                    )
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'

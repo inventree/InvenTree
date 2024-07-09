@@ -59,7 +59,9 @@ def currency_codes() -> list:
     """Returns the current currency codes."""
     from common.settings import get_global_setting
 
-    codes = get_global_setting('CURRENCY_CODES', create=False).strip()
+    codes = get_global_setting(
+        'CURRENCY_CODES', create=False, enviroment_key='INVENTREE_CURRENCY_CODES'
+    ).strip()
 
     if not codes:
         codes = currency_codes_default_list()

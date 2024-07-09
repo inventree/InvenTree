@@ -24,15 +24,17 @@ export function PartIcons({ part }: { part: any }) {
   return (
     <td colSpan={2}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        {part.locked && (
+          <Tooltip label={t`Part is locked`}>
+            <Badge color="black" variant="filled">
+              <Trans>Locked</Trans>
+            </Badge>
+          </Tooltip>
+        )}
         {!part.active && (
           <Tooltip label={t`Part is not active`}>
             <Badge color="red" variant="filled">
-              <div
-                style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
-              >
-                <InvenTreeIcon icon="inactive" iconProps={{ size: 19 }} />{' '}
-                <Trans>Inactive</Trans>
-              </div>
+              <Trans>Inactive</Trans>
             </Badge>
           </Tooltip>
         )}

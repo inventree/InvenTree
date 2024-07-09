@@ -1,6 +1,7 @@
 """Basic unit tests for the BuildOrder app"""
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.test import tag
 from django.urls import reverse
 
@@ -9,8 +10,10 @@ from datetime import datetime, timedelta
 from InvenTree.unit_test import InvenTreeTestCase
 
 from .models import Build
+from part.models import Part, BomItem
 from stock.models import StockItem
 
+from common.settings import get_global_setting, set_global_setting
 from build.status_codes import BuildStatus
 
 
@@ -88,6 +91,79 @@ class BuildTestSimple(InvenTreeTestCase):
 
         self.assertEqual(build.status, BuildStatus.CANCELLED)
 
+    def test_build_create(self):
+        """Test creation of build orders via API."""
+
+        n = Build.objects.count()
+
+        # Find an assembly part
+        assembly = Part.objects.filter(assembly=True).first()
+
+        assembly.active = True
+        assembly.locked = False
+        assembly.save()
+
+        self.assertEqual(assembly.get_bom_items().count(), 0)
+
+        # Let's create some BOM items for this assembly
+        for component in Part.objects.filter(assembly=False, component=True)[:15]:
+
+            try:
+                BomItem.objects.create(
+                    part=assembly,
+                    sub_part=component,
+                    reference='xxx',
+                    quantity=5
+                )
+            except ValidationError:
+                pass
+
+        # The assembly has a BOM, and is now *invalid*
+        self.assertGreater(assembly.get_bom_items().count(), 0)
+        self.assertFalse(assembly.is_bom_valid())
+
+        # Create a build for an assembly with an *invalid* BOM
+        set_global_setting('BUILDORDER_REQUIRE_VALID_BOM', False)
+        set_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART', True)
+        set_global_setting('BUILDORDER_REQUIRE_LOCKED_PART', False)
+
+        bo = Build.objects.create(part=assembly, quantity=10, reference='BO-9990')
+        bo.save()
+
+        # Now, require a *valid* BOM
+        set_global_setting('BUILDORDER_REQUIRE_VALID_BOM', True)
+
+        with self.assertRaises(ValidationError):
+            bo = Build.objects.create(part=assembly, quantity=10, reference='BO-9991')
+
+        # Now, validate the BOM, and try again
+        assembly.validate_bom(None)
+        self.assertTrue(assembly.is_bom_valid())
+
+        bo = Build.objects.create(part=assembly, quantity=10, reference='BO-9992')
+
+        # Now, try and create a build for an inactive assembly
+        assembly.active = False
+        assembly.save()
+
+        with self.assertRaises(ValidationError):
+            bo = Build.objects.create(part=assembly, quantity=10, reference='BO-9993')
+
+        set_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART', False)
+        Build.objects.create(part=assembly, quantity=10, reference='BO-9994')
+
+        # Check that the "locked" requirement works
+        set_global_setting('BUILDORDER_REQUIRE_LOCKED_PART', True)
+        with self.assertRaises(ValidationError):
+            Build.objects.create(part=assembly, quantity=10, reference='BO-9995')
+
+        assembly.locked = True
+        assembly.save()
+
+        Build.objects.create(part=assembly, quantity=10, reference='BO-9996')
+
+        # Check that expected quantity of new builds is created
+        self.assertEqual(Build.objects.count(), n + 4)
 
 class TestBuildViews(InvenTreeTestCase):
     """Tests for Build app views."""
