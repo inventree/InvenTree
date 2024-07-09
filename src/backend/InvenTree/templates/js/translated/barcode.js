@@ -315,6 +315,10 @@ function barcodeDialog(title, options={}) {
 
         var barcode = $(modal + ' #barcode');
 
+        barcode.keydown(function(event) {
+            event.preventDefault();
+        });
+
         // Handle 'enter' key on barcode
         barcode.keyup(function(event) {
             event.preventDefault();
