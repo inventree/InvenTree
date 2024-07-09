@@ -54,11 +54,17 @@ if [ "$APP_PKG_VERSION" != "0.8.0" ]; then
   TAG_SHA=$(jq -r '.sha' tag.json)
   if [ "${TAG_SHA:0:8}" != "$SHA" ]; then
     echo "Tag sha is not the same as commit sha"
-    exit 0
+    curl  -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$REPO/actions/runs?head_sha=$SHA > runs.json
+    artifact_url = $(jq -r '.workflow_runs.[] | select(.name=="QC").artifacts_url' runs.json)
+    run_id = $(jq -r '.workflow_runs.[] | select(.name=="QC").id' runs.json)
+    curl artifact_url > artifact.json
+    artifact_id = $(jq -r '.artifacts.[] | select(.name=="frontend-build").id' artifacts.json)
+    echo "Getting frontend from github via run artifact"
+    curl https://github.com/$REPO/actions/runs/$run_id/$artifact_id -L frontend.zip
+  else
+    echo "Getting frontend from github via tag"
+    curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L frontend.zip
   fi
-
-  echo "Getting frontend from github"
-  curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L frontend.zip
   unzip frontend.zip -d src/backend/InvenTree/web/static/web
   echo "Unzipped frontend"
 fi
