@@ -1,7 +1,7 @@
 """Machine registry."""
 
 import logging
-from typing import Union
+from typing import Union, cast
 from uuid import UUID
 
 from django.core.cache import cache
@@ -29,10 +29,12 @@ class MachineRegistry(
 
         self.base_drivers: list[type[BaseDriver]] = []
 
+        self._hash = None
+
     @property
     def errors(self) -> list[Union[str, Exception]]:
         """List of registry errors."""
-        return self.get_shared_state('errors', [])
+        return cast(list[Union[str, Exception]], self.get_shared_state('errors', []))
 
     def handle_error(self, error: Union[Exception, str]):
         """Helper function for capturing errors with the machine registry."""
@@ -132,7 +134,9 @@ class MachineRegistry(
         from machine.models import MachineConfig
 
         for machine_config in MachineConfig.objects.all():
-            self.add_machine(machine_config, initialize=False)
+            self.add_machine(
+                machine_config, initialize=False, update_registry_hash=False
+            )
 
         # initialize machines only in main thread
         if main:
@@ -145,11 +149,18 @@ class MachineRegistry(
                 if machine.active:
                     machine.initialize()
 
+            self._update_registry_hash()
             logger.info('Initialized %s machines', len(self.machines.keys()))
         else:
+            self._hash = None  # reset hash to force reload hash
             logger.info('Loaded %s machines', len(self.machines.keys()))
 
-    def add_machine(self, machine_config, initialize=True):
+    def reload_machines(self):
+        """Reload all machines from the database."""
+        self.machines = {}
+        self.load_machines()
+
+    def add_machine(self, machine_config, initialize=True, update_registry_hash=True):
         """Add a machine to the machine registry."""
         machine_type = self.machine_types.get(machine_config.machine_type, None)
         if machine_type is None:
@@ -162,10 +173,18 @@ class MachineRegistry(
         if initialize and machine.active:
             machine.initialize()
 
-    def update_machine(self, old_machine_state, machine_config):
+        if update_registry_hash:
+            self._update_registry_hash()
+
+    def update_machine(
+        self, old_machine_state, machine_config, update_registry_hash=True
+    ):
         """Notify the machine about an update."""
         if machine := machine_config.machine:
             machine.update(old_machine_state)
+
+            if update_registry_hash:
+                self._update_registry_hash()
 
     def restart_machine(self, machine):
         """Restart a machine."""
@@ -174,6 +193,7 @@ class MachineRegistry(
     def remove_machine(self, machine: BaseMachineType):
         """Remove a machine from the registry."""
         self.machines.pop(str(machine.pk), None)
+        self._update_registry_hash()
 
     def get_machines(self, **kwargs):
         """Get loaded machines from registry (By default only initialized machines).
@@ -186,6 +206,8 @@ class MachineRegistry(
             active: (bool)
             base_driver: base driver (class)
         """
+        self._check_reload()
+
         allowed_fields = [
             'name',
             'machine_type',
@@ -229,6 +251,7 @@ class MachineRegistry(
 
     def get_machine(self, pk: Union[str, UUID]):
         """Get machine from registry by pk."""
+        self._check_reload()
         return self.machines.get(str(pk), None)
 
     def get_drivers(self, machine_type: str):
@@ -238,6 +261,38 @@ class MachineRegistry(
             for driver in self.driver_instances.values()
             if driver.machine_type == machine_type
         ]
+
+    def _calculate_registry_hash(self):
+        """Calculate a hash of the machine registry state."""
+        from hashlib import md5
+
+        data = md5()
+
+        for pk, machine in self.machines.items():
+            data.update(str(pk).encode())
+            try:
+                data.update(str(machine.machine_config.active).encode())
+            except:
+                # machine does not exist anymore, hash will be different
+                pass
+
+        return str(data.hexdigest())
+
+    def _check_reload(self):
+        """Check if the registry needs to be reloaded, and reload it."""
+        if not self._hash:
+            self._hash = self._calculate_registry_hash()
+
+        last_hash = self.get_shared_state('hash', None)
+
+        if last_hash and last_hash != self._hash:
+            logger.info('Machine registry has changed - reloading machines')
+            self.reload_machines()
+
+    def _update_registry_hash(self):
+        """Save the current registry hash."""
+        self._hash = self._calculate_registry_hash()
+        self.set_shared_state('hash', self._hash)
 
 
 registry: MachineRegistry = MachineRegistry()
