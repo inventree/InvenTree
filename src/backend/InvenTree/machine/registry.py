@@ -4,12 +4,15 @@ import logging
 from typing import Union
 from uuid import UUID
 
+from InvenTree.helpers_mixin import get_shared_class_instance_state_mixin
 from machine.machine_type import BaseDriver, BaseMachineType
 
 logger = logging.getLogger('inventree')
 
 
-class MachineRegistry:
+class MachineRegistry(
+    get_shared_class_instance_state_mixin(lambda _x: f'machine:registry')
+):
     """Machine registry class."""
 
     def __init__(self) -> None:
@@ -23,17 +26,21 @@ class MachineRegistry:
         self.machines: dict[str, BaseMachineType] = {}
 
         self.base_drivers: list[type[BaseDriver]] = []
-        self.errors: list[Union[str, Exception]] = []
+
+    @property
+    def errors(self) -> list[Union[str, Exception]]:
+        """List of registry errors."""
+        return self.get_shared_state('errors', [])
 
     def handle_error(self, error: Union[Exception, str]):
         """Helper function for capturing errors with the machine registry."""
-        self.errors.append(error)
+        self.set_shared_state('errors', self.errors + [error])
 
-    def initialize(self):
+    def initialize(self, main: bool = False):
         """Initialize the machine registry."""
         self.discover_machine_types()
         self.discover_drivers()
-        self.load_machines()
+        self.load_machines(main=main)
 
     def discover_machine_types(self):
         """Discovers all machine types by inferring all classes that inherit the BaseMachineType class."""
@@ -113,7 +120,7 @@ class MachineRegistry:
 
         return self.driver_instances.get(slug, None)
 
-    def load_machines(self):
+    def load_machines(self, main: bool = False):
         """Load all machines defined in the database into the machine registry."""
         # Imports need to be in this level to prevent early db model imports
         from machine.models import MachineConfig
@@ -121,16 +128,20 @@ class MachineRegistry:
         for machine_config in MachineConfig.objects.all():
             self.add_machine(machine_config, initialize=False)
 
-        # initialize drivers
-        for driver in self.driver_instances.values():
-            driver.init_driver()
+        # initialize machines only in main thread
+        if main:
+            # initialize drivers
+            for driver in self.driver_instances.values():
+                driver.init_driver()
 
-        # initialize machines after all machine instances were created
-        for machine in self.machines.values():
-            if machine.active:
-                machine.initialize()
+            # initialize machines after all machine instances were created
+            for machine in self.machines.values():
+                if machine.active:
+                    machine.initialize()
 
-        logger.info('Initialized %s machines', len(self.machines.keys()))
+            logger.info('Initialized %s machines', len(self.machines.keys()))
+        else:
+            logger.info('Loaded %s machines', len(self.machines.keys()))
 
     def add_machine(self, machine_config, initialize=True):
         """Add a machine to the machine registry."""
