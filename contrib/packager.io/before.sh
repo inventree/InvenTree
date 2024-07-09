@@ -55,8 +55,10 @@ if [ "${TAG_SHA:0:8}" != "$SHA" ]; then
   curl  -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$REPO/actions/runs?head_sha=$SHA > runs.json
   echo "jq version is $(jq --version)"
   echo "Bash version is $BASH_VERSION | $SHELL"
-  artifact_url=$(jq -r '.workflow_runs.[] | select(.name=="QC").artifacts_url' runs.json)
+  artifact_url=$(jq -r '.workflow_runs | .[] | select(.name=="QC").artifacts_url' runs.json)
+  echo "Artifact url is $artifact_url"
   run_id=$(jq -r '.workflow_runs.[] | select(.name=="QC").id' runs.json)
+  echo "Run id is $run_id"
   curl artifact_url > artifact.json
   artifact_id=$(jq -r '.artifacts.[] | select(.name=="frontend-build").id' artifacts.json)
   echo "Getting frontend from github via run artifact"
