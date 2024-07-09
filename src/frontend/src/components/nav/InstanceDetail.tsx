@@ -1,5 +1,6 @@
 import { LoadingOverlay } from '@mantine/core';
 
+import { useUserState } from '../../states/UserState';
 import ClientError from '../errors/ClientError';
 import ServerError from '../errors/ServerError';
 
@@ -12,8 +13,14 @@ export default function InstanceDetail({
   loading: boolean;
   children: React.ReactNode;
 }) {
-  if (loading) {
+  const user = useUserState();
+
+  if (loading || !user.isLoggedIn()) {
     return <LoadingOverlay />;
+  }
+
+  if (status == 0) {
+    return <ServerError status={status} />;
   }
 
   if (status >= 500) {
