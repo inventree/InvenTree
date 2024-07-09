@@ -43,15 +43,19 @@ msgid "Print Label"
 msgstr ""
 
 #: src/components/buttons/PrintingActions.tsx:101
+msgid "Print"
+msgstr ""
+
+#: src/components/buttons/PrintingActions.tsx:102
 msgid "Label printing completed successfully"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:107
-#: src/components/buttons/PrintingActions.tsx:144
+#: src/components/buttons/PrintingActions.tsx:108
+#: src/components/buttons/PrintingActions.tsx:146
 #: src/components/editors/NotesEditor.tsx:65
 #: src/components/editors/NotesEditor.tsx:165
-#: src/components/forms/ApiForm.tsx:513
-#: src/components/forms/fields/ApiFormField.tsx:306
+#: src/components/forms/ApiForm.tsx:516
+#: src/components/forms/fields/ApiFormField.tsx:330
 #: src/components/importer/ImportDataSelector.tsx:171
 #: src/components/importer/ImporterColumnSelector.tsx:112
 #: src/components/modals/LicenseModal.tsx:75
@@ -65,31 +69,35 @@ msgstr ""
 msgid "Error"
 msgstr "Hiba"
 
-#: src/components/buttons/PrintingActions.tsx:108
+#: src/components/buttons/PrintingActions.tsx:109
 msgid "The label could not be generated"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:123
+#: src/components/buttons/PrintingActions.tsx:124
 msgid "Print Report"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:139
+#: src/components/buttons/PrintingActions.tsx:140
+msgid "Generate"
+msgstr ""
+
+#: src/components/buttons/PrintingActions.tsx:141
 msgid "Report printing completed successfully"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:145
+#: src/components/buttons/PrintingActions.tsx:147
 msgid "The report could not be generated"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:173
+#: src/components/buttons/PrintingActions.tsx:175
 msgid "Printing Actions"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:178
+#: src/components/buttons/PrintingActions.tsx:180
 msgid "Print Labels"
 msgstr ""
 
-#: src/components/buttons/PrintingActions.tsx:184
+#: src/components/buttons/PrintingActions.tsx:186
 msgid "Print Reports"
 msgstr ""
 
@@ -156,7 +164,7 @@ msgstr "Eltávolítás"
 #: src/components/items/ActionDropdown.tsx:229
 #: src/components/items/ActionDropdown.tsx:230
 #: src/contexts/ThemeContext.tsx:43
-#: src/functions/forms.tsx:196
+#: src/functions/forms.tsx:213
 #: src/hooks/UseForm.tsx:40
 #: src/tables/FilterSelectDrawer.tsx:204
 #: src/tables/InvenTreeTable.tsx:518
@@ -177,7 +185,7 @@ msgid "Clear"
 msgstr "Törlés"
 
 #: src/components/details/DetailsImage.tsx:227
-#: src/components/forms/ApiForm.tsx:580
+#: src/components/forms/ApiForm.tsx:585
 #: src/contexts/ThemeContext.tsx:43
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
 msgid "Submit"
@@ -211,7 +219,7 @@ msgstr ""
 #: src/components/details/PartIcons.tsx:30
 #: src/pages/part/PartDetail.tsx:267
 #: src/pages/part/PartDetail.tsx:698
-#: src/tables/part/PartTable.tsx:175
+#: src/tables/part/PartTable.tsx:180
 msgid "Locked"
 msgstr ""
 
@@ -257,8 +265,8 @@ msgid "Part is virtual (not a physical part)"
 msgstr "Virtuális (nem kézzelfogható alkatrész)"
 
 #: src/components/details/PartIcons.tsx:84
-#: src/tables/part/PartTable.tsx:241
-#: src/tables/part/PartTable.tsx:245
+#: src/tables/part/PartTable.tsx:246
+#: src/tables/part/PartTable.tsx:250
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
 msgstr "Virtuális"
@@ -268,7 +276,7 @@ msgid "Image upload failed"
 msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:156
-#: src/components/forms/ApiForm.tsx:437
+#: src/components/forms/ApiForm.tsx:440
 #: src/tables/bom/BomTable.tsx:357
 msgid "Success"
 msgstr "Siker"
@@ -423,7 +431,7 @@ msgid "A server error occurred"
 msgstr ""
 
 #: src/components/forms/ApiForm.tsx:151
-#: src/functions/forms.tsx:259
+#: src/functions/forms.tsx:276
 msgid "Form Error"
 msgstr "Form hiba"
 
@@ -431,14 +439,14 @@ msgstr "Form hiba"
 #~ msgid "Form Errors Exist"
 #~ msgstr "Form Errors Exist"
 
-#: src/components/forms/ApiForm.tsx:618
+#: src/components/forms/ApiForm.tsx:623
 #: src/tables/plugin/PluginListTable.tsx:388
 msgid "Update"
 msgstr "Frissítés"
 
-#: src/components/forms/ApiForm.tsx:638
+#: src/components/forms/ApiForm.tsx:643
 #: src/components/items/ActionDropdown.tsx:210
-#: src/functions/forms.tsx:299
+#: src/functions/forms.tsx:316
 #: src/hooks/UseForm.tsx:122
 #: src/pages/Index/Scan.tsx:343
 #: src/pages/Notifications.tsx:123
@@ -1686,12 +1694,6 @@ msgstr ""
 #~ msgid "Substitutes"
 #~ msgstr "Substitutes"
 
-#: src/components/tables/bom/BomTable.tsx:139
-#: src/components/tables/bom/BomTable.tsx:265
-#: src/components/tables/bom/UsedInTable.tsx:64
-#~ msgid "Gets Inherited"
-#~ msgstr "Gets Inherited"
-
 #: src/components/tables/bom/BomTable.tsx:200
 #~ msgid "Validate"
 #~ msgstr "Validate"
@@ -2296,7 +2298,7 @@ msgid "Recently Updated"
 msgstr "Nemrég frissítve"
 
 #: src/defaults/dashboardItems.tsx:50
-#: src/tables/part/PartTable.tsx:223
+#: src/tables/part/PartTable.tsx:228
 msgid "Low Stock"
 msgstr "Alacsony készlet"
 
@@ -2878,11 +2880,11 @@ msgstr "Sikeres bejelentkezés"
 #~ msgid "Response did not contain action data"
 #~ msgstr "Response did not contain action data"
 
-#: src/functions/forms.tsx:182
+#: src/functions/forms.tsx:199
 msgid "Invalid Form"
 msgstr "Érvénytelen űrlap"
 
-#: src/functions/forms.tsx:183
+#: src/functions/forms.tsx:200
 msgid "method parameter not supplied"
 msgstr "metódus paraméter nem támogatott"
 
@@ -3836,7 +3838,7 @@ msgstr "Gyártás részletei"
 #~ msgstr "Delete build order"
 
 #: src/pages/build/BuildDetail.tsx:237
-#: src/tables/build/BuildLineTable.tsx:225
+#: src/tables/build/BuildLineTable.tsx:234
 msgid "Allocate Stock"
 msgstr "Készlet foglalása"
 
@@ -4233,7 +4235,7 @@ msgstr "Link"
 #: src/pages/part/PartDetail.tsx:209
 #: src/tables/bom/BomTable.tsx:279
 #: src/tables/build/BuildLineTable.tsx:121
-#: src/tables/part/PartTable.tsx:263
+#: src/tables/part/PartTable.tsx:268
 msgid "Available Stock"
 msgstr ""
 
@@ -4262,7 +4264,7 @@ msgstr "Gyártható"
 
 #: src/pages/part/PartDetail.tsx:253
 #: src/tables/bom/BomTable.tsx:228
-#: src/tables/part/PartTable.tsx:83
+#: src/tables/part/PartTable.tsx:88
 msgid "Building"
 msgstr "Gyártásban"
 
@@ -4273,7 +4275,7 @@ msgstr "Gyártásban"
 #: src/tables/company/CompanyTable.tsx:95
 #: src/tables/machine/MachineListTable.tsx:323
 #: src/tables/machine/MachineListTable.tsx:585
-#: src/tables/part/PartTable.tsx:169
+#: src/tables/part/PartTable.tsx:174
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:149
 #: src/tables/plugin/PluginListTable.tsx:271
@@ -4342,7 +4344,7 @@ msgstr "Alapértelmezett beszállító"
 #: src/pages/part/PartDetail.tsx:341
 #: src/pages/part/pricing/BomPricingPanel.tsx:78
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
-#: src/tables/part/PartTable.tsx:152
+#: src/tables/part/PartTable.tsx:157
 msgid "Price Range"
 msgstr "Ártartomány"
 
@@ -4401,7 +4403,7 @@ msgstr "Kapcsolódó alkatrészek"
 #: src/pages/stock/StockDetail.tsx:154
 #: src/pages/stock/StockDetail.tsx:533
 #: src/tables/build/BuildLineTable.tsx:36
-#: src/tables/part/PartTable.tsx:108
+#: src/tables/part/PartTable.tsx:113
 #: src/tables/stock/StockItemTable.tsx:166
 #: src/tables/stock/StockItemTable.tsx:297
 msgid "Available"
@@ -4413,7 +4415,7 @@ msgstr "Nincs készlet"
 
 #: src/pages/part/PartDetail.tsx:686
 #: src/tables/bom/BomTable.tsx:284
-#: src/tables/part/PartTable.tsx:77
+#: src/tables/part/PartTable.tsx:82
 msgid "On Order"
 msgstr "Rendelve"
 
@@ -4428,8 +4430,8 @@ msgid "Edit Part"
 msgstr "Alkatrész szerkesztése"
 
 #: src/pages/part/PartDetail.tsx:744
-#: src/tables/part/PartTable.tsx:296
-#: src/tables/part/PartTable.tsx:309
+#: src/tables/part/PartTable.tsx:301
+#: src/tables/part/PartTable.tsx:314
 msgid "Add Part"
 msgstr "Alkatrész hozzáadása"
 
@@ -4513,7 +4515,7 @@ msgstr "Teljes ár"
 
 #: src/pages/part/pricing/BomPricingPanel.tsx:77
 #: src/pages/part/pricing/BomPricingPanel.tsx:101
-#: src/tables/part/PartTable.tsx:193
+#: src/tables/part/PartTable.tsx:198
 msgid "Component"
 msgstr "Összetevő"
 
@@ -5126,13 +5128,13 @@ msgid "Part Information"
 msgstr "Alkatrész információ"
 
 #: src/tables/bom/BomTable.tsx:187
-#: src/tables/part/PartTable.tsx:125
+#: src/tables/part/PartTable.tsx:130
 msgid "No stock"
 msgstr "Nincs készlet"
 
 #: src/tables/bom/BomTable.tsx:195
 #: src/tables/build/BuildLineTable.tsx:104
-#: src/tables/part/PartTable.tsx:116
+#: src/tables/part/PartTable.tsx:121
 msgid "External stock"
 msgstr ""
 
@@ -5147,13 +5149,13 @@ msgid "Includes variant stock"
 msgstr "Változatokkal együtt"
 
 #: src/tables/bom/BomTable.tsx:237
-#: src/tables/part/PartTable.tsx:144
+#: src/tables/part/PartTable.tsx:149
 #: src/tables/stock/StockItemTable.tsx:205
 msgid "Stock Information"
 msgstr "Készlet adatok"
 
 #: src/tables/bom/BomTable.tsx:249
-#: src/tables/build/BuildLineTable.tsx:195
+#: src/tables/build/BuildLineTable.tsx:204
 msgid "Consumable item"
 msgstr "Fogyóeszköz tétel"
 
@@ -5224,7 +5226,7 @@ msgid "Show consumable items"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:314
-#: src/tables/part/PartTable.tsx:257
+#: src/tables/part/PartTable.tsx:262
 msgid "Has Pricing"
 msgstr ""
 
@@ -5315,7 +5317,7 @@ msgid "Show active assemblies"
 msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:78
-#: src/tables/part/PartTable.tsx:199
+#: src/tables/part/PartTable.tsx:204
 #: src/tables/part/PartVariantTable.tsx:30
 msgid "Trackable"
 msgstr "Követésre kötelezett"
@@ -5364,14 +5366,18 @@ msgid "No stock available"
 msgstr "Nincs elérhető készlet"
 
 #: src/tables/build/BuildLineTable.tsx:157
+msgid "Gets Inherited"
+msgstr "Gets Inherited"
+
+#: src/tables/build/BuildLineTable.tsx:166
 msgid "Unit Quantity"
 msgstr "Mennyiségi egység"
 
-#: src/tables/build/BuildLineTable.tsx:231
+#: src/tables/build/BuildLineTable.tsx:240
 msgid "Order Stock"
 msgstr "Készlet rendelés"
 
-#: src/tables/build/BuildLineTable.tsx:237
+#: src/tables/build/BuildLineTable.tsx:246
 msgid "Build Stock"
 msgstr "Gyártási készlet"
 
@@ -5807,7 +5813,7 @@ msgid "Edit Part Parameter"
 msgstr "Alkatrész paraméter szerkesztése"
 
 #: src/tables/part/PartCategoryTable.tsx:60
-#: src/tables/part/PartTable.tsx:187
+#: src/tables/part/PartTable.tsx:192
 msgid "Include Subcategories"
 msgstr "Alkategóriákkal együtt"
 
@@ -5820,7 +5826,7 @@ msgid "Show structural categories"
 msgstr ""
 
 #: src/tables/part/PartCategoryTable.tsx:70
-#: src/tables/part/PartTable.tsx:269
+#: src/tables/part/PartTable.tsx:274
 msgid "Subscribed"
 msgstr ""
 
@@ -5896,7 +5902,7 @@ msgid "Show templates with choices"
 msgstr ""
 
 #: src/tables/part/PartParameterTemplateTable.tsx:41
-#: src/tables/part/PartTable.tsx:205
+#: src/tables/part/PartTable.tsx:210
 msgid "Has Units"
 msgstr "Van mértékegysége"
 
@@ -5920,120 +5926,120 @@ msgstr "Paraméter sablon törlés"
 msgid "Add parameter template"
 msgstr "Paraméter sablon létrehozás"
 
-#: src/tables/part/PartTable.tsx:68
+#: src/tables/part/PartTable.tsx:73
 msgid "Minimum stock"
 msgstr "Minimális készlet"
 
-#: src/tables/part/PartTable.tsx:90
+#: src/tables/part/PartTable.tsx:95
 msgid "Build Order Allocations"
 msgstr "Gyártáshoz foglalások"
 
-#: src/tables/part/PartTable.tsx:99
+#: src/tables/part/PartTable.tsx:104
 msgid "Sales Order Allocations"
 msgstr "Vevői rendeléshez foglalások"
 
-#: src/tables/part/PartTable.tsx:170
+#: src/tables/part/PartTable.tsx:175
 msgid "Filter by part active status"
 msgstr "Szűrés aktív státusz szerint"
 
-#: src/tables/part/PartTable.tsx:176
+#: src/tables/part/PartTable.tsx:181
 msgid "Filter by part locked status"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:181
+#: src/tables/part/PartTable.tsx:186
 #: src/tables/stock/StockItemTable.tsx:287
 msgid "Assembly"
 msgstr "Gyártmány"
 
-#: src/tables/part/PartTable.tsx:182
+#: src/tables/part/PartTable.tsx:187
 msgid "Filter by assembly attribute"
 msgstr "Szűrés szerelési tulajdonság szerint"
 
-#: src/tables/part/PartTable.tsx:188
+#: src/tables/part/PartTable.tsx:193
 msgid "Include parts in subcategories"
 msgstr "Alkategóriákkal együtt"
 
-#: src/tables/part/PartTable.tsx:194
+#: src/tables/part/PartTable.tsx:199
 msgid "Filter by component attribute"
 msgstr "Szűrés összetevő tulajdonság szerint"
 
-#: src/tables/part/PartTable.tsx:200
+#: src/tables/part/PartTable.tsx:205
 msgid "Filter by trackable attribute"
 msgstr "Szűrés követésre kötelezettség szerint"
 
-#: src/tables/part/PartTable.tsx:206
+#: src/tables/part/PartTable.tsx:211
 msgid "Filter by parts which have units"
 msgstr "Szűrés meglévő mértékegység szerint"
 
-#: src/tables/part/PartTable.tsx:211
+#: src/tables/part/PartTable.tsx:216
 msgid "Has IPN"
 msgstr "Van IPN-je"
 
-#: src/tables/part/PartTable.tsx:212
+#: src/tables/part/PartTable.tsx:217
 msgid "Filter by parts which have an internal part number"
 msgstr "Szűrés meglévő IPN szerint"
 
-#: src/tables/part/PartTable.tsx:217
+#: src/tables/part/PartTable.tsx:222
 msgid "Has Stock"
 msgstr "Van készlet"
 
-#: src/tables/part/PartTable.tsx:218
+#: src/tables/part/PartTable.tsx:223
 msgid "Filter by parts which have stock"
 msgstr "Szűrés meglévő készlet szerint"
 
-#: src/tables/part/PartTable.tsx:224
+#: src/tables/part/PartTable.tsx:229
 msgid "Filter by parts which have low stock"
 msgstr "Szűrés alacsony készlet szerint"
 
-#: src/tables/part/PartTable.tsx:229
+#: src/tables/part/PartTable.tsx:234
 msgid "Purchaseable"
 msgstr "Beszerezhető"
 
-#: src/tables/part/PartTable.tsx:230
+#: src/tables/part/PartTable.tsx:235
 msgid "Filter by parts which are purchaseable"
 msgstr "Szűrés beszerezhetőség szerint"
 
-#: src/tables/part/PartTable.tsx:235
+#: src/tables/part/PartTable.tsx:240
 msgid "Salable"
 msgstr "Értékesíthető"
 
-#: src/tables/part/PartTable.tsx:236
+#: src/tables/part/PartTable.tsx:241
 msgid "Filter by parts which are salable"
 msgstr "Szűrés értékesíthetőség szerint"
 
-#: src/tables/part/PartTable.tsx:242
+#: src/tables/part/PartTable.tsx:247
 msgid "Filter by parts which are virtual"
 msgstr "Szűrés virtuális alkatrészek szerint"
 
-#: src/tables/part/PartTable.tsx:246
+#: src/tables/part/PartTable.tsx:251
 msgid "Not Virtual"
 msgstr "Nem virtuális"
 
-#: src/tables/part/PartTable.tsx:251
+#: src/tables/part/PartTable.tsx:256
 msgid "Is Template"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:252
+#: src/tables/part/PartTable.tsx:257
 msgid "Filter by parts which are templates"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:258
+#: src/tables/part/PartTable.tsx:263
 msgid "Filter by parts which have pricing information"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:264
+#: src/tables/part/PartTable.tsx:269
 msgid "Filter by parts which have available stock"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:270
+#: src/tables/part/PartTable.tsx:275
 msgid "Filter by parts to which the user is subscribed"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:275
+#: src/tables/part/PartTable.tsx:280
 msgid "Has Stocktake"
 msgstr ""
 
-#: src/tables/part/PartTable.tsx:276
+#: src/tables/part/PartTable.tsx:281
 msgid "Filter by parts which have stocktake information"
 msgstr ""
 
