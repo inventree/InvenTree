@@ -4,6 +4,8 @@ import logging
 from typing import Union
 from uuid import UUID
 
+from django.core.cache import cache
+
 from InvenTree.helpers_mixin import get_shared_class_instance_state_mixin
 from machine.machine_type import BaseDriver, BaseMachineType
 
@@ -38,6 +40,9 @@ class MachineRegistry(
 
     def initialize(self, main: bool = False):
         """Initialize the machine registry."""
+        if main:
+            cache.delete_pattern(f'machine:*')
+
         self.discover_machine_types()
         self.discover_drivers()
         self.load_machines(main=main)
