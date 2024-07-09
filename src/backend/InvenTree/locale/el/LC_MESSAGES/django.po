@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-09 11:43+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-09 15:44\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -1210,10 +1210,8 @@ msgid "Part Name"
 msgstr ""
 
 #: build/serializers.py:102
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Κωδικός Έργου"
+msgstr ""
 
 #: build/serializers.py:163 build/serializers.py:882
 #: templates/js/translated/build.js:1322
@@ -14826,3 +14824,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
