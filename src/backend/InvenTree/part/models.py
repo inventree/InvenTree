@@ -5,6 +5,7 @@ from __future__ import annotations
 import decimal
 import hashlib
 import logging
+import math
 import os
 import re
 from datetime import datetime, timedelta
@@ -3755,6 +3756,12 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
             try:
                 self.data_numeric = float(self.data)
             except ValueError:
+                self.data_numeric = None
+
+        if self.data_numeric is not None and type(self.data_numeric) is float:
+            # Prevent out of range numbers, etc
+            # Ref: https://github.com/inventree/InvenTree/issues/7593
+            if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
                 self.data_numeric = None
 
     part = models.ForeignKey(
