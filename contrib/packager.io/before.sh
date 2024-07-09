@@ -53,6 +53,7 @@ TAG_SHA=$(jq -r '.sha' tag.json)
 if [ "${TAG_SHA:0:8}" != "$SHA" ]; then
   echo "Tag sha is not the same as commit sha"
   curl  -L -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" https://api.github.com/repos/$REPO/actions/runs?head_sha=$SHA > runs.json
+  echo "jq version is $(jq --version)"
   artifact_url=$(jq -r '.workflow_runs.[] | select(.name=="QC").artifacts_url' runs.json)
   run_id=$(jq -r '.workflow_runs.[] | select(.name=="QC").id' runs.json)
   curl artifact_url > artifact.json
