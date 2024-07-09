@@ -47,6 +47,25 @@ class TestParams(TestCase):
             t3.full_clean()
             t3.save()  # pragma: no cover
 
+    def test_invalid_numbers(self):
+        """Test that invalid floating point numbers are correctly handled."""
+        p = Part.objects.first()
+        t = PartParameterTemplate.objects.create(name='Yaks')
+
+        valid_floats = ['-12', '1.234', '17', '3e45', '-12e34']
+
+        for value in valid_floats:
+            param = PartParameter(part=p, template=t, data=value)
+            param.full_clean()
+            self.assertIsNotNone(param.data_numeric)
+
+        invalid_floats = ['88E6352', 'inf', '-inf', 'nan', '3.14.15', '3eee3']
+
+        for value in invalid_floats:
+            param = PartParameter(part=p, template=t, data=value)
+            param.full_clean()
+            self.assertIsNone(param.data_numeric)
+
     def test_metadata(self):
         """Unit tests for the metadata field."""
         for model in [PartParameterTemplate]:
