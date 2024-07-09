@@ -57,6 +57,8 @@ repos:
   rev: v2.3.0
   hooks:
   - id: codespell
+    additional_dependencies:
+      - tomli
     exclude: >
       (?x)^(
           docs/docs/stylesheets/.*|
