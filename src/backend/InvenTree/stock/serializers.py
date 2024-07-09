@@ -17,19 +17,19 @@ from taggit.serializers import TagListSerializerField
 
 import build.models
 import company.models
+import company.serializers as company_serializers
 import InvenTree.helpers
 import InvenTree.serializers
 import order.models
 import part.filters as part_filters
 import part.models as part_models
+import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
-from company.serializers import SupplierPartSerializer
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
-from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
 from .models import (
     StockItem,
@@ -233,7 +233,9 @@ class StockItemTestResultSerializer(
         label=_('Test template for this result'),
     )
 
-    template_detail = PartTestTemplateSerializer(source='template', read_only=True)
+    template_detail = part_serializers.PartTestTemplateSerializer(
+        source='template', read_only=True
+    )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
         required=False
@@ -560,7 +562,7 @@ class StockItemSerializer(
     sku = serializers.CharField(source='supplier_part.SKU', read_only=True)
 
     # Optional detail fields, which can be appended via query parameters
-    supplier_part_detail = SupplierPartSerializer(
+    supplier_part_detail = company_serializers.SupplierPartSerializer(
         source='supplier_part',
         supplier_detail=False,
         manufacturer_detail=False,
@@ -568,7 +570,9 @@ class StockItemSerializer(
         many=False,
         read_only=True,
     )
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part_detail = part_serializers.PartBriefSerializer(
+        source='part', many=False, read_only=True
+    )
 
     location_detail = LocationBriefSerializer(
         source='location', many=False, read_only=True

@@ -1,12 +1,21 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 213
+INVENTREE_API_VERSION = 216
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v216 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7595
+    - Moves API endpoint for contenttype lookup by model name
+
+v215 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7591
+    - Adds additional fields to the BuildLine serializer
+
+v214 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7587
+    - Adds "default_location_detail" field to the Part API
+
 v213 - 2024-07-06 : https://github.com/inventree/InvenTree/pull/7527
     - Adds 'locked' field to Part API
 
