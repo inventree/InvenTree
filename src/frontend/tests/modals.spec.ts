@@ -34,7 +34,7 @@ test('PUI - Modals as admin', async ({ page }) => {
   await page.getByRole('button', { name: '@sentry/utils MIT' }).click();
   await page
     .getByLabel('@sentry/utilsMIT')
-    .getByText('Copyright (c) 2019 Sentry (')
+    .getByText('Copyright (c) 2019')
     .waitFor();
 
   await page
