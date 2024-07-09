@@ -158,7 +158,7 @@ class LabelPrinterBaseDriver(BaseDriver):
 
     def render_to_png(
         self, label: LabelTemplate, item: models.Model, **kwargs
-    ) -> Image | None:
+    ) -> Union[Image, None]:
         """Helper method to render a label to PNG format for a specific item.
 
         Arguments:
@@ -232,6 +232,7 @@ class LabelPrinterStatus(MachineStatus):
     UNKNOWN = 101, _('Unknown'), 'secondary'
     PRINTING = 110, _('Printing'), 'primary'
     NO_MEDIA = 301, _('No media'), 'warning'
+    PAPER_JAM = 302, _('Paper jam'), 'warning'
     DISCONNECTED = 400, _('Disconnected'), 'danger'
 
 
