@@ -56,10 +56,8 @@ if [ "$TAG_SHA" != "$FULL_SHA" ]; then
   curl https://api.github.com/repos/$REPO/actions/runs?head_sha=$FULL_SHA > runs.json
   artifact_url=$(jq -r '.workflow_runs | .[] | select(.name=="QC").artifacts_url' runs.json)
   run_id=$(jq -r '.workflow_runs[] | select(.name=="QC").id' runs.json)
-  curl artifact_url > artifacts.json
-  echo "###########"
-  cat artifacts.json
-  echo "###########"
+  echo "Getting artifact url from github via run. Run id: $run_id, Artifact url: $artifact_url"
+  curl $artifact_url > artifacts.json
   artifact_id=$(jq -r '.artifacts[] | select(.name=="frontend-build").id' artifacts.json)
   echo "Getting frontend from github via run artifact. Run id: $run_id, Artifact id: $artifact_id, Artifact url: $artifact_url"
   curl https://github.com/$REPO/actions/runs/$run_id/artifacts/$artifact_id -L
