@@ -60,6 +60,7 @@ if [ "$TAG_SHA" != "$FULL_SHA" ]; then
   artifact_id=$(jq -r '.artifacts[] | select(.name=="frontend-build").id' artifacts.json)
   echo "Getting frontend from github via run artifact. Run id: $run_id, Artifact id: $artifact_id, Artifact url: $artifact_url"
   curl https://github.com/$REPO/actions/runs/$run_id/artifacts/$artifact_id -L
+  ls
 else
   echo "Getting frontend from github via tag"
   curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L frontend.zip
