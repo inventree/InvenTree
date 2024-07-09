@@ -34,6 +34,7 @@ DATE=$(jq -r '.commit.committer.date' commit.json)
 BRANCH=$(jq -r '.[].name' branches.json)
 NODE_ID=$(jq -r '.node_id' commit.json)
 SIGNATURE=$(jq -r '.commit.verification.signature' commit.json)
+FULL_SHA=$(jq -r '.sha' commit.json)
 
 echo "Write VERSION information"
 echo "INVENTREE_COMMIT_HASH='$SHA'" >> VERSION
@@ -50,18 +51,18 @@ cat VERSION
 # Try to get frontend
 # Check if tag sha is the same as the commit sha
 TAG_SHA=$(jq -r '.sha' tag.json)
-if [ "${TAG_SHA:0:8}" != "$SHA" ]; then
+if [ "$TAG_SHA" != "$FULL_SHA" ]; then
   echo "Tag sha is not the same as commit sha"
-  curl -L "https://api.github.com/repos/$REPO/actions/runs?head_sha=$SHA" > runs.json
+  curl https://api.github.com/repos/$REPO/actions/runs?head_sha=$FULL_SHA > runs.json
   artifact_url=$(jq -r '.workflow_runs | .[] | select(.name=="QC").artifacts_url' runs.json)
   run_id=$(jq -r '.workflow_runs[] | select(.name=="QC").id' runs.json)
-  curl $artifact_url > artifact.json
+  curl $artifact_url > artifacts.json
   artifact_id=$(jq -r '.artifacts[] | select(.name=="frontend-build").id' artifacts.json)
   echo "Getting frontend from github via run artifact. Run id: $run_id, Artifact id: $artifact_id, Artifact url: $artifact_url"
-  curl "https://github.com/$REPO/actions/runs/$run_id/$artifact_id" -L frontend.zip
+  curl https://github.com/$REPO/actions/runs/$run_id/artifacts/$artifact_id -L
 else
   echo "Getting frontend from github via tag"
-  curl "https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip" -L frontend.zip
+  curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L frontend.zip
 fi
 unzip frontend.zip -d src/backend/InvenTree/web/static/web
 echo "Unzipped frontend"
