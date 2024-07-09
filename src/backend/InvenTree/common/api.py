@@ -950,7 +950,7 @@ common_api_urls = [
                 '<int:pk>/', ContentTypeDetail.as_view(), name='api-contenttype-detail'
             ),
             path(
-                '<str:model>/',
+                'model/<str:model>/',
                 ContentTypeModelDetail.as_view(),
                 name='api-contenttype-detail-modelname',
             ),

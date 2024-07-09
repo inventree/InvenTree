@@ -1,15 +1,24 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 215
+INVENTREE_API_VERSION = 218
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-v215 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7585
+v218 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7585
     - Adds "revision_of" field to Part serializer
     - Adds new API filters for "revision" status
+
+v217 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7599
+    - Fixes bug in "project_code" field for order API endpoints
+
+v216 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7595
+    - Moves API endpoint for contenttype lookup by model name
+
+v215 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7591
+    - Adds additional fields to the BuildLine serializer
 
 v214 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7587
     - Adds "default_location_detail" field to the Part API
