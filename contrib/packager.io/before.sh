@@ -50,7 +50,8 @@ cat VERSION
 
 echo "ALL"
 echo "##############"
-printenv
+git_base=$(git config --get remote.origin.url)
+echo "git_base: $git_base"
 echo "##############"
 
 # Try to get frontend
