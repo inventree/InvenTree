@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-09 11:43+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-09 15:45\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -1210,10 +1210,8 @@ msgid "Part Name"
 msgstr ""
 
 #: build/serializers.py:102
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Projektkod"
+msgstr ""
 
 #: build/serializers.py:163 build/serializers.py:882
 #: templates/js/translated/build.js:1322
@@ -1524,16 +1522,12 @@ msgid "Part Description"
 msgstr ""
 
 #: build/serializers.py:1204
-#, fuzzy
-#| msgid "Edit Category"
 msgid "Part Category ID"
-msgstr "Redigera kategori"
+msgstr ""
 
 #: build/serializers.py:1205
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Kategorinamn"
+msgstr ""
 
 #: build/serializers.py:1211 common/models.py:1488 part/admin.py:113
 #: part/models.py:1069 templates/js/translated/table_filters.js:147
@@ -14830,3 +14824,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
