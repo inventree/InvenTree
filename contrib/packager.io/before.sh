@@ -5,6 +5,7 @@
 
 set -eu
 
+REPO="InvenTree/InvenTree"
 VERSION="$APP_PKG_VERSION-$APP_PKG_ITERATION"
 echo "Setting VERSION information to $VERSION"
 echo "$VERSION" > VERSION
@@ -17,11 +18,15 @@ echo "Getting info from github for commit $SHA"
 curl -L \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
-  https://api.github.com/repos/InvenTree/InvenTree/commits/$SHA > commit.json
+  https://api.github.com/repos/$REPO/commits/$SHA > commit.json
 curl -L \
   -H "Accept: application/vnd.github+json" \
   -H "X-GitHub-Api-Version: 2022-11-28" \
-  https://api.github.com/repos/InvenTree/InvenTree/commits/$SHA/branches-where-head > branches.json
+  https://api.github.com/repos/$REPO/commits/$SHA/branches-where-head > branches.json
+curl -L \
+  -H "Accept: application/vnd.github+json" \
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  https://api.github.com/repos/$REPO/commits/$APP_PKG_VERSION > tag.json
 
 # Extract info
 echo "Extracting info from github"
@@ -41,3 +46,19 @@ echo "SIGNATURE='$SIGNATURE'" >> VERSION
 
 echo "Written VERSION information"
 cat VERSION
+
+# Try to get frontend
+# With tag if tag is not 0.8.0
+if [ "$APP_PKG_VERSION" != "0.8.0" ]; then
+  # Check if tag sha is the same as the commit sha
+  TAG_SHA=$(jq -r '.sha' tag.json)
+  if [ "${TAG_SHA:0:8}" != "$SHA" ]; then
+    echo "Tag sha is not the same as commit sha"
+    exit 0
+  fi
+
+  echo "Getting frontend from github"
+  curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L frontend.zip
+  unzip frontend.zip -d src/backend/InvenTree/web/static/web
+  echo "Unzipped frontend"
+fi
