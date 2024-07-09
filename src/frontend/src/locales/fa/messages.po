@@ -8,7 +8,7 @@ msgstr ""
 "Language: fa\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-09 15:45\n"
 "Last-Translator: \n"
 "Language-Team: Persian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -4979,7 +4979,7 @@ msgstr ""
 
 #: src/tables/DownloadAction.tsx:24
 #~ msgid "Excel (.xls)"
-#~ msgstr ""
+#~ msgstr "Excel (.xls)"
 
 #: src/tables/DownloadAction.tsx:38
 msgid "Download Data"
@@ -5367,7 +5367,7 @@ msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:157
 msgid "Gets Inherited"
-msgstr "Gets Inherited"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:166
 msgid "Unit Quantity"
@@ -6664,7 +6664,7 @@ msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:70
 msgid "Uploaded"
-msgstr "Uploaded"
+msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:80
 msgid "Imported Rows"
@@ -7197,3 +7197,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
