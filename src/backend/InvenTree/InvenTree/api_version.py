@@ -7,7 +7,7 @@ INVENTREE_API_VERSION = 216
 
 
 INVENTREE_API_TEXT = """
-v216 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7002
+v216 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7595
     - Moves API endpoint for contenttype lookup by model name
 
 v215 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7591
