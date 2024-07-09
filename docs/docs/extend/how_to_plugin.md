@@ -149,7 +149,7 @@ class SampleActionPlugin(ActionMixin, InvenTreePlugin):
     # metadata
     AUTHOR = "Sample Author"
     DESCRIPTION = "A very basic plugin with one mixin"
-    PUBLISH_DATE = "22.02.2222"
+    PUBLISH_DATE = "2222-02-22"
     VERSION = "1.2.3"  # We recommend semver and increase the major version with each new major release of InvenTree
     WEBSITE = "https://example.com/"
     LICENSE = "MIT"  # use what you want - OSI approved is &hearts;

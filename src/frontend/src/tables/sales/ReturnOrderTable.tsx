@@ -8,6 +8,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -35,6 +36,9 @@ export function ReturnOrderTable({ params }: { params?: any }) {
   const table = useTable('return-orders');
   const user = useUserState();
 
+  const projectCodeFilters = useProjectCodeFilters();
+  const responsibleFilters = useOwnerFilters();
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -45,13 +49,30 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       },
       OutstandingFilter(),
       OverdueFilter(),
-      AssignedToMeFilter()
+      AssignedToMeFilter(),
+      {
+        name: 'project_code',
+        label: t`Project Code`,
+        description: t`Filter by project code`,
+        choices: projectCodeFilters.choices
+      },
+      {
+        name: 'has_project_code',
+        label: t`Has Project Code`,
+        description: t`Filter by whether the purchase order has a project code`
+      },
+      {
+        name: 'assigned_to',
+        label: t`Responsible`,
+        description: t`Filter by responsible owner`,
+        choices: responsibleFilters.choices
+      }
     ];
-  }, []);
+  }, [projectCodeFilters.choices, responsibleFilters.choices]);
 
   const tableColumns = useMemo(() => {
     return [
-      ReferenceColumn(),
+      ReferenceColumn({}),
       {
         accessor: 'customer__name',
         title: t`Customer`,
@@ -73,11 +94,11 @@ export function ReturnOrderTable({ params }: { params?: any }) {
       },
       DescriptionColumn({}),
       LineItemsProgressColumn(),
-      StatusColumn(ModelType.returnorder),
-      ProjectCodeColumn(),
-      CreationDateColumn(),
-      TargetDateColumn(),
-      ResponsibleColumn(),
+      StatusColumn({ model: ModelType.returnorder }),
+      ProjectCodeColumn({}),
+      CreationDateColumn({}),
+      TargetDateColumn({}),
+      ResponsibleColumn({}),
       {
         accessor: 'total_price',
         title: t`Total Price`,
@@ -125,7 +146,10 @@ export function ReturnOrderTable({ params }: { params?: any }) {
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
-          modelType: ModelType.returnorder
+          modelType: ModelType.returnorder,
+          enableSelection: true,
+          enableDownload: true,
+          enableReports: true
         }}
       />
     </>

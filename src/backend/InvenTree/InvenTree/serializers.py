@@ -18,12 +18,13 @@ from djmoney.utils import MONEY_CLASSES, get_currency_field_name
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.fields import empty
+from rest_framework.mixins import ListModelMixin
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
 from taggit.serializers import TaggitSerializer
 
 import common.models as common_models
-from common.settings import currency_code_default, currency_code_mappings
+from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
 
 
@@ -403,6 +404,17 @@ class UserSerializer(InvenTreeModelSerializer):
 
         read_only_fields = ['username']
 
+    username = serializers.CharField(label=_('Username'), help_text=_('Username'))
+    first_name = serializers.CharField(
+        label=_('First Name'), help_text=_('First name of the user')
+    )
+    last_name = serializers.CharField(
+        label=_('Last Name'), help_text=_('Last name of the user')
+    )
+    email = serializers.EmailField(
+        label=_('Email'), help_text=_('Email address of the user')
+    )
+
 
 class ExendedUserSerializer(UserSerializer):
     """Serializer for a User with a bit more info."""
@@ -422,6 +434,16 @@ class ExendedUserSerializer(UserSerializer):
         ]
 
         read_only_fields = UserSerializer.Meta.read_only_fields + ['groups']
+
+    is_staff = serializers.BooleanField(
+        label=_('Staff'), help_text=_('Does this user have staff permissions')
+    )
+    is_superuser = serializers.BooleanField(
+        label=_('Superuser'), help_text=_('Is this user a superuser')
+    )
+    is_active = serializers.BooleanField(
+        label=_('Active'), help_text=_('Is this user account active')
+    )
 
     def validate(self, attrs):
         """Expanded validation for changing user role."""
@@ -506,43 +528,6 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
             return None
 
         return os.path.join(str(settings.MEDIA_URL), str(value))
-
-
-class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
-    """Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
-
-    The only real addition here is that we support "renaming" of the attachment file.
-    """
-
-    @staticmethod
-    def attachment_fields(extra_fields=None):
-        """Default set of fields for an attachment serializer."""
-        fields = [
-            'pk',
-            'attachment',
-            'filename',
-            'link',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        if extra_fields:
-            fields += extra_fields
-
-        return fields
-
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
-
-    attachment = InvenTreeAttachmentSerializerField(required=False, allow_null=False)
-
-    # The 'filename' field must be present in the serializer
-    filename = serializers.CharField(
-        label=_('Filename'), required=False, source='basename', allow_blank=False
-    )
-
-    upload_date = serializers.DateField(read_only=True)
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):
@@ -842,6 +827,23 @@ class DataFileExtractSerializer(serializers.Serializer):
         pass
 
 
+class NotesFieldMixin:
+    """Serializer mixin for handling 'notes' fields.
+
+    The 'notes' field will be hidden in a LIST serializer,
+    but available in a DETAIL serializer.
+    """
+
+    def __init__(self, *args, **kwargs):
+        """Remove 'notes' field from list views."""
+        super().__init__(*args, **kwargs)
+
+        if hasattr(self, 'context'):
+            if view := self.context.get('view', None):
+                if issubclass(view.__class__, ListModelMixin):
+                    self.fields.pop('notes', None)
+
+
 class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
     """Mixin class which allows downloading an 'image' from a remote URL.
 
@@ -854,7 +856,7 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
     remote_image = serializers.URLField(
         required=False,
-        allow_blank=False,
+        allow_blank=True,
         write_only=True,
         label=_('Remote Image'),
         help_text=_('URL of remote image file'),

@@ -34,7 +34,9 @@ class SampleLabelPrinter(LabelPrintingMixin, InvenTreePlugin):
         print(f"Printing Label: {kwargs['filename']} (User: {kwargs['user']})")
 
         pdf_data = kwargs['pdf_data']
-        png_file = self.render_to_png(label=None, pdf_data=pdf_data)
+        png_file = self.render_to_png(
+            kwargs['label_instance'], kwargs['item_instance'], **kwargs
+        )
 
         filename = str(BASE_DIR / '_testfolder' / 'label.pdf')
 

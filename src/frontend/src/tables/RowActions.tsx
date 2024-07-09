@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Tooltip } from '@mantine/core';
-import { Menu } from '@mantine/core';
+import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import { IconCopy, IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
@@ -85,11 +84,13 @@ export function RowDeleteAction({
 export function RowActions({
   title,
   actions,
-  disabled = false
+  disabled = false,
+  index
 }: {
   title?: string;
   disabled?: boolean;
   actions: RowAction[];
+  index?: number;
 }): ReactNode {
   // Prevent default event handling
   // Ref: https://icflorescu.github.io/mantine-datatable/examples/links-or-buttons-inside-clickable-rows-or-cells
@@ -105,7 +106,7 @@ export function RowActions({
   }, [actions]);
 
   // Render a single action icon
-  function RowActionIcon(action: RowAction) {
+  function RowActionIcon(action: Readonly<RowAction>) {
     return (
       <Tooltip
         withinPortal={true}
@@ -114,7 +115,7 @@ export function RowActions({
       >
         <Menu.Item
           color={action.color}
-          icon={action.icon}
+          leftSection={action.icon}
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
             cancelEvent(event);
@@ -147,6 +148,8 @@ export function RowActions({
         <Menu.Target>
           <Tooltip withinPortal={true} label={title || t`Actions`}>
             <ActionIcon
+              key={`row-action-menu-${index ?? ''}`}
+              aria-label={`row-action-menu-${index ?? ''}`}
               onClick={openMenu}
               disabled={disabled}
               variant="subtle"

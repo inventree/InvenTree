@@ -20,7 +20,7 @@ export type TableFilterChoice = {
  */
 export type TableFilter = {
   name: string;
-  label?: string;
+  label: string;
   description?: string;
   type?: string;
   choices?: TableFilterChoice[];
@@ -72,8 +72,8 @@ export function StatusFilterOptions(
       return Object.keys(codes).map((key) => {
         const entry = codes[key];
         return {
-          value: entry.key,
-          label: entry.label ?? entry.key
+          value: entry.key.toString(),
+          label: entry.label?.toString() ?? entry.key.toString()
         };
       });
     }

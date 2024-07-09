@@ -317,6 +317,8 @@
                 params: {
                     {% if category %}
                     parent: {{ category.pk }},
+                    {% else %}
+                    top_level: true,
                     {% endif %}
                 },
                 allowTreeView: true,

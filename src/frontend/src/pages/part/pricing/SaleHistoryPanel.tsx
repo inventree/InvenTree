@@ -1,23 +1,14 @@
 import { t } from '@lingui/macro';
+import { BarChart } from '@mantine/charts';
 import { SimpleGrid } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import {
-  Bar,
-  BarChart,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
 
-import { CHART_COLORS } from '../../../components/charts/colors';
-import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { formatCurrency, renderDate } from '../../../defaults/formatters';
+import { formatCurrency } from '../../../defaults/formatters';
 import { ApiEndpoints } from '../../../enums/ApiEndpoints';
 import { useTable } from '../../../hooks/UseTable';
 import { apiUrl } from '../../../states/ApiState';
 import { TableColumn } from '../../../tables/Column';
+import { DateColumn } from '../../../tables/ColumnRenderers';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
 import { NoPricingData } from './PricingPanel';
 
@@ -40,13 +31,12 @@ export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
         switchable: true,
         render: (record: any) => record?.customer_detail?.name
       },
-      {
-        accessor: 'shipment_date',
+      DateColumn({
+        accessor: 'order_detail.shipment_date',
         title: t`Date`,
         sortable: false,
-        switchable: true,
-        render: (record: any) => renderDate(record.order_detail.shipment_date)
-      },
+        switchable: true
+      }),
       {
         accessor: 'sale_price',
         title: t`Sale Price`,
@@ -95,27 +85,13 @@ export default function SaleHistoryPanel({ part }: { part: any }): ReactNode {
         }}
       />
       {saleHistoryData.length > 0 ? (
-        <ResponsiveContainer width="100%" height={500}>
-          <BarChart data={saleHistoryData}>
-            <XAxis dataKey="name" />
-            <YAxis
-              tickFormatter={(value, index) =>
-                formatCurrency(value, {
-                  currency: currency
-                })?.toString() ?? ''
-              }
-            />
-            <Tooltip
-              formatter={(label, payload) => tooltipFormatter(label, currency)}
-            />
-            <Legend />
-            <Bar
-              dataKey="sale_price"
-              fill={CHART_COLORS[0]}
-              label={t`Sale Price`}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <BarChart
+          data={saleHistoryData}
+          dataKey="name"
+          series={[
+            { name: 'sale_price', label: t`Sale Price`, color: 'blue.6' }
+          ]}
+        />
       ) : (
         <NoPricingData />
       )}

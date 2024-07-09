@@ -8,10 +8,14 @@ import { useMemo } from 'react';
 
 import { useLocalState } from '../../states/LocalState';
 
+interface ApiImageProps extends ImageProps {
+  onClick?: (event: any) => void;
+}
+
 /**
  * Construct an image container which will load and display the image
  */
-export function ApiImage(props: ImageProps) {
+export function ApiImage(props: Readonly<ApiImageProps>) {
   const { host } = useLocalState.getState();
 
   const imageUrl = useMemo(() => {
@@ -21,12 +25,9 @@ export function ApiImage(props: ImageProps) {
   return (
     <Stack>
       {imageUrl ? (
-        <Image {...props} src={imageUrl} withPlaceholder fit="contain" />
+        <Image {...props} src={imageUrl} fit="contain" />
       ) : (
-        <Skeleton
-          height={props?.height ?? props.width}
-          width={props?.width ?? props.height}
-        />
+        <Skeleton h={props?.h ?? props.w} w={props?.w ?? props.h} />
       )}
     </Stack>
   );

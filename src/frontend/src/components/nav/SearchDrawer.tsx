@@ -8,6 +8,7 @@ import {
   Divider,
   Drawer,
   Group,
+  Loader,
   Menu,
   Paper,
   Space,
@@ -15,7 +16,6 @@ import {
   Text,
   TextInput
 } from '@mantine/core';
-import { Loader } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
   IconAlertCircle,
@@ -33,9 +33,11 @@ import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { useUserSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
+import { Boundary } from '../Boundary';
 import { RenderInstance } from '../render/Instance';
 import { ModelInformationDict } from '../render/ModelType';
 
@@ -57,7 +59,7 @@ function QueryResultGroup({
 }: {
   query: SearchQuery;
   onRemove: (query: ModelType) => void;
-  onResultClick: (query: ModelType, pk: number) => void;
+  onResultClick: (query: ModelType, pk: number, event: any) => void;
 }) {
   if (query.results.count == 0) {
     return null;
@@ -68,10 +70,10 @@ function QueryResultGroup({
   return (
     <Paper shadow="sm" radius="xs" p="md" key={`paper-${query.model}`}>
       <Stack key={`stack-${query.model}`}>
-        <Group position="apart" noWrap={true}>
-          <Group position="left" spacing={5} noWrap={true}>
+        <Group justify="space-between" wrap="nowrap">
+          <Group justify="left" gap={5} wrap="nowrap">
             <Text size="lg">{model.label_multiple}</Text>
-            <Text size="sm" italic>
+            <Text size="sm" style={{ fontStyle: 'italic' }}>
               {' '}
               - {query.results.count} <Trans>results</Trans>
             </Text>
@@ -91,7 +93,9 @@ function QueryResultGroup({
         <Stack>
           {query.results.results.map((result: any) => (
             <Anchor
-              onClick={() => onResultClick(query.model, result.pk)}
+              onClick={(event: any) =>
+                onResultClick(query.model, result.pk, event)
+              }
               key={result.pk}
             >
               <RenderInstance instance={result} model={query.model} />
@@ -315,11 +319,20 @@ export function SearchDrawer({
   const navigate = useNavigate();
 
   // Callback when one of the search results is clicked
-  function onResultClick(query: ModelType, pk: number) {
-    closeDrawer();
+  function onResultClick(query: ModelType, pk: number, event: any) {
     const targetModel = ModelInformationDict[query];
-    if (targetModel.url_detail == undefined) return;
-    navigate(targetModel.url_detail.replace(':pk', pk.toString()));
+    if (targetModel.url_detail == undefined) {
+      return;
+    }
+
+    if (event?.ctrlKey || event?.shiftKey) {
+      // Keep the drawer open in this condition
+    } else {
+      closeDrawer();
+    }
+
+    let url = targetModel.url_detail.replace(':pk', pk.toString());
+    navigateToLink(url, navigate, event);
   }
 
   return (
@@ -331,13 +344,13 @@ export function SearchDrawer({
       withCloseButton={false}
       styles={{ header: { width: '100%' }, title: { width: '100%' } }}
       title={
-        <Group position="apart" spacing={1} noWrap={true}>
+        <Group justify="space-between" gap={1} wrap="nowrap">
           <TextInput
             placeholder={t`Enter search text`}
             radius="xs"
             value={value}
             onChange={(event) => setValue(event.currentTarget.value)}
-            icon={<IconSearch size="0.8rem" />}
+            leftSection={<IconSearch size="0.8rem" />}
             rightSection={
               value && (
                 <IconBackspace color="red" onClick={() => setValue('')} />
@@ -386,48 +399,52 @@ export function SearchDrawer({
         </Group>
       }
     >
-      {searchQuery.isFetching && (
-        <Center>
-          <Loader />
-        </Center>
-      )}
-      {!searchQuery.isFetching && !searchQuery.isError && (
-        <Stack spacing="md">
-          {queryResults.map((query, idx) => (
-            <QueryResultGroup
-              key={idx}
-              query={query}
-              onRemove={(query) => removeResults(query)}
-              onResultClick={(query, pk) => onResultClick(query, pk)}
-            />
-          ))}
-        </Stack>
-      )}
-      {searchQuery.isError && (
-        <Alert
-          color="red"
-          radius="sm"
-          variant="light"
-          title={t`Error`}
-          icon={<IconAlertCircle size="1rem" />}
-        >
-          <Trans>An error occurred during search query</Trans>
-        </Alert>
-      )}
-      {searchText &&
-        !searchQuery.isFetching &&
-        !searchQuery.isError &&
-        queryResults.length == 0 && (
+      <Boundary label="SearchDrawer">
+        {searchQuery.isFetching && (
+          <Center>
+            <Loader />
+          </Center>
+        )}
+        {!searchQuery.isFetching && !searchQuery.isError && (
+          <Stack gap="md">
+            {queryResults.map((query, idx) => (
+              <QueryResultGroup
+                key={idx}
+                query={query}
+                onRemove={(query) => removeResults(query)}
+                onResultClick={(query, pk, event) =>
+                  onResultClick(query, pk, event)
+                }
+              />
+            ))}
+          </Stack>
+        )}
+        {searchQuery.isError && (
           <Alert
-            color="blue"
+            color="red"
             radius="sm"
             variant="light"
-            title={t`No results`}
-            icon={<IconSearch size="1rem" />}
+            title={t`Error`}
+            icon={<IconAlertCircle size="1rem" />}
           >
-            <Trans>No results available for search query</Trans>
+            <Trans>An error occurred during search query</Trans>
           </Alert>
         )}
+        {searchText &&
+          !searchQuery.isFetching &&
+          !searchQuery.isError &&
+          queryResults.length == 0 && (
+            <Alert
+              color="blue"
+              radius="sm"
+              variant="light"
+              title={t`No results`}
+              icon={<IconSearch size="1rem" />}
+            >
+              <Trans>No results available for search query</Trans>
+            </Alert>
+          )}
+      </Boundary>
     </Drawer>
   );
 }

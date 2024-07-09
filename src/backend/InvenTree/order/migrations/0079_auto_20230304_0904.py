@@ -8,7 +8,7 @@ from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 
-from common.settings import currency_code_default
+from common.currency import currency_code_default
 
 
 logger = logging.getLogger('inventree')

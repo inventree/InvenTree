@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { BarChart } from '@mantine/charts';
 import {
   Alert,
   Anchor,
@@ -17,21 +18,11 @@ import {
   IconShoppingCart,
   IconTriangleSquareCircle
 } from '@tabler/icons-react';
-import { DataTable, DataTableColumn } from 'mantine-datatable';
+import { DataTable } from 'mantine-datatable';
 import { ReactNode, useMemo } from 'react';
-import {
-  Bar,
-  BarChart,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis
-} from 'recharts';
 
-import { CHART_COLORS } from '../../../components/charts/colors';
 import { tooltipFormatter } from '../../../components/charts/tooltipFormatter';
-import { formatCurrency, renderDate } from '../../../defaults/formatters';
+import { formatCurrency, formatDate } from '../../../defaults/formatters';
 import { panelOptions } from '../PartPricingPanel';
 
 interface PricingOverviewEntry {
@@ -53,7 +44,7 @@ export default function PricingOverviewPanel({
   pricing: any;
   doNavigation: (panel: panelOptions) => void;
 }): ReactNode {
-  const columns: DataTableColumn<any>[] = useMemo(() => {
+  const columns: any[] = useMemo(() => {
     return [
       {
         accessor: 'title',
@@ -61,14 +52,14 @@ export default function PricingOverviewPanel({
         render: (record: PricingOverviewEntry) => {
           const is_link = record.name !== panelOptions.overall;
           return (
-            <Group position="left" spacing="xs">
+            <Group justify="left" gap="xs">
               {record.icon}
               {is_link ? (
-                <Anchor weight={700} onClick={() => doNavigation(record.name)}>
+                <Anchor fw={700} onClick={() => doNavigation(record.name)}>
                   {record.title}
                 </Anchor>
               ) : (
-                <Text weight={700}>{record.title}</Text>
+                <Text fw={700}>{record.title}</Text>
               )}
             </Group>
           );
@@ -176,13 +167,13 @@ export default function PricingOverviewPanel({
   // TODO: Add "update now" button
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <SimpleGrid cols={2}>
-        <Stack spacing="xs">
+        <Stack gap="xs">
           {pricing?.updated && (
             <Paper p="xs">
               <Alert color="blue" title={t`Last Updated`}>
-                <Text>{renderDate(pricing.updated)}</Text>
+                <Text>{formatDate(pricing.updated)}</Text>
               </Alert>
             </Paper>
           )}
@@ -192,34 +183,17 @@ export default function PricingOverviewPanel({
             columns={columns}
           />
         </Stack>
-        <ResponsiveContainer width="100%" height={500}>
-          <BarChart data={overviewData} id="pricing-overview-chart">
-            <XAxis dataKey="title" />
-            <YAxis
-              tickFormatter={(value, index) =>
-                formatCurrency(value, {
-                  currency: pricing?.currency
-                })?.toString() ?? ''
-              }
-            />
-            <Tooltip
-              formatter={(label, payload) =>
-                tooltipFormatter(label, pricing?.currency)
-              }
-            />
-            <Legend />
-            <Bar
-              dataKey="min_value"
-              fill={CHART_COLORS[0]}
-              label={t`Minimum Price`}
-            />
-            <Bar
-              dataKey="max_value"
-              fill={CHART_COLORS[1]}
-              label={t`Maximum Price`}
-            />
-          </BarChart>
-        </ResponsiveContainer>
+        <BarChart
+          aria-label="pricing-overview-chart"
+          dataKey="title"
+          data={overviewData}
+          title={t`Pricing Overview`}
+          series={[
+            { name: 'min_value', label: t`Minimum Value`, color: 'blue.6' },
+            { name: 'max_value', label: t`Maximum Value`, color: 'teal.6' }
+          ]}
+          valueFormatter={(value) => tooltipFormatter(value, pricing?.currency)}
+        />
       </SimpleGrid>
     </Stack>
   );

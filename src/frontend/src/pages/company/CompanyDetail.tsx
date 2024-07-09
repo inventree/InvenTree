@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingFactory2,
   IconBuildingWarehouse,
@@ -18,21 +18,23 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   DeleteItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
 import { Breadcrumb } from '../../components/nav/BreadcrumbList';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup } from '../../components/nav/PanelGroup';
-import { PanelType } from '../../components/nav/PanelGroup';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
@@ -57,7 +59,7 @@ export type CompanyDetailProps = {
 /**
  * Detail view for a single company instance
  */
-export default function CompanyDetail(props: CompanyDetailProps) {
+export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   const { id } = useParams();
 
   const user = useUserState();
@@ -65,7 +67,8 @@ export default function CompanyDetail(props: CompanyDetailProps) {
   const {
     instance: company,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.company_list,
     pk: id,
@@ -82,7 +85,8 @@ export default function CompanyDetail(props: CompanyDetailProps) {
       {
         type: 'text',
         name: 'description',
-        label: t`Description`
+        label: t`Description`,
+        copy: true
       },
       {
         type: 'link',
@@ -198,7 +202,11 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPackages />,
         hidden: !company?.is_manufacturer && !company?.is_supplier,
         content: company?.pk && (
-          <StockItemTable params={{ company: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="company-stock"
+            params={{ company: company.pk }}
+          />
         )
       },
       {
@@ -223,7 +231,11 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPackageExport />,
         hidden: !company?.is_customer,
         content: company?.pk ? (
-          <StockItemTable params={{ customer: company.pk }} />
+          <StockItemTable
+            allowAdd={false}
+            tableName="assigned-stock"
+            params={{ customer: company.pk }}
+          />
         ) : (
           <Skeleton />
         )
@@ -246,9 +258,8 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.company_attachment_list}
-            model="company"
-            pk={company.pk ?? -1}
+            model_type={ModelType.company}
+            model_id={company.pk}
           />
         )
       },
@@ -258,14 +269,18 @@ export default function CompanyDetail(props: CompanyDetailProps) {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.company_list, company.pk)}
-            data={company?.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.company}
+            modelId={company.pk}
+            editable={
+              user.hasChangeRole(UserRoles.purchase_order) ||
+              user.hasChangeRole(UserRoles.sales_order) ||
+              user.hasChangeRole(UserRoles.return_order)
+            }
           />
         )
       }
     ];
-  }, [id, company]);
+  }, [id, company, user]);
 
   const editCompany = useEditApiFormModal({
     url: ApiEndpoints.company_list,
@@ -277,8 +292,8 @@ export default function CompanyDetail(props: CompanyDetailProps) {
 
   const companyActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.company} pk={company.pk} />,
       <ActionDropdown
-        key="company"
         tooltip={t`Company Actions`}
         icon={<IconDots />}
         actions={[
@@ -296,25 +311,30 @@ export default function CompanyDetail(props: CompanyDetailProps) {
 
   const badges: ReactNode[] = useMemo(() => {
     return [
-      <DetailsBadge label={t`Inactive`} color="red" visible={!company.active} />
+      <DetailsBadge
+        label={t`Inactive`}
+        color="red"
+        visible={company.active == false}
+      />
     ];
   }, [company]);
 
   return (
     <>
       {editCompany.modal}
-      <Stack spacing="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Company` + `: ${company.name}`}
-          subtitle={company.description}
-          actions={companyActions}
-          imageUrl={company.image}
-          breadcrumbs={props.breadcrumbs}
-          badges={badges}
-        />
-        <PanelGroup pageKey="company" panels={companyPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Company` + `: ${company.name}`}
+            subtitle={company.description}
+            actions={companyActions}
+            imageUrl={company.image}
+            breadcrumbs={props.breadcrumbs}
+            badges={badges}
+          />
+          <PanelGroup pageKey="company" panels={companyPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

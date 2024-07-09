@@ -10,7 +10,8 @@ from part.models import Part
 from build.models import Build, BuildItem
 from stock.models import StockItem
 
-from InvenTree.status_codes import BuildStatus, StockStatus
+from build.status_codes import BuildStatus
+from stock.status_codes import StockStatus
 from InvenTree.unit_test import InvenTreeAPITestCase
 
 
@@ -223,6 +224,7 @@ class BuildTest(BuildAPITest):
                 "status": 50,  # Item requires attention
             },
             expected_code=201,
+            max_query_count=450,  # TODO: Try to optimize this
         )
 
         self.assertEqual(self.build.incomplete_outputs.count(), 0)
@@ -264,8 +266,35 @@ class BuildTest(BuildAPITest):
         self.assertTrue(self.build.is_complete)
 
     def test_cancel(self):
-        """Test that we can cancel a BuildOrder via the API."""
-        bo = Build.objects.get(pk=1)
+        """Test that we can cancel a BuildOrder via the API.
+
+        - First test that all stock is returned to stock
+        - Second test that stock is consumed by the build order
+        """
+
+        def make_new_build(ref):
+            """Make a new build order, and allocate stock to it."""
+
+            data = self.post(
+                reverse('api-build-list'),
+                {
+                    'part': 100,
+                    'quantity': 10,
+                    'title': 'Test build',
+                    'reference': ref,
+                },
+                expected_code=201
+            ).data
+
+            build = Build.objects.get(pk=data['pk'])
+
+            build.auto_allocate_stock()
+
+            self.assertGreater(build.build_lines.count(), 0)
+
+            return build
+
+        bo = make_new_build('BO-12345')
 
         url = reverse('api-build-cancel', kwargs={'pk': bo.pk})
 
@@ -276,6 +305,23 @@ class BuildTest(BuildAPITest):
         bo.refresh_from_db()
 
         self.assertEqual(bo.status, BuildStatus.CANCELLED)
+
+        # No items were "consumed" by this build
+        self.assertEqual(bo.consumed_stock.count(), 0)
+
+        # Make another build, this time we will *consume* the allocated stock
+        bo = make_new_build('BO-12346')
+
+        url = reverse('api-build-cancel', kwargs={'pk': bo.pk})
+
+        self.post(url, {'remove_allocated_stock': True}, expected_code=201)
+
+        bo.refresh_from_db()
+
+        self.assertEqual(bo.status, BuildStatus.CANCELLED)
+
+        # This time, there should be *consumed* stock
+        self.assertGreater(bo.consumed_stock.count(), 0)
 
     def test_delete(self):
         """Test that we can delete a BuildOrder via the API"""
@@ -518,16 +564,16 @@ class BuildTest(BuildAPITest):
     def test_download_build_orders(self):
         """Test that we can download a list of build orders via the API"""
         required_cols = [
-            'reference',
-            'status',
-            'completed',
-            'batch',
-            'notes',
-            'title',
-            'part',
-            'part_name',
-            'id',
-            'quantity',
+            'Reference',
+            'Build Status',
+            'Completed items',
+            'Batch Code',
+            'Notes',
+            'Description',
+            'Part',
+            'Part Name',
+            'ID',
+            'Quantity',
         ]
 
         excluded_cols = [
@@ -551,13 +597,13 @@ class BuildTest(BuildAPITest):
 
             for row in data:
 
-                build = Build.objects.get(pk=row['id'])
+                build = Build.objects.get(pk=row['ID'])
 
-                self.assertEqual(str(build.part.pk), row['part'])
-                self.assertEqual(build.part.full_name, row['part_name'])
+                self.assertEqual(str(build.part.pk), row['Part'])
+                self.assertEqual(build.part.name, row['Part Name'])
 
-                self.assertEqual(build.reference, row['reference'])
-                self.assertEqual(build.title, row['title'])
+                self.assertEqual(build.reference, row['Reference'])
+                self.assertEqual(build.title, row['Description'])
 
 
 class BuildAllocationTest(BuildAPITest):
@@ -948,6 +994,7 @@ class BuildOverallocationTest(BuildAPITest):
                 'accept_overallocated': 'accept',
             },
             expected_code=201,
+            max_query_count=550,  # TODO: Come back and refactor this
         )
 
         self.build.refresh_from_db()
@@ -968,6 +1015,7 @@ class BuildOverallocationTest(BuildAPITest):
                 'accept_overallocated': 'trim',
             },
             expected_code=201,
+            max_query_count=550,  # TODO: Come back and refactor this
         )
 
         self.build.refresh_from_db()

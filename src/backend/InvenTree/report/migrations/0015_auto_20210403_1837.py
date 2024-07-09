@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='reportasset',
             name='asset',
-            field=models.FileField(help_text='Report asset file', upload_to=report.models.rename_asset, verbose_name='Asset'),
+            field=models.FileField(help_text='Report asset file', upload_to='report/assets', verbose_name='Asset'),
         ),
         migrations.AlterField(
             model_name='reportasset',
@@ -30,6 +30,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='reportsnippet',
             name='snippet',
-            field=models.FileField(help_text='Report snippet file', upload_to=report.models.rename_snippet, validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Snippet'),
+            field=models.FileField(help_text='Report snippet file', upload_to='report/snippets', validators=[django.core.validators.FileExtensionValidator(allowed_extensions=['html', 'htm'])], verbose_name='Snippet'),
         ),
     ]

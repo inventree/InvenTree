@@ -22,7 +22,8 @@ from mptt.exceptions import InvalidMove
 
 from rest_framework import serializers
 
-from InvenTree.status_codes import BuildStatus, StockStatus, StockHistoryCode, BuildStatusGroups
+from build.status_codes import BuildStatus, BuildStatusGroups
+from stock.status_codes import StockStatus, StockHistoryCode
 
 from build.validators import generate_next_build_reference, validate_build_order_reference
 
@@ -35,9 +36,11 @@ import InvenTree.tasks
 
 import common.models
 from common.notifications import trigger_notification, InvenTreeNotificationBodies
+from common.settings import get_global_setting
 from plugin.events import trigger_event
 
 import part.models
+import report.mixins
 import stock.models
 import users.models
 
@@ -45,7 +48,15 @@ import users.models
 logger = logging.getLogger('inventree')
 
 
-class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNotesMixin, InvenTree.models.MetadataMixin, InvenTree.models.PluginValidationMixin, InvenTree.models.ReferenceIndexingMixin, MPTTModel):
+class Build(
+    report.mixins.InvenTreeReportMixin,
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.MetadataMixin,
+    InvenTree.models.PluginValidationMixin,
+    InvenTree.models.ReferenceIndexingMixin,
+    MPTTModel):
     """A Build object organises the creation of new StockItem objects from other existing StockItem objects.
 
     Attributes:
@@ -93,7 +104,7 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         }
 
     @classmethod
-    def api_defaults(cls, request):
+    def api_defaults(cls, request=None):
         """Return default values for this model when issuing an API OPTIONS request."""
         defaults = {
             'reference': generate_next_build_reference(),
@@ -109,6 +120,34 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         self.validate_reference_field(self.reference)
         self.reference_int = self.rebuild_reference_field(self.reference)
 
+        if get_global_setting('BUILDORDER_REQUIRE_VALID_BOM'):
+            # Check that the BOM is valid
+            if not self.part.is_bom_valid():
+                raise ValidationError({
+                    'part': _('Assembly BOM has not been validated')
+                })
+
+        if get_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART'):
+            # Check that the part is active
+            if not self.part.active:
+                raise ValidationError({
+                    'part': _('Build order cannot be created for an inactive part')
+                })
+
+        if get_global_setting('BUILDORDER_REQUIRE_LOCKED_PART'):
+            # Check that the part is locked
+            if not self.part.locked:
+                raise ValidationError({
+                    'part': _('Build order cannot be created for an unlocked part')
+                })
+
+        # On first save (i.e. creation), run some extra checks
+        if self.pk is None:
+
+            # Set the destination location (if not specified)
+            if not self.destination:
+                self.destination = self.part.get_default_location()
+
         try:
             super().save(*args, **kwargs)
         except InvalidMove:
@@ -121,7 +160,7 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
 
         super().clean()
 
-        if common.models.InvenTreeSetting.get_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
+        if get_global_setting('BUILDORDER_REQUIRE_RESPONSIBLE'):
             if not self.responsible:
                 raise ValidationError({
                     'responsible': _('Responsible user or group must be specified')
@@ -132,6 +171,21 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
             raise ValidationError({
                 'part': _('Build order part cannot be changed')
             })
+
+    def report_context(self) -> dict:
+        """Generate custom report context data."""
+
+        return {
+            'bom_items': self.part.get_bom_items(),
+            'build': self,
+            'build_outputs': self.build_outputs.all(),
+            'line_items': self.build_lines.all(),
+            'part': self.part,
+            'quantity': self.quantity,
+            'reference': self.reference,
+            'title': str(self)
+        }
+
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -538,7 +592,7 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         self.allocated_stock.delete()
 
     @transaction.atomic
-    def complete_build(self, user):
+    def complete_build(self, user, trim_allocated_stock=False):
         """Mark this build as complete."""
 
         import build.tasks
@@ -546,17 +600,21 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         if self.incomplete_count > 0:
             return
 
+        if trim_allocated_stock:
+            self.trim_allocated_stock()
+
         self.completion_date = InvenTree.helpers.current_date()
         self.completed_by = user
         self.status = BuildStatus.COMPLETE.value
         self.save()
 
         # Offload task to complete build allocations
-        InvenTree.tasks.offload_task(
+        if not InvenTree.tasks.offload_task(
             build.tasks.complete_build_allocations,
             self.pk,
             user.pk if user else None
-        )
+        ):
+            raise ValidationError(_("Failed to offload task to complete build allocations"))
 
         # Register an event
         trigger_event('build.completed', id=self.pk)
@@ -608,24 +666,29 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         - Set build status to CANCELLED
         - Save the Build object
         """
+
+        import build.tasks
+
         remove_allocated_stock = kwargs.get('remove_allocated_stock', False)
         remove_incomplete_outputs = kwargs.get('remove_incomplete_outputs', False)
 
-        # Find all BuildItem objects associated with this Build
-        items = self.allocated_stock
-
         if remove_allocated_stock:
-            for item in items:
-                item.complete_allocation(user)
+            # Offload task to remove allocated stock
+            if not InvenTree.tasks.offload_task(
+                build.tasks.complete_build_allocations,
+                self.pk,
+                user.pk if user else None
+            ):
+                raise ValidationError(_("Failed to offload task to complete build allocations"))
 
-        items.delete()
+        else:
+            self.allocated_stock.all().delete()
 
         # Remove incomplete outputs (if required)
         if remove_incomplete_outputs:
             outputs = self.build_outputs.filter(is_building=True)
 
-            for output in outputs:
-                output.delete()
+            outputs.delete()
 
         # Date of 'completion' is the date the build was cancelled
         self.completion_date = InvenTree.helpers.current_date()
@@ -676,9 +739,12 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         """
         user = kwargs.get('user', None)
         batch = kwargs.get('batch', self.batch)
-        location = kwargs.get('location', self.destination)
+        location = kwargs.get('location', None)
         serials = kwargs.get('serials', None)
         auto_allocate = kwargs.get('auto_allocate', False)
+
+        if location is None:
+            location = self.destination or self.part.get_default_location()
 
         """
         Determine if we can create a single output (with quantity > 0),
@@ -820,6 +886,10 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
     def trim_allocated_stock(self):
         """Called after save to reduce allocated stock if the build order is now overallocated."""
         # Only need to worry about untracked stock here
+
+        items_to_save = []
+        items_to_delete = []
+
         for build_line in self.untracked_line_items:
 
             reduce_by = build_line.allocated_quantity() - build_line.quantity
@@ -837,13 +907,19 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
                 # Easy case - this item can just be reduced.
                 if item.quantity > reduce_by:
                     item.quantity -= reduce_by
-                    item.save()
+                    items_to_save.append(item)
                     break
 
                 # Harder case, this item needs to be deleted, and any remainder
                 # taken from the next items in the list.
                 reduce_by -= item.quantity
-                item.delete()
+                items_to_delete.append(item)
+
+        # Save the updated BuildItem objects
+        BuildItem.objects.bulk_update(items_to_save, ['quantity'])
+
+        # Delete the remaining BuildItem objects
+        BuildItem.objects.filter(pk__in=[item.pk for item in items_to_delete]).delete()
 
     @property
     def allocated_stock(self):
@@ -940,7 +1016,10 @@ class Build(InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeNo
         # List the allocated BuildItem objects for the given output
         allocated_items = output.items_to_install.all()
 
-        if (common.settings.prevent_build_output_complete_on_incompleted_tests() and output.hasRequiredTests() and not output.passedAllRequiredTests()):
+        required_tests = kwargs.get('required_tests', output.part.getRequiredTests())
+        prevent_on_incomplete = kwargs.get('prevent_on_incomplete', common.settings.prevent_build_output_complete_on_incompleted_tests())
+
+        if (prevent_on_incomplete and not output.passedAllRequiredTests(required_tests=required_tests)):
             serial = output.serial
             raise ValidationError(
                 _(f"Build output {serial} has not passed all required tests"))
@@ -1266,17 +1345,7 @@ def after_save_build(sender, instance: Build, created: bool, **kwargs):
             instance.update_build_line_items()
 
 
-class BuildOrderAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a BuildOrder object."""
-
-    def getSubdir(self):
-        """Return the media file subdirectory for storing BuildOrder attachments"""
-        return os.path.join('bo_files', str(self.build.id))
-
-    build = models.ForeignKey(Build, on_delete=models.CASCADE, related_name='attachments')
-
-
-class BuildLine(InvenTree.models.InvenTreeModel):
+class BuildLine(report.mixins.InvenTreeReportMixin, InvenTree.models.InvenTreeModel):
     """A BuildLine object links a BOMItem to a Build.
 
     When a new Build is created, the BuildLine objects are created automatically.
@@ -1293,7 +1362,8 @@ class BuildLine(InvenTree.models.InvenTreeModel):
     """
 
     class Meta:
-        """Model meta options"""
+        """Model meta options."""
+        verbose_name = _('Build Order Line Item')
         unique_together = [
             ('build', 'bom_item'),
         ]
@@ -1302,6 +1372,19 @@ class BuildLine(InvenTree.models.InvenTreeModel):
     def get_api_url():
         """Return the API URL used to access this model"""
         return reverse('api-build-line-list')
+
+    def report_context(self):
+        """Generate custom report context for this BuildLine object."""
+
+        return {
+            'allocated_quantity': self.allocated_quantity,
+            'allocations': self.allocations,
+            'bom_item': self.bom_item,
+            'build': self.build,
+            'build_line': self,
+            'part': self.bom_item.sub_part,
+            'quantity': self.quantity,
+        }
 
     build = models.ForeignKey(
         Build, on_delete=models.CASCADE,
@@ -1369,7 +1452,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
     """
 
     class Meta:
-        """Model meta options"""
+        """Model meta options."""
         unique_together = [
             ('build_line', 'stock_item', 'install_into'),
         ]
@@ -1554,7 +1637,7 @@ class BuildItem(InvenTree.models.InvenTreeMetadataModel):
 
     build_line = models.ForeignKey(
         BuildLine,
-        on_delete=models.SET_NULL, null=True,
+        on_delete=models.CASCADE, null=True,
         related_name='allocations',
     )
 

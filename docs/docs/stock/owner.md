@@ -12,8 +12,25 @@ The stock ownership feature is disabled by default, and must be enabled via the 
 {% include 'img.html' %}
 {% endwith %}
 
+### Background
+The stock item ownership function does not change or the influence the access rights that have been set
+in admin panel. It just hides buttons for edit, add and delete actions. This means that the user who
+should have access by ownership needs to have stock item write access set in the admin panel. By
+this he also gets write access to all other items, except the item has a different owner.
+
+Example
+
+* Stock item 1111 has an owner called Daniel
+* Stock item 2222 has an owner called Peter
+* Stock item 3333 has no owner
+
+Set  stock item access for Daniel and Peter to V,A,E,D in the admin panel. Now Daniel can edit
+1111 but not 2222. Peter can edit 2222 but not 1111. Both can edit 3333.
+
+
 !!! warning "Existing Stock Locations and Items"
-	Enabling the ownership feature will automatically remove the edit permissions to all users for stock locations and items which **do not have** any owner set. Only a user with admin permissions will be able to set the owner for those locations and items.
+	Items with no user set can be edited by everyone who has the access rights. An owner has
+	to be added to every stock item in order to use the ownership control.
 
 ### Owner: Group vs User
 
@@ -45,6 +62,12 @@ Setting the owner of stock location will automatically:
 
 * Set the owner of all children locations to the same owner.
 * Set the owner of all stock items at this location to the same owner.
+
+The inherited ownership changes with stock transfer. If a stock item is transferred from a location
+owned by Daniel to a location owned by Peter the owner of the stock item and the access right will
+also change from Daniel to Peter. This is only valid for the inherited ownership. If a stock item
+is directly owned by Peter the ownership and the access right will stay with Peter even when the item
+is moved to a location owned by Daniel.
 
 !!! info
 	If the owner of a children location or a stock item is a subset of the specified owner (eg. a user linked to the specified group), the owner won't be updated.

@@ -9,14 +9,18 @@ export function LanguageToggle() {
 
   return (
     <Group
-      position="center"
+      justify="center"
       style={{
         border: open === true ? `1px dashed ` : ``,
         margin: open === true ? 2 : 12,
         padding: open === true ? 8 : 0
       }}
     >
-      <ActionIcon onClick={() => toggle.toggle()} size="lg">
+      <ActionIcon
+        onClick={() => toggle.toggle()}
+        size="lg"
+        variant="transparent"
+      >
         <IconLanguage />
       </ActionIcon>
       {open && (

@@ -66,7 +66,7 @@ InvenTree is designed to be **extensible**, and provides multiple options for **
     <li><a href="https://www.djangoproject.com/">Django</a></li>
     <li><a href="https://www.django-rest-framework.org/">DRF</a></li>
     <li><a href="https://django-q.readthedocs.io/">Django Q</a></li>
-    <li><a href="https://django-allauth.readthedocs.io/">Django-Allauth</a></li>
+    <li><a href="https://docs.allauth.org/">Django-Allauth</a></li>
   </ul>
 </details>
 
@@ -123,7 +123,7 @@ Refer to the [getting started guide](https://docs.inventree.org/en/latest/start/
 <!-- Mobile App -->
 ## 	:iphone: Mobile App
 
-InvenTree is supported by a [companion mobile app](https://docs.inventree.org/en/latest/app/app/) which allows users access to stock control information and functionality.
+InvenTree is supported by a [companion mobile app](https://docs.inventree.org/app/) which allows users access to stock control information and functionality.
 
 <div align="center"><h4>
     <a href="https://play.google.com/store/apps/details?id=inventree.inventree_app">Android Play Store</a>

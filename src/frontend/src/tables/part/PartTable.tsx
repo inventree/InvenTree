@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatPriceRange } from '../../defaults/formatters';
@@ -9,7 +8,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePartFields } from '../../forms/PartForms';
-import { shortenString } from '../../functions/tables';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -27,6 +25,7 @@ function partTableColumns(): TableColumn[] {
   return [
     {
       accessor: 'name',
+      title: t`Part`,
       sortable: true,
       noWrap: true,
       render: (record: any) => PartColumn(record)
@@ -43,13 +42,12 @@ function partTableColumns(): TableColumn[] {
     {
       accessor: 'category',
       sortable: true,
-
-      render: function (record: any) {
-        // TODO: Link to the category detail page
-        return shortenString({
-          str: record.category_detail?.pathstring
-        });
-      }
+      render: (record: any) => record.category_detail?.pathstring
+    },
+    {
+      accessor: 'default_location',
+      sortable: true,
+      render: (record: any) => record.default_location_detail?.pathstring
     },
     {
       accessor: 'total_in_stock',
@@ -139,8 +137,8 @@ function partTableColumns(): TableColumn[] {
         return (
           <TableHoverCard
             value={
-              <Group spacing="xs" position="left" noWrap>
-                <Text color={color}>{text}</Text>
+              <Group gap="xs" justify="left" wrap="nowrap">
+                <Text c={color}>{text}</Text>
                 {record.units && (
                   <Text size="xs" color={color}>
                     [{record.units}]
@@ -175,6 +173,12 @@ function partTableFilters(): TableFilter[] {
       name: 'active',
       label: t`Active`,
       description: t`Filter by part active status`,
+      type: 'boolean'
+    },
+    {
+      name: 'locked',
+      label: t`Locked`,
+      description: t`Filter by part locked status`,
       type: 'boolean'
     },
     {
@@ -246,14 +250,37 @@ function partTableFilters(): TableFilter[] {
         { value: 'true', label: t`Virtual` },
         { value: 'false', label: t`Not Virtual` }
       ]
+    },
+    {
+      name: 'is_template',
+      label: t`Is Template`,
+      description: t`Filter by parts which are templates`,
+      type: 'boolean'
+    },
+    {
+      name: 'has_pricing',
+      label: t`Has Pricing`,
+      description: t`Filter by parts which have pricing information`,
+      type: 'boolean'
+    },
+    {
+      name: 'unallocated_stock',
+      label: t`Available Stock`,
+      description: t`Filter by parts which have available stock`,
+      type: 'boolean'
+    },
+    {
+      name: 'starred',
+      label: t`Subscribed`,
+      description: t`Filter by parts to which the user is subscribed`,
+      type: 'boolean'
+    },
+    {
+      name: 'stocktake',
+      label: t`Has Stocktake`,
+      description: t`Filter by parts which have stocktake information`,
+      type: 'boolean'
     }
-    // unallocated_stock
-    // starred
-    // stocktake
-    // is_template
-    // virtual
-    // has_pricing
-    // TODO: Any others from table_filters.js?
   ];
 }
 
@@ -305,7 +332,8 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
           tableActions: tableActions,
           params: {
             ...props.params,
-            category_detail: true
+            category_detail: true,
+            location_detail: true
           }
         }}
       />

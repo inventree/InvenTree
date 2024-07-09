@@ -4,7 +4,7 @@ import random
 
 from plugin import InvenTreePlugin
 from plugin.mixins import ReportMixin
-from report.models import PurchaseOrderReport
+from report.models import ReportTemplate
 
 
 class SampleReportPlugin(ReportMixin, InvenTreePlugin):
@@ -32,7 +32,7 @@ class SampleReportPlugin(ReportMixin, InvenTreePlugin):
         context['random_int'] = self.some_custom_function()
 
         # We can also add extra data to the context which is specific to the report type
-        context['is_purchase_order'] = isinstance(report_instance, PurchaseOrderReport)
+        context['is_purchase_order'] = report_instance.model_type == 'purchaseorder'
 
         # We can also use the 'request' object to add extra context data
         context['request_method'] = request.method

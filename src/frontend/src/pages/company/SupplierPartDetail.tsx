@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
   IconDots,
@@ -10,6 +10,7 @@ import {
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -20,6 +21,7 @@ import {
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -45,7 +47,8 @@ export default function SupplierPartDetail() {
   const {
     instance: supplierPart,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
@@ -243,8 +246,8 @@ export default function SupplierPartDetail() {
 
   const supplierPartActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
       <ActionDropdown
-        key="part"
         tooltip={t`Supplier Part Actions`}
         icon={<IconDots />}
         actions={[
@@ -262,7 +265,7 @@ export default function SupplierPartDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, supplierPart]);
 
   const supplierPartFields = useSupplierPartFields();
 
@@ -303,7 +306,7 @@ export default function SupplierPartDetail() {
       <DetailsBadge
         label={t`Inactive`}
         color="red"
-        visible={!supplierPart.active}
+        visible={supplierPart.active == false}
       />
     ];
   }, [supplierPart]);
@@ -311,19 +314,19 @@ export default function SupplierPartDetail() {
   return (
     <>
       {editSuppliertPart.modal}
-      {duplicateSupplierPart.modal}
-      <Stack spacing="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Supplier Part`}
-          subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
-          breadcrumbs={breadcrumbs}
-          badges={badges}
-          actions={supplierPartActions}
-          imageUrl={supplierPart?.part_detail?.thumbnail}
-        />
-        <PanelGroup pageKey="supplierpart" panels={panels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Supplier Part`}
+            subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
+            breadcrumbs={breadcrumbs}
+            badges={badges}
+            actions={supplierPartActions}
+            imageUrl={supplierPart?.part_detail?.thumbnail}
+          />
+          <PanelGroup pageKey="supplierpart" panels={panels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

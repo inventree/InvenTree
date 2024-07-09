@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconDots,
@@ -10,6 +10,7 @@ import {
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
@@ -19,6 +20,7 @@ import {
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -43,7 +45,8 @@ export default function ManufacturerPartDetail() {
   const {
     instance: manufacturerPart,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
@@ -172,9 +175,8 @@ export default function ManufacturerPartDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.manufacturer_part_attachment_list}
-            model="manufacturer_part"
-            pk={manufacturerPart?.pk}
+            model_type={ModelType.manufacturerpart}
+            model_id={manufacturerPart?.pk}
           />
         )
       }
@@ -204,8 +206,11 @@ export default function ManufacturerPartDetail() {
 
   const manufacturerPartActions = useMemo(() => {
     return [
+      <AdminButton
+        model={ModelType.manufacturerpart}
+        pk={manufacturerPart.pk}
+      />,
       <ActionDropdown
-        key="part"
         tooltip={t`Manufacturer Part Actions`}
         icon={<IconDots />}
         actions={[
@@ -223,7 +228,7 @@ export default function ManufacturerPartDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, manufacturerPart]);
 
   const breadcrumbs = useMemo(() => {
     return [
@@ -241,18 +246,18 @@ export default function ManufacturerPartDetail() {
   return (
     <>
       {editManufacturerPart.modal}
-      {duplicateManufacturerPart.modal}
-      <Stack spacing="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`ManufacturerPart`}
-          subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
-          breadcrumbs={breadcrumbs}
-          actions={manufacturerPartActions}
-          imageUrl={manufacturerPart?.part_detail?.thumbnail}
-        />
-        <PanelGroup pageKey="manufacturerpart" panels={panels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`ManufacturerPart`}
+            subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
+            breadcrumbs={breadcrumbs}
+            actions={manufacturerPartActions}
+            imageUrl={manufacturerPart?.part_detail?.thumbnail}
+          />
+          <PanelGroup pageKey="manufacturerpart" panels={panels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

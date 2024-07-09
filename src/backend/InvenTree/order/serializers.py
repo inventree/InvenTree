@@ -1,6 +1,5 @@
 """JSON serializers for the Order API."""
 
-from datetime import datetime
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -34,6 +33,8 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
+from importer.mixins import DataImportExportSerializerMixin
+from importer.registry import register_importer
 from InvenTree.helpers import (
     current_date,
     extract_serial_numbers,
@@ -42,20 +43,20 @@ from InvenTree.helpers import (
     str2bool,
 )
 from InvenTree.serializers import (
-    InvenTreeAttachmentSerializer,
     InvenTreeCurrencySerializer,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
+    NotesFieldMixin,
 )
-from InvenTree.status_codes import (
+from order.status_codes import (
     PurchaseOrderStatusGroups,
     ReturnOrderLineStatus,
     ReturnOrderStatus,
     SalesOrderStatusGroups,
-    StockStatus,
 )
 from part.serializers import PartBriefSerializer
+from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer
 
 
@@ -73,20 +74,24 @@ class TotalPriceMixin(serializers.Serializer):
     )
 
 
-class AbstractOrderSerializer(serializers.Serializer):
+class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Serializer):
     """Abstract serializer class which provides fields common to all order types."""
 
+    export_exclude_fields = ['notes']
+
     # Number of line items in this order
-    line_items = serializers.IntegerField(read_only=True)
+    line_items = serializers.IntegerField(read_only=True, label=_('Line Items'))
 
     # Number of completed line items (this is an annotated field)
-    completed_lines = serializers.IntegerField(read_only=True)
+    completed_lines = serializers.IntegerField(
+        read_only=True, label=_('Completed Lines')
+    )
 
     # Human-readable status text (read-only)
     status_text = serializers.CharField(source='get_status_display', read_only=True)
 
     # status field cannot be set directly
-    status = serializers.IntegerField(read_only=True)
+    status = serializers.IntegerField(read_only=True, label=_('Order Status'))
 
     # Reference string is *required*
     reference = serializers.CharField(required=True)
@@ -97,6 +102,10 @@ class AbstractOrderSerializer(serializers.Serializer):
     # Detail for responsible field
     responsible_detail = OwnerSerializer(
         source='responsible', read_only=True, many=False
+    )
+
+    project_code = serializers.CharField(
+        source='project_code.code', label=_('Project Code'), read_only=True
     )
 
     # Detail for project code field
@@ -114,7 +123,9 @@ class AbstractOrderSerializer(serializers.Serializer):
 
     barcode_hash = serializers.CharField(read_only=True)
 
-    creation_date = serializers.DateField(required=False, allow_null=True)
+    creation_date = serializers.DateField(
+        required=False, allow_null=True, label=_('Creation Date')
+    )
 
     def validate_reference(self, reference):
         """Custom validation for the reference field."""
@@ -156,7 +167,17 @@ class AbstractOrderSerializer(serializers.Serializer):
         ] + extra_fields
 
 
-class AbstractExtraLineSerializer(serializers.Serializer):
+class AbstractLineItemSerializer:
+    """Abstract serializer for LineItem object."""
+
+    target_date = serializers.DateField(
+        required=False, allow_null=True, label=_('Target Date')
+    )
+
+
+class AbstractExtraLineSerializer(
+    DataImportExportSerializerMixin, serializers.Serializer
+):
     """Abstract Serializer for a ExtraLine object."""
 
     def __init__(self, *args, **kwargs):
@@ -166,7 +187,7 @@ class AbstractExtraLineSerializer(serializers.Serializer):
         super().__init__(*args, **kwargs)
 
         if order_detail is not True:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
     quantity = serializers.FloatField()
 
@@ -193,8 +214,9 @@ class AbstractExtraLineMeta:
     ]
 
 
+@register_importer()
 class PurchaseOrderSerializer(
-    TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
 ):
     """Serializer for a PurchaseOrder object."""
 
@@ -227,7 +249,7 @@ class PurchaseOrderSerializer(
         super().__init__(*args, **kwargs)
 
         if supplier_detail is not True:
-            self.fields.pop('supplier_detail')
+            self.fields.pop('supplier_detail', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -267,7 +289,7 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ([],)
+        fields = []
 
     def get_context_data(self):
         """Return custom context information about the order."""
@@ -335,7 +357,12 @@ class PurchaseOrderIssueSerializer(serializers.Serializer):
         order.place_order()
 
 
-class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
+@register_importer()
+class PurchaseOrderLineItemSerializer(
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
+):
     """Serializer class for the PurchaseOrderLineItem model."""
 
     class Meta:
@@ -364,6 +391,11 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             'total_price',
             'link',
             'merge_items',
+            'sku',
+            'mpn',
+            'ipn',
+            'internal_part',
+            'internal_part_name',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -375,11 +407,11 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if part_detail is not True:
-            self.fields.pop('part_detail')
-            self.fields.pop('supplier_part_detail')
+            self.fields.pop('part_detail', None)
+            self.fields.pop('supplier_part_detail', None)
 
         if order_detail is not True:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
@@ -477,6 +509,25 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
             'Merge items with the same part, destination and target date into one line item'
         ),
         default=True,
+        write_only=True,
+    )
+
+    sku = serializers.CharField(source='part.SKU', read_only=True, label=_('SKU'))
+
+    mpn = serializers.CharField(
+        source='part.manufacturer_part.MPN', read_only=True, label=_('MPN')
+    )
+
+    ipn = serializers.CharField(
+        source='part.part.IPN', read_only=True, label=_('Internal Part Number')
+    )
+
+    internal_part = serializers.PrimaryKeyRelatedField(
+        source='part.part', read_only=True, many=False, label=_('Internal Part')
+    )
+
+    internal_part_name = serializers.CharField(
+        source='part.part.name', read_only=True, label=_('Internal Part Name')
     )
 
     def validate(self, data):
@@ -510,6 +561,7 @@ class PurchaseOrderLineItemSerializer(InvenTreeModelSerializer):
         return data
 
 
+@register_importer()
 class PurchaseOrderExtraLineSerializer(
     AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
@@ -752,19 +804,9 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                     raise ValidationError(detail=serializers.as_serializer_error(exc))
 
 
-class PurchaseOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializers for the PurchaseOrderAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.PurchaseOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['order'])
-
-
+@register_importer()
 class SalesOrderSerializer(
-    TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
 ):
     """Serializer for the SalesOrder model class."""
 
@@ -793,7 +835,7 @@ class SalesOrderSerializer(
         super().__init__(*args, **kwargs)
 
         if customer_detail is not True:
-            self.fields.pop('customer_detail')
+            self.fields.pop('customer_detail', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -880,19 +922,19 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if not order_detail:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if not item_detail:
-            self.fields.pop('item_detail')
+            self.fields.pop('item_detail', None)
 
         if not location_detail:
-            self.fields.pop('location_detail')
+            self.fields.pop('location_detail', None)
 
         if not customer_detail:
-            self.fields.pop('customer_detail')
+            self.fields.pop('customer_detail', None)
 
     part = serializers.PrimaryKeyRelatedField(source='item.part', read_only=True)
     order = serializers.PrimaryKeyRelatedField(
@@ -922,7 +964,12 @@ class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
     )
 
 
-class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
+@register_importer()
+class SalesOrderLineItemSerializer(
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
+):
     """Serializer for a SalesOrderLineItem object."""
 
     class Meta:
@@ -965,16 +1012,16 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if part_detail is not True:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
         if order_detail is not True:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
         if allocations is not True:
-            self.fields.pop('allocations')
+            self.fields.pop('allocations', None)
 
         if customer_detail is not True:
-            self.fields.pop('customer_detail')
+            self.fields.pop('customer_detail', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1071,7 +1118,8 @@ class SalesOrderLineItemSerializer(InvenTreeModelSerializer):
     )
 
 
-class SalesOrderShipmentSerializer(InvenTreeModelSerializer):
+@register_importer()
+class SalesOrderShipmentSerializer(NotesFieldMixin, InvenTreeModelSerializer):
     """Serializer for the SalesOrderShipment class."""
 
     class Meta:
@@ -1284,7 +1332,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
 
         user = getattr(request, 'user', None)
 
-        order.complete_order(
+        order.ship_order(
             user, allow_incomplete_lines=str2bool(data.get('accept_incomplete', False))
         )
 
@@ -1507,6 +1555,7 @@ class SalesOrderShipmentAllocationSerializer(serializers.Serializer):
                 allocation.save()
 
 
+@register_importer()
 class SalesOrderExtraLineSerializer(
     AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
@@ -1520,19 +1569,9 @@ class SalesOrderExtraLineSerializer(
     order_detail = SalesOrderSerializer(source='order', many=False, read_only=True)
 
 
-class SalesOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializers for the SalesOrderAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.SalesOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['order'])
-
-
+@register_importer()
 class ReturnOrderSerializer(
-    AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
+    NotesFieldMixin, AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
 ):
     """Serializer for the ReturnOrder model class."""
 
@@ -1558,7 +1597,7 @@ class ReturnOrderSerializer(
         super().__init__(*args, **kwargs)
 
         if customer_detail is not True:
-            self.fields.pop('customer_detail')
+            self.fields.pop('customer_detail', None)
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -1709,7 +1748,12 @@ class ReturnOrderReceiveSerializer(serializers.Serializer):
                 order.receive_line_item(line_item, location, request.user)
 
 
-class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
+@register_importer()
+class ReturnOrderLineItemSerializer(
+    DataImportExportSerializerMixin,
+    AbstractLineItemSerializer,
+    InvenTreeModelSerializer,
+):
     """Serializer for a ReturnOrderLineItem object."""
 
     class Meta:
@@ -1744,13 +1788,13 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
         super().__init__(*args, **kwargs)
 
         if not order_detail:
-            self.fields.pop('order_detail')
+            self.fields.pop('order_detail', None)
 
         if not item_detail:
-            self.fields.pop('item_detail')
+            self.fields.pop('item_detail', None)
 
         if not part_detail:
-            self.fields.pop('part_detail')
+            self.fields.pop('part_detail', None)
 
     order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
     item_detail = stock.serializers.StockItemSerializer(
@@ -1762,6 +1806,7 @@ class ReturnOrderLineItemSerializer(InvenTreeModelSerializer):
     price_currency = InvenTreeCurrencySerializer(help_text=_('Line price currency'))
 
 
+@register_importer()
 class ReturnOrderExtraLineSerializer(
     AbstractExtraLineSerializer, InvenTreeModelSerializer
 ):
@@ -1773,14 +1818,3 @@ class ReturnOrderExtraLineSerializer(
         model = order.models.ReturnOrderExtraLine
 
     order_detail = ReturnOrderSerializer(source='order', many=False, read_only=True)
-
-
-class ReturnOrderAttachmentSerializer(InvenTreeAttachmentSerializer):
-    """Serializer for the ReturnOrderAttachment model."""
-
-    class Meta:
-        """Metaclass options."""
-
-        model = order.models.ReturnOrderAttachment
-
-        fields = InvenTreeAttachmentSerializer.attachment_fields(['order'])

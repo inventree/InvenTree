@@ -5,6 +5,6 @@ import { ActionButton, ActionButtonProps } from './ActionButton';
 /**
  * A generic icon button which is used to add or create a new item
  */
-export function AddItemButton(props: ActionButtonProps) {
+export function AddItemButton(props: Readonly<ActionButtonProps>) {
   return <ActionButton {...props} color="green" icon={<IconPlus />} />;
 }

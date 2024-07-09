@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -9,11 +9,14 @@ import {
   IconPaperclip
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   BarcodeActionDropdown,
@@ -24,10 +27,11 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -37,7 +41,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
@@ -54,7 +57,8 @@ export default function PurchaseOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
@@ -151,18 +155,23 @@ export default function PurchaseOrderDetail() {
         label: t`Completed Shipments`,
         total: order.shipments,
         progress: order.completed_shipments
-        // TODO: Fix this progress bar
       },
       {
         type: 'text',
         name: 'currency',
-        label: t`Order Currency,`
+        label: t`Order Currency`,
+        value_formatter: () =>
+          order?.order_currency ?? order?.supplier_detail?.currency
       },
       {
         type: 'text',
-        name: 'total_cost',
-        label: t`Total Cost`
-        // TODO: Implement this!
+        name: 'total_price',
+        label: t`Total Cost`,
+        value_formatter: () => {
+          return formatCurrency(order?.total_price, {
+            currency: order?.order_currency ?? order?.supplier_detail?.currency
+          });
+        }
       }
     ];
 
@@ -258,6 +267,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconPackages />,
         content: (
           <StockItemTable
+            tableName="received-stock"
             params={{
               purchase_order: id
             }}
@@ -270,9 +280,8 @@ export default function PurchaseOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.purchase_order_attachment_list}
-            model="order"
-            pk={Number(id)}
+            model_type={ModelType.purchaseorder}
+            model_id={order.pk}
           />
         )
       },
@@ -282,17 +291,18 @@ export default function PurchaseOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.purchase_order_list, id)}
-            data={order.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.purchaseorder}
+            modelId={order.pk}
+            editable={user.hasChangeRole(UserRoles.purchase_order)}
           />
         )
       }
     ];
-  }, [order, id]);
+  }, [order, id, user]);
 
   const poActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
       <BarcodeActionDropdown
         actions={[
           ViewBarcodeAction({}),
@@ -304,8 +314,12 @@ export default function PurchaseOrderDetail() {
           })
         ]}
       />,
+      <PrintingActions
+        modelType={ModelType.purchaseorder}
+        items={[order.pk]}
+        enableReports
+      />,
       <ActionDropdown
-        key="order-actions"
         tooltip={t`Order Actions`}
         icon={<IconDots />}
         actions={[
@@ -342,19 +356,19 @@ export default function PurchaseOrderDetail() {
   return (
     <>
       {editPurchaseOrder.modal}
-      {duplicatePurchaseOrder.modal}
-      <Stack spacing="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Purchase Order` + `: ${order.reference}`}
-          subtitle={order.description}
-          imageUrl={order.supplier_detail?.image}
-          breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
-          actions={poActions}
-          badges={orderBadges}
-        />
-        <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Purchase Order` + `: ${order.reference}`}
+            subtitle={order.description}
+            imageUrl={order.supplier_detail?.image}
+            breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
+            actions={poActions}
+            badges={orderBadges}
+          />
+          <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

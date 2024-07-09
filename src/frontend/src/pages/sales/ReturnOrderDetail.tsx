@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -8,21 +8,26 @@ import {
   IconPaperclip
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import { PlaceholderPanel } from '../../components/items/Placeholder';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -32,7 +37,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 
@@ -47,7 +51,8 @@ export default function ReturnOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.return_order_list,
     pk: id,
@@ -123,13 +128,19 @@ export default function ReturnOrderDetail() {
       {
         type: 'text',
         name: 'currency',
-        label: t`Order Currency,`
+        label: t`Order Currency`,
+        value_formatter: () =>
+          order?.order_currency ?? order?.customer_detail?.currency
       },
       {
         type: 'text',
-        name: 'total_cost',
-        label: t`Total Cost`
-        // TODO: Implement this!
+        name: 'total_price',
+        label: t`Total Cost`,
+        value_formatter: () => {
+          return formatCurrency(order?.total_price, {
+            currency: order?.order_currency ?? order?.customer_detail?.currency
+          });
+        }
       }
     ];
 
@@ -211,7 +222,8 @@ export default function ReturnOrderDetail() {
       {
         name: 'line-items',
         label: t`Line Items`,
-        icon: <IconList />
+        icon: <IconList />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'attachments',
@@ -219,9 +231,8 @@ export default function ReturnOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.return_order_attachment_list}
-            model="order"
-            pk={Number(id)}
+            model_type={ModelType.returnorder}
+            model_id={order.pk}
           />
         )
       },
@@ -231,14 +242,14 @@ export default function ReturnOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.return_order_list, id)}
-            data={order.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.returnorder}
+            modelId={order.pk}
+            editable={user.hasChangeRole(UserRoles.return_order)}
           />
         )
       }
     ];
-  }, [order, id]);
+  }, [order, id, user]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
@@ -278,8 +289,13 @@ export default function ReturnOrderDetail() {
 
   const orderActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.returnorder} pk={order.pk} />,
+      <PrintingActions
+        modelType={ModelType.returnorder}
+        items={[order.pk]}
+        enableReports
+      />,
       <ActionDropdown
-        key="order-actions"
         tooltip={t`Order Actions`}
         icon={<IconDots />}
         actions={[
@@ -299,24 +315,25 @@ export default function ReturnOrderDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, order]);
 
   return (
     <>
       {editReturnOrder.modal}
       {duplicateReturnOrder.modal}
-      <Stack spacing="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Return Order` + `: ${order.reference}`}
-          subtitle={order.description}
-          imageUrl={order.customer_detail?.image}
-          badges={orderBadges}
-          actions={orderActions}
-          breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
-        />
-        <PanelGroup pageKey="returnorder" panels={orderPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Return Order` + `: ${order.reference}`}
+            subtitle={order.description}
+            imageUrl={order.customer_detail?.image}
+            badges={orderBadges}
+            actions={orderActions}
+            breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+          />
+          <PanelGroup pageKey="returnorder" panels={orderPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

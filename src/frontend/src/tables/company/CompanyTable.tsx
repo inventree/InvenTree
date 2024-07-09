@@ -44,7 +44,7 @@ export function CompanyTable({
         sortable: true,
         render: (record: any) => {
           return (
-            <Group spacing="xs" noWrap={true}>
+            <Group gap="xs" wrap="nowrap">
               <Thumbnail
                 src={record.thumbnail ?? record.image ?? ''}
                 alt={record.name}
@@ -158,6 +158,7 @@ export function CompanyTable({
           },
           tableFilters: tableFilters,
           tableActions: tableActions,
+          enableDownload: true,
           rowActions: rowActions,
           onRowClick: (row: any) => {
             if (row.pk) {

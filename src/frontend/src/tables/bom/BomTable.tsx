@@ -1,13 +1,16 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { Alert, Group, Stack, Text } from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
+  IconLock,
   IconSwitch3
 } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { api } from '../../App';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
@@ -33,7 +36,7 @@ import {
 } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -54,9 +57,11 @@ function availableStockQuantity(record: any): number {
 
 export function BomTable({
   partId,
+  partLocked,
   params = {}
 }: {
   partId: number;
+  partLocked?: boolean;
   params?: any;
 }) {
   const user = useUserState();
@@ -99,7 +104,9 @@ export function BomTable({
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
-      ReferenceColumn(),
+      ReferenceColumn({
+        switchable: true
+      }),
       {
         accessor: 'quantity',
         switchable: false,
@@ -109,7 +116,7 @@ export function BomTable({
           let units = record.sub_part_detail?.units;
 
           return (
-            <Group position="apart" grow>
+            <Group justify="space-between" grow>
               <Text>{quantity}</Text>
               {record.overage && <Text size="xs">+{record.overage}</Text>}
               {units && <Text size="xs">{units}</Text>}
@@ -144,6 +151,9 @@ export function BomTable({
         // TODO: Custom renderer for this column
         // TODO: See bom.js for existing implementation
       }),
+      BooleanColumn({
+        accessor: 'validated'
+      }),
       {
         accessor: 'price_range',
         title: t`Unit Price`,
@@ -174,7 +184,7 @@ export function BomTable({
 
           let text =
             available_stock <= 0 ? (
-              <Text color="red" italic>{t`No stock`}</Text>
+              <Text c="red" style={{ fontStyle: 'italic' }}>{t`No stock`}</Text>
             ) : (
               available_stock
             );
@@ -235,18 +245,20 @@ export function BomTable({
         sortable: false, // TODO: Custom sorting via API
         render: (record: any) => {
           if (record.consumable) {
-            return <Text italic>{t`Consumable item`}</Text>;
+            return (
+              <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
+            );
           }
 
           let can_build = availableStockQuantity(record) / record.quantity;
           can_build = Math.trunc(can_build);
 
           return (
-            <Text color={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
+            <Text c={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
           );
         }
       },
-      NoteColumn()
+      NoteColumn({})
     ];
   }, [partId, params]);
 
@@ -264,26 +276,37 @@ export function BomTable({
       },
       {
         name: 'available_stock',
+        label: t`Available Stock`,
         description: t`Show items with available stock`
       },
       {
         name: 'on_order',
+        label: t`On Order`,
         description: t`Show items on order`
       },
       {
         name: 'validated',
+        label: t`Validated`,
         description: t`Show validated items`
       },
       {
         name: 'inherited',
+        label: t`Inherited`,
         description: t`Show inherited items`
       },
       {
+        name: 'allow_variants',
+        label: t`Allow Variants`,
+        description: t`Show items which allow variant substitution`
+      },
+      {
         name: 'optional',
+        label: t`Optional`,
         description: t`Show optional items`
       },
       {
         name: 'consumable',
+        label: t`Consumable`,
         description: t`Show consumable items`
       },
       {
@@ -304,7 +327,7 @@ export function BomTable({
       part: partId
     },
     successMessage: t`BOM item created`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const editBomItem = useEditApiFormModal({
@@ -313,7 +336,7 @@ export function BomTable({
     title: t`Edit BOM Item`,
     fields: bomItemFields(),
     successMessage: t`BOM item updated`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const deleteBomItem = useDeleteApiFormModal({
@@ -321,8 +344,31 @@ export function BomTable({
     pk: selectedBomItem,
     title: t`Delete BOM Item`,
     successMessage: t`BOM item deleted`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
+
+  const validateBomItem = useCallback((record: any) => {
+    const url = apiUrl(ApiEndpoints.bom_item_validate, record.pk);
+
+    api
+      .patch(url, { valid: true })
+      .then((_response) => {
+        showNotification({
+          title: t`Success`,
+          message: t`BOM item validated`,
+          color: 'green'
+        });
+
+        table.refreshTable();
+      })
+      .catch((_error) => {
+        showNotification({
+          title: t`Error`,
+          message: t`Failed to validate BOM item`,
+          color: 'red'
+        });
+      });
+  }, []);
 
   const rowActions = useCallback(
     (record: any) => {
@@ -337,83 +383,89 @@ export function BomTable({
         ];
       }
 
-      let actions: RowAction[] = [];
-
-      // TODO: Enable BomItem validation
-      actions.push({
-        title: t`Validate BOM line`,
-        color: 'green',
-        hidden: record.validated || !user.hasChangeRole(UserRoles.part),
-        icon: <IconCircleCheck />
-      });
-
-      // TODO: Enable editing of substitutes
-      actions.push({
-        title: t`Edit Substitutes`,
-        color: 'blue',
-        hidden: !user.hasChangeRole(UserRoles.part),
-        icon: <IconSwitch3 />
-      });
-
-      // Action on edit
-      actions.push(
+      return [
+        {
+          title: t`Validate BOM Line`,
+          color: 'green',
+          hidden:
+            partLocked ||
+            record.validated ||
+            !user.hasChangeRole(UserRoles.part),
+          icon: <IconCircleCheck />,
+          onClick: () => validateBomItem(record)
+        },
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.part),
+          hidden: partLocked || !user.hasChangeRole(UserRoles.part),
           onClick: () => {
             setSelectedBomItem(record.pk);
             editBomItem.open();
           }
-        })
-      );
-
-      // Action on delete
-      actions.push(
+        }),
+        {
+          title: t`Edit Substitutes`,
+          color: 'blue',
+          hidden: partLocked || !user.hasChangeRole(UserRoles.part),
+          icon: <IconSwitch3 />
+        },
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.part),
+          hidden: partLocked || !user.hasDeleteRole(UserRoles.part),
           onClick: () => {
             setSelectedBomItem(record.pk);
             deleteBomItem.open();
           }
         })
-      );
-
-      return actions;
+      ];
     },
-    [partId, user]
+    [partId, partLocked, user]
   );
 
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
-        hidden={!user.hasAddRole(UserRoles.part)}
+        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add BOM Item`}
         onClick={() => newBomItem.open()}
       />
     ];
-  }, [user]);
+  }, [partLocked, user]);
 
   return (
     <>
       {newBomItem.modal}
       {editBomItem.modal}
       {deleteBomItem.modal}
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.bom_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          params: {
-            ...params,
-            part: partId,
-            part_detail: true,
-            sub_part_detail: true
-          },
-          tableActions: tableActions,
-          tableFilters: tableFilters,
-          modelType: ModelType.part,
-          rowActions: rowActions
-        }}
-      />
+      <Stack gap="xs">
+        {partLocked && (
+          <Alert
+            title={t`Part is Locked`}
+            color="red"
+            icon={<IconLock />}
+            p="xs"
+          >
+            <Text>{t`Bill of materials cannot be edited, as the part is locked`}</Text>
+          </Alert>
+        )}
+        <InvenTreeTable
+          url={apiUrl(ApiEndpoints.bom_list)}
+          tableState={table}
+          columns={tableColumns}
+          props={{
+            params: {
+              ...params,
+              part: partId,
+              part_detail: true,
+              sub_part_detail: true
+            },
+            tableActions: tableActions,
+            tableFilters: tableFilters,
+            modelType: ModelType.part,
+            modelField: 'sub_part',
+            rowActions: rowActions,
+            enableSelection: !partLocked,
+            enableBulkDelete: !partLocked
+          }}
+        />
+      </Stack>
     </>
   );
 }

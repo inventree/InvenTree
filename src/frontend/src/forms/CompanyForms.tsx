@@ -82,6 +82,9 @@ export function useManufacturerPartFields() {
 export function useManufacturerPartParameterFields() {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
+      manufacturer_part: {
+        disabled: true
+      },
       name: {},
       value: {},
       units: {}

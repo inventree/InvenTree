@@ -4,28 +4,27 @@ These models are 'generic' and do not fit a particular business logic object.
 """
 
 import base64
-import decimal
 import hashlib
 import hmac
 import json
 import logging
-import math
 import os
-import re
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
+from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Callable, TypedDict, Union
+from typing import Any, Callable, Collection, TypedDict, Union
 
 from django.apps import apps
-from django.conf import settings
+from django.conf import settings as django_settings
 from django.contrib.auth.models import Group, User
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
-from django.core.exceptions import AppRegistryNotReady, ValidationError
+from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
@@ -37,10 +36,12 @@ from django.utils.translation import gettext_lazy as _
 
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
-from djmoney.settings import CURRENCY_CHOICES
 from rest_framework.exceptions import PermissionDenied
+from taggit.managers import TaggableManager
 
 import build.validators
+import common.currency
+import common.validators
 import InvenTree.fields
 import InvenTree.helpers
 import InvenTree.models
@@ -50,6 +51,7 @@ import InvenTree.validators
 import order.validators
 import report.helpers
 import users.models
+from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
 logger = logging.getLogger('inventree')
@@ -101,7 +103,7 @@ class BaseURLValidator(URLValidator):
         value = str(value).strip()
 
         # If a configuration level value has been specified, prevent change
-        if settings.SITE_URL and value != settings.SITE_URL:
+        if django_settings.SITE_URL and value != django_settings.SITE_URL:
             raise ValidationError(_('Site URL is locked by configuration'))
 
         if len(value) == 0:
@@ -113,6 +115,11 @@ class BaseURLValidator(URLValidator):
 
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
+
+    class Meta:
+        """Class options for the ProjectCode model."""
+
+        verbose_name = _('Project Code')
 
     @staticmethod
     def get_api_url():
@@ -551,25 +558,25 @@ class BaseInvenTreeSetting(models.Model):
         """
         key = str(key).strip().upper()
 
+        # Unless otherwise specified, attempt to create the setting
+        create = kwargs.pop('create', True)
+
+        # Specify if cache lookup should be performed
+        do_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
+
         filters = {
             'key__iexact': key,
             # Optionally filter by other keys
             **cls.get_filters(**kwargs),
         }
 
-        # Unless otherwise specified, attempt to create the setting
-        create = kwargs.pop('create', True)
-
-        # Specify if cache lookup should be performed
-        do_cache = kwargs.pop('cache', False)
-
-        # Prevent saving to the database during data import
-        if InvenTree.ready.isImportingData():
-            create = False
-            do_cache = False
-
-        # Prevent saving to the database during migrations
-        if InvenTree.ready.isRunningMigrations():
+        # Prevent saving to the database during certain operations
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
             create = False
             do_cache = False
 
@@ -596,33 +603,21 @@ class BaseInvenTreeSetting(models.Model):
             setting = None
 
         # Setting does not exist! (Try to create it)
-        if not setting:
-            # Prevent creation of new settings objects when importing data
-            if (
-                InvenTree.ready.isImportingData()
-                or not InvenTree.ready.canAppAccessDatabase(
-                    allow_test=True, allow_shell=True
-                )
-            ):
-                create = False
+        if not setting and create:
+            # Attempt to create a new settings object
+            default_value = cls.get_setting_default(key, **kwargs)
+            setting = cls(key=key, value=default_value, **kwargs)
 
-            if create:
-                # Attempt to create a new settings object
-
-                default_value = cls.get_setting_default(key, **kwargs)
-
-                setting = cls(key=key, value=default_value, **kwargs)
-
-                try:
-                    # Wrap this statement in "atomic", so it can be rolled back if it fails
-                    with transaction.atomic():
-                        setting.save(**kwargs)
-                except (IntegrityError, OperationalError, ProgrammingError):
-                    # It might be the case that the database isn't created yet
-                    pass
-                except ValidationError:
-                    # The setting failed validation - might be due to duplicate keys
-                    pass
+            try:
+                # Wrap this statement in "atomic", so it can be rolled back if it fails
+                with transaction.atomic():
+                    setting.save(**kwargs)
+            except (IntegrityError, OperationalError, ProgrammingError):
+                # It might be the case that the database isn't created yet
+                pass
+            except ValidationError:
+                # The setting failed validation - might be due to duplicate keys
+                pass
 
         if setting and do_cache:
             # Cache this setting object
@@ -696,6 +691,15 @@ class BaseInvenTreeSetting(models.Model):
         if change_user is not None and not change_user.is_staff:
             return
 
+        # Do not write to the database under certain conditions
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
+            return
+
         attempts = int(kwargs.get('attempts', 3))
 
         filters = {
@@ -749,6 +753,7 @@ class BaseInvenTreeSetting(models.Model):
                     attempts=attempts - 1,
                     **kwargs,
                 )
+
         except (OperationalError, ProgrammingError):
             logger.warning("Database is locked, cannot set setting '%s'", key)
             # Likely the DB is locked - not much we can do here
@@ -1116,7 +1121,7 @@ def settings_group_options():
 
 def update_instance_url(setting):
     """Update the first site objects domain to url."""
-    if not settings.SITE_MULTI:
+    if not django_settings.SITE_MULTI:
         return
 
     try:
@@ -1132,7 +1137,7 @@ def update_instance_url(setting):
 
 def update_instance_name(setting):
     """Update the first site objects name to instance name."""
-    if not settings.SITE_MULTI:
+    if not django_settings.SITE_MULTI:
         return
 
     try:
@@ -1144,52 +1149,6 @@ def update_instance_name(setting):
     site_obj = Site.objects.all().order_by('id').first()
     site_obj.name = setting.value
     site_obj.save()
-
-
-def validate_email_domains(setting):
-    """Validate the email domains setting."""
-    if not setting.value:
-        return
-
-    domains = setting.value.split(',')
-    for domain in domains:
-        if not domain:
-            raise ValidationError(_('An empty domain is not allowed.'))
-        if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
-            raise ValidationError(_(f'Invalid domain name: {domain}'))
-
-
-def currency_exchange_plugins():
-    """Return a set of plugin choices which can be used for currency exchange."""
-    try:
-        from plugin import registry
-
-        plugs = registry.with_mixin('currencyexchange', active=True)
-    except Exception:
-        plugs = []
-
-    return [('', _('No plugin'))] + [(plug.slug, plug.human_name) for plug in plugs]
-
-
-def after_change_currency(setting):
-    """Callback function when base currency is changed.
-
-    - Update exchange rates
-    - Recalculate prices for all parts
-    """
-    if InvenTree.ready.isImportingData():
-        return
-
-    if not InvenTree.ready.canAppAccessDatabase():
-        return
-
-    from part import tasks as part_tasks
-
-    # Immediately update exchange rates
-    InvenTree.tasks.update_exchange_rates(force=True)
-
-    # Offload update of part prices to a background task
-    InvenTree.tasks.offload_task(part_tasks.check_missing_pricing, force_async=True)
 
 
 def reload_plugin_registry(setting):
@@ -1304,8 +1263,15 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Default Currency'),
             'description': _('Select base currency for pricing calculations'),
             'default': 'USD',
-            'choices': CURRENCY_CHOICES,
-            'after_save': after_change_currency,
+            'choices': common.currency.currency_code_mappings,
+            'after_save': common.currency.after_change_currency,
+        },
+        'CURRENCY_CODES': {
+            'name': _('Supported Currencies'),
+            'description': _('List of supported currency codes'),
+            'default': common.currency.currency_codes_default_list(),
+            'validator': common.currency.validate_currency_codes,
+            'after_save': common.currency.after_change_currency,
         },
         'CURRENCY_UPDATE_INTERVAL': {
             'name': _('Currency Update Interval'),
@@ -1319,7 +1285,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'CURRENCY_UPDATE_PLUGIN': {
             'name': _('Currency Update Plugin'),
             'description': _('Currency update plugin to use'),
-            'choices': currency_exchange_plugins,
+            'choices': common.currency.currency_exchange_plugins,
             'default': 'inventreecurrencyexchange',
         },
         'INVENTREE_DOWNLOAD_FROM_URL': {
@@ -1430,11 +1396,23 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'BARCODE_SHOW_TEXT': {
+            'name': _('Barcode Show Data'),
+            'description': _('Display barcode data in browser as text'),
+            'default': False,
+            'validator': bool,
+        },
         'PART_ENABLE_REVISION': {
             'name': _('Part Revisions'),
             'description': _('Enable revision field for Part'),
             'validator': bool,
             'default': True,
+        },
+        'PART_ALLOW_DELETE_FROM_ASSEMBLY': {
+            'name': _('Allow Deletion from Assembly'),
+            'description': _('Allow deletion of parts which are used in an assembly'),
+            'validator': bool,
+            'default': False,
         },
         'PART_IPN_REGEX': {
             'name': _('IPN Regex'),
@@ -1570,7 +1548,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
                 'Minimum number of decimal places to display when rendering pricing data'
             ),
             'default': 0,
-            'validator': [int, MinValueValidator(0), MaxValueValidator(4)],
+            'validator': [
+                int,
+                MinValueValidator(0),
+                MaxValueValidator(4),
+                common.validators.validate_decimal_places_min,
+            ],
         },
         'PRICING_DECIMAL_PLACES': {
             'name': _('Maximum Pricing Decimal Places'),
@@ -1578,7 +1561,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
                 'Maximum number of decimal places to display when rendering pricing data'
             ),
             'default': 6,
-            'validator': [int, MinValueValidator(2), MaxValueValidator(6)],
+            'validator': [
+                int,
+                MinValueValidator(2),
+                MaxValueValidator(6),
+                common.validators.validate_decimal_places_max,
+            ],
         },
         'PRICING_USE_SUPPLIER_PRICING': {
             'name': _('Use Supplier Pricing'),
@@ -1781,6 +1769,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'STOCK_ALLOW_OUT_OF_STOCK_TRANSFER': {
+            'name': _('Allow Out of Stock Transfer'),
+            'description': _(
+                'Allow stock items which are not in stock to be transferred between stock locations'
+            ),
+            'default': False,
+            'validator': bool,
+        },
         'BUILDORDER_REFERENCE_PATTERN': {
             'name': _('Build Order Reference Pattern'),
             'description': _(
@@ -1792,6 +1788,26 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'BUILDORDER_REQUIRE_RESPONSIBLE': {
             'name': _('Require Responsible Owner'),
             'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_ACTIVE_PART': {
+            'name': _('Require Active Part'),
+            'description': _('Prevent build order creation for inactive parts'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_LOCKED_PART': {
+            'name': _('Require Locked Part'),
+            'description': _('Prevent build order creation for unlocked parts'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_VALID_BOM': {
+            'name': _('Require Valid BOM'),
+            'description': _(
+                'Prevent build order creation unless BOM has been validated'
+            ),
             'default': False,
             'validator': bool,
         },
@@ -1859,6 +1875,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'SALESORDER_SHIP_COMPLETE': {
+            'name': _('Mark Shipped Orders as Complete'),
+            'description': _(
+                'Sales orders marked as shipped will automatically be completed, bypassing the "shipped" status'
+            ),
+            'default': False,
+            'validator': bool,
+        },
         'PURCHASEORDER_REFERENCE_PATTERN': {
             'name': _('Purchase Order Reference Pattern'),
             'description': _(
@@ -1916,6 +1940,38 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'LOGIN_ENABLE_SSO_GROUP_SYNC': {
+            'name': _('Enable SSO group sync'),
+            'description': _(
+                'Enable synchronizing InvenTree groups with groups provided by the IdP'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'SSO_GROUP_KEY': {
+            'name': _('SSO group key'),
+            'description': _(
+                'The name of the groups claim attribute provided by the IdP'
+            ),
+            'default': 'groups',
+            'validator': str,
+        },
+        'SSO_GROUP_MAP': {
+            'name': _('SSO group map'),
+            'description': _(
+                'A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created.'
+            ),
+            'validator': json.loads,
+            'default': '{}',
+        },
+        'SSO_REMOVE_GROUPS': {
+            'name': _('Remove groups outside of SSO'),
+            'description': _(
+                'Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues'
+            ),
+            'default': True,
+            'validator': bool,
+        },
         'LOGIN_MAIL_REQUIRED': {
             'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
@@ -1948,11 +2004,13 @@ class InvenTreeSetting(BaseInvenTreeSetting):
                 'Restrict signup to certain domains (comma-separated, starting with @)'
             ),
             'default': '',
-            'before_save': validate_email_domains,
+            'before_save': common.validators.validate_email_domains,
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
-            'description': _('Group to which new users are assigned on registration'),
+            'description': _(
+                'Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP.'
+            ),
             'default': '',
             'choices': settings_group_options,
         },
@@ -2433,36 +2491,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(0)],
             'default': 100,
         },
-        'DEFAULT_PART_LABEL_TEMPLATE': {
-            'name': _('Default part label template'),
-            'description': _('The part label template to be automatically selected'),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_ITEM_LABEL_TEMPLATE': {
-            'name': _('Default stock item template'),
-            'description': _(
-                'The stock item label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LOCATION_LABEL_TEMPLATE': {
-            'name': _('Default stock location label template'),
-            'description': _(
-                'The stock location label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LINE_LABEL_TEMPLATE': {
-            'name': _('Default build line label template'),
-            'description': _(
-                'The build line label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
         'NOTIFICATION_ERROR_REPORT': {
             'name': _('Receive error reports'),
             'description': _('Receive notifications for system errors'),
@@ -2544,100 +2572,25 @@ class PriceBreak(MetaMixin):
         return converted.amount
 
 
-def get_price(
-    instance,
-    quantity,
-    moq=True,
-    multiples=True,
-    currency=None,
-    break_name: str = 'price_breaks',
-):
-    """Calculate the price based on quantity price breaks.
-
-    - Don't forget to add in flat-fee cost (base_cost field)
-    - If MOQ (minimum order quantity) is required, bump quantity
-    - If order multiples are to be observed, then we need to calculate based on that, too
-    """
-    from common.settings import currency_code_default
-
-    if hasattr(instance, break_name):
-        price_breaks = getattr(instance, break_name).all()
-    else:
-        price_breaks = []
-
-    # No price break information available?
-    if len(price_breaks) == 0:
-        return None
-
-    # Check if quantity is fraction and disable multiples
-    multiples = quantity % 1 == 0
-
-    # Order multiples
-    if multiples:
-        quantity = int(math.ceil(quantity / instance.multiple) * instance.multiple)
-
-    pb_found = False
-    pb_quantity = -1
-    pb_cost = 0.0
-
-    if currency is None:
-        # Default currency selection
-        currency = currency_code_default()
-
-    pb_min = None
-    for pb in price_breaks:
-        # Store smallest price break
-        if not pb_min:
-            pb_min = pb
-
-        # Ignore this pricebreak (quantity is too high)
-        if pb.quantity > quantity:
-            continue
-
-        pb_found = True
-
-        # If this price-break quantity is the largest so far, use it!
-        if pb.quantity > pb_quantity:
-            pb_quantity = pb.quantity
-
-            # Convert everything to the selected currency
-            pb_cost = pb.convert_to(currency)
-
-    # Use smallest price break
-    if not pb_found and pb_min:
-        # Update price break information
-        pb_quantity = pb_min.quantity
-        pb_cost = pb_min.convert_to(currency)
-        # Trigger cost calculation using smallest price break
-        pb_found = True
-
-    # Convert quantity to decimal.Decimal format
-    quantity = decimal.Decimal(f'{quantity}')
-
-    if pb_found:
-        cost = pb_cost * quantity
-        return InvenTree.helpers.normalize(cost + instance.base_cost)
-    return None
-
-
 class ColorTheme(models.Model):
     """Color Theme Setting."""
 
     name = models.CharField(max_length=20, default='', blank=True)
 
     user = models.CharField(max_length=150, unique=True)
+    user_obj = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     @classmethod
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
-        if not settings.STATIC_COLOR_THEMES_DIR.exists():
+        if not django_settings.STATIC_COLOR_THEMES_DIR.exists():
             logger.error('Theme directory does not exist')
             return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
 
-        for file in settings.STATIC_COLOR_THEMES_DIR.iterdir():
+        for file in django_settings.STATIC_COLOR_THEMES_DIR.iterdir():
             files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)
@@ -2988,7 +2941,7 @@ class NotificationMessage(models.Model):
         # Add timezone information if TZ is enabled (in production mode mostly)
         delta = now() - (
             self.creation.replace(tzinfo=timezone.utc)
-            if settings.USE_TZ
+            if django_settings.USE_TZ
             else self.creation
         )
         return delta.seconds
@@ -3037,7 +2990,7 @@ def rename_notes_image(instance, filename):
 class NotesImage(models.Model):
     """Model for storing uploading images for the 'notes' fields of various models.
 
-    Simply stores the image file, for use in the 'notes' field (of any models which support markdown)
+    Simply stores the image file, for use in the 'notes' field (of any models which support markdown).
     """
 
     image = models.ImageField(
@@ -3047,6 +3000,21 @@ class NotesImage(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
 
     date = models.DateTimeField(auto_now_add=True)
+
+    model_type = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        validators=[common.validators.validate_notes_model_type],
+        help_text=_('Target model type for this image'),
+    )
+
+    model_id = models.IntegerField(
+        help_text=_('Target model ID for this image'),
+        blank=True,
+        null=True,
+        default=None,
+    )
 
 
 class CustomUnit(models.Model):
@@ -3061,6 +3029,11 @@ class CustomUnit(models.Model):
     https://pint.readthedocs.io/en/stable/advanced/defining.html
     """
 
+    class Meta:
+        """Class meta options."""
+
+        verbose_name = _('Custom Unit')
+
     def fmt_string(self):
         """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'."""
         fmt = f'{self.name} = {self.definition}'
@@ -3069,6 +3042,18 @@ class CustomUnit(models.Model):
             fmt += f' = {self.symbol}'
 
         return fmt
+
+    def validate_unique(self, exclude=None) -> None:
+        """Ensure that the custom unit is unique."""
+        super().validate_unique(exclude)
+
+        if self.symbol:
+            if (
+                CustomUnit.objects.filter(symbol=self.symbol)
+                .exclude(pk=self.pk)
+                .exists()
+            ):
+                raise ValidationError({'symbol': _('Unit symbol must be unique')})
 
     def clean(self):
         """Validate that the provided custom unit is indeed valid."""
@@ -3111,7 +3096,6 @@ class CustomUnit(models.Model):
         max_length=10,
         verbose_name=_('Symbol'),
         help_text=_('Optional unit symbol'),
-        unique=True,
         blank=True,
     )
 
@@ -3131,3 +3115,184 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     from InvenTree.conversion import reload_unit_registry
 
     reload_unit_registry()
+
+
+def rename_attachment(instance, filename):
+    """Callback function to rename an uploaded attachment file.
+
+    Arguments:
+        - instance: The Attachment instance
+        - filename: The original filename of the uploaded file
+
+    Returns:
+        - The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'
+    """
+    # Remove any illegal characters from the filename
+    illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
+
+    for c in illegal_chars:
+        filename = filename.replace(c, '')
+
+    filename = os.path.basename(filename)
+
+    # Generate a new filename for the attachment
+    return os.path.join(
+        'attachments', str(instance.model_type), str(instance.model_id), filename
+    )
+
+
+class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Class which represents an uploaded file attachment.
+
+    An attachment can be either an uploaded file, or an external URL.
+
+    Attributes:
+        attachment: The uploaded file
+        url: An external URL
+        comment: A comment or description for the attachment
+        user: The user who uploaded the attachment
+        upload_date: The date the attachment was uploaded
+        file_size: The size of the uploaded file
+        metadata: Arbitrary metadata for the attachment (inherit from MetadataMixin)
+        tags: Tags for the attachment
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        verbose_name = _('Attachment')
+
+    def save(self, *args, **kwargs):
+        """Custom 'save' method for the Attachment model.
+
+        - Record the file size of the uploaded attachment (if applicable)
+        - Ensure that the 'content_type' and 'object_id' fields are set
+        - Run extra validations
+        """
+        # Either 'attachment' or 'link' must be specified!
+        if not self.attachment and not self.link:
+            raise ValidationError({
+                'attachment': _('Missing file'),
+                'link': _('Missing external link'),
+            })
+
+        if self.attachment:
+            if self.attachment.name.lower().endswith('.svg'):
+                self.attachment.file.file = self.clean_svg(self.attachment)
+        else:
+            self.file_size = 0
+
+        super().save(*args, **kwargs)
+
+        # Update file size
+        if self.file_size == 0 and self.attachment:
+            # Get file size
+            if default_storage.exists(self.attachment.name):
+                try:
+                    self.file_size = default_storage.size(self.attachment.name)
+                except Exception:
+                    pass
+
+            if self.file_size != 0:
+                super().save()
+
+    def clean_svg(self, field):
+        """Sanitize SVG file before saving."""
+        cleaned = sanitize_svg(field.file.read())
+        return BytesIO(bytes(cleaned, 'utf8'))
+
+    def __str__(self):
+        """Human name for attachment."""
+        if self.attachment is not None:
+            return os.path.basename(self.attachment.name)
+        return str(self.link)
+
+    model_type = models.CharField(
+        max_length=100,
+        validators=[common.validators.validate_attachment_model_type],
+        help_text=_('Target model type for this image'),
+    )
+
+    model_id = models.PositiveIntegerField()
+
+    attachment = models.FileField(
+        upload_to=rename_attachment,
+        verbose_name=_('Attachment'),
+        help_text=_('Select file to attach'),
+        blank=True,
+        null=True,
+    )
+
+    link = InvenTree.fields.InvenTreeURLField(
+        blank=True,
+        null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL'),
+    )
+
+    comment = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Comment'),
+        help_text=_('Attachment comment'),
+    )
+
+    upload_user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
+
+    upload_date = models.DateField(
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        verbose_name=_('Upload date'),
+        help_text=_('Date the file was uploaded'),
+    )
+
+    file_size = models.PositiveIntegerField(
+        default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
+    )
+
+    tags = TaggableManager(blank=True)
+
+    @property
+    def basename(self):
+        """Base name/path for attachment."""
+        if self.attachment:
+            return os.path.basename(self.attachment.name)
+        return None
+
+    def fully_qualified_url(self):
+        """Return a 'fully qualified' URL for this attachment.
+
+        - If the attachment is a link to an external resource, return the link
+        - If the attachment is an uploaded file, return the fully qualified media URL
+        """
+        if self.link:
+            return self.link
+
+        if self.attachment:
+            import InvenTree.helpers_model
+
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
+
+        return ''
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this attachment."""
+        from InvenTree.models import InvenTreeAttachmentMixin
+
+        model_class = common.validators.attachment_model_class_from_label(
+            self.model_type
+        )
+
+        if not issubclass(model_class, InvenTreeAttachmentMixin):
+            raise ValidationError(_('Invalid model type specified for attachment'))
+
+        return model_class.check_attachment_permission(permission, user)

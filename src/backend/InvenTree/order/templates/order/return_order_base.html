@@ -248,11 +248,7 @@ $('#cancel-order').click(function() {
 
 {% if report_enabled %}
 $('#print-order-report').click(function() {
-    printReports({
-        items: [{{ order.pk }}],
-        key: 'order',
-        url: '{% url "api-return-order-report-list" %}',
-    });
+    printReports('returnorder', [{{ order.pk }}]);
 });
 {% endif %}
 

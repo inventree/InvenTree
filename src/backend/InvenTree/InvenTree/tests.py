@@ -29,8 +29,8 @@ import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
 import InvenTree.tasks
+from common.currency import currency_codes
 from common.models import CustomUnit, InvenTreeSetting
-from common.settings import currency_codes
 from InvenTree.helpers_mixin import ClassProviderMixin, ClassValidationMixin
 from InvenTree.sanitizer import sanitize_svg
 from InvenTree.unit_test import InvenTreeTestCase
@@ -1065,7 +1065,8 @@ class TestVersionNumber(TestCase):
             subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
         ).strip()
 
-        self.assertEqual(hash, version.inventreeCommitHash())
+        # On some systems the hash is a different length, so just check the first 6 characters
+        self.assertEqual(hash[:6], version.inventreeCommitHash()[:6])
 
         d = (
             str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8')

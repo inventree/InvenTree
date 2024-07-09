@@ -50,6 +50,7 @@ export default function DateField({
   return (
     <DateInput
       id={fieldId}
+      aria-label={`date-field-${field.name}`}
       radius="sm"
       ref={field.ref}
       type={undefined}
@@ -61,7 +62,7 @@ export default function DateField({
       label={definition.label}
       description={definition.description}
       placeholder={definition.placeholder}
-      icon={definition.icon}
+      leftSection={definition.icon}
     />
   );
 }

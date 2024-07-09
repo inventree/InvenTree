@@ -1,6 +1,6 @@
 import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
-import { doQuickLogin } from './login.js';
+import { doLogout, doQuickLogin } from './login.js';
 
 test('PUI - Parts', async ({ page }) => {
   await doQuickLogin(page);
@@ -27,10 +27,19 @@ test('PUI - Parts', async ({ page }) => {
   await page.getByText('1551ACLR').click();
   await page.getByRole('tab', { name: 'Part Details' }).click();
   await page.getByRole('tab', { name: 'Parameters' }).click();
-  // await page.getByRole('tab', { name: 'Stock' }).click();
+  await page
+    .getByRole('tab', { name: 'Part Details' })
+    .locator('xpath=..')
+    .getByRole('tab', { name: 'Stock', exact: true })
+    .click();
   await page.getByRole('tab', { name: 'Allocations' }).click();
   await page.getByRole('tab', { name: 'Used In' }).click();
   await page.getByRole('tab', { name: 'Pricing' }).click();
+
+  await page.goto(`${baseUrl}/part/category/index/parts`);
+  await page.getByText('Blue Chair').click();
+  await page.getByRole('tab', { name: 'Bill of Materials' }).click();
+  await page.getByRole('tab', { name: 'Build Orders' }).click();
 });
 
 test('PUI - Parts - Manufacturer Parts', async ({ page }) => {
@@ -62,9 +71,10 @@ test('PUI - Parts - Supplier Parts', async ({ page }) => {
 test('PUI - Sales', async ({ page }) => {
   await doQuickLogin(page);
 
-  await page.goto(`${baseUrl}/sales/`);
-
+  await page.goto(`${baseUrl}/sales/index/`);
   await page.waitForURL('**/platform/sales/**');
+
+  await page.getByRole('tab', { name: 'Sales Orders' }).click();
   await page.waitForURL('**/platform/sales/index/salesorders');
   await page.getByRole('tab', { name: 'Return Orders' }).click();
 
@@ -131,56 +141,6 @@ test('PUI - Scanning', async ({ page }) => {
   await page.getByRole('option', { name: 'Manual input' }).click();
 });
 
-test('PUI - Admin', async ({ page }) => {
-  // Note here we login with admin access
-  await doQuickLogin(page, 'admin', 'inventree');
-
-  // User settings
-  await page.getByRole('button', { name: 'admin' }).click();
-  await page.getByRole('menuitem', { name: 'Account settings' }).click();
-  await page.getByRole('tab', { name: 'Security' }).click();
-  //await page.getByRole('tab', { name: 'Dashboard' }).click();
-  await page.getByRole('tab', { name: 'Display Options' }).click();
-  await page.getByText('Date Format').waitFor();
-  await page.getByRole('tab', { name: 'Search' }).click();
-  await page.getByText('Regex Search').waitFor();
-  await page.getByRole('tab', { name: 'Notifications' }).click();
-  await page.getByRole('tab', { name: 'Reporting' }).click();
-  await page.getByText('Inline report display').waitFor();
-
-  // System Settings
-  await page.getByRole('link', { name: 'Switch to System Setting' }).click();
-  await page.getByText('Base URL', { exact: true }).waitFor();
-  await page.getByRole('tab', { name: 'Login' }).click();
-  await page.getByRole('tab', { name: 'Barcodes' }).click();
-  await page.getByRole('tab', { name: 'Notifications' }).click();
-  await page.getByRole('tab', { name: 'Pricing' }).click();
-  await page.getByRole('tab', { name: 'Labels' }).click();
-  await page.getByRole('tab', { name: 'Reporting' }).click();
-  await page.getByRole('tab', { name: 'Part Categories' }).click();
-  //wait page.locator('#mantine-9hqbwrml8-tab-parts').click();
-  //await page.locator('#mantine-9hqbwrml8-tab-stock').click();
-  await page.getByRole('tab', { name: 'Stocktake' }).click();
-  await page.getByRole('tab', { name: 'Build Orders' }).click();
-  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
-  await page.getByRole('tab', { name: 'Sales Orders' }).click();
-  await page.getByRole('tab', { name: 'Return Orders' }).click();
-
-  // Admin Center
-  await page.getByRole('button', { name: 'admin' }).click();
-  await page.getByRole('menuitem', { name: 'Admin Center' }).click();
-  await page.getByRole('tab', { name: 'Background Tasks' }).click();
-  await page.getByRole('tab', { name: 'Error Reports' }).click();
-  await page.getByRole('tab', { name: 'Currencies' }).click();
-  await page.getByRole('tab', { name: 'Project Codes' }).click();
-  await page.getByRole('tab', { name: 'Custom Units' }).click();
-  await page.getByRole('tab', { name: 'Part Parameters' }).click();
-  await page.getByRole('tab', { name: 'Category Parameters' }).click();
-  await page.getByRole('tab', { name: 'Templates' }).click();
-  await page.getByRole('tab', { name: 'Plugins' }).click();
-  await page.getByRole('tab', { name: 'Machines' }).click();
-});
-
 test('PUI - Language / Color', async ({ page }) => {
   await doQuickLogin(page);
 
@@ -188,7 +148,7 @@ test('PUI - Language / Color', async ({ page }) => {
   await page.getByRole('menuitem', { name: 'Logout' }).click();
   await page.getByRole('button', { name: 'Send me an email' }).click();
   await page.getByRole('button').nth(3).click();
-  await page.getByLabel('Select language').click();
+  await page.getByLabel('Select language').first().click();
   await page.getByRole('option', { name: 'German' }).click();
   await page.waitForTimeout(200);
 
@@ -219,10 +179,7 @@ test('PUI - Company', async ({ page }) => {
   await doQuickLogin(page);
 
   await page.goto(`${baseUrl}/company/1/details`);
-  await page
-    .locator('div')
-    .filter({ hasText: /^DigiKey Electronics$/ })
-    .waitFor();
+  await page.getByLabel('Details').getByText('DigiKey Electronics').waitFor();
   await page.getByRole('cell', { name: 'https://www.digikey.com/' }).waitFor();
   await page.getByRole('tab', { name: 'Supplied Parts' }).click();
   await page

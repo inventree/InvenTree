@@ -39,7 +39,7 @@ InvenTree/
 │  │  ├─ tsconfig.json                 # Settings for frontend compilation
 ├─ .pkgr.yml                           # Build definition for Debian/Ubuntu packages
 ├─ .pre-commit-config.yaml             # Code formatter/linter configuration
-├─ CONTRIBUTING.md                     # Contirbution guidelines and overview
+├─ CONTRIBUTING.md                     # Contribution guidelines and overview
 ├─ Procfile                            # Process definition for Debian/Ubuntu packages
 ├─ README.md                           # General project information and overview
 ├─ runtime.txt                         # Python runtime settings for Debian/Ubuntu packages build

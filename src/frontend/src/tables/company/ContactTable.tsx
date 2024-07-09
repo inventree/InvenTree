@@ -80,14 +80,14 @@ export function ContactTable({
       company: companyId
     },
     fields: contactFields,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const deleteContact = useDeleteApiFormModal({
     url: ApiEndpoints.contact_list,
     pk: selectedContact,
     title: t`Delete Contact`,
-    onFormSuccess: table.refreshTable
+    table: table
   });
 
   const rowActions = useCallback(
@@ -143,6 +143,7 @@ export function ContactTable({
         tableState={table}
         columns={columns}
         props={{
+          enableDownload: true,
           rowActions: rowActions,
           tableActions: tableActions,
           params: {

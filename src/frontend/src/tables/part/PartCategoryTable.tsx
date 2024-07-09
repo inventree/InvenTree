@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
@@ -8,7 +7,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { partCategoryFields } from '../../forms/PartForms';
-import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -26,8 +24,6 @@ import { RowEditAction } from '../RowActions';
  * PartCategoryTable - Displays a table of part categories
  */
 export function PartCategoryTable({ parentId }: { parentId?: any }) {
-  const navigate = useNavigate();
-
   const table = useTable('partcategory');
   const user = useUserState();
 
@@ -68,6 +64,11 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         name: 'structural',
         label: t`Structural`,
         description: t`Show structural categories`
+      },
+      {
+        name: 'starred',
+        label: t`Subscribed`,
+        description: t`Show categories to which the user is subscribed`
       }
     ];
   }, []);
@@ -79,13 +80,9 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     initialData: {
       parent: parentId
     },
-    onFormSuccess(data: any) {
-      if (data.pk) {
-        navigate(getDetailUrl(ModelType.partcategory, data.pk));
-      } else {
-        table.refreshTable();
-      }
-    }
+    follow: true,
+    modelType: ModelType.partcategory,
+    table: table
   });
 
   const [selectedCategory, setSelectedCategory] = useState<number>(-1);
@@ -138,7 +135,8 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
         props={{
           enableDownload: true,
           params: {
-            parent: parentId
+            parent: parentId,
+            top_level: parentId === undefined ? true : undefined
           },
           tableFilters: tableFilters,
           tableActions: tableActions,

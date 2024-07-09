@@ -22,6 +22,7 @@ import {
   IconClipboardText,
   IconCopy,
   IconCornerDownLeft,
+  IconCornerDownRight,
   IconCornerUpRightDouble,
   IconCurrencyDollar,
   IconDots,
@@ -37,6 +38,7 @@ import {
   IconLink,
   IconList,
   IconListTree,
+  IconLock,
   IconMail,
   IconMapPin,
   IconMapPinHeart,
@@ -49,6 +51,7 @@ import {
   IconPaperclip,
   IconPhone,
   IconPhoto,
+  IconPoint,
   IconPrinter,
   IconProgressCheck,
   IconProps,
@@ -84,6 +87,7 @@ import {
 import React from 'react';
 
 const icons = {
+  name: IconPoint,
   description: IconInfoCircle,
   variant_of: IconStatusChange,
   unallocated_stock: IconPackage,
@@ -149,6 +153,8 @@ const icons = {
   inactive: IconX,
   part: IconBox,
   supplier_part: IconPackageImport,
+  lock: IconLock,
+  locked: IconLock,
 
   calendar: IconCalendar,
   external: IconExternalLink,
@@ -161,6 +167,7 @@ const icons = {
   link: IconLink,
   responsible: IconUserStar,
   pricing: IconCurrencyDollar,
+  total_price: IconCurrencyDollar,
   currency: IconCurrencyDollar,
   stocktake: IconClipboardList,
   user: IconUser,
@@ -187,8 +194,10 @@ const icons = {
   phone: IconPhone,
   sitemap: IconSitemap,
   downleft: IconCornerDownLeft,
+  downright: IconCornerDownRight,
   barcode: IconQrcode,
   barLine: IconMinusVertical,
+  batch: IconClipboardText,
   batch_code: IconClipboardText,
   destination: IconFlag,
   repeat_destination: IconFlagShare,
@@ -217,7 +226,7 @@ type InvenTreeIconProps = {
   iconProps?: TablerIconProps;
 };
 
-export function InvenTreeIcon(props: InvenTreeIconProps) {
+export function InvenTreeIcon(props: Readonly<InvenTreeIconProps>) {
   let Icon: React.ForwardRefExoticComponent<React.RefAttributes<any>>;
 
   if (props.icon in icons) {

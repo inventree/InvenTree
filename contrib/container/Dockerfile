@@ -128,6 +128,7 @@ COPY --from=prebuild /root/.local /root/.local
 
 # Copy source code
 COPY src/backend/InvenTree ${INVENTREE_BACKEND_DIR}/InvenTree
+COPY src/backend/requirements.txt ${INVENTREE_BACKEND_DIR}/requirements.txt
 COPY --from=frontend ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web ${INVENTREE_BACKEND_DIR}/InvenTree/web/static/web
 
 # Launch the production server

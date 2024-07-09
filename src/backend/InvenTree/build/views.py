@@ -5,7 +5,7 @@ from django.views.generic import DetailView, ListView
 from .models import Build
 
 from InvenTree.views import InvenTreeRoleMixin
-from InvenTree.status_codes import BuildStatus
+from build.status_codes import BuildStatus
 
 from plugin.views import InvenTreePluginViewMixin
 

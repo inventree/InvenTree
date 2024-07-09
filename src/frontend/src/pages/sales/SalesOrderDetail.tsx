@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -11,21 +11,26 @@ import {
   IconTruckLoading
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import { PlaceholderPanel } from '../../components/items/Placeholder';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
-import { NotesEditor } from '../../components/widgets/MarkdownEditor';
+import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -35,7 +40,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
@@ -51,7 +55,8 @@ export default function SalesOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.sales_order_list,
     pk: id,
@@ -127,13 +132,19 @@ export default function SalesOrderDetail() {
       {
         type: 'text',
         name: 'currency',
-        label: t`Order Currency,`
+        label: t`Order Currency`,
+        value_formatter: () =>
+          order?.order_currency ?? order?.customer_detail.currency
       },
       {
         type: 'text',
-        name: 'total_cost',
-        label: t`Total Cost`
-        // TODO: Implement this!
+        name: 'total_price',
+        label: t`Total Cost`,
+        value_formatter: () => {
+          return formatCurrency(order?.total_price, {
+            currency: order?.order_currency ?? order?.customer_detail?.currency
+          });
+        }
       }
     ];
 
@@ -239,17 +250,20 @@ export default function SalesOrderDetail() {
       {
         name: 'line-items',
         label: t`Line Items`,
-        icon: <IconList />
+        icon: <IconList />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'pending-shipments',
         label: t`Pending Shipments`,
-        icon: <IconTruckLoading />
+        icon: <IconTruckLoading />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'completed-shipments',
         label: t`Completed Shipments`,
-        icon: <IconTruckDelivery />
+        icon: <IconTruckDelivery />,
+        content: <PlaceholderPanel />
       },
       {
         name: 'build-orders',
@@ -267,9 +281,8 @@ export default function SalesOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.sales_order_attachment_list}
-            model="order"
-            pk={Number(id)}
+            model_type={ModelType.salesorder}
+            model_id={order.pk}
           />
         )
       },
@@ -279,19 +292,24 @@ export default function SalesOrderDetail() {
         icon: <IconNotes />,
         content: (
           <NotesEditor
-            url={apiUrl(ApiEndpoints.sales_order_list, id)}
-            data={order.notes ?? ''}
-            allowEdit={true}
+            modelType={ModelType.salesorder}
+            modelId={order.pk}
+            editable={user.hasChangeRole(UserRoles.sales_order)}
           />
         )
       }
     ];
-  }, [order, id]);
+  }, [order, id, user]);
 
   const soActions = useMemo(() => {
     return [
+      <AdminButton model={ModelType.salesorder} pk={order.pk} />,
+      <PrintingActions
+        modelType={ModelType.salesorder}
+        items={[order.pk]}
+        enableReports
+      />,
       <ActionDropdown
-        key="order-actions"
         tooltip={t`Order Actions`}
         icon={<IconDots />}
         actions={[
@@ -309,7 +327,7 @@ export default function SalesOrderDetail() {
         ]}
       />
     ];
-  }, [user]);
+  }, [user, order]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
@@ -327,19 +345,19 @@ export default function SalesOrderDetail() {
   return (
     <>
       {editSalesOrder.modal}
-      {duplicateSalesOrder.modal}
-      <Stack spacing="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Sales Order` + `: ${order.reference}`}
-          subtitle={order.description}
-          imageUrl={order.customer_detail?.image}
-          badges={orderBadges}
-          actions={soActions}
-          breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
-        />
-        <PanelGroup pageKey="salesorder" panels={orderPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Sales Order` + `: ${order.reference}`}
+            subtitle={order.description}
+            imageUrl={order.customer_detail?.image}
+            badges={orderBadges}
+            actions={soActions}
+            breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+          />
+          <PanelGroup pageKey="salesorder" panels={orderPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

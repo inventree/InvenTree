@@ -11,16 +11,18 @@ from rest_framework.exceptions import ValidationError
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
-from InvenTree.api import AttachmentMixin, APIDownloadMixin, ListCreateDestroyAPIView, MetadataView
+from importer.mixins import DataExportViewMixin
+
+from InvenTree.api import MetadataView
 from generic.states.api import StatusView
-from InvenTree.helpers import str2bool, isNull, DownloadFile
-from InvenTree.status_codes import BuildStatus, BuildStatusGroups
+from InvenTree.helpers import str2bool, isNull
+from build.status_codes import BuildStatus, BuildStatusGroups
 from InvenTree.mixins import CreateAPI, RetrieveUpdateDestroyAPI, ListCreateAPI
 
 import common.models
 import build.admin
 import build.serializers
-from build.models import Build, BuildLine, BuildItem, BuildOrderAttachment
+from build.models import Build, BuildLine, BuildItem
 import part.models
 from users.models import Owner
 from InvenTree.filters import SEARCH_ORDER_FILTER_ALIAS
@@ -30,7 +32,7 @@ class BuildFilter(rest_filters.FilterSet):
     """Custom filterset for BuildList API endpoint."""
 
     class Meta:
-        """Metaclass options"""
+        """Metaclass options."""
         model = Build
         fields = [
             'parent',
@@ -103,15 +105,35 @@ class BuildFilter(rest_filters.FilterSet):
         return queryset.filter(project_code=None)
 
 
-class BuildList(APIDownloadMixin, ListCreateAPI):
+class BuildMixin:
+    """Mixin class for Build API endpoints."""
+
+    queryset = Build.objects.all()
+    serializer_class = build.serializers.BuildSerializer
+
+    def get_queryset(self):
+        """Return the queryset for the Build API endpoints."""
+        queryset = super().get_queryset()
+
+        queryset = queryset.prefetch_related(
+            'responsible',
+            'issued_by',
+            'build_lines',
+            'build_lines__bom_item',
+            'build_lines__build',
+            'part',
+        )
+
+        return queryset
+
+
+class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
     """API endpoint for accessing a list of Build objects.
 
     - GET: Return list of objects (with filters)
     - POST: Create a new Build object
     """
 
-    queryset = Build.objects.all()
-    serializer_class = build.serializers.BuildSerializer
     filterset_class = BuildFilter
 
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
@@ -155,15 +177,6 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
         queryset = build.serializers.BuildSerializer.annotate_queryset(queryset)
 
         return queryset
-
-    def download_queryset(self, queryset, export_format):
-        """Download the queryset data as a file."""
-        dataset = build.admin.BuildResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-        filename = f"InvenTree_BuildOrders.{export_format}"
-
-        return DownloadFile(filedata, filename)
 
     def filter_queryset(self, queryset):
         """Custom query filtering for the BuildList endpoint."""
@@ -223,11 +236,8 @@ class BuildList(APIDownloadMixin, ListCreateAPI):
         return self.serializer_class(*args, **kwargs)
 
 
-class BuildDetail(RetrieveUpdateDestroyAPI):
+class BuildDetail(BuildMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a Build object."""
-
-    queryset = Build.objects.all()
-    serializer_class = build.serializers.BuildSerializer
 
     def destroy(self, request, *args, **kwargs):
         """Only allow deletion of a BuildOrder if the build status is CANCELLED"""
@@ -334,7 +344,7 @@ class BuildLineEndpoint:
         return queryset
 
 
-class BuildLineList(BuildLineEndpoint, ListCreateAPI):
+class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildLine objects"""
 
     filterset_class = BuildLineFilter
@@ -363,6 +373,8 @@ class BuildLineList(BuildLineEndpoint, ListCreateAPI):
 
     search_fields = [
         'bom_item__sub_part__name',
+        'bom_item__sub_part__IPN',
+        'bom_item__sub_part__description',
         'bom_item__reference',
     ]
 
@@ -534,7 +546,7 @@ class BuildItemFilter(rest_filters.FilterSet):
         return queryset.filter(install_into=None)
 
 
-class BuildItemList(ListCreateAPI):
+class BuildItemList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildItem objects.
 
     - GET: Return list of objects
@@ -564,10 +576,15 @@ class BuildItemList(ListCreateAPI):
         queryset = queryset.select_related(
             'build_line',
             'build_line__build',
+            'build_line__bom_item',
             'install_into',
             'stock_item',
             'stock_item__location',
             'stock_item__part',
+            'stock_item__supplier_part',
+            'stock_item__supplier_part__manufacturer_part',
+        ).prefetch_related(
+            'stock_item__location__tags',
         )
 
         return queryset
@@ -595,31 +612,7 @@ class BuildItemList(ListCreateAPI):
     ]
 
 
-class BuildAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing (and creating) BuildOrderAttachment objects."""
-
-    queryset = BuildOrderAttachment.objects.all()
-    serializer_class = build.serializers.BuildAttachmentSerializer
-
-    filterset_fields = [
-        'build',
-    ]
-
-
-class BuildAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for a BuildOrderAttachment object."""
-
-    queryset = BuildOrderAttachment.objects.all()
-    serializer_class = build.serializers.BuildAttachmentSerializer
-
-
 build_api_urls = [
-
-    # Attachments
-    path('attachment/', include([
-        path('<int:pk>/', BuildAttachmentDetail.as_view(), name='api-build-attachment-detail'),
-        path('', BuildAttachmentList.as_view(), name='api-build-attachment-list'),
-    ])),
 
     # Build lines
     path('line/', include([

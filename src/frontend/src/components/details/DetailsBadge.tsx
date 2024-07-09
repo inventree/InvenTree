@@ -7,7 +7,7 @@ export type DetailsBadgeProps = {
   visible?: boolean;
 };
 
-export default function DetailsBadge(props: DetailsBadgeProps) {
+export default function DetailsBadge(props: Readonly<DetailsBadgeProps>) {
   if (props.visible == false) {
     return null;
   }

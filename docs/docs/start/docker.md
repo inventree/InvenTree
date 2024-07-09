@@ -117,11 +117,14 @@ Runs an InvenTree web server instance, powered by a Gunicorn web server.
 
 Runs the InvenTree background worker process. This spins up a second instance of the *inventree* container, with a different entrypoint command.
 
-#### File Server
+#### Proxy Server
 
 Caddy working as a reverse proxy, separating requests for static and media files, and directing everything else to Gunicorn.
 
 This container uses the official [caddy image](https://hub.docker.com/_/caddy).
+
+!!! info "Nginx Proxy"
+    An alternative is to run nginx as the reverse proxy. A sample configuration file is provided in the `./contrib/container/` source directory.
 
 #### Redis Cache
 
@@ -133,10 +136,8 @@ This container uses the official [redis image](https://hub.docker.com/_/redis).
     Docker adds an additional network layer - that might lead to lower performance than bare metal.
     To optimize and configure your redis deployment follow the [official docker guide](https://redis.io/docs/getting-started/install-stack/docker/#configuration).
 
-!!! warning "Disabled by default"
-    The *redis* container is not enabled in the default configuration. This is provided as an example for users wishing to use redis.
-    To enable the *redis* container, run any `docker compose` commands with the `--profile redis` flag.
-    You will also need to un-comment the `INVENTREE_CACHE_<...>` variables in the `.env` file.
+!!! tip "Enable Cache"
+    While a redis container is provided in the default configuration, by default it is not enabled in the Inventree server. You can enable redis cache support by following the [caching configuration guide](./config.md#caching)
 
 ### Data Volume
 

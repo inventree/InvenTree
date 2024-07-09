@@ -65,7 +65,7 @@ export default function PartPricingPanel({ part }: { part: any }) {
   }
 
   return (
-    <Stack spacing="xs">
+    <Stack gap="xs">
       <LoadingOverlay visible={instanceQuery.isLoading} />
       {!pricing && !instanceQuery.isLoading && (
         <Alert color="ref" title={t`Error`}>

@@ -1,3 +1,4 @@
+import { MantineSize } from '@mantine/core';
 import dayjs from 'dayjs';
 
 import {
@@ -5,13 +6,13 @@ import {
   useUserSettingsState
 } from '../states/SettingsState';
 
-interface formatDecmimalOptionsType {
+interface FormatDecmimalOptionsInterface {
   digits?: number;
   minDigits?: number;
   locale?: string;
 }
 
-interface formatCurrencyOptionsType {
+interface FormatCurrencyOptionsInterface {
   digits?: number;
   minDigits?: number;
   currency?: string;
@@ -21,7 +22,7 @@ interface formatCurrencyOptionsType {
 
 export function formatDecimal(
   value: number | null | undefined,
-  options: formatDecmimalOptionsType = {}
+  options: FormatDecmimalOptionsInterface = {}
 ) {
   let locale = options.locale || navigator.language || 'en-US';
 
@@ -44,7 +45,7 @@ export function formatDecimal(
  */
 export function formatCurrency(
   value: number | string | null | undefined,
-  options: formatCurrencyOptionsType = {}
+  options: FormatCurrencyOptionsInterface = {}
 ) {
   if (value == null || value == undefined) {
     return null;
@@ -76,8 +77,8 @@ export function formatCurrency(
   let formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
-    maximumFractionDigits: maxDigits,
-    minimumFractionDigits: minDigits
+    maximumFractionDigits: Math.max(minDigits, maxDigits),
+    minimumFractionDigits: Math.min(minDigits, maxDigits)
   });
 
   return formatter.format(value);
@@ -89,7 +90,7 @@ export function formatCurrency(
 export function formatPriceRange(
   minValue: number | null,
   maxValue: number | null,
-  options: formatCurrencyOptionsType = {}
+  options: FormatCurrencyOptionsInterface = {}
 ) {
   // If neither values are provided, return a dash
   if (minValue == null && maxValue == null) {
@@ -116,7 +117,23 @@ export function formatPriceRange(
   )}`;
 }
 
-interface renderDateOptionsType {
+/*
+ * Format a file size (in bytes) into a human-readable format
+ */
+export function formatFileSize(size: number) {
+  const suffixes: string[] = ['B', 'KB', 'MB', 'GB'];
+
+  let idx = 0;
+
+  while (size > 1024 && idx < suffixes.length) {
+    size /= 1024;
+    idx++;
+  }
+
+  return `${size.toFixed(2)} ${suffixes[idx]}`;
+}
+
+interface FormatDateOptionsInterface {
   showTime?: boolean;
   showSeconds?: boolean;
 }
@@ -127,7 +144,10 @@ interface renderDateOptionsType {
  * The provided "date" variable is a string, nominally ISO format e.g. 2022-02-22
  * The user-configured setting DATE_DISPLAY_FORMAT determines how the date should be displayed.
  */
-export function renderDate(date: string, options: renderDateOptionsType = {}) {
+export function formatDate(
+  date: string,
+  options: FormatDateOptionsInterface = {}
+) {
   if (!date) {
     return '-';
   }
@@ -151,3 +171,5 @@ export function renderDate(date: string, options: renderDateOptionsType = {}) {
     return date;
   }
 }
+
+export type UiSizeType = MantineSize | string | number;

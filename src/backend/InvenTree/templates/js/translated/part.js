@@ -215,9 +215,8 @@ function partFields(options={}) {
 
     // If editing a part, we can set the "active" status
     if (options.edit) {
-        fields.active = {
-            group: 'attributes'
-        };
+        fields.active = {};
+        fields.locked = {};
     }
 
     // Pop 'expiry' field
@@ -305,6 +304,7 @@ function partFields(options={}) {
 function categoryFields(options={}) {
     let fields = {
         parent: {
+            label: '{% trans "Parent" %}',
             help_text: '{% trans "Parent part category" %}',
             required: false,
             tree_picker: {
@@ -812,6 +812,10 @@ function makePartIcons(part) {
 
     if (!part.active) {
         html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Inactive" %}</span> `;
+    }
+
+    if (part.locked) {
+        html += `<span class='badge badge-right rounded-pill bg-warning'>{% trans "Locked" %}</span>`;
     }
 
     return html;
@@ -2272,6 +2276,7 @@ function loadPartTable(table, url, options={}) {
 
     // Ensure category detail is included
     options.params['category_detail'] = true;
+    options.params['location_detail'] = true;
 
     let filters = {};
 
@@ -2281,8 +2286,7 @@ function loadPartTable(table, url, options={}) {
         setupFilterList('parts', $(table), options.filterTarget, {
             download: true,
             labels: {
-                url: '{% url "api-part-label-list" %}',
-                key: 'part',
+                model_type: 'part',
             },
             singular_name: '{% trans "part" %}',
             plural_name: '{% trans "parts" %}',
@@ -2386,6 +2390,19 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    columns.push({
+        field: 'default_location',
+        title: '{% trans "Default Location" %}',
+        sortable: true,
+        formatter: function(value, row) {
+            if (row.default_location && row.default_location_detail) {
+                let text = shortenString(row.default_location_detail.pathstring);
+                return withTitle(renderLink(text, `/stock/location/${row.default_location}/`), row.default_location_detail.pathstring);
+            } else {
+                return '-';
+            }
+        }
+    });
 
     columns.push({
         field: 'total_in_stock',
@@ -2828,6 +2845,7 @@ function partTestTemplateFields(options={}) {
         requires_value: {},
         requires_attachment: {},
         enabled: {},
+        choices: {},
         part: {
             hidden: true,
         }

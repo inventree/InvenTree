@@ -15,7 +15,7 @@ export function InstanceOptions({
   setHostEdit
 }: {
   hostKey: string;
-  ChangeHost: (newHost: string) => void;
+  ChangeHost: (newHost: string | null) => void;
   setHostEdit: () => void;
 }) {
   const [HostListEdit, setHostListEdit] = useToggle([false, true] as const);

@@ -7,32 +7,25 @@ from django.utils.translation import gettext_lazy as _
 from django_filters import rest_framework as rest_filters
 
 import part.models
-from InvenTree.api import AttachmentMixin, ListCreateDestroyAPIView, MetadataView
-from InvenTree.filters import (
-    ORDER_FILTER,
-    SEARCH_ORDER_FILTER,
-    SEARCH_ORDER_FILTER_ALIAS,
-)
+from importer.mixins import DataExportViewMixin
+from InvenTree.api import ListCreateDestroyAPIView, MetadataView
+from InvenTree.filters import SEARCH_ORDER_FILTER, SEARCH_ORDER_FILTER_ALIAS
 from InvenTree.helpers import str2bool
 from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
 
 from .models import (
     Address,
     Company,
-    CompanyAttachment,
     Contact,
     ManufacturerPart,
-    ManufacturerPartAttachment,
     ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
 )
 from .serializers import (
     AddressSerializer,
-    CompanyAttachmentSerializer,
     CompanySerializer,
     ContactSerializer,
-    ManufacturerPartAttachmentSerializer,
     ManufacturerPartParameterSerializer,
     ManufacturerPartSerializer,
     SupplierPartSerializer,
@@ -40,7 +33,7 @@ from .serializers import (
 )
 
 
-class CompanyList(ListCreateAPI):
+class CompanyList(DataExportViewMixin, ListCreateAPI):
     """API endpoint for accessing a list of Company objects.
 
     Provides two methods:
@@ -88,23 +81,7 @@ class CompanyDetail(RetrieveUpdateDestroyAPI):
         return queryset
 
 
-class CompanyAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing, creating and bulk deleting a CompanyAttachment."""
-
-    queryset = CompanyAttachment.objects.all()
-    serializer_class = CompanyAttachmentSerializer
-
-    filterset_fields = ['company']
-
-
-class CompanyAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpoint for CompanyAttachment model."""
-
-    queryset = CompanyAttachment.objects.all()
-    serializer_class = CompanyAttachmentSerializer
-
-
-class ContactList(ListCreateDestroyAPIView):
+class ContactList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Company model."""
 
     queryset = Contact.objects.all()
@@ -128,7 +105,7 @@ class ContactDetail(RetrieveUpdateDestroyAPI):
     serializer_class = ContactSerializer
 
 
-class AddressList(ListCreateDestroyAPIView):
+class AddressList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of Address model."""
 
     queryset = Address.objects.all()
@@ -169,7 +146,7 @@ class ManufacturerPartFilter(rest_filters.FilterSet):
     )
 
 
-class ManufacturerPartList(ListCreateDestroyAPIView):
+class ManufacturerPartList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of ManufacturerPart object.
 
     - GET: Return list of ManufacturerPart objects
@@ -225,22 +202,6 @@ class ManufacturerPartDetail(RetrieveUpdateDestroyAPI):
 
     queryset = ManufacturerPart.objects.all()
     serializer_class = ManufacturerPartSerializer
-
-
-class ManufacturerPartAttachmentList(AttachmentMixin, ListCreateDestroyAPIView):
-    """API endpoint for listing, creating and bulk deleting a ManufacturerPartAttachment (file upload)."""
-
-    queryset = ManufacturerPartAttachment.objects.all()
-    serializer_class = ManufacturerPartAttachmentSerializer
-
-    filterset_fields = ['manufacturer_part']
-
-
-class ManufacturerPartAttachmentDetail(AttachmentMixin, RetrieveUpdateDestroyAPI):
-    """Detail endpooint for ManufacturerPartAttachment model."""
-
-    queryset = ManufacturerPartAttachment.objects.all()
-    serializer_class = ManufacturerPartAttachmentSerializer
 
 
 class ManufacturerPartParameterFilter(rest_filters.FilterSet):
@@ -333,7 +294,7 @@ class SupplierPartFilter(rest_filters.FilterSet):
     )
 
 
-class SupplierPartList(ListCreateDestroyAPIView):
+class SupplierPartList(DataExportViewMixin, ListCreateDestroyAPIView):
     """API endpoint for list view of SupplierPart object.
 
     - GET: Return list of SupplierPart objects
@@ -509,22 +470,6 @@ class SupplierPriceBreakDetail(RetrieveUpdateDestroyAPI):
 
 
 manufacturer_part_api_urls = [
-    # Base URL for ManufacturerPartAttachment API endpoints
-    path(
-        'attachment/',
-        include([
-            path(
-                '<int:pk>/',
-                ManufacturerPartAttachmentDetail.as_view(),
-                name='api-manufacturer-part-attachment-detail',
-            ),
-            path(
-                '',
-                ManufacturerPartAttachmentList.as_view(),
-                name='api-manufacturer-part-attachment-list',
-            ),
-        ]),
-    ),
     path(
         'parameter/',
         include([
@@ -609,19 +554,6 @@ company_api_urls = [
                 name='api-company-metadata',
             ),
             path('', CompanyDetail.as_view(), name='api-company-detail'),
-        ]),
-    ),
-    path(
-        'attachment/',
-        include([
-            path(
-                '<int:pk>/',
-                CompanyAttachmentDetail.as_view(),
-                name='api-company-attachment-detail',
-            ),
-            path(
-                '', CompanyAttachmentList.as_view(), name='api-company-attachment-list'
-            ),
         ]),
     ),
     path(

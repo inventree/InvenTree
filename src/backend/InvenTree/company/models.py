@@ -1,7 +1,6 @@
 """Company database model definitions."""
 
 import os
-from datetime import datetime
 from decimal import Decimal
 
 from django.apps import apps
@@ -20,6 +19,7 @@ from moneyed import CURRENCIES
 from stdimage.models import StdImageField
 from taggit.managers import TaggableManager
 
+import common.currency
 import common.models
 import common.settings
 import InvenTree.conversion
@@ -29,9 +29,9 @@ import InvenTree.models
 import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
-from common.settings import currency_code_default
+from common.currency import currency_code_default
 from InvenTree.fields import InvenTreeURLField, RoundingDecimalField
-from InvenTree.status_codes import PurchaseOrderStatusGroups
+from order.status_codes import PurchaseOrderStatusGroups
 
 
 def rename_company_image(instance, filename):
@@ -60,7 +60,9 @@ def rename_company_image(instance, filename):
 
 
 class Company(
-    InvenTree.models.InvenTreeNotesMixin, InvenTree.models.InvenTreeMetadataModel
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeNotesMixin,
+    InvenTree.models.InvenTreeMetadataModel,
 ):
     """A Company object represents an external company.
 
@@ -95,7 +97,8 @@ class Company(
         constraints = [
             UniqueConstraint(fields=['name', 'email'], name='unique_name_email_pair')
         ]
-        verbose_name_plural = 'Companies'
+        verbose_name = _('Company')
+        verbose_name_plural = _('Companies')
 
     @staticmethod
     def get_api_url():
@@ -162,19 +165,19 @@ class Company(
 
     is_customer = models.BooleanField(
         default=False,
-        verbose_name=_('is customer'),
+        verbose_name=_('Is customer'),
         help_text=_('Do you sell items to this company?'),
     )
 
     is_supplier = models.BooleanField(
         default=True,
-        verbose_name=_('is supplier'),
+        verbose_name=_('Is supplier'),
         help_text=_('Do you purchase items from this company?'),
     )
 
     is_manufacturer = models.BooleanField(
         default=False,
-        verbose_name=_('is manufacturer'),
+        verbose_name=_('Is manufacturer'),
         help_text=_('Does this company manufacture parts?'),
     )
 
@@ -212,7 +215,7 @@ class Company(
         code = self.currency
 
         if code not in CURRENCIES:
-            code = common.settings.currency_code_default()
+            code = common.currency.currency_code_default()
 
         return code
 
@@ -255,26 +258,6 @@ class Company(
         ).distinct()
 
 
-class CompanyAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file or URL attachments against a Company object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with this model."""
-        return reverse('api-company-attachment-list')
-
-    def getSubdir(self):
-        """Return the subdirectory where these attachments are uploaded."""
-        return os.path.join('company_files', str(self.company.pk))
-
-    company = models.ForeignKey(
-        Company,
-        on_delete=models.CASCADE,
-        verbose_name=_('Company'),
-        related_name='attachments',
-    )
-
-
 class Contact(InvenTree.models.InvenTreeMetadataModel):
     """A Contact represents a person who works at a particular company. A Company may have zero or more associated Contact objects.
 
@@ -285,6 +268,11 @@ class Contact(InvenTree.models.InvenTreeMetadataModel):
         email: contact email
         role: position in company
     """
+
+    class Meta:
+        """Metaclass defines extra model options."""
+
+        verbose_name = _('Contact')
 
     @staticmethod
     def get_api_url():
@@ -323,7 +311,8 @@ class Address(InvenTree.models.InvenTreeModel):
     class Meta:
         """Metaclass defines extra model options."""
 
-        verbose_name_plural = 'Addresses'
+        verbose_name = _('Address')
+        verbose_name_plural = _('Addresses')
 
     def __init__(self, *args, **kwargs):
         """Custom init function."""
@@ -460,7 +449,9 @@ class Address(InvenTree.models.InvenTreeModel):
 
 
 class ManufacturerPart(
-    InvenTree.models.InvenTreeBarcodeMixin, InvenTree.models.InvenTreeMetadataModel
+    InvenTree.models.InvenTreeAttachmentMixin,
+    InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
 
@@ -475,6 +466,7 @@ class ManufacturerPart(
     class Meta:
         """Metaclass defines extra model options."""
 
+        verbose_name = _('Manufacturer Part')
         unique_together = ('part', 'manufacturer', 'MPN')
 
     @staticmethod
@@ -563,26 +555,6 @@ class ManufacturerPart(
         return s
 
 
-class ManufacturerPartAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a ManufacturerPart object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return the API URL associated with the ManufacturerPartAttachment model."""
-        return reverse('api-manufacturer-part-attachment-list')
-
-    def getSubdir(self):
-        """Return the subdirectory where attachment files for the ManufacturerPart model are located."""
-        return os.path.join('manufacturer_part_files', str(self.manufacturer_part.id))
-
-    manufacturer_part = models.ForeignKey(
-        ManufacturerPart,
-        on_delete=models.CASCADE,
-        verbose_name=_('Manufacturer Part'),
-        related_name='attachments',
-    )
-
-
 class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
     """A ManufacturerPartParameter represents a key:value parameter for a MnaufacturerPart.
 
@@ -594,6 +566,7 @@ class ManufacturerPartParameter(InvenTree.models.InvenTreeModel):
     class Meta:
         """Metaclass defines extra model options."""
 
+        verbose_name = _('Manufacturer Part Parameter')
         unique_together = ('manufacturer_part', 'name')
 
     @staticmethod
@@ -678,6 +651,8 @@ class SupplierPart(
         """Metaclass defines extra model options."""
 
         unique_together = ('part', 'supplier', 'SKU')
+
+        verbose_name = _('Supplier Part')
 
         # This model was moved from the 'Part' app
         db_table = 'part_supplierpart'
@@ -967,7 +942,7 @@ class SupplierPart(
 
         SupplierPriceBreak.objects.create(part=self, quantity=quantity, price=price)
 
-    get_price = common.models.get_price
+    get_price = common.currency.get_price
 
     def open_orders(self):
         """Return a database query for PurchaseOrder line items for this SupplierPart, limited to purchase orders that are open / outstanding."""
@@ -1037,6 +1012,7 @@ class SupplierPriceBreak(common.models.PriceBreak):
     class Meta:
         """Metaclass defines extra model options."""
 
+        verbose_name = _('Supplier Price Break')
         unique_together = ('part', 'quantity')
 
         # This model was moved from the 'Part' app
