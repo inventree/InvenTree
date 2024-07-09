@@ -371,6 +371,24 @@ class PartTest(TestCase):
         self.assertIsNotNone(p.last_stocktake)
         self.assertEqual(p.last_stocktake, ps.date)
 
+    def test_delete(self):
+        """Test delete operation for a Part instance."""
+        part = Part.objects.first()
+
+        for active, locked in [(True, True), (True, False), (False, True)]:
+            # Cannot delete part if it is active or locked
+            part.active = active
+            part.locked = locked
+            part.save()
+
+            with self.assertRaises(ValidationError):
+                part.delete()
+
+        part.active = False
+        part.locked = False
+
+        part.delete()
+
 
 class TestTemplateTest(TestCase):
     """Unit test for the TestTemplate class."""

@@ -25,6 +25,7 @@ function partTableColumns(): TableColumn[] {
   return [
     {
       accessor: 'name',
+      title: t`Part`,
       sortable: true,
       noWrap: true,
       render: (record: any) => PartColumn(record)
@@ -42,6 +43,11 @@ function partTableColumns(): TableColumn[] {
       accessor: 'category',
       sortable: true,
       render: (record: any) => record.category_detail?.pathstring
+    },
+    {
+      accessor: 'default_location',
+      sortable: true,
+      render: (record: any) => record.default_location_detail?.pathstring
     },
     {
       accessor: 'total_in_stock',
@@ -167,6 +173,12 @@ function partTableFilters(): TableFilter[] {
       name: 'active',
       label: t`Active`,
       description: t`Filter by part active status`,
+      type: 'boolean'
+    },
+    {
+      name: 'locked',
+      label: t`Locked`,
+      description: t`Filter by part locked status`,
       type: 'boolean'
     },
     {
@@ -320,7 +332,8 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
           tableActions: tableActions,
           params: {
             ...props.params,
-            category_detail: true
+            category_detail: true,
+            location_detail: true
           }
         }}
       />

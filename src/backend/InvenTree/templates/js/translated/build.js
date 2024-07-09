@@ -2449,6 +2449,7 @@ function loadBuildLineTable(table, build_id, options={}) {
     // If data is passed directly to this function, do not setup filters
     if (!options.data) {
         setupFilterList('buildlines', $(table), filterTarget, {
+            download: true,
             labels: {
                 modeltype: 'buildline',
             },
@@ -2516,6 +2517,15 @@ function loadBuildLineTable(table, build_id, options={}) {
                 }
             },
             {
+                field: 'optional',
+                title: '{% trans "Optional" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value, row) {
+                    return yesNoLabel(row.bom_item_detail.optional);
+                }
+            },
+            {
                 field: 'consumable',
                 title: '{% trans "Consumable" %}',
                 sortable: true,
@@ -2525,12 +2535,21 @@ function loadBuildLineTable(table, build_id, options={}) {
                 }
             },
             {
-                field: 'optional',
-                title: '{% trans "Optional" %}',
-                sortable: true,
+                field: 'allow_variants',
+                title: '{% trans "Allow Variants" %}',
+                sortable: false,
                 switchable: true,
                 formatter: function(value, row) {
-                    return yesNoLabel(row.bom_item_detail.optional);
+                    return yesNoLabel(row.bom_item_detail.allow_variants);
+                }
+            },
+            {
+                field: 'inherited',
+                title: '{% trans "Gets Inherited" %}',
+                sortable: false,
+                switchable: true,
+                formatter: function(value, row) {
+                    return yesNoLabel(row.bom_item_detail.inherited);
                 }
             },
             {

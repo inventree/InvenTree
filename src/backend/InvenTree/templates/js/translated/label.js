@@ -25,13 +25,6 @@
     printLabels,
 */
 
-const defaultLabelTemplates = {
-    part: user_settings.DEFAULT_PART_LABEL_TEMPLATE,
-    location: user_settings.DEFAULT_LOCATION_LABEL_TEMPLATE,
-    item: user_settings.DEFAULT_ITEM_LABEL_TEMPLATE,
-    line: user_settings.DEFAULT_LINE_LABEL_TEMPLATE,
-}
-
 
 /*
  *  Print label(s) for the selected items:

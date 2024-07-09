@@ -46,6 +46,13 @@ export enum ApiEndpoints {
   group_list = 'user/group/',
   owner_list = 'user/owner/',
 
+  // Data import endpoints
+  import_session_list = 'importer/session/',
+  import_session_accept_fields = 'importer/session/:id/accept_fields/',
+  import_session_accept_rows = 'importer/session/:id/accept_rows/',
+  import_session_column_mapping_list = 'importer/column-mapping/',
+  import_session_row_list = 'importer/row/',
+
   // Notification endpoints
   notifications_list = 'notifications/',
   notifications_readall = 'notifications/readall/',
@@ -60,6 +67,7 @@ export enum ApiEndpoints {
   build_line_list = 'build/line/',
 
   bom_list = 'bom/',
+  bom_item_validate = 'bom/:id/validate/',
 
   // Part API endpoints
   part_list = 'part/',
