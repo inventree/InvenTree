@@ -48,12 +48,6 @@ echo "SIGNATURE='$SIGNATURE'" >> VERSION
 echo "Written VERSION information"
 cat VERSION
 
-echo "ALL"
-echo "##############"
-git_base=$(git config --get remote.origin.url)
-echo "git_base: $git_base"
-echo "##############"
-
 # Try to get frontend
 # Check if tag sha is the same as the commit sha
 TAG_SHA=$(jq -r '.sha' tag.json)
@@ -62,7 +56,7 @@ if [ "$TAG_SHA" != "$FULL_SHA" ]; then
   curl https://api.github.com/repos/$REPO/actions/runs?head_sha=$FULL_SHA > runs.json
   artifact_url=$(jq -r '.workflow_runs | .[] | select(.name=="QC").artifacts_url' runs.json)
   run_id=$(jq -r '.workflow_runs[] | select(.name=="QC").id' runs.json)
-  curl $artifact_url > artifacts.json
+  curl artifact_url > artifacts.json
   artifact_id=$(jq -r '.artifacts[] | select(.name=="frontend-build").id' artifacts.json)
   echo "Getting frontend from github via run artifact. Run id: $run_id, Artifact id: $artifact_id, Artifact url: $artifact_url"
   curl https://github.com/$REPO/actions/runs/$run_id/artifacts/$artifact_id -L
