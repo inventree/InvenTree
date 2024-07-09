@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 214
+INVENTREE_API_VERSION = 215
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v215 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7591
+    - Adds additional fields to the BuildLine serializer
+
 v214 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7587
     - Adds "default_location_detail" field to the Part API
 
