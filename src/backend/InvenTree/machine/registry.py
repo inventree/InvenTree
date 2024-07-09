@@ -40,7 +40,8 @@ class MachineRegistry(
 
     def initialize(self, main: bool = False):
         """Initialize the machine registry."""
-        if main:
+        # clear cache for machines (only needed for global redis cache)
+        if main and hasattr(cache, 'delete_pattern'):  # pragma: no cover
             cache.delete_pattern(f'machine:*')
 
         self.discover_machine_types()
