@@ -22,6 +22,7 @@ type UseFilterProps = {
 export function useFilters(props: UseFilterProps) {
   const query = useQuery({
     enabled: true,
+    gcTime: 500,
     queryKey: [props.url, props.method, props.params],
     queryFn: async () => {
       return await api
