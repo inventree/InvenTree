@@ -283,9 +283,9 @@ class BaseMachineType(
 
             # check if the active state has changed and initialize the machine if necessary
             if old_state['active'] != self.active:
-                if self.initialized is False:
+                if self.initialized is False and self.active is True:
                     self.initialize()
-                else:
+                elif self.initialized is True and self.active is False:
                     self.initialized = False
         except Exception as e:
             self.handle_error(e)
