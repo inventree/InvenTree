@@ -19,10 +19,6 @@ export default function InstanceDetail({
     return <LoadingOverlay />;
   }
 
-  if (status == 0) {
-    return <ServerError status={status} />;
-  }
-
   if (status >= 500) {
     return <ServerError status={status} />;
   }
