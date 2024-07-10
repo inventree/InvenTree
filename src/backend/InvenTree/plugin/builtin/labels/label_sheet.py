@@ -12,6 +12,7 @@ import weasyprint
 from rest_framework import serializers
 
 import report.helpers
+from InvenTree.helpers import str2bool
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
 from report.models import LabelOutput, LabelTemplate
@@ -64,9 +65,22 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
     BLOCKING_PRINT = True
 
-    SETTINGS = {}
+    SETTINGS = {
+        'DEBUG': {
+            'name': _('Debug mode'),
+            'description': _('Enable debug mode - returns raw HTML instead of PDF'),
+            'validator': bool,
+            'default': False,
+        }
+    }
 
     PrintingOptionsSerializer = LabelPrintingOptionsSerializer
+    debug = None
+
+    def in_debug_mode(self):
+        """Check if the plugin is printing in debug mode."""
+        if self.debug is None:
+            self.debug = str2bool(self.get_setting('DEBUG'))
 
     def print_labels(
         self, label: LabelTemplate, output: LabelOutput, items: list, request, **kwargs
@@ -135,11 +149,15 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         # Render to a single HTML document
         html_data = self.wrap_pages(pages, **document_data)
 
-        # Render HTML to PDF
-        html = weasyprint.HTML(string=html_data)
-        document = html.render().write_pdf()
+        if self.in_debug_mode():
+            # Render HTML to PDF
+            html = weasyprint.HTML(string=html_data)
+            document = html.render().write_pdf()
 
-        output.output = ContentFile(document, 'labels.pdf')
+            output.output = ContentFile(document, 'labels.pdf')
+        else:
+            output.output = ContentFile(html_data, 'labels.html')
+
         output.progress = 100
         output.complete = True
         output.save()
