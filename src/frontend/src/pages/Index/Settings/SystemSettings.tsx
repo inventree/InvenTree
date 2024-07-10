@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
@@ -306,6 +306,10 @@ export default function SystemSettings() {
   const user = useUserState();
 
   const [server] = useServerApiState((state) => [state.server]);
+
+  if (!user.isLoggedIn()) {
+    return <Skeleton />;
+  }
 
   return (
     <>
