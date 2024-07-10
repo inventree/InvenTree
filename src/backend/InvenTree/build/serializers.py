@@ -1066,6 +1066,9 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         'sku',
         'mpn',
         'location_name',
+        'part_id',
+        'part_name',
+        'part_ipn',
     ]
 
     class Meta:
@@ -1093,6 +1096,9 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'location_name',
             'mpn',
             'sku',
+            'part_id',
+            'part_name',
+            'part_ipn',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1122,6 +1128,11 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     location_name = serializers.CharField(source='stock_item.location.name', label=_('Location Name'), read_only=True)
     build_reference = serializers.CharField(source='build.reference', label=_('Build Reference'), read_only=True)
     bom_reference = serializers.CharField(source='build_line.bom_item.reference', label=_('BOM Reference'), read_only=True)
+
+    # Part detail fields
+    part_id = serializers.PrimaryKeyRelatedField(source='stock_item.part', label=_('Part ID'), many=False, read_only=True)
+    part_name = serializers.CharField(source='stock_item.part.name', label=_('Part Name'), read_only=True)
+    part_ipn = serializers.CharField(source='stock_item.part.IPN', label=_('Part IPN'), read_only=True)
 
     # Annotated fields
     build = serializers.PrimaryKeyRelatedField(source='build_line.build', many=False, read_only=True)
