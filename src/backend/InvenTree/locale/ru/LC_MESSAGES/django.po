@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-10 10:04+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-10 15:59\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1210,10 +1210,8 @@ msgid "Part Name"
 msgstr "Наименование детали"
 
 #: build/serializers.py:102
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Код проекта"
+msgstr ""
 
 #: build/serializers.py:163 build/serializers.py:882
 #: templates/js/translated/build.js:1322
@@ -1524,16 +1522,12 @@ msgid "Part Description"
 msgstr "Описание детали"
 
 #: build/serializers.py:1204
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Категория детали"
+msgstr ""
 
 #: build/serializers.py:1205
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Название категории"
+msgstr ""
 
 #: build/serializers.py:1211 common/models.py:1488 part/admin.py:113
 #: part/models.py:1069 templates/js/translated/table_filters.js:147
@@ -4221,7 +4215,7 @@ msgstr "Ссылка на сайт производителя"
 
 #: company/models.py:516
 msgid "Manufacturer part description"
-msgstr ""
+msgstr "Описание детали производителя"
 
 #: company/models.py:569
 msgid "Manufacturer Part Parameter"
@@ -4313,7 +4307,7 @@ msgstr "Ссылка на сайт поставщика"
 
 #: company/models.py:816
 msgid "Supplier part description"
-msgstr ""
+msgstr "Описание детали поставщика"
 
 #: company/models.py:823 company/templates/company/supplier_part.html:187
 #: part/admin.py:412 part/models.py:4185 part/templates/part/upload_bom.html:59
@@ -6492,7 +6486,7 @@ msgstr ""
 
 #: part/models.py:852
 msgid "Part with this Name, IPN and Revision already exists."
-msgstr ""
+msgstr "Часть с таким именем, IPN и ревизией уже существует."
 
 #: part/models.py:867
 msgid "Parts cannot be assigned to structural part categories!"
@@ -6954,7 +6948,7 @@ msgstr ""
 
 #: part/models.py:3677
 msgid "Parameter description"
-msgstr ""
+msgstr "Описание параметра"
 
 #: part/models.py:3683 templates/js/translated/part.js:1631
 #: templates/js/translated/table_filters.js:830
@@ -8849,11 +8843,11 @@ msgstr "Название шаблона"
 
 #: report/models.py:157
 msgid "Template description"
-msgstr ""
+msgstr "Описание шаблона"
 
 #: report/models.py:163
 msgid "Revision number (auto-increments)"
-msgstr ""
+msgstr "Номер ревизии (автоматически)"
 
 #: report/models.py:203
 msgid "Filename Pattern"
@@ -8953,7 +8947,7 @@ msgstr ""
 
 #: report/models.py:511
 msgid "Snippet file description"
-msgstr ""
+msgstr "Описание файла сниппета"
 
 #: report/models.py:529
 msgid "Asset"
@@ -8965,7 +8959,7 @@ msgstr ""
 
 #: report/models.py:537
 msgid "Asset file description"
-msgstr ""
+msgstr "Описание медиафайла"
 
 #: report/serializers.py:91
 msgid "Select report template"
@@ -12521,7 +12515,7 @@ msgstr ""
 #: templates/js/translated/filters.js:186
 #: templates/js/translated/filters.js:667
 msgid "true"
-msgstr ""
+msgstr "да"
 
 #: templates/js/translated/filters.js:190
 #: templates/js/translated/filters.js:668
@@ -12628,7 +12622,7 @@ msgstr "НЕТ"
 
 #: templates/js/translated/helpers.js:93
 msgid "True"
-msgstr ""
+msgstr "Да"
 
 #: templates/js/translated/helpers.js:94
 msgid "False"
@@ -14259,7 +14253,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:279
 #: templates/js/translated/table_filters.js:711
 msgid "Include subcategories"
-msgstr ""
+msgstr "Включая подкатегории"
 
 #: templates/js/translated/table_filters.js:287
 #: templates/js/translated/table_filters.js:764
@@ -14411,7 +14405,7 @@ msgstr "Статус Производства"
 
 #: templates/js/translated/table_filters.js:712
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Включить детали в подкатегориях"
 
 #: templates/js/translated/table_filters.js:717
 msgid "Show active parts"
@@ -14830,3 +14824,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
