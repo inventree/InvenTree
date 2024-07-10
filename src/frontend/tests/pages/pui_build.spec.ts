@@ -15,6 +15,8 @@ test('PUI - Pages - Build Order', async ({ page }) => {
   await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
   await page.getByRole('tab', { name: 'Line Items' }).click();
   await page.getByRole('tab', { name: 'Allocated Stock' }).click();
+  await page.getByRole('tab', { name: 'Attachments' }).click();
+  await page.getByRole('tab', { name: 'Notes' }).click();
 
   // Check for expected text in the table
   await page.getByText('R_10R_0402_1%').click();
