@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-05 14:57\n"
+"PO-Revision-Date: 2024-07-10 15:59\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -44,7 +44,7 @@ msgstr "Etiketten Drucken"
 
 #: src/components/buttons/PrintingActions.tsx:99
 msgid "Print"
-msgstr ""
+msgstr "Drucken"
 
 #: src/components/buttons/PrintingActions.tsx:100
 msgid "Label printing completed successfully"
@@ -79,7 +79,7 @@ msgstr "Bericht drucken"
 
 #: src/components/buttons/PrintingActions.tsx:138
 msgid "Generate"
-msgstr ""
+msgstr "Generieren"
 
 #: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
@@ -91,15 +91,15 @@ msgstr "Der Bericht konnte nicht erstellt werden"
 
 #: src/components/buttons/PrintingActions.tsx:173
 msgid "Printing Actions"
-msgstr ""
+msgstr "Druck Aktionen"
 
 #: src/components/buttons/PrintingActions.tsx:178
 msgid "Print Labels"
-msgstr ""
+msgstr "Etiketten drucken"
 
 #: src/components/buttons/PrintingActions.tsx:184
 msgid "Print Reports"
-msgstr ""
+msgstr "Berichte drucken"
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
@@ -214,14 +214,14 @@ msgstr "Bild löschen"
 #: src/components/details/PartIcons.tsx:28
 #: src/tables/ColumnRenderers.tsx:35
 msgid "Part is locked"
-msgstr ""
+msgstr "Artikel ist gesperrt"
 
 #: src/components/details/PartIcons.tsx:30
 #: src/pages/part/PartDetail.tsx:267
 #: src/pages/part/PartDetail.tsx:698
 #: src/tables/part/PartTable.tsx:180
 msgid "Locked"
-msgstr ""
+msgstr "Gesperrt"
 
 #: src/components/details/PartIcons.tsx:35
 #: src/tables/ColumnRenderers.tsx:30
@@ -273,7 +273,7 @@ msgstr "Virtuell"
 
 #: src/components/editors/NotesEditor.tsx:66
 msgid "Image upload failed"
-msgstr ""
+msgstr "Das Bild konnte nicht hochgeladen werden"
 
 #: src/components/editors/NotesEditor.tsx:156
 #: src/components/forms/ApiForm.tsx:440
@@ -291,7 +291,7 @@ msgstr "Notiz konnte nicht gespeichert werden"
 
 #: src/components/editors/NotesEditor.tsx:198
 msgid "Preview Notes"
-msgstr ""
+msgstr "Notizen Vorschau"
 
 #: src/components/editors/NotesEditor.tsx:198
 msgid "Edit Notes"
@@ -328,7 +328,7 @@ msgstr "Fehler beim Speichern der Vorlage"
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:146
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:270
 msgid "Save & Reload Preview"
-msgstr ""
+msgstr "Vorschau speichern & neu laden"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 msgid "Are you sure you want to Save & Reload the preview?"
@@ -376,7 +376,7 @@ msgstr "Die aktuelle Vorlage speichern und die Vorschau neu laden"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:329
 msgid "Select instance to preview"
-msgstr ""
+msgstr "Instanz für Vorschau auswählen"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:373
 msgid "Error rendering template"
@@ -384,11 +384,11 @@ msgstr "Fehler bei Darstellung der Vorlage"
 
 #: src/components/errors/ClientError.tsx:23
 msgid "Client Error"
-msgstr ""
+msgstr "Client Fehler"
 
 #: src/components/errors/ClientError.tsx:24
 msgid "Client error occurred"
-msgstr ""
+msgstr "Client-Fehler aufgetreten"
 
 #: src/components/errors/GenericErrorPage.tsx:51
 msgid "Status Code"
@@ -5367,7 +5367,7 @@ msgstr "Kein Lagerbestand verfügbar"
 
 #: src/tables/build/BuildLineTable.tsx:157
 msgid "Gets Inherited"
-msgstr "Gets Inherited"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:166
 msgid "Unit Quantity"
@@ -6664,7 +6664,7 @@ msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:70
 msgid "Uploaded"
-msgstr "Uploaded"
+msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:80
 msgid "Imported Rows"
@@ -7197,3 +7197,4 @@ msgstr "Dokumentation lesen"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr "Ignorieren und weiter zur Desktopansicht"
+
