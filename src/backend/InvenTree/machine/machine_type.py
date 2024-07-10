@@ -284,12 +284,21 @@ class BaseMachineType(
             self.handle_error(e)
 
     def restart(self):
-        """Machine restart function, can be used to manually restart the machine from the admin ui."""
+        """Machine restart function, can be used to manually restart the machine from the admin ui.
+
+        This will first reset the machines state (errors, status, status_text) and then call the drivers restart function.
+        """
         if self.driver is None:
             return
 
         try:
+            # reset the machine state
             self.restart_required = False
+            self.reset_errors()
+            self.set_status(self.default_machine_status)
+            self.set_status_text('')
+
+            # call the driver restart function
             self.driver.restart_machine(self)
         except Exception as e:
             self.handle_error(e)
@@ -302,6 +311,10 @@ class BaseMachineType(
             error: Exception or string
         """
         self.set_shared_state('errors', self.errors + [error])
+
+    def reset_errors(self):
+        """Helper function for resetting the error list for a machine."""
+        self.set_shared_state('errors', [])
 
     def get_setting(
         self, key: str, config_type_str: Literal['M', 'D'], cache: bool = False

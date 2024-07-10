@@ -96,6 +96,7 @@ The machine type class gets instantiated for each machine on server startup and 
           - update
           - restart
           - handle_error
+          - clear_errors
           - get_setting
           - set_setting
           - check_setting
