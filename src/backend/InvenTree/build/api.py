@@ -8,12 +8,11 @@ from django.contrib.auth.models import User
 
 from rest_framework.exceptions import ValidationError
 
-from django_filters.rest_framework import DjangoFilterBackend
 from django_filters import rest_framework as rest_filters
 
 from importer.mixins import DataExportViewMixin
 
-from InvenTree.api import MetadataView
+from InvenTree.api import BulkDeleteMixin, MetadataView
 from generic.states.api import StatusView
 from InvenTree.helpers import str2bool, isNull
 from build.status_codes import BuildStatus, BuildStatusGroups
@@ -546,7 +545,7 @@ class BuildItemFilter(rest_filters.FilterSet):
         return queryset.filter(install_into=None)
 
 
-class BuildItemList(DataExportViewMixin, ListCreateAPI):
+class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
     """API endpoint for accessing a list of BuildItem objects.
 
     - GET: Return list of objects

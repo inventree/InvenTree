@@ -954,6 +954,28 @@ function loadBuildOrderAllocatedStockTable(table, buildId) {
         null,
         {
             download: true,
+            custom_actions: [{
+                label: 'actions',
+                actions: [{
+                    label: 'delete',
+                    title: '{% trans "Delete allocations" %}',
+                    icon: 'fa-trash-alt icon-red',
+                    permission: 'build.delete',
+                    callback: function(data) {
+                        constructForm('{% url "api-build-item-list" %}', {
+                            method: 'DELETE',
+                            multi_delete: true,
+                            title: '{% trans "Delete Stock Allocations" %}',
+                            form_data: {
+                                items: data.map(item => item.pk),
+                            },
+                            onSuccess: function() {
+                                $(table).bootstrapTable('refresh');
+                            }
+                        });
+                    }
+                }]
+            }]
         }
     );
 
@@ -969,6 +991,12 @@ function loadBuildOrderAllocatedStockTable(table, buildId) {
             return '{% trans "No allocated stock" %}';
         },
         columns: [
+            {
+                title: '',
+                visible: true,
+                checkbox: true,
+                switchable: false,
+            },
             {
                 field: 'part',
                 sortable: true,
