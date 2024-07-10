@@ -337,19 +337,6 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
     image = InvenTree.serializers.InvenTreeImageSerializerField(read_only=True)
     thumbnail = serializers.CharField(source='get_thumbnail_url', read_only=True)
 
-    IPN = serializers.CharField(
-        required=False,
-        allow_null=True,
-        help_text=_('Internal Part Number'),
-        max_length=100,
-    )
-    revision = serializers.CharField(
-        required=False,
-        allow_null=True,
-        help_text=_('Part revision or version number'),
-        max_length=100,
-    )
-
     # Pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
         source='pricing_data.overall_min', allow_null=True, read_only=True
@@ -890,22 +877,6 @@ class PartSerializer(
 
     creation_user = serializers.PrimaryKeyRelatedField(
         queryset=users.models.User.objects.all(), required=False, allow_null=True
-    )
-
-    IPN = serializers.CharField(
-        required=False,
-        default='',
-        allow_blank=True,
-        help_text=_('Internal Part Number'),
-        max_length=100,
-    )
-
-    revision = serializers.CharField(
-        required=False,
-        default='',
-        allow_blank=True,
-        help_text=_('Part revision or version number'),
-        max_length=100,
     )
 
     # Annotated fields
