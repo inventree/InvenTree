@@ -58,6 +58,7 @@
     duplicateBuildOrder,
     editBuildOrder,
     loadBuildLineTable,
+    loadBuildOrderAllocatedStockTable,
     loadBuildOrderAllocationTable,
     loadBuildOutputTable,
     loadBuildTable,
@@ -932,6 +933,108 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
     });
 }
 
+
+/**
+ * Load a table showing all stock allocated to a given Build Order
+ */
+function loadBuildOrderAllocatedStockTable(table, buildId) {
+
+    let params = {
+        build: buildId,
+        part_detail: true,
+        location_detail: true,
+        stock_detail: true,
+        supplier_detail: true,
+    };
+
+    let filters = loadTableFilters('buildorderallocatedstock', params);
+    setupFilterList(
+        'buildorderallocatedstock',
+        $(table),
+        null,
+        {
+            download: true,
+        }
+    );
+
+    $(table).inventreeTable({
+        url: '{% url "api-build-item-list" %}',
+        queryParams: filters,
+        original: params,
+        sortable: true,
+        search: true,
+        groupBy: false,
+        sidePagination: 'server',
+        formatNoMatches: function() {
+            return '{% trans "No allocated stock" %}';
+        },
+        columns: [
+            {
+                field: 'part',
+                sortable: true,
+                switchable: false,
+                title: '{% trans "Part" %}',
+                formatter: function(value, row) {
+                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
+                }
+            },
+            {
+                field: 'bom_reference',
+                sortable: true,
+                switchable: true,
+                title: '{% trans "Reference" %}',
+            },
+            {
+                field: 'quantity',
+                sortable: true,
+                switchable: false,
+                title: '{% trans "Allocated Quantity" %}',
+                formatter: function(value, row) {
+                    let stock_item = row.stock_item_detail;
+                    let text = value;
+
+                    if (stock_item.serial && stock_item.quantity == 1) {
+                        text = `# ${stock_item.serial}`;
+                    }
+
+                    return renderLink(text, `/stock/item/${stock_item.pk}/`);
+                }
+            },
+            {
+                field: 'location',
+                sortable: true,
+                title: '{% trans "Location" %}',
+                formatter: function(value, row) {
+                    if (row.location_detail) {
+                        return locationDetail(row, true);
+                    }
+                }
+            },
+            {
+                field: 'install_into',
+                sortable: true,
+                title: '{% trans "Build Output" %}',
+                formatter: function(value, row) {
+                    if (value) {
+                        return renderLink(`{% trans "Stock item" %}: ${value}`, `/stock/item/${value}/`);
+                    }
+                }
+            },
+            {
+                field: 'sku',
+                sortable: true,
+                title: '{% trans "Supplier Part" %}',
+                formatter: function(value, row) {
+                    if (row.supplier_part_detail) {
+                        let text = row.supplier_part_detail.SKU;
+
+                        return renderLink(text, `/supplier-part/${row.supplier_part_detail.pk}/`);
+                    }
+                }
+            }
+        ]
+    });
+}
 
 /**
  * Load a table showing all the BuildOrder allocations for a given part

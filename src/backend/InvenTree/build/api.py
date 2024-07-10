@@ -553,8 +553,10 @@ class BuildItemList(DataExportViewMixin, ListCreateAPI):
     - POST: Create a new BuildItem object
     """
 
+    queryset = BuildItem.objects.all()
     serializer_class = build.serializers.BuildItemSerializer
     filterset_class = BuildItemFilter
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     def get_serializer(self, *args, **kwargs):
         """Returns a BuildItemSerializer instance based on the request."""
@@ -571,7 +573,7 @@ class BuildItemList(DataExportViewMixin, ListCreateAPI):
 
     def get_queryset(self):
         """Override the queryset method, to allow filtering by stock_item.part."""
-        queryset = BuildItem.objects.all()
+        queryset = super().get_queryset()
 
         queryset = queryset.select_related(
             'build_line',
@@ -607,8 +609,25 @@ class BuildItemList(DataExportViewMixin, ListCreateAPI):
 
         return queryset
 
-    filter_backends = [
-        DjangoFilterBackend,
+    ordering_fields = [
+        'part',
+        'sku',
+        'quantity',
+        'location',
+        'reference',
+    ]
+
+    ordering_field_aliases = {
+        'part': 'stock_item__part__name',
+        'sku': 'stock_item__supplier_part__SKU',
+        'location': 'stock_item__location__name',
+        'reference': 'build_line__bom_item__reference',
+    }
+
+    search_fields = [
+        'stock_item__supplier_part__SKU',
+        'stock_item__part__name',
+        'build_line__bom_item__reference',
     ]
 
 
