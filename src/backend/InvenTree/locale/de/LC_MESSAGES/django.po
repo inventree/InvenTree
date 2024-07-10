@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-10 10:04+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-10 15:59\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -1210,10 +1210,8 @@ msgid "Part Name"
 msgstr "Name des Teils"
 
 #: build/serializers.py:102
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Projektcode"
+msgstr ""
 
 #: build/serializers.py:163 build/serializers.py:882
 #: templates/js/translated/build.js:1322
@@ -1524,16 +1522,12 @@ msgid "Part Description"
 msgstr "Beschreibung des Teils"
 
 #: build/serializers.py:1204
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Teil-Kategorie"
+msgstr ""
 
 #: build/serializers.py:1205
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Kategoriename"
+msgstr ""
 
 #: build/serializers.py:1211 common/models.py:1488 part/admin.py:113
 #: part/models.py:1069 templates/js/translated/table_filters.js:147
@@ -1543,10 +1537,8 @@ msgid "Trackable"
 msgstr "Nachverfolgbar"
 
 #: build/serializers.py:1212
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Inherited"
-msgstr "Wird vererbt"
+msgstr "Vererbt"
 
 #: build/serializers.py:1213 part/models.py:4210
 #: part/templates/part/upload_bom.html:56 templates/js/translated/bom.js:1046
@@ -1586,7 +1578,7 @@ msgstr "Verfügbarer Bestand"
 
 #: build/serializers.py:1245
 msgid "Available Substitute Stock"
-msgstr ""
+msgstr "Verfügbares Ersatzmaterial"
 
 #: build/serializers.py:1246
 msgid "Available Variant Stock"
@@ -4049,7 +4041,7 @@ msgstr "Ist dieses Unternehmen aktiv?"
 
 #: company/models.py:168
 msgid "Is customer"
-msgstr ""
+msgstr "Ist Kunde"
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
@@ -4057,7 +4049,7 @@ msgstr "Verkaufen Sie Teile an diese Firma?"
 
 #: company/models.py:174
 msgid "Is supplier"
-msgstr ""
+msgstr "Ist Zulieferer"
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
@@ -4065,7 +4057,7 @@ msgstr "Kaufen Sie Teile von dieser Firma?"
 
 #: company/models.py:180
 msgid "Is manufacturer"
-msgstr ""
+msgstr "Ist Hersteller"
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4227,7 +4219,7 @@ msgstr "Teilbeschreibung des Herstellers"
 
 #: company/models.py:569
 msgid "Manufacturer Part Parameter"
-msgstr ""
+msgstr "Teilenummer des Herstellers"
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4392,7 +4384,7 @@ msgstr "Standard-Währung für diesen Zulieferer"
 
 #: company/serializers.py:210
 msgid "Company Name"
-msgstr ""
+msgstr "Firmenname"
 
 #: company/serializers.py:386 part/admin.py:126 part/serializers.py:881
 #: part/templates/part/part_base.html:197
@@ -4854,15 +4846,15 @@ msgstr "Platziert"
 
 #: importer/mixins.py:263
 msgid "Invalid export format"
-msgstr ""
+msgstr "Ungültiges Exportformat"
 
 #: importer/models.py:56
 msgid "Timestamp"
-msgstr ""
+msgstr "Zeitstempel"
 
 #: importer/models.py:61
 msgid "Data file to import"
-msgstr ""
+msgstr "Zu importierende Datei"
 
 #: importer/models.py:70 templates/js/translated/tables.js:558
 msgid "Columns"
@@ -4870,11 +4862,11 @@ msgstr "Spalten"
 
 #: importer/models.py:81
 msgid "Import status"
-msgstr ""
+msgstr "Importstatus"
 
 #: importer/models.py:91
 msgid "Field Defaults"
-msgstr ""
+msgstr "Standardwerte"
 
 #: importer/models.py:201
 msgid "Some required fields have not been mapped"
@@ -4938,27 +4930,27 @@ msgstr "Gültig"
 
 #: importer/operations.py:28 importer/operations.py:49
 msgid "Unsupported data file format"
-msgstr ""
+msgstr "Dateiformat nicht unterstützt"
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
-msgstr ""
+msgstr "Fehler beim Öffnen der Datei"
 
 #: importer/operations.py:51
 msgid "Invalid data file dimensions"
-msgstr ""
+msgstr "Ungültige Dateigröße"
 
 #: importer/serializers.py:135
 msgid "Rows"
-msgstr ""
+msgstr "Zeilen"
 
 #: importer/serializers.py:136
 msgid "List of row IDs to accept"
-msgstr ""
+msgstr "Liste der zu akzeptierenden Zeilen IDs"
 
 #: importer/serializers.py:149
 msgid "No rows provided"
-msgstr ""
+msgstr "Keine Zeilen ausgewählt"
 
 #: importer/serializers.py:153
 msgid "Row does not belong to this session"
@@ -12237,10 +12229,8 @@ msgid "Trackable part"
 msgstr "Nachverfolgbares Teil"
 
 #: templates/js/translated/build.js:2548
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Gets Inherited"
-msgstr "Wird vererbt"
+msgstr ""
 
 #: templates/js/translated/build.js:2558
 msgid "Unit Quantity"
@@ -14834,3 +14824,4 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
+
