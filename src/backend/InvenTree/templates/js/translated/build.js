@@ -1059,8 +1059,52 @@ function loadBuildOrderAllocatedStockTable(table, buildId) {
                         return renderLink(text, `/supplier-part/${row.supplier_part_detail.pk}/`);
                     }
                 }
+            },
+            {
+                field: 'pk',
+                title: '{% trans "Actions" %}',
+                visible: true,
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+                    let buttons = '';
+
+                    buttons += makeEditButton('build-item-edit', row.pk, '{% trans "Edit build allocation" %}');
+                    buttons += makeDeleteButton('build-item-delete', row.pk, '{% trans "Delete build allocation" %}');
+
+                    return wrapButtons(buttons);
+                }
             }
         ]
+    });
+
+    // Add row callbacks
+    $(table).on('click', '.build-item-edit', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(
+            `/api/build/item/${pk}/`,
+            {
+                fields: {
+                    quantity: {},
+                },
+                title: '{% trans "Edit Build Allocation" %}',
+                refreshTable: table
+            }
+        );
+    });
+
+    $(table).on('click', '.build-item-delete', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(
+            `/api/build/item/${pk}/`,
+            {
+                method: 'DELETE',
+                title: '{% trans "Delete Build Allocation" %}',
+                refreshTable: table,
+            }
+        );
     });
 }
 
