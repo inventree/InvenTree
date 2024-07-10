@@ -113,6 +113,11 @@ export const ModelInformationDict: ModelDict = {
     cui_detail: '/build/line/:pk/',
     api_endpoint: ApiEndpoints.build_line_list
   },
+  builditem: {
+    label: t`Build Item`,
+    label_multiple: t`Build Items`,
+    api_endpoint: ApiEndpoints.build_item_list
+  },
   company: {
     label: t`Company`,
     label_multiple: t`Companies`,

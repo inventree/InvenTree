@@ -1069,6 +1069,7 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         'part_id',
         'part_name',
         'part_ipn',
+        'available_quantity',
     ]
 
     class Meta:
@@ -1099,6 +1100,7 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'part_id',
             'part_name',
             'part_ipn',
+            'available_quantity',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1145,7 +1147,8 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     build_detail = BuildSerializer(source='build_line.build', many=False, read_only=True)
     supplier_part_detail = company.serializers.SupplierPartSerializer(source='stock_item.supplier_part', many=False, read_only=True)
 
-    quantity = InvenTreeDecimalField()
+    quantity = InvenTreeDecimalField(label=_('Allocated Quantity'))
+    available_quantity = InvenTreeDecimalField(source='stock_item.quantity', read_only=True, label=_('Available Quantity'))
 
 
 class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
