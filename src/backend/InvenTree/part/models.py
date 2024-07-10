@@ -662,17 +662,6 @@ class Part(
             if match is None:
                 raise ValidationError(_(f'IPN must match regex pattern {pattern}'))
 
-        # Ensure unique across (Name, revision, IPN) (as specified)
-        if self.revision or self.IPN:
-            if (
-                Part.objects.exclude(pk=self.pk)
-                .filter(name=self.name, revision=self.revision, IPN=self.IPN)
-                .exists()
-            ):
-                raise ValidationError(
-                    _('Part with this Name, IPN and Revision already exists.')
-                )
-
     def validate_revision(self):
         """Check the 'revision' and 'revision_of' fields."""
         # Part cannot be a revision of itself
@@ -903,6 +892,17 @@ class Part(
                 .exists()
             ):
                 raise ValidationError(_('Duplicate part revision already exists.'))
+
+        # Ensure unique across (Name, revision, IPN) (as specified)
+        if self.revision or self.IPN:
+            if (
+                Part.objects.exclude(pk=self.pk)
+                .filter(name=self.name, revision=self.revision, IPN=self.IPN)
+                .exists()
+            ):
+                raise ValidationError(
+                    _('Part with this Name, IPN and Revision already exists.')
+                )
 
     def clean(self):
         """Perform cleaning operations for the Part model.
