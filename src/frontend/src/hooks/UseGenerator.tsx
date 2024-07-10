@@ -42,13 +42,15 @@ export function useGenerator(
           ...params
         }));
       }
+
+      queryGenerator.refetch();
     },
     []
   );
 
   // API query handler
   const queryGenerator = useQuery({
-    enabled: true,
+    enabled: false,
     queryKey: ['generator', key, endpoint, debouncedQuery],
     queryFn: async () => {
       return api.post(apiUrl(endpoint), debouncedQuery).then((response) => {

@@ -11,7 +11,7 @@ export default function Logged_In() {
 
   useEffect(() => {
     checkLoginState(navigate, location?.state?.redirectFrom);
-  }, []);
+  }, [navigate]);
 
   return (
     <>
