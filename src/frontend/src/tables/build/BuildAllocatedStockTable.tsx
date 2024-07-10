@@ -59,11 +59,16 @@ export default function BuildAllocatedStockTable({
         switchable: false
       },
       {
+        accessor: 'batch',
+        title: t`Batch Code`,
+        sortable: false,
+        switchable: true,
+        render: (record: any) => record?.stock_item_detail?.batch
+      },
+      {
         accessor: 'available',
         title: t`Available Quantity`,
-        render: (record: any) => {
-          return record?.stock_item_detail?.quantity;
-        }
+        render: (record: any) => record?.stock_item_detail?.quantity
       },
       LocationColumn({
         accessor: 'location_detail',
