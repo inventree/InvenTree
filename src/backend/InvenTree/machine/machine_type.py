@@ -280,6 +280,13 @@ class BaseMachineType(
 
         try:
             self.driver.update_machine(old_state, self)
+
+            # check if the active state has changed and initialize the machine if necessary
+            if old_state['active'] != self.active:
+                if self.initialized is False:
+                    self.initialize()
+                else:
+                    self.initialized = False
         except Exception as e:
             self.handle_error(e)
 
