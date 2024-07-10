@@ -135,7 +135,6 @@ export function fetchGlobalStates() {
   setApiDefaults();
 
   useServerApiState.getState().fetchServerApiState();
-  useUserState.getState().fetchUserState();
   useUserSettingsState.getState().fetchSettings();
   useGlobalSettingsState.getState().fetchSettings();
   useGlobalStatusState.getState().fetchStatus();
