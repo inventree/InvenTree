@@ -714,8 +714,6 @@ class StockItem(
                     self.delete_on_deplete = False
 
         except PartModels.Part.DoesNotExist:
-            # This gets thrown if self.supplier_part is null
-            # TODO - Find a test than can be performed...
             pass
 
         # Ensure that the item cannot be assigned to itself
