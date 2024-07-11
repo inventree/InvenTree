@@ -151,14 +151,15 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         # Render to a single HTML document
         html_data = self.wrap_pages(pages, **document_data)
 
-        if not self.in_debug_mode():
+        if self.in_debug_mode():
+            # In debug mode return with the raw HTML
+            output.output = ContentFile(html_data, 'labels.html')
+        else:
             # Render HTML to PDF
             html = weasyprint.HTML(string=html_data)
             document = html.render().write_pdf()
 
             output.output = ContentFile(document, 'labels.pdf')
-        else:
-            output.output = ContentFile(html_data, 'labels.html')
 
         output.progress = 100
         output.complete = True
