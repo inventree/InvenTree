@@ -1978,6 +1978,18 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         self.assertEqual(reference['required'], True)
         self.assertEqual(reference['type'], 'string')
 
+    def test_project_code(self):
+        """Test the 'project_code' serializer field."""
+        self.assignRole('return_order.add')
+        response = self.options(reverse('api-return-order-list'), expected_code=200)
+        project_code = response.data['actions']['POST']['project_code']
+
+        self.assertFalse(project_code['required'])
+        self.assertFalse(project_code['read_only'])
+        self.assertEqual(project_code['type'], 'related field')
+        self.assertEqual(project_code['label'], 'Project Code')
+        self.assertEqual(project_code['model'], 'projectcode')
+
     def test_list(self):
         """Tests for the list endpoint."""
         url = reverse('api-return-order-list')

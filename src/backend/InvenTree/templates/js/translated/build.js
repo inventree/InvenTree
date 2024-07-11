@@ -58,6 +58,7 @@
     duplicateBuildOrder,
     editBuildOrder,
     loadBuildLineTable,
+    loadBuildOrderAllocatedStockTable,
     loadBuildOrderAllocationTable,
     loadBuildOutputTable,
     loadBuildTable,
@@ -932,6 +933,180 @@ function deleteBuildOutputs(build_id, outputs, options={}) {
     });
 }
 
+
+/**
+ * Load a table showing all stock allocated to a given Build Order
+ */
+function loadBuildOrderAllocatedStockTable(table, buildId) {
+
+    let params = {
+        build: buildId,
+        part_detail: true,
+        location_detail: true,
+        stock_detail: true,
+        supplier_detail: true,
+    };
+
+    let filters = loadTableFilters('buildorderallocatedstock', params);
+    setupFilterList(
+        'buildorderallocatedstock',
+        $(table),
+        null,
+        {
+            download: true,
+            custom_actions: [{
+                label: 'actions',
+                actions: [{
+                    label: 'delete',
+                    title: '{% trans "Delete allocations" %}',
+                    icon: 'fa-trash-alt icon-red',
+                    permission: 'build.delete',
+                    callback: function(data) {
+                        constructForm('{% url "api-build-item-list" %}', {
+                            method: 'DELETE',
+                            multi_delete: true,
+                            title: '{% trans "Delete Stock Allocations" %}',
+                            form_data: {
+                                items: data.map(item => item.pk),
+                            },
+                            onSuccess: function() {
+                                $(table).bootstrapTable('refresh');
+                            }
+                        });
+                    }
+                }]
+            }]
+        }
+    );
+
+    $(table).inventreeTable({
+        url: '{% url "api-build-item-list" %}',
+        queryParams: filters,
+        original: params,
+        sortable: true,
+        search: true,
+        groupBy: false,
+        sidePagination: 'server',
+        formatNoMatches: function() {
+            return '{% trans "No allocated stock" %}';
+        },
+        columns: [
+            {
+                title: '',
+                visible: true,
+                checkbox: true,
+                switchable: false,
+            },
+            {
+                field: 'part',
+                sortable: true,
+                switchable: false,
+                title: '{% trans "Part" %}',
+                formatter: function(value, row) {
+                    return imageHoverIcon(row.part_detail.thumbnail) + renderLink(row.part_detail.full_name, `/part/${row.part_detail.pk}/`);
+                }
+            },
+            {
+                field: 'bom_reference',
+                sortable: true,
+                switchable: true,
+                title: '{% trans "Reference" %}',
+            },
+            {
+                field: 'quantity',
+                sortable: true,
+                switchable: false,
+                title: '{% trans "Allocated Quantity" %}',
+                formatter: function(value, row) {
+                    let stock_item = row.stock_item_detail;
+                    let text = value;
+
+                    if (stock_item.serial && stock_item.quantity == 1) {
+                        text = `# ${stock_item.serial}`;
+                    }
+
+                    return renderLink(text, `/stock/item/${stock_item.pk}/`);
+                }
+            },
+            {
+                field: 'location',
+                sortable: true,
+                title: '{% trans "Location" %}',
+                formatter: function(value, row) {
+                    if (row.location_detail) {
+                        return locationDetail(row, true);
+                    }
+                }
+            },
+            {
+                field: 'install_into',
+                sortable: true,
+                title: '{% trans "Build Output" %}',
+                formatter: function(value, row) {
+                    if (value) {
+                        return renderLink(`{% trans "Stock item" %}: ${value}`, `/stock/item/${value}/`);
+                    }
+                }
+            },
+            {
+                field: 'sku',
+                sortable: true,
+                title: '{% trans "Supplier Part" %}',
+                formatter: function(value, row) {
+                    if (row.supplier_part_detail) {
+                        let text = row.supplier_part_detail.SKU;
+
+                        return renderLink(text, `/supplier-part/${row.supplier_part_detail.pk}/`);
+                    }
+                }
+            },
+            {
+                field: 'pk',
+                title: '{% trans "Actions" %}',
+                visible: true,
+                switchable: false,
+                sortable: false,
+                formatter: function(value, row) {
+                    let buttons = '';
+
+                    buttons += makeEditButton('build-item-edit', row.pk, '{% trans "Edit build allocation" %}');
+                    buttons += makeDeleteButton('build-item-delete', row.pk, '{% trans "Delete build allocation" %}');
+
+                    return wrapButtons(buttons);
+                }
+            }
+        ]
+    });
+
+    // Add row callbacks
+    $(table).on('click', '.build-item-edit', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(
+            `/api/build/item/${pk}/`,
+            {
+                fields: {
+                    quantity: {},
+                },
+                title: '{% trans "Edit Build Allocation" %}',
+                refreshTable: table
+            }
+        );
+    });
+
+    $(table).on('click', '.build-item-delete', function() {
+        let pk = $(this).attr('pk');
+
+        constructForm(
+            `/api/build/item/${pk}/`,
+            {
+                method: 'DELETE',
+                title: '{% trans "Delete Build Allocation" %}',
+                refreshTable: table,
+            }
+        );
+    });
+}
 
 /**
  * Load a table showing all the BuildOrder allocations for a given part
@@ -2517,6 +2692,15 @@ function loadBuildLineTable(table, build_id, options={}) {
                 }
             },
             {
+                field: 'optional',
+                title: '{% trans "Optional" %}',
+                sortable: true,
+                switchable: true,
+                formatter: function(value, row) {
+                    return yesNoLabel(row.bom_item_detail.optional);
+                }
+            },
+            {
                 field: 'consumable',
                 title: '{% trans "Consumable" %}',
                 sortable: true,
@@ -2526,12 +2710,21 @@ function loadBuildLineTable(table, build_id, options={}) {
                 }
             },
             {
-                field: 'optional',
-                title: '{% trans "Optional" %}',
-                sortable: true,
+                field: 'allow_variants',
+                title: '{% trans "Allow Variants" %}',
+                sortable: false,
                 switchable: true,
                 formatter: function(value, row) {
-                    return yesNoLabel(row.bom_item_detail.optional);
+                    return yesNoLabel(row.bom_item_detail.allow_variants);
+                }
+            },
+            {
+                field: 'inherited',
+                title: '{% trans "Gets Inherited" %}',
+                sortable: false,
+                switchable: true,
+                formatter: function(value, row) {
+                    return yesNoLabel(row.bom_item_detail.inherited);
                 }
             },
             {

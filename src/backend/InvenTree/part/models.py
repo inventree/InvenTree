@@ -5,6 +5,7 @@ from __future__ import annotations
 import decimal
 import hashlib
 import logging
+import math
 import os
 import re
 from datetime import timedelta
@@ -3820,6 +3821,12 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
             except ValueError:
                 self.data_numeric = None
 
+        if self.data_numeric is not None and type(self.data_numeric) is float:
+            # Prevent out of range numbers, etc
+            # Ref: https://github.com/inventree/InvenTree/issues/7593
+            if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
+                self.data_numeric = None
+
     part = models.ForeignKey(
         Part,
         on_delete=models.CASCADE,
@@ -4101,16 +4108,16 @@ class BomItem(
         """
         # TODO: Perhaps control this with a global setting?
 
-        msg = _('BOM item cannot be modified - assembly is locked')
-
         if assembly.locked:
-            raise ValidationError(msg)
+            raise ValidationError(_('BOM item cannot be modified - assembly is locked'))
 
         # If this BOM item is inherited, check all variants of the assembly
         if self.inherited:
             for part in assembly.get_descendants(include_self=False):
                 if part.locked:
-                    raise ValidationError(msg)
+                    raise ValidationError(
+                        _('BOM item cannot be modified - variant assembly is locked')
+                    )
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'

@@ -1,5 +1,13 @@
 import { Trans, t } from '@lingui/macro';
-import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import {
+  Divider,
+  Paper,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  Title
+} from '@mantine/core';
 import {
   IconCoins,
   IconCpu,
@@ -200,6 +208,10 @@ export default function AdminCenter() {
       </SimpleGrid>
     </Stack>
   );
+
+  if (!user.isLoggedIn()) {
+    return <Skeleton />;
+  }
 
   return (
     <>

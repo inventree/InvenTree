@@ -23,7 +23,7 @@ import {
   IconVersions
 } from '@tabler/icons-react';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { api } from '../../App';

@@ -94,6 +94,12 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
           locales.push('en-us');
         }
 
+        let new_locales = locales.join(', ');
+
+        if (new_locales == api.defaults.headers.common['Accept-Language']) {
+          return;
+        }
+
         // Update default Accept-Language headers
         api.defaults.headers.common['Accept-Language'] = locales.join(', ');
 

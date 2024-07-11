@@ -65,6 +65,7 @@ export enum ApiEndpoints {
   build_output_scrap = 'build/:id/scrap-outputs/',
   build_output_delete = 'build/:id/delete-outputs/',
   build_line_list = 'build/line/',
+  build_item_list = 'build/item/',
 
   bom_list = 'bom/',
   bom_item_validate = 'bom/:id/validate/',
