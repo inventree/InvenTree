@@ -1773,7 +1773,7 @@ class StockItem(
                     price = convert_money(price, base_currency)
                     total_price += price * qty
                     quantity += qty
-                except:
+                except Exception:
                     # Skip this entry, cannot convert to base currency
                     continue
 
