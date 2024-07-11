@@ -90,6 +90,9 @@ class MatchItemForm(forms.Form):
 
         super().__init__(*args, **kwargs)
 
+        if not file_manager:  # pragma: no cover
+            return
+
         # Setup FileManager
         file_manager.setup()
 
