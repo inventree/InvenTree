@@ -400,10 +400,10 @@ export function DetailsTableField({
       >
         <InvenTreeIcon icon={field.icon ?? (field.name as InvenTreeIconType)} />
       </Table.Td>
-      <Table.Td style={{ maxWidth: '65%' }}>
+      <Table.Td style={{ maxWidth: '65%', lineBreak: 'auto' }}>
         <Text>{field.label}</Text>
       </Table.Td>
-      <Table.Td style={{}}>
+      <Table.Td style={{ lineBreak: 'anywhere' }}>
         <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
       <Table.Td style={{ width: '50' }}>
