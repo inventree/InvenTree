@@ -15,6 +15,7 @@ export enum ModelType {
   stockhistory = 'stockhistory',
   build = 'build',
   buildline = 'buildline',
+  builditem = 'builditem',
   company = 'company',
   purchaseorder = 'purchaseorder',
   purchaseorderline = 'purchaseorderline',

@@ -1,15 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 218
+INVENTREE_API_VERSION = 220
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-v218 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7585
+v220 - 2024-07-11 : https://github.com/inventree/InvenTree/pull/7585
     - Adds "revision_of" field to Part serializer
     - Adds new API filters for "revision" status
+
+v219 - 2024-07-11 : https://github.com/inventree/InvenTree/pull/7611
+    - Adds new fields to the BuildItem API endpoints
+    - Adds new ordering / filtering options to the BuildItem API endpoints
+
+v218 - 2024-07-11 : https://github.com/inventree/InvenTree/pull/7619
+    - Adds "can_build" field to the BomItem API
 
 v217 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7599
     - Fixes bug in "project_code" field for order API endpoints

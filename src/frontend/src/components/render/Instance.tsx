@@ -8,7 +8,7 @@ import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
-import { RenderBuildLine, RenderBuildOrder } from './Build';
+import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
   RenderAddress,
   RenderCompany,
@@ -60,6 +60,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.address]: RenderAddress,
   [ModelType.build]: RenderBuildOrder,
   [ModelType.buildline]: RenderBuildLine,
+  [ModelType.builditem]: RenderBuildItem,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
   [ModelType.manufacturerpart]: RenderManufacturerPart,

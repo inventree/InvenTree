@@ -1863,7 +1863,6 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     """
 
     filterset_class = BomFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     search_fields = [
@@ -1877,6 +1876,7 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     ]
 
     ordering_fields = [
+        'can_build',
         'quantity',
         'sub_part',
         'available_stock',

@@ -103,6 +103,11 @@ export function BomTable({
           );
         }
       },
+      {
+        accessor: 'sub_part_detail.IPN',
+        title: t`IPN`,
+        sortable: true
+      },
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
@@ -244,19 +249,38 @@ export function BomTable({
       {
         accessor: 'can_build',
         title: t`Can Build`,
-        sortable: false, // TODO: Custom sorting via API
+        sortable: true,
         render: (record: any) => {
+          if (record.can_build === null || record.can_build === undefined) {
+            return '-';
+          }
+
+          if (!isFinite(record.can_build) || isNaN(record.can_build)) {
+            return '-';
+          }
+
+          let can_build = Math.trunc(record.can_build);
+          let value = (
+            <Text
+              fs={record.consumable && 'italic'}
+              c={can_build <= 0 && !record.consumable ? 'red' : undefined}
+            >
+              {can_build}
+            </Text>
+          );
+
+          let extra = [];
+
           if (record.consumable) {
-            return (
-              <Text style={{ fontStyle: 'italic' }}>{t`Consumable item`}</Text>
+            extra.push(<Text key="consumable">{t`Consumable item`}</Text>);
+          } else if (can_build <= 0) {
+            extra.push(
+              <Text key="no-build" c="red">{t`No available stock`}</Text>
             );
           }
 
-          let can_build = availableStockQuantity(record) / record.quantity;
-          can_build = Math.trunc(can_build);
-
           return (
-            <Text c={can_build <= 0 ? 'red' : undefined}>{can_build}</Text>
+            <TableHoverCard value={value} extra={extra} title={t`Can Build`} />
           );
         }
       },

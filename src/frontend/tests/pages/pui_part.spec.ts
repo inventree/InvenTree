@@ -116,8 +116,6 @@ test('PUI - Pages - Part - Pricing (Variant)', async ({ page }) => {
 
   // Variant Pricing
   await page.getByRole('button', { name: 'Variant Pricing' }).click();
-  await page.waitForTimeout(500);
-  await page.getByRole('button', { name: 'Variant Part Not sorted' }).click();
 
   // Variant Pricing - linkjumping
   let target = page.getByText('Green Chair').first();

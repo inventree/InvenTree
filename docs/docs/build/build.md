@@ -26,14 +26,6 @@ To navigate to the Build Order display, select *Build* from the main navigation 
 {% include "img.html" %}
 {% endwith %}
 
-#### Tree View
-
-*Tree View* also provides a tabulated view of Build Orders. Orders are displayed in a hierarchical manner, showing any parent / child relationships between different build orders.
-
-{% with id="build_tree", url="build/build_tree.png", description="Build Tree" %}
-{% include "img.html" %}
-{% endwith %}
-
 #### Calendar View
 
 *Calendar View* shows a calendar display with upcoming build orders, based on the various dates specified for each build.
@@ -121,9 +113,9 @@ The *Build Details* tab provides an overview of the Build Order:
 {% include "img.html" %}
 {% endwith %}
 
-### Allocate Stock
+### Line Items
 
-The *Allocate Stock* tab provides an interface to allocate required stock (as specified by the BOM) to the build:
+The *Line Items* tab provides an interface to allocate required stock (as specified by the BOM) to the build:
 
 {% with id="build_allocate", url="build/build_allocate.png", description="Allocation tab" %}
 {% include "img.html" %}
@@ -131,8 +123,13 @@ The *Allocate Stock* tab provides an interface to allocate required stock (as sp
 
 The allocation table (as shown above) shows the stock allocation progress for this build. In the example above, there are two BOM lines, which have been partially allocated.
 
-!!! info "Completed Builds"
-	The *Allocate Stock* tab is not available if the build has been completed!
+### Allocated Stock
+
+The *Allocated Stock* tab displays all stock items which have been *allocated* to this build order. These stock items are reserved for this build, and will be consumed when the build is completed:
+
+{% with id="allocated_stock_table", url="build/allocated_stock_table.png", description="Allocated Stock Table" %}
+{% include "img.html" %}
+{% endwith %}
 
 ### Consumed Stock
 
