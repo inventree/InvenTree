@@ -97,7 +97,7 @@ export function usePartFields({
 /**
  * Construct a set of fields for creating / editing a PartCategory instance
  */
-export function partCategoryFields(): ApiFormFieldSet {
+export function partCategoryFields({}: {}): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {
     parent: {
       description: t`Parent part category`,
