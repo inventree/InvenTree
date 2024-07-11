@@ -253,9 +253,9 @@ distlib==0.3.8 \
     --hash=sha256:034db59a0b96f8ca18035f36290806a9a6e6bd9d1ff91e45a7f172eb17e51784 \
     --hash=sha256:1530ea13e350031b6312d8580ddb6b27a104275a31106523b8f123787f494f64
     # via virtualenv
-django==4.2.12 \
-    --hash=sha256:6a6b4aff8a2db2dc7dcc5650cb2c7a7a0d1eb38e2aa2335fdf001e41801e9797 \
-    --hash=sha256:7640e86835d44ae118c2916a803d8081f40e214ee18a5a92a0202994ca60a4b4
+django==4.2.14 \
+    --hash=sha256:3ec32bc2c616ab02834b9cac93143a7dc1cdcd5b822d78ac95fc20a38c534240 \
+    --hash=sha256:fc6919875a6226c7ffcae1a7d51e0f2ceaf6f160393180818f6c95f51b1e7b96
     # via
     #   django-admin-shell
     #   django-slowtests
