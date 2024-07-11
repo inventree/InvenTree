@@ -82,6 +82,8 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         if self.debug is None:
             self.debug = str2bool(self.get_setting('DEBUG'))
 
+        return self.debug
+
     def print_labels(
         self, label: LabelTemplate, output: LabelOutput, items: list, request, **kwargs
     ):
@@ -149,7 +151,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         # Render to a single HTML document
         html_data = self.wrap_pages(pages, **document_data)
 
-        if self.in_debug_mode():
+        if not self.in_debug_mode():
             # Render HTML to PDF
             html = weasyprint.HTML(string=html_data)
             document = html.render().write_pdf()
