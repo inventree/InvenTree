@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 217
+INVENTREE_API_VERSION = 218
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v218 - 2024-07-11 : https://github.com/inventree/InvenTree/pull/7619
+    - Adds "can_build" field to the BomItem API
+
 v217 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7599
     - Fixes bug in "project_code" field for order API endpoints
 
