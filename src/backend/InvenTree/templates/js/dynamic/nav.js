@@ -162,10 +162,8 @@ function enableSidebar(label, options={}) {
 function generateTreeStructure(data, options) {
     const nodes = {};
     const roots = [];
-    let node = null;
 
-    for (var i = 0; i < data.length; i++) {
-        node = data[i];
+    for (let node of data) {
         nodes[node.pk] = node;
         node.selectable = false;
 
@@ -179,9 +177,7 @@ function generateTreeStructure(data, options) {
         }
     }
 
-    for (var i = 0; i < data.length; i++) {
-        node = data[i];
-
+    for (let node of data) {
         if (node.parent != null) {
             if (nodes[node.parent].nodes) {
                 nodes[node.parent].nodes.push(node);
