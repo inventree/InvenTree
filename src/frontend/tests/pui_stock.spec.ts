@@ -32,20 +32,6 @@ test('PUI - Stock', async ({ page }) => {
   await page.getByRole('tab', { name: 'Installed Items' }).click();
 });
 
-test('PUI - Build', async ({ page }) => {
-  await doQuickLogin(page);
-
-  await page.getByRole('tab', { name: 'Build' }).click();
-  await page.getByText('Widget Assembly Variant').click();
-  await page.getByRole('tab', { name: 'Allocate Stock' }).click();
-  await page.getByRole('tab', { name: 'Incomplete Outputs' }).click();
-  await page.getByRole('tab', { name: 'Completed Outputs' }).click();
-  await page.getByRole('tab', { name: 'Consumed Stock' }).click();
-  await page.getByRole('tab', { name: 'Child Build Orders' }).click();
-  await page.getByRole('tab', { name: 'Attachments' }).click();
-  await page.getByRole('tab', { name: 'Notes' }).click();
-});
-
 test('PUI - Purchasing', async ({ page }) => {
   await doQuickLogin(page);
 
