@@ -21,7 +21,8 @@ import {
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
-import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { PanelType } from '../../components/nav/Panel';
+import { PanelGroup } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -32,6 +33,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
@@ -261,6 +263,15 @@ export default function CategoryDetail({}: {}) {
     ],
     [category, id]
   );
+
+  const pluginPanels = usePluginPanels({
+    targetModel: ModelType.partcategory,
+    targetId: id
+  });
+
+  const panels: PanelType[] = useMemo(() => {
+    return [...categoryPanels, ...pluginPanels.panels];
+  }, [categoryPanels, pluginPanels]);
 
   const breadcrumbs = useMemo(
     () => [

@@ -9,6 +9,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
 from rest_framework import permissions, status
 from rest_framework.exceptions import NotFound
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -410,6 +411,67 @@ class RegistryStatusView(APIView):
         return Response(result)
 
 
+class PluginPanelList(APIView):
+    """API endpoint for listing all available plugin panels."""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = PluginSerializers.PluginPanelSerializer
+
+    @extend_schema(responses={200: PluginSerializers.PluginPanelSerializer(many=True)})
+    def get(self, request):
+        """Show available plugin panels."""
+        panels = []
+
+        # Extract all plugins from the registry which provide custom panels
+        for _plugin in registry.with_mixin('panel', active=True):
+            # TODO: Allow plugins to fill this data out
+            ...
+
+        user = request.user
+        target_model = request.query_params.get('target_model', None)
+        target_id = request.query_params.get('target_id', None)
+
+        if target_model == 'part' and target_id:
+            panels = [
+                *panels,
+                {
+                    'plugin': 'myplugin',
+                    'name': 'test-plugin',
+                    'label': 'My Plugin',
+                    'icon': 'part',
+                    'content': '<div>hello world</div>',
+                },
+                {
+                    'plugin': 'myplugin',
+                    'name': 'test-plugin-2',
+                    'label': 'My Plugin 2',
+                    'icon': 'email',
+                    'content': '<div>hello world 2</div>',
+                },
+                {
+                    'plugin': 'myplugin',
+                    'name': 'test-plugin-3',
+                    'label': 'My Plugin 3',
+                    'icon': 'website',
+                    'content': '<div>hello world 3</div>',
+                },
+            ]
+
+        if target_model == 'partcategory':
+            panels = [
+                *panels,
+                {
+                    'plugin': 'cat',
+                    'name': 'demo-cat',
+                    'label': 'Custom Category',
+                    'icon': 'customer',
+                    'content': 'This should only appear for a category',
+                },
+            ]
+
+        return Response(PluginSerializers.PluginPanelSerializer(panels, many=True).data)
+
+
 plugin_api_urls = [
     path('action/', ActionPluginView.as_view(), name='api-action-plugin'),
     path('barcode/', include(barcode_api_urls)),
@@ -417,6 +479,12 @@ plugin_api_urls = [
     path(
         'plugins/',
         include([
+            path(
+                'panels/',
+                include([
+                    path('', PluginPanelList.as_view(), name='api-plugin-panel-list')
+                ]),
+            ),
             # Plugin management
             path('reload/', PluginReload.as_view(), name='api-plugin-reload'),
             path('install/', PluginInstall.as_view(), name='api-plugin-install'),
