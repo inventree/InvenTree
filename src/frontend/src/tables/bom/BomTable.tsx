@@ -101,6 +101,11 @@ export function BomTable({
           );
         }
       },
+      {
+        accessor: 'sub_part_detail.IPN',
+        title: t`IPN`,
+        sortable: true
+      },
       DescriptionColumn({
         accessor: 'sub_part_detail.description'
       }),
