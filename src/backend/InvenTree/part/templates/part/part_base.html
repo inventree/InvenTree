@@ -271,6 +271,15 @@
             </tr>
             {% endif %}
             {% settings_value "PART_ENABLE_REVISION" as show_revision %}
+            {% if show_revision and part.revision_of %}
+            <tr>
+                <td><span class='fas fa-sitemap'></span></td>
+                <td>{% trans "Revision Of" %}</td>
+                <td>
+                    <a href='{% url "part-detail" part.revision_of.pk %}'>{{ part.revision_of.full_name }}</a>
+                </td>
+            </tr>
+            {% endif %}
             {% if show_revision and part.revision %}
             <tr>
                 <td><span class='fas fa-code-branch'></span></td>

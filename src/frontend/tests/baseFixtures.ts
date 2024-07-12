@@ -67,8 +67,9 @@ export const test = baseTest.extend({
         url != 'http://localhost:8000/api/user/me/' &&
         url != 'http://localhost:8000/api/user/token/' &&
         url != 'http://localhost:8000/api/barcode/' &&
-        url != 'http://localhost:8000/api/news/?search=&offset=0&limit=25' &&
         url != 'https://docs.inventree.org/en/versions.json' &&
+        !url.startsWith('http://localhost:8000/api/news/') &&
+        !url.startsWith('http://localhost:8000/api/notifications/') &&
         !url.startsWith('chrome://') &&
         url.indexOf('99999') < 0
       )

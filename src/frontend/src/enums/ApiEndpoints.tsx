@@ -69,6 +69,7 @@ export enum ApiEndpoints {
 
   bom_list = 'bom/',
   bom_item_validate = 'bom/:id/validate/',
+  bom_validate = 'part/:id/bom-validate/',
 
   // Part API endpoints
   part_list = 'part/',
