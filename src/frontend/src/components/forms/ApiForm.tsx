@@ -417,7 +417,7 @@ export function ApiForm({
     return api({
       method: method,
       url: url,
-      data: dataForm,
+      data: hasFiles ? dataForm : data,
       timeout: props.timeout,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'

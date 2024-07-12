@@ -1,26 +1,22 @@
 import { t } from '@lingui/macro';
 import {
-  ActionIcon,
   Divider,
   Drawer,
   Group,
   LoadingOverlay,
   Paper,
+  Space,
   Stack,
   Stepper,
-  Text,
-  Tooltip
+  Text
 } from '@mantine/core';
-import { IconCircleX } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { ReactNode, useMemo } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
 import {
   ImportSessionStatus,
   useImportSession
 } from '../../hooks/UseImportSession';
 import { StylishText } from '../items/StylishText';
-import { StatusRenderer } from '../render/StatusRenderer';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
 import ImporterImportProgress from './ImporterImportProgress';
@@ -39,10 +35,12 @@ function ImportDrawerStepper({ currentStep }: { currentStep: number }) {
       active={currentStep}
       onStepClick={undefined}
       allowNextStepsSelect={false}
+      iconSize={20}
       size="xs"
     >
-      <Stepper.Step label={t`Import Data`} />
+      <Stepper.Step label={t`Upload File`} />
       <Stepper.Step label={t`Map Columns`} />
+      <Stepper.Step label={t`Import Data`} />
       <Stepper.Step label={t`Process Data`} />
       <Stepper.Step label={t`Complete Import`} />
     </Stepper>
@@ -59,6 +57,25 @@ export default function ImporterDrawer({
   onClose: () => void;
 }) {
   const session = useImportSession({ sessionId: sessionId });
+
+  // Map from import steps to stepper steps
+  const currentStep = useMemo(() => {
+    switch (session.status) {
+      default:
+      case ImportSessionStatus.INITIAL:
+        return 0;
+      case ImportSessionStatus.MAPPING:
+        return 1;
+      case ImportSessionStatus.IMPORTING:
+        return 2;
+      case ImportSessionStatus.PROCESSING:
+        return 3;
+      case ImportSessionStatus.COMPLETE:
+        return 4;
+    }
+  }, [session.status]);
+
+  // const importComplete
 
   const widget = useMemo(() => {
     switch (session.status) {
@@ -90,15 +107,8 @@ export default function ImporterDrawer({
           <StylishText>
             {session.sessionData?.statusText ?? t`Importing Data`}
           </StylishText>
-          {StatusRenderer({
-            status: session.status,
-            type: ModelType.importsession
-          })}
-          <Tooltip label={t`Cancel import session`}>
-            <ActionIcon color="red" variant="transparent" onClick={onClose}>
-              <IconCircleX />
-            </ActionIcon>
-          </Tooltip>
+          <ImportDrawerStepper currentStep={currentStep} />
+          <Space />
         </Group>
         <Divider />
       </Stack>
@@ -112,7 +122,7 @@ export default function ImporterDrawer({
       title={title}
       opened={opened}
       onClose={onClose}
-      withCloseButton={false}
+      withCloseButton={true}
       closeOnEscape={false}
       closeOnClickOutside={false}
       styles={{
