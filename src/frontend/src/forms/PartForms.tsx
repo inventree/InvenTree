@@ -3,6 +3,7 @@ import { IconPackages } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 
 import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**
  * Construct a set of fields for creating / editing a Part instance
@@ -21,9 +22,19 @@ export function usePartFields({
       },
       name: {},
       IPN: {},
-      revision: {},
       description: {},
-      variant_of: {},
+      revision: {},
+      revision_of: {
+        filters: {
+          is_revision: false,
+          is_template: false
+        }
+      },
+      variant_of: {
+        filters: {
+          is_template: true
+        }
+      },
       keywords: {},
       units: {},
       link: {},
@@ -82,13 +93,22 @@ export function usePartFields({
       };
     }
 
-    // TODO: pop 'expiry' field if expiry not enabled
-    delete fields['default_expiry'];
+    const settings = useGlobalSettingsState.getState();
 
-    // TODO: pop 'revision' field if PART_ENABLE_REVISION is False
-    delete fields['revision'];
+    if (settings.isSet('PART_REVISION_ASSEMBLY_ONLY')) {
+      fields.revision_of.filters['assembly'] = true;
+    }
 
-    // TODO: handle part duplications
+    // Pop 'revision' field if PART_ENABLE_REVISION is False
+    if (!settings.isSet('PART_ENABLE_REVISION')) {
+      delete fields['revision'];
+      delete fields['revision_of'];
+    }
+
+    // Pop 'expiry' field if expiry not enabled
+    if (!settings.isSet('STOCK_ENABLE_EXPIRY')) {
+      delete fields['default_expiry'];
+    }
 
     return fields;
   }, [create]);

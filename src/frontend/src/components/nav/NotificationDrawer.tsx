@@ -53,8 +53,7 @@ export function NotificationDrawer({
         .catch((error) => {
           return error;
         }),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false
+    refetchOnMount: false
   });
 
   const hasNotifications: boolean = useMemo(() => {

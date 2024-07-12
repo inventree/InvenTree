@@ -389,6 +389,83 @@ class PartTest(TestCase):
 
         part.delete()
 
+    def test_revisions(self):
+        """Test the 'revision' and 'revision_of' field."""
+        template = Part.objects.create(
+            name='Template part', description='A template part', is_template=True
+        )
+
+        # Create a new part
+        part = Part.objects.create(
+            name='Master Part',
+            description='Master part (will have revisions)',
+            variant_of=template,
+        )
+
+        self.assertEqual(part.revisions.count(), 0)
+
+        # Try to set as revision of itself
+        with self.assertRaises(ValidationError) as exc:
+            part.revision_of = part
+            part.save()
+
+        self.assertIn('Part cannot be a revision of itself', str(exc.exception))
+
+        part.refresh_from_db()
+
+        rev_a = Part.objects.create(
+            name='Master Part', description='Master part (revision A)'
+        )
+
+        with self.assertRaises(ValidationError) as exc:
+            print('rev a:', rev_a.revision_of, part.revision_of)
+            rev_a.revision_of = part
+            rev_a.save()
+
+        self.assertIn('Revision code must be specified', str(exc.exception))
+
+        with self.assertRaises(ValidationError) as exc:
+            rev_a.revision_of = template
+            rev_a.revision = 'A'
+            rev_a.save()
+
+        self.assertIn('Cannot make a revision of a template part', str(exc.exception))
+
+        with self.assertRaises(ValidationError) as exc:
+            rev_a.revision_of = part
+            rev_a.revision = 'A'
+            rev_a.save()
+
+        self.assertIn('Parent part must point to the same template', str(exc.exception))
+
+        rev_a.variant_of = template
+        rev_a.revision_of = part
+        rev_a.revision = 'A'
+        rev_a.save()
+
+        self.assertEqual(part.revisions.count(), 1)
+
+        rev_b = Part.objects.create(
+            name='Master Part', description='Master part (revision B)'
+        )
+
+        with self.assertRaises(ValidationError) as exc:
+            rev_b.revision_of = rev_a
+            rev_b.revision = 'B'
+            rev_b.save()
+
+        self.assertIn(
+            'Cannot make a revision of a part which is already a revision',
+            str(exc.exception),
+        )
+
+        rev_b.variant_of = template
+        rev_b.revision_of = part
+        rev_b.revision = 'B'
+        rev_b.save()
+
+        self.assertEqual(part.revisions.count(), 2)
+
 
 class TestTemplateTest(TestCase):
     """Unit test for the TestTemplate class."""

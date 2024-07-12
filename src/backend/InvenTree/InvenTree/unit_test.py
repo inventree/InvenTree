@@ -84,6 +84,9 @@ def getNewestMigrationFile(app, exclude_extension=True):
             newest_num = num
             newest_file = f
 
+    if not newest_file:  # pragma: no cover
+        return newest_file
+
     if exclude_extension:
         newest_file = newest_file.replace('.py', '')
 
