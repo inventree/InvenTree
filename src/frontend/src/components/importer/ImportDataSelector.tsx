@@ -178,6 +178,8 @@ export default function ImporterDataSelector({
           table.clearSelectedRecords();
           notifications.hide('importing-rows');
           table.refreshTable();
+
+          session.refreshSession();
         });
     },
     [session.sessionId, table.refreshTable]

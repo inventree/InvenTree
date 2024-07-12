@@ -196,4 +196,7 @@ class DataImportAcceptRowSerializer(serializers.Serializer):
         for row in rows:
             row.validate(commit=True)
 
+        if session := self.context.get('session', None):
+            session.check_complete()
+
         return rows

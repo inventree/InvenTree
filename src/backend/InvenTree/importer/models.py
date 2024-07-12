@@ -286,6 +286,18 @@ class DataImportSession(models.Model):
         self.status = DataImportStatusCode.PROCESSING.value
         self.save()
 
+    def check_complete(self) -> bool:
+        """Check if the import session is complete."""
+        if self.completed_row_count < self.row_count:
+            return False
+
+        # Update the status of this session
+        if self.status != DataImportStatusCode.COMPLETE.value:
+            self.status = DataImportStatusCode.COMPLETE.value
+            self.save()
+
+        return True
+
     @property
     def row_count(self):
         """Return the number of rows in the import session."""
@@ -629,6 +641,8 @@ class DataImportRow(models.Model):
                     serializer.save()
                     self.complete = True
                     self.save()
+
+                    self.session.check_complete()
 
                 except Exception as e:
                     self.errors = {'non_field_errors': str(e)}
