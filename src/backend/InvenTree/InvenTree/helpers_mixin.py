@@ -2,8 +2,10 @@
 
 import inspect
 from pathlib import Path
+from typing import Any, Callable
 
 from django.conf import settings
+from django.core.cache import cache
 
 from plugin import registry as plg_registry
 
@@ -104,3 +106,37 @@ class ClassProviderMixin:
         except ValueError:
             # Path(...).relative_to throws an ValueError if its not relative to the InvenTree source base dir
             return False
+
+
+def get_shared_class_instance_state_mixin(get_state_key: Callable[[type], str]):
+    """Get a mixin class that provides shared state for classes across the main application and worker.
+
+    Arguments:
+        get_state_key: A function that returns the key for the shared state when given a class instance.
+    """
+
+    class SharedClassStateMixinClass:
+        """Mixin to provide shared state for classes across the main application and worker."""
+
+        def set_shared_state(self, key: str, value: Any):
+            """Set a shared state value for this machine.
+
+            Arguments:
+                key: The key for the shared state
+                value: The value to set
+            """
+            cache.set(self._get_key(key), value, timeout=None)
+
+        def get_shared_state(self, key: str, default=None):
+            """Get a shared state value for this machine.
+
+            Arguments:
+                key: The key for the shared state
+            """
+            return cache.get(self._get_key(key)) or default
+
+        def _get_key(self, key: str):
+            """Get the key for this class instance."""
+            return f'{get_state_key(self)}:{key}'
+
+    return SharedClassStateMixinClass
