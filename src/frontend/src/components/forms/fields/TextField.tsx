@@ -2,13 +2,7 @@ import { TextInput } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import { useCallback, useEffect, useId, useState } from 'react';
-import {
-  FieldValues,
-  UseControllerReturn,
-  useFormContext
-} from 'react-hook-form';
-
-import { ApiFormFieldType } from './ApiFormField';
+import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 /*
  * Custom implementation of the mantine <TextInput> component,

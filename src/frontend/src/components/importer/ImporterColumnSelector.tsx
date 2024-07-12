@@ -14,6 +14,8 @@ import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ImportSessionState } from '../../hooks/UseImportSession';
 import { apiUrl } from '../../states/ApiState';
+import { StandaloneField } from '../forms/StandaloneField';
+import { ApiFormFieldType } from '../forms/fields/ApiFormField';
 
 function ImporterColumn({ column, options }: { column: any; options: any[] }) {
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -63,6 +65,56 @@ function ImporterColumn({ column, options }: { column: any; options: any[] }) {
   );
 }
 
+function ImporterDefaultField({
+  fieldName,
+  session
+}: {
+  fieldName: string;
+  session: ImportSessionState;
+}) {
+  const onChange = useCallback(
+    (value: any) => {
+      // Update the default value for the field
+      let defaults = {
+        ...session.fieldDefaults,
+        [fieldName]: value
+      };
+
+      api
+        .patch(apiUrl(ApiEndpoints.import_session_list, session.sessionId), {
+          field_defaults: defaults
+        })
+        .then((response: any) => {
+          session.setSessionData(response.data);
+        })
+        .catch(() => {
+          // TODO: Error message?
+        });
+    },
+    [fieldName, session, session.fieldDefaults]
+  );
+
+  const fieldDef: ApiFormFieldType = useMemo(() => {
+    let def: any = session.availableFields[fieldName];
+
+    if (def) {
+      def = {
+        ...def,
+        value: session.fieldDefaults[fieldName],
+        field_type: def.type,
+        description: def.help_text,
+        onValueChange: onChange
+      };
+    }
+
+    return def;
+  }, [fieldName, session.availableFields, session.fieldDefaults]);
+
+  return (
+    fieldDef && <StandaloneField fieldDefinition={fieldDef} hideLabels={true} />
+  );
+}
+
 function ImporterColumnTableRow({
   session,
   column,
@@ -92,7 +144,9 @@ function ImporterColumnTableRow({
       <Table.Td>
         <ImporterColumn column={column} options={options} />
       </Table.Td>
-      <Table.Td>default value</Table.Td>
+      <Table.Td>
+        <ImporterDefaultField fieldName={column.field} session={session} />
+      </Table.Td>
     </Table.Tr>
   );
 }

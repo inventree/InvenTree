@@ -21,6 +21,7 @@ export enum ImportSessionStatus {
 export type ImportSessionState = {
   sessionId: number;
   sessionData: any;
+  setSessionData: (data: any) => void;
   refreshSession: () => void;
   sessionQuery: any;
   status: ImportSessionStatus;
@@ -28,6 +29,8 @@ export type ImportSessionState = {
   availableColumns: string[];
   mappedFields: any[];
   columnMappings: any[];
+  fieldDefaults: any;
+  fieldOverrides: any;
 };
 
 export function useImportSession({
@@ -38,6 +41,7 @@ export function useImportSession({
   // Query manager for the import session
   const {
     instance: sessionData,
+    setInstance,
     refreshInstance: refreshSession,
     instanceQuery: sessionQuery
   } = useInstance({
@@ -45,6 +49,12 @@ export function useImportSession({
     pk: sessionId,
     defaultValue: {}
   });
+
+  const setSessionData = useCallback((data: any) => {
+    console.log('setting session data:');
+    console.log(data);
+    setInstance(data);
+  }, []);
 
   // Current step of the import process
   const status: ImportSessionStatus = useMemo(() => {
@@ -93,8 +103,17 @@ export function useImportSession({
     );
   }, [sessionData]);
 
+  const fieldDefaults: any = useMemo(() => {
+    return sessionData?.field_defaults ?? {};
+  }, [sessionData]);
+
+  const fieldOverrides: any = useMemo(() => {
+    return sessionData?.field_overrides ?? {};
+  }, [sessionData]);
+
   return {
     sessionData,
+    setSessionData,
     sessionId,
     refreshSession,
     sessionQuery,
@@ -102,6 +121,8 @@ export function useImportSession({
     availableFields,
     availableColumns,
     columnMappings,
-    mappedFields
+    mappedFields,
+    fieldDefaults,
+    fieldOverrides
   };
 }
