@@ -1,5 +1,7 @@
 """JSON serializers for Build API."""
 
+from decimal import Decimal
+
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
@@ -209,7 +211,7 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
-        min_value=0,
+        min_value=Decimal(0),
         required=True,
         label=_('Quantity'),
         help_text=_('Enter quantity for build output'),
@@ -256,7 +258,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
-        min_value=0,
+        min_value=Decimal(0),
         required=True,
         label=_('Quantity'),
         help_text=_('Enter quantity for build output'),
@@ -864,7 +866,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
-        min_value=0,
+        min_value=Decimal(0),
         required=True
     )
 
