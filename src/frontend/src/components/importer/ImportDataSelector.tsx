@@ -403,7 +403,10 @@ export default function ImporterDataSelector({
             enableColumnSwitching: true,
             enableColumnCaching: false,
             enableSelection: true,
-            enableBulkDelete: true
+            enableBulkDelete: true,
+            afterBulkDelete: () => {
+              session.refreshSession();
+            }
           }}
         />
       </Stack>
