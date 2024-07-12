@@ -21,6 +21,7 @@ import { DependentField } from './DependentField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
+import TextField from './TextField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
 
@@ -223,21 +224,11 @@ export function ApiFormField({
       case 'url':
       case 'string':
         return (
-          <TextInput
-            {...reducedDefinition}
-            ref={field.ref}
-            id={fieldId}
-            aria-label={`text-field-${field.name}`}
-            type={definition.field_type}
-            value={value || ''}
-            error={error?.message}
-            radius="sm"
-            onChange={(event) => onChange(event.currentTarget.value)}
-            rightSection={
-              value && !definition.required ? (
-                <IconX size="1rem" color="red" onClick={() => onChange('')} />
-              ) : null
-            }
+          <TextField
+            definition={reducedDefinition}
+            controller={controller}
+            fieldName={fieldName}
+            onChange={onChange}
           />
         );
       case 'boolean':
