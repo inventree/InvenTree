@@ -2,11 +2,10 @@ import { t } from '@lingui/macro';
 import {
   Alert,
   Button,
-  Divider,
   Group,
   Select,
-  SimpleGrid,
   Stack,
+  Table,
   Text
 } from '@mantine/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -54,12 +53,47 @@ function ImporterColumn({ column, options }: { column: any; options: any[] }) {
     <Select
       error={errorMessage}
       clearable
+      searchable
       placeholder={t`Select column, or leave blank to ignore this field.`}
       label={undefined}
       data={options}
       value={selectedColumn}
       onChange={onChange}
     />
+  );
+}
+
+function ImporterColumnTableRow({
+  session,
+  column,
+  options
+}: {
+  session: ImportSessionState;
+  column: any;
+  options: any;
+}) {
+  return (
+    <Table.Tr key={column.label ?? column.field}>
+      <Table.Td>
+        <Group gap="xs">
+          <Text fw={column.required ? 700 : undefined}>
+            {column.label ?? column.field}
+          </Text>
+          {column.required && (
+            <Text c="red" fw={700}>
+              *
+            </Text>
+          )}
+        </Group>
+      </Table.Td>
+      <Table.Td>
+        <Text size="sm">{column.description}</Text>
+      </Table.Td>
+      <Table.Td>
+        <ImporterColumn column={column} options={options} />
+      </Table.Td>
+      <Table.Td>default value</Table.Td>
+    </Table.Tr>
   );
 }
 
@@ -88,7 +122,7 @@ export default function ImporterColumnSelector({
 
   const columnOptions: any[] = useMemo(() => {
     return [
-      { value: '', label: t`Select a column from the data file` },
+      { value: '', label: t`Ignore this field` },
       ...session.availableColumns.map((column: any) => {
         return {
           value: column,
@@ -113,32 +147,27 @@ export default function ImporterColumnSelector({
           <Text>{errorMessage}</Text>
         </Alert>
       )}
-      <SimpleGrid cols={3} spacing="xs">
-        <Text fw={700}>{t`Database Field`}</Text>
-        <Text fw={700}>{t`Field Description`}</Text>
-        <Text fw={700}>{t`Imported Column Name`}</Text>
-        <Divider />
-        <Divider />
-        <Divider />
-        {session.columnMappings.map((column: any) => {
-          return [
-            <Group gap="xs">
-              <Text fw={column.required ? 700 : undefined}>
-                {column.label ?? column.field}
-              </Text>
-              {column.required && (
-                <Text c="red" fw={700}>
-                  *
-                </Text>
-              )}
-            </Group>,
-            <Text size="sm" fs="italic">
-              {column.description}
-            </Text>,
-            <ImporterColumn column={column} options={columnOptions} />
-          ];
-        })}
-      </SimpleGrid>
+      <Table>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>{t`Database Field`}</Table.Th>
+            <Table.Th>{t`Field Description`}</Table.Th>
+            <Table.Th>{t`Imported Column`}</Table.Th>
+            <Table.Th>{t`Default Value`}</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>
+          {session.columnMappings.map((column: any) => {
+            return (
+              <ImporterColumnTableRow
+                session={session}
+                column={column}
+                options={columnOptions}
+              />
+            );
+          })}
+        </Table.Tbody>
+      </Table>
     </Stack>
   );
 }
