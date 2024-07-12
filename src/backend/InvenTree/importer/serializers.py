@@ -1,5 +1,7 @@
 """API serializers for the importer app."""
 
+import json
+
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
@@ -75,6 +77,32 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
     column_mappings = DataImportColumnMapSerializer(many=True, read_only=True)
 
     user_detail = UserSerializer(source='user', read_only=True, many=False)
+
+    def validate_field_defaults(self, defaults):
+        """De-stringify the field defaults."""
+        if defaults is None:
+            return None
+
+        if type(defaults) is not dict:
+            try:
+                defaults = json.loads(str(defaults))
+            except:
+                raise ValidationError(_('Invalid field defaults'))
+
+        return defaults
+
+    def validate_field_overrides(self, overrides):
+        """De-stringify the field overrides."""
+        if overrides is None:
+            return None
+
+        if type(overrides) is not dict:
+            try:
+                overrides = json.loads(str(overrides))
+            except:
+                raise ValidationError(_('Invalid field overrides'))
+
+        return overrides
 
     def create(self, validated_data):
         """Override create method for this serializer.

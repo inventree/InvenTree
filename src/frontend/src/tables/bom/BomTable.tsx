@@ -500,6 +500,12 @@ export function BomTable({
   const tableActions = useMemo(() => {
     return [
       <ActionButton
+        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
+        tooltip={t`Import BOM Data`}
+        icon={<IconFileArrowLeft />}
+        onClick={() => importBomItem.open()}
+      />,
+      <ActionButton
         hidden={partLocked || !user.hasChangeRole(UserRoles.part)}
         tooltip={t`Validate BOM`}
         icon={<IconCircleCheck />}
@@ -509,12 +515,6 @@ export function BomTable({
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add BOM Item`}
         onClick={() => newBomItem.open()}
-      />,
-      <ActionButton
-        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
-        tooltip={t`Import BOM Data`}
-        icon={<IconFileArrowLeft />}
-        onClick={() => importBomItem.open()}
       />
     ];
   }, [partLocked, user]);

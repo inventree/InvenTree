@@ -1,5 +1,6 @@
 """Model definitions for the 'importer' app."""
 
+import json
 import logging
 
 from django.contrib.auth.models import User
@@ -196,10 +197,15 @@ class DataImportSession(models.Model):
         required_fields = self.required_fields()
 
         field_defaults = self.field_defaults or {}
+        field_overrides = self.field_overrides or {}
 
         missing_fields = []
 
         for field in required_fields.keys():
+            # An override value exists
+            if field in field_overrides:
+                continue
+
             # A default value exists
             if field in field_defaults and field_defaults[field]:
                 continue
@@ -482,6 +488,34 @@ class DataImportRow(models.Model):
 
     complete = models.BooleanField(default=False, verbose_name=_('Complete'))
 
+    @property
+    def default_values(self) -> dict:
+        """Return a dict object of the 'default' values for this row."""
+        defaults = self.session.field_defaults or {}
+
+        if type(defaults) is not dict:
+            try:
+                defaults = json.loads(str(defaults))
+            except json.JSONDecodeError:
+                logger.warning('Failed to parse default values for import row')
+                defaults = {}
+
+        return defaults
+
+    @property
+    def override_values(self) -> dict:
+        """Return a dict object of the 'override' values for this row."""
+        overrides = self.session.field_overrides or {}
+
+        if type(overrides) is not dict:
+            try:
+                overrides = json.loads(str(overrides))
+            except json.JSONDecodeError:
+                logger.warning('Failed to parse override values for import row')
+                overrides = {}
+
+        return overrides
+
     def extract_data(
         self, available_fields: dict = None, field_mapping: dict = None, commit=True
     ):
@@ -492,8 +526,8 @@ class DataImportRow(models.Model):
         if not available_fields:
             available_fields = self.session.available_fields()
 
-        overrride_values = self.session.field_overrides or {}
-        default_values = self.session.field_defaults or {}
+        overrride_values = self.override_values
+        default_values = self.default_values
 
         data = {}
 
@@ -541,10 +575,13 @@ class DataImportRow(models.Model):
         - If available, we use the "default" values provided by the import session
         - If available, we use the "override" values provided by the import session
         """
-        data = self.session.field_defaults or {}
+        data = self.default_values
 
         if self.data:
             data.update(self.data)
+
+        # Override values take priority, if present
+        data.update(self.override_values)
 
         return data
 
