@@ -1,5 +1,7 @@
 import { t } from '@lingui/macro';
 import {
+  Alert,
+  Button,
   Divider,
   Drawer,
   Group,
@@ -10,6 +12,7 @@ import {
   Stepper,
   Text
 } from '@mantine/core';
+import { IconCheck } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
 import {
@@ -75,8 +78,6 @@ export default function ImporterDrawer({
     }
   }, [session.status]);
 
-  // const importComplete
-
   const widget = useMemo(() => {
     switch (session.status) {
       case ImportSessionStatus.INITIAL:
@@ -88,9 +89,27 @@ export default function ImporterDrawer({
       case ImportSessionStatus.PROCESSING:
         return <ImporterDataSelector session={session} />;
       case ImportSessionStatus.COMPLETE:
-        return <Text>Complete!</Text>;
+        return (
+          <Stack gap="xs">
+            <Alert
+              color="green"
+              title={t`Import Complete`}
+              icon={<IconCheck />}
+            >
+              {t`Data has been imported successfully`}
+            </Alert>
+            <Button color="blue" onClick={onClose}>{t`Close`}</Button>
+          </Stack>
+        );
       default:
-        return <Text>Unknown status code: {session?.status}</Text>;
+        return (
+          <Stack gap="xs">
+            <Alert color="red" title={t`Unknown Status`} icon={<IconCheck />}>
+              {t`Import session has unknown status`}: {session.status}
+            </Alert>
+            <Button color="red" onClick={onClose}>{t`Close`}</Button>
+          </Stack>
+        );
     }
   }, [session.status]);
 
