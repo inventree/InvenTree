@@ -4,6 +4,7 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
+  IconFileArrowLeft,
   IconLock,
   IconSwitch3
 } from '@tabler/icons-react';
@@ -11,14 +12,17 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -67,6 +71,12 @@ export function BomTable({
   const user = useUserState();
   const table = useTable('bom');
   const navigate = useNavigate();
+
+  const [importOpened, setImportOpened] = useState<boolean>(false);
+
+  const [selectedSession, setSelectedSession] = useState<number | undefined>(
+    undefined
+  );
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -343,6 +353,29 @@ export function BomTable({
 
   const [selectedBomItem, setSelectedBomItem] = useState<number>(0);
 
+  const importSessionFields = useMemo(() => {
+    let fields = dataImporterSessionFields();
+
+    fields.model_type.hidden = true;
+    fields.model_type.value = 'bomitem';
+
+    fields.field_overrides.value = {
+      part: partId
+    };
+
+    return fields;
+  }, [partId]);
+
+  const importBomItem = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import BOM Data`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      setSelectedSession(response.pk);
+      setImportOpened(true);
+    }
+  });
+
   const newBomItem = useCreateApiFormModal({
     url: ApiEndpoints.bom_list,
     title: t`Add BOM Item`,
@@ -449,12 +482,19 @@ export function BomTable({
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add BOM Item`}
         onClick={() => newBomItem.open()}
+      />,
+      <ActionButton
+        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
+        tooltip={t`Import BOM Data`}
+        icon={<IconFileArrowLeft />}
+        onClick={() => importBomItem.open()}
       />
     ];
   }, [partLocked, user]);
 
   return (
     <>
+      {importBomItem.modal}
       {newBomItem.modal}
       {editBomItem.modal}
       {deleteBomItem.modal}
@@ -490,6 +530,15 @@ export function BomTable({
           }}
         />
       </Stack>
+      <ImporterDrawer
+        sessionId={selectedSession ?? -1}
+        opened={selectedSession !== undefined && importOpened}
+        onClose={() => {
+          setSelectedSession(undefined);
+          setImportOpened(false);
+          table.refreshTable();
+        }}
+      />
     </>
   );
 }
