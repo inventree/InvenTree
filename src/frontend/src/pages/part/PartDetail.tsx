@@ -222,6 +222,14 @@ export default function PartDetail() {
       },
       {
         type: 'string',
+        name: 'variant_stock',
+        unit: true,
+        label: t`Variant Stock`,
+        hidden: !part.variant_stock,
+        icon: 'stock'
+      },
+      {
+        type: 'string',
         name: 'minimum_stock',
         unit: true,
         label: t`Minimum Stock`,
@@ -232,7 +240,7 @@ export default function PartDetail() {
         name: 'ordering',
         label: t`On order`,
         unit: true,
-        hidden: part.ordering <= 0
+        hidden: !part.purchaseable || part.ordering <= 0
       },
       {
         type: 'progressbar',
@@ -255,14 +263,14 @@ export default function PartDetail() {
         name: 'can_build',
         unit: true,
         label: t`Can Build`,
-        hidden: !part.assembly
+        hidden: true // TODO: Expose "can_build" to the API
       },
       {
         type: 'string',
         name: 'building',
         unit: true,
         label: t`Building`,
-        hidden: !part.assembly
+        hidden: !part.assembly || !part.building
       }
     ];
 
@@ -753,8 +761,8 @@ export default function PartDetail() {
     return [
       <DetailsBadge
         label={t`In Stock` + `: ${part.total_in_stock}`}
-        color={part.in_stock >= part.minimum_stock ? 'green' : 'orange'}
-        visible={part.in_stock > 0}
+        color={part.total_in_stock >= part.minimum_stock ? 'green' : 'orange'}
+        visible={part.total_in_stock > 0}
         key="in_stock"
       />,
       <DetailsBadge
@@ -766,7 +774,7 @@ export default function PartDetail() {
       <DetailsBadge
         label={t`No Stock`}
         color="orange"
-        visible={part.in_stock == 0}
+        visible={part.total_in_stock == 0}
         key="no_stock"
       />,
       <DetailsBadge
