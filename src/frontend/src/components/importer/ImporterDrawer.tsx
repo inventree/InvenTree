@@ -5,6 +5,7 @@ import {
   Divider,
   Drawer,
   Group,
+  Loader,
   LoadingOverlay,
   Paper,
   Space,
@@ -79,6 +80,10 @@ export default function ImporterDrawer({
   }, [session.status]);
 
   const widget = useMemo(() => {
+    if (session.sessionQuery.isLoading || session.sessionQuery.isFetching) {
+      return <Loader />;
+    }
+
     switch (session.status) {
       case ImportSessionStatus.INITIAL:
         return <Text>Initial : TODO</Text>;
@@ -111,7 +116,7 @@ export default function ImporterDrawer({
           </Stack>
         );
     }
-  }, [session.status]);
+  }, [session.status, session.sessionQuery]);
 
   const title: ReactNode = useMemo(() => {
     return (
@@ -123,7 +128,7 @@ export default function ImporterDrawer({
           grow
           preventGrowOverflow={false}
         >
-          <StylishText>
+          <StylishText size="lg">
             {session.sessionData?.statusText ?? t`Importing Data`}
           </StylishText>
           <ImportDrawerStepper currentStep={currentStep} />

@@ -31,6 +31,8 @@ export type ImportSessionState = {
   columnMappings: any[];
   fieldDefaults: any;
   fieldOverrides: any;
+  rowCount: number;
+  completedRowCount: number;
 };
 
 export function useImportSession({
@@ -111,6 +113,14 @@ export function useImportSession({
     return sessionData?.field_overrides ?? {};
   }, [sessionData]);
 
+  const rowCount: number = useMemo(() => {
+    return sessionData?.row_count ?? 0;
+  }, [sessionData]);
+
+  const completedRowCount: number = useMemo(() => {
+    return sessionData?.completed_row_count ?? 0;
+  }, [sessionData]);
+
   return {
     sessionData,
     setSessionData,
@@ -123,6 +133,8 @@ export function useImportSession({
     columnMappings,
     mappedFields,
     fieldDefaults,
-    fieldOverrides
+    fieldOverrides,
+    rowCount,
+    completedRowCount
   };
 }

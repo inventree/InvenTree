@@ -3,11 +3,14 @@ import {
   Alert,
   Button,
   Group,
+  Paper,
   Select,
+  Space,
   Stack,
   Table,
   Text
 } from '@mantine/core';
+import { IconCheck } from '@tabler/icons-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
@@ -188,14 +191,18 @@ export default function ImporterColumnSelector({
 
   return (
     <Stack gap="xs">
-      <Group justify="apart">
-        <Text>{t`Map data columns to database fields`}</Text>
-        <Button
-          color="green"
-          variant="filled"
-          onClick={acceptMapping}
-        >{t`Accept Column Mapping`}</Button>
-      </Group>
+      <Paper shadow="xs" p="xs">
+        <Group grow justify="apart">
+          <Text size="lg">{t`Mapping data columns to database fields`}</Text>
+          <Space />
+          <Button color="green" variant="filled" onClick={acceptMapping}>
+            <Group>
+              <IconCheck />
+              {t`Accept Column Mapping`}
+            </Group>
+          </Button>
+        </Group>
+      </Paper>
       {errorMessage && (
         <Alert color="red" title={t`Error`}>
           <Text>{errorMessage}</Text>
