@@ -32,6 +32,7 @@ class DataImportSession(models.Model):
         status: IntegerField for the status of the import session
         user: ForeignKey to the User who initiated the import
         field_defaults: JSONField for field default values
+        field_overrides: JSONField for field override values
     """
 
     @staticmethod
@@ -92,6 +93,13 @@ class DataImportSession(models.Model):
         validators=[importer.validators.validate_field_defaults],
     )
 
+    field_overrides = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Field Overrides'),
+        validators=[importer.validators.validate_field_defaults],
+    )
+
     @property
     def field_mapping(self):
         """Construct a dict of field mappings for this import session.
@@ -132,8 +140,15 @@ class DataImportSession(models.Model):
 
         matched_columns = set()
 
+        field_overrides = self.field_overrides or {}
+
         # Create a default mapping for each available field in the database
         for field, field_def in serializer_fields.items():
+            # If an override value is provided for the field,
+            # skip creating a mapping for this field
+            if field in field_overrides:
+                continue
+
             # Generate a list of possible column names for this field
             field_options = [
                 field,
