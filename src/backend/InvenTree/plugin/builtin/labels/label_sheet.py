@@ -75,14 +75,6 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
     }
 
     PrintingOptionsSerializer = LabelPrintingOptionsSerializer
-    debug = None
-
-    def in_debug_mode(self):
-        """Check if the plugin is printing in debug mode."""
-        if self.debug is None:
-            self.debug = str2bool(self.get_setting('DEBUG'))
-
-        return self.debug
 
     def print_labels(
         self, label: LabelTemplate, output: LabelOutput, items: list, request, **kwargs
@@ -151,7 +143,7 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         # Render to a single HTML document
         html_data = self.wrap_pages(pages, **document_data)
 
-        if self.in_debug_mode():
+        if str2bool(self.get_setting('DEBUG')):
             # In debug mode return with the raw HTML
             output.output = ContentFile(html_data, 'labels.html')
         else:
