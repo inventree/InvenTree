@@ -395,14 +395,26 @@ export function ApiForm({
       data = props.processFormData(data);
     }
 
+    let dataForm = new FormData();
+
+    Object.keys(data).forEach((key: string) => {
+      let value: any = data[key];
+
+      // Stringify any JSON objects
+      if (typeof value === 'object') {
+        value = JSON.stringify(value);
+      }
+
+      console.log('adding:', key, '->', value);
+
+      dataForm.append(key, data[key]);
+    });
+
     return api({
       method: method,
       url: url,
-      data: data,
-      timeout: props.timeout,
-      headers: {
-        'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
-      }
+      data: dataForm,
+      timeout: props.timeout
     })
       .then((response) => {
         switch (response.status) {
@@ -462,7 +474,11 @@ export function ApiForm({
                 for (const [k, v] of Object.entries(errors)) {
                   const path = _path ? `${_path}.${k}` : k;
 
-                  if (k === 'non_field_errors' || k === '__all__') {
+                  // Determine if field "k" is valid (exists and is visible)
+                  let field = fields[k];
+                  let valid = field && !field.hidden;
+
+                  if (!valid || k === 'non_field_errors' || k === '__all__') {
                     if (Array.isArray(v)) {
                       _nonFieldErrors.push(...v);
                     }
