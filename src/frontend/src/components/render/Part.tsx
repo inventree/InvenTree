@@ -17,16 +17,17 @@ export function RenderPart(
   let badgeText = '';
   let badgeColor = 'green';
 
+  let stock = instance.total_in_stock;
+
   if (instance.active == false) {
     badgeColor = 'red';
     badgeText = t`Inactive`;
-  } else if (instance.in_stock <= 0) {
+  } else if (stock <= 0) {
     badgeColor = 'orange';
     badgeText = t`No stock`;
   } else {
-    badgeText = t`Stock` + `: ${instance.in_stock}`;
-    badgeColor =
-      instance.minimum_stock > instance.in_stock ? 'yellow' : 'green';
+    badgeText = t`Stock` + `: ${stock}`;
+    badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
   }
 
   const badge = (
