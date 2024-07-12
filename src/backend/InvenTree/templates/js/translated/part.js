@@ -135,6 +135,7 @@ function partFields(options={}) {
         },
         name: {},
         IPN: {},
+        revision_of: {},
         revision: {
             icon: 'fa-code-branch',
         },
@@ -227,6 +228,7 @@ function partFields(options={}) {
     // Pop 'revision' field
     if (!global_settings.PART_ENABLE_REVISION) {
         delete fields['revision'];
+        delete fields['revision_of'];
     }
 
     if (options.create || options.duplicate) {

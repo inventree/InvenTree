@@ -106,6 +106,7 @@ nav:
     - Part Views: part/views.md
     - Tracking: part/trackable.md
     - Parameters: part/parameter.md
+    - Revisions: part/revision.md
     - Templates: part/template.md
     - Tests: part/test.md
     - Pricing: part/pricing.md
