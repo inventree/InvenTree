@@ -492,14 +492,24 @@ class DataImportRow(models.Model):
         if not available_fields:
             available_fields = self.session.available_fields()
 
+        overrride_values = self.session.field_overrides or {}
         default_values = self.session.field_defaults or {}
 
         data = {}
 
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
+            # Data override (force value and skip any further checks)
+            if field in overrride_values:
+                data[field] = overrride_values[field]
+                continue
+
+            # Default value (if provided)
+            if field in default_values:
+                data[field] = default_values[field]
+
             # If this field is *not* mapped to any column, skip
-            if not col:
+            if not col or col not in self.row_data:
                 continue
 
             # Extract field type
