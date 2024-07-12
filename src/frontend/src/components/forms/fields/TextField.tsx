@@ -37,6 +37,10 @@ export default function TextField({
   const [rawText, setRawText] = useState(value);
   const [debouncedText] = useDebouncedValue(rawText, 250);
 
+  useEffect(() => {
+    setRawText(value);
+  }, [value]);
+
   const onTextChange = useCallback((value: any) => {
     setRawText(value);
   }, []);
