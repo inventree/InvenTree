@@ -384,11 +384,6 @@ export function ApiForm({
     let method = props.method?.toLowerCase() ?? 'get';
 
     let hasFiles = false;
-    mapFields(fields, (_path, field) => {
-      if (field.field_type === 'file upload') {
-        hasFiles = true;
-      }
-    });
 
     // Optionally pre-process the data before submitting it
     if (props.processFormData) {
@@ -399,22 +394,34 @@ export function ApiForm({
 
     Object.keys(data).forEach((key: string) => {
       let value: any = data[key];
+      let field_type = fields[key]?.field_type;
+
+      if (field_type == 'file upload') {
+        hasFiles = true;
+      }
 
       // Stringify any JSON objects
       if (typeof value === 'object') {
-        value = JSON.stringify(value);
+        switch (field_type) {
+          case 'file upload':
+            break;
+          default:
+            value = JSON.stringify(value);
+            break;
+        }
       }
 
-      console.log('adding:', key, '->', value);
-
-      dataForm.append(key, data[key]);
+      dataForm.append(key, value);
     });
 
     return api({
       method: method,
       url: url,
       data: dataForm,
-      timeout: props.timeout
+      timeout: props.timeout,
+      headers: {
+        'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
+      }
     })
       .then((response) => {
         switch (response.status) {
