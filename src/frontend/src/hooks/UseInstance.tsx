@@ -93,5 +93,11 @@ export function useInstance<T = any>({
     instanceQuery.refetch();
   }, []);
 
-  return { instance, refreshInstance, instanceQuery, requestStatus };
+  return {
+    instance,
+    setInstance,
+    refreshInstance,
+    instanceQuery,
+    requestStatus
+  };
 }
