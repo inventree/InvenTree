@@ -932,7 +932,7 @@ def to_local_time(time, target_tz: str = None):
         target_tz = server_timezone()
 
     try:
-        target_tz = ZoneInfo(target_tz)
+        target_tz = ZoneInfo(str(target_tz))
     except ZoneInfoNotFoundError:
         target_tz = ZoneInfo('UTC')
 
