@@ -850,7 +850,7 @@ export function useDeleteStockItem(props: StockOperationProps) {
   });
 }
 
-export function stockLocationFields({}: {}): ApiFormFieldSet {
+export function stockLocationFields(): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {
     parent: {
       description: t`Parent stock location`,
