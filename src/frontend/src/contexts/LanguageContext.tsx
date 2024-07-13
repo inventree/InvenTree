@@ -17,6 +17,7 @@ export const defaultLocale = 'en';
  */
 export const getSupportedLanguages = (): Record<string, string> => {
   return {
+    ar: t`Arabic`,
     bg: t`Bulgarian`,
     cs: t`Czech`,
     da: t`Danish`,

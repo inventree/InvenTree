@@ -33,6 +33,7 @@ import {
   IconGitBranch,
   IconGridDots,
   IconHash,
+  IconHierarchy,
   IconInfoCircle,
   IconLayersLinked,
   IconLink,
@@ -89,7 +90,8 @@ import React from 'react';
 const icons = {
   name: IconPoint,
   description: IconInfoCircle,
-  variant_of: IconStatusChange,
+  variant_of: IconHierarchy,
+  revision_of: IconStatusChange,
   unallocated_stock: IconPackage,
   total_in_stock: IconPackages,
   minimum_stock: IconFlag,
