@@ -158,7 +158,7 @@ export default function CategoryDetail({}: {}) {
     url: ApiEndpoints.category_list,
     pk: id,
     title: t`Edit Part Category`,
-    fields: partCategoryFields({}),
+    fields: partCategoryFields(),
     onFormSuccess: refreshInstance
   });
 
