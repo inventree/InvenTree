@@ -39,7 +39,7 @@ def qrcode(data, **kwargs):
     fill_color = kwargs.pop('fill_color', 'black')
     back_color = kwargs.pop('back_color', 'white')
 
-    format = kwargs.pop('format', 'PNG')
+    img_format = kwargs.pop('format', 'PNG')
 
     params.update(**kwargs)
 
@@ -51,7 +51,7 @@ def qrcode(data, **kwargs):
     qri = qr.make_image(fill_color=fill_color, back_color=back_color)
 
     # Render to byte-encoded image
-    return image_data(qri, fmt=format)
+    return image_data(qri, fmt=img_format)
 
 
 @register.simple_tag()
@@ -59,7 +59,7 @@ def barcode(data, barcode_class='code128', **kwargs):
     """Render a barcode."""
     constructor = python_barcode.get_barcode_class(barcode_class)
 
-    format = kwargs.pop('format', 'PNG')
+    img_format = kwargs.pop('format', 'PNG')
 
     data = str(data).zfill(constructor.digits)
 
@@ -70,4 +70,4 @@ def barcode(data, barcode_class='code128', **kwargs):
     image = barcode_image.render(writer_options=kwargs)
 
     # Render to byte-encoded image
-    return image_data(image, fmt=format)
+    return image_data(image, fmt=img_format)

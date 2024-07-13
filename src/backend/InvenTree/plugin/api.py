@@ -290,16 +290,16 @@ def check_plugin(
         raise NotFound(detail='Plugin not specified')
 
     # Define filter
-    filter = {}
+    filters = {}
     if plugin_slug:
-        filter['key'] = plugin_slug
+        filters['key'] = plugin_slug
     elif plugin_pk:
-        filter['pk'] = plugin_pk
+        filters['pk'] = plugin_pk
     ref = plugin_slug or plugin_pk
 
     # Check that the 'plugin' specified is valid
     try:
-        plugin_cgf = PluginConfig.objects.filter(**filter).first()
+        plugin_cgf = PluginConfig.objects.filter(**filters).first()
     except PluginConfig.DoesNotExist:
         raise NotFound(detail=f"Plugin '{ref}' not installed")
 
