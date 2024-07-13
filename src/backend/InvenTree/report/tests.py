@@ -10,8 +10,8 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.safestring import SafeString
 
-import pytz
 from PIL import Image
+from zoneinfo import ZoneInfo
 
 import report.models as report_models
 from build.models import Build
@@ -169,7 +169,7 @@ class ReportTagTest(TestCase):
             hour=12,
             minute=30,
             second=0,
-            tzinfo=pytz.timezone('Australia/Sydney'),
+            tzinfo=ZoneInfo('Australia/Sydney'),
         )
 
         # Format a set of tests: timezone, format, expected

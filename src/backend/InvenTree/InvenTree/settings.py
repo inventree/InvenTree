@@ -20,8 +20,8 @@ from django.core.validators import URLValidator
 from django.http import Http404
 from django.utils.translation import gettext_lazy as _
 
-import pytz
 from dotenv import load_dotenv
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from InvenTree.cache import get_cache_config, is_global_cache_enabled
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
@@ -942,8 +942,8 @@ TIME_ZONE = get_setting('INVENTREE_TIMEZONE', 'timezone', 'UTC')
 
 # Check that the timezone is valid
 try:
-    pytz.timezone(TIME_ZONE)
-except pytz.exceptions.UnknownTimeZoneError:  # pragma: no cover
+    ZoneInfo(TIME_ZONE)
+except ZoneInfoNotFoundError:  # pragma: no cover
     raise ValueError(f"Specified timezone '{TIME_ZONE}' is not valid")
 
 USE_I18N = True
