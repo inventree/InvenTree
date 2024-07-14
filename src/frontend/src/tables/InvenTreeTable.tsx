@@ -104,7 +104,7 @@ export type InvenTreeTableProps<T = any> = {
   enableLabels?: boolean;
   enableReports?: boolean;
   pageSize?: number;
-  barcodeActions?: any[];
+  barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   rowExpansion?: any;

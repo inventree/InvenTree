@@ -423,7 +423,10 @@ export default function StockDetail() {
       <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
       <BarcodeActionDropdown
         actions={[
-          ViewBarcodeAction({}),
+          ViewBarcodeAction({
+            model: ModelType.stockitem,
+            pk: stockitem.pk
+          }),
           LinkBarcodeAction({
             hidden:
               stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)

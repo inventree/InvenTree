@@ -11,7 +11,7 @@ export function ButtonMenu({
   label = ''
 }: {
   icon: any;
-  actions: any[];
+  actions: React.ReactNode[];
   label?: string;
   tooltip?: string;
 }) {
