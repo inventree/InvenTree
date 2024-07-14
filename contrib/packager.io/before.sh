@@ -58,5 +58,4 @@ else
   curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L frontend.zip
   unzip frontend.zip -d src/backend/InvenTree/web/static/web
   echo "Unzipped frontend"
-  echo "$APP_PKG_VERSION" > src/backend/InvenTree/web/static/web/.vite/version.txt
 fi
