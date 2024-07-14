@@ -11,7 +11,6 @@ import json
 import re
 from typing import cast
 
-from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.utils.translation import gettext_lazy as _
 
 import plugin.base.barcodes.helper
@@ -45,7 +44,6 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
             'description': _(
                 'Customize the prefix used for short barcodes, may be useful for environments with multiple InvenTree instances'
             ),
-            'validator': [str, MinLengthValidator(4), MaxLengthValidator(4)],
             'default': 'INV-',
         },
     }
@@ -63,7 +61,9 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
         # Attempt to match the barcode data against the short barcode format
         prefix = cast(str, self.get_setting('SHORT_BARCODE_PREFIX'))
         if type(barcode_data) is str and (
-            m := re.match(f'^{re.escape(prefix)}(\\w{"{2}"})(\\d+)$', barcode_data)
+            m := re.match(
+                f'^{re.escape(prefix)}([0-9A-Z $%*+-.\\/:]{"{2}"})(\\d+)$', barcode_data
+            )
         ):
             model_type_code, pk = m.groups()
 
