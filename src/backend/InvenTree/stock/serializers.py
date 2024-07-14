@@ -306,6 +306,7 @@ class StockItemSerializerBrief(
             'location',
             'quantity',
             'serial',
+            'batch',
             'supplier_part',
             'barcode_hash',
         ]
