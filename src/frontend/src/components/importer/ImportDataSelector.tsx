@@ -194,6 +194,7 @@ export default function ImporterDataSelector({
     title: t`Edit Data`,
     fields: selectedFields,
     initialData: selectedRow.data,
+    fetchInitialData: false,
     processFormData: (data: any) => {
       // Construct fields back into a single object
       return {
