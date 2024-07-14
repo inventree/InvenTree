@@ -1,12 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 220
+INVENTREE_API_VERSION = 222
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v222 - 2024-07-14 : https://github.com/inventree/InvenTree/pull/7635
+    - Adjust the BomItem API endpoint to improve data import process
+
+v221 - 2024-07-13 : https://github.com/inventree/InvenTree/pull/7636
+    - Adds missing fields from StockItemBriefSerializer
+    - Adds missing fields from PartBriefSerializer
+    - Adds extra exportable fields to BuildItemSerializer
+
 v220 - 2024-07-11 : https://github.com/inventree/InvenTree/pull/7585
     - Adds "revision_of" field to Part serializer
     - Adds new API filters for "revision" status
