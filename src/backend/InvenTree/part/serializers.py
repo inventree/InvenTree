@@ -1480,28 +1480,30 @@ class BomItemSerializer(
 ):
     """Serializer for BomItem object."""
 
+    import_exclude_fields = ['validated', 'substitutes']
+
     class Meta:
         """Metaclass defining serializer fields."""
 
         model = BomItem
         fields = [
+            'part',
+            'sub_part',
+            'reference',
+            'quantity',
+            'overage',
             'allow_variants',
             'inherited',
-            'note',
             'optional',
             'consumable',
-            'overage',
+            'note',
             'pk',
-            'part',
             'part_detail',
             'pricing_min',
             'pricing_max',
             'pricing_min_total',
             'pricing_max_total',
             'pricing_updated',
-            'quantity',
-            'reference',
-            'sub_part',
             'sub_part_detail',
             'substitutes',
             'validated',

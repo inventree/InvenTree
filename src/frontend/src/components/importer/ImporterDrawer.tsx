@@ -1,26 +1,26 @@
 import { t } from '@lingui/macro';
 import {
-  ActionIcon,
+  Alert,
+  Button,
   Divider,
   Drawer,
   Group,
+  Loader,
   LoadingOverlay,
   Paper,
+  Space,
   Stack,
   Stepper,
-  Text,
-  Tooltip
+  Text
 } from '@mantine/core';
-import { IconCircleX } from '@tabler/icons-react';
-import { ReactNode, useCallback, useMemo, useState } from 'react';
+import { IconCheck } from '@tabler/icons-react';
+import { ReactNode, useMemo } from 'react';
 
-import { ModelType } from '../../enums/ModelType';
 import {
   ImportSessionStatus,
   useImportSession
 } from '../../hooks/UseImportSession';
 import { StylishText } from '../items/StylishText';
-import { StatusRenderer } from '../render/StatusRenderer';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
 import ImporterImportProgress from './ImporterImportProgress';
@@ -39,10 +39,12 @@ function ImportDrawerStepper({ currentStep }: { currentStep: number }) {
       active={currentStep}
       onStepClick={undefined}
       allowNextStepsSelect={false}
+      iconSize={20}
       size="xs"
     >
-      <Stepper.Step label={t`Import Data`} />
+      <Stepper.Step label={t`Upload File`} />
       <Stepper.Step label={t`Map Columns`} />
+      <Stepper.Step label={t`Import Data`} />
       <Stepper.Step label={t`Process Data`} />
       <Stepper.Step label={t`Complete Import`} />
     </Stepper>
@@ -60,7 +62,28 @@ export default function ImporterDrawer({
 }) {
   const session = useImportSession({ sessionId: sessionId });
 
+  // Map from import steps to stepper steps
+  const currentStep = useMemo(() => {
+    switch (session.status) {
+      default:
+      case ImportSessionStatus.INITIAL:
+        return 0;
+      case ImportSessionStatus.MAPPING:
+        return 1;
+      case ImportSessionStatus.IMPORTING:
+        return 2;
+      case ImportSessionStatus.PROCESSING:
+        return 3;
+      case ImportSessionStatus.COMPLETE:
+        return 4;
+    }
+  }, [session.status]);
+
   const widget = useMemo(() => {
+    if (session.sessionQuery.isLoading || session.sessionQuery.isFetching) {
+      return <Loader />;
+    }
+
     switch (session.status) {
       case ImportSessionStatus.INITIAL:
         return <Text>Initial : TODO</Text>;
@@ -71,11 +94,29 @@ export default function ImporterDrawer({
       case ImportSessionStatus.PROCESSING:
         return <ImporterDataSelector session={session} />;
       case ImportSessionStatus.COMPLETE:
-        return <Text>Complete!</Text>;
+        return (
+          <Stack gap="xs">
+            <Alert
+              color="green"
+              title={t`Import Complete`}
+              icon={<IconCheck />}
+            >
+              {t`Data has been imported successfully`}
+            </Alert>
+            <Button color="blue" onClick={onClose}>{t`Close`}</Button>
+          </Stack>
+        );
       default:
-        return <Text>Unknown status code: {session?.status}</Text>;
+        return (
+          <Stack gap="xs">
+            <Alert color="red" title={t`Unknown Status`} icon={<IconCheck />}>
+              {t`Import session has unknown status`}: {session.status}
+            </Alert>
+            <Button color="red" onClick={onClose}>{t`Close`}</Button>
+          </Stack>
+        );
     }
-  }, [session.status]);
+  }, [session.status, session.sessionQuery]);
 
   const title: ReactNode = useMemo(() => {
     return (
@@ -87,18 +128,11 @@ export default function ImporterDrawer({
           grow
           preventGrowOverflow={false}
         >
-          <StylishText>
+          <StylishText size="lg">
             {session.sessionData?.statusText ?? t`Importing Data`}
           </StylishText>
-          {StatusRenderer({
-            status: session.status,
-            type: ModelType.importsession
-          })}
-          <Tooltip label={t`Cancel import session`}>
-            <ActionIcon color="red" variant="transparent" onClick={onClose}>
-              <IconCircleX />
-            </ActionIcon>
-          </Tooltip>
+          <ImportDrawerStepper currentStep={currentStep} />
+          <Space />
         </Group>
         <Divider />
       </Stack>
@@ -112,7 +146,7 @@ export default function ImporterDrawer({
       title={title}
       opened={opened}
       onClose={onClose}
-      withCloseButton={false}
+      withCloseButton={true}
       closeOnEscape={false}
       closeOnClickOutside={false}
       styles={{
