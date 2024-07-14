@@ -47,6 +47,10 @@ export function Header() {
     queryKey: ['notification-count'],
     enabled: isLoggedIn(),
     queryFn: async () => {
+      if (!isLoggedIn()) {
+        return null;
+      }
+
       try {
         const params = {
           params: {
@@ -62,12 +66,11 @@ export function Header() {
         setNotificationCount(response?.data?.count ?? 0);
         return response?.data ?? null;
       } catch (error) {
-        return error;
+        return null;
       }
     },
     refetchInterval: 30000,
-    refetchOnMount: true,
-    refetchOnWindowFocus: false
+    refetchOnMount: true
   });
 
   // Sync Navigation Drawer state with zustand

@@ -125,7 +125,6 @@ export function OptionsApiForm({
   const optionsQuery = useQuery({
     enabled: true,
     refetchOnMount: false,
-    refetchOnWindowFocus: false,
     queryKey: [
       'form-options-data',
       id,

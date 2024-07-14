@@ -104,8 +104,8 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
         source='responsible', read_only=True, many=False
     )
 
-    project_code = serializers.CharField(
-        source='project_code.code', label=_('Project Code'), read_only=True
+    project_code_label = serializers.CharField(
+        source='project_code.code', read_only=True, label='Project Code Label'
     )
 
     # Detail for project code field
@@ -151,6 +151,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'completed_lines',
             'link',
             'project_code',
+            'project_code_label',
             'project_code_detail',
             'reference',
             'responsible',
@@ -615,7 +616,7 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
     )
 
     quantity = serializers.DecimalField(
-        max_digits=15, decimal_places=5, min_value=0, required=True
+        max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
     )
 
     def validate_quantity(self, quantity):
@@ -1249,7 +1250,7 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
     )
 
     quantity = serializers.DecimalField(
-        max_digits=15, decimal_places=5, min_value=0, required=True
+        max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
     )
 
     def validate_quantity(self, quantity):

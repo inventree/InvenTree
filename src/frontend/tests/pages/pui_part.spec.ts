@@ -116,8 +116,6 @@ test('PUI - Pages - Part - Pricing (Variant)', async ({ page }) => {
 
   // Variant Pricing
   await page.getByRole('button', { name: 'Variant Pricing' }).click();
-  await page.waitForTimeout(500);
-  await page.getByRole('button', { name: 'Variant Part Not sorted' }).click();
 
   // Variant Pricing - linkjumping
   let target = page.getByText('Green Chair').first();
@@ -255,4 +253,22 @@ test('PUI - Pages - Part - 404', async ({ page }) => {
 
   // Clear out any console error messages
   await page.evaluate(() => console.clear());
+});
+
+test('PUI - Pages - Part - Revision', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/part/906/details`);
+
+  await page.getByText('Revision of').waitFor();
+  await page.getByText('Select Part Revision').waitFor();
+  await page
+    .getByText('Green Round Table (revision B) | B', { exact: true })
+    .click();
+  await page
+    .getByRole('option', { name: 'Thumbnail Green Round Table No stock' })
+    .click();
+
+  await page.waitForURL('**/platform/part/101/**');
+  await page.getByText('Select Part Revision').waitFor();
 });

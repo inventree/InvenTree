@@ -1,6 +1,7 @@
 import '@mantine/carousel/styles.css';
 import '@mantine/charts/styles.css';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/spotlight/styles.css';
 import * as Sentry from '@sentry/react';

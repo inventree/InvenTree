@@ -20,8 +20,12 @@ export function CopyButton({
           size="compact-md"
         >
           <IconCopy size={10} />
-          {label && <div>&nbsp;</div>}
-          {label && label}
+          {label && (
+            <>
+              <div>&nbsp;</div>
+              {label}
+            </>
+          )}
         </Button>
       )}
     </MantineCopyButton>
