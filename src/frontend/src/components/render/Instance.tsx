@@ -8,7 +8,7 @@ import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { apiUrl } from '../../states/ApiState';
 import { Thumbnail } from '../images/Thumbnail';
-import { RenderBuildLine, RenderBuildOrder } from './Build';
+import { RenderBuildItem, RenderBuildLine, RenderBuildOrder } from './Build';
 import {
   RenderAddress,
   RenderCompany,
@@ -47,6 +47,7 @@ export interface InstanceRenderInterface {
   instance: any;
   link?: boolean;
   navigate?: any;
+  showSecondary?: boolean;
 }
 
 /**
@@ -59,6 +60,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.address]: RenderAddress,
   [ModelType.build]: RenderBuildOrder,
   [ModelType.buildline]: RenderBuildLine,
+  [ModelType.builditem]: RenderBuildItem,
   [ModelType.company]: RenderCompany,
   [ModelType.contact]: RenderContact,
   [ModelType.manufacturerpart]: RenderManufacturerPart,
@@ -148,10 +150,12 @@ export function RenderInlineModel({
   image,
   labels,
   url,
-  navigate
+  navigate,
+  showSecondary = true
 }: {
   primary: string;
   secondary?: string;
+  showSecondary?: boolean;
   suffix?: ReactNode;
   image?: string;
   labels?: string[];
@@ -180,7 +184,7 @@ export function RenderInlineModel({
         ) : (
           <Text size="sm">{primary}</Text>
         )}
-        {secondary && <Text size="xs">{secondary}</Text>}
+        {showSecondary && secondary && <Text size="xs">{secondary}</Text>}
       </Group>
       {suffix && (
         <>

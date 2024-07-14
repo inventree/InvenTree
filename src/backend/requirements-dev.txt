@@ -26,7 +26,7 @@ cryptography==42.0.8
     #   pdfminer-six
 distlib==0.3.8
     # via virtualenv
-django==4.2.13
+django==4.2.14
     # via
     #   -c src/backend/requirements.txt
     #   django-admin-shell

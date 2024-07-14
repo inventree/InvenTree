@@ -8,7 +8,7 @@ babel==2.15.0
     #   mkdocs-material
 bracex==2.4
     # via wcmatch
-certifi==2024.2.2
+certifi==2024.7.4
     # via
     #   httpcore
     #   httpx
@@ -49,7 +49,7 @@ idna==3.7
     #   anyio
     #   httpx
     #   requests
-importlib-metadata==7.1.0
+importlib-metadata==8.0.0
     # via
     #   markdown
     #   mkdocs
@@ -169,7 +169,7 @@ sniffio==1.3.1
     #   httpx
 termcolor==2.4.0
     # via mkdocs-macros-plugin
-typing-extensions==4.11.0
+typing-extensions==4.12.2
     # via
     #   anyio
     #   mkdocstrings
@@ -179,5 +179,5 @@ watchdog==4.0.0
     # via mkdocs
 wcmatch==8.5.2
     # via mkdocs-include-markdown-plugin
-zipp==3.18.2
+zipp==3.19.2
     # via importlib-metadata

@@ -315,6 +315,34 @@ function barcodeDialog(title, options={}) {
 
         var barcode = $(modal + ' #barcode');
 
+        // The control characters that are used in barcodes.
+        const controlKeys = {
+            "BracketRight": String.fromCharCode(29), // Group separator
+            "Digit6": String.fromCharCode(30), // Record separator
+        }
+        let altValue = 0;
+
+        barcode.keydown(function(event) {
+            if (event.ctrlKey) {
+                // Prevent most of the keyboard shortcuts.
+                // Not all of them will be blocked, browser don't allow this:
+                // https://stackoverflow.com/questions/59952382/using-preventdefault-to-override-opening-new-tab
+                event.preventDefault();
+                if (event.originalEvent.code in controlKeys) {
+                    event.target.value += controlKeys[event.originalEvent.code];
+                }
+            }
+            else if (event.altKey && event.key != "Alt") {
+                let val = parseInt(event.key, 10);
+                if (Number.isNaN(val) || val < 0 || val > 9) {
+                    altValue = 0;
+                    return;
+                }
+                altValue *= 10;
+                altValue += val;
+            }
+        });
+
         // Handle 'enter' key on barcode
         barcode.keyup(function(event) {
             event.preventDefault();
@@ -322,6 +350,9 @@ function barcodeDialog(title, options={}) {
             if (event.which == 10 || event.which == 13) {
                 clearTimeout(barcodeInputTimer);
                 sendBarcode();
+            } else if (event.key == "Alt" && altValue > 0) {
+                event.target.value += String.fromCharCode(altValue);
+                altValue = 0;
             } else {
                 // Start a timer to automatically send barcode after input is complete
                 clearTimeout(barcodeInputTimer);

@@ -47,6 +47,16 @@ function stockItemTableColumns(): TableColumn[] {
       sortable: true,
       render: (record: any) => PartColumn(record?.part_detail)
     },
+    {
+      accessor: 'part_detail.IPN',
+      title: t`IPN`,
+      sortable: true
+    },
+    {
+      accessor: 'part_detail.revision',
+      title: t`Revision`,
+      sortable: true
+    },
     DescriptionColumn({
       accessor: 'part_detail.description'
     }),

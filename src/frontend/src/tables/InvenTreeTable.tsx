@@ -178,7 +178,6 @@ export function InvenTreeTable<T = any>({
     queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
-    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (props.enableColumnCaching == false) {
         return null;
@@ -483,7 +482,6 @@ export function InvenTreeTable<T = any>({
       tableState.searchTerm
     ],
     queryFn: fetchTableData,
-    refetchOnWindowFocus: false,
     refetchOnMount: true
   });
 

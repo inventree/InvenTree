@@ -658,6 +658,8 @@ class PartSerializer(
             'pk',
             'purchaseable',
             'revision',
+            'revision_of',
+            'revision_count',
             'salable',
             'starred',
             'thumbnail',
@@ -761,6 +763,9 @@ class PartSerializer(
         Performing database queries as efficiently as possible, to reduce database trips.
         """
         queryset = queryset.prefetch_related('category', 'default_location')
+
+        # Annotate with the total number of revisions
+        queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
 
         # Annotate with the total number of stock items
         queryset = queryset.annotate(stock_item_count=SubqueryCount('stock_items'))
@@ -883,6 +888,7 @@ class PartSerializer(
     required_for_build_orders = serializers.IntegerField(read_only=True)
     required_for_sales_orders = serializers.IntegerField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True, label=_('Stock Items'))
+    revision_count = serializers.IntegerField(read_only=True, label=_('Revisions'))
     suppliers = serializers.IntegerField(read_only=True, label=_('Suppliers'))
     total_in_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
     external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
@@ -1506,6 +1512,8 @@ class BomItemSerializer(
             'on_order',
             # Annotated field describing quantity being built
             'building',
+            # Annotate the total potential quantity we can build
+            'can_build',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1559,6 +1567,8 @@ class BomItemSerializer(
     on_order = serializers.FloatField(label=_('On Order'), read_only=True)
 
     building = serializers.FloatField(label=_('In Production'), read_only=True)
+
+    can_build = serializers.FloatField(label=_('Can Build'), read_only=True)
 
     # Cached pricing fields
     pricing_min = InvenTree.serializers.InvenTreeMoneySerializer(
@@ -1730,6 +1740,20 @@ class BomItemSerializer(
                 - F('variant_bo_allocations')
                 - F('variant_so_allocations'),
                 output_field=FloatField(),
+            )
+        )
+
+        # Annotate the "can_build" quantity
+        queryset = queryset.alias(
+            total_stock=ExpressionWrapper(
+                F('available_variant_stock')
+                + F('available_substitute_stock')
+                + F('available_stock'),
+                output_field=FloatField(),
+            )
+        ).annotate(
+            can_build=ExpressionWrapper(
+                F('total_stock') / F('quantity'), output_field=FloatField()
             )
         )
 

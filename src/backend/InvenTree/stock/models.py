@@ -714,8 +714,6 @@ class StockItem(
                     self.delete_on_deplete = False
 
         except PartModels.Part.DoesNotExist:
-            # This gets thrown if self.supplier_part is null
-            # TODO - Find a test than can be performed...
             pass
 
         # Ensure that the item cannot be assigned to itself
@@ -1109,7 +1107,11 @@ class StockItem(
 
         item.add_tracking_entry(code, user, deltas, notes=notes)
 
-        trigger_event('stockitem.assignedtocustomer', id=self.id, customer=customer.id)
+        trigger_event(
+            'stockitem.assignedtocustomer',
+            id=self.id,
+            customer=customer.id if customer else None,
+        )
 
         # Return the reference to the stock item
         return item
@@ -1773,7 +1775,7 @@ class StockItem(
                     price = convert_money(price, base_currency)
                     total_price += price * qty
                     quantity += qty
-                except:
+                except Exception:
                     # Skip this entry, cannot convert to base currency
                     continue
 
