@@ -1136,7 +1136,7 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
         );
 
         // Hidden barcode input
-        var barcode_input = constructField(
+        const barcode_input = constructField(
             `items_barcode_${pk}`,
             {
                 type: 'string',
@@ -1145,7 +1145,8 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             }
         );
 
-        var sn_input = constructField(
+        // Hidden serial number input
+        const sn_input = constructField(
             `items_serial_numbers_${pk}`,
             {
                 type: 'string',
@@ -1153,6 +1154,22 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
                 label: '{% trans "Serial Numbers" %}',
                 help_text: '{% trans "Enter serial numbers for incoming stock items" %}',
                 icon: 'fa-hashtag',
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        // Hidden packaging input
+        const packaging_input = constructField(
+            `items_packaging_${pk}`,
+            {
+                type: 'string',
+                required: false,
+                label: '{% trans "Packaging" %}',
+                help_text: '{% trans "Specify packaging for incoming stock items" %}',
+                icon: 'fa-boxes',
+                value: line_item.supplier_part_detail.packaging,
             },
             {
                 hideLabels: true,
@@ -1220,6 +1237,16 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             }
         );
 
+        buttons += makeIconButton(
+            'fa-boxes',
+            'button-row-add-packaging',
+            pk,
+            '{% trans "Specify packaging" %}',
+            {
+                collapseTarget: `row-packaging-${pk}`
+            }
+        );
+
         if (line_item.part_detail.trackable) {
             buttons += makeIconButton(
                 'fa-hashtag',
@@ -1273,6 +1300,12 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             <td colspan='2'></td>
             <th>{% trans "Batch" %}</th>
             <td colspan='2'>${batch_input}</td>
+            <td></td>
+        </tr>
+        <tr id='row-packaging-${pk}' class='collapse'>
+            <td colspan='2'></td>
+            <th>{% trans "Packaging" %}</th>
+            <td colspan='2'>${packaging_input}</td>
             <td></td>
         </tr>
         <tr id='row-serials-${pk}' class='collapse'>
@@ -1470,6 +1503,10 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
                     if (getFormFieldElement(`items_batch_code_${pk}`).exists()) {
                         line.batch_code = getFormFieldValue(`items_batch_code_${pk}`);
+                    }
+
+                    if (getFormFieldElement(`items_packaging_${pk}`).exists()) {
+                        line.packaging = getFormFieldValue(`items_packaging_${pk}`);
                     }
 
                     if (getFormFieldElement(`items_serial_numbers_${pk}`).exists()) {
