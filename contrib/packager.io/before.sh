@@ -52,19 +52,10 @@ cat VERSION
 # Check if tag sha is the same as the commit sha
 TAG_SHA=$(jq -r '.sha' tag.json)
 if [ "$TAG_SHA" != "$FULL_SHA" ]; then
-  echo "Tag sha is not the same as commit sha"
-  curl https://api.github.com/repos/$REPO/actions/runs?head_sha=$FULL_SHA > runs.json
-  artifact_url=$(jq -r '.workflow_runs | .[] | select(.name=="QC").artifacts_url' runs.json)
-  run_id=$(jq -r '.workflow_runs[] | select(.name=="QC").id' runs.json)
-  echo "Getting artifact url from github via run. Run id: $run_id, Artifact url: $artifact_url"
-  curl $artifact_url > artifacts.json
-  artifact_id=$(jq -r '.artifacts[] | select(.name=="frontend-build").id' artifacts.json)
-  echo "Getting frontend from github via run artifact. Run id: $run_id, Artifact id: $artifact_id, Artifact url: $artifact_url"
-  curl https://github.com/$REPO/actions/runs/$run_id/artifacts/$artifact_id -L
-  ls
+  echo "Tag sha is not the same as commit sha, can not download frontend"
 else
   echo "Getting frontend from github via tag"
   curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L frontend.zip
+  unzip frontend.zip -d src/backend/InvenTree/web/static/web
+  echo "Unzipped frontend"
 fi
-unzip frontend.zip -d src/backend/InvenTree/web/static/web
-echo "Unzipped frontend"
