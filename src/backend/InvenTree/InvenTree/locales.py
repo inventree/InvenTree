@@ -24,6 +24,7 @@ LOCALES = [
     ('en', _('English')),
     ('es', _('Spanish')),
     ('es-mx', _('Spanish (Mexican)')),
+    ('et', _('Estonian')),
     ('fa', _('Farsi / Persian')),
     ('fi', _('Finnish')),
     ('fr', _('French')),
