@@ -8,6 +8,8 @@ references model objects actually exist in the database.
 """
 
 import json
+import re
+from typing import cast
 
 from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.utils.translation import gettext_lazy as _
@@ -57,8 +59,29 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
 
         Here we are looking for a dict object which contains a reference to a particular InvenTree database object
         """
+        # Internal Barcodes - Short Format
+        # Attempt to match the barcode data against the short barcode format
+        prefix = cast(str, self.get_setting('SHORT_BARCODE_PREFIX'))
+        if type(barcode_data) is str and (
+            m := re.match(f'^{re.escape(prefix)}(\\w{"{2}"})(\\d+)$', barcode_data)
+        ):
+            model_type_code, pk = m.groups()
+
+            supported_models_map = (
+                plugin.base.barcodes.helper.get_supported_barcode_model_codes_map()
+            )
+            model = supported_models_map.get(model_type_code, None)
+
+            if model is None:
+                return None
+
+            label = model.barcode_model_type()
+            pk = int(pk)
+            return self.format_matched_response(label, model, model.objects.get(pk=pk))
+
+        # Internal Barcodes - JSON Format
         # Attempt to coerce the barcode data into a dict object
-        # This is the internal barcode representation that InvenTree uses
+        # This is the internal JSON barcode representation that InvenTree uses
         barcode_dict = None
 
         if type(barcode_data) is dict:
@@ -84,6 +107,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
                     except (ValueError, model.DoesNotExist):
                         pass
 
+        # External Barcodes (Linked barcodes)
         # Create hash from raw barcode data
         barcode_hash = hash_barcode(barcode_data)
 

@@ -46,3 +46,11 @@ def get_supported_barcode_models_map():
     return {
         model.barcode_model_type(): model for model in get_supported_barcode_models()
     }
+
+
+def get_supported_barcode_model_codes_map():
+    """Return a mapping of barcode model type codes to the model class."""
+    return {
+        model.barcode_model_type_code(): model
+        for model in get_supported_barcode_models()
+    }
