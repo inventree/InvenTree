@@ -1272,6 +1272,34 @@ def frontend_download(
 
             handle_extract(dst.name)
 
+    def check_already_current(tag=None, sha=None):
+        """Check if the currently available frontend is already the requested one."""
+        ref = 'tag' if tag else 'commit'
+
+        if tag:
+            current = managePyDir().joinpath('web', 'static', 'web', '.vite', 'tag.txt')
+        elif sha:
+            current = managePyDir().joinpath('web', 'static', 'web', '.vite', 'sha.txt')
+        else:
+            raise ValueError('Either tag or sha needs to be set')
+
+        if not current.exists():
+            print(
+                f'Current frontend information for {ref} is not available - this is expected in some cases'
+            )
+            return False
+
+        current_content = current.read_text()
+        ref_value = tag or sha
+        if current_content == ref_value:
+            print(f'Frontend {ref} is already `{ref_value}`')
+            return True
+        else:
+            print(
+                f'Frontend {ref} is not expected `{ref_value}` but `{current_content}`'
+            )
+            return False
+
     # if zip file is specified, try to extract it directly
     if file:
         handle_extract(file)
@@ -1297,6 +1325,8 @@ def frontend_download(
     if tag:
         tag = tag.lstrip('v')
         try:
+            if check_already_current(tag=tag):
+                return
             handle_download(
                 f'https://github.com/{repo}/releases/download/{tag}/frontend-build.zip'
             )
@@ -1312,6 +1342,8 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
         return
 
     if ref:
+        if check_already_current(sha=ref):
+            return
         # get workflow run from all workflow runs on that particular ref
         workflow_runs = requests.get(
             f'https://api.github.com/repos/{repo}/actions/runs?head_sha={ref}',
