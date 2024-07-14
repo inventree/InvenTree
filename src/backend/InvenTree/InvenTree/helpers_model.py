@@ -15,9 +15,6 @@ from djmoney.contrib.exchange.models import convert_money
 from djmoney.money import Money
 from PIL import Image
 
-import InvenTree
-import InvenTree.helpers_model
-import InvenTree.version
 from common.notifications import (
     InvenTreeNotificationBodies,
     NotificationBody,
@@ -331,9 +328,7 @@ def notify_users(
         'instance': instance,
         'name': content.name.format(**content_context),
         'message': content.message.format(**content_context),
-        'link': InvenTree.helpers_model.construct_absolute_url(
-            instance.get_absolute_url()
-        ),
+        'link': construct_absolute_url(instance.get_absolute_url()),
         'template': {'subject': content.name.format(**content_context)},
     }
 

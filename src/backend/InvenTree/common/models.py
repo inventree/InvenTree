@@ -9,12 +9,13 @@ import hmac
 import json
 import logging
 import os
+import sys
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Callable, Collection, TypedDict, Union
+from typing import Any, Callable, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -49,12 +50,20 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import plugin.base.barcodes.helper
 import report.helpers
 import users.models
 from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
 logger = logging.getLogger('inventree')
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired
+else:
+
+    class NotRequired:
+        """NotRequired type helper is only supported with Python 3.11+."""
 
 
 class MetaMixin(models.Model):
@@ -1167,7 +1176,7 @@ class InvenTreeSettingsKeyType(SettingsKeyType):
         requires_restart: If True, a server restart is required after changing the setting
     """
 
-    requires_restart: bool
+    requires_restart: NotRequired[bool]
 
 
 class InvenTreeSetting(BaseInvenTreeSetting):
@@ -1401,6 +1410,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _('Display barcode data in browser as text'),
             'default': False,
             'validator': bool,
+        },
+        'BARCODE_GENERATION_PLUGIN': {
+            'name': _('Barcode Generation Plugin'),
+            'description': _('Plugin to use for internal barcode data generation'),
+            'choices': plugin.base.barcodes.helper.barcode_plugins,
+            'default': 'inventreebarcode',
         },
         'PART_ENABLE_REVISION': {
             'name': _('Part Revisions'),

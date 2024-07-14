@@ -115,6 +115,11 @@ class Build(
 
         return defaults
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return "BO"
+
     def save(self, *args, **kwargs):
         """Custom save method for the BuildOrder model"""
         self.validate_reference_field(self.reference)

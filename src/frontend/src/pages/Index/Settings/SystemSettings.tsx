@@ -98,7 +98,8 @@ export default function SystemSettings() {
               'BARCODE_ENABLE',
               'BARCODE_INPUT_DELAY',
               'BARCODE_WEBCAM_SUPPORT',
-              'BARCODE_SHOW_TEXT'
+              'BARCODE_SHOW_TEXT',
+              'BARCODE_GENERATION_PLUGIN'
             ]}
           />
         )

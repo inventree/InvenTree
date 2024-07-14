@@ -9,28 +9,44 @@ references model objects actually exist in the database.
 
 import json
 
+from django.core.validators import MaxLengthValidator, MinLengthValidator
 from django.utils.translation import gettext_lazy as _
 
+import plugin.base.barcodes.helper
 from InvenTree.helpers import hash_barcode
-from InvenTree.helpers_model import getModelsWithMixin
 from InvenTree.models import InvenTreeBarcodeMixin
 from plugin import InvenTreePlugin
-from plugin.mixins import BarcodeMixin
+from plugin.mixins import BarcodeMixin, SettingsMixin
 
 
-class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
+class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugin):
     """Builtin BarcodePlugin for matching and generating internal barcodes."""
 
     NAME = 'InvenTreeBarcode'
     TITLE = _('InvenTree Barcodes')
     DESCRIPTION = _('Provides native support for barcodes')
-    VERSION = '2.0.0'
+    VERSION = '2.1.0'
     AUTHOR = _('InvenTree contributors')
 
-    @staticmethod
-    def get_supported_barcode_models():
-        """Returns a list of database models which support barcode functionality."""
-        return getModelsWithMixin(InvenTreeBarcodeMixin)
+    SETTINGS = {
+        'INTERNAL_BARCODE_FORMAT': {
+            'name': _('Internal Barcode Format'),
+            'description': _('Select an internal barcode format'),
+            'choices': [
+                ('json', _('JSON barcodes (require more space)')),
+                ('short', _('Short barcodes (made for optimized space)')),
+            ],
+            'default': 'json',
+        },
+        'SHORT_BARCODE_PREFIX': {
+            'name': _('Short Barcode Prefix'),
+            'description': _(
+                'Customize the prefix used for short barcodes, may be useful for environments with multiple InvenTree instances'
+            ),
+            'validator': [str, MinLengthValidator(4), MaxLengthValidator(4)],
+            'default': 'INV-',
+        },
+    }
 
     def format_matched_response(self, label, model, instance):
         """Format a response for the scanned data."""
@@ -53,7 +69,7 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
             except json.JSONDecodeError:
                 pass
 
-        supported_models = self.get_supported_barcode_models()
+        supported_models = plugin.base.barcodes.helper.get_supported_barcode_models()
 
         if barcode_dict is not None and type(barcode_dict) is dict:
             # Look for various matches. First good match will be returned
@@ -79,3 +95,18 @@ class InvenTreeInternalBarcodePlugin(BarcodeMixin, InvenTreePlugin):
 
             if instance is not None:
                 return self.format_matched_response(label, model, instance)
+
+    def generate(self, model_instance: InvenTreeBarcodeMixin):
+        """Generate a barcode for a given model instance."""
+        barcode_format = self.get_setting('INTERNAL_BARCODE_FORMAT')
+
+        if barcode_format == 'json':
+            return json.dumps({model_instance.barcode_model_type(): model_instance.pk})
+
+        if barcode_format == 'short':
+            prefix = self.get_setting('SHORT_BARCODE_PREFIX')
+            model_type_code = model_instance.barcode_model_type_code()
+
+            return f'{prefix}{model_type_code}{model_instance.pk}'
+
+        return None
