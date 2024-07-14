@@ -180,6 +180,10 @@ test('PUI - Pages - Part - Attachments', async ({ page }) => {
   await page.getByLabel('action-button-add-external-').click();
   await page.getByLabel('text-field-link').fill('https://www.google.com');
   await page.getByLabel('text-field-comment').fill('a sample comment');
+
+  // Note: Text field values are debounced for 250ms
+  await page.waitForTimeout(500);
+
   await page.getByRole('button', { name: 'Submit' }).click();
   await page.getByRole('cell', { name: 'a sample comment' }).first().waitFor();
 
