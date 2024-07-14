@@ -31,19 +31,19 @@ repos:
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
-        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt]
+        args: [src/backend/requirements-dev.in, -o, src/backend/requirements-dev.txt, --no-strip-extras, --generate-hashes]
         files: src/backend/requirements-dev\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [src/backend/requirements.in, -o, src/backend/requirements.txt]
+        args: [src/backend/requirements.in, -o, src/backend/requirements.txt, --no-strip-extras, --generate-hashes]
         files: src/backend/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt]
+        args: [contrib/dev_reqs/requirements.in, -o, contrib/dev_reqs/requirements.txt, --no-strip-extras, --generate-hashes]
         files: contrib/dev_reqs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
-        args: [docs/requirements.in, -o, docs/requirements.txt]
+        args: [docs/requirements.in, -o, docs/requirements.txt, --no-strip-extras, --generate-hashes]
         files: docs/requirements\.(in|txt)$
       - id: pip-compile
         name: pip-compile requirements.txt
