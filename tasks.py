@@ -1296,7 +1296,7 @@ def frontend_download(
             return True
         else:
             print(
-                f'Frontend {ref} is not expected `{ref_value}` but `{current_content}`'
+                f'Frontend {ref} is not expected `{ref_value}` but `{current_content}` - new version will be downloaded'
             )
             return False
 
