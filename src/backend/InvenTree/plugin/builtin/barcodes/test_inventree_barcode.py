@@ -352,24 +352,24 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
 
     def test_generation_inventree_json(self):
         """Test JSON barcode generation."""
-        item = stock.models.StockLocation.objects.get(pk=522)
+        item = stock.models.StockLocation.objects.get(pk=5)
         data = self.generate('stocklocation', item.pk, expected_code=200).data
-        self.assertEqual(data['barcode'], '{"location": 522}')
+        self.assertEqual(data['barcode'], '{"stocklocation": 5}')
 
     def test_generation_inventree_short(self):
         """Test short barcode generation."""
         self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'short')
 
-        item = stock.models.StockLocation.objects.get(pk=522)
+        item = stock.models.StockLocation.objects.get(pk=5)
 
         # test with default prefix
         data = self.generate('stocklocation', item.pk, expected_code=200).data
-        self.assertEqual(data['barcode'], 'INV-SL522')
+        self.assertEqual(data['barcode'], 'INV-SL5')
 
         # test with custom prefix
         self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'TEST')
         data = self.generate('stocklocation', item.pk, expected_code=200).data
-        self.assertEqual(data['barcode'], 'TESTSL522')
+        self.assertEqual(data['barcode'], 'TESTSL5')
         self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'INV-')
 
         self.set_internal_barcode_format('INTERNAL_BARCODE_FORMAT', 'json')

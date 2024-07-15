@@ -35,7 +35,7 @@ def qrcode(data, **kwargs):
 
     Keyword Arguments:
         version: QR code version, (None to auto detect) (default = None)
-        error_correction: Error correction level (L: 7%, M: 15%, Q: 25%, H: 30%) (default = 'Q')
+        error_correction: Error correction level (L: 7%, M: 15%, Q: 25%, H: 30%) (default = 'M')
         box_size: pixel dimensions for one black square pixel in the QR code (default = 20)
         border: count white QR square pixels around the qr code, needed as padding (default = 1)
         optimize: data will be split into multiple chunks of at least this length using different modes (text, alphanumeric, binary) to optimize the QR code size. Set to `0` to disable. (default = 1)
@@ -59,7 +59,7 @@ def qrcode(data, **kwargs):
         'border': 1,
         'version': None,
         **kwargs,
-        'error_correction': QR_ECL_LEVEL_MAP[kwargs.get('error_correction', 'Q')],
+        'error_correction': QR_ECL_LEVEL_MAP[kwargs.get('error_correction', 'M')],
     })
     qr.add_data(data, optimize=optimize)
     qr.make(fit=False)  # if version is None, it will automatically use fit=True
