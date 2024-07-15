@@ -373,4 +373,4 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertEqual(data['barcode'], 'TESTSL5')
         self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'INV-')
 
-        self.set_internal_barcode_format('INTERNAL_BARCODE_FORMAT', 'json')
+        self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'json')
