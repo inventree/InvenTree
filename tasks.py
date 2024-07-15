@@ -1289,7 +1289,7 @@ def frontend_download(
             )
             return False
 
-        current_content = current.read_text()
+        current_content = current.read_text().strip()
         ref_value = tag or sha
         if current_content == ref_value:
             print(f'Frontend {ref} is already `{ref_value}`')
