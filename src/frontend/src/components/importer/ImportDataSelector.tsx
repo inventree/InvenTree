@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, HoverCard, Stack, Text } from '@mantine/core';
+import { Group, HoverCard, Paper, Space, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
   IconArrowRight,
@@ -26,6 +26,7 @@ import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
 import { ActionButton } from '../buttons/ActionButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
+import { ProgressBar } from '../items/ProgressBar';
 import { RenderRemoteInstance } from '../render/Instance';
 
 function ImporterDataCell({
@@ -178,6 +179,8 @@ export default function ImporterDataSelector({
           table.clearSelectedRecords();
           notifications.hide('importing-rows');
           table.refreshTable();
+
+          session.refreshSession();
         });
     },
     [session.sessionId, table.refreshTable]
@@ -191,6 +194,7 @@ export default function ImporterDataSelector({
     title: t`Edit Data`,
     fields: selectedFields,
     initialData: selectedRow.data,
+    fetchInitialData: false,
     processFormData: (data: any) => {
       // Construct fields back into a single object
       return {
@@ -374,6 +378,18 @@ export default function ImporterDataSelector({
       {editRow.modal}
       {deleteRow.modal}
       <Stack gap="xs">
+        <Paper shadow="xs" p="xs">
+          <Group grow justify="apart">
+            <Text size="lg">{t`Processing Data`}</Text>
+            <Space />
+            <ProgressBar
+              maximum={session.rowCount}
+              value={session.completedRowCount}
+              progressLabel
+            />
+            <Space />
+          </Group>
+        </Paper>
         <InvenTreeTable
           tableState={table}
           columns={columns}
@@ -388,7 +404,10 @@ export default function ImporterDataSelector({
             enableColumnSwitching: true,
             enableColumnCaching: false,
             enableSelection: true,
-            enableBulkDelete: true
+            enableBulkDelete: true,
+            afterBulkDelete: () => {
+              session.refreshSession();
+            }
           }}
         />
       </Stack>

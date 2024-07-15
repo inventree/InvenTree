@@ -6,6 +6,10 @@ title: Stock
 
 A stock location represents a physical real-world location where *Stock Items* are stored. Locations are arranged in a cascading manner and each location may contain multiple sub-locations, or stock, or both.
 
+## Stock Location Type
+
+A stock location type represents a specific type of location (e.g. one specific size of drawer, shelf, ... or box) which can be assigned to multiple stock locations. In the first place, it is used to specify an icon and having the icon in sync for all locations that use this location type, but it also serves as a data field to quickly see what type of location this is. It is planned to add e.g. drawer dimension information to the location type to add a "find a matching, empty stock location" tool.
+
 ## Stock Item
 
 A *Stock Item* is an actual instance of a [*Part*](../part/part.md) item. It represents a physical quantity of the *Part* in a specific location.
