@@ -62,8 +62,12 @@ if sys.version_info >= (3, 11):
     from typing import NotRequired
 else:
 
-    class NotRequired:
+    class NotRequired:  # pragma: no cover
         """NotRequired type helper is only supported with Python 3.11+."""
+
+        def __class_getitem__(cls, item):
+            """Return the item."""
+            return item
 
 
 class MetaMixin(models.Model):
