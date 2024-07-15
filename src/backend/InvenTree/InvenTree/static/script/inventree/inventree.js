@@ -61,10 +61,6 @@ function exportFormatOptions() {
             display_name: 'TSV',
         },
         {
-            value: 'xls',
-            display_name: 'XLS',
-        },
-        {
             value: 'xlsx',
             display_name: 'XLSX',
         },

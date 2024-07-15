@@ -67,6 +67,7 @@ export interface ApiFormAction {
  * @param successMessage : Optional message to display on successful form submission
  * @param onFormSuccess : A callback function to call when the form is submitted successfully.
  * @param onFormError : A callback function to call when the form is submitted with errors.
+ * @param processFormData : A callback function to process the form data before submission
  * @param modelType : Define a model type for this form
  * @param follow : Boolean, follow the result of the form (if possible)
  * @param table : Table to update on success (if provided)
@@ -91,6 +92,7 @@ export interface ApiFormProps {
   successMessage?: string;
   onFormSuccess?: (data: any) => void;
   onFormError?: () => void;
+  processFormData?: (data: any) => any;
   table?: TableState;
   modelType?: ModelType;
   follow?: boolean;
@@ -123,7 +125,6 @@ export function OptionsApiForm({
   const optionsQuery = useQuery({
     enabled: true,
     refetchOnMount: false,
-    refetchOnWindowFocus: false,
     queryKey: [
       'form-options-data',
       id,
@@ -202,8 +203,11 @@ export function ApiForm({
 }) {
   const navigate = useNavigate();
 
-  const fields: ApiFormFieldSet = useMemo(() => {
-    return props.fields ?? {};
+  const [fields, setFields] = useState<ApiFormFieldSet>(
+    () => props.fields ?? {}
+  );
+  useEffect(() => {
+    setFields(props.fields ?? {});
   }, [props.fields]);
 
   const defaultValues: FieldValues = useMemo(() => {
@@ -308,7 +312,7 @@ export function ApiForm({
 
         return response;
       } catch (error) {
-        console.error('Error fetching initial data:', error);
+        console.error('ERR: Error fetching initial data:', error);
         // Re-throw error to allow react-query to handle error
         throw error;
       }
@@ -380,16 +384,40 @@ export function ApiForm({
     let method = props.method?.toLowerCase() ?? 'get';
 
     let hasFiles = false;
-    mapFields(fields, (_path, field) => {
-      if (field.field_type === 'file upload') {
+
+    // Optionally pre-process the data before submitting it
+    if (props.processFormData) {
+      data = props.processFormData(data);
+    }
+
+    let dataForm = new FormData();
+
+    Object.keys(data).forEach((key: string) => {
+      let value: any = data[key];
+      let field_type = fields[key]?.field_type;
+
+      if (field_type == 'file upload') {
         hasFiles = true;
       }
+
+      // Stringify any JSON objects
+      if (typeof value === 'object') {
+        switch (field_type) {
+          case 'file upload':
+            break;
+          default:
+            value = JSON.stringify(value);
+            break;
+        }
+      }
+
+      dataForm.append(key, value);
     });
 
     return api({
       method: method,
       url: url,
-      data: data,
+      data: hasFiles ? dataForm : data,
       timeout: props.timeout,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
@@ -453,7 +481,11 @@ export function ApiForm({
                 for (const [k, v] of Object.entries(errors)) {
                   const path = _path ? `${_path}.${k}` : k;
 
-                  if (k === 'non_field_errors' || k === '__all__') {
+                  // Determine if field "k" is valid (exists and is visible)
+                  let field = fields[k];
+                  let valid = field && !field.hidden;
+
+                  if (!valid || k === 'non_field_errors' || k === '__all__') {
                     if (Array.isArray(v)) {
                       _nonFieldErrors.push(...v);
                     }
@@ -536,6 +568,8 @@ export function ApiForm({
                           fieldName={fieldName}
                           definition={field}
                           control={form.control}
+                          url={url}
+                          setFields={setFields}
                         />
                       ))}
                   </Stack>

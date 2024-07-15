@@ -23,6 +23,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { TableColumn } from '../Column';
 import {
   CurrencyColumn,
   LinkColumn,
@@ -65,7 +66,7 @@ export function PurchaseOrderLineItemTable({
     }
   });
 
-  const tableColumns = useMemo(() => {
+  const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'part',
@@ -138,17 +139,21 @@ export function PurchaseOrderLineItemTable({
         )
       },
       {
-        accessor: 'pack_quantity',
+        accessor: 'supplier_part_detail.packaging',
         sortable: false,
-        title: t`Pack Quantity`,
-        render: (record: any) => record?.supplier_part_detail?.pack_quantity
+        title: t`Packaging`
       },
       {
-        accessor: 'SKU',
+        accessor: 'supplier_part_detail.pack_quantity',
+        sortable: false,
+        title: t`Pack Quantity`
+      },
+      {
+        accessor: 'supplier_part_detail.SKU',
         title: t`Supplier Code`,
         switchable: false,
         sortable: true,
-        render: (record: any) => record?.supplier_part_detail?.SKU
+        ordering: 'SKU'
       },
       {
         accessor: 'supplier_link',

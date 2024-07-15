@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconClipboardCheck,
   IconClipboardList,
@@ -7,6 +7,7 @@ import {
   IconInfoCircle,
   IconList,
   IconListCheck,
+  IconListNumbers,
   IconNotes,
   IconPaperclip,
   IconQrcode,
@@ -30,6 +31,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -44,6 +46,7 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
@@ -61,7 +64,8 @@ export default function BuildDetail() {
   const {
     instance: build,
     refreshInstance,
-    instanceQuery
+    instanceQuery,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.build_order_list,
     pk: id,
@@ -231,9 +235,9 @@ export default function BuildDetail() {
         content: detailsPanel
       },
       {
-        name: 'allocate-stock',
-        label: t`Allocate Stock`,
-        icon: <IconListCheck />,
+        name: 'line-items',
+        label: t`Line Items`,
+        icon: <IconListNumbers />,
         content: build?.pk ? (
           <BuildLineTable
             params={{
@@ -267,9 +271,19 @@ export default function BuildDetail() {
         )
       },
       {
+        name: 'allocated-stock',
+        label: t`Allocated Stock`,
+        icon: <IconList />,
+        content: build.pk ? (
+          <BuildAllocatedStockTable buildId={build.pk} />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
-        icon: <IconList />,
+        icon: <IconListCheck />,
         content: (
           <StockItemTable
             allowAdd={false}
@@ -410,21 +424,22 @@ export default function BuildDetail() {
       {editBuild.modal}
       {duplicateBuild.modal}
       {cancelBuild.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={build.reference}
-          subtitle={build.title}
-          badges={buildBadges}
-          imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
-          breadcrumbs={[
-            { name: t`Build Orders`, url: '/build' },
-            { name: build.reference, url: `/build/${build.pk}` }
-          ]}
-          actions={buildActions}
-        />
-        <PanelGroup pageKey="build" panels={buildPanels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={build.reference}
+            subtitle={build.title}
+            badges={buildBadges}
+            imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
+            breadcrumbs={[
+              { name: t`Build Orders`, url: '/build' },
+              { name: build.reference, url: `/build/${build.pk}` }
+            ]}
+            actions={buildActions}
+          />
+          <PanelGroup pageKey="build" panels={buildPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

@@ -213,7 +213,8 @@ export function StockTrackingTable({ itemId }: { itemId: number }) {
         params: {
           item: itemId,
           user_detail: true
-        }
+        },
+        enableDownload: true
       }}
     />
   );

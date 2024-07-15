@@ -438,9 +438,9 @@ def progress_bar(val, max_val, *args, **kwargs):
 
 
 @register.simple_tag()
-def get_color_theme_css(username):
+def get_color_theme_css(user):
     """Return the custom theme .css file for the selected user."""
-    user_theme_name = get_user_color_theme(username)
+    user_theme_name = get_user_color_theme(user)
     # Build path to CSS sheet
     inventree_css_sheet = os.path.join('css', 'color-themes', user_theme_name + '.css')
 
@@ -451,12 +451,18 @@ def get_color_theme_css(username):
 
 
 @register.simple_tag()
-def get_user_color_theme(username):
+def get_user_color_theme(user):
     """Get current user color theme."""
     from common.models import ColorTheme
 
     try:
-        user_theme = ColorTheme.objects.filter(user=username).get()
+        if not user.is_authenticated:
+            return 'default'
+    except Exception:
+        return 'default'
+
+    try:
+        user_theme = ColorTheme.objects.filter(user_obj=user).get()
         user_theme_name = user_theme.name
         if not user_theme_name or not ColorTheme.is_valid_choice(user_theme):
             user_theme_name = 'default'

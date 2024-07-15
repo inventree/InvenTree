@@ -46,3 +46,9 @@ export function RenderBuildLine({
     />
   );
 }
+
+export function RenderBuildItem({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return <RenderInlineModel primary={instance.pk} />;
+}

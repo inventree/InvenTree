@@ -47,6 +47,25 @@ class TestParams(TestCase):
             t3.full_clean()
             t3.save()  # pragma: no cover
 
+    def test_invalid_numbers(self):
+        """Test that invalid floating point numbers are correctly handled."""
+        p = Part.objects.first()
+        t = PartParameterTemplate.objects.create(name='Yaks')
+
+        valid_floats = ['-12', '1.234', '17', '3e45', '-12e34']
+
+        for value in valid_floats:
+            param = PartParameter(part=p, template=t, data=value)
+            param.full_clean()
+            self.assertIsNotNone(param.data_numeric)
+
+        invalid_floats = ['88E6352', 'inf', '-inf', 'nan', '3.14.15', '3eee3']
+
+        for value in invalid_floats:
+            param = PartParameter(part=p, template=t, data=value)
+            param.full_clean()
+            self.assertIsNone(param.data_numeric)
+
     def test_metadata(self):
         """Unit tests for the metadata field."""
         for model in [PartParameterTemplate]:
@@ -76,6 +95,43 @@ class TestParams(TestCase):
         # Check that an incorrect name returns None
         param = prt.get_parameter('Not a parameter')
         self.assertIsNone(param)
+
+    def test_locked_part(self):
+        """Test parameter editing for a locked part."""
+        part = Part.objects.create(
+            name='Test Part 3',
+            description='A part for testing',
+            category=PartCategory.objects.first(),
+            IPN='TEST-PART',
+        )
+
+        parameter = PartParameter.objects.create(
+            part=part, template=PartParameterTemplate.objects.first(), data='123'
+        )
+
+        # Lock the part
+        part.locked = True
+        part.save()
+
+        # Attempt to edit the parameter
+        with self.assertRaises(django_exceptions.ValidationError):
+            parameter.data = '456'
+            parameter.save()
+
+        # Attempt to delete the parameter
+        with self.assertRaises(django_exceptions.ValidationError):
+            parameter.delete()
+
+        # Unlock the part
+        part.locked = False
+        part.save()
+
+        # Now we can edit the parameter
+        parameter.data = '456'
+        parameter.save()
+
+        # And we can delete the parameter
+        parameter.delete()
 
 
 class TestCategoryTemplates(TransactionTestCase):

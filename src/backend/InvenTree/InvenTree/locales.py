@@ -15,6 +15,7 @@ Additionally, update the following files with the new locale code:
 from django.utils.translation import gettext_lazy as _
 
 LOCALES = [
+    ('ar', _('Arabic')),
     ('bg', _('Bulgarian')),
     ('cs', _('Czech')),
     ('da', _('Danish')),
@@ -23,6 +24,7 @@ LOCALES = [
     ('en', _('English')),
     ('es', _('Spanish')),
     ('es-mx', _('Spanish (Mexican)')),
+    ('et', _('Estonian')),
     ('fa', _('Farsi / Persian')),
     ('fi', _('Finnish')),
     ('fr', _('French')),
