@@ -76,8 +76,12 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
                 return None
 
             label = model.barcode_model_type()
-            pk = int(pk)
-            return self.format_matched_response(label, model, model.objects.get(pk=pk))
+
+            try:
+                instance = model.objects.get(pk=int(pk))
+                return self.format_matched_response(label, model, instance)
+            except (ValueError, model.DoesNotExist):
+                pass
 
         # Internal Barcodes - JSON Format
         # Attempt to coerce the barcode data into a dict object

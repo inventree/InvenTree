@@ -162,7 +162,10 @@ class BarcodeGenerate(CreateAPIView):
         if model_cls is None:
             raise ValidationError({'error': _('Model is not supported')})
 
-        model_instance = model_cls.objects.get(pk=pk)
+        try:
+            model_instance = model_cls.objects.get(pk=pk)
+        except model_cls.DoesNotExist:
+            raise ValidationError({'error': _('Model instance not found')})
 
         barcode_data = plugin.base.barcodes.helper.generate_barcode(model_instance)
 
