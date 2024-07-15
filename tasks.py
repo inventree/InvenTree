@@ -1289,14 +1289,14 @@ def frontend_download(
             )
             return False
 
-        current_content = current.read_text()
+        current_content = current.read_text().strip()
         ref_value = tag or sha
         if current_content == ref_value:
             print(f'Frontend {ref} is already `{ref_value}`')
             return True
         else:
             print(
-                f'Frontend {ref} is not expected `{ref_value}` but `{current_content}`'
+                f'Frontend {ref} is not expected `{ref_value}` but `{current_content}` - new version will be downloaded'
             )
             return False
 
@@ -1316,8 +1316,24 @@ def frontend_download(
                 ['git', 'rev-parse', 'HEAD'], encoding='utf-8'
             ).strip()
         except Exception:
-            print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
-            return
+            # .deb Packages contain extra information in the VERSION file
+            version_file = localDir().joinpath('VERSION')
+            if not version_file.exists():
+                return
+            from dotenv import dotenv_values  # noqa: WPS433
+
+            content = dotenv_values(version_file)
+            if (
+                'INVENTREE_PKG_INSTALLER' in content
+                and content['INVENTREE_PKG_INSTALLER'] == 'PKG'
+            ):
+                ref = content.get('INVENTREE_COMMIT_SHA')
+                print(
+                    f'[INFO] Running in package environment, got commit "{ref}" from VERSION file'
+                )
+            else:
+                print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
+                return
 
     if ref is None and tag is None:
         print('[ERROR] Either ref or tag needs to be set.')
