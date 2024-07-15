@@ -63,6 +63,6 @@ else
   curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L -O -f
   mkdir -p src/backend/InvenTree/web/static
   echo "INFO frontend | Unzipping frontend"
-  unzip frontend-build.zip -d src/backend/InvenTree/web/static/web -q
+  unzip -qq frontend-build.zip -d src/backend/InvenTree/web/static/web
   echo "INFO frontend | Unzipped frontend"
 fi
