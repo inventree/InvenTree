@@ -1176,6 +1176,21 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             }
         );
 
+        // Hidden note input
+        const note_input = constructField(
+            `items_note_${pk}`,
+            {
+                type: 'string',
+                required: false,
+                label: '{% trans "Note" %}',
+                icon: 'fa-sticky-note',
+                value: '',
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
         var quantity_input_group = `${quantity_input}${pack_size_div}`;
 
         // Construct list of StockItem status codes
@@ -1259,6 +1274,16 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             );
         }
 
+        buttons += makeIconButton(
+            'fa-sticky-note',
+            'button-row-add-note',
+            pk,
+            '{% trans "Add note" %}',
+            {
+                collapseTarget: `row-note-${pk}`,
+            }
+        );
+
         if (line_items.length > 1) {
             buttons += makeRemoveButton('button-row-remove', pk, '{% trans "Remove row" %}');
         }
@@ -1314,6 +1339,11 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
             <td colspan=2'>${sn_input}</td>
             <td></td>
         </tr>
+        <tr id='row-note-${pk}' class='collapse'>
+            <td colspan='2'></td>
+            <th>{% trans "Note" %}</th>
+            <td colspan='2'>${note_input}</td>
+        <td></td>
         `;
 
         return html;
@@ -1507,6 +1537,10 @@ function receivePurchaseOrderItems(order_id, line_items, options={}) {
 
                     if (getFormFieldElement(`items_packaging_${pk}`).exists()) {
                         line.packaging = getFormFieldValue(`items_packaging_${pk}`);
+                    }
+
+                    if (getFormFieldElement(`items_note_${pk}`).exists()) {
+                        line.note = getFormFieldValue(`items_note_${pk}`);
                     }
 
                     if (getFormFieldElement(`items_serial_numbers_${pk}`).exists()) {
