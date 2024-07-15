@@ -55,7 +55,8 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
     def generate(self, model: str, pk: int, expected_code: int):
         """Generate a barcode for a given model instance."""
         return self.post(
-            reverse('api-barcode-generate', kwargs={'model': model, 'pk': pk}),
+            reverse('api-barcode-generate'),
+            data={'model': model, 'pk': pk},
             expected_code=expected_code,
         )
 
