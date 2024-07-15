@@ -319,7 +319,7 @@ function LineItemFormRow({
       <Modal
         opened={opened}
         onClose={close}
-        title={<StylishText>{t`Scan Barcode`}</StylishText>}
+        title={<StylishText children={t`Scan Barcode`} />}
       >
         <FocusTrap>
           <TextInput
