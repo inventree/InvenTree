@@ -33,7 +33,10 @@ import {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
-import { TableFieldExtraRow } from '../components/forms/fields/TableField';
+import {
+  TableField,
+  TableFieldExtraRow
+} from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { StylishText } from '../components/items/StylishText';
@@ -236,6 +239,12 @@ function LineItemFormRow({
     }
   });
 
+  const [noteOpen, noteHandlers] = useDisclosure(false, {
+    onClose: () => {
+      input.changeFn(input.idx, 'note', undefined);
+    }
+  });
+
   // State for serializing
   const [batchCode, setBatchCode] = useState<string>('');
   const [serials, setSerials] = useState<string>('');
@@ -404,6 +413,13 @@ function LineItemFormRow({
               tooltipAlignment="top"
               variant={statusOpen ? 'filled' : 'transparent'}
             />
+            <ActionButton
+              icon={<InvenTreeIcon icon="note" />}
+              tooltip={t`Add Note`}
+              tooltipAlignment="top"
+              variant={noteOpen ? 'filled' : 'transparent'}
+              onClick={() => noteHandlers.toggle()}
+            />
             {barcode ? (
               <ActionButton
                 icon={<InvenTreeIcon icon="unlink" />}
@@ -538,6 +554,14 @@ function LineItemFormRow({
           api_url: apiUrl(ApiEndpoints.stock_status),
           choices: statuses,
           label: t`Status`
+        }}
+      />
+      <TableFieldExtraRow
+        visible={noteOpen}
+        onValueChange={(value) => input.changeFn(input.idx, 'note', value)}
+        fieldDefinition={{
+          field_type: 'string',
+          label: t`Note`
         }}
       />
     </>
