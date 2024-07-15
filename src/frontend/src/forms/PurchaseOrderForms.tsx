@@ -361,27 +361,34 @@ function LineItemFormRow({
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
           <Flex gap="1px">
             <ActionButton
+              size="sm"
               onClick={() => locationHandlers.toggle()}
               icon={<InvenTreeIcon icon="location" />}
               tooltip={t`Set Location`}
               tooltipAlignment="top"
-              variant={locationOpen ? 'filled' : 'outline'}
+              variant={locationOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
+              size="sm"
               onClick={() => batchHandlers.toggle()}
               icon={<InvenTreeIcon icon="batch_code" />}
               tooltip={t`Assign Batch Code${
                 record.trackable && ' and Serial Numbers'
               }`}
               tooltipAlignment="top"
-              variant={batchOpen ? 'filled' : 'outline'}
+              variant={batchOpen ? 'filled' : 'transparent'}
+            />
+            <ActionButton
+              size="sm"
+              icon={<InvenTreeIcon icon="packaging" />}
+              tooltip={t`Adjust Packaging`}
             />
             <ActionButton
               onClick={() => statusHandlers.toggle()}
               icon={<InvenTreeIcon icon="status" />}
               tooltip={t`Change Status`}
               tooltipAlignment="top"
-              variant={statusOpen ? 'filled' : 'outline'}
+              variant={statusOpen ? 'filled' : 'transparent'}
             />
             {barcode ? (
               <ActionButton
@@ -397,7 +404,7 @@ function LineItemFormRow({
                 icon={<InvenTreeIcon icon="barcode" />}
                 tooltip={t`Scan Barcode`}
                 tooltipAlignment="top"
-                variant="outline"
+                variant="transparent"
                 onClick={() => open()}
               />
             )}
@@ -608,7 +615,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
           />
         );
       },
-      headers: ['Part', 'SKU', 'Received', 'Quantity to receive', 'Actions']
+      headers: [t`Part`, t`SKU`, t`Received`, t`Quantity`, t`Actions`]
     },
     location: {
       filters: {
