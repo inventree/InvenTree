@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-14 12:01+0000\n"
-"PO-Revision-Date: 2024-07-14 16:35\n"
+"PO-Revision-Date: 2024-07-15 16:36\n"
 "Last-Translator: \n"
 "Language-Team: Estonian\n"
 "Language: et_EE\n"
@@ -90,7 +90,7 @@ msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr ""
+msgstr "Salasõna"
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
@@ -518,7 +518,7 @@ msgstr ""
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr ""
+msgstr "Valuuta"
 
 #: InvenTree/serializers.py:103
 msgid "Select currency from available options"
@@ -530,7 +530,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:409 templates/InvenTree/settings/user.html:37
 msgid "First Name"
-msgstr ""
+msgstr "Eesnimi"
 
 #: InvenTree/serializers.py:409
 msgid "First name of the user"
@@ -538,7 +538,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
-msgstr ""
+msgstr "Perekonnanimi"
 
 #: InvenTree/serializers.py:412
 msgid "Last name of the user"
@@ -673,7 +673,7 @@ msgstr ""
 
 #: InvenTree/templatetags/inventree_extras.py:184
 msgid "Unknown database"
-msgstr ""
+msgstr "Tundmatu andmebaas"
 
 #: InvenTree/validators.py:32 InvenTree/validators.py:34
 msgid "Invalid physical unit"
@@ -701,7 +701,7 @@ msgstr ""
 
 #: InvenTree/views.py:412 templates/InvenTree/settings/user.html:20
 msgid "Set Password"
-msgstr ""
+msgstr "Määra parool"
 
 #: InvenTree/views.py:434
 msgid "Password fields must match"
@@ -709,7 +709,7 @@ msgstr ""
 
 #: InvenTree/views.py:442
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Esitatud vale parool"
 
 #: InvenTree/views.py:650 templates/navbar.html:160
 msgid "System Information"
@@ -828,7 +828,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:728
 #: templates/js/translated/sales_order.js:1854
 msgid "Reference"
-msgstr ""
+msgstr "Tootekood"
 
 #: build/models.py:245
 msgid "Brief description of the build (optional)"
@@ -1502,7 +1502,7 @@ msgstr ""
 
 #: build/serializers.py:1134
 msgid "Supplier Part Number"
-msgstr ""
+msgstr "Tarnija osa number"
 
 #: build/serializers.py:1135 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1524,7 +1524,7 @@ msgstr ""
 #: build/serializers.py:1141 part/admin.py:39 part/admin.py:398
 #: part/models.py:4063 part/stocktake.py:219 stock/admin.py:152
 msgid "Part ID"
-msgstr ""
+msgstr "Osa ID"
 
 #: build/serializers.py:1143 build/serializers.py:1226 part/admin.py:402
 #: part/models.py:4065
@@ -1545,7 +1545,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:1732
 #: templates/js/translated/stock.js:596
 msgid "Serial Number"
-msgstr ""
+msgstr "Seerianumber"
 
 #: build/serializers.py:1159 stock/serializers.py:590
 #: templates/js/translated/build.js:1019 templates/js/translated/build.js:1166
@@ -1637,7 +1637,7 @@ msgstr ""
 #: order/status_codes.py:37 order/status_codes.py:64 order/status_codes.py:82
 #: templates/js/translated/table_filters.js:598
 msgid "Pending"
-msgstr ""
+msgstr "Ootel"
 
 #: build/status_codes.py:12
 msgid "Production"
@@ -1646,7 +1646,7 @@ msgstr ""
 #: build/status_codes.py:13 order/status_codes.py:15 order/status_codes.py:45
 #: order/status_codes.py:70
 msgid "Cancelled"
-msgstr ""
+msgstr "Katkestatud"
 
 #: build/status_codes.py:14 generic/states/tests.py:19 importer/models.py:501
 #: importer/status_codes.py:19 order/status_codes.py:14
@@ -1654,7 +1654,7 @@ msgstr ""
 #: order/templates/order/order_base.html:158
 #: order/templates/order/sales_order_base.html:165 report/models.py:444
 msgid "Complete"
-msgstr ""
+msgstr "Valmis"
 
 #: build/tasks.py:184
 msgid "Stock required for build order"
@@ -1902,7 +1902,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:190
 #: templates/js/translated/build.js:2374
 msgid "Created"
-msgstr ""
+msgstr "Loodud"
 
 #: build/templates/build/detail.html:144
 msgid "No target date set"
@@ -2149,11 +2149,11 @@ msgstr ""
 
 #: common/models.py:1119
 msgid "No group"
-msgstr ""
+msgstr "Grupp puudub"
 
 #: common/models.py:1218
 msgid "Restart required"
-msgstr ""
+msgstr "Taaskäivitamine on vajalik"
 
 #: common/models.py:1220
 msgid "A setting has been changed which requires a server restart"
@@ -2304,7 +2304,7 @@ msgstr ""
 
 #: common/models.py:1341
 msgid "Automatic Backup"
-msgstr ""
+msgstr "Automaatne varundus"
 
 #: common/models.py:1342
 msgid "Enable automatic backup of database and media files"
@@ -2344,7 +2344,7 @@ msgstr ""
 
 #: common/models.py:1381 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Vöötkoodi tugi"
 
 #: common/models.py:1382
 msgid "Enable barcode scanner support in the web interface"
@@ -14723,7 +14723,7 @@ msgstr ""
 
 #: templates/search.html:15
 msgid "Close search menu"
-msgstr ""
+msgstr "Sulgege otsingumenüü"
 
 #: templates/socialaccount/authentication_error.html:5
 msgid "Social Network Login Failure"
