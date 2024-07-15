@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 from platform import python_version
 
+from dotenv import dotenv_values
 from invoke import task
 
 
@@ -1316,8 +1317,22 @@ def frontend_download(
                 ['git', 'rev-parse', 'HEAD'], encoding='utf-8'
             ).strip()
         except Exception:
-            print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
-            return
+            # .deb Packages contain extra information in the VERSION file
+            version_file = localDir().joinpath('VERSION')
+            if not version_file.exists():
+                return
+            content = dotenv_values(version_file)
+            if (
+                'INVENTREE_PKG_INSTALLER' in content
+                and content['INVENTREE_PKG_INSTALLER'] == 'PKG'
+            ):
+                ref = content.get('INVENTREE_COMMIT_SHA')
+                print(
+                    f'[INFO] Running in package environment, got commit "{ref}" from VERSION file'
+                )
+            else:
+                print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
+                return
 
     if ref is None and tag is None:
         print('[ERROR] Either ref or tag needs to be set.')
