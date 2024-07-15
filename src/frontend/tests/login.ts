@@ -8,10 +8,10 @@ export const doLogin = async (page, username?: string, password?: string) => {
   username = username ?? user.username;
   password = password ?? user.password;
 
-  const userLoggedIn = page.locator('p[aria-label="username"]');
+  const userLoggedIn = page.getByTestId('username');
   const visible = await userLoggedIn.isVisible();
 
-  if (visible) {
+  if (false) {
     const currentUser = await userLoggedIn.innerText();
     if (currentUser === username) {
       return;

@@ -160,7 +160,7 @@ const setTextSetting = async (page, setting: TestSetting) => {
       }
     }
   }
-  await page.locator('text=Edit Setting').waitFor({ state: 'hidden' });
+  await page.getByText('Edit Setting').waitFor({ state: 'hidden' });
 
   if (updated) {
     await page

@@ -32,7 +32,7 @@ export function MainMenu() {
                 size="sm"
                 style={{ lineHeight: 1 }}
                 mr={3}
-                aria-label="username"
+                data-testid="username"
               >
                 {username()}
               </Text>
