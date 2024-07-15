@@ -38,6 +38,7 @@ FULL_SHA=$(jq -r '.sha' commit.json)
 
 echo "Write VERSION information"
 echo "INVENTREE_COMMIT_HASH='$SHA'" >> VERSION
+echo "INVENTREE_COMMIT_SHA='$FULL_SHA'" >> VERSION
 echo "INVENTREE_COMMIT_DATE='$DATE'" >> VERSION
 echo "INVENTREE_PKG_INSTALLER='PKG'" >> VERSION
 echo "INVENTREE_PKG_BRANCH='$BRANCH'" >> VERSION
@@ -52,7 +53,7 @@ cat VERSION
 # Check if tag sha is the same as the commit sha
 TAG_SHA=$(jq -r '.sha' tag.json)
 if [ "$TAG_SHA" != "$FULL_SHA" ]; then
-  echo "Tag sha is not the same as commit sha, can not download frontend"
+  echo "Tag sha '$TAG_SHA' is not the same as commit sha $FULL_SHA, can not download frontend"
 else
   echo "Getting frontend from github via tag"
   curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L frontend.zip
