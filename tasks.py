@@ -10,7 +10,6 @@ import sys
 from pathlib import Path
 from platform import python_version
 
-from dotenv import dotenv_values
 from invoke import task
 
 
@@ -1321,6 +1320,8 @@ def frontend_download(
             version_file = localDir().joinpath('VERSION')
             if not version_file.exists():
                 return
+            from dotenv import dotenv_values  # noqa: WPS433
+
             content = dotenv_values(version_file)
             if (
                 'INVENTREE_PKG_INSTALLER' in content
