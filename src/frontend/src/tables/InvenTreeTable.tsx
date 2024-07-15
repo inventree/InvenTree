@@ -103,6 +103,7 @@ export type InvenTreeTableProps<T = any> = {
   enableColumnCaching?: boolean;
   enableLabels?: boolean;
   enableReports?: boolean;
+  afterBulkDelete?: () => void;
   pageSize?: number;
   barcodeActions?: any[];
   tableFilters?: TableFilter[];
@@ -547,6 +548,9 @@ export function InvenTreeTable<T = any>({
           })
           .finally(() => {
             tableState.clearSelectedRecords();
+            if (props.afterBulkDelete) {
+              props.afterBulkDelete();
+            }
           });
       }
     });

@@ -134,7 +134,11 @@ export function RenderRemoteInstance({
   }
 
   if (!data) {
-    return <Text>${pk}</Text>;
+    return (
+      <Text>
+        {model}: {pk}
+      </Text>
+    );
   }
 
   return <RenderInstance model={model} instance={data} />;
