@@ -1,3 +1,5 @@
+import { Page } from '@playwright/test';
+
 import { baseUrl } from './defaults';
 
 export type TestSetting = {
@@ -16,7 +18,7 @@ type SettingsMap = {
  * @param page - Page object from test
  * @param {TestSetting} setting - Setting to change, including desired new state
  */
-export const setGlobalSetting = async (page, setting: TestSetting) => {
+export const setGlobalSetting = async (page: Page, setting: TestSetting) => {
   const startUrl = new URL(page.url());
   const startPath = `.${startUrl.pathname}`;
 
@@ -37,7 +39,10 @@ export const setGlobalSetting = async (page, setting: TestSetting) => {
  * @param page - Page object from test
  * @param {TestSetting[]} settings - Array of settings to change
  */
-export const setGlobalSettings = async (page, settings: TestSetting[]) => {
+export const setGlobalSettings = async (
+  page: Page,
+  settings: TestSetting[]
+) => {
   const sorted = settings.sort((a, b) => {
     return a.slug.localeCompare(b.slug);
   });
@@ -71,7 +76,7 @@ export const setGlobalSettings = async (page, settings: TestSetting[]) => {
  * @param page - Page object from test
  * @param {TestSetting} setting - Setting to change, including desired new state
  */
-const setToggleSetting = async (page, setting: TestSetting) => {
+const setToggleSetting = async (page: Page, setting: TestSetting) => {
   await page
     .getByTestId(setting.key)
     .locator('input')
@@ -89,7 +94,7 @@ const setToggleSetting = async (page, setting: TestSetting) => {
  * @param page
  * @param setting
  */
-const setTextSetting = async (page, setting: TestSetting) => {
+const setTextSetting = async (page: Page, setting: TestSetting) => {
   let updated = true;
 
   await page
@@ -150,12 +155,10 @@ const setTextSetting = async (page, setting: TestSetting) => {
           await noValue.click();
         }
         // Wait for the dropdown to close
-        await page.locator('div[role="listbox"]').waitFor({ state: 'hidden' });
         await page.getByRole('button', { name: btnName }).click();
       } else {
         // Click the drowndown matching the supplied state
         await page.click(`div[role="option"][value="${setting.state}"]`);
-        await page.locator('div[role="listbox"]').waitFor({ state: 'hidden' });
         await page.getByRole('button', { name: 'Submit' }).click();
       }
     }
