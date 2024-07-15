@@ -19,7 +19,7 @@ Some simple examples of this format are shown below:
 | Stock Location | `{% raw %}{"stocklocation": 1}{% endraw %}` |
 | Supplier Part | `{% raw %}{"supplierpart": 99}{% endraw %}` |
 
-The numerical ID value used is the _Primary Key_ (PK) of the particular object in the database.
+The numerical ID value used is the *Primary Key* (PK) of the particular object in the database.
 
 #### Downsides
 
@@ -27,7 +27,7 @@ The numerical ID value used is the _Primary Key_ (PK) of the particular object i
 2. The model name key has not a fixed length. Some model names are longer than others. E.g. a part QR code with the shortest possible id requires 11 chars, while a stock location QR code with the same id would already require 20 chars, which already requires QR code version 2 and quickly version 3.
 
 !!! info "QR code versions"
-    There are 40 different qr code versions from 1-40. They all can encode more data than the previous version, but require more "squares". E.g. a V1 QR codes has 21x21 "pixels" while a V2 already has 25x25. For more information see [QR code comparison](https://www.qrcode.com/en/about/version.html).
+    There are 40 different qr code versions from 1-40. They all can encode more data than the previous version, but require more "squares". E.g. a V1 QR codes has 21x21 "squares" while a V2 already has 25x25. For more information see [QR code comparison](https://www.qrcode.com/en/about/version.html).
 
 For a more detailed size analysis of the JSON-based QR codes refer to [this issue](https://github.com/inventree/InvenTree/issues/6612).
 
@@ -37,7 +37,9 @@ While JSON-based QR Codes encode all necessary information, they come with the d
 
 - `INV-` is a constant prefix. This is configurable in the InvenTree Barcode plugins settings per instance to support environments that use multiple instances.
 - `??` is a two character alphanumeric (`0-9A-Z  $%*+-./:` (45 chars)) code, individual to each model.
-- `x` the actual pk of the model. Now with an overhead of 6 chars for every model, this format supports the following amount of model instances using the described QR code modes:
+- `x` the actual pk of the model.
+
+Now with an overhead of 6 chars for every model, this format supports the following amount of model instances using the described QR code modes:
 
 | QR code mode | Alphanumeric mode | Mixed mode |
 | --- | --- | --- |
