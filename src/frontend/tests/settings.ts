@@ -137,6 +137,7 @@ const setTextSetting = async (page: Page, setting: TestSetting) => {
 
     if (choice) {
       // It is a choice field, open the dropdown
+      await page.locator('input[aria-label="choice-field-value"]').click();
       await page.locator('div[role="listbox"]').waitFor();
 
       if (setting.state === null || setting.state === undefined) {
