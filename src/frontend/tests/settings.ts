@@ -173,7 +173,6 @@ const setTextSetting = async (page: Page, setting: TestSetting) => {
       }
     }
   }
-  await page.getByRole('dialog').waitFor({ state: 'hidden', timeout: 3000 });
 
   if (updated) {
     await page
