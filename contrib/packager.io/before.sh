@@ -56,7 +56,9 @@ if [ "$TAG_SHA" != "$FULL_SHA" ]; then
   echo "Tag sha '$TAG_SHA' is not the same as commit sha $FULL_SHA, can not download frontend"
 else
   echo "Getting frontend from github via tag"
-  curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L -O
+  curl https://github.com/$REPO/releases/download/$APP_PKG_VERSION/frontend-build.zip -L -O -f
+  mkdir -p src/backend/InvenTree/web/static
+  echo "Unzipping frontend"
   unzip frontend-build.zip -d src/backend/InvenTree/web/static/web
   echo "Unzipped frontend"
 fi
