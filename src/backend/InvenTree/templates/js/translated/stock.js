@@ -17,6 +17,7 @@
     formatDecimal,
     formatPriceRange,
     getCurrencyConversionRates,
+    getFormFieldElement,
     getFormFieldValue,
     getTableData,
     global_settings,
