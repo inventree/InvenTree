@@ -77,15 +77,22 @@ export const setGlobalSettings = async (
  * @param {TestSetting} setting - Setting to change, including desired new state
  */
 const setToggleSetting = async (page: Page, setting: TestSetting) => {
+  let updated = false;
   await page
     .getByTestId(setting.key)
     .locator('input')
     .evaluate((input: any, setting: TestSetting) => {
       if (input.checked !== setting.state) {
         input.click();
+        updated = true;
       }
     }, setting);
-  await page.getByText(`Setting ${setting.key} updated successfully`);
+
+  if (updated) {
+    await page
+      .getByText(`Setting ${setting.key} updated successfully`)
+      .waitFor();
+  }
 };
 
 /**
@@ -109,8 +116,9 @@ const setTextSetting = async (page: Page, setting: TestSetting) => {
     'input[type=string], input[aria-label="number-field-value"]'
   );
 
-  if (await text.isVisible()) {
-    console.log("IS TEXT'Y");
+  const visible = await text.isVisible();
+
+  if (visible) {
     const value = await text.evaluate((node) => node.getAttribute('value'));
     if (value != setting.state) {
       // Fill out the text field
@@ -129,7 +137,6 @@ const setTextSetting = async (page: Page, setting: TestSetting) => {
 
     if (choice) {
       // It is a choice field, open the dropdown
-      await page.click('input[aria-label="choice-field-value"]');
       await page.locator('div[role="listbox"]').waitFor();
 
       if (setting.state === null || setting.state === undefined) {
@@ -148,14 +155,17 @@ const setTextSetting = async (page: Page, setting: TestSetting) => {
         if (selected) {
           updated = false;
           // Just close the dropdown
-          await page.click('input[aria-label="choice-field-value"]');
+          await page.keyboard.press('Escape');
+          await page
+            .locator('div[role="listbox"]')
+            .waitFor({ state: 'hidden' });
           btnName = 'Cancel';
         } else {
           // Select the first option
           await noValue.click();
         }
         // Wait for the dropdown to close
-        await page.getByRole('button', { name: btnName }).click();
+        await page.getByRole('dialog').getByText(btnName).click();
       } else {
         // Click the drowndown matching the supplied state
         await page.click(`div[role="option"][value="${setting.state}"]`);
@@ -163,7 +173,7 @@ const setTextSetting = async (page: Page, setting: TestSetting) => {
       }
     }
   }
-  await page.getByText('Edit Setting').waitFor({ state: 'hidden' });
+  await page.getByRole('dialog').waitFor({ state: 'hidden', timeout: 3000 });
 
   if (updated) {
     await page
