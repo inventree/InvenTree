@@ -47,13 +47,13 @@ def qrcode(data, **kwargs):
         base64 encoded image data
 
     """
-    # Construct params
+    # Extract other arguments from kwargs
     fill_color = kwargs.pop('fill_color', 'black')
     back_color = kwargs.pop('back_color', 'white')
     image_format = kwargs.pop('format', 'PNG')
     optimize = kwargs.pop('optimize', 1)
 
-    # Construct QR code params
+    # Construct QR code object
     qr = QRCode(**{
         'box_size': 20,
         'border': 1,
