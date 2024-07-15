@@ -91,7 +91,7 @@ export function ServerInfoModal({
               </OnlyStaff>
             </Table.Td>
           </Table.Tr>
-          {server.worker_running != true && (
+          {server?.worker_running == false && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Background Worker</Trans>
@@ -103,7 +103,7 @@ export function ServerInfoModal({
               </Table.Td>
             </Table.Tr>
           )}
-          {server.email_configured != true && (
+          {server?.email_configured == false && (
             <Table.Tr>
               <Table.Td>
                 <Trans>Email Settings</Trans>
