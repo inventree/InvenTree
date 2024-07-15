@@ -36,9 +36,9 @@ test('PUI - Label Printing', async ({ page }) => {
 
   await page.waitForTimeout(100);
 
-  // Submit the form (second time should result in success)
-  await page.getByRole('button', { name: 'Submit' }).isEnabled();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  // Submit the print form (second time should result in success)
+  await page.getByRole('button', { name: 'Print', exact: true }).isEnabled();
+  await page.getByRole('button', { name: 'Print', exact: true }).click();
 
   await page.locator('#form-success').waitFor();
   await page.getByText('Label printing completed').waitFor();
@@ -71,9 +71,9 @@ test('PUI - Report Printing', async ({ page }) => {
 
   await page.waitForTimeout(100);
 
-  // Submit the form (should result in success)
-  await page.getByRole('button', { name: 'Submit' }).isEnabled();
-  await page.getByRole('button', { name: 'Submit' }).click();
+  // Submit the print form (should result in success)
+  await page.getByRole('button', { name: 'Generate', exact: true }).isEnabled();
+  await page.getByRole('button', { name: 'Generate', exact: true }).click();
 
   await page.locator('#form-success').waitFor();
   await page.getByText('Report printing completed').waitFor();

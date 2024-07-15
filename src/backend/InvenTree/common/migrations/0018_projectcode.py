@@ -17,5 +17,8 @@ class Migration(migrations.Migration):
                 ('code', models.CharField(help_text='Unique project code', max_length=50, unique=True, verbose_name='Project Code')),
                 ('description', models.CharField(blank=True, help_text='Project description', max_length=200, verbose_name='Description')),
             ],
+            options={
+                'verbose_name': 'Project Code',
+            },
         ),
     ]

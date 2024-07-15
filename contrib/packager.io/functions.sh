@@ -246,7 +246,11 @@ function create_initscripts() {
 }
 
 function create_admin() {
-  # Create data for admin user
+  # Create data for admin users - stop with setting SETUP_ADMIN_NOCREATION to true
+  if [ "${SETUP_ADMIN_NOCREATION}" == "true" ]; then
+    echo "# Admin creation is disabled - skipping"
+    return
+  fi
 
   if test -f "${SETUP_ADMIN_PASSWORD_FILE}"; then
     echo "# Admin data already exists - skipping"

@@ -17,6 +17,7 @@ export const defaultLocale = 'en';
  */
 export const getSupportedLanguages = (): Record<string, string> => {
   return {
+    ar: t`Arabic`,
     bg: t`Bulgarian`,
     cs: t`Czech`,
     da: t`Danish`,
@@ -25,6 +26,7 @@ export const getSupportedLanguages = (): Record<string, string> => {
     en: t`English`,
     es: t`Spanish`,
     'es-mx': t`Spanish (Mexican)`,
+    et: t`Estonian`,
     fa: t`Farsi / Persian`,
     fi: t`Finnish`,
     fr: t`French`,
@@ -92,6 +94,12 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
 
         if (locales.indexOf('en-us') < 0) {
           locales.push('en-us');
+        }
+
+        let new_locales = locales.join(', ');
+
+        if (new_locales == api.defaults.headers.common['Accept-Language']) {
+          return;
         }
 
         // Update default Accept-Language headers

@@ -455,7 +455,10 @@ def get_user_color_theme(user):
     """Get current user color theme."""
     from common.models import ColorTheme
 
-    if not user.is_authenticated:
+    try:
+        if not user.is_authenticated:
+            return 'default'
+    except Exception:
         return 'default'
 
     try:
