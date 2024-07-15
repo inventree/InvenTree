@@ -5,7 +5,7 @@
 
 set -eu
 
-REPO="InvenTree/InvenTree"
+REPO="matmair/InvenTree"
 VERSION="$APP_PKG_VERSION-$APP_PKG_ITERATION"
 echo "Setting VERSION information to $VERSION"
 echo "$VERSION" > VERSION
