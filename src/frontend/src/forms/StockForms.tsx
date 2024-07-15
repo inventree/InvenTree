@@ -434,17 +434,19 @@ function StockOperationsRow({
           </Flex>
         </Table.Td>
       </Table.Tr>
-      <TableFieldExtraRow
-        visible={transfer && packagingOpen}
-        onValueChange={(value: any) => {
-          input.changeFn(input.idx, 'packaging', value || undefined);
-        }}
-        fieldDefinition={{
-          field_type: 'string',
-          label: t`Packaging`
-        }}
-        defaultValue={record.packaging}
-      />
+      {transfer && (
+        <TableFieldExtraRow
+          visible={transfer && packagingOpen}
+          onValueChange={(value: any) => {
+            input.changeFn(input.idx, 'packaging', value || undefined);
+          }}
+          fieldDefinition={{
+            field_type: 'string',
+            label: t`Packaging`
+          }}
+          defaultValue={record.packaging}
+        />
+      )}
     </>
   );
 }
