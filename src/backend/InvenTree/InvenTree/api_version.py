@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 223
+INVENTREE_API_VERSION = 224
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v224 - 2024-07-14 : https://github.com/inventree/InvenTree/pull/7667
+    - Add notes field to ManufacturerPart and SupplierPart API endpoints
+
 v223 - 2024-07-14 : https://github.com/inventree/InvenTree/pull/7649
     - Allow adjustment of "packaging" field when receiving items against a purchase order
 
