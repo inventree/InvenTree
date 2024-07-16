@@ -1,22 +1,21 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2024-07-16 16:38\n"
+"Last-Translator: \n"
+"Language-Team: Estonian\n"
+"Language: et_EE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Crowdin-Project: inventree\n"
+"X-Crowdin-Project-ID: 452300\n"
+"X-Crowdin-Language: et\n"
+"X-Crowdin-File: /[inventree.InvenTree] l10/src/backend/InvenTree/locale/en/LC_MESSAGES/django.po\n"
+"X-Crowdin-File-ID: 216\n"
 
 #: InvenTree/api.py:272
 msgid "API endpoint not found"
@@ -24,7 +23,7 @@ msgstr ""
 
 #: InvenTree/api.py:505
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "Teil ei ole selle lehe vaatamiseks luba"
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
@@ -78,7 +77,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:2018
 #: templates/js/translated/stock.js:1617 templates/js/translated/stock.js:2509
 msgid "Notes"
-msgstr ""
+msgstr "Märkmed"
 
 #: InvenTree/format.py:164
 #, python-brace-format
@@ -91,31 +90,31 @@ msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr ""
+msgstr "Salasõna"
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr ""
+msgstr "Sisesta uus parool"
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr ""
+msgstr "Kinnitage parool"
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr ""
+msgstr "Kinnita uut parooli"
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr ""
+msgstr "Vana parool"
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr ""
+msgstr "Meili (uuesti)"
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr ""
+msgstr "E-posti aadressi kinnitus"
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
@@ -131,7 +130,7 @@ msgstr ""
 
 #: InvenTree/forms.py:392
 msgid "Registration is disabled."
-msgstr ""
+msgstr "Registreerimine on ajutiselt väljalülitatud."
 
 #: InvenTree/helpers.py:525 order/models.py:562 order/models.py:772
 msgid "Invalid quantity provided"
@@ -174,7 +173,7 @@ msgstr ""
 
 #: InvenTree/helpers_model.py:140
 msgid "Connection error"
-msgstr ""
+msgstr "Ühenduse viga"
 
 #: InvenTree/helpers_model.py:145 InvenTree/helpers_model.py:152
 msgid "Server responded with invalid status code"
@@ -182,7 +181,7 @@ msgstr ""
 
 #: InvenTree/helpers_model.py:148
 msgid "Exception occurred"
-msgstr ""
+msgstr "Esines tõrge"
 
 #: InvenTree/helpers_model.py:158
 msgid "Server responded with invalid Content-Length value"
@@ -206,35 +205,35 @@ msgstr ""
 
 #: InvenTree/locales.py:18
 msgid "Arabic"
-msgstr ""
+msgstr "Araabia"
 
 #: InvenTree/locales.py:19
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgaaria keel"
 
 #: InvenTree/locales.py:20
 msgid "Czech"
-msgstr ""
+msgstr "Tšehhi"
 
 #: InvenTree/locales.py:21
 msgid "Danish"
-msgstr ""
+msgstr "Taani"
 
 #: InvenTree/locales.py:22
 msgid "German"
-msgstr ""
+msgstr "Saksa keel"
 
 #: InvenTree/locales.py:23
 msgid "Greek"
-msgstr ""
+msgstr "Kreeka keel"
 
 #: InvenTree/locales.py:24
 msgid "English"
-msgstr ""
+msgstr "Inglise keel"
 
 #: InvenTree/locales.py:25
 msgid "Spanish"
-msgstr ""
+msgstr "Hispaania keel"
 
 #: InvenTree/locales.py:26
 msgid "Spanish (Mexican)"
@@ -242,7 +241,7 @@ msgstr ""
 
 #: InvenTree/locales.py:27
 msgid "Estonian"
-msgstr ""
+msgstr "Eesti"
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -330,15 +329,15 @@ msgstr ""
 
 #: InvenTree/locales.py:49
 msgid "Thai"
-msgstr ""
+msgstr "Tai keel"
 
 #: InvenTree/locales.py:50
 msgid "Turkish"
-msgstr ""
+msgstr "Türgi keel"
 
 #: InvenTree/locales.py:51
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukraina keel"
 
 #: InvenTree/locales.py:52
 msgid "Vietnamese"
@@ -519,7 +518,7 @@ msgstr ""
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr ""
+msgstr "Valuuta"
 
 #: InvenTree/serializers.py:103
 msgid "Select currency from available options"
@@ -531,7 +530,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:409 templates/InvenTree/settings/user.html:37
 msgid "First Name"
-msgstr ""
+msgstr "Eesnimi"
 
 #: InvenTree/serializers.py:409
 msgid "First name of the user"
@@ -539,7 +538,7 @@ msgstr ""
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
-msgstr ""
+msgstr "Perekonnanimi"
 
 #: InvenTree/serializers.py:412
 msgid "Last name of the user"
@@ -674,7 +673,7 @@ msgstr ""
 
 #: InvenTree/templatetags/inventree_extras.py:184
 msgid "Unknown database"
-msgstr ""
+msgstr "Tundmatu andmebaas"
 
 #: InvenTree/validators.py:32 InvenTree/validators.py:34
 msgid "Invalid physical unit"
@@ -702,7 +701,7 @@ msgstr ""
 
 #: InvenTree/views.py:412 templates/InvenTree/settings/user.html:20
 msgid "Set Password"
-msgstr ""
+msgstr "Määra parool"
 
 #: InvenTree/views.py:434
 msgid "Password fields must match"
@@ -710,7 +709,7 @@ msgstr ""
 
 #: InvenTree/views.py:442
 msgid "Wrong password provided"
-msgstr ""
+msgstr "Esitatud vale parool"
 
 #: InvenTree/views.py:650 templates/navbar.html:160
 msgid "System Information"
@@ -829,7 +828,7 @@ msgstr ""
 #: templates/js/translated/return_order.js:728
 #: templates/js/translated/sales_order.js:1854
 msgid "Reference"
-msgstr ""
+msgstr "Tootekood"
 
 #: build/models.py:245
 msgid "Brief description of the build (optional)"
@@ -1504,7 +1503,7 @@ msgstr ""
 
 #: build/serializers.py:1134
 msgid "Supplier Part Number"
-msgstr ""
+msgstr "Tarnija osa number"
 
 #: build/serializers.py:1135 company/models.py:500
 msgid "Manufacturer Part Number"
@@ -1526,7 +1525,7 @@ msgstr ""
 #: build/serializers.py:1141 part/admin.py:39 part/admin.py:398
 #: part/models.py:4063 part/stocktake.py:219 stock/admin.py:152
 msgid "Part ID"
-msgstr ""
+msgstr "Osa ID"
 
 #: build/serializers.py:1143 build/serializers.py:1226 part/admin.py:402
 #: part/models.py:4065
@@ -1547,7 +1546,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:1732
 #: templates/js/translated/stock.js:597
 msgid "Serial Number"
-msgstr ""
+msgstr "Seerianumber"
 
 #: build/serializers.py:1159 stock/serializers.py:590
 #: templates/js/translated/build.js:1019 templates/js/translated/build.js:1166
@@ -1639,7 +1638,7 @@ msgstr ""
 #: order/status_codes.py:37 order/status_codes.py:64 order/status_codes.py:82
 #: templates/js/translated/table_filters.js:598
 msgid "Pending"
-msgstr ""
+msgstr "Ootel"
 
 #: build/status_codes.py:12
 msgid "Production"
@@ -1648,7 +1647,7 @@ msgstr ""
 #: build/status_codes.py:13 order/status_codes.py:15 order/status_codes.py:45
 #: order/status_codes.py:70
 msgid "Cancelled"
-msgstr ""
+msgstr "Katkestatud"
 
 #: build/status_codes.py:14 generic/states/tests.py:19 importer/models.py:501
 #: importer/status_codes.py:19 order/status_codes.py:14
@@ -1656,7 +1655,7 @@ msgstr ""
 #: order/templates/order/order_base.html:158
 #: order/templates/order/sales_order_base.html:165 report/models.py:444
 msgid "Complete"
-msgstr ""
+msgstr "Valmis"
 
 #: build/tasks.py:184
 msgid "Stock required for build order"
@@ -1904,7 +1903,7 @@ msgstr ""
 #: order/templates/order/sales_order_base.html:190
 #: templates/js/translated/build.js:2374
 msgid "Created"
-msgstr ""
+msgstr "Loodud"
 
 #: build/templates/build/detail.html:144
 msgid "No target date set"
@@ -2151,11 +2150,11 @@ msgstr ""
 
 #: common/models.py:1119
 msgid "No group"
-msgstr ""
+msgstr "Grupp puudub"
 
 #: common/models.py:1218
 msgid "Restart required"
-msgstr ""
+msgstr "Taaskäivitamine on vajalik"
 
 #: common/models.py:1220
 msgid "A setting has been changed which requires a server restart"
@@ -2306,7 +2305,7 @@ msgstr ""
 
 #: common/models.py:1341
 msgid "Automatic Backup"
-msgstr ""
+msgstr "Automaatne varundus"
 
 #: common/models.py:1342
 msgid "Enable automatic backup of database and media files"
@@ -2346,7 +2345,7 @@ msgstr ""
 
 #: common/models.py:1381 templates/InvenTree/settings/sidebar.html:31
 msgid "Barcode Support"
-msgstr ""
+msgstr "Vöötkoodi tugi"
 
 #: common/models.py:1382
 msgid "Enable barcode scanner support in the web interface"
@@ -14760,7 +14759,7 @@ msgstr ""
 
 #: templates/search.html:15
 msgid "Close search menu"
-msgstr ""
+msgstr "Sulgege otsingumenüü"
 
 #: templates/socialaccount/authentication_error.html:5
 msgid "Social Network Login Failure"
@@ -14990,3 +14989,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
