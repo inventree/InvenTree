@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:38\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -1219,10 +1219,8 @@ msgid "Part Name"
 msgstr "Tên sản phẩm"
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Mã dự án"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1565,16 +1563,12 @@ msgid "Part Description"
 msgstr "Mô tả sản phẩm"
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Danh mục sản phẩm"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Tên danh mục"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1584,10 +1578,8 @@ msgid "Trackable"
 msgstr "Có thể theo dõi"
 
 #: build/serializers.py:1237
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Inherited"
-msgstr "Nhận thừa hưởng"
+msgstr ""
 
 #: build/serializers.py:1238 part/models.py:4275
 #: part/templates/part/upload_bom.html:56 templates/js/translated/bom.js:1046
@@ -1932,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr "Đơn đặt bản dựng con"
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Build Order Line Items"
-msgstr "Mục chi tiết bản dựng"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4945,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Pricing Overrides"
 msgid "Field Overrides"
-msgstr "Ghi đè định giá"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5023,16 +5011,12 @@ msgid "Invalid data file dimensions"
 msgstr ""
 
 #: importer/serializers.py:90
-#, fuzzy
-#| msgid "Invalid physical unit"
 msgid "Invalid field defaults"
-msgstr "Đơn vị vật lý không hợp lệ"
+msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Internal Price Override"
 msgid "Invalid field overrides"
-msgstr "Ghi đè giá nội bộ"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -5754,16 +5738,12 @@ msgid "Enter serial numbers for incoming stock items"
 msgstr "Nhập số sê ri cho hàng trong kho đang đến"
 
 #: order/serializers.py:654
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Override packaging information for incoming stock items"
-msgstr "Nhập mã lô cho hàng trong kho đang đến"
+msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Additional note for incoming stock items"
-msgstr "Nhập số sê ri cho hàng trong kho đang đến"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6465,16 +6445,12 @@ msgid "This option must be selected"
 msgstr "Tùy chọn này phải được chọn"
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "Revision"
 msgid "Is Revision"
-msgstr "Phiên bản"
+msgstr ""
 
 #: part/api.py:927
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Has Revisions"
-msgstr "Phiên bản Sản phẩm"
+msgstr ""
 
 #: part/api.py:1118
 msgid "BOM Valid"
@@ -6587,20 +6563,16 @@ msgid "IPN must match regex pattern {pattern}"
 msgstr "IPN phải phù hợp mẫu biểu thức chính quy {pattern}"
 
 #: part/models.py:671
-#, fuzzy
-#| msgid "Item cannot belong to itself"
 msgid "Part cannot be a revision of itself"
-msgstr "Hàng hóa không thể thuộc về chính nó"
+msgstr ""
 
 #: part/models.py:678
 msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Destination location must be specified"
 msgid "Revision code must be specified"
-msgstr "Vị trí đích phải được chỉ ra"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6611,10 +6583,8 @@ msgid "Cannot make a revision of a template part"
 msgstr ""
 
 #: part/models.py:705
-#, fuzzy
-#| msgid "Build output must point to the same build"
 msgid "Parent part must point to the same template"
-msgstr "Đầu ra bản dựng phải chỉ đến bản dựng tương ứng"
+msgstr ""
 
 #: part/models.py:784
 msgid "Stock item with this serial number already exists"
@@ -6625,10 +6595,8 @@ msgid "Duplicate IPN not allowed in part settings"
 msgstr "IPN trùng lặp không được cho phép trong thiết lập sản phẩm"
 
 #: part/models.py:894
-#, fuzzy
-#| msgid "Duplicate relationship already exists"
 msgid "Duplicate part revision already exists."
-msgstr "Đã tồn tại mối quan hệ trùng lặp"
+msgstr ""
 
 #: part/models.py:904
 msgid "Part with this Name, IPN and Revision already exists."
@@ -6671,16 +6639,12 @@ msgid "Part revision or version number"
 msgstr "Số phiên bản hoặc bản duyệt lại sản phẩm"
 
 #: part/models.py:1018
-#, fuzzy
-#| msgid "Is this part a variant of another part?"
 msgid "Is this part a revision of another part?"
-msgstr "Đây có phải là 1 biến thể của sản phẩm khác?"
+msgstr ""
 
 #: part/models.py:1019 part/templates/part/part_base.html:277
-#, fuzzy
-#| msgid "Revision"
 msgid "Revision Of"
-msgstr "Phiên bản"
+msgstr ""
 
 #: part/models.py:1043
 msgid "Where is this item normally stored?"
@@ -7424,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr "Mã số nhà cung cấp khớp với SKU này đã tồn tại"
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Revision"
 msgid "Revisions"
-msgstr "Phiên bản"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12207,52 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete allocations"
-msgstr "Xóa vị trí"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Stock Allocations"
-msgstr "Xóa vị trí"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Deallocate stock"
 msgid "No allocated stock"
-msgstr "Phân kho"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Kho hàng"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit build allocation"
-msgstr "Sửa vị trí"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete build allocation"
-msgstr "Xóa vị trí"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit Build Allocation"
-msgstr "Sửa vị trí"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Build Allocation"
-msgstr "Xóa vị trí"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -12420,10 +12366,8 @@ msgid "Trackable part"
 msgstr ""
 
 #: templates/js/translated/build.js:2723
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Gets Inherited"
-msgstr "Nhận thừa hưởng"
+msgstr ""
 
 #: templates/js/translated/build.js:2733
 msgid "Unit Quantity"
@@ -13271,16 +13215,12 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Add Test Template"
 msgid "Edit test template"
-msgstr "Thêm mẫu kiểm thử"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Delete Test Data"
 msgid "Delete test template"
-msgstr "Xóa dữ liệu báo cáo kiểm thử"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13537,10 +13477,8 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1170
 #: templates/js/translated/stock.js:1211
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Specify packaging for incoming stock items"
-msgstr "Nhập mã lô cho hàng trong kho đang đến"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1223
 msgid "Stock Status"
@@ -13563,20 +13501,16 @@ msgid "Add batch code"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1259
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Specify packaging"
-msgstr "Đóng gói sản phẩm"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1270
 msgid "Add serial numbers"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Add Unit"
 msgid "Add note"
-msgstr "Thêm đơn vị"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -14138,10 +14072,8 @@ msgid "Adjust batch code"
 msgstr ""
 
 #: templates/js/translated/stock.js:1174
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Adjust packaging"
-msgstr "Đóng gói sản phẩm"
+msgstr ""
 
 #: templates/js/translated/stock.js:1252 templates/js/translated/stock.js:3380
 msgid "Select Stock Items"
@@ -15058,5 +14990,3 @@ msgstr "Quyển để sửa mục"
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
 
-#~ msgid "Allocate Stock to Build"
-#~ msgstr "Phân bổ kho đến bản dựng"
