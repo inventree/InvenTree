@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -1219,10 +1219,8 @@ msgid "Part Name"
 msgstr ""
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Κωδικός Έργου"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1926,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Build Order Line Items"
-msgstr "Αντικείμενο Γραμμής Κατασκευής"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4939,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "Δημιουργία Παραγγελιών"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5017,16 +5011,12 @@ msgid "Invalid data file dimensions"
 msgstr ""
 
 #: importer/serializers.py:90
-#, fuzzy
-#| msgid "Invalid physical unit"
 msgid "Invalid field defaults"
-msgstr "Μη έγκυρη φυσική μονάδα"
+msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid field overrides"
-msgstr "Μη έγκυρη τιμή για υπέρβαση"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -5752,10 +5742,8 @@ msgid "Override packaging information for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Destination stock item"
 msgid "Additional note for incoming stock items"
-msgstr "Αποθήκη προορισμού"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6583,10 +6571,8 @@ msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Unknown format key specified"
 msgid "Revision code must be specified"
-msgstr "Δώσατε λάθος μορφή κλειδιού"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6597,10 +6583,8 @@ msgid "Cannot make a revision of a template part"
 msgstr ""
 
 #: part/models.py:705
-#, fuzzy
-#| msgid "Build output must point to the same build"
 msgid "Parent part must point to the same template"
-msgstr "Το προϊόν κατασκευής πρέπει να δείχνει στην ίδια κατασκευή"
+msgstr ""
 
 #: part/models.py:784
 msgid "Stock item with this serial number already exists"
@@ -12185,52 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Accept Incomplete Allocation"
 msgid "Delete allocations"
-msgstr "Αποδοχή Ελλιπούς Δέσμευσης"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Discard Allocations"
 msgid "Delete Stock Allocations"
-msgstr "Απόρριψη Κατανομών"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Overallocated Stock"
 msgid "No allocated stock"
-msgstr "Υπερ-δεσμευμένο Απόθεμα"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Στοιχείο Αποθέματος"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Build actions"
 msgid "Edit build allocation"
-msgstr "Εντολές κατασκευής"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete build allocation"
-msgstr "Διαγραφή Κατασκευής"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Discard Allocations"
 msgid "Edit Build Allocation"
-msgstr "Απόρριψη Κατανομών"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete Build Allocation"
-msgstr "Διαγραφή Κατασκευής"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -13247,10 +13215,8 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Edit test template"
-msgstr "Έγινε συγχώνευση αποθεμάτων"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
 msgid "Delete test template"
@@ -15023,3 +14989,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
