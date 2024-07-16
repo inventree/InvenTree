@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:38\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Language: uk_UA\n"
@@ -19,11 +19,11 @@ msgstr ""
 
 #: InvenTree/api.py:272
 msgid "API endpoint not found"
-msgstr ""
+msgstr "Кінцева точка API не знайдена"
 
 #: InvenTree/api.py:505
 msgid "User does not have permission to view this model"
-msgstr ""
+msgstr "У користувача немає дозволу на перегляд цієї моделі"
 
 #: InvenTree/conversion.py:160
 #, python-brace-format
@@ -32,29 +32,29 @@ msgstr ""
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
-msgstr ""
+msgstr "Значення не вказане"
 
 #: InvenTree/conversion.py:204
 #, python-brace-format
 msgid "Could not convert {original} to {unit}"
-msgstr ""
+msgstr "Не вдалося перетворити {original} на {unit}"
 
 #: InvenTree/conversion.py:206
 msgid "Invalid quantity supplied"
-msgstr ""
+msgstr "Невірна кількість поставляється"
 
 #: InvenTree/conversion.py:220
 #, python-brace-format
 msgid "Invalid quantity supplied ({exc})"
-msgstr ""
+msgstr "Невірна кількість поставляється ({exc})"
 
 #: InvenTree/exceptions.py:109
 msgid "Error details can be found in the admin panel"
-msgstr ""
+msgstr "Деталі помилки можна знайти на панелі адміністратора"
 
 #: InvenTree/fields.py:136
 msgid "Enter date"
-msgstr ""
+msgstr "Введіть дату"
 
 #: InvenTree/fields.py:205 InvenTree/models.py:921 build/serializers.py:462
 #: build/serializers.py:540 build/templates/build/sidebar.html:25
@@ -77,7 +77,7 @@ msgstr ""
 #: templates/js/translated/sales_order.js:2018
 #: templates/js/translated/stock.js:1617 templates/js/translated/stock.js:2509
 msgid "Notes"
-msgstr ""
+msgstr "Нотатки"
 
 #: InvenTree/format.py:164
 #, python-brace-format
@@ -90,55 +90,55 @@ msgstr ""
 
 #: InvenTree/forms.py:128
 msgid "Enter password"
-msgstr ""
+msgstr "Введіть пароль"
 
 #: InvenTree/forms.py:129
 msgid "Enter new password"
-msgstr ""
+msgstr "Введіть новий пароль"
 
 #: InvenTree/forms.py:138
 msgid "Confirm password"
-msgstr ""
+msgstr "Підтвердити пароль"
 
 #: InvenTree/forms.py:139
 msgid "Confirm new password"
-msgstr ""
+msgstr "Підтвердити новий пароль"
 
 #: InvenTree/forms.py:143
 msgid "Old password"
-msgstr ""
+msgstr "Старий пароль"
 
 #: InvenTree/forms.py:182
 msgid "Email (again)"
-msgstr ""
+msgstr "Email (ще раз)"
 
 #: InvenTree/forms.py:186
 msgid "Email address confirmation"
-msgstr ""
+msgstr "Підтвердження адреси електронної пошти"
 
 #: InvenTree/forms.py:209
 msgid "You must type the same email each time."
-msgstr ""
+msgstr "Ви повинні використовувати щоразу однаковий email."
 
 #: InvenTree/forms.py:248 InvenTree/forms.py:256
 msgid "The provided primary email address is not valid."
-msgstr ""
+msgstr "Вказана основна адреса електронної пошти недійсна."
 
 #: InvenTree/forms.py:263
 msgid "The provided email domain is not approved."
-msgstr ""
+msgstr "Наданий домен електронної пошти не затверджено."
 
 #: InvenTree/forms.py:392
 msgid "Registration is disabled."
-msgstr ""
+msgstr "Реєстрацію вимкнено."
 
 #: InvenTree/helpers.py:525 order/models.py:562 order/models.py:772
 msgid "Invalid quantity provided"
-msgstr ""
+msgstr "Невірна кількість"
 
 #: InvenTree/helpers.py:533
 msgid "Empty serial number string"
-msgstr ""
+msgstr "Пустий серійний номер"
 
 #: InvenTree/helpers.py:562
 msgid "Duplicate serial"
@@ -337,7 +337,7 @@ msgstr ""
 
 #: InvenTree/locales.py:51
 msgid "Ukrainian"
-msgstr ""
+msgstr "Українська"
 
 #: InvenTree/locales.py:52
 msgid "Vietnamese"
@@ -14989,3 +14989,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
