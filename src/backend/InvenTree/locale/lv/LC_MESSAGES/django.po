@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:57\n"
+"PO-Revision-Date: 2024-07-16 16:38\n"
 "Last-Translator: \n"
 "Language-Team: Latvian\n"
 "Language: lv_LV\n"
@@ -5015,10 +5015,8 @@ msgid "Invalid field defaults"
 msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid field overrides"
-msgstr "Norādītais daudzums nav derīgs"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -14991,3 +14989,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
