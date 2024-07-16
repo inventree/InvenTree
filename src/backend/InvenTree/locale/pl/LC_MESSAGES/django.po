@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -240,10 +240,8 @@ msgid "Spanish (Mexican)"
 msgstr "Hiszpański (Meksyk)"
 
 #: InvenTree/locales.py:27
-#, fuzzy
-#| msgid "Romanian"
 msgid "Estonian"
-msgstr "Rumuński"
+msgstr ""
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -1221,10 +1219,8 @@ msgid "Part Name"
 msgstr "Nazwa komponentu"
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Kod projektu"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1567,16 +1563,12 @@ msgid "Part Description"
 msgstr ""
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Kategoria komponentu"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category Name"
-msgstr "Kategoria komponentu"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1932,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Build Order Line Items"
-msgstr "Zlecenia budowy"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4945,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "Zlecenia budowy"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5023,16 +5011,12 @@ msgid "Invalid data file dimensions"
 msgstr ""
 
 #: importer/serializers.py:90
-#, fuzzy
-#| msgid "Invalid physical unit"
 msgid "Invalid field defaults"
-msgstr "Niewłaściwa jednostka fizyczna"
+msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid field overrides"
-msgstr "Nieprawidłowa wartość przedawnienia"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -5758,10 +5742,8 @@ msgid "Override packaging information for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Destination stock item"
 msgid "Additional note for incoming stock items"
-msgstr "Docelowa lokalizacja magazynowa przedmiotu"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6463,16 +6445,12 @@ msgid "This option must be selected"
 msgstr "Ta opcja musi być zaznaczona"
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "Revision"
 msgid "Is Revision"
-msgstr "Wersja"
+msgstr ""
 
 #: part/api.py:927
-#, fuzzy
-#| msgid "Revision"
 msgid "Has Revisions"
-msgstr "Wersja"
+msgstr ""
 
 #: part/api.py:1118
 msgid "BOM Valid"
@@ -6593,10 +6571,8 @@ msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Purchase order must be specified"
 msgid "Revision code must be specified"
-msgstr "Zlecenie zakupu musi być określone"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6663,16 +6639,12 @@ msgid "Part revision or version number"
 msgstr ""
 
 #: part/models.py:1018
-#, fuzzy
-#| msgid "Is this part a variant of another part?"
 msgid "Is this part a revision of another part?"
-msgstr "Czy ta część jest wariantem innej części?"
+msgstr ""
 
 #: part/models.py:1019 part/templates/part/part_base.html:277
-#, fuzzy
-#| msgid "Revision"
 msgid "Revision Of"
-msgstr "Wersja"
+msgstr ""
 
 #: part/models.py:1043
 msgid "Where is this item normally stored?"
@@ -7416,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Revision"
 msgid "Revisions"
-msgstr "Wersja"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12199,52 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Default Location"
 msgid "Delete allocations"
-msgstr "Domyślna lokalizacja"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Stock Locations"
 msgid "Delete Stock Allocations"
-msgstr "Lokacje stanu magazynowego"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Overallocated Stock"
 msgid "No allocated stock"
-msgstr "Nadmierny przydział zasobów"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Element magazynowy"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit build allocation"
-msgstr "Edytuj lokację"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Discard Allocations"
 msgid "Delete build allocation"
-msgstr "Odrzuć przydziały"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit Build Allocation"
-msgstr "Edytuj lokację"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Discard Allocations"
 msgid "Delete Build Allocation"
-msgstr "Odrzuć przydziały"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -13261,16 +13215,12 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Test Templates"
 msgid "Edit test template"
-msgstr "Szablony testowe"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Delete on deplete"
 msgid "Delete test template"
-msgstr "Usuń po wyczerpaniu"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13551,20 +13501,16 @@ msgid "Add batch code"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1259
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Specify packaging"
-msgstr "Opakowanie części"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1270
 msgid "Add serial numbers"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Add Line Item"
 msgid "Add note"
-msgstr "Dodaj element zamówienia"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -14126,10 +14072,8 @@ msgid "Adjust batch code"
 msgstr ""
 
 #: templates/js/translated/stock.js:1174
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Adjust packaging"
-msgstr "Opakowanie części"
+msgstr ""
 
 #: templates/js/translated/stock.js:1252 templates/js/translated/stock.js:3380
 msgid "Select Stock Items"
@@ -15046,5 +14990,3 @@ msgstr "Uprawnienie do edycji przedmiotów"
 msgid "Permission to delete items"
 msgstr "Uprawnienie do usuwania przedmiotów"
 
-#~ msgid "Allocate Stock to Build"
-#~ msgstr "Przydziel zapasy do budowy"
