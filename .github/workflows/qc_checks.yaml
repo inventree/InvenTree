@@ -181,6 +181,7 @@ jobs:
         with:
           base: 'api.yaml'
           revision: 'src/backend/InvenTree/schema.yml'
+          format: 'html'
       - name: Echoing diff to step
         run: echo "${{ steps.breaking_changes.outputs.diff }}" >> $GITHUB_STEP_SUMMARY
 
