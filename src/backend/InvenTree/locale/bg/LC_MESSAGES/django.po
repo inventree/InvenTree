@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Bulgarian\n"
 "Language: bg_BG\n"
@@ -5015,10 +5015,8 @@ msgid "Invalid field defaults"
 msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid field overrides"
-msgstr "Въведена е недопустима стойност"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -12171,26 +12169,20 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Stock Locations"
 msgid "Delete allocations"
-msgstr "Места в склада"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Stock Locations"
 msgid "Delete Stock Allocations"
-msgstr "Места в склада"
+msgstr ""
 
 #: templates/js/translated/build.js:991
 msgid "No allocated stock"
 msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock counted"
 msgid "Stock item"
-msgstr "Наличността е преброена"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
 msgid "Edit build allocation"
@@ -14997,3 +14989,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
