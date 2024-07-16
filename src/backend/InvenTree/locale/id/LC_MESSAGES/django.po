@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:38\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -1924,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Build Order Line Items"
-msgstr "Order Produksi"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4937,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "Order Produksi"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5019,10 +5015,8 @@ msgid "Invalid field defaults"
 msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid SSO Provider"
 msgid "Invalid field overrides"
-msgstr "Penyedia SSO tidak valid"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -5748,10 +5742,8 @@ msgid "Override packaging information for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Destination stock item"
 msgid "Additional note for incoming stock items"
-msgstr "Tujuan stok item"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6591,10 +6583,8 @@ msgid "Cannot make a revision of a template part"
 msgstr ""
 
 #: part/models.py:705
-#, fuzzy
-#| msgid "Build output must point to the same build"
 msgid "Parent part must point to the same template"
-msgstr "Hasil pesanan harus mengarah ke pesanan yang sama"
+msgstr ""
 
 #: part/models.py:784
 msgid "Stock item with this serial number already exists"
@@ -12179,50 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Accept Incomplete Allocation"
 msgid "Delete allocations"
-msgstr "Terima Alokasi Tidak Lengkap"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Accept Incomplete Allocation"
 msgid "Delete Stock Allocations"
-msgstr "Terima Alokasi Tidak Lengkap"
+msgstr ""
 
 #: templates/js/translated/build.js:991
 msgid "No allocated stock"
 msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Stok Item"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Build actions"
 msgid "Edit build allocation"
-msgstr "Aksi produksi"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete build allocation"
-msgstr "Hapus Produksi"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Build actions"
 msgid "Edit Build Allocation"
-msgstr "Aksi produksi"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete Build Allocation"
-msgstr "Hapus Produksi"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -13239,10 +13215,8 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Edit test template"
-msgstr "Item stok diubah"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
 msgid "Delete test template"
@@ -15015,3 +14989,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
