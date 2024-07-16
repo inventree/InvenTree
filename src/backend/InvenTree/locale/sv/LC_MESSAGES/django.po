@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:38\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -205,7 +205,7 @@ msgstr "Angiven URL är inte en giltig bildfil"
 
 #: InvenTree/locales.py:18
 msgid "Arabic"
-msgstr ""
+msgstr "Arabiska"
 
 #: InvenTree/locales.py:19
 msgid "Bulgarian"
@@ -240,10 +240,8 @@ msgid "Spanish (Mexican)"
 msgstr "Spanska (Mexikanska)"
 
 #: InvenTree/locales.py:27
-#, fuzzy
-#| msgid "Romanian"
 msgid "Estonian"
-msgstr "Rumänska"
+msgstr ""
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -1221,10 +1219,8 @@ msgid "Part Name"
 msgstr ""
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Projektkod"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1567,16 +1563,12 @@ msgid "Part Description"
 msgstr ""
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Edit Category"
 msgid "Part Category ID"
-msgstr "Redigera kategori"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Kategorinamn"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1932,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Build Order Line Items"
-msgstr "Byggordrar"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4460,7 +4450,7 @@ msgstr ""
 
 #: company/serializers.py:210
 msgid "Company Name"
-msgstr ""
+msgstr "Företagsnamn"
 
 #: company/serializers.py:386 part/admin.py:126 part/serializers.py:888
 #: part/templates/part/part_base.html:197
@@ -4945,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "Byggordrar"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -4988,7 +4976,7 @@ msgstr ""
 
 #: importer/models.py:420
 msgid "Column"
-msgstr ""
+msgstr "Kolumn"
 
 #: importer/models.py:489
 msgid "Row Index"
@@ -5027,14 +5015,12 @@ msgid "Invalid field defaults"
 msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid value for overage"
 msgid "Invalid field overrides"
-msgstr "Ogiltigt värde för överskott"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
-msgstr ""
+msgstr "Rader"
 
 #: importer/serializers.py:165
 msgid "List of row IDs to accept"
@@ -5756,10 +5742,8 @@ msgid "Override packaging information for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Destination stock item"
 msgid "Additional note for incoming stock items"
-msgstr "Destination lagervara"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6587,10 +6571,8 @@ msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Unknown format key specified"
 msgid "Revision code must be specified"
-msgstr "Okänd formatnyckel angiven"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -7406,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Version"
 msgid "Revisions"
-msgstr "Version"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12189,10 +12169,8 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete category"
 msgid "Delete allocations"
-msgstr "Radera kategori"
+msgstr ""
 
 #: templates/js/translated/build.js:968
 msgid "Delete Stock Allocations"
@@ -12203,32 +12181,24 @@ msgid "No allocated stock"
 msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Artikel i lager"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
 msgid "Edit build allocation"
 msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete build allocation"
-msgstr "Ta bort bygge"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit Build"
 msgid "Edit Build Allocation"
-msgstr "Redigera bygge"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete Build Allocation"
-msgstr "Ta bort bygge"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -13245,16 +13215,12 @@ msgid "results"
 msgstr "resultat"
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Edit Template"
 msgid "Edit test template"
-msgstr "Redigera mall"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Delete Template"
 msgid "Delete test template"
-msgstr "Radera mall"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13543,10 +13509,8 @@ msgid "Add serial numbers"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Add new filter"
 msgid "Add note"
-msgstr "Lägg till nytt filter"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -14104,10 +14068,8 @@ msgid "Specify stock quantity"
 msgstr ""
 
 #: templates/js/translated/stock.js:1164
-#, fuzzy
-#| msgid "Add barcode"
 msgid "Adjust batch code"
-msgstr "Lägg till streckkod"
+msgstr ""
 
 #: templates/js/translated/stock.js:1174
 msgid "Adjust packaging"
@@ -15027,3 +14989,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
