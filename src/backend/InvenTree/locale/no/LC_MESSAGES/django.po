@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -1219,10 +1219,8 @@ msgid "Part Name"
 msgstr "Delnavn"
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Prosjektkode"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1565,16 +1563,12 @@ msgid "Part Description"
 msgstr "Delbeskrivelse"
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Delkategori"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Kategorinavn"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1584,10 +1578,8 @@ msgid "Trackable"
 msgstr "Sporbar"
 
 #: build/serializers.py:1237
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Inherited"
-msgstr "Arves"
+msgstr ""
 
 #: build/serializers.py:1238 part/models.py:4275
 #: part/templates/part/upload_bom.html:56 templates/js/translated/bom.js:1046
@@ -1932,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr "Underordnede Produksjonsordrer"
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Build Order Line Items"
-msgstr "Produksjonsartikkel"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4945,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Pricing Overrides"
 msgid "Field Overrides"
-msgstr "Prisoverstyringer"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5023,16 +5011,12 @@ msgid "Invalid data file dimensions"
 msgstr ""
 
 #: importer/serializers.py:90
-#, fuzzy
-#| msgid "Invalid physical unit"
 msgid "Invalid field defaults"
-msgstr "Ugyldig fysisk enhet"
+msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Internal Price Override"
 msgid "Invalid field overrides"
-msgstr "Intern prisoverstyring"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -5754,16 +5738,12 @@ msgid "Enter serial numbers for incoming stock items"
 msgstr "Angi serienummer for innkommende lagervarer"
 
 #: order/serializers.py:654
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Override packaging information for incoming stock items"
-msgstr "Angi batchkode for innkommende lagervarer"
+msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Additional note for incoming stock items"
-msgstr "Angi serienummer for innkommende lagervarer"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6465,16 +6445,12 @@ msgid "This option must be selected"
 msgstr "Dette alternativet må være valgt"
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "Revision"
 msgid "Is Revision"
-msgstr "Revisjon"
+msgstr ""
 
 #: part/api.py:927
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Has Revisions"
-msgstr "Delrevisjoner"
+msgstr ""
 
 #: part/api.py:1118
 msgid "BOM Valid"
@@ -6587,20 +6563,16 @@ msgid "IPN must match regex pattern {pattern}"
 msgstr "IPN må samsvare med regex-mønsteret {pattern}"
 
 #: part/models.py:671
-#, fuzzy
-#| msgid "Item cannot belong to itself"
 msgid "Part cannot be a revision of itself"
-msgstr "Elementet kan ikke tilhøre seg selv"
+msgstr ""
 
 #: part/models.py:678
 msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Destination location must be specified"
 msgid "Revision code must be specified"
-msgstr "Målplassering må angis"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6611,10 +6583,8 @@ msgid "Cannot make a revision of a template part"
 msgstr ""
 
 #: part/models.py:705
-#, fuzzy
-#| msgid "Build output must point to the same build"
 msgid "Parent part must point to the same template"
-msgstr "Produksjonsartikkel må peke til samme produksjon"
+msgstr ""
 
 #: part/models.py:784
 msgid "Stock item with this serial number already exists"
@@ -6625,10 +6595,8 @@ msgid "Duplicate IPN not allowed in part settings"
 msgstr "Duplikat av internt delnummer er ikke tillatt i delinnstillinger"
 
 #: part/models.py:894
-#, fuzzy
-#| msgid "Duplicate relationship already exists"
 msgid "Duplicate part revision already exists."
-msgstr "Duplikatforhold eksisterer allerede"
+msgstr ""
 
 #: part/models.py:904
 msgid "Part with this Name, IPN and Revision already exists."
@@ -6671,16 +6639,12 @@ msgid "Part revision or version number"
 msgstr "Delrevisjon eller versjonsnummer"
 
 #: part/models.py:1018
-#, fuzzy
-#| msgid "Is this part a variant of another part?"
 msgid "Is this part a revision of another part?"
-msgstr "Er delen en variant av en annen del?"
+msgstr ""
 
 #: part/models.py:1019 part/templates/part/part_base.html:277
-#, fuzzy
-#| msgid "Revision"
 msgid "Revision Of"
-msgstr "Revisjon"
+msgstr ""
 
 #: part/models.py:1043
 msgid "Where is this item normally stored?"
@@ -7424,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr "Leverandørdel som matcher denne SKU-en, finnes allerede"
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Revision"
 msgid "Revisions"
-msgstr "Revisjon"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12207,52 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete allocations"
-msgstr "Slett plassering"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Stock Allocations"
-msgstr "Slett plassering"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Deallocate stock"
 msgid "No allocated stock"
-msgstr "Fjern allokering av lagerbeholdning"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Lagervare"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit build allocation"
-msgstr "Rediger plassering"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete build allocation"
-msgstr "Slett plassering"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit Build Allocation"
-msgstr "Rediger plassering"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Build Allocation"
-msgstr "Slett plassering"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -12420,10 +12366,8 @@ msgid "Trackable part"
 msgstr ""
 
 #: templates/js/translated/build.js:2723
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Gets Inherited"
-msgstr "Arves"
+msgstr ""
 
 #: templates/js/translated/build.js:2733
 msgid "Unit Quantity"
@@ -13271,16 +13215,12 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Add Test Template"
 msgid "Edit test template"
-msgstr "Legg til Testmal"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Delete Test Data"
 msgid "Delete test template"
-msgstr "Slett testdata"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13537,10 +13477,8 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1170
 #: templates/js/translated/stock.js:1211
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Specify packaging for incoming stock items"
-msgstr "Angi batchkode for innkommende lagervarer"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1223
 msgid "Stock Status"
@@ -13563,20 +13501,16 @@ msgid "Add batch code"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1259
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Specify packaging"
-msgstr "Delemballasje"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1270
 msgid "Add serial numbers"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Add Unit"
 msgid "Add note"
-msgstr "Legg til enhet"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -14138,10 +14072,8 @@ msgid "Adjust batch code"
 msgstr ""
 
 #: templates/js/translated/stock.js:1174
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Adjust packaging"
-msgstr "Delemballasje"
+msgstr ""
 
 #: templates/js/translated/stock.js:1252 templates/js/translated/stock.js:3380
 msgid "Select Stock Items"
@@ -15058,5 +14990,3 @@ msgstr "Tillatelse til å endre elementer"
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
 
-#~ msgid "Allocate Stock to Build"
-#~ msgstr "Tildel Lagerbeholdning til Produksjon"
