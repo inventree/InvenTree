@@ -642,7 +642,12 @@ export function InvenTreeTable<T = any>({
               {tableProps.enableRefresh && (
                 <ActionIcon variant="transparent" aria-label="table-refresh">
                   <Tooltip label={t`Refresh data`}>
-                    <IconRefresh onClick={() => refetch()} />
+                    <IconRefresh
+                      onClick={() => {
+                        refetch();
+                        tableState.clearSelectedRecords();
+                      }}
+                    />
                   </Tooltip>
                 </ActionIcon>
               )}

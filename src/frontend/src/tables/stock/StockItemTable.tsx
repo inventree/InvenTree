@@ -228,13 +228,15 @@ function stockItemTableColumns(): TableColumn[] {
     }),
     DateColumn({
       accessor: 'stocktake_date',
-      title: t`Stocktake`,
+      title: t`Stocktake Date`,
       sortable: true
     }),
     DateColumn({
+      title: t`Expiry Date`,
       accessor: 'expiry_date'
     }),
     DateColumn({
+      title: t`Last Updated`,
       accessor: 'updated'
     }),
     // TODO: purchase order
