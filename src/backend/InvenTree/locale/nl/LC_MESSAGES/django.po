@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -1219,10 +1219,8 @@ msgid "Part Name"
 msgstr "Onderdeel naam"
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Print Label"
 msgid "Project Code Label"
-msgstr "Label afdrukken"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1565,16 +1563,12 @@ msgid "Part Description"
 msgstr "Onderdeel omschrijving"
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Onderdeel Categorie"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category Name"
-msgstr "Onderdeel Categorie"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1930,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr "Onderliggende Productieorders"
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Build Order Line Items"
-msgstr "Bouw lijn-item"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4943,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "Productieorders"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5021,16 +5011,12 @@ msgid "Invalid data file dimensions"
 msgstr ""
 
 #: importer/serializers.py:90
-#, fuzzy
-#| msgid "Invalid physical unit"
 msgid "Invalid field defaults"
-msgstr "Ongeldige fysieke eenheid"
+msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Internal Price Override"
 msgid "Invalid field overrides"
-msgstr "Interne prijs overschrijven"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -5752,16 +5738,12 @@ msgid "Enter serial numbers for incoming stock items"
 msgstr "Voer serienummers in voor inkomende voorraadartikelen"
 
 #: order/serializers.py:654
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Override packaging information for incoming stock items"
-msgstr "Voer serienummers in voor inkomende voorraadartikelen"
+msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Additional note for incoming stock items"
-msgstr "Voer serienummers in voor inkomende voorraadartikelen"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6463,16 +6445,12 @@ msgid "This option must be selected"
 msgstr ""
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Is Revision"
-msgstr "Herzieningen onderdeel"
+msgstr ""
 
 #: part/api.py:927
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Has Revisions"
-msgstr "Herzieningen onderdeel"
+msgstr ""
 
 #: part/api.py:1118
 msgid "BOM Valid"
@@ -6593,10 +6571,8 @@ msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Destination location must be specified"
 msgid "Revision code must be specified"
-msgstr "Bestemmingslocatie moet worden opgegeven"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6607,10 +6583,8 @@ msgid "Cannot make a revision of a template part"
 msgstr ""
 
 #: part/models.py:705
-#, fuzzy
-#| msgid "Build output must point to the same build"
 msgid "Parent part must point to the same template"
-msgstr "Productieuitvoer moet naar dezelfde productie wijzen"
+msgstr ""
 
 #: part/models.py:784
 msgid "Stock item with this serial number already exists"
@@ -6669,10 +6643,8 @@ msgid "Is this part a revision of another part?"
 msgstr ""
 
 #: part/models.py:1019 part/templates/part/part_base.html:277
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Revision Of"
-msgstr "Herzieningen onderdeel"
+msgstr ""
 
 #: part/models.py:1043
 msgid "Where is this item normally stored?"
@@ -7416,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Revisions"
-msgstr "Herzieningen onderdeel"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12199,52 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete allocations"
-msgstr "Verwijder locatie"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Stock Allocations"
-msgstr "Verwijder locatie"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Deallocate stock"
 msgid "No allocated stock"
-msgstr "Voorraad niet meer toewijzen"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Voorraadartikel"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit build allocation"
-msgstr "Bewerk locatie"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete build allocation"
-msgstr "Verwijder locatie"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit Build Allocation"
-msgstr "Bewerk locatie"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Build Allocation"
-msgstr "Verwijder locatie"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -13261,10 +13215,8 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Edit test template"
-msgstr "Bewerken voorraadartikel"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
 msgid "Delete test template"
@@ -13525,10 +13477,8 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1170
 #: templates/js/translated/stock.js:1211
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Specify packaging for incoming stock items"
-msgstr "Voer serienummers in voor inkomende voorraadartikelen"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1223
 msgid "Stock Status"
@@ -13559,10 +13509,8 @@ msgid "Add serial numbers"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Add Line Item"
 msgid "Add note"
-msgstr "Artikel toevoegen"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -15042,5 +14990,3 @@ msgstr ""
 msgid "Permission to delete items"
 msgstr ""
 
-#~ msgid "Allocate Stock to Build"
-#~ msgstr "Voorraad toewijzen aan Product"
