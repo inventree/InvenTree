@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -240,10 +240,8 @@ msgid "Spanish (Mexican)"
 msgstr "Spanyol (Mexikói)"
 
 #: InvenTree/locales.py:27
-#, fuzzy
-#| msgid "Romanian"
 msgid "Estonian"
-msgstr "Román"
+msgstr ""
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -1221,10 +1219,8 @@ msgid "Part Name"
 msgstr "Alkatrész neve"
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Projektszám"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1354,8 +1350,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:536
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:621
@@ -1569,16 +1564,12 @@ msgid "Part Description"
 msgstr "Alkatrész leírása"
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Alkatrész kategória"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Kategória neve"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1588,10 +1579,8 @@ msgid "Trackable"
 msgstr "Követésre kötelezett"
 
 #: build/serializers.py:1237
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Inherited"
-msgstr "Öröklődött"
+msgstr ""
 
 #: build/serializers.py:1238 part/models.py:4275
 #: part/templates/part/upload_bom.html:56 templates/js/translated/bom.js:1046
@@ -1936,10 +1925,8 @@ msgid "Child Build Orders"
 msgstr "Alárendelt gyártások"
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Build Order Line Items"
-msgstr "Gyártás sor tétel"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4949,10 +4936,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Pricing Overrides"
 msgid "Field Overrides"
-msgstr "Árazás felülbírálások"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5027,16 +5012,12 @@ msgid "Invalid data file dimensions"
 msgstr ""
 
 #: importer/serializers.py:90
-#, fuzzy
-#| msgid "Invalid barcode data"
 msgid "Invalid field defaults"
-msgstr "Érvénytelen vonalkód adat"
+msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid server response"
 msgid "Invalid field overrides"
-msgstr "Érvénytelen válasz a szervertől"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -5758,16 +5739,12 @@ msgid "Enter serial numbers for incoming stock items"
 msgstr "Írd be a sorozatszámokat a beérkezett tételekhez"
 
 #: order/serializers.py:654
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Override packaging information for incoming stock items"
-msgstr "Írd be a batch kódját a beérkezett tételeknek"
+msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Additional note for incoming stock items"
-msgstr "Írd be a sorozatszámokat a beérkezett tételekhez"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6469,16 +6446,12 @@ msgid "This option must be selected"
 msgstr "Ennek az opciónak ki kll lennie választva"
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "Revision"
 msgid "Is Revision"
-msgstr "Változat"
+msgstr ""
 
 #: part/api.py:927
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Has Revisions"
-msgstr "Alkatrész változatok"
+msgstr ""
 
 #: part/api.py:1118
 msgid "BOM Valid"
@@ -6591,20 +6564,16 @@ msgid "IPN must match regex pattern {pattern}"
 msgstr "Az IPN belső cikkszámnak illeszkednie kell a {pattern} regex mintára"
 
 #: part/models.py:671
-#, fuzzy
-#| msgid "Item cannot belong to itself"
 msgid "Part cannot be a revision of itself"
-msgstr "A tétel nem tartozhat saját magához"
+msgstr ""
 
 #: part/models.py:678
 msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Destination location must be specified"
 msgid "Revision code must be specified"
-msgstr "A cél helyet kötelező megadni"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6615,10 +6584,8 @@ msgid "Cannot make a revision of a template part"
 msgstr ""
 
 #: part/models.py:705
-#, fuzzy
-#| msgid "Build output must point to the same build"
 msgid "Parent part must point to the same template"
-msgstr "A gyártási kimenetnek ugyanarra a gyártásra kell mutatnia"
+msgstr ""
 
 #: part/models.py:784
 msgid "Stock item with this serial number already exists"
@@ -6629,10 +6596,8 @@ msgid "Duplicate IPN not allowed in part settings"
 msgstr "Azonos IPN nem engedélyezett az alkatrészekre, már létezik ilyen"
 
 #: part/models.py:894
-#, fuzzy
-#| msgid "Duplicate relationship already exists"
 msgid "Duplicate part revision already exists."
-msgstr "Már létezik duplikált alkatrész kapcsolat"
+msgstr ""
 
 #: part/models.py:904
 msgid "Part with this Name, IPN and Revision already exists."
@@ -6675,16 +6640,12 @@ msgid "Part revision or version number"
 msgstr "Alkatrész változat vagy verziószám (pl. szín, hossz, revízió, stb.)"
 
 #: part/models.py:1018
-#, fuzzy
-#| msgid "Is this part a variant of another part?"
 msgid "Is this part a revision of another part?"
-msgstr "Ez az alkatrész egy másik változata?"
+msgstr ""
 
 #: part/models.py:1019 part/templates/part/part_base.html:277
-#, fuzzy
-#| msgid "Revision"
 msgid "Revision Of"
-msgstr "Változat"
+msgstr ""
 
 #: part/models.py:1043
 msgid "Where is this item normally stored?"
@@ -7428,10 +7389,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr "Van már ilyen beszállítói alkatrész"
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Revision"
 msgid "Revisions"
-msgstr "Változat"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12211,52 +12170,36 @@ msgid "Delete Build Outputs"
 msgstr "Gyártási kimenetek törlése"
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete allocations"
-msgstr "Hely törlése"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Delete Stock Allocation"
 msgid "Delete Stock Allocations"
-msgstr "Készlet foglalások törlése"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Deallocate stock"
 msgid "No allocated stock"
-msgstr "Készlet felszabadítása"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "stock item"
 msgid "Stock item"
-msgstr "készlet tétel"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Edit Allocation"
 msgid "Edit build allocation"
-msgstr "Foglalás szerkesztése"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete build allocation"
-msgstr "Hely törlése"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit Allocation"
 msgid "Edit Build Allocation"
-msgstr "Foglalás szerkesztése"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Build Allocation"
-msgstr "Hely törlése"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -12424,10 +12367,8 @@ msgid "Trackable part"
 msgstr "Követésre kötelezett alkatrész"
 
 #: templates/js/translated/build.js:2723
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Gets Inherited"
-msgstr "Öröklődött"
+msgstr ""
 
 #: templates/js/translated/build.js:2733
 msgid "Unit Quantity"
@@ -13275,16 +13216,12 @@ msgid "results"
 msgstr "találat"
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Edit Test Result Template"
 msgid "Edit test template"
-msgstr "Teszt eredmény sablon szerkesztése"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Delete Test Result Template"
 msgid "Delete test template"
-msgstr "Teszt eredmény sablon törlése"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13541,10 +13478,8 @@ msgstr "Érkező mennyiség"
 
 #: templates/js/translated/purchase_order.js:1170
 #: templates/js/translated/stock.js:1211
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Specify packaging for incoming stock items"
-msgstr "Írd be a batch kódját a beérkezett tételeknek"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1223
 msgid "Stock Status"
@@ -13567,20 +13502,16 @@ msgid "Add batch code"
 msgstr "Batch kód hozzáadása"
 
 #: templates/js/translated/purchase_order.js:1259
-#, fuzzy
-#| msgid "Specify location"
 msgid "Specify packaging"
-msgstr "Add meg a helyet"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1270
 msgid "Add serial numbers"
 msgstr "Sorozatszám hozzáadása"
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Add Unit"
 msgid "Add note"
-msgstr "Mértékegység hozzáadása"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -14138,16 +14069,12 @@ msgid "Specify stock quantity"
 msgstr "Készlet mennyiség megadása"
 
 #: templates/js/translated/stock.js:1164
-#, fuzzy
-#| msgid "Add batch code"
 msgid "Adjust batch code"
-msgstr "Batch kód hozzáadása"
+msgstr ""
 
 #: templates/js/translated/stock.js:1174
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Adjust packaging"
-msgstr "Alkatrész csomagolás"
+msgstr ""
 
 #: templates/js/translated/stock.js:1252 templates/js/translated/stock.js:3380
 msgid "Select Stock Items"
@@ -15064,5 +14991,3 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
 
-#~ msgid "Allocate Stock to Build"
-#~ msgstr "Készlet foglalása gyártáshoz"
