@@ -343,7 +343,7 @@ function poLineItemFields(options={}) {
         reference: {},
         purchase_price: {
             icon: 'fa-dollar-sign',
-            onEdit: function(value, name, field, opts) {
+            onInput: function(value, name, field, opts) {
                 updateFieldValue('auto_pricing', value === '', {}, opts);
             }
         },
