@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -240,10 +240,8 @@ msgid "Spanish (Mexican)"
 msgstr "Spanisch (Mexikanisch)"
 
 #: InvenTree/locales.py:27
-#, fuzzy
-#| msgid "Romanian"
 msgid "Estonian"
-msgstr "Rumänisch"
+msgstr ""
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -1221,10 +1219,8 @@ msgid "Part Name"
 msgstr "Name des Teils"
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Projektcode"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1567,16 +1563,12 @@ msgid "Part Description"
 msgstr "Beschreibung des Teils"
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Teil-Kategorie"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Kategoriename"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1586,10 +1578,8 @@ msgid "Trackable"
 msgstr "Nachverfolgbar"
 
 #: build/serializers.py:1237
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Inherited"
-msgstr "Wird vererbt"
+msgstr "Vererbt"
 
 #: build/serializers.py:1238 part/models.py:4275
 #: part/templates/part/upload_bom.html:56 templates/js/translated/bom.js:1046
@@ -1630,7 +1620,7 @@ msgstr "Verfügbarer Bestand"
 
 #: build/serializers.py:1270
 msgid "Available Substitute Stock"
-msgstr ""
+msgstr "Verfügbares Ersatzmaterial"
 
 #: build/serializers.py:1271
 msgid "Available Variant Stock"
@@ -1934,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr "Unter-Bauaufträge"
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Build Order Line Items"
-msgstr "Bauauftragspositionsartikel"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4113,7 +4101,7 @@ msgstr "Ist dieses Unternehmen aktiv?"
 
 #: company/models.py:168
 msgid "Is customer"
-msgstr ""
+msgstr "Ist Kunde"
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
@@ -4121,7 +4109,7 @@ msgstr "Verkaufen Sie Teile an diese Firma?"
 
 #: company/models.py:174
 msgid "Is supplier"
-msgstr ""
+msgstr "Ist Zulieferer"
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
@@ -4129,7 +4117,7 @@ msgstr "Kaufen Sie Teile von dieser Firma?"
 
 #: company/models.py:180
 msgid "Is manufacturer"
-msgstr ""
+msgstr "Ist Hersteller"
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4291,7 +4279,7 @@ msgstr "Teilbeschreibung des Herstellers"
 
 #: company/models.py:569
 msgid "Manufacturer Part Parameter"
-msgstr ""
+msgstr "Teilenummer des Herstellers"
 
 #: company/models.py:588
 msgid "Parameter name"
@@ -4462,7 +4450,7 @@ msgstr "Standard-Währung für diesen Zulieferer"
 
 #: company/serializers.py:210
 msgid "Company Name"
-msgstr ""
+msgstr "Firmenname"
 
 #: company/serializers.py:386 part/admin.py:126 part/serializers.py:888
 #: part/templates/part/part_base.html:197
@@ -4924,15 +4912,15 @@ msgstr "Platziert"
 
 #: importer/mixins.py:263
 msgid "Invalid export format"
-msgstr ""
+msgstr "Ungültiges Exportformat"
 
 #: importer/models.py:58
 msgid "Timestamp"
-msgstr ""
+msgstr "Zeitstempel"
 
 #: importer/models.py:63
 msgid "Data file to import"
-msgstr ""
+msgstr "Zu importierende Datei"
 
 #: importer/models.py:72 templates/js/translated/tables.js:558
 msgid "Columns"
@@ -4940,17 +4928,15 @@ msgstr "Spalten"
 
 #: importer/models.py:83
 msgid "Import status"
-msgstr ""
+msgstr "Importstatus"
 
 #: importer/models.py:93
 msgid "Field Defaults"
-msgstr ""
+msgstr "Standardwerte"
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Pricing Overrides"
 msgid "Field Overrides"
-msgstr "Preisüberschreitungen"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5014,39 +5000,35 @@ msgstr "Gültig"
 
 #: importer/operations.py:28 importer/operations.py:49
 msgid "Unsupported data file format"
-msgstr ""
+msgstr "Dateiformat nicht unterstützt"
 
 #: importer/operations.py:40
 msgid "Failed to open data file"
-msgstr ""
+msgstr "Fehler beim Öffnen der Datei"
 
 #: importer/operations.py:51
 msgid "Invalid data file dimensions"
-msgstr ""
+msgstr "Ungültige Dateigröße"
 
 #: importer/serializers.py:90
-#, fuzzy
-#| msgid "Invalid barcode data"
 msgid "Invalid field defaults"
-msgstr "Ungültige Barcode-Daten"
+msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid server response"
 msgid "Invalid field overrides"
-msgstr "Ungültige Serverantwort"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
-msgstr ""
+msgstr "Zeilen"
 
 #: importer/serializers.py:165
 msgid "List of row IDs to accept"
-msgstr ""
+msgstr "Liste der zu akzeptierenden Zeilen IDs"
 
 #: importer/serializers.py:178
 msgid "No rows provided"
-msgstr ""
+msgstr "Keine Zeilen ausgewählt"
 
 #: importer/serializers.py:182
 msgid "Row does not belong to this session"
@@ -5756,16 +5738,12 @@ msgid "Enter serial numbers for incoming stock items"
 msgstr "Seriennummern für eingehende Lagerartikel"
 
 #: order/serializers.py:654
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Override packaging information for incoming stock items"
-msgstr "Losnummer für eingehende Lagerartikel"
+msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Additional note for incoming stock items"
-msgstr "Seriennummern für eingehende Lagerartikel"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6467,16 +6445,12 @@ msgid "This option must be selected"
 msgstr "Diese Option muss ausgewählt werden"
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "Revision"
 msgid "Is Revision"
-msgstr "Version"
+msgstr ""
 
 #: part/api.py:927
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Has Revisions"
-msgstr "Artikelrevisionen"
+msgstr ""
 
 #: part/api.py:1118
 msgid "BOM Valid"
@@ -6589,20 +6563,16 @@ msgid "IPN must match regex pattern {pattern}"
 msgstr "IPN muss mit Regex-Muster {pattern} übereinstimmen"
 
 #: part/models.py:671
-#, fuzzy
-#| msgid "Item cannot belong to itself"
 msgid "Part cannot be a revision of itself"
-msgstr "Teil kann nicht zu sich selbst gehören"
+msgstr ""
 
 #: part/models.py:678
 msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Destination location must be specified"
 msgid "Revision code must be specified"
-msgstr "Ziel-Lagerort muss angegeben werden"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6613,10 +6583,8 @@ msgid "Cannot make a revision of a template part"
 msgstr ""
 
 #: part/models.py:705
-#, fuzzy
-#| msgid "Build output must point to the same build"
 msgid "Parent part must point to the same template"
-msgstr "Endprodukt muss auf den gleichen Bauauftrag verweisen"
+msgstr ""
 
 #: part/models.py:784
 msgid "Stock item with this serial number already exists"
@@ -6627,10 +6595,8 @@ msgid "Duplicate IPN not allowed in part settings"
 msgstr "Doppelte IPN in den Teil-Einstellungen nicht erlaubt"
 
 #: part/models.py:894
-#, fuzzy
-#| msgid "Duplicate relationship already exists"
 msgid "Duplicate part revision already exists."
-msgstr "Doppelte Beziehung existiert bereits"
+msgstr ""
 
 #: part/models.py:904
 msgid "Part with this Name, IPN and Revision already exists."
@@ -6673,16 +6639,12 @@ msgid "Part revision or version number"
 msgstr "Revisions- oder Versionsnummer"
 
 #: part/models.py:1018
-#, fuzzy
-#| msgid "Is this part a variant of another part?"
 msgid "Is this part a revision of another part?"
-msgstr "Ist dieses Teil eine Variante eines anderen Teils?"
+msgstr ""
 
 #: part/models.py:1019 part/templates/part/part_base.html:277
-#, fuzzy
-#| msgid "Revision"
 msgid "Revision Of"
-msgstr "Version"
+msgstr ""
 
 #: part/models.py:1043
 msgid "Where is this item normally stored?"
@@ -7426,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr "Lieferantenteil mit dieser SKU existiert bereits"
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Revision"
 msgid "Revisions"
-msgstr "Version"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12209,52 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr "Endprodukte entfernen"
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete allocations"
-msgstr "Lagerort löschen"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Delete Stock Allocation"
 msgid "Delete Stock Allocations"
-msgstr "Bestandszuordnung löschen"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Deallocate stock"
 msgid "No allocated stock"
-msgstr "Bestandszuordnung aufheben"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "stock item"
 msgid "Stock item"
-msgstr "Lagerartikel"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Edit Allocation"
 msgid "Edit build allocation"
-msgstr "Zuordnung bearbeiten"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete build allocation"
-msgstr "Lagerort löschen"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit Allocation"
 msgid "Edit Build Allocation"
-msgstr "Zuordnung bearbeiten"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Build Allocation"
-msgstr "Lagerort löschen"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -12422,10 +12366,8 @@ msgid "Trackable part"
 msgstr "Nachverfolgbares Teil"
 
 #: templates/js/translated/build.js:2723
-#, fuzzy
-#| msgid "Gets inherited"
 msgid "Gets Inherited"
-msgstr "Wird vererbt"
+msgstr ""
 
 #: templates/js/translated/build.js:2733
 msgid "Unit Quantity"
@@ -13273,16 +13215,12 @@ msgid "results"
 msgstr "Ergebnisse"
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Edit Test Result Template"
 msgid "Edit test template"
-msgstr "Vorlage für Testergebnis bearbeiten"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Delete Test Result Template"
 msgid "Delete test template"
-msgstr "Vorlage für Testergebnis löschen"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13539,10 +13477,8 @@ msgstr "Zu erhaltende Menge"
 
 #: templates/js/translated/purchase_order.js:1170
 #: templates/js/translated/stock.js:1211
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Specify packaging for incoming stock items"
-msgstr "Losnummer für eingehende Lagerartikel"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1223
 msgid "Stock Status"
@@ -13565,20 +13501,16 @@ msgid "Add batch code"
 msgstr "Losnummer hinzufügen"
 
 #: templates/js/translated/purchase_order.js:1259
-#, fuzzy
-#| msgid "Specify location"
 msgid "Specify packaging"
-msgstr "Lagerort angeben"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1270
 msgid "Add serial numbers"
 msgstr "Seriennummern hinzufügen"
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Add Unit"
 msgid "Add note"
-msgstr "Einheit hinzufügen"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -14136,16 +14068,12 @@ msgid "Specify stock quantity"
 msgstr "Bestandsanzahl angeben"
 
 #: templates/js/translated/stock.js:1164
-#, fuzzy
-#| msgid "Add batch code"
 msgid "Adjust batch code"
-msgstr "Losnummer hinzufügen"
+msgstr ""
 
 #: templates/js/translated/stock.js:1174
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Adjust packaging"
-msgstr "Teile-Verpackungen"
+msgstr ""
 
 #: templates/js/translated/stock.js:1252 templates/js/translated/stock.js:3380
 msgid "Select Stock Items"
@@ -15062,5 +14990,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
 
-#~ msgid "Allocate Stock to Build"
-#~ msgstr "Bestand Bauauftrag zuweisen"
