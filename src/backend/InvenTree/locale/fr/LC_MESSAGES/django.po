@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:55\n"
+"PO-Revision-Date: 2024-07-16 16:36\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -240,10 +240,8 @@ msgid "Spanish (Mexican)"
 msgstr "Espagnol (Mexique)"
 
 #: InvenTree/locales.py:27
-#, fuzzy
-#| msgid "Romanian"
 msgid "Estonian"
-msgstr "Roumain"
+msgstr ""
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -1221,10 +1219,8 @@ msgid "Part Name"
 msgstr "Nom de l'article"
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Code du projet"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1567,16 +1563,12 @@ msgid "Part Description"
 msgstr "Description pièce"
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Catégorie de composant"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Nom catégorie"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1932,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr "Commandes de constructions filles"
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Build Order Line Items"
-msgstr "Élément de la ligne de construction"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4945,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "Ordres de Fabrication"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5023,16 +5011,12 @@ msgid "Invalid data file dimensions"
 msgstr ""
 
 #: importer/serializers.py:90
-#, fuzzy
-#| msgid "Invalid physical unit"
 msgid "Invalid field defaults"
-msgstr "Unité invalide"
+msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Internal Price Override"
 msgid "Invalid field overrides"
-msgstr "Substitution du prix interne"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -5754,16 +5738,12 @@ msgid "Enter serial numbers for incoming stock items"
 msgstr "Entrez les numéros de série pour les articles de stock entrants"
 
 #: order/serializers.py:654
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Override packaging information for incoming stock items"
-msgstr "Entrez les numéros de série pour les articles de stock entrants"
+msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Additional note for incoming stock items"
-msgstr "Entrez les numéros de série pour les articles de stock entrants"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6465,16 +6445,12 @@ msgid "This option must be selected"
 msgstr ""
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "Revision"
 msgid "Is Revision"
-msgstr "Révision"
+msgstr ""
 
 #: part/api.py:927
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Has Revisions"
-msgstr "Modifications de la pièce"
+msgstr ""
 
 #: part/api.py:1118
 msgid "BOM Valid"
@@ -6595,10 +6571,8 @@ msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Responsible user or group must be specified"
 msgid "Revision code must be specified"
-msgstr "Un utilisateur ou un groupe responsable doit être spécifié"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6609,10 +6583,8 @@ msgid "Cannot make a revision of a template part"
 msgstr ""
 
 #: part/models.py:705
-#, fuzzy
-#| msgid "Build output must point to the same build"
 msgid "Parent part must point to the same template"
-msgstr "La sortie de la construction doit pointer vers la même construction"
+msgstr ""
 
 #: part/models.py:784
 msgid "Stock item with this serial number already exists"
@@ -6671,10 +6643,8 @@ msgid "Is this part a revision of another part?"
 msgstr ""
 
 #: part/models.py:1019 part/templates/part/part_base.html:277
-#, fuzzy
-#| msgid "Revision"
 msgid "Revision Of"
-msgstr "Révision"
+msgstr ""
 
 #: part/models.py:1043
 msgid "Where is this item normally stored?"
@@ -7418,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Revision"
 msgid "Revisions"
-msgstr "Révision"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12201,52 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete Notifications"
 msgid "Delete allocations"
-msgstr "Supprimer les notifications"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Delete Notifications"
 msgid "Delete Stock Allocations"
-msgstr "Supprimer les notifications"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Deallocate stock"
 msgid "No allocated stock"
-msgstr "Désallouer le stock"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Article en stock"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Build actions"
 msgid "Edit build allocation"
-msgstr "Modifier construction/ordre de construction"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete Notifications"
 msgid "Delete build allocation"
-msgstr "Supprimer les notifications"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Discard Allocations"
 msgid "Edit Build Allocation"
-msgstr "Ignorer les allocations"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete Build Allocation"
-msgstr "Supprimer l'assemblage"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -13263,16 +13215,12 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Test Templates"
 msgid "Edit test template"
-msgstr "Tester le modèle"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Test Templates"
 msgid "Delete test template"
-msgstr "Tester le modèle"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13529,10 +13477,8 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1170
 #: templates/js/translated/stock.js:1211
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Specify packaging for incoming stock items"
-msgstr "Entrez les numéros de série pour les articles de stock entrants"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1223
 msgid "Stock Status"
@@ -13555,20 +13501,16 @@ msgid "Add batch code"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1259
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Specify packaging"
-msgstr "Conditionnement de l'article"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1270
 msgid "Add serial numbers"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Additional notes"
 msgid "Add note"
-msgstr "Notes additionnelles"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -14130,10 +14072,8 @@ msgid "Adjust batch code"
 msgstr ""
 
 #: templates/js/translated/stock.js:1174
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Adjust packaging"
-msgstr "Conditionnement de l'article"
+msgstr ""
 
 #: templates/js/translated/stock.js:1252 templates/js/translated/stock.js:3380
 msgid "Select Stock Items"
@@ -15050,5 +14990,3 @@ msgstr "Droit de modifier des élément"
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
 
-#~ msgid "Allocate Stock to Build"
-#~ msgstr "Allouer le stock à la construction"
