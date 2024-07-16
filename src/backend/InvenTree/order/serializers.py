@@ -373,13 +373,13 @@ class PurchaseOrderLineItemSerializer(
 
         fields = [
             'pk',
+            'part',
             'quantity',
             'reference',
             'notes',
             'order',
             'order_detail',
             'overdue',
-            'part',
             'part_detail',
             'supplier_part_detail',
             'received',
@@ -453,6 +453,13 @@ class PurchaseOrderLineItemSerializer(
         )
 
         return queryset
+
+    part = serializers.PrimaryKeyRelatedField(
+        queryset=part_models.SupplierPart.objects.all(),
+        many=False,
+        required=True,
+        label=_('Supplier Part'),
+    )
 
     quantity = serializers.FloatField(min_value=0, required=True)
 
