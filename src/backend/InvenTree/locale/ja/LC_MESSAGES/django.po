@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -1563,16 +1563,12 @@ msgid "Part Description"
 msgstr ""
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "パーツカテゴリ"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "カテゴリ名"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1928,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Build Order Line Items"
-msgstr "組立注文"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4941,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "組立注文"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5023,10 +5015,8 @@ msgid "Invalid field defaults"
 msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid field overrides"
-msgstr "数量コードが無効です"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -7398,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Permissions"
 msgid "Revisions"
-msgstr "許可"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12181,10 +12169,8 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete category"
 msgid "Delete allocations"
-msgstr "カテゴリを削除"
+msgstr ""
 
 #: templates/js/translated/build.js:968
 msgid "Delete Stock Allocations"
@@ -12195,32 +12181,24 @@ msgid "No allocated stock"
 msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "在庫商品"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
 msgid "Edit build allocation"
 msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete build allocation"
-msgstr "組立を削除"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit Build"
 msgid "Edit Build Allocation"
-msgstr "組立を編集"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Delete Build Allocation"
-msgstr "組立を削除"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -13237,10 +13215,8 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Edit test template"
-msgstr "在庫商品編集済み"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
 msgid "Delete test template"
@@ -15013,3 +14989,4 @@ msgstr "項目を編集する権限"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
+
