@@ -595,7 +595,10 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
             'location',
             'quantity',
             'status',
-            'batch_code' 'serial_numbers',
+            'batch_code',
+            'serial_numbers',
+            'packaging',
+            'note',
         ]
 
     line_item = serializers.PrimaryKeyRelatedField(
@@ -651,6 +654,22 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
 
     status = serializers.ChoiceField(
         choices=StockStatus.items(), default=StockStatus.OK.value, label=_('Status')
+    )
+
+    packaging = serializers.CharField(
+        label=_('Packaging'),
+        help_text=_('Override packaging information for incoming stock items'),
+        required=False,
+        default='',
+        allow_blank=True,
+    )
+
+    note = serializers.CharField(
+        label=_('Note'),
+        help_text=_('Additional note for incoming stock items'),
+        required=False,
+        default='',
+        allow_blank=True,
     )
 
     barcode = serializers.CharField(
@@ -805,7 +824,9 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
                         status=item['status'],
                         barcode=item.get('barcode', ''),
                         batch_code=item.get('batch_code', ''),
+                        packaging=item.get('packaging', ''),
                         serials=item.get('serials', None),
+                        notes=item.get('note', None),
                     )
                 except (ValidationError, DjangoValidationError) as exc:
                     # Catch model errors and re-throw as DRF errors
