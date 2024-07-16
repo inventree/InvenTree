@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:38\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -1219,10 +1219,8 @@ msgid "Part Name"
 msgstr ""
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Print Label"
 msgid "Project Code Label"
-msgstr "Etiket Yazdır"
+msgstr ""
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1565,16 +1563,12 @@ msgid "Part Description"
 msgstr ""
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Categories"
 msgid "Part Category ID"
-msgstr "Parça Kategorileri"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Part Categories"
 msgid "Part Category Name"
-msgstr "Parça Kategorileri"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1930,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr "Alt Yapım İşi Emrileri"
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Build Order Line Items"
-msgstr "Yapım İşi Emirleri"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4943,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "Yapım İşi Emirleri"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5025,10 +5015,8 @@ msgid "Invalid field defaults"
 msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid field overrides"
-msgstr "Geçersiz veri sağlandı"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -5754,10 +5742,8 @@ msgid "Override packaging information for incoming stock items"
 msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Destination stock item"
 msgid "Additional note for incoming stock items"
-msgstr "Hedef stok kalemi"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6459,16 +6445,12 @@ msgid "This option must be selected"
 msgstr ""
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "Revision"
 msgid "Is Revision"
-msgstr "Revizyon"
+msgstr ""
 
 #: part/api.py:927
-#, fuzzy
-#| msgid "Revision"
 msgid "Has Revisions"
-msgstr "Revizyon"
+msgstr ""
 
 #: part/api.py:1118
 msgid "BOM Valid"
@@ -6589,10 +6571,8 @@ msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Destination location not specified"
 msgid "Revision code must be specified"
-msgstr "Hedef konumu belirtilmedi"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6659,16 +6639,12 @@ msgid "Part revision or version number"
 msgstr "Parça revizyon veya versiyon numarası"
 
 #: part/models.py:1018
-#, fuzzy
-#| msgid "Is this part a variant of another part?"
 msgid "Is this part a revision of another part?"
-msgstr "Bu parça başka bir parçanın çeşidi mi?"
+msgstr ""
 
 #: part/models.py:1019 part/templates/part/part_base.html:277
-#, fuzzy
-#| msgid "Revision"
 msgid "Revision Of"
-msgstr "Revizyon"
+msgstr ""
 
 #: part/models.py:1043
 msgid "Where is this item normally stored?"
@@ -7412,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Revision"
 msgid "Revisions"
-msgstr "Revizyon"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12195,52 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete allocations"
-msgstr "Konumu sil"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Stock Allocations"
-msgstr "Konumu sil"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Allocate Stock"
 msgid "No allocated stock"
-msgstr "Stok Tahsis Et"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Stok Kalemi"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit build allocation"
-msgstr "Konumu düzenle"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete build allocation"
-msgstr "Konumu sil"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit Build Allocation"
-msgstr "Konumu düzenle"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Build Allocation"
-msgstr "Konumu sil"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -13257,16 +13215,12 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Add Test Template"
 msgid "Edit test template"
-msgstr "Test Şablonu Ekle"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Delete test template"
-msgstr "Parça Test Şablonları"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13547,10 +13501,8 @@ msgid "Add batch code"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1259
-#, fuzzy
-#| msgid "Packaging"
 msgid "Specify packaging"
-msgstr "Paketleme"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1270
 msgid "Add serial numbers"
@@ -14120,10 +14072,8 @@ msgid "Adjust batch code"
 msgstr ""
 
 #: templates/js/translated/stock.js:1174
-#, fuzzy
-#| msgid "Packaging"
 msgid "Adjust packaging"
-msgstr "Paketleme"
+msgstr ""
 
 #: templates/js/translated/stock.js:1252 templates/js/translated/stock.js:3380
 msgid "Select Stock Items"
@@ -15040,5 +14990,3 @@ msgstr "Parçaları düzenleme izni"
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
 
-#~ msgid "Allocate Stock to Build"
-#~ msgstr "Yapım İşi için Stok Tahsis Et"
