@@ -8,7 +8,7 @@ msgstr ""
 "Language: sl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Plural-Forms: nplurals=4; plural=n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3;\n"
@@ -212,31 +212,31 @@ msgstr ""
 
 #: src/components/details/PartIcons.tsx:43
 #~ msgid "Part is a template part (variants can be made from this part)"
-#~ msgstr ""
+#~ msgstr "Part is a template part (variants can be made from this part)"
 
 #: src/components/details/PartIcons.tsx:49
 #~ msgid "Part can be assembled from other parts"
-#~ msgstr ""
+#~ msgstr "Part can be assembled from other parts"
 
 #: src/components/details/PartIcons.tsx:55
 #~ msgid "Part can be used in assemblies"
-#~ msgstr ""
+#~ msgstr "Part can be used in assemblies"
 
 #: src/components/details/PartIcons.tsx:61
 #~ msgid "Part stock is tracked by serial number"
-#~ msgstr ""
+#~ msgstr "Part stock is tracked by serial number"
 
 #: src/components/details/PartIcons.tsx:67
 #~ msgid "Part can be purchased from external suppliers"
-#~ msgstr ""
+#~ msgstr "Part can be purchased from external suppliers"
 
 #: src/components/details/PartIcons.tsx:73
 #~ msgid "Part can be sold to customers"
-#~ msgstr ""
+#~ msgstr "Part can be sold to customers"
 
 #: src/components/details/PartIcons.tsx:78
 #~ msgid "Part is virtual (not a physical part)"
-#~ msgstr ""
+#~ msgstr "Part is virtual (not a physical part)"
 
 #: src/components/editors/NotesEditor.tsx:66
 msgid "Image upload failed"
@@ -741,15 +741,15 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:91
 #~ msgid "Select a column from the data file"
-#~ msgstr ""
+#~ msgstr "Select a column from the data file"
 
 #: src/components/importer/ImporterColumnSelector.tsx:104
 #~ msgid "Map data columns to database fields"
-#~ msgstr ""
+#~ msgstr "Map data columns to database fields"
 
 #: src/components/importer/ImporterColumnSelector.tsx:119
 #~ msgid "Imported Column Name"
-#~ msgstr ""
+#~ msgstr "Imported Column Name"
 
 #: src/components/importer/ImporterColumnSelector.tsx:182
 msgid "Ignore this field"
@@ -801,7 +801,7 @@ msgstr ""
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
-#~ msgstr ""
+#~ msgstr "Cancel import session"
 
 #: src/components/importer/ImporterDrawer.tsx:101
 msgid "Import Complete"
@@ -2986,11 +2986,11 @@ msgstr ""
 
 #: src/functions/forms.tsx:182
 #~ msgid "Invalid Form"
-#~ msgstr ""
+#~ msgstr "Invalid Form"
 
 #: src/functions/forms.tsx:183
 #~ msgid "method parameter not supplied"
-#~ msgstr ""
+#~ msgstr "method parameter not supplied"
 
 #: src/functions/notifications.tsx:10
 msgid "Not implemented"
@@ -5077,7 +5077,7 @@ msgstr ""
 
 #: src/tables/DownloadAction.tsx:24
 #~ msgid "Excel (.xls)"
-#~ msgstr ""
+#~ msgstr "Excel (.xls)"
 
 #: src/tables/DownloadAction.tsx:38
 msgid "Download Data"
@@ -5512,7 +5512,7 @@ msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:157
 msgid "Gets Inherited"
-msgstr "Gets Inherited"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:166
 msgid "Unit Quantity"
@@ -6840,7 +6840,7 @@ msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:70
 msgid "Uploaded"
-msgstr "Uploaded"
+msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:80
 msgid "Imported Rows"
@@ -7077,7 +7077,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:235
 msgid "Expiry Date"
-msgstr "Expiry Date"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:259
 msgid "Stock Value"
@@ -7381,3 +7381,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
