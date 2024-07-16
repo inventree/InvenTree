@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-05 14:57\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -20,35 +20,35 @@ msgstr ""
 
 #: src/components/Boundary.tsx:12
 msgid "Error rendering component"
-msgstr ""
+msgstr "Errore nel renderizzare il componente"
 
 #: src/components/Boundary.tsx:14
 msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr ""
+msgstr "Si è verificato un errore durante il rendering di questo componente. Fare riferimento alla console per maggiori informazioni."
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
-msgstr ""
+msgstr "Titolo"
 
 #: src/components/buttons/AdminButton.tsx:83
 msgid "Open in admin interface"
-msgstr ""
+msgstr "Apri nell'interfaccia di amministrazione"
 
 #: src/components/buttons/CopyButton.tsx:18
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Copia negli appunti"
 
 #: src/components/buttons/PrintingActions.tsx:93
 msgid "Print Label"
-msgstr ""
+msgstr "Stampa Etichetta"
 
 #: src/components/buttons/PrintingActions.tsx:99
 msgid "Print"
-msgstr ""
+msgstr "Stampa"
 
 #: src/components/buttons/PrintingActions.tsx:100
 msgid "Label printing completed successfully"
-msgstr ""
+msgstr "Stampa dell'etichetta completata con successo"
 
 #: src/components/buttons/PrintingActions.tsx:106
 #: src/components/buttons/PrintingActions.tsx:144
@@ -67,51 +67,51 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:444
 #: src/tables/stock/StockItemTestResultTable.tsx:294
 msgid "Error"
-msgstr ""
+msgstr "Errore"
 
 #: src/components/buttons/PrintingActions.tsx:107
 msgid "The label could not be generated"
-msgstr ""
+msgstr "Impossibile generare l'etichetta"
 
 #: src/components/buttons/PrintingActions.tsx:122
 msgid "Print Report"
-msgstr ""
+msgstr "Stampa report"
 
 #: src/components/buttons/PrintingActions.tsx:138
 msgid "Generate"
-msgstr ""
+msgstr "Genera"
 
 #: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
-msgstr ""
+msgstr "Stampa del report completata con successo"
 
 #: src/components/buttons/PrintingActions.tsx:145
 msgid "The report could not be generated"
-msgstr ""
+msgstr "Non è stato possibile generare il report"
 
 #: src/components/buttons/PrintingActions.tsx:173
 msgid "Printing Actions"
-msgstr ""
+msgstr "Azioni di stampa"
 
 #: src/components/buttons/PrintingActions.tsx:178
 msgid "Print Labels"
-msgstr ""
+msgstr "Stampa Etichette"
 
 #: src/components/buttons/PrintingActions.tsx:184
 msgid "Print Reports"
-msgstr ""
+msgstr "Stampa report"
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr ""
+msgstr "Scansiona il codice QR"
 
 #: src/components/buttons/ScanButton.tsx:20
 msgid "Open QR code scanner"
-msgstr ""
+msgstr "Apri scanner di codice QR"
 
 #: src/components/buttons/SpotlightButton.tsx:14
 msgid "Open spotlight"
-msgstr ""
+msgstr "Accendi torcia"
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
@@ -119,37 +119,37 @@ msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Errore"
 
 #: src/components/buttons/YesNoButton.tsx:33
 #: src/tables/Filter.tsx:51
 msgid "Yes"
-msgstr ""
+msgstr "Si"
 
 #: src/components/buttons/YesNoButton.tsx:33
 #: src/tables/Filter.tsx:52
 msgid "No"
-msgstr ""
+msgstr "No"
 
 #: src/components/details/Details.tsx:294
 msgid "No name defined"
-msgstr ""
+msgstr "Nessun nome definito"
 
 #: src/components/details/Details.tsx:331
 msgid "Copied"
-msgstr ""
+msgstr "Copiato"
 
 #: src/components/details/Details.tsx:331
 msgid "Copy"
-msgstr ""
+msgstr "Copia"
 
 #: src/components/details/DetailsImage.tsx:65
 msgid "Remove Image"
-msgstr ""
+msgstr "Rimuovi l'immagine"
 
 #: src/components/details/DetailsImage.tsx:68
 msgid "Remove the associated image from this item?"
-msgstr ""
+msgstr "Rimuovi l'immagine associata all'articolo?"
 
 #: src/components/details/DetailsImage.tsx:71
 #: src/forms/StockForms.tsx:535
@@ -157,7 +157,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:299
 #: src/pages/stock/StockDetail.tsx:465
 msgid "Remove"
-msgstr ""
+msgstr "Rimuovi"
 
 #: src/components/details/DetailsImage.tsx:71
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
@@ -169,96 +169,96 @@ msgstr ""
 #: src/tables/InvenTreeTable.tsx:517
 #: src/tables/build/BuildOutputTable.tsx:225
 msgid "Cancel"
-msgstr ""
+msgstr "Annulla"
 
 #: src/components/details/DetailsImage.tsx:97
 msgid "Drag and drop to upload"
-msgstr ""
+msgstr "Trascina e rilascia per caricare"
 
 #: src/components/details/DetailsImage.tsx:100
 msgid "Click to select file(s)"
-msgstr ""
+msgstr "Fare clic per selezionare i file(s)"
 
 #: src/components/details/DetailsImage.tsx:224
 msgid "Clear"
-msgstr ""
+msgstr "Elimina"
 
 #: src/components/details/DetailsImage.tsx:227
 #: src/components/forms/ApiForm.tsx:607
 #: src/contexts/ThemeContext.tsx:43
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
 msgid "Submit"
-msgstr ""
+msgstr "Invia"
 
 #: src/components/details/DetailsImage.tsx:267
 msgid "Select from existing images"
-msgstr ""
+msgstr "Seleziona da immagini esistenti"
 
 #: src/components/details/DetailsImage.tsx:275
 msgid "Select Image"
-msgstr ""
+msgstr "Seleziona un'immagine"
 
 #: src/components/details/DetailsImage.tsx:287
 msgid "Upload new image"
-msgstr ""
+msgstr "Carica nuova immagine"
 
 #: src/components/details/DetailsImage.tsx:294
 msgid "Upload Image"
-msgstr ""
+msgstr "Carica immagine"
 
 #: src/components/details/DetailsImage.tsx:307
 msgid "Delete image"
-msgstr ""
+msgstr "Elimina immagine"
 
 #: src/components/details/PartIcons.tsx:43
 #~ msgid "Part is a template part (variants can be made from this part)"
-#~ msgstr ""
+#~ msgstr "Part is a template part (variants can be made from this part)"
 
 #: src/components/details/PartIcons.tsx:49
 #~ msgid "Part can be assembled from other parts"
-#~ msgstr ""
+#~ msgstr "Part can be assembled from other parts"
 
 #: src/components/details/PartIcons.tsx:55
 #~ msgid "Part can be used in assemblies"
-#~ msgstr ""
+#~ msgstr "Part can be used in assemblies"
 
 #: src/components/details/PartIcons.tsx:61
 #~ msgid "Part stock is tracked by serial number"
-#~ msgstr ""
+#~ msgstr "Part stock is tracked by serial number"
 
 #: src/components/details/PartIcons.tsx:67
 #~ msgid "Part can be purchased from external suppliers"
-#~ msgstr "L'articolo può essere acquistato da fornitori esterni"
+#~ msgstr "Part can be purchased from external suppliers"
 
 #: src/components/details/PartIcons.tsx:73
 #~ msgid "Part can be sold to customers"
-#~ msgstr "L'articolo può essere venduto ai clienti"
+#~ msgstr "Part can be sold to customers"
 
 #: src/components/details/PartIcons.tsx:78
 #~ msgid "Part is virtual (not a physical part)"
-#~ msgstr "L'Articolo è virtuale (non è un articolo fisico)"
+#~ msgstr "Part is virtual (not a physical part)"
 
 #: src/components/editors/NotesEditor.tsx:66
 msgid "Image upload failed"
-msgstr ""
+msgstr "Il caricamento della foto è fallito"
 
 #: src/components/editors/NotesEditor.tsx:156
 #: src/components/forms/ApiForm.tsx:458
 #: src/tables/bom/BomTable.tsx:435
 msgid "Success"
-msgstr ""
+msgstr "Operazione completata"
 
 #: src/components/editors/NotesEditor.tsx:157
 msgid "Notes saved successfully"
-msgstr ""
+msgstr "Note salvate con successo"
 
 #: src/components/editors/NotesEditor.tsx:166
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Salvataggio delle note non riuscito"
 
 #: src/components/editors/NotesEditor.tsx:198
 msgid "Preview Notes"
-msgstr ""
+msgstr "Anteprima Note"
 
 #: src/components/editors/NotesEditor.tsx:198
 msgid "Edit Notes"
@@ -741,15 +741,15 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:91
 #~ msgid "Select a column from the data file"
-#~ msgstr ""
+#~ msgstr "Select a column from the data file"
 
 #: src/components/importer/ImporterColumnSelector.tsx:104
 #~ msgid "Map data columns to database fields"
-#~ msgstr ""
+#~ msgstr "Map data columns to database fields"
 
 #: src/components/importer/ImporterColumnSelector.tsx:119
 #~ msgid "Imported Column Name"
-#~ msgstr ""
+#~ msgstr "Imported Column Name"
 
 #: src/components/importer/ImporterColumnSelector.tsx:182
 msgid "Ignore this field"
@@ -801,7 +801,7 @@ msgstr ""
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
-#~ msgstr ""
+#~ msgstr "Cancel import session"
 
 #: src/components/importer/ImporterDrawer.tsx:101
 msgid "Import Complete"
@@ -2986,11 +2986,11 @@ msgstr ""
 
 #: src/functions/forms.tsx:182
 #~ msgid "Invalid Form"
-#~ msgstr ""
+#~ msgstr "Invalid Form"
 
 #: src/functions/forms.tsx:183
 #~ msgid "method parameter not supplied"
-#~ msgstr ""
+#~ msgstr "method parameter not supplied"
 
 #: src/functions/notifications.tsx:10
 msgid "Not implemented"
@@ -5077,7 +5077,7 @@ msgstr ""
 
 #: src/tables/DownloadAction.tsx:24
 #~ msgid "Excel (.xls)"
-#~ msgstr ""
+#~ msgstr "Excel (.xls)"
 
 #: src/tables/DownloadAction.tsx:38
 msgid "Download Data"
@@ -5512,7 +5512,7 @@ msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:157
 msgid "Gets Inherited"
-msgstr "Gets Inherited"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:166
 msgid "Unit Quantity"
@@ -6840,7 +6840,7 @@ msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:70
 msgid "Uploaded"
-msgstr "Uploaded"
+msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:80
 msgid "Imported Rows"
@@ -7077,7 +7077,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:235
 msgid "Expiry Date"
-msgstr "Expiry Date"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:259
 msgid "Stock Value"
@@ -7381,3 +7381,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
