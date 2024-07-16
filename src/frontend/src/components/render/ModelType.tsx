@@ -201,6 +201,14 @@ export const ModelInformationDict: ModelDict = {
     url_detail: '/user/:pk/',
     api_endpoint: ApiEndpoints.user_list
   },
+  group: {
+    label: t`Group`,
+    label_multiple: t`Groups`,
+    url_overview: '/user/group',
+    url_detail: '/user/group-:pk',
+    api_endpoint: ApiEndpoints.group_list,
+    admin_url: '/auth/group/'
+  },
   importsession: {
     label: t`Import Session`,
     label_multiple: t`Import Sessions`,
