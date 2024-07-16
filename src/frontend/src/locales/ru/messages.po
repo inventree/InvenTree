@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-05 14:58\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -20,11 +20,11 @@ msgstr ""
 
 #: src/components/Boundary.tsx:12
 msgid "Error rendering component"
-msgstr ""
+msgstr "Ошибка при отображении компонента"
 
 #: src/components/Boundary.tsx:14
 msgid "An error occurred while rendering this component. Refer to the console for more information."
-msgstr ""
+msgstr "Произошла ошибка при отрисовки этого компонента. Обратитесь к консоли для получения дополнительной информации."
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
@@ -32,23 +32,23 @@ msgstr "Заголовок"
 
 #: src/components/buttons/AdminButton.tsx:83
 msgid "Open in admin interface"
-msgstr ""
+msgstr "Открыть в панели администратора"
 
 #: src/components/buttons/CopyButton.tsx:18
 msgid "Copy to clipboard"
-msgstr ""
+msgstr "Копировать в буфер обмена"
 
 #: src/components/buttons/PrintingActions.tsx:93
 msgid "Print Label"
-msgstr ""
+msgstr "Печать этикеток"
 
 #: src/components/buttons/PrintingActions.tsx:99
 msgid "Print"
-msgstr ""
+msgstr "Печать"
 
 #: src/components/buttons/PrintingActions.tsx:100
 msgid "Label printing completed successfully"
-msgstr ""
+msgstr "Печать этикеток успешно завершена"
 
 #: src/components/buttons/PrintingActions.tsx:106
 #: src/components/buttons/PrintingActions.tsx:144
@@ -71,23 +71,23 @@ msgstr "Ошибка"
 
 #: src/components/buttons/PrintingActions.tsx:107
 msgid "The label could not be generated"
-msgstr ""
+msgstr "Ошибка при создании этикетки"
 
 #: src/components/buttons/PrintingActions.tsx:122
 msgid "Print Report"
-msgstr ""
+msgstr "Печать отчета"
 
 #: src/components/buttons/PrintingActions.tsx:138
 msgid "Generate"
-msgstr ""
+msgstr "Создать"
 
 #: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
-msgstr ""
+msgstr "Печать отчета успешно завершена"
 
 #: src/components/buttons/PrintingActions.tsx:145
 msgid "The report could not be generated"
-msgstr ""
+msgstr "Ошибка при создании отчета"
 
 #: src/components/buttons/PrintingActions.tsx:173
 msgid "Printing Actions"
@@ -95,11 +95,11 @@ msgstr ""
 
 #: src/components/buttons/PrintingActions.tsx:178
 msgid "Print Labels"
-msgstr ""
+msgstr "Печать этикеток"
 
 #: src/components/buttons/PrintingActions.tsx:184
 msgid "Print Reports"
-msgstr ""
+msgstr "Печать отчетов"
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
@@ -107,7 +107,7 @@ msgstr "Сканировать QR код"
 
 #: src/components/buttons/ScanButton.tsx:20
 msgid "Open QR code scanner"
-msgstr ""
+msgstr "Использовать сканер QR-кода"
 
 #: src/components/buttons/SpotlightButton.tsx:14
 msgid "Open spotlight"
@@ -115,33 +115,33 @@ msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:16
 msgid "Pass"
-msgstr ""
+msgstr "Пропустить"
 
 #: src/components/buttons/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Сбой"
 
 #: src/components/buttons/YesNoButton.tsx:33
 #: src/tables/Filter.tsx:51
 msgid "Yes"
-msgstr ""
+msgstr "Да"
 
 #: src/components/buttons/YesNoButton.tsx:33
 #: src/tables/Filter.tsx:52
 msgid "No"
-msgstr ""
+msgstr "Нет"
 
 #: src/components/details/Details.tsx:294
 msgid "No name defined"
-msgstr ""
+msgstr "Имя не определено"
 
 #: src/components/details/Details.tsx:331
 msgid "Copied"
-msgstr ""
+msgstr "Скопировано"
 
 #: src/components/details/Details.tsx:331
 msgid "Copy"
-msgstr ""
+msgstr "Копировать"
 
 #: src/components/details/DetailsImage.tsx:65
 msgid "Remove Image"
@@ -192,55 +192,55 @@ msgstr "Подтвердить"
 
 #: src/components/details/DetailsImage.tsx:267
 msgid "Select from existing images"
-msgstr ""
+msgstr "Выбрать из существующих изображений"
 
 #: src/components/details/DetailsImage.tsx:275
 msgid "Select Image"
-msgstr ""
+msgstr "Выбрать изображение"
 
 #: src/components/details/DetailsImage.tsx:287
 msgid "Upload new image"
-msgstr ""
+msgstr "Загрузить новое изображение"
 
 #: src/components/details/DetailsImage.tsx:294
 msgid "Upload Image"
-msgstr ""
+msgstr "Загрузить изображение"
 
 #: src/components/details/DetailsImage.tsx:307
 msgid "Delete image"
-msgstr ""
+msgstr "Удалить изображение"
 
 #: src/components/details/PartIcons.tsx:43
 #~ msgid "Part is a template part (variants can be made from this part)"
-#~ msgstr ""
+#~ msgstr "Part is a template part (variants can be made from this part)"
 
 #: src/components/details/PartIcons.tsx:49
 #~ msgid "Part can be assembled from other parts"
-#~ msgstr ""
+#~ msgstr "Part can be assembled from other parts"
 
 #: src/components/details/PartIcons.tsx:55
 #~ msgid "Part can be used in assemblies"
-#~ msgstr ""
+#~ msgstr "Part can be used in assemblies"
 
 #: src/components/details/PartIcons.tsx:61
 #~ msgid "Part stock is tracked by serial number"
-#~ msgstr ""
+#~ msgstr "Part stock is tracked by serial number"
 
 #: src/components/details/PartIcons.tsx:67
 #~ msgid "Part can be purchased from external suppliers"
-#~ msgstr ""
+#~ msgstr "Part can be purchased from external suppliers"
 
 #: src/components/details/PartIcons.tsx:73
 #~ msgid "Part can be sold to customers"
-#~ msgstr ""
+#~ msgstr "Part can be sold to customers"
 
 #: src/components/details/PartIcons.tsx:78
 #~ msgid "Part is virtual (not a physical part)"
-#~ msgstr ""
+#~ msgstr "Part is virtual (not a physical part)"
 
 #: src/components/editors/NotesEditor.tsx:66
 msgid "Image upload failed"
-msgstr ""
+msgstr "Не удалось загрузить изображение"
 
 #: src/components/editors/NotesEditor.tsx:156
 #: src/components/forms/ApiForm.tsx:458
@@ -250,27 +250,27 @@ msgstr "Успешно"
 
 #: src/components/editors/NotesEditor.tsx:157
 msgid "Notes saved successfully"
-msgstr ""
+msgstr "Заметка успешно сохранена"
 
 #: src/components/editors/NotesEditor.tsx:166
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Не удалось сохранить заметки"
 
 #: src/components/editors/NotesEditor.tsx:198
 msgid "Preview Notes"
-msgstr ""
+msgstr "Просмотр заметок"
 
 #: src/components/editors/NotesEditor.tsx:198
 msgid "Edit Notes"
-msgstr ""
+msgstr "Редактировать заметки"
 
 #: src/components/editors/NotesEditor.tsx:212
 msgid "Save Notes"
-msgstr ""
+msgstr "Сохранить заметки"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
-msgstr ""
+msgstr "Код"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:44
 #~ msgid "Failed to parse error response from server."
@@ -278,11 +278,11 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:81
 msgid "Preview not available, click \"Reload Preview\"."
-msgstr ""
+msgstr "Предварительный просмотр недоступен, нажмите \"Перезагрузить предпросмотр\"."
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr ""
+msgstr "Предварительный просмотр в PDF"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:104
 msgid "Error loading template"
@@ -323,7 +323,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:262
 msgid "Reload preview"
-msgstr ""
+msgstr "Перезагрузить предварительный просмотр"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:263
 msgid "Use the currently stored template from the server"
@@ -741,15 +741,15 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:91
 #~ msgid "Select a column from the data file"
-#~ msgstr ""
+#~ msgstr "Select a column from the data file"
 
 #: src/components/importer/ImporterColumnSelector.tsx:104
 #~ msgid "Map data columns to database fields"
-#~ msgstr ""
+#~ msgstr "Map data columns to database fields"
 
 #: src/components/importer/ImporterColumnSelector.tsx:119
 #~ msgid "Imported Column Name"
-#~ msgstr ""
+#~ msgstr "Imported Column Name"
 
 #: src/components/importer/ImporterColumnSelector.tsx:182
 msgid "Ignore this field"
@@ -769,7 +769,7 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:215
 msgid "Field Description"
-msgstr ""
+msgstr "Описание поля"
 
 #: src/components/importer/ImporterColumnSelector.tsx:216
 msgid "Imported Column"
@@ -801,7 +801,7 @@ msgstr ""
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
-#~ msgstr ""
+#~ msgstr "Cancel import session"
 
 #: src/components/importer/ImporterDrawer.tsx:101
 msgid "Import Complete"
@@ -851,20 +851,20 @@ msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:155
 msgid "Link Barcode"
-msgstr ""
+msgstr "Привязать штрих-код"
 
 #: src/components/items/ActionDropdown.tsx:156
 msgid "Link custom barcode"
-msgstr ""
+msgstr "Привязать пользовательский штрих-код"
 
 #: src/components/items/ActionDropdown.tsx:172
 #: src/forms/PurchaseOrderForms.tsx:426
 msgid "Unlink Barcode"
-msgstr ""
+msgstr "Отвязать штрих-код"
 
 #: src/components/items/ActionDropdown.tsx:173
 msgid "Unlink custom barcode"
-msgstr ""
+msgstr "Отвязать пользовательский штрих-код"
 
 #: src/components/items/ActionDropdown.tsx:191
 #: src/tables/RowActions.tsx:51
@@ -977,7 +977,7 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:162
 msgid "Links"
-msgstr ""
+msgstr "Ссылки"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 msgid "InvenTree Documentation"
@@ -1384,7 +1384,7 @@ msgstr "Детали производителей"
 #: src/components/render/ModelType.tsx:63
 #: src/pages/part/CategoryDetail.tsx:297
 msgid "Part Category"
-msgstr ""
+msgstr "Категория детали"
 
 #: src/components/render/ModelType.tsx:64
 #: src/pages/Index/Settings/SystemSettings.tsx:172
@@ -1398,7 +1398,7 @@ msgstr "Категории деталей"
 #: src/pages/stock/StockDetail.tsx:563
 #: src/tables/stock/StockTrackingTable.tsx:45
 msgid "Stock Item"
-msgstr ""
+msgstr "На складе"
 
 #: src/components/render/ModelType.tsx:73
 #: src/pages/company/CompanyDetail.tsx:201
@@ -1439,7 +1439,7 @@ msgstr ""
 #: src/defaults/links.tsx:30
 #: src/defaults/menuItems.tsx:43
 msgid "Build"
-msgstr ""
+msgstr "Сборка"
 
 #: src/components/render/ModelType.tsx:101
 msgid "Builds"
@@ -1632,7 +1632,7 @@ msgstr ""
 #: src/pages/company/SupplierPartDetail.tsx:307
 #: src/pages/part/PartDetail.tsx:799
 msgid "Inactive"
-msgstr ""
+msgstr "Неактивный"
 
 #: src/components/render/Part.tsx:27
 #: src/tables/bom/BomTable.tsx:203
@@ -1649,7 +1649,7 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:355
 #: src/tables/stock/StockItemTable.tsx:67
 msgid "Stock"
-msgstr ""
+msgstr "Остатки"
 
 #: src/components/render/Stock.tsx:52
 #: src/pages/stock/StockDetail.tsx:147
@@ -2266,7 +2266,7 @@ msgstr ""
 #: src/defaults/links.tsx:26
 #: src/defaults/menuItems.tsx:9
 msgid "Home"
-msgstr ""
+msgstr "Домашняя страница"
 
 #: src/defaults/actions.tsx:23
 #: src/defaults/links.tsx:27
@@ -2274,7 +2274,7 @@ msgstr ""
 #: src/pages/Index/Dashboard.tsx:19
 #: src/pages/Index/Settings/UserSettings.tsx:47
 msgid "Dashboard"
-msgstr ""
+msgstr "Контрольная панель"
 
 #: src/defaults/actions.tsx:24
 msgid "Go to the InvenTree dashboard"
@@ -2288,12 +2288,12 @@ msgstr ""
 #: src/defaults/links.tsx:92
 #: src/defaults/links.tsx:122
 msgid "About InvenTree"
-msgstr ""
+msgstr "О программе InvenTree"
 
 #: src/defaults/actions.tsx:38
 #: src/defaults/links.tsx:123
 msgid "About the InvenTree org"
-msgstr ""
+msgstr "О программе InvenTree org"
 
 #: src/defaults/actions.tsx:44
 msgid "Server Information"
@@ -2302,17 +2302,17 @@ msgstr ""
 #: src/defaults/actions.tsx:45
 #: src/defaults/links.tsx:117
 msgid "About this Inventree instance"
-msgstr ""
+msgstr "Об этом экземпляре Inventree"
 
 #: src/defaults/actions.tsx:51
 #: src/defaults/links.tsx:105
 msgid "License Information"
-msgstr ""
+msgstr "Информация о лицензии"
 
 #: src/defaults/actions.tsx:52
 #: src/defaults/links.tsx:129
 msgid "Licenses for dependencies of the service"
-msgstr ""
+msgstr "Лицензии на зависимостей сервиса"
 
 #: src/defaults/actions.tsx:59
 msgid "Open the main navigation menu"
@@ -2398,15 +2398,15 @@ msgstr ""
 #: src/defaults/links.tsx:11
 #: src/pages/company/CompanyDetail.tsx:94
 msgid "Website"
-msgstr ""
+msgstr "Веб-сайт"
 
 #: src/defaults/links.tsx:16
 msgid "GitHub"
-msgstr ""
+msgstr "GitHub"
 
 #: src/defaults/links.tsx:21
 msgid "Demo"
-msgstr ""
+msgstr "Демо"
 
 #: src/defaults/links.tsx:31
 #: src/defaults/menuItems.tsx:48
@@ -2417,7 +2417,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:351
 #: src/pages/purchasing/PurchasingIndex.tsx:52
 msgid "Purchasing"
-msgstr ""
+msgstr "Покупка"
 
 #: src/defaults/links.tsx:32
 #: src/defaults/menuItems.tsx:53
@@ -2426,45 +2426,45 @@ msgstr ""
 #: src/pages/sales/SalesIndex.tsx:45
 #: src/pages/sales/SalesOrderDetail.tsx:350
 msgid "Sales"
-msgstr ""
+msgstr "Продажи"
 
 #: src/defaults/links.tsx:35
 #: src/defaults/menuItems.tsx:71
 #: src/pages/Index/Playground.tsx:221
 msgid "Playground"
-msgstr ""
+msgstr "Песочница"
 
 #: src/defaults/links.tsx:49
 msgid "Getting Started"
-msgstr ""
+msgstr "Начать работу"
 
 #: src/defaults/links.tsx:50
 msgid "Getting started with InvenTree"
-msgstr ""
+msgstr "Начало работы с InvenTree"
 
 #: src/defaults/links.tsx:56
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/defaults/links.tsx:57
 msgid "InvenTree API documentation"
-msgstr ""
+msgstr "Документация по API InvenTree"
 
 #: src/defaults/links.tsx:62
 msgid "Developer Manual"
-msgstr ""
+msgstr "Руководство разработчика"
 
 #: src/defaults/links.tsx:63
 msgid "InvenTree developer manual"
-msgstr ""
+msgstr "Инструкция по разработке InvenTree"
 
 #: src/defaults/links.tsx:68
 msgid "FAQ"
-msgstr ""
+msgstr "FAQ"
 
 #: src/defaults/links.tsx:69
 msgid "Frequently asked questions"
-msgstr ""
+msgstr "Часто задаваемые вопросы"
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
@@ -2473,7 +2473,7 @@ msgstr ""
 #: src/defaults/links.tsx:79
 #: src/defaults/links.tsx:116
 msgid "System Information"
-msgstr ""
+msgstr "Информация о системе"
 
 #: src/defaults/links.tsx:83
 #~ msgid "InvenTree"
@@ -2485,7 +2485,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:128
 msgid "Licenses"
-msgstr ""
+msgstr "Лицензии"
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -2867,7 +2867,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:763
 #: src/tables/stock/StockItemTable.tsx:324
 msgid "In Stock"
-msgstr ""
+msgstr "В наличии"
 
 #: src/forms/StockForms.tsx:501
 msgid "Move"
@@ -2887,33 +2887,33 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:837
 msgid "Add Stock"
-msgstr ""
+msgstr "Добавить Остатки"
 
 #: src/forms/StockForms.tsx:846
 msgid "Remove Stock"
-msgstr ""
+msgstr "Удалить запасы"
 
 #: src/forms/StockForms.tsx:855
 #: src/pages/part/PartDetail.tsx:926
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Перемещение запасов"
 
 #: src/forms/StockForms.tsx:864
 #: src/pages/part/PartDetail.tsx:915
 msgid "Count Stock"
-msgstr ""
+msgstr "Подсчет остатков"
 
 #: src/forms/StockForms.tsx:873
 msgid "Change Stock Status"
-msgstr ""
+msgstr "Изменить статус запасов"
 
 #: src/forms/StockForms.tsx:882
 msgid "Merge Stock"
-msgstr ""
+msgstr "Объединить Запасы"
 
 #: src/forms/StockForms.tsx:901
 msgid "Delete Stock Items"
-msgstr ""
+msgstr "Удалить складскую позицию"
 
 #: src/forms/StockForms.tsx:908
 msgid "Parent stock location"
@@ -2986,11 +2986,11 @@ msgstr ""
 
 #: src/functions/forms.tsx:182
 #~ msgid "Invalid Form"
-#~ msgstr ""
+#~ msgstr "Invalid Form"
 
 #: src/functions/forms.tsx:183
 #~ msgid "method parameter not supplied"
-#~ msgstr ""
+#~ msgstr "method parameter not supplied"
 
 #: src/functions/notifications.tsx:10
 msgid "Not implemented"
@@ -3324,7 +3324,7 @@ msgstr ""
 
 #: src/pages/Index/Scan.tsx:359
 msgid "Open Link"
-msgstr ""
+msgstr "Открыть ссылку"
 
 #: src/pages/Index/Scan.tsx:375
 msgid "History is locally kept in this browser."
@@ -3546,7 +3546,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:140
 msgid "Custom Units"
-msgstr ""
+msgstr "Специальная единица"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:146
 #: src/pages/part/CategoryDetail.tsx:257
@@ -3824,7 +3824,7 @@ msgstr ""
 #: src/tables/plugin/PluginListTable.tsx:276
 #: src/tables/stock/LocationTypesTable.tsx:65
 msgid "Description"
-msgstr ""
+msgstr "Описание"
 
 #: src/pages/build/BuildDetail.tsx:111
 msgid "Parent Build"
@@ -4097,7 +4097,7 @@ msgstr ""
 #: src/pages/company/ManufacturerPartDetail.tsx:86
 #: src/pages/company/SupplierPartDetail.tsx:92
 msgid "External Link"
-msgstr ""
+msgstr "Внешняя ссылка"
 
 #: src/pages/company/ManufacturerPartDetail.tsx:104
 #: src/pages/company/SupplierPartDetail.tsx:133
@@ -4199,7 +4199,7 @@ msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:102
 msgid "Parent Category"
-msgstr ""
+msgstr "Родительская категория"
 
 #: src/pages/part/CategoryDetail.tsx:119
 msgid "Subcategories"
@@ -4222,13 +4222,13 @@ msgstr ""
 
 #: src/pages/part/CategoryDetail.tsx:150
 msgid "Top level part category"
-msgstr ""
+msgstr "Категория детали верхнего уровня"
 
 #: src/pages/part/CategoryDetail.tsx:160
 #: src/pages/part/CategoryDetail.tsx:214
 #: src/tables/part/PartCategoryTable.tsx:93
 msgid "Edit Part Category"
-msgstr ""
+msgstr "Добавить категорию детали"
 
 #: src/pages/part/CategoryDetail.tsx:173
 #: src/pages/stock/LocationDetail.tsx:225
@@ -4238,7 +4238,7 @@ msgstr ""
 #: src/pages/part/CategoryDetail.tsx:181
 #: src/pages/part/CategoryDetail.tsx:219
 msgid "Delete Part Category"
-msgstr ""
+msgstr "Удалить категорию детали"
 
 #: src/pages/part/CategoryDetail.tsx:184
 msgid "Parts Action"
@@ -4275,13 +4275,13 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:154
 #: src/tables/stock/StockItemTable.tsx:57
 msgid "Revision"
-msgstr ""
+msgstr "Ревизия"
 
 #: src/pages/part/PartDetail.tsx:161
 #: src/tables/notifications/NotificationsTable.tsx:31
 #: src/tables/part/PartCategoryTemplateTable.tsx:67
 msgid "Category"
-msgstr ""
+msgstr "Категория"
 
 #: src/pages/part/PartDetail.tsx:167
 msgid "Default Location"
@@ -4300,7 +4300,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:188
 #: src/tables/purchasing/ManufacturerPartParameterTable.tsx:44
 msgid "Units"
-msgstr ""
+msgstr "Ед. изм"
 
 #: src/pages/part/PartDetail.tsx:195
 #: src/tables/settings/PendingTasksTable.tsx:40
@@ -4312,7 +4312,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:152
 #: src/pages/sales/SalesOrderDetail.tsx:150
 msgid "Link"
-msgstr ""
+msgstr "Ссылка"
 
 #: src/pages/part/PartDetail.tsx:220
 #: src/tables/bom/BomTable.tsx:314
@@ -4379,7 +4379,7 @@ msgstr ""
 #: src/tables/part/ParametricPartTable.tsx:227
 #: src/tables/part/PartTable.tsx:184
 msgid "Locked"
-msgstr ""
+msgstr "Заблокировано"
 
 #: src/pages/part/PartDetail.tsx:291
 msgid "Template Part"
@@ -4441,7 +4441,7 @@ msgstr ""
 #: src/pages/part/pricing/VariantPricingPanel.tsx:95
 #: src/tables/part/PartTable.tsx:161
 msgid "Price Range"
-msgstr ""
+msgstr "Ценовой диапазон"
 
 #: src/pages/part/PartDetail.tsx:399
 #: src/pages/stock/StockDetail.tsx:132
@@ -5031,11 +5031,11 @@ msgstr ""
 
 #: src/tables/ColumnRenderers.tsx:30
 msgid "Part is not active"
-msgstr ""
+msgstr "Часть не активна"
 
 #: src/tables/ColumnRenderers.tsx:35
 msgid "Part is locked"
-msgstr ""
+msgstr "Деталь заблокирована"
 
 #: src/tables/ColumnRenderers.tsx:57
 msgid "No location set"
@@ -5077,7 +5077,7 @@ msgstr ""
 
 #: src/tables/DownloadAction.tsx:24
 #~ msgid "Excel (.xls)"
-#~ msgstr ""
+#~ msgstr "Excel (.xls)"
 
 #: src/tables/DownloadAction.tsx:38
 msgid "Download Data"
@@ -5512,7 +5512,7 @@ msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:157
 msgid "Gets Inherited"
-msgstr "Gets Inherited"
+msgstr ""
 
 #: src/tables/build/BuildLineTable.tsx:166
 msgid "Unit Quantity"
@@ -5739,11 +5739,11 @@ msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:225
 msgid "Is Link"
-msgstr ""
+msgstr "Это ссылка"
 
 #: src/tables/general/AttachmentTable.tsx:226
 msgid "Show link attachments"
-msgstr ""
+msgstr "Показывать встроенные вложения"
 
 #: src/tables/general/AttachmentTable.tsx:230
 msgid "Is File"
@@ -5759,7 +5759,7 @@ msgstr ""
 
 #: src/tables/general/AttachmentTable.tsx:251
 msgid "Add external link"
-msgstr ""
+msgstr "Добавить внешнюю ссылку"
 
 #: src/tables/general/AttachmentTable.tsx:254
 #~ msgid "Upload attachment"
@@ -5941,7 +5941,7 @@ msgstr ""
 #: src/tables/part/ParametricPartTable.tsx:77
 #: src/tables/part/PartParameterTable.tsx:95
 msgid "Internal Units"
-msgstr ""
+msgstr "Внутренние ед. измерения"
 
 #: src/tables/part/ParametricPartTable.tsx:82
 msgid "Edit parameter"
@@ -5978,11 +5978,11 @@ msgstr ""
 #: src/tables/part/PartCategoryTable.tsx:60
 #: src/tables/part/PartTable.tsx:196
 msgid "Include Subcategories"
-msgstr ""
+msgstr "Включая подкатегории"
 
 #: src/tables/part/PartCategoryTable.tsx:61
 msgid "Include subcategories in results"
-msgstr ""
+msgstr "Включить подкатегории в результаты"
 
 #: src/tables/part/PartCategoryTable.tsx:66
 msgid "Show structural categories"
@@ -6067,11 +6067,11 @@ msgstr ""
 #: src/tables/part/PartParameterTemplateTable.tsx:41
 #: src/tables/part/PartTable.tsx:214
 msgid "Has Units"
-msgstr ""
+msgstr "Имеет ед. измерения"
 
 #: src/tables/part/PartParameterTemplateTable.tsx:42
 msgid "Show templates with units"
-msgstr ""
+msgstr "Показать шаблоны с единицами измерения"
 
 #: src/tables/part/PartParameterTemplateTable.tsx:85
 msgid "Add Parameter Template"
@@ -6115,7 +6115,7 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:197
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Включить детали в подкатегориях"
 
 #: src/tables/part/PartTable.tsx:203
 msgid "Filter by component attribute"
@@ -6127,7 +6127,7 @@ msgstr ""
 
 #: src/tables/part/PartTable.tsx:215
 msgid "Filter by parts which have units"
-msgstr ""
+msgstr "Фильтр по деталям, в которых есть ед. измерения"
 
 #: src/tables/part/PartTable.tsx:220
 msgid "Has IPN"
@@ -6169,7 +6169,7 @@ msgstr ""
 #: src/tables/part/PartTable.tsx:254
 #: src/tables/part/PartVariantTable.tsx:25
 msgid "Virtual"
-msgstr ""
+msgstr "Виртуальный"
 
 #: src/tables/part/PartTable.tsx:251
 msgid "Filter by parts which are virtual"
@@ -6419,7 +6419,7 @@ msgstr ""
 
 #: src/tables/plugin/PluginListTable.tsx:287
 msgid "Description not available"
-msgstr ""
+msgstr "Описание недоступно"
 
 #: src/tables/plugin/PluginListTable.tsx:319
 msgid "Confirm plugin activation"
@@ -6613,7 +6613,7 @@ msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:91
 msgid "Part Description"
-msgstr ""
+msgstr "Описание детали"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:118
 msgid "Total Quantity"
@@ -6625,7 +6625,7 @@ msgstr ""
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:164
 msgid "Supplier Link"
-msgstr ""
+msgstr "Ссылка поставщика"
 
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:171
 msgid "Manufacturer Code"
@@ -6665,7 +6665,7 @@ msgstr ""
 
 #: src/tables/purchasing/SupplierPartTable.tsx:122
 msgid "Base units"
-msgstr ""
+msgstr "Базовая единица измерения"
 
 #: src/tables/purchasing/SupplierPartTable.tsx:170
 msgid "Supplier part created"
@@ -6729,19 +6729,19 @@ msgstr ""
 
 #: src/tables/settings/CustomUnitsTable.tsx:50
 msgid "Add Custom Unit"
-msgstr ""
+msgstr "Новая пользовательская ед. измерения"
 
 #: src/tables/settings/CustomUnitsTable.tsx:60
 msgid "Edit Custom Unit"
-msgstr ""
+msgstr "Редактировать пользовательскую ед. измерения"
 
 #: src/tables/settings/CustomUnitsTable.tsx:68
 msgid "Delete Custom Unit"
-msgstr ""
+msgstr "Удалить специальную ед. измерения"
 
 #: src/tables/settings/CustomUnitsTable.tsx:100
 msgid "Add custom unit"
-msgstr ""
+msgstr "Новая пользовательская ед. измерения"
 
 #: src/tables/settings/ErrorTable.tsx:29
 msgid "When"
@@ -6840,7 +6840,7 @@ msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:70
 msgid "Uploaded"
-msgstr "Uploaded"
+msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:80
 msgid "Imported Rows"
@@ -7077,7 +7077,7 @@ msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:235
 msgid "Expiry Date"
-msgstr "Expiry Date"
+msgstr ""
 
 #: src/tables/stock/StockItemTable.tsx:259
 msgid "Stock Value"
@@ -7381,3 +7381,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
