@@ -4,6 +4,7 @@ import {
   IconCurrencyDollar,
   IconDots,
   IconInfoCircle,
+  IconNotes,
   IconPackages,
   IconShoppingCart
 } from '@tabler/icons-react';
@@ -15,6 +16,7 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -239,6 +241,18 @@ export default function SupplierPartDetail() {
           <SupplierPriceBreakTable supplierPartId={supplierPart.pk} />
         ) : (
           <Skeleton />
+        )
+      },
+      {
+        name: 'notes',
+        label: t`Notes`,
+        icon: <IconNotes />,
+        content: (
+          <NotesEditor
+            modelType={ModelType.supplierpart}
+            modelId={supplierPart.pk}
+            editable={user.hasChangeRole(UserRoles.purchase_order)}
+          />
         )
       }
     ];
