@@ -327,9 +327,9 @@ diff-match-patch==20230430 \
     # via django-import-export
 dj-rest-auth==6.0.0 \
     --hash=sha256:760b45f3a07cd6182e6a20fe07d0c55230c5f950167df724d7914d0dd8c50133
-django==4.2.13 \
-    --hash=sha256:837e3cf1f6c31347a1396a3f6b65688f2b4bb4a11c580dcb628b5afe527b68a5 \
-    --hash=sha256:a17fcba2aad3fc7d46fdb23215095dbbd64e6174bf4589171e732b18b07e426a
+django==4.2.14 \
+    --hash=sha256:3ec32bc2c616ab02834b9cac93143a7dc1cdcd5b822d78ac95fc20a38c534240 \
+    --hash=sha256:fc6919875a6226c7ffcae1a7d51e0f2ceaf6f160393180818f6c95f51b1e7b96
     # via
     #   dj-rest-auth
     #   django-allauth
@@ -1489,9 +1489,9 @@ sentry-sdk==2.7.0 \
     --hash=sha256:d846a211d4a0378b289ced3c434480945f110d0ede00450ba631fc2852e7a0d4 \
     --hash=sha256:db9594c27a4d21c1ebad09908b1f0dc808ef65c2b89c1c8e7e455143262e37c1
     # via django-q-sentry
-setuptools==70.2.0 \
-    --hash=sha256:b8b8060bb426838fbe942479c90296ce976249451118ef566a5a0b7d8b78fb05 \
-    --hash=sha256:bd63e505105011b25c3c11f753f7e3b8465ea739efddaccef8f0efac2137bac1
+setuptools==70.3.0 \
+    --hash=sha256:f171bab1dfbc86b132997f26a119f6056a57950d058587841a0082e8830f9dc5 \
+    --hash=sha256:fe384da74336c398e0d956d1cae0669bc02eed936cdb1d49b57de1990dc11ffc
     # via
     #   django-money
     #   opentelemetry-instrumentation

@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
@@ -180,11 +180,12 @@ export default function SystemSettings() {
         content: (
           <GlobalSettingList
             keys={[
-              'PART_ENABLE_REVISION',
               'PART_IPN_REGEX',
               'PART_ALLOW_DUPLICATE_IPN',
               'PART_ALLOW_EDIT_IPN',
               'PART_ALLOW_DELETE_FROM_ASSEMBLY',
+              'PART_ENABLE_REVISION',
+              'PART_REVISION_ASSEMBLY_ONLY',
               'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',
@@ -305,6 +306,10 @@ export default function SystemSettings() {
   const user = useUserState();
 
   const [server] = useServerApiState((state) => [state.server]);
+
+  if (!user.isLoggedIn()) {
+    return <Skeleton />;
+  }
 
   return (
     <>

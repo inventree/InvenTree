@@ -1408,6 +1408,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'default': True,
         },
+        'PART_REVISION_ASSEMBLY_ONLY': {
+            'name': _('Assembly Revision Only'),
+            'description': _('Only allow revisions for assembly parts'),
+            'validator': bool,
+            'default': False,
+        },
         'PART_ALLOW_DELETE_FROM_ASSEMBLY': {
             'name': _('Allow Deletion from Assembly'),
             'description': _('Allow deletion of parts which are used in an assembly'),

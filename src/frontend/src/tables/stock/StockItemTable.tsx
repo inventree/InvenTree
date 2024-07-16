@@ -47,6 +47,16 @@ function stockItemTableColumns(): TableColumn[] {
       sortable: true,
       render: (record: any) => PartColumn(record?.part_detail)
     },
+    {
+      accessor: 'part_detail.IPN',
+      title: t`IPN`,
+      sortable: true
+    },
+    {
+      accessor: 'part_detail.revision',
+      title: t`Revision`,
+      sortable: true
+    },
     DescriptionColumn({
       accessor: 'part_detail.description'
     }),
@@ -218,13 +228,15 @@ function stockItemTableColumns(): TableColumn[] {
     }),
     DateColumn({
       accessor: 'stocktake_date',
-      title: t`Stocktake`,
+      title: t`Stocktake Date`,
       sortable: true
     }),
     DateColumn({
+      title: t`Expiry Date`,
       accessor: 'expiry_date'
     }),
     DateColumn({
+      title: t`Last Updated`,
       accessor: 'updated'
     }),
     // TODO: purchase order

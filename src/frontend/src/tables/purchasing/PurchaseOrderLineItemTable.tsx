@@ -23,6 +23,7 @@ import {
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { TableColumn } from '../Column';
 import {
   CurrencyColumn,
   LinkColumn,
@@ -55,17 +56,21 @@ export function PurchaseOrderLineItemTable({
 
   const user = useUserState();
 
-  const [singleRecord, setSingeRecord] = useState(null);
+  const [singleRecord, setSingleRecord] = useState(null);
+
   const receiveLineItems = useReceiveLineItems({
     items: singleRecord ? [singleRecord] : table.selectedRecords,
     orderPk: orderId,
     formProps: {
       // Timeout is a small hack to prevent function being called before re-render
-      onClose: () => setTimeout(() => setSingeRecord(null), 500)
+      onClose: () => {
+        table.refreshTable();
+        setTimeout(() => setSingleRecord(null), 500);
+      }
     }
   });
 
-  const tableColumns = useMemo(() => {
+  const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'part',
@@ -138,17 +143,21 @@ export function PurchaseOrderLineItemTable({
         )
       },
       {
-        accessor: 'pack_quantity',
+        accessor: 'supplier_part_detail.packaging',
         sortable: false,
-        title: t`Pack Quantity`,
-        render: (record: any) => record?.supplier_part_detail?.pack_quantity
+        title: t`Packaging`
       },
       {
-        accessor: 'SKU',
+        accessor: 'supplier_part_detail.pack_quantity',
+        sortable: false,
+        title: t`Pack Quantity`
+      },
+      {
+        accessor: 'supplier_part_detail.SKU',
         title: t`Supplier Code`,
         switchable: false,
         sortable: true,
-        render: (record: any) => record?.supplier_part_detail?.SKU
+        ordering: 'SKU'
       },
       {
         accessor: 'supplier_link',
@@ -235,7 +244,7 @@ export function PurchaseOrderLineItemTable({
           icon: <IconSquareArrowRight />,
           color: 'green',
           onClick: () => {
-            setSingeRecord(record);
+            setSingleRecord(record);
             receiveLineItems.open();
           }
         },
