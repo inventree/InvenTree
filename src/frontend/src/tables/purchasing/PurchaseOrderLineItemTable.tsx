@@ -1,16 +1,19 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { IconSquareArrowRight } from '@tabler/icons-react';
+import { Action } from '@mdxeditor/editor';
+import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderStockLocation } from '../../components/render/Stock';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
   useReceiveLineItems
@@ -55,6 +58,42 @@ export function PurchaseOrderLineItemTable({
   const table = useTable('purchase-order-line-item');
 
   const user = useUserState();
+
+  // Data import
+  const [importOpened, setImportOpened] = useState<boolean>(false);
+  const [selectedSession, setSelectedSession] = useState<number | undefined>(
+    undefined
+  );
+
+  const importSessionFields = useMemo(() => {
+    let fields = dataImporterSessionFields();
+
+    fields.model_type.hidden = true;
+    fields.model_type.value = ModelType.purchaseorderline;
+
+    fields.field_overrides.value = {
+      order: orderId
+    };
+
+    fields.field_filters.value = {
+      part: {
+        supplier: supplierId,
+        active: true
+      }
+    };
+
+    return fields;
+  }, [orderId, supplierId]);
+
+  const importLineItems = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Line Items`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      setSelectedSession(response.pk);
+      setImportOpened(true);
+    }
+  });
 
   const [singleRecord, setSingeRecord] = useState(null);
   const receiveLineItems = useReceiveLineItems({
@@ -273,6 +312,12 @@ export function PurchaseOrderLineItemTable({
   // Custom table actions
   const tableActions = useMemo(() => {
     return [
+      <ActionButton
+        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        tooltip={t`Import Line Items`}
+        icon={<IconFileArrowLeft />}
+        onClick={() => importLineItems.open()}
+      />,
       <AddItemButton
         tooltip={t`Add line item`}
         onClick={() => {
@@ -294,6 +339,7 @@ export function PurchaseOrderLineItemTable({
 
   return (
     <>
+      {importLineItems.modal}
       {receiveLineItems.modal}
       {newLine.modal}
       {editLine.modal}
@@ -314,6 +360,15 @@ export function PurchaseOrderLineItemTable({
           tableActions: tableActions,
           modelType: ModelType.supplierpart,
           modelField: 'part'
+        }}
+      />
+      <ImporterDrawer
+        sessionId={selectedSession ?? -1}
+        opened={selectedSession != undefined && importOpened}
+        onClose={() => {
+          setSelectedSession(undefined);
+          setImportOpened(false);
+          table.refreshTable();
         }}
       />
     </>

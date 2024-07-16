@@ -561,7 +561,7 @@ export function BomTable({
       </Stack>
       <ImporterDrawer
         sessionId={selectedSession ?? -1}
-        opened={selectedSession !== undefined && importOpened}
+        opened={selectedSession != undefined && importOpened}
         onClose={() => {
           setSelectedSession(undefined);
           setImportOpened(false);
