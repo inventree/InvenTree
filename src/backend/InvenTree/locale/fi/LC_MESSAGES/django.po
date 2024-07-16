@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -1563,16 +1563,12 @@ msgid "Part Description"
 msgstr ""
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Edit Category"
 msgid "Part Category ID"
-msgstr "Muokkaa kategoriaa"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Edit Category"
 msgid "Part Category Name"
-msgstr "Muokkaa kategoriaa"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -5019,10 +5015,8 @@ msgid "Invalid field defaults"
 msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Internal Price Override"
 msgid "Invalid field overrides"
-msgstr "Sisäisen hinnan ohitus"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -6451,10 +6445,8 @@ msgid "This option must be selected"
 msgstr ""
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "API Version"
 msgid "Is Revision"
-msgstr "API-versio"
+msgstr ""
 
 #: part/api.py:927
 msgid "Has Revisions"
@@ -7396,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Permissions"
 msgid "Revisions"
-msgstr "Oikeudet"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -12179,50 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr ""
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete allocations"
-msgstr "Poista sijainti"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Stock Allocations"
-msgstr "Poista sijainti"
+msgstr ""
 
 #: templates/js/translated/build.js:991
 msgid "No allocated stock"
 msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Varastotuote"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit build allocation"
-msgstr "Muokkaa sijaintia"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete build allocation"
-msgstr "Poista sijainti"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit location"
 msgid "Edit Build Allocation"
-msgstr "Muokkaa sijaintia"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Build Allocation"
-msgstr "Poista sijainti"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -13243,10 +13219,8 @@ msgid "Edit test template"
 msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Delete part"
 msgid "Delete test template"
-msgstr "Poista osa"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13535,10 +13509,8 @@ msgid "Add serial numbers"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Additional notes"
 msgid "Add note"
-msgstr "Muut merkinnät"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -15017,3 +14989,4 @@ msgstr "Oikeus muokata kohteita"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
+
