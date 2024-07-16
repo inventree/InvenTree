@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -305,7 +305,7 @@ msgstr "Португальский (Бразильский диалект)"
 
 #: InvenTree/locales.py:43
 msgid "Romanian"
-msgstr ""
+msgstr "Румынский"
 
 #: InvenTree/locales.py:44
 msgid "Russian"
@@ -534,7 +534,7 @@ msgstr "Имя"
 
 #: InvenTree/serializers.py:409
 msgid "First name of the user"
-msgstr ""
+msgstr "Имя пользователя"
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
@@ -542,27 +542,27 @@ msgstr "Фамилия"
 
 #: InvenTree/serializers.py:412
 msgid "Last name of the user"
-msgstr ""
+msgstr "Фамилия пользователя"
 
 #: InvenTree/serializers.py:415
 msgid "Email address of the user"
-msgstr ""
+msgstr "Электронный адрес пользователя"
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
-msgstr ""
+msgstr "Персонал"
 
 #: InvenTree/serializers.py:439
 msgid "Does this user have staff permissions"
-msgstr ""
+msgstr "Имеет ли этот пользователь права персонала"
 
 #: InvenTree/serializers.py:442
 msgid "Superuser"
-msgstr ""
+msgstr "Суперпользователь"
 
 #: InvenTree/serializers.py:442
 msgid "Is this user a superuser"
-msgstr ""
+msgstr "Это пользователь является суперпользователем"
 
 #: InvenTree/serializers.py:445 common/models.py:2670 company/models.py:163
 #: company/models.py:789 machine/models.py:39 part/admin.py:88
@@ -579,7 +579,7 @@ msgstr "Активный"
 
 #: InvenTree/serializers.py:445
 msgid "Is this user account active"
-msgstr ""
+msgstr "Активна эта учетная запись"
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
@@ -788,15 +788,15 @@ msgstr "Заказы на производство"
 
 #: build/models.py:127
 msgid "Assembly BOM has not been validated"
-msgstr ""
+msgstr "Сборка BOM не подтверждена"
 
 #: build/models.py:134
 msgid "Build order cannot be created for an inactive part"
-msgstr ""
+msgstr "Порядок сборки не может быть создан для неактивной части"
 
 #: build/models.py:141
 msgid "Build order cannot be created for an unlocked part"
-msgstr ""
+msgstr "Порядок сборки не может быть создан для разблокированной части"
 
 #: build/models.py:155
 msgid "Invalid choice for parent build"
@@ -1095,7 +1095,7 @@ msgstr "Сборка {serial} не прошла все необходимые т
 
 #: build/models.py:1366
 msgid "Build Order Line Item"
-msgstr ""
+msgstr "Номер позиции для производства"
 
 #: build/models.py:1391
 msgid "Build object"
@@ -1219,10 +1219,8 @@ msgid "Part Name"
 msgstr "Наименование детали"
 
 #: build/serializers.py:105
-#, fuzzy
-#| msgid "Project Code"
 msgid "Project Code Label"
-msgstr "Код проекта"
+msgstr "Название кода проекта"
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1044 templates/js/translated/build.js:1497
@@ -1565,16 +1563,12 @@ msgid "Part Description"
 msgstr "Описание детали"
 
 #: build/serializers.py:1229
-#, fuzzy
-#| msgid "Part Category"
 msgid "Part Category ID"
-msgstr "Категория детали"
+msgstr ""
 
 #: build/serializers.py:1230
-#, fuzzy
-#| msgid "Category Name"
 msgid "Part Category Name"
-msgstr "Название категории"
+msgstr ""
 
 #: build/serializers.py:1236 common/models.py:1494 part/admin.py:113
 #: part/models.py:1134 templates/js/translated/table_filters.js:147
@@ -1930,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr "Дочерние заказы на производство"
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Line Item"
 msgid "Build Order Line Items"
-msgstr "Позиция для производства"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4231,7 +4223,7 @@ msgstr "Записи отправления для внутреннего пол
 
 #: company/models.py:447
 msgid "Link to address information (external)"
-msgstr ""
+msgstr "Ссылка на адресную информацию (внешняя)"
 
 #: company/models.py:469 company/models.py:581 company/models.py:799
 #: company/templates/company/manufacturer_part.html:7
@@ -4283,7 +4275,7 @@ msgstr "Ссылка на сайт производителя"
 
 #: company/models.py:516
 msgid "Manufacturer part description"
-msgstr ""
+msgstr "Описание детали производителя"
 
 #: company/models.py:569
 msgid "Manufacturer Part Parameter"
@@ -4336,7 +4328,7 @@ msgstr ""
 
 #: company/models.py:728
 msgid "Linked manufacturer part must reference the same base part"
-msgstr ""
+msgstr "Связанная деталь производителя должна ссылаться на ту же базовую деталь"
 
 #: company/models.py:777 company/templates/company/company_base.html:87
 #: company/templates/company/supplier_part.html:129 order/models.py:486
@@ -4376,7 +4368,7 @@ msgstr "Ссылка на сайт поставщика"
 
 #: company/models.py:816
 msgid "Supplier part description"
-msgstr ""
+msgstr "Описание детали поставщика"
 
 #: company/models.py:823 company/templates/company/supplier_part.html:187
 #: order/serializers.py:661 part/admin.py:412 part/models.py:4250
@@ -4868,7 +4860,7 @@ msgstr ""
 
 #: company/templates/company/supplier_part.html:287
 msgid "Link Barcode to Supplier Part"
-msgstr ""
+msgstr "Привязать штрихкод к части поставщика"
 
 #: company/templates/company/supplier_part.html:359
 msgid "Update Part Availability"
@@ -4943,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "Заказы на производство"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -4962,7 +4952,7 @@ msgstr ""
 
 #: importer/models.py:393
 msgid "Column mapping must be linked to a valid import session"
-msgstr ""
+msgstr "Сопоставление столбцов должно быть связано с корректным сеансом импорта"
 
 #: importer/models.py:398
 msgid "Column does not exist in the data file"
@@ -5021,20 +5011,16 @@ msgid "Invalid data file dimensions"
 msgstr ""
 
 #: importer/serializers.py:90
-#, fuzzy
-#| msgid "Invalid physical unit"
 msgid "Invalid field defaults"
-msgstr "Неверная физическая единица"
+msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Internal Price Override"
 msgid "Invalid field overrides"
-msgstr "Переопределение внутренней цены"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
-msgstr ""
+msgstr "Строки"
 
 #: importer/serializers.py:165
 msgid "List of row IDs to accept"
@@ -5282,7 +5268,7 @@ msgstr "Выберите код проекта для этого заказа"
 
 #: order/models.py:303 order/models.py:1310 order/models.py:1742
 msgid "Link to external page"
-msgstr ""
+msgstr "Ссылка на внешнюю страницу"
 
 #: order/models.py:311
 msgid "Expected date for order delivery. Order will be overdue after this date."
@@ -5752,16 +5738,12 @@ msgid "Enter serial numbers for incoming stock items"
 msgstr "Введите серийные номера для входящих складских позиций"
 
 #: order/serializers.py:654
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Override packaging information for incoming stock items"
-msgstr "Введите код партии для поступающих складских позиций"
+msgstr ""
 
 #: order/serializers.py:662
-#, fuzzy
-#| msgid "Enter serial numbers for incoming stock items"
 msgid "Additional note for incoming stock items"
-msgstr "Введите серийные номера для входящих складских позиций"
+msgstr ""
 
 #: order/serializers.py:669 templates/js/translated/barcode.js:52
 msgid "Barcode"
@@ -6463,16 +6445,12 @@ msgid "This option must be selected"
 msgstr "Необходимо выбрать эту опцию"
 
 #: part/api.py:917
-#, fuzzy
-#| msgid "Revision"
 msgid "Is Revision"
-msgstr "Ревизия"
+msgstr ""
 
 #: part/api.py:927
-#, fuzzy
-#| msgid "Part Revisions"
 msgid "Has Revisions"
-msgstr "Ревизия детали"
+msgstr ""
 
 #: part/api.py:1118
 msgid "BOM Valid"
@@ -6593,10 +6571,8 @@ msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Responsible user or group must be specified"
 msgid "Revision code must be specified"
-msgstr "Должен быть указан ответственный пользователь или группа"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -6607,10 +6583,8 @@ msgid "Cannot make a revision of a template part"
 msgstr ""
 
 #: part/models.py:705
-#, fuzzy
-#| msgid "Build output must point to the same build"
 msgid "Parent part must point to the same template"
-msgstr "Продукция должна указывать на тот же производство"
+msgstr ""
 
 #: part/models.py:784
 msgid "Stock item with this serial number already exists"
@@ -6626,7 +6600,7 @@ msgstr ""
 
 #: part/models.py:904
 msgid "Part with this Name, IPN and Revision already exists."
-msgstr ""
+msgstr "Часть с таким именем, IPN и ревизией уже существует."
 
 #: part/models.py:919
 msgid "Parts cannot be assigned to structural part categories!"
@@ -6665,16 +6639,12 @@ msgid "Part revision or version number"
 msgstr "Ревизия или серийный номер детали"
 
 #: part/models.py:1018
-#, fuzzy
-#| msgid "Is this part a variant of another part?"
 msgid "Is this part a revision of another part?"
-msgstr "Эта деталь является разновидностью другой детали?"
+msgstr ""
 
 #: part/models.py:1019 part/templates/part/part_base.html:277
-#, fuzzy
-#| msgid "Revision"
 msgid "Revision Of"
-msgstr "Ревизия"
+msgstr ""
 
 #: part/models.py:1043
 msgid "Where is this item normally stored?"
@@ -7100,7 +7070,7 @@ msgstr ""
 
 #: part/models.py:3742
 msgid "Parameter description"
-msgstr ""
+msgstr "Описание параметра"
 
 #: part/models.py:3748 templates/js/translated/part.js:1633
 #: templates/js/translated/table_filters.js:830
@@ -7418,10 +7388,8 @@ msgid "Supplier part matching this SKU already exists"
 msgstr ""
 
 #: part/serializers.py:893
-#, fuzzy
-#| msgid "Revision"
 msgid "Revisions"
-msgstr "Ревизия"
+msgstr ""
 
 #: part/serializers.py:898
 msgid "Unallocated Stock"
@@ -8226,7 +8194,7 @@ msgstr ""
 
 #: part/templates/part/prices.html:164
 msgid "Price range data is not available for this part."
-msgstr ""
+msgstr "Данные о ценовом диапазоне недоступны для данной детали."
 
 #: part/templates/part/prices.html:175 part/templates/part/prices.html:207
 #: part/templates/part/prices.html:228 part/templates/part/prices.html:251
@@ -9004,11 +8972,11 @@ msgstr "Название шаблона"
 
 #: report/models.py:157
 msgid "Template description"
-msgstr ""
+msgstr "Описание шаблона"
 
 #: report/models.py:163
 msgid "Revision number (auto-increments)"
-msgstr ""
+msgstr "Номер ревизии (автоматически)"
 
 #: report/models.py:203
 msgid "Filename Pattern"
@@ -9108,7 +9076,7 @@ msgstr ""
 
 #: report/models.py:511
 msgid "Snippet file description"
-msgstr ""
+msgstr "Описание файла сниппета"
 
 #: report/models.py:529
 msgid "Asset"
@@ -9120,7 +9088,7 @@ msgstr ""
 
 #: report/models.py:537
 msgid "Asset file description"
-msgstr ""
+msgstr "Описание медиафайла"
 
 #: report/serializers.py:91
 msgid "Select report template"
@@ -10980,7 +10948,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:440
 msgid "No stock location types found"
-msgstr ""
+msgstr "Типы местоположения склада не найдены"
 
 #: templates/InvenTree/settings/settings_staff_js.html:461
 msgid "Location count"
@@ -12201,52 +12169,36 @@ msgid "Delete Build Outputs"
 msgstr "Удалить Продукцию"
 
 #: templates/js/translated/build.js:961
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete allocations"
-msgstr "Удалить место хранения"
+msgstr ""
 
 #: templates/js/translated/build.js:968
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Stock Allocations"
-msgstr "Удалить место хранения"
+msgstr ""
 
 #: templates/js/translated/build.js:991
-#, fuzzy
-#| msgid "Deallocate stock"
 msgid "No allocated stock"
-msgstr "Отменить резерв остатков"
+msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock Item"
 msgid "Stock item"
-msgstr "Складская позиция"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
-#, fuzzy
-#| msgid "Edit Allocation"
 msgid "Edit build allocation"
-msgstr "Редактировать Резерв"
+msgstr ""
 
 #: templates/js/translated/build.js:1073
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete build allocation"
-msgstr "Удалить место хранения"
+msgstr ""
 
 #: templates/js/translated/build.js:1091
-#, fuzzy
-#| msgid "Edit Allocation"
 msgid "Edit Build Allocation"
-msgstr "Редактировать Резерв"
+msgstr ""
 
 #: templates/js/translated/build.js:1104
-#, fuzzy
-#| msgid "Delete location"
 msgid "Delete Build Allocation"
-msgstr "Удалить место хранения"
+msgstr ""
 
 #: templates/js/translated/build.js:1135
 msgid "No build order allocations found"
@@ -12700,7 +12652,7 @@ msgstr ""
 #: templates/js/translated/filters.js:186
 #: templates/js/translated/filters.js:667
 msgid "true"
-msgstr ""
+msgstr "да"
 
 #: templates/js/translated/filters.js:190
 #: templates/js/translated/filters.js:668
@@ -12807,7 +12759,7 @@ msgstr "НЕТ"
 
 #: templates/js/translated/helpers.js:93
 msgid "True"
-msgstr ""
+msgstr "Да"
 
 #: templates/js/translated/helpers.js:94
 msgid "False"
@@ -12965,7 +12917,7 @@ msgstr "Атрибуты детали"
 
 #: templates/js/translated/part.js:94
 msgid "Part Creation Options"
-msgstr ""
+msgstr "Настройки создания детали"
 
 #: templates/js/translated/part.js:98
 msgid "Part Duplication Options"
@@ -13263,16 +13215,12 @@ msgid "results"
 msgstr "результаты"
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Edit Template"
 msgid "Edit test template"
-msgstr "Редактировать шаблон"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
-#, fuzzy
-#| msgid "Delete Template"
 msgid "Delete test template"
-msgstr "Удалить шаблон"
+msgstr ""
 
 #: templates/js/translated/part.js:2961
 msgid "This test is defined for a parent part"
@@ -13529,10 +13477,8 @@ msgstr ""
 
 #: templates/js/translated/purchase_order.js:1170
 #: templates/js/translated/stock.js:1211
-#, fuzzy
-#| msgid "Enter batch code for incoming stock items"
 msgid "Specify packaging for incoming stock items"
-msgstr "Введите код партии для поступающих складских позиций"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1223
 msgid "Stock Status"
@@ -13555,20 +13501,16 @@ msgid "Add batch code"
 msgstr "Добавить код партии"
 
 #: templates/js/translated/purchase_order.js:1259
-#, fuzzy
-#| msgid "Specify location"
 msgid "Specify packaging"
-msgstr "Выберите место хранения"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1270
 msgid "Add serial numbers"
 msgstr ""
 
 #: templates/js/translated/purchase_order.js:1281
-#, fuzzy
-#| msgid "Add Unit"
 msgid "Add note"
-msgstr "Добавить Единицу"
+msgstr ""
 
 #: templates/js/translated/purchase_order.js:1338
 msgid "Serials"
@@ -14019,7 +13961,7 @@ msgstr "Редактировать складскую позицию"
 
 #: templates/js/translated/stock.js:544
 msgid "Create another item after this one"
-msgstr ""
+msgstr "Создать еще один элемент после этого"
 
 #: templates/js/translated/stock.js:556
 msgid "Created new stock item"
@@ -14126,16 +14068,12 @@ msgid "Specify stock quantity"
 msgstr ""
 
 #: templates/js/translated/stock.js:1164
-#, fuzzy
-#| msgid "Add batch code"
 msgid "Adjust batch code"
-msgstr "Добавить код партии"
+msgstr ""
 
 #: templates/js/translated/stock.js:1174
-#, fuzzy
-#| msgid "Part packaging"
 msgid "Adjust packaging"
-msgstr "Упаковка детали"
+msgstr ""
 
 #: templates/js/translated/stock.js:1252 templates/js/translated/stock.js:3380
 msgid "Select Stock Items"
@@ -14147,7 +14085,7 @@ msgstr "Выбрать как минимум одну складскую поз�
 
 #: templates/js/translated/stock.js:1299
 msgid "Confirm stock adjustment"
-msgstr ""
+msgstr "Подтвердите изменение запасов"
 
 #: templates/js/translated/stock.js:1444
 msgid "PASS"
@@ -14215,7 +14153,7 @@ msgstr ""
 
 #: templates/js/translated/stock.js:1867
 msgid "No stock location set"
-msgstr ""
+msgstr "Место хранения не установлено"
 
 #: templates/js/translated/stock.js:1923
 msgid "Change stock status"
@@ -14480,7 +14418,7 @@ msgstr ""
 #: templates/js/translated/table_filters.js:279
 #: templates/js/translated/table_filters.js:711
 msgid "Include subcategories"
-msgstr ""
+msgstr "Включая подкатегории"
 
 #: templates/js/translated/table_filters.js:287
 #: templates/js/translated/table_filters.js:764
@@ -14632,7 +14570,7 @@ msgstr "Статус Производства"
 
 #: templates/js/translated/table_filters.js:712
 msgid "Include parts in subcategories"
-msgstr ""
+msgstr "Включить детали в подкатегориях"
 
 #: templates/js/translated/table_filters.js:717
 msgid "Show active parts"
@@ -14717,7 +14655,7 @@ msgstr "строк на страницу"
 
 #: templates/js/translated/tables.js:537
 msgid "Showing all rows"
-msgstr ""
+msgstr "Отображение всех строк"
 
 #: templates/js/translated/tables.js:539
 msgid "Showing"
@@ -15052,5 +14990,3 @@ msgstr "Разрешение на редактирование элементо�
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
 
-#~ msgid "Allocate Stock to Build"
-#~ msgstr "Зарезервировать остатки для производства"
