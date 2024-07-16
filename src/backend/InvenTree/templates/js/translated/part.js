@@ -135,6 +135,7 @@ function partFields(options={}) {
         },
         name: {},
         IPN: {},
+        revision_of: {},
         revision: {
             icon: 'fa-code-branch',
         },
@@ -227,6 +228,7 @@ function partFields(options={}) {
     // Pop 'revision' field
     if (!global_settings.PART_ENABLE_REVISION) {
         delete fields['revision'];
+        delete fields['revision_of'];
     }
 
     if (options.create || options.duplicate) {
@@ -2951,8 +2953,8 @@ function loadPartTestTemplateTable(table, options) {
                     if (row.part == part) {
                         let html = '';
 
-                        html += makeEditButton('button-test-edit', pk, '{% trans "Edit test result" %}');
-                        html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test result" %}');
+                        html += makeEditButton('button-test-edit', pk, '{% trans "Edit test template" %}');
+                        html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test template" %}');
 
                         return wrapButtons(html);
                     } else {

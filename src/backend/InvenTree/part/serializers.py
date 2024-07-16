@@ -309,7 +309,9 @@ class PartBriefSerializer(InvenTree.serializers.InvenTreeModelSerializer):
             'image',
             'thumbnail',
             'active',
+            'locked',
             'assembly',
+            'component',
             'is_template',
             'purchaseable',
             'salable',
@@ -658,6 +660,8 @@ class PartSerializer(
             'pk',
             'purchaseable',
             'revision',
+            'revision_of',
+            'revision_count',
             'salable',
             'starred',
             'thumbnail',
@@ -761,6 +765,9 @@ class PartSerializer(
         Performing database queries as efficiently as possible, to reduce database trips.
         """
         queryset = queryset.prefetch_related('category', 'default_location')
+
+        # Annotate with the total number of revisions
+        queryset = queryset.annotate(revision_count=SubqueryCount('revisions'))
 
         # Annotate with the total number of stock items
         queryset = queryset.annotate(stock_item_count=SubqueryCount('stock_items'))
@@ -883,6 +890,7 @@ class PartSerializer(
     required_for_build_orders = serializers.IntegerField(read_only=True)
     required_for_sales_orders = serializers.IntegerField(read_only=True)
     stock_item_count = serializers.IntegerField(read_only=True, label=_('Stock Items'))
+    revision_count = serializers.IntegerField(read_only=True, label=_('Revisions'))
     suppliers = serializers.IntegerField(read_only=True, label=_('Suppliers'))
     total_in_stock = serializers.FloatField(read_only=True, label=_('Total Stock'))
     external_stock = serializers.FloatField(read_only=True, label=_('External Stock'))
@@ -1472,28 +1480,30 @@ class BomItemSerializer(
 ):
     """Serializer for BomItem object."""
 
+    import_exclude_fields = ['validated', 'substitutes']
+
     class Meta:
         """Metaclass defining serializer fields."""
 
         model = BomItem
         fields = [
+            'part',
+            'sub_part',
+            'reference',
+            'quantity',
+            'overage',
             'allow_variants',
             'inherited',
-            'note',
             'optional',
             'consumable',
-            'overage',
+            'note',
             'pk',
-            'part',
             'part_detail',
             'pricing_min',
             'pricing_max',
             'pricing_min_total',
             'pricing_max_total',
             'pricing_updated',
-            'quantity',
-            'reference',
-            'sub_part',
             'sub_part_detail',
             'substitutes',
             'validated',

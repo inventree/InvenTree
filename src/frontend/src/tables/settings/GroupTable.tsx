@@ -146,7 +146,8 @@ export function GroupTable() {
       }),
       RowDeleteAction({
         onClick: () => {
-          setSelectedGroup(record.pk), deleteGroup.open();
+          setSelectedGroup(record.pk);
+          deleteGroup.open();
         }
       })
     ];

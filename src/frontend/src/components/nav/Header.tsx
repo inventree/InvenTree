@@ -70,8 +70,7 @@ export function Header() {
       }
     },
     refetchInterval: 30000,
-    refetchOnMount: true,
-    refetchOnWindowFocus: false
+    refetchOnMount: true
   });
 
   // Sync Navigation Drawer state with zustand

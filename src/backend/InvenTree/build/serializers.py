@@ -1,5 +1,7 @@
 """JSON serializers for Build API."""
 
+from decimal import Decimal
+
 from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils.translation import gettext_lazy as _
@@ -209,7 +211,7 @@ class BuildOutputQuantitySerializer(BuildOutputSerializer):
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
-        min_value=0,
+        min_value=Decimal(0),
         required=True,
         label=_('Quantity'),
         help_text=_('Enter quantity for build output'),
@@ -256,7 +258,7 @@ class BuildOutputCreateSerializer(serializers.Serializer):
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
-        min_value=0,
+        min_value=Decimal(0),
         required=True,
         label=_('Quantity'),
         help_text=_('Enter quantity for build output'),
@@ -864,7 +866,7 @@ class BuildAllocationItemSerializer(serializers.Serializer):
     quantity = serializers.DecimalField(
         max_digits=15,
         decimal_places=5,
-        min_value=0,
+        min_value=Decimal(0),
         required=True
     )
 
@@ -1070,6 +1072,8 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         'part_name',
         'part_ipn',
         'available_quantity',
+        'item_batch_code',
+        'item_serial',
     ]
 
     class Meta:
@@ -1101,6 +1105,8 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'part_name',
             'part_ipn',
             'available_quantity',
+            'item_batch_code',
+            'item_serial_number',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1135,6 +1141,9 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     part_id = serializers.PrimaryKeyRelatedField(source='stock_item.part', label=_('Part ID'), many=False, read_only=True)
     part_name = serializers.CharField(source='stock_item.part.name', label=_('Part Name'), read_only=True)
     part_ipn = serializers.CharField(source='stock_item.part.IPN', label=_('Part IPN'), read_only=True)
+
+    item_batch_code = serializers.CharField(source='stock_item.batch', label=_('Batch Code'), read_only=True)
+    item_serial_number = serializers.CharField(source='stock_item.serial', label=_('Serial Number'), read_only=True)
 
     # Annotated fields
     build = serializers.PrimaryKeyRelatedField(source='build_line.build', many=False, read_only=True)

@@ -4,6 +4,7 @@ import { showNotification } from '@mantine/notifications';
 import {
   IconArrowRight,
   IconCircleCheck,
+  IconFileArrowLeft,
   IconLock,
   IconSwitch3
 } from '@tabler/icons-react';
@@ -11,15 +12,19 @@ import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { Thumbnail } from '../../components/images/Thumbnail';
+import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { formatDecimal, formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
+  useApiFormModal,
   useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
@@ -67,6 +72,12 @@ export function BomTable({
   const user = useUserState();
   const table = useTable('bom');
   const navigate = useNavigate();
+
+  const [importOpened, setImportOpened] = useState<boolean>(false);
+
+  const [selectedSession, setSelectedSession] = useState<number | undefined>(
+    undefined
+  );
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -343,6 +354,29 @@ export function BomTable({
 
   const [selectedBomItem, setSelectedBomItem] = useState<number>(0);
 
+  const importSessionFields = useMemo(() => {
+    let fields = dataImporterSessionFields();
+
+    fields.model_type.hidden = true;
+    fields.model_type.value = 'bomitem';
+
+    fields.field_overrides.value = {
+      part: partId
+    };
+
+    return fields;
+  }, [partId]);
+
+  const importBomItem = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import BOM Data`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      setSelectedSession(response.pk);
+      setImportOpened(true);
+    }
+  });
+
   const newBomItem = useCreateApiFormModal({
     url: ApiEndpoints.bom_list,
     title: t`Add BOM Item`,
@@ -369,6 +403,26 @@ export function BomTable({
     title: t`Delete BOM Item`,
     successMessage: t`BOM item deleted`,
     table: table
+  });
+
+  const validateBom = useApiFormModal({
+    url: ApiEndpoints.bom_validate,
+    method: 'PUT',
+    fields: {
+      valid: {
+        hidden: true,
+        value: true
+      }
+    },
+    title: t`Validate BOM`,
+    pk: partId,
+    preFormContent: (
+      <Alert color="green" icon={<IconCircleCheck />} title={t`Validate BOM`}>
+        <Text>{t`Do you want to validate the bill of materials for this assembly?`}</Text>
+      </Alert>
+    ),
+    successMessage: t`BOM validated`,
+    onFormSuccess: () => table.refreshTable()
   });
 
   const validateBomItem = useCallback((record: any) => {
@@ -445,6 +499,18 @@ export function BomTable({
 
   const tableActions = useMemo(() => {
     return [
+      <ActionButton
+        hidden={partLocked || !user.hasAddRole(UserRoles.part)}
+        tooltip={t`Import BOM Data`}
+        icon={<IconFileArrowLeft />}
+        onClick={() => importBomItem.open()}
+      />,
+      <ActionButton
+        hidden={partLocked || !user.hasChangeRole(UserRoles.part)}
+        tooltip={t`Validate BOM`}
+        icon={<IconCircleCheck />}
+        onClick={() => validateBom.open()}
+      />,
       <AddItemButton
         hidden={partLocked || !user.hasAddRole(UserRoles.part)}
         tooltip={t`Add BOM Item`}
@@ -455,14 +521,16 @@ export function BomTable({
 
   return (
     <>
+      {importBomItem.modal}
       {newBomItem.modal}
       {editBomItem.modal}
+      {validateBom.modal}
       {deleteBomItem.modal}
       <Stack gap="xs">
         {partLocked && (
           <Alert
             title={t`Part is Locked`}
-            color="red"
+            color="orange"
             icon={<IconLock />}
             p="xs"
           >
@@ -486,10 +554,20 @@ export function BomTable({
             modelField: 'sub_part',
             rowActions: rowActions,
             enableSelection: !partLocked,
-            enableBulkDelete: !partLocked
+            enableBulkDelete: !partLocked,
+            enableDownload: true
           }}
         />
       </Stack>
+      <ImporterDrawer
+        sessionId={selectedSession ?? -1}
+        opened={selectedSession !== undefined && importOpened}
+        onClose={() => {
+          setSelectedSession(undefined);
+          setImportOpened(false);
+          table.refreshTable();
+        }}
+      />
     </>
   );
 }

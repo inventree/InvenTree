@@ -47,6 +47,7 @@ export interface InstanceRenderInterface {
   instance: any;
   link?: boolean;
   navigate?: any;
+  showSecondary?: boolean;
 }
 
 /**
@@ -133,7 +134,11 @@ export function RenderRemoteInstance({
   }
 
   if (!data) {
-    return <Text>${pk}</Text>;
+    return (
+      <Text>
+        {model}: {pk}
+      </Text>
+    );
   }
 
   return <RenderInstance model={model} instance={data} />;
@@ -149,10 +154,12 @@ export function RenderInlineModel({
   image,
   labels,
   url,
-  navigate
+  navigate,
+  showSecondary = true
 }: {
   primary: string;
   secondary?: string;
+  showSecondary?: boolean;
   suffix?: ReactNode;
   image?: string;
   labels?: string[];
@@ -181,7 +188,7 @@ export function RenderInlineModel({
         ) : (
           <Text size="sm">{primary}</Text>
         )}
-        {secondary && <Text size="xs">{secondary}</Text>}
+        {showSecondary && secondary && <Text size="xs">{secondary}</Text>}
       </Group>
       {suffix && (
         <>

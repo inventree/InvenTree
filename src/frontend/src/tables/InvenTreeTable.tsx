@@ -103,6 +103,7 @@ export type InvenTreeTableProps<T = any> = {
   enableColumnCaching?: boolean;
   enableLabels?: boolean;
   enableReports?: boolean;
+  afterBulkDelete?: () => void;
   pageSize?: number;
   barcodeActions?: any[];
   tableFilters?: TableFilter[];
@@ -178,7 +179,6 @@ export function InvenTreeTable<T = any>({
     queryKey: ['options', url, tableState.tableKey, props.enableColumnCaching],
     retry: 3,
     refetchOnMount: true,
-    refetchOnWindowFocus: false,
     queryFn: async () => {
       if (props.enableColumnCaching == false) {
         return null;
@@ -483,7 +483,6 @@ export function InvenTreeTable<T = any>({
       tableState.searchTerm
     ],
     queryFn: fetchTableData,
-    refetchOnWindowFocus: false,
     refetchOnMount: true
   });
 
@@ -549,6 +548,9 @@ export function InvenTreeTable<T = any>({
           })
           .finally(() => {
             tableState.clearSelectedRecords();
+            if (props.afterBulkDelete) {
+              props.afterBulkDelete();
+            }
           });
       }
     });
@@ -640,7 +642,12 @@ export function InvenTreeTable<T = any>({
               {tableProps.enableRefresh && (
                 <ActionIcon variant="transparent" aria-label="table-refresh">
                   <Tooltip label={t`Refresh data`}>
-                    <IconRefresh onClick={() => refetch()} />
+                    <IconRefresh
+                      onClick={() => {
+                        refetch();
+                        tableState.clearSelectedRecords();
+                      }}
+                    />
                   </Tooltip>
                 </ActionIcon>
               )}

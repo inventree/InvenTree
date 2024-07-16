@@ -35,6 +35,10 @@ function partTableColumns(): TableColumn[] {
       sortable: true
     },
     {
+      accessor: 'revision',
+      sortable: true
+    },
+    {
       accessor: 'units',
       sortable: true
     },
@@ -256,6 +260,16 @@ function partTableFilters(): TableFilter[] {
       label: t`Is Template`,
       description: t`Filter by parts which are templates`,
       type: 'boolean'
+    },
+    {
+      name: 'is_revision',
+      label: t`Is Revision`,
+      description: t`Filter by parts which are revisions`
+    },
+    {
+      name: 'has_revisions',
+      label: t`Has Revisions`,
+      description: t`Filter by parts which have revisions`
     },
     {
       name: 'has_pricing',

@@ -1,8 +1,10 @@
 import { Trans, t } from '@lingui/macro';
 import { Container, Flex, Group, Table } from '@mantine/core';
+import { useEffect, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { InvenTreeIcon } from '../../../functions/icons';
+import { StandaloneField } from '../StandaloneField';
 import { ApiFormFieldType } from './ApiFormField';
 
 export function TableField({
@@ -83,23 +85,51 @@ export function TableField({
 
 /*
  * Display an "extra" row below the main table row, for additional information.
+ * - Each "row" can display an extra row of information below the main row
  */
 export function TableFieldExtraRow({
   visible,
-  content,
-  colSpan
+  fieldDefinition,
+  defaultValue,
+  emptyValue,
+  onValueChange
 }: {
   visible: boolean;
-  content: React.ReactNode;
-  colSpan?: number;
+  fieldDefinition: ApiFormFieldType;
+  defaultValue?: any;
+  emptyValue?: any;
+  onValueChange: (value: any) => void;
 }) {
+  // Callback whenever the visibility of the sub-field changes
+  useEffect(() => {
+    if (!visible) {
+      // If the sub-field is hidden, reset the value to the "empty" value
+      onValueChange(emptyValue);
+    }
+  }, [visible]);
+
+  const field: ApiFormFieldType = useMemo(() => {
+    return {
+      ...fieldDefinition,
+      default: defaultValue,
+      onValueChange: (value: any) => {
+        onValueChange(value);
+      }
+    };
+  }, [fieldDefinition]);
+
   return (
     visible && (
       <Table.Tr>
-        <Table.Td colSpan={colSpan ?? 3}>
-          <Group justify="flex-start" grow>
-            <InvenTreeIcon icon="downright" />
-            {content}
+        <Table.Td colSpan={10}>
+          <Group grow preventGrowOverflow={false} justify="flex-apart" p="xs">
+            <Container flex={0} p="xs">
+              <InvenTreeIcon icon="downright" />
+            </Container>
+            <StandaloneField
+              fieldDefinition={field}
+              defaultValue={defaultValue}
+            />
           </Group>
         </Table.Td>
       </Table.Tr>
