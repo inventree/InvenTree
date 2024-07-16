@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:57\n"
+"PO-Revision-Date: 2024-07-16 16:38\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -1924,10 +1924,8 @@ msgid "Child Build Orders"
 msgstr ""
 
 #: build/templates/build/detail.html:177
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Build Order Line Items"
-msgstr "Nalozi za izradu"
+msgstr ""
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -4937,10 +4935,8 @@ msgid "Field Defaults"
 msgstr ""
 
 #: importer/models.py:100
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Field Overrides"
-msgstr "Nalozi za izradu"
+msgstr ""
 
 #: importer/models.py:222
 msgid "Some required fields have not been mapped"
@@ -5019,10 +5015,8 @@ msgid "Invalid field defaults"
 msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid field overrides"
-msgstr "Isporučena nevažeća količina"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -6577,10 +6571,8 @@ msgid "Cannot make a revision of a part which is already a revision"
 msgstr ""
 
 #: part/models.py:685
-#, fuzzy
-#| msgid "Unknown format key specified"
 msgid "Revision code must be specified"
-msgstr "Naveden je ključ nepoznatog formata"
+msgstr ""
 
 #: part/models.py:692
 msgid "Revisions are only allowed for assembly parts"
@@ -12189,10 +12181,8 @@ msgid "No allocated stock"
 msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock item created"
 msgid "Stock item"
-msgstr "Stavka na zalihi stvorena"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
 msgid "Edit build allocation"
@@ -13225,10 +13215,8 @@ msgid "results"
 msgstr ""
 
 #: templates/js/translated/part.js:2956
-#, fuzzy
-#| msgid "Edited stock item"
 msgid "Edit test template"
-msgstr "Izmenjena stavka u zalihama"
+msgstr ""
 
 #: templates/js/translated/part.js:2957
 msgid "Delete test template"
@@ -15001,3 +14989,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
