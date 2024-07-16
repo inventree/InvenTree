@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-16 03:18+0000\n"
-"PO-Revision-Date: 2024-07-08 14:56\n"
+"PO-Revision-Date: 2024-07-16 16:38\n"
 "Last-Translator: \n"
 "Language-Team: Thai\n"
 "Language: th_TH\n"
@@ -5015,10 +5015,8 @@ msgid "Invalid field defaults"
 msgstr ""
 
 #: importer/serializers.py:103
-#, fuzzy
-#| msgid "Invalid quantity provided"
 msgid "Invalid field overrides"
-msgstr "ปริมาณสินค้าไม่ถูกต้อง"
+msgstr ""
 
 #: importer/serializers.py:164
 msgid "Rows"
@@ -12183,10 +12181,8 @@ msgid "No allocated stock"
 msgstr ""
 
 #: templates/js/translated/build.js:1047
-#, fuzzy
-#| msgid "Stock counted"
 msgid "Stock item"
-msgstr "นับสต็อกแล้ว"
+msgstr ""
 
 #: templates/js/translated/build.js:1072
 msgid "Edit build allocation"
@@ -14993,3 +14989,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
