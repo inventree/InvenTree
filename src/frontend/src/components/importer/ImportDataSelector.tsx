@@ -138,16 +138,27 @@ export default function ImporterDataSelector({
       // Find the field definition in session.availableFields
       let fieldDef = session.availableFields[field];
       if (fieldDef) {
+        // Construct field filters based on session field filters
+        let filters = fieldDef.filters ?? {};
+
+        if (session.fieldFilters[field]) {
+          filters = {
+            ...filters,
+            ...session.fieldFilters[field]
+          };
+        }
+
         fields[field] = {
           ...fieldDef,
           field_type: fieldDef.type,
-          description: fieldDef.help_text
+          description: fieldDef.help_text,
+          filters: filters
         };
       }
     }
 
     return fields;
-  }, [selectedFieldNames, session.availableFields]);
+  }, [selectedFieldNames, session.availableFields, session.fieldFilters]);
 
   const importData = useCallback(
     (rows: number[]) => {
