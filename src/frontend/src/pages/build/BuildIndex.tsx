@@ -9,11 +9,9 @@ import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
  */
 export default function BuildIndex() {
   return (
-    <>
-      <Stack>
-        <PageDetail title={t`Build Orders`} actions={[]} />
-        <BuildOrderTable />
-      </Stack>
-    </>
+    <Stack>
+      <PageDetail title={t`Build Orders`} actions={[]} />
+      <BuildOrderTable />
+    </Stack>
   );
 }

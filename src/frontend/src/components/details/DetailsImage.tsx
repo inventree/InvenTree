@@ -354,31 +354,27 @@ export function DetailsImage(props: Readonly<DetailImageProps>) {
   };
 
   return (
-    <>
-      <AspectRatio ref={ref} maw={IMAGE_DIMENSION} ratio={1} pos="relative">
-        <>
-          <ApiImage
-            src={img}
-            mah={IMAGE_DIMENSION}
-            maw={IMAGE_DIMENSION}
-            onClick={expandImage}
-          />
-          {permissions.hasChangeRole(props.appRole) &&
-            hasOverlay &&
-            hovered && (
-              <Overlay color="black" opacity={0.8} onClick={expandImage}>
-                <ImageActionButtons
-                  visible={hovered}
-                  actions={props.imageActions}
-                  apiPath={props.apiPath}
-                  hasImage={props.src ? true : false}
-                  pk={props.pk}
-                  setImage={setAndRefresh}
-                />
-              </Overlay>
-            )}
-        </>
-      </AspectRatio>
-    </>
+    <AspectRatio ref={ref} maw={IMAGE_DIMENSION} ratio={1} pos="relative">
+      <>
+        <ApiImage
+          src={img}
+          mah={IMAGE_DIMENSION}
+          maw={IMAGE_DIMENSION}
+          onClick={expandImage}
+        />
+        {permissions.hasChangeRole(props.appRole) && hasOverlay && hovered && (
+          <Overlay color="black" opacity={0.8} onClick={expandImage}>
+            <ImageActionButtons
+              visible={hovered}
+              actions={props.imageActions}
+              apiPath={props.apiPath}
+              hasImage={props.src ? true : false}
+              pk={props.pk}
+              setImage={setAndRefresh}
+            />
+          </Overlay>
+        )}
+      </>
+    </AspectRatio>
   );
 }

@@ -160,30 +160,28 @@ export function PartThumbTable({
       <Suspense>
         <Divider />
         <Paper p="sm">
-          <>
-            <SimpleGrid cols={8}>
-              {!thumbQuery.isFetching
-                ? thumbQuery.data?.data.map(
-                    (data: ImageElement, index: number) => (
-                      <PartThumbComponent
-                        element={data}
-                        key={index}
-                        selected={img}
-                        selectImage={selectImage}
-                      />
-                    )
-                  )
-                : [...Array(limit)].map((elem, idx) => (
-                    <Skeleton
-                      height={150}
-                      width={150}
-                      radius="sm"
-                      key={idx}
-                      style={{ padding: '5px' }}
+          <SimpleGrid cols={8}>
+            {!thumbQuery.isFetching
+              ? thumbQuery.data?.data.map(
+                  (data: ImageElement, index: number) => (
+                    <PartThumbComponent
+                      element={data}
+                      key={index}
+                      selected={img}
+                      selectImage={selectImage}
                     />
-                  ))}
-            </SimpleGrid>
-          </>
+                  )
+                )
+              : [...Array(limit)].map((elem, idx) => (
+                  <Skeleton
+                    height={150}
+                    width={150}
+                    radius="sm"
+                    key={idx}
+                    style={{ padding: '5px' }}
+                  />
+                ))}
+          </SimpleGrid>
         </Paper>
       </Suspense>
 
