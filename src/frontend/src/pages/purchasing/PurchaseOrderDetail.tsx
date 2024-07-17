@@ -242,6 +242,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconList />,
         content: (
           <PurchaseOrderLineItemTable
+            order={order}
             orderId={Number(id)}
             supplierId={Number(order.supplier)}
           />
