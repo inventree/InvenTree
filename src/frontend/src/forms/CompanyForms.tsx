@@ -41,7 +41,8 @@ export function useSupplierPartFields() {
       },
       supplier: {
         filters: {
-          active: true
+          active: true,
+          is_supplier: true
         }
       },
       SKU: {
