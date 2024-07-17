@@ -26,6 +26,7 @@ export const getSupportedLanguages = (): Record<string, string> => {
     en: t`English`,
     es: t`Spanish`,
     'es-mx': t`Spanish (Mexican)`,
+    et: t`Estonian`,
     fa: t`Farsi / Persian`,
     fi: t`Finnish`,
     fr: t`French`,

@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import {
   useDeleteApiFormModal,
@@ -57,6 +58,13 @@ export default function BuildAllocatedStockTable({
         title: t`Allocated Quantity`,
         sortable: true,
         switchable: false
+      },
+      {
+        accessor: 'serial',
+        title: t`Serial Number`,
+        sortable: false,
+        switchable: true,
+        render: (record: any) => record?.stock_item_detail?.serial
       },
       {
         accessor: 'batch',
@@ -150,7 +158,9 @@ export default function BuildAllocatedStockTable({
           enableDownload: true,
           enableSelection: true,
           rowActions: rowActions,
-          tableFilters: tableFilters
+          tableFilters: tableFilters,
+          modelField: 'stock_item',
+          modelType: ModelType.stockitem
         }}
       />
     </>

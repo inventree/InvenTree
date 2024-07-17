@@ -107,12 +107,6 @@ export default function SalesOrderDetail() {
 
     let tr: DetailsField[] = [
       {
-        type: 'text',
-        name: 'line_items',
-        label: t`Line Items`,
-        icon: 'list'
-      },
-      {
         type: 'progressbar',
         name: 'completed',
         icon: 'progress',
@@ -126,8 +120,8 @@ export default function SalesOrderDetail() {
         icon: 'shipment',
         label: t`Completed Shipments`,
         total: order.shipments,
-        progress: order.completed_shipments
-        // TODO: Fix this progress bar
+        progress: order.completed_shipments,
+        hidden: !order.shipments
       },
       {
         type: 'text',

@@ -120,26 +120,28 @@ class Build(
         self.validate_reference_field(self.reference)
         self.reference_int = self.rebuild_reference_field(self.reference)
 
-        if get_global_setting('BUILDORDER_REQUIRE_VALID_BOM'):
-            # Check that the BOM is valid
-            if not self.part.is_bom_valid():
-                raise ValidationError({
-                    'part': _('Assembly BOM has not been validated')
-                })
+        # Check part when initially creating the build order
+        if not self.pk or self.has_field_changed('part'):
+            if get_global_setting('BUILDORDER_REQUIRE_VALID_BOM'):
+                # Check that the BOM is valid
+                if not self.part.is_bom_valid():
+                    raise ValidationError({
+                        'part': _('Assembly BOM has not been validated')
+                    })
 
-        if get_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART'):
-            # Check that the part is active
-            if not self.part.active:
-                raise ValidationError({
-                    'part': _('Build order cannot be created for an inactive part')
-                })
+            if get_global_setting('BUILDORDER_REQUIRE_ACTIVE_PART'):
+                # Check that the part is active
+                if not self.part.active:
+                    raise ValidationError({
+                        'part': _('Build order cannot be created for an inactive part')
+                    })
 
-        if get_global_setting('BUILDORDER_REQUIRE_LOCKED_PART'):
-            # Check that the part is locked
-            if not self.part.locked:
-                raise ValidationError({
-                    'part': _('Build order cannot be created for an unlocked part')
-                })
+            if get_global_setting('BUILDORDER_REQUIRE_LOCKED_PART'):
+                # Check that the part is locked
+                if not self.part.locked:
+                    raise ValidationError({
+                        'part': _('Build order cannot be created for an unlocked part')
+                    })
 
         # On first save (i.e. creation), run some extra checks
         if self.pk is None:
