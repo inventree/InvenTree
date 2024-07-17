@@ -29,11 +29,11 @@ class BomExportTest(InvenTreeTestCase):
         url = reverse('api-bom-upload-template')
 
         # Download an XLS template
-        response = self.client.get(url, data={'format': 'xls'})
+        response = self.client.get(url, data={'format': 'xlsx'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.headers['Content-Disposition'],
-            'attachment; filename="InvenTree_BOM_Template.xls"',
+            'attachment; filename="InvenTree_BOM_Template.xlsx"',
         )
 
         # Return a simple CSV template
@@ -134,10 +134,10 @@ class BomExportTest(InvenTreeTestCase):
             for header in headers:
                 self.assertIn(header, expected)
 
-    def test_export_xls(self):
-        """Test BOM download in XLS format."""
+    def test_export_xlsx(self):
+        """Test BOM download in XLSX format."""
         params = {
-            'format': 'xls',
+            'format': 'xlsx',
             'cascade': True,
             'parameter_data': True,
             'stock_data': True,

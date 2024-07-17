@@ -9,11 +9,12 @@ import { ModelType } from '../enums/ModelType';
 export const statusCodeList: Record<string, ModelType> = {
   BuildStatus: ModelType.build,
   PurchaseOrderStatus: ModelType.purchaseorder,
-  ReturnOrderLineStatus: ModelType.purchaseorderline,
+  ReturnOrderLineStatus: ModelType.purchaseorderlineitem,
   ReturnOrderStatus: ModelType.returnorder,
   SalesOrderStatus: ModelType.salesorder,
   StockHistoryCode: ModelType.stockhistory,
-  StockStatus: ModelType.stockitem
+  StockStatus: ModelType.stockitem,
+  DataImportStatusCode: ModelType.importsession
 };
 
 /*

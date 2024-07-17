@@ -135,26 +135,12 @@ export default function PurchaseOrderDetail() {
 
     let tr: DetailsField[] = [
       {
-        type: 'text',
-        name: 'line_items',
-        label: t`Line Items`,
-        icon: 'list'
-      },
-      {
         type: 'progressbar',
         name: 'completed',
         icon: 'progress',
         label: t`Completed Line Items`,
         total: order.line_items,
         progress: order.completed_lines
-      },
-      {
-        type: 'progressbar',
-        name: 'shipments',
-        icon: 'shipment',
-        label: t`Completed Shipments`,
-        total: order.shipments,
-        progress: order.completed_shipments
       },
       {
         type: 'text',
@@ -256,6 +242,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconList />,
         content: (
           <PurchaseOrderLineItemTable
+            order={order}
             orderId={Number(id)}
             supplierId={Number(order.supplier)}
           />

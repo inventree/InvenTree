@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Grid, Skeleton, Stack, Table } from '@mantine/core';
+import { Alert, Grid, Skeleton, Space, Stack, Text } from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -22,9 +22,10 @@ import {
   IconTruckDelivery,
   IconVersions
 } from '@tabler/icons-react';
-import { useSuspenseQuery } from '@tanstack/react-query';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { ReactNode, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import Select from 'react-select';
 
 import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
@@ -32,8 +33,8 @@ import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
-import { PartIcons } from '../../components/details/PartIcons';
 import NotesEditor from '../../components/editors/NotesEditor';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { Thumbnail } from '../../components/images/Thumbnail';
 import {
   ActionDropdown,
@@ -50,6 +51,7 @@ import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
+import { RenderPart } from '../../components/render/Part';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -69,6 +71,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
@@ -94,6 +97,8 @@ export default function PartDetail() {
   const user = useUserState();
 
   const [treeOpen, setTreeOpen] = useState(false);
+
+  const globalSettings = useGlobalSettingsState();
 
   const {
     instance: part,
@@ -138,6 +143,20 @@ export default function PartDetail() {
       },
       {
         type: 'link',
+        name: 'revision_of',
+        label: t`Revision of`,
+        model: ModelType.part,
+        hidden: !part.revision_of
+      },
+      {
+        type: 'string',
+        name: 'revision',
+        label: t`Revision`,
+        hidden: !part.revision,
+        copy: true
+      },
+      {
+        type: 'link',
         name: 'category',
         label: t`Category`,
         model: ModelType.partcategory
@@ -162,13 +181,6 @@ export default function PartDetail() {
         label: t`IPN`,
         copy: true,
         hidden: !part.IPN
-      },
-      {
-        type: 'string',
-        name: 'revision',
-        label: t`Revision`,
-        copy: true,
-        hidden: !part.revision
       },
       {
         type: 'string',
@@ -210,6 +222,14 @@ export default function PartDetail() {
       },
       {
         type: 'string',
+        name: 'variant_stock',
+        unit: true,
+        label: t`Variant Stock`,
+        hidden: !part.variant_stock,
+        icon: 'stock'
+      },
+      {
+        type: 'string',
         name: 'minimum_stock',
         unit: true,
         label: t`Minimum Stock`,
@@ -220,7 +240,7 @@ export default function PartDetail() {
         name: 'ordering',
         label: t`On order`,
         unit: true,
-        hidden: part.ordering <= 0
+        hidden: !part.purchaseable || part.ordering <= 0
       },
       {
         type: 'progressbar',
@@ -243,14 +263,14 @@ export default function PartDetail() {
         name: 'can_build',
         unit: true,
         label: t`Can Build`,
-        hidden: !part.assembly
+        hidden: true // TODO: Expose "can_build" to the API
       },
       {
         type: 'string',
         name: 'building',
         unit: true,
         label: t`Building`,
-        hidden: !part.assembly
+        hidden: !part.assembly || !part.building
       }
     ];
 
@@ -259,6 +279,11 @@ export default function PartDetail() {
         type: 'boolean',
         name: 'active',
         label: t`Active`
+      },
+      {
+        type: 'boolean',
+        name: 'locked',
+        label: t`Locked`
       },
       {
         type: 'boolean',
@@ -435,7 +460,7 @@ export default function PartDetail() {
       });
     }
 
-    return (
+    return part ? (
       <ItemDetailsGrid>
         <Grid>
           <Grid.Col span={4}>
@@ -453,22 +478,15 @@ export default function PartDetail() {
             />
           </Grid.Col>
           <Grid.Col span={8}>
-            <Stack gap="xs">
-              <Table>
-                <Table.Tbody>
-                  <Table.Tr>
-                    <PartIcons part={part} />
-                  </Table.Tr>
-                </Table.Tbody>
-              </Table>
-              <DetailsTable fields={tl} item={part} />
-            </Stack>
+            <DetailsTable fields={tl} item={part} />
           </Grid.Col>
         </Grid>
         <DetailsTable fields={tr} item={part} />
         <DetailsTable fields={bl} item={part} />
         <DetailsTable fields={br} item={part} />
       </ItemDetailsGrid>
+    ) : (
+      <Skeleton />
     );
   }, [part, instanceQuery]);
 
@@ -485,7 +503,12 @@ export default function PartDetail() {
         name: 'parameters',
         label: t`Parameters`,
         icon: <IconList />,
-        content: <PartParameterTable partId={id ?? -1} />
+        content: (
+          <PartParameterTable
+            partId={id ?? -1}
+            partLocked={part?.locked == true}
+          />
+        )
       },
       {
         name: 'stock',
@@ -520,7 +543,9 @@ export default function PartDetail() {
         label: t`Bill of Materials`,
         icon: <IconListTree />,
         hidden: !part.assembly,
-        content: <BomTable partId={part.pk ?? -1} />
+        content: (
+          <BomTable partId={part.pk ?? -1} partLocked={part?.locked == true} />
+        )
       },
       {
         name: 'builds',
@@ -634,6 +659,89 @@ export default function PartDetail() {
     ];
   }, [id, part, user]);
 
+  // Fetch information on part revision
+  const partRevisionQuery = useQuery({
+    refetchOnMount: true,
+    queryKey: [
+      'part_revisions',
+      part.pk,
+      part.revision_of,
+      part.revision_count
+    ],
+    queryFn: async () => {
+      if (!part.revision_of && !part.revision_count) {
+        return [];
+      }
+
+      let revisions = [];
+
+      // First, fetch information for the top-level part
+      if (part.revision_of) {
+        await api
+          .get(apiUrl(ApiEndpoints.part_list, part.revision_of))
+          .then((response) => {
+            revisions.push(response.data);
+          });
+      } else {
+        revisions.push(part);
+      }
+
+      const url = apiUrl(ApiEndpoints.part_list);
+
+      await api
+        .get(url, {
+          params: {
+            revision_of: part.revision_of || part.pk
+          }
+        })
+        .then((response) => {
+          switch (response.status) {
+            case 200:
+              response.data.forEach((r: any) => {
+                revisions.push(r);
+              });
+              break;
+            default:
+              break;
+          }
+        })
+        .catch(() => {});
+
+      return revisions;
+    }
+  });
+
+  const partRevisionOptions: any[] = useMemo(() => {
+    if (partRevisionQuery.isFetching || !partRevisionQuery.data) {
+      return [];
+    }
+
+    if (!part.revision_of && !part.revision_count) {
+      return [];
+    }
+
+    let options: any[] = partRevisionQuery.data.map((revision: any) => {
+      return {
+        value: revision.pk,
+        label: revision.full_name,
+        part: revision
+      };
+    });
+
+    // Add this part if not already available
+    if (!options.find((o) => o.value == part.pk)) {
+      options.push({
+        value: part.pk,
+        label: part.full_name,
+        part: part
+      });
+    }
+
+    return options.sort((a, b) => {
+      return ('' + a.part.revision).localeCompare(b.part.revision);
+    });
+  }, [part, partRevisionQuery.isFetching, partRevisionQuery.data]);
+
   const breadcrumbs = useMemo(
     () => [
       { name: t`Parts`, url: '/part' },
@@ -653,8 +761,8 @@ export default function PartDetail() {
     return [
       <DetailsBadge
         label={t`In Stock` + `: ${part.total_in_stock}`}
-        color={part.in_stock >= part.minimum_stock ? 'green' : 'orange'}
-        visible={part.in_stock > 0}
+        color={part.total_in_stock >= part.minimum_stock ? 'green' : 'orange'}
+        visible={part.total_in_stock > 0}
         key="in_stock"
       />,
       <DetailsBadge
@@ -665,8 +773,8 @@ export default function PartDetail() {
       />,
       <DetailsBadge
         label={t`No Stock`}
-        color="red"
-        visible={part.in_stock == 0}
+        color="orange"
+        visible={part.total_in_stock == 0}
         key="no_stock"
       />,
       <DetailsBadge
@@ -680,6 +788,12 @@ export default function PartDetail() {
         color="blue"
         visible={part.building > 0}
         key="in_production"
+      />,
+      <DetailsBadge
+        label={t`Locked`}
+        color="black"
+        visible={part.locked == true}
+        key="locked"
       />,
       <DetailsBadge
         label={t`Inactive`}
@@ -700,12 +814,42 @@ export default function PartDetail() {
     onFormSuccess: refreshInstance
   });
 
+  const createPartFields = usePartFields({ create: true });
+
+  const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      ...createPartFields,
+      duplicate: {
+        children: {
+          part: {
+            value: part.pk,
+            hidden: true
+          },
+          copy_image: {
+            value: true
+          },
+          copy_bom: {
+            value: globalSettings.isSet('PART_COPY_BOM')
+          },
+          copy_notes: {
+            value: true
+          },
+          copy_parameters: {
+            value: globalSettings.isSet('PART_COPY_PARAMETERS')
+          }
+        }
+      }
+    };
+  }, [createPartFields, globalSettings, part]);
+
   const duplicatePart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
     title: t`Add Part`,
-    fields: partFields,
+    fields: duplicatePartFields,
     initialData: {
-      ...part
+      ...part,
+      active: true,
+      locked: false
     },
     follow: true,
     modelType: ModelType.part
@@ -810,6 +954,13 @@ export default function PartDetail() {
     ];
   }, [id, part, user]);
 
+  const enableRevisionSelection: boolean = useMemo(() => {
+    return (
+      partRevisionOptions.length > 0 &&
+      globalSettings.isSet('PART_ENABLE_REVISION')
+    );
+  }, [partRevisionOptions, globalSettings]);
+
   return (
     <>
       {duplicatePart.modal}
@@ -837,6 +988,40 @@ export default function PartDetail() {
               setTreeOpen(true);
             }}
             actions={partActions}
+            detail={
+              enableRevisionSelection ? (
+                <Stack gap="xs">
+                  <Text>{t`Select Part Revision`}</Text>
+                  <Select
+                    id="part-revision-select"
+                    aria-label="part-revision-select"
+                    options={partRevisionOptions}
+                    value={{
+                      value: part.pk,
+                      label: part.full_name,
+                      part: part
+                    }}
+                    isSearchable={false}
+                    formatOptionLabel={(option: any) =>
+                      RenderPart({
+                        instance: option.part,
+                        showSecondary: false
+                      })
+                    }
+                    onChange={(value: any) => {
+                      navigate(getDetailUrl(ModelType.part, value.value));
+                    }}
+                    styles={{
+                      menuPortal: (base: any) => ({ ...base, zIndex: 9999 }),
+                      menu: (base: any) => ({ ...base, zIndex: 9999 }),
+                      menuList: (base: any) => ({ ...base, zIndex: 9999 })
+                    }}
+                  />
+                </Stack>
+              ) : (
+                <Space />
+              )
+            }
           />
           <PanelGroup pageKey="part" panels={partPanels} />
           {transferStockItems.modal}

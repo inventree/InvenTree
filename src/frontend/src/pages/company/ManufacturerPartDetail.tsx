@@ -5,6 +5,7 @@ import {
   IconDots,
   IconInfoCircle,
   IconList,
+  IconNotes,
   IconPaperclip
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -14,6 +15,7 @@ import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   DeleteItemAction,
@@ -177,6 +179,18 @@ export default function ManufacturerPartDetail() {
           <AttachmentTable
             model_type={ModelType.manufacturerpart}
             model_id={manufacturerPart?.pk}
+          />
+        )
+      },
+      {
+        name: 'notes',
+        label: t`Notes`,
+        icon: <IconNotes />,
+        content: (
+          <NotesEditor
+            modelType={ModelType.manufacturerpart}
+            modelId={manufacturerPart.pk}
+            editable={user.hasChangeRole(UserRoles.purchase_order)}
           />
         )
       }

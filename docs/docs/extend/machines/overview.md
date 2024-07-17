@@ -6,6 +6,9 @@ title: Machines
 
 InvenTree has a builtin machine registry. There are different machine types available where each type can have different drivers. Drivers and even custom machine types can be provided by plugins.
 
+!!! info "Requires Redis"
+    If the machines features is used in production setup using workers, a shared [redis cache](../../start/docker.md#redis-cache) is required to function properly.
+
 ### Registry
 
 The machine registry is the main component which gets initialized on server start and manages all configured machines.
@@ -20,6 +23,13 @@ The machine registry initialization process can be divided into three stages:
     1. For each MachineConfig in database instantiate the MachineType class (drivers get instantiated here as needed and passed to the machine class. But only one instance of the driver class is maintained along the registry)
     2. The driver.init_driver function is called for each used driver
     3. The machine.initialize function is called for each machine, which calls the driver.init_machine function for each machine, then the machine.initialized state is set to true
+
+#### Production setup (with a worker)
+
+If a worker is connected, there exist multiple instances of the machine registry (one in each worker thread and one in the main thread) due to the nature of how python handles state in different processes. Therefore the machine instances and drivers are instantiated multiple times (The `__init__` method is called multiple times). But the init functions and update hooks (e.g. `init_machine`) are only called once from the main process.
+
+The registry, driver and machine state (e.g. machine status codes, errors, ...) is stored in the cache. Therefore a shared redis cache is needed. (The local in-memory cache which is used by default is not capable to cache across multiple processes)
+
 
 ### Machine types
 
@@ -86,6 +96,7 @@ The machine type class gets instantiated for each machine on server startup and 
           - update
           - restart
           - handle_error
+          - clear_errors
           - get_setting
           - set_setting
           - check_setting

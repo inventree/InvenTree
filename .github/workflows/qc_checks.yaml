@@ -94,7 +94,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # pin@v5.1.1
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -115,7 +115,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # pin@v5.1.1
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -159,20 +159,32 @@ jobs:
       - name: Export API Documentation
         run: invoke schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
-        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4.3.3
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4.3.4
         with:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
       - name: Download public schema
-        if: needs.paths-filter.outputs.api == 'false'
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
-          version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
+          version="$(python3 .github/scripts/version_check.py only_version ${{ needs.paths-filter.outputs.api }} 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
-          curl -s -o api.yaml $url
+          code=$(curl -s -o api.yaml $url --write-out '%{http_code}' --silent)
+          if [ "$code" != "200" ]; then
+            exit 1
+          fi
           echo "Downloaded api.yaml"
+      - name: Running OpenAPI Spec diff action
+        id: breaking_changes
+        uses: oasdiff/oasdiff-action/diff@main
+        with:
+          base: 'api.yaml'
+          revision: 'src/backend/InvenTree/schema.yml'
+          format: 'html'
+      - name: Echoing diff to step
+        run: echo "${{ steps.breaking_changes.outputs.diff }}" >> $GITHUB_STEP_SUMMARY
+
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
@@ -200,11 +212,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        name: Checkout Code
         with:
           repository: inventree/schema
           token: ${{ secrets.SCHEMA_PAT }}
       - name: Download schema artifact
-        uses: actions/download-artifact@65a9edc5881444af0b9093a5e628f2fe47ea3b2e # v4.1.7
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
           name: schema.yml
       - name: Move schema to correct location
@@ -213,8 +226,9 @@ jobs:
           mkdir export/${version}
           mv schema.yml export/${version}/api.yaml
       - uses: stefanzweifel/git-auto-commit-action@8621497c8c39c72f3e2a999a26b4ca1b5058a842 # v5.0.1
+        name: Commit schema changes
         with:
-          commit_message: "Update API schema for ${version}"
+          commit_message: "Update API schema for ${{ env.version }} / ${{ github.sha }}"
 
   python:
     name: Tests - inventree-python
@@ -267,7 +281,8 @@ jobs:
     continue-on-error: true # continue if a step fails so that coverage gets pushed
     strategy:
       matrix:
-        python_version: [3.9, 3.12]
+        python_version: [3.9]
+        # python_version: [3.9, 3.12]  # Disabled due to requirement issues
 
     env:
       INVENTREE_DB_NAME: ./inventree.sqlite
@@ -520,7 +535,7 @@ jobs:
       - name: Run Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4
+      - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
@@ -556,7 +571,7 @@ jobs:
         run: |
           cd src/backend/InvenTree/web/static
           zip -r frontend-build.zip web/ web/.vite
-      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # pin@v4.3.3
+      - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4.3.4
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/web

@@ -116,7 +116,8 @@ export default function CustomUnitsTable() {
         columns={columns}
         props={{
           rowActions: rowActions,
-          tableActions: tableActions
+          tableActions: tableActions,
+          enableDownload: true
         }}
       />
     </>

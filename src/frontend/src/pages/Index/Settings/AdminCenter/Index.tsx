@@ -1,10 +1,19 @@
 import { Trans, t } from '@lingui/macro';
-import { Divider, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import {
+  Divider,
+  Paper,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  Title
+} from '@mantine/core';
 import {
   IconCoins,
   IconCpu,
   IconDevicesPc,
   IconExclamationCircle,
+  IconFileUpload,
   IconList,
   IconListDetails,
   IconPackages,
@@ -51,6 +60,10 @@ const ErrorReportTable = Loadable(
   lazy(() => import('../../../../tables/settings/ErrorTable'))
 );
 
+const ImportSesssionTable = Loadable(
+  lazy(() => import('../../../../tables/settings/ImportSessionTable'))
+);
+
 const ProjectCodeTable = Loadable(
   lazy(() => import('../../../../tables/settings/ProjectCodeTable'))
 );
@@ -85,6 +98,12 @@ export default function AdminCenter() {
         label: t`Users`,
         icon: <IconUsersGroup />,
         content: <UserManagementPanel />
+      },
+      {
+        name: 'import',
+        label: t`Data Import`,
+        icon: <IconFileUpload />,
+        content: <ImportSesssionTable />
       },
       {
         name: 'background',
@@ -189,6 +208,10 @@ export default function AdminCenter() {
       </SimpleGrid>
     </Stack>
   );
+
+  if (!user.isLoggedIn()) {
+    return <Skeleton />;
+  }
 
   return (
     <>

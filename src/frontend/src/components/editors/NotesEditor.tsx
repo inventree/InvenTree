@@ -142,7 +142,12 @@ export default function NotesEditor({
 
   // Callback to save notes to the server
   const saveNotes = useCallback(() => {
-    const markdown = ref.current?.getMarkdown() ?? '';
+    const markdown = ref.current?.getMarkdown();
+
+    if (!noteUrl || markdown === undefined) {
+      return;
+    }
+
     api
       .patch(noteUrl, { notes: markdown })
       .then(() => {
@@ -163,7 +168,7 @@ export default function NotesEditor({
           id: 'notes'
         });
       });
-  }, [noteUrl, ref.current]);
+  }, [api, noteUrl, ref.current]);
 
   const plugins: any[] = useMemo(() => {
     let plg = [

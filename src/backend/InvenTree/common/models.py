@@ -116,6 +116,11 @@ class BaseURLValidator(URLValidator):
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
 
+    class Meta:
+        """Class options for the ProjectCode model."""
+
+        verbose_name = _('Project Code')
+
     @staticmethod
     def get_api_url():
         """Return the API URL for this model."""
@@ -1403,6 +1408,12 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'validator': bool,
             'default': True,
         },
+        'PART_REVISION_ASSEMBLY_ONLY': {
+            'name': _('Assembly Revision Only'),
+            'description': _('Only allow revisions for assembly parts'),
+            'validator': bool,
+            'default': False,
+        },
         'PART_ALLOW_DELETE_FROM_ASSEMBLY': {
             'name': _('Allow Deletion from Assembly'),
             'description': _('Allow deletion of parts which are used in an assembly'),
@@ -1783,6 +1794,26 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'BUILDORDER_REQUIRE_RESPONSIBLE': {
             'name': _('Require Responsible Owner'),
             'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_ACTIVE_PART': {
+            'name': _('Require Active Part'),
+            'description': _('Prevent build order creation for inactive parts'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_LOCKED_PART': {
+            'name': _('Require Locked Part'),
+            'description': _('Prevent build order creation for unlocked parts'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_VALID_BOM': {
+            'name': _('Require Valid BOM'),
+            'description': _(
+                'Prevent build order creation unless BOM has been validated'
+            ),
             'default': False,
             'validator': bool,
         },
@@ -2466,36 +2497,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(0)],
             'default': 100,
         },
-        'DEFAULT_PART_LABEL_TEMPLATE': {
-            'name': _('Default part label template'),
-            'description': _('The part label template to be automatically selected'),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_ITEM_LABEL_TEMPLATE': {
-            'name': _('Default stock item template'),
-            'description': _(
-                'The stock item label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LOCATION_LABEL_TEMPLATE': {
-            'name': _('Default stock location label template'),
-            'description': _(
-                'The stock location label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LINE_LABEL_TEMPLATE': {
-            'name': _('Default build line label template'),
-            'description': _(
-                'The build line label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
         'NOTIFICATION_ERROR_REPORT': {
             'name': _('Receive error reports'),
             'description': _('Receive notifications for system errors'),
@@ -3033,6 +3034,11 @@ class CustomUnit(models.Model):
     Refer to the pint documentation for further information on unit definitions.
     https://pint.readthedocs.io/en/stable/advanced/defining.html
     """
+
+    class Meta:
+        """Class meta options."""
+
+        verbose_name = _('Custom Unit')
 
     def fmt_string(self):
         """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'."""

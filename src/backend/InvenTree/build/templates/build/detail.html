@@ -174,7 +174,7 @@
 <div class='panel panel-hidden' id='panel-allocate'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
-            <h4>{% trans "Allocate Stock to Build" %}</h4>
+            <h4>{% trans "Build Order Line Items" %}</h4>
             {% include "spacer.html" %}
             <div class='btn-group' role='group'>
                 {% if roles.build.add and build.active %}
@@ -228,6 +228,18 @@
             {% include "filter_list.html" with id='incompletebuilditems' %}
         </div>
         <table class='table table-striped table-condensed' id='build-output-table' data-toolbar='#build-output-toolbar'></table>
+    </div>
+</div>
+
+<div class='panel panel-hidden' id='panel-allocated'>
+    <div class='panel-heading'>
+        <h4>{% trans "Allocated Stock" %}</h4>
+    </div>
+    <div class='panel-content'>
+        <div id='build-allocated-stock-toolbar'>
+            {% include "filter_list.html" with id='buildorderallocatedstock' %}
+        </div>
+        <table class='table table-striped table-condensed' id='allocated-stock-table' data-toolbar='#build-allocated-stock-toolbar'></table>
     </div>
 </div>
 
@@ -289,6 +301,10 @@
 
 {% block js_ready %}
 {{ block.super }}
+
+onPanelLoad('allocated', function() {
+    loadBuildOrderAllocatedStockTable($('#allocated-stock-table'), {{ build.pk }});
+});
 
 onPanelLoad('consumed', function() {
     loadStockTable($('#consumed-stock-table'), {

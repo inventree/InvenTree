@@ -84,6 +84,9 @@ def getNewestMigrationFile(app, exclude_extension=True):
             newest_num = num
             newest_file = f
 
+    if not newest_file:  # pragma: no cover
+        return newest_file
+
     if exclude_extension:
         newest_file = newest_file.replace('.py', '')
 
@@ -412,12 +415,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         # Extract filename
         disposition = response.headers['Content-Disposition']
 
-        result = re.search(r'attachment; filename="([\w.]+)"', disposition)
+        result = re.search(r'attachment; filename="([\w\d\-.]+)"', disposition)
 
         fn = result.groups()[0]
 
         if expected_fn is not None:
-            self.assertEqual(expected_fn, fn)
+            self.assertRegex(fn, expected_fn)
 
         if decode:
             # Decode data and return as StringIO file object
