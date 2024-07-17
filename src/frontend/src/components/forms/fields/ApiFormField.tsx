@@ -1,15 +1,7 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  FileInput,
-  NumberInput,
-  Stack,
-  Switch,
-  TextInput
-} from '@mantine/core';
+import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { IconX } from '@tabler/icons-react';
 import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 

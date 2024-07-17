@@ -41,7 +41,7 @@ import {
 } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';

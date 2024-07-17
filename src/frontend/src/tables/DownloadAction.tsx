@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import {
   IconDownload,
   IconFileSpreadsheet,

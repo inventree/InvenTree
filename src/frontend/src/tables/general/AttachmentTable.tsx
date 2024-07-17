@@ -8,7 +8,7 @@ import {
   IconUpload,
   IconX
 } from '@tabler/icons-react';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
@@ -28,7 +28,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 /**
  * Define set of columns to display for the attachment table
