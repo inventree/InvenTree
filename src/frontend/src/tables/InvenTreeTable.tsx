@@ -608,7 +608,7 @@ export function InvenTreeTable<T = any>({
                 enableLabels={tableProps.enableLabels}
                 enableReports={tableProps.enableReports}
               />
-              {(tableProps.barcodeActions?.length ?? 0 > 0) && (
+              {(tableProps.barcodeActions?.length ?? 0) > 0 && (
                 <ButtonMenu
                   key="barcode-actions"
                   icon={<IconBarcode />}

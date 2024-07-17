@@ -76,7 +76,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
   const newCategory = useCreateApiFormModal({
     url: ApiEndpoints.category_list,
     title: t`New Part Category`,
-    fields: partCategoryFields({}),
+    fields: partCategoryFields(),
     initialData: {
       parent: parentId
     },
@@ -91,7 +91,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     url: ApiEndpoints.category_list,
     pk: selectedCategory,
     title: t`Edit Part Category`,
-    fields: partCategoryFields({}),
+    fields: partCategoryFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
