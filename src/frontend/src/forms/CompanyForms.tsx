@@ -70,7 +70,12 @@ export function useManufacturerPartFields() {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {},
-      manufacturer: {},
+      manufacturer: {
+        filters: {
+          active: true,
+          is_manufacturer: true
+        }
+      },
       MPN: {},
       description: {},
       link: {}
