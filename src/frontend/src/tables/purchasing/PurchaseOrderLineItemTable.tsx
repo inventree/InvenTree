@@ -71,7 +71,7 @@ export function PurchaseOrderLineItemTable({
     let fields = dataImporterSessionFields();
 
     fields.model_type.hidden = true;
-    fields.model_type.value = ModelType.purchaseorderline;
+    fields.model_type.value = ModelType.purchaseorderlineitem;
 
     // Specify override values for import
     fields.field_overrides.value = {

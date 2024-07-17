@@ -71,7 +71,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.parttesttemplate]: RenderPartTestTemplate,
   [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
-  [ModelType.purchaseorderline]: RenderPurchaseOrder,
+  [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
