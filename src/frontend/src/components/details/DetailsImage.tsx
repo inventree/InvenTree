@@ -85,7 +85,7 @@ function UploadModal({
   apiPath: string;
   setImage: (image: string) => void;
 }) {
-  const [file1, setFile] = useState<FileWithPath | null>(null);
+  const [currentFile, setCurrentFile] = useState<FileWithPath | null>(null);
   let uploading = false;
 
   // Components to show in the Dropzone when no file is selected
@@ -168,7 +168,7 @@ function UploadModal({
   return (
     <Paper style={{ height: '220px' }}>
       <Dropzone
-        onDrop={(files) => setFile(files[0])}
+        onDrop={(files) => setCurrentFile(files[0])}
         maxFiles={1}
         accept={IMAGE_MIME_TYPE}
         loading={uploading}
@@ -198,7 +198,9 @@ function UploadModal({
               }}
             />
           </Dropzone.Reject>
-          <Dropzone.Idle>{file1 ? fileInfo(file1) : noFileIdle}</Dropzone.Idle>
+          <Dropzone.Idle>
+            {currentFile ? fileInfo(currentFile) : noFileIdle}
+          </Dropzone.Idle>
         </Group>
       </Dropzone>
       <Paper
@@ -218,12 +220,15 @@ function UploadModal({
       >
         <Button
           variant="outline"
-          disabled={!file1}
-          onClick={() => setFile(null)}
+          disabled={!currentFile}
+          onClick={() => setCurrentFile(null)}
         >
           <Trans>Clear</Trans>
         </Button>
-        <Button disabled={!file1} onClick={() => uploadImage(file1)}>
+        <Button
+          disabled={!currentFile}
+          onClick={() => uploadImage(currentFile)}
+        >
           <Trans>Submit</Trans>
         </Button>
       </Paper>

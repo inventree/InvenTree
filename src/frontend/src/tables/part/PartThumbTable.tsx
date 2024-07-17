@@ -128,13 +128,13 @@ export function PartThumbTable({
   pk,
   setImage
 }: ThumbTableProps) {
-  const [img, selectImage] = useState<string | null>(null);
+  const [thumbImage, setThumbImage] = useState<string | null>(null);
   const [filterInput, setFilterInput] = useState<string>('');
-  const [filterQuery, setFilter] = useState<string>(search);
+  const [filterQuery, setFilterQuery] = useState<string>(search);
 
   // Keep search filters from updating while user is typing
   useEffect(() => {
-    const timeoutId = setTimeout(() => setFilter(filterInput), 500);
+    const timeoutId = setTimeout(() => setFilterQuery(filterInput), 500);
     return () => clearTimeout(timeoutId);
   }, [filterInput]);
 
@@ -167,8 +167,8 @@ export function PartThumbTable({
                     <PartThumbComponent
                       element={data}
                       key={index}
-                      selected={img}
-                      selectImage={selectImage}
+                      selected={thumbImage}
+                      selectImage={setThumbImage}
                     />
                   )
                 )
@@ -195,8 +195,8 @@ export function PartThumbTable({
             }}
           />
           <Button
-            disabled={!img}
-            onClick={() => setNewImage(img, pk, setImage)}
+            disabled={!thumbImage}
+            onClick={() => setNewImage(thumbImage, pk, setImage)}
           >
             <Trans>Select</Trans>
           </Button>
