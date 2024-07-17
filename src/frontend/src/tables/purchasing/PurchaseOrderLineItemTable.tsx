@@ -47,10 +47,12 @@ import { TableHoverCard } from '../TableHoverCard';
  * Display a table of purchase order line items, for a specific order
  */
 export function PurchaseOrderLineItemTable({
+  order,
   orderId,
   supplierId,
   params
 }: {
+  order: any;
   orderId: number;
   supplierId?: number;
   params?: any;
@@ -71,8 +73,15 @@ export function PurchaseOrderLineItemTable({
     fields.model_type.hidden = true;
     fields.model_type.value = ModelType.purchaseorderline;
 
+    // Specify override values for import
     fields.field_overrides.value = {
       order: orderId
+    };
+
+    // Specify default values based on the order data
+    fields.field_defaults.value = {
+      purchase_price_currency:
+        order?.order_currency || order?.supplier_detail?.currency || undefined
     };
 
     fields.field_filters.value = {
@@ -83,7 +92,7 @@ export function PurchaseOrderLineItemTable({
     };
 
     return fields;
-  }, [orderId, supplierId]);
+  }, [order, orderId, supplierId]);
 
   const importLineItems = useCreateApiFormModal({
     url: ApiEndpoints.import_session_list,
@@ -95,7 +104,8 @@ export function PurchaseOrderLineItemTable({
     }
   });
 
-  const [singleRecord, setSingeRecord] = useState(null);
+  const [singleRecord, setSingleRecord] = useState(null);
+
   const receiveLineItems = useReceiveLineItems({
     items: singleRecord ? [singleRecord] : table.selectedRecords,
     orderPk: orderId,
