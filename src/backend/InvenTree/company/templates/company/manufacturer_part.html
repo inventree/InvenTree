@@ -171,10 +171,39 @@ src="{% static 'img/blank_image.png' %}"
     </div>
 </div>
 
+<div class='panel panel-hidden' id='panel-manufacturer-part-notes'>
+    <div class='panel-heading'>
+        <div class='d-flex flex-wrap'>
+            <h4>{% trans "Manufacturer Part Notes" %}</h4>
+            {% include "spacer.html" %}
+            <div class='btn-group' role='group'>
+                {% include "notes_buttons.html" %}
+            </div>
+        </div>
+    </div>
+    <div class='panel-content'>
+        <textarea id='manufacturer-part-notes'></textarea>
+    </div>
+</div>
+
 {% endblock page_content %}
 
 {% block js_ready %}
 {{ block.super }}
+
+// Load the "notes" tab
+onPanelLoad('manufacturer-part-notes', function() {
+
+    setupNotesField(
+        'manufacturer-part-notes',
+        '{% url "api-manufacturer-part-detail" part.pk %}',
+        {
+            model_type: "manufacturerpart",
+            model_id: {{ part.pk }},
+            editable: {% js_bool roles.purchase_order.change %},
+        }
+    );
+});
 
 onPanelLoad("attachments", function() {
     loadAttachmentTable('manufacturerpart', {{ part.pk }});
