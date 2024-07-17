@@ -384,21 +384,40 @@ export function ApiForm({
     let method = props.method?.toLowerCase() ?? 'get';
 
     let hasFiles = false;
-    mapFields(fields, (_path, field) => {
-      if (field.field_type === 'file upload') {
-        hasFiles = true;
-      }
-    });
 
     // Optionally pre-process the data before submitting it
     if (props.processFormData) {
       data = props.processFormData(data);
     }
 
+    let dataForm = new FormData();
+
+    Object.keys(data).forEach((key: string) => {
+      let value: any = data[key];
+      let field_type = fields[key]?.field_type;
+
+      if (field_type == 'file upload') {
+        hasFiles = true;
+      }
+
+      // Stringify any JSON objects
+      if (typeof value === 'object') {
+        switch (field_type) {
+          case 'file upload':
+            break;
+          default:
+            value = JSON.stringify(value);
+            break;
+        }
+      }
+
+      dataForm.append(key, value);
+    });
+
     return api({
       method: method,
       url: url,
-      data: data,
+      data: hasFiles ? dataForm : data,
       timeout: props.timeout,
       headers: {
         'Content-Type': hasFiles ? 'multipart/form-data' : 'application/json'
@@ -462,7 +481,11 @@ export function ApiForm({
                 for (const [k, v] of Object.entries(errors)) {
                   const path = _path ? `${_path}.${k}` : k;
 
-                  if (k === 'non_field_errors' || k === '__all__') {
+                  // Determine if field "k" is valid (exists and is visible)
+                  let field = fields[k];
+                  let valid = field && !field.hidden;
+
+                  if (!valid || k === 'non_field_errors' || k === '__all__') {
                     if (Array.isArray(v)) {
                       _nonFieldErrors.push(...v);
                     }

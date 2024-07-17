@@ -89,7 +89,7 @@ export function SecurityContent() {
   );
 }
 
-function EmailContent({}: {}) {
+function EmailContent() {
   const [value, setValue] = useState<string>('');
   const [newEmailValue, setNewEmailValue] = useState('');
   const [user] = useUserState((state) => [state.user]);
@@ -321,7 +321,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   );
 }
 
-function MfaContent({}: {}) {
+function MfaContent() {
   return (
     <>
       MFA Details

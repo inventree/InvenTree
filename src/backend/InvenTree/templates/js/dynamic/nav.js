@@ -173,7 +173,7 @@ function generateTreeStructure(data, options) {
         };
 
         if (options.processNode) {
-            node = options.processNode(node);
+            data[data.indexOf(node)] = options.processNode(node);
         }
     }
 
@@ -188,7 +188,7 @@ function generateTreeStructure(data, options) {
             if (node.state.expanded) {
                 while (node.parent != null) {
                     nodes[node.parent].state.expanded = true;
-                    node = nodes[node.parent];
+                    data[data.indexOf(node)] = nodes[node.parent];
                 }
             }
 

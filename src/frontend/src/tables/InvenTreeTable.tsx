@@ -103,6 +103,7 @@ export type InvenTreeTableProps<T = any> = {
   enableColumnCaching?: boolean;
   enableLabels?: boolean;
   enableReports?: boolean;
+  afterBulkDelete?: () => void;
   pageSize?: number;
   barcodeActions?: any[];
   tableFilters?: TableFilter[];
@@ -547,6 +548,9 @@ export function InvenTreeTable<T = any>({
           })
           .finally(() => {
             tableState.clearSelectedRecords();
+            if (props.afterBulkDelete) {
+              props.afterBulkDelete();
+            }
           });
       }
     });
@@ -604,7 +608,7 @@ export function InvenTreeTable<T = any>({
                 enableLabels={tableProps.enableLabels}
                 enableReports={tableProps.enableReports}
               />
-              {(tableProps.barcodeActions?.length ?? 0 > 0) && (
+              {(tableProps.barcodeActions?.length ?? 0) > 0 && (
                 <ButtonMenu
                   key="barcode-actions"
                   icon={<IconBarcode />}
@@ -638,7 +642,12 @@ export function InvenTreeTable<T = any>({
               {tableProps.enableRefresh && (
                 <ActionIcon variant="transparent" aria-label="table-refresh">
                   <Tooltip label={t`Refresh data`}>
-                    <IconRefresh onClick={() => refetch()} />
+                    <IconRefresh
+                      onClick={() => {
+                        refetch();
+                        tableState.clearSelectedRecords();
+                      }}
+                    />
                   </Tooltip>
                 </ActionIcon>
               )}

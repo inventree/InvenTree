@@ -143,7 +143,7 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.purchase_order_list,
     admin_url: '/order/purchaseorder/'
   },
-  purchaseorderline: {
+  purchaseorderlineitem: {
     label: t`Purchase Order Line`,
     label_multiple: t`Purchase Order Lines`,
     api_endpoint: ApiEndpoints.purchase_order_line_list
