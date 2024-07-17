@@ -71,7 +71,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.parttesttemplate]: RenderPartTestTemplate,
   [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
-  [ModelType.purchaseorderline]: RenderPurchaseOrder,
+  [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
@@ -180,7 +180,7 @@ export function RenderInlineModel({
   return (
     <Group gap="xs" justify="space-between" wrap="nowrap">
       <Group gap="xs" justify="left" wrap="nowrap">
-        {image && Thumbnail({ src: image, size: 18 })}
+        {image && <Thumbnail src={image} size={18} />}
         {url ? (
           <Anchor href={url} onClick={(event: any) => onClick(event)}>
             <Text size="sm">{primary}</Text>
