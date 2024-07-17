@@ -22,6 +22,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
+import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -214,6 +215,26 @@ export default function ParametricPartTable({
     });
   }, [user, categoryParmeters.data]);
 
+  const tableFilters: TableFilter[] = useMemo(() => {
+    return [
+      {
+        name: 'active',
+        label: t`Active`,
+        description: t`Show active parts`
+      },
+      {
+        name: 'locked',
+        label: t`Locked`,
+        description: t`Show locked parts`
+      },
+      {
+        name: 'assembly',
+        label: t`Assembly`,
+        description: t`Show assembly parts`
+      }
+    ];
+  }, []);
+
   const tableColumns: TableColumn[] = useMemo(() => {
     const partColumns: TableColumn[] = [
       {
@@ -253,7 +274,8 @@ export default function ParametricPartTable({
             category_detail: true,
             parameters: true
           },
-          modelType: ModelType.part
+          modelType: ModelType.part,
+          tableFilters: tableFilters
         }}
       />
     </>

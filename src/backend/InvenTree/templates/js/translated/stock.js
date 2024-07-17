@@ -17,6 +17,7 @@
     formatDecimal,
     formatPriceRange,
     getCurrencyConversionRates,
+    getFormFieldElement,
     getFormFieldValue,
     getTableData,
     global_settings,
@@ -1010,14 +1011,16 @@ function mergeStockItems(items, options={}) {
  */
 function adjustStock(action, items, options={}) {
 
-    var formTitle = 'Form Title Here';
-    var actionTitle = null;
+    let formTitle = 'Form Title Here';
+    let actionTitle = null;
+
+    const allowExtraFields = action == 'move';
 
     // API url
     var url = null;
 
-    var specifyLocation = false;
-    var allowSerializedStock = false;
+    let specifyLocation = false;
+    let allowSerializedStock = false;
 
     switch (action) {
     case 'move':
@@ -1069,7 +1072,7 @@ function adjustStock(action, items, options={}) {
 
     for (var idx = 0; idx < items.length; idx++) {
 
-        var item = items[idx];
+        const item = items[idx];
 
         if ((item.serial != null) && (item.serial != '') && !allowSerializedStock) {
             continue;
@@ -1112,7 +1115,6 @@ function adjustStock(action, items, options={}) {
 
         let quantityString = '';
 
-
         var location = locationDetail(item, false);
 
         if (item.location_detail) {
@@ -1152,11 +1154,68 @@ function adjustStock(action, items, options={}) {
             );
         }
 
-        let buttons = wrapButtons(makeRemoveButton(
+        let buttons = '';
+
+        if (allowExtraFields) {
+            buttons += makeIconButton(
+                'fa-layer-group',
+                'button-row-add-batch',
+                pk,
+                '{% trans "Adjust batch code" %}',
+                {
+                    collapseTarget: `row-batch-${pk}`
+                }
+            );
+
+            buttons += makeIconButton(
+                'fa-boxes',
+                'button-row-add-packaging',
+                pk,
+                '{% trans "Adjust packaging" %}',
+                {
+                    collapseTarget: `row-packaging-${pk}`
+                }
+            );
+        }
+
+        buttons += makeRemoveButton(
             'button-stock-item-remove',
             pk,
             '{% trans "Remove stock item" %}',
-        ));
+        );
+
+        buttons = wrapButtons(buttons);
+
+        // Add in options for "batch code" and "serial numbers"
+        const batch_input = constructField(
+            `items_batch_code_${pk}`,
+            {
+                type: 'string',
+                required: false,
+                label: '{% trans "Batch Code" %}',
+                help_text: '{% trans "Enter batch code for incoming stock items" %}',
+                icon: 'fa-layer-group',
+                value: item.batch,
+            },
+            {
+                hideLabels: true,
+            }
+        );
+
+        const packaging_input = constructField(
+            `items_packaging_${pk}`,
+            {
+                type: 'string',
+                required: false,
+                label: '{% trans "Packaging" %}',
+                help_text: '{% trans "Specify packaging for incoming stock items" %}',
+                icon: 'fa-boxes',
+                value: item.packaging,
+            },
+            {
+                hideLabels: true,
+            }
+        );
 
         html += `
         <tr id='stock_item_${pk}' class='stock-item-row'>
@@ -1170,6 +1229,19 @@ function adjustStock(action, items, options={}) {
                 </div>
             </td>
             <td id='buttons_${pk}'>${buttons}</td>
+        </tr>
+        <!-- Hidden row for extra data entry -->
+        <tr id='row-batch-${pk}' class='collapse'>
+            <td colspan='2'></td>
+            <th>{% trans "Batch" %}</th>
+            <td colspan='2'>${batch_input}</td>
+            <td></td>
+        </tr>
+        <tr id='row-packaging-${pk}' class='collapse'>
+            <td colspan='2'></td>
+            <th>{% trans "Packaging" %}</th>
+            <td colspan='2'>${packaging_input}</td>
+            <td></td>
         </tr>`;
 
         itemCount += 1;
@@ -1266,21 +1338,30 @@ function adjustStock(action, items, options={}) {
             var item_pk_values = [];
 
             items.forEach(function(item) {
-                var pk = item.pk;
+                let pk = item.pk;
 
                 // Does the row exist in the form?
-                var row = $(opts.modal).find(`#stock_item_${pk}`);
+                let row = $(opts.modal).find(`#stock_item_${pk}`);
 
                 if (row.exists()) {
 
                     item_pk_values.push(pk);
 
-                    var quantity = getFormFieldValue(`items_quantity_${pk}`, {}, opts);
-
-                    data.items.push({
+                    let quantity = getFormFieldValue(`items_quantity_${pk}`, {}, opts);
+                    let line = {
                         pk: pk,
-                        quantity: quantity,
-                    });
+                        quantity: quantity
+                    };
+
+                    if (getFormFieldElement(`items_batch_code_${pk}`).exists()) {
+                        line.batch = getFormFieldValue(`items_batch_code_${pk}`);
+                    }
+
+                    if (getFormFieldElement(`items_packaging_${pk}`).exists()) {
+                        line.packaging = getFormFieldValue(`items_packaging_${pk}`);
+                    }
+
+                    data.items.push(line);
                 }
             });
 

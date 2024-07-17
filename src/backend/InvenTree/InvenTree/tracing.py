@@ -22,9 +22,6 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExport
 import InvenTree.ready
 from InvenTree.version import inventreeVersion
 
-# Logger configuration
-logger = logging.getLogger('inventree')
-
 
 def setup_tracing(
     endpoint: str,
@@ -45,6 +42,9 @@ def setup_tracing(
     """
     if InvenTree.ready.isImportingData() or InvenTree.ready.isRunningMigrations():
         return
+
+    # Logger configuration
+    logger = logging.getLogger('inventree')
 
     if resources_input is None:
         resources_input = {}

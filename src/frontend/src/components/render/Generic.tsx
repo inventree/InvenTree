@@ -14,3 +14,11 @@ export function RenderProjectCode({
     )
   );
 }
+
+export function RenderImportSession({
+  instance
+}: {
+  instance: any;
+}): ReactNode {
+  return instance && <RenderInlineModel primary={instance.data_file} />;
+}

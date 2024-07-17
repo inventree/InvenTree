@@ -1,15 +1,20 @@
 import { t } from '@lingui/macro';
 import { Flex, Group, NumberInput, Skeleton, Table, Text } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Suspense, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
+import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   ApiFormAdjustFilterType,
+  ApiFormField,
   ApiFormFieldSet
 } from '../components/forms/fields/ApiFormField';
+import { ChoiceField } from '../components/forms/fields/ChoiceField';
+import { TableFieldExtraRow } from '../components/forms/fields/TableField';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { StylishText } from '../components/items/StylishText';
 import { StatusRenderer } from '../components/render/StatusRenderer';
@@ -319,9 +324,29 @@ function StockOperationsRow({
     [item]
   );
 
+  const changeSubItem = useCallback(
+    (key: string, value: any) => {
+      input.changeFn(input.idx, key, value);
+    },
+    [input]
+  );
+
   const removeAndRefresh = () => {
     input.removeFn(input.idx);
   };
+
+  const [packagingOpen, packagingHandlers] = useDisclosure(false, {
+    onOpen: () => {
+      if (transfer) {
+        input.changeFn(input.idx, 'packaging', record?.packaging || undefined);
+      }
+    },
+    onClose: () => {
+      if (transfer) {
+        input.changeFn(input.idx, 'packaging', undefined);
+      }
+    }
+  });
 
   const stockString: string = useMemo(() => {
     if (!record) {
@@ -338,64 +363,91 @@ function StockOperationsRow({
   return !record ? (
     <div>{t`Loading...`}</div>
   ) : (
-    <Table.Tr>
-      <Table.Td>
-        <Flex gap="sm" align="center">
-          <Thumbnail
-            size={40}
-            src={record.part_detail?.thumbnail}
-            align="center"
-          />
-          <div>{record.part_detail?.name}</div>
-        </Flex>
-      </Table.Td>
-      <Table.Td>
-        {record.location ? record.location_detail?.pathstring : '-'}
-      </Table.Td>
-      <Table.Td>
-        <Flex align="center" gap="xs">
-          <Group justify="space-between">
-            <Text>{stockString}</Text>
-            <StatusRenderer status={record.status} type={ModelType.stockitem} />
-          </Group>
-        </Flex>
-      </Table.Td>
-      {!merge && (
+    <>
+      <Table.Tr>
         <Table.Td>
-          <NumberInput
-            value={value}
-            onChange={onChange}
-            disabled={!!record.serial && record.quantity == 1}
-            max={setMax ? record.quantity : undefined}
-            min={0}
-            style={{ maxWidth: '100px' }}
-          />
-        </Table.Td>
-      )}
-      <Table.Td>
-        <Flex gap="3px">
-          {transfer && (
-            <ActionButton
-              onClick={() => moveToDefault(record, value, removeAndRefresh)}
-              icon={<InvenTreeIcon icon="default_location" />}
-              tooltip={t`Move to default location`}
-              tooltipAlignment="top"
-              disabled={
-                !record.part_detail?.default_location &&
-                !record.part_detail?.category_default_location
-              }
+          <Flex gap="sm" align="center">
+            <Thumbnail
+              size={40}
+              src={record.part_detail?.thumbnail}
+              align="center"
             />
-          )}
-          <ActionButton
-            onClick={() => input.removeFn(input.idx)}
-            icon={<InvenTreeIcon icon="square_x" />}
-            tooltip={t`Remove item from list`}
-            tooltipAlignment="top"
-            color="red"
-          />
-        </Flex>
-      </Table.Td>
-    </Table.Tr>
+            <div>{record.part_detail?.name}</div>
+          </Flex>
+        </Table.Td>
+        <Table.Td>
+          {record.location ? record.location_detail?.pathstring : '-'}
+        </Table.Td>
+        <Table.Td>
+          <Flex align="center" gap="xs">
+            <Group justify="space-between">
+              <Text>{stockString}</Text>
+              <StatusRenderer
+                status={record.status}
+                type={ModelType.stockitem}
+              />
+            </Group>
+          </Flex>
+        </Table.Td>
+        {!merge && (
+          <Table.Td>
+            <NumberInput
+              value={value}
+              onChange={onChange}
+              disabled={!!record.serial && record.quantity == 1}
+              max={setMax ? record.quantity : undefined}
+              min={0}
+              style={{ maxWidth: '100px' }}
+            />
+          </Table.Td>
+        )}
+        <Table.Td>
+          <Flex gap="3px">
+            {transfer && (
+              <ActionButton
+                onClick={() => moveToDefault(record, value, removeAndRefresh)}
+                icon={<InvenTreeIcon icon="default_location" />}
+                tooltip={t`Move to default location`}
+                tooltipAlignment="top"
+                disabled={
+                  !record.part_detail?.default_location &&
+                  !record.part_detail?.category_default_location
+                }
+              />
+            )}
+            {transfer && (
+              <ActionButton
+                size="sm"
+                icon={<InvenTreeIcon icon="packaging" />}
+                tooltip={t`Adjust Packaging`}
+                onClick={() => packagingHandlers.toggle()}
+                variant={packagingOpen ? 'filled' : 'transparent'}
+              />
+            )}
+            <ActionButton
+              onClick={() => input.removeFn(input.idx)}
+              icon={<InvenTreeIcon icon="square_x" />}
+              tooltip={t`Remove item from list`}
+              tooltipAlignment="top"
+              color="red"
+            />
+          </Flex>
+        </Table.Td>
+      </Table.Tr>
+      {transfer && (
+        <TableFieldExtraRow
+          visible={transfer && packagingOpen}
+          onValueChange={(value: any) => {
+            input.changeFn(input.idx, 'packaging', value || undefined);
+          }}
+          fieldDefinition={{
+            field_type: 'string',
+            label: t`Packaging`
+          }}
+          defaultValue={record.packaging}
+        />
+      )}
+    </>
   );
 }
 
@@ -850,7 +902,7 @@ export function useDeleteStockItem(props: StockOperationProps) {
   });
 }
 
-export function stockLocationFields({}: {}): ApiFormFieldSet {
+export function stockLocationFields(): ApiFormFieldSet {
   let fields: ApiFormFieldSet = {
     parent: {
       description: t`Parent stock location`,
@@ -860,7 +912,7 @@ export function stockLocationFields({}: {}): ApiFormFieldSet {
     description: {},
     structural: {},
     external: {},
-    icon: {},
+    custom_icon: {},
     location_type: {}
   };
 

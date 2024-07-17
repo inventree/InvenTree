@@ -37,6 +37,10 @@ Change how logins, password-forgot, signups are handled.
 | Enable registration | Boolean | Enable self-registration for users on the login-pages | False |
 | Enable SSO | Boolean | Enable SSO on the login-pages | False |
 | Enable SSO registration | Boolean | Enable self-registration for users via SSO on the login-pages | False |
+| Enable SSO group sync | Boolean | Enable synchronizing InvenTree groups directly from the IdP | False |
+| SSO group key | String | The name of the groups claim attribute provided by the IdP | |
+| SSO group map | String (JSON) | A mapping from SSO groups to local InvenTree groups | {} |
+| Remove groups outside of SSO | Boolean | Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues | True |
 | Enable password forgot | Boolean | Enable password forgot function on the login-pages.<br><br>This will let users reset their passwords on their own. For this feature to work you need to configure E-mail | True |
 | E-Mail required | Boolean | Require user to supply e-mail on signup.<br><br>Without a way (e-mail) to contact the user notifications and security features might not work! | False |
 | Enforce MFA | Boolean | Users must use multifactor security.<br><br>This forces each user to setup MFA and use it on each authentication | False |

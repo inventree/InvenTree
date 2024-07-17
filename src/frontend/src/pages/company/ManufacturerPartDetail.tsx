@@ -1,10 +1,11 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconDots,
   IconInfoCircle,
   IconList,
+  IconNotes,
   IconPaperclip
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -14,12 +15,14 @@ import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -44,7 +47,8 @@ export default function ManufacturerPartDetail() {
   const {
     instance: manufacturerPart,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
@@ -177,6 +181,18 @@ export default function ManufacturerPartDetail() {
             model_id={manufacturerPart?.pk}
           />
         )
+      },
+      {
+        name: 'notes',
+        label: t`Notes`,
+        icon: <IconNotes />,
+        content: (
+          <NotesEditor
+            modelType={ModelType.manufacturerpart}
+            modelId={manufacturerPart.pk}
+            editable={user.hasChangeRole(UserRoles.purchase_order)}
+          />
+        )
       }
     ];
   }, [manufacturerPart]);
@@ -244,17 +260,18 @@ export default function ManufacturerPartDetail() {
   return (
     <>
       {editManufacturerPart.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`ManufacturerPart`}
-          subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
-          breadcrumbs={breadcrumbs}
-          actions={manufacturerPartActions}
-          imageUrl={manufacturerPart?.part_detail?.thumbnail}
-        />
-        <PanelGroup pageKey="manufacturerpart" panels={panels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`ManufacturerPart`}
+            subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
+            breadcrumbs={breadcrumbs}
+            actions={manufacturerPartActions}
+            imageUrl={manufacturerPart?.part_detail?.thumbnail}
+          />
+          <PanelGroup pageKey="manufacturerpart" panels={panels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

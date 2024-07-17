@@ -97,6 +97,9 @@ if __name__ == '__main__':
         )
         text = version_file.read_text()
         results = re.findall(r"""INVENTREE_API_VERSION = (.*)""", text)
+        # If 2. args is true lower the version number by 1
+        if len(sys.argv) > 2 and sys.argv[2] == 'true':
+            results[0] = str(int(results[0]) - 1)
         print(results[0])
         exit(0)
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'

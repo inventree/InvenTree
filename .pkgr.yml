@@ -14,6 +14,7 @@ env:
   - INVENTREE_BACKUP_DIR=/opt/inventree/backup
   - INVENTREE_PLUGIN_FILE=/opt/inventree/plugins.txt
   - INVENTREE_CONFIG_FILE=/opt/inventree/config.yaml
+before_install: contrib/packager.io/preinstall.sh
 after_install: contrib/packager.io/postinstall.sh
 before:
   - contrib/packager.io/before.sh

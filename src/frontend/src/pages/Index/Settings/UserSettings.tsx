@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconDeviceDesktop,
@@ -23,6 +23,11 @@ import { AccountContent } from './AccountSettings/UserPanel';
  * User settings page
  */
 export default function UserSettings() {
+  const [user, isLoggedIn] = useUserState((state) => [
+    state.user,
+    state.isLoggedIn
+  ]);
+
   const userSettingsPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -109,7 +114,10 @@ export default function UserSettings() {
       }
     ];
   }, []);
-  const [user] = useUserState((state) => [state.user]);
+
+  if (!isLoggedIn()) {
+    return <Skeleton />;
+  }
 
   return (
     <>

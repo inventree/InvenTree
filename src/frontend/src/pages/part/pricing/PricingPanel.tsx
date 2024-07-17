@@ -21,10 +21,9 @@ function AccordionControl(props: AccordionControlProps) {
   return (
     <Box style={{ display: 'flex', alignItems: 'center' }}>
       {props.disabled && (
-        <Tooltip
-          label={t`No data available`}
-          children={<IconAlertCircle size="1rem" color="gray" />}
-        />
+        <Tooltip label={t`No data available`}>
+          <IconAlertCircle size="1rem" color="gray" />
+        </Tooltip>
       )}
       <Accordion.Control
         {...props}

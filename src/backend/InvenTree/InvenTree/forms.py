@@ -190,7 +190,7 @@ class CustomSignupForm(SignupForm):
 
         # check for two password fields
         if not get_global_setting('LOGIN_SIGNUP_PWD_TWICE'):
-            self.fields.pop('password2')
+            self.fields.pop('password2', None)
 
         # reorder fields
         set_form_field_order(
@@ -269,7 +269,9 @@ class RegistratonMixin:
 
         # Check if a default group is set in settings
         start_group = get_global_setting('SIGNUP_GROUP')
-        if start_group:
+        if (
+            start_group and user.groups.count() == 0
+        ):  # check that no group has been added through SSO group sync
             try:
                 group = Group.objects.get(id=start_group)
                 user.groups.add(group)

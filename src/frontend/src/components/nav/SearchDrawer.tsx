@@ -275,8 +275,7 @@ export function SearchDrawer({
   // Search query manager
   const searchQuery = useQuery({
     queryKey: ['search', searchText, searchRegex, searchWhole],
-    queryFn: performSearch,
-    refetchOnWindowFocus: false
+    queryFn: performSearch
   });
 
   // A list of queries which return valid results
