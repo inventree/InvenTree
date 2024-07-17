@@ -458,6 +458,7 @@ class PurchaseOrderLineItemSerializer(
         queryset=part_models.SupplierPart.objects.all(),
         many=False,
         required=True,
+        allow_null=True,
         label=_('Supplier Part'),
     )
 
