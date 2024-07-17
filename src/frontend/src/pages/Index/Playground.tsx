@@ -27,7 +27,7 @@ import {
 } from '../../hooks/UseForm';
 
 // Generate some example forms using the modal API forms interface
-const fields = partCategoryFields({});
+const fields = partCategoryFields();
 
 function ApiFormsPlayground() {
   const editCategory = useEditApiFormModal({

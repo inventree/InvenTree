@@ -5,7 +5,7 @@ import { NavigateFunction } from 'react-router-dom';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl, useServerApiState } from '../states/ApiState';
+import { apiUrl } from '../states/ApiState';
 import { useLocalState } from '../states/LocalState';
 import { useUserState } from '../states/UserState';
 import { fetchGlobalStates } from '../states/states';
@@ -47,8 +47,7 @@ function post(path: string, params: any, method = 'post') {
  */
 export const doBasicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState, isLoggedIn } =
-    useUserState.getState();
+  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -96,7 +95,7 @@ export const doBasicLogin = async (username: string, password: string) => {
 
   if (result) {
     await fetchUserState();
-    await fetchGlobalStates();
+    fetchGlobalStates();
   } else {
     clearUserState();
   }
