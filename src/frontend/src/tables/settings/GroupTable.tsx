@@ -13,9 +13,11 @@ import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import AdminButton from '../../components/buttons/AdminButton';
 import { EditApiForm } from '../../components/forms/ApiForm';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -108,10 +110,12 @@ export function GroupDrawer({
         }}
         id={`group-detail-drawer-${id}`}
       />
-
-      <Title order={5}>
-        <Trans>Permission set</Trans>
-      </Title>
+      <Group justify="space-between">
+        <Title order={5}>
+          <Trans>Permission set</Trans>
+        </Title>
+        <AdminButton model={ModelType.group} pk={instance.pk} />
+      </Group>
       <Group>{permissionsAccordion}</Group>
     </Stack>
   );
