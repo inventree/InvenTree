@@ -75,7 +75,7 @@ def barcode(data, barcode_class='code128', **kwargs):
     """Render a barcode."""
     constructor = python_barcode.get_barcode_class(barcode_class)
 
-    format = kwargs.pop('format', 'PNG')
+    img_format = kwargs.pop('format', 'PNG')
 
     data = str(data).zfill(constructor.digits)
 
@@ -86,4 +86,4 @@ def barcode(data, barcode_class='code128', **kwargs):
     image = barcode_image.render(writer_options=kwargs)
 
     # Render to byte-encoded image
-    return image_data(image, fmt=format)
+    return image_data(image, fmt=img_format)

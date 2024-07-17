@@ -81,7 +81,9 @@ export const PdfPreviewComponent: PreviewAreaComponent = forwardRef(
             <Trans>Preview not available, click "Reload Preview".</Trans>
           </div>
         )}
-        {pdfUrl && <iframe src={pdfUrl} width="100%" height="100%" />}
+        {pdfUrl && (
+          <iframe src={pdfUrl} width="100%" height="100%" title="PDF Preview" />
+        )}
       </>
     );
   }
