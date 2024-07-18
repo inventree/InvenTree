@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-17 13:47+0000\n"
+"POT-Creation-Date: 2024-07-18 06:31+0000\n"
 "PO-Revision-Date: 2024-07-17 16:39\n"
 "Last-Translator: \n"
 "Language-Team: Latvian\n"
@@ -9230,15 +9230,15 @@ msgstr ""
 msgid "Asset file does not exist"
 msgstr ""
 
-#: report/templatetags/report.py:152 report/templatetags/report.py:217
+#: report/templatetags/report.py:152 report/templatetags/report.py:231
 msgid "Image file not found"
 msgstr ""
 
-#: report/templatetags/report.py:242
+#: report/templatetags/report.py:256
 msgid "part_image tag requires a Part instance"
 msgstr ""
 
-#: report/templatetags/report.py:283
+#: report/templatetags/report.py:297
 msgid "company_image tag requires a Company instance"
 msgstr ""
 
@@ -15009,4 +15009,3 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
-

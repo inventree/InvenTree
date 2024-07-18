@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-17 13:47+0000\n"
+"POT-Creation-Date: 2024-07-18 06:31+0000\n"
 "PO-Revision-Date: 2024-07-17 16:37\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
@@ -9230,15 +9230,15 @@ msgstr "Seriennummer"
 msgid "Asset file does not exist"
 msgstr "Die Bestandsdatei ist nicht vorhanden"
 
-#: report/templatetags/report.py:152 report/templatetags/report.py:217
+#: report/templatetags/report.py:152 report/templatetags/report.py:231
 msgid "Image file not found"
 msgstr "Bilddatei nicht gefunden"
 
-#: report/templatetags/report.py:242
+#: report/templatetags/report.py:256
 msgid "part_image tag requires a Part instance"
 msgstr "part_image tag benötigt eine Bauteilinstanz"
 
-#: report/templatetags/report.py:283
+#: report/templatetags/report.py:297
 msgid "company_image tag requires a Company instance"
 msgstr "company_image tag erfordert eine Firmeninstanz"
 
@@ -15009,4 +15009,3 @@ msgstr "Berechtigungen Einträge zu ändern"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Berechtigung Einträge zu löschen"
-
