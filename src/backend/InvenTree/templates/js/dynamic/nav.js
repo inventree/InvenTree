@@ -163,7 +163,13 @@ function generateTreeStructure(data, options) {
     const nodes = {};
     const roots = [];
 
-    for (let node of data) {
+    if (!data || !Array.isArray(data) || data.length == 0) {
+        return [];
+    }
+
+    for (let ii = 0; ii < data.length; ii++) {
+        let node = data[ii];
+
         nodes[node.pk] = node;
         node.selectable = false;
 
@@ -173,11 +179,15 @@ function generateTreeStructure(data, options) {
         };
 
         if (options.processNode) {
-            data[data.indexOf(node)] = options.processNode(node);
+            node = options.processNode(node);
+            data[ii] = node;
         }
     }
 
-    for (let node of data) {
+    for (let ii = 0; ii < data.length; ii++) {
+
+        let node = data[ii];
+
         if (node.parent != null) {
             if (nodes[node.parent].nodes) {
                 nodes[node.parent].nodes.push(node);
@@ -188,7 +198,7 @@ function generateTreeStructure(data, options) {
             if (node.state.expanded) {
                 while (node.parent != null) {
                     nodes[node.parent].state.expanded = true;
-                    data[data.indexOf(node)] = nodes[node.parent];
+                    node = nodes[node.parent];
                 }
             }
 
