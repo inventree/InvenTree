@@ -31,11 +31,7 @@ export enum panelOptions {
 export default function PartPricingPanel({ part }: { part: any }) {
   const user = useUserState();
 
-  const {
-    instance: pricing,
-    refreshInstance,
-    instanceQuery
-  } = useInstance({
+  const { instance: pricing, instanceQuery } = useInstance({
     pk: part?.pk,
     hasPrimaryKey: true,
     endpoint: ApiEndpoints.part_pricing_get,
