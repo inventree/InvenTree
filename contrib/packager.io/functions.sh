@@ -60,7 +60,7 @@ function detect_python() {
   fi
 
   # Try to detect a python between 3.9 and 3.12 in reverse order
-  if [ -z "${SETUP_PYTHON}" ]; then
+  if [ -z "$(which ${SETUP_PYTHON})" ]; then
     echo "# Trying to detecting python3.${PYTHON_FROM} to python3.${PYTHON_TO} - using newest version"
     for i in $(seq $PYTHON_TO -1 $PYTHON_FROM); do
       echo "# Checking for python3.${i}"
