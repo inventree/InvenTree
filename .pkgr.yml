@@ -17,6 +17,7 @@ env:
   - APP_REPO=inventree/InvenTree
 before_install: contrib/packager.io/preinstall.sh
 after_install: contrib/packager.io/postinstall.sh
+before_remove: contrib/packager.io/preinstall.sh
 before:
   - contrib/packager.io/before.sh
 dependencies:
