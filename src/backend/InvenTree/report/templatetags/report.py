@@ -170,6 +170,18 @@ def uploaded_image(
     width = kwargs.get('width', None)
     height = kwargs.get('height', None)
 
+    if width is not None:
+        try:
+            width = int(width)
+        except ValueError:
+            width = None
+
+    if height is not None:
+        try:
+            height = int(height)
+        except ValueError:
+            height = None
+
     if width is not None and height is not None:
         # Resize the image, width *and* height are provided
         img = img.resize((width, height))
