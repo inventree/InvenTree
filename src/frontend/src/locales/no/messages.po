@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-17 16:38\n"
+"PO-Revision-Date: 2024-07-18 16:37\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3559,7 +3559,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:170
 #~ msgid "Location types"
-#~ msgstr ""
+#~ msgstr "Location types"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:182
 #: src/tables/machine/MachineTypeTable.tsx:287
@@ -5196,19 +5196,19 @@ msgstr "Denne handlingen kan ikke angres!"
 
 #: src/tables/InvenTreeTable.tsx:510
 #~ msgid "Are you sure you want to delete the selected records?"
-#~ msgstr "Er du sikker på at du vil slette valgte oppføringer?"
+#~ msgstr "Are you sure you want to delete the selected records?"
 
 #: src/tables/InvenTreeTable.tsx:535
 #~ msgid "Deleted records"
-#~ msgstr "Slettede oppføringer"
+#~ msgstr "Deleted records"
 
 #: src/tables/InvenTreeTable.tsx:536
 #~ msgid "Records were deleted successfully"
-#~ msgstr "Oppføringer slettet"
+#~ msgstr "Records were deleted successfully"
 
 #: src/tables/InvenTreeTable.tsx:545
 #~ msgid "Failed to delete records"
-#~ msgstr "Kunne ikke slette oppføringer"
+#~ msgstr "Failed to delete records"
 
 #: src/tables/InvenTreeTable.tsx:585
 #: src/tables/InvenTreeTable.tsx:586
@@ -7397,3 +7397,4 @@ msgstr "Les dokumentasjonen"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
