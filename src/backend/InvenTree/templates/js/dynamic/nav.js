@@ -188,7 +188,7 @@ function generateTreeStructure(data, options) {
 
         let node = data[ii];
 
-        if (node.parent != null) {
+        if (!!node.parent) {
             if (nodes[node.parent].nodes) {
                 nodes[node.parent].nodes.push(node);
             } else {
@@ -196,7 +196,7 @@ function generateTreeStructure(data, options) {
             }
 
             if (node.state.expanded) {
-                while (node.parent != null) {
+                while (!!node.parent) {
                     nodes[node.parent].state.expanded = true;
                     node = nodes[node.parent];
                 }
