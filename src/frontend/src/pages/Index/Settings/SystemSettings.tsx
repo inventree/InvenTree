@@ -169,12 +169,6 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'categories',
-        label: t`Part Categories`,
-        icon: <IconSitemap />,
-        content: <PlaceholderPanel />
-      },
-      {
         name: 'parts',
         label: t`Parts`,
         icon: <IconCategory />,

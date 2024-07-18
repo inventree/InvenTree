@@ -45,6 +45,7 @@ import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
+import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
@@ -495,66 +496,34 @@ export function InvenTreeTable<T = any>({
     tableState.setRecords(data ?? []);
   }, [data]);
 
-  // Callback function to delete the selected records in the table
-  const deleteSelectedRecords = useCallback((ids: number[]) => {
-    if (ids.length == 0) {
-      // Ignore if no records are selected
-      return;
-    }
-
-    modals.openConfirmModal({
-      title: t`Delete selected records`,
-      children: (
-        <Alert
-          color="red"
-          title={t`Are you sure you want to delete the selected records?`}
-        >
-          {t`This action cannot be undone!`}
-        </Alert>
-      ),
-      labels: {
-        confirm: t`Delete`,
-        cancel: t`Cancel`
-      },
-      confirmProps: {
-        color: 'red'
-      },
-      onConfirm: () => {
-        api
-          .delete(url, {
-            data: {
-              items: ids
-            }
-          })
-          .then((_response) => {
-            // Refresh the table
-            refetch();
-
-            // Show notification
-            showNotification({
-              title: t`Deleted records`,
-              message: t`Records were deleted successfully`,
-              color: 'green'
-            });
-          })
-          .catch((_error) => {
-            console.warn(`Bulk delete operation failed at ${url}`);
-
-            showNotification({
-              title: t`Error`,
-              message: t`Failed to delete records`,
-              color: 'red'
-            });
-          })
-          .finally(() => {
-            tableState.clearSelectedRecords();
-            if (props.afterBulkDelete) {
-              props.afterBulkDelete();
-            }
-          });
+  const deleteRecords = useDeleteApiFormModal({
+    url: url,
+    title: t`Delete Selected Items`,
+    preFormContent: (
+      <Alert
+        color="red"
+        title={t`Are you sure you want to delete the selected items?`}
+      >
+        {t`This action cannot be undone!`}
+      </Alert>
+    ),
+    initialData: {
+      items: tableState.selectedIds
+    },
+    fields: {
+      items: {
+        hidden: true
       }
-    });
-  }, []);
+    },
+    onFormSuccess: () => {
+      tableState.clearSelectedRecords();
+      tableState.refreshTable();
+
+      if (props.afterBulkDelete) {
+        props.afterBulkDelete();
+      }
+    }
+  });
 
   // Callback when a row is clicked
   const handleRowClick = useCallback(
@@ -587,6 +556,7 @@ export function InvenTreeTable<T = any>({
 
   return (
     <>
+      {deleteRecords.modal}
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
         <Boundary label="table-filter-drawer">
           <FilterSelectDrawer
@@ -623,7 +593,9 @@ export function InvenTreeTable<T = any>({
                   icon={<IconTrash />}
                   color="red"
                   tooltip={t`Delete selected records`}
-                  onClick={() => deleteSelectedRecords(tableState.selectedIds)}
+                  onClick={() => {
+                    deleteRecords.open();
+                  }}
                 />
               )}
               {tableProps.tableActions?.map((group, idx) => (
