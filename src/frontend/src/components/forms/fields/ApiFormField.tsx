@@ -149,7 +149,7 @@ export function ApiFormField({
       label: hideLabels ? undefined : definition.label,
       description: hideLabels ? undefined : definition.description
     };
-  }, [definition]);
+  }, [hideLabels, definition]);
 
   // pull out onValueChange as this can cause strange errors when passing the
   // definition to the input components via spread syntax
@@ -202,7 +202,7 @@ export function ApiFormField({
     }
 
     return val;
-  }, [value]);
+  }, [definition.field_type, value]);
 
   // Coerce the value to a (stringified) boolean value
   const booleanValue: boolean = useMemo(() => {
