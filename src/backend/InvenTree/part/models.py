@@ -50,6 +50,7 @@ import users.models
 from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
+from common.icons import validate_icon
 from common.models import InvenTreeSetting
 from common.settings import get_global_setting, set_global_setting
 from company.models import SupplierPart
@@ -128,6 +129,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
+        validators=[validate_icon],
     )
 
     @staticmethod
