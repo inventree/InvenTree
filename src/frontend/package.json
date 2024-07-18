@@ -51,6 +51,7 @@
         "codemirror": ">=6.0.0",
         "dayjs": "^1.11.10",
         "embla-carousel-react": "^8.1.6",
+        "fuse.js": "^7.0.0",
         "html5-qrcode": "^2.3.8",
         "mantine-datatable": "^7.11.1",
         "react": "^18.3.1",

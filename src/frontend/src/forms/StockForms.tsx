@@ -912,7 +912,9 @@ export function stockLocationFields(): ApiFormFieldSet {
     description: {},
     structural: {},
     external: {},
-    custom_icon: {},
+    custom_icon: {
+      field_type: 'icon'
+    },
     location_type: {}
   };
 

@@ -1,5 +1,6 @@
 import { setApiDefaults } from '../App';
 import { useServerApiState } from './ApiState';
+import { useIconState } from './IconState';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
 import { useUserState } from './UserState';
@@ -138,4 +139,5 @@ export function fetchGlobalStates() {
   useUserSettingsState.getState().fetchSettings();
   useGlobalSettingsState.getState().fetchSettings();
   useGlobalStatusState.getState().fetchStatus();
+  useIconState.getState().fetchIcons();
 }

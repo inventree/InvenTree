@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
+import { ApiIcon } from '../items/ApiIcon';
 import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
@@ -36,7 +37,7 @@ export function RenderStockLocationType({
   return (
     <RenderInlineModel
       primary={instance.name}
-      // TODO: render location icon here too (ref: #7237)
+      prefix={instance.icon && <ApiIcon name={instance.icon} />}
       secondary={instance.description + ` (${instance.location_count})`}
     />
   );
