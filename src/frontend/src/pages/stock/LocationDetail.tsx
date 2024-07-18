@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Skeleton, Stack, Text } from '@mantine/core';
+import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -23,6 +23,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -85,7 +86,13 @@ export default function Stock() {
         type: 'text',
         name: 'name',
         label: t`Name`,
-        copy: true
+        copy: true,
+        value_formatter: () => (
+          <Group gap="xs">
+            {location.icon && <ApiIcon name={location.icon} />}
+            {location.name}
+          </Group>
+        )
       },
       {
         type: 'text',
@@ -347,7 +354,8 @@ export default function Stock() {
       { name: t`Stock`, url: '/stock' },
       ...(location.path ?? []).map((l: any) => ({
         name: l.name,
-        url: getDetailUrl(ModelType.stocklocation, l.pk)
+        url: getDetailUrl(ModelType.stocklocation, l.pk),
+        icon: l.icon ? <ApiIcon name={l.icon} /> : undefined
       }))
     ],
     [location]

@@ -119,6 +119,8 @@ class StockLocation(
 
     ITEM_PARENT_KEY = 'location'
 
+    EXTRA_PATH_FIELDS = ['icon']
+
     objects = StockLocationManager()
 
     class Meta:

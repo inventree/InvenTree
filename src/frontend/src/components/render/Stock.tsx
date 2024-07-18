@@ -17,6 +17,7 @@ export function RenderStockLocation(
   return (
     <RenderInlineModel
       {...props}
+      prefix={instance.icon && <ApiIcon name={instance.icon} />}
       primary={instance.name}
       secondary={instance.description}
       url={

@@ -81,6 +81,8 @@ class PartCategory(InvenTree.models.InvenTreeTree):
 
     ITEM_PARENT_KEY = 'category'
 
+    EXTRA_PATH_FIELDS = ['icon']
+
     class Meta:
         """Metaclass defines extra model properties."""
 

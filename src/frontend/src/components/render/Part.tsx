@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
+import { ApiIcon } from '../items/ApiIcon';
 import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
@@ -60,6 +61,7 @@ export function RenderPartCategory(
   return (
     <RenderInlineModel
       {...props}
+      prefix={instance.icon && <ApiIcon name={instance.icon} />}
       primary={`${lvl} ${instance.name}`}
       secondary={instance.description}
       url={
