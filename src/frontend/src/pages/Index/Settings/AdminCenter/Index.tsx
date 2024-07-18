@@ -167,7 +167,7 @@ export default function AdminCenter() {
       },
       {
         name: 'location-types',
-        label: t`Location types`,
+        label: t`Location Types`,
         icon: <IconPackages />,
         content: <LocationTypesTable />
       },
