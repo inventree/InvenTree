@@ -333,7 +333,7 @@ export function ApiForm({
   // Fetch initial data on form load
   useEffect(() => {
     // Fetch initial data if the fetchInitialData property is set
-    if (props.fetchInitialData) {
+    if (!optionsLoading && props.fetchInitialData) {
       queryClient.removeQueries({
         queryKey: [
           'form-initial-data',
@@ -346,7 +346,7 @@ export function ApiForm({
       });
       initialDataQuery.refetch();
     }
-  }, [props.fetchInitialData]);
+  }, [props.fetchInitialData, optionsLoading]);
 
   const isLoading = useMemo(
     () =>
