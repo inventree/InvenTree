@@ -28,7 +28,6 @@ test('PUI - Admin', async ({ page }) => {
   await page.getByRole('tab', { name: 'Pricing' }).click();
   await page.getByRole('tab', { name: 'Labels' }).click();
   await page.getByRole('tab', { name: 'Reporting' }).click();
-  await page.getByRole('tab', { name: 'Part Categories' }).click();
 
   await page.getByRole('tab', { name: 'Stocktake' }).click();
   await page.getByRole('tab', { name: 'Build Orders' }).click();

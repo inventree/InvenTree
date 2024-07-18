@@ -9,7 +9,7 @@ import {
   IconPaperclip
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -29,8 +29,10 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -43,6 +45,7 @@ import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
   const user = useUserState();
+  const navigate = useNavigate();
 
   const {
     instance: manufacturerPart,
@@ -218,6 +221,15 @@ export default function ManufacturerPartDetail() {
     modelType: ModelType.manufacturerpart
   });
 
+  const deleteManufacturerPart = useDeleteApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    pk: manufacturerPart?.pk,
+    title: t`Delete Manufacturer Part`,
+    onFormSuccess: () => {
+      navigate(getDetailUrl(ModelType.part, manufacturerPart.part));
+    }
+  });
+
   const manufacturerPartActions = useMemo(() => {
     return [
       <AdminButton
@@ -237,7 +249,8 @@ export default function ManufacturerPartDetail() {
             onClick: () => editManufacturerPart.open()
           }),
           DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+            onClick: () => deleteManufacturerPart.open()
           })
         ]}
       />
@@ -259,6 +272,8 @@ export default function ManufacturerPartDetail() {
 
   return (
     <>
+      {deleteManufacturerPart.modal}
+      {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">

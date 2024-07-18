@@ -139,6 +139,7 @@ export function OptionsApiForm({
       if (!props.ignorePermissionCheck) {
         fields = extractAvailableFields(response, props.method);
       }
+
       return fields;
     },
     throwOnError: (error: any) => {
@@ -183,7 +184,7 @@ export function OptionsApiForm({
     <ApiForm
       id={id}
       props={formProps}
-      optionsLoading={optionsQuery.isFetching}
+      optionsLoading={optionsQuery.isFetching || !optionsQuery.data}
     />
   );
 }
@@ -206,9 +207,6 @@ export function ApiForm({
   const [fields, setFields] = useState<ApiFormFieldSet>(
     () => props.fields ?? {}
   );
-  useEffect(() => {
-    setFields(props.fields ?? {});
-  }, [props.fields]);
 
   const defaultValues: FieldValues = useMemo(() => {
     let defaultValuesMap = mapFields(fields ?? {}, (_path, field) => {
@@ -314,10 +312,23 @@ export function ApiForm({
       } catch (error) {
         console.error('ERR: Error fetching initial data:', error);
         // Re-throw error to allow react-query to handle error
-        throw error;
+        return {};
       }
     }
   });
+
+  useEffect(() => {
+    let _fields = props.fields ?? {};
+
+    // Ensure default values override initial field spec
+    for (const k of Object.keys(_fields)) {
+      if (defaultValues[k]) {
+        _fields[k].value = defaultValues[k];
+      }
+    }
+
+    setFields(_fields);
+  }, [props.fields, defaultValues, initialDataQuery.data]);
 
   // Fetch initial data on form load
   useEffect(() => {
@@ -559,21 +570,23 @@ export function ApiForm({
                 )}
               </Boundary>
               <Boundary label={`ApiForm-${id}-FormContent`}>
-                <FormProvider {...form}>
-                  <Stack gap="xs">
-                    {!optionsLoading &&
-                      Object.entries(fields).map(([fieldName, field]) => (
-                        <ApiFormField
-                          key={fieldName}
-                          fieldName={fieldName}
-                          definition={field}
-                          control={form.control}
-                          url={url}
-                          setFields={setFields}
-                        />
-                      ))}
-                  </Stack>
-                </FormProvider>
+                {!isLoading && (
+                  <FormProvider {...form}>
+                    <Stack gap="xs">
+                      {!optionsLoading &&
+                        Object.entries(fields).map(([fieldName, field]) => (
+                          <ApiFormField
+                            key={fieldName}
+                            fieldName={fieldName}
+                            definition={field}
+                            control={form.control}
+                            url={url}
+                            setFields={setFields}
+                          />
+                        ))}
+                    </Stack>
+                  </FormProvider>
+                )}
               </Boundary>
               <Boundary label={`ApiForm-${id}-PostFormContent`}>
                 {props.postFormContent}

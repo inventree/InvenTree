@@ -9,7 +9,7 @@ import {
   IconShoppingCart
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
@@ -30,8 +30,10 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -45,6 +47,8 @@ export default function SupplierPartDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const navigate = useNavigate();
 
   const {
     instance: supplierPart,
@@ -271,10 +275,11 @@ export default function SupplierPartDetail() {
           }),
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
-            onClick: () => editSuppliertPart.open()
+            onClick: () => editSupplierPart.open()
           }),
           DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+            onClick: () => deleteSupplierPart.open()
           })
         ]}
       />
@@ -283,12 +288,21 @@ export default function SupplierPartDetail() {
 
   const supplierPartFields = useSupplierPartFields();
 
-  const editSuppliertPart = useEditApiFormModal({
+  const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: supplierPart?.pk,
     title: t`Edit Supplier Part`,
     fields: supplierPartFields,
     onFormSuccess: refreshInstance
+  });
+
+  const deleteSupplierPart = useDeleteApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    pk: supplierPart?.pk,
+    title: t`Delete Supplier Part`,
+    onFormSuccess: () => {
+      navigate(getDetailUrl(ModelType.part, supplierPart.part));
+    }
   });
 
   const duplicateSupplierPart = useCreateApiFormModal({
@@ -327,7 +341,9 @@ export default function SupplierPartDetail() {
 
   return (
     <>
-      {editSuppliertPart.modal}
+      {deleteSupplierPart.modal}
+      {duplicateSupplierPart.modal}
+      {editSupplierPart.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">
           <PageDetail
