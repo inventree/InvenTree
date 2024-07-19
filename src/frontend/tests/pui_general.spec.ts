@@ -195,4 +195,13 @@ test('PUI - Company', async ({ page }) => {
   await page.getByRole('cell', { name: 'Carla Tunnel' }).waitFor();
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByRole('tab', { name: 'Notes' }).click();
+
+  // Let's edit the company details
+  await page.getByLabel('action-menu-company-actions').click();
+  await page.getByLabel('action-menu-company-actions-edit').click();
+
+  await page.getByLabel('text-field-website').fill('invalid-website');
+  await page.getByRole('button', { name: 'Submit' }).click();
+  await page.getByText('Enter a valid URL.').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
 });
