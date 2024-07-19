@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Alert, Stack, Text } from '@mantine/core';
+import { Alert, Stack, Text } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,

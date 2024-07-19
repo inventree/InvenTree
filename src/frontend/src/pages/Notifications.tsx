@@ -147,11 +147,9 @@ export default function NotificationsPage() {
   }, [unreadTable, readTable]);
 
   return (
-    <>
-      <Stack>
-        <PageDetail title={t`Notifications`} />
-        <PanelGroup pageKey="notifications" panels={notificationPanels} />
-      </Stack>
-    </>
+    <Stack>
+      <PageDetail title={t`Notifications`} />
+      <PanelGroup pageKey="notifications" panels={notificationPanels} />
+    </Stack>
   );
 }

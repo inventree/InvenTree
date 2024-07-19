@@ -14,21 +14,19 @@ export default function Logged_In() {
   }, [navigate]);
 
   return (
-    <>
-      <Container>
-        <Stack align="center">
-          <Card shadow="sm" padding="lg" radius="md">
-            <Stack>
-              <Text size="lg">
-                <Trans>Checking if you are already logged in</Trans>
-              </Text>
-              <Group justify="center">
-                <Loader />
-              </Group>
-            </Stack>
-          </Card>
-        </Stack>
-      </Container>
-    </>
+    <Container>
+      <Stack align="center">
+        <Card shadow="sm" padding="lg" radius="md">
+          <Stack>
+            <Text size="lg">
+              <Trans>Checking if you are already logged in</Trans>
+            </Text>
+            <Group justify="center">
+              <Loader />
+            </Group>
+          </Stack>
+        </Card>
+      </Stack>
+    </Container>
   );
 }

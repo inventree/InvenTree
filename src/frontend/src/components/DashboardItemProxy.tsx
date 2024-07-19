@@ -31,7 +31,7 @@ export function DashboardItemProxy({
     queryFn: fetchData,
     refetchOnWindowFocus: autoupdate
   });
-  const [dashdata, setDashData] = useState({ title: t`Title`, value: '000' });
+  const [dashData, setDashData] = useState({ title: t`Title`, value: '000' });
 
   useEffect(() => {
     if (data) {
@@ -44,7 +44,7 @@ export function DashboardItemProxy({
     <div key={id}>
       <StatisticItem
         id={id}
-        data={dashdata}
+        data={dashData}
         isLoading={isLoading || isFetching}
       />
     </div>
