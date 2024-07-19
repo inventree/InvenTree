@@ -99,6 +99,16 @@ class RoleSerializer(InvenTreeModelSerializer):
 class ApiTokenSerializer(InvenTreeModelSerializer):
     """Serializer for the ApiToken model."""
 
+    in_use = serializers.SerializerMethodField(read_only=True)
+
+    def get_in_use(self, token: ApiToken) -> bool:
+        """Return True if the token is associated with a user."""
+        from InvenTree.middleware import get_token_from_request
+
+        request = self.context.get('request')
+        rq_token = get_token_from_request(request)
+        return token.key == rq_token
+
     class Meta:
         """Meta options for ApiTokenSerializer."""
 
@@ -113,4 +123,5 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
             'active',
             'revoked',
             'user',
+            'in_use',
         ]

@@ -16,7 +16,7 @@ import {
 } from '@mantine/core';
 import { IconAlertCircle, IconAt } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { api, queryClient } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
@@ -338,7 +338,7 @@ function MfaContent() {
 }
 
 function TokenContent() {
-  const { isLoading, data } = useQuery({
+  const { isLoading, data, refetch } = useQuery({
     queryKey: ['token-list'],
     queryFn: () =>
       api.get(apiUrl(ApiEndpoints.user_tokens)).then((res) => res.data)
@@ -348,12 +348,37 @@ function TokenContent() {
     api
       .delete(apiUrl(ApiEndpoints.user_tokens, id))
       .then(() => {
-        queryClient.removeQueries({
-          queryKey: ['token-list']
-        });
+        refetch();
       })
       .catch((res) => console.log(res.data));
   }
+  const rows = useMemo(() => {
+    if (isLoading || data === undefined) return null;
+    return data.map((token: any) => (
+      <Table.Tr key={token.id}>
+        <Table.Td>
+          <YesNoButton value={token.active} />
+        </Table.Td>
+        <Table.Td>{token.expiry}</Table.Td>
+        <Table.Td>{token.last_seen}</Table.Td>
+        <Table.Td>{token.token}</Table.Td>
+        <Table.Td>{token.name}</Table.Td>
+        <Table.Td>
+          {token.in_use ? (
+            <Trans>Token is used - no actions</Trans>
+          ) : (
+            <Button
+              onClick={() => revokeToken(token.id)}
+              color="red"
+              disabled={!token.active}
+            >
+              <Trans>Revoke</Trans>
+            </Button>
+          )}
+        </Table.Td>
+      </Table.Tr>
+    ));
+  }, [data, isLoading]);
 
   /* renderer */
   if (isLoading) return <Loader />;
@@ -365,28 +390,8 @@ function TokenContent() {
       </Alert>
     );
 
-  const rows = data.map((token: any) => (
-    <Table.Tr key={token.id}>
-      <Table.Td>
-        <YesNoButton value={token.active} />
-      </Table.Td>
-      <Table.Td>{token.expiry}</Table.Td>
-      <Table.Td>{token.last_seen}</Table.Td>
-      <Table.Td>{token.token}</Table.Td>
-      <Table.Td>{token.name}</Table.Td>
-      <Table.Td>
-        <Button
-          onClick={() => revokeToken(token.id)}
-          color="red"
-          disabled={token.active}
-        >
-          <Trans>Revoke</Trans>
-        </Button>
-      </Table.Td>
-    </Table.Tr>
-  ));
   return (
-    <Table>
+    <Table stickyHeader striped highlightOnHover withTableBorder>
       <Table.Thead>
         <Table.Tr>
           <Table.Th>
