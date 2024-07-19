@@ -588,17 +588,16 @@ export function ApiForm({
               <Boundary label={`ApiForm-${id}-FormContent`}>
                 <FormProvider {...form}>
                   <Stack gap="xs">
-                    {!optionsLoading &&
-                      Object.entries(fields).map(([fieldName, field]) => (
-                        <ApiFormField
-                          key={fieldName}
-                          fieldName={fieldName}
-                          definition={field}
-                          control={form.control}
-                          url={url}
-                          setFields={setFields}
-                        />
-                      ))}
+                    {Object.entries(fields).map(([fieldName, field]) => (
+                      <ApiFormField
+                        key={fieldName}
+                        fieldName={fieldName}
+                        definition={field}
+                        control={form.control}
+                        url={url}
+                        setFields={setFields}
+                      />
+                    ))}
                   </Stack>
                 </FormProvider>
               </Boundary>
