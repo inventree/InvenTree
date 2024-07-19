@@ -34,8 +34,8 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
             'name': _('Internal Barcode Format'),
             'description': _('Select an internal barcode format'),
             'choices': [
-                ('json', _('JSON barcodes (require more space)')),
-                ('short', _('Short barcodes (made for optimized space)')),
+                ('json', _('JSON barcodes (human readable)')),
+                ('short', _('Short barcodes (space optimized)')),
             ],
             'default': 'json',
         },

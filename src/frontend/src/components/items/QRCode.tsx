@@ -1,4 +1,4 @@
-import { t } from '@lingui/macro';
+import { Trans, t } from '@lingui/macro';
 import {
   Box,
   Code,
@@ -6,7 +6,8 @@ import {
   Image,
   Select,
   Skeleton,
-  Stack
+  Stack,
+  Text
 } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
@@ -94,8 +95,23 @@ export const InvenTreeQRCode = ({
   return (
     <Stack>
       <QRCode data={data} ecl={ecl} {...props} />
+
       {data && settings.getSetting('BARCODE_SHOW_TEXT', 'false') && (
-        <Group justify={showEclSelector ? 'space-between' : 'center'}>
+        <Group
+          justify={showEclSelector ? 'space-between' : 'center'}
+          align="flex-start"
+          px={16}
+        >
+          <Stack gap={4} pt={2}>
+            <Text size="sm" fw={500}>
+              <Trans>Barcode Data:</Trans>
+            </Text>
+            <Group>
+              <Code>{data}</Code>
+              <CopyButton value={data} />
+            </Group>
+          </Stack>
+
           {showEclSelector && (
             <Select
               allowDeselect={false}
@@ -107,11 +123,6 @@ export const InvenTreeQRCode = ({
               data={eclOptions}
             />
           )}
-
-          <Group>
-            <Code>{data}</Code>
-            <CopyButton value={data} />
-          </Group>
         </Group>
       )}
     </Stack>
