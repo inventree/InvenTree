@@ -208,10 +208,6 @@ export function ApiForm({
     () => props.fields ?? {}
   );
 
-  useEffect(() => {
-    setFields(props.fields ?? {});
-  }, [props.fields]);
-
   const defaultValues: FieldValues = useMemo(() => {
     let defaultValuesMap = mapFields(fields ?? {}, (_path, field) => {
       return field.value ?? field.default ?? undefined;
@@ -304,7 +300,7 @@ export function ApiForm({
         let _fields = fields;
 
         // Update the field references, too
-        Object.keys(fields).forEach((fieldName) => {
+        Object.keys(_fields).forEach((fieldName) => {
           if (fieldName in initialData) {
             let field = _fields[fieldName] ?? {};
             _fields[fieldName] = {
@@ -326,7 +322,7 @@ export function ApiForm({
   });
 
   useEffect(() => {
-    let _fields = fields;
+    let _fields = props.fields || {};
     let _initialData = props.initialData;
 
     for (const k of Object.keys(_fields)) {
@@ -596,16 +592,18 @@ export function ApiForm({
               <Boundary label={`ApiForm-${id}-FormContent`}>
                 <FormProvider {...form}>
                   <Stack gap="xs">
-                    {Object.entries(fields).map(([fieldName, field]) => (
-                      <ApiFormField
-                        key={fieldName}
-                        fieldName={fieldName}
-                        definition={field}
-                        control={form.control}
-                        url={url}
-                        setFields={setFields}
-                      />
-                    ))}
+                    {Object.entries(fields).map(([fieldName, field]) => {
+                      return (
+                        <ApiFormField
+                          key={fieldName}
+                          fieldName={fieldName}
+                          definition={field}
+                          control={form.control}
+                          url={url}
+                          setFields={setFields}
+                        />
+                      );
+                    })}
                   </Stack>
                 </FormProvider>
               </Boundary>
