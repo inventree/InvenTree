@@ -331,8 +331,9 @@ function categoryFields(options={}) {
         },
         structural: {},
         icon: {
-            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
-            placeholder: 'fas fa-tag',
+            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://tabler.io/icons" target="_blank" rel="noopener noreferrer">Tabler Icons</a>.`,
+            placeholder: 'ti:<icon-name>:<variant> (e.g. ti:alert-circle:filled)',
+            icon: "fa-icons",
         },
     };
 
