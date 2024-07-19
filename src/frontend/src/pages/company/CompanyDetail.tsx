@@ -39,7 +39,6 @@ import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
 import { useEditApiFormModal } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
 import { ContactTable } from '../../tables/company/ContactTable';
