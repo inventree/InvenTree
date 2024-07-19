@@ -137,7 +137,7 @@ function NavTabs() {
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
 
-  const tabs = useMemo(() => {
+  const tabs: ReactNode[] = useMemo(() => {
     let _tabs: ReactNode[] = [];
 
     mainNavTabs.forEach((tab) => {
