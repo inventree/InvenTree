@@ -208,6 +208,10 @@ export function ApiForm({
     () => props.fields ?? {}
   );
 
+  useEffect(() => {
+    setFields(props.fields ?? {});
+  }, [props.fields]);
+
   const defaultValues: FieldValues = useMemo(() => {
     let defaultValuesMap = mapFields(fields ?? {}, (_path, field) => {
       return field.value ?? field.default ?? undefined;
@@ -297,16 +301,20 @@ export function ApiForm({
         // Update form values, but only for the fields specified for this form
         form.reset(initialData);
 
+        let _fields = fields;
+
         // Update the field references, too
         Object.keys(fields).forEach((fieldName) => {
           if (fieldName in initialData) {
-            let field = fields[fieldName] ?? {};
-            fields[fieldName] = {
+            let field = _fields[fieldName] ?? {};
+            _fields[fieldName] = {
               ...field,
               value: initialData[fieldName]
             };
           }
         });
+
+        setFields(_fields);
 
         return response;
       } catch (error) {
@@ -318,12 +326,18 @@ export function ApiForm({
   });
 
   useEffect(() => {
-    let _fields = props.fields ?? {};
+    let _fields = fields;
+    let _initialData = props.initialData;
 
-    // Ensure default values override initial field spec
     for (const k of Object.keys(_fields)) {
+      // Ensure default values override initial field spec
       if (defaultValues[k]) {
         _fields[k].value = defaultValues[k];
+      }
+
+      // Ensure initial data overrides default values
+      if (props.fetchInitialData && _initialData && _initialData.data[k]) {
+        _fields[k].value = _initialData.data[k];
       }
     }
 
@@ -546,13 +560,15 @@ export function ApiForm({
             {/* Form Fields */}
             <Stack gap="sm">
               {(!isValid || nonFieldErrors.length > 0) && (
-                <Alert radius="sm" color="red" title={t`Error`}>
-                  {nonFieldErrors.length > 0 && (
+                <Alert radius="sm" color="red" title={t`Form Error`}>
+                  {nonFieldErrors.length > 0 ? (
                     <Stack gap="xs">
                       {nonFieldErrors.map((message) => (
                         <Text key={message}>{message}</Text>
                       ))}
                     </Stack>
+                  ) : (
+                    <Text>{t`Errors exist for one or more form fields`}</Text>
                   )}
                 </Alert>
               )}
@@ -570,23 +586,21 @@ export function ApiForm({
                 )}
               </Boundary>
               <Boundary label={`ApiForm-${id}-FormContent`}>
-                {!isLoading && (
-                  <FormProvider {...form}>
-                    <Stack gap="xs">
-                      {!optionsLoading &&
-                        Object.entries(fields).map(([fieldName, field]) => (
-                          <ApiFormField
-                            key={fieldName}
-                            fieldName={fieldName}
-                            definition={field}
-                            control={form.control}
-                            url={url}
-                            setFields={setFields}
-                          />
-                        ))}
-                    </Stack>
-                  </FormProvider>
-                )}
+                <FormProvider {...form}>
+                  <Stack gap="xs">
+                    {!optionsLoading &&
+                      Object.entries(fields).map(([fieldName, field]) => (
+                        <ApiFormField
+                          key={fieldName}
+                          fieldName={fieldName}
+                          definition={field}
+                          control={form.control}
+                          url={url}
+                          setFields={setFields}
+                        />
+                      ))}
+                  </Stack>
+                </FormProvider>
               </Boundary>
               <Boundary label={`ApiForm-${id}-PostFormContent`}>
                 {props.postFormContent}
