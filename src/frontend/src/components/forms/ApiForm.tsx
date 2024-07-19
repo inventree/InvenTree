@@ -395,7 +395,7 @@ export function ApiForm({
       });
     }
 
-    if (isLoading || initialFocus == focusField) {
+    if (isLoading) {
       return;
     }
 

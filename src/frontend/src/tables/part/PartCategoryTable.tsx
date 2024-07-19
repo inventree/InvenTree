@@ -77,6 +77,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     url: ApiEndpoints.category_list,
     title: t`New Part Category`,
     fields: partCategoryFields(),
+    focus: 'name',
     initialData: {
       parent: parentId
     },
