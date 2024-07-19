@@ -547,6 +547,14 @@ export function ApiForm({
     props.onFormError?.();
   }, [props.onFormError]);
 
+  if (optionsLoading) {
+    return (
+      <Paper mah={'65vh'}>
+        <LoadingOverlay visible />
+      </Paper>
+    );
+  }
+
   return (
     <Stack>
       <Boundary label={`ApiForm-${id}`}>
