@@ -47,11 +47,9 @@ export default function PurchasingIndex() {
   }, []);
 
   return (
-    <>
-      <Stack>
-        <PageDetail title={t`Purchasing`} />
-        <PanelGroup pageKey="purchasing-index" panels={panels} />
-      </Stack>
-    </>
+    <Stack>
+      <PageDetail title={t`Purchasing`} />
+      <PanelGroup pageKey="purchasing-index" panels={panels} />
+    </Stack>
   );
 }

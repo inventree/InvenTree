@@ -1,5 +1,4 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Menu, Tooltip } from '@mantine/core';
 import {
   IconDownload,
   IconFileSpreadsheet,
@@ -33,12 +32,10 @@ export function DownloadAction({
   }, [formatOptions, downloadCallback]);
 
   return (
-    <>
-      <ActionDropdown
-        tooltip={t`Download Data`}
-        icon={<IconDownload />}
-        actions={actions}
-      />
-    </>
+    <ActionDropdown
+      tooltip={t`Download Data`}
+      icon={<IconDownload />}
+      actions={actions}
+    />
   );
 }

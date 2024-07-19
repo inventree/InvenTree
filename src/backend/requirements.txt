@@ -1543,15 +1543,15 @@ rpds-py==0.18.1 \
     # via
     #   jsonschema
     #   referencing
-sentry-sdk==2.7.0 \
-    --hash=sha256:d846a211d4a0378b289ced3c434480945f110d0ede00450ba631fc2852e7a0d4 \
-    --hash=sha256:db9594c27a4d21c1ebad09908b1f0dc808ef65c2b89c1c8e7e455143262e37c1
+sentry-sdk==2.8.0 \
+    --hash=sha256:6051562d2cfa8087bb8b4b8b79dc44690f8a054762a29c07e22588b1f619bfb5 \
+    --hash=sha256:aa4314f877d9cd9add5a0c9ba18e3f27f99f7de835ce36bd150e48a41c7c646f
     # via
     #   -r src/backend/requirements.in
     #   django-q-sentry
-setuptools==70.3.0 \
-    --hash=sha256:f171bab1dfbc86b132997f26a119f6056a57950d058587841a0082e8830f9dc5 \
-    --hash=sha256:fe384da74336c398e0d956d1cae0669bc02eed936cdb1d49b57de1990dc11ffc
+setuptools==71.0.3 \
+    --hash=sha256:3d8531791a27056f4a38cd3e54084d8b1c4228ff9cf3f2d7dd075ec99f9fd70d \
+    --hash=sha256:f501b6e6db709818dc76882582d9c516bf3b67b948864c5fa1d1624c09a49207
     # via
     #   -r src/backend/requirements.in
     #   django-money

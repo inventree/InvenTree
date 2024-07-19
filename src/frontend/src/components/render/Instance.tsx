@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback } from 'react';
 
 import { api } from '../../App';
