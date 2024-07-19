@@ -210,7 +210,7 @@ export default function Stock() {
     url: ApiEndpoints.stock_location_list,
     pk: id,
     title: t`Edit Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
     onFormSuccess: refreshInstance
   });
 

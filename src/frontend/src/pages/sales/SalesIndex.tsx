@@ -7,13 +7,18 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
+import { UserRoles } from '../../enums/Roles';
+import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import { ReturnOrderTable } from '../../tables/sales/ReturnOrderTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 
 export default function PurchasingIndex() {
+  const user = useUserState();
+
   const panels = useMemo(() => {
     return [
       {
@@ -39,12 +44,14 @@ export default function PurchasingIndex() {
     ];
   }, []);
 
+  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.sales_order)) {
+    return <PermissionDenied />;
+  }
+
   return (
-    <>
-      <Stack>
-        <PageDetail title={t`Sales`} />
-        <PanelGroup pageKey="sales-index" panels={panels} />
-      </Stack>
-    </>
+    <Stack>
+      <PageDetail title={t`Sales`} />
+      <PanelGroup pageKey="sales-index" panels={panels} />
+    </Stack>
   );
 }

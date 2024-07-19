@@ -1,6 +1,6 @@
 import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
-import { doLogout, doQuickLogin } from './login.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Admin', async ({ page }) => {
   // Note here we login with admin access

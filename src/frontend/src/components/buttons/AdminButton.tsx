@@ -1,11 +1,8 @@
 import { t } from '@lingui/macro';
 import { IconUserStar } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { ModelType } from '../../enums/ModelType';
-import { navigateToLink } from '../../functions/navigation';
-import { base_url } from '../../main';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { ModelInformationDict } from '../render/ModelType';

@@ -1,6 +1,6 @@
 import { Trans } from '@lingui/macro';
 import { Carousel } from '@mantine/carousel';
-import { Anchor, Button, Paper, Text, Title, rem } from '@mantine/core';
+import { Anchor, Button, Paper, Text, Title } from '@mantine/core';
 
 import { DocumentationLinkItem } from './DocumentationLinks';
 import * as classes from './GettingStartedCarousel.css';

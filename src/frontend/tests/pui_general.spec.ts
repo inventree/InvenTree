@@ -1,6 +1,6 @@
 import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
-import { doLogout, doQuickLogin } from './login.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Parts', async ({ page }) => {
   await doQuickLogin(page);

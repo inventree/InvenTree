@@ -1,6 +1,5 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { Action } from '@mdxeditor/editor';
 import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 

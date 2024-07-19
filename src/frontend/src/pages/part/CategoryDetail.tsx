@@ -42,7 +42,7 @@ import { PartListTable } from '../../tables/part/PartTable';
  *
  * Note: If no category ID is supplied, this acts as the top-level part category page
  */
-export default function CategoryDetail({}: {}) {
+export default function CategoryDetail() {
   const { id: _id } = useParams();
   const id = useMemo(
     () => (!isNaN(parseInt(_id || '')) ? _id : undefined),
@@ -158,7 +158,7 @@ export default function CategoryDetail({}: {}) {
     url: ApiEndpoints.category_list,
     pk: id,
     title: t`Edit Part Category`,
-    fields: partCategoryFields({}),
+    fields: partCategoryFields(),
     onFormSuccess: refreshInstance
   });
 

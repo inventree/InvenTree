@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Container, Flex, Group, Table } from '@mantine/core';
+import { Container, Group, Table } from '@mantine/core';
 import { useEffect, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
