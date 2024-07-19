@@ -51,6 +51,14 @@ export function ChoiceField({
     [field.onChange, definition]
   );
 
+  const choiceValue = useMemo(() => {
+    if (!value) {
+      return '';
+    } else {
+      return value.toString();
+    }
+  }, [value]);
+
   return (
     <Select
       id={fieldId}
@@ -60,7 +68,7 @@ export function ChoiceField({
       {...field}
       onChange={onChange}
       data={choices}
-      value={value.toString()}
+      value={choiceValue}
       label={definition.label}
       description={definition.description}
       placeholder={definition.placeholder}
