@@ -364,6 +364,7 @@ function TokenContent() {
         <Trans>No tokens configured</Trans>
       </Alert>
     );
+
   const rows = data.map((token: any) => (
     <Table.Tr key={token.id}>
       <Table.Td>
@@ -374,14 +375,16 @@ function TokenContent() {
       <Table.Td>{token.token}</Table.Td>
       <Table.Td>{token.name}</Table.Td>
       <Table.Td>
-        <Button onClick={() => revokeToken(token.id)} color="red">
+        <Button
+          onClick={() => revokeToken(token.id)}
+          color="red"
+          disabled={token.active}
+        >
           <Trans>Revoke</Trans>
         </Button>
       </Table.Td>
     </Table.Tr>
   ));
-  console.log(data);
-
   return (
     <Table>
       <Table.Thead>
