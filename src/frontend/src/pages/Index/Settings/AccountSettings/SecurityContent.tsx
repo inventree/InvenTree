@@ -344,9 +344,9 @@ function TokenContent() {
       api.get(apiUrl(ApiEndpoints.user_tokens)).then((res) => res.data)
   });
 
-  function removeProvider(id: string) {
+  function revokeToken(id: string) {
     api
-      .delete(apiUrl(ApiEndpoints.user_tokens, undefined, { id: id }))
+      .delete(apiUrl(ApiEndpoints.user_tokens, id))
       .then(() => {
         queryClient.removeQueries({
           queryKey: ['token-list']
@@ -374,8 +374,8 @@ function TokenContent() {
       <Table.Td>{token.token}</Table.Td>
       <Table.Td>{token.name}</Table.Td>
       <Table.Td>
-        <Button onClick={() => removeProvider(token.id)} color="red">
-          <Trans>Remove</Trans>
+        <Button onClick={() => revokeToken(token.id)} color="red">
+          <Trans>Revoke</Trans>
         </Button>
       </Table.Td>
     </Table.Tr>
