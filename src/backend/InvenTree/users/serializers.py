@@ -102,7 +102,7 @@ class ApiTokenSerializer(InvenTreeModelSerializer):
     in_use = serializers.SerializerMethodField(read_only=True)
 
     def get_in_use(self, token: ApiToken) -> bool:
-        """Return True if the token is associated with a user."""
+        """Return True if the token is currently used to call the endpoint."""
         from InvenTree.middleware import get_token_from_request
 
         request = self.context.get('request')
