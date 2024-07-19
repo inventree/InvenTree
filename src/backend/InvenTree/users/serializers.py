@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from InvenTree.serializers import InvenTreeModelSerializer
 
-from .models import Owner, RuleSet, check_user_role
+from .models import ApiToken, Owner, RuleSet, check_user_role
 
 
 class OwnerSerializer(InvenTreeModelSerializer):
@@ -94,3 +94,23 @@ class RoleSerializer(InvenTreeModelSerializer):
             perms[model].append(perm)
 
         return perms
+
+
+class ApiTokenSerializer(InvenTreeModelSerializer):
+    """Serializer for the ApiToken model."""
+
+    class Meta:
+        """Meta options for ApiTokenSerializer."""
+
+        model = ApiToken
+        fields = [
+            'created',
+            'expiry',
+            'id',
+            'last_seen',
+            'name',
+            'token',
+            'active',
+            'revoked',
+            'user',
+        ]

@@ -8,6 +8,7 @@ import {
   Loader,
   Radio,
   Stack,
+  Table,
   Text,
   TextInput,
   Title,
@@ -18,6 +19,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 
 import { api, queryClient } from '../../../../App';
+import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { apiUrl } from '../../../../states/ApiState';
@@ -85,6 +87,11 @@ export function SecurityContent() {
           )}
         </>
       )}
+
+      <Title order={5}>
+        <Trans>Token</Trans>
+      </Title>
+      <TokenContent />
     </Stack>
   );
 }
@@ -327,5 +334,79 @@ function MfaContent() {
       MFA Details
       <PlaceholderPill />
     </>
+  );
+}
+
+function TokenContent() {
+  const { isLoading, data } = useQuery({
+    queryKey: ['token-list'],
+    queryFn: () =>
+      api.get(apiUrl(ApiEndpoints.user_tokens)).then((res) => res.data)
+  });
+
+  function removeProvider(id: string) {
+    api
+      .delete(apiUrl(ApiEndpoints.user_tokens, undefined, { id: id }))
+      .then(() => {
+        queryClient.removeQueries({
+          queryKey: ['token-list']
+        });
+      })
+      .catch((res) => console.log(res.data));
+  }
+
+  /* renderer */
+  if (isLoading) return <Loader />;
+
+  if (data.length == 0)
+    return (
+      <Alert icon={<IconAlertCircle size="1rem" />} color="green">
+        <Trans>No tokens configured</Trans>
+      </Alert>
+    );
+  const rows = data.map((token: any) => (
+    <Table.Tr key={token.id}>
+      <Table.Td>
+        <YesNoButton value={token.active} />
+      </Table.Td>
+      <Table.Td>{token.expiry}</Table.Td>
+      <Table.Td>{token.last_seen}</Table.Td>
+      <Table.Td>{token.token}</Table.Td>
+      <Table.Td>{token.name}</Table.Td>
+      <Table.Td>
+        <Button onClick={() => removeProvider(token.id)} color="red">
+          <Trans>Remove</Trans>
+        </Button>
+      </Table.Td>
+    </Table.Tr>
+  ));
+  console.log(data);
+
+  return (
+    <Table>
+      <Table.Thead>
+        <Table.Tr>
+          <Table.Th>
+            <Trans>Active</Trans>
+          </Table.Th>
+          <Table.Th>
+            <Trans>Expiry</Trans>
+          </Table.Th>
+          <Table.Th>
+            <Trans>Last Seen</Trans>
+          </Table.Th>
+          <Table.Th>
+            <Trans>Token</Trans>
+          </Table.Th>
+          <Table.Th>
+            <Trans>Name</Trans>
+          </Table.Th>
+          <Table.Th>
+            <Trans>Actions</Trans>
+          </Table.Th>
+        </Table.Tr>
+      </Table.Thead>
+      <Table.Tbody>{rows}</Table.Tbody>
+    </Table>
   );
 }
