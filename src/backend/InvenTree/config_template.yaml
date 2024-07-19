@@ -11,6 +11,8 @@
 # Note: Database configuration options can also be specified from environmental variables,
 #       with the prefix INVENTREE_DB_
 #       e.g INVENTREE_DB_NAME / INVENTREE_DB_USER / INVENTREE_DB_PASSWORD
+# Do not change this section if you are using the package - use `inventree config` instead
+# TO MAINTAINERS: Do not change database strings
 database:
   # --- Available options: ---
   # ENGINE: Database engine. Selection from:
