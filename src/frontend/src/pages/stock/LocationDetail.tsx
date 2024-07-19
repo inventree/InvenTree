@@ -381,6 +381,7 @@ export default function Stock() {
           <PageDetail
             title={t`Stock Items`}
             subtitle={location?.name}
+            icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}
             breadcrumbs={breadcrumbs}
             breadcrumbAction={() => {

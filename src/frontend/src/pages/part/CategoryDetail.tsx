@@ -304,6 +304,7 @@ export default function CategoryDetail() {
           <PageDetail
             title={t`Part Category`}
             subtitle={category?.name}
+            icon={category?.icon && <ApiIcon name={category?.icon} />}
             breadcrumbs={breadcrumbs}
             breadcrumbAction={() => {
               setTreeOpen(true);
