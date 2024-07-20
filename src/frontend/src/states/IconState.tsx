@@ -41,7 +41,10 @@ export const useIconState = create<IconState>()((set, get) => ({
     await Promise.all(
       packs.data.map(async (pack: any) => {
         const fontName = `inventree-icon-font-${pack.prefix}`;
-        const font = new FontFace(fontName, `url(${host}${pack.fonts.woff2})`);
+        const src = Object.entries(pack.fonts)
+          .map(([format, url]) => `url(${host}${url}) format("${format}")`)
+          .join(',\n');
+        const font = new FontFace(fontName, src + ';');
         await font.load();
         document.fonts.add(font);
 

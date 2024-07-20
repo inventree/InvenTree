@@ -16,6 +16,7 @@
     formatCurrency,
     formatDecimal,
     formatPriceRange,
+    getApiIconClass,
     getCurrencyConversionRates,
     getFormFieldElement,
     getFormFieldValue,
@@ -2811,9 +2812,8 @@ function loadStockLocationTable(table, options) {
                         }
                     }
 
-                    const icon = row.icon || global_settings.STOCK_LOCATION_DEFAULT_ICON;
-                    if (icon) {
-                        html += `<span class="${icon} me-1"></span>`;
+                    if (row.icon) {
+                        html += `<span class="${getApiIconClass(row.icon)} me-1"></span>`;
                     }
 
                     html += renderLink(

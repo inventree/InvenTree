@@ -11,6 +11,7 @@
     formatCurrency,
     formatDecimal,
     formatPriceRange,
+    getApiIconClass,
     getCurrencyConversionRates,
     getFormFieldValue,
     getTableData,
@@ -2783,9 +2784,8 @@ function loadPartCategoryTable(table, options) {
                         }
                     }
 
-                    const icon = row.icon || global_settings.PART_CATEGORY_DEFAULT_ICON;
-                    if (icon) {
-                        html += `<span class="${icon} me-1"></span>`;
+                    if (row.icon) {
+                        html += `<span class="${getApiIconClass(row.icon)} me-1"></span>`;
                     }
 
                     html += renderLink(

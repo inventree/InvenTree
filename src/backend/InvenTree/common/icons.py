@@ -25,8 +25,8 @@ def get_icon_packs():
                 'name': 'Tabler Icons',
                 'prefix': 'ti',
                 'fonts': {
-                    'woff': static('tabler-icons/tabler-icons.woff'),
                     'woff2': static('tabler-icons/tabler-icons.woff2'),
+                    'woff': static('tabler-icons/tabler-icons.woff'),
                     'ttf': static('tabler-icons/tabler-icons.ttf'),
                 },
                 'icons': tabler_icons,
