@@ -322,8 +322,13 @@ export function ApiForm({
   });
 
   useEffect(() => {
-    let _fields = props.fields || {};
-    let _initialData = props.initialData;
+    let _fields: any = props.fields || {};
+    let _initialData: any = props.initialData;
+    let _fetchedData: any = initialDataQuery.data || {};
+
+    if (_fetchedData.data) {
+      _fetchedData = _fetchedData.data;
+    }
 
     for (const k of Object.keys(_fields)) {
       // Ensure default values override initial field spec
@@ -332,13 +337,18 @@ export function ApiForm({
       }
 
       // Ensure initial data overrides default values
-      if (props.fetchInitialData && _initialData && _initialData.data[k]) {
+      if (_initialData && _initialData.data[k]) {
         _fields[k].value = _initialData.data[k];
+      }
+
+      // Ensure fetched data overrides also
+      if (_fetchedData[k]) {
+        _fields[k].value = _fetchedData[k];
       }
     }
 
     setFields(_fields);
-  }, [props.fields, defaultValues, initialDataQuery.data]);
+  }, [props.fields, props.initialData, defaultValues, initialDataQuery.data]);
 
   // Fetch initial data on form load
   useEffect(() => {
