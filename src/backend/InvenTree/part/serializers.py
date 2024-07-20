@@ -140,7 +140,7 @@ class CategorySerializer(
     )
 
     icon = serializers.CharField(
-        required=False, allow_blank=True, help_text=_('Icon (optional)')
+        required=False, allow_blank=True, help_text=_('Icon (optional)'), max_length=100
     )
 
     parent_default_location = serializers.IntegerField(read_only=True)
