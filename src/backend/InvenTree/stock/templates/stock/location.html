@@ -252,14 +252,12 @@
             category: {
                 tree_picker: {
                     url: '{% url "api-part-category-tree" %}',
-                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
                 },
             },
             location: {
                 {% if location %}value: {{ location.pk }},{% endif %}
                 tree_picker: {
                     url: '{% url "api-location-tree" %}',
-                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                 },
             },
             generate_report: {},
@@ -456,7 +454,6 @@
 
             return node;
         },
-        defaultIcon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
     });
 
 {% endblock js_ready %}

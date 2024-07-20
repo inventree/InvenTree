@@ -330,7 +330,6 @@ onPanelLoad('category', function() {
                     icon: 'fa-sitemap',
                     tree_picker: {
                         url: '{% url "api-part-category-tree" %}',
-                        default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
                     },
                 },
                 default_value: {},
@@ -394,7 +393,6 @@ onPanelLoad('category', function() {
                     value: pk,
                     tree_picker: {
                         url: '{% url "api-part-category-tree" %}',
-                        default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
                     },
                 },
                 default_value: {},
@@ -565,13 +563,11 @@ onPanelLoad('stocktake', function() {
             category: {
                 tree_picker: {
                     url: '{% url "api-part-category-tree" %}',
-                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
                 },
             },
             location: {
                 tree_picker: {
                     url: '{% url "api-location-tree" %}',
-                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                 },
             },
             generate_report: {},

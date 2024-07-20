@@ -131,7 +131,6 @@ function partFields(options={}) {
             },
             tree_picker: {
                 url: '{% url "api-part-category-tree" %}',
-                default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
             },
         },
         name: {},
@@ -156,7 +155,6 @@ function partFields(options={}) {
             },
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
-                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         default_supplier: {
@@ -312,7 +310,6 @@ function categoryFields(options={}) {
             required: false,
             tree_picker: {
                 url: '{% url "api-part-category-tree" %}',
-                default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
             },
         },
         name: {},
@@ -324,7 +321,6 @@ function categoryFields(options={}) {
             },
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
-                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         default_keywords: {
@@ -2217,7 +2213,6 @@ function setPartCategory(data, options={}) {
             category: {
                 tree_picker: {
                     url: '{% url "api-part-category-tree" %}',
-                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
                 },
             },
         },

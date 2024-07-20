@@ -2251,7 +2251,6 @@ function initializeRelatedField(field, fields, options={}) {
                         data: rootNodes,
                         expandIcon: 'fas fa-plus-square large-treeview-icon',
                         collapseIcon: 'fa fa-minus-square large-treeview-icon',
-                        nodeIcon: field.tree_picker.defaultIcon,
                         color: "black",
                     });
                 }

@@ -126,13 +126,38 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         help_text=_('Default keywords for parts in this category'),
     )
 
-    icon = models.CharField(
+    _icon = models.CharField(
         blank=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
         validators=[validate_icon],
+        db_column='icon',
     )
+
+    @property
+    def icon(self):
+        """Return the icon associated with this PartCategory or the default icon."""
+        if self._icon:
+            return self._icon
+
+        if default_icon := get_global_setting(
+            'PART_CATEGORY_DEFAULT_ICON', create=False
+        ):
+            return default_icon
+
+        return ''
+
+    @icon.setter
+    def icon(self, value):
+        """Setter for icon field."""
+        default_icon = get_global_setting('PART_CATEGORY_DEFAULT_ICON', create=False)
+
+        # if icon is not defined previously and new value is default icon, do not save it
+        if not self._icon and value == default_icon:
+            return
+
+        self._icon = value
 
     @staticmethod
     def get_api_url():

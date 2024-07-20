@@ -155,7 +155,6 @@ function stockLocationFields(options={}) {
             required: false,
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
-                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         name: {},
@@ -357,7 +356,6 @@ function stockItemFields(options={}) {
             },
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
-                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         quantity: {
@@ -917,7 +915,6 @@ function mergeStockItems(items, options={}) {
                 },
                 tree_picker: {
                     url: '{% url "api-location-tree" %}',
-                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                 },
             },
             notes: {
@@ -3262,7 +3259,6 @@ function uninstallStockItem(installed_item_id, options={}) {
                     },
                     tree_picker: {
                         url: '{% url "api-location-tree" %}',
-                        default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                     },
                 },
                 note: {

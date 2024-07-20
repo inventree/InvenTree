@@ -212,6 +212,11 @@ class StockLocation(
         if self.location_type:
             return self.location_type.icon
 
+        if default_icon := get_global_setting(
+            'STOCK_LOCATION_DEFAULT_ICON', create=False
+        ):
+            return default_icon
+
         return ''
 
     @icon.setter
