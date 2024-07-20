@@ -55,3 +55,5 @@ def validate_icon(icon: str):
 
     if variant not in packs[pack]['icons'][name]['variants']:
         raise ValidationError(f'Invalid icon variant: {variant}')
+
+    return packs[pack], packs[pack]['icons'][name], variant
