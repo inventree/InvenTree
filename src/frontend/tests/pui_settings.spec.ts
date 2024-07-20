@@ -59,6 +59,7 @@ test('PUI - Admin', async ({ page }) => {
   await expect(page.getByLabel('text-field-name')).toHaveValue('Room');
   await expect(page.getByLabel('text-field-description')).toHaveValue('A room');
   await page.getByLabel('text-field-name').fill('Large Room');
+  await page.waitForTimeout(500);
   await page.getByLabel('text-field-description').fill('A large room');
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
@@ -80,11 +81,10 @@ test('PUI - Admin', async ({ page }) => {
     'A large room'
   );
   await page.getByLabel('text-field-name').fill('Room');
+  await page.waitForTimeout(500);
   await page.getByLabel('text-field-description').fill('A room');
   await page.waitForTimeout(500);
   await page.getByRole('button', { name: 'Submit' }).click();
-
-  await page.waitForTimeout(5000);
 });
 
 test('PUI - Admin - Unauthorized', async ({ page }) => {

@@ -201,9 +201,7 @@ test('PUI - Company', async ({ page }) => {
   await page.getByLabel('action-menu-company-actions-edit').click();
 
   await page.getByLabel('text-field-name').fill('');
-  await page.waitForTimeout(300);
   await page.getByLabel('text-field-website').fill('invalid-website');
-  await page.waitForTimeout(300);
   await page.getByRole('button', { name: 'Submit' }).click();
 
   await page.getByText('This field may not be blank.').waitFor();
