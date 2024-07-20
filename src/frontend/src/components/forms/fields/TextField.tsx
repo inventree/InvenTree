@@ -56,6 +56,9 @@ export default function TextField({
       error={error?.message}
       radius="sm"
       onChange={(event) => onTextChange(event.currentTarget.value)}
+      onBlur={(event) => {
+        onChange(event.currentTarget.value);
+      }}
       rightSection={
         value && !definition.required ? (
           <IconX size="1rem" color="red" onClick={() => onTextChange('')} />

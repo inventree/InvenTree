@@ -286,7 +286,7 @@ export function ApiForm({
       props.pathParams
     ],
     queryFn: async () => {
-      return api
+      return await api
         .get(url)
         .then((response: any) => {
           // Process API response
@@ -294,7 +294,6 @@ export function ApiForm({
 
           // Update form values, but only for the fields specified for this form
           form.reset(fetchedData);
-
           return fetchedData;
         })
         .catch(() => {
@@ -346,20 +345,14 @@ export function ApiForm({
     }
   }, [props.fetchInitialData, optionsLoading]);
 
-  const isLoading = useMemo(
+  const isLoading: boolean = useMemo(
     () =>
       isFormLoading ||
       initialDataQuery.isFetching ||
       optionsLoading ||
       isSubmitting ||
       !fields,
-    [
-      isFormLoading,
-      initialDataQuery.isFetching,
-      isSubmitting,
-      fields,
-      optionsLoading
-    ]
+    [isFormLoading, initialDataQuery, isSubmitting, fields, optionsLoading]
   );
 
   const [initialFocus, setInitialFocus] = useState<string>('');
@@ -531,10 +524,10 @@ export function ApiForm({
     props.onFormError?.();
   }, [props.onFormError]);
 
-  if (optionsLoading) {
+  if (optionsLoading || initialDataQuery.isFetching) {
     return (
       <Paper mah={'65vh'}>
-        <LoadingOverlay visible />
+        <LoadingOverlay visible zIndex={1010} />
       </Paper>
     );
   }
