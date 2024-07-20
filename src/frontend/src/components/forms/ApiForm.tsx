@@ -249,6 +249,31 @@ export function ApiForm({
     [props.url, props.pk, props.pathParams]
   );
 
+  // Define function to process API response
+  const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
+    const res: NestedDict = {};
+
+    for (const [k, field] of Object.entries(fields)) {
+      const dataValue = data[k];
+
+      if (
+        field.field_type === 'nested object' &&
+        field.children &&
+        typeof dataValue === 'object'
+      ) {
+        res[k] = processFields(field.children, dataValue);
+      } else {
+        res[k] = dataValue;
+
+        if (field.onValueChange) {
+          field.onValueChange(dataValue, data);
+        }
+      }
+    }
+
+    return res;
+  };
+
   // Query manager for retrieving initial data from the server
   const initialDataQuery = useQuery({
     enabled: false,
@@ -261,63 +286,20 @@ export function ApiForm({
       props.pathParams
     ],
     queryFn: async () => {
-      try {
-        // Await API call
-        let response = await api.get(url);
+      return api
+        .get(url)
+        .then((response: any) => {
+          // Process API response
+          const fetchedData: any = processFields(fields, response.data);
 
-        // Define function to process API response
-        const processFields = (fields: ApiFormFieldSet, data: NestedDict) => {
-          const res: NestedDict = {};
+          // Update form values, but only for the fields specified for this form
+          form.reset(fetchedData);
 
-          // TODO: replace with .map()
-          for (const [k, field] of Object.entries(fields)) {
-            const dataValue = data[k];
-
-            if (
-              field.field_type === 'nested object' &&
-              field.children &&
-              typeof dataValue === 'object'
-            ) {
-              res[k] = processFields(field.children, dataValue);
-            } else {
-              res[k] = dataValue;
-
-              if (field.onValueChange) {
-                field.onValueChange(dataValue, data);
-              }
-            }
-          }
-
-          return res;
-        };
-
-        // Process API response
-        const initialData: any = processFields(fields, response.data);
-
-        // Update form values, but only for the fields specified for this form
-        form.reset(initialData);
-
-        let _fields = fields;
-
-        // Update the field references, too
-        Object.keys(_fields).forEach((fieldName) => {
-          if (fieldName in initialData) {
-            let field = _fields[fieldName] ?? {};
-            _fields[fieldName] = {
-              ...field,
-              value: initialData[fieldName]
-            };
-          }
+          return fetchedData;
+        })
+        .catch(() => {
+          return {};
         });
-
-        setFields(_fields);
-
-        return response;
-      } catch (error) {
-        console.error('ERR: Error fetching initial data:', error);
-        // Re-throw error to allow react-query to handle error
-        return {};
-      }
     }
   });
 
@@ -326,10 +308,6 @@ export function ApiForm({
     let _initialData: any = props.initialData || {};
     let _fetchedData: any = initialDataQuery.data || {};
 
-    if (_fetchedData.data) {
-      _fetchedData = _fetchedData.data;
-    }
-
     for (const k of Object.keys(_fields)) {
       // Ensure default values override initial field spec
       if (defaultValues[k]) {
@@ -337,12 +315,12 @@ export function ApiForm({
       }
 
       // Ensure initial data overrides default values
-      if (_initialData && _initialData.data[k]) {
-        _fields[k].value = _initialData.data[k];
+      if (_initialData && _initialData[k]) {
+        _fields[k].value = _initialData[k];
       }
 
       // Ensure fetched data overrides also
-      if (_fetchedData[k]) {
+      if (_fetchedData && _fetchedData[k]) {
         _fields[k].value = _fetchedData[k];
       }
     }
