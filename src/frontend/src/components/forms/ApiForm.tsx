@@ -323,7 +323,7 @@ export function ApiForm({
 
   useEffect(() => {
     let _fields: any = props.fields || {};
-    let _initialData: any = props.initialData;
+    let _initialData: any = props.initialData || {};
     let _fetchedData: any = initialDataQuery.data || {};
 
     if (_fetchedData.data) {
