@@ -2,7 +2,7 @@ import { APIRequestContext, Page } from '@playwright/test';
 
 import { expect, test } from '../baseFixtures';
 import { adminuser, baseUrl, user } from '../defaults';
-import { doLogin } from '../login';
+import { doLogin, doQuickLogin } from '../login';
 
 // CSRF token
 let TOKEN: string;
@@ -39,12 +39,12 @@ async function toggleApprovals(request: APIRequestContext, disable = false) {
   await setting(request, 'ENABLE_PURCHASE_ORDER_APPROVAL', !disable);
 }
 
-async function setApprover(request: APIRequestContext) {
-  setting(request, 'PURCHASE_ORDER_APPROVE_ALL_GROUP', 'all access');
+async function setApprover(request: APIRequestContext, group = 'all access') {
+  await setting(request, 'PURCHASE_ORDER_APPROVE_ALL_GROUP', group);
 }
 
-async function setPurchaser(request: APIRequestContext) {
-  setting(request, 'PURCHASE_ORDER_PURCHASER_GROUP', 'all access');
+async function setPurchaser(request: APIRequestContext, group = 'all access') {
+  await setting(request, 'PURCHASE_ORDER_PURCHASER_GROUP', group);
 }
 
 async function disableAllSettings(request: APIRequestContext) {
@@ -98,9 +98,9 @@ test.beforeEach(
       }
     });
     expect(order.ok()).toBeTruthy();
-    await doLogin(page, adminuser.username, adminuser.password);
+    await doQuickLogin(page);
     const pk = (await order.json()).pk;
-    page.goto(`${baseUrl}/purchasing/purchase-order/${pk}/`);
+    await page.goto(`${baseUrl}/purchasing/purchase-order/${pk}/`);
     await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
   }
 );
@@ -156,7 +156,7 @@ test('PUI - Pages - Purchasing - In Approval transitions', async ({
 }) => {
   const url = page.url();
   await toggleApprovals(request);
-  await setApprover(request);
+  await setApprover(request, 'readers');
 
   await page.goto(url);
   await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
@@ -175,9 +175,9 @@ test('PUI - Pages - Purchasing - In Approval transitions', async ({
   await modal.getByText('Recall Purchase Order').isVisible();
   await modal.getByRole('button', { name: 'Submit' }).isEnabled();
 
-  await doLogin(page, user.username, user.password);
+  await setApprover(request);
 
-  await page.goto(url);
+  await page.reload();
   await page.getByRole('button', { name: 'Approve' }).isEnabled();
   await page.getByRole('button', { name: 'Approve' }).click();
   await modal.waitFor();
@@ -227,7 +227,7 @@ test('PUI - Pages - Purchasing - Ready Transitions', async ({
   await expect(modal.getByText('Issue Order')).toBeVisible();
   await expect(modal.getByRole('button', { name: 'Submit' })).toBeEnabled();
 
-  await setPurchaser(request);
+  await setPurchaser(request, 'readers');
 
   await page.goto(url);
   await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
@@ -247,7 +247,7 @@ test('PUI - Pages - Purchasing - Placed Transitions', async ({
   const modal = page.getByRole('dialog');
 
   await page.getByRole('button', { name: 'Issue Order' }).click();
-  modal.waitFor();
+  await modal.waitFor();
   expect(modal.getByRole('button', { name: 'Submit' })).toBeEnabled();
   await modal.getByRole('button', { name: 'Submit' }).click();
 
