@@ -1,5 +1,7 @@
 """Plugin mixin classes for icon pack plugin."""
 
+import logging
+
 from common.icons import IconPack, reload_icon_packs
 from plugin.helpers import MixinNotImplementedError
 
