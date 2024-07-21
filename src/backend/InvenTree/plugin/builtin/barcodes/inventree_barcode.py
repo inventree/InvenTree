@@ -11,6 +11,7 @@ import json
 import re
 from typing import cast
 
+from django.core.validators import MinLengthValidator
 from django.utils.translation import gettext_lazy as _
 
 import plugin.base.barcodes.helper
@@ -45,6 +46,7 @@ class InvenTreeInternalBarcodePlugin(SettingsMixin, BarcodeMixin, InvenTreePlugi
                 'Customize the prefix used for short barcodes, may be useful for environments with multiple InvenTree instances'
             ),
             'default': 'INV-',
+            'validator': MinLengthValidator(1),
         },
     }
 
