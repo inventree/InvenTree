@@ -11,7 +11,7 @@ export const doLogin = async (page, username?: string, password?: string) => {
   const userLoggedIn = page.getByTestId('username');
   const visible = await userLoggedIn.isVisible();
 
-  if (false) {
+  if (visible) {
     const currentUser = await userLoggedIn.innerText();
     if (currentUser === username) {
       return;
