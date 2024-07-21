@@ -62,6 +62,4 @@ test('PUI - Tables - Columns', async ({ page }) => {
   // De-select some items
   await page.getByRole('menuitem', { name: 'Description' }).click();
   await page.getByRole('menuitem', { name: 'Stocktake' }).click();
-
-  await page.waitForTimeout(2500);
 });
