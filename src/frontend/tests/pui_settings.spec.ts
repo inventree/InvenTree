@@ -48,7 +48,6 @@ test('PUI - Admin', async ({ page }) => {
   await page.getByRole('tab', { name: 'Label Templates' }).click();
   await page.getByRole('tab', { name: 'Report Templates' }).click();
   await page.getByRole('tab', { name: 'Plugins' }).click();
-  await page.getByRole('tab', { name: 'Machines' }).click();
 
   // Adjust some "location type" items
   await page.getByRole('tab', { name: 'Location Types' }).click();
