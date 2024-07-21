@@ -81,6 +81,13 @@ def get_icon_packs():
     return _icon_packs
 
 
+def reload_icon_packs():
+    """Reload the icon packs."""
+    global _icon_packs
+    _icon_packs = None
+    get_icon_packs()
+
+
 def validate_icon(icon: str):
     """Validate an icon string in the format pack:name:variant."""
     try:
