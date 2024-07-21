@@ -537,7 +537,7 @@ class StockLocationTypeTest(StockAPITestCase):
         res = self.patch(
             reverse('api-location-type-detail', kwargs={'pk': location_type.pk}),
             {'icon': 'ti:tag:outline'},
-            expected_code=400,
+            expected_code=200,
         ).json()
         self.assertEqual(res['icon'], 'ti:tag:outline')
 
