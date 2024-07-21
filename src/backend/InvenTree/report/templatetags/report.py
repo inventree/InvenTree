@@ -496,7 +496,7 @@ def icon(name, **kwargs):
 
     unicode = chr(int(icon['variants'][variant], 16))
     return mark_safe(
-        f'<i class="icon {kwargs.get("class", "")}" style="font-family: inventree-icon-font-{pack["prefix"]}">{unicode}</i>'
+        f'<i class="icon {kwargs.get("class", "")}" style="font-family: inventree-icon-font-{pack.prefix}">{unicode}</i>'
     )
 
 
@@ -507,14 +507,14 @@ def include_icon_fonts():
 
     for font in common.icons.get_icon_packs().values():
         # generate the font src string (prefer ttf over woff, woff2 is not supported by weasyprint)
-        if 'ttf' in font['fonts']:
-            font_format, url = 'truetype', font['fonts']['ttf']
-        elif 'woff' in font['fonts']:
-            font_format, url = 'woff', font['fonts']['woff']
+        if 'truetype' in font.fonts:
+            font_format, url = 'truetype', font.fonts['truetype']
+        elif 'woff' in font.fonts:
+            font_format, url = 'woff', font.fonts['woff']
 
         fonts.append(f"""
 @font-face {'{'}
-    font-family: 'inventree-icon-font-{font['prefix']}';
+    font-family: 'inventree-icon-font-{font.prefix}';
     src: url('{InvenTree.helpers_model.construct_absolute_url(url)}') format('{font_format}');
 {'}'}\n""")
 

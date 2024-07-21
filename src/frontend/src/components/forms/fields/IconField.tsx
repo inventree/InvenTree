@@ -1,25 +1,21 @@
 import { Trans, t } from '@lingui/macro';
 import {
-  ActionIcon,
   Box,
-  Button,
   CloseButton,
   Combobox,
   Group,
   Input,
   InputBase,
-  Popover,
   ScrollArea,
   Select,
   Text,
   TextInput,
-  Tooltip,
   useCombobox
 } from '@mantine/core';
-import { useDebouncedValue, useScrollIntoView } from '@mantine/hooks';
+import { useDebouncedValue } from '@mantine/hooks';
 import { IconX } from '@tabler/icons-react';
 import Fuse from 'fuse.js';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { startTransition, useEffect, useMemo, useState } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { useIconState } from '../../../states/IconState';
@@ -28,7 +24,6 @@ import { ApiFormFieldType } from './ApiFormField';
 
 export default function IconField({
   controller,
-  fieldName,
   definition
 }: {
   controller: UseControllerReturn<FieldValues, any>;
@@ -66,32 +61,63 @@ export default function IconField({
       }),
     [icons]
   );
-  const categories = useMemo(
-    () => Array.from(new Set(icons.map((i) => i.category))).filter((x) => !!x),
-    [icons]
-  );
 
   const [searchValue, setSearchValue] = useState('');
   const [debouncedSearchValue] = useDebouncedValue(searchValue, 200);
   const [category, setCategory] = useState<string | null>(null);
+  const [pack, setPack] = useState<string | null>(null);
+
+  const categories = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          icons
+            .filter((i) => (pack !== null ? i.package === pack : true))
+            .map((i) => i.category)
+        )
+      ).map((x) =>
+        x === ''
+          ? { value: '', label: t`Uncategorized` }
+          : { value: x, label: x }
+      ),
+    [icons, pack]
+  );
+  const packs = useMemo(
+    () => iconPacks.map((pack) => ({ value: pack.prefix, label: pack.name })),
+    [iconPacks]
+  );
+
+  const applyFilters = (
+    iconList: typeof icons,
+    category: string | null,
+    pack: string | null
+  ) => {
+    if (category === null && pack === null) return iconList;
+    return iconList.filter(
+      (i) =>
+        (category !== null ? i.category === category : true) &&
+        (pack !== null ? i.package === pack : true)
+    );
+  };
 
   const filteredIcons = useMemo(() => {
     if (!debouncedSearchValue) {
-      if (!category) return icons;
-
-      return icons.filter((i) => i.category === category);
+      return applyFilters(icons, category, pack);
     }
 
     const res = filter.search(debouncedSearchValue.trim()).map((r) => r.item);
 
-    if (category) {
-      return res.filter((i) =>
-        category !== null ? i.category === category : true
-      );
-    }
+    return applyFilters(res, category, pack);
+  }, [debouncedSearchValue, filter, category, pack]);
 
-    return res;
-  }, [debouncedSearchValue, filter, category]);
+  // Reset category when pack changes and the current category is not available in the new pack
+  useEffect(() => {
+    if (value === null) return;
+
+    if (!categories.find((c) => c.value === category)) {
+      setCategory(null);
+    }
+  }, [pack]);
 
   return (
     <Combobox store={combobox}>
@@ -135,7 +161,7 @@ export default function IconField({
       </Combobox.Target>
 
       <Combobox.Dropdown>
-        <Group mb={10} gap={4}>
+        <Group gap={4}>
           <TextInput
             value={searchValue}
             onChange={(e) => setSearchValue(e.currentTarget.value)}
@@ -149,15 +175,28 @@ export default function IconField({
           />
           <Select
             value={category}
-            onChange={(c) => setCategory(c)}
+            onChange={(c) => startTransition(() => setCategory(c))}
             data={categories}
             comboboxProps={{ withinPortal: false }}
             clearable
             placeholder={t`Select category`}
           />
+
+          <Select
+            value={pack}
+            onChange={(c) => startTransition(() => setPack(c))}
+            data={packs}
+            comboboxProps={{ withinPortal: false }}
+            clearable
+            placeholder={t`Select pack`}
+          />
         </Group>
 
-        <ScrollArea h={200} offsetScrollbars>
+        <Text size="sm" c="dimmed" ta="center" mt={2}>
+          <Trans>{filteredIcons.length} icons</Trans>
+        </Text>
+
+        <ScrollArea h={200} offsetScrollbars mt={6}>
           <Group gap={2}>
             {filteredIcons.map((icon) => {
               const isSelected = field.value === icon.name;
