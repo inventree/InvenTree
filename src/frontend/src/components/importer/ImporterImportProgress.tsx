@@ -29,18 +29,16 @@ export default function ImporterImportProgress({
   }, []);
 
   return (
-    <>
-      <Center>
-        <Container>
-          <Stack gap="xs">
-            <StylishText size="lg">{t`Importing Records`}</StylishText>
-            <Loader />
-            <Text size="lg">
-              {t`Imported rows`}: {session.sessionData.row_count}
-            </Text>
-          </Stack>
-        </Container>
-      </Center>
-    </>
+    <Center>
+      <Container>
+        <Stack gap="xs">
+          <StylishText size="lg">{t`Importing Records`}</StylishText>
+          <Loader />
+          <Text size="lg">
+            {t`Imported rows`}: {session.sessionData.row_count}
+          </Text>
+        </Stack>
+      </Container>
+    </Center>
   );
 }
