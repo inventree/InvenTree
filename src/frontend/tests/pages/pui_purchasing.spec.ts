@@ -6,6 +6,7 @@ import { doLogin, doQuickLogin } from '../login';
 
 // CSRF token
 let TOKEN: string;
+let ORDER_ID: number;
 
 // These tests modify settings, and have to run sequentially
 // Each test will reset settings with its afterEach hook
@@ -100,6 +101,7 @@ test.beforeEach(
     expect(order.ok()).toBeTruthy();
     await doQuickLogin(page);
     const pk = (await order.json()).pk;
+    ORDER_ID = pk;
     await page.goto(`${baseUrl}/purchasing/purchase-order/${pk}/`);
     await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
   }
@@ -131,7 +133,7 @@ test('PUI - Pages - Purchasing - Pending transitions', async ({
   await toggleReady(request);
 
   // Check that Ready Button is present
-  await page.goto(url);
+  await page.reload();
   await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
   await page.getByRole('button', { name: 'Ready' }).isEnabled();
   await page.getByRole('button', { name: 'Ready' }).click();
@@ -140,7 +142,7 @@ test('PUI - Pages - Purchasing - Pending transitions', async ({
   // Enable Approvals (Approvals come before Ready, so Ready is not disabled)
   await toggleApprovals(request);
 
-  await page.goto(url);
+  await page.reload();
   await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
   await page.getByRole('button', { name: 'Request Approval' }).isEnabled();
   await page.getByRole('button', { name: 'Request Approval' }).click();
@@ -155,28 +157,39 @@ test('PUI - Pages - Purchasing - In Approval transitions', async ({
   request: APIRequestContext;
 }) => {
   const url = page.url();
+
+  // Activate Approvals and set  valid approver to not be the current user
   await toggleApprovals(request);
   await setApprover(request, 'readers');
 
-  await page.goto(url);
-  await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
-  await page.getByRole('button', { name: 'Request Approval' }).click();
+  // Perform state transition through API
+  const response = await request.post(
+    `http://localhost:8000/api/order/po/${ORDER_ID}/request_approval/`,
+    {
+      headers: {
+        Authorization: TOKEN
+      }
+    }
+  );
+  expect(response.ok()).toBeTruthy();
 
-  const modal = page.getByRole('dialog');
-  await modal.getByRole('button', { name: 'Submit' }).click();
-
+  // Check buttons when the user isn't permitted to approve
+  await page.reload();
   await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
   await page.getByRole('button', { name: 'Approve' }).waitFor();
   await page.getByRole('button', { name: 'Approve' }).isDisabled();
   await page.getByRole('button', { name: 'Recall' }).isEnabled();
   await page.getByRole('button', { name: 'Recall' }).click();
 
+  const modal = page.getByRole('dialog');
   await modal.waitFor();
   await modal.getByText('Recall Purchase Order').isVisible();
   await modal.getByRole('button', { name: 'Submit' }).isEnabled();
 
+  // Change approver group to one that user is member of
   await setApprover(request);
 
+  // Check buttons when the user is permitted to approve
   await page.reload();
   await page.getByRole('button', { name: 'Approve' }).isEnabled();
   await page.getByRole('button', { name: 'Approve' }).click();
@@ -203,15 +216,22 @@ test('PUI - Pages - Purchasing - Ready Transitions', async ({
   // Standard modal locator
   const modal = page.getByRole('dialog');
 
+  // Activate Ready state
   await toggleReady(request);
 
-  await page.goto(url);
+  // Perform state transition through API
+  const response = await request.post(
+    `http://localhost:8000/api/order/po/${ORDER_ID}/ready/`,
+    {
+      headers: {
+        Authorization: TOKEN
+      }
+    }
+  );
+  expect(response.ok()).toBeTruthy();
+
+  await page.reload();
   await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
-  await expect(page.getByRole('button', { name: 'Ready' })).toBeEnabled();
-  await page.getByRole('button', { name: 'Ready' }).click();
-
-  await modal.getByRole('button', { name: 'Submit' }).click();
-
   await expect(page.getByRole('button', { name: 'Issue Order' })).toBeEnabled();
   await expect(page.getByRole('button', { name: 'Recall' })).toBeEnabled();
   await page.getByRole('button', { name: 'Recall' }).click();
@@ -229,7 +249,7 @@ test('PUI - Pages - Purchasing - Ready Transitions', async ({
 
   await setPurchaser(request, 'readers');
 
-  await page.goto(url);
+  await page.reload();
   await page.getByText(RegExp(/^Purchase Order: PO\d{4}$/)).waitFor();
   await expect(
     page.getByRole('button', { name: 'Issue Order' })
@@ -238,19 +258,28 @@ test('PUI - Pages - Purchasing - Ready Transitions', async ({
 });
 
 test('PUI - Pages - Purchasing - Placed Transitions', async ({
-  page
+  page,
+  request
 }: {
   page: Page;
+  request: APIRequestContext;
 }) => {
   const url = page.url();
 
   const modal = page.getByRole('dialog');
 
-  await page.getByRole('button', { name: 'Issue Order' }).click();
-  await modal.waitFor();
-  expect(modal.getByRole('button', { name: 'Submit' })).toBeEnabled();
-  await modal.getByRole('button', { name: 'Submit' }).click();
+  // Perform state transition through API
+  const response = await request.post(
+    `http://localhost:8000/api/order/po/${ORDER_ID}/issue/`,
+    {
+      headers: {
+        Authorization: TOKEN
+      }
+    }
+  );
+  expect(response.ok()).toBeTruthy();
 
+  await page.reload();
   await page.getByRole('button', { name: 'Complete' }).waitFor();
   await page.getByRole('button', { name: 'Complete' }).click();
   await expect(modal.getByText('Complete Purchase Order')).toBeVisible();

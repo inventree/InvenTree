@@ -8,16 +8,6 @@ export const doLogin = async (page, username?: string, password?: string) => {
   username = username ?? user.username;
   password = password ?? user.password;
 
-  const userLoggedIn = page.getByTestId('username');
-  const visible = await userLoggedIn.isVisible();
-
-  if (visible) {
-    const currentUser = await userLoggedIn.innerText();
-    if (currentUser === username) {
-      return;
-    }
-  }
-
   await page.goto(logoutUrl);
   await expect(page).toHaveTitle(RegExp('^InvenTree.*$'));
   await page.waitForURL('**/platform/login');
