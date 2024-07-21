@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-17 16:38\n"
+"PO-Revision-Date: 2024-07-21 16:41\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -3564,7 +3564,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:170
 #~ msgid "Location types"
-#~ msgstr ""
+#~ msgstr "Location types"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:182
 #: src/tables/machine/MachineTypeTable.tsx:287
@@ -5201,19 +5201,19 @@ msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:510
 #~ msgid "Are you sure you want to delete the selected records?"
-#~ msgstr ""
+#~ msgstr "Are you sure you want to delete the selected records?"
 
 #: src/tables/InvenTreeTable.tsx:535
 #~ msgid "Deleted records"
-#~ msgstr ""
+#~ msgstr "Deleted records"
 
 #: src/tables/InvenTreeTable.tsx:536
 #~ msgid "Records were deleted successfully"
-#~ msgstr ""
+#~ msgstr "Records were deleted successfully"
 
 #: src/tables/InvenTreeTable.tsx:545
 #~ msgid "Failed to delete records"
-#~ msgstr ""
+#~ msgstr "Failed to delete records"
 
 #: src/tables/InvenTreeTable.tsx:585
 #: src/tables/InvenTreeTable.tsx:586
@@ -7402,3 +7402,4 @@ msgstr "Läs dokumenten"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
