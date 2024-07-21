@@ -203,7 +203,7 @@ test('PUI - Pages - Part - Parameters', async ({ page }) => {
 
   // Select the "Color" parameter template (should create a "choice" field)
   await page.getByLabel('related-field-template').fill('Color');
-  await page.getByText('Part color').click();
+  await page.getByRole('option', { name: 'Color Part color' }).click();
   await page.getByLabel('choice-field-data').click();
   await page.getByRole('option', { name: 'Green' }).click();
 
