@@ -12,7 +12,7 @@ class SampleIconPackPluginTests(InvenTreeAPITestCase):
     """Tests for SampleIconPackPlugin."""
 
     def test_get_icons_api(self):
-        """Check if the event is issued."""
+        """Check get icons api."""
         # Activate plugin
         config = registry.get_plugin('sampleicons').plugin_config()
         config.active = True
