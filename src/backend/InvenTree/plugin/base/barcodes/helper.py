@@ -1,7 +1,6 @@
 """Helper functions for barcode generation."""
 
 import logging
-from functools import lru_cache
 from typing import Type, cast
 
 import InvenTree.helpers_model
@@ -38,13 +37,11 @@ def generate_barcode(model_instance: InvenTreeBarcodeMixin):
     return plugin.generate(model_instance)
 
 
-@lru_cache(maxsize=1)
 def get_supported_barcode_models() -> list[Type[InvenTreeBarcodeMixin]]:
     """Returns a list of database models which support barcode functionality."""
     return InvenTree.helpers_model.getModelsWithMixin(InvenTreeBarcodeMixin)
 
 
-@lru_cache(maxsize=1)
 def get_supported_barcode_models_map():
     """Return a mapping of barcode model types to the model class."""
     return {
@@ -52,7 +49,6 @@ def get_supported_barcode_models_map():
     }
 
 
-@lru_cache(maxsize=1)
 def get_supported_barcode_model_codes_map():
     """Return a mapping of barcode model type codes to the model class."""
     return {
