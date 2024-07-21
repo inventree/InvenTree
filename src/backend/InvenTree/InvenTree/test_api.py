@@ -62,6 +62,7 @@ class APITests(InvenTreeAPITestCase):
     """Tests for the InvenTree API."""
 
     fixtures = ['location', 'category', 'part', 'stock']
+    roles = ['part.view']
     token = None
     auto_login = False
 
