@@ -18,11 +18,11 @@ def cache_ignore_none(func):
         if 'default' not in cache:
             res = func()
 
-            if res is not None:
+            if res:
                 cache['default'] = res
                 print('===> update cache', func.__name__, res)
             else:
-                print('===> ignore none cache', func.__name__)
+                print('===> ignore none cache', func.__name__, res)
 
             return res
 
