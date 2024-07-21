@@ -9,8 +9,8 @@ from InvenTree.models import InvenTreeBarcodeMixin
 logger = logging.getLogger('inventree')
 
 
-def cache_ignore_none(func):
-    """Cache the result of a function, but do not cache None results."""
+def cache(func):
+    """Cache the result of a function, but do not cache falsy results."""
     cache = {}
 
     def wrapper():
@@ -20,13 +20,8 @@ def cache_ignore_none(func):
 
             if res:
                 cache['default'] = res
-                print('===> update cache', func.__name__, res)
-            else:
-                print('===> ignore none cache', func.__name__, res)
 
             return res
-
-        print('===> retrieve from cache', func.__name__, cache['default'])
 
         return cache['default']
 
@@ -61,13 +56,13 @@ def generate_barcode(model_instance: InvenTreeBarcodeMixin):
     return plugin.generate(model_instance)
 
 
-@cache_ignore_none
+@cache
 def get_supported_barcode_models() -> list[Type[InvenTreeBarcodeMixin]]:
     """Returns a list of database models which support barcode functionality."""
     return InvenTree.helpers_model.getModelsWithMixin(InvenTreeBarcodeMixin)
 
 
-@cache_ignore_none
+@cache
 def get_supported_barcode_models_map():
     """Return a mapping of barcode model types to the model class."""
     return {
@@ -75,7 +70,7 @@ def get_supported_barcode_models_map():
     }
 
 
-@cache_ignore_none
+@cache
 def get_supported_barcode_model_codes_map():
     """Return a mapping of barcode model type codes to the model class."""
     return {
