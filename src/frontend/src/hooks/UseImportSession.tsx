@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
-import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
 import { useInstance } from './UseInstance';
 
 /*
@@ -31,6 +29,7 @@ export type ImportSessionState = {
   columnMappings: any[];
   fieldDefaults: any;
   fieldOverrides: any;
+  fieldFilters: any;
   rowCount: number;
   completedRowCount: number;
 };
@@ -113,6 +112,10 @@ export function useImportSession({
     return sessionData?.field_overrides ?? {};
   }, [sessionData]);
 
+  const fieldFilters: any = useMemo(() => {
+    return sessionData?.field_filters ?? {};
+  }, [sessionData]);
+
   const rowCount: number = useMemo(() => {
     return sessionData?.row_count ?? 0;
   }, [sessionData]);
@@ -134,6 +137,7 @@ export function useImportSession({
     mappedFields,
     fieldDefaults,
     fieldOverrides,
+    fieldFilters,
     rowCount,
     completedRowCount
   };

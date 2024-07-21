@@ -1,5 +1,5 @@
 import { expect } from './baseFixtures.js';
-import { baseUrl, loginUrl, logoutUrl, user } from './defaults';
+import { baseUrl, logoutUrl, user } from './defaults';
 
 /*
  * Perform form based login operation from the "login" URL

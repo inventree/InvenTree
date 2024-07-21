@@ -1,6 +1,6 @@
 import { expect, test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
-import { doLogout, doQuickLogin } from './login.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Admin', async ({ page }) => {
   // Note here we login with admin access
@@ -29,7 +29,6 @@ test('PUI - Admin', async ({ page }) => {
   await page.getByRole('tab', { name: 'Pricing' }).click();
   await page.getByRole('tab', { name: 'Labels' }).click();
   await page.getByRole('tab', { name: 'Reporting' }).click();
-  await page.getByRole('tab', { name: 'Part Categories' }).click();
 
   await page.getByRole('tab', { name: 'Stocktake' }).click();
   await page.getByRole('tab', { name: 'Build Orders' }).click();

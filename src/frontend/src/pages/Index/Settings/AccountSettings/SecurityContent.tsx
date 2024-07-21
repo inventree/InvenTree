@@ -89,7 +89,7 @@ export function SecurityContent() {
   );
 }
 
-function EmailContent({}: {}) {
+function EmailContent() {
   const [value, setValue] = useState<string>('');
   const [newEmailValue, setNewEmailValue] = useState('');
   const [user] = useUserState((state) => [state.user]);
@@ -204,7 +204,7 @@ function EmailContent({}: {}) {
 
 function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   const [value, setValue] = useState<string>('');
-  const [currentProviders, setcurrentProviders] = useState<[]>();
+  const [currentProviders, setCurrentProviders] = useState<[]>();
   const { isLoading, data } = useQuery({
     queryKey: ['sso-list'],
     queryFn: () =>
@@ -225,7 +225,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
     // remove providers that are used currently
     let newData = dataProvider.providers;
     newData = newData.filter(isAlreadyInUse);
-    setcurrentProviders(newData);
+    setCurrentProviders(newData);
   }, [dataProvider, data]);
 
   function removeProvider() {
@@ -321,7 +321,7 @@ function SsoContent({ dataProvider }: { dataProvider: any | undefined }) {
   );
 }
 
-function MfaContent({}: {}) {
+function MfaContent() {
   return (
     <>
       MFA Details

@@ -1,13 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 223
+INVENTREE_API_VERSION = 226
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-v223 - 2024-07-15 : https://github.com/inventree/InvenTree/pull/6989
+v226 - 2024-07-21 : https://github.com/inventree/InvenTree/pull/6989
     - Adds new API endpoints for PurchaseOrder state transitions
         - Request Approval
         - Reject order
@@ -19,6 +19,15 @@ v223 - 2024-07-15 : https://github.com/inventree/InvenTree/pull/6989
         - created_by
         - approved_by
         - placed_by
+
+v225 - 2024-07-17 : https://github.com/inventree/InvenTree/pull/7671
+    - Adds "filters" field to DataImportSession API
+
+v224 - 2024-07-14 : https://github.com/inventree/InvenTree/pull/7667
+    - Add notes field to ManufacturerPart and SupplierPart API endpoints
+
+v223 - 2024-07-14 : https://github.com/inventree/InvenTree/pull/7649
+    - Allow adjustment of "packaging" field when receiving items against a purchase order
 
 v222 - 2024-07-14 : https://github.com/inventree/InvenTree/pull/7635
     - Adjust the BomItem API endpoint to improve data import process

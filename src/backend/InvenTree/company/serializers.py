@@ -213,7 +213,7 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 
 @register_importer()
 class ManufacturerPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
 ):
     """Serializer for ManufacturerPart object."""
 
@@ -232,6 +232,7 @@ class ManufacturerPartSerializer(
             'MPN',
             'link',
             'barcode_hash',
+            'notes',
             'tags',
         ]
 
@@ -305,7 +306,7 @@ class ManufacturerPartParameterSerializer(
 
 @register_importer()
 class SupplierPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
 ):
     """Serializer for SupplierPart object."""
 
@@ -340,6 +341,7 @@ class SupplierPartSerializer(
             'supplier_detail',
             'url',
             'updated',
+            'notes',
             'tags',
         ]
 

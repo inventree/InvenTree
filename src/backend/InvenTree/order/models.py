@@ -1042,6 +1042,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Extract optional notes field
         notes = kwargs.get('notes', '')
 
+        # Extract optional packaging field
+        packaging = kwargs.get('packaging', None)
+
+        if not packaging:
+            # Default to the packaging field for the linked supplier part
+            if line.part:
+                packaging = line.part.packaging
+
         # Extract optional barcode field
         barcode = kwargs.get('barcode', None)
 
@@ -1091,6 +1099,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
+                    packaging=packaging,
                     serial=sn,
                     purchase_price=unit_purchase_price,
                 )

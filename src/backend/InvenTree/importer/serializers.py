@@ -50,6 +50,7 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
             'column_mappings',
             'field_defaults',
             'field_overrides',
+            'field_filters',
             'row_count',
             'completed_row_count',
         ]
@@ -103,6 +104,19 @@ class DataImportSessionSerializer(InvenTreeModelSerializer):
                 raise ValidationError(_('Invalid field overrides'))
 
         return overrides
+
+    def validate_field_filters(self, filters):
+        """De-stringify the field filters."""
+        if filters is None:
+            return None
+
+        if type(filters) is not dict:
+            try:
+                filters = json.loads(str(filters))
+            except:
+                raise ValidationError(_('Invalid field filters'))
+
+        return filters
 
     def create(self, validated_data):
         """Override create method for this serializer.

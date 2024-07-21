@@ -2,7 +2,7 @@ import { ActionIcon, Container, Group, Indicator, Tabs } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { IconBell, IconSearch } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useMatch, useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -132,9 +132,34 @@ export function Header() {
 }
 
 function NavTabs() {
+  const user = useUserState();
   const navigate = useNavigate();
   const match = useMatch(':tabName/*');
   const tabValue = match?.params.tabName;
+
+  const tabs: ReactNode[] = useMemo(() => {
+    let _tabs: ReactNode[] = [];
+
+    mainNavTabs.forEach((tab) => {
+      if (tab.role && !user.hasViewRole(tab.role)) {
+        return;
+      }
+
+      _tabs.push(
+        <Tabs.Tab
+          value={tab.name}
+          key={tab.name}
+          onClick={(event: any) =>
+            navigateToLink(`/${tab.name}`, navigate, event)
+          }
+        >
+          {tab.text}
+        </Tabs.Tab>
+      );
+    });
+
+    return _tabs;
+  }, [mainNavTabs, user]);
 
   return (
     <Tabs
@@ -146,19 +171,7 @@ function NavTabs() {
       }}
       value={tabValue}
     >
-      <Tabs.List>
-        {mainNavTabs.map((tab) => (
-          <Tabs.Tab
-            value={tab.name}
-            key={tab.name}
-            onClick={(event: any) =>
-              navigateToLink(`/${tab.name}`, navigate, event)
-            }
-          >
-            {tab.text}
-          </Tabs.Tab>
-        ))}
-      </Tabs.List>
+      <Tabs.List>{tabs.map((tab) => tab)}</Tabs.List>
     </Tabs>
   );
 }

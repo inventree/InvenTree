@@ -170,6 +170,18 @@ def uploaded_image(
     width = kwargs.get('width', None)
     height = kwargs.get('height', None)
 
+    if width is not None:
+        try:
+            width = int(width)
+        except ValueError:
+            width = None
+
+    if height is not None:
+        try:
+            height = int(height)
+        except ValueError:
+            height = None
+
     if width is not None and height is not None:
         # Resize the image, width *and* height are provided
         img = img.resize((width, height))
@@ -185,10 +197,12 @@ def uploaded_image(
         img = img.resize((wsize, height))
 
     # Optionally rotate the image
-    rotate = kwargs.get('rotate', None)
-
-    if rotate is not None:
-        img = img.rotate(rotate)
+    if rotate := kwargs.get('rotate', None):
+        try:
+            rotate = int(rotate)
+            img = img.rotate(rotate)
+        except ValueError:
+            pass
 
     # Return a base-64 encoded image
     img_data = report.helpers.encode_image_base64(img)

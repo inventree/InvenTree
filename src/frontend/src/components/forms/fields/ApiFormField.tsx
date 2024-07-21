@@ -1,15 +1,7 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  FileInput,
-  NumberInput,
-  Stack,
-  Switch,
-  TextInput
-} from '@mantine/core';
+import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { IconX } from '@tabler/icons-react';
 import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 
@@ -149,7 +141,7 @@ export function ApiFormField({
       label: hideLabels ? undefined : definition.label,
       description: hideLabels ? undefined : definition.description
     };
-  }, [definition]);
+  }, [hideLabels, definition]);
 
   // pull out onValueChange as this can cause strange errors when passing the
   // definition to the input components via spread syntax
@@ -202,7 +194,7 @@ export function ApiFormField({
     }
 
     return val;
-  }, [value]);
+  }, [definition.field_type, value]);
 
   // Coerce the value to a (stringified) boolean value
   const booleanValue: boolean = useMemo(() => {

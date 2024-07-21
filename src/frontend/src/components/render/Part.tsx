@@ -15,7 +15,7 @@ export function RenderPart(
   const { instance } = props;
 
   let badgeText = '';
-  let badgeColor = 'green';
+  let badgeColor = '';
 
   let stock = instance.total_in_stock;
 
