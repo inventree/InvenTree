@@ -157,6 +157,10 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
 
     subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
 
+    icon = serializers.CharField(
+        required=False, allow_blank=True, help_text=_('Icon (optional)'), max_length=100
+    )
+
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with the number of subcategories."""
