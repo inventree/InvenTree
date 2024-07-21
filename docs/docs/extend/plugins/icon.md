@@ -10,7 +10,7 @@ The IconPackMixin class provides basic functionality for letting plugins expose 
 
 The following example demonstrates how to use the `IconPackMixin` class to add a custom icon pack:
 
-::: plugin.samples.icons.icon_sample.MyCustomIconPlugin
+::: plugin.samples.icons.icon_sample.SampleIconPlugin
     options:
         show_bases: False
         show_root_heading: False

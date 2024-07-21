@@ -1,6 +1,7 @@
 """Plugin mixin classes for icon pack plugin."""
 
 from common.icons import IconPack
+from plugin.helpers import MixinNotImplementedError
 
 
 class IconPackMixin:
@@ -18,4 +19,6 @@ class IconPackMixin:
 
     def icon_packs(self) -> list[IconPack]:
         """Return a list of custom icon packs."""
-        return []
+        raise MixinNotImplementedError(
+            f"{__class__} is missing the 'icon_packs' method"
+        )

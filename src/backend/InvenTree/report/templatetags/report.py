@@ -486,7 +486,7 @@ def icon(name, **kwargs):
     Keyword Arguments:
         class: Optional class name(s) to apply to the icon element
     """
-    if name == '':
+    if not name:
         return ''
 
     try:

@@ -7,14 +7,14 @@ from plugin.base.icons.mixins import IconPackMixin
 from plugin.plugin import InvenTreePlugin
 
 
-class MyCustomIconPlugin(IconPackMixin, InvenTreePlugin):
+class SampleIconPlugin(IconPackMixin, InvenTreePlugin):
     """Example plugin to add custom icons."""
 
-    SLUG = 'my_custom_icon_plugin'
-    NAME = 'My Custom Icon Plugin'
+    NAME = 'SampleIconPackPlugin'
+    SLUG = 'sampleicons'
+    TITLE = 'My sample icon pack plugin'
+
     VERSION = '0.0.1'
-    DESCRIPTION = 'Example plugin to add custom icons.'
-    AUTHOR = 'InvenTree Contributors'
 
     def icon_packs(self):
         """Return a list of custom icon packs."""
