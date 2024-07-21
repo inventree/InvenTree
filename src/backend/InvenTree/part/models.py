@@ -142,7 +142,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
             return self._icon
 
         if default_icon := get_global_setting(
-            'PART_CATEGORY_DEFAULT_ICON', create=False
+            'PART_CATEGORY_DEFAULT_ICON', create=False, cache=True
         ):
             return default_icon
 
@@ -151,7 +151,9 @@ class PartCategory(InvenTree.models.InvenTreeTree):
     @icon.setter
     def icon(self, value):
         """Setter for icon field."""
-        default_icon = get_global_setting('PART_CATEGORY_DEFAULT_ICON', create=False)
+        default_icon = get_global_setting(
+            'PART_CATEGORY_DEFAULT_ICON', create=False, cache=True
+        )
 
         # if icon is not defined previously and new value is default icon, do not save it
         if not self._icon and value == default_icon:
