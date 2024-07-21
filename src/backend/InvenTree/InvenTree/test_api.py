@@ -298,14 +298,7 @@ class SearchTests(InvenTreeAPITestCase):
         'order',
         'sales_order',
     ]
-    roles = [
-        'build.view',
-        'part.view',
-        'purchase_order.view',
-        'sales_order.view',
-        'stock.view',
-        'build.view',
-    ]
+    roles = ['build.view', 'part.view']
 
     def test_empty(self):
         """Test empty request."""
@@ -335,6 +328,19 @@ class SearchTests(InvenTreeAPITestCase):
         self.assertNotIn('salesorder', response.data)
 
         # Search for orders
+        response = self.post(
+            reverse('api-search'),
+            {'search': '01', 'limit': 2, 'purchaseorder': {}, 'salesorder': {}},
+            expected_code=200,
+        )
+        self.assertEqual(
+            response.data['purchaseorder'],
+            {'error': 'User does not have permission to view this model'},
+        )
+
+        # Add permissions and try again
+        self.assignRole('purchase_order.view')
+        self.assignRole('sales_order.view')
         response = self.post(
             reverse('api-search'),
             {'search': '01', 'limit': 2, 'purchaseorder': {}, 'salesorder': {}},
