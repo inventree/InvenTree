@@ -340,13 +340,14 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertEqual(response.data['part']['pk'], 5)
 
         # Scan a SupplierPart instance with custom prefix
-        self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'TEST')
-        response = self.scan({'barcode': 'TESTSP1'}, expected_code=200)
-        self.assertEqual(response.data['supplierpart']['pk'], 1)
-        self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
-        self.assertIn('success', response.data)
-        self.assertIn('barcode_data', response.data)
-        self.assertIn('barcode_hash', response.data)
+        for prefix in ['TEST', '']:
+            self.set_plugin_setting('SHORT_BARCODE_PREFIX', prefix)
+            response = self.scan({'barcode': f'{prefix}SP1'}, expected_code=200)
+            self.assertEqual(response.data['supplierpart']['pk'], 1)
+            self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
+            self.assertIn('success', response.data)
+            self.assertIn('barcode_data', response.data)
+            self.assertIn('barcode_hash', response.data)
 
         self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'INV-')
 
@@ -367,9 +368,10 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertEqual(data['barcode'], 'INV-SL5')
 
         # test generation with custom prefix
-        self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'TEST')
-        data = self.generate('stocklocation', item.pk, expected_code=200).data
-        self.assertEqual(data['barcode'], 'TESTSL5')
+        for prefix in ['TEST', '']:
+            self.set_plugin_setting('SHORT_BARCODE_PREFIX', prefix)
+            data = self.generate('stocklocation', item.pk, expected_code=200).data
+            self.assertEqual(data['barcode'], f'{prefix}SL5')
 
         self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'INV-')
         self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'json')
