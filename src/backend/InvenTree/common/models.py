@@ -2589,14 +2589,22 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
-        if not django_settings.STATIC_COLOR_THEMES_DIR.exists():
-            logger.error('Theme directory does not exist')
+        color_theme_dir = (
+            django_settings.STATIC_COLOR_THEMES_DIR
+            if django_settings.STATIC_COLOR_THEMES_DIR.exists()
+            else django_settings.BASE_DIR.joinpath(
+                'InvenTree', 'static', 'css', 'color-themes'
+            )
+        )
+
+        if not color_theme_dir.exists():
+            logger.error(f'Theme directory "{color_theme_dir}" does not exist')
             return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
 
-        for file in django_settings.STATIC_COLOR_THEMES_DIR.iterdir():
+        for file in color_theme_dir.iterdir():
             files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)
