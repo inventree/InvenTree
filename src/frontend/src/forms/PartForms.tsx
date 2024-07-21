@@ -185,6 +185,7 @@ export function usePartParameterFields(): ApiFormFieldSet {
         }
       },
       data: {
+        type: fieldType,
         field_type: fieldType,
         choices: fieldType === 'choice' ? choices : undefined,
         adjustValue: (value: any) => {

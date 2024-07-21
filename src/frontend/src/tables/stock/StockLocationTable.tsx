@@ -106,6 +106,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     url: ApiEndpoints.stock_location_list,
     title: t`Add Stock Location`,
     fields: stockLocationFields(),
+    focus: 'name',
     initialData: {
       parent: parentId
     },
