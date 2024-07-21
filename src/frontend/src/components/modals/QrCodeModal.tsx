@@ -35,7 +35,7 @@ export function QrCodeModal({
     key: 'camId',
     defaultValue: null
   });
-  const [ScanningEnabled, setIsScanning] = useState<boolean>(false);
+  const [scanningEnabled, setScanningEnabled] = useState<boolean>(false);
   const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
   const documentState = useDocumentVisibility();
 
@@ -48,7 +48,7 @@ export function QrCodeModal({
 
   // Stop/star when leaving or reentering page
   useEffect(() => {
-    if (ScanningEnabled && documentState === 'hidden') {
+    if (scanningEnabled && documentState === 'hidden') {
       stopScanning();
       setWasAutoPaused(true);
     } else if (wasAutoPaused && documentState === 'visible') {
@@ -128,12 +128,12 @@ export function QrCodeModal({
             icon: <IconX />
           });
         });
-      setIsScanning(true);
+      setScanningEnabled(true);
     }
   }
 
   function stopScanning() {
-    if (qrCodeScanner && ScanningEnabled) {
+    if (qrCodeScanner && scanningEnabled) {
       qrCodeScanner.stop().catch((err: string) => {
         showNotification({
           title: t`Error while stopping`,
@@ -142,7 +142,7 @@ export function QrCodeModal({
           icon: <IconX />
         });
       });
-      setIsScanning(false);
+      setScanningEnabled(false);
     }
   }
 
@@ -151,7 +151,7 @@ export function QrCodeModal({
       <Group>
         <Text size="sm">{camId?.label}</Text>
         <Space style={{ flex: 1 }} />
-        <Badge>{ScanningEnabled ? t`Scanning` : t`Not scanning`}</Badge>
+        <Badge>{scanningEnabled ? t`Scanning` : t`Not scanning`}</Badge>
       </Group>
       <Container px={0} id="reader" w={'100%'} mih="300px" />
       {!camId ? (
@@ -164,14 +164,14 @@ export function QrCodeModal({
             <Button
               style={{ flex: 1 }}
               onClick={() => startScanning()}
-              disabled={camId != undefined && ScanningEnabled}
+              disabled={camId != undefined && scanningEnabled}
             >
               <Trans>Start scanning</Trans>
             </Button>
             <Button
               style={{ flex: 1 }}
               onClick={() => stopScanning()}
-              disabled={!ScanningEnabled}
+              disabled={!scanningEnabled}
             >
               <Trans>Stop scanning</Trans>
             </Button>

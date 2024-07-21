@@ -97,7 +97,8 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   const newLocation = useCreateApiFormModal({
     url: ApiEndpoints.stock_location_list,
     title: t`Add Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
+    focus: 'name',
     initialData: {
       parent: parentId
     },
@@ -112,7 +113,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     url: ApiEndpoints.stock_location_list,
     pk: selectedLocation,
     title: t`Edit Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 

@@ -11,6 +11,10 @@ export function dataImporterSessionFields(): ApiFormFieldSet {
     field_overrides: {
       hidden: true,
       value: {}
+    },
+    field_filters: {
+      hidden: true,
+      value: {}
     }
   };
 }
