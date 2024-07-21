@@ -1,15 +1,16 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
 import { DateColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowAction } from '../RowActions';
+import { RowAction, RowDeleteAction } from '../RowActions';
 
 export default function StocktakeReportTable() {
   const table = useTable('stocktake-report');
@@ -45,12 +46,31 @@ export default function StocktakeReportTable() {
     return [];
   }, []);
 
+  const [selectedReport, setSelectedReport] = useState<number | undefined>(
+    undefined
+  );
+
+  const deleteReport = useDeleteApiFormModal({
+    url: ApiEndpoints.part_stocktake_report_list,
+    pk: selectedReport,
+    title: t`Delete Report`,
+    onFormSuccess: () => table.refreshTable()
+  });
+
   const rowActions = useCallback((record: any): RowAction[] => {
-    return [];
+    return [
+      RowDeleteAction({
+        onClick: () => {
+          setSelectedReport(record.pk);
+          deleteReport.open();
+        }
+      })
+    ];
   }, []);
 
   return (
     <>
+      {deleteReport.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_stocktake_report_list)}
         tableState={table}
