@@ -148,12 +148,11 @@ class APITests(InvenTreeAPITestCase):
 
         role_names = roles.keys()
 
-        # By default, 'view' permissions are provided
+        # By default, no  permissions are provided
         for rule in RuleSet.RULESET_NAMES:
             self.assertIn(rule, role_names)
 
-            self.assertIn('view', roles[rule])
-
+            self.assertNotIn('view', roles[rule])
             self.assertNotIn('add', roles[rule])
             self.assertNotIn('change', roles[rule])
             self.assertNotIn('delete', roles[rule])
