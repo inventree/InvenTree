@@ -128,5 +128,4 @@ test('PUI - Pages - Index - Scan (General)', async ({ page }) => {
   await page.getByRole('button', { name: 'Toggle Fullscreen' }).click();
   await page.waitForTimeout(1000);
   await page.getByRole('button', { name: 'Toggle Fullscreen' }).click();
-  await page.waitForTimeout(1000);
 });
