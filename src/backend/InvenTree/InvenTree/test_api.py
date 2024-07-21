@@ -298,6 +298,14 @@ class SearchTests(InvenTreeAPITestCase):
         'order',
         'sales_order',
     ]
+    roles = [
+        'build.view',
+        'part.view',
+        'purchase_order.view',
+        'sales_order.view',
+        'stock.view',
+        'build.view',
+    ]
 
     def test_empty(self):
         """Test empty request."""
