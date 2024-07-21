@@ -133,6 +133,7 @@ class APITests(InvenTreeAPITestCase):
 
         # Now log in!
         self.basicAuth()
+        self.assignRole('part.view')
 
         response = self.get(url)
 
@@ -148,11 +149,17 @@ class APITests(InvenTreeAPITestCase):
 
         role_names = roles.keys()
 
-        # By default, no  permissions are provided
+        # By default, no permissions are provided
         for rule in RuleSet.RULESET_NAMES:
             self.assertIn(rule, role_names)
 
-            self.assertNotIn('view', roles[rule])
+            if roles[rule] is None:
+                continue
+
+            if rule == 'part':
+                self.assertIn('view', roles[rule])
+            else:
+                self.assertNotIn('view', roles[rule])
             self.assertNotIn('add', roles[rule])
             self.assertNotIn('change', roles[rule])
             self.assertNotIn('delete', roles[rule])
