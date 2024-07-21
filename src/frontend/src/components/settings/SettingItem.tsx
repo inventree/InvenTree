@@ -80,14 +80,12 @@ export function SettingItem({
   setting,
   shaded,
   onEdit,
-  onToggle,
-  id
+  onToggle
 }: {
   setting: Setting;
   shaded: boolean;
   onEdit: (setting: Setting) => void;
   onToggle: (setting: Setting, value: boolean) => void;
-  id: string;
 }) {
   const { colorScheme } = useMantineColorScheme();
 
@@ -98,7 +96,7 @@ export function SettingItem({
   }
 
   return (
-    <Paper style={style} data-testid={id}>
+    <Paper style={style}>
       <Group justify="space-between" p="3">
         <Stack gap="2" p="4px">
           <Text>

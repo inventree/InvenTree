@@ -27,13 +27,7 @@ export function MainMenu() {
         <UnstyledButton className={classes.layoutHeaderUser}>
           <Group gap={7}>
             {username() ? (
-              <Text
-                fw={500}
-                size="sm"
-                style={{ lineHeight: 1 }}
-                mr={3}
-                data-testid="username"
-              >
+              <Text fw={500} size="sm" style={{ lineHeight: 1 }} mr={3}>
                 {username()}
               </Text>
             ) : (

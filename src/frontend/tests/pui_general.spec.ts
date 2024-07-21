@@ -1,4 +1,4 @@
-import { expect, test } from './baseFixtures.js';
+import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
@@ -144,10 +144,7 @@ test('PUI - Scanning', async ({ page }) => {
 test('PUI - Language / Color', async ({ page }) => {
   await doQuickLogin(page);
 
-  await expect(
-    page.locator('button', { hasText: 'Ally Access' })
-  ).toBeVisible();
-  await page.locator('button', { hasText: 'Ally Access' }).click();
+  await page.getByRole('button', { name: 'Ally Access' }).click();
   await page.getByRole('menuitem', { name: 'Logout' }).click();
   await page.getByRole('button', { name: 'Send me an email' }).click();
   await page.getByRole('button').nth(3).click();

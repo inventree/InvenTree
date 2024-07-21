@@ -1,4 +1,4 @@
-import { expect, test } from './baseFixtures.js';
+import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
@@ -7,8 +7,7 @@ test('PUI - Admin', async ({ page }) => {
   await doQuickLogin(page, 'admin', 'inventree');
 
   // User settings
-  await expect(page.locator('button', { hasText: 'admin' })).toBeVisible();
-  await page.locator('button', { hasText: 'admin' }).click();
+  await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Account settings' }).click();
   await page.getByRole('tab', { name: 'Security' }).click();
 
@@ -37,8 +36,7 @@ test('PUI - Admin', async ({ page }) => {
   await page.getByRole('tab', { name: 'Return Orders' }).click();
 
   // Admin Center
-  await expect(page.locator('button', { hasText: 'admin' })).toBeVisible();
-  await page.locator('button', { hasText: 'admin' }).click();
+  await page.getByRole('button', { name: 'admin' }).click();
   await page.getByRole('menuitem', { name: 'Admin Center' }).click();
   await page.getByRole('tab', { name: 'Background Tasks' }).click();
   await page.getByRole('tab', { name: 'Error Reports' }).click();

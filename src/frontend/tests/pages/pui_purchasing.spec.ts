@@ -1,8 +1,8 @@
 import { APIRequestContext, Page } from '@playwright/test';
 
 import { expect, test } from '../baseFixtures';
-import { adminuser, baseUrl, user } from '../defaults';
-import { doLogin, doQuickLogin } from '../login';
+import { baseUrl } from '../defaults';
+import { doQuickLogin } from '../login';
 
 // CSRF token
 let TOKEN: string;
@@ -12,7 +12,7 @@ let ORDER_ID: number;
 // Each test will reset settings with its afterEach hook
 test.describe.configure({ mode: 'serial' });
 
-async function setting(
+async function setSettingAPI(
   request: APIRequestContext,
   key: string,
   value: string | boolean | null
@@ -33,19 +33,19 @@ async function setting(
 }
 
 async function toggleReady(request: APIRequestContext, disable = false) {
-  await setting(request, 'ENABLE_PURCHASE_ORDER_READY_STATUS', !disable);
+  await setSettingAPI(request, 'ENABLE_PURCHASE_ORDER_READY_STATUS', !disable);
 }
 
 async function toggleApprovals(request: APIRequestContext, disable = false) {
-  await setting(request, 'ENABLE_PURCHASE_ORDER_APPROVAL', !disable);
+  await setSettingAPI(request, 'ENABLE_PURCHASE_ORDER_APPROVAL', !disable);
 }
 
 async function setApprover(request: APIRequestContext, group = 'all access') {
-  await setting(request, 'PURCHASE_ORDER_APPROVE_ALL_GROUP', group);
+  await setSettingAPI(request, 'PURCHASE_ORDER_APPROVE_ALL_GROUP', group);
 }
 
 async function setPurchaser(request: APIRequestContext, group = 'all access') {
-  await setting(request, 'PURCHASE_ORDER_PURCHASER_GROUP', group);
+  await setSettingAPI(request, 'PURCHASE_ORDER_PURCHASER_GROUP', group);
 }
 
 async function disableAllSettings(request: APIRequestContext) {
@@ -68,7 +68,7 @@ async function disableAllSettings(request: APIRequestContext) {
     }
   ];
   for (const set of settings) {
-    await setting(request, set.key, set.state);
+    await setSettingAPI(request, set.key, set.state);
   }
 }
 
