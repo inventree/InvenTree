@@ -152,6 +152,12 @@ export default function StockDetail() {
         name: 'available_stock',
         label: t`Available`,
         icon: 'quantity'
+      },
+      {
+        type: 'text',
+        name: 'batch',
+        label: t`Batch Code`,
+        hidden: !stockitem.batch
       }
       // TODO: allocated_to_sales_orders
       // TODO: allocated_to_build_orders

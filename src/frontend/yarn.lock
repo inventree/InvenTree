@@ -4364,10 +4364,10 @@ make-dir@^4.0.0:
   dependencies:
     semver "^7.5.3"
 
-mantine-datatable@^7.11.1:
-  version "7.11.1"
-  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-7.11.1.tgz#a77ab8fc151569998ae2ef479dc535f48694cb05"
-  integrity sha512-YpTdmk1rRHengIyqjS2QI2GOIVtVUvBRdLClGJPnT1Sallunhx7aCFJWsvm3FQJO6yriz+/DexgQaOt8hZ6GNQ==
+mantine-datatable@^7.11.2:
+  version "7.11.2"
+  resolved "https://registry.yarnpkg.com/mantine-datatable/-/mantine-datatable-7.11.2.tgz#800cf3b91158089616f905f257461683f018c73d"
+  integrity sha512-4TUBw/LXJF+S5DpES26c+0CDFfVwUsO5or2bChHBZqg04Hpoev87i/JvRpuNgzvqRJaZ/EKqkSCuc1ldOrFgWg==
 
 markdown-table@^3.0.0:
   version "3.0.3"
