@@ -451,7 +451,7 @@
     $("#show-qr-code").click(function() {
         showQRDialog(
             '{% trans "Part QR Code" escape %}',
-            '{"part": {{ part.pk }} }',
+            '{{ part.barcode }}',
         );
     });
 

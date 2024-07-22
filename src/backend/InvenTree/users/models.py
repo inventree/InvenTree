@@ -389,7 +389,7 @@ class RuleSet(models.Model):
     )
 
     can_view = models.BooleanField(
-        verbose_name=_('View'), default=True, help_text=_('Permission to view items')
+        verbose_name=_('View'), default=False, help_text=_('Permission to view items')
     )
 
     can_add = models.BooleanField(

@@ -408,6 +408,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         return defaults
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'PO'
+
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
         """Filter by 'minimum and maximum date range'.
@@ -879,6 +884,11 @@ class SalesOrder(TotalPriceMixin, Order):
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
         return defaults
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SO'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -2043,6 +2053,11 @@ class ReturnOrder(TotalPriceMixin, Order):
         }
 
         return defaults
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'RO'
 
     def __str__(self):
         """Render a string representation of this ReturnOrder."""

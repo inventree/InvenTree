@@ -142,11 +142,16 @@ class StockLocation(
         """Return API url."""
         return reverse('api-location-list')
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SL'
+
     def report_context(self):
         """Return report context data for this StockLocation."""
         return {
             'location': self,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'parent': self.parent,
             'stock_location': self,
             'stock_items': self.get_stock_items(),
@@ -367,6 +372,11 @@ class StockItem(
         """Custom API instance filters."""
         return {'parent': {'exclude_tree': self.pk}}
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SI'
+
     def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
         keys = []
@@ -397,7 +407,7 @@ class StockItem(
             'item': self,
             'name': self.part.full_name,
             'part': self.part,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'qr_url': self.get_absolute_url(),
             'parameters': self.part.parameters_map(),
             'quantity': InvenTree.helpers.normalize(self.quantity),

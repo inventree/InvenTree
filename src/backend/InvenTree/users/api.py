@@ -162,7 +162,24 @@ class UserList(ListCreateAPI):
     filterset_fields = ['is_staff', 'is_active', 'is_superuser']
 
 
-class GroupDetail(RetrieveUpdateDestroyAPI):
+class GroupMixin:
+    """Mixin for Group API endpoints to add permissions filter."""
+
+    def get_serializer(self, *args, **kwargs):
+        """Return serializer instance for this endpoint."""
+        # Do we wish to include extra detail?
+        try:
+            params = self.request.query_params
+            kwargs['permission_detail'] = InvenTree.helpers.str2bool(
+                params.get('permission_detail', None)
+            )
+        except AttributeError:
+            pass
+        kwargs['context'] = self.get_serializer_context()
+        return self.serializer_class(*args, **kwargs)
+
+
+class GroupDetail(GroupMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for a particular auth group."""
 
     queryset = Group.objects.all()
@@ -170,7 +187,7 @@ class GroupDetail(RetrieveUpdateDestroyAPI):
     permission_classes = [permissions.IsAuthenticated]
 
 
-class GroupList(ListCreateAPI):
+class GroupList(GroupMixin, ListCreateAPI):
     """List endpoint for all auth groups."""
 
     queryset = Group.objects.all()
