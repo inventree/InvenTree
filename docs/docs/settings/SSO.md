@@ -4,13 +4,13 @@ title: InvenTree Single Sign On
 
 ## Single Sign On
 
-InvenTree provides the possibility to use 3rd party services to authenticate users. This functionality makes use of [django-allauth](https://django-allauth.readthedocs.io/en/latest/) and supports a wide array of OpenID and OAuth [providers](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html).
+InvenTree provides the possibility to use 3rd party services to authenticate users. This functionality makes use of [django-allauth](https://docs.allauth.org/en/latest/) and supports a wide array of OpenID and OAuth [providers](https://docs.allauth.org/en/latest/socialaccount/providers/index.html).
 
 !!! tip "Provider Documentation"
-    There are a lot of technical considerations when configuring a particular SSO provider. A good starting point is the [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html)
+    There are a lot of technical considerations when configuring a particular SSO provider. A good starting point is the [django-allauth documentation](https://docs.allauth.org/en/latest/socialaccount/providers/index.html)
 
 !!! warning "Advanced Users"
-    The SSO functionality provided by django-allauth is powerful, but can prove challenging to configure. Please ensure that you understand the implications of enabling SSO for your InvenTree instance. Specific technical details of each available SSO provider are beyond the scope of this documentation - please refer to the [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) for more information.
+    The SSO functionality provided by django-allauth is powerful, but can prove challenging to configure. Please ensure that you understand the implications of enabling SSO for your InvenTree instance. Specific technical details of each available SSO provider are beyond the scope of this documentation - please refer to the [django-allauth documentation](https://docs.allauth.org/en/latest/socialaccount/providers/index.html) for more information.
 
 ## SSO Configuration
 
@@ -31,8 +31,8 @@ There are two variables in the configuration file which define the operation of 
 
 | Environment Variable |Configuration File | Description | More Info |
 | --- | --- | --- | --- |
-| INVENTREE_SOCIAL_BACKENDS | `social_backends` | A *list* of provider backends enabled for the InvenTree instance | [django-allauth docs](https://django-allauth.readthedocs.io/en/latest/installation/quickstart.html) |
-| INVENTREE_SOCIAL_PROVIDERS | `social_providers` | A *dict* of settings specific to the installed providers | [provider documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) |
+| INVENTREE_SOCIAL_BACKENDS | `social_backends` | A *list* of provider backends enabled for the InvenTree instance | [django-allauth docs](https://docs.allauth.org/en/latest/installation/quickstart.html) |
+| INVENTREE_SOCIAL_PROVIDERS | `social_providers` | A *dict* of settings specific to the installed providers | [provider documentation](https://docs.allauth.org/en/latest/socialaccount/providers/index.html) |
 
 In the example below, SSO provider modules are activated for *google*, *github* and *microsoft*. Specific configuration options are specified for the *microsoft* provider module:
 
@@ -44,7 +44,7 @@ In the example below, SSO provider modules are activated for *google*, *github* 
     Note that the provider modules specified in `social_backends` must be prefixed with `allauth.socialaccounts.providers`
 
 !!! warning "Provider Documentation"
-    We do not provide any specific documentation for each provider module. Please refer to the [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) for more information.
+    We do not provide any specific documentation for each provider module. Please refer to the [django-allauth documentation](https://docs.allauth.org/en/latest/socialaccount/providers/index.html) for more information.
 
 !!! tip "Restart Server"
     As the [configuration file](../start/config.md) is only read when the server is launched, ensure you restart the server after editing the file.
@@ -57,7 +57,7 @@ The next step is to create an external authentication app with your provider of 
     The provider application will be created as part of your SSO provider setup. This is *not* the same as the *SocialApp* entry in the InvenTree admin interface.
 
 !!! info "Read the Documentation"
-    The [django-allauth documentation](https://django-allauth.readthedocs.io/en/latest/socialaccount/providers/index.html) is a good starting point here. There are also a number of good tutorials online (at least for the major supported SSO providers).
+    The [django-allauth documentation](https://docs.allauth.org/en/latest/socialaccount/providers/index.html) is a good starting point here. There are also a number of good tutorials online (at least for the major supported SSO providers).
 
 In general, the external app will generate a *key* and *secret* pair - although different terminology may be used, depending on the provider.
 
