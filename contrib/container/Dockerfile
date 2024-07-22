@@ -110,7 +110,7 @@ COPY src ${INVENTREE_HOME}/src
 COPY tasks.py ${INVENTREE_HOME}/tasks.py
 RUN cd ${INVENTREE_HOME} && inv frontend-compile
 
-COPY docker/execute.sh ${INVENTREE_HOME}/execute.sh
+COPY contrib/container/execute.sh ${INVENTREE_HOME}/execute.sh
 RUN chmod +x ${INVENTREE_HOME}/execute.sh
 
 COPY db_version ${INVENTREE_HOME}/db_version
