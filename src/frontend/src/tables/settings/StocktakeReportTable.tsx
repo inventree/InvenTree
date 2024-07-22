@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -43,7 +44,7 @@ export default function StocktakeReportTable() {
   }, []);
 
   const tableActions = useMemo(() => {
-    return [];
+    return [<AddItemButton tooltip={t`New Stocktake Report`} />];
   }, []);
 
   const [selectedReport, setSelectedReport] = useState<number | undefined>(
@@ -76,7 +77,9 @@ export default function StocktakeReportTable() {
         tableState={table}
         columns={tableColumns}
         props={{
-          rowActions: rowActions
+          enableSearch: false,
+          rowActions: rowActions,
+          tableActions: tableActions
         }}
       />
     </>
