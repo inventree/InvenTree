@@ -1,6 +1,13 @@
 import { t } from '@lingui/macro';
-import { Button, CopyButton as MantineCopyButton } from '@mantine/core';
-import { IconCopy } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  Button,
+  CopyButton as MantineCopyButton,
+  Text,
+  Tooltip
+} from '@mantine/core';
+
+import { InvenTreeIcon } from '../../functions/icons';
 
 export function CopyButton({
   value,
@@ -9,24 +16,27 @@ export function CopyButton({
   value: any;
   label?: JSX.Element;
 }) {
+  const ButtonComponent = label ? Button : ActionIcon;
+
   return (
     <MantineCopyButton value={value}>
       {({ copied, copy }) => (
-        <Button
-          color={copied ? 'teal' : 'gray'}
-          onClick={copy}
-          title={t`Copy to clipboard`}
-          variant="subtle"
-          size="compact-md"
-        >
-          <IconCopy size={10} />
-          {label && (
-            <>
-              <div>&nbsp;</div>
-              {label}
-            </>
-          )}
-        </Button>
+        <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
+          <ButtonComponent
+            color={copied ? 'teal' : 'gray'}
+            onClick={copy}
+            variant="transparent"
+            size="sm"
+          >
+            {copied ? (
+              <InvenTreeIcon icon="check" />
+            ) : (
+              <InvenTreeIcon icon="copy" />
+            )}
+
+            {label && <Text ml={10}>{label}</Text>}
+          </ButtonComponent>
+        </Tooltip>
       )}
     </MantineCopyButton>
   );

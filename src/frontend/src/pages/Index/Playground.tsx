@@ -146,16 +146,14 @@ function ApiFormsPlayground() {
 function StatusLabelPlayground() {
   const [status, setStatus] = useState<string>('10');
   return (
-    <>
-      <Group>
-        <Text>Stock Status</Text>
-        <TextInput
-          value={status}
-          onChange={(event) => setStatus(event.currentTarget.value)}
-        />
-        <StatusRenderer type={ModelType.stockitem} status={status} />
-      </Group>
-    </>
+    <Group>
+      <Text>Stock Status</Text>
+      <TextInput
+        value={status}
+        onChange={(event) => setStatus(event.currentTarget.value)}
+      />
+      <StatusRenderer type={ModelType.stockitem} status={status} />
+    </Group>
   );
 }
 
@@ -202,14 +200,12 @@ function PlaygroundArea({
   content: ReactNode;
 }) {
   return (
-    <>
-      <Accordion.Item value={`accordion-playground-${title}`}>
-        <Accordion.Control>
-          <Text>{title}</Text>
-        </Accordion.Control>
-        <Accordion.Panel>{content}</Accordion.Panel>
-      </Accordion.Item>
-    </>
+    <Accordion.Item value={`accordion-playground-${title}`}>
+      <Accordion.Control>
+        <Text>{title}</Text>
+      </Accordion.Control>
+      <Accordion.Panel>{content}</Accordion.Panel>
+    </Accordion.Item>
   );
 }
 

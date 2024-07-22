@@ -512,7 +512,7 @@ class PartOptionsAPITest(InvenTreeAPITestCase):
     Ensure that the required field details are provided!
     """
 
-    roles = ['part.add']
+    roles = ['part.add', 'part_category.view']
 
     def test_part(self):
         """Test the Part API OPTIONS."""
@@ -2149,7 +2149,7 @@ class BomItemTest(InvenTreeAPITestCase):
 
     fixtures = ['category', 'part', 'location', 'stock', 'bom', 'company']
 
-    roles = ['part.add', 'part.change', 'part.delete']
+    roles = ['part.add', 'part.change', 'part.delete', 'stock.view']
 
     def setUp(self):
         """Set up the test case."""
@@ -2642,6 +2642,7 @@ class PartStocktakeTest(InvenTreeAPITestCase):
 
     superuser = False
     is_staff = False
+    roles = ['stocktake.view']
 
     fixtures = ['category', 'part', 'location', 'stock']
 

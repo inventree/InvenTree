@@ -60,7 +60,7 @@ function detect_python() {
   fi
 
   # Try to detect a python between 3.9 and 3.12 in reverse order
-  if [ -z "${SETUP_PYTHON}" ]; then
+  if [ -z "$(which ${SETUP_PYTHON})" ]; then
     echo "# Trying to detecting python3.${PYTHON_FROM} to python3.${PYTHON_TO} - using newest version"
     for i in $(seq $PYTHON_TO -1 $PYTHON_FROM); do
       echo "# Checking for python3.${i}"
@@ -318,17 +318,17 @@ function set_env() {
   sed -i s=debug:\ True=debug:\ False=g ${INVENTREE_CONFIG_FILE}
 
   # Database engine
-  sed -i s=#ENGINE:\ sampleengine=ENGINE:\ ${INVENTREE_DB_ENGINE}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ ENGINE:\ Database\ engine.\ Selection\ from:=ENGINE:\ ${INVENTREE_DB_ENGINE}=g ${INVENTREE_CONFIG_FILE}
   # Database name
-  sed -i s=#NAME:\ \'/path/to/database\'=NAME:\ \'${INVENTREE_DB_NAME}\'=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ NAME:\ Database\ name=NAME:\ \'${INVENTREE_DB_NAME}\'=g ${INVENTREE_CONFIG_FILE}
   # Database user
-  sed -i s=#USER:\ sampleuser=USER:\ ${INVENTREE_DB_USER}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ USER:\ Database\ username\ \(if\ required\)=USER:\ ${INVENTREE_DB_USER}=g ${INVENTREE_CONFIG_FILE}
   # Database password
-  sed -i s=#PASSWORD:\ samplepassword=PASSWORD:\ ${INVENTREE_DB_PASSWORD}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ PASSWORD:\ Database\ password\ \(if\ required\)=PASSWORD:\ ${INVENTREE_DB_PASSWORD}=g ${INVENTREE_CONFIG_FILE}
   # Database host
-  sed -i s=#HOST:\ samplehost=HOST:\ ${INVENTREE_DB_HOST}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ HOST:\ Database\ host\ address\ \(if\ required\)=HOST:\ ${INVENTREE_DB_HOST}=g ${INVENTREE_CONFIG_FILE}
   # Database port
-  sed -i s=#PORT:\ 123456=PORT:\ ${INVENTREE_DB_PORT}=g ${INVENTREE_CONFIG_FILE}
+  sed -i s=#\ PORT:\ Database\ host\ port\ \(if\ required\)=PORT:\ ${INVENTREE_DB_PORT}=g ${INVENTREE_CONFIG_FILE}
 
   # Fixing the permissions
   chown ${APP_USER}:${APP_GROUP} ${DATA_DIR} ${INVENTREE_CONFIG_FILE}

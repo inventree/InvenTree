@@ -370,7 +370,10 @@ export default function BuildDetail() {
         tooltip={t`Barcode Actions`}
         icon={<IconQrcode />}
         actions={[
-          ViewBarcodeAction({}),
+          ViewBarcodeAction({
+            model: ModelType.build,
+            pk: build.pk
+          }),
           LinkBarcodeAction({
             hidden: build?.barcode_hash
           }),

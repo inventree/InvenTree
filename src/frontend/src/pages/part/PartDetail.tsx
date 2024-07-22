@@ -894,7 +894,10 @@ export default function PartDetail() {
       <AdminButton model={ModelType.part} pk={part.pk} />,
       <BarcodeActionDropdown
         actions={[
-          ViewBarcodeAction({}),
+          ViewBarcodeAction({
+            model: ModelType.part,
+            pk: part.pk
+          }),
           LinkBarcodeAction({
             hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
           }),

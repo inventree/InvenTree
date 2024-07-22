@@ -131,6 +131,7 @@ function BasePanelGroup({
                     label={panel.label}
                     key={panel.name}
                     disabled={expanded}
+                    position="right"
                   >
                     <Tabs.Tab
                       p="xs"

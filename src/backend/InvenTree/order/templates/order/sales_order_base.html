@@ -319,7 +319,7 @@ $('#print-order-report').click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Sales Order QR Code" escape %}',
-        '{"salesorder": {{ order.pk }} }'
+        '{{ order.barcode }}'
     );
 });
 
