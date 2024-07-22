@@ -78,7 +78,6 @@ def get_icon_packs():
                 icon_packs.extend(plugin.icon_packs())
             except Exception as e:
                 logger.warning('Error loading icon pack from plugin %s: %s', plugin, e)
-                pass
 
         _icon_packs = {pack.prefix: pack for pack in icon_packs}
 
