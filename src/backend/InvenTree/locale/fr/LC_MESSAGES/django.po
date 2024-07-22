@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-22 10:29+0000\n"
-"PO-Revision-Date: 2024-07-17 16:37\n"
+"POT-Creation-Date: 2024-07-22 01:53+0000\n"
+"PO-Revision-Date: 2024-07-22 17:01\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -2379,10 +2379,8 @@ msgid "Display barcode data in browser as text"
 msgstr ""
 
 #: common/models.py:1419
-#, fuzzy
-#| msgid "Barcode actions"
 msgid "Barcode Generation Plugin"
-msgstr "Actions de code-barres"
+msgstr ""
 
 #: common/models.py:1420
 msgid "Plugin to use for internal barcode data generation"
@@ -8352,16 +8350,12 @@ msgid "Match found for barcode data"
 msgstr "Correspondance trouvée pour les données du code-barres"
 
 #: plugin/base/barcodes/api.py:163 plugin/base/barcodes/serializers.py:45
-#, fuzzy
-#| msgid "Order is not open"
 msgid "Model is not supported"
-msgstr "La commande n'est pas ouverte"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:168
-#, fuzzy
-#| msgid "Price not found"
 msgid "Model instance not found"
-msgstr "Prix introuvable"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:197
 #: templates/js/translated/purchase_order.js:1469
@@ -8547,16 +8541,12 @@ msgid "InvenTree contributors"
 msgstr "Contributeurs d'InvenTree"
 
 #: plugin/builtin/barcodes/inventree_barcode.py:34
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Barcode Format"
-msgstr "Pièces Internes"
+msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:35
-#, fuzzy
-#| msgid "Select file format"
 msgid "Select an internal barcode format"
-msgstr "Sélectionner un format de fichier"
+msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:37
 msgid "JSON barcodes (human readable)"
@@ -15067,3 +15057,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
