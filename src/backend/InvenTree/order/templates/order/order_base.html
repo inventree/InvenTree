@@ -312,7 +312,7 @@ $("#export-order").click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Purchase Order QR Code" escape %}',
-        '{"purchaseorder": {{ order.pk }} }'
+        '{{ order.barcode }}'
     );
 });
 

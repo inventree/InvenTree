@@ -10,6 +10,7 @@ from django.db.models import F, Q
 from django.utils.translation import gettext_lazy as _
 
 from company.models import Company, SupplierPart
+from InvenTree.models import InvenTreeBarcodeMixin
 from order.models import PurchaseOrder, PurchaseOrderStatus
 from plugin.base.integration.SettingsMixin import SettingsMixin
 from stock.models import StockLocation
@@ -52,6 +53,30 @@ class BarcodeMixin:
         Default return value is None
         """
         return None
+
+    @property
+    def has_barcode_generation(self):
+        """Does this plugin support barcode generation."""
+        try:
+            # Attempt to call the generate method
+            self.generate(None)  # type: ignore
+        except NotImplementedError:
+            # If a NotImplementedError is raised, then barcode generation is not supported
+            return False
+        except:
+            pass
+
+        return True
+
+    def generate(self, model_instance: InvenTreeBarcodeMixin):
+        """Generate barcode data for the given model instance.
+
+        Arguments:
+            model_instance: The model instance to generate barcode data for. It is extending the InvenTreeBarcodeMixin.
+
+        Returns: The generated barcode data.
+        """
+        raise NotImplementedError('Generate must be implemented by a plugin')
 
 
 class SupplierBarcodeMixin(BarcodeMixin):

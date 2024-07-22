@@ -37,7 +37,7 @@ import {
   RenderStockLocation,
   RenderStockLocationType
 } from './Stock';
-import { RenderOwner, RenderUser } from './User';
+import { RenderGroup, RenderOwner, RenderUser } from './User';
 
 type EnumDictionary<T extends string | symbol | number, U> = {
   [K in T]: U;
@@ -81,6 +81,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,
   [ModelType.user]: RenderUser,
+  [ModelType.group]: RenderGroup,
   [ModelType.importsession]: RenderImportSession,
   [ModelType.reporttemplate]: RenderReportTemplate,
   [ModelType.labeltemplate]: RenderLabelTemplate,
