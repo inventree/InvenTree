@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-22 10:29+0000\n"
-"PO-Revision-Date: 2024-07-17 16:37\n"
+"POT-Creation-Date: 2024-07-22 01:53+0000\n"
+"PO-Revision-Date: 2024-07-22 17:01\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -2379,10 +2379,8 @@ msgid "Display barcode data in browser as text"
 msgstr ""
 
 #: common/models.py:1419
-#, fuzzy
-#| msgid "Barcode actions"
 msgid "Barcode Generation Plugin"
-msgstr "Akce čárového kódu"
+msgstr ""
 
 #: common/models.py:1420
 msgid "Plugin to use for internal barcode data generation"
@@ -8352,16 +8350,12 @@ msgid "Match found for barcode data"
 msgstr "Pro data čárového kódu byla nalezena shoda"
 
 #: plugin/base/barcodes/api.py:163 plugin/base/barcodes/serializers.py:45
-#, fuzzy
-#| msgid "Order is not open"
 msgid "Model is not supported"
-msgstr "Objednávka není otevřena"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:168
-#, fuzzy
-#| msgid "API endpoint not found"
 msgid "Model instance not found"
-msgstr "API endpoint nebyl nalezen"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:197
 #: templates/js/translated/purchase_order.js:1469
@@ -8547,16 +8541,12 @@ msgid "InvenTree contributors"
 msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:34
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Barcode Format"
-msgstr "Interní díl"
+msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:35
-#, fuzzy
-#| msgid "Enable internal prices for parts"
 msgid "Select an internal barcode format"
-msgstr "Povolit interní ceny pro díly"
+msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:37
 msgid "JSON barcodes (human readable)"
@@ -15067,3 +15057,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
