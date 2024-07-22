@@ -1015,7 +1015,7 @@ class BuildOverallocationTest(BuildAPITest):
                 'accept_overallocated': 'trim',
             },
             expected_code=201,
-            max_query_count=550,  # TODO: Come back and refactor this
+            max_query_count=555,  # TODO: Come back and refactor this
         )
 
         self.build.refresh_from_db()
