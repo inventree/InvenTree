@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-17 16:39\n"
+"PO-Revision-Date: 2024-07-22 17:03\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -36,7 +36,7 @@ msgstr ""
 
 #: src/components/buttons/CopyButton.tsx:18
 #~ msgid "Copy to clipboard"
-#~ msgstr ""
+#~ msgstr "Copy to clipboard"
 
 #: src/components/buttons/CopyButton.tsx:24
 msgid "Copied"
@@ -3649,7 +3649,7 @@ msgstr ""
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:170
 #~ msgid "Location types"
-#~ msgstr ""
+#~ msgstr "Location types"
 
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:182
 #: src/tables/machine/MachineTypeTable.tsx:287
@@ -5250,7 +5250,7 @@ msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:510
 #~ msgid "Are you sure you want to delete the selected records?"
-#~ msgstr ""
+#~ msgstr "Are you sure you want to delete the selected records?"
 
 #: src/tables/InvenTreeTable.tsx:516
 msgid "Delete Selected Items"
@@ -5266,15 +5266,15 @@ msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:535
 #~ msgid "Deleted records"
-#~ msgstr ""
+#~ msgstr "Deleted records"
 
 #: src/tables/InvenTreeTable.tsx:536
 #~ msgid "Records were deleted successfully"
-#~ msgstr ""
+#~ msgstr "Records were deleted successfully"
 
 #: src/tables/InvenTreeTable.tsx:545
 #~ msgid "Failed to delete records"
-#~ msgstr ""
+#~ msgstr "Failed to delete records"
 
 #: src/tables/InvenTreeTable.tsx:594
 #: src/tables/InvenTreeTable.tsx:595
@@ -7463,3 +7463,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
