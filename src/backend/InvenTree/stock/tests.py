@@ -958,12 +958,6 @@ class StockBarcodeTest(StockTestBase):
 
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
 
-        # Call format_barcode method
-        barcode = item.format_barcode(brief=False)
-
-        for key in ['tool', 'version', 'instance', 'stockitem']:
-            self.assertIn(key, barcode)
-
         # Render simple barcode data for the StockItem
         barcode = item.barcode
         self.assertEqual(barcode, '{"stockitem": 1}')
@@ -974,7 +968,7 @@ class StockBarcodeTest(StockTestBase):
 
         loc = StockLocation.objects.get(pk=1)
 
-        barcode = loc.format_barcode(brief=True)
+        barcode = loc.format_barcode()
         self.assertEqual('{"stocklocation": 1}', barcode)
 
 

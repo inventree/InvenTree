@@ -283,23 +283,28 @@ export default function Stock() {
         variant="outline"
         size="lg"
       />,
-      <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({}),
-          LinkBarcodeAction({}),
-          UnlinkBarcodeAction({}),
-          {
-            name: 'Scan in stock items',
-            icon: <InvenTreeIcon icon="stock" />,
-            tooltip: 'Scan items'
-          },
-          {
-            name: 'Scan in container',
-            icon: <InvenTreeIcon icon="unallocated_stock" />,
-            tooltip: 'Scan container'
-          }
-        ]}
-      />,
+      location.pk ? (
+        <BarcodeActionDropdown
+          actions={[
+            ViewBarcodeAction({
+              model: ModelType.stocklocation,
+              pk: location.pk
+            }),
+            LinkBarcodeAction({}),
+            UnlinkBarcodeAction({}),
+            {
+              name: 'Scan in stock items',
+              icon: <InvenTreeIcon icon="stock" />,
+              tooltip: 'Scan items'
+            },
+            {
+              name: 'Scan in container',
+              icon: <InvenTreeIcon icon="unallocated_stock" />,
+              tooltip: 'Scan container'
+            }
+          ]}
+        />
+      ) : null,
       <PrintingActions
         modelType={ModelType.stocklocation}
         items={[location.pk ?? 0]}
