@@ -18,7 +18,7 @@ if __name__ == '__main__':
     if not os.path.exists(STATIC_FOLDER):
         os.mkdir(STATIC_FOLDER)
 
-    print(f'Downloading tabler icons...')
+    print('Downloading tabler icons...')
     os.system(f'npm install --prefix {TMP_FOLDER} @tabler/icons @tabler/icons-webfont')
 
     print(f'Copying tabler icons to {STATIC_FOLDER}...')

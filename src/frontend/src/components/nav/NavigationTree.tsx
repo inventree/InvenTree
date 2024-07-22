@@ -15,7 +15,6 @@ import {
 import {
   IconChevronDown,
   IconChevronRight,
-  IconPoint,
   IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';

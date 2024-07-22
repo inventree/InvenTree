@@ -2,6 +2,7 @@
 
 import json
 
+from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand, CommandError
 from django.db import models
 
@@ -86,7 +87,7 @@ class Command(BaseCommand):
                     try:
                         validate_icon(icon)
                         continue  # Skip if the icon is already valid
-                    except:
+                    except ValidationError:
                         pass
 
                     if icon not in icons:
@@ -98,8 +99,8 @@ class Command(BaseCommand):
                     if kwargs['include_items']:
                         icons[icon]['items'].append({
                             'model': model.__name__.lower(),
-                            'id': item.id,
-                        })  # type: ignore
+                            'id': item.id,  # type: ignore
+                        })
 
             self.stdout.write(f'Writing icon map for {len(icons.keys())} icons')
             with open(kwargs['output_file'], 'w') as f:
@@ -121,7 +122,7 @@ class Command(BaseCommand):
             for old_icon, data in icons.items():
                 try:
                     validate_icon(data.get('new_icon', ''))
-                except:
+                except ValidationError:
                     self.stdout.write(
                         f'[ERR] Invalid icon: "{old_icon}" -> "{data.get("new_icon", "")}'
                     )
@@ -136,6 +137,12 @@ class Command(BaseCommand):
 
                 for item in items:
                     icon = getattr(item, icon_name)
+
+                    try:
+                        validate_icon(icon)
+                        continue  # Skip if the icon is already valid
+                    except ValidationError:
+                        pass
 
                     if icon not in icons:
                         self.stdout.write(
@@ -163,6 +170,12 @@ class Command(BaseCommand):
 
                     for item in items:
                         icon = getattr(item, icon_name)
+
+                        try:
+                            validate_icon(icon)
+                            continue  # Skip if the icon is already valid
+                        except ValidationError:
+                            pass
 
                         setattr(item, icon_name, icons[icon]['new_icon'])
                         cnt += 1

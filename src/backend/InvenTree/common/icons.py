@@ -92,7 +92,7 @@ def validate_icon(icon: str):
     """Validate an icon string in the format pack:name:variant."""
     try:
         pack, name, variant = icon.split(':')
-    except:
+    except ValueError:
         raise ValidationError(
             f'Invalid icon format: {icon}, expected: pack:name:variant'
         )

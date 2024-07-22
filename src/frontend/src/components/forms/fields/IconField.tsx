@@ -25,11 +25,10 @@ import { ApiFormFieldType } from './ApiFormField';
 export default function IconField({
   controller,
   definition
-}: {
+}: Readonly<{
   controller: UseControllerReturn<FieldValues, any>;
   definition: ApiFormFieldType;
-  fieldName: string;
-}) {
+}>) {
   const {
     field,
     fieldState: { error }

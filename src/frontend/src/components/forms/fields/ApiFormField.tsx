@@ -227,11 +227,7 @@ export function ApiFormField({
         );
       case 'icon':
         return (
-          <IconField
-            definition={fieldDefinition}
-            controller={controller}
-            fieldName={fieldName}
-          />
+          <IconField definition={fieldDefinition} controller={controller} />
         );
       case 'boolean':
         return (

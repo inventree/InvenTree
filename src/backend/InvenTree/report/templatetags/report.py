@@ -7,6 +7,7 @@ from decimal import Decimal
 
 from django import template
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
@@ -491,7 +492,7 @@ def icon(name, **kwargs):
 
     try:
         pack, icon, variant = common.icons.validate_icon(name)
-    except:
+    except ValidationError:
         return ''
 
     unicode = chr(int(icon['variants'][variant], 16))
