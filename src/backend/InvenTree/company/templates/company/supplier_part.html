@@ -303,7 +303,7 @@ onPanelLoad('supplier-part-notes', function() {
 $("#show-qr-code").click(function() {
     showQRDialog(
         '{% trans "Supplier Part QR Code" escape %}',
-        '{"supplierpart": {{ part.pk }} }'
+        '{{ part.barcode }}'
     );
 });
 

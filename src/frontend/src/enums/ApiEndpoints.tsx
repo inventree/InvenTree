@@ -39,6 +39,7 @@ export enum ApiEndpoints {
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
   barcode = 'barcode/',
+  generate_barcode = 'barcode/generate/',
   news = 'news/',
   global_status = 'generic/status/',
   version = 'version/',

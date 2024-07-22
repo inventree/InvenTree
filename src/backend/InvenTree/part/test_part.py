@@ -169,7 +169,7 @@ class PartTest(TestCase):
         self.assertEqual(Part.barcode_model_type(), 'part')
 
         p = Part.objects.get(pk=1)
-        barcode = p.format_barcode(brief=True)
+        barcode = p.format_barcode()
         self.assertEqual(barcode, '{"part": 1}')
 
     def test_tree(self):
@@ -270,9 +270,8 @@ class PartTest(TestCase):
 
     def test_barcode(self):
         """Test barcode format functionality."""
-        barcode = self.r1.format_barcode(brief=False)
-        self.assertIn('InvenTree', barcode)
-        self.assertIn('"part": {"id": 3}', barcode)
+        barcode = self.r1.format_barcode()
+        self.assertEqual('{"part": 3}', barcode)
 
     def test_sell_pricing(self):
         """Check that the sell pricebreaks were loaded."""

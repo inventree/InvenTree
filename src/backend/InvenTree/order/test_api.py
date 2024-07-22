@@ -2010,6 +2010,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         'supplier_part',
         'stock',
     ]
+    roles = ['return_order.view']
 
     def test_options(self):
         """Test the OPTIONS endpoint."""

@@ -123,8 +123,8 @@ class RuleSetModelTest(TestCase):
             for model in models:
                 permission_set.add(model)
 
-        # Every ruleset by default sets one permission, the "view" permission set
-        self.assertEqual(group.permissions.count(), len(permission_set))
+        # By default no permissions should be assigned
+        self.assertEqual(group.permissions.count(), 0)
 
         # Add some more rules
         for rule in rulesets:

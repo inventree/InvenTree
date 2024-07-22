@@ -1,14 +1,17 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 226
+INVENTREE_API_VERSION = 227
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-v226 - 2024-07-19 : https://github.com/inventree/InvenTree/pull/7693/
+v227 - 2024-07-19 : https://github.com/inventree/InvenTree/pull/7693/
     - Adds endpoints to list and revoke the tokens issued to the current user
+
+v226 - 2024-07-15 : https://github.com/inventree/InvenTree/pull/7648
+    - Adds barcode generation API endpoint
 
 v225 - 2024-07-17 : https://github.com/inventree/InvenTree/pull/7671
     - Adds "filters" field to DataImportSession API
