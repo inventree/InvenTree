@@ -2,7 +2,7 @@ version: "3"
 
 services:
   db:
-    image: postgres:13
+    image: postgres:14
     restart: unless-stopped
     expose:
       - 5432/tcp

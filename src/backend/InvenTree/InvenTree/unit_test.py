@@ -204,7 +204,8 @@ class UserMixin:
                     ruleset.can_add = True
 
                 ruleset.save()
-                break
+                if not assign_all:
+                    break
 
 
 class PluginMixin:

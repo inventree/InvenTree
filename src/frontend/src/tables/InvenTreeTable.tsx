@@ -10,8 +10,6 @@ import {
   Stack,
   Tooltip
 } from '@mantine/core';
-import { modals } from '@mantine/modals';
-import { showNotification } from '@mantine/notifications';
 import {
   IconBarcode,
   IconFilter,
@@ -106,7 +104,7 @@ export type InvenTreeTableProps<T = any> = {
   enableReports?: boolean;
   afterBulkDelete?: () => void;
   pageSize?: number;
-  barcodeActions?: any[];
+  barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   rowExpansion?: any;
@@ -157,7 +155,12 @@ export function InvenTreeTable<T = any>({
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }) {
-  const { getTableColumnNames, setTableColumnNames } = useLocalState();
+  const {
+    getTableColumnNames,
+    setTableColumnNames,
+    getTableSorting,
+    setTableSorting
+  } = useLocalState();
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
@@ -390,6 +393,15 @@ export function InvenTreeTable<T = any>({
     direction: 'asc'
   });
 
+  useEffect(() => {
+    const tableKey: string = tableState.tableKey.split('-')[0];
+    const sorting: DataTableSortStatus = getTableSorting(tableKey);
+
+    if (sorting) {
+      setSortStatus(sorting);
+    }
+  }, []);
+
   // Return the ordering parameter
   function getOrderingTerm() {
     let key = sortStatus.columnAccessor;
@@ -413,6 +425,9 @@ export function InvenTreeTable<T = any>({
   const handleSortStatusChange = (status: DataTableSortStatus) => {
     tableState.setPage(1);
     setSortStatus(status);
+
+    const tableKey = tableState.tableKey.split('-')[0];
+    setTableSorting(tableKey)(status);
   };
 
   // Function to perform API query to fetch required data

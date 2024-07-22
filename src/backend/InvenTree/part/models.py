@@ -416,6 +416,11 @@ class Part(
         """Return API query filters for limiting field results against this instance."""
         return {'variant_of': {'exclude_tree': self.pk}}
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'PA'
+
     def report_context(self):
         """Return custom report context information."""
         return {
@@ -426,11 +431,11 @@ class Part(
             'name': self.name,
             'parameters': self.parameters_map(),
             'part': self,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'qr_url': self.get_absolute_url(),
             'revision': self.revision,
             'test_template_list': self.getTestTemplates(),
-            'test_templates': self.getTestTemplates(),
+            'test_templates': self.getTestTemplateMap(),
         }
 
     def get_context_data(self, request, **kwargs):
