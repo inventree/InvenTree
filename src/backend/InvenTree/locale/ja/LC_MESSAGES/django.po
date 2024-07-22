@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-22 10:29+0000\n"
-"PO-Revision-Date: 2024-07-17 16:38\n"
+"POT-Creation-Date: 2024-07-22 01:53+0000\n"
+"PO-Revision-Date: 2024-07-22 17:02\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -8354,10 +8354,8 @@ msgid "Model is not supported"
 msgstr ""
 
 #: plugin/base/barcodes/api.py:168
-#, fuzzy
-#| msgid "API endpoint not found"
 msgid "Model instance not found"
-msgstr "APIエンドポイントが見つかりません"
+msgstr ""
 
 #: plugin/base/barcodes/api.py:197
 #: templates/js/translated/purchase_order.js:1469
@@ -8543,10 +8541,8 @@ msgid "InvenTree contributors"
 msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:34
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Internal Barcode Format"
-msgstr "内部パーツ"
+msgstr ""
 
 #: plugin/builtin/barcodes/inventree_barcode.py:35
 msgid "Select an internal barcode format"
@@ -15061,3 +15057,4 @@ msgstr "項目を編集する権限"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
+
