@@ -534,7 +534,7 @@ $('#stock-edit-status').click(function () {
 $("#show-qr-code").click(function() {
     showQRDialog(
         '{% trans "Stock Item QR Code" escape %}',
-        '{"stockitem": {{ item.pk }} }',
+        '{{ item.barcode }}',
     );
 });
 

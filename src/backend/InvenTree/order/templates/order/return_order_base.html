@@ -257,7 +257,7 @@ $('#print-order-report').click(function() {
 $('#show-qr-code').click(function() {
     showQRDialog(
         '{% trans "Return Order QR Code" escape %}',
-        '{"returnorder": {{ order.pk }} }'
+        '{{ order.barcode }}'
     );
 });
 

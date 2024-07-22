@@ -475,6 +475,11 @@ class ManufacturerPart(
         """Return the API URL associated with the ManufacturerPart instance."""
         return reverse('api-manufacturer-part-list')
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'MP'
+
     part = models.ForeignKey(
         'part.Part',
         on_delete=models.CASCADE,
@@ -677,6 +682,11 @@ class SupplierPart(
     def api_instance_filters(self):
         """Return custom API filters for this particular instance."""
         return {'manufacturer_part': {'part': self.part.pk}}
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SP'
 
     def clean(self):
         """Custom clean action for the SupplierPart model.

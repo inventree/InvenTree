@@ -52,6 +52,21 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             reverse('api-barcode-scan'), data=data, expected_code=expected_code
         )
 
+    def generate(self, model: str, pk: int, expected_code: int):
+        """Generate a barcode for a given model instance."""
+        return self.post(
+            reverse('api-barcode-generate'),
+            data={'model': model, 'pk': pk},
+            expected_code=expected_code,
+        )
+
+    def set_plugin_setting(self, key: str, value: str):
+        """Set the internal barcode format for the plugin."""
+        from plugin import registry
+
+        plugin = registry.get_plugin('inventreebarcode')
+        plugin.set_setting(key, value)
+
     def test_unassign_errors(self):
         """Test various error conditions for the barcode unassign endpoint."""
         # Fail without any fields provided
@@ -248,8 +263,8 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
             self.assertIn('success', response.data)
             self.assertEqual(response.data['stockitem']['pk'], 1)
 
-    def test_scan_inventree(self):
-        """Test scanning of first-party barcodes."""
+    def test_scan_inventree_json(self):
+        """Test scanning of first-party json barcodes."""
         # Scan a StockItem object (which does not exist)
         response = self.scan({'barcode': '{"stockitem": 5}'}, expected_code=400)
 
@@ -290,3 +305,73 @@ class TestInvenTreeBarcode(InvenTreeAPITestCase):
         self.assertIn('success', response.data)
         self.assertIn('barcode_data', response.data)
         self.assertIn('barcode_hash', response.data)
+
+    def test_scan_inventree_short(self):
+        """Test scanning of first-party short barcodes."""
+        # Scan a StockItem object (which does not exist)
+        response = self.scan({'barcode': 'INV-SI5'}, expected_code=400)
+
+        self.assertIn('No match found for barcode data', str(response.data))
+
+        # Scan a StockItem object (which does exist)
+        response = self.scan({'barcode': 'INV-SI1'}, expected_code=200)
+
+        self.assertIn('success', response.data)
+        self.assertIn('stockitem', response.data)
+        self.assertEqual(response.data['stockitem']['pk'], 1)
+
+        # Scan a StockLocation object
+        response = self.scan({'barcode': 'INV-SL5'}, expected_code=200)
+
+        self.assertIn('success', response.data)
+        self.assertEqual(response.data['stocklocation']['pk'], 5)
+        self.assertEqual(
+            response.data['stocklocation']['api_url'], '/api/stock/location/5/'
+        )
+        if settings.ENABLE_CLASSIC_FRONTEND:
+            self.assertEqual(
+                response.data['stocklocation']['web_url'], '/stock/location/5/'
+            )
+        self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
+
+        # Scan a Part object
+        response = self.scan({'barcode': 'INV-PA5'}, expected_code=200)
+
+        self.assertEqual(response.data['part']['pk'], 5)
+
+        # Scan a SupplierPart instance with custom prefix
+        for prefix in ['TEST', '']:
+            self.set_plugin_setting('SHORT_BARCODE_PREFIX', prefix)
+            response = self.scan({'barcode': f'{prefix}SP1'}, expected_code=200)
+            self.assertEqual(response.data['supplierpart']['pk'], 1)
+            self.assertEqual(response.data['plugin'], 'InvenTreeBarcode')
+            self.assertIn('success', response.data)
+            self.assertIn('barcode_data', response.data)
+            self.assertIn('barcode_hash', response.data)
+
+        self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'INV-')
+
+    def test_generation_inventree_json(self):
+        """Test JSON barcode generation."""
+        item = stock.models.StockLocation.objects.get(pk=5)
+        data = self.generate('stocklocation', item.pk, expected_code=200).data
+        self.assertEqual(data['barcode'], '{"stocklocation": 5}')
+
+    def test_generation_inventree_short(self):
+        """Test short barcode generation."""
+        self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'short')
+
+        item = stock.models.StockLocation.objects.get(pk=5)
+
+        # test with default prefix
+        data = self.generate('stocklocation', item.pk, expected_code=200).data
+        self.assertEqual(data['barcode'], 'INV-SL5')
+
+        # test generation with custom prefix
+        for prefix in ['TEST', '']:
+            self.set_plugin_setting('SHORT_BARCODE_PREFIX', prefix)
+            data = self.generate('stocklocation', item.pk, expected_code=200).data
+            self.assertEqual(data['barcode'], f'{prefix}SL5')
+
+        self.set_plugin_setting('SHORT_BARCODE_PREFIX', 'INV-')
+        self.set_plugin_setting('INTERNAL_BARCODE_FORMAT', 'json')
