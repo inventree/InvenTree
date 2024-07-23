@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-22 01:53+0000\n"
-"PO-Revision-Date: 2024-07-22 17:02\n"
+"PO-Revision-Date: 2024-07-23 18:07\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -208,7 +208,7 @@ msgstr "Предоставленный URL не является допусти�
 
 #: InvenTree/locales.py:18
 msgid "Arabic"
-msgstr ""
+msgstr "Арабский"
 
 #: InvenTree/locales.py:19
 msgid "Bulgarian"
@@ -244,7 +244,7 @@ msgstr "Испанский (Мексика)"
 
 #: InvenTree/locales.py:27
 msgid "Estonian"
-msgstr ""
+msgstr "Эстонский"
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -1582,7 +1582,7 @@ msgstr "Отслеживание"
 
 #: build/serializers.py:1237
 msgid "Inherited"
-msgstr ""
+msgstr "Унаследованные"
 
 #: build/serializers.py:1238 part/models.py:4280
 #: part/templates/part/upload_bom.html:56 templates/js/translated/bom.js:1046
@@ -1635,7 +1635,7 @@ msgstr ""
 
 #: build/serializers.py:1273 part/serializers.py:896
 msgid "External Stock"
-msgstr ""
+msgstr "Внешний склад"
 
 #: build/status_codes.py:11 generic/states/tests.py:17 order/status_codes.py:12
 #: order/status_codes.py:37 order/status_codes.py:64 order/status_codes.py:82
@@ -2376,11 +2376,11 @@ msgstr ""
 
 #: common/models.py:1414
 msgid "Display barcode data in browser as text"
-msgstr ""
+msgstr "Отображать данные штрих-кода в браузере в виде текста"
 
 #: common/models.py:1419
 msgid "Barcode Generation Plugin"
-msgstr ""
+msgstr "Плагин генерации штрих-кода"
 
 #: common/models.py:1420
 msgid "Plugin to use for internal barcode data generation"
