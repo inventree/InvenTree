@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-22 01:53+0000\n"
-"PO-Revision-Date: 2024-07-22 17:01\n"
+"PO-Revision-Date: 2024-07-23 18:07\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -208,7 +208,7 @@ msgstr "L'URL fournie n'est pas un fichier image valide"
 
 #: InvenTree/locales.py:18
 msgid "Arabic"
-msgstr ""
+msgstr "Arabe"
 
 #: InvenTree/locales.py:19
 msgid "Bulgarian"
@@ -244,7 +244,7 @@ msgstr "Espagnol (Mexique)"
 
 #: InvenTree/locales.py:27
 msgid "Estonian"
-msgstr ""
+msgstr "Estonien"
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -537,7 +537,7 @@ msgstr "Prénom"
 
 #: InvenTree/serializers.py:409
 msgid "First name of the user"
-msgstr ""
+msgstr "Prénom de l'utilisateur"
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
@@ -545,27 +545,27 @@ msgstr "Nom"
 
 #: InvenTree/serializers.py:412
 msgid "Last name of the user"
-msgstr ""
+msgstr "Nom de famille de l'utilisateur"
 
 #: InvenTree/serializers.py:415
 msgid "Email address of the user"
-msgstr ""
+msgstr "Adresse e-mail de l'utilisateur"
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
-msgstr ""
+msgstr "Staff"
 
 #: InvenTree/serializers.py:439
 msgid "Does this user have staff permissions"
-msgstr ""
+msgstr "Cet utilisateur a-t-il les permissions du staff"
 
 #: InvenTree/serializers.py:442
 msgid "Superuser"
-msgstr ""
+msgstr "Super-utilisateur"
 
 #: InvenTree/serializers.py:442
 msgid "Is this user a superuser"
-msgstr ""
+msgstr "Cet utilisateur est-il un super-utilisateur"
 
 #: InvenTree/serializers.py:445 common/models.py:2697 company/models.py:163
 #: company/models.py:801 machine/models.py:39 part/admin.py:88
@@ -582,7 +582,7 @@ msgstr "Actif"
 
 #: InvenTree/serializers.py:445
 msgid "Is this user account active"
-msgstr ""
+msgstr "Ce compte d'utilisateur est-il actif"
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
