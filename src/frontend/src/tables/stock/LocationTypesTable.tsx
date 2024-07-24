@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
 import {
@@ -25,7 +26,9 @@ export default function LocationTypesTable() {
     return {
       name: {},
       description: {},
-      icon: {}
+      icon: {
+        field_type: 'icon'
+      }
     };
   }, []);
 
@@ -56,6 +59,12 @@ export default function LocationTypesTable() {
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
+        accessor: 'icon',
+        title: t`Icon`,
+        sortable: true,
+        render: (value: any) => <ApiIcon name={value.icon} />
+      },
+      {
         accessor: 'name',
         title: t`Name`,
         sortable: true
@@ -63,11 +72,6 @@ export default function LocationTypesTable() {
       {
         accessor: 'description',
         title: t`Description`
-      },
-      {
-        accessor: 'icon',
-        title: t`Icon`,
-        sortable: true
       },
       {
         accessor: 'location_count',

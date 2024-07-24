@@ -1,10 +1,12 @@
 """Validation helpers for common models."""
 
 import re
+from typing import Union
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import common.icons
 from common.settings import get_global_setting
 
 
@@ -103,3 +105,11 @@ def validate_email_domains(setting):
             raise ValidationError(_('An empty domain is not allowed.'))
         if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
             raise ValidationError(_(f'Invalid domain name: {domain}'))
+
+
+def validate_icon(name: Union[str, None]):
+    """Validate the provided icon name, and ignore if empty."""
+    if name == '' or name is None:
+        return
+
+    common.icons.validate_icon(name)

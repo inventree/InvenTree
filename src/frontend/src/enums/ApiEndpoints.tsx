@@ -14,6 +14,7 @@ export enum ApiEndpoints {
   user_me = 'user/me/',
   user_roles = 'user/roles/',
   user_token = 'user/token/',
+  user_tokens = 'user/tokens/',
   user_simple_login = 'email/generate/',
   user_reset = 'auth/password/reset/',
   user_reset_set = 'auth/password/reset/confirm/',
@@ -46,6 +47,7 @@ export enum ApiEndpoints {
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+  icons = 'icons/',
 
   // Data import endpoints
   import_session_list = 'importer/session/',

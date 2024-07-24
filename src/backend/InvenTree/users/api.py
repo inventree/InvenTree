@@ -18,6 +18,8 @@ from drf_spectacular.utils import OpenApiResponse, extend_schema, extend_schema_
 from rest_framework import exceptions, permissions
 from rest_framework.authentication import BasicAuthentication
 from rest_framework.decorators import authentication_classes
+from rest_framework.generics import DestroyAPIView
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -34,7 +36,12 @@ from InvenTree.mixins import (
 from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner
-from users.serializers import GroupSerializer, OwnerSerializer, RoleSerializer
+from users.serializers import (
+    ApiTokenSerializer,
+    GroupSerializer,
+    OwnerSerializer,
+    RoleSerializer,
+)
 
 logger = logging.getLogger('inventree')
 
@@ -342,6 +349,22 @@ class GetAuthToken(APIView):
             raise exceptions.NotAuthenticated()
 
 
+class TokenListView(DestroyAPIView, ListAPI):
+    """List of registered tokens for current users."""
+
+    permission_classes = (IsAuthenticated,)
+    serializer_class = ApiTokenSerializer
+
+    def get_queryset(self):
+        """Only return data for current user."""
+        return ApiToken.objects.filter(user=self.request.user)
+
+    def perform_destroy(self, instance):
+        """Revoke token."""
+        instance.revoked = True
+        instance.save()
+
+
 class LoginRedirect(RedirectView):
     """Redirect to the correct starting page after backend login."""
 
@@ -356,6 +379,13 @@ class LoginRedirect(RedirectView):
 user_urls = [
     path('roles/', RoleDetails.as_view(), name='api-user-roles'),
     path('token/', GetAuthToken.as_view(), name='api-token'),
+    path(
+        'tokens/',
+        include([
+            path('<int:pk>/', TokenListView.as_view(), name='api-token-detail'),
+            path('', TokenListView.as_view(), name='api-token-list'),
+        ]),
+    ),
     path('me/', MeUserDetail.as_view(), name='api-user-me'),
     path(
         'owner/',
