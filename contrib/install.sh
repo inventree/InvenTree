@@ -75,6 +75,7 @@ root_command() {
           ;;
       "Debian GNU/Linux" | "debian gnu/linux" | Raspbian)
           if [[ $VER == "12" ]]; then
+              DIST_VER="11"
               SUPPORTED=true
           elif [[ $VER == "11" ]]; then
               SUPPORTED=true
