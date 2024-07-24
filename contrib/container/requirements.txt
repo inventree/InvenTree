@@ -4,6 +4,10 @@ asgiref==3.8.1 \
     --hash=sha256:3e1e3ecc849832fe52ccf2cb6686b7a55f82bb1d6aee72a58826471390335e47 \
     --hash=sha256:c343bd80a0bec947a9860adb4c432ffa7db769836c64238fc34bdc3fec84d590
     # via django
+click==8.1.7 \
+    --hash=sha256:ae74fb96c20a0277a1d615f1e4d73c8414f5a98db8b799a7931d1582f3390c28 \
+    --hash=sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de
+    # via uvicorn
 django==4.2.14 \
     --hash=sha256:3ec32bc2c616ab02834b9cac93143a7dc1cdcd5b822d78ac95fc20a38c534240 \
     --hash=sha256:fc6919875a6226c7ffcae1a7d51e0f2ceaf6f160393180818f6c95f51b1e7b96
@@ -15,7 +19,13 @@ django-auth-ldap==4.8.0 \
 gunicorn==22.0.0 \
     --hash=sha256:350679f91b24062c86e386e198a15438d53a7a8207235a78ba1b53df4c4378d9 \
     --hash=sha256:4a0b436239ff76fb33f11c07a16482c521a7e09c1ce3cc293c2330afe01bec63
-    # via -r contrib/container/requirements.in
+    # via
+    #   -r contrib/container/requirements.in
+    #   uvicorn-worker
+h11==0.14.0 \
+    --hash=sha256:8f19fbbe99e72420ff35c00b27a34cb9937e902a8b810e2c88300c6f0a3b699d \
+    --hash=sha256:e3fe4ac4b851c468cc8363d500db52c2ead036020723024a109d37346efaa761
+    # via uvicorn
 invoke==2.2.0 \
     --hash=sha256:6ea924cc53d4f78e3d98bc436b08069a03077e6f85ad1ddaa8a116d7dad15820 \
     --hash=sha256:ee6cbb101af1a859c7fe84f2a264c059020b0cb7fe3535f9424300ab568f6bd5
@@ -225,6 +235,14 @@ uv==0.1.38 \
     --hash=sha256:b0b15e51a0f8240969bc412ed0dd60cfe3f664b30173139ef263d71c596d631f \
     --hash=sha256:ea44c07605d1359a7d82bf42706dd86d341f15f4ca2e1f36e51626a7111c2ad5 \
     --hash=sha256:f87c9711493c53d32012a96b49c4d53aabdf7ed666cbf2c3fb55dd402a6b31a8
+    # via -r contrib/container/requirements.in
+uvicorn==0.30.3 \
+    --hash=sha256:0d114d0831ff1adbf231d358cbf42f17333413042552a624ea6a9b4c33dcfd81 \
+    --hash=sha256:94a3608da0e530cea8f69683aa4126364ac18e3826b6630d1a65f4638aade503
+    # via uvicorn-worker
+uvicorn-worker==0.2.0 \
+    --hash=sha256:65dcef25ab80a62e0919640f9582216ee05b3bb1dc2f0e58b354ca0511c398fb \
+    --hash=sha256:f6894544391796be6eeed37d48cae9d7739e5a105f7e37061eccef2eac5a0295
     # via -r contrib/container/requirements.in
 wheel==0.43.0 \
     --hash=sha256:465ef92c69fa5c5da2d1cf8ac40559a8c940886afcef87dcf14b9470862f1d85 \

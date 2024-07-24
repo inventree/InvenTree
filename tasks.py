@@ -817,9 +817,7 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
     Note: This server will not auto-reload in response to code changes.
     """
     config_file = localDir().joinpath('contrib', 'container', 'gunicorn.conf.py')
-    cmd = (
-        f'gunicorn -c {config_file} InvenTree.wsgi -b {address} --chdir {managePyDir()}'
-    )
+    cmd = f'gunicorn -c {config_file} InvenTree.asgi -b {address} --chdir {managePyDir()} -k uvicorn_worker.UvicornWorker'
 
     if workers:
         cmd += f' --workers={workers}'
