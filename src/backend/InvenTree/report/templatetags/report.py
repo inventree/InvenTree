@@ -7,11 +7,13 @@ from decimal import Decimal
 
 from django import template
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from PIL import Image
 
+import common.icons
 import InvenTree.helpers
 import InvenTree.helpers_model
 import report.helpers
@@ -473,3 +475,61 @@ def format_date(date, timezone=None, format=None):
         return date.strftime(format)
     else:
         return date.isoformat()
+
+
+@register.simple_tag()
+def icon(name, **kwargs):
+    """Render an icon from the icon packs.
+
+    Arguments:
+        name: The name of the icon to render
+
+    Keyword Arguments:
+        class: Optional class name(s) to apply to the icon element
+    """
+    if not name:
+        return ''
+
+    try:
+        pack, icon, variant = common.icons.validate_icon(name)
+    except ValidationError:
+        return ''
+
+    unicode = chr(int(icon['variants'][variant], 16))
+    return mark_safe(
+        f'<i class="icon {kwargs.get("class", "")}" style="font-family: inventree-icon-font-{pack.prefix}">{unicode}</i>'
+    )
+
+
+@register.simple_tag()
+def include_icon_fonts():
+    """Return the CSS font-face rule for the icon fonts used on the current page (or all)."""
+    fonts = []
+
+    for font in common.icons.get_icon_packs().values():
+        # generate the font src string (prefer ttf over woff, woff2 is not supported by weasyprint)
+        if 'truetype' in font.fonts:
+            font_format, url = 'truetype', font.fonts['truetype']
+        elif 'woff' in font.fonts:
+            font_format, url = 'woff', font.fonts['woff']
+
+        fonts.append(f"""
+@font-face {'{'}
+    font-family: 'inventree-icon-font-{font.prefix}';
+    src: url('{InvenTree.helpers_model.construct_absolute_url(url)}') format('{font_format}');
+{'}'}\n""")
+
+    icon_class = f"""
+.icon {'{'}
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    /* Better font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+{'}'}
+    """
+
+    return mark_safe(icon_class + '\n'.join(fonts))

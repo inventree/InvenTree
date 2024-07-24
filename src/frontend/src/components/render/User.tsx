@@ -28,3 +28,9 @@ export function RenderUser({
     )
   );
 }
+
+export function RenderGroup({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return instance && <RenderInlineModel primary={instance.name} />;
+}

@@ -619,7 +619,6 @@ function completeBuildOutputs(build_id, outputs, options={}) {
                 },
                 tree_picker: {
                     url: '{% url "api-location-tree" %}',
-                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                 },
             },
             notes: {
@@ -753,7 +752,6 @@ function scrapBuildOutputs(build_id, outputs, options={}) {
                 },
                 tree_picker: {
                     url: '{% url "api-location-tree" %}',
-                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                 },
             },
             notes: {},
@@ -2131,7 +2129,6 @@ function autoAllocateStockToBuild(build_id, bom_items=[], options={}) {
             },
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
-                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         exclude_location: {},
