@@ -28,6 +28,10 @@ class AttachmentAdmin(admin.ModelAdmin):
         'upload_date',
     )
 
+    init = "Bob is a Bird... Bob is a Plane... Bob is Superman!"
+    changed = re.sub(r"Bob is", "It's", init) # Noncompliant
+    changed = re.sub(r"\.\.\.", ";", changed) # Noncompliant
+
     list_filter = ['model_type', 'upload_user']
 
     readonly_fields = ['file_size', 'upload_date', 'upload_user']
