@@ -10,6 +10,7 @@ import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';
+import IconField from './IconField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
@@ -58,6 +59,7 @@ export type ApiFormFieldType = {
     | 'email'
     | 'url'
     | 'string'
+    | 'icon'
     | 'boolean'
     | 'date'
     | 'datetime'
@@ -222,6 +224,10 @@ export function ApiFormField({
             fieldName={fieldName}
             onChange={onChange}
           />
+        );
+      case 'icon':
+        return (
+          <IconField definition={fieldDefinition} controller={controller} />
         );
       case 'boolean':
         return (

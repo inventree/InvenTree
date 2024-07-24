@@ -565,3 +565,21 @@ class AttachmentSerializer(InvenTreeModelSerializer):
             )
 
         return super().save()
+
+
+class IconSerializer(serializers.Serializer):
+    """Serializer for an icon."""
+
+    name = serializers.CharField()
+    category = serializers.CharField()
+    tags = serializers.ListField(child=serializers.CharField())
+    variants = serializers.DictField(child=serializers.CharField())
+
+
+class IconPackageSerializer(serializers.Serializer):
+    """Serializer for a list of icons."""
+
+    name = serializers.CharField()
+    prefix = serializers.CharField()
+    fonts = serializers.DictField(child=serializers.CharField())
+    icons = serializers.DictField(child=IconSerializer())
