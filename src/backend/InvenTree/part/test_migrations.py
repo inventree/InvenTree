@@ -110,7 +110,6 @@ class TestParameterMigrations(MigratorTestCase):
         t2 = PartParameterTemlate.objects.create(name='Template 2', units='AMPERE')
 
         # Create some parameter values
-        print('===>', repr(Part), repr(a), repr(PartParameter), repr(t1))
         PartParameter.objects.create(part=a, template=t1, data='1.0')
         PartParameter.objects.create(part=a, template=t2, data='-2mA')
 
