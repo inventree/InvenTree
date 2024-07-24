@@ -48,13 +48,12 @@ ENV INVENTREE_BACKGROUND_WORKERS="4"
 ENV INVENTREE_WEB_ADDR=0.0.0.0
 ENV INVENTREE_WEB_PORT=8000
 
-LABEL org.label-schema.schema-version="1.0" \
-      org.label-schema.build-date=${DATE} \
+LABEL org.label-schema.created=${DATE} \
       org.label-schema.vendor="inventree" \
-      org.label-schema.name="inventree/inventree" \
+      org.label-schema.title="InvenTree backend server" \
       org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
-      org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git" \
-      org.label-schema.vcs-ref=${commit_tag}
+      org.label-schema.source="https://github.com/inventree/InvenTree.git" \
+      org.label-schema.revision=${commit_tag}
 
 # Install required system level packages
 RUN apk add --no-cache \
