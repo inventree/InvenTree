@@ -575,6 +575,9 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     # e.g. for StockLocation, this value is 'location'
     ITEM_PARENT_KEY = None
 
+    # Extra fields to include in the get_path result. E.g. icon
+    EXTRA_PATH_FIELDS = []
+
     class Meta:
         """Metaclass defines extra model properties."""
 
@@ -868,7 +871,14 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
             name: <name>,
         }
         """
-        return [{'pk': item.pk, 'name': item.name} for item in self.path]
+        return [
+            {
+                'pk': item.pk,
+                'name': item.name,
+                **{k: getattr(item, k, None) for k in self.EXTRA_PATH_FIELDS},
+            }
+            for item in self.path
+        ]
 
     def __str__(self):
         """String representation of a category is the full path to that category."""

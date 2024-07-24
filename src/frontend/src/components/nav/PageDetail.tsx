@@ -7,6 +7,7 @@ import { Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 
 interface PageDetailInterface {
   title?: string;
+  icon?: ReactNode;
   subtitle?: string;
   imageUrl?: string;
   detail?: ReactNode;
@@ -24,6 +25,7 @@ interface PageDetailInterface {
  */
 export function PageDetail({
   title,
+  icon,
   subtitle,
   detail,
   badges,
@@ -50,9 +52,12 @@ export function PageDetail({
               <Stack gap="xs">
                 {title && <StylishText size="lg">{title}</StylishText>}
                 {subtitle && (
-                  <Text size="md" truncate>
-                    {subtitle}
-                  </Text>
+                  <Group gap="xs">
+                    {icon}
+                    <Text size="md" truncate>
+                      {subtitle}
+                    </Text>
+                  </Group>
                 )}
               </Stack>
             </Group>
