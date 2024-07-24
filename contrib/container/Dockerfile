@@ -11,6 +11,7 @@
 
 ARG base_image=python:3.11-alpine3.20
 FROM ${base_image} AS inventree_base
+ARG base_image
 
 # Build arguments for this image
 ARG commit_tag=""
