@@ -1,5 +1,7 @@
 /* globals
+    getApiIconClass,
     inventreeGet,
+    loadApiIconPacks,
 */
 
 /* exported
@@ -180,6 +182,11 @@ function generateTreeStructure(data, options) {
 
         if (options.processNode) {
             node = options.processNode(node);
+
+            if (node.icon) {
+                node.icon = getApiIconClass(node.icon);
+            }
+
             data[ii] = node;
         }
     }
@@ -213,7 +220,7 @@ function generateTreeStructure(data, options) {
 /**
  * Enable support for breadcrumb tree navigation on this page
  */
-function enableBreadcrumbTree(options) {
+async function enableBreadcrumbTree(options) {
 
     const label = options.label;
 
@@ -223,6 +230,8 @@ function enableBreadcrumbTree(options) {
     }
 
     const filters = options.filters || {};
+
+    await loadApiIconPacks();
 
     inventreeGet(
         options.url,

@@ -151,6 +151,7 @@ export function RenderRemoteInstance({
 export function RenderInlineModel({
   primary,
   secondary,
+  prefix,
   suffix,
   image,
   labels,
@@ -161,6 +162,7 @@ export function RenderInlineModel({
   primary: string;
   secondary?: string;
   showSecondary?: boolean;
+  prefix?: ReactNode;
   suffix?: ReactNode;
   image?: string;
   labels?: string[];
@@ -181,6 +183,7 @@ export function RenderInlineModel({
   return (
     <Group gap="xs" justify="space-between" wrap="nowrap">
       <Group gap="xs" justify="left" wrap="nowrap">
+        {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
           <Anchor href={url} onClick={(event: any) => onClick(event)}>

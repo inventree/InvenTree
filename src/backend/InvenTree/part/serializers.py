@@ -139,6 +139,10 @@ class CategorySerializer(
         child=serializers.DictField(), source='get_path', read_only=True
     )
 
+    icon = serializers.CharField(
+        required=False, allow_blank=True, help_text=_('Icon (optional)'), max_length=100
+    )
+
     parent_default_location = serializers.IntegerField(read_only=True)
 
 
@@ -152,6 +156,10 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
         fields = ['pk', 'name', 'parent', 'icon', 'structural', 'subcategories']
 
     subcategories = serializers.IntegerField(label=_('Subcategories'), read_only=True)
+
+    icon = serializers.CharField(
+        required=False, allow_blank=True, help_text=_('Icon (optional)'), max_length=100
+    )
 
     @staticmethod
     def annotate_queryset(queryset):

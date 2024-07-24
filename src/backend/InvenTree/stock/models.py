@@ -33,6 +33,7 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
+from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -86,6 +87,7 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Default icon for all locations that have no icon set (optional)'),
+        validators=[validate_icon],
     )
 
 
@@ -116,6 +118,8 @@ class StockLocation(
     """
 
     ITEM_PARENT_KEY = 'location'
+
+    EXTRA_PATH_FIELDS = ['icon']
 
     objects = StockLocationManager()
 
@@ -163,6 +167,7 @@ class StockLocation(
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
         db_column='icon',
+        validators=[validate_icon],
     )
 
     owner = models.ForeignKey(
@@ -211,6 +216,11 @@ class StockLocation(
 
         if self.location_type:
             return self.location_type.icon
+
+        if default_icon := get_global_setting(
+            'STOCK_LOCATION_DEFAULT_ICON', cache=True
+        ):
+            return default_icon
 
         return ''
 
