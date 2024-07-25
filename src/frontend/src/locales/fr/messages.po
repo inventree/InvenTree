@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-24 18:22\n"
+"PO-Revision-Date: 2024-07-25 18:20\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -52,7 +52,7 @@ msgstr "Imprimer l'étiquette"
 
 #: src/components/buttons/PrintingActions.tsx:99
 msgid "Print"
-msgstr ""
+msgstr "Imprimer"
 
 #: src/components/buttons/PrintingActions.tsx:100
 msgid "Label printing completed successfully"
@@ -85,7 +85,7 @@ msgstr "Imprimer le rapport"
 
 #: src/components/buttons/PrintingActions.tsx:138
 msgid "Generate"
-msgstr ""
+msgstr "Générer"
 
 #: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
@@ -304,7 +304,7 @@ msgstr "Êtes-vous sûr de vouloir enregistrer et recharger l'aperçu ?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:153
 msgid "To render the preview the current template needs to be replaced on the server with your modifications which may break the label if it is under active use. Do you want to proceed?"
-msgstr ""
+msgstr "Pour afficher l'aperçu, le modèle actuel doit être remplacé sur le serveur par vos modifications qui peuvent casser l'étiquette s'il est en cours d'utilisation. Voulez-vous continuer ?"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 msgid "Save & Reload"
@@ -348,51 +348,51 @@ msgstr "Erreur de rendu du modèle"
 
 #: src/components/errors/ClientError.tsx:23
 msgid "Client Error"
-msgstr ""
+msgstr "Erreur client"
 
 #: src/components/errors/ClientError.tsx:24
 msgid "Client error occurred"
-msgstr ""
+msgstr "Une erreur client est survenue"
 
 #: src/components/errors/GenericErrorPage.tsx:50
 msgid "Status Code"
-msgstr ""
+msgstr "Code d'état"
 
 #: src/components/errors/GenericErrorPage.tsx:63
 msgid "Return to the index page"
-msgstr ""
+msgstr "Retour à la page d'index"
 
 #: src/components/errors/NotAuthenticated.tsx:8
 msgid "Not Authenticated"
-msgstr ""
+msgstr "Non authentifié"
 
 #: src/components/errors/NotAuthenticated.tsx:9
 msgid "You are not logged in."
-msgstr ""
+msgstr "Vous n'êtes pas connecté."
 
 #: src/components/errors/NotFound.tsx:8
 msgid "Page Not Found"
-msgstr ""
+msgstr "Page introuvable"
 
 #: src/components/errors/NotFound.tsx:9
 msgid "This page does not exist"
-msgstr ""
+msgstr "Cette page n'existe pas"
 
 #: src/components/errors/PermissionDenied.tsx:8
 msgid "Permission Denied"
-msgstr ""
+msgstr "Permission refusée"
 
 #: src/components/errors/PermissionDenied.tsx:9
 msgid "You do not have permission to view this page."
-msgstr ""
+msgstr "Vous n’avez pas la permission de voir cette page."
 
 #: src/components/errors/ServerError.tsx:8
 msgid "Server Error"
-msgstr ""
+msgstr "Erreur serveur"
 
 #: src/components/errors/ServerError.tsx:9
 msgid "A server error occurred"
-msgstr ""
+msgstr "Une erreur serveur s'est produite"
 
 #: src/components/forms/ApiForm.tsx:151
 #: src/components/forms/ApiForm.tsx:548
@@ -405,7 +405,7 @@ msgstr "Erreur de formulaire"
 
 #: src/components/forms/ApiForm.tsx:556
 msgid "Errors exist for one or more form fields"
-msgstr ""
+msgstr "Il existe des erreurs pour un ou plusieurs champs du formulaire"
 
 #: src/components/forms/ApiForm.tsx:658
 #: src/tables/plugin/PluginListTable.tsx:388
@@ -643,11 +643,11 @@ msgstr ""
 
 #: src/components/forms/fields/IconField.tsx:81
 msgid "No icon selected"
-msgstr ""
+msgstr "Aucune icône sélectionnée"
 
 #: src/components/forms/fields/IconField.tsx:159
 msgid "Uncategorized"
-msgstr ""
+msgstr "Non catégorisé"
 
 #: src/components/forms/fields/IconField.tsx:209
 #: src/components/nav/Layout.tsx:70
@@ -657,15 +657,15 @@ msgstr "Rechercher..."
 
 #: src/components/forms/fields/IconField.tsx:223
 msgid "Select category"
-msgstr ""
+msgstr "Sélectionner une catégorie"
 
 #: src/components/forms/fields/IconField.tsx:232
 msgid "Select pack"
-msgstr ""
+msgstr "Sélectionnez le pack"
 
 #: src/components/forms/fields/IconField.tsx:237
 msgid "{0} icons"
-msgstr ""
+msgstr "Icônes {0}"
 
 #: src/components/forms/fields/RelatedModelField.tsx:320
 #: src/pages/Index/Settings/UserSettings.tsx:71
@@ -686,7 +686,7 @@ msgstr "Aucun résultat trouvé"
 
 #: src/components/forms/fields/TableField.tsx:52
 msgid "modelRenderer entry required for tables"
-msgstr ""
+msgstr "Entrée modelRenderer requise pour les tables"
 
 #: src/components/forms/fields/TableField.tsx:76
 msgid "No entries available"
@@ -703,69 +703,69 @@ msgstr "Miniature"
 
 #: src/components/importer/ImportDataSelector.tsx:166
 msgid "Importing Rows"
-msgstr ""
+msgstr "Importation des lignes"
 
 #: src/components/importer/ImportDataSelector.tsx:167
 msgid "Please wait while the data is imported"
-msgstr ""
+msgstr "Veuillez patienter pendant que les données sont importées"
 
 #: src/components/importer/ImportDataSelector.tsx:184
 msgid "An error occurred while importing data"
-msgstr ""
+msgstr "Une erreur est survenue lors de l’importation des données"
 
 #: src/components/importer/ImportDataSelector.tsx:205
 msgid "Edit Data"
-msgstr ""
+msgstr "Éditer les données"
 
 #: src/components/importer/ImportDataSelector.tsx:233
 msgid "Delete Row"
-msgstr ""
+msgstr "Supprimer cette ligne"
 
 #: src/components/importer/ImportDataSelector.tsx:263
 msgid "Row"
-msgstr ""
+msgstr "Ligne"
 
 #: src/components/importer/ImportDataSelector.tsx:281
 msgid "Row contains errors"
-msgstr ""
+msgstr "La ligne contient des erreurs"
 
 #: src/components/importer/ImportDataSelector.tsx:322
 msgid "Accept"
-msgstr ""
+msgstr "Accepter"
 
 #: src/components/importer/ImportDataSelector.tsx:355
 msgid "Valid"
-msgstr ""
+msgstr "Valide"
 
 #: src/components/importer/ImportDataSelector.tsx:356
 msgid "Filter by row validation status"
-msgstr ""
+msgstr "Filtrer par état de validation de ligne"
 
 #: src/components/importer/ImportDataSelector.tsx:361
 #: src/tables/build/BuildOutputTable.tsx:205
 msgid "Complete"
-msgstr ""
+msgstr "Complet"
 
 #: src/components/importer/ImportDataSelector.tsx:362
 msgid "Filter by row completion status"
-msgstr ""
+msgstr "Filtrer par statut de complétion de ligne"
 
 #: src/components/importer/ImportDataSelector.tsx:379
 msgid "Import selected rows"
-msgstr ""
+msgstr "Importer les lignes sélectionnées"
 
 #: src/components/importer/ImportDataSelector.tsx:394
 msgid "Processing Data"
-msgstr ""
+msgstr "Traitement des données..."
 
 #: src/components/importer/ImporterColumnSelector.tsx:50
 #: src/components/importer/ImporterColumnSelector.tsx:176
 msgid "An error occurred"
-msgstr ""
+msgstr "Une erreur s'est produite"
 
 #: src/components/importer/ImporterColumnSelector.tsx:62
 msgid "Select column, or leave blank to ignore this field."
-msgstr ""
+msgstr "Sélectionnez la colonne, ou laissez vide pour ignorer ce champ."
 
 #: src/components/importer/ImporterColumnSelector.tsx:91
 #~ msgid "Select a column from the data file"
@@ -781,51 +781,51 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:182
 msgid "Ignore this field"
-msgstr ""
+msgstr "Ignorer ce champ"
 
 #: src/components/importer/ImporterColumnSelector.tsx:196
 msgid "Mapping data columns to database fields"
-msgstr ""
+msgstr "Mappage des colonnes de données aux champs de la base de données"
 
 #: src/components/importer/ImporterColumnSelector.tsx:201
 msgid "Accept Column Mapping"
-msgstr ""
+msgstr "Accepter le mappage des colonnes"
 
 #: src/components/importer/ImporterColumnSelector.tsx:214
 msgid "Database Field"
-msgstr ""
+msgstr "Champ de base de données"
 
 #: src/components/importer/ImporterColumnSelector.tsx:215
 msgid "Field Description"
-msgstr ""
+msgstr "Description du champs"
 
 #: src/components/importer/ImporterColumnSelector.tsx:216
 msgid "Imported Column"
-msgstr ""
+msgstr "Colonne importée"
 
 #: src/components/importer/ImporterColumnSelector.tsx:217
 msgid "Default Value"
-msgstr ""
+msgstr "Valeur par Défaut"
 
 #: src/components/importer/ImporterDrawer.tsx:45
 msgid "Upload File"
-msgstr ""
+msgstr "Transférer un fichier"
 
 #: src/components/importer/ImporterDrawer.tsx:46
 msgid "Map Columns"
-msgstr ""
+msgstr "Mapper les colonnes"
 
 #: src/components/importer/ImporterDrawer.tsx:47
 msgid "Import Data"
-msgstr ""
+msgstr "Importer les données"
 
 #: src/components/importer/ImporterDrawer.tsx:48
 msgid "Process Data"
-msgstr ""
+msgstr "Traiter les données"
 
 #: src/components/importer/ImporterDrawer.tsx:49
 msgid "Complete Import"
-msgstr ""
+msgstr "Finaliser l’importation"
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
@@ -2200,35 +2200,35 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:25
 msgid "Greek"
-msgstr ""
+msgstr "Grecque"
 
 #: src/contexts/LanguageContext.tsx:26
 msgid "English"
-msgstr ""
+msgstr "Anglais"
 
 #: src/contexts/LanguageContext.tsx:27
 msgid "Spanish"
-msgstr ""
+msgstr "Espagnol"
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Espagnol (Mexique)"
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Estonian"
-msgstr ""
+msgstr "Estonien"
 
 #: src/contexts/LanguageContext.tsx:30
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persan"
 
 #: src/contexts/LanguageContext.tsx:31
 msgid "Finnish"
-msgstr ""
+msgstr "Finlandais"
 
 #: src/contexts/LanguageContext.tsx:32
 msgid "French"
-msgstr ""
+msgstr "Francais"
 
 #: src/contexts/LanguageContext.tsx:33
 msgid "Hebrew"
@@ -2248,19 +2248,19 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:37
 msgid "Japanese"
-msgstr ""
+msgstr "Japonais"
 
 #: src/contexts/LanguageContext.tsx:38
 msgid "Korean"
-msgstr ""
+msgstr "Corean"
 
 #: src/contexts/LanguageContext.tsx:39
 msgid "Latvian"
-msgstr ""
+msgstr "Letton"
 
 #: src/contexts/LanguageContext.tsx:40
 msgid "Dutch"
-msgstr ""
+msgstr "Néerlandais"
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Norwegian"
