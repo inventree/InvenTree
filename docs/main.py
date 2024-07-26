@@ -52,6 +52,7 @@ def check_link(url) -> bool:
 
     return False
 
+
 def get_build_enviroment() -> str:
     """Returns the branch we are currently building on, based on the environment variables of the various CI plattforms."""
     # Check if we are in ReadTheDocs
@@ -120,7 +121,7 @@ def define_env(env):
             - FileNotFoundError: If the file does not exist, or the generated URL is invalid
         """
         if branch == None:
-            branch =  get_build_enviroment()
+            branch = get_build_enviroment()
 
         if filename.startswith('/'):
             filename = filename[1:]
