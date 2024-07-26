@@ -1221,6 +1221,34 @@ def frontend_download(
 
             handle_extract(dst.name)
 
+    def check_already_current(tag=None, sha=None):
+        """Check if the currently available frontend is already the requested one."""
+        ref = 'tag' if tag else 'commit'
+
+        if tag:
+            current = managePyDir().joinpath('web', 'static', 'web', '.vite', 'tag.txt')
+        elif sha:
+            current = managePyDir().joinpath('web', 'static', 'web', '.vite', 'sha.txt')
+        else:
+            raise ValueError('Either tag or sha needs to be set')
+
+        if not current.exists():
+            print(
+                f'Current frontend information for {ref} is not available - this is expected in some cases'
+            )
+            return False
+
+        current_content = current.read_text().strip()
+        ref_value = tag or sha
+        if current_content == ref_value:
+            print(f'Frontend {ref} is already `{ref_value}`')
+            return True
+        else:
+            print(
+                f'Frontend {ref} is not expected `{ref_value}` but `{current_content}` - new version will be downloaded'
+            )
+            return False
+
     # if zip file is specified, try to extract it directly
     if file:
         handle_extract(file)
@@ -1237,8 +1265,24 @@ def frontend_download(
                 ['git', 'rev-parse', 'HEAD'], encoding='utf-8'
             ).strip()
         except Exception:
-            print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
-            return
+            # .deb Packages contain extra information in the VERSION file
+            version_file = localDir().joinpath('VERSION')
+            if not version_file.exists():
+                return
+            from dotenv import dotenv_values  # noqa: WPS433
+
+            content = dotenv_values(version_file)
+            if (
+                'INVENTREE_PKG_INSTALLER' in content
+                and content['INVENTREE_PKG_INSTALLER'] == 'PKG'
+            ):
+                ref = content.get('INVENTREE_COMMIT_SHA')
+                print(
+                    f'[INFO] Running in package environment, got commit "{ref}" from VERSION file'
+                )
+            else:
+                print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
+                return
 
     if ref is None and tag is None:
         print('[ERROR] Either ref or tag needs to be set.')
@@ -1246,6 +1290,8 @@ def frontend_download(
     if tag:
         tag = tag.lstrip('v')
         try:
+            if check_already_current(tag=tag):
+                return
             handle_download(
                 f'https://github.com/{repo}/releases/download/{tag}/frontend-build.zip'
             )
@@ -1261,6 +1307,8 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
         return
 
     if ref:
+        if check_already_current(sha=ref):
+            return
         # get workflow run from all workflow runs on that particular ref
         workflow_runs = requests.get(
             f'https://api.github.com/repos/{repo}/actions/runs?head_sha={ref}',
