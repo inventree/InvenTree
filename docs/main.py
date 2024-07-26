@@ -56,14 +56,11 @@ def get_build_enviroment() -> str:
     """Returns the branch we are currently building on, based on the environment variables of the various CI plattforms."""
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
-        print('Building on ReadTheDocs')
         return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
     # We are in GitHub Actions
     elif os.environ.get('GITHUB_ACTIONS') == 'true':
-        print('Building on GitHub Actions')
         return os.environ.get('GITHUB_REF')
     else:
-        print('Building locally')
         return 'master'
 
 
