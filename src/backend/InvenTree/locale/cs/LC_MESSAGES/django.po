@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-24 02:36+0000\n"
-"PO-Revision-Date: 2024-07-24 18:22\n"
+"POT-Creation-Date: 2024-07-26 00:28+0000\n"
+"PO-Revision-Date: 2024-07-26 18:36\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -440,7 +440,7 @@ msgstr "Název"
 #: company/templates/company/company_base.html:77
 #: company/templates/company/manufacturer_part.html:75
 #: company/templates/company/supplier_part.html:107 order/models.py:289
-#: order/models.py:1348 part/admin.py:305 part/admin.py:408 part/models.py:1006
+#: order/models.py:1348 part/admin.py:305 part/admin.py:411 part/models.py:1006
 #: part/models.py:3773 part/templates/part/category.html:79
 #: part/templates/part/part_base.html:170
 #: part/templates/part/part_scheduling.html:12 report/models.py:156
@@ -819,7 +819,7 @@ msgstr "Referenční číslo objednávky"
 
 #: build/models.py:241 build/serializers.py:1233 order/models.py:468
 #: order/models.py:945 order/models.py:1308 order/models.py:2070
-#: part/admin.py:411 part/models.py:4274 part/templates/part/upload_bom.html:54
+#: part/admin.py:414 part/models.py:4274 part/templates/part/upload_bom.html:54
 #: report/templates/report/inventree_bill_of_materials_report.html:139
 #: report/templates/report/inventree_purchase_order_report.html:28
 #: report/templates/report/inventree_return_order_report.html:26
@@ -1109,7 +1109,7 @@ msgstr "Vytvořit objekt"
 #: build/templates/build/build_base.html:102
 #: build/templates/build/detail.html:34 common/models.py:2571
 #: order/models.py:1291 order/models.py:1976 order/serializers.py:1413
-#: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:410
+#: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:413
 #: part/forms.py:48 part/models.py:3278 part/models.py:4247
 #: part/templates/part/part_pricing.html:16
 #: part/templates/part/upload_bom.html:53
@@ -1216,7 +1216,7 @@ msgid "Destination stock item"
 msgstr "Cílová skladová položka"
 
 #: build/serializers.py:93 build/serializers.py:1142 build/serializers.py:1225
-#: part/admin.py:41 part/admin.py:405 part/models.py:4096 part/stocktake.py:220
+#: part/admin.py:41 part/admin.py:408 part/models.py:4096 part/stocktake.py:220
 #: stock/admin.py:156
 msgid "Part Name"
 msgstr "Název dílu"
@@ -1600,7 +1600,7 @@ msgstr "BOM Položka"
 msgid "Allocated Stock"
 msgstr "Přidělené zásoby"
 
-#: build/serializers.py:1256 part/admin.py:132 part/bom.py:173
+#: build/serializers.py:1256 part/admin.py:132 part/bom.py:181
 #: part/serializers.py:897 part/serializers.py:1579
 #: part/templates/part/part_base.html:210 templates/js/translated/bom.js:1208
 #: templates/js/translated/build.js:2804 templates/js/translated/part.js:709
@@ -1615,7 +1615,7 @@ msgstr "Na objednávku"
 msgid "In Production"
 msgstr "Ve výrobě"
 
-#: build/serializers.py:1266 part/bom.py:172 part/serializers.py:1606
+#: build/serializers.py:1266 part/bom.py:180 part/serializers.py:1606
 #: part/templates/part/part_base.html:192
 #: templates/js/translated/sales_order.js:1929
 msgid "Available Stock"
@@ -2478,7 +2478,7 @@ msgstr "Šablona"
 msgid "Parts are templates by default"
 msgstr "Díly jsou ve výchozím nastavení šablony"
 
-#: common/models.py:1489 part/admin.py:91 part/admin.py:425 part/models.py:1154
+#: common/models.py:1489 part/admin.py:91 part/admin.py:428 part/models.py:1154
 #: templates/js/translated/bom.js:1639
 #: templates/js/translated/table_filters.js:330
 #: templates/js/translated/table_filters.js:726
@@ -4344,7 +4344,7 @@ msgstr "Odkazovaný díl výrobce musí odkazovat na stejný základní díl"
 
 #: company/models.py:789 company/templates/company/company_base.html:87
 #: company/templates/company/supplier_part.html:129 order/models.py:491
-#: order/templates/order/order_base.html:136 part/bom.py:272 part/bom.py:310
+#: order/templates/order/order_base.html:136 part/bom.py:280 part/bom.py:318
 #: part/serializers.py:537 plugin/builtin/suppliers/digikey.py:25
 #: plugin/builtin/suppliers/lcsc.py:26 plugin/builtin/suppliers/mouser.py:24
 #: plugin/builtin/suppliers/tme.py:26 stock/templates/stock/item_base.html:224
@@ -4383,7 +4383,7 @@ msgid "Supplier part description"
 msgstr "Popis dílu dodavatele"
 
 #: company/models.py:835 company/templates/company/supplier_part.html:187
-#: order/serializers.py:669 part/admin.py:412 part/models.py:4282
+#: order/serializers.py:669 part/admin.py:415 part/models.py:4282
 #: part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:32
@@ -4833,7 +4833,7 @@ msgid "No supplier information available"
 msgstr "Nejsou k dispozici žádné informace o dodavateli"
 
 #: company/templates/company/supplier_part.html:139 order/serializers.py:524
-#: part/bom.py:279 part/bom.py:311 part/serializers.py:547
+#: part/bom.py:287 part/bom.py:319 part/serializers.py:547
 #: templates/js/translated/company.js:349 templates/js/translated/part.js:1790
 #: templates/js/translated/pricing.js:510
 #: templates/js/translated/purchase_order.js:1920
@@ -6384,13 +6384,17 @@ msgstr ""
 msgid "Parent IPN"
 msgstr ""
 
-#: part/admin.py:415 part/serializers.py:1344
+#: part/admin.py:405
+msgid "Part Revision"
+msgstr ""
+
+#: part/admin.py:418 part/serializers.py:1344
 #: templates/js/translated/pricing.js:358
 #: templates/js/translated/pricing.js:1024
 msgid "Minimum Price"
 msgstr ""
 
-#: part/admin.py:420 part/serializers.py:1359
+#: part/admin.py:423 part/serializers.py:1359
 #: templates/js/translated/pricing.js:353
 #: templates/js/translated/pricing.js:1032
 msgid "Maximum Price"
@@ -6497,13 +6501,13 @@ msgstr ""
 msgid "Uses"
 msgstr ""
 
-#: part/bom.py:170 part/models.py:108 part/models.py:1077
+#: part/bom.py:178 part/models.py:108 part/models.py:1077
 #: part/templates/part/category.html:113 part/templates/part/part_base.html:376
 #: templates/js/translated/part.js:2394
 msgid "Default Location"
 msgstr ""
 
-#: part/bom.py:171 part/serializers.py:903
+#: part/bom.py:179 part/serializers.py:903
 #: templates/email/low_stock_notification.html:16
 msgid "Total Stock"
 msgstr ""
