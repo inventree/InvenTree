@@ -54,7 +54,7 @@ def check_link(url) -> bool:
 
 
 def get_build_enviroment() -> str:
-    """Returns the branch we are currently building on, based on the environment variables of the various CI plattforms."""
+    """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
     # Check if we are in ReadTheDocs
     if os.environ.get('READTHEDOCS') == 'True':
         return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
