@@ -319,7 +319,10 @@ export default function PurchaseOrderDetail() {
       <AdminButton model={ModelType.purchaseorder} pk={order.pk} key={0} />,
       <BarcodeActionDropdown
         actions={[
-          ViewBarcodeAction({}),
+          ViewBarcodeAction({
+            model: ModelType.purchaseorder,
+            pk: order.pk
+          }),
           LinkBarcodeAction({
             hidden: order?.barcode_hash
           }),

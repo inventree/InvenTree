@@ -21,6 +21,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         super().setUp()
 
         self.scan_url = reverse('api-barcode-scan')
+        self.generate_url = reverse('api-barcode-generate')
         self.assign_url = reverse('api-barcode-link')
         self.unassign_url = reverse('api-barcode-unlink')
 
@@ -28,6 +29,14 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         """Post barcode and return results."""
         return self.post(
             url, data={'barcode': str(barcode)}, expected_code=expected_code
+        )
+
+    def generateBarcode(self, model: str, pk: int, expected_code: int):
+        """Post barcode generation and return barcode contents."""
+        return self.post(
+            self.generate_url,
+            data={'model': model, 'pk': pk},
+            expected_code=expected_code,
         )
 
     def test_invalid(self):
@@ -130,7 +139,7 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         data = response.data
         self.assertIn('error', data)
 
-    def test_barcode_generation(self):
+    def test_barcode_scan(self):
         """Test that a barcode is generated with a scan."""
         item = StockItem.objects.get(pk=522)
 
@@ -144,6 +153,18 @@ class BarcodeAPITest(InvenTreeAPITestCase):
         pk = data['stockitem']['pk']
 
         self.assertEqual(pk, item.pk)
+
+    def test_barcode_generation(self):
+        """Test that a barcode can be generated for a StockItem."""
+        item = StockItem.objects.get(pk=522)
+
+        data = self.generateBarcode('stockitem', item.pk, expected_code=200).data
+        self.assertEqual(data['barcode'], '{"stockitem": 522}')
+
+    def test_barcode_generation_invalid(self):
+        """Test barcode generation for invalid model/pk."""
+        self.generateBarcode('invalidmodel', 1, expected_code=400)
+        self.generateBarcode('stockitem', 99999999, expected_code=400)
 
     def test_association(self):
         """Test that a barcode can be associated with a StockItem."""

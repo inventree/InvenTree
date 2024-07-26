@@ -62,6 +62,7 @@ class APITests(InvenTreeAPITestCase):
     """Tests for the InvenTree API."""
 
     fixtures = ['location', 'category', 'part', 'stock']
+    roles = ['part.view']
     token = None
     auto_login = False
 
@@ -132,6 +133,7 @@ class APITests(InvenTreeAPITestCase):
 
         # Now log in!
         self.basicAuth()
+        self.assignRole('part.view')
 
         response = self.get(url)
 
@@ -147,12 +149,17 @@ class APITests(InvenTreeAPITestCase):
 
         role_names = roles.keys()
 
-        # By default, 'view' permissions are provided
+        # By default, no permissions are provided
         for rule in RuleSet.RULESET_NAMES:
             self.assertIn(rule, role_names)
 
-            self.assertIn('view', roles[rule])
+            if roles[rule] is None:
+                continue
 
+            if rule == 'part':
+                self.assertIn('view', roles[rule])
+            else:
+                self.assertNotIn('view', roles[rule])
             self.assertNotIn('add', roles[rule])
             self.assertNotIn('change', roles[rule])
             self.assertNotIn('delete', roles[rule])
@@ -297,6 +304,7 @@ class SearchTests(InvenTreeAPITestCase):
         'order',
         'sales_order',
     ]
+    roles = ['build.view', 'part.view']
 
     def test_empty(self):
         """Test empty request."""
@@ -326,6 +334,19 @@ class SearchTests(InvenTreeAPITestCase):
         self.assertNotIn('salesorder', response.data)
 
         # Search for orders
+        response = self.post(
+            reverse('api-search'),
+            {'search': '01', 'limit': 2, 'purchaseorder': {}, 'salesorder': {}},
+            expected_code=200,
+        )
+        self.assertEqual(
+            response.data['purchaseorder'],
+            {'error': 'User does not have permission to view this model'},
+        )
+
+        # Add permissions and try again
+        self.assignRole('purchase_order.view')
+        self.assignRole('sales_order.view')
         response = self.post(
             reverse('api-search'),
             {'search': '01', 'limit': 2, 'purchaseorder': {}, 'salesorder': {}},

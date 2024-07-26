@@ -160,7 +160,7 @@ class CompanyTest(InvenTreeAPITestCase):
 class ContactTest(InvenTreeAPITestCase):
     """Tests for the Contact models."""
 
-    roles = []
+    roles = ['purchase_order.view']
 
     @classmethod
     def setUpTestData(cls):
@@ -266,7 +266,7 @@ class ContactTest(InvenTreeAPITestCase):
 class AddressTest(InvenTreeAPITestCase):
     """Test cases for Address API endpoints."""
 
-    roles = []
+    roles = ['purchase_order.view']
 
     @classmethod
     def setUpTestData(cls):
