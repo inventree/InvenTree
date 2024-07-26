@@ -1,13 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './tests',
-  testIgnore: '**/destructive/**',
-  fullyParallel: true,
+  testDir: './tests/destructive',
   timeout: 90000,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: process.env.CI ? 2 : undefined,
+  workers: 1,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
 
   /* Configure projects for major browsers */

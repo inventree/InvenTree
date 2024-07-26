@@ -179,9 +179,9 @@ jobs:
         id: breaking_changes
         uses: oasdiff/oasdiff-action/diff@main
         with:
-          base: 'api.yaml'
-          revision: 'src/backend/InvenTree/schema.yml'
-          format: 'html'
+          base: "api.yaml"
+          revision: "src/backend/InvenTree/schema.yml"
+          format: "html"
       - name: Echoing diff to step
         run: echo "${{ steps.breaking_changes.outputs.diff }}" >> $GITHUB_STEP_SUMMARY
 
@@ -532,9 +532,12 @@ jobs:
         run: inv frontend-compile
       - name: Install Playwright Browsers
         run: cd src/frontend && npx playwright install --with-deps
-      - name: Run Playwright tests
+      - name: Run Non-Destructive Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
+      - name: Run Destructive Playwright tests
+        id: tests
+        run: cd src/frontend && npx nyc playwright test -c playwright-destructive.config.ts
       - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
