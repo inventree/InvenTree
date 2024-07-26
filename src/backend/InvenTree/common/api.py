@@ -9,6 +9,7 @@ from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 
 import django_q.models
@@ -25,6 +26,7 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
+from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from generic.states.api import AllStatusViews, StatusView
 from importer.mixins import DataExportViewMixin
@@ -743,6 +745,18 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
         return super().destroy(request, *args, **kwargs)
 
 
+@method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
+class IconList(ListAPI):
+    """List view for available icon packages."""
+
+    serializer_class = common.serializers.IconPackageSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        """Return a list of all available icon packages."""
+        return get_icon_packs().values()
+
+
 settings_api_urls = [
     # User settings
     path(
@@ -957,6 +971,8 @@ common_api_urls = [
             path('', ContentTypeList.as_view(), name='api-contenttype-list'),
         ]),
     ),
+    # Icons
+    path('icons/', IconList.as_view(), name='api-icon-list'),
 ]
 
 admin_api_urls = [

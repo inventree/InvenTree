@@ -1101,3 +1101,14 @@ a {
 .large-treeview-icon {
     font-size: 1em;
 }
+
+.api-icon {
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    /* Better font rendering */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

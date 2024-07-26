@@ -1,13 +1,13 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 228
+INVENTREE_API_VERSION = 229
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
-v228 - 2024-07-27 : https://github.com/inventree/InvenTree/pull/6989
+v229 - 2024-07-27 : https://github.com/inventree/InvenTree/pull/6989
     - Adds new API endpoints for PurchaseOrder state transitions
         - Request Approval
         - Reject order
@@ -19,6 +19,10 @@ v228 - 2024-07-27 : https://github.com/inventree/InvenTree/pull/6989
         - created_by
         - approved_by
         - placed_by
+
+v228 - 2024-07-18 : https://github.com/inventree/InvenTree/pull/7684
+    - Adds "icon" field to the PartCategory.path and StockLocation.path API
+    - Adds icon packages API endpoint
 
 v227 - 2024-07-19 : https://github.com/inventree/InvenTree/pull/7693/
     - Adds endpoints to list and revoke the tokens issued to the current user

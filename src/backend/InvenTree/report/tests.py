@@ -186,6 +186,31 @@ class ReportTagTest(TestCase):
             result = report_tags.format_datetime(time, tz, fmt)
             self.assertEqual(result, expected)
 
+    def test_icon(self):
+        """Test the icon template tag."""
+        for icon in [None, '', 'not:the-correct-format', 'any-non-existent-icon']:
+            self.assertEqual(report_tags.icon(icon), '')
+
+        self.assertEqual(
+            report_tags.icon('ti:package:outline'),
+            f'<i class="icon " style="font-family: inventree-icon-font-ti">{chr(int("eaff", 16))}</i>',
+        )
+        self.assertEqual(
+            report_tags.icon(
+                'ti:package:outline', **{'class': 'my-custom-class my-seconds-class'}
+            ),
+            f'<i class="icon my-custom-class my-seconds-class" style="font-family: inventree-icon-font-ti">{chr(int("eaff", 16))}</i>',
+        )
+
+    def test_include_icon_fonts(self):
+        """Test the include_icon_fonts template tag."""
+        style = report_tags.include_icon_fonts()
+
+        self.assertIn('@font-face {', style)
+        self.assertIn("font-family: 'inventree-icon-font-ti';", style)
+        self.assertIn('tabler-icons/tabler-icons.ttf', style)
+        self.assertIn('.icon {', style)
+
 
 class BarcodeTagTest(TestCase):
     """Unit tests for the barcode template tags."""

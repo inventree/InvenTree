@@ -472,13 +472,13 @@ class StockLocationTypeTest(StockAPITestCase):
         """Test that the list endpoint works as expected."""
         location_types = [
             StockLocationType.objects.create(
-                name='Type 1', description='Type 1 desc', icon='fas fa-box'
+                name='Type 1', description='Type 1 desc', icon='ti:package:outline'
             ),
             StockLocationType.objects.create(
-                name='Type 2', description='Type 2 desc', icon='fas fa-box'
+                name='Type 2', description='Type 2 desc', icon='ti:package:outline'
             ),
             StockLocationType.objects.create(
-                name='Type 3', description='Type 3 desc', icon='fas fa-box'
+                name='Type 3', description='Type 3 desc', icon='ti:package:outline'
             ),
         ]
 
@@ -493,7 +493,7 @@ class StockLocationTypeTest(StockAPITestCase):
     def test_delete(self):
         """Test that we can delete a location type via API."""
         location_type = StockLocationType.objects.create(
-            name='Type 1', description='Type 1 desc', icon='fas fa-box'
+            name='Type 1', description='Type 1 desc', icon='ti:package:outline'
         )
         self.delete(
             reverse('api-location-type-detail', kwargs={'pk': location_type.pk}),
@@ -506,8 +506,19 @@ class StockLocationTypeTest(StockAPITestCase):
         self.post(
             self.list_url,
             {'name': 'Test Type 1', 'description': 'Test desc 1', 'icon': 'fas fa-box'},
+            expected_code=400,
+        )
+
+        self.post(
+            self.list_url,
+            {
+                'name': 'Test Type 1',
+                'description': 'Test desc 1',
+                'icon': 'ti:package:outline',
+            },
             expected_code=201,
         )
+
         self.assertIsNotNone(
             StockLocationType.objects.filter(name='Test Type 1').first()
         )
@@ -515,14 +526,20 @@ class StockLocationTypeTest(StockAPITestCase):
     def test_update(self):
         """Test that we can update a location type via API."""
         location_type = StockLocationType.objects.create(
-            name='Type 1', description='Type 1 desc', icon='fas fa-box'
+            name='Type 1', description='Type 1 desc', icon='ti:package:outline'
         )
-        res = self.patch(
+        self.patch(
             reverse('api-location-type-detail', kwargs={'pk': location_type.pk}),
             {'icon': 'fas fa-shapes'},
+            expected_code=400,
+        )
+
+        res = self.patch(
+            reverse('api-location-type-detail', kwargs={'pk': location_type.pk}),
+            {'icon': 'ti:tag:outline'},
             expected_code=200,
         ).json()
-        self.assertEqual(res['icon'], 'fas fa-shapes')
+        self.assertEqual(res['icon'], 'ti:tag:outline')
 
 
 class StockItemListTest(StockAPITestCase):

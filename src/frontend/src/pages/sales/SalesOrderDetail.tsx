@@ -21,9 +21,13 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
+  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -298,6 +302,20 @@ export default function SalesOrderDetail() {
   const soActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.salesorder} pk={order.pk} />,
+      <BarcodeActionDropdown
+        actions={[
+          ViewBarcodeAction({
+            model: ModelType.salesorder,
+            pk: order.pk
+          }),
+          LinkBarcodeAction({
+            hidden: order?.barcode_hash
+          }),
+          UnlinkBarcodeAction({
+            hidden: !order?.barcode_hash
+          })
+        ]}
+      />,
       <PrintingActions
         modelType={ModelType.salesorder}
         items={[order.pk]}
