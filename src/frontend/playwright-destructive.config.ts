@@ -4,7 +4,7 @@ export default defineConfig({
   testDir: './tests/destructive',
   timeout: 90000,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 2 : 0,
   workers: 1,
   reporter: process.env.CI ? [['html', { open: 'never' }], ['github']] : 'list',
 
