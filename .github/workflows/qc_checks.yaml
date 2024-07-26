@@ -535,13 +535,19 @@ jobs:
       - name: Run Non-Destructive Playwright tests
         id: tests
         run: cd src/frontend && npx nyc playwright test
-      - name: Run Destructive Playwright tests
-        id: tests
-        run: cd src/frontend && npx nyc playwright test -c playwright-destructive.config.ts
       - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
           name: playwright-report
+          path: src/frontend/playwright-report/
+          retention-days: 14
+      - name: Run Destructive Playwright tests
+        id: tests-destructive
+        run: cd src/frontend && npx nyc playwright test -c playwright-destructive.config.ts
+      - uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4
+        if: ${{ !cancelled() && steps.tests-destructive.outcome == 'failure' }}
+        with:
+          name: playwright-report-destructive
           path: src/frontend/playwright-report/
           retention-days: 14
       - name: Report coverage
