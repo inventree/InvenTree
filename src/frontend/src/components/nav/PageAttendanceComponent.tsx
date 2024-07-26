@@ -8,7 +8,6 @@ import {
   Indicator,
   List,
   Pill,
-  ScrollArea,
   Stack,
   Text,
   TextInput
