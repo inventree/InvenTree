@@ -54,7 +54,7 @@ export const PageAttendanceComponent = () => {
   useEffect(() => {
     setMessageHistory([]);
     setParsedMessageHistory([]);
-    let new_room_name = location.pathname.slice(1).replace('/', '__');
+    let new_room_name = location.pathname.slice(1).replaceAll('/', '__');
     if (new_room_name === '') new_room_name = 'home';
     const cleaned_host = host.replace(/(^\w+:|^)\/\//, '');
     setSocketUrl(`ws://${cleaned_host}/ws/page/${new_room_name}/`);
