@@ -47,6 +47,7 @@ export enum ApiEndpoints {
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+  icons = 'icons/',
 
   // Data import endpoints
   import_session_list = 'importer/session/',

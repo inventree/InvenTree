@@ -46,7 +46,7 @@ export type DetailsField =
     );
 
 type BadgeType = 'owner' | 'user' | 'group';
-type ValueFormatterReturn = string | number | null;
+type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
   type: 'string' | 'text';

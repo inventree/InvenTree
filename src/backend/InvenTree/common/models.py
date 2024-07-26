@@ -1558,6 +1558,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Part Category Default Icon'),
             'description': _('Part category default icon (empty means no icon)'),
             'default': '',
+            'validator': common.validators.validate_icon,
         },
         'PART_PARAMETER_ENFORCE_UNITS': {
             'name': _('Enforce Parameter Units'),
@@ -1779,6 +1780,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Stock Location Default Icon'),
             'description': _('Stock location default icon (empty means no icon)'),
             'default': '',
+            'validator': common.validators.validate_icon,
         },
         'STOCK_SHOW_INSTALLED_ITEMS': {
             'name': _('Show Installed Stock Items'),

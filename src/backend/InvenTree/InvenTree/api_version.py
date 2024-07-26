@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 227
+INVENTREE_API_VERSION = 228
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v228 - 2024-07-18 : https://github.com/inventree/InvenTree/pull/7684
+    - Adds "icon" field to the PartCategory.path and StockLocation.path API
+    - Adds icon packages API endpoint
+
 v227 - 2024-07-19 : https://github.com/inventree/InvenTree/pull/7693/
     - Adds endpoints to list and revoke the tokens issued to the current user
 
