@@ -24,7 +24,7 @@ import { StylishText } from '../items/StylishText';
 interface PageMessages {
   type: 'chat_message' | 'users' | 'unknown';
   message: string;
-  data: any | null;
+  data: any;
   user: string;
 }
 
@@ -34,7 +34,6 @@ export const PageAttendanceComponent = () => {
   const [socketUrl, setSocketUrl] = useState<string | null>(null);
 
   // websocket history
-  const [messageHistory, setMessageHistory] = useState<MessageEvent<any>[]>([]);
   const [parsedMessageHistory, setParsedMessageHistory] = useState<
     PageMessages[]
   >([]);
@@ -51,7 +50,6 @@ export const PageAttendanceComponent = () => {
 
   // Websockets
   useEffect(() => {
-    setMessageHistory([]);
     setParsedMessageHistory([]);
     let new_room_name = location.pathname.slice(1).replaceAll('/', '__');
     if (new_room_name === '') new_room_name = 'home';
@@ -62,7 +60,6 @@ export const PageAttendanceComponent = () => {
 
   useEffect(() => {
     if (lastMessage !== null) {
-      setMessageHistory((prev) => prev.concat(lastMessage));
       setParsedMessageHistory((prev) =>
         prev.concat(JSON.parse(lastMessage.data))
       );
@@ -100,13 +97,13 @@ function AttendanceDrawer({
   sendMessage,
   readyState,
   messages
-}: {
+}: Readonly<{
   opened: boolean;
   onClose: () => void;
   sendMessage: (message: string) => void;
   readyState: ReadyState;
   messages: PageMessages[];
-}) {
+}>) {
   const [inputValue, setInputValue] = useState('');
   function handleClickSendMessage() {
     sendMessage(JSON.stringify({ message: inputValue }));
