@@ -31,6 +31,36 @@ import { useUserState } from '../../../states/UserState';
  * System settings page
  */
 export default function SystemSettings() {
+  const [mfa_enabled] = useServerApiState((state) => [
+    state.server.mfa_enabled
+  ]);
+
+  const loginSettingsKeys: string[] = useMemo(() => {
+    let keys: string[] = [
+      'LOGIN_ENABLE_PWD_FORGOT',
+      'LOGIN_MAIL_REQUIRED',
+      'LOGIN_ENFORCE_MFA',
+      'LOGIN_ENABLE_REG',
+      'LOGIN_SIGNUP_MAIL_TWICE',
+      'LOGIN_SIGNUP_PWD_TWICE',
+      'SIGNUP_GROUP',
+      'LOGIN_SIGNUP_MAIL_RESTRICTION',
+      'LOGIN_ENABLE_SSO',
+      'LOGIN_ENABLE_SSO_REG',
+      'LOGIN_SIGNUP_SSO_AUTO',
+      'LOGIN_ENABLE_SSO_GROUP_SYNC',
+      'SSO_GROUP_MAP',
+      'SSO_GROUP_KEY',
+      'SSO_REMOVE_GROUPS'
+    ];
+
+    if (mfa_enabled == false) {
+      keys = keys.filter((key) => key !== 'LOGIN_ENFORCE_MFA');
+    }
+
+    return keys;
+  }, [mfa_enabled]);
+
   const systemSettingsPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -66,27 +96,7 @@ export default function SystemSettings() {
         name: 'login',
         label: t`Login`,
         icon: <IconFingerprint />,
-        content: (
-          <GlobalSettingList
-            keys={[
-              'LOGIN_ENABLE_PWD_FORGOT',
-              'LOGIN_MAIL_REQUIRED',
-              'LOGIN_ENFORCE_MFA',
-              'LOGIN_ENABLE_REG',
-              'LOGIN_SIGNUP_MAIL_TWICE',
-              'LOGIN_SIGNUP_PWD_TWICE',
-              'SIGNUP_GROUP',
-              'LOGIN_SIGNUP_MAIL_RESTRICTION',
-              'LOGIN_ENABLE_SSO',
-              'LOGIN_ENABLE_SSO_REG',
-              'LOGIN_SIGNUP_SSO_AUTO',
-              'LOGIN_ENABLE_SSO_GROUP_SYNC',
-              'SSO_GROUP_MAP',
-              'SSO_GROUP_KEY',
-              'SSO_REMOVE_GROUPS'
-            ]}
-          />
-        )
+        content: <GlobalSettingList keys={loginSettingsKeys} />
       },
       {
         name: 'barcode',

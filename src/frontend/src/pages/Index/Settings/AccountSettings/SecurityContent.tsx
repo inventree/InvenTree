@@ -3,6 +3,7 @@ import {
   Alert,
   Badge,
   Button,
+  Divider,
   Grid,
   Group,
   Loader,
@@ -22,12 +23,16 @@ import { api, queryClient } from '../../../../App';
 import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
-import { apiUrl } from '../../../../states/ApiState';
+import { apiUrl, useServerApiState } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
 
 export function SecurityContent() {
   const [isSsoEnabled, setIsSsoEnabled] = useState<boolean>(false);
   const [isMfaEnabled, setIsMfaEnabled] = useState<boolean>(false);
+
+  const [mfaEnabledForServer] = useServerApiState((state) => [
+    state.server.mfa_enabled
+  ]);
 
   const { isLoading: isLoadingProvider, data: dataProvider } = useQuery({
     queryKey: ['sso-providers'],
@@ -50,10 +55,12 @@ export function SecurityContent() {
       <Title order={5}>
         <Trans>Email</Trans>
       </Title>
+      <Divider />
       <EmailContent />
       <Title order={5}>
         <Trans>Single Sign On Accounts</Trans>
       </Title>
+      <Divider />
       {isSsoEnabled ? (
         <SsoContent dataProvider={dataProvider} />
       ) : (
@@ -65,32 +72,39 @@ export function SecurityContent() {
           <Trans>Single Sign On is not enabled for this server </Trans>
         </Alert>
       )}
-      <Title order={5}>
-        <Trans>Multifactor</Trans>
-      </Title>
-      {isLoadingProvider ? (
-        <Loader />
-      ) : (
+      {mfaEnabledForServer && (
         <>
-          {isMfaEnabled ? (
-            <MfaContent />
+          <Title order={5}>
+            <Trans>Multifactor</Trans>
+          </Title>
+          <Divider />
+          {isLoadingProvider ? (
+            <Loader />
           ) : (
-            <Alert
-              icon={<IconAlertCircle size="1rem" />}
-              title={t`Not enabled`}
-              color="yellow"
-            >
-              <Trans>
-                Multifactor authentication is not configured for your account{' '}
-              </Trans>
-            </Alert>
+            <>
+              {isMfaEnabled ? (
+                <MfaContent />
+              ) : (
+                <Alert
+                  icon={<IconAlertCircle size="1rem" />}
+                  title={t`Not enabled`}
+                  color="yellow"
+                >
+                  <Trans>
+                    Multifactor authentication is not configured for your
+                    account{' '}
+                  </Trans>
+                </Alert>
+              )}
+            </>
           )}
         </>
       )}
 
       <Title order={5}>
-        <Trans>Token</Trans>
+        <Trans>API Tokens</Trans>
       </Title>
+      <Divider />
       <TokenContent />
     </Stack>
   );
