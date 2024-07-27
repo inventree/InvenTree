@@ -1,11 +1,16 @@
 import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { UserRoles } from '../../enums/Roles';
-import { partStocktakeFields } from '../../forms/PartForms';
 import {
+  generateStocktakeReportFields,
+  partStocktakeFields
+} from '../../forms/PartForms';
+import {
+  useCreateApiFormModal,
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
@@ -41,6 +46,16 @@ export default function PartStocktakeTable({ partId }: { partId: number }) {
     table: table
   });
 
+  const generateReport = useCreateApiFormModal({
+    url: ApiEndpoints.part_stocktake_report_generate,
+    title: t`Generate Stocktake Report`,
+    fields: generateStocktakeReportFields(),
+    initialData: {
+      part: partId
+    },
+    successMessage: t`Stocktake report scheduled`
+  });
+
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
@@ -73,7 +88,12 @@ export default function PartStocktakeTable({ partId }: { partId: number }) {
   }, []);
 
   const tableActions = useMemo(() => {
-    return [];
+    return [
+      <AddItemButton
+        tooltip={t`New Stocktake Report`}
+        onClick={() => generateReport.open()}
+      />
+    ];
   }, []);
 
   const rowActions = useCallback(
@@ -100,6 +120,7 @@ export default function PartStocktakeTable({ partId }: { partId: number }) {
 
   return (
     <>
+      {generateReport.modal}
       {editStocktakeEntry.modal}
       {deleteStocktakeEntry.modal}
       <InvenTreeTable
