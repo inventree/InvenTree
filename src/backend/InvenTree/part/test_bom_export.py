@@ -111,6 +111,7 @@ class BomExportTest(InvenTreeTestCase):
                 'Parent Name',
                 'Part ID',
                 'Part IPN',
+                'Part Revision',
                 'Part Name',
                 'Description',
                 'Assembly',
