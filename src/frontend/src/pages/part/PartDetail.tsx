@@ -86,6 +86,7 @@ import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import PartPricingPanel from './PartPricingPanel';
+import PartStocktakeDetail from './PartStocktakeDetail';
 
 /**
  * Detail view for a single Part instance
@@ -617,7 +618,8 @@ export default function PartDetail() {
         name: 'stocktake',
         label: t`Stocktake`,
         icon: <IconClipboardList />,
-        content: <PlaceholderPanel />
+        content: part ? <PartStocktakeDetail partId={part.pk} /> : <Skeleton />,
+        hidden: !globalSettings.isSet('STOCKTAKE_ENABLE')
       },
       {
         name: 'test_templates',
@@ -657,7 +659,7 @@ export default function PartDetail() {
         )
       }
     ];
-  }, [id, part, user]);
+  }, [id, part, user, globalSettings]);
 
   // Fetch information on part revision
   const partRevisionQuery = useQuery({
