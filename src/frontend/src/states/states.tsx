@@ -47,6 +47,7 @@ export interface ServerAPIProps {
   installer: null | string;
   target: null | string;
   default_locale: null | string;
+  mfa_enabled: null | boolean;
 }
 
 export interface AuthProps {

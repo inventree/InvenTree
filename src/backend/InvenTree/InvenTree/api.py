@@ -232,6 +232,7 @@ class InfoView(AjaxView):
             'debug_mode': settings.DEBUG,
             'docker_mode': settings.DOCKER,
             'default_locale': settings.LANGUAGE_CODE,
+            'mfa_enabled': settings.INVENTREE_MFA_ENABLED,
             # Following fields are only available to staff users
             'system_health': check_system_health() if is_staff else None,
             'database': InvenTree.version.inventreeDatabase() if is_staff else None,

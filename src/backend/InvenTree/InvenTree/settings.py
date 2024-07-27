@@ -267,6 +267,21 @@ MIDDLEWARE = CONFIG.get(
     ],
 )
 
+# Determine if multi-factor authentication is enabled for this server (default = True)
+INVENTREE_MFA_ENABLED = get_boolean_setting(
+    'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
+)
+
+if not INVENTREE_MFA_ENABLED:
+    INSTALLED_APPS.remove('allauth_2fa')
+    INSTALLED_APPS.remove('django_otp')
+    INSTALLED_APPS.remove('django_otp.plugins.otp_totp')
+    INSTALLED_APPS.remove('django_otp.plugins.otp_static')
+
+    MIDDLEWARE.remove('django_otp.middleware.OTPMiddleware')
+    MIDDLEWARE.remove('InvenTree.middleware.CustomAllauthTwoFactorMiddleware')
+    MIDDLEWARE.remove('InvenTree.middleware.Check2FAMiddleware')
+
 # In DEBUG mode, add support for django-querycount
 # Ref: https://github.com/bradmontgomery/django-querycount
 if DEBUG and get_boolean_setting(

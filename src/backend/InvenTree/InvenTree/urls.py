@@ -443,11 +443,19 @@ classic_frontendpatterns = [
         CustomPasswordResetFromKeyView.as_view(),
         name='account_reset_password_from_key',
     ),
-    # Override login page
-    path('accounts/login/', CustomLoginView.as_view(), name='account_login'),
-    path('accounts/', include('allauth_2fa.urls')),  # MFA support
-    path('accounts/', include('allauth.urls')),  # included urlpatterns
 ]
+
+
+# Override login page
+classic_frontendpatterns.append(
+    path('accounts/login/', CustomLoginView.as_view(), name='account_login')
+)
+
+if settings.INVENTREE_MFA_ENABLED:
+    # MFA support
+    classic_frontendpatterns.append(path('accounts/', include('allauth_2fa.urls')))
+
+classic_frontendpatterns.append(path('accounts/', include('allauth.urls')))
 
 urlpatterns = []
 
