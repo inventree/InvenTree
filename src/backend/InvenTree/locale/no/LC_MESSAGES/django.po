@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-26 00:28+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"PO-Revision-Date: 2024-07-27 19:45\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -28,7 +28,7 @@ msgstr "Brukeren har ikke rettigheter til å se denne modellen"
 #: InvenTree/conversion.py:160
 #, python-brace-format
 msgid "Invalid unit provided ({unit})"
-msgstr ""
+msgstr "Ugyldig enhet angitt ({unit})"
 
 #: InvenTree/conversion.py:177
 msgid "No value provided"
@@ -208,7 +208,7 @@ msgstr "Angitt URL er ikke en gyldig bildefil"
 
 #: InvenTree/locales.py:18
 msgid "Arabic"
-msgstr ""
+msgstr "Arabisk"
 
 #: InvenTree/locales.py:19
 msgid "Bulgarian"
@@ -244,7 +244,7 @@ msgstr "Spansk (Meksikansk)"
 
 #: InvenTree/locales.py:27
 msgid "Estonian"
-msgstr ""
+msgstr "Estisk"
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -264,7 +264,7 @@ msgstr "Hebraisk"
 
 #: InvenTree/locales.py:32
 msgid "Hindi"
-msgstr ""
+msgstr "Hindi"
 
 #: InvenTree/locales.py:33
 msgid "Hungarian"
@@ -284,7 +284,7 @@ msgstr "Koreansk"
 
 #: InvenTree/locales.py:37
 msgid "Latvian"
-msgstr ""
+msgstr "Latvisk"
 
 #: InvenTree/locales.py:38
 msgid "Dutch"
@@ -308,7 +308,7 @@ msgstr "Portugisisk (Brasil)"
 
 #: InvenTree/locales.py:43
 msgid "Romanian"
-msgstr ""
+msgstr "Rumensk"
 
 #: InvenTree/locales.py:44
 msgid "Russian"
@@ -340,7 +340,7 @@ msgstr "Tyrkisk"
 
 #: InvenTree/locales.py:51
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrainsk"
 
 #: InvenTree/locales.py:52
 msgid "Vietnamese"
@@ -537,7 +537,7 @@ msgstr "Fornavn"
 
 #: InvenTree/serializers.py:409
 msgid "First name of the user"
-msgstr ""
+msgstr "Fornavn på brukeren"
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
@@ -545,27 +545,27 @@ msgstr "Etternavn"
 
 #: InvenTree/serializers.py:412
 msgid "Last name of the user"
-msgstr ""
+msgstr "Etternavn på brukeren"
 
 #: InvenTree/serializers.py:415
 msgid "Email address of the user"
-msgstr ""
+msgstr "E-postadressen til brukeren"
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
-msgstr ""
+msgstr "Personale"
 
 #: InvenTree/serializers.py:439
 msgid "Does this user have staff permissions"
-msgstr ""
+msgstr "Har denne brukeren personelltillatelser"
 
 #: InvenTree/serializers.py:442
 msgid "Superuser"
-msgstr ""
+msgstr "Superbruker"
 
 #: InvenTree/serializers.py:442
 msgid "Is this user a superuser"
-msgstr ""
+msgstr "Er denne brukeren en superbruker"
 
 #: InvenTree/serializers.py:445 common/models.py:2699 company/models.py:163
 #: company/models.py:801 machine/models.py:39 part/admin.py:88
@@ -582,7 +582,7 @@ msgstr "Aktiv"
 
 #: InvenTree/serializers.py:445
 msgid "Is this user account active"
-msgstr ""
+msgstr "Er denne brukerkontoen aktiv"
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
@@ -791,15 +791,15 @@ msgstr "Produksjonsordrer"
 
 #: build/models.py:134
 msgid "Assembly BOM has not been validated"
-msgstr ""
+msgstr "Sammenstillings-BOMen er ikke godkjent"
 
 #: build/models.py:141
 msgid "Build order cannot be created for an inactive part"
-msgstr ""
+msgstr "Produksjonsordre kan ikke opprettes for en inaktiv del"
 
 #: build/models.py:148
 msgid "Build order cannot be created for an unlocked part"
-msgstr ""
+msgstr "Produksjonsordre kan ikke opprettes for en ulåst del"
 
 #: build/models.py:162
 msgid "Invalid choice for parent build"
@@ -807,7 +807,7 @@ msgstr "Ugyldig valg for overordnet produksjon"
 
 #: build/models.py:173 order/models.py:240
 msgid "Responsible user or group must be specified"
-msgstr ""
+msgstr "Ansvarlig bruker eller gruppe må spesifiseres"
 
 #: build/models.py:179
 msgid "Build order part cannot be changed"
@@ -1057,7 +1057,7 @@ msgstr "Prosjektkode for denne produksjonsordren"
 
 #: build/models.py:624 build/models.py:689
 msgid "Failed to offload task to complete build allocations"
-msgstr ""
+msgstr "Kunne ikke delegere bort oppgaven for å fullføre tildelinger"
 
 #: build/models.py:646
 #, python-brace-format
@@ -1094,11 +1094,11 @@ msgstr "Kvantitet kan ikke være større enn utgangsantallet"
 #: build/models.py:1032 build/serializers.py:557
 #, python-brace-format
 msgid "Build output {serial} has not passed all required tests"
-msgstr ""
+msgstr "Produksjonsartikkel {serial} har ikke bestått alle påkrevde tester"
 
 #: build/models.py:1373
 msgid "Build Order Line Item"
-msgstr ""
+msgstr "Produksjonsartikkel"
 
 #: build/models.py:1398
 msgid "Build object"
@@ -1223,7 +1223,7 @@ msgstr "Delnavn"
 
 #: build/serializers.py:105
 msgid "Project Code Label"
-msgstr ""
+msgstr "Etikett for prosjektkode"
 
 #: build/serializers.py:166 build/serializers.py:885
 #: templates/js/translated/build.js:1042 templates/js/translated/build.js:1495
@@ -1290,7 +1290,7 @@ msgstr "Plassering"
 
 #: build/serializers.py:310
 msgid "Stock location for build output"
-msgstr ""
+msgstr "Lagerplassering for produksjonsartikkel"
 
 #: build/serializers.py:324
 msgid "Auto Allocate Serial Numbers"
@@ -1302,7 +1302,7 @@ msgstr "Automatisk tildeling av nødvendige artikler med tilsvarende serienummer
 
 #: build/serializers.py:340
 msgid "Serial numbers must be provided for trackable parts"
-msgstr ""
+msgstr "Serienumre må angis for sporbare deler"
 
 #: build/serializers.py:365 stock/api.py:1033
 msgid "The following serial numbers already exist or are invalid"
@@ -1345,7 +1345,7 @@ msgstr "Plassering for ferdige produksjonsartikler"
 #: templates/js/translated/stock.js:2255 templates/js/translated/stock.js:3073
 #: templates/js/translated/stock.js:3198
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: build/serializers.py:535
 msgid "Accept Incomplete Allocation"
@@ -1357,11 +1357,11 @@ msgstr "Fullfør artikler dersom lagerbeholdning ikke er fullt tildelt"
 
 #: build/serializers.py:621
 msgid "Consume Allocated Stock"
-msgstr ""
+msgstr "Bruk tildelt lagerbeholdning"
 
 #: build/serializers.py:622
 msgid "Consume any stock which has already been allocated to this build"
-msgstr ""
+msgstr "Bruk all lagerbeholdning som allerede er tildelt denne produksjonen"
 
 #: build/serializers.py:628
 msgid "Remove Incomplete Outputs"
@@ -1502,11 +1502,11 @@ msgstr "Tildel valgfrie BOM-artikler til produksjonsordre"
 
 #: build/serializers.py:1059
 msgid "Failed to start auto-allocation task"
-msgstr ""
+msgstr "Kunne ikke starte auto-tideling"
 
 #: build/serializers.py:1134
 msgid "Supplier Part Number"
-msgstr ""
+msgstr "Leverandørens delnummer"
 
 #: build/serializers.py:1135 company/models.py:506
 msgid "Manufacturer Part Number"
@@ -1519,11 +1519,11 @@ msgstr "Plasseringsnavn"
 
 #: build/serializers.py:1137
 msgid "Build Reference"
-msgstr ""
+msgstr "Produksjonsreferanse"
 
 #: build/serializers.py:1138
 msgid "BOM Reference"
-msgstr ""
+msgstr "BOM-referanse"
 
 #: build/serializers.py:1141 part/admin.py:39 part/admin.py:398
 #: part/models.py:4095 part/stocktake.py:219 stock/admin.py:152
@@ -1555,7 +1555,7 @@ msgstr "Serienummer"
 #: templates/js/translated/build.js:1017 templates/js/translated/build.js:1164
 #: templates/js/translated/build.js:2516
 msgid "Allocated Quantity"
-msgstr ""
+msgstr "Tildelt antall"
 
 #: build/serializers.py:1160 stock/templates/stock/item_base.html:340
 msgid "Available Quantity"
@@ -1567,11 +1567,11 @@ msgstr "Delbeskrivelse"
 
 #: build/serializers.py:1229
 msgid "Part Category ID"
-msgstr ""
+msgstr "Delkategori-ID"
 
 #: build/serializers.py:1230
 msgid "Part Category Name"
-msgstr ""
+msgstr "Delkategorinavn"
 
 #: build/serializers.py:1236 common/models.py:1513 part/admin.py:113
 #: part/models.py:1166 templates/js/translated/table_filters.js:147
@@ -1582,7 +1582,7 @@ msgstr "Sporbar"
 
 #: build/serializers.py:1237
 msgid "Inherited"
-msgstr ""
+msgstr "Nedarvet"
 
 #: build/serializers.py:1238 part/models.py:4307
 #: part/templates/part/upload_bom.html:56 templates/js/translated/bom.js:1046
@@ -1623,19 +1623,19 @@ msgstr "Tilgjengelig lagerbeholdning"
 
 #: build/serializers.py:1270
 msgid "Available Substitute Stock"
-msgstr ""
+msgstr "Tilgjengelige erstatningsvarer"
 
 #: build/serializers.py:1271
 msgid "Available Variant Stock"
-msgstr ""
+msgstr "Tilgjengelige variantvarer"
 
 #: build/serializers.py:1272
 msgid "Total Available Stock"
-msgstr ""
+msgstr "Totalt tilgjengelig lagerbeholdning"
 
 #: build/serializers.py:1273 part/serializers.py:904
 msgid "External Stock"
-msgstr ""
+msgstr "Ekstern lagerbeholdning"
 
 #: build/status_codes.py:11 generic/states/tests.py:17 order/status_codes.py:12
 #: order/status_codes.py:37 order/status_codes.py:64 order/status_codes.py:82
@@ -1898,7 +1898,7 @@ msgstr "Tildelte deler"
 #: templates/js/translated/table_filters.js:313
 #: templates/js/translated/table_filters.js:404
 msgid "Batch"
-msgstr ""
+msgstr "Parti"
 
 #: build/templates/build/detail.html:133
 #: order/templates/order/order_base.html:173
@@ -1928,7 +1928,7 @@ msgstr "Underordnede Produksjonsordrer"
 
 #: build/templates/build/detail.html:177
 msgid "Build Order Line Items"
-msgstr ""
+msgstr "Produksjonsartikkel"
 
 #: build/templates/build/detail.html:181
 msgid "Deallocate stock"
@@ -1965,7 +1965,7 @@ msgstr "Bestill deler"
 
 #: build/templates/build/detail.html:205
 msgid "Available stock has been filtered based on specified source location for this build order"
-msgstr ""
+msgstr "Tilgjengelig lagerbeholdning er filtrert basert på angitt kildeplassering for denne produksjonsordren"
 
 #: build/templates/build/detail.html:215
 msgid "Incomplete Build Outputs"
@@ -2039,27 +2039,27 @@ msgstr "Ufullstendige artikler"
 
 #: common/api.py:692
 msgid "Is Link"
-msgstr ""
+msgstr "Er lenke"
 
 #: common/api.py:700
 msgid "Is File"
-msgstr ""
+msgstr "Er fil"
 
 #: common/api.py:742
 msgid "User does not have permission to delete this attachment"
-msgstr ""
+msgstr "Brukeren har ikke tillatelse til å slette dette vedlegget"
 
 #: common/currency.py:132
 msgid "Invalid currency code"
-msgstr ""
+msgstr "Ugyldig valutakode"
 
 #: common/currency.py:134
 msgid "Duplicate currency code"
-msgstr ""
+msgstr "Valutakode eksisterer allerede"
 
 #: common/currency.py:139
 msgid "No valid currency codes provided"
-msgstr ""
+msgstr "Ingen gyldige valutakoder angitt"
 
 #: common/currency.py:156
 msgid "No plugin"
@@ -2113,7 +2113,7 @@ msgstr "Tidsstempel for forrige oppdatering"
 
 #: common/models.py:120
 msgid "Site URL is locked by configuration"
-msgstr ""
+msgstr "Nettstedets URL er låst av konfigurasjon"
 
 #: common/models.py:150
 msgid "Unique project code"
@@ -2221,11 +2221,11 @@ msgstr "Velg grunnvalutaen for prisberegninger"
 
 #: common/models.py:1283
 msgid "Supported Currencies"
-msgstr ""
+msgstr "Støttede valutaer"
 
 #: common/models.py:1284
 msgid "List of supported currency codes"
-msgstr ""
+msgstr "Liste over støttede valutakoder"
 
 #: common/models.py:1290
 msgid "Currency Update Interval"
@@ -2372,11 +2372,11 @@ msgstr "Tillat strekkodelesning via webkamera i nettleseren"
 
 #: common/models.py:1413
 msgid "Barcode Show Data"
-msgstr ""
+msgstr "Vis Strekkodedata"
 
 #: common/models.py:1414
 msgid "Display barcode data in browser as text"
-msgstr ""
+msgstr "Vis strekkodedata som tekst"
 
 #: common/models.py:1419
 msgid "Barcode Generation Plugin"
@@ -3786,7 +3786,7 @@ msgstr ""
 
 #: common/models.py:3091
 msgid "Unit symbol must be unique"
-msgstr ""
+msgstr "Enhetssymbolet må være unikt"
 
 #: common/models.py:3106
 msgid "Unit name must be a valid identifier"
@@ -3798,7 +3798,7 @@ msgstr "Enhetsnavn"
 
 #: common/models.py:3132 templates/InvenTree/settings/settings_staff_js.html:75
 msgid "Symbol"
-msgstr ""
+msgstr "Symbol"
 
 #: common/models.py:3133
 msgid "Optional unit symbol"
@@ -3837,27 +3837,27 @@ msgstr "Kommentar"
 
 #: common/models.py:3272
 msgid "Attachment comment"
-msgstr ""
+msgstr "Vedleggskommentar"
 
 #: common/models.py:3288
 msgid "Upload date"
-msgstr ""
+msgstr "Opplastet dato"
 
 #: common/models.py:3289
 msgid "Date the file was uploaded"
-msgstr ""
+msgstr "Datoen som filen ble lastet opp"
 
 #: common/models.py:3293
 msgid "File size"
-msgstr ""
+msgstr "Filstørrelse"
 
 #: common/models.py:3293
 msgid "File size in bytes"
-msgstr ""
+msgstr "Filstørrelse i byte"
 
 #: common/models.py:3331 common/serializers.py:557
 msgid "Invalid model type specified for attachment"
-msgstr ""
+msgstr "Ugyldig modelltype spesifisert for vedlegg"
 
 #: common/notifications.py:314
 #, python-brace-format
@@ -3959,27 +3959,27 @@ msgstr "Filnavn"
 
 #: common/serializers.py:536 report/api.py:100 report/serializers.py:53
 msgid "Model Type"
-msgstr ""
+msgstr "Modelltype"
 
 #: common/serializers.py:563
 msgid "User does not have permission to create or edit attachments for this model"
-msgstr ""
+msgstr "Brukeren har ikke tillatelse tillatelse å opprette eller endre vedlegg for denne modellen"
 
 #: common/validators.py:35
 msgid "No attachment model type provided"
-msgstr ""
+msgstr "Ingen modelltype angitt for vedlegg"
 
 #: common/validators.py:41
 msgid "Invalid attachment model type"
-msgstr ""
+msgstr "Ugyldig modelltype for vedlegg"
 
 #: common/validators.py:82
 msgid "Minimum places cannot be greater than maximum places"
-msgstr ""
+msgstr "Minste antall plasser kan ikke være mer enn største antall plasser"
 
 #: common/validators.py:94
 msgid "Maximum places cannot be less than minimum places"
-msgstr ""
+msgstr "Største antall plasser kan ikke være mindre enn minste antall plasser"
 
 #: common/validators.py:105
 msgid "An empty domain is not allowed."
@@ -4030,23 +4030,23 @@ msgstr "Forrige trinn"
 
 #: company/api.py:141
 msgid "Part is Active"
-msgstr ""
+msgstr "Delen er aktiv"
 
 #: company/api.py:145
 msgid "Manufacturer is Active"
-msgstr ""
+msgstr "Leverandør er aktiv"
 
 #: company/api.py:278
 msgid "Supplier Part is Active"
-msgstr ""
+msgstr "Leverandørdel er aktiv"
 
 #: company/api.py:282
 msgid "Internal Part is Active"
-msgstr ""
+msgstr "Intern del er aktiv"
 
 #: company/api.py:286
 msgid "Supplier is Active"
-msgstr ""
+msgstr "Leverandør er aktiv"
 
 #: company/models.py:100 company/models.py:371
 #: company/templates/company/company_base.html:8
@@ -4108,11 +4108,11 @@ msgstr "Link til ekstern bedriftsinformasjon"
 
 #: company/models.py:163
 msgid "Is this company active?"
-msgstr ""
+msgstr "Er firmaet aktivt?"
 
 #: company/models.py:168
 msgid "Is customer"
-msgstr ""
+msgstr "Er kunde"
 
 #: company/models.py:169
 msgid "Do you sell items to this company?"
@@ -4120,7 +4120,7 @@ msgstr "Selger du varer til dette firmaet?"
 
 #: company/models.py:174
 msgid "Is supplier"
-msgstr ""
+msgstr "Er leverandør"
 
 #: company/models.py:175
 msgid "Do you purchase items from this company?"
@@ -4128,7 +4128,7 @@ msgstr "Kjøper du varer fra dette firmaet?"
 
 #: company/models.py:180
 msgid "Is manufacturer"
-msgstr ""
+msgstr "Er produsent"
 
 #: company/models.py:181
 msgid "Does this company manufacture parts?"
@@ -4278,7 +4278,7 @@ msgstr "Velg produsent"
 #: templates/js/translated/purchase_order.js:1921
 #: templates/js/translated/purchase_order.js:2123
 msgid "MPN"
-msgstr ""
+msgstr "MPN"
 
 #: company/models.py:513
 msgid "URL for external manufacturer part link"
@@ -4290,7 +4290,7 @@ msgstr "Produsentens delbeskrivelse"
 
 #: company/models.py:575
 msgid "Manufacturer Part Parameter"
-msgstr ""
+msgstr "Produsentdel parameter"
 
 #: company/models.py:594
 msgid "Parameter name"
@@ -4368,7 +4368,7 @@ msgstr "Leverandørens lagerbeholdningsenhet"
 
 #: company/models.py:802
 msgid "Is this supplier part active?"
-msgstr ""
+msgstr "Er denne leverandørdelen aktiv?"
 
 #: company/models.py:812
 msgid "Select manufacturer part"
@@ -4454,7 +4454,7 @@ msgstr "Dato for siste oppdatering av tilgjengelighetsdata"
 
 #: company/models.py:1027
 msgid "Supplier Price Break"
-msgstr ""
+msgstr "Leverandørens prisbrudd"
 
 #: company/serializers.py:174
 msgid "Default currency used for this supplier"
@@ -4462,7 +4462,7 @@ msgstr "Standardvaluta brukt for denne leverandøren"
 
 #: company/serializers.py:210
 msgid "Company Name"
-msgstr ""
+msgstr "Bedriftsnavn"
 
 #: company/serializers.py:388 part/admin.py:126 part/serializers.py:896
 #: part/templates/part/part_base.html:197
@@ -4559,11 +4559,11 @@ msgstr "Telefon"
 #: company/templates/company/company_base.html:211
 #: part/templates/part/part_base.html:536
 msgid "Remove Image"
-msgstr ""
+msgstr "Fjern Bilde"
 
 #: company/templates/company/company_base.html:212
 msgid "Remove associated image from this company"
-msgstr ""
+msgstr "Fjern tilknyttet bilde fra dette firmaet"
 
 #: company/templates/company/company_base.html:214
 #: part/templates/part/part_base.html:539
@@ -4575,12 +4575,12 @@ msgstr "Fjern"
 #: company/templates/company/company_base.html:243
 #: part/templates/part/part_base.html:568
 msgid "Upload Image"
-msgstr ""
+msgstr "Last opp bilde"
 
 #: company/templates/company/company_base.html:258
 #: part/templates/part/part_base.html:622
 msgid "Download Image"
-msgstr ""
+msgstr "Last ned Bilde"
 
 #: company/templates/company/detail.html:15
 #: company/templates/company/manufacturer_part_sidebar.html:7
@@ -4764,12 +4764,12 @@ msgstr "Nytt Parameter"
 
 #: company/templates/company/manufacturer_part.html:177
 msgid "Manufacturer Part Notes"
-msgstr ""
+msgstr "Notater for leverandørdel"
 
 #: company/templates/company/manufacturer_part.html:225
 #: templates/js/translated/part.js:1426
 msgid "Add Parameter"
-msgstr ""
+msgstr "Legg til Parameter"
 
 #: company/templates/company/sidebar.html:6
 msgid "Manufactured Parts"
@@ -4872,7 +4872,7 @@ msgstr "Legg til Prisbrudd"
 
 #: company/templates/company/supplier_part.html:270
 msgid "Supplier Part Notes"
-msgstr ""
+msgstr "Notater for leverandørdeler"
 
 #: company/templates/company/supplier_part.html:305
 msgid "Supplier Part QR Code"
@@ -15059,3 +15059,4 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
+
