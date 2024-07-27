@@ -211,3 +211,14 @@ export function partStocktakeFields(): ApiFormFieldSet {
     note: {}
   };
 }
+
+export function generateStocktakeReportFields(): ApiFormFieldSet {
+  return {
+    part: {},
+    category: {},
+    location: {},
+    exclude_external: {},
+    generate_report: {},
+    update_parts: {}
+  };
+}

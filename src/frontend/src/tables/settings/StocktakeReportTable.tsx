@@ -2,10 +2,15 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { useDeleteApiFormModal } from '../../hooks/UseForm';
+import { generateStocktakeReportFields } from '../../forms/PartForms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -43,10 +48,6 @@ export default function StocktakeReportTable() {
     ];
   }, []);
 
-  const tableActions = useMemo(() => {
-    return [<AddItemButton tooltip={t`New Stocktake Report`} />];
-  }, []);
-
   const [selectedReport, setSelectedReport] = useState<number | undefined>(
     undefined
   );
@@ -57,6 +58,27 @@ export default function StocktakeReportTable() {
     title: t`Delete Report`,
     onFormSuccess: () => table.refreshTable()
   });
+
+  const generateFields: ApiFormFieldSet = useMemo(
+    () => generateStocktakeReportFields(),
+    []
+  );
+
+  const generateReport = useCreateApiFormModal({
+    url: ApiEndpoints.part_stocktake_report_generate,
+    title: t`Generate Stocktake Report`,
+    fields: generateFields,
+    successMessage: t`Stocktake report scheduled`
+  });
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`New Stocktake Report`}
+        onClick={() => generateReport.open()}
+      />
+    ];
+  }, []);
 
   const rowActions = useCallback((record: any): RowAction[] => {
     return [
@@ -71,6 +93,7 @@ export default function StocktakeReportTable() {
 
   return (
     <>
+      {generateReport.modal}
       {deleteReport.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.part_stocktake_report_list)}
