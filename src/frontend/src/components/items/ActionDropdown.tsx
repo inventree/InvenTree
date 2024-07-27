@@ -6,6 +6,7 @@ import {
   Menu,
   Tooltip
 } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import {
   IconCopy,
   IconEdit,
@@ -16,9 +17,11 @@ import {
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
+import { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
+import { InvenTreeQRCode } from './QRCode';
 
 export type ActionDropdownItem = {
   icon: ReactNode;
@@ -39,12 +42,14 @@ export function ActionDropdown({
   icon,
   tooltip,
   actions,
-  disabled = false
+  disabled = false,
+  hidden = false
 }: {
   icon: ReactNode;
   tooltip: string;
   actions: ActionDropdownItem[];
   disabled?: boolean;
+  hidden?: boolean;
 }) {
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.hidden);
@@ -58,7 +63,7 @@ export function ActionDropdown({
     return identifierString(`action-menu-${tooltip}`);
   }, [tooltip]);
 
-  return hasActions ? (
+  return !hidden && hasActions ? (
     <Menu position="bottom-end" key={menuName}>
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
@@ -126,11 +131,20 @@ export function BarcodeActionDropdown({
 // Common action button for viewing a barcode
 export function ViewBarcodeAction({
   hidden = false,
-  onClick
+  model,
+  pk
 }: {
   hidden?: boolean;
-  onClick?: () => void;
+  model: ModelType;
+  pk: number;
 }): ActionDropdownItem {
+  const onClick = () => {
+    modals.open({
+      title: t`View Barcode`,
+      children: <InvenTreeQRCode model={model} pk={pk} />
+    });
+  };
+
   return {
     icon: <IconQrcode />,
     name: t`View`,

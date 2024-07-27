@@ -7,6 +7,7 @@ import {
   IconInfoCircle,
   IconList,
   IconListCheck,
+  IconListNumbers,
   IconNotes,
   IconPaperclip,
   IconQrcode,
@@ -24,6 +25,7 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
+  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -46,6 +48,7 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
@@ -235,9 +238,9 @@ export default function BuildDetail() {
         content: detailsPanel
       },
       {
-        name: 'allocate-stock',
-        label: t`Allocate Stock`,
-        icon: <IconListCheck />,
+        name: 'line-items',
+        label: t`Line Items`,
+        icon: <IconListNumbers />,
         content: build?.pk ? (
           <BuildLineTable
             params={{
@@ -271,9 +274,19 @@ export default function BuildDetail() {
         )
       },
       {
+        name: 'allocated-stock',
+        label: t`Allocated Stock`,
+        icon: <IconList />,
+        content: build.pk ? (
+          <BuildAllocatedStockTable buildId={build.pk} />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
-        icon: <IconList />,
+        icon: <IconListCheck />,
         content: (
           <StockItemTable
             allowAdd={false}
@@ -370,11 +383,12 @@ export default function BuildDetail() {
   const buildActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.build} pk={build.pk} />,
-      <ActionDropdown
-        tooltip={t`Barcode Actions`}
-        icon={<IconQrcode />}
+      <BarcodeActionDropdown
         actions={[
-          ViewBarcodeAction({}),
+          ViewBarcodeAction({
+            model: ModelType.build,
+            pk: build.pk
+          }),
           LinkBarcodeAction({
             hidden: build?.barcode_hash
           }),

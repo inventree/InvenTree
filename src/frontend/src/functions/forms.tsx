@@ -1,20 +1,12 @@
-import { t } from '@lingui/macro';
-import { Divider, Stack } from '@mantine/core';
-import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
 import { AxiosResponse } from 'axios';
 
-import { api } from '../App';
-import { ApiForm, ApiFormProps } from '../components/forms/ApiForm';
 import {
   ApiFormFieldSet,
   ApiFormFieldType
 } from '../components/forms/fields/ApiFormField';
-import { StylishText } from '../components/items/StylishText';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { PathParams, apiUrl } from '../states/ApiState';
 import { invalidResponse, permissionDenied } from './notifications';
-import { generateUniqueId } from './uid';
 
 /**
  * Construct an API url from the provided ApiFormProps object
@@ -179,144 +171,4 @@ export function constructField({
   delete def['read_only'];
 
   return def;
-}
-
-export interface OpenApiFormProps extends ApiFormProps {
-  title: string;
-  cancelText?: string;
-  cancelColor?: string;
-  onClose?: () => void;
-}
-
-/*
- * Construct and open a modal form
- * @param title :
- */
-export function openModalApiForm(props: OpenApiFormProps) {
-  // method property *must* be supplied
-  if (!props.method) {
-    notifications.show({
-      title: t`Invalid Form`,
-      message: t`method parameter not supplied`,
-      color: 'red'
-    });
-    return;
-  }
-
-  // Generate a random modal ID for controller
-  let modalId: string =
-    `modal-${props.title}-${props.url}-${props.method}` + generateUniqueId();
-
-  props.actions = [
-    ...(props.actions || []),
-    {
-      text: props.cancelText ?? t`Cancel`,
-      color: props.cancelColor ?? 'blue',
-      onClick: () => {
-        modals.close(modalId);
-      }
-    }
-  ];
-
-  const oldFormSuccess = props.onFormSuccess;
-  props.onFormSuccess = (data) => {
-    oldFormSuccess?.(data);
-    modals.close(modalId);
-  };
-
-  let url = constructFormUrl(props.url, props.pk, props.pathParams);
-
-  // Make OPTIONS request first
-  api
-    .options(url)
-    .then((response) => {
-      // Extract available fields from the OPTIONS response (and handle any errors)
-
-      let fields: Record<string, ApiFormFieldType> | null = {};
-
-      if (!props.ignorePermissionCheck) {
-        fields = extractAvailableFields(response, props.method);
-
-        if (fields == null) {
-          return;
-        }
-      }
-
-      const _props = { ...props };
-
-      if (_props.fields) {
-        for (const [k, v] of Object.entries(_props.fields)) {
-          _props.fields[k] = constructField({
-            field: v,
-            definition: fields?.[k]
-          });
-        }
-      }
-
-      modals.open({
-        title: <StylishText size="xl">{props.title}</StylishText>,
-        modalId: modalId,
-        size: 'xl',
-        onClose: () => {
-          props.onClose ? props.onClose() : null;
-        },
-        children: (
-          <Stack gap={'xs'}>
-            <Divider />
-            <ApiForm id={modalId} props={props} optionsLoading={false} />
-          </Stack>
-        )
-      });
-    })
-    .catch((error) => {
-      if (error.response) {
-        invalidResponse(error.response.status);
-      } else {
-        notifications.show({
-          title: t`Form Error`,
-          message: error.message,
-          color: 'red'
-        });
-      }
-    });
-}
-
-/**
- * Opens a modal form to create a new model instance
- */
-export function openCreateApiForm(props: OpenApiFormProps) {
-  let createProps: OpenApiFormProps = {
-    ...props,
-    method: 'POST'
-  };
-
-  openModalApiForm(createProps);
-}
-
-/**
- * Open a modal form to edit a model instance
- */
-export function openEditApiForm(props: OpenApiFormProps) {
-  let editProps: OpenApiFormProps = {
-    ...props,
-    fetchInitialData: props.fetchInitialData ?? true,
-    method: 'PATCH'
-  };
-
-  openModalApiForm(editProps);
-}
-
-/**
- * Open a modal form to delete a model instancel
- */
-export function openDeleteApiForm(props: OpenApiFormProps) {
-  let deleteProps: OpenApiFormProps = {
-    ...props,
-    method: 'DELETE',
-    submitText: t`Delete`,
-    submitColor: 'red',
-    fields: {}
-  };
-
-  openModalApiForm(deleteProps);
 }

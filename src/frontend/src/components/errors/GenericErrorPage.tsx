@@ -1,7 +1,6 @@
 import { Trans } from '@lingui/macro';
 import {
   ActionIcon,
-  Alert,
   Button,
   Card,
   Center,

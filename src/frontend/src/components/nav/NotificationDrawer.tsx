@@ -7,7 +7,6 @@ import {
   Drawer,
   Group,
   Loader,
-  LoadingOverlay,
   Space,
   Stack,
   Text,
@@ -53,8 +52,7 @@ export function NotificationDrawer({
         .catch((error) => {
           return error;
         }),
-    refetchOnMount: false,
-    refetchOnWindowFocus: false
+    refetchOnMount: false
   });
 
   const hasNotifications: boolean = useMemo(() => {

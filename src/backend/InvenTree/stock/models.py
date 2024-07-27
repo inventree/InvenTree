@@ -34,6 +34,7 @@ import InvenTree.tasks
 import report.mixins
 import report.models
 from build import models as BuildModels
+from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
@@ -88,6 +89,7 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Default icon for all locations that have no icon set (optional)'),
+        validators=[validate_icon],
     )
 
 
@@ -119,6 +121,8 @@ class StockLocation(
 
     ITEM_PARENT_KEY = 'location'
 
+    EXTRA_PATH_FIELDS = ['icon']
+
     objects = StockLocationManager()
 
     class Meta:
@@ -144,11 +148,16 @@ class StockLocation(
         """Return API url."""
         return reverse('api-location-list')
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SL'
+
     def report_context(self):
         """Return report context data for this StockLocation."""
         return {
             'location': self,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'parent': self.parent,
             'stock_location': self,
             'stock_items': self.get_stock_items(),
@@ -160,6 +169,7 @@ class StockLocation(
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
         db_column='icon',
+        validators=[validate_icon],
     )
 
     owner = models.ForeignKey(
@@ -208,6 +218,11 @@ class StockLocation(
 
         if self.location_type:
             return self.location_type.icon
+
+        if default_icon := get_global_setting(
+            'STOCK_LOCATION_DEFAULT_ICON', cache=True
+        ):
+            return default_icon
 
         return ''
 
@@ -369,6 +384,11 @@ class StockItem(
         """Custom API instance filters."""
         return {'parent': {'exclude_tree': self.pk}}
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SI'
+
     def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
         keys = []
@@ -399,7 +419,7 @@ class StockItem(
             'item': self,
             'name': self.part.full_name,
             'part': self.part,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'qr_url': self.get_absolute_url(),
             'parameters': self.part.parameters_map(),
             'quantity': InvenTree.helpers.normalize(self.quantity),
@@ -716,8 +736,6 @@ class StockItem(
                     self.delete_on_deplete = False
 
         except PartModels.Part.DoesNotExist:
-            # This gets thrown if self.supplier_part is null
-            # TODO - Find a test than can be performed...
             pass
 
         # Ensure that the item cannot be assigned to itself
@@ -1111,7 +1129,11 @@ class StockItem(
 
         item.add_tracking_entry(code, user, deltas, notes=notes)
 
-        trigger_event('stockitem.assignedtocustomer', id=self.id, customer=customer.id)
+        trigger_event(
+            'stockitem.assignedtocustomer',
+            id=self.id,
+            customer=customer.id if customer else None,
+        )
 
         # Return the reference to the stock item
         return item
@@ -1775,7 +1797,7 @@ class StockItem(
                     price = convert_money(price, base_currency)
                     total_price += price * qty
                     quantity += qty
-                except:
+                except Exception:
                     # Skip this entry, cannot convert to base currency
                     continue
 

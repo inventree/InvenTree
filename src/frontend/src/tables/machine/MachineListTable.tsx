@@ -41,8 +41,11 @@ import {
 } from '../../components/render/StatusRenderer';
 import { MachineSettingList } from '../../components/settings/SettingList';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { openDeleteApiForm, openEditApiForm } from '../../functions/forms';
-import { useCreateApiFormModal } from '../../hooks/UseForm';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
@@ -205,8 +208,39 @@ function MachineDrawer({
     [refreshAll]
   );
 
+  const machineEditModal = useEditApiFormModal({
+    title: t`Edit machine`,
+    url: ApiEndpoints.machine_list,
+    pk: machinePk,
+    fields: useMemo(
+      () => ({
+        name: {},
+        active: {}
+      }),
+      []
+    ),
+    onClose: () => refreshAll()
+  });
+
+  const machineDeleteModal = useDeleteApiFormModal({
+    title: t`Delete machine`,
+    successMessage: t`Machine successfully deleted.`,
+    url: ApiEndpoints.machine_list,
+    pk: machinePk,
+    preFormContent: (
+      <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
+    ),
+    onFormSuccess: () => {
+      refreshTable();
+      navigate(-1);
+    }
+  });
+
   return (
     <Stack gap="xs">
+      {machineEditModal.modal}
+      {machineDeleteModal.modal}
+
       <Group justify="space-between">
         <Box></Box>
 
@@ -227,36 +261,11 @@ function MachineDrawer({
             actions={[
               EditItemAction({
                 tooltip: t`Edit machine`,
-                onClick: () => {
-                  openEditApiForm({
-                    title: t`Edit machine`,
-                    url: ApiEndpoints.machine_list,
-                    pk: machinePk,
-                    fields: {
-                      name: {},
-                      active: {}
-                    },
-                    onClose: () => refreshAll()
-                  });
-                }
+                onClick: machineEditModal.open
               }),
               DeleteItemAction({
                 tooltip: t`Delete machine`,
-                onClick: () => {
-                  openDeleteApiForm({
-                    title: t`Delete machine`,
-                    successMessage: t`Machine successfully deleted.`,
-                    url: ApiEndpoints.machine_list,
-                    pk: machinePk,
-                    preFormContent: (
-                      <Text>{t`Are you sure you want to remove the machine "${machine?.name}"?`}</Text>
-                    ),
-                    onFormSuccess: () => {
-                      refreshTable();
-                      navigate(-1);
-                    }
-                  });
-                }
+                onClick: machineDeleteModal.open
               }),
               {
                 icon: <IconRefresh />,

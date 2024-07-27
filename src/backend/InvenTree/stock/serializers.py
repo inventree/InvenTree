@@ -306,6 +306,7 @@ class StockItemSerializerBrief(
             'location',
             'quantity',
             'serial',
+            'batch',
             'supplier_part',
             'barcode_hash',
         ]
@@ -1548,7 +1549,7 @@ class StockAdjustmentItemSerializer(serializers.Serializer):
     )
 
     quantity = serializers.DecimalField(
-        max_digits=15, decimal_places=5, min_value=0, required=True
+        max_digits=15, decimal_places=5, min_value=Decimal(0), required=True
     )
 
     batch = serializers.CharField(

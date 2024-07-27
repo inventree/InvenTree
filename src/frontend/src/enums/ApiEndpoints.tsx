@@ -14,6 +14,7 @@ export enum ApiEndpoints {
   user_me = 'user/me/',
   user_roles = 'user/roles/',
   user_token = 'user/token/',
+  user_tokens = 'user/tokens/',
   user_simple_login = 'email/generate/',
   user_reset = 'auth/password/reset/',
   user_reset_set = 'auth/password/reset/confirm/',
@@ -38,6 +39,7 @@ export enum ApiEndpoints {
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
   barcode = 'barcode/',
+  generate_barcode = 'barcode/generate/',
   news = 'news/',
   global_status = 'generic/status/',
   version = 'version/',
@@ -45,6 +47,7 @@ export enum ApiEndpoints {
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+  icons = 'icons/',
 
   // Data import endpoints
   import_session_list = 'importer/session/',
@@ -65,9 +68,11 @@ export enum ApiEndpoints {
   build_output_scrap = 'build/:id/scrap-outputs/',
   build_output_delete = 'build/:id/delete-outputs/',
   build_line_list = 'build/line/',
+  build_item_list = 'build/item/',
 
   bom_list = 'bom/',
   bom_item_validate = 'bom/:id/validate/',
+  bom_validate = 'part/:id/bom-validate/',
 
   // Part API endpoints
   part_list = 'part/',

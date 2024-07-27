@@ -41,7 +41,7 @@ import {
 } from '@tabler/icons-react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { CameraDevice } from 'html5-qrcode/camera/core';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { DocInfo } from '../../components/items/DocInfo';
@@ -553,7 +553,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
   });
   const [cameras, setCameras] = useState<any[]>([]);
   const [cameraValue, setCameraValue] = useState<string | null>(null);
-  const [ScanningEnabled, setIsScanning] = useState<boolean>(false);
+  const [scanningEnabled, setScanningEnabled] = useState<boolean>(false);
   const [wasAutoPaused, setWasAutoPaused] = useState<boolean>(false);
   const documentState = useDocumentVisibility();
 
@@ -580,7 +580,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
 
   // Stop/start when leaving or reentering page
   useEffect(() => {
-    if (ScanningEnabled && documentState === 'hidden') {
+    if (scanningEnabled && documentState === 'hidden') {
       btnStopScanning();
       setWasAutoPaused(true);
     } else if (wasAutoPaused && documentState === 'visible') {
@@ -642,7 +642,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
   }
 
   function btnStartScanning() {
-    if (camId && qrCodeScanner && !ScanningEnabled) {
+    if (camId && qrCodeScanner && !scanningEnabled) {
       qrCodeScanner
         .start(
           camId.id,
@@ -662,12 +662,12 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
             icon: <IconX />
           });
         });
-      setIsScanning(true);
+      setScanningEnabled(true);
     }
   }
 
   function btnStopScanning() {
-    if (qrCodeScanner && ScanningEnabled) {
+    if (qrCodeScanner && scanningEnabled) {
       qrCodeScanner.stop().catch((err: string) => {
         showNotification({
           title: t`Error while stopping`,
@@ -676,7 +676,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
           icon: <IconX />
         });
       });
-      setIsScanning(false);
+      setScanningEnabled(false);
     }
   }
 
@@ -690,7 +690,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
     const cam = cameras.find((cam) => cam.id === cameraValue);
 
     // stop scanning if cam changed while scanning
-    if (qrCodeScanner && ScanningEnabled) {
+    if (qrCodeScanner && scanningEnabled) {
       // stop scanning
       qrCodeScanner.stop().then(() => {
         // change ID
@@ -723,7 +723,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
           })}
           size="sm"
         />
-        {ScanningEnabled ? (
+        {scanningEnabled ? (
           <ActionIcon
             onClick={btnStopScanning}
             title={t`Stop scanning`}
@@ -742,8 +742,8 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
           </ActionIcon>
         )}
         <Space style={{ flex: 1 }} />
-        <Badge color={ScanningEnabled ? 'green' : 'orange'}>
-          {ScanningEnabled ? t`Scanning` : t`Not scanning`}
+        <Badge color={scanningEnabled ? 'green' : 'orange'}>
+          {scanningEnabled ? t`Scanning` : t`Not scanning`}
         </Badge>
       </Group>
       <Container px={0} id="reader" w={'100%'} mih="300px" />

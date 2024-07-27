@@ -189,7 +189,7 @@ export function PartParameterTable({
         {partLocked && (
           <Alert
             title={t`Part is Locked`}
-            color="red"
+            color="orange"
             icon={<IconLock />}
             p="xs"
           >

@@ -1,8 +1,10 @@
 import { t } from '@lingui/macro';
+import { Badge } from '@mantine/core';
 import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
+import { ApiIcon } from '../items/ApiIcon';
 import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
@@ -12,14 +14,35 @@ export function RenderPart(
   props: Readonly<InstanceRenderInterface>
 ): ReactNode {
   const { instance } = props;
-  const stock = t`Stock` + `: ${instance.in_stock}`;
+
+  let badgeText = '';
+  let badgeColor = '';
+
+  let stock = instance.total_in_stock;
+
+  if (instance.active == false) {
+    badgeColor = 'red';
+    badgeText = t`Inactive`;
+  } else if (stock <= 0) {
+    badgeColor = 'orange';
+    badgeText = t`No stock`;
+  } else {
+    badgeText = t`Stock` + `: ${stock}`;
+    badgeColor = instance.minimum_stock > stock ? 'yellow' : 'green';
+  }
+
+  const badge = (
+    <Badge size="xs" color={badgeColor}>
+      {badgeText}
+    </Badge>
+  );
 
   return (
     <RenderInlineModel
       {...props}
-      primary={instance.name}
+      primary={instance.full_name ?? instance.name}
       secondary={instance.description}
-      suffix={stock}
+      suffix={badge}
       image={instance.thumnbnail || instance.image}
       url={props.link ? getDetailUrl(ModelType.part, instance.pk) : undefined}
     />
@@ -38,6 +61,7 @@ export function RenderPartCategory(
   return (
     <RenderInlineModel
       {...props}
+      prefix={instance.icon && <ApiIcon name={instance.icon} />}
       primary={`${lvl} ${instance.name}`}
       secondary={instance.description}
       url={

@@ -911,7 +911,27 @@ class PartFilter(rest_filters.FilterSet):
         """Metaclass options for this filter set."""
 
         model = Part
-        fields = []
+        fields = ['revision_of']
+
+    is_revision = rest_filters.BooleanFilter(
+        label=_('Is Revision'), method='filter_is_revision'
+    )
+
+    def filter_is_revision(self, queryset, name, value):
+        """Filter by whether the Part is a revision or not."""
+        if str2bool(value):
+            return queryset.exclude(revision_of=None)
+        return queryset.filter(revision_of=None)
+
+    has_revisions = rest_filters.BooleanFilter(
+        label=_('Has Revisions'), method='filter_has_revisions'
+    )
+
+    def filter_has_revisions(self, queryset, name, value):
+        """Filter by whether the Part has any revisions or not."""
+        if str2bool(value):
+            return queryset.exclude(revision_count=0)
+        return queryset.filter(revision_count=0)
 
     has_units = rest_filters.BooleanFilter(label='Has units', method='filter_has_units')
 
@@ -1361,6 +1381,8 @@ class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
         'pricing_min',
         'pricing_max',
         'pricing_updated',
+        'revision',
+        'revision_count',
     ]
 
     ordering_field_aliases = {
@@ -1841,7 +1863,6 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     """
 
     filterset_class = BomFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     search_fields = [
@@ -1855,6 +1876,7 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     ]
 
     ordering_fields = [
+        'can_build',
         'quantity',
         'sub_part',
         'available_stock',

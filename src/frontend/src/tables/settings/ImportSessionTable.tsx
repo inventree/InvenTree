@@ -25,7 +25,6 @@ import { RowAction, RowDeleteAction } from '../RowActions';
 
 export default function ImportSesssionTable() {
   const table = useTable('importsession');
-  const user = useUserState();
 
   const [opened, setOpened] = useState<boolean>(false);
 

@@ -10,7 +10,7 @@ on:
 
 env:
   python_version: 3.9
-  node_version: 18
+  node_version: 20
   # The OS version must be set per job
   server_start_sleep: 60
 
@@ -94,7 +94,7 @@ jobs:
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # pin@v5.1.1
         with:
           python-version: ${{ env.python_version }}
           cache: "pip"
@@ -115,7 +115,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Set up Python ${{ env.python_version }}
-        uses: actions/setup-python@82c7e631bb3cdc910f68e0081d67478d79c6982d # pin@v5.1.0
+        uses: actions/setup-python@39cd14951b08e74b54015e9e001cdefcf80e669f # pin@v5.1.1
         with:
           python-version: ${{ env.python_version }}
       - name: Check Config
@@ -164,15 +164,27 @@ jobs:
           name: schema.yml
           path: src/backend/InvenTree/schema.yml
       - name: Download public schema
-        if: needs.paths-filter.outputs.api == 'false'
         run: |
           pip install --require-hashes -r contrib/dev_reqs/requirements.txt >/dev/null 2>&1
-          version="$(python3 .github/scripts/version_check.py only_version 2>&1)"
+          version="$(python3 .github/scripts/version_check.py only_version ${{ needs.paths-filter.outputs.api }} 2>&1)"
           echo "Version: $version"
           url="https://raw.githubusercontent.com/inventree/schema/main/export/${version}/api.yaml"
           echo "URL: $url"
-          curl -s -o api.yaml $url
+          code=$(curl -s -o api.yaml $url --write-out '%{http_code}' --silent)
+          if [ "$code" != "200" ]; then
+            exit 1
+          fi
           echo "Downloaded api.yaml"
+      - name: Running OpenAPI Spec diff action
+        id: breaking_changes
+        uses: oasdiff/oasdiff-action/diff@main
+        with:
+          base: 'api.yaml'
+          revision: 'src/backend/InvenTree/schema.yml'
+          format: 'html'
+      - name: Echoing diff to step
+        run: echo "${{ steps.breaking_changes.outputs.diff }}" >> $GITHUB_STEP_SUMMARY
+
       - name: Check for differences in API Schema
         if: needs.paths-filter.outputs.api == 'false'
         run: |
@@ -555,6 +567,8 @@ jobs:
         run: cd src/frontend && yarn install
       - name: Build frontend
         run: cd src/frontend && yarn run compile && yarn run build
+      - name: Write version file - SHA
+        run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
       - name: Zip frontend
         run: |
           cd src/backend/InvenTree/web/static
