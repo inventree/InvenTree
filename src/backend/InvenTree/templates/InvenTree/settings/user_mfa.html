@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load sso %}
+
+<div class="row">
+    <div class='panel-heading'>
+        <h4>{% trans "Multifactor" %}</h4>
+    </div>
+
+    <div class="col-md-6">
+    {% if user.staticdevice_set.all or user.totpdevice_set.all %}
+    <p>{% trans 'You have these factors available:' %}</p>
+
+    <table class="table table-striped">
+        <thead>
+            <th>Type</th>
+            <th>Name</th>
+        </thead>
+        <tbody>
+        {% for token in user.totpdevice_set.all %}
+        <tr>
+            <td>{% trans 'TOTP' %}</td>
+            <td>{{ token.name }}</td>
+        </tr>
+        {% endfor %}
+        {% for token in user.staticdevice_set.all %}
+        <tr>
+            <td>{% trans 'Static' %}</td>
+            <td>{{ token.name }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    <div class='alert alert-block alert-warning'>
+        {% trans "Multifactor authentication is not configured for your account" %}
+    </div>
+
+    {% endif %}
+    </div>
+
+    <div class="col-md-6">
+    <h5>{% trans "Change factors" %}</h5>
+    <a href="{% url 'two-factor-setup' %}" class="btn btn-primary {% if user.staticdevice_set.all and user.totpdevice_set.all %}disabled{% endif %}" role="button">{% trans "Setup multifactor" %}</a>
+    {% if user.staticdevice_set.all or user.totpdevice_set.all %}
+    <a href="{% url 'two-factor-remove' %}" class="btn btn-primary" role="button">{% trans "Remove multifactor" %}</a>
+    {% endif %}
+    </div>
+</div>

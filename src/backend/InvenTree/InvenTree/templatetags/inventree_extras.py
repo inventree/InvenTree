@@ -151,6 +151,12 @@ def inventree_docker_mode(*args, **kwargs):
 
 
 @register.simple_tag()
+def inventree_mfa_enabled(*args, **kwargs):
+    """Return True if MFA is enabled for the server instance."""
+    return djangosettings.INVENTREE_MFA_ENABLED
+
+
+@register.simple_tag()
 def plugins_enabled(*args, **kwargs):
     """Return True if plugins are enabled for the server instance."""
     return djangosettings.PLUGINS_ENABLED

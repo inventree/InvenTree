@@ -115,52 +115,10 @@
 
 {% include "InvenTree/settings/user_sso.html" %}
 
-<div class="row">
-    <div class='panel-heading'>
-        <h4>{% trans "Multifactor" %}</h4>
-    </div>
-
-    <div class="col-md-6">
-    {% if user.staticdevice_set.all or user.totpdevice_set.all %}
-    <p>{% trans 'You have these factors available:' %}</p>
-
-    <table class="table table-striped">
-        <thead>
-            <th>Type</th>
-            <th>Name</th>
-        </thead>
-        <tbody>
-        {% for token in user.totpdevice_set.all %}
-        <tr>
-            <td>{% trans 'TOTP' %}</td>
-            <td>{{ token.name }}</td>
-        </tr>
-        {% endfor %}
-        {% for token in user.staticdevice_set.all %}
-        <tr>
-            <td>{% trans 'Static' %}</td>
-            <td>{{ token.name }}</td>
-        </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    {% else %}
-    <div class='alert alert-block alert-warning'>
-        {% trans "Multifactor authentication is not configured for your account" %}
-    </div>
-
-    {% endif %}
-    </div>
-
-    <div class="col-md-6">
-    <h5>{% trans "Change factors" %}</h5>
-    <a href="{% url 'two-factor-setup' %}" class="btn btn-primary {% if user.staticdevice_set.all and user.totpdevice_set.all %}disabled{% endif %}" role="button">{% trans "Setup multifactor" %}</a>
-    {% if user.staticdevice_set.all or user.totpdevice_set.all %}
-    <a href="{% url 'two-factor-remove' %}" class="btn btn-primary" role="button">{% trans "Remove multifactor" %}</a>
-    {% endif %}
-    </div>
-</div>
+{% inventree_mfa_enabled as mfa_enabled %}
+{% if mfa_enabled %}
+{% include "InvenTree/settings/user_mfa.html" %}
+{% endif %}
 
 {% inventree_customize 'hide_active_sessions' as hide_active_sessions %}
 
@@ -220,14 +178,14 @@
 
 {% block js_ready %}
 (function() {
-var message = '{% trans "Do you really want to remove the selected email address?" escape %}';
-var actions = document.getElementsByName('action_remove');
-if (actions.length) {
-actions[0].addEventListener("click", function(e) {
-if (! confirm(message)) {
-e.preventDefault();
-}
-});
-}
+    var message = '{% trans "Do you really want to remove the selected email address?" escape %}';
+    var actions = document.getElementsByName('action_remove');
+    if (actions.length) {
+        actions[0].addEventListener("click", function(e) {
+            if (! confirm(message)) {
+                e.preventDefault();
+            }
+        });
+    }
 })();
 {% endblock js_ready %}

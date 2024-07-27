@@ -22,7 +22,10 @@
     <tbody>
         {% include "InvenTree/settings/setting.html" with key="LOGIN_ENABLE_PWD_FORGOT" icon="fa-user-lock" %}
         {% include "InvenTree/settings/setting.html" with key="LOGIN_MAIL_REQUIRED" icon="fa-at" %}
+        {% inventree_mfa_enabled as mfa_enabled %}
+        {% if mfa_enabled %}
         {% include "InvenTree/settings/setting.html" with key="LOGIN_ENFORCE_MFA" icon='fa-key' %}
+        {% endif %}
         <tr>
             <th><h5>{% trans 'Signup' %}</h5></th>
             <td colspan='4'></td>
