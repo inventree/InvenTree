@@ -54,7 +54,7 @@ export default function SystemSettings() {
       'SSO_REMOVE_GROUPS'
     ];
 
-    if (mfa_enabled == false) {
+    if (!mfa_enabled) {
       keys = keys.filter((key) => key !== 'LOGIN_ENFORCE_MFA');
     }
 
