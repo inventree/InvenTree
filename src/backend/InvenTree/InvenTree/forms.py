@@ -15,6 +15,7 @@ from allauth.account.forms import LoginForm, SignupForm, set_form_field_order
 from allauth.core.exceptions import ImmediateHttpResponse
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from allauth_2fa.adapter import OTPAdapter
+from allauth_2fa.forms import TOTPDeviceForm
 from allauth_2fa.utils import user_has_valid_totp_device
 from crispy_forms.bootstrap import AppendedText, PrependedAppendedText, PrependedText
 from crispy_forms.helper import FormHelper
@@ -209,6 +210,16 @@ class CustomSignupForm(SignupForm):
                 self.add_error('email2', _('You must type the same email each time.'))
 
         return cleaned_data
+
+
+class CustomTOTPDeviceForm(TOTPDeviceForm):
+    """Ensure that db registration is enabled."""
+
+    def __init__(self, user, metadata=None, **kwargs):
+        """Override to check if registration is open."""
+        if not settings.INVENTREE_MFA_ENABLED:
+            raise forms.ValidationError(_('MFA Registration is disabled.'))
+        super().__init__(user, metadata, **kwargs)
 
 
 def registration_enabled():
