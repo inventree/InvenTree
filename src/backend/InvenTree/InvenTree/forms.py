@@ -217,7 +217,7 @@ class CustomTOTPDeviceForm(TOTPDeviceForm):
 
     def __init__(self, user, metadata=None, **kwargs):
         """Override to check if registration is open."""
-        if not settings.INVENTREE_MFA_ENABLED:
+        if not settings.MFA_ENABLED:
             raise forms.ValidationError(_('MFA Registration is disabled.'))
         super().__init__(user, metadata, **kwargs)
 

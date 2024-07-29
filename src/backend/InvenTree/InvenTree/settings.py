@@ -1212,9 +1212,7 @@ ACCOUNT_FORMS = {
 }
 ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.forms.CustomTOTPDeviceForm'}
 # Determine if multi-factor authentication is enabled for this server (default = True)
-INVENTREE_MFA_ENABLED = get_boolean_setting(
-    'INVENTREE_MFA_ENABLED', 'mfa_enabled', True
-)
+MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
