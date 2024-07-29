@@ -3477,7 +3477,7 @@ function prepareTestStatisticsTable(keyName, apiUrl)
                         title: '{% trans "This week" %}',
                         label: 'this-week',
                         callback: function(data) {
-                            filterTestStatisticsTableDateRange(data, 'this-week', $("#test-statistics-table"), 'buildteststatistics', options);
+                            filterTestStatisticsTableDateRange(data, 'this-week', $("#test-statistics-table"), keyName + 'teststatistics', options);
                         }
                     },
                     {
@@ -3485,7 +3485,7 @@ function prepareTestStatisticsTable(keyName, apiUrl)
                         title: '{% trans "This month" %}',
                         label: 'this-month',
                         callback: function(data) {
-                            filterTestStatisticsTableDateRange(data, 'this-month', $("#test-statistics-table"), 'buildteststatistics', options);
+                            filterTestStatisticsTableDateRange(data, 'this-month', $("#test-statistics-table"), keyName + 'teststatistics', options);
                         }
                     },
                 ],
@@ -3495,7 +3495,7 @@ function prepareTestStatisticsTable(keyName, apiUrl)
             loadTestStatisticsTable($("#test-statistics-table"), keyName, apiUrl, options, filters);
         }
     }
-    setupFilterList('buildteststatistics', $("#test-statistics-table"), '#filter-list-buildteststatistics', options);
+    setupFilterList(keyName + 'teststatistics', $("#test-statistics-table"), '#filter-list-' + keyName + 'teststatistics', options);
 
     // Load test statistics table
     loadTestStatisticsTable($("#test-statistics-table"), keyName, apiUrl, options);
