@@ -14,7 +14,10 @@
     deleteButton,
     editButton,
     formatDecimal,
+    getApiIcon,
+    getApiIconClass,
     imageHoverIcon,
+    loadApiIconPacks,
     makeCopyButton,
     makeDeleteButton,
     makeEditButton,
@@ -593,4 +596,67 @@ function renderClipboard(s, prepend=false) {
     } else {
         return `<div class="flex-cell">${s+clipString}</div>`;
     }
+}
+
+async function loadApiIconPacks() {
+    if(!window._ICON_PACKS) {
+        const packs = await inventreeGet('{% url "api-icon-list" %}');
+
+        window._ICON_PACKS = Object.fromEntries(packs.map(pack => [pack.prefix, pack]));
+
+        await Promise.all(
+            packs.map(async (pack) => {
+                const fontName = `inventree-icon-font-${pack.prefix}`;
+                const src = Object.entries(pack.fonts).map(([format, url]) => `url(${url}) format("${format}")`).join(',\n');
+                const font = new FontFace(fontName, src + ";");
+                await font.load();
+                document.fonts.add(font);
+
+                return font;
+            })
+        )
+    }
+
+    return window._ICON_PACKS;
+}
+
+function getApiIcon(name) {
+    if(!window._ICON_PACKS) return;
+
+    const [_iconPackage, _name, _variant] = name.split(':');
+
+    const iconPackage = window._ICON_PACKS[_iconPackage];
+    if(!iconPackage) return;
+
+    const icon = iconPackage.icons[_name];
+    if(!icon) return;
+
+    const variant = icon.variants[_variant];
+    if(!variant) return;
+
+    return [`inventree-icon-font-${_iconPackage}`, variant];
+}
+
+function getApiIconClass(name) {
+    const icon = getApiIcon(name);
+    if(!icon) return "";
+
+    const [font, hexContent] = icon;
+
+    let styleTag = document.getElementById('api-icon-styles');
+    if(!styleTag) {
+        styleTag = document.createElement('style');
+        styleTag.id = 'api-icon-styles';
+        styleTag.type = 'text/css';
+
+        document.head.appendChild(styleTag);
+    }
+
+    const className = `icon-${name.replace(/:/g, '-')}`;
+
+    if (!styleTag.textContent.includes(`.${className}`)) {
+        styleTag.textContent += `.${className} { font-family: ${font}; } .${className}:before { content: "\\${hexContent}"; }\n`;
+    }
+
+    return `api-icon ${className}`;
 }
