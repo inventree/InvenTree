@@ -2,6 +2,7 @@
 
 from django import template
 from django.conf import settings as djangosettings
+from django.templatetags.static import static
 from django.urls import reverse
 
 from common.models import InvenTreeSetting
@@ -96,3 +97,17 @@ def notification_list(context, *args, **kwargs):
         }
         for a in storage.liste
     ]
+
+
+@register.simple_tag()
+def plugin_static(file: str, **kwargs):
+    """Return the URL for a static file within a plugin.
+
+    Arguments:
+        file: The path to the file within the plugin static directory
+
+    Keyword Arguments:
+        plugin: The plugin slug (optional, will be inferred from the context if not provided)
+
+    """
+    return static(file)
