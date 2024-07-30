@@ -24,6 +24,7 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
+  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -366,11 +367,12 @@ export default function BuildDetail() {
   const buildActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.build} pk={build.pk} />,
-      <ActionDropdown
-        tooltip={t`Barcode Actions`}
-        icon={<IconQrcode />}
+      <BarcodeActionDropdown
         actions={[
-          ViewBarcodeAction({}),
+          ViewBarcodeAction({
+            model: ModelType.build,
+            pk: build.pk
+          }),
           LinkBarcodeAction({
             hidden: build?.barcode_hash
           }),

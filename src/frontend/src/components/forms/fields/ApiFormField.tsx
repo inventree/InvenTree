@@ -1,15 +1,7 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  FileInput,
-  NumberInput,
-  Stack,
-  Switch,
-  TextInput
-} from '@mantine/core';
+import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { IconX } from '@tabler/icons-react';
 import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 
@@ -18,9 +10,11 @@ import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
 import { DependentField } from './DependentField';
+import IconField from './IconField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
+import TextField from './TextField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
 
@@ -65,6 +59,7 @@ export type ApiFormFieldType = {
     | 'email'
     | 'url'
     | 'string'
+    | 'icon'
     | 'boolean'
     | 'date'
     | 'datetime'
@@ -148,7 +143,7 @@ export function ApiFormField({
       label: hideLabels ? undefined : definition.label,
       description: hideLabels ? undefined : definition.description
     };
-  }, [definition]);
+  }, [hideLabels, definition]);
 
   // pull out onValueChange as this can cause strange errors when passing the
   // definition to the input components via spread syntax
@@ -201,7 +196,7 @@ export function ApiFormField({
     }
 
     return val;
-  }, [value]);
+  }, [definition.field_type, value]);
 
   // Coerce the value to a (stringified) boolean value
   const booleanValue: boolean = useMemo(() => {
@@ -223,22 +218,16 @@ export function ApiFormField({
       case 'url':
       case 'string':
         return (
-          <TextInput
-            {...reducedDefinition}
-            ref={field.ref}
-            id={fieldId}
-            aria-label={`text-field-${field.name}`}
-            type={definition.field_type}
-            value={value || ''}
-            error={error?.message}
-            radius="sm"
-            onChange={(event) => onChange(event.currentTarget.value)}
-            rightSection={
-              value && !definition.required ? (
-                <IconX size="1rem" color="red" onClick={() => onChange('')} />
-              ) : null
-            }
+          <TextField
+            definition={reducedDefinition}
+            controller={controller}
+            fieldName={fieldName}
+            onChange={onChange}
           />
+        );
+      case 'icon':
+        return (
+          <IconField definition={fieldDefinition} controller={controller} />
         );
       case 'boolean':
         return (

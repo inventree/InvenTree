@@ -212,3 +212,86 @@ To start afresh (and completely remove the existing database), run the following
 ```
 docker compose run --rm inventree-server invoke delete-data
 ```
+
+## Install custom packages
+
+To install custom packages to your docker image, a custom docker image can be built and used automatically each time when updating. The following changes need to be applied to the docker compose file:
+
+<details><summary>docker-compose.yml changes</summary>
+
+```diff
+diff --git a/docker-compose.yml b/docker-compose.yml
+index 8adee63..dc3993c 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -69,7 +69,14 @@ services:
+     # Uses gunicorn as the web server
+     inventree-server:
+         # If you wish to specify a particular InvenTree version, do so here
+-        image: inventree/inventree:${INVENTREE_TAG:-stable}
++        image: inventree/inventree:${INVENTREE_TAG:-stable}-custom
++        pull_policy: never
++        build:
++          context: .
++          dockerfile: Dockerfile
++          target: production
++          args:
++            INVENTREE_TAG: ${INVENTREE_TAG:-stable}
+         # Only change this port if you understand the stack.
+         # If you change this you have to change:
+         # - the proxy settings (on two lines)
+@@ -88,7 +95,8 @@ services:
+     # Background worker process handles long-running or periodic tasks
+     inventree-worker:
+         # If you wish to specify a particular InvenTree version, do so here
+-        image: inventree/inventree:${INVENTREE_TAG:-stable}
++        image: inventree/inventree:${INVENTREE_TAG:-stable}-custom
++        pull_policy: never
+         command: invoke worker
+         depends_on:
+             - inventree-server
+```
+
+</details>
+
+And the following `Dockerfile` needs to be created:
+
+<details><summary>Dockerfile</summary>
+
+```dockerfile
+ARG INVENTREE_TAG
+
+FROM inventree/inventree:${INVENTREE_TAG} as production
+
+# Install whatever dependency is needed here (e.g. git)
+RUN apk add --no-cache git
+```
+
+</details>
+
+And if additional, development packages are needed e.g. just for building a wheel for a pip package, a multi stage build can be used with the following `Dockerfile`:
+
+<details><summary>Dockerfile</summary>
+
+```dockerfile
+ARG INVENTREE_TAG
+
+# prebuild stage - needs a lot of build dependencies
+# make sure, the alpine and python version matches the version used in the inventree base image
+FROM python:3.11-alpine3.18 as prebuild
+
+# Install whatever development dependency is needed (e.g. cups-dev, gcc, the musl-dev build tools and the pip pycups package)
+RUN apk add --no-cache cups-dev gcc musl-dev && \
+    pip install --user --no-cache-dir pycups
+
+# production image - only install the cups shared library
+FROM inventree/inventree:${INVENTREE_TAG} as production
+
+# Install e.g. shared library later available in the final image
+RUN apk add --no-cache cups-libs
+
+# Copy the pip wheels from the build stage in the production stage
+COPY --from=prebuild /root/.local /root/.local
+```
+
+</details>

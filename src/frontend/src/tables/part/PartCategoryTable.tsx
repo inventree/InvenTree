@@ -1,8 +1,10 @@
 import { t } from '@lingui/macro';
+import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -32,7 +34,13 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
       {
         accessor: 'name',
         sortable: true,
-        switchable: false
+        switchable: false,
+        render: (record: any) => (
+          <Group gap="xs">
+            {record.icon && <ApiIcon name={record.icon} />}
+            {record.name}
+          </Group>
+        )
       },
       DescriptionColumn({}),
       {
@@ -76,7 +84,8 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
   const newCategory = useCreateApiFormModal({
     url: ApiEndpoints.category_list,
     title: t`New Part Category`,
-    fields: partCategoryFields({}),
+    fields: partCategoryFields(),
+    focus: 'name',
     initialData: {
       parent: parentId
     },
@@ -91,7 +100,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
     url: ApiEndpoints.category_list,
     pk: selectedCategory,
     title: t`Edit Part Category`,
-    fields: partCategoryFields({}),
+    fields: partCategoryFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 

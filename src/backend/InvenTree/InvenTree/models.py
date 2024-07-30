@@ -3,9 +3,7 @@
 import logging
 from datetime import datetime
 
-from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -577,6 +575,9 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
     # e.g. for StockLocation, this value is 'location'
     ITEM_PARENT_KEY = None
 
+    # Extra fields to include in the get_path result. E.g. icon
+    EXTRA_PATH_FIELDS = []
+
     class Meta:
         """Metaclass defines extra model properties."""
 
@@ -870,7 +871,14 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
             name: <name>,
         }
         """
-        return [{'pk': item.pk, 'name': item.name} for item in self.path]
+        return [
+            {
+                'pk': item.pk,
+                'name': item.name,
+                **{k: getattr(item, k, None) for k in self.EXTRA_PATH_FIELDS},
+            }
+            for item in self.path
+        ]
 
     def __str__(self):
         """String representation of a category is the full path to that category."""
@@ -934,6 +942,8 @@ class InvenTreeBarcodeMixin(models.Model):
 
     - barcode_data : Raw data associated with an assigned barcode
     - barcode_hash : A 'hash' of the assigned barcode data used to improve matching
+
+    The barcode_model_type_code() classmethod must be implemented in the model class.
     """
 
     class Meta:
@@ -964,11 +974,25 @@ class InvenTreeBarcodeMixin(models.Model):
         # By default, use the name of the class
         return cls.__name__.lower()
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        r"""Return a 'short' code for the model type.
+
+        This is used to generate a efficient QR code for the model type.
+        It is expected to match this pattern: [0-9A-Z $%*+-.\/:]{2}
+
+        Note: Due to the shape constrains (45**2=2025 different allowed codes)
+        this needs to be explicitly implemented in the model class to avoid collisions.
+        """
+        raise NotImplementedError(
+            'barcode_model_type_code() must be implemented in the model class'
+        )
+
     def format_barcode(self, **kwargs):
         """Return a JSON string for formatting a QR code for this model instance."""
-        return InvenTree.helpers.MakeBarcode(
-            self.__class__.barcode_model_type(), self.pk, **kwargs
-        )
+        from plugin.base.barcodes.helper import generate_barcode
+
+        return generate_barcode(self)
 
     def format_matched_response(self):
         """Format a standard response for a matched barcode."""
@@ -986,7 +1010,7 @@ class InvenTreeBarcodeMixin(models.Model):
     @property
     def barcode(self):
         """Format a minimal barcode string (e.g. for label printing)."""
-        return self.format_barcode(brief=True)
+        return self.format_barcode()
 
     @classmethod
     def lookup_barcode(cls, barcode_hash):

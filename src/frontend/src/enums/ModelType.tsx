@@ -18,7 +18,7 @@ export enum ModelType {
   builditem = 'builditem',
   company = 'company',
   purchaseorder = 'purchaseorder',
-  purchaseorderline = 'purchaseorderline',
+  purchaseorderlineitem = 'purchaseorderlineitem',
   salesorder = 'salesorder',
   salesordershipment = 'salesordershipment',
   returnorder = 'returnorder',
@@ -27,6 +27,7 @@ export enum ModelType {
   contact = 'contact',
   owner = 'owner',
   user = 'user',
+  group = 'group',
   reporttemplate = 'reporttemplate',
   labeltemplate = 'labeltemplate',
   pluginconfig = 'pluginconfig'

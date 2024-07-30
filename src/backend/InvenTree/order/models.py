@@ -408,6 +408,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         return defaults
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'PO'
+
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
         """Filter by 'minimum and maximum date range'.
@@ -742,6 +747,14 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Extract optional notes field
         notes = kwargs.get('notes', '')
 
+        # Extract optional packaging field
+        packaging = kwargs.get('packaging', None)
+
+        if not packaging:
+            # Default to the packaging field for the linked supplier part
+            if line.part:
+                packaging = line.part.packaging
+
         # Extract optional barcode field
         barcode = kwargs.get('barcode', None)
 
@@ -791,6 +804,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     purchase_order=self,
                     status=status,
                     batch=batch_code,
+                    packaging=packaging,
                     serial=sn,
                     purchase_price=unit_purchase_price,
                 )
@@ -870,6 +884,11 @@ class SalesOrder(TotalPriceMixin, Order):
         defaults = {'reference': order.validators.generate_next_sales_order_reference()}
 
         return defaults
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SO'
 
     @staticmethod
     def filterByDate(queryset, min_date, max_date):
@@ -2034,6 +2053,11 @@ class ReturnOrder(TotalPriceMixin, Order):
         }
 
         return defaults
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'RO'
 
     def __str__(self):
         """Render a string representation of this ReturnOrder."""

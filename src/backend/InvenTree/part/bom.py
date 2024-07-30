@@ -117,6 +117,14 @@ def ExportBom(
         for bom_item in bom_items:
             substitutes = BomItemSubstitute.objects.filter(bom_item=bom_item)
             for s_idx, substitute in enumerate(substitutes):
+                """Create substitute part IPN column"""
+                name = f'{_("Substitute IPN")}{s_idx + 1}'
+                value = substitute.part.IPN
+                try:
+                    substitute_cols[name].update({col_index: value})
+                except KeyError:
+                    substitute_cols[name] = {col_index: value}
+
                 """Create substitute part name column"""
                 name = f'{_("Substitute Part")}{s_idx + 1}'
                 value = substitute.part.name

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -93,5 +93,11 @@ export function useInstance<T = any>({
     instanceQuery.refetch();
   }, []);
 
-  return { instance, refreshInstance, instanceQuery, requestStatus };
+  return {
+    instance,
+    setInstance,
+    refreshInstance,
+    instanceQuery,
+    requestStatus
+  };
 }

@@ -330,7 +330,6 @@ onPanelLoad('category', function() {
                     icon: 'fa-sitemap',
                     tree_picker: {
                         url: '{% url "api-part-category-tree" %}',
-                        default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
                     },
                 },
                 default_value: {},
@@ -394,7 +393,6 @@ onPanelLoad('category', function() {
                     value: pk,
                     tree_picker: {
                         url: '{% url "api-part-category-tree" %}',
-                        default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
                     },
                 },
                 default_value: {},
@@ -429,7 +427,8 @@ onPanelLoad('parts', function() {
 });
 
 // Javascript for the Stock settings panel
-onPanelLoad("stock", function() {
+onPanelLoad("stock", async function() {
+    await loadApiIconPacks();
 
     // Construct the stock location type table
     $('#location-type-table').bootstrapTable({
@@ -441,6 +440,15 @@ onPanelLoad("stock", function() {
         },
         columns: [
             {
+                field: 'icon',
+                sortable: true,
+                title: '{% trans "Icon" escape %}',
+                width: "50px",
+                formatter: function(value, row) {
+                    return `<span class="${getApiIconClass(value)}"></span>`
+                }
+            },
+            {
                 field: 'name',
                 sortable: true,
                 title: '{% trans "Name" escape %}',
@@ -449,11 +457,6 @@ onPanelLoad("stock", function() {
                 field: 'description',
                 sortable: false,
                 title: '{% trans "Description" escape %}',
-            },
-            {
-                field: 'icon',
-                sortable: true,
-                title: '{% trans "Icon" escape %}',
             },
             {
                 field: 'location_count',
@@ -560,13 +563,11 @@ onPanelLoad('stocktake', function() {
             category: {
                 tree_picker: {
                     url: '{% url "api-part-category-tree" %}',
-                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
                 },
             },
             location: {
                 tree_picker: {
                     url: '{% url "api-location-tree" %}',
-                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                 },
             },
             generate_report: {},

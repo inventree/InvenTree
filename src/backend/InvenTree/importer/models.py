@@ -1,5 +1,6 @@
 """Model definitions for the 'importer' app."""
 
+import json
 import logging
 
 from django.contrib.auth.models import User
@@ -31,7 +32,9 @@ class DataImportSession(models.Model):
         data_file: FileField for the data file to import
         status: IntegerField for the status of the import session
         user: ForeignKey to the User who initiated the import
-        field_defaults: JSONField for field default values
+        field_defaults: JSONField for field default values - provides a backup value for a field
+        field_overrides: JSONField for field override values - used to force a value for a field
+        field_filters: JSONField for field filter values - optional field API filters
     """
 
     @staticmethod
@@ -92,6 +95,20 @@ class DataImportSession(models.Model):
         validators=[importer.validators.validate_field_defaults],
     )
 
+    field_overrides = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Field Overrides'),
+        validators=[importer.validators.validate_field_defaults],
+    )
+
+    field_filters = models.JSONField(
+        blank=True,
+        null=True,
+        verbose_name=_('Field Filters'),
+        validators=[importer.validators.validate_field_defaults],
+    )
+
     @property
     def field_mapping(self):
         """Construct a dict of field mappings for this import session.
@@ -132,8 +149,15 @@ class DataImportSession(models.Model):
 
         matched_columns = set()
 
+        field_overrides = self.field_overrides or {}
+
         # Create a default mapping for each available field in the database
         for field, field_def in serializer_fields.items():
+            # If an override value is provided for the field,
+            # skip creating a mapping for this field
+            if field in field_overrides:
+                continue
+
             # Generate a list of possible column names for this field
             field_options = [
                 field,
@@ -181,10 +205,15 @@ class DataImportSession(models.Model):
         required_fields = self.required_fields()
 
         field_defaults = self.field_defaults or {}
+        field_overrides = self.field_overrides or {}
 
         missing_fields = []
 
         for field in required_fields.keys():
+            # An override value exists
+            if field in field_overrides:
+                continue
+
             # A default value exists
             if field in field_defaults and field_defaults[field]:
                 continue
@@ -264,6 +293,18 @@ class DataImportSession(models.Model):
         # Mark the import task as "PROCESSING"
         self.status = DataImportStatusCode.PROCESSING.value
         self.save()
+
+    def check_complete(self) -> bool:
+        """Check if the import session is complete."""
+        if self.completed_row_count < self.row_count:
+            return False
+
+        # Update the status of this session
+        if self.status != DataImportStatusCode.COMPLETE.value:
+            self.status = DataImportStatusCode.COMPLETE.value
+            self.save()
+
+        return True
 
     @property
     def row_count(self):
@@ -467,6 +508,34 @@ class DataImportRow(models.Model):
 
     complete = models.BooleanField(default=False, verbose_name=_('Complete'))
 
+    @property
+    def default_values(self) -> dict:
+        """Return a dict object of the 'default' values for this row."""
+        defaults = self.session.field_defaults or {}
+
+        if type(defaults) is not dict:
+            try:
+                defaults = json.loads(str(defaults))
+            except json.JSONDecodeError:
+                logger.warning('Failed to parse default values for import row')
+                defaults = {}
+
+        return defaults
+
+    @property
+    def override_values(self) -> dict:
+        """Return a dict object of the 'override' values for this row."""
+        overrides = self.session.field_overrides or {}
+
+        if type(overrides) is not dict:
+            try:
+                overrides = json.loads(str(overrides))
+            except json.JSONDecodeError:
+                logger.warning('Failed to parse override values for import row')
+                overrides = {}
+
+        return overrides
+
     def extract_data(
         self, available_fields: dict = None, field_mapping: dict = None, commit=True
     ):
@@ -477,14 +546,24 @@ class DataImportRow(models.Model):
         if not available_fields:
             available_fields = self.session.available_fields()
 
-        default_values = self.session.field_defaults or {}
+        overrride_values = self.override_values
+        default_values = self.default_values
 
         data = {}
 
         # We have mapped column (file) to field (serializer) already
         for field, col in field_mapping.items():
+            # Data override (force value and skip any further checks)
+            if field in overrride_values:
+                data[field] = overrride_values[field]
+                continue
+
+            # Default value (if provided)
+            if field in default_values:
+                data[field] = default_values[field]
+
             # If this field is *not* mapped to any column, skip
-            if not col:
+            if not col or col not in self.row_data:
                 continue
 
             # Extract field type
@@ -516,10 +595,13 @@ class DataImportRow(models.Model):
         - If available, we use the "default" values provided by the import session
         - If available, we use the "override" values provided by the import session
         """
-        data = self.session.field_defaults or {}
+        data = self.default_values
 
         if self.data:
             data.update(self.data)
+
+        # Override values take priority, if present
+        data.update(self.override_values)
 
         return data
 
@@ -567,6 +649,8 @@ class DataImportRow(models.Model):
                     serializer.save()
                     self.complete = True
                     self.save()
+
+                    self.session.check_complete()
 
                 except Exception as e:
                     self.errors = {'non_field_errors': str(e)}

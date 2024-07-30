@@ -210,7 +210,11 @@ export function TemplateEditor(props: Readonly<TemplateEditorProps>) {
   );
 
   const templateFilters: Record<string, string> = useMemo(() => {
-    // TODO: Extract custom filters from template
+    // TODO: Extract custom filters from template (make this more generic)
+    if (template.model_type === ModelType.stockitem) {
+      return { part_detail: 'true' } as Record<string, string>;
+    }
+
     return {};
   }, [template]);
 

@@ -1,7 +1,9 @@
 import { t } from '@lingui/macro';
+import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -69,7 +71,13 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     return [
       {
         accessor: 'name',
-        switchable: false
+        switchable: false,
+        render: (record: any) => (
+          <Group gap="xs">
+            {record.icon && <ApiIcon name={record.icon} />}
+            {record.name}
+          </Group>
+        )
       },
       DescriptionColumn({}),
       {
@@ -97,7 +105,8 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   const newLocation = useCreateApiFormModal({
     url: ApiEndpoints.stock_location_list,
     title: t`Add Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
+    focus: 'name',
     initialData: {
       parent: parentId
     },
@@ -112,7 +121,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     url: ApiEndpoints.stock_location_list,
     pk: selectedLocation,
     title: t`Edit Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 

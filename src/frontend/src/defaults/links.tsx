@@ -3,6 +3,7 @@ import { openContextModal } from '@mantine/modals';
 
 import { DocumentationLinkItem } from '../components/items/DocumentationLinks';
 import { StylishText } from '../components/items/StylishText';
+import { UserRoles } from '../enums/Roles';
 import { IS_DEV_OR_DEMO } from '../main';
 
 export const footerLinks = [
@@ -25,12 +26,17 @@ export const footerLinks = [
 export const navTabs = [
   { text: <Trans>Home</Trans>, name: 'home' },
   { text: <Trans>Dashboard</Trans>, name: 'dashboard' },
-  { text: <Trans>Parts</Trans>, name: 'part' },
-  { text: <Trans>Stock</Trans>, name: 'stock' },
-  { text: <Trans>Build</Trans>, name: 'build' },
-  { text: <Trans>Purchasing</Trans>, name: 'purchasing' },
-  { text: <Trans>Sales</Trans>, name: 'sales' }
+  { text: <Trans>Parts</Trans>, name: 'part', role: UserRoles.part },
+  { text: <Trans>Stock</Trans>, name: 'stock', role: UserRoles.stock },
+  { text: <Trans>Build</Trans>, name: 'build', role: UserRoles.build },
+  {
+    text: <Trans>Purchasing</Trans>,
+    name: 'purchasing',
+    role: UserRoles.purchase_order
+  },
+  { text: <Trans>Sales</Trans>, name: 'sales', role: UserRoles.sales_order }
 ];
+
 if (IS_DEV_OR_DEMO) {
   navTabs.push({ text: <Trans>Playground</Trans>, name: 'playground' });
 }

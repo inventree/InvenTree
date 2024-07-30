@@ -451,6 +451,7 @@ class Address(InvenTree.models.InvenTreeModel):
 class ManufacturerPart(
     InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
     InvenTree.models.InvenTreeMetadataModel,
 ):
     """Represents a unique part as provided by a Manufacturer Each ManufacturerPart is identified by a MPN (Manufacturer Part Number) Each ManufacturerPart is also linked to a Part object. A Part may be available from multiple manufacturers.
@@ -473,6 +474,11 @@ class ManufacturerPart(
     def get_api_url():
         """Return the API URL associated with the ManufacturerPart instance."""
         return reverse('api-manufacturer-part-list')
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'MP'
 
     part = models.ForeignKey(
         'part.Part',
@@ -624,6 +630,7 @@ class SupplierPartManager(models.Manager):
 class SupplierPart(
     InvenTree.models.MetadataMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
+    InvenTree.models.InvenTreeNotesMixin,
     common.models.MetaMixin,
     InvenTree.models.InvenTreeModel,
 ):
@@ -675,6 +682,11 @@ class SupplierPart(
     def api_instance_filters(self):
         """Return custom API filters for this particular instance."""
         return {'manufacturer_part': {'part': self.part.pk}}
+
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SP'
 
     def clean(self):
         """Custom clean action for the SupplierPart model.

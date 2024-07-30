@@ -19,10 +19,10 @@ test('PUI - Pages - Build Order', async ({ page }) => {
   await page.getByRole('tab', { name: 'Allocated Stock' }).click();
 
   // Check for expected text in the table
-  await page.getByText('R_10R_0402_1%').click();
+  await page.getByText('R_10R_0402_1%').waitFor();
   await page
     .getByRole('cell', { name: 'R38, R39, R40, R41, R42, R43' })
-    .click();
+    .waitFor();
 
   // Click through to the "parent" build
   await page.getByRole('tab', { name: 'Build Details' }).click();

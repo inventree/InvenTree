@@ -25,12 +25,18 @@ const tags: Tag[] = [
     description: 'Generate a QR code image',
     args: ['data'],
     kwargs: {
-      fill_color: 'Fill color (default = black)',
-      back_color: 'Background color (default = white)',
-      version: 'Version (default = 1)',
-      box_size: 'Box size (default = 20)',
-      border: 'Border width (default = 1)',
-      format: 'Format (default = PNG)'
+      version: 'QR code version, (None to auto detect) (default = None)',
+      error_correction:
+        "Error correction level (L: 7%, M: 15%, Q: 25%, H: 30%) (default = 'Q')",
+      box_size:
+        'pixel dimensions for one black square pixel in the QR code (default = 20)',
+      border:
+        'count white QR square pixels around the qr code, needed as padding (default = 1)',
+      optimize:
+        'data will be split into multiple chunks of at least this length using different modes (text, alphanumeric, binary) to optimize the QR code size. Set to `0` to disable. (default = 1)',
+      format: "Image format (default = 'PNG')",
+      fill_color: 'Fill color (default = "black")',
+      back_color: 'Background color (default = "white")'
     },
     returns: 'base64 encoded qr code image data'
   },

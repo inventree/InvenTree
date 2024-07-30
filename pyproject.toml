@@ -16,7 +16,7 @@ exclude = [
 src = ["src/backend/InvenTree"]
 # line-length = 120
 
-[tool.ruff.extend-per-file-ignores]
+[tool.ruff.lint.extend-per-file-ignores]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]

@@ -1137,6 +1137,56 @@ class PurchaseOrderReceiveTest(OrderTest):
         self.assertEqual(item.quantity, 10)
         self.assertEqual(item.batch, 'B-xyz-789')
 
+    def test_packaging(self):
+        """Test that we can supply a 'packaging' value when receiving items."""
+        line_1 = models.PurchaseOrderLineItem.objects.get(pk=1)
+        line_2 = models.PurchaseOrderLineItem.objects.get(pk=2)
+
+        line_1.part.packaging = 'Reel'
+        line_1.part.save()
+
+        line_2.part.packaging = 'Tube'
+        line_2.part.save()
+
+        # Receive items without packaging data
+        data = {
+            'items': [
+                {'line_item': line_1.pk, 'quantity': 1},
+                {'line_item': line_2.pk, 'quantity': 1},
+            ],
+            'location': 1,
+        }
+
+        n = StockItem.objects.count()
+
+        self.post(self.url, data, expected_code=201)
+
+        item_1 = StockItem.objects.filter(supplier_part=line_1.part).first()
+        self.assertEqual(item_1.packaging, 'Reel')
+
+        item_2 = StockItem.objects.filter(supplier_part=line_2.part).first()
+        self.assertEqual(item_2.packaging, 'Tube')
+
+        # Receive items and override packaging data
+        data = {
+            'items': [
+                {'line_item': line_1.pk, 'quantity': 1, 'packaging': 'Bag'},
+                {'line_item': line_2.pk, 'quantity': 1, 'packaging': 'Box'},
+            ],
+            'location': 1,
+        }
+
+        self.post(self.url, data, expected_code=201)
+
+        item_1 = StockItem.objects.filter(supplier_part=line_1.part).last()
+        self.assertEqual(item_1.packaging, 'Bag')
+
+        item_2 = StockItem.objects.filter(supplier_part=line_2.part).last()
+        self.assertEqual(item_2.packaging, 'Box')
+
+        # Check that the expected number of stock items has been created
+        self.assertEqual(n + 4, StockItem.objects.count())
+
 
 class SalesOrderTest(OrderTest):
     """Tests for the SalesOrder API."""
@@ -1960,6 +2010,7 @@ class ReturnOrderTests(InvenTreeAPITestCase):
         'supplier_part',
         'stock',
     ]
+    roles = ['return_order.view']
 
     def test_options(self):
         """Test the OPTIONS endpoint."""

@@ -50,6 +50,7 @@ import users.models
 from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
+from common.icons import validate_icon
 from common.models import InvenTreeSetting
 from common.settings import get_global_setting, set_global_setting
 from company.models import SupplierPart
@@ -79,6 +80,8 @@ class PartCategory(InvenTree.models.InvenTreeTree):
     """
 
     ITEM_PARENT_KEY = 'category'
+
+    EXTRA_PATH_FIELDS = ['icon']
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -123,12 +126,36 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         help_text=_('Default keywords for parts in this category'),
     )
 
-    icon = models.CharField(
+    _icon = models.CharField(
         blank=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
+        validators=[validate_icon],
+        db_column='icon',
     )
+
+    @property
+    def icon(self):
+        """Return the icon associated with this PartCategory or the default icon."""
+        if self._icon:
+            return self._icon
+
+        if default_icon := get_global_setting('PART_CATEGORY_DEFAULT_ICON', cache=True):
+            return default_icon
+
+        return ''
+
+    @icon.setter
+    def icon(self, value):
+        """Setter for icon field."""
+        default_icon = get_global_setting('PART_CATEGORY_DEFAULT_ICON', cache=True)
+
+        # if icon is not defined previously and new value is default icon, do not save it
+        if not self._icon and value == default_icon:
+            return
+
+        self._icon = value
 
     @staticmethod
     def get_api_url():
@@ -416,6 +443,11 @@ class Part(
         """Return API query filters for limiting field results against this instance."""
         return {'variant_of': {'exclude_tree': self.pk}}
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'PA'
+
     def report_context(self):
         """Return custom report context information."""
         return {
@@ -426,11 +458,11 @@ class Part(
             'name': self.name,
             'parameters': self.parameters_map(),
             'part': self,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'qr_url': self.get_absolute_url(),
             'revision': self.revision,
             'test_template_list': self.getTestTemplates(),
-            'test_templates': self.getTestTemplates(),
+            'test_templates': self.getTestTemplateMap(),
         }
 
     def get_context_data(self, request, **kwargs):
