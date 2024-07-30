@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-26 00:28+0000\n"
+"POT-Creation-Date: 2024-07-30 14:34+0000\n"
 "PO-Revision-Date: 2024-07-26 18:36\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
@@ -91,47 +91,53 @@ msgstr "Giá trị '{name}' không xuất hiện ở định dạng mẫu"
 msgid "Provided value does not match required pattern: "
 msgstr "Giá trị được cung cấp không khớp với mẫu bắt buộc: "
 
-#: InvenTree/forms.py:128
+#: InvenTree/forms.py:129
 msgid "Enter password"
 msgstr "Nhập mật khẩu"
 
-#: InvenTree/forms.py:129
+#: InvenTree/forms.py:130
 msgid "Enter new password"
 msgstr "Nhập mật khẩu mới"
 
-#: InvenTree/forms.py:138
+#: InvenTree/forms.py:139
 msgid "Confirm password"
 msgstr "Xác nhận mật khẩu"
 
-#: InvenTree/forms.py:139
+#: InvenTree/forms.py:140
 msgid "Confirm new password"
 msgstr "Xác nhận mật khẩu mới"
 
-#: InvenTree/forms.py:143
+#: InvenTree/forms.py:144
 msgid "Old password"
 msgstr "Mật khẩu cũ"
 
-#: InvenTree/forms.py:182
+#: InvenTree/forms.py:183
 msgid "Email (again)"
 msgstr "Email (nhắc lại)"
 
-#: InvenTree/forms.py:186
+#: InvenTree/forms.py:187
 msgid "Email address confirmation"
 msgstr "Xác nhận địa chỉ email"
 
-#: InvenTree/forms.py:209
+#: InvenTree/forms.py:210
 msgid "You must type the same email each time."
 msgstr "Bạn phải nhập cùng một email mỗi lần."
 
-#: InvenTree/forms.py:248 InvenTree/forms.py:256
+#: InvenTree/forms.py:221
+#, fuzzy
+#| msgid "Registration is disabled."
+msgid "MFA Registration is disabled."
+msgstr "Đăng ký bị vô hiệu hóa."
+
+#: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
 msgstr "Địa chỉ email chính đã cung cấp không hợp lệ."
 
-#: InvenTree/forms.py:263
+#: InvenTree/forms.py:274
 msgid "The provided email domain is not approved."
 msgstr "Miền email được cung cấp không được phê duyệt."
 
-#: InvenTree/forms.py:392
+#: InvenTree/forms.py:403
 msgid "Registration is disabled."
 msgstr "Đăng ký bị vô hiệu hóa."
 
@@ -15059,4 +15065,3 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
-

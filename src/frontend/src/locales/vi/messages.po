@@ -865,7 +865,6 @@ msgid "Imported rows"
 msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:124
-#: src/pages/build/BuildDetail.tsx:370
 msgid "Barcode Actions"
 msgstr "Chức năng mã vạch"
 
@@ -1374,7 +1373,7 @@ msgstr "Model không rõ: {model}"
 #: src/forms/StockForms.tsx:655
 #: src/forms/StockForms.tsx:697
 #: src/forms/StockForms.tsx:733
-#: src/pages/build/BuildDetail.tsx:87
+#: src/pages/build/BuildDetail.tsx:88
 #: src/pages/part/PartDetail.tsx:985
 #: src/tables/build/BuildAllocatedStockTable.tsx:45
 #: src/tables/part/PartTable.tsx:28
@@ -1559,8 +1558,8 @@ msgid "Purchase Order Lines"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:152
-#: src/pages/build/BuildDetail.tsx:135
-#: src/pages/sales/SalesOrderDetail.tsx:345
+#: src/pages/build/BuildDetail.tsx:136
+#: src/pages/sales/SalesOrderDetail.tsx:363
 #: src/pages/stock/StockDetail.tsx:218
 #: src/tables/stock/StockTrackingTable.tsx:118
 msgid "Sales Order"
@@ -1583,7 +1582,7 @@ msgid "Sales Order Shipments"
 msgstr "Vận chuyển đơn hàng"
 
 #: src/components/render/ModelType.tsx:168
-#: src/pages/sales/ReturnOrderDetail.tsx:327
+#: src/pages/sales/ReturnOrderDetail.tsx:345
 #: src/tables/stock/StockTrackingTable.tsx:129
 msgid "Return Order"
 msgstr "Đơn hàng trả lại"
@@ -1607,8 +1606,8 @@ msgstr "Địa chỉ"
 
 #: src/components/render/ModelType.tsx:184
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:178
-#: src/pages/sales/ReturnOrderDetail.tsx:161
-#: src/pages/sales/SalesOrderDetail.tsx:159
+#: src/pages/sales/ReturnOrderDetail.tsx:165
+#: src/pages/sales/SalesOrderDetail.tsx:163
 msgid "Contact"
 msgstr "Liên hệ"
 
@@ -2482,9 +2481,9 @@ msgstr "Mua sắm"
 #: src/defaults/links.tsx:37
 #: src/defaults/menuItems.tsx:53
 #: src/pages/company/CustomerDetail.tsx:9
-#: src/pages/sales/ReturnOrderDetail.tsx:332
+#: src/pages/sales/ReturnOrderDetail.tsx:350
 #: src/pages/sales/SalesIndex.tsx:53
-#: src/pages/sales/SalesOrderDetail.tsx:350
+#: src/pages/sales/SalesOrderDetail.tsx:368
 msgid "Sales"
 msgstr "Bán hàng"
 
@@ -2803,7 +2802,7 @@ msgid "Store with already received stock"
 msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:521
-#: src/pages/build/BuildDetail.tsx:201
+#: src/pages/build/BuildDetail.tsx:202
 #: src/pages/stock/StockDetail.tsx:159
 #: src/pages/stock/StockDetail.tsx:547
 #: src/tables/build/BuildAllocatedStockTable.tsx:71
@@ -2824,10 +2823,10 @@ msgid "Packaging"
 msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:553
-#: src/pages/build/BuildDetail.tsx:93
+#: src/pages/build/BuildDetail.tsx:94
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:131
-#: src/pages/sales/ReturnOrderDetail.tsx:99
-#: src/pages/sales/SalesOrderDetail.tsx:103
+#: src/pages/sales/ReturnOrderDetail.tsx:103
+#: src/pages/sales/SalesOrderDetail.tsx:107
 #: src/tables/build/BuildOrderTable.tsx:113
 #: src/tables/machine/MachineListTable.tsx:335
 #: src/tables/purchasing/PurchaseOrderTable.tsx:55
@@ -3837,10 +3836,10 @@ msgid "Stocktake"
 msgstr "Kiểm kê"
 
 #: src/pages/Index/Settings/SystemSettings.tsx:237
-#: src/pages/build/BuildDetail.tsx:438
+#: src/pages/build/BuildDetail.tsx:437
 #: src/pages/build/BuildIndex.tsx:22
 #: src/pages/part/PartDetail.tsx:552
-#: src/pages/sales/SalesOrderDetail.tsx:264
+#: src/pages/sales/SalesOrderDetail.tsx:268
 msgid "Build Orders"
 msgstr "Đơn đặt bản dựng"
 
@@ -3900,25 +3899,25 @@ msgstr "Đánh dấu chưa đọc"
 #~ msgid "Build Status"
 #~ msgstr "Build Status"
 
-#: src/pages/build/BuildDetail.tsx:99
+#: src/pages/build/BuildDetail.tsx:100
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:104
-#: src/pages/sales/ReturnOrderDetail.tsx:73
-#: src/pages/sales/SalesOrderDetail.tsx:77
+#: src/pages/sales/ReturnOrderDetail.tsx:77
+#: src/pages/sales/SalesOrderDetail.tsx:81
 #: src/tables/ColumnRenderers.tsx:121
 #: src/tables/build/BuildAllocatedStockTable.tsx:52
 #: src/tables/build/BuildLineTable.tsx:140
 msgid "Reference"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:104
+#: src/pages/build/BuildDetail.tsx:105
 #: src/pages/company/CompanyDetail.tsx:87
 #: src/pages/company/ManufacturerPartDetail.tsx:83
 #: src/pages/company/SupplierPartDetail.tsx:91
 #: src/pages/part/CategoryDetail.tsx:101
 #: src/pages/part/PartDetail.tsx:134
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:125
-#: src/pages/sales/ReturnOrderDetail.tsx:93
-#: src/pages/sales/SalesOrderDetail.tsx:97
+#: src/pages/sales/ReturnOrderDetail.tsx:97
+#: src/pages/sales/SalesOrderDetail.tsx:101
 #: src/pages/stock/LocationDetail.tsx:108
 #: src/tables/ColumnRenderers.tsx:81
 #: src/tables/machine/MachineTypeTable.tsx:69
@@ -3932,29 +3931,29 @@ msgstr ""
 msgid "Description"
 msgstr "Mô tả"
 
-#: src/pages/build/BuildDetail.tsx:111
+#: src/pages/build/BuildDetail.tsx:112
 msgid "Parent Build"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:122
+#: src/pages/build/BuildDetail.tsx:123
 msgid "Build Quantity"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:130
-#: src/pages/build/BuildDetail.tsx:260
+#: src/pages/build/BuildDetail.tsx:131
+#: src/pages/build/BuildDetail.tsx:261
 msgid "Completed Outputs"
 msgstr "Đầu ra hoàn thiện"
 
-#: src/pages/build/BuildDetail.tsx:147
+#: src/pages/build/BuildDetail.tsx:148
 #: src/tables/build/BuildOrderTable.tsx:142
 msgid "Issued By"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:154
+#: src/pages/build/BuildDetail.tsx:155
 #: src/pages/part/PartDetail.tsx:342
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:203
-#: src/pages/sales/ReturnOrderDetail.tsx:186
-#: src/pages/sales/SalesOrderDetail.tsx:184
+#: src/pages/sales/ReturnOrderDetail.tsx:190
+#: src/pages/sales/SalesOrderDetail.tsx:188
 #: src/tables/build/BuildOrderTable.tsx:148
 #: src/tables/purchasing/PurchaseOrderTable.tsx:75
 #: src/tables/sales/ReturnOrderTable.tsx:66
@@ -3962,20 +3961,20 @@ msgstr ""
 msgid "Responsible"
 msgstr "Chịu trách nhiệm"
 
-#: src/pages/build/BuildDetail.tsx:161
+#: src/pages/build/BuildDetail.tsx:162
 #: src/tables/settings/PendingTasksTable.tsx:30
 msgid "Created"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:168
+#: src/pages/build/BuildDetail.tsx:169
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:196
-#: src/pages/sales/ReturnOrderDetail.tsx:179
-#: src/pages/sales/SalesOrderDetail.tsx:177
+#: src/pages/sales/ReturnOrderDetail.tsx:183
+#: src/pages/sales/SalesOrderDetail.tsx:181
 #: src/tables/ColumnRenderers.tsx:206
 msgid "Target Date"
 msgstr "Ngày mục tiêu"
 
-#: src/pages/build/BuildDetail.tsx:175
+#: src/pages/build/BuildDetail.tsx:176
 msgid "Completed"
 msgstr ""
 
@@ -3985,11 +3984,11 @@ msgstr ""
 #~ msgid "View part barcode"
 #~ msgstr "View part barcode"
 
-#: src/pages/build/BuildDetail.tsx:187
+#: src/pages/build/BuildDetail.tsx:188
 msgid "Source Location"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:188
+#: src/pages/build/BuildDetail.tsx:189
 msgid "Any location"
 msgstr ""
 
@@ -3998,7 +3997,7 @@ msgstr ""
 #~ msgid "Link custom barcode to part"
 #~ msgstr "Link custom barcode to part"
 
-#: src/pages/build/BuildDetail.tsx:195
+#: src/pages/build/BuildDetail.tsx:196
 msgid "Destination Location"
 msgstr ""
 
@@ -4023,67 +4022,67 @@ msgstr ""
 #~ msgid "Delete build order"
 #~ msgstr "Delete build order"
 
-#: src/pages/build/BuildDetail.tsx:233
+#: src/pages/build/BuildDetail.tsx:234
 msgid "Build Details"
 msgstr "Chi tiết bản dựng"
 
-#: src/pages/build/BuildDetail.tsx:239
+#: src/pages/build/BuildDetail.tsx:240
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:241
-#: src/pages/sales/ReturnOrderDetail.tsx:108
-#: src/pages/sales/ReturnOrderDetail.tsx:224
-#: src/pages/sales/SalesOrderDetail.tsx:246
+#: src/pages/sales/ReturnOrderDetail.tsx:112
+#: src/pages/sales/ReturnOrderDetail.tsx:228
+#: src/pages/sales/SalesOrderDetail.tsx:250
 msgid "Line Items"
 msgstr "Dòng hàng hóa"
 
-#: src/pages/build/BuildDetail.tsx:253
+#: src/pages/build/BuildDetail.tsx:254
 msgid "Incomplete Outputs"
 msgstr "Đầu ra chưa hoàn hiện"
 
-#: src/pages/build/BuildDetail.tsx:275
+#: src/pages/build/BuildDetail.tsx:276
 msgid "Allocated Stock"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:285
+#: src/pages/build/BuildDetail.tsx:286
 msgid "Consumed Stock"
 msgstr "Kho tiêu thụ"
 
-#: src/pages/build/BuildDetail.tsx:299
+#: src/pages/build/BuildDetail.tsx:300
 msgid "Child Build Orders"
 msgstr "Đơn đặt bản dựng con"
 
-#: src/pages/build/BuildDetail.tsx:309
+#: src/pages/build/BuildDetail.tsx:310
 #: src/pages/company/CompanyDetail.tsx:256
 #: src/pages/company/ManufacturerPartDetail.tsx:179
 #: src/pages/part/PartDetail.tsx:641
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:266
-#: src/pages/sales/ReturnOrderDetail.tsx:230
-#: src/pages/sales/SalesOrderDetail.tsx:274
+#: src/pages/sales/ReturnOrderDetail.tsx:234
+#: src/pages/sales/SalesOrderDetail.tsx:278
 #: src/pages/stock/StockDetail.tsx:335
 msgid "Attachments"
 msgstr "Đính kèm"
 
-#: src/pages/build/BuildDetail.tsx:317
+#: src/pages/build/BuildDetail.tsx:318
 #: src/pages/company/CompanyDetail.tsx:267
 #: src/pages/company/ManufacturerPartDetail.tsx:190
 #: src/pages/company/SupplierPartDetail.tsx:252
 #: src/pages/part/PartDetail.tsx:649
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:277
-#: src/pages/sales/ReturnOrderDetail.tsx:241
-#: src/pages/sales/SalesOrderDetail.tsx:285
+#: src/pages/sales/ReturnOrderDetail.tsx:245
+#: src/pages/sales/SalesOrderDetail.tsx:289
 #: src/pages/stock/StockDetail.tsx:346
 #: src/tables/stock/StockTrackingTable.tsx:189
 msgid "Notes"
 msgstr "Ghi chú"
 
-#: src/pages/build/BuildDetail.tsx:335
+#: src/pages/build/BuildDetail.tsx:336
 msgid "Edit Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:344
+#: src/pages/build/BuildDetail.tsx:345
 msgid "Cancel Build Order"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:356
+#: src/pages/build/BuildDetail.tsx:357
 #: src/tables/build/BuildOrderTable.tsx:167
 #: src/tables/build/BuildOrderTable.tsx:182
 msgid "Add Build Order"
@@ -4097,14 +4096,14 @@ msgstr ""
 #~ msgid "Print build report"
 #~ msgstr "Print build report"
 
-#: src/pages/build/BuildDetail.tsx:391
+#: src/pages/build/BuildDetail.tsx:390
 msgid "Build Order Actions"
 msgstr ""
 
-#: src/pages/build/BuildDetail.tsx:399
+#: src/pages/build/BuildDetail.tsx:398
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:323
-#: src/pages/sales/ReturnOrderDetail.tsx:309
-#: src/pages/sales/SalesOrderDetail.tsx:315
+#: src/pages/sales/ReturnOrderDetail.tsx:327
+#: src/pages/sales/SalesOrderDetail.tsx:333
 msgid "Cancel order"
 msgstr ""
 
@@ -4152,8 +4151,8 @@ msgstr "Nhà sản xuất"
 #: src/pages/company/CompanyDetail.tsx:135
 #: src/pages/company/CustomerDetail.tsx:8
 #: src/pages/part/pricing/SaleHistoryPanel.tsx:29
-#: src/pages/sales/ReturnOrderDetail.tsx:87
-#: src/pages/sales/SalesOrderDetail.tsx:91
+#: src/pages/sales/ReturnOrderDetail.tsx:91
+#: src/pages/sales/SalesOrderDetail.tsx:95
 #: src/pages/stock/StockDetail.tsx:227
 #: src/tables/company/CompanyTable.tsx:110
 #: src/tables/sales/ReturnOrderTable.tsx:78
@@ -4427,8 +4426,8 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:202
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:169
-#: src/pages/sales/ReturnOrderDetail.tsx:152
-#: src/pages/sales/SalesOrderDetail.tsx:150
+#: src/pages/sales/ReturnOrderDetail.tsx:156
+#: src/pages/sales/SalesOrderDetail.tsx:154
 msgid "Link"
 msgstr "Liên kết"
 
@@ -4886,20 +4885,20 @@ msgid "Supplier Reference"
 msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:141
-#: src/pages/sales/ReturnOrderDetail.tsx:115
-#: src/pages/sales/SalesOrderDetail.tsx:113
+#: src/pages/sales/ReturnOrderDetail.tsx:119
+#: src/pages/sales/SalesOrderDetail.tsx:117
 msgid "Completed Line Items"
 msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:148
-#: src/pages/sales/ReturnOrderDetail.tsx:131
-#: src/pages/sales/SalesOrderDetail.tsx:129
+#: src/pages/sales/ReturnOrderDetail.tsx:135
+#: src/pages/sales/SalesOrderDetail.tsx:133
 msgid "Order Currency"
 msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:155
-#: src/pages/sales/ReturnOrderDetail.tsx:138
-#: src/pages/sales/SalesOrderDetail.tsx:136
+#: src/pages/sales/ReturnOrderDetail.tsx:142
+#: src/pages/sales/SalesOrderDetail.tsx:140
 msgid "Total Cost"
 msgstr ""
 
@@ -4910,40 +4909,40 @@ msgstr ""
 #~ msgstr "Order Currency,"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:190
-#: src/pages/sales/ReturnOrderDetail.tsx:173
-#: src/pages/sales/SalesOrderDetail.tsx:171
+#: src/pages/sales/ReturnOrderDetail.tsx:177
+#: src/pages/sales/SalesOrderDetail.tsx:175
 msgid "Created On"
 msgstr ""
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:235
-#: src/pages/sales/ReturnOrderDetail.tsx:218
-#: src/pages/sales/SalesOrderDetail.tsx:240
+#: src/pages/sales/ReturnOrderDetail.tsx:222
+#: src/pages/sales/SalesOrderDetail.tsx:244
 msgid "Order Details"
 msgstr "Chi tiết đơn đặt"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:313
-#: src/pages/sales/ReturnOrderDetail.tsx:299
-#: src/pages/sales/SalesOrderDetail.tsx:307
+#: src/pages/sales/ReturnOrderDetail.tsx:317
+#: src/pages/sales/SalesOrderDetail.tsx:325
 msgid "Order Actions"
 msgstr "Chức năng đơn đặt"
 
-#: src/pages/sales/ReturnOrderDetail.tsx:79
-#: src/pages/sales/SalesOrderDetail.tsx:83
+#: src/pages/sales/ReturnOrderDetail.tsx:83
+#: src/pages/sales/SalesOrderDetail.tsx:87
 #: src/tables/sales/SalesOrderTable.tsx:123
 msgid "Customer Reference"
 msgstr ""
 
-#: src/pages/sales/ReturnOrderDetail.tsx:123
-#: src/pages/sales/SalesOrderDetail.tsx:121
-#: src/pages/sales/SalesOrderDetail.tsx:258
+#: src/pages/sales/ReturnOrderDetail.tsx:127
+#: src/pages/sales/SalesOrderDetail.tsx:125
+#: src/pages/sales/SalesOrderDetail.tsx:262
 msgid "Completed Shipments"
 msgstr ""
 
-#: src/pages/sales/ReturnOrderDetail.tsx:271
+#: src/pages/sales/ReturnOrderDetail.tsx:275
 msgid "Edit Return Order"
 msgstr ""
 
-#: src/pages/sales/ReturnOrderDetail.tsx:280
+#: src/pages/sales/ReturnOrderDetail.tsx:284
 #: src/tables/sales/ReturnOrderTable.tsx:119
 #: src/tables/sales/ReturnOrderTable.tsx:128
 msgid "Add Return Order"
@@ -4953,17 +4952,17 @@ msgstr ""
 msgid "Customers"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:217
+#: src/pages/sales/SalesOrderDetail.tsx:221
 msgid "Edit Sales Order"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:226
+#: src/pages/sales/SalesOrderDetail.tsx:230
 #: src/tables/sales/SalesOrderTable.tsx:83
 #: src/tables/sales/SalesOrderTable.tsx:95
 msgid "Add Sales Order"
 msgstr ""
 
-#: src/pages/sales/SalesOrderDetail.tsx:252
+#: src/pages/sales/SalesOrderDetail.tsx:256
 msgid "Pending Shipments"
 msgstr ""
 
@@ -7484,4 +7483,3 @@ msgstr "Đọc tài liệu"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
-

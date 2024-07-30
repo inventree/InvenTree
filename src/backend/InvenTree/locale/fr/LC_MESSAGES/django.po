@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-26 00:28+0000\n"
+"POT-Creation-Date: 2024-07-30 14:34+0000\n"
 "PO-Revision-Date: 2024-07-26 18:36\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
@@ -91,47 +91,53 @@ msgstr "La valeur '{name}' n'apparaît pas dans le format du modèle"
 msgid "Provided value does not match required pattern: "
 msgstr "La valeur fournie ne correspond pas au modèle requis : "
 
-#: InvenTree/forms.py:128
+#: InvenTree/forms.py:129
 msgid "Enter password"
 msgstr "Entrer le mot de passe"
 
-#: InvenTree/forms.py:129
+#: InvenTree/forms.py:130
 msgid "Enter new password"
 msgstr "Entrer le nouveau mot de passe"
 
-#: InvenTree/forms.py:138
+#: InvenTree/forms.py:139
 msgid "Confirm password"
 msgstr "Confirmez le mot de passe"
 
-#: InvenTree/forms.py:139
+#: InvenTree/forms.py:140
 msgid "Confirm new password"
 msgstr "Confirmer le nouveau mot de passe"
 
-#: InvenTree/forms.py:143
+#: InvenTree/forms.py:144
 msgid "Old password"
 msgstr "Ancien mot de passe"
 
-#: InvenTree/forms.py:182
+#: InvenTree/forms.py:183
 msgid "Email (again)"
 msgstr "Email (encore)"
 
-#: InvenTree/forms.py:186
+#: InvenTree/forms.py:187
 msgid "Email address confirmation"
 msgstr "Confirmation de l'adresse email"
 
-#: InvenTree/forms.py:209
+#: InvenTree/forms.py:210
 msgid "You must type the same email each time."
 msgstr "Vous devez taper le même e-mail à chaque fois."
 
-#: InvenTree/forms.py:248 InvenTree/forms.py:256
+#: InvenTree/forms.py:221
+#, fuzzy
+#| msgid "Registration is disabled."
+msgid "MFA Registration is disabled."
+msgstr "L'enregistrement est désactivé."
+
+#: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
 msgstr "L'adresse e-mail principale fournie n'est pas valide."
 
-#: InvenTree/forms.py:263
+#: InvenTree/forms.py:274
 msgid "The provided email domain is not approved."
 msgstr "Le domaine e-mail fourni n'est pas approuvé."
 
-#: InvenTree/forms.py:392
+#: InvenTree/forms.py:403
 msgid "Registration is disabled."
 msgstr "L'enregistrement est désactivé."
 
@@ -15059,4 +15065,3 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
-

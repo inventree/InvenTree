@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-26 00:28+0000\n"
+"POT-Creation-Date: 2024-07-30 14:34+0000\n"
 "PO-Revision-Date: 2024-07-26 18:36\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
@@ -91,47 +91,51 @@ msgstr ""
 msgid "Provided value does not match required pattern: "
 msgstr ""
 
-#: InvenTree/forms.py:128
+#: InvenTree/forms.py:129
 msgid "Enter password"
 msgstr ""
 
-#: InvenTree/forms.py:129
+#: InvenTree/forms.py:130
 msgid "Enter new password"
 msgstr ""
 
-#: InvenTree/forms.py:138
+#: InvenTree/forms.py:139
 msgid "Confirm password"
 msgstr ""
 
-#: InvenTree/forms.py:139
+#: InvenTree/forms.py:140
 msgid "Confirm new password"
 msgstr ""
 
-#: InvenTree/forms.py:143
+#: InvenTree/forms.py:144
 msgid "Old password"
 msgstr ""
 
-#: InvenTree/forms.py:182
+#: InvenTree/forms.py:183
 msgid "Email (again)"
 msgstr ""
 
-#: InvenTree/forms.py:186
+#: InvenTree/forms.py:187
 msgid "Email address confirmation"
 msgstr ""
 
-#: InvenTree/forms.py:209
+#: InvenTree/forms.py:210
 msgid "You must type the same email each time."
 msgstr ""
 
-#: InvenTree/forms.py:248 InvenTree/forms.py:256
+#: InvenTree/forms.py:221
+msgid "MFA Registration is disabled."
+msgstr ""
+
+#: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
 msgstr ""
 
-#: InvenTree/forms.py:263
+#: InvenTree/forms.py:274
 msgid "The provided email domain is not approved."
 msgstr ""
 
-#: InvenTree/forms.py:392
+#: InvenTree/forms.py:403
 msgid "Registration is disabled."
 msgstr ""
 
@@ -15059,4 +15063,3 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
-
