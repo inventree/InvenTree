@@ -3,6 +3,7 @@
 import logging
 from importlib import import_module
 
+from django.conf import settings
 from django.urls import NoReverseMatch, include, path, reverse
 
 from allauth.account.models import EmailAddress
@@ -177,7 +178,9 @@ class SocialProviderListView(ListAPI):
         data = {
             'sso_enabled': InvenTree.sso.login_enabled(),
             'sso_registration': InvenTree.sso.registration_enabled(),
-            'mfa_required': get_global_setting('LOGIN_ENFORCE_MFA'),
+            'mfa_required': settings.MFA_ENABLED
+            and get_global_setting('LOGIN_ENFORCE_MFA'),
+            'mfa_enabled': settings.MFA_ENABLED,
             'providers': provider_list,
             'registration_enabled': get_global_setting('LOGIN_ENABLE_REG'),
             'password_forgotten_enabled': get_global_setting('LOGIN_ENABLE_PWD_FORGOT'),
