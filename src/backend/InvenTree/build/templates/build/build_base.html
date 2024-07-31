@@ -298,6 +298,12 @@ src="{% static 'img/blank_image.png' %}"
             build: {{ build.pk }},
         });
     });
+
+    {% if build.part.trackable > 0 %}
+    onPanelLoad("test-statistics", function() {
+        prepareTestStatisticsTable('build', '{% url "api-test-statistics-by-build" build.pk %}')
+    });
+    {% endif %}
     {% endif %}
     {% endif %}
 

@@ -267,6 +267,21 @@
     </div>
 </div>
 
+<div class='panel panel-hidden' id='panel-test-statistics'>
+    <div class='panel-heading'>
+        <h4>
+            {% trans "Build test statistics" %}
+        </h4>
+    </div>
+
+    <div class='panel-content'>
+        <div id='teststatistics-button-toolbar'>
+            {% include "filter_list.html" with id="buildteststatistics" %}
+        </div>
+        {% include "test_statistics_table.html" with prefix="build-" %}
+    </div>
+</div>
+
 <div class='panel panel-hidden' id='panel-attachments'>
     <div class='panel-heading'>
         <div class='d-flex flex-wrap'>
