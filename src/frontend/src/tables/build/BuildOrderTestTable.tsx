@@ -16,6 +16,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
+import { LocationColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -201,7 +202,10 @@ export default function BuildOrderTestTable({
             );
           }
         }
-      }
+      },
+      LocationColumn({
+        accessor: 'location_detail'
+      })
     ];
 
     return [...columns, ...testColumns];
@@ -238,6 +242,7 @@ export default function BuildOrderTestTable({
         props={{
           params: {
             part_detail: true,
+            location_detail: true,
             tests: true,
             build: buildId
           },
