@@ -398,7 +398,7 @@ export function ApiForm({
       let value: any = data[key];
       let field_type = fields[key]?.field_type;
 
-      if (field_type == 'file upload') {
+      if (field_type == 'file upload' && !!value) {
         hasFiles = true;
       }
 
@@ -413,7 +413,9 @@ export function ApiForm({
         }
       }
 
-      dataForm.append(key, value);
+      if (value != undefined) {
+        dataForm.append(key, value);
+      }
     });
 
     return api({
