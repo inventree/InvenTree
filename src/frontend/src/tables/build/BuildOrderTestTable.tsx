@@ -1,11 +1,14 @@
 import { t } from '@lingui/macro';
-import { Badge, Group, Text } from '@mantine/core';
+import { Badge, Group, Stack, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { PassFailButton } from '../../components/buttons/YesNoButton';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { useTestResultFields } from '../../forms/StockForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -53,6 +56,26 @@ export default function BuildOrderTestTable({
     table.refreshTable();
   }, [testTemplates]);
 
+  const [selectedOutput, setSelectedOutput] = useState<number>(0);
+  const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
+
+  const testResultFields: ApiFormFieldSet = useTestResultFields({
+    partId: partId,
+    itemId: selectedOutput
+  });
+
+  const createTestResult = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.stock_test_result_list),
+    title: t`Add Test Result`,
+    fields: testResultFields,
+    initialData: {
+      template: selectedTemplate,
+      result: true
+    },
+    onFormSuccess: () => table.refreshTable(),
+    successMessage: t`Test result added`
+  });
+
   // Generate a table column for each test template
   const testColumns: TableColumn[] = useMemo(() => {
     if (!testTemplates || testTemplates.length == 0) {
@@ -72,14 +95,22 @@ export default function BuildOrderTestTable({
 
           if (!test || test.result === undefined) {
             return (
-              <Badge color="lightblue" variant="filled">{t`No Result`}</Badge>
+              <Badge
+                onClick={() => {
+                  setSelectedOutput(record.pk);
+                  setSelectedTemplate(template.pk);
+                  createTestResult.open();
+                }}
+                color="lightblue"
+                variant="filled"
+              >{t`No Result`}</Badge>
             );
           }
 
           return (
-            <Group gap="xs" wrap="nowrap">
-              {test.value && <Text>{test.value}</Text>}
+            <Group gap="xs" wrap="nowrap" justify="space-between">
               <PassFailButton value={test.result} />
+              {test.value && <Text size="sm">{test.value}</Text>}
             </Group>
           );
         }
@@ -131,6 +162,7 @@ export default function BuildOrderTestTable({
 
   return (
     <>
+      {createTestResult.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.stock_item_list)}
         tableState={table}
