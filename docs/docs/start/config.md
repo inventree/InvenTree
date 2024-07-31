@@ -297,6 +297,10 @@ Alternatively this location can be specified with the `INVENTREE_BACKUP_DIR` env
 
 InvenTree provides allowance for additional sign-in options. The following options are not enabled by default, and care must be taken by the system administrator when configuring these settings.
 
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_MFA_ENABLED | mfa_enabled | Enable or disable multi-factor authentication support for the InvenTree server | True |
+
 ### Single Sign On
 
 Single Sign On (SSO) allows users to sign in to InvenTree using a third-party authentication provider. This functionality is provided by the [django-allauth](https://docs.allauth.org/en/latest/) package.
