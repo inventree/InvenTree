@@ -1,6 +1,6 @@
 # Runs on releases
 
-name: Publish release notes
+name: Publish release
 on:
   release:
     types: [published]
@@ -8,6 +8,7 @@ on:
 jobs:
   stable:
     runs-on: ubuntu-latest
+    name: Write release to stable branch
     permissions:
       contents: write
       pull-requests: write
