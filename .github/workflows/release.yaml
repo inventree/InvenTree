@@ -4,6 +4,8 @@ name: Publish release
 on:
   release:
     types: [published]
+permissions:
+  contents: read
 
 jobs:
   stable:
