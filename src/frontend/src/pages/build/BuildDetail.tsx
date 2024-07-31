@@ -12,6 +12,7 @@ import {
   IconNotes,
   IconPaperclip,
   IconQrcode,
+  IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -55,6 +56,7 @@ import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 
 /**
  * Detail page for a single Build Order
@@ -317,6 +319,20 @@ export default function BuildDetail() {
         ) : (
           <Skeleton />
         )
+      },
+      {
+        name: 'test-statistics',
+        label: t`Test Statistics`,
+        icon: <IconReportAnalytics />,
+        content: (
+          <TestStatisticsTable
+            params={{
+              pk: build.pk,
+              apiEndpoint: ApiEndpoints.build_test_statistics
+            }}
+          />
+        ),
+        hidden: !build?.part_detail?.trackable
       },
       {
         name: 'attachments',
