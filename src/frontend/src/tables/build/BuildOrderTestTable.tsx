@@ -51,7 +51,25 @@ export default function BuildOrderTestTable({
     table.refreshTable();
   }, [testTemplates]);
 
+  // Generate a table column for each test template
+  const testColumns: TableColumn[] = useMemo(() => {
+    if (!testTemplates || testTemplates.length == 0) {
+      return [];
+    }
+
+    return testTemplates.map((template: any) => {
+      return {
+        accessor: `test_${template.pk}`,
+        title: template.test_name,
+        render: (record: any) => {
+          return record.test_name;
+        }
+      };
+    });
+  }, [testTemplates]);
+
   const tableColumns: TableColumn[] = useMemo(() => {
+    // Fixed columns
     let columns: TableColumn[] = [
       {
         accessor: 'stock',
@@ -60,8 +78,8 @@ export default function BuildOrderTestTable({
       }
     ];
 
-    return columns;
-  }, [testTemplates]);
+    return [...columns, ...testColumns];
+  }, [testColumns]);
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
