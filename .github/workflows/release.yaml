@@ -31,9 +31,11 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    name: Build frontend
+    name: Build and attest frontend
     permissions:
-      contents: read
+      id-token: write
+      contents: write
+      attestations: write
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Environment Setup
@@ -44,6 +46,15 @@ jobs:
         run: cd src/frontend && yarn install
       - name: Build frontend
         run: cd src/frontend && npm run compile && npm run build
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-path: '${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip'
+      - name: Create SBOM for frontend
+        uses: anchore/sbom-action@v0
+        with:
+          artifact-name: frontend.spdx
+          path: src/frontend
       - name: Write version file - SHA
         run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
       - name: Write version file - TAG
