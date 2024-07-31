@@ -95,7 +95,11 @@ export default function BuildOrderTestTable({
         render: (record: any) => {
           let tests = record.tests || [];
 
-          let test = tests.find((test: any) => test.template == template.pk);
+          // Find the most recent test result (highest primary key)
+          let test = tests
+            .filter((test: any) => test.template == template.pk)
+            .sort((a: any, b: any) => b.pk - a.pk)
+            .shift();
 
           // No test result recorded
           if (!test || test.result === undefined) {
@@ -174,7 +178,27 @@ export default function BuildOrderTestTable({
           if (record.serial) {
             return `# ${record.serial}`;
           } else {
-            return record.quantity;
+            let extra: ReactNode[] = [];
+
+            if (record.batch) {
+              extra.push(
+                <Text key="batch" size="sm">
+                  {t`Batch Code`}: {record.batch}
+                </Text>
+              );
+            }
+
+            return (
+              <TableHoverCard
+                value={
+                  <Text>
+                    {t`Quantity`}: {record.quantity}
+                  </Text>
+                }
+                title={t`Build Output`}
+                extra={extra}
+              />
+            );
           }
         }
       }
