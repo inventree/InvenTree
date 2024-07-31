@@ -29,11 +29,11 @@ jobs:
           branch: stable
           force: true
 
-  publish-build:
+  build:
     runs-on: ubuntu-latest
+    name: Build frontend
     permissions:
-      contents: write
-      pull-requests: write
+      contents: read
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # pin@v4.1.7
       - name: Environment Setup
@@ -52,10 +52,28 @@ jobs:
         run: |
           cd src/backend/InvenTree/web/static/web
           zip -r ../frontend-build.zip * .vite
-      - uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
+      - name: Upload frontend
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4.3.4
+        with:
+          name: frontend-build
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: ["build"]
+    permissions:
+      contents: write
+      pull-requests: write
+    name: Publish frontend
+    steps:
+      - name: Download frontend
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: frontend-build
+      - name: Upload to release
+        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: src/backend/InvenTree/web/static/frontend-build.zip
+          file: frontend-build.zip
           asset_name: frontend-build.zip
           tag: ${{ github.ref }}
           overwrite: true
