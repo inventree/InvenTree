@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
-import { Badge, Group, Stack, Text } from '@mantine/core';
+import { ActionIcon, Badge, Group, Text, Tooltip } from '@mantine/core';
+import { IconCirclePlus } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -37,7 +38,7 @@ export default function BuildOrderTestTable({
         return [];
       }
 
-      return await api
+      return api
         .get(apiUrl(ApiEndpoints.part_test_template_list), {
           params: {
             part: partId,
@@ -95,15 +96,23 @@ export default function BuildOrderTestTable({
 
           if (!test || test.result === undefined) {
             return (
-              <Badge
-                onClick={() => {
-                  setSelectedOutput(record.pk);
-                  setSelectedTemplate(template.pk);
-                  createTestResult.open();
-                }}
-                color="lightblue"
-                variant="filled"
-              >{t`No Result`}</Badge>
+              <Group gap="xs" wrap="nowrap" justify="space-between">
+                <Badge color="lightblue" variant="filled">{t`No Result`}</Badge>
+                <Tooltip label={t`Add Test Result`}>
+                  <ActionIcon
+                    size="sm"
+                    color="green"
+                    variant="transparent"
+                    onClick={() => {
+                      setSelectedOutput(record.pk);
+                      setSelectedTemplate(template.pk);
+                      createTestResult.open();
+                    }}
+                  >
+                    <IconCirclePlus />
+                  </ActionIcon>
+                </Tooltip>
+              </Group>
             );
           }
 
