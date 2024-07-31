@@ -286,17 +286,6 @@ export default function BuildDetail() {
         )
       },
       {
-        name: 'test-results',
-        label: t`Test Results`,
-        icon: <IconChecklist />,
-        hidden: !build.part_detail?.trackable,
-        content: build.pk ? (
-          <BuildOrderTestTable buildId={build.pk} partId={build.part} />
-        ) : (
-          <Skeleton />
-        )
-      },
-      {
         name: 'consumed-stock',
         label: t`Consumed Stock`,
         icon: <IconListCheck />,
@@ -316,6 +305,17 @@ export default function BuildDetail() {
         icon: <IconSitemap />,
         content: build.pk ? (
           <BuildOrderTable parentBuildId={build.pk} />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
+        name: 'test-results',
+        label: t`Test Results`,
+        icon: <IconChecklist />,
+        hidden: !build.part_detail?.trackable,
+        content: build.pk ? (
+          <BuildOrderTestTable buildId={build.pk} partId={build.part} />
         ) : (
           <Skeleton />
         )
