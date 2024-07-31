@@ -1,8 +1,10 @@
 import { t } from '@lingui/macro';
+import { Badge, Group, Text } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo } from 'react';
 
 import { api } from '../../App';
+import { PassFailButton } from '../../components/buttons/YesNoButton';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -61,8 +63,25 @@ export default function BuildOrderTestTable({
       return {
         accessor: `test_${template.pk}`,
         title: template.test_name,
+        sortable: false,
+        switchable: true,
         render: (record: any) => {
-          return record.test_name;
+          let tests = record.tests || [];
+
+          let test = tests.find((test: any) => test.template == template.pk);
+
+          if (!test || test.result === undefined) {
+            return (
+              <Badge color="lightblue" variant="filled">{t`No Result`}</Badge>
+            );
+          }
+
+          return (
+            <Group gap="xs" wrap="nowrap">
+              {test.value && <Text>{test.value}</Text>}
+              <PassFailButton value={test.result} />
+            </Group>
+          );
         }
       };
     });
@@ -73,8 +92,16 @@ export default function BuildOrderTestTable({
     let columns: TableColumn[] = [
       {
         accessor: 'stock',
-        title: t`Output`,
-        render: (record: any) => record.serial || record.quantity // TODO: fix this
+        title: t`Build Output`,
+        sortable: true,
+        switchable: false,
+        render: (record: any) => {
+          if (record.serial) {
+            return `# ${record.serial}`;
+          } else {
+            return record.quantity;
+          }
+        }
       }
     ];
 
@@ -111,7 +138,7 @@ export default function BuildOrderTestTable({
         props={{
           params: {
             part_detail: true,
-            test_results: true,
+            tests: true,
             build: buildId
           },
           rowActions: rowActions,
