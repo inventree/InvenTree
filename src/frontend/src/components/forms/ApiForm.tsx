@@ -309,17 +309,17 @@ export function ApiForm({
 
     for (const k of Object.keys(_fields)) {
       // Ensure default values override initial field spec
-      if (defaultValues[k]) {
+      if (k in defaultValues) {
         _fields[k].value = defaultValues[k];
       }
 
       // Ensure initial data overrides default values
-      if (_initialData && _initialData[k]) {
+      if (_initialData && k in _initialData) {
         _fields[k].value = _initialData[k];
       }
 
       // Ensure fetched data overrides also
-      if (_fetchedData && _fetchedData[k]) {
+      if (_fetchedData && k in _fetchedData) {
         _fields[k].value = _fetchedData[k];
       }
     }

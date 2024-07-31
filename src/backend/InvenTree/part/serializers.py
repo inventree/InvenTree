@@ -1490,6 +1490,8 @@ class BomItemSerializer(
 
     import_exclude_fields = ['validated', 'substitutes']
 
+    export_only_fields = ['sub_part_name', 'sub_part_ipn', 'sub_part_description']
+
     class Meta:
         """Metaclass defining serializer fields."""
 
@@ -1497,6 +1499,10 @@ class BomItemSerializer(
         fields = [
             'part',
             'sub_part',
+            # Extra fields only for export
+            'sub_part_name',
+            'sub_part_ipn',
+            'sub_part_description',
             'reference',
             'quantity',
             'overage',
@@ -1563,15 +1569,30 @@ class BomItemSerializer(
         return quantity
 
     part = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.filter(assembly=True)
+        queryset=Part.objects.filter(assembly=True),
+        label=_('Assembly'),
+        help_text=_('Select the parent assembly'),
     )
 
     substitutes = BomItemSubstituteSerializer(many=True, read_only=True)
 
     part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
 
+    # Extra fields only for export
+    sub_part_name = serializers.CharField(
+        source='sub_part.name', read_only=True, label=_('Component Name')
+    )
+    sub_part_ipn = serializers.CharField(
+        source='sub_part.IPN', read_only=True, label=_('Component IPN')
+    )
+    sub_part_description = serializers.CharField(
+        source='sub_part.description', read_only=True, label=_('Component Description')
+    )
+
     sub_part = serializers.PrimaryKeyRelatedField(
-        queryset=Part.objects.filter(component=True)
+        queryset=Part.objects.filter(component=True),
+        label=_('Component'),
+        help_text=_('Select the component part'),
     )
 
     sub_part_detail = PartBriefSerializer(source='sub_part', many=False, read_only=True)
