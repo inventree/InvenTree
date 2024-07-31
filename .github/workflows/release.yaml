@@ -49,7 +49,7 @@ jobs:
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@v1
         with:
-          subject-path: '${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip'
+          subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
       - name: Create SBOM for frontend
         uses: anchore/sbom-action@v0
         with:
