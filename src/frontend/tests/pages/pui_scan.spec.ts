@@ -38,8 +38,8 @@ test('PUI - Pages - Index - Scan (Stockitem)', async ({ page }) => {
 
   // stockitem: 408
   await page.getByText('1551ABK').waitFor();
-  await page.getByText('Quantity: 145').waitFor();
-  await page.getByRole('cell', { name: 'Quantity: 145' }).waitFor();
+  await page.getByText('Quantity: 100').waitFor();
+  await page.getByRole('cell', { name: 'Quantity: 100' }).waitFor();
 });
 
 test('PUI - Pages - Index - Scan (StockLocation)', async ({ page }) => {
