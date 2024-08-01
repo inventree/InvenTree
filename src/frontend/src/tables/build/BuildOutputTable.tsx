@@ -47,9 +47,9 @@ export default function BuildOutputTable({ build }: { build: any }) {
 
   // Fetch the test templates associated with the partId
   const { data: testTemplates } = useQuery({
-    queryKey: ['buildoutputtests', build.part],
+    queryKey: ['buildoutputtests', partId],
     queryFn: async () => {
-      if (!partId) {
+      if (!partId || partId < 0) {
         return [];
       }
 
@@ -322,7 +322,7 @@ export default function BuildOutputTable({ build }: { build: any }) {
         }
       }
     ];
-  }, [buildId, partId]);
+  }, [buildId, partId, testTemplates]);
 
   return (
     <>
