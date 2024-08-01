@@ -269,7 +269,7 @@ RUN apk add --no-cache git
 
 </details>
 
-And if addittional, development packages are needed e.g. just for building a wheel for a pip package, a multi stage build can be used with the following `Dockerfile`:
+And if additional, development packages are needed e.g. just for building a wheel for a pip package, a multi stage build can be used with the following `Dockerfile`:
 
 <details><summary>Dockerfile</summary>
 
@@ -277,7 +277,7 @@ And if addittional, development packages are needed e.g. just for building a whe
 ARG INVENTREE_TAG
 
 # prebuild stage - needs a lot of build dependencies
-# make sure, the alpine and python version matches the version used in the inventree base image 
+# make sure, the alpine and python version matches the version used in the inventree base image
 FROM python:3.11-alpine3.18 as prebuild
 
 # Install whatever development dependency is needed (e.g. cups-dev, gcc, the musl-dev build tools and the pip pycups package)

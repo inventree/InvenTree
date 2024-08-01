@@ -462,6 +462,20 @@ function getStockTestTableFilters() {
     };
 }
 
+// Return a dictionary of filters for the "test statistics" table
+function getTestStatisticsTableFilters() {
+
+    return {
+        finished_datetime_after: {
+            type: 'date',
+            title: '{% trans "Interval start" %}',
+        },
+        finished_datetime_before: {
+            type: 'date',
+            title: '{% trans "Interval end" %}',
+        }
+    };
+}
 
 // Return a dictionary of filters for the "stocktracking" table
 function getStockTrackingTableFilters() {
@@ -863,6 +877,8 @@ function getAvailableTableFilters(tableKey) {
         return getBuildItemTableFilters();
     case 'buildlines':
         return getBuildLineTableFilters();
+    case 'buildteststatistics':
+        return getTestStatisticsTableFilters();
     case 'bom':
         return getBOMTableFilters();
     case 'category':
@@ -885,6 +901,8 @@ function getAvailableTableFilters(tableKey) {
         return getPartTableFilters();
     case 'parttests':
         return getPartTestTemplateFilters();
+    case 'partteststatistics':
+        return getTestStatisticsTableFilters();
     case 'plugins':
         return getPluginTableFilters();
     case 'purchaseorder':

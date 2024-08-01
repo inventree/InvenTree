@@ -188,7 +188,10 @@ test('PUI - Company', async ({ page }) => {
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
   await page.getByRole('cell', { name: 'Molex connectors' }).first().waitFor();
   await page.getByRole('tab', { name: 'Stock Items' }).click();
-  await page.getByRole('cell', { name: 'Blue plastic enclosure' }).waitFor();
+  await page
+    .getByRole('cell', { name: 'Blue plastic enclosure' })
+    .first()
+    .waitFor();
   await page.getByRole('tab', { name: 'Contacts' }).click();
   await page.getByRole('cell', { name: 'jimmy.mcleod@digikey.com' }).waitFor();
   await page.getByRole('tab', { name: 'Addresses' }).click();
