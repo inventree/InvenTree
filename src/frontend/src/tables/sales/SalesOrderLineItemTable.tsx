@@ -6,12 +6,18 @@ import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DateColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function SalesOrderLineItemTable({
@@ -144,7 +150,17 @@ export default function SalesOrderLineItemTable({
 
   const rowActions = useCallback(
     (record: any) => {
-      return [];
+      return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.sales_order)
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.sales_order)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.sales_order)
+        })
+      ];
     },
     [user]
   );
