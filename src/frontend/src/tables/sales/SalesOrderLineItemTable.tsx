@@ -1,5 +1,6 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
+import { IconSquareArrowRight } from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -209,7 +210,15 @@ export default function SalesOrderLineItemTable({
 
   const rowActions = useCallback(
     (record: any) => {
+      const allocated = (record?.allocated ?? 0) > (record?.quantity ?? 0);
+
       return [
+        {
+          hidden: allocated || !user.hasChangeRole(UserRoles.sales_order),
+          title: t`Allocate stock`,
+          icon: <IconSquareArrowRight />,
+          color: 'green'
+        },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.sales_order),
           onClick: () => {
