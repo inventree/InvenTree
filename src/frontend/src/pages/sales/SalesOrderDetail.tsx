@@ -250,7 +250,12 @@ export default function SalesOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <SalesOrderLineItemTable orderId={order.pk} />
+        content: (
+          <SalesOrderLineItemTable
+            orderId={order.pk}
+            customerId={order.customer}
+          />
+        )
       },
       {
         name: 'pending-shipments',

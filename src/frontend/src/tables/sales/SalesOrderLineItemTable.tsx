@@ -1,17 +1,24 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { ReactNode, useCallback, useMemo } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useSalesOrderLineItemFields } from '../../forms/SalesOrderForms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { DateColumn, PartColumn } from '../ColumnRenderers';
+import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
   RowDeleteAction,
@@ -21,9 +28,11 @@ import {
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function SalesOrderLineItemTable({
-  orderId
+  orderId,
+  customerId
 }: {
   orderId: number;
+  customerId: number;
 }) {
   const user = useUserState();
   const table = useTable('sales-order-line-item');
@@ -138,27 +147,89 @@ export default function SalesOrderLineItemTable({
       {
         accessor: 'notes'
       },
-      {
+      LinkColumn({
         accessor: 'link'
-      }
+      })
     ];
   }, []);
 
+  const [selectedLine, setSelectedLine] = useState<number>(0);
+
+  const [initialData, setInitialData] = useState({});
+
+  const createLineFields = useSalesOrderLineItemFields({
+    orderId: orderId,
+    customerId: customerId,
+    create: true
+  });
+
+  const newLine = useCreateApiFormModal({
+    url: ApiEndpoints.sales_order_line_list,
+    title: t`Add Line Item`,
+    fields: createLineFields,
+    initialData: initialData,
+    table: table
+  });
+
+  const editLineFields = useSalesOrderLineItemFields({
+    orderId: orderId,
+    customerId: customerId,
+    create: false
+  });
+
+  const editLine = useEditApiFormModal({
+    url: ApiEndpoints.sales_order_line_list,
+    pk: selectedLine,
+    title: t`Edit Line Item`,
+    fields: editLineFields,
+    table: table
+  });
+
+  const deleteLine = useDeleteApiFormModal({
+    url: ApiEndpoints.sales_order_line_list,
+    pk: selectedLine,
+    title: t`Delete Line Item`,
+    table: table
+  });
+
   const tableActions = useMemo(() => {
-    return [];
+    return [
+      <AddItemButton
+        tooltip={t`Add line item`}
+        onClick={() => {
+          setInitialData({
+            order: orderId
+          });
+          newLine.open();
+        }}
+        hidden={!user.hasAddRole(UserRoles.sales_order)}
+      />
+    ];
   }, [user]);
 
   const rowActions = useCallback(
     (record: any) => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.sales_order)
+          hidden: !user.hasChangeRole(UserRoles.sales_order),
+          onClick: () => {
+            setSelectedLine(record.pk);
+            editLine.open();
+          }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(UserRoles.sales_order)
+          hidden: !user.hasAddRole(UserRoles.sales_order),
+          onClick: () => {
+            setInitialData(record);
+            newLine.open();
+          }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.sales_order)
+          hidden: !user.hasDeleteRole(UserRoles.sales_order),
+          onClick: () => {
+            setSelectedLine(record.pk);
+            deleteLine.open();
+          }
         })
       ];
     },
@@ -167,6 +238,9 @@ export default function SalesOrderLineItemTable({
 
   return (
     <>
+      {editLine.modal}
+      {deleteLine.modal}
+      {newLine.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
         tableState={table}
