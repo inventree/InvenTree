@@ -51,7 +51,7 @@ jobs:
       - name: Create SBOM for frontend
         uses: anchore/sbom-action@v0
         with:
-          artifact-name: frontend.spdx
+          artifact-name: frontend-build.spdx
           path: src/frontend
       - name: Write version file - SHA
         run: cd src/backend/InvenTree/web/static/web/.vite && echo "$GITHUB_SHA" > sha.txt
@@ -62,14 +62,22 @@ jobs:
           cd src/backend/InvenTree/web/static/web
           zip -r ../frontend-build.zip * .vite
       - name: Attest Build Provenance
+        id: attest
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
+      - name: Upload Provenance
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4.3.4
+        with:
+          name: frontend-build.intoto.jsonl
+          path: ${{ steps.attest.outputs.bundle-path}}
+          retention-days: 5
       - name: Upload frontend
         uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4.3.4
         with:
           name: frontend-build
           path: src/backend/InvenTree/web/static/frontend-build.zip
+          retention-days: 5
 
   publish:
     runs-on: ubuntu-latest
@@ -79,15 +87,15 @@ jobs:
       pull-requests: write
     name: Publish frontend
     steps:
-      - name: Download frontend
+      - name: Download Artifacts
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
         with:
-          name: frontend-build
+          path: artifacts
       - name: Upload to release
         uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: frontend-build.zip
-          asset_name: frontend-build.zip
+          file: artifacts/*
+          file_glob: true
           tag: ${{ github.ref }}
           overwrite: true
