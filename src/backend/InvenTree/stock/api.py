@@ -13,7 +13,7 @@ from django.utils.translation import gettext_lazy as _
 
 from django_filters import rest_framework as rest_filters
 from drf_spectacular.types import OpenApiTypes
-from drf_spectacular.utils import extend_schema_field
+from drf_spectacular.utils import extend_schema, extend_schema_field
 from rest_framework import permissions, status
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -1288,6 +1288,54 @@ class StockItemTestResultFilter(rest_filters.FilterSet):
         return queryset.filter(template__key=key)
 
 
+class TestStatisticsFilter(rest_filters.FilterSet):
+    """API filter for the filtering the test results belonging to a specific build."""
+
+    class Meta:
+        """Metaclass options."""
+
+        model = StockItemTestResult
+        fields = []
+
+    # Created date filters
+    finished_before = InvenTreeDateFilter(
+        label='Finished before', field_name='finished_datetime', lookup_expr='lte'
+    )
+    finished_after = InvenTreeDateFilter(
+        label='Finished after', field_name='finished_datetime', lookup_expr='gte'
+    )
+
+
+class TestStatistics(GenericAPIView):
+    """API endpoint for accessing a test statistics broken down by test templates."""
+
+    queryset = StockItemTestResult.objects.all()
+    serializer_class = StockSerializers.TestStatisticsSerializer
+    pagination_class = None
+    filterset_class = TestStatisticsFilter
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    @extend_schema(
+        responses={200: StockSerializers.TestStatisticsSerializer(many=False)}
+    )
+    def get(self, request, pk, *args, **kwargs):
+        """Return test execution count matrix broken down by test result."""
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        if request.resolver_match.url_name == 'api-test-statistics-by-part':
+            serializer.context['type'] = 'by-part'
+        elif request.resolver_match.url_name == 'api-test-statistics-by-build':
+            serializer.context['type'] = 'by-build'
+        serializer.context['finished_datetime_after'] = self.request.query_params.get(
+            'finished_datetime_after'
+        )
+        serializer.context['finished_datetime_before'] = self.request.query_params.get(
+            'finished_datetime_before'
+        )
+        serializer.context['pk'] = pk
+        return Response([serializer.data])
+
+
 class StockItemTestResultList(StockItemTestResultMixin, ListCreateDestroyAPIView):
     """API endpoint for listing (and creating) a StockItemTestResult object."""
 
@@ -1662,4 +1710,28 @@ stock_api_urls = [
     ),
     # Anything else
     path('', StockList.as_view(), name='api-stock-list'),
+]
+
+test_statistics_api_urls = [
+    # Test statistics endpoints
+    path(
+        'by-part/',
+        include([
+            path(
+                '<int:pk>/',
+                TestStatistics.as_view(),
+                name='api-test-statistics-by-part',
+            )
+        ]),
+    ),
+    path(
+        'by-build/',
+        include([
+            path(
+                '<int:pk>/',
+                TestStatistics.as_view(),
+                name='api-test-statistics-by-build',
+            )
+        ]),
+    ),
 ]

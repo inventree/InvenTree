@@ -24,6 +24,16 @@ test('PUI - Pages - Build Order', async ({ page }) => {
     .getByRole('cell', { name: 'R38, R39, R40, R41, R42, R43' })
     .waitFor();
 
+  // Check "test results"
+  await page.getByRole('tab', { name: 'Test Results' }).click();
+  await page.getByText('Quantity: 25').waitFor();
+  await page.getByText('Continuity Checks').waitFor();
+  await page
+    .getByRole('row', { name: 'Quantity: 16 No location set' })
+    .getByRole('button')
+    .hover();
+  await page.getByText('Add Test Result').waitFor();
+
   // Click through to the "parent" build
   await page.getByRole('tab', { name: 'Build Details' }).click();
   await page.getByRole('link', { name: 'BO0010' }).click();
