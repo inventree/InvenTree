@@ -66,36 +66,20 @@ jobs:
         uses: actions/attest-build-provenance@v1
         with:
           subject-path: "${{ github.workspace }}/src/backend/InvenTree/web/static/frontend-build.zip"
-      - name: Upload Provenance
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4.3.4
-        with:
-          name: frontend-build.intoto.jsonl
-          path: ${{ steps.attest.outputs.bundle-path}}
-          retention-days: 5
-      - name: Upload frontend
-        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # pin@v4.3.4
-        with:
-          name: frontend-build
-          path: src/backend/InvenTree/web/static/frontend-build.zip
-          retention-days: 5
 
-  publish:
-    runs-on: ubuntu-latest
-    needs: ["build"]
-    permissions:
-      contents: write
-      pull-requests: write
-    name: Publish frontend
-    steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
-        with:
-          path: artifacts
-      - name: Upload to release
+      - name: Upload frontend
         uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: artifacts/*
-          file_glob: true
+          file: src/backend/InvenTree/web/static/frontend-build.zip
+          asset_name: frontend-build.zip
+          tag: ${{ github.ref }}
+          overwrite: true
+      - name: Upload Attestation
+        uses: svenstaro/upload-release-action@04733e069f2d7f7f0b4aebc4fbdbce8613b03ccd # pin@2.9.0
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          asset_name: frontend-build.intoto.jsonl
+          file: ${{ steps.attest.outputs.bundle-path}}
           tag: ${{ github.ref }}
           overwrite: true
