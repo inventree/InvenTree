@@ -359,6 +359,8 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
         'unit_quantity',
         'available_stock',
         'trackable',
+        'allow_variants',
+        'inherited',
     ]
 
     ordering_field_aliases = {
@@ -368,6 +370,8 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
         'consumable': 'bom_item__consumable',
         'optional': 'bom_item__optional',
         'trackable': 'bom_item__sub_part__trackable',
+        'allow_variants': 'bom_item__allow_variants',
+        'inherited': 'bom_item__inherited',
     }
 
     search_fields = [

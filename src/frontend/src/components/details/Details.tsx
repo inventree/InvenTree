@@ -122,11 +122,11 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
             case 200:
               return response.data;
             default:
-              return undefined;
+              return {};
           }
         })
         .catch(() => {
-          return undefined;
+          return {};
         });
     }
   });
