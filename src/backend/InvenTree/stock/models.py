@@ -2474,14 +2474,12 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
                 StockModels.StockItemTestResult.objects.filter(result=1)
                 .filter(template=test_template.pk)
                 .filter(stock_item__build_id=build.pk)
-                .filter(stock_item__serial__isnull=False)
                 .count()
             )
             failed = (
                 StockModels.StockItemTestResult.objects.filter(result=0)
                 .filter(template=test_template.pk)
                 .filter(stock_item__build_id=build.pk)
-                .filter(stock_item__serial__isnull=False)
                 .count()
             )
             ret[test_template.test_name] = {
@@ -2509,14 +2507,12 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
                 StockModels.StockItemTestResult.objects.filter(result=1)
                 .filter(template=test_template.pk)
                 .filter(stock_item__part_id=part.pk)
-                .filter(stock_item__serial__isnull=False)
                 .count()
             )
             failed = (
                 StockModels.StockItemTestResult.objects.filter(result=0)
                 .filter(template=test_template.pk)
                 .filter(stock_item__part_id=part.pk)
-                .filter(stock_item__serial__isnull=False)
                 .count()
             )
             ret[test_template.test_name] = {
