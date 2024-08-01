@@ -103,25 +103,44 @@ For further information, refer to the [stock allocation documentation](./allocat
 
 ## Build Order Display
 
-The detail view for a single build order provides multiple display tabs, as follows:
+The detail view for a single build order provides multiple display panels, as follows:
 
 ### Build Details
 
-The *Build Details* tab provides an overview of the Build Order:
+The *Build Details* panel provides an overview of the Build Order:
 
-{% with id="build_details", url="build/build_details.png", description="Details tab" %}
+{% with id="build_details", url="build/build_panel_details.png", description="Build details panel" %}
 {% include "img.html" %}
 {% endwith %}
 
 ### Line Items
 
-The *Line Items* tab provides an interface to allocate required stock (as specified by the BOM) to the build:
+The *Line Items* panel displays all the line items (as defined by the [bill of materials](./bom.md)) required to complete the build order.
 
-{% with id="build_allocate", url="build/build_allocate.png", description="Allocation tab" %}
+{% with id="build_allocate", url="build/build_panel_line_items.png", description="Build line items panel" %}
 {% include "img.html" %}
 {% endwith %}
 
-The allocation table (as shown above) shows the stock allocation progress for this build. In the example above, there are two BOM lines, which have been partially allocated.
+The allocation table (as shown above) provides an interface to allocate required stock, and also shows the stock allocation progress for each line item in the build.
+
+### Incomplete Outputs
+
+The *Incomplete Outputs* panel shows the list of in-progress [build outputs](./output.md) (created stock items) associated with this build.
+
+{% with id="build_outputs", url="build/build_outputs.png", description="Outputs tab" %}
+{% include "img.html" %}
+{% endwith %}
+
+!!! info "Example: Build Outputs"
+	In the example image above, a single output (serial number 2) has been completed, while serial numbers 1 and 4 are still in progress.
+
+- Build outputs can be created from this screen, by selecting the *Create New Output* button
+- Outputs which are "in progress" can be completed or cancelled
+- Completed outputs (which are simply *stock items*) can be viewed in the stock table at the bottom of the screen
+
+### Completed Outputs
+
+This panel displays all the completed build outputs (stock items) which have been created by this build order:
 
 ### Allocated Stock
 
@@ -138,28 +157,29 @@ The *Consumed Stock* tab displays all stock items which have been *consumed* by 
 - [Tracked stock items](./allocate.md#tracked-stock) are consumed by specific build outputs
 - [Untracked stock items](./allocate.md#untracked-stock) are consumed by the build order
 
-### Build Outputs
-
-The *Build Outputs* tab shows the [build outputs](./output.md) (created stock items) associated with this build.
-
-As shown below, there are separate panels for *incomplete* and *completed* build outputs.
-
-{% with id="build_outputs", url="build/build_outputs.png", description="Outputs tab" %}
-{% include "img.html" %}
-{% endwith %}
-
-!!! info "Example: Build Outputs"
-	In the example image above, a single output (serial number 2) has been completed, while serial numbers 1 and 4 are still in progress.
-
-- Build outputs can be created from this screen, by selecting the *Create New Output* button
-- Outputs which are "in progress" can be completed or cancelled
-- Completed outputs (which are simply *stock items*) can be viewed in the stock table at the bottom of the screen
-
 ### Child Builds
 
 If there exist any build orders which are *children* of the selected build order, they are displayed in the *Child Builds* tab:
 
-{% with id="build_childs", url="build/build_childs.png", description="Child builds tab" %}
+{% with id="build_childs", url="build/build_childs.png", description="Child builds panel" %}
+{% include "img.html" %}
+{% endwith %}
+
+### Test Results
+
+For *trackable* parts, test results can be recorded against each build output. These results are displayed in the *Test Results* panel:
+
+{% with id="build_test_results", url="build/build_panel_test_results.png", description="Test Results panel" %}
+{% include "img.html" %}
+{% endwith %}
+
+This table provides a summary of the test results for each build output, and allows test results to be quickly added for each build output.
+
+### Test Statistics
+
+For *trackable* parts, this panel displays a summary of the test results for all build outputs:
+
+{% with id="build_test_stats", url="build/build_panel_test_statistics.png", description="Test Statistics panel" %}
 {% include "img.html" %}
 {% endwith %}
 
