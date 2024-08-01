@@ -8,7 +8,7 @@ msgstr ""
 "Language: ru\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-07-24 18:23\n"
+"PO-Revision-Date: 2024-08-01 19:28\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -744,7 +744,7 @@ msgstr ""
 #: src/components/importer/ImportDataSelector.tsx:361
 #: src/tables/build/BuildOutputTable.tsx:205
 msgid "Complete"
-msgstr ""
+msgstr "Готово"
 
 #: src/components/importer/ImportDataSelector.tsx:362
 msgid "Filter by row completion status"
@@ -752,16 +752,16 @@ msgstr ""
 
 #: src/components/importer/ImportDataSelector.tsx:379
 msgid "Import selected rows"
-msgstr ""
+msgstr "Импорт выделенных строк"
 
 #: src/components/importer/ImportDataSelector.tsx:394
 msgid "Processing Data"
-msgstr ""
+msgstr "Обработка данных"
 
 #: src/components/importer/ImporterColumnSelector.tsx:50
 #: src/components/importer/ImporterColumnSelector.tsx:176
 msgid "An error occurred"
-msgstr ""
+msgstr "Произошла ошибка"
 
 #: src/components/importer/ImporterColumnSelector.tsx:62
 msgid "Select column, or leave blank to ignore this field."
@@ -866,11 +866,11 @@ msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:124
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Действия со штрихкодом"
 
 #: src/components/items/ActionDropdown.tsx:143
 msgid "View Barcode"
-msgstr ""
+msgstr "Показать штрихкод"
 
 #: src/components/items/ActionDropdown.tsx:150
 msgid "View"
@@ -878,7 +878,7 @@ msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:151
 msgid "View barcode"
-msgstr ""
+msgstr "Показать штрихкод"
 
 #: src/components/items/ActionDropdown.tsx:167
 msgid "Link Barcode"
@@ -904,12 +904,12 @@ msgstr "Изменить"
 
 #: src/components/items/ActionDropdown.tsx:225
 msgid "Delete item"
-msgstr ""
+msgstr "Удалить элемент"
 
 #: src/components/items/ActionDropdown.tsx:262
 #: src/tables/RowActions.tsx:31
 msgid "Duplicate"
-msgstr ""
+msgstr "Дублировать"
 
 #: src/components/items/ActionDropdown.tsx:263
 msgid "Duplicate item"
@@ -983,7 +983,7 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Version Information"
-msgstr ""
+msgstr "Информация о версии"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:103
 msgid "Your InvenTree version status is"
@@ -991,40 +991,40 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:107
 msgid "Development Version"
-msgstr ""
+msgstr "Версия разработки"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:111
 msgid "Up to Date"
-msgstr ""
+msgstr "Последняя версия"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:115
 msgid "Update Available"
-msgstr ""
+msgstr "Доступно обновление"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:125
 msgid "InvenTree Version"
-msgstr ""
+msgstr "Версия InvenTree"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:131
 msgid "Commit Hash"
-msgstr ""
+msgstr "Хеш коммита"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:136
 msgid "Commit Date"
-msgstr ""
+msgstr "Дата коммита"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:141
 msgid "Commit Branch"
-msgstr ""
+msgstr "Ветка коммита"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:146
 #: src/components/modals/ServerInfoModal.tsx:133
 msgid "API Version"
-msgstr ""
+msgstr "Версия API"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:149
 msgid "Python Version"
-msgstr ""
+msgstr "Версия Python"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:152
 msgid "Django Version"
@@ -1163,15 +1163,15 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:57
 msgid "Docker Mode"
-msgstr ""
+msgstr "Режим Docker"
 
 #: src/components/modals/ServerInfoModal.tsx:60
 msgid "Server is deployed using docker"
-msgstr ""
+msgstr "Сервер развернут с помощью docker"
 
 #: src/components/modals/ServerInfoModal.tsx:66
 msgid "Plugin Support"
-msgstr ""
+msgstr "Поддержка плагина"
 
 #: src/components/modals/ServerInfoModal.tsx:71
 msgid "Plugin support enabled"
@@ -1183,45 +1183,45 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:80
 msgid "Server status"
-msgstr ""
+msgstr "Состояние сервера"
 
 #: src/components/modals/ServerInfoModal.tsx:86
 msgid "Healthy"
-msgstr ""
+msgstr "Исправен"
 
 #: src/components/modals/ServerInfoModal.tsx:88
 msgid "Issues detected"
-msgstr ""
+msgstr "Обнаруженные проблемы"
 
 #: src/components/modals/ServerInfoModal.tsx:97
 msgid "Background Worker"
-msgstr ""
+msgstr "Фоновый процесс"
 
 #: src/components/modals/ServerInfoModal.tsx:101
 msgid "Background worker not running"
-msgstr ""
+msgstr "Фоновый процесс не запущен"
 
 #: src/components/modals/ServerInfoModal.tsx:109
 msgid "Email Settings"
-msgstr ""
+msgstr "Настройки Email"
 
 #: src/components/modals/ServerInfoModal.tsx:113
 msgid "Email settings not configured"
-msgstr ""
+msgstr "Параметры электронной почты не настроены"
 
 #: src/components/modals/ServerInfoModal.tsx:121
 #: src/tables/plugin/PluginListTable.tsx:144
 #: src/tables/plugin/PluginListTable.tsx:294
 msgid "Version"
-msgstr ""
+msgstr "Версия"
 
 #: src/components/modals/ServerInfoModal.tsx:127
 msgid "Server Version"
-msgstr ""
+msgstr "Версия сервера"
 
 #: src/components/nav/Layout.tsx:73
 msgid "Nothing found..."
-msgstr ""
+msgstr "Ничего не найдено..."
 
 #: src/components/nav/MainMenu.tsx:40
 #: src/pages/Index/Profile/Profile.tsx:15
@@ -1301,7 +1301,7 @@ msgstr "Документация"
 
 #: src/components/nav/NavigationDrawer.tsx:78
 msgid "About"
-msgstr ""
+msgstr "О проекте"
 
 #: src/components/nav/NotificationDrawer.tsx:79
 #: src/pages/Index/Settings/SystemSettings.tsx:109
@@ -1319,7 +1319,7 @@ msgstr "У вас нет непрочитанных уведомлений."
 #: src/components/nav/NotificationDrawer.tsx:118
 #: src/tables/notifications/NotificationsTable.tsx:36
 msgid "Notification"
-msgstr ""
+msgstr "Уведомление"
 
 #: src/components/nav/NotificationDrawer.tsx:141
 #: src/pages/Notifications.tsx:73
@@ -7515,3 +7515,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
