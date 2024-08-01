@@ -43,7 +43,7 @@ from InvenTree.mixins import (
 from InvenTree.permissions import RolePermission
 from InvenTree.serializers import EmptySerializer
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
-from part.admin import PartCategoryResource, PartResource
+from part.models import PartCategory
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -245,7 +245,7 @@ class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
     # Use hierarchical ordering by default
     ordering = ['tree_id', 'lft', 'name']
 
-    search_fields = ['name', 'description']
+    search_fields = ['name', 'description', 'pathstring']
 
 
 class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
