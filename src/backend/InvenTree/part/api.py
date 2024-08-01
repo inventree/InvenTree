@@ -43,7 +43,6 @@ from InvenTree.mixins import (
 from InvenTree.permissions import RolePermission
 from InvenTree.serializers import EmptySerializer
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
-from part.models import PartCategory
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
