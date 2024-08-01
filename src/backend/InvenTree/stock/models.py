@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import FieldError, ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
-from django.db.models import Q, Sum
+from django.db.models import Count, Q, Sum
 from django.db.models.functions import Coalesce
 from django.db.models.signals import post_delete, post_save, pre_delete
 from django.db.utils import IntegrityError, OperationalError
@@ -2461,34 +2461,6 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         """Return key for test."""
         return InvenTree.helpers.generateTestKey(self.test_name)
 
-    def calculate_test_statistics_for_test_template(
-        self, query_base, test_template, ret, start, end
-    ):
-        """Helper function to calculate the passed/failed/total tests count per test template type."""
-        query = query_base & Q(template=test_template.pk)
-        if start is not None and end is not None:
-            query = query & Q(started_datetime__range=(start, end))
-        elif start is not None and end is None:
-            query = query & Q(started_datetime__gt=start)
-        elif start is None and end is not None:
-            query = query & Q(started_datetime__lt=end)
-
-        passed = StockModels.StockItemTestResult.objects.filter(
-            query & Q(result=True)
-        ).count()
-        failed = StockModels.StockItemTestResult.objects.filter(
-            query & ~Q(result=True)
-        ).count()
-        if test_template.test_name not in ret:
-            ret[test_template.test_name] = {'passed': 0, 'failed': 0, 'total': 0}
-        ret[test_template.test_name]['passed'] += passed
-        ret[test_template.test_name]['failed'] += failed
-        ret[test_template.test_name]['total'] += passed + failed
-        ret['total']['passed'] += passed
-        ret['total']['failed'] += failed
-        ret['total']['total'] += passed + failed
-        return ret
-
     def build_test_statistics(self, build_order_pk, start, end):
         """Generate a statistics matrix for each test template based on the test executions result counts."""
         build = BuildModels.Build.objects.get(pk=build_order_pk)
@@ -2497,12 +2469,30 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
 
         test_templates = build.part.getTestTemplates()
         ret = {'total': {'passed': 0, 'failed': 0, 'total': 0}}
-        for build_item in build.get_build_outputs():
-            for test_template in test_templates:
-                query_base = Q(stock_item=build_item)
-                ret = self.calculate_test_statistics_for_test_template(
-                    query_base, test_template, ret, start, end
-                )
+        for test_template in test_templates:
+            passed = (
+                StockModels.StockItemTestResult.objects.filter(result=1)
+                .filter(template=test_template.pk)
+                .filter(stock_item__build_id=build.pk)
+                .filter(stock_item__serial__isnull=False)
+                .count()
+            )
+            failed = (
+                StockModels.StockItemTestResult.objects.filter(result=0)
+                .filter(template=test_template.pk)
+                .filter(stock_item__build_id=build.pk)
+                .filter(stock_item__serial__isnull=False)
+                .count()
+            )
+            ret[test_template.test_name] = {
+                'passed': passed,
+                'failed': failed,
+                'total': passed + failed,
+            }
+            ret['total']['passed'] += passed
+            ret['total']['failed'] += failed
+            ret['total']['total'] += passed + failed
+
         return ret
 
     def part_test_statistics(self, part_pk, start, end):
@@ -2514,12 +2504,29 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
 
         test_templates = part.getTestTemplates()
         ret = {'total': {'passed': 0, 'failed': 0, 'total': 0}}
-        for bo in part.stock_entries():
-            for test_template in test_templates:
-                query_base = Q(stock_item=bo)
-                ret = self.calculate_test_statistics_for_test_template(
-                    query_base, test_template, ret, start, end
-                )
+        for test_template in test_templates:
+            passed = (
+                StockModels.StockItemTestResult.objects.filter(result=1)
+                .filter(template=test_template.pk)
+                .filter(stock_item__part_id=part.pk)
+                .filter(stock_item__serial__isnull=False)
+                .count()
+            )
+            failed = (
+                StockModels.StockItemTestResult.objects.filter(result=0)
+                .filter(template=test_template.pk)
+                .filter(stock_item__part_id=part.pk)
+                .filter(stock_item__serial__isnull=False)
+                .count()
+            )
+            ret[test_template.test_name] = {
+                'passed': passed,
+                'failed': failed,
+                'total': passed + failed,
+            }
+            ret['total']['passed'] += passed
+            ret['total']['failed'] += failed
+            ret['total']['total'] += passed + failed
         return ret
 
     stock_item = models.ForeignKey(
