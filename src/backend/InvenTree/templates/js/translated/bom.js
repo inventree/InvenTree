@@ -1119,7 +1119,8 @@ function loadBomTable(table, options={}) {
                 }
 
                 // check if it is a consumable and add it only if required
-                if(row.consumable && !include_consumables_in_bom_pricing.checked){
+                var include_consumables_in_pricing = document.getElementById('include_consumables_in_bom_pricing').checked
+                if(row.consumable && !include_consumables_in_pricing){
                     continue;
                 }
 
