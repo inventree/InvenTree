@@ -1,6 +1,10 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { IconSquareArrowRight } from '@tabler/icons-react';
+import {
+  IconShoppingCart,
+  IconSquareArrowRight,
+  IconTools
+} from '@tabler/icons-react';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -218,6 +222,24 @@ export default function SalesOrderLineItemTable({
           title: t`Allocate stock`,
           icon: <IconSquareArrowRight />,
           color: 'green'
+        },
+        {
+          hidden:
+            allocated ||
+            !user.hasAddRole(UserRoles.build) ||
+            !record?.part_detail?.assembly,
+          title: t`Build stock`,
+          icon: <IconTools />,
+          color: 'blue'
+        },
+        {
+          hidden:
+            allocated ||
+            !user.hasAddRole(UserRoles.purchase_order) ||
+            !record?.part_detail?.purchaseable,
+          title: t`Order stock`,
+          icon: <IconShoppingCart />,
+          color: 'blue'
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.sales_order),
