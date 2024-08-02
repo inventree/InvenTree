@@ -19,7 +19,7 @@ from pathlib import Path
 import requests
 
 REPO = os.getenv('GITHUB_REPOSITORY', 'inventree/inventree')
-GITHUB_API_URL = os.getenv('GITHUB_REPOSITORY', 'https://api.github.com')
+GITHUB_API_URL = os.getenv('GITHUB_API_URL', 'https://api.github.com')
 
 
 def get_existing_release_tags():
