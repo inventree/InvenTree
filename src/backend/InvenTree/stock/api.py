@@ -418,7 +418,7 @@ class StockLocationList(DataExportViewMixin, ListCreateAPI):
 
     filter_backends = SEARCH_ORDER_FILTER
 
-    search_fields = ['name', 'description', 'tags__name', 'tags__slug']
+    search_fields = ['name', 'description', 'pathstring', 'tags__name', 'tags__slug']
 
     ordering_fields = ['name', 'pathstring', 'items', 'level', 'tree_id', 'lft']
 
