@@ -15,6 +15,10 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='salesorder',
             name='status',
-            field=models.PositiveIntegerField(choices=order.status_codes.SalesOrderStatus.items(), default=10, help_text='Purchase order status', verbose_name='Status'),
+            field=models.PositiveIntegerField(
+                choices=order.status_codes.SalesOrderStatus.items(),
+                default=order.status_codes.SalesOrderStatus.PENDING.value,
+                help_text='Sales order status', verbose_name='Status'
+            ),
         ),
     ]
