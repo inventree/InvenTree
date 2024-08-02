@@ -47,6 +47,7 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import SalesOrderLineItemTable from '../../tables/sales/SalesOrderLineItemTable';
 
 /**
  * Detail page for a single SalesOrder
@@ -249,7 +250,12 @@ export default function SalesOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <PlaceholderPanel />
+        content: (
+          <SalesOrderLineItemTable
+            orderId={order.pk}
+            customerId={order.customer}
+          />
+        )
       },
       {
         name: 'pending-shipments',

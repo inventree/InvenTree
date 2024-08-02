@@ -281,7 +281,7 @@ export function InvenTreeTable<T = any>({
     // If row actions are available, add a column for them
     if (tableProps.rowActions) {
       cols.push({
-        accessor: 'actions',
+        accessor: '--actions--',
         title: '   ',
         hidden: false,
         switchable: false,
@@ -540,19 +540,29 @@ export function InvenTreeTable<T = any>({
     }
   });
 
-  // Callback when a row is clicked
-  const handleRowClick = useCallback(
+  // Callback when a cell is clicked
+  const handleCellClick = useCallback(
     ({
       event,
       record,
-      index
+      index,
+      column,
+      columnIndex
     }: {
       event: React.MouseEvent;
       record: any;
       index: number;
+      column: any;
+      columnIndex: number;
     }) => {
-      if (props.onRowClick) {
-        // If a custom row click handler is provided, use that
+      // Ignore any click on the 'actions' column
+      if (column.accessor == '--actions--') {
+        return;
+      }
+
+      if (props.onCellClick) {
+        props.onCellClick({ event, record, index, column, columnIndex });
+      } else if (props.onRowClick) {
         props.onRowClick(record, index, event);
       } else if (tableProps.modelType) {
         const accessor = tableProps.modelField ?? 'pk';
@@ -566,7 +576,7 @@ export function InvenTreeTable<T = any>({
         }
       }
     },
-    [props.onRowClick]
+    [props.onRowClick, props.onCellClick]
   );
 
   return (
@@ -705,8 +715,7 @@ export function InvenTreeTable<T = any>({
               noRecordsText={missingRecordsText}
               records={tableState.records}
               columns={dataColumns}
-              onRowClick={handleRowClick}
-              onCellClick={tableProps.onCellClick}
+              onCellClick={handleCellClick}
               defaultColumnProps={{
                 noWrap: true,
                 textAlign: 'left',

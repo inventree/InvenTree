@@ -11,6 +11,7 @@ import {
   TemplateEditor
 } from '../../components/editors/TemplateEditor';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { AttachmentLink } from '../../components/items/AttachmentLink';
 import { DetailDrawer } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -134,7 +135,11 @@ export function TemplateTable({
         sortable: false,
         switchable: true,
         render: (record: any) => {
-          return record.template?.split('/')?.pop() ?? '-';
+          if (!record.template) {
+            return '-';
+          }
+
+          return <AttachmentLink attachment={record.template} />;
         }
       },
       {
