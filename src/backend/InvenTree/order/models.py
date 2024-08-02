@@ -474,6 +474,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
     status = models.PositiveIntegerField(
         default=PurchaseOrderStatus.PENDING.value,
         choices=PurchaseOrderStatus.items(),
+        verbose_name=_('Status'),
         help_text=_('Purchase order status'),
     )
 
@@ -967,7 +968,7 @@ class SalesOrder(TotalPriceMixin, Order):
         default=SalesOrderStatus.PENDING.value,
         choices=SalesOrderStatus.items(),
         verbose_name=_('Status'),
-        help_text=_('Purchase order status'),
+        help_text=_('Sales order status'),
     )
 
     @property
