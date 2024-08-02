@@ -1,11 +1,18 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { IconSquareArrowRight } from '@tabler/icons-react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useReturnOrderLineItemFields } from '../../forms/ReturnOrderForms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -27,12 +34,52 @@ import {
 } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
-  orderId
+  orderId,
+  customerId
 }: {
   orderId: number;
+  customerId: number;
 }) {
   const table = useTable('return-order-line-item');
   const user = useUserState();
+
+  const [selectedLine, setSelectedLine] = useState<number>(0);
+
+  const [initialData, setInitialData] = useState({});
+
+  const newLineFields = useReturnOrderLineItemFields({
+    orderId: orderId,
+    customerId: customerId,
+    create: true
+  });
+
+  const editLineFields = useReturnOrderLineItemFields({
+    orderId: orderId,
+    customerId: customerId
+  });
+
+  const newLine = useCreateApiFormModal({
+    url: ApiEndpoints.return_order_line_list,
+    title: t`Add Line Item`,
+    fields: newLineFields,
+    initialData: initialData,
+    table: table
+  });
+
+  const editLine = useEditApiFormModal({
+    url: ApiEndpoints.return_order_line_list,
+    pk: selectedLine,
+    title: t`Edit Line Item`,
+    fields: editLineFields,
+    table: table
+  });
+
+  const deleteLine = useDeleteApiFormModal({
+    url: ApiEndpoints.return_order_line_list,
+    pk: selectedLine,
+    title: t`Delete Line Item`,
+    table: table
+  });
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
@@ -94,21 +141,46 @@ export default function ReturnOrderLineItemTable({
       <AddItemButton
         tooltip={t`Add line item`}
         hidden={!user.hasAddRole(UserRoles.return_order)}
+        onClick={() => {
+          setInitialData({
+            order: orderId
+          });
+          newLine.open();
+        }}
       />
     ];
-  }, [user]);
+  }, [user, orderId]);
 
   const rowActions = useCallback(
     (record: any) => {
+      const received: boolean = !!record?.received_date;
+
       return [
+        {
+          hidden: received || !user.hasChangeRole(UserRoles.return_order),
+          title: t`Receive Item`,
+          icon: <IconSquareArrowRight />
+        },
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.return_order)
+          hidden: !user.hasChangeRole(UserRoles.return_order),
+          onClick: () => {
+            setSelectedLine(record.pk);
+            editLine.open();
+          }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(UserRoles.return_order)
+          hidden: !user.hasAddRole(UserRoles.return_order),
+          onClick: () => {
+            setInitialData(record);
+            newLine.open();
+          }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.return_order)
+          hidden: !user.hasDeleteRole(UserRoles.return_order),
+          onClick: () => {
+            setSelectedLine(record.pk);
+            deleteLine.open();
+          }
         })
       ];
     },
@@ -117,6 +189,9 @@ export default function ReturnOrderLineItemTable({
 
   return (
     <>
+      {newLine.modal}
+      {editLine.modal}
+      {deleteLine.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.return_order_line_list)}
         tableState={table}

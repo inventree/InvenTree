@@ -228,7 +228,12 @@ export default function ReturnOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <ReturnOrderLineItemTable orderId={order.pk} />
+        content: (
+          <ReturnOrderLineItemTable
+            orderId={order.pk}
+            customerId={order.customer}
+          />
+        )
       },
       {
         name: 'attachments',
