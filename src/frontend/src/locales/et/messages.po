@@ -8,7 +8,7 @@ msgstr ""
 "Language: et\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-01 19:29\n"
+"PO-Revision-Date: 2024-08-02 19:32\n"
 "Last-Translator: \n"
 "Language-Team: Estonian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -7532,3 +7532,4 @@ msgstr "Loe dokumente"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr "Eira ja jätka töölaua vaates"
+
