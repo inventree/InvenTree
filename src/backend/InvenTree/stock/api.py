@@ -1320,8 +1320,7 @@ class TestStatistics(GenericAPIView):
     )
     def get(self, request, pk, *args, **kwargs):
         """Return test execution count matrix broken down by test result."""
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
+        serializer = self.get_serializer(request.data)
         if request.resolver_match.url_name == 'api-test-statistics-by-part':
             serializer.context['type'] = 'by-part'
         elif request.resolver_match.url_name == 'api-test-statistics-by-build':

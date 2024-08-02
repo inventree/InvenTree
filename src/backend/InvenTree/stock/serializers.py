@@ -885,13 +885,15 @@ class TestStatisticsSerializer(serializers.Serializer):
     def to_representation(self, obj):
         """Just pass through the test statistics from the model."""
         if self.context['type'] == 'by-part':
-            return obj.part_test_statistics(
+            return StockItemTestResult.part_test_statistics(
+                {},
                 self.context['pk'],
                 self.context['finished_datetime_after'],
                 self.context['finished_datetime_before'],
             )
         elif self.context['type'] == 'by-build':
-            return obj.build_test_statistics(
+            return StockItemTestResult.build_test_statistics(
+                {},
                 self.context['pk'],
                 self.context['finished_datetime_after'],
                 self.context['finished_datetime_before'],
