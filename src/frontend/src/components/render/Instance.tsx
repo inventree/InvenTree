@@ -157,7 +157,8 @@ export function RenderInlineModel({
   labels,
   url,
   navigate,
-  showSecondary = true
+  showSecondary = true,
+  tooltip
 }: {
   primary: string;
   secondary?: string;
@@ -168,6 +169,7 @@ export function RenderInlineModel({
   labels?: string[];
   url?: string;
   navigate?: any;
+  tooltip?: string;
 }): ReactNode {
   // TODO: Handle labels
 
@@ -181,7 +183,7 @@ export function RenderInlineModel({
   );
 
   return (
-    <Group gap="xs" justify="space-between" wrap="nowrap">
+    <Group gap="xs" justify="space-between" wrap="nowrap" title={tooltip}>
       <Group gap="xs" justify="left" wrap="nowrap">
         {prefix}
         {image && <Thumbnail src={image} size={18} />}

@@ -5,6 +5,8 @@ from django.db import migrations, models
 import django.db.models.deletion
 import mptt.fields
 
+from build.status_codes import BuildStatus
+
 
 class Migration(migrations.Migration):
 
@@ -40,7 +42,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='build',
             name='status',
-            field=models.PositiveIntegerField(choices=[(10, 'Pending'), (20, 'Production'), (30, 'Cancelled'), (40, 'Complete')], default=10, help_text='Build status code', validators=[django.core.validators.MinValueValidator(0)], verbose_name='Build Status'),
+            field=models.PositiveIntegerField(choices=BuildStatus.items(), default=BuildStatus.PENDING.value, help_text='Build status code', validators=[django.core.validators.MinValueValidator(0)], verbose_name='Build Status'),
         ),
         migrations.AlterField(
             model_name='build',

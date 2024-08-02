@@ -17,7 +17,13 @@ export function RenderStockLocation(
   return (
     <RenderInlineModel
       {...props}
-      prefix={instance.icon && <ApiIcon name={instance.icon} />}
+      tooltip={instance.pathstring}
+      prefix={
+        <>
+          <div style={{ width: 10 * (instance.level || 0) }}></div>
+          {instance.icon && <ApiIcon name={instance.icon} />}
+        </>
+      }
       primary={instance.name}
       secondary={instance.description}
       url={
