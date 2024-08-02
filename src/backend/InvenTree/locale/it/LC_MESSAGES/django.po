@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-02 11:16+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"POT-Creation-Date: 2024-08-02 02:18+0000\n"
+"PO-Revision-Date: 2024-08-02 19:31\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "È necessario digitare la stessa e-mail ogni volta."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "La registrazione è disabilitata."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1995,10 +1993,8 @@ msgid "Completed Build Outputs"
 msgstr "Produzioni Completate"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build Details"
 msgid "Build test statistics"
-msgstr "Dettagli della Produzione"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -5386,10 +5382,8 @@ msgid "Company to which the items are being sold"
 msgstr "Azienda da cui sono stati ordinati gli elementi"
 
 #: order/models.py:971
-#, fuzzy
-#| msgid "Server status"
 msgid "Sales order status"
-msgstr "Stato del Server"
+msgstr ""
 
 #: order/models.py:982 order/models.py:2102
 msgid "Customer Reference "
@@ -7579,34 +7573,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the parent assembly"
-msgstr "Seleziona articolo principale"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Componente"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Componente"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Company description"
 msgid "Component Description"
-msgstr "Descrizione azienda"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the component part"
-msgstr "Seleziona articolo principale"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7852,10 +7836,8 @@ msgid "Add Test Template"
 msgstr "Aggiungi Modelli Test"
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Statistics"
-msgstr "Modelli Articoli Test"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -9956,10 +9938,8 @@ msgid "Destination location for uninstalled item"
 msgstr "Posizione di destinazione per gli elementi disinstallati"
 
 #: stock/serializers.py:900
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Formato file non supportato"
+msgstr ""
 
 #: stock/serializers.py:914
 msgid "Select part to convert stock item into"
@@ -14711,16 +14691,12 @@ msgid "Include Installed Items"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:471
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Interval start"
-msgstr "Articolo interno"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:475
-#, fuzzy
-#| msgid "Internal Price"
 msgid "Interval end"
-msgstr "Prezzo interno"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:529
 msgid "Build status"
@@ -15045,16 +15021,12 @@ msgid "Email settings not configured"
 msgstr "Impostazioni dell'email non configurate"
 
 #: templates/test_statistics_table.html:13
-#, fuzzy
-#| msgid "Pass"
 msgid "Passed"
-msgstr "Passaggio"
+msgstr ""
 
 #: templates/test_statistics_table.html:16
-#, fuzzy
-#| msgid "Fail"
 msgid "Failed"
-msgstr "Fallito"
+msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
@@ -15159,3 +15131,4 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
+
