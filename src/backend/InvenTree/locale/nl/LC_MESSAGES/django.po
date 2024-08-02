@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-02 11:16+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"POT-Creation-Date: 2024-08-02 02:18+0000\n"
+"PO-Revision-Date: 2024-08-02 19:31\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Er moet hetzelfde e-mailadres ingevoerd worden."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Registratie is uitgeschakeld."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1995,10 +1993,8 @@ msgid "Completed Build Outputs"
 msgstr "Voltooide Productieuitvoeren"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build Details"
 msgid "Build test statistics"
-msgstr "Productie details"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -5386,10 +5382,8 @@ msgid "Company to which the items are being sold"
 msgstr "Bedrijf waaraan de artikelen worden verkocht"
 
 #: order/models.py:971
-#, fuzzy
-#| msgid "Purchase order status"
 msgid "Sales order status"
-msgstr "Inkooporder status"
+msgstr ""
 
 #: order/models.py:982 order/models.py:2102
 msgid "Customer Reference "
@@ -7579,32 +7573,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select part to build"
 msgid "Select the parent assembly"
-msgstr "Selecteer onderdeel om te produceren"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Company name"
 msgid "Component Name"
-msgstr "Bedrijfsnaam"
+msgstr ""
 
 #: part/serializers.py:1586
 msgid "Component IPN"
 msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Part Description"
 msgid "Component Description"
-msgstr "Onderdeel omschrijving"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select manufacturer part"
 msgid "Select the component part"
-msgstr "Selecteer fabrikant onderdeel"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7850,10 +7836,8 @@ msgid "Add Test Template"
 msgstr ""
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Copy Part Test Data"
 msgid "Part Test Statistics"
-msgstr "Kopieer Onderdeel Testdata"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -9954,10 +9938,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:900
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Niet ondersteund bestandstype"
+msgstr ""
 
 #: stock/serializers.py:914
 msgid "Select part to convert stock item into"
@@ -14709,16 +14691,12 @@ msgid "Include Installed Items"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:471
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Interval start"
-msgstr "Intern onderdeel"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:475
-#, fuzzy
-#| msgid "Internal Prices"
 msgid "Interval end"
-msgstr "Interne Prijzen"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:529
 msgid "Build status"
@@ -15153,3 +15131,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
