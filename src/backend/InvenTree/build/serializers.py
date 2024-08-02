@@ -1305,6 +1305,8 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         queryset = queryset.select_related(
             'build',
             'bom_item',
+            'bom_item__part',
+            'bom_item__part__pricing_data',
             'bom_item__sub_part',
             'bom_item__sub_part__pricing_data',
         )
