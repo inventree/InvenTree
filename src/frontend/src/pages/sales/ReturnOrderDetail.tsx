@@ -43,6 +43,7 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
 
 /**
  * Detail page for a single ReturnOrder
@@ -227,7 +228,7 @@ export default function ReturnOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <PlaceholderPanel />
+        content: <ReturnOrderLineItemTable orderId={order.pk} />
       },
       {
         name: 'attachments',

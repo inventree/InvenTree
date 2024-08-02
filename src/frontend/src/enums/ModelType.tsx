@@ -22,6 +22,7 @@ export enum ModelType {
   salesorder = 'salesorder',
   salesordershipment = 'salesordershipment',
   returnorder = 'returnorder',
+  returnorderlineitem = 'returnorderlineitem',
   importsession = 'importsession',
   address = 'address',
   contact = 'contact',

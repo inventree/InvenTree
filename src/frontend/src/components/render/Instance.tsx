@@ -21,6 +21,7 @@ import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
+  RenderReturnOrderLineItem,
   RenderSalesOrder,
   RenderSalesOrderShipment
 } from './Order';
@@ -73,6 +74,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.purchaseorder]: RenderPurchaseOrder,
   [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
+  [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
   [ModelType.stocklocation]: RenderStockLocation,
