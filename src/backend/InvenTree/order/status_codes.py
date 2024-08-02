@@ -11,6 +11,7 @@ class PurchaseOrderStatus(StatusCode):
     # Order status codes
     PENDING = 10, _('Pending'), 'secondary'  # Order is pending (not yet placed)
     PLACED = 20, _('Placed'), 'primary'  # Order has been placed with supplier
+    ON_HOLD = 25, _('On Hold'), 'secondary'  # Order is on hold
     COMPLETE = 30, _('Complete'), 'success'  # Order has been completed
     CANCELLED = 40, _('Cancelled'), 'danger'  # Order was cancelled
     LOST = 50, _('Lost'), 'warning'  # Order was lost
@@ -21,7 +22,11 @@ class PurchaseOrderStatusGroups:
     """Groups for PurchaseOrderStatus codes."""
 
     # Open orders
-    OPEN = [PurchaseOrderStatus.PENDING.value, PurchaseOrderStatus.PLACED.value]
+    OPEN = [
+        PurchaseOrderStatus.PENDING.value,
+        PurchaseOrderStatus.PLACED.value,
+        PurchaseOrderStatus.ON_HOLD.value,
+    ]
 
     # Failed orders
     FAILED = [
@@ -41,6 +46,7 @@ class SalesOrderStatus(StatusCode):
         'primary',
     )  # Order has been issued, and is in progress
     SHIPPED = 20, _('Shipped'), 'success'  # Order has been shipped to customer
+    ON_HOLD = 25, _('On Hold'), 'secondary'  # Order is on hold
     COMPLETE = 30, _('Complete'), 'success'  # Order is complete
     CANCELLED = 40, _('Cancelled'), 'danger'  # Order has been cancelled
     LOST = 50, _('Lost'), 'warning'  # Order was lost
@@ -51,7 +57,11 @@ class SalesOrderStatusGroups:
     """Groups for SalesOrderStatus codes."""
 
     # Open orders
-    OPEN = [SalesOrderStatus.PENDING.value, SalesOrderStatus.IN_PROGRESS.value]
+    OPEN = [
+        SalesOrderStatus.PENDING.value,
+        SalesOrderStatus.IN_PROGRESS.value,
+        SalesOrderStatus.ON_HOLD.value,
+    ]
 
     # Completed orders
     COMPLETE = [SalesOrderStatus.SHIPPED.value, SalesOrderStatus.COMPLETE.value]
@@ -66,6 +76,8 @@ class ReturnOrderStatus(StatusCode):
     # Items have been received, and are being inspected
     IN_PROGRESS = 20, _('In Progress'), 'primary'
 
+    ON_HOLD = 25, _('On Hold'), 'secondary'
+
     COMPLETE = 30, _('Complete'), 'success'
     CANCELLED = 40, _('Cancelled'), 'danger'
 
@@ -73,7 +85,11 @@ class ReturnOrderStatus(StatusCode):
 class ReturnOrderStatusGroups:
     """Groups for ReturnOrderStatus codes."""
 
-    OPEN = [ReturnOrderStatus.PENDING.value, ReturnOrderStatus.IN_PROGRESS.value]
+    OPEN = [
+        ReturnOrderStatus.PENDING.value,
+        ReturnOrderStatus.IN_PROGRESS.value,
+        ReturnOrderStatus.ON_HOLD.value,
+    ]
 
 
 class ReturnOrderLineStatus(StatusCode):
