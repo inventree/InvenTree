@@ -1,9 +1,11 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -18,6 +20,11 @@ import {
 } from '../ColumnRenderers';
 import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId
@@ -52,10 +59,12 @@ export default function ReturnOrderLineItemTable({
           formatCurrency(record.price, { currency: record.price_currency })
       },
       DateColumn({
-        accessor: 'target_date'
+        accessor: 'target_date',
+        title: t`Target Date`
       }),
       DateColumn({
-        accessor: 'received_date'
+        accessor: 'received_date',
+        title: t`Received Date`
       }),
       NoteColumn({
         accessor: 'notes'
@@ -80,6 +89,32 @@ export default function ReturnOrderLineItemTable({
     ];
   }, []);
 
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add line item`}
+        hidden={!user.hasAddRole(UserRoles.return_order)}
+      />
+    ];
+  }, [user]);
+
+  const rowActions = useCallback(
+    (record: any) => {
+      return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(UserRoles.return_order)
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.return_order)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(UserRoles.return_order)
+        })
+      ];
+    },
+    [user]
+  );
+
   return (
     <>
       <InvenTreeTable
@@ -93,7 +128,9 @@ export default function ReturnOrderLineItemTable({
             item_detail: true,
             order_detail: true
           },
-          tableFilters: tableFilters
+          tableActions: tableActions,
+          tableFilters: tableFilters,
+          rowActions: rowActions
         }}
       />
     </>
