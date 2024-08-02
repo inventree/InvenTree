@@ -160,6 +160,8 @@ export default function SalesOrderLineItemTable({
 
   const [selectedLine, setSelectedLine] = useState<number>(0);
 
+  const [initialData, setInitialData] = useState({});
+
   const createLineFields = useSalesOrderLineItemFields({
     orderId: orderId,
     customerId: customerId,
@@ -170,9 +172,7 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_line_list,
     title: t`Add Line Item`,
     fields: createLineFields,
-    initialData: {
-      order: orderId
-    },
+    initialData: initialData,
     table: table
   });
 
@@ -202,6 +202,9 @@ export default function SalesOrderLineItemTable({
       <AddItemButton
         tooltip={t`Add line item`}
         onClick={() => {
+          setInitialData({
+            order: orderId
+          });
           newLine.open();
         }}
         hidden={!user.hasAddRole(UserRoles.sales_order)}
@@ -243,6 +246,13 @@ export default function SalesOrderLineItemTable({
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(UserRoles.sales_order),
+          onClick: () => {
+            setInitialData(record);
+            newLine.open();
           }
         }),
         RowDeleteAction({

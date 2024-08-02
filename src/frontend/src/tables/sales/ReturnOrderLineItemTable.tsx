@@ -27,11 +27,7 @@ import {
 } from '../ColumnRenderers';
 import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import {
-  RowDeleteAction,
-  RowDuplicateAction,
-  RowEditAction
-} from '../RowActions';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId,
@@ -44,8 +40,6 @@ export default function ReturnOrderLineItemTable({
   const user = useUserState();
 
   const [selectedLine, setSelectedLine] = useState<number>(0);
-
-  const [initialData, setInitialData] = useState({});
 
   const newLineFields = useReturnOrderLineItemFields({
     orderId: orderId,
@@ -62,7 +56,9 @@ export default function ReturnOrderLineItemTable({
     url: ApiEndpoints.return_order_line_list,
     title: t`Add Line Item`,
     fields: newLineFields,
-    initialData: initialData,
+    initialData: {
+      order: orderId
+    },
     table: table
   });
 
@@ -142,9 +138,6 @@ export default function ReturnOrderLineItemTable({
         tooltip={t`Add line item`}
         hidden={!user.hasAddRole(UserRoles.return_order)}
         onClick={() => {
-          setInitialData({
-            order: orderId
-          });
           newLine.open();
         }}
       />
@@ -166,13 +159,6 @@ export default function ReturnOrderLineItemTable({
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
-          }
-        }),
-        RowDuplicateAction({
-          hidden: !user.hasAddRole(UserRoles.return_order),
-          onClick: () => {
-            setInitialData(record);
-            newLine.open();
           }
         }),
         RowDeleteAction({
