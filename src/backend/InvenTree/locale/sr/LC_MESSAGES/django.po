@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-02 11:16+0000\n"
-"PO-Revision-Date: 2024-07-26 18:37\n"
+"POT-Creation-Date: 2024-08-02 02:18+0000\n"
+"PO-Revision-Date: 2024-08-02 19:32\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Svaki put morate upisati istu e-poštu."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Registracija je onemogućena."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -7579,20 +7577,16 @@ msgid "Select the parent assembly"
 msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Complete"
 msgid "Component Name"
-msgstr "Gotovo"
+msgstr ""
 
 #: part/serializers.py:1586
 msgid "Component IPN"
 msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Description"
 msgid "Component Description"
-msgstr "Opis"
+msgstr ""
 
 #: part/serializers.py:1595
 msgid "Select the component part"
@@ -9944,10 +9938,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:900
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Nije podržan tip datoteke"
+msgstr ""
 
 #: stock/serializers.py:914
 msgid "Select part to convert stock item into"
@@ -15139,3 +15131,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
