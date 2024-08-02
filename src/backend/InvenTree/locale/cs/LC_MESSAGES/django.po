@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-02 11:16+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"POT-Creation-Date: 2024-08-02 02:18+0000\n"
+"PO-Revision-Date: 2024-08-02 19:31\n"
 "Last-Translator: \n"
 "Language-Team: Czech\n"
 "Language: cs_CZ\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Pokaždé musíte zadat stejný email."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Registrace vypnuta."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1995,10 +1993,8 @@ msgid "Completed Build Outputs"
 msgstr "Dokončené výstupy sestavy"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build Details"
 msgid "Build test statistics"
-msgstr "Detaily sestavy"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -5386,10 +5382,8 @@ msgid "Company to which the items are being sold"
 msgstr "Společnost, jíž se položky prodávají"
 
 #: order/models.py:971
-#, fuzzy
-#| msgid "Return order status"
 msgid "Sales order status"
-msgstr "Stav návratové objednávky"
+msgstr ""
 
 #: order/models.py:982 order/models.py:2102
 msgid "Customer Reference "
@@ -7579,34 +7573,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the parent assembly"
-msgstr "Vyberte nadřazený díl"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Komponent"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Komponent"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Company description"
 msgid "Component Description"
-msgstr "Popis společnosti"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the component part"
-msgstr "Vyberte nadřazený díl"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7852,10 +7836,8 @@ msgid "Add Test Template"
 msgstr ""
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Copy Part Test Data"
 msgid "Part Test Statistics"
-msgstr "Kopírovat zkušební data dílu"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -9956,10 +9938,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:900
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Nepodporovaný typ souboru"
+msgstr ""
 
 #: stock/serializers.py:914
 msgid "Select part to convert stock item into"
@@ -14711,16 +14691,12 @@ msgid "Include Installed Items"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:471
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Interval start"
-msgstr "Interní díl"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:475
-#, fuzzy
-#| msgid "Internal Prices"
 msgid "Interval end"
-msgstr "Interní ceny"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:529
 msgid "Build status"
@@ -15155,3 +15131,4 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
+
