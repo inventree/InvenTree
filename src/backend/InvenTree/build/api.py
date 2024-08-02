@@ -587,7 +587,6 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
             'install_into',
             'stock_item',
             'stock_item__location',
-            # 'stock_item__location__location_type',
             'stock_item__part',
             'stock_item__supplier_part__part',
             'stock_item__supplier_part__supplier',
