@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-02 11:16+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"POT-Creation-Date: 2024-08-02 02:18+0000\n"
+"PO-Revision-Date: 2024-08-02 19:31\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Mindig ugyanazt az email címet kell beírni."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Regisztráció le van tiltva."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1360,8 +1358,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:536
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:621
@@ -1997,10 +1994,8 @@ msgid "Completed Build Outputs"
 msgstr "Befejezett gyártási kimenetek"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build status"
 msgid "Build test statistics"
-msgstr "Gyártási állapot"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -2054,10 +2049,8 @@ msgstr "Befejezetlen kimenetek"
 
 #: build/templates/build/sidebar.html:24
 #: part/templates/part/part_sidebar.html:56
-#, fuzzy
-#| msgid "Test station"
 msgid "Test Statistics"
-msgstr "Teszt állomás"
+msgstr ""
 
 #: common/api.py:692
 msgid "Is Link"
@@ -5390,10 +5383,8 @@ msgid "Company to which the items are being sold"
 msgstr "Cég akinek a tételek értékesítésre kerülnek"
 
 #: order/models.py:971
-#, fuzzy
-#| msgid "Server status"
 msgid "Sales order status"
-msgstr "Kiszolgáló állapota"
+msgstr ""
 
 #: order/models.py:982 order/models.py:2102
 msgid "Customer Reference "
@@ -7583,34 +7574,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr "A Maximum ár nem lehet kisebb mint a Minimum ár"
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the parent assembly"
-msgstr "Szülő alkatrész kiválasztása"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Összetevő"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Összetevő"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Company description"
 msgid "Component Description"
-msgstr "Cég leírása"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the component part"
-msgstr "Szülő alkatrész kiválasztása"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7856,10 +7837,8 @@ msgid "Add Test Template"
 msgstr "Teszt sablon hozzáadása"
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Statistics"
-msgstr "Alkatrész teszt sablonok"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -9960,10 +9939,8 @@ msgid "Destination location for uninstalled item"
 msgstr "Cél hely a kiszedett tételeknek"
 
 #: stock/serializers.py:900
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Nem támogatott fájltípus"
+msgstr ""
 
 #: stock/serializers.py:914
 msgid "Select part to convert stock item into"
@@ -14715,16 +14692,12 @@ msgid "Include Installed Items"
 msgstr "Beépített tételekkel együtt"
 
 #: templates/js/translated/table_filters.js:471
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Interval start"
-msgstr "Belső alkatrész"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:475
-#, fuzzy
-#| msgid "Internal Price"
 msgid "Interval end"
-msgstr "Belső ár"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:529
 msgid "Build status"
@@ -15049,16 +15022,12 @@ msgid "Email settings not configured"
 msgstr "Email beállítások hiányoznak"
 
 #: templates/test_statistics_table.html:13
-#, fuzzy
-#| msgid "Pass"
 msgid "Passed"
-msgstr "Sikeres"
+msgstr ""
 
 #: templates/test_statistics_table.html:16
-#, fuzzy
-#| msgid "Fail"
 msgid "Failed"
-msgstr "Sikertelen"
+msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
@@ -15163,3 +15132,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
