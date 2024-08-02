@@ -1257,7 +1257,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
     # Foreign key fields
     bom_item_detail = part_serializers.BomItemSerializer(source='bom_item', many=False, read_only=True, pricing=False)
-    part_detail = part_serializers.PartSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
+    part_detail = part_serializers.PartBriefSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
     allocations = BuildItemSerializer(many=True, read_only=True)
 
     # Annotated (calculated) fields
@@ -1303,16 +1303,18 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         """
         queryset = queryset.select_related(
-            'build', 'bom_item',
+            'build',
+            'bom_item',
+            'bom_item__sub_part',
+            'bom_item__sub_part__pricing_data',
         )
 
         # Pre-fetch related fields
         queryset = queryset.prefetch_related(
-            'bom_item__sub_part',
+            'bom_item__sub_part__tags',
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
             'bom_item__sub_part__stock_items__sales_order_allocations',
-            'bom_item__sub_part__tags',
 
             'bom_item__substitutes',
             'bom_item__substitutes__part__stock_items',
@@ -1324,6 +1326,11 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'allocations__stock_item__part',
             'allocations__stock_item__location',
             'allocations__stock_item__location__tags',
+            'allocations__stock_item__supplier_part',
+            'allocations__stock_item__supplier_part__part',
+            'allocations__stock_item__supplier_part__supplier',
+            'allocations__stock_item__supplier_part__manufacturer_part',
+            'allocations__stock_item__supplier_part__manufacturer_part__manufacturer',
         )
 
         # Annotate the "allocated" quantity
