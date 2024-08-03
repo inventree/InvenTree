@@ -154,7 +154,7 @@ export default function BuildAllocatedStockTable({
             stock_detail: true,
             supplier_detail: true
           },
-          enableBulkDelete: true,
+          enableBulkDelete: user.hasDeleteRole(UserRoles.build),
           enableDownload: true,
           enableSelection: true,
           rowActions: rowActions,

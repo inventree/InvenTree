@@ -1,15 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 231
+INVENTREE_API_VERSION = 232
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v231 - 2024-08-02 : https://github.com/inventree/InvenTree/pull/7793
+v232 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7793
     - Allow ordering of SalesOrderShipment API by 'shipment_date' and 'delivery_date'
+
+v231 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7794
+    - Optimize BuildItem and BuildLine serializers to improve API efficiency
 
 v230 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7164
     - Adds test statistics endpoint

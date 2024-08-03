@@ -23,7 +23,7 @@ from stock.status_codes import StockStatus
 
 from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
-from stock.serializers import StockItemSerializerBrief, LocationSerializer
+from stock.serializers import StockItemSerializerBrief, LocationBriefSerializer
 
 import common.models
 from common.serializers import ProjectCodeSerializer
@@ -1064,6 +1064,8 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
     # These fields are only used for data export
     export_only_fields = [
+        'bom_part_id',
+        'bom_part_name',
         'build_reference',
         'sku',
         'mpn',
@@ -1071,9 +1073,11 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
         'part_id',
         'part_name',
         'part_ipn',
+        'part_description',
         'available_quantity',
         'item_batch_code',
         'item_serial',
+        'item_packaging',
     ]
 
     class Meta:
@@ -1097,6 +1101,8 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
             # The following fields are only used for data export
             'bom_reference',
+            'bom_part_id',
+            'bom_part_name',
             'build_reference',
             'location_name',
             'mpn',
@@ -1104,9 +1110,11 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'part_id',
             'part_name',
             'part_ipn',
+            'part_description',
             'available_quantity',
             'item_batch_code',
             'item_serial_number',
+            'item_packaging',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1136,11 +1144,17 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     location_name = serializers.CharField(source='stock_item.location.name', label=_('Location Name'), read_only=True)
     build_reference = serializers.CharField(source='build.reference', label=_('Build Reference'), read_only=True)
     bom_reference = serializers.CharField(source='build_line.bom_item.reference', label=_('BOM Reference'), read_only=True)
+    item_packaging = serializers.CharField(source='stock_item.packaging', label=_('Packaging'), read_only=True)
 
     # Part detail fields
     part_id = serializers.PrimaryKeyRelatedField(source='stock_item.part', label=_('Part ID'), many=False, read_only=True)
     part_name = serializers.CharField(source='stock_item.part.name', label=_('Part Name'), read_only=True)
     part_ipn = serializers.CharField(source='stock_item.part.IPN', label=_('Part IPN'), read_only=True)
+    part_description = serializers.CharField(source='stock_item.part.description', label=_('Part Description'), read_only=True)
+
+    # BOM Item Part ID (it may be different to the allocated part)
+    bom_part_id = serializers.PrimaryKeyRelatedField(source='build_line.bom_item.sub_part', label=_('BOM Part ID'), many=False, read_only=True)
+    bom_part_name = serializers.CharField(source='build_line.bom_item.sub_part.name', label=_('BOM Part Name'), read_only=True)
 
     item_batch_code = serializers.CharField(source='stock_item.batch', label=_('Batch Code'), read_only=True)
     item_serial_number = serializers.CharField(source='stock_item.serial', label=_('Serial Number'), read_only=True)
@@ -1152,9 +1166,9 @@ class BuildItemSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     part_detail = part_serializers.PartBriefSerializer(source='stock_item.part', many=False, read_only=True, pricing=False)
     stock_item_detail = StockItemSerializerBrief(source='stock_item', read_only=True)
     location = serializers.PrimaryKeyRelatedField(source='stock_item.location', many=False, read_only=True)
-    location_detail = LocationSerializer(source='stock_item.location', read_only=True)
+    location_detail = LocationBriefSerializer(source='stock_item.location', read_only=True)
     build_detail = BuildSerializer(source='build_line.build', many=False, read_only=True)
-    supplier_part_detail = company.serializers.SupplierPartSerializer(source='stock_item.supplier_part', many=False, read_only=True)
+    supplier_part_detail = company.serializers.SupplierPartSerializer(source='stock_item.supplier_part', many=False, read_only=True, brief=True)
 
     quantity = InvenTreeDecimalField(label=_('Allocated Quantity'))
     available_quantity = InvenTreeDecimalField(source='stock_item.quantity', read_only=True, label=_('Available Quantity'))
@@ -1243,7 +1257,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
     # Foreign key fields
     bom_item_detail = part_serializers.BomItemSerializer(source='bom_item', many=False, read_only=True, pricing=False)
-    part_detail = part_serializers.PartSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
+    part_detail = part_serializers.PartBriefSerializer(source='bom_item.sub_part', many=False, read_only=True, pricing=False)
     allocations = BuildItemSerializer(many=True, read_only=True)
 
     # Annotated (calculated) fields
@@ -1289,16 +1303,20 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
 
         """
         queryset = queryset.select_related(
-            'build', 'bom_item',
+            'build',
+            'bom_item',
+            'bom_item__part',
+            'bom_item__part__pricing_data',
+            'bom_item__sub_part',
+            'bom_item__sub_part__pricing_data',
         )
 
         # Pre-fetch related fields
         queryset = queryset.prefetch_related(
-            'bom_item__sub_part',
+            'bom_item__sub_part__tags',
             'bom_item__sub_part__stock_items',
             'bom_item__sub_part__stock_items__allocations',
             'bom_item__sub_part__stock_items__sales_order_allocations',
-            'bom_item__sub_part__tags',
 
             'bom_item__substitutes',
             'bom_item__substitutes__part__stock_items',
@@ -1310,6 +1328,11 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'allocations__stock_item__part',
             'allocations__stock_item__location',
             'allocations__stock_item__location__tags',
+            'allocations__stock_item__supplier_part',
+            'allocations__stock_item__supplier_part__part',
+            'allocations__stock_item__supplier_part__supplier',
+            'allocations__stock_item__supplier_part__manufacturer_part',
+            'allocations__stock_item__supplier_part__manufacturer_part__manufacturer',
         )
 
         # Annotate the "allocated" quantity
