@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-03 11:45+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"POT-Creation-Date: 2024-08-03 08:50+0000\n"
+"PO-Revision-Date: 2024-08-03 19:35\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Vous devez taper le même e-mail à chaque fois."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "L'enregistrement est désactivé."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1560,16 +1558,12 @@ msgid "Part Description"
 msgstr "Description pièce"
 
 #: build/serializers.py:1156
-#, fuzzy
-#| msgid "Part ID"
 msgid "BOM Part ID"
-msgstr "ID de composant"
+msgstr ""
 
 #: build/serializers.py:1157
-#, fuzzy
-#| msgid "Part Name"
 msgid "BOM Part Name"
-msgstr "Nom de l'article"
+msgstr ""
 
 #: build/serializers.py:1160
 #: report/templates/report/inventree_return_order_report.html:25
@@ -2020,10 +2014,8 @@ msgid "Completed Build Outputs"
 msgstr "Sorties de Construction terminées"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build Details"
 msgid "Build test statistics"
-msgstr "Détails de la construction"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -5400,10 +5392,8 @@ msgid "Company to which the items are being sold"
 msgstr "Société à laquelle les articles sont vendus"
 
 #: order/models.py:971
-#, fuzzy
-#| msgid "Server status"
 msgid "Sales order status"
-msgstr "Statut serveur"
+msgstr ""
 
 #: order/models.py:982 order/models.py:2102
 msgid "Customer Reference "
@@ -7593,34 +7583,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select part to build"
 msgid "Select the parent assembly"
-msgstr "Sélectionnez la pièce à construire"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Composant"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Composant"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Company description"
 msgid "Component Description"
-msgstr "Description de la société"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select theme"
 msgid "Select the component part"
-msgstr "Sélectionner un thème"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7866,10 +7846,8 @@ msgid "Add Test Template"
 msgstr ""
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Copy Part Test Data"
 msgid "Part Test Statistics"
-msgstr "Copier les données de test de la pièce"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -9970,10 +9948,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Format de fichier non supporté"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -14725,16 +14701,12 @@ msgid "Include Installed Items"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:471
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Interval start"
-msgstr "Pièces Internes"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:475
-#, fuzzy
-#| msgid "Internal Prices"
 msgid "Interval end"
-msgstr "Prix internes"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:529
 msgid "Build status"
@@ -15063,10 +15035,8 @@ msgid "Passed"
 msgstr ""
 
 #: templates/test_statistics_table.html:16
-#, fuzzy
-#| msgid "Failed Tasks"
 msgid "Failed"
-msgstr "Tâches échouées"
+msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
@@ -15171,3 +15141,4 @@ msgstr "Droit de modifier des élément"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Droit de supprimer des éléments"
+
