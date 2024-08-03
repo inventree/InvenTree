@@ -7,8 +7,7 @@ import {
   IconNotes,
   IconPaperclip,
   IconTools,
-  IconTruckDelivery,
-  IconTruckLoading
+  IconTruckDelivery
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
@@ -29,7 +28,6 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -47,6 +45,8 @@ import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import SalesOrderLineItemTable from '../../tables/sales/SalesOrderLineItemTable';
+import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 
 /**
  * Detail page for a single SalesOrder
@@ -249,19 +249,18 @@ export default function SalesOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <PlaceholderPanel />
+        content: (
+          <SalesOrderLineItemTable
+            orderId={order.pk}
+            customerId={order.customer}
+          />
+        )
       },
       {
-        name: 'pending-shipments',
-        label: t`Pending Shipments`,
-        icon: <IconTruckLoading />,
-        content: <PlaceholderPanel />
-      },
-      {
-        name: 'completed-shipments',
-        label: t`Completed Shipments`,
+        name: 'shipments',
+        label: t`Shipments`,
         icon: <IconTruckDelivery />,
-        content: <PlaceholderPanel />
+        content: <SalesOrderShipmentTable orderId={order.pk} />
       },
       {
         name: 'build-orders',

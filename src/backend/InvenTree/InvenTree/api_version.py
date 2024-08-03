@@ -1,12 +1,25 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 228
+INVENTREE_API_VERSION = 232
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v232 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7793
+    - Allow ordering of SalesOrderShipment API by 'shipment_date' and 'delivery_date'
+
+v231 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7794
+    - Optimize BuildItem and BuildLine serializers to improve API efficiency
+
+v230 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7164
+    - Adds test statistics endpoint
+
+v229 - 2024-07-31 : https://github.com/inventree/InvenTree/pull/7775
+    - Add extra exportable fields to the BomItem serializer
+
 v228 - 2024-07-18 : https://github.com/inventree/InvenTree/pull/7684
     - Adds "icon" field to the PartCategory.path and StockLocation.path API
     - Adds icon packages API endpoint

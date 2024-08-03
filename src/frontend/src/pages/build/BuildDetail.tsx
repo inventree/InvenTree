@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
+  IconChecklist,
   IconClipboardCheck,
   IconClipboardList,
   IconDots,
@@ -11,6 +12,7 @@ import {
   IconNotes,
   IconPaperclip,
   IconQrcode,
+  IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
@@ -50,9 +52,11 @@ import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import BuildLineTable from '../../tables/build/BuildLineTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
+import BuildOrderTestTable from '../../tables/build/BuildOrderTestTable';
 import BuildOutputTable from '../../tables/build/BuildOutputTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 
 /**
  * Detail page for a single Build Order
@@ -304,6 +308,31 @@ export default function BuildDetail() {
         ) : (
           <Skeleton />
         )
+      },
+      {
+        name: 'test-results',
+        label: t`Test Results`,
+        icon: <IconChecklist />,
+        hidden: !build.part_detail?.trackable,
+        content: build.pk ? (
+          <BuildOrderTestTable buildId={build.pk} partId={build.part} />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
+        name: 'test-statistics',
+        label: t`Test Statistics`,
+        icon: <IconReportAnalytics />,
+        content: (
+          <TestStatisticsTable
+            params={{
+              pk: build.pk,
+              apiEndpoint: ApiEndpoints.build_test_statistics
+            }}
+          />
+        ),
+        hidden: !build?.part_detail?.trackable
       },
       {
         name: 'attachments',

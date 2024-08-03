@@ -28,6 +28,7 @@ import {
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
+import { useGlobalSettingsState } from '../states/SettingsState';
 
 /**
  * Construct a set of fields for creating / editing a StockItem instance
@@ -932,6 +933,13 @@ export function useTestResultFields({
   // Field type for the "value" input
   const [fieldType, setFieldType] = useState<'string' | 'choice'>('string');
 
+  const settings = useGlobalSettingsState.getState();
+
+  const includeTestStation = useMemo(
+    () => settings.isSet('TEST_STATION_DATA'),
+    [settings]
+  );
+
   return useMemo(() => {
     return {
       stock_item: {
@@ -972,8 +980,15 @@ export function useTestResultFields({
       },
       attachment: {},
       notes: {},
-      started_datetime: {},
-      finished_datetime: {}
+      started_datetime: {
+        hidden: !includeTestStation
+      },
+      finished_datetime: {
+        hidden: !includeTestStation
+      },
+      test_station: {
+        hidden: !includeTestStation
+      }
     };
-  }, [choices, fieldType, partId, itemId]);
+  }, [choices, fieldType, partId, itemId, includeTestStation]);
 }

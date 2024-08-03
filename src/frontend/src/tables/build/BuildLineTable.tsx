@@ -7,7 +7,6 @@ import {
 } from '@tabler/icons-react';
 import { useCallback, useMemo } from 'react';
 
-import { PartHoverCard } from '../../components/images/Thumbnail';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -15,7 +14,7 @@ import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
+import { BooleanColumn, PartColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
@@ -131,7 +130,7 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         ordering: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => <PartHoverCard part={record.part_detail} />
+        render: (record: any) => PartColumn(record.part_detail)
       },
       {
         accessor: 'bom_item_detail.reference',

@@ -115,6 +115,8 @@ export enum ApiEndpoints {
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
   stock_install = 'stock/:id/install',
+  build_test_statistics = 'test-statistics/by-build/:id',
+  part_test_statistics = 'test-statistics/by-part/:id',
 
   // Generator API endpoints
   generate_batch_code = 'generate/batch-code/',
@@ -130,6 +132,7 @@ export enum ApiEndpoints {
   sales_order_shipment_list = 'order/so/shipment/',
 
   return_order_list = 'order/ro/',
+  return_order_line_list = 'order/ro-line/',
 
   // Template API endpoints
   label_list = 'label/template/',

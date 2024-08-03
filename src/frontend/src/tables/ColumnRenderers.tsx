@@ -163,16 +163,19 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
 export function StatusColumn({
   model,
   sortable,
-  accessor
+  accessor,
+  title
 }: {
   model: ModelType;
   sortable?: boolean;
   accessor?: string;
+  title?: string;
 }) {
   return {
     accessor: accessor ?? 'status',
     sortable: sortable ?? true,
-    render: TableStatusRenderer(model)
+    title: title,
+    render: TableStatusRenderer(model, accessor ?? 'status')
   };
 }
 

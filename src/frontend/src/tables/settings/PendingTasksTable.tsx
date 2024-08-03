@@ -4,11 +4,13 @@ import { useMemo } from 'react';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function PendingTasksTable() {
   const table = useTable('tasks-pending');
+  const user = useUserState();
 
   const columns: TableColumn[] = useMemo(() => {
     return [
@@ -48,7 +50,7 @@ export default function PendingTasksTable() {
       tableState={table}
       columns={columns}
       props={{
-        enableBulkDelete: true,
+        enableBulkDelete: user.isStaff(),
         enableSelection: true
       }}
     />
