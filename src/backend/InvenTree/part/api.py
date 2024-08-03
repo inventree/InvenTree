@@ -1195,6 +1195,10 @@ class PartMixin:
 
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
+        # Annotate with parameter template data?
+        if str2bool(self.request.query_params.get('parameters', False)):
+            queryset = queryset.prefetch_related('parameters', 'parameters__template')
+
         return queryset
 
     def get_serializer(self, *args, **kwargs):

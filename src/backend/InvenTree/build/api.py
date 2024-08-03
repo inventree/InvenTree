@@ -575,19 +575,23 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self):
-        """Override the queryset method, to allow filtering by stock_item.part."""
+        """Override the queryset method, to perform custom prefetch."""
         queryset = super().get_queryset()
 
         queryset = queryset.select_related(
             'build_line',
             'build_line__build',
             'build_line__bom_item',
+            'build_line__bom_item__part',
+            'build_line__bom_item__sub_part',
             'install_into',
             'stock_item',
             'stock_item__location',
             'stock_item__part',
-            'stock_item__supplier_part',
+            'stock_item__supplier_part__part',
+            'stock_item__supplier_part__supplier',
             'stock_item__supplier_part__manufacturer_part',
+            'stock_item__supplier_part__manufacturer_part__manufacturer',
         ).prefetch_related(
             'stock_item__location__tags',
         )
