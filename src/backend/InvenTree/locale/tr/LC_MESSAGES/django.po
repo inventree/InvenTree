@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-03 11:45+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"POT-Creation-Date: 2024-08-03 08:50+0000\n"
+"PO-Revision-Date: 2024-08-03 19:37\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Her seferind eaynı e-posta adresini yazmalısınız."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Kayıt devre dışı."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1560,16 +1558,12 @@ msgid "Part Description"
 msgstr ""
 
 #: build/serializers.py:1156
-#, fuzzy
-#| msgid "Base Part"
 msgid "BOM Part ID"
-msgstr "Temel Parça"
+msgstr ""
 
 #: build/serializers.py:1157
-#, fuzzy
-#| msgid "Part name"
 msgid "BOM Part Name"
-msgstr "Parça adı"
+msgstr ""
 
 #: build/serializers.py:1160
 #: report/templates/report/inventree_return_order_report.html:25
@@ -2020,10 +2014,8 @@ msgid "Completed Build Outputs"
 msgstr "Tamamlanmış Yapım İşi Çıktıları"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build Details"
 msgid "Build test statistics"
-msgstr "Yapım İşi Detayları"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -5400,10 +5392,8 @@ msgid "Company to which the items are being sold"
 msgstr ""
 
 #: order/models.py:971
-#, fuzzy
-#| msgid "Server status"
 msgid "Sales order status"
-msgstr "Sunucu Durumu"
+msgstr ""
 
 #: order/models.py:982 order/models.py:2102
 msgid "Customer Reference "
@@ -7593,34 +7583,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select part to build"
 msgid "Select the parent assembly"
-msgstr "Yapım işi için parça seçin"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Bileşen"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Bileşen"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Test Description"
 msgid "Component Description"
-msgstr "Test Açıklaması"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select part"
 msgid "Select the component part"
-msgstr "Parça seçin"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7866,10 +7846,8 @@ msgid "Add Test Template"
 msgstr "Test Şablonu Ekle"
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Statistics"
-msgstr "Parça Test Şablonları"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -9970,10 +9948,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Desteklenmeyen dsoya tipi"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -15165,3 +15141,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
