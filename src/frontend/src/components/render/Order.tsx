@@ -62,6 +62,23 @@ export function RenderReturnOrder(
   );
 }
 
+export function RenderReturnOrderLineItem(
+  props: Readonly<InstanceRenderInterface>
+): ReactNode {
+  const { instance } = props;
+
+  return (
+    <RenderInlineModel
+      {...props}
+      primary={instance.reference}
+      suffix={StatusRenderer({
+        status: instance.outcome,
+        type: ModelType.returnorderlineitem
+      })}
+    />
+  );
+}
+
 /**
  * Inline rendering of a single SalesOrder instance
  */

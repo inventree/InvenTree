@@ -9,8 +9,8 @@ import { ModelType } from '../enums/ModelType';
 export const statusCodeList: Record<string, ModelType> = {
   BuildStatus: ModelType.build,
   PurchaseOrderStatus: ModelType.purchaseorder,
-  ReturnOrderLineStatus: ModelType.purchaseorderlineitem,
   ReturnOrderStatus: ModelType.returnorder,
+  ReturnOrderLineStatus: ModelType.returnorderlineitem,
   SalesOrderStatus: ModelType.salesorder,
   StockHistoryCode: ModelType.stockhistory,
   StockStatus: ModelType.stockitem,

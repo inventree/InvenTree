@@ -84,6 +84,23 @@ export function useSalesOrderLineItemFields({
   return fields;
 }
 
+export function useSalesOrderShipmentFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      order: {
+        disabled: true
+      },
+      reference: {},
+      shipment_date: {},
+      delivery_date: {},
+      tracking_number: {},
+      invoice_number: {},
+      link: {},
+      notes: {}
+    };
+  }, []);
+}
+
 export function useReturnOrderFields(): ApiFormFieldSet {
   return useMemo(() => {
     return {
