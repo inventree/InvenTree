@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-03 11:45+0000\n"
-"PO-Revision-Date: 2024-07-26 18:37\n"
+"POT-Creation-Date: 2024-08-03 08:50+0000\n"
+"PO-Revision-Date: 2024-08-03 19:37\n"
 "Last-Translator: \n"
 "Language-Team: Estonian\n"
 "Language: et_EE\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr ""
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Registreerimine on ajutiselt väljalülitatud."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1560,16 +1558,12 @@ msgid "Part Description"
 msgstr ""
 
 #: build/serializers.py:1156
-#, fuzzy
-#| msgid "Part ID"
 msgid "BOM Part ID"
-msgstr "Osa ID"
+msgstr ""
 
 #: build/serializers.py:1157
-#, fuzzy
-#| msgid "Last Name"
 msgid "BOM Part Name"
-msgstr "Perekonnanimi"
+msgstr ""
 
 #: build/serializers.py:1160
 #: report/templates/report/inventree_return_order_report.html:25
@@ -7593,10 +7587,8 @@ msgid "Select the parent assembly"
 msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Complete"
 msgid "Component Name"
-msgstr "Valmis"
+msgstr ""
 
 #: part/serializers.py:1586
 msgid "Component IPN"
@@ -15149,3 +15141,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
