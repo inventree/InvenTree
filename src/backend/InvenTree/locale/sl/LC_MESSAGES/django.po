@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-03 11:45+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"POT-Creation-Date: 2024-08-03 08:50+0000\n"
+"PO-Revision-Date: 2024-08-03 19:36\n"
 "Last-Translator: \n"
 "Language-Team: Slovenian\n"
 "Language: sl_SI\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "E-pošti se morata ujemati"
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Registracija je onemogočena."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -2016,10 +2014,8 @@ msgid "Completed Build Outputs"
 msgstr ""
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build status code"
 msgid "Build test statistics"
-msgstr "Koda statusa izgradnje"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -7587,26 +7583,20 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select part to build"
 msgid "Select the parent assembly"
-msgstr "Izberite del za izgradnjo"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Complete"
 msgid "Component Name"
-msgstr "Končano"
+msgstr ""
 
 #: part/serializers.py:1586
 msgid "Component IPN"
 msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Description"
 msgid "Component Description"
-msgstr "Opis"
+msgstr ""
 
 #: part/serializers.py:1595
 msgid "Select the component part"
@@ -9958,10 +9948,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Nepodprta vrsta datotek"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -15153,3 +15141,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
