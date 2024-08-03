@@ -154,21 +154,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Calculate ghcr.io image name
-        id: image_name
-        run: |
-          IMAGE_ID=ghcr.io/${{ github.repository }}
-          IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
-          echo "IMAGE_ID=$IMAGE_ID" >> $GITHUB_OUTPUT
-
       - name: Extract Docker metadata
         if: github.event_name != 'pull_request'
         id: meta
         uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 # pin@v5.5.1
         with:
           images: |
-            ${{ steps.docker_login.outputs.skip_dockerhub_login == 'true' && '' || 'inventree/inventree'}}
-            ${{ steps.image_name.outputs.IMAGE_ID }}
+            inventree/inventree
+            ghcr.io/${{ github.repository }}
 
       - name: Push Docker Images
         id: push-docker
