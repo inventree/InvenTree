@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-03 11:45+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"POT-Creation-Date: 2024-08-03 08:50+0000\n"
+"PO-Revision-Date: 2024-08-03 19:36\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Вы должны вводить один и тот же адрес электронной почты."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Регистрация отключена."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1560,16 +1558,12 @@ msgid "Part Description"
 msgstr "Описание детали"
 
 #: build/serializers.py:1156
-#, fuzzy
-#| msgid "Part ID"
 msgid "BOM Part ID"
-msgstr "Код детали"
+msgstr ""
 
 #: build/serializers.py:1157
-#, fuzzy
-#| msgid "Part Name"
 msgid "BOM Part Name"
-msgstr "Наименование детали"
+msgstr ""
 
 #: build/serializers.py:1160
 #: report/templates/report/inventree_return_order_report.html:25
@@ -2020,10 +2014,8 @@ msgid "Completed Build Outputs"
 msgstr "Завершенная продукция"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build status"
 msgid "Build test statistics"
-msgstr "Статус Производства"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -2077,10 +2069,8 @@ msgstr "Незавершенная продукция"
 
 #: build/templates/build/sidebar.html:24
 #: part/templates/part/part_sidebar.html:56
-#, fuzzy
-#| msgid "Test Passed"
 msgid "Test Statistics"
-msgstr "Тест Пройден"
+msgstr ""
 
 #: common/api.py:692
 msgid "Is Link"
@@ -3028,7 +3018,7 @@ msgstr ""
 
 #: common/models.py:1951
 msgid "Enable registration"
-msgstr ""
+msgstr "Разрешить регистрацию"
 
 #: common/models.py:1952
 msgid "Enable self-registration for users on the login pages"
@@ -5038,7 +5028,7 @@ msgstr ""
 
 #: importer/models.py:497
 msgid "Row Index"
-msgstr ""
+msgstr "Номер строки"
 
 #: importer/models.py:500
 msgid "Original row data"
@@ -5050,7 +5040,7 @@ msgstr "Данные"
 
 #: importer/models.py:505 machine/models.py:110
 msgid "Errors"
-msgstr ""
+msgstr "Ошибки"
 
 #: importer/models.py:507 part/api.py:873
 msgid "Valid"
@@ -5106,7 +5096,7 @@ msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
-msgstr ""
+msgstr "Инициализация"
 
 #: importer/status_codes.py:12
 msgid "Mapping Columns"
@@ -5142,7 +5132,7 @@ msgstr ""
 
 #: machine/machine_types/label_printer.py:215
 msgid "Copies"
-msgstr ""
+msgstr "Копии"
 
 #: machine/machine_types/label_printer.py:216
 msgid "Number of copies to print for each label"
@@ -5150,7 +5140,7 @@ msgstr ""
 
 #: machine/machine_types/label_printer.py:231
 msgid "Connected"
-msgstr ""
+msgstr "Подключен"
 
 #: machine/machine_types/label_printer.py:232 order/api.py:1390
 #: templates/js/translated/sales_order.js:1078
@@ -5159,7 +5149,7 @@ msgstr "Неизвестно"
 
 #: machine/machine_types/label_printer.py:233
 msgid "Printing"
-msgstr ""
+msgstr "Печать"
 
 #: machine/machine_types/label_printer.py:234
 msgid "No media"
@@ -5183,7 +5173,7 @@ msgstr ""
 
 #: machine/machine_types/label_printer.py:250
 msgid "Printer Location"
-msgstr ""
+msgstr "Расположение принтера"
 
 #: machine/machine_types/label_printer.py:251
 msgid "Scope the printer to a specific location"
@@ -5191,7 +5181,7 @@ msgstr ""
 
 #: machine/models.py:25
 msgid "Name of machine"
-msgstr ""
+msgstr "Имя машины"
 
 #: machine/models.py:29
 msgid "Machine Type"
@@ -5402,10 +5392,8 @@ msgid "Company to which the items are being sold"
 msgstr "Компания, которой детали продаются"
 
 #: order/models.py:971
-#, fuzzy
-#| msgid "Server status"
 msgid "Sales order status"
-msgstr "Статус сервера"
+msgstr ""
 
 #: order/models.py:982 order/models.py:2102
 msgid "Customer Reference "
@@ -7354,7 +7342,7 @@ msgstr "Подкатегории"
 
 #: part/serializers.py:197
 msgid "Results"
-msgstr ""
+msgstr "Результаты"
 
 #: part/serializers.py:198
 msgid "Number of results recorded against this template"
@@ -7595,34 +7583,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the parent assembly"
-msgstr "Выберите родительскую деталь"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Компонент"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Компонент"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Company description"
 msgid "Component Description"
-msgstr "Описание компании"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the component part"
-msgstr "Выберите родительскую деталь"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7651,7 +7629,7 @@ msgstr ""
 
 #: part/serializers.py:1862
 msgid "Skip Invalid Rows"
-msgstr ""
+msgstr "Пропустить некорректные строки"
 
 #: part/serializers.py:1863
 msgid "Enable this option to skip invalid rows"
@@ -7868,10 +7846,8 @@ msgid "Add Test Template"
 msgstr "Добавить шаблон тестирования"
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Statistics"
-msgstr "Шаблоны тестирования детали"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -9201,11 +9177,11 @@ msgstr ""
 
 #: report/models.py:464 report/models.py:487
 msgid "Output File"
-msgstr ""
+msgstr "Выходной файл"
 
 #: report/models.py:465 report/models.py:488
 msgid "Generated output file"
-msgstr ""
+msgstr "Сгенерированный выходной файл"
 
 #: report/models.py:476
 msgid "Label output plugin"
@@ -9972,10 +9948,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Неподдерживаемый тип файла"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -10066,7 +10040,7 @@ msgstr "Необходимо предоставить как минимум 2 с
 
 #: stock/serializers.py:1522
 msgid "No Change"
-msgstr ""
+msgstr "Нет изменений"
 
 #: stock/serializers.py:1551
 msgid "StockItem primary key value"
@@ -10726,7 +10700,7 @@ msgstr ""
 #: templates/InvenTree/notifications/notifications.html:89
 #: templates/js/translated/notification.js:85
 msgid "Delete Notification"
-msgstr ""
+msgstr "Удалить уведомление"
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
@@ -10776,7 +10750,7 @@ msgstr "Регистрация"
 
 #: templates/InvenTree/settings/login.html:36
 msgid "Single Sign On"
-msgstr ""
+msgstr "Единый вход"
 
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:147
@@ -10887,11 +10861,11 @@ msgstr "Сообщения"
 
 #: templates/InvenTree/settings/plugin_settings.html:16
 msgid "Plugin information"
-msgstr ""
+msgstr "Информация о плагине"
 
 #: templates/InvenTree/settings/plugin_settings.html:47
 msgid "no version information supplied"
-msgstr ""
+msgstr "нет информации о версии"
 
 #: templates/InvenTree/settings/plugin_settings.html:61
 msgid "License"
@@ -10903,15 +10877,15 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:76
 msgid "Package information"
-msgstr ""
+msgstr "Информация о пакете"
 
 #: templates/InvenTree/settings/plugin_settings.html:82
 msgid "Installation method"
-msgstr ""
+msgstr "Способ установки"
 
 #: templates/InvenTree/settings/plugin_settings.html:85
 msgid "This plugin was installed as a package"
-msgstr ""
+msgstr "Этот плагин был установлен как пакет"
 
 #: templates/InvenTree/settings/plugin_settings.html:87
 msgid "This plugin was found in a local server path"
@@ -10919,7 +10893,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:93
 msgid "Installation path"
-msgstr ""
+msgstr "Путь установки"
 
 #: templates/InvenTree/settings/plugin_settings.html:100
 #: templates/js/translated/plugin.js:68
@@ -11033,7 +11007,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:49
 msgid "Rate"
-msgstr ""
+msgstr "Оценить"
 
 #: templates/InvenTree/settings/settings_staff_js.html:81
 #: templates/js/translated/forms.js:548 templates/js/translated/helpers.js:108
@@ -11247,7 +11221,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:135
 msgid "TOTP"
-msgstr ""
+msgstr "TOTP"
 
 #: templates/InvenTree/settings/user.html:141
 msgid "Static"
@@ -14727,16 +14701,12 @@ msgid "Include Installed Items"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:471
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Interval start"
-msgstr "Внутренняя деталь"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:475
-#, fuzzy
-#| msgid "Internal Price"
 msgid "Interval end"
-msgstr "Внутренняя цена"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:529
 msgid "Build status"
@@ -15061,16 +15031,12 @@ msgid "Email settings not configured"
 msgstr "Электронная почта не настроена"
 
 #: templates/test_statistics_table.html:13
-#, fuzzy
-#| msgid "Pass"
 msgid "Passed"
-msgstr "Прошел"
+msgstr ""
 
 #: templates/test_statistics_table.html:16
-#, fuzzy
-#| msgid "Fail"
 msgid "Failed"
-msgstr "Провален"
+msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
@@ -15175,3 +15141,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
