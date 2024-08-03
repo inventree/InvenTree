@@ -101,8 +101,7 @@ test('PUI - Sales', async ({ page }) => {
     .getByText('Selling some stuff')
     .waitFor();
   await page.getByRole('tab', { name: 'Line Items' }).click();
-  await page.getByRole('tab', { name: 'Pending Shipments' }).click();
-  await page.getByRole('tab', { name: 'Completed Shipments' }).click();
+  await page.getByRole('tab', { name: 'Shipments' }).click();
   await page.getByRole('tab', { name: 'Build Orders' }).click();
   await page.getByText('No records found').first().waitFor();
   await page.getByRole('tab', { name: 'Attachments' }).click();
