@@ -293,12 +293,22 @@ export default function PurchaseOrderDetail() {
   const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
 
   const poActions = useMemo(() => {
+    const canEdit: boolean = user.hasChangeRole(UserRoles.purchase_order);
+
     const canIssue: boolean =
-      user.hasChangeRole(UserRoles.purchase_order) &&
+      canEdit &&
       (order.status == poStatus.PENDING || order.status == poStatus.ON_HOLD);
-    const canComplete: boolean =
-      user.hasChangeRole(UserRoles.purchase_order) &&
-      order.status == poStatus.PLACED;
+
+    const canHold: boolean =
+      canEdit &&
+      (order.status == poStatus.PENDING || order.status == poStatus.PLACED);
+
+    const canComplete: boolean = canEdit && order.status == poStatus.PLACED;
+
+    const canCancel: boolean =
+      canEdit &&
+      order.status != poStatus.CANCELLED &&
+      order.status != poStatus.COMPLETE;
 
     return [
       <PrimaryActionButton
@@ -338,7 +348,7 @@ export default function PurchaseOrderDetail() {
         icon={<IconDots />}
         actions={[
           EditItemAction({
-            hidden: !user.hasChangeRole(UserRoles.purchase_order),
+            hidden: !canEdit,
             tooltip: t`Edit order`,
             onClick: () => {
               editPurchaseOrder.open();
@@ -350,10 +360,12 @@ export default function PurchaseOrderDetail() {
             tooltip: t`Duplicate order`
           }),
           HoldItemAction({
-            tooltip: t`Hold order`
+            tooltip: t`Hold order`,
+            hidden: !canHold
           }),
           CancelItemAction({
-            tooltip: t`Cancel order`
+            tooltip: t`Cancel order`,
+            hidden: !canCancel
           })
         ]}
       />
