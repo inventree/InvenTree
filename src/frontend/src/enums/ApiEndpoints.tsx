@@ -132,6 +132,10 @@ export enum ApiEndpoints {
   sales_order_shipment_list = 'order/so/shipment/',
 
   return_order_list = 'order/ro/',
+  return_order_issue = 'order/ro/:id/issue/',
+  return_order_hold = 'order/ro/:id/hold/',
+  return_order_cancel = 'order/ro/:id/cancel/',
+  return_order_complete = 'order/ro/:id/complete/',
 
   // Template API endpoints
   label_list = 'label/template/',

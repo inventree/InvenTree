@@ -367,9 +367,7 @@ export default function BuildDetail() {
     pk: build.pk,
     title: t`Edit Build Order`,
     fields: buildOrderFields,
-    onFormSuccess: () => {
-      refreshInstance();
-    }
+    onFormSuccess: refreshInstance
   });
 
   const cancelBuild = useCreateApiFormModal({
@@ -379,9 +377,7 @@ export default function BuildDetail() {
       remove_allocated_stock: {},
       remove_incomplete_outputs: {}
     },
-    onFormSuccess: () => {
-      refreshInstance();
-    }
+    onFormSuccess: refreshInstance
   });
 
   const duplicateBuild = useCreateApiFormModal({

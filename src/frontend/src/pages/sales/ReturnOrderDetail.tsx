@@ -44,6 +44,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 
@@ -285,6 +286,34 @@ export default function ReturnOrderDetail() {
     follow: true
   });
 
+  const issueOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.return_order_issue, order.pk),
+    title: t`Issue Return Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this return order as issued`
+  });
+
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.return_order_cancel, order.pk),
+    title: t`Cancel Return Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Cancel this return order`
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.return_order_hold, order.pk),
+    title: t`Hold Return Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this return order as on hold`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.return_order_complete, order.pk),
+    title: t`Complete Return Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this return order as complete`
+  });
+
   const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
 
   const orderActions = useMemo(() => {
@@ -315,12 +344,14 @@ export default function ReturnOrderDetail() {
         icon="issue"
         hidden={!canIssue}
         color="blue"
+        onClick={() => issueOrder.open()}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
         icon="complete"
         hidden={!canComplete}
         color="green"
+        onClick={() => completeOrder.open()}
       />,
       <AdminButton model={ModelType.returnorder} pk={order.pk} />,
       <BarcodeActionDropdown
@@ -360,11 +391,13 @@ export default function ReturnOrderDetail() {
           }),
           HoldItemAction({
             tooltip: t`Hold order`,
-            hidden: !canHold
+            hidden: !canHold,
+            onClick: () => holdOrder.open()
           }),
           CancelItemAction({
             tooltip: t`Cancel order`,
-            hidden: !canCancel
+            hidden: !canCancel,
+            onClick: () => cancelOrder.open()
           })
         ]}
       />
@@ -374,6 +407,10 @@ export default function ReturnOrderDetail() {
   return (
     <>
       {editReturnOrder.modal}
+      {issueOrder.modal}
+      {cancelOrder.modal}
+      {holdOrder.modal}
+      {completeOrder.modal}
       {duplicateReturnOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">
