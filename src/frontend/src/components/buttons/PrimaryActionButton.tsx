@@ -31,6 +31,7 @@ export default function PrimaryActionButton({
         leftSection={icon && <InvenTreeIcon icon={icon} />}
         color={color}
         radius="sm"
+        p="xs"
         onClick={onClick ?? notYetImplemented}
       >
         {title}
