@@ -14,6 +14,7 @@ import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -45,6 +46,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
@@ -291,22 +293,29 @@ export default function PurchaseOrderDetail() {
     ];
   }, [order, id, user]);
 
+  const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
+
   const poActions = useMemo(() => {
+    const canIssue: boolean =
+      user.hasChangeRole(UserRoles.purchase_order) &&
+      (order.status == poStatus.PENDING || order.status == poStatus.ON_HOLD);
+    const canComplete: boolean =
+      user.hasChangeRole(UserRoles.purchase_order) &&
+      order.status == poStatus.PLACED;
+
     return [
-      <Button
-        leftSection={<IconBrandTelegram />}
+      <PrimaryActionButton
+        title={t`Issue Order`}
+        icon="issue"
+        hidden={!canIssue}
         color="blue"
-        onClick={notYetImplemented}
-      >
-        {t`Issue Order`}
-      </Button>,
-      <Button
-        leftSection={<IconCircleCheck />}
+      />,
+      <PrimaryActionButton
+        title={t`Complete Order`}
+        icon="complete"
+        hidden={!canComplete}
         color="green"
-        onClick={notYetImplemented}
-      >
-        {t`Complete Order`}
-      </Button>,
+      />,
       <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
       <BarcodeActionDropdown
         actions={[
@@ -352,7 +361,7 @@ export default function PurchaseOrderDetail() {
         ]}
       />
     ];
-  }, [id, order, user]);
+  }, [id, order, user, poStatus]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading

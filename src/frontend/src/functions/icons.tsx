@@ -146,6 +146,7 @@ const icons = {
   cancel: IconCircleX,
   hold: IconHandStop,
   issue: IconBrandTelegram,
+  complete: IconCircleCheck,
 
   // Part Icons
   active: IconCheck,
