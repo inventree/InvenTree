@@ -1368,6 +1368,14 @@ class SalesOrderCompleteSerializer(OrderAdjustSerializer):
         )
 
 
+class SalesOrderHoldSerializer(OrderAdjustSerializer):
+    """Serilaizer for placing a SalesOrder on hold."""
+
+    def save(self):
+        """Save the serializer to place the SalesOrder on hold."""
+        self.order.hold_order()
+
+
 class SalesOrderCancelSerializer(OrderAdjustSerializer):
     """Serializer for marking a SalesOrder as cancelled."""
 

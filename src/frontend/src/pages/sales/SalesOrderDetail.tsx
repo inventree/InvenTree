@@ -47,6 +47,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
@@ -308,6 +309,34 @@ export default function SalesOrderDetail() {
     ];
   }, [order, id, user]);
 
+  const issueOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),
+    title: t`Issue Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as issued`
+  });
+
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_cancel, order.pk),
+    title: t`Cancel Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Cancel this order`
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_hold, order.pk),
+    title: t`Hold Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Place this order on hold`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_complete, order.pk),
+    title: t`Complete Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as complete`
+  });
+
   const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
   const soActions = useMemo(() => {
@@ -338,6 +367,7 @@ export default function SalesOrderDetail() {
         icon="issue"
         hidden={!canIssue}
         color="blue"
+        onClick={issueOrder.open}
       />,
       <PrimaryActionButton
         title={t`Ship Order`}
@@ -350,6 +380,7 @@ export default function SalesOrderDetail() {
         icon="complete"
         hidden={!canComplete}
         color="green"
+        onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.salesorder} pk={order.pk} />,
       <BarcodeActionDropdown
@@ -387,11 +418,13 @@ export default function SalesOrderDetail() {
           }),
           HoldItemAction({
             tooltip: t`Hold order`,
-            hidden: !canHold
+            hidden: !canHold,
+            onClick: () => holdOrder.open()
           }),
           CancelItemAction({
             tooltip: t`Cancel order`,
-            hidden: !canCancel
+            hidden: !canCancel,
+            onClick: () => cancelOrder.open()
           })
         ]}
       />
@@ -413,6 +446,10 @@ export default function SalesOrderDetail() {
 
   return (
     <>
+      {issueOrder.modal}
+      {cancelOrder.modal}
+      {holdOrder.modal}
+      {completeOrder.modal}
       {editSalesOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">

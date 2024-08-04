@@ -893,6 +893,12 @@ class SalesOrderContextMixin:
         return ctx
 
 
+class SalesOrderHold(SalesOrderContextMixin, CreateAPI):
+    """API endpoint to place a SalesOrder on hold."""
+
+    serializer_class = serializers.SalesOrderHoldSerializer
+
+
 class SalesOrderCancel(SalesOrderContextMixin, CreateAPI):
     """API endpoint to cancel a SalesOrder."""
 
@@ -1614,6 +1620,7 @@ order_api_urls = [
                         SalesOrderAllocateSerials.as_view(),
                         name='api-so-allocate-serials',
                     ),
+                    path('hold/', SalesOrderHold.as_view(), name='api-so-hold'),
                     path('cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
                     path('issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
                     path(

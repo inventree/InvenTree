@@ -128,6 +128,11 @@ export enum ApiEndpoints {
   purchase_order_receive = 'order/po/:id/receive/',
 
   sales_order_list = 'order/so/',
+  sales_order_issue = 'order/so/:id/issue/',
+  sales_order_hold = 'order/so/:id/hold/',
+  sales_order_cancel = 'order/so/:id/cancel/',
+  sales_order_ship = 'order/so/:id/ship/',
+  sales_order_complete = 'order/so/:id/complete/',
   sales_order_line_list = 'order/so-line/',
   sales_order_shipment_list = 'order/so/shipment/',
 

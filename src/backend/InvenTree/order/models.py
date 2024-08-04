@@ -1076,12 +1076,26 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def _action_place(self, *args, **kwargs):
         """Change this order from 'PENDING' to 'IN_PROGRESS'."""
-        if self.status == SalesOrderStatus.PENDING:
+        if self.status in [
+            SalesOrderStatus.PENDING.value,
+            SalesOrderStatus.ON_HOLD.value,
+        ]:
             self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('salesorder.issued', id=self.pk)
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this sales order as 'on hold'."""
+        if self.status in [
+            SalesOrderStatus.PENDING.value,
+            SalesOrderStatus.IN_PROGRESS.value,
+        ]:
+            self.status = SalesOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event('salesorder.onhold', id=self.pk)
 
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
@@ -1174,6 +1188,13 @@ class SalesOrder(TotalPriceMixin, Order):
             self._action_complete,
             user=user,
             **kwargs,
+        )
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, SalesOrderStatus.ON_HOLD.value, self, self._action_hold
         )
 
     @transaction.atomic
