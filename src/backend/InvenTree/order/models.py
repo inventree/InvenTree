@@ -609,7 +609,10 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
-        if self.is_pending:
+        if self.status in [
+            PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.ON_HOLD.value,
+        ]:
             self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
@@ -657,6 +660,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         )
 
     @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, PurchaseOrderStatus.ON_HOLD.value, self, self._action_hold
+        )
+
+    @transaction.atomic
     def cancel_order(self):
         """Attempt to transition to CANCELLED status."""
         return self.handle_transition(
@@ -678,11 +688,12 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """A PurchaseOrder can only be cancelled under the following circumstances.
 
         - Status is PLACED
-        - Status is PENDING
+        - Status is PENDING (or ON_HOLD)
         """
         return self.status in [
             PurchaseOrderStatus.PLACED.value,
             PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.ON_HOLD.value,
         ]
 
     def _action_cancel(self, *args, **kwargs):
@@ -700,6 +711,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.OrderCanceled,
             )
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this purchase order as 'on hold'."""
+        if self.status in [
+            PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.PLACED.value,
+        ]:
+            self.status = PurchaseOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event('purchaseorder.hold', id=self.pk)
 
     # endregion
 

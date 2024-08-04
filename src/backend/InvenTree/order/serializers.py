@@ -304,6 +304,14 @@ class OrderAdjustSerializer(serializers.Serializer):
         return self.context['order']
 
 
+class PurchaseOrderHoldSerializer(OrderAdjustSerializer):
+    """Serializer for placing a PurchaseOrder on hold."""
+
+    def save(self):
+        """Save the serializer to 'hold' the order."""
+        self.order.hold_order()
+
+
 class PurchaseOrderCancelSerializer(OrderAdjustSerializer):
     """Serializer for cancelling a PurchaseOrder."""
 

@@ -124,6 +124,10 @@ export enum ApiEndpoints {
 
   // Order API endpoints
   purchase_order_list = 'order/po/',
+  purchase_order_issue = 'order/po/:id/issue/',
+  purchase_order_hold = 'order/po/:id/hold/',
+  purchase_order_cancel = 'order/po/:id/cancel/',
+  purchase_order_complete = 'order/po/:id/complete/',
   purchase_order_line_list = 'order/po-line/',
   purchase_order_receive = 'order/po/:id/receive/',
 

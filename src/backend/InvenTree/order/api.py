@@ -360,6 +360,12 @@ class PurchaseOrderContextMixin:
         return context
 
 
+class PurchaseOrderHold(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to place a PurchaseOrder on hold."""
+
+    serializer_class = serializers.PurchaseOrderHoldSerializer
+
+
 class PurchaseOrderCancel(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to 'cancel' a purchase order.
 
@@ -1491,6 +1497,7 @@ order_api_urls = [
                     path(
                         'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
                     ),
+                    path('hold/', PurchaseOrderHold.as_view(), name='api-po-hold'),
                     path(
                         'complete/',
                         PurchaseOrderComplete.as_view(),

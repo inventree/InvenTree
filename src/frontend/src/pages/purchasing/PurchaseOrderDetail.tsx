@@ -44,6 +44,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
+import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
@@ -292,6 +293,37 @@ export default function PurchaseOrderDetail() {
 
   const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
 
+  const issueOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
+    title: t`Issue Purchase Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as issued`
+  });
+
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_cancel, order.pk),
+    title: t`Cancel Purchase Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Cancel this order`
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_hold, order.pk),
+    title: t`Hold Purchase Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Place this order on hold`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_complete, order.pk),
+    title: t`Complete Purchase Order`,
+    fields: {
+      accept_incomplete: {}
+    },
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as complete`
+  });
+
   const poActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.purchase_order);
 
@@ -316,12 +348,14 @@ export default function PurchaseOrderDetail() {
         icon="issue"
         hidden={!canIssue}
         color="blue"
+        onClick={issueOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
         icon="complete"
         hidden={!canComplete}
         color="green"
+        onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
       <BarcodeActionDropdown
@@ -361,11 +395,13 @@ export default function PurchaseOrderDetail() {
           }),
           HoldItemAction({
             tooltip: t`Hold order`,
-            hidden: !canHold
+            hidden: !canHold,
+            onClick: holdOrder.open
           }),
           CancelItemAction({
             tooltip: t`Cancel order`,
-            hidden: !canCancel
+            hidden: !canCancel,
+            onClick: cancelOrder.open
           })
         ]}
       />
@@ -386,6 +422,10 @@ export default function PurchaseOrderDetail() {
 
   return (
     <>
+      {issueOrder.modal}
+      {holdOrder.modal}
+      {cancelOrder.modal}
+      {completeOrder.modal}
       {editPurchaseOrder.modal}
       {duplicatePurchaseOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
