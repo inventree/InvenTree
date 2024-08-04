@@ -284,13 +284,28 @@ class PurchaseOrderSerializer(
     )
 
 
-class PurchaseOrderCancelSerializer(serializers.Serializer):
-    """Serializer for cancelling a PurchaseOrder."""
+class OrderAdjustSerializer(serializers.Serializer):
+    """Generic serializer class for adjusting the status of an order."""
 
     class Meta:
-        """Metaclass options."""
+        """Metaclass options.
+
+        By default, there are no fields required for this serializer type.
+        """
 
         fields = []
+
+    @property
+    def order(self):
+        """Return the order object associated with this serializer.
+
+        Note: It is passed in via the serializer context data.
+        """
+        return self.context['order']
+
+
+class PurchaseOrderCancelSerializer(OrderAdjustSerializer):
+    """Serializer for cancelling a PurchaseOrder."""
 
     def get_context_data(self):
         """Return custom context information about the order."""
@@ -300,21 +315,19 @@ class PurchaseOrderCancelSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer to 'cancel' the order."""
-        order = self.context['order']
-
-        if not order.can_cancel:
+        if not self.order.can_cancel:
             raise ValidationError(_('Order cannot be cancelled'))
 
-        order.cancel_order()
+        self.order.cancel_order()
 
 
-class PurchaseOrderCompleteSerializer(serializers.Serializer):
+class PurchaseOrderCompleteSerializer(OrderAdjustSerializer):
     """Serializer for completing a purchase order."""
 
     class Meta:
         """Metaclass options."""
 
-        fields = []
+        fields = ['accept_incomplete']
 
     accept_incomplete = serializers.BooleanField(
         label=_('Accept Incomplete'),
@@ -340,22 +353,15 @@ class PurchaseOrderCompleteSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer to 'complete' the order."""
-        order = self.context['order']
-        order.complete_order()
+        self.order.complete_order()
 
 
-class PurchaseOrderIssueSerializer(serializers.Serializer):
+class PurchaseOrderIssueSerializer(OrderAdjustSerializer):
     """Serializer for issuing (sending) a purchase order."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def save(self):
         """Save the serializer to 'place' the order."""
-        order = self.context['order']
-        order.place_order()
+        self.order.place_order()
 
 
 @register_importer()
@@ -898,18 +904,12 @@ class SalesOrderSerializer(
     )
 
 
-class SalesOrderIssueSerializer(serializers.Serializer):
+class SalesOrderIssueSerializer(OrderAdjustSerializer):
     """Serializer for issuing a SalesOrder."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def save(self):
         """Save the serializer to 'issue' the order."""
-        order = self.context['order']
-        order.issue_order()
+        self.order.issue_order()
 
 
 class SalesOrderAllocationSerializer(InvenTreeModelSerializer):
@@ -1313,8 +1313,13 @@ class SalesOrderShipmentAllocationItemSerializer(serializers.Serializer):
         return data
 
 
-class SalesOrderCompleteSerializer(serializers.Serializer):
+class SalesOrderCompleteSerializer(OrderAdjustSerializer):
     """DRF serializer for manually marking a sales order as complete."""
+
+    class Meta:
+        """Serializer metaclass options."""
+
+        fields = ['accept_incomplete']
 
     accept_incomplete = serializers.BooleanField(
         label=_('Accept Incomplete'),
@@ -1344,10 +1349,7 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
     def validate(self, data):
         """Custom validation for the serializer."""
         data = super().validate(data)
-
-        order = self.context['order']
-
-        order.can_complete(
+        self.order.can_complete(
             raise_error=True,
             allow_incomplete_lines=str2bool(data.get('accept_incomplete', False)),
         )
@@ -1357,17 +1359,16 @@ class SalesOrderCompleteSerializer(serializers.Serializer):
     def save(self):
         """Save the serializer to complete the SalesOrder."""
         request = self.context['request']
-        order = self.context['order']
         data = self.validated_data
 
         user = getattr(request, 'user', None)
 
-        order.ship_order(
+        self.order.ship_order(
             user, allow_incomplete_lines=str2bool(data.get('accept_incomplete', False))
         )
 
 
-class SalesOrderCancelSerializer(serializers.Serializer):
+class SalesOrderCancelSerializer(OrderAdjustSerializer):
     """Serializer for marking a SalesOrder as cancelled."""
 
     def get_context_data(self):
@@ -1378,9 +1379,7 @@ class SalesOrderCancelSerializer(serializers.Serializer):
 
     def save(self):
         """Save the serializer to cancel the order."""
-        order = self.context['order']
-
-        order.cancel_order()
+        self.order.cancel_order()
 
 
 class SalesOrderSerialAllocationSerializer(serializers.Serializer):
@@ -1657,46 +1656,36 @@ class ReturnOrderSerializer(
     )
 
 
-class ReturnOrderIssueSerializer(serializers.Serializer):
+class ReturnOrderHoldSerializer(OrderAdjustSerializer):
+    """Serializers for holding a ReturnOrder."""
+
+    def save(self):
+        """Save the serializer to 'hold' the order."""
+        self.order.hold_order()
+
+
+class ReturnOrderIssueSerializer(OrderAdjustSerializer):
     """Serializer for issuing a ReturnOrder."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def save(self):
         """Save the serializer to 'issue' the order."""
-        order = self.context['order']
-        order.issue_order()
+        self.order.issue_order()
 
 
-class ReturnOrderCancelSerializer(serializers.Serializer):
+class ReturnOrderCancelSerializer(OrderAdjustSerializer):
     """Serializer for cancelling a ReturnOrder."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def save(self):
         """Save the serializer to 'cancel' the order."""
-        order = self.context['order']
-        order.cancel_order()
+        self.order.cancel_order()
 
 
-class ReturnOrderCompleteSerializer(serializers.Serializer):
+class ReturnOrderCompleteSerializer(OrderAdjustSerializer):
     """Serializer for completing a ReturnOrder."""
-
-    class Meta:
-        """Metaclass options."""
-
-        fields = []
 
     def save(self):
         """Save the serializer to 'complete' the order."""
-        order = self.context['order']
-        order.complete_order()
+        self.order.complete_order()
 
 
 class ReturnOrderLineItemReceiveSerializer(serializers.Serializer):

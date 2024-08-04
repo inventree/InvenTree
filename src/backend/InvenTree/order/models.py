@@ -2133,9 +2133,20 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return True if this order is fully received."""
         return not self.lines.filter(received_date=None).exists()
 
+    def _action_hold(self, *args, **kwargs):
+        """Mark this order as 'on hold' (if allowed)."""
+        if self.status in [
+            ReturnOrderStatus.PENDING.value,
+            ReturnOrderStatus.IN_PROGRESS.value,
+        ]:
+            self.status = ReturnOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event('returnorder.hold', id=self.pk)
+
     def _action_cancel(self, *args, **kwargs):
         """Cancel this ReturnOrder (if not already cancelled)."""
-        if self.status != ReturnOrderStatus.CANCELLED:
+        if self.status != ReturnOrderStatus.CANCELLED.value:
             self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
 
@@ -2151,7 +2162,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_complete(self, *args, **kwargs):
         """Complete this ReturnOrder (if not already completed)."""
-        if self.status == ReturnOrderStatus.IN_PROGRESS:
+        if self.status == ReturnOrderStatus.IN_PROGRESS.value:
             self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()
             self.save()
@@ -2164,12 +2175,22 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_place(self, *args, **kwargs):
         """Issue this ReturnOrder (if currently pending)."""
-        if self.status == ReturnOrderStatus.PENDING:
+        if self.status in [
+            ReturnOrderStatus.PENDING.value,
+            ReturnOrderStatus.ON_HOLD.value,
+        ]:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('returnorder.issued', id=self.pk)
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to tranasition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, ReturnOrderStatus.ON_HOLD.value, self, self._action_hold
+        )
 
     @transaction.atomic
     def issue_order(self):

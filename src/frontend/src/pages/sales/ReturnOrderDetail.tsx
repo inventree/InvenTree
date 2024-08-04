@@ -321,7 +321,7 @@ export default function ReturnOrderDetail() {
 
     const canIssue: boolean =
       canEdit &&
-      order.status === (roStatus.PENDING || order.status == roStatus.ON_HOLD);
+      (order.status == roStatus.PENDING || order.status == roStatus.ON_HOLD);
 
     const canHold: boolean =
       canEdit &&

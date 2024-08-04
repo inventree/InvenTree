@@ -1196,6 +1196,12 @@ class ReturnOrderCancel(ReturnOrderContextMixin, CreateAPI):
     serializer_class = serializers.ReturnOrderCancelSerializer
 
 
+class ReturnOrderHold(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to hold a ReturnOrder."""
+
+    serializer_class = serializers.ReturnOrderHoldSerializer
+
+
 class ReturnOrderComplete(ReturnOrderContextMixin, CreateAPI):
     """API endpoint to complete a ReturnOrder."""
 
@@ -1706,6 +1712,9 @@ order_api_urls = [
                         'cancel/',
                         ReturnOrderCancel.as_view(),
                         name='api-return-order-cancel',
+                    ),
+                    path(
+                        'hold/', ReturnOrderHold.as_view(), name='api-return-order-hold'
                     ),
                     path(
                         'complete/',
