@@ -1,6 +1,8 @@
 import { t } from '@lingui/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Button, Grid, Skeleton, Stack } from '@mantine/core';
 import {
+  IconBrandTelegram,
+  IconCircleCheck,
   IconDots,
   IconInfoCircle,
   IconList,
@@ -23,6 +25,7 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
+  HoldItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
   ViewBarcodeAction
@@ -36,6 +39,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -289,6 +293,20 @@ export default function PurchaseOrderDetail() {
 
   const poActions = useMemo(() => {
     return [
+      <Button
+        leftSection={<IconBrandTelegram />}
+        color="blue"
+        onClick={notYetImplemented}
+      >
+        {t`Issue Order`}
+      </Button>,
+      <Button
+        leftSection={<IconCircleCheck />}
+        color="green"
+        onClick={notYetImplemented}
+      >
+        {t`Complete Order`}
+      </Button>,
       <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
       <BarcodeActionDropdown
         actions={[
@@ -315,16 +333,21 @@ export default function PurchaseOrderDetail() {
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
+            tooltip: t`Edit order`,
             onClick: () => {
               editPurchaseOrder.open();
             }
           }),
-          CancelItemAction({
-            tooltip: t`Cancel order`
-          }),
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),
-            onClick: () => duplicatePurchaseOrder.open()
+            onClick: () => duplicatePurchaseOrder.open(),
+            tooltip: t`Duplicate order`
+          }),
+          HoldItemAction({
+            tooltip: t`Hold order`
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel order`
           })
         ]}
       />
@@ -346,6 +369,7 @@ export default function PurchaseOrderDetail() {
   return (
     <>
       {editPurchaseOrder.modal}
+      {duplicatePurchaseOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">
           <PageDetail

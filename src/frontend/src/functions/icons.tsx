@@ -6,6 +6,7 @@ import {
   IconBinaryTree2,
   IconBookmarks,
   IconBox,
+  IconBrandTelegram,
   IconBuilding,
   IconBuildingFactory2,
   IconBuildingStore,
@@ -32,6 +33,7 @@ import {
   IconFlagShare,
   IconGitBranch,
   IconGridDots,
+  IconHandStop,
   IconHash,
   IconHierarchy,
   IconInfoCircle,
@@ -142,6 +144,8 @@ const icons = {
   plus: IconCirclePlus,
   minus: IconCircleMinus,
   cancel: IconCircleX,
+  hold: IconHandStop,
+  issue: IconBrandTelegram,
 
   // Part Icons
   active: IconCheck,
