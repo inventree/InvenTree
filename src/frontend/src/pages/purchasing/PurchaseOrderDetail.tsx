@@ -317,6 +317,7 @@ export default function PurchaseOrderDetail() {
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_complete, order.pk),
     title: t`Complete Purchase Order`,
+    timeout: 10000,
     fields: {
       accept_incomplete: {}
     },
