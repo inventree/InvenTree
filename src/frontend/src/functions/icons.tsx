@@ -147,6 +147,7 @@ const icons = {
   hold: IconHandStop,
   issue: IconBrandTelegram,
   complete: IconCircleCheck,
+  deliver: IconTruckDelivery,
 
   // Part Icons
   active: IconCheck,
