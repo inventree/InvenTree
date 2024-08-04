@@ -333,7 +333,10 @@ export default function SalesOrderDetail() {
     url: apiUrl(ApiEndpoints.sales_order_complete, order.pk),
     title: t`Complete Sales Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Mark this order as complete`
+    preFormWarning: t`Mark this order as complete`,
+    fields: {
+      accept_incomplete: {}
+    }
   });
 
   const soActions = useMemo(() => {
@@ -355,7 +358,6 @@ export default function SalesOrderDetail() {
         order.status == soStatus.IN_PROGRESS);
 
     const canShip: boolean = canEdit && order.status == soStatus.IN_PROGRESS;
-
     const canComplete: boolean = canEdit && order.status == soStatus.SHIPPED;
 
     return [
@@ -371,6 +373,7 @@ export default function SalesOrderDetail() {
         icon="deliver"
         hidden={!canShip}
         color="blue"
+        onClick={completeOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
@@ -448,6 +451,7 @@ export default function SalesOrderDetail() {
       {holdOrder.modal}
       {completeOrder.modal}
       {editSalesOrder.modal}
+      {duplicateSalesOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">
           <PageDetail
