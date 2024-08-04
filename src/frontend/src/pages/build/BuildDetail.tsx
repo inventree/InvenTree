@@ -19,6 +19,7 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -30,6 +31,7 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
+  HoldItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
   ViewBarcodeAction
@@ -47,6 +49,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
@@ -393,8 +396,42 @@ export default function BuildDetail() {
     modelType: ModelType.build
   });
 
+  const buildStatus = useStatusCodes({ modelType: ModelType.build });
+
   const buildActions = useMemo(() => {
+    const canEdit = user.hasChangeRole(UserRoles.build);
+
+    const canIssue =
+      canEdit &&
+      (build.status == buildStatus.PENDING ||
+        build.status == buildStatus.ON_HOLD);
+
+    const canComplete = canEdit && build.status == buildStatus.PRODUCTION;
+
+    const canHold =
+      canEdit &&
+      (build.status == buildStatus.PENDING ||
+        build.status == buildStatus.PRODUCTION);
+
+    const canCancel =
+      canEdit &&
+      (build.status == buildStatus.PENDING ||
+        build.status == buildStatus.ON_HOLD ||
+        build.status == buildStatus.PRODUCTION);
+
     return [
+      <PrimaryActionButton
+        title={t`Issue Order`}
+        icon="issue"
+        hidden={!canIssue}
+        color="blue"
+      />,
+      <PrimaryActionButton
+        title={t`Complete Order`}
+        icon="complete"
+        hidden={!canComplete}
+        color="green"
+      />,
       <AdminButton model={ModelType.build} pk={build.pk} />,
       <BarcodeActionDropdown
         actions={[
@@ -421,22 +458,27 @@ export default function BuildDetail() {
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),
-            hidden: !user.hasChangeRole(UserRoles.build)
+            hidden: !canEdit,
+            tooltip: t`Edit order`
+          }),
+          DuplicateItemAction({
+            onClick: () => duplicateBuild.open(),
+            tooltip: t`Duplicate order`,
+            hidden: !user.hasAddRole(UserRoles.build)
+          }),
+          HoldItemAction({
+            tooltip: t`Hold order`,
+            hidden: !canHold
           }),
           CancelItemAction({
             tooltip: t`Cancel order`,
             onClick: () => cancelBuild.open(),
-            hidden: !user.hasChangeRole(UserRoles.build)
-            // TODO: Hide if build cannot be cancelled
-          }),
-          DuplicateItemAction({
-            onClick: () => duplicateBuild.open(),
-            hidden: !user.hasAddRole(UserRoles.build)
+            hidden: !canCancel
           })
         ]}
       />
     ];
-  }, [id, build, user]);
+  }, [id, build, user, buildStatus]);
 
   const buildBadges = useMemo(() => {
     return instanceQuery.isFetching
