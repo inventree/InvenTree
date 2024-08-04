@@ -79,7 +79,7 @@ src="{% static 'img/blank_image.png' %}"
     </ul>
 </div>
 <div class='btn-group' role='group'>
-    {% if order.is_pending %}
+    {% if order.status == SalesOrderStatus.PENDING or order.status == SalesOrderStatus.ON_HOLD %}
     <button type='button' class='btn btn-primary' id='issue-order' title='{% trans "Issue Order" %}'>
         <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
     </button>

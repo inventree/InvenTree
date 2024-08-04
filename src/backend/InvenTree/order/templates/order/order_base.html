@@ -75,11 +75,11 @@
         {% endif %}
     </ul>
 </div>
-{% if order.is_pending %}
+{% if order.status == PurchaseOrderStatus.PENDING or order.status == PurchaseOrderStatus.ON_HOLD %}
 <button type='button' class='btn btn-primary' id='place-order' title='{% trans "Issue Order" %}'>
     <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
 </button>
-{% elif order.is_open %}
+{% elif order.status == PurchaseOrderStatus.PLACED %}
 <button type='button' class='btn btn-success' id='complete-order' title='{% trans "Mark order as complete" %}'>
     <span class='fas fa-check-circle'></span> {% trans "Complete Order" %}
 </button>
@@ -238,7 +238,7 @@ src="{% static 'img/blank_image.png' %}"
 {% block js_ready %}
 {{ block.super }}
 
-{% if order.status == PurchaseOrderStatus.PENDING %}
+{% if order.status == PurchaseOrderStatus.PENDING or order.status == PurchaseOrderStatus.ON_HOLD %}
 $("#place-order").click(function() {
 
     issuePurchaseOrder(
