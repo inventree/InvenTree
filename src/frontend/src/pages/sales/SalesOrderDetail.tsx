@@ -218,6 +218,8 @@ export default function SalesOrderDetail() {
     );
   }, [order, instanceQuery]);
 
+  const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
+
   const salesOrderFields = useSalesOrderFields();
 
   const editSalesOrder = useEditApiFormModal({
@@ -258,6 +260,10 @@ export default function SalesOrderDetail() {
           <SalesOrderLineItemTable
             orderId={order.pk}
             customerId={order.customer}
+            editable={
+              order.status != soStatus.COMPLETE &&
+              order.status != soStatus.CANCELLED
+            }
           />
         )
       },
@@ -307,7 +313,7 @@ export default function SalesOrderDetail() {
         )
       }
     ];
-  }, [order, id, user]);
+  }, [order, id, user, soStatus]);
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),
@@ -336,8 +342,6 @@ export default function SalesOrderDetail() {
     onFormSuccess: refreshInstance,
     preFormWarning: t`Mark this order as complete`
   });
-
-  const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
 
   const soActions = useMemo(() => {
     const canEdit: boolean = user.hasChangeRole(UserRoles.sales_order);
