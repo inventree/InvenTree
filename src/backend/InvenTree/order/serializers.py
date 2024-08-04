@@ -416,7 +416,6 @@ class PurchaseOrderLineItemSerializer(
     def __init__(self, *args, **kwargs):
         """Initialization routine for the serializer."""
         part_detail = kwargs.pop('part_detail', False)
-
         order_detail = kwargs.pop('order_detail', False)
 
         super().__init__(*args, **kwargs)
@@ -448,6 +447,18 @@ class PurchaseOrderLineItemSerializer(
                     )
                 ).prefetch_related(None),
             )
+        )
+
+        queryset = queryset.prefetch_related(
+            'order',
+            'order__responsible',
+            'order__stock_items',
+            'part__tags',
+            'part__supplier',
+            'part__manufacturer_part',
+            'part__manufacturer_part__manufacturer',
+            'part__part__pricing_data',
+            'part__part__tags',
         )
 
         queryset = queryset.annotate(
@@ -503,7 +514,7 @@ class PurchaseOrderLineItemSerializer(
     )
 
     supplier_part_detail = SupplierPartSerializer(
-        source='part', many=False, read_only=True
+        source='part', brief=True, many=False, read_only=True
     )
 
     purchase_price = InvenTreeMoneySerializer(allow_null=True)
