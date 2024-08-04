@@ -148,6 +148,7 @@ export enum ApiEndpoints {
   return_order_hold = 'order/ro/:id/hold/',
   return_order_cancel = 'order/ro/:id/cancel/',
   return_order_complete = 'order/ro/:id/complete/',
+  return_order_line_list = 'order/ro-line/',
 
   // Template API endpoints
   label_list = 'label/template/',

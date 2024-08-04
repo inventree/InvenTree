@@ -1054,7 +1054,9 @@ class SalesOrderShipmentList(ListCreateAPI):
     serializer_class = serializers.SalesOrderShipmentSerializer
     filterset_class = SalesOrderShipmentFilter
 
-    filter_backends = [rest_filters.DjangoFilterBackend]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    ordering_fields = ['delivery_date', 'shipment_date']
 
 
 class SalesOrderShipmentDetail(RetrieveUpdateDestroyAPI):
