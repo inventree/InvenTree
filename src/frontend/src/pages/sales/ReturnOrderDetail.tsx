@@ -11,6 +11,7 @@ import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -22,6 +23,7 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
+  HoldItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
   ViewBarcodeAction
@@ -41,6 +43,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 
@@ -101,7 +104,7 @@ export default function ReturnOrderDetail() {
         type: 'status',
         name: 'status',
         label: t`Status`,
-        model: ModelType.salesorder
+        model: ModelType.returnorder
       }
     ];
 
@@ -119,15 +122,6 @@ export default function ReturnOrderDetail() {
         label: t`Completed Line Items`,
         total: order.line_items,
         progress: order.completed_lines
-      },
-      {
-        type: 'progressbar',
-        name: 'shipments',
-        icon: 'shipment',
-        label: t`Completed Shipments`,
-        total: order.shipments,
-        progress: order.completed_shipments
-        // TODO: Fix this progress bar
       },
       {
         type: 'text',
@@ -291,8 +285,43 @@ export default function ReturnOrderDetail() {
     follow: true
   });
 
+  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
+
   const orderActions = useMemo(() => {
+    const canEdit: boolean = user.hasChangeRole(UserRoles.return_order);
+
+    const canIssue: boolean =
+      canEdit &&
+      order.status === (roStatus.PENDING || order.status == roStatus.ON_HOLD);
+
+    const canHold: boolean =
+      canEdit &&
+      (order.status == roStatus.PENDING ||
+        order.status == roStatus.PLACED ||
+        order.status == roStatus.IN_PROGRESS);
+
+    const canCancel: boolean =
+      canEdit &&
+      (order.status == roStatus.PENDING ||
+        order.status == roStatus.IN_PROGRESS ||
+        order.status == roStatus.ON_HOLD);
+
+    const canComplete: boolean =
+      canEdit && order.status == roStatus.IN_PROGRESS;
+
     return [
+      <PrimaryActionButton
+        title={t`Issue Order`}
+        icon="issue"
+        hidden={!canIssue}
+        color="blue"
+      />,
+      <PrimaryActionButton
+        title={t`Complete Order`}
+        icon="complete"
+        hidden={!canComplete}
+        color="green"
+      />,
       <AdminButton model={ModelType.returnorder} pk={order.pk} />,
       <BarcodeActionDropdown
         actions={[
@@ -319,21 +348,28 @@ export default function ReturnOrderDetail() {
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.return_order),
+            tooltip: t`Edit order`,
             onClick: () => {
               editReturnOrder.open();
             }
           }),
-          CancelItemAction({
-            tooltip: t`Cancel order`
-          }),
           DuplicateItemAction({
+            tooltip: t`Duplicate order`,
             hidden: !user.hasChangeRole(UserRoles.return_order),
             onClick: () => duplicateReturnOrder.open()
+          }),
+          HoldItemAction({
+            tooltip: t`Hold order`,
+            hidden: !canHold
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel order`,
+            hidden: !canCancel
           })
         ]}
       />
     ];
-  }, [user, order]);
+  }, [user, order, roStatus]);
 
   return (
     <>
