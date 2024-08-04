@@ -1,7 +1,7 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 232
+INVENTREE_API_VERSION = 233
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
