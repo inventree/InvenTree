@@ -297,7 +297,7 @@ export default function PurchaseOrderDetail() {
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
     title: t`Issue Purchase Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Mark this order as issued`
+    preFormWarning: t`Issue this order`
   });
 
   const cancelOrder = useCreateApiFormModal({

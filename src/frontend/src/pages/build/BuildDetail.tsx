@@ -370,16 +370,6 @@ export default function BuildDetail() {
     onFormSuccess: refreshInstance
   });
 
-  const cancelBuild = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
-    title: t`Cancel Build Order`,
-    fields: {
-      remove_allocated_stock: {},
-      remove_incomplete_outputs: {}
-    },
-    onFormSuccess: refreshInstance
-  });
-
   const duplicateBuild = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Add Build Order`,
@@ -393,6 +383,43 @@ export default function BuildDetail() {
   });
 
   const buildStatus = useStatusCodes({ modelType: ModelType.build });
+
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
+    title: t`Cancel Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Cancel this order`,
+    fields: {
+      remove_allocated_stock: {},
+      remove_incomplete_outputs: {}
+    }
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_hold, build.pk),
+    title: t`Hold Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Place this order on hold`
+  });
+
+  const issueOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_issue, build.pk),
+    title: t`Issue Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Issue this order`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_complete, build.pk),
+    title: t`Complete Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as complete`,
+    fields: {
+      accept_overallocated: {},
+      accept_unallocated: {},
+      accept_incomplete: {}
+    }
+  });
 
   const buildActions = useMemo(() => {
     const canEdit = user.hasChangeRole(UserRoles.build);
@@ -421,12 +448,14 @@ export default function BuildDetail() {
         icon="issue"
         hidden={!canIssue}
         color="blue"
+        onClick={issueOrder.open}
       />,
       <PrimaryActionButton
         title={t`Complete Order`}
         icon="complete"
         hidden={!canComplete}
         color="green"
+        onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.build} pk={build.pk} />,
       <BarcodeActionDropdown
@@ -464,11 +493,12 @@ export default function BuildDetail() {
           }),
           HoldItemAction({
             tooltip: t`Hold order`,
-            hidden: !canHold
+            hidden: !canHold,
+            onClick: holdOrder.open
           }),
           CancelItemAction({
             tooltip: t`Cancel order`,
-            onClick: () => cancelBuild.open(),
+            onClick: cancelOrder.open,
             hidden: !canCancel
           })
         ]}
@@ -492,7 +522,10 @@ export default function BuildDetail() {
     <>
       {editBuild.modal}
       {duplicateBuild.modal}
-      {cancelBuild.modal}
+      {cancelOrder.modal}
+      {holdOrder.modal}
+      {issueOrder.modal}
+      {completeOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">
           <PageDetail

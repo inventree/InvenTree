@@ -368,6 +368,11 @@ export function ApiForm({
           return;
         }
 
+        // Do not auto-focus on a 'choice' field
+        if (field.field_type == 'choice') {
+          return;
+        }
+
         focusField = fieldName;
       });
     }

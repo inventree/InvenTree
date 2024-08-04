@@ -319,7 +319,7 @@ export default function SalesOrderDetail() {
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),
     title: t`Issue Sales Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Mark this order as issued`
+    preFormWarning: t`Issue this order`
   });
 
   const cancelOrder = useCreateApiFormModal({

@@ -62,9 +62,12 @@ export enum ApiEndpoints {
 
   // Build API endpoints
   build_order_list = 'build/',
+  build_order_issue = 'build/:id/issue/',
   build_order_cancel = 'build/:id/cancel/',
-  build_output_create = 'build/:id/create-output/',
+  build_order_hold = 'build/:id/hold/',
+  build_order_complete = 'build/:id/finish/',
   build_output_complete = 'build/:id/complete/',
+  build_output_create = 'build/:id/create-output/',
   build_output_scrap = 'build/:id/scrap-outputs/',
   build_output_delete = 'build/:id/delete-outputs/',
   build_line_list = 'build/line/',
