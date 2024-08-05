@@ -1107,12 +1107,17 @@ class SalesOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order'."""
         self.issue_order()
 
-    def _action_place(self, *args, **kwargs):
-        """Change this order from 'PENDING' to 'IN_PROGRESS'."""
-        if self.status in [
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
             SalesOrderStatus.PENDING.value,
             SalesOrderStatus.ON_HOLD.value,
-        ]:
+        ]
+
+    def _action_place(self, *args, **kwargs):
+        """Change this order from 'PENDING' to 'IN_PROGRESS'."""
+        if self.can_issue:
             self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
@@ -2242,12 +2247,17 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order."""
         self.issue_order()
 
-    def _action_place(self, *args, **kwargs):
-        """Issue this ReturnOrder (if currently pending)."""
-        if self.status in [
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
             ReturnOrderStatus.PENDING.value,
             ReturnOrderStatus.ON_HOLD.value,
-        ]:
+        ]
+
+    def _action_place(self, *args, **kwargs):
+        """Issue this ReturnOrder (if currently pending)."""
+        if self.can_issue:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
