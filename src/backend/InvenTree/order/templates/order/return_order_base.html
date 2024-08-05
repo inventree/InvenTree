@@ -74,7 +74,10 @@ src="{% static 'img/blank_image.png' %}"
     </button>
     <ul class='dropdown-menu' role='menu'>
         <li><a class='dropdown-item' href='#' id='edit-order'><span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}</a></li>
-        {% if order.is_open %}
+        {% if order.can_hold %}
+        <li><a class='dropdown-item' href='#' id='hold-order'><span class='fas fa-hand-paper icon-yellow'></span> {% trans "Hold order" %}</a></li>
+        {% endif %}
+        {% if order.can_cancel %}
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
     </ul>
@@ -234,7 +237,7 @@ $('#edit-order').click(function() {
     });
 });
 
-{% if order.is_open %}
+{% if order.can_cancel %}
 $('#cancel-order').click(function() {
     cancelReturnOrder(
         {{ order.pk }},
@@ -243,6 +246,17 @@ $('#cancel-order').click(function() {
         }
     );
 });
+{% endif %}
+
+{% if order.can_hold %}
+$("#hold-order").click(function() {
+    holdOrder(
+        '{% url "api-ro-hold" order.pk %}',
+        {
+            reload: true,
+        }
+        );
+    });
 {% endif %}
 {% endif %}
 

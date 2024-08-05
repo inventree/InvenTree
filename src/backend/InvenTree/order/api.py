@@ -1729,9 +1729,7 @@ order_api_urls = [
                         ReturnOrderCancel.as_view(),
                         name='api-return-order-cancel',
                     ),
-                    path(
-                        'hold/', ReturnOrderHold.as_view(), name='api-return-order-hold'
-                    ),
+                    path('hold/', ReturnOrderHold.as_view(), name='api-ro-hold'),
                     path(
                         'complete/',
                         ReturnOrderComplete.as_view(),
