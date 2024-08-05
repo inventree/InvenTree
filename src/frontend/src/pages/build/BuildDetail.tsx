@@ -388,6 +388,7 @@ export default function BuildDetail() {
     url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
     title: t`Cancel Build Order`,
     onFormSuccess: refreshInstance,
+    successMessage: t`Order cancelled`,
     preFormWarning: t`Cancel this order`,
     fields: {
       remove_allocated_stock: {},
@@ -399,14 +400,16 @@ export default function BuildDetail() {
     url: apiUrl(ApiEndpoints.build_order_hold, build.pk),
     title: t`Hold Build Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Place this order on hold`
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
   });
 
   const issueOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_order_issue, build.pk),
     title: t`Issue Build Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Issue this order`
+    preFormWarning: t`Issue this order`,
+    successMessage: t`Order issued`
   });
 
   const completeOrder = useCreateApiFormModal({
@@ -414,6 +417,7 @@ export default function BuildDetail() {
     title: t`Complete Build Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Mark this order as complete`,
+    successMessage: t`Order completed`,
     fields: {
       accept_overallocated: {},
       accept_unallocated: {},

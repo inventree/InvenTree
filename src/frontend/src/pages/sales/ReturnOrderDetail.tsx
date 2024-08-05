@@ -295,28 +295,32 @@ export default function ReturnOrderDetail() {
     url: apiUrl(ApiEndpoints.return_order_issue, order.pk),
     title: t`Issue Return Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Issue this order`
+    preFormWarning: t`Issue this order`,
+    successMessage: t`Order issued`
   });
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.return_order_cancel, order.pk),
     title: t`Cancel Return Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Cancel this order`
+    preFormWarning: t`Cancel this order`,
+    successMessage: t`Order canceled`
   });
 
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.return_order_hold, order.pk),
     title: t`Hold Return Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Place this order on hold`
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
   });
 
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.return_order_complete, order.pk),
     title: t`Complete Return Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Mark this order as complete`
+    preFormWarning: t`Mark this order as complete`,
+    successMessage: t`Order completed`
   });
 
   const roStatus = useStatusCodes({ modelType: ModelType.returnorder });

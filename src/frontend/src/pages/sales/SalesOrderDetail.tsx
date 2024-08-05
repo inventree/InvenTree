@@ -312,21 +312,24 @@ export default function SalesOrderDetail() {
     url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),
     title: t`Issue Sales Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Issue this order`
+    preFormWarning: t`Issue this order`,
+    successMessage: t`Order issued`
   });
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_cancel, order.pk),
     title: t`Cancel Sales Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Cancel this order`
+    preFormWarning: t`Cancel this order`,
+    successMessage: t`Order cancelled`
   });
 
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.sales_order_hold, order.pk),
     title: t`Hold Sales Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Place this order on hold`
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
   });
 
   const completeOrder = useCreateApiFormModal({
@@ -334,6 +337,7 @@ export default function SalesOrderDetail() {
     title: t`Complete Sales Order`,
     onFormSuccess: refreshInstance,
     preFormWarning: t`Mark this order as complete`,
+    successMessage: t`Order completed`,
     fields: {
       accept_incomplete: {}
     }

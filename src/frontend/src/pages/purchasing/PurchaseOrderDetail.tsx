@@ -297,26 +297,30 @@ export default function PurchaseOrderDetail() {
     url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
     title: t`Issue Purchase Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Issue this order`
+    preFormWarning: t`Issue this order`,
+    successMessage: t`Order issued`
   });
 
   const cancelOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_cancel, order.pk),
     title: t`Cancel Purchase Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Cancel this order`
+    preFormWarning: t`Cancel this order`,
+    successMessage: t`Order cancelled`
   });
 
   const holdOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_hold, order.pk),
     title: t`Hold Purchase Order`,
     onFormSuccess: refreshInstance,
-    preFormWarning: t`Place this order on hold`
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
   });
 
   const completeOrder = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.purchase_order_complete, order.pk),
     title: t`Complete Purchase Order`,
+    successMessage: t`Order completed`,
     timeout: 10000,
     fields: {
       accept_incomplete: {}
