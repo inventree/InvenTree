@@ -40,3 +40,28 @@ test('PUI - Sales Orders', async ({ page }) => {
   await page.getByText('On Hold').first().waitFor();
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
+
+test('PUI - Purchase Orders', async ({ page }) => {
+  await doQuickLogin(page);
+
+  await page.goto(`${baseUrl}/home`);
+  await page.getByRole('tab', { name: 'Purchasing' }).click();
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+
+  // Check for expected values
+  await page.getByRole('cell', { name: 'PO0014' }).waitFor();
+  await page.getByText('Wire-E-Coyote').waitFor();
+  await page.getByText('Cancelled').first().waitFor();
+  await page.getByText('Pending').first().waitFor();
+  await page.getByText('On Hold').first().waitFor();
+
+  // Click through to a particular purchase order
+  await page.getByRole('cell', { name: 'PO0013' }).click();
+
+  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
+
+  // Display QR code
+  await page.getByLabel('action-menu-barcode-actions').click();
+  await page.getByLabel('action-menu-barcode-actions-view').click();
+  await page.getByRole('img', { name: 'QR Code' }).waitFor();
+});
