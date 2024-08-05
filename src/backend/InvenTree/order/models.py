@@ -609,10 +609,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
-        if self.status in [
-            PurchaseOrderStatus.PENDING.value,
-            PurchaseOrderStatus.ON_HOLD.value,
-        ]:
+        if self.can_issue:
             self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
@@ -644,6 +641,19 @@ class PurchaseOrder(TotalPriceMixin, Order):
                     line.part.part.schedule_pricing_update(create=True)
 
             trigger_event('purchaseorder.completed', id=self.pk)
+
+    @transaction.atomic
+    def issue_order(self):
+        """Equivalent to 'place_order'."""
+        self.place_order()
+
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
+            PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.ON_HOLD.value,
+        ]
 
     @transaction.atomic
     def place_order(self):
@@ -690,11 +700,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         - Status is PLACED
         - Status is PENDING (or ON_HOLD)
         """
-        return self.status in [
-            PurchaseOrderStatus.PLACED.value,
-            PurchaseOrderStatus.PENDING.value,
-            PurchaseOrderStatus.ON_HOLD.value,
-        ]
+        return self.status in PurchaseOrderStatusGroups.OPEN
 
     def _action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
@@ -712,12 +718,17 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 content=InvenTreeNotificationBodies.OrderCanceled,
             )
 
-    def _action_hold(self, *args, **kwargs):
-        """Mark this purchase order as 'on hold'."""
-        if self.status in [
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
             PurchaseOrderStatus.PENDING.value,
             PurchaseOrderStatus.PLACED.value,
-        ]:
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this purchase order as 'on hold'."""
+        if self.can_hold:
             self.status = PurchaseOrderStatus.ON_HOLD.value
             self.save()
 
@@ -1108,12 +1119,17 @@ class SalesOrder(TotalPriceMixin, Order):
 
             trigger_event('salesorder.issued', id=self.pk)
 
-    def _action_hold(self, *args, **kwargs):
-        """Mark this sales order as 'on hold'."""
-        if self.status in [
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
             SalesOrderStatus.PENDING.value,
             SalesOrderStatus.IN_PROGRESS.value,
-        ]:
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this sales order as 'on hold'."""
+        if self.can_hold:
             self.status = SalesOrderStatus.ON_HOLD.value
             self.save()
 
@@ -2176,20 +2192,30 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return True if this order is fully received."""
         return not self.lines.filter(received_date=None).exists()
 
-    def _action_hold(self, *args, **kwargs):
-        """Mark this order as 'on hold' (if allowed)."""
-        if self.status in [
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
             ReturnOrderStatus.PENDING.value,
             ReturnOrderStatus.IN_PROGRESS.value,
-        ]:
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this order as 'on hold' (if allowed)."""
+        if self.can_hold:
             self.status = ReturnOrderStatus.ON_HOLD.value
             self.save()
 
             trigger_event('returnorder.hold', id=self.pk)
 
+    @property
+    def can_cancel(self):
+        """Return True if this order can be cancelled."""
+        return self.status in ReturnOrderStatusGroups.OPEN
+
     def _action_cancel(self, *args, **kwargs):
         """Cancel this ReturnOrder (if not already cancelled)."""
-        if self.status != ReturnOrderStatus.CANCELLED.value:
+        if self.can_cancel:
             self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
 

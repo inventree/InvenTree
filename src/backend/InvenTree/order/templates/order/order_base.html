@@ -63,19 +63,24 @@
         <li><a class='dropdown-item' href='#' id='edit-order'>
             <span class='fas fa-edit icon-green'></span> {% trans "Edit order" %}
         </a></li>
-        {% if order.can_cancel %}
-        <li><a class='dropdown-item' href='#' id='cancel-order'>
-            <span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}
-        </a></li>
-        {% endif %}
         {% if roles.purchase_order.add %}
         <li><a class='dropdown-item' href='#' id='duplicate-order'>
             <span class='fas fa-clone'></span> {% trans "Duplicate order" %}
         </a></li>
         {% endif %}
+        {% if order.can_hold %}
+        <li><a class='dropdown-item' href='#' id='hold-order'>
+            <span class='fas fa-hand-paper icon-yellow'></span> {% trans "Hold order" %}
+        </a></li>
+        {% endif %}
+        {% if order.can_cancel %}
+        <li><a class='dropdown-item' href='#' id='cancel-order'>
+            <span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}
+        </a></li>
+        {% endif %}
     </ul>
 </div>
-{% if order.status == PurchaseOrderStatus.PENDING or order.status == PurchaseOrderStatus.ON_HOLD %}
+{% if order.can_issue %}
 <button type='button' class='btn btn-primary' id='place-order' title='{% trans "Issue Order" %}'>
     <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
 </button>
@@ -281,6 +286,7 @@ $("#complete-order").click(function() {
     );
 });
 
+{% if order.can_cancel %}
 $("#cancel-order").click(function() {
 
     cancelPurchaseOrder(
@@ -292,6 +298,21 @@ $("#cancel-order").click(function() {
         },
     );
 });
+{% endif %}
+
+{% if order.can_hold %}
+$("#hold-order").click(function() {
+
+    holdOrder(
+        '{% url "api-po-hold" order.pk %}',
+        {
+            onSuccess: function() {
+                window.location.reload();
+            }
+        }
+    );
+});
+{% endif %}
 
 {% endif %}
 
