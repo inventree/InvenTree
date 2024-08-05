@@ -81,7 +81,7 @@ src="{% static 'img/blank_image.png' %}"
         <li><a class='dropdown-item' href='#' id='cancel-order'><span class='fas fa-times-circle icon-red'></span> {% trans "Cancel order" %}</a></li>
         {% endif %}
     </ul>
-    {% if order.status == ReturnOrderStatus.PENDING or order.status == ReturnOrderStatus.ON_HOLD %}
+    {% if order.can_issue %}
     <button type='button' class='btn btn-primary' id='issue-order' title='{% trans "Issue Order" %}'>
         <span class='fas fa-paper-plane'></span> {% trans "Issue Order" %}
     </button>
@@ -214,7 +214,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% if roles.return_order.change %}
 
-{% if order.status == ReturnOrderStatus.PENDING or order.status == ReturnOrderStatus.ON_HOLD %}
+{% if order.can_issue %}
 $('#issue-order').click(function() {
     issueReturnOrder({{ order.pk }}, {
         reload: true,
