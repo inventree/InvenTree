@@ -22,9 +22,6 @@ test('PUI - Pages - Build Order', async ({ page }) => {
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Cancel' }).click();
 
-  await page.waitForTimeout(5000);
-  return;
-
   // Back to the build list
   await page.getByLabel('breadcrumb-0-build-orders').click();
 
