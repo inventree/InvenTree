@@ -289,7 +289,8 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
-        name: 'template',
+        icon: 'template',
+        name: 'is_template',
         label: t`Template Part`
       },
       {
