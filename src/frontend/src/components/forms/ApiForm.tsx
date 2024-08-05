@@ -383,7 +383,7 @@ export function ApiForm({
 
     form.setFocus(focusField);
     setInitialFocus(focusField);
-  }, [props.focus, fields, form.setFocus, isLoading, initialFocus]);
+  }, [props.focus, form.setFocus, isLoading, initialFocus]);
 
   const submitForm: SubmitHandler<FieldValues> = async (data) => {
     setNonFieldErrors([]);
