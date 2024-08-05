@@ -691,13 +691,18 @@ class Build(
             self.status, BuildStatus.PENDING.value, self, self._action_issue
         )
 
+    @property
+    def can_issue(self):
+        """Returns True if this BuildOrder can be issued."""
+        return self.status in [
+            BuildStatus.PENDING,
+            BuildStatus.ON_HOLD,
+        ]
+
     def _action_issue(self, *args, **kwargs):
         """Perform the action to mark this order as PRODUCTION."""
 
-        if self.status in [
-            BuildStatus.PENDING,
-            BuildStatus.ON_HOLD,
-        ]:
+        if self.can_issue:
             self.status = BuildStatus.PRODUCTION.value
             self.save()
 
@@ -711,13 +716,18 @@ class Build(
             self.status, BuildStatus.ON_HOLD.value, self, self._action_hold
         )
 
+    @property
+    def can_hold(self):
+        """Returns True if this BuildOrder can be placed on hold"""
+        return self.status in [
+            BuildStatus.PENDING,
+            BuildStatus.PRODUCTION,
+        ]
+
     def _action_hold(self, *args, **kwargs):
         """Action to be taken when a build is placed on hold."""
 
-        if self.status in [
-            BuildStatus.PENDING,
-            BuildStatus.PRODUCTION,
-        ]:
+        if self.can_hold:
             self.status = BuildStatus.ON_HOLD.value
             self.save()
 
