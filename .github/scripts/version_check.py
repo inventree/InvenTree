@@ -22,7 +22,7 @@ REPO = os.getenv('GITHUB_REPOSITORY', 'inventree/inventree')
 GITHUB_API_URL = os.getenv('GITHUB_API_URL', 'https://api.github.com')
 
 
-def get_existing_release_tags():
+def get_existing_release_tags(include_prerelease=True):
     """Request information on existing releases via the GitHub API."""
     # Check for github token
     token = os.getenv('GITHUB_TOKEN', None)
@@ -51,6 +51,9 @@ def get_existing_release_tags():
             print(f"Version '{tag}' did not match expected pattern")
             continue
 
+        if not include_prerelease and release['prerelease']:
+            continue
+
         tags.append([int(x) for x in match.groups()])
 
     return tags
@@ -74,7 +77,7 @@ def check_version_number(version_string, allow_duplicate=False):
     version_tuple = [int(x) for x in match.groups()]
 
     # Look through the existing releases
-    existing = get_existing_release_tags()
+    existing = get_existing_release_tags(inclure_prerelease=False)
 
     # Assume that this is the highest release, unless told otherwise
     highest_release = True
