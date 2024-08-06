@@ -15,6 +15,7 @@ import common.models
 from common.settings import set_global_setting
 import build.tasks
 from build.models import Build, BuildItem, BuildLine, generate_next_build_reference
+from build.status_codes import BuildStatus
 from part.models import Part, BomItem, BomItemSubstitute, PartTestTemplate
 from stock.models import StockItem, StockItemTestResult
 from users.models import Owner
@@ -175,6 +176,7 @@ class BuildTestBase(TestCase):
             part=cls.assembly,
             quantity=10,
             issued_by=get_user_model().objects.get(pk=1),
+            status=BuildStatus.PRODUCTION,
         )
 
         # Create some BuildLine items we can use later on
