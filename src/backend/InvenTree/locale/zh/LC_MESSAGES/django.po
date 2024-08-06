@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-03 08:50+0000\n"
-"PO-Revision-Date: 2024-08-04 21:29\n"
+"PO-Revision-Date: 2024-08-06 21:44\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1559,11 +1559,11 @@ msgstr "零件描述"
 
 #: build/serializers.py:1156
 msgid "BOM Part ID"
-msgstr ""
+msgstr "物料清单零件识别号码"
 
 #: build/serializers.py:1157
 msgid "BOM Part Name"
-msgstr ""
+msgstr "物料清单零件名称"
 
 #: build/serializers.py:1160
 #: report/templates/report/inventree_return_order_report.html:25
