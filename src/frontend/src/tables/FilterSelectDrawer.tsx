@@ -136,6 +136,7 @@ function FilterAddGroup({
         <Select
           data={valueOptions}
           label={t`Value`}
+          searchable={true}
           placeholder={t`Select filter value`}
           onChange={(value: string | null) => setSelectedValue(value)}
           maxDropdownHeight={800}
