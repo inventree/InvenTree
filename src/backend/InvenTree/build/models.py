@@ -695,8 +695,8 @@ class Build(
     def can_issue(self):
         """Returns True if this BuildOrder can be issued."""
         return self.status in [
-            BuildStatus.PENDING,
-            BuildStatus.ON_HOLD,
+            BuildStatus.PENDING.value,
+            BuildStatus.ON_HOLD.value,
         ]
 
     def _action_issue(self, *args, **kwargs):
@@ -720,8 +720,8 @@ class Build(
     def can_hold(self):
         """Returns True if this BuildOrder can be placed on hold"""
         return self.status in [
-            BuildStatus.PENDING,
-            BuildStatus.PRODUCTION,
+            BuildStatus.PENDING.value,
+            BuildStatus.PRODUCTION.value,
         ]
 
     def _action_hold(self, *args, **kwargs):
@@ -1353,7 +1353,7 @@ class Build(
     @property
     def is_complete(self):
         """Returns True if the build status is COMPLETE."""
-        return self.status == BuildStatus.COMPLETE
+        return self.status == BuildStatus.COMPLETE.value
 
     @transaction.atomic
     def create_build_line_items(self, prevent_duplicates=True):

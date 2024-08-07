@@ -26,9 +26,16 @@ class BaseEnum(enum.IntEnum):
 
     def __eq__(self, obj):
         """Override equality operator to allow comparison with int."""
-        if type(self) is type(obj):
-            return super().__eq__(obj)
-        return self.value == obj
+        if type(obj) is int:
+            return self.value == obj
+
+        if isinstance(obj, BaseEnum):
+            return self.value == obj.value
+
+        if hasattr(obj, 'value'):
+            return self.value == obj.value
+
+        return super().__eq__(obj)
 
     def __ne__(self, obj):
         """Override inequality operator to allow comparison with int."""
