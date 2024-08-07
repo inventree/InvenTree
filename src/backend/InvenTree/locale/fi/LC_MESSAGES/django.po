@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-07 10:35+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"PO-Revision-Date: 2024-08-07 21:46\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -1566,10 +1566,8 @@ msgid "BOM Part ID"
 msgstr ""
 
 #: build/serializers.py:1188
-#, fuzzy
-#| msgid "Last Name"
 msgid "BOM Part Name"
-msgstr "Sukunimi"
+msgstr ""
 
 #: build/serializers.py:1191
 #: report/templates/report/inventree_return_order_report.html:25
@@ -5423,10 +5421,8 @@ msgid "Company to which the items are being sold"
 msgstr ""
 
 #: order/models.py:1004
-#, fuzzy
-#| msgid "Server status"
 msgid "Sales order status"
-msgstr "Palvelimen tila"
+msgstr ""
 
 #: order/models.py:1015 order/models.py:2166
 msgid "Customer Reference "
@@ -5997,10 +5993,8 @@ msgstr "Kopioi tilaus"
 #: order/templates/order/order_base.html:73
 #: order/templates/order/return_order_base.html:78
 #: order/templates/order/sales_order_base.html:77
-#, fuzzy
-#| msgid "Edit order"
 msgid "Hold order"
-msgstr "Muokkaa tilausta"
+msgstr ""
 
 #: order/templates/order/order_base.html:78
 #: order/templates/order/return_order_base.html:81
@@ -7628,28 +7622,20 @@ msgid "Select the parent assembly"
 msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Komponentti"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Komponentti"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Company description"
 msgid "Component Description"
-msgstr "Yrityksen kuvaus"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select theme"
 msgid "Select the component part"
-msgstr "Valitse teema"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -9997,10 +9983,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Tiedostotyyppiä ei tueta"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -13057,10 +13041,8 @@ msgid "Notifications will load here"
 msgstr ""
 
 #: templates/js/translated/order.js:48
-#, fuzzy
-#| msgid "Edit order"
 msgid "Hold Order"
-msgstr "Muokkaa tilausta"
+msgstr ""
 
 #: templates/js/translated/order.js:53
 msgid "Are you sure you wish to place this order on hold?"
@@ -14762,16 +14744,12 @@ msgid "Include Installed Items"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:471
-#, fuzzy
-#| msgid "Internal Prices"
 msgid "Interval start"
-msgstr "Sisäiset hinnat"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:475
-#, fuzzy
-#| msgid "Internal Prices"
 msgid "Interval end"
-msgstr "Sisäiset hinnat"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:529
 msgid "Build status"
@@ -15206,3 +15184,4 @@ msgstr "Oikeus muokata kohteita"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
+
