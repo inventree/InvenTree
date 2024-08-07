@@ -16,11 +16,26 @@ class BaseEnum(enum.IntEnum):
         obj._value_ = args[0]
         return obj
 
+    def __int__(self):
+        """Return an integer representation of the value."""
+        return self.value
+
+    def __str__(self):
+        """Return a string representation of the value."""
+        return str(self.value)
+
     def __eq__(self, obj):
         """Override equality operator to allow comparison with int."""
-        if type(self) is type(obj):
-            return super().__eq__(obj)
-        return self.value == obj
+        if type(obj) is int:
+            return self.value == obj
+
+        if isinstance(obj, BaseEnum):
+            return self.value == obj.value
+
+        if hasattr(obj, 'value'):
+            return self.value == obj.value
+
+        return super().__eq__(obj)
 
     def __ne__(self, obj):
         """Override inequality operator to allow comparison with int."""

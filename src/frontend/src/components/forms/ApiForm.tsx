@@ -368,6 +368,11 @@ export function ApiForm({
           return;
         }
 
+        // Do not auto-focus on a 'choice' field
+        if (field.field_type == 'choice') {
+          return;
+        }
+
         focusField = fieldName;
       });
     }
@@ -378,7 +383,7 @@ export function ApiForm({
 
     form.setFocus(focusField);
     setInitialFocus(focusField);
-  }, [props.focus, fields, form.setFocus, isLoading, initialFocus]);
+  }, [props.focus, form.setFocus, isLoading, initialFocus]);
 
   const submitForm: SubmitHandler<FieldValues> = async (data) => {
     setNonFieldErrors([]);

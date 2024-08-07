@@ -470,8 +470,18 @@ class BuildFinish(BuildOrderContextMixin, CreateAPI):
     """API endpoint for marking a build as finished (completed)."""
 
     queryset = Build.objects.none()
-
     serializer_class = build.serializers.BuildCompleteSerializer
+
+    def get_queryset(self):
+        """Return the queryset for the BuildFinish API endpoint."""
+
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related(
+            'build_lines',
+            'build_lines__allocations'
+        )
+
+        return queryset
 
 
 class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
@@ -484,7 +494,6 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
     """
 
     queryset = Build.objects.none()
-
     serializer_class = build.serializers.BuildAutoAllocationSerializer
 
 
@@ -500,9 +509,21 @@ class BuildAllocate(BuildOrderContextMixin, CreateAPI):
     """
 
     queryset = Build.objects.none()
-
     serializer_class = build.serializers.BuildAllocationSerializer
 
+
+class BuildIssue(BuildOrderContextMixin, CreateAPI):
+    """API endpoint for issuing a BuildOrder."""
+
+    queryset = Build.objects.all()
+    serializer_class = build.serializers.BuildIssueSerializer
+
+
+class BuildHold(BuildOrderContextMixin, CreateAPI):
+    """API endpoint for placing a BuildOrder on hold."""
+
+    queryset = Build.objects.all()
+    serializer_class = build.serializers.BuildHoldSerializer
 
 class BuildCancel(BuildOrderContextMixin, CreateAPI):
     """API endpoint for cancelling a BuildOrder."""
@@ -663,6 +684,8 @@ build_api_urls = [
         path('create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
         path('delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
         path('scrap-outputs/', BuildOutputScrap.as_view(), name='api-build-output-scrap'),
+        path('issue/', BuildIssue.as_view(), name='api-build-issue'),
+        path('hold/', BuildHold.as_view(), name='api-build-hold'),
         path('finish/', BuildFinish.as_view(), name='api-build-finish'),
         path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
         path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),

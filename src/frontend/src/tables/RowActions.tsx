@@ -112,6 +112,7 @@ export function RowActions({
         withinPortal={true}
         label={action.tooltip ?? action.title}
         key={action.title}
+        position="left"
       >
         <Menu.Item
           color={action.color}
