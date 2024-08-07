@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-07 10:35+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"PO-Revision-Date: 2024-08-07 21:47\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Вы должны вводить один и тот же адрес электронной почты."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Регистрация отключена."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1427,10 +1425,8 @@ msgid "Required build quantity has not been completed"
 msgstr "Требуемое количество деталей не было произведено"
 
 #: build/serializers.py:769
-#, fuzzy
-#| msgid "Build order output created"
 msgid "Build order must be in production state"
-msgstr "Создан выход продукции для этого заказа на производство"
+msgstr ""
 
 #: build/serializers.py:772 templates/js/translated/build.js:304
 msgid "Build order has incomplete outputs"
@@ -1566,16 +1562,12 @@ msgid "Part Description"
 msgstr "Описание детали"
 
 #: build/serializers.py:1187
-#, fuzzy
-#| msgid "Part ID"
 msgid "BOM Part ID"
-msgstr "Код детали"
+msgstr ""
 
 #: build/serializers.py:1188
-#, fuzzy
-#| msgid "Part Name"
 msgid "BOM Part Name"
-msgstr "Наименование детали"
+msgstr ""
 
 #: build/serializers.py:1191
 #: report/templates/report/inventree_return_order_report.html:25
@@ -1791,10 +1783,8 @@ msgid "Duplicate Build"
 msgstr "Дублировать производство"
 
 #: build/templates/build/build_base.html:76
-#, fuzzy
-#| msgid "Edit Build"
 msgid "Hold Build"
-msgstr "Редактировать производство"
+msgstr ""
 
 #: build/templates/build/build_base.html:79
 msgid "Cancel Build"
@@ -1805,16 +1795,12 @@ msgid "Delete Build"
 msgstr "Удалить производство"
 
 #: build/templates/build/build_base.html:87
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Isueue Build"
-msgstr "Удалить производство"
+msgstr ""
 
 #: build/templates/build/build_base.html:88
-#, fuzzy
-#| msgid "Issued"
 msgid "Issue Build"
-msgstr "Создан"
+msgstr ""
 
 #: build/templates/build/build_base.html:91
 #: build/templates/build/build_base.html:92
@@ -1913,16 +1899,12 @@ msgid "Priority"
 msgstr "Приоритет"
 
 #: build/templates/build/build_base.html:267
-#, fuzzy
-#| msgid "New Build Order"
 msgid "Issue Build Order"
-msgstr "Новый заказ на производство"
+msgstr ""
 
 #: build/templates/build/build_base.html:271
-#, fuzzy
-#| msgid "User who issued this build order"
 msgid "Issue this Build Order?"
-msgstr "Пользователь, создавший этот заказ на производство"
+msgstr ""
 
 #: build/templates/build/build_base.html:302
 msgid "Delete Build Order"
@@ -2061,10 +2043,8 @@ msgid "Completed Build Outputs"
 msgstr "Завершенная продукция"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build status"
 msgid "Build test statistics"
-msgstr "Статус Производства"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -2118,10 +2098,8 @@ msgstr "Незавершенная продукция"
 
 #: build/templates/build/sidebar.html:24
 #: part/templates/part/part_sidebar.html:56
-#, fuzzy
-#| msgid "Test Passed"
 msgid "Test Statistics"
-msgstr "Тест Пройден"
+msgstr ""
 
 #: common/api.py:692
 msgid "Is Link"
@@ -3069,7 +3047,7 @@ msgstr ""
 
 #: common/models.py:1951
 msgid "Enable registration"
-msgstr ""
+msgstr "Разрешить регистрацию"
 
 #: common/models.py:1952
 msgid "Enable self-registration for users on the login pages"
@@ -5079,7 +5057,7 @@ msgstr ""
 
 #: importer/models.py:497
 msgid "Row Index"
-msgstr ""
+msgstr "Номер строки"
 
 #: importer/models.py:500
 msgid "Original row data"
@@ -5091,7 +5069,7 @@ msgstr "Данные"
 
 #: importer/models.py:505 machine/models.py:110
 msgid "Errors"
-msgstr ""
+msgstr "Ошибки"
 
 #: importer/models.py:507 part/api.py:873
 msgid "Valid"
@@ -5147,7 +5125,7 @@ msgstr ""
 
 #: importer/status_codes.py:11
 msgid "Initializing"
-msgstr ""
+msgstr "Инициализация"
 
 #: importer/status_codes.py:12
 msgid "Mapping Columns"
@@ -5183,7 +5161,7 @@ msgstr ""
 
 #: machine/machine_types/label_printer.py:215
 msgid "Copies"
-msgstr ""
+msgstr "Копии"
 
 #: machine/machine_types/label_printer.py:216
 msgid "Number of copies to print for each label"
@@ -5191,7 +5169,7 @@ msgstr ""
 
 #: machine/machine_types/label_printer.py:231
 msgid "Connected"
-msgstr ""
+msgstr "Подключен"
 
 #: machine/machine_types/label_printer.py:232 order/api.py:1408
 #: templates/js/translated/sales_order.js:1078
@@ -5200,7 +5178,7 @@ msgstr "Неизвестно"
 
 #: machine/machine_types/label_printer.py:233
 msgid "Printing"
-msgstr ""
+msgstr "Печать"
 
 #: machine/machine_types/label_printer.py:234
 msgid "No media"
@@ -5224,7 +5202,7 @@ msgstr ""
 
 #: machine/machine_types/label_printer.py:250
 msgid "Printer Location"
-msgstr ""
+msgstr "Расположение принтера"
 
 #: machine/machine_types/label_printer.py:251
 msgid "Scope the printer to a specific location"
@@ -5232,7 +5210,7 @@ msgstr ""
 
 #: machine/models.py:25
 msgid "Name of machine"
-msgstr ""
+msgstr "Имя машины"
 
 #: machine/models.py:29
 msgid "Machine Type"
@@ -5443,10 +5421,8 @@ msgid "Company to which the items are being sold"
 msgstr "Компания, которой детали продаются"
 
 #: order/models.py:1004
-#, fuzzy
-#| msgid "Server status"
 msgid "Sales order status"
-msgstr "Статус сервера"
+msgstr ""
 
 #: order/models.py:1015 order/models.py:2166
 msgid "Customer Reference "
@@ -6017,10 +5993,8 @@ msgstr "Дублировать заказ"
 #: order/templates/order/order_base.html:73
 #: order/templates/order/return_order_base.html:78
 #: order/templates/order/sales_order_base.html:77
-#, fuzzy
-#| msgid "Edit order"
 msgid "Hold order"
-msgstr "Редактировать заказ"
+msgstr ""
 
 #: order/templates/order/order_base.html:78
 #: order/templates/order/return_order_base.html:81
@@ -7403,7 +7377,7 @@ msgstr "Подкатегории"
 
 #: part/serializers.py:197
 msgid "Results"
-msgstr ""
+msgstr "Результаты"
 
 #: part/serializers.py:198
 msgid "Number of results recorded against this template"
@@ -7644,34 +7618,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the parent assembly"
-msgstr "Выберите родительскую деталь"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Компонент"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Компонент"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Company description"
 msgid "Component Description"
-msgstr "Описание компании"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the component part"
-msgstr "Выберите родительскую деталь"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7700,7 +7664,7 @@ msgstr ""
 
 #: part/serializers.py:1862
 msgid "Skip Invalid Rows"
-msgstr ""
+msgstr "Пропустить некорректные строки"
 
 #: part/serializers.py:1863
 msgid "Enable this option to skip invalid rows"
@@ -7917,10 +7881,8 @@ msgid "Add Test Template"
 msgstr "Добавить шаблон тестирования"
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Statistics"
-msgstr "Шаблоны тестирования детали"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -9250,11 +9212,11 @@ msgstr ""
 
 #: report/models.py:464 report/models.py:487
 msgid "Output File"
-msgstr ""
+msgstr "Выходной файл"
 
 #: report/models.py:465 report/models.py:488
 msgid "Generated output file"
-msgstr ""
+msgstr "Сгенерированный выходной файл"
 
 #: report/models.py:476
 msgid "Label output plugin"
@@ -10021,10 +9983,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Неподдерживаемый тип файла"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -10115,7 +10075,7 @@ msgstr "Необходимо предоставить как минимум 2 с
 
 #: stock/serializers.py:1522
 msgid "No Change"
-msgstr ""
+msgstr "Нет изменений"
 
 #: stock/serializers.py:1551
 msgid "StockItem primary key value"
@@ -10775,7 +10735,7 @@ msgstr ""
 #: templates/InvenTree/notifications/notifications.html:89
 #: templates/js/translated/notification.js:85
 msgid "Delete Notification"
-msgstr ""
+msgstr "Удалить уведомление"
 
 #: templates/InvenTree/notifications/sidebar.html:8
 msgid "Inbox"
@@ -10825,7 +10785,7 @@ msgstr "Регистрация"
 
 #: templates/InvenTree/settings/login.html:36
 msgid "Single Sign On"
-msgstr ""
+msgstr "Единый вход"
 
 #: templates/InvenTree/settings/mixins/settings.html:5
 #: templates/InvenTree/settings/settings.html:12 templates/navbar.html:147
@@ -10936,11 +10896,11 @@ msgstr "Сообщения"
 
 #: templates/InvenTree/settings/plugin_settings.html:16
 msgid "Plugin information"
-msgstr ""
+msgstr "Информация о плагине"
 
 #: templates/InvenTree/settings/plugin_settings.html:47
 msgid "no version information supplied"
-msgstr ""
+msgstr "нет информации о версии"
 
 #: templates/InvenTree/settings/plugin_settings.html:61
 msgid "License"
@@ -10952,15 +10912,15 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:76
 msgid "Package information"
-msgstr ""
+msgstr "Информация о пакете"
 
 #: templates/InvenTree/settings/plugin_settings.html:82
 msgid "Installation method"
-msgstr ""
+msgstr "Способ установки"
 
 #: templates/InvenTree/settings/plugin_settings.html:85
 msgid "This plugin was installed as a package"
-msgstr ""
+msgstr "Этот плагин был установлен как пакет"
 
 #: templates/InvenTree/settings/plugin_settings.html:87
 msgid "This plugin was found in a local server path"
@@ -10968,7 +10928,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/plugin_settings.html:93
 msgid "Installation path"
-msgstr ""
+msgstr "Путь установки"
 
 #: templates/InvenTree/settings/plugin_settings.html:100
 #: templates/js/translated/plugin.js:68
@@ -11082,7 +11042,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/settings_staff_js.html:49
 msgid "Rate"
-msgstr ""
+msgstr "Оценить"
 
 #: templates/InvenTree/settings/settings_staff_js.html:81
 #: templates/js/translated/forms.js:548 templates/js/translated/helpers.js:108
@@ -11296,7 +11256,7 @@ msgstr ""
 
 #: templates/InvenTree/settings/user.html:135
 msgid "TOTP"
-msgstr ""
+msgstr "TOTP"
 
 #: templates/InvenTree/settings/user.html:141
 msgid "Static"
@@ -13081,16 +13041,12 @@ msgid "Notifications will load here"
 msgstr ""
 
 #: templates/js/translated/order.js:48
-#, fuzzy
-#| msgid "Build Order"
 msgid "Hold Order"
-msgstr "Заказ на производство"
+msgstr ""
 
 #: templates/js/translated/order.js:53
-#, fuzzy
-#| msgid "Are you sure you want to delete this stock item?"
 msgid "Are you sure you wish to place this order on hold?"
-msgstr "Вы уверены, что хотите удалить эту складскую позицию?"
+msgstr ""
 
 #: templates/js/translated/order.js:114
 msgid "Add Extra Line Item"
@@ -14788,16 +14744,12 @@ msgid "Include Installed Items"
 msgstr ""
 
 #: templates/js/translated/table_filters.js:471
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Interval start"
-msgstr "Внутренняя деталь"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:475
-#, fuzzy
-#| msgid "Internal Price"
 msgid "Interval end"
-msgstr "Внутренняя цена"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:529
 msgid "Build status"
@@ -15122,16 +15074,12 @@ msgid "Email settings not configured"
 msgstr "Электронная почта не настроена"
 
 #: templates/test_statistics_table.html:13
-#, fuzzy
-#| msgid "Pass"
 msgid "Passed"
-msgstr "Прошел"
+msgstr ""
 
 #: templates/test_statistics_table.html:16
-#, fuzzy
-#| msgid "Fail"
 msgid "Failed"
-msgstr "Провален"
+msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
@@ -15236,3 +15184,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
