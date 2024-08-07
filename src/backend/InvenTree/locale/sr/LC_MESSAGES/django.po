@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-07 10:35+0000\n"
-"PO-Revision-Date: 2024-07-26 18:37\n"
+"PO-Revision-Date: 2024-08-07 21:48\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Svaki put morate upisati istu e-poštu."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Registracija je onemogućena."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1901,16 +1899,12 @@ msgid "Priority"
 msgstr ""
 
 #: build/templates/build/build_base.html:267
-#, fuzzy
-#| msgid "Build Order"
 msgid "Issue Build Order"
-msgstr "Nalog za izradu"
+msgstr ""
 
 #: build/templates/build/build_base.html:271
-#, fuzzy
-#| msgid "Build Order"
 msgid "Issue this Build Order?"
-msgstr "Nalog za izradu"
+msgstr ""
 
 #: build/templates/build/build_base.html:302
 msgid "Delete Build Order"
@@ -5999,10 +5993,8 @@ msgstr ""
 #: order/templates/order/order_base.html:73
 #: order/templates/order/return_order_base.html:78
 #: order/templates/order/sales_order_base.html:77
-#, fuzzy
-#| msgid "Build Order"
 msgid "Hold order"
-msgstr "Nalog za izradu"
+msgstr ""
 
 #: order/templates/order/order_base.html:78
 #: order/templates/order/return_order_base.html:81
@@ -7630,20 +7622,16 @@ msgid "Select the parent assembly"
 msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Complete"
 msgid "Component Name"
-msgstr "Gotovo"
+msgstr ""
 
 #: part/serializers.py:1586
 msgid "Component IPN"
 msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Description"
 msgid "Component Description"
-msgstr "Opis"
+msgstr ""
 
 #: part/serializers.py:1595
 msgid "Select the component part"
@@ -9995,10 +9983,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Nije podržan tip datoteke"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -13055,10 +13041,8 @@ msgid "Notifications will load here"
 msgstr ""
 
 #: templates/js/translated/order.js:48
-#, fuzzy
-#| msgid "Build Order"
 msgid "Hold Order"
-msgstr "Nalog za izradu"
+msgstr ""
 
 #: templates/js/translated/order.js:53
 msgid "Are you sure you wish to place this order on hold?"
@@ -15200,3 +15184,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
