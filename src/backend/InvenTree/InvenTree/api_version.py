@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 233
+INVENTREE_API_VERSION = 234
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v234 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7829
+    - Fixes bug in the plugin metadata endpoint
 
 v233 - 2024-08-04 : https://github.com/inventree/InvenTree/pull/7807
     - Adds new endpoints for managing state of build orders
