@@ -77,7 +77,7 @@ def check_version_number(version_string, allow_duplicate=False):
     version_tuple = [int(x) for x in match.groups()]
 
     # Look through the existing releases
-    existing = get_existing_release_tags(inclure_prerelease=False)
+    existing = get_existing_release_tags(include_prerelease=False)
 
     # Assume that this is the highest release, unless told otherwise
     highest_release = True
