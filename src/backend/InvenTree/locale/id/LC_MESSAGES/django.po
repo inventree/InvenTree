@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-07 10:35+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"PO-Revision-Date: 2024-08-07 21:47\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -1425,10 +1425,8 @@ msgid "Required build quantity has not been completed"
 msgstr "Jumlah produksi yang diperlukan masih belum cukup"
 
 #: build/serializers.py:769
-#, fuzzy
-#| msgid "Build order output created"
 msgid "Build order must be in production state"
-msgstr "Output order produksi dibuat"
+msgstr ""
 
 #: build/serializers.py:772 templates/js/translated/build.js:304
 msgid "Build order has incomplete outputs"
@@ -1785,10 +1783,8 @@ msgid "Duplicate Build"
 msgstr ""
 
 #: build/templates/build/build_base.html:76
-#, fuzzy
-#| msgid "Edit Build"
 msgid "Hold Build"
-msgstr "Ubah Produksi"
+msgstr ""
 
 #: build/templates/build/build_base.html:79
 msgid "Cancel Build"
@@ -1799,16 +1795,12 @@ msgid "Delete Build"
 msgstr "Hapus Produksi"
 
 #: build/templates/build/build_base.html:87
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Isueue Build"
-msgstr "Hapus Produksi"
+msgstr ""
 
 #: build/templates/build/build_base.html:88
-#, fuzzy
-#| msgid "Build"
 msgid "Issue Build"
-msgstr "Produksi"
+msgstr ""
 
 #: build/templates/build/build_base.html:91
 #: build/templates/build/build_base.html:92
@@ -1907,16 +1899,12 @@ msgid "Priority"
 msgstr ""
 
 #: build/templates/build/build_base.html:267
-#, fuzzy
-#| msgid "Build Order"
 msgid "Issue Build Order"
-msgstr "Order Produksi"
+msgstr ""
 
 #: build/templates/build/build_base.html:271
-#, fuzzy
-#| msgid "User who issued this build order"
 msgid "Issue this Build Order?"
-msgstr "Pengguna yang menyerahkan order ini"
+msgstr ""
 
 #: build/templates/build/build_base.html:302
 msgid "Delete Build Order"
@@ -2055,10 +2043,8 @@ msgid "Completed Build Outputs"
 msgstr ""
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build status code"
 msgid "Build test statistics"
-msgstr "Kode status pembuatan"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -6007,10 +5993,8 @@ msgstr ""
 #: order/templates/order/order_base.html:73
 #: order/templates/order/return_order_base.html:78
 #: order/templates/order/sales_order_base.html:77
-#, fuzzy
-#| msgid "Build Order"
 msgid "Hold order"
-msgstr "Order Produksi"
+msgstr ""
 
 #: order/templates/order/order_base.html:78
 #: order/templates/order/return_order_base.html:81
@@ -7634,26 +7618,20 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select part to build"
 msgid "Select the parent assembly"
-msgstr "Pilih bagian untuk diproduksi"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Complete"
 msgid "Component Name"
-msgstr "Selesai"
+msgstr ""
 
 #: part/serializers.py:1586
 msgid "Component IPN"
 msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Description"
 msgid "Component Description"
-msgstr "Keterangan"
+msgstr ""
 
 #: part/serializers.py:1595
 msgid "Select the component part"
@@ -10005,10 +9983,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Jenis file tidak didukung"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -13065,10 +13041,8 @@ msgid "Notifications will load here"
 msgstr ""
 
 #: templates/js/translated/order.js:48
-#, fuzzy
-#| msgid "Build Order"
 msgid "Hold Order"
-msgstr "Order Produksi"
+msgstr ""
 
 #: templates/js/translated/order.js:53
 msgid "Are you sure you wish to place this order on hold?"
@@ -15210,3 +15184,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
