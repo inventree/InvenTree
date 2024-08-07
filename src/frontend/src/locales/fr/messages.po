@@ -8,7 +8,7 @@ msgstr ""
 "Language: fr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-01 19:28\n"
+"PO-Revision-Date: 2024-08-07 21:46\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -841,7 +841,7 @@ msgstr ""
 #: src/components/importer/ImporterDrawer.tsx:109
 #: src/components/importer/ImporterDrawer.tsx:118
 msgid "Close"
-msgstr ""
+msgstr "Fermer"
 
 #: src/components/importer/ImporterDrawer.tsx:115
 msgid "Unknown Status"
@@ -2194,19 +2194,19 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Arabic"
-msgstr ""
+msgstr "Arabe"
 
 #: src/contexts/LanguageContext.tsx:21
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgare"
 
 #: src/contexts/LanguageContext.tsx:22
 msgid "Czech"
-msgstr ""
+msgstr "Tchèque"
 
 #: src/contexts/LanguageContext.tsx:23
 msgid "Danish"
-msgstr ""
+msgstr "Danois"
 
 #: src/contexts/LanguageContext.tsx:24
 msgid "German"
@@ -2381,7 +2381,7 @@ msgstr "À propos de cette instance Inventree"
 #: src/defaults/actions.tsx:51
 #: src/defaults/links.tsx:111
 msgid "License Information"
-msgstr ""
+msgstr "Informations de licence"
 
 #: src/defaults/actions.tsx:52
 #: src/defaults/links.tsx:135
@@ -5140,7 +5140,7 @@ msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:256
 #~ msgid "Pending Shipments"
-#~ msgstr ""
+#~ msgstr "Pending Shipments"
 
 #: src/pages/sales/SalesOrderDetail.tsx:271
 msgid "Shipments"
@@ -7785,3 +7785,4 @@ msgstr "Lire la documentation"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
