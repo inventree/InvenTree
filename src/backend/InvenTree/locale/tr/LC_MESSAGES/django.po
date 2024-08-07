@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-07 10:35+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"PO-Revision-Date: 2024-08-07 21:47\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Her seferind eaynı e-posta adresini yazmalısınız."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Kayıt devre dışı."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1427,10 +1425,8 @@ msgid "Required build quantity has not been completed"
 msgstr "Gerekli yapım işi miktarı tamamlanmadı"
 
 #: build/serializers.py:769
-#, fuzzy
-#| msgid "Build order output created"
 msgid "Build order must be in production state"
-msgstr "Yapım emri çıktısı oluşturuldu"
+msgstr ""
 
 #: build/serializers.py:772 templates/js/translated/build.js:304
 msgid "Build order has incomplete outputs"
@@ -1566,16 +1562,12 @@ msgid "Part Description"
 msgstr ""
 
 #: build/serializers.py:1187
-#, fuzzy
-#| msgid "Base Part"
 msgid "BOM Part ID"
-msgstr "Temel Parça"
+msgstr ""
 
 #: build/serializers.py:1188
-#, fuzzy
-#| msgid "Part name"
 msgid "BOM Part Name"
-msgstr "Parça adı"
+msgstr ""
 
 #: build/serializers.py:1191
 #: report/templates/report/inventree_return_order_report.html:25
@@ -1791,10 +1783,8 @@ msgid "Duplicate Build"
 msgstr ""
 
 #: build/templates/build/build_base.html:76
-#, fuzzy
-#| msgid "Edit Build"
 msgid "Hold Build"
-msgstr "Yapım İşini Düzenle"
+msgstr ""
 
 #: build/templates/build/build_base.html:79
 msgid "Cancel Build"
@@ -1805,16 +1795,12 @@ msgid "Delete Build"
 msgstr ""
 
 #: build/templates/build/build_base.html:87
-#, fuzzy
-#| msgid "Complete Build"
 msgid "Isueue Build"
-msgstr "Tamamlanmış Yapım İşi"
+msgstr ""
 
 #: build/templates/build/build_base.html:88
-#, fuzzy
-#| msgid "Issued By"
 msgid "Issue Build"
-msgstr "Veren"
+msgstr ""
 
 #: build/templates/build/build_base.html:91
 #: build/templates/build/build_base.html:92
@@ -1913,16 +1899,12 @@ msgid "Priority"
 msgstr ""
 
 #: build/templates/build/build_base.html:267
-#, fuzzy
-#| msgid "New Build Order"
 msgid "Issue Build Order"
-msgstr "Yeni Yapım İşi Emri"
+msgstr ""
 
 #: build/templates/build/build_base.html:271
-#, fuzzy
-#| msgid "User who issued this build order"
 msgid "Issue this Build Order?"
-msgstr "Bu yapım işi emrini veren kullanıcı"
+msgstr ""
 
 #: build/templates/build/build_base.html:302
 msgid "Delete Build Order"
@@ -2061,10 +2043,8 @@ msgid "Completed Build Outputs"
 msgstr "Tamamlanmış Yapım İşi Çıktıları"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build Details"
 msgid "Build test statistics"
-msgstr "Yapım İşi Detayları"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -5441,10 +5421,8 @@ msgid "Company to which the items are being sold"
 msgstr ""
 
 #: order/models.py:1004
-#, fuzzy
-#| msgid "Server status"
 msgid "Sales order status"
-msgstr "Sunucu Durumu"
+msgstr ""
 
 #: order/models.py:1015 order/models.py:2166
 msgid "Customer Reference "
@@ -6015,10 +5993,8 @@ msgstr ""
 #: order/templates/order/order_base.html:73
 #: order/templates/order/return_order_base.html:78
 #: order/templates/order/sales_order_base.html:77
-#, fuzzy
-#| msgid "Build Order"
 msgid "Hold order"
-msgstr "Yapım İşi Emri"
+msgstr ""
 
 #: order/templates/order/order_base.html:78
 #: order/templates/order/return_order_base.html:81
@@ -7642,34 +7618,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr ""
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select part to build"
 msgid "Select the parent assembly"
-msgstr "Yapım işi için parça seçin"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Bileşen"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Bileşen"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Test Description"
 msgid "Component Description"
-msgstr "Test Açıklaması"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select part"
 msgid "Select the component part"
-msgstr "Parça seçin"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7915,10 +7881,8 @@ msgid "Add Test Template"
 msgstr "Test Şablonu Ekle"
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Statistics"
-msgstr "Parça Test Şablonları"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -10019,10 +9983,8 @@ msgid "Destination location for uninstalled item"
 msgstr ""
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Desteklenmeyen dsoya tipi"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -13079,10 +13041,8 @@ msgid "Notifications will load here"
 msgstr ""
 
 #: templates/js/translated/order.js:48
-#, fuzzy
-#| msgid "Build Order"
 msgid "Hold Order"
-msgstr "Yapım İşi Emri"
+msgstr ""
 
 #: templates/js/translated/order.js:53
 msgid "Are you sure you wish to place this order on hold?"
@@ -15224,3 +15184,4 @@ msgstr "Parçaları düzenleme izni"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Parçaları silme izni"
+
