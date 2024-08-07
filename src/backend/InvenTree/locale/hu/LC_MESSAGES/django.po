@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-07 10:35+0000\n"
-"PO-Revision-Date: 2024-07-26 18:36\n"
+"PO-Revision-Date: 2024-08-07 21:46\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -125,10 +125,8 @@ msgid "You must type the same email each time."
 msgstr "Mindig ugyanazt az email címet kell beírni."
 
 #: InvenTree/forms.py:221
-#, fuzzy
-#| msgid "Registration is disabled."
 msgid "MFA Registration is disabled."
-msgstr "Regisztráció le van tiltva."
+msgstr ""
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -1360,8 +1358,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:537
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:649
@@ -1429,10 +1426,8 @@ msgid "Required build quantity has not been completed"
 msgstr "Szükséges gyártási mennyiség nem lett elérve"
 
 #: build/serializers.py:769
-#, fuzzy
-#| msgid "Build order output created"
 msgid "Build order must be in production state"
-msgstr "Gyártási utasítás kimenete elkészült"
+msgstr ""
 
 #: build/serializers.py:772 templates/js/translated/build.js:304
 msgid "Build order has incomplete outputs"
@@ -1568,16 +1563,12 @@ msgid "Part Description"
 msgstr "Alkatrész leírása"
 
 #: build/serializers.py:1187
-#, fuzzy
-#| msgid "Part ID"
 msgid "BOM Part ID"
-msgstr "Alkatrész ID"
+msgstr ""
 
 #: build/serializers.py:1188
-#, fuzzy
-#| msgid "Part Name"
 msgid "BOM Part Name"
-msgstr "Alkatrész neve"
+msgstr ""
 
 #: build/serializers.py:1191
 #: report/templates/report/inventree_return_order_report.html:25
@@ -1793,10 +1784,8 @@ msgid "Duplicate Build"
 msgstr "Gyártás másolása"
 
 #: build/templates/build/build_base.html:76
-#, fuzzy
-#| msgid "Edit Build"
 msgid "Hold Build"
-msgstr "Gyártás szerkesztése"
+msgstr ""
 
 #: build/templates/build/build_base.html:79
 msgid "Cancel Build"
@@ -1807,16 +1796,12 @@ msgid "Delete Build"
 msgstr "Gyártás törlése"
 
 #: build/templates/build/build_base.html:87
-#, fuzzy
-#| msgid "Delete Build"
 msgid "Isueue Build"
-msgstr "Gyártás törlése"
+msgstr ""
 
 #: build/templates/build/build_base.html:88
-#, fuzzy
-#| msgid "Issued"
 msgid "Issue Build"
-msgstr "Kiküldve"
+msgstr ""
 
 #: build/templates/build/build_base.html:91
 #: build/templates/build/build_base.html:92
@@ -1915,16 +1900,12 @@ msgid "Priority"
 msgstr "Prioritás"
 
 #: build/templates/build/build_base.html:267
-#, fuzzy
-#| msgid "New Build Order"
 msgid "Issue Build Order"
-msgstr "Új gyártási utasítás"
+msgstr ""
 
 #: build/templates/build/build_base.html:271
-#, fuzzy
-#| msgid "Issue this Sales Order?"
 msgid "Issue this Build Order?"
-msgstr "Vissza lett igazolva ez a vevői rendelés?"
+msgstr ""
 
 #: build/templates/build/build_base.html:302
 msgid "Delete Build Order"
@@ -2063,10 +2044,8 @@ msgid "Completed Build Outputs"
 msgstr "Befejezett gyártási kimenetek"
 
 #: build/templates/build/detail.html:273
-#, fuzzy
-#| msgid "Build status"
 msgid "Build test statistics"
-msgstr "Gyártási állapot"
+msgstr ""
 
 #: build/templates/build/detail.html:288 build/templates/build/sidebar.html:27
 #: company/templates/company/detail.html:229
@@ -2120,10 +2099,8 @@ msgstr "Befejezetlen kimenetek"
 
 #: build/templates/build/sidebar.html:24
 #: part/templates/part/part_sidebar.html:56
-#, fuzzy
-#| msgid "Test station"
 msgid "Test Statistics"
-msgstr "Teszt állomás"
+msgstr ""
 
 #: common/api.py:692
 msgid "Is Link"
@@ -5445,10 +5422,8 @@ msgid "Company to which the items are being sold"
 msgstr "Cég akinek a tételek értékesítésre kerülnek"
 
 #: order/models.py:1004
-#, fuzzy
-#| msgid "Server status"
 msgid "Sales order status"
-msgstr "Kiszolgáló állapota"
+msgstr ""
 
 #: order/models.py:1015 order/models.py:2166
 msgid "Customer Reference "
@@ -6019,10 +5994,8 @@ msgstr "Rendelés másolása"
 #: order/templates/order/order_base.html:73
 #: order/templates/order/return_order_base.html:78
 #: order/templates/order/sales_order_base.html:77
-#, fuzzy
-#| msgid "Edit order"
 msgid "Hold order"
-msgstr "Rendelés szerkesztése"
+msgstr ""
 
 #: order/templates/order/order_base.html:78
 #: order/templates/order/return_order_base.html:81
@@ -7646,34 +7619,24 @@ msgid "Maximum price must not be less than minimum price"
 msgstr "A Maximum ár nem lehet kisebb mint a Minimum ár"
 
 #: part/serializers.py:1574
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the parent assembly"
-msgstr "Szülő alkatrész kiválasztása"
+msgstr ""
 
 #: part/serializers.py:1583
-#, fuzzy
-#| msgid "Component"
 msgid "Component Name"
-msgstr "Összetevő"
+msgstr ""
 
 #: part/serializers.py:1586
-#, fuzzy
-#| msgid "Component"
 msgid "Component IPN"
-msgstr "Összetevő"
+msgstr ""
 
 #: part/serializers.py:1589
-#, fuzzy
-#| msgid "Company description"
 msgid "Component Description"
-msgstr "Cég leírása"
+msgstr ""
 
 #: part/serializers.py:1595
-#, fuzzy
-#| msgid "Select parent part"
 msgid "Select the component part"
-msgstr "Szülő alkatrész kiválasztása"
+msgstr ""
 
 #: part/serializers.py:1604 part/templates/part/part_base.html:235
 #: templates/js/translated/bom.js:1219
@@ -7919,10 +7882,8 @@ msgid "Add Test Template"
 msgstr "Teszt sablon hozzáadása"
 
 #: part/templates/part/detail.html:106
-#, fuzzy
-#| msgid "Part Test Templates"
 msgid "Part Test Statistics"
-msgstr "Alkatrész teszt sablonok"
+msgstr ""
 
 #: part/templates/part/detail.html:155 stock/templates/stock/item.html:49
 msgid "Sales Order Allocations"
@@ -10023,10 +9984,8 @@ msgid "Destination location for uninstalled item"
 msgstr "Cél hely a kiszedett tételeknek"
 
 #: stock/serializers.py:903
-#, fuzzy
-#| msgid "Unsupported file type"
 msgid "Unsupported statistic type: "
-msgstr "Nem támogatott fájltípus"
+msgstr ""
 
 #: stock/serializers.py:917
 msgid "Select part to convert stock item into"
@@ -13083,16 +13042,12 @@ msgid "Notifications will load here"
 msgstr "Az értesítések itt fognak megjelenni"
 
 #: templates/js/translated/order.js:48
-#, fuzzy
-#| msgid "Build Order"
 msgid "Hold Order"
-msgstr "Gyártási utasítás"
+msgstr ""
 
 #: templates/js/translated/order.js:53
-#, fuzzy
-#| msgid "Are you sure you wish to cancel this Return Order?"
 msgid "Are you sure you wish to place this order on hold?"
-msgstr "Biztosan törölni szeretnéd ezt a visszavételt?"
+msgstr ""
 
 #: templates/js/translated/order.js:114
 msgid "Add Extra Line Item"
@@ -14790,16 +14745,12 @@ msgid "Include Installed Items"
 msgstr "Beépített tételekkel együtt"
 
 #: templates/js/translated/table_filters.js:471
-#, fuzzy
-#| msgid "Internal Part"
 msgid "Interval start"
-msgstr "Belső alkatrész"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:475
-#, fuzzy
-#| msgid "Internal Price"
 msgid "Interval end"
-msgstr "Belső ár"
+msgstr ""
 
 #: templates/js/translated/table_filters.js:529
 msgid "Build status"
@@ -15124,16 +15075,12 @@ msgid "Email settings not configured"
 msgstr "Email beállítások hiányoznak"
 
 #: templates/test_statistics_table.html:13
-#, fuzzy
-#| msgid "Pass"
 msgid "Passed"
-msgstr "Sikeres"
+msgstr ""
 
 #: templates/test_statistics_table.html:16
-#, fuzzy
-#| msgid "Fail"
 msgid "Failed"
-msgstr "Sikertelen"
+msgstr ""
 
 #: templates/yesnolabel.html:4
 msgid "Yes"
@@ -15238,3 +15185,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
