@@ -179,7 +179,7 @@ export function usePurchaseOrderFields(): ApiFormFieldSet {
       },
       responsible: {
         filters: {
-          active: true
+          is_active: true
         },
         icon: <IconUsers />
       }

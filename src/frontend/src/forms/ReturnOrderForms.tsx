@@ -36,7 +36,7 @@ export function useReturnOrderLineItemFields({
       link: {},
       responsible: {
         filters: {
-          active: true
+          is_active: true
         },
         icon: <IconUsers />
       }
