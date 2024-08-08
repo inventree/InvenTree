@@ -85,9 +85,9 @@ import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
+import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
-import PartBuildAlloctionsTable from '../../tables/part/PartBuildAllocationsTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
@@ -562,7 +562,12 @@ export default function PartDetail() {
                   <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
                 </Accordion.Control>
                 <Accordion.Panel>
-                  <PartBuildAlloctionsTable partId={part.pk} />
+                  <BuildAllocatedStockTable
+                    partId={part.pk}
+                    modelField="build"
+                    modelTarget={ModelType.build}
+                    showBuildInfo
+                  />
                 </Accordion.Panel>
               </Accordion.Item>
             )}
@@ -571,9 +576,7 @@ export default function PartDetail() {
                 <Accordion.Control>
                   <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
                 </Accordion.Control>
-                <Accordion.Panel>
-                  <PartBuildAlloctionsTable partId={part.pk} />
-                </Accordion.Panel>
+                <Accordion.Panel>TODO</Accordion.Panel>
               </Accordion.Item>
             )}
           </Accordion>
