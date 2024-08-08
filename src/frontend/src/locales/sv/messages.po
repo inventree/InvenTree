@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-07 21:47\n"
+"PO-Revision-Date: 2024-08-08 22:04\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -7448,7 +7448,7 @@ msgstr ""
 
 #: src/tables/settings/UserTable.tsx:289
 msgid "Staff"
-msgstr "Staff"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:290
 msgid "Show staff users"
@@ -7456,7 +7456,7 @@ msgstr ""
 
 #: src/tables/settings/UserTable.tsx:294
 msgid "Superuser"
-msgstr "Superuser"
+msgstr ""
 
 #: src/tables/settings/UserTable.tsx:295
 msgid "Show superusers"
@@ -7825,3 +7825,4 @@ msgstr "Läs dokumenten"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
