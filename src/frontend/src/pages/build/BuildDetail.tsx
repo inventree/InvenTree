@@ -283,7 +283,7 @@ export default function BuildDetail() {
         label: t`Allocated Stock`,
         icon: <IconList />,
         content: build.pk ? (
-          <BuildAllocatedStockTable buildId={build.pk} />
+          <BuildAllocatedStockTable buildId={build.pk} showPartInfo allowEdit />
         ) : (
           <Skeleton />
         )
