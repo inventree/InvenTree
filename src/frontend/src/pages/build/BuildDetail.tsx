@@ -19,6 +19,7 @@ import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -30,6 +31,7 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
+  HoldItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
   ViewBarcodeAction
@@ -47,6 +49,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
@@ -364,21 +367,7 @@ export default function BuildDetail() {
     pk: build.pk,
     title: t`Edit Build Order`,
     fields: buildOrderFields,
-    onFormSuccess: () => {
-      refreshInstance();
-    }
-  });
-
-  const cancelBuild = useCreateApiFormModal({
-    url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
-    title: t`Cancel Build Order`,
-    fields: {
-      remove_allocated_stock: {},
-      remove_incomplete_outputs: {}
-    },
-    onFormSuccess: () => {
-      refreshInstance();
-    }
+    onFormSuccess: refreshInstance
   });
 
   const duplicateBuild = useCreateApiFormModal({
@@ -393,8 +382,85 @@ export default function BuildDetail() {
     modelType: ModelType.build
   });
 
+  const buildStatus = useStatusCodes({ modelType: ModelType.build });
+
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_cancel, build.pk),
+    title: t`Cancel Build Order`,
+    onFormSuccess: refreshInstance,
+    successMessage: t`Order cancelled`,
+    preFormWarning: t`Cancel this order`,
+    fields: {
+      remove_allocated_stock: {},
+      remove_incomplete_outputs: {}
+    }
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_hold, build.pk),
+    title: t`Hold Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
+  });
+
+  const issueOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_issue, build.pk),
+    title: t`Issue Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Issue this order`,
+    successMessage: t`Order issued`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.build_order_complete, build.pk),
+    title: t`Complete Build Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as complete`,
+    successMessage: t`Order completed`,
+    fields: {
+      accept_overallocated: {},
+      accept_unallocated: {},
+      accept_incomplete: {}
+    }
+  });
+
   const buildActions = useMemo(() => {
+    const canEdit = user.hasChangeRole(UserRoles.build);
+
+    const canIssue =
+      canEdit &&
+      (build.status == buildStatus.PENDING ||
+        build.status == buildStatus.ON_HOLD);
+
+    const canComplete = canEdit && build.status == buildStatus.PRODUCTION;
+
+    const canHold =
+      canEdit &&
+      (build.status == buildStatus.PENDING ||
+        build.status == buildStatus.PRODUCTION);
+
+    const canCancel =
+      canEdit &&
+      (build.status == buildStatus.PENDING ||
+        build.status == buildStatus.ON_HOLD ||
+        build.status == buildStatus.PRODUCTION);
+
     return [
+      <PrimaryActionButton
+        title={t`Issue Order`}
+        icon="issue"
+        hidden={!canIssue}
+        color="blue"
+        onClick={issueOrder.open}
+      />,
+      <PrimaryActionButton
+        title={t`Complete Order`}
+        icon="complete"
+        hidden={!canComplete}
+        color="green"
+        onClick={completeOrder.open}
+      />,
       <AdminButton model={ModelType.build} pk={build.pk} />,
       <BarcodeActionDropdown
         actions={[
@@ -421,22 +487,28 @@ export default function BuildDetail() {
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),
-            hidden: !user.hasChangeRole(UserRoles.build)
-          }),
-          CancelItemAction({
-            tooltip: t`Cancel order`,
-            onClick: () => cancelBuild.open(),
-            hidden: !user.hasChangeRole(UserRoles.build)
-            // TODO: Hide if build cannot be cancelled
+            hidden: !canEdit,
+            tooltip: t`Edit order`
           }),
           DuplicateItemAction({
             onClick: () => duplicateBuild.open(),
+            tooltip: t`Duplicate order`,
             hidden: !user.hasAddRole(UserRoles.build)
+          }),
+          HoldItemAction({
+            tooltip: t`Hold order`,
+            hidden: !canHold,
+            onClick: holdOrder.open
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel order`,
+            onClick: cancelOrder.open,
+            hidden: !canCancel
           })
         ]}
       />
     ];
-  }, [id, build, user]);
+  }, [id, build, user, buildStatus]);
 
   const buildBadges = useMemo(() => {
     return instanceQuery.isFetching
@@ -454,7 +526,10 @@ export default function BuildDetail() {
     <>
       {editBuild.modal}
       {duplicateBuild.modal}
-      {cancelBuild.modal}
+      {cancelOrder.modal}
+      {holdOrder.modal}
+      {issueOrder.modal}
+      {completeOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">
           <PageDetail

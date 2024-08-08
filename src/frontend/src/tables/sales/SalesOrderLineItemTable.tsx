@@ -34,10 +34,12 @@ import { TableHoverCard } from '../TableHoverCard';
 
 export default function SalesOrderLineItemTable({
   orderId,
-  customerId
+  customerId,
+  editable
 }: {
   orderId: number;
   customerId: number;
+  editable: boolean;
 }) {
   const user = useUserState();
   const table = useTable('sales-order-line-item');
@@ -207,7 +209,7 @@ export default function SalesOrderLineItemTable({
           });
           newLine.open();
         }}
-        hidden={!user.hasAddRole(UserRoles.sales_order)}
+        hidden={!editable || !user.hasAddRole(UserRoles.sales_order)}
       />
     ];
   }, [user, orderId]);
@@ -218,7 +220,10 @@ export default function SalesOrderLineItemTable({
 
       return [
         {
-          hidden: allocated || !user.hasChangeRole(UserRoles.sales_order),
+          hidden:
+            allocated ||
+            !editable ||
+            !user.hasChangeRole(UserRoles.sales_order),
           title: t`Allocate stock`,
           icon: <IconSquareArrowRight />,
           color: 'green'
@@ -242,21 +247,21 @@ export default function SalesOrderLineItemTable({
           color: 'blue'
         },
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.sales_order),
+          hidden: !editable || !user.hasChangeRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
           }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(UserRoles.sales_order),
+          hidden: !editable || !user.hasAddRole(UserRoles.sales_order),
           onClick: () => {
             setInitialData(record);
             newLine.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.sales_order),
+          hidden: !editable || !user.hasDeleteRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLine.open();
@@ -264,7 +269,7 @@ export default function SalesOrderLineItemTable({
         })
       ];
     },
-    [user]
+    [user, editable]
   );
 
   return (

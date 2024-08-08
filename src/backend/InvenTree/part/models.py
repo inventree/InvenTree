@@ -51,8 +51,7 @@ from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
 from common.icons import validate_icon
-from common.models import InvenTreeSetting
-from common.settings import get_global_setting, set_global_setting
+from common.settings import get_global_setting
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField

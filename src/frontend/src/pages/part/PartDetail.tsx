@@ -132,6 +132,13 @@ export default function PartDetail() {
       },
       {
         type: 'string',
+        name: 'IPN',
+        label: t`IPN`,
+        copy: true,
+        hidden: !part.IPN
+      },
+      {
+        type: 'string',
         name: 'description',
         label: t`Description`,
         copy: true
@@ -176,13 +183,6 @@ export default function PartDetail() {
         label: t`Category Default Location`,
         model: ModelType.stocklocation,
         hidden: part.default_location || !part.category_default_location
-      },
-      {
-        type: 'string',
-        name: 'IPN',
-        label: t`IPN`,
-        copy: true,
-        hidden: !part.IPN
       },
       {
         type: 'string',
@@ -799,7 +799,7 @@ export default function PartDetail() {
       <DetailsBadge
         label={t`On Order` + `: ${part.ordering}`}
         color="blue"
-        visible={part.on_order > 0}
+        visible={part.ordering > 0}
         key="on_order"
       />,
       <DetailsBadge
