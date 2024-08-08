@@ -123,6 +123,22 @@ export default function SalesOrderLineItemTable({
             extra.push(<Text size="sm">{t`Includes variant stock`}</Text>);
           }
 
+          if (record.building > 0) {
+            extra.push(
+              <Text size="sm">
+                {t`In production`}: {record.building}
+              </Text>
+            );
+          }
+
+          if (record.on_order > 0) {
+            extra.push(
+              <Text size="sm">
+                {t`On order`}: {record.on_order}
+              </Text>
+            );
+          }
+
           return (
             <TableHoverCard
               value={<Text color={color}>{text}</Text>}
