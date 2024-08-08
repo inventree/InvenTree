@@ -19,6 +19,8 @@ import {
   DetailDrawerLink
 } from '../../components/nav/DetailDrawer';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { UserPermissions } from '../../enums/Roles';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal
@@ -163,6 +165,7 @@ export function UserDrawer({
 export function UserTable() {
   const table = useTable('users');
   const navigate = useNavigate();
+  const user = useUserState();
 
   const openDetailDrawer = useCallback(
     (pk: number) => navigate(`user-${pk}/`),
@@ -256,11 +259,12 @@ export function UserTable() {
         key="add-user"
         onClick={newUser.open}
         tooltip={t`Add user`}
+        hidden={!user.hasAddPermission(ModelType.user)}
       />
     );
 
     return actions;
-  }, []);
+  }, [user]);
 
   return (
     <>

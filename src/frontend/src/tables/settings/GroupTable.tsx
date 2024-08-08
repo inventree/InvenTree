@@ -25,6 +25,7 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
@@ -127,6 +128,7 @@ export function GroupDrawer({
 export function GroupTable() {
   const table = useTable('groups');
   const navigate = useNavigate();
+  const user = useUserState();
 
   const openDetailDrawer = useCallback(
     (pk: number) => navigate(`group-${pk}/`),
@@ -183,11 +185,12 @@ export function GroupTable() {
         key={'add-group'}
         onClick={() => newGroup.open()}
         tooltip={t`Add group`}
+        hidden={!user.hasAddPermission(ModelType.group)}
       />
     );
 
     return actions;
-  }, []);
+  }, [user]);
 
   return (
     <>
