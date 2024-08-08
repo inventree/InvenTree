@@ -247,11 +247,7 @@ export default function BuildDetail() {
         label: t`Line Items`,
         icon: <IconListNumbers />,
         content: build?.pk ? (
-          <BuildLineTable
-            params={{
-              build: id
-            }}
-          />
+          <BuildLineTable buildId={build.pk} />
         ) : (
           <Skeleton />
         )

@@ -5,11 +5,14 @@ import {
   IconShoppingCart,
   IconTool
 } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { useBuildOrderFields } from '../../forms/BuildForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -19,7 +22,13 @@ import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
-export default function BuildLineTable({ params = {} }: { params?: any }) {
+export default function BuildLineTable({
+  buildId,
+  params = {}
+}: {
+  buildId: number;
+  params?: any;
+}) {
   const table = useTable('buildline');
   const user = useUserState();
 
@@ -213,6 +222,19 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
     ];
   }, []);
 
+  const buildOrderFields = useBuildOrderFields({ create: true });
+
+  const [initialData, setInitialData] = useState<any>({});
+
+  const newBuildOrder = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Create Build Order`,
+    fields: buildOrderFields,
+    initialData: initialData,
+    follow: true,
+    modelType: ModelType.build
+  });
+
   const rowActions = useCallback(
     (record: any) => {
       let part = record.part_detail;
@@ -243,8 +265,16 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         {
           icon: <IconTool />,
           title: t`Build Stock`,
-          hidden: !part?.assembly,
-          color: 'blue'
+          hidden: !part?.assembly || !user.hasAddRole(UserRoles.build),
+          color: 'blue',
+          onClick: () => {
+            setInitialData({
+              part: record.part,
+              parent: buildId,
+              quantity: record.quantity - record.allocated
+            });
+            newBuildOrder.open();
+          }
         }
       ];
     },
@@ -252,21 +282,25 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
   );
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.build_line_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          part_detail: true
-        },
-        tableFilters: tableFilters,
-        rowActions: rowActions,
-        modelType: ModelType.part,
-        modelField: 'part_detail.pk',
-        enableDownload: true
-      }}
-    />
+    <>
+      {newBuildOrder.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.build_line_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            build: buildId,
+            part_detail: true
+          },
+          tableFilters: tableFilters,
+          rowActions: rowActions,
+          modelType: ModelType.part,
+          modelField: 'part_detail.pk',
+          enableDownload: true
+        }}
+      />
+    </>
   );
 }

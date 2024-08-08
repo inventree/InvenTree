@@ -543,7 +543,7 @@ export default function PartDetail() {
         label: t`Variants`,
         icon: <IconVersions />,
         hidden: !part.is_template,
-        content: <PartVariantTable partId={String(id)} />
+        content: <PartVariantTable part={part} />
       },
       {
         name: 'allocations',
