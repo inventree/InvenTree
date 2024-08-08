@@ -18,6 +18,7 @@ class CustomChoiceField(serializers.ChoiceField):
         choice_field = kwargs.pop('choice_field', None)
         is_custom = kwargs.pop('is_custom', False)
         kwargs.pop('max_value', None)
+        kwargs.pop('min_value', None)
         super().__init__(choices, **kwargs)
         self.choice_mdl = choice_mdl
         self.choice_field = choice_field
