@@ -326,7 +326,9 @@ class StockItemSerializerBrief(
 
 @register_importer()
 class StockItemSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin,
+    InvenTree.serializers.InvenTreeCustomStatusSerializerMixin,
+    InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Serializer for a StockItem.
 
@@ -373,6 +375,7 @@ class StockItemSerializer(
             'serial',
             'status',
             'status_text',
+            'status_custom_key',
             'stocktake_date',
             'supplier_part',
             'sku',

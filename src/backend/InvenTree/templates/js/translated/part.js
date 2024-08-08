@@ -1758,7 +1758,7 @@ function loadPartPurchaseOrderTable(table, part_id, options={}) {
                     var html = renderLink(order.reference, `/order/purchase-order/${order.pk}/`);
 
                     html += purchaseOrderStatusDisplay(
-                        order.status,
+                        order.status_custom_key,
                         {
                             classes: 'float-right',
                         }

@@ -44,6 +44,7 @@ from InvenTree.fields import (
     InvenTreeURLField,
     RoundingDecimalField,
 )
+from InvenTree.generic_fields import InvenTreeCustomStatusModelField
 from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import notify_responsible
 from order.status_codes import (
@@ -471,7 +472,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
         validators=[order.validators.validate_purchase_order_reference],
     )
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=PurchaseOrderStatus.PENDING.value,
         choices=PurchaseOrderStatus.items(),
         verbose_name=_('Status'),
@@ -997,7 +998,7 @@ class SalesOrder(TotalPriceMixin, Order):
         """Accessor helper for Order base."""
         return self.customer
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=SalesOrderStatus.PENDING.value,
         choices=SalesOrderStatus.items(),
         verbose_name=_('Status'),
@@ -2153,7 +2154,7 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Accessor helper for Order base class."""
         return self.customer
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=ReturnOrderStatus.PENDING.value,
         choices=ReturnOrderStatus.items(),
         verbose_name=_('Status'),
@@ -2404,7 +2405,7 @@ class ReturnOrderLineItem(OrderLineItem):
         """Return True if this item has been received."""
         return self.received_date is not None
 
-    outcome = models.PositiveIntegerField(
+    outcome = InvenTreeCustomStatusModelField(
         default=ReturnOrderLineStatus.PENDING.value,
         choices=ReturnOrderLineStatus.items(),
         verbose_name=_('Outcome'),

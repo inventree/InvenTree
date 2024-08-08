@@ -381,6 +381,14 @@ class InvenTreeMetadata(SimpleMetadata):
         if field_info['type'] == 'dependent field':
             field_info['depends_on'] = field.depends_on
 
+        # Extend field info if the field has a get_field_info method
+        if (
+            not field_info.get('read_only')
+            and hasattr(field, 'get_field_info')
+            and callable(field.get_field_info)
+        ):
+            field_info = field.get_field_info(field, field_info)
+
         return field_info
 
 

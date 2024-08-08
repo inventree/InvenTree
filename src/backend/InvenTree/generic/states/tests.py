@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework.test import force_authenticate
 
+from generic.states.states import ColorEnum
 from InvenTree.unit_test import InvenTreeTestCase
 
 from .api import StatusView
@@ -14,9 +15,9 @@ from .states import StatusCode
 class GeneralStatus(StatusCode):
     """Defines a set of status codes for tests."""
 
-    PENDING = 10, _('Pending'), 'secondary'
+    PENDING = 10, _('Pending'), ColorEnum.secondary
     PLACED = 20, _('Placed'), 'primary'
-    COMPLETE = 30, _('Complete'), 'success'
+    COMPLETE = 30, _('Complete'), ColorEnum.success
     ABC = None  # This should be ignored
     _DEF = None  # This should be ignored
     jkl = None  # This should be ignored

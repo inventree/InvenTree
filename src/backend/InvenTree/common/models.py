@@ -53,6 +53,8 @@ import order.validators
 import plugin.base.barcodes.helper
 import report.helpers
 import users.models
+from generic.states.states import ColorEnum, StatusCode
+from InvenTree.helpers import inheritors
 from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
@@ -3331,3 +3333,107 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             raise ValidationError(_('Invalid model type specified for attachment'))
 
         return model_class.check_attachment_permission(permission, user)
+
+
+def state_color_mappings():
+    """Return a list of custom user state colors."""
+    return [(a.name, a.value) for a in ColorEnum]
+
+
+class InvenTreeCustomUserStateModel(models.Model):
+    """Custom model to extends any registered state with extra custom, user defined states."""
+
+    key = models.IntegerField(
+        verbose_name=_('Key'),
+        help_text=_('Value that will be saved in the models database'),
+    )
+    name = models.CharField(
+        max_length=250, verbose_name=_('Name'), help_text=_('Name of the state')
+    )
+    label = models.CharField(
+        max_length=250,
+        verbose_name=_('label'),
+        help_text=_('Label that will be displayed in the frontend'),
+    )
+    color = models.CharField(
+        max_length=10,
+        choices=state_color_mappings(),
+        default=ColorEnum.secondary,
+        verbose_name=_('Color'),
+        help_text=_('Color that will be displayed in the frontend'),
+    )
+
+    logical_key = models.IntegerField(
+        verbose_name=_('Logical Key'),
+        help_text=_(
+            'State logical key that is equal to this custom state in business logic'
+        ),
+    )
+    model = models.ForeignKey(
+        ContentType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name=_('Model'),
+        help_text=_('Model this state is associated with'),
+    )
+    reference_status = models.CharField(
+        max_length=250,
+        verbose_name=_('Reference Status Set'),
+        help_text=_('Status set that is extended with this custom state'),
+    )
+
+    class Meta:
+        """Metaclass options for this mixin."""
+
+        verbose_name = _('Custom State')
+        verbose_name_plural = _('Custom States')
+        unique_together = [['model', 'reference_status', 'key', 'logical_key']]
+
+    def __str__(self) -> str:
+        """Return string representation of the custom state."""
+        return f'{self.model} ({self.reference_status}): {self.name} | {self.key} ({self.logical_key})'
+
+    def clean(self) -> None:
+        """Validate custom state data."""
+        if self.model is None:
+            raise ValidationError({'model': _('Model must be selected')})
+
+        if self.key is None:
+            raise ValidationError({'key': _('Key must be selected')})
+
+        if self.logical_key is None:
+            raise ValidationError({'logical_key': _('Logical key must be selected')})
+
+        # Ensure that the key is not the same as the logical key
+        if self.key == self.logical_key:
+            raise ValidationError({'key': _('Key must be different from logical key')})
+
+        if self.reference_status is None:
+            raise ValidationError({
+                'reference_status': _('Reference status must be selected')
+            })
+
+        # Ensure that the key is not in the range of the logical keys of the reference status
+        ref_set = [
+            x for x in inheritors(StatusCode) if x.__name__ == self.reference_status
+        ]
+        if len(ref_set) == 0:
+            raise ValidationError({
+                'reference_status': _('Reference status set not found')
+            })
+        ref_set = ref_set[0]
+        if self.key in ref_set.keys():
+            raise ValidationError({
+                'key': _(
+                    'Key must be different from the logical keys of the reference status'
+                )
+            })
+        if self.logical_key not in ref_set.keys():
+            raise ValidationError({
+                'logical_key': _(
+                    'Logical key must be in the logical keys of the reference status'
+                )
+            })
+
+        return super().clean()

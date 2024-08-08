@@ -21,6 +21,8 @@ import InvenTree.fields
 import InvenTree.format
 import InvenTree.helpers
 import InvenTree.helpers_model
+from generic.states.states import ColorEnum, StatusCode
+from InvenTree.helpers import inheritors
 
 logger = logging.getLogger('inventree')
 

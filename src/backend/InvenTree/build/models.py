@@ -21,6 +21,7 @@ from mptt.exceptions import InvalidMove
 
 from rest_framework import serializers
 
+import InvenTree.generic_fields
 from build.status_codes import BuildStatus, BuildStatusGroups
 from stock.status_codes import StockStatus, StockHistoryCode
 
@@ -315,7 +316,7 @@ class Build(
         help_text=_('Number of stock items which have been completed')
     )
 
-    status = models.PositiveIntegerField(
+    status = InvenTree.generic_fields.InvenTreeCustomStatusModelField(
         verbose_name=_('Build Status'),
         default=BuildStatus.PENDING.value,
         choices=BuildStatus.items(),

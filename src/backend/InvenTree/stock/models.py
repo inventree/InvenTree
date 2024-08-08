@@ -38,6 +38,13 @@ from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
+from InvenTree.generic_fields import InvenTreeCustomStatusModelField
+from InvenTree.status_codes import (
+    SalesOrderStatusGroups,
+    StockHistoryCode,
+    StockStatus,
+    StockStatusGroups,
+)
 from order.status_codes import SalesOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
@@ -940,7 +947,7 @@ class StockItem(
         help_text=_('Delete this Stock Item when stock is depleted'),
     )
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=StockStatus.OK.value,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)],
@@ -2358,7 +2365,7 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
         return getattr(self, 'title', '')
 
-    tracking_type = models.IntegerField(default=StockHistoryCode.LEGACY)
+    tracking_type = InvenTreeCustomStatusModelField(default=StockHistoryCode.LEGACY)
 
     item = models.ForeignKey(
         StockItem, on_delete=models.CASCADE, related_name='tracking_info'
