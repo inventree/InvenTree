@@ -107,7 +107,10 @@ export function useBuildOrderFields({
         icon: <IconLink />
       },
       issued_by: {
-        icon: <IconUser />
+        icon: <IconUser />,
+        filters: {
+          is_active: true
+        }
       },
       responsible: {
         icon: <IconUsersGroup />,
