@@ -11,7 +11,7 @@ test('PUI - Pages - Build Order', async ({ page }) => {
   await page.getByRole('tab', { name: 'Build', exact: true }).click();
 
   // We have now loaded the "Build Order" table. Check for some expected texts
-  await page.getByText('On Hold').waitFor();
+  await page.getByText('On Hold').first().waitFor();
   await page.getByText('Pending').first().waitFor();
 
   // Load a particular build order
