@@ -9,6 +9,7 @@ import {
   Title
 } from '@mantine/core';
 import {
+  IconClipboardCheck,
   IconCoins,
   IconCpu,
   IconDevicesPc,
@@ -84,6 +85,8 @@ const LocationTypesTable = Loadable(
   lazy(() => import('../../../../tables/stock/LocationTypesTable'))
 );
 
+const StocktakePanel = Loadable(lazy(() => import('./StocktakePanel')));
+
 const CurrencyTable = Loadable(
   lazy(() => import('../../../../tables/settings/CurrencyTable'))
 );
@@ -152,6 +155,12 @@ export default function AdminCenter() {
         label: t`Category Parameters`,
         icon: <IconSitemap />,
         content: <PartCategoryTemplateTable />
+      },
+      {
+        name: 'stocktake',
+        label: t`Stocktake`,
+        icon: <IconClipboardCheck />,
+        content: <StocktakePanel />
       },
       {
         name: 'labels',
