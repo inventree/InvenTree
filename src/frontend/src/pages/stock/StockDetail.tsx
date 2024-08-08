@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBookmark,
   IconBoxPadding,
@@ -33,6 +33,7 @@ import {
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -58,6 +59,7 @@ import {
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
+import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import InstalledItemsTable from '../../tables/stock/InstalledItemsTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
@@ -293,7 +295,40 @@ export default function StockDetail() {
         hidden:
           !stockitem?.part_detail?.salable &&
           !stockitem?.part_detail?.component,
-        content: <PlaceholderPanel />
+        content: (
+          <Accordion
+            multiple={true}
+            defaultValue={[
+              stockitem?.part_detail?.component
+                ? 'buildallocations'
+                : 'salesorderallocations'
+            ]}
+          >
+            {stockitem?.part_detail?.component && (
+              <Accordion.Item value="buildallocations" key="buildallocations">
+                <Accordion.Control>
+                  <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <BuildAllocatedStockTable
+                    stockId={stockitem.pk}
+                    modelField="build"
+                    modelTarget={ModelType.build}
+                    showBuildInfo
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+            )}
+            {stockitem?.part_detail?.salable && (
+              <Accordion.Item value="salesallocations" key="salesallocations">
+                <Accordion.Control>
+                  <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>TODO</Accordion.Panel>
+              </Accordion.Item>
+            )}
+          </Accordion>
+        )
       },
       {
         name: 'testdata',
