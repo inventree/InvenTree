@@ -45,7 +45,7 @@ export default function BuildAllocatedStockTable({
   modelField?: string;
 }) {
   const user = useUserState();
-  const table = useTable('build-allocated-stock');
+  const table = useTable('buildallocatedstock');
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
