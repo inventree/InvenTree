@@ -13,6 +13,7 @@ import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useSalesOrderLineItemFields } from '../../forms/SalesOrderForms';
 import {
   useCreateApiFormModal,
@@ -199,6 +200,17 @@ export default function SalesOrderLineItemTable({
     table: table
   });
 
+  const buildOrderFields = useBuildOrderFields({ create: true });
+
+  const newBuildOrder = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Create Build Order`,
+    fields: buildOrderFields,
+    initialData: initialData,
+    follow: true,
+    modelType: ModelType.build
+  });
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -235,7 +247,15 @@ export default function SalesOrderLineItemTable({
             !record?.part_detail?.assembly,
           title: t`Build stock`,
           icon: <IconTools />,
-          color: 'blue'
+          color: 'blue',
+          onClick: () => {
+            setInitialData({
+              part: record.part,
+              quantity: (record?.quantity ?? 1) - (record?.allocated ?? 0),
+              sales_order: orderId
+            });
+            newBuildOrder.open();
+          }
         },
         {
           hidden:
@@ -277,6 +297,7 @@ export default function SalesOrderLineItemTable({
       {editLine.modal}
       {deleteLine.modal}
       {newLine.modal}
+      {newBuildOrder.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
         tableState={table}
