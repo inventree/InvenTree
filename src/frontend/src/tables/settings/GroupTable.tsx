@@ -140,24 +140,30 @@ export function GroupTable() {
       {
         accessor: 'name',
         sortable: true,
-        title: t`Name`
+        title: t`Name`,
+        switchable: false
       }
     ];
   }, []);
 
-  const rowActions = useCallback((record: GroupDetailI): RowAction[] => {
-    return [
-      RowEditAction({
-        onClick: () => openDetailDrawer(record.pk)
-      }),
-      RowDeleteAction({
-        onClick: () => {
-          setSelectedGroup(record.pk);
-          deleteGroup.open();
-        }
-      })
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: GroupDetailI): RowAction[] => {
+      return [
+        RowEditAction({
+          onClick: () => openDetailDrawer(record.pk),
+          hidden: !user.hasChangePermission(ModelType.group)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeletePermission(ModelType.group),
+          onClick: () => {
+            setSelectedGroup(record.pk);
+            deleteGroup.open();
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   const [selectedGroup, setSelectedGroup] = useState<number>(-1);
 
