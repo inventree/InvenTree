@@ -131,8 +131,12 @@ export function GroupTable() {
   const user = useUserState();
 
   const openDetailDrawer = useCallback(
-    (pk: number) => navigate(`group-${pk}/`),
-    []
+    (pk: number) => {
+      if (user.hasChangePermission(ModelType.group)) {
+        navigate(`group-${pk}/`);
+      }
+    },
+    [user]
   );
 
   const columns: TableColumn<GroupDetailI>[] = useMemo(() => {
