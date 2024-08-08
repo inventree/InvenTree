@@ -73,6 +73,7 @@ export default function BuildAllocatedStockTable({
       StatusColumn({
         accessor: 'build_detail.status',
         model: ModelType.build,
+        title: t`Order Status`,
         hidden: showBuildInfo != true
       }),
       {

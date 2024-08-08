@@ -94,6 +94,7 @@ import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
@@ -552,9 +553,7 @@ export default function PartDetail() {
         content: (
           <Accordion
             multiple={true}
-            defaultValue={[
-              part.component ? 'buildallocations' : 'salesorderallocations'
-            ]}
+            defaultValue={['buildallocations', 'salesallocations']}
           >
             {part.component && (
               <Accordion.Item value="buildallocations" key="buildallocations">
@@ -576,7 +575,14 @@ export default function PartDetail() {
                 <Accordion.Control>
                   <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
                 </Accordion.Control>
-                <Accordion.Panel>TODO</Accordion.Panel>
+                <Accordion.Panel>
+                  <SalesOrderAllocationTable
+                    partId={part.pk}
+                    modelField="order"
+                    modelTarget={ModelType.salesorder}
+                    showOrderInfo
+                  />
+                </Accordion.Panel>
               </Accordion.Item>
             )}
           </Accordion>

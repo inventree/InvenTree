@@ -1,6 +1,8 @@
 import { t } from '@lingui/macro';
 import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
+  IconBook,
+  IconBookmark,
   IconDots,
   IconInfoCircle,
   IconList,
@@ -49,6 +51,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import SalesOrderLineItemTable from '../../tables/sales/SalesOrderLineItemTable';
 import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 
@@ -271,6 +274,20 @@ export default function SalesOrderDetail() {
         label: t`Shipments`,
         icon: <IconTruckDelivery />,
         content: <SalesOrderShipmentTable orderId={order.pk} />
+      },
+      {
+        name: 'allocations',
+        label: t`Allocated Stock`,
+        icon: <IconBookmark />,
+        content: (
+          <SalesOrderAllocationTable
+            orderId={order.pk}
+            showPartInfo
+            allowEdit
+            modelField="item"
+            modelTarget={ModelType.stockitem}
+          />
+        )
       },
       {
         name: 'build-orders',

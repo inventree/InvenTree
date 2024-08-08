@@ -141,8 +141,8 @@ export enum ApiEndpoints {
   sales_order_ship = 'order/so/:id/ship/',
   sales_order_complete = 'order/so/:id/complete/',
   sales_order_line_list = 'order/so-line/',
+  sales_order_allocation_list = 'order/so-allocation/',
   sales_order_shipment_list = 'order/so/shipment/',
-  sales_order_allocation_list = 'order/so/allocations/',
 
   return_order_list = 'order/ro/',
   return_order_issue = 'order/ro/:id/issue/',
