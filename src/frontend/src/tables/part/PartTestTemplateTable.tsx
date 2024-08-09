@@ -200,7 +200,6 @@ export default function PartTestTemplateTable({
         // This test is defined for a parent part
         return [
           {
-            hidden: record.part == partId,
             icon: <IconArrowRight />,
             title: t`View Parent Part`,
             onClick: () => {
@@ -269,6 +268,7 @@ export default function PartTestTemplateTable({
             },
             tableFilters: tableFilters,
             tableActions: tableActions,
+            enableDownload: true,
             rowActions: rowActions,
             onRowClick: (row) => {
               if (row.part && row.part != partId) {
