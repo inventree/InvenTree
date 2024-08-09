@@ -121,3 +121,14 @@ This view can be accessed externally as an ICS calendar using a URL like the fol
 `http://inventree.example.org/api/order/calendar/return-order/calendar.ics`
 
 by default, completed orders are not exported. These can be included by appending `?include_completed=True` to the URL.
+
+## Return Order Settings
+
+The following [global settings](../settings/global.md) are available for return orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("RETURNORDER_ENABLED") }}
+{{ globalsetting("RETURNORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("RETURNORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("RETURNORDER_EDIT_COMPLETED_ORDERS") }}
