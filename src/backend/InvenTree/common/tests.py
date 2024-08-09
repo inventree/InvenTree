@@ -1103,7 +1103,6 @@ class CommonTest(InvenTreeAPITestCase):
 
     def test_restart_flag(self):
         """Test that the restart flag is reset on start."""
-        import common.models
         from plugin import registry
 
         # set flag true

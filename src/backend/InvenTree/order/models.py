@@ -1,7 +1,6 @@
 """Order model definitions."""
 
 import logging
-import os
 import sys
 from datetime import datetime
 from decimal import Decimal

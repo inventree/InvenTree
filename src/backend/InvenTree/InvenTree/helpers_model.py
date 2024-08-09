@@ -36,8 +36,6 @@ def get_base_url(request=None):
     3. If settings.SITE_URL is set (e.g. in the Django settings), use that
     4. If the InvenTree setting INVENTREE_BASE_URL is set, use that
     """
-    import common.models
-
     # Check if a request is provided
     if request:
         return request.build_absolute_uri('/')
@@ -104,8 +102,6 @@ def download_image_from_url(remote_url, timeout=2.5):
         ValueError: Server responded with invalid 'Content-Length' value
         TypeError: Response is not a valid image
     """
-    import common.models
-
     # Check that the provided URL at least looks valid
     validator = URLValidator()
     validator(remote_url)
@@ -203,8 +199,6 @@ def render_currency(
         max_decimal_places: The maximum number of decimal places to render to. If unspecified, uses the PRICING_DECIMAL_PLACES setting.
         include_symbol: If True, include the currency symbol in the output
     """
-    import common.models
-
     if money in [None, '']:
         return '-'
 

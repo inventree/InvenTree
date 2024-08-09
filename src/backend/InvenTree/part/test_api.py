@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
-from pathlib import Path
 from random import randint
 
 from django.core.exceptions import ValidationError
@@ -13,7 +12,6 @@ from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 import PIL
-from rest_framework import status
 from rest_framework.test import APIClient
 
 import build.models
