@@ -251,7 +251,16 @@ export function InvenTreeTable<T = any>({
     if (props.enableColumnSwitching == false) {
       return false;
     } else {
-      return columns.some((col: TableColumn) => col.switchable ?? true);
+      return columns.some((col: TableColumn) => {
+        if (col.hidden == true) {
+          // Not a switchable column - is hidden
+          return false;
+        } else if (col.switchable == false) {
+          return false;
+        } else {
+          return true;
+        }
+      });
     }
   }, [columns, props.enableColumnSwitching]);
 
@@ -264,19 +273,21 @@ export function InvenTreeTable<T = any>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    let cols = columns.map((col) => {
-      let hidden: boolean = col.hidden ?? false;
+    let cols = columns
+      .filter((col) => col?.hidden != true)
+      .map((col) => {
+        let hidden: boolean = col.hidden ?? false;
 
-      if (col.switchable ?? true) {
-        hidden = tableState.hiddenColumns.includes(col.accessor);
-      }
+        if (col.switchable ?? true) {
+          hidden = tableState.hiddenColumns.includes(col.accessor);
+        }
 
-      return {
-        ...col,
-        hidden: hidden,
-        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
-      };
-    });
+        return {
+          ...col,
+          hidden: hidden,
+          title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
+        };
+      });
 
     // If row actions are available, add a column for them
     if (tableProps.rowActions) {

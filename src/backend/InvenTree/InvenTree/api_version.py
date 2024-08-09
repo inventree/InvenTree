@@ -1,16 +1,20 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 235
+INVENTREE_API_VERSION = 236
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v235 - 2024-08-09 : https://github.com/inventree/InvenTree/pull/
+v236 - 2024-08-09 : https://github.com/inventree/InvenTree/pull/
     - Added custom status fields
     - Added endpoints to admin custom status fields
+
+v235 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7837
+    - Adds "on_order" quantity to SalesOrderLineItem serializer
+    - Adds "building" quantity to SalesOrderLineItem serializer
 
 v234 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7829
     - Fixes bug in the plugin metadata endpoint
