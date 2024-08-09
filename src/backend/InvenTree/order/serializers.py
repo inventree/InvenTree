@@ -231,6 +231,7 @@ class PurchaseOrderSerializer(
             'supplier',
             'supplier_detail',
             'supplier_reference',
+            'supplier_name',
             'total_price',
             'order_currency',
         ])
@@ -277,6 +278,10 @@ class PurchaseOrderSerializer(
         )
 
         return queryset
+
+    supplier_name = serializers.CharField(
+        source='supplier.name', read_only=True, label=_('Supplier Name')
+    )
 
     supplier_detail = CompanyBriefSerializer(
         source='supplier', many=False, read_only=True

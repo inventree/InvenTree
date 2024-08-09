@@ -89,6 +89,7 @@ import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTabl
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
+import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
@@ -648,7 +649,7 @@ export default function PartDetail() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         hidden: !part.purchaseable,
-        content: <PlaceholderPanel />
+        content: <PartPurchaseOrdersTable partId={part.pk} />
       },
       {
         name: 'sales_orders',
