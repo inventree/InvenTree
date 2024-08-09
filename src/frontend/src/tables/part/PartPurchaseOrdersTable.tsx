@@ -10,7 +10,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DateColumn, ReferenceColumn, StatusColumn } from '../ColumnRenderers';
-import { TableFilter } from '../Filter';
+import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
@@ -104,7 +104,24 @@ export default function PartPurchaseOrdersTable({
   }, []);
 
   const tableFilters: TableFilter[] = useMemo(() => {
-    return [];
+    return [
+      {
+        name: 'pending',
+        label: t`Pending`,
+        description: t`Show pending orders`
+      },
+      {
+        name: 'received',
+        label: t`Received`,
+        description: t`Show received items`
+      },
+      {
+        name: 'order_status',
+        label: t`Order Status`,
+        description: t`Filter by order status`,
+        choiceFunction: StatusFilterOptions(ModelType.purchaseorder)
+      }
+    ];
   }, []);
 
   return (
@@ -121,7 +138,8 @@ export default function PartPurchaseOrdersTable({
             supplier_detail: true
           },
           modelField: 'order',
-          modelType: ModelType.purchaseorder
+          modelType: ModelType.purchaseorder,
+          tableFilters: tableFilters
         }}
       />
     </>
