@@ -398,7 +398,6 @@ class Build(
             return self.get_descendants(include_self=False)
         else:
             return self.get_children()
-            return Build.objects.filter(parent=self.pk)
 
     def sub_build_count(self, cascade=True):
         """Return the number of sub builds under this one.
