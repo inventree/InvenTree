@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-07 10:35+0000\n"
+"POT-Creation-Date: 2024-08-08 10:02+0000\n"
 "PO-Revision-Date: 2024-08-07 21:47\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -859,7 +859,7 @@ msgstr "Заказ на производство, которому принад�
 #: part/models.py:3263 part/models.py:3411 part/models.py:3432
 #: part/models.py:3454 part/models.py:3590 part/models.py:3930
 #: part/models.py:4093 part/models.py:4224 part/models.py:4583
-#: part/serializers.py:1190 part/serializers.py:1841
+#: part/serializers.py:1190 part/serializers.py:1834
 #: part/templates/part/part_app_base.html:8
 #: part/templates/part/part_pricing.html:12
 #: part/templates/part/upload_bom.html:52
@@ -958,7 +958,7 @@ msgid "Build status code"
 msgstr "Код статуса заказа на производство"
 
 #: build/models.py:332 build/serializers.py:297 build/serializers.py:1190
-#: order/serializers.py:666 stock/models.py:859 stock/serializers.py:76
+#: order/serializers.py:665 stock/models.py:859 stock/serializers.py:76
 #: stock/serializers.py:1562 templates/js/translated/purchase_order.js:1129
 #: templates/js/translated/stock.js:1199
 msgid "Batch Code"
@@ -968,7 +968,7 @@ msgstr "Код партии"
 msgid "Batch code for this build output"
 msgstr "Код партии для продукции"
 
-#: build/models.py:339 order/models.py:316 order/serializers.py:127
+#: build/models.py:339 order/models.py:316 order/serializers.py:126
 #: part/models.py:1222 part/templates/part/part_base.html:319
 #: templates/js/translated/return_order.js:338
 #: templates/js/translated/sales_order.js:863
@@ -1086,8 +1086,8 @@ msgid "Build output does not match Build Order"
 msgstr "Продукция не совпадает с заказом на производство"
 
 #: build/models.py:1044 build/serializers.py:230 build/serializers.py:279
-#: build/serializers.py:907 order/models.py:565 order/serializers.py:495
-#: order/serializers.py:661 part/serializers.py:1567 part/serializers.py:2004
+#: build/serializers.py:907 order/models.py:565 order/serializers.py:494
+#: order/serializers.py:660 part/serializers.py:1567 part/serializers.py:1997
 #: stock/models.py:700 stock/models.py:1520 stock/serializers.py:669
 msgid "Quantity must be greater than zero"
 msgstr "Количество должно быть больше нуля"
@@ -1113,7 +1113,7 @@ msgstr "Объект производства"
 #: build/serializers.py:264 build/serializers.py:1285
 #: build/templates/build/build_base.html:110
 #: build/templates/build/detail.html:34 common/models.py:2571
-#: order/models.py:1356 order/models.py:2041 order/serializers.py:1439
+#: order/models.py:1356 order/models.py:2041 order/serializers.py:1455
 #: order/templates/order/order_wizard/match_parts.html:30 part/admin.py:413
 #: part/forms.py:48 part/models.py:3277 part/models.py:4246
 #: part/templates/part/part_pricing.html:16
@@ -1186,8 +1186,8 @@ msgstr "Количество должно быть 1 для сериализов
 msgid "Selected stock item does not match BOM line"
 msgstr "Выбранная складская позиция не соответствует позиции в BOM"
 
-#: build/models.py:1732 build/serializers.py:887 order/serializers.py:1276
-#: order/serializers.py:1297 stock/models.py:376 stock/serializers.py:93
+#: build/models.py:1732 build/serializers.py:887 order/serializers.py:1292
+#: order/serializers.py:1313 stock/models.py:376 stock/serializers.py:93
 #: stock/serializers.py:763 stock/serializers.py:1281 stock/serializers.py:1393
 #: stock/templates/stock/item_base.html:10
 #: stock/templates/stock/item_base.html:23
@@ -1263,7 +1263,7 @@ msgstr "Для отслеживаемых деталей должно быть �
 msgid "Integer quantity required, as the bill of materials contains trackable parts"
 msgstr "Требуется целое количество, так как материал содержит отслеживаемые детали"
 
-#: build/serializers.py:304 order/serializers.py:674 order/serializers.py:1443
+#: build/serializers.py:304 order/serializers.py:673 order/serializers.py:1459
 #: stock/serializers.py:680 templates/js/translated/purchase_order.js:1154
 #: templates/js/translated/stock.js:373 templates/js/translated/stock.js:571
 msgid "Serial Numbers"
@@ -1274,7 +1274,7 @@ msgid "Enter serial numbers for build outputs"
 msgstr "Введите серийные номера для продукции"
 
 #: build/serializers.py:310 build/serializers.py:451 build/serializers.py:523
-#: order/serializers.py:650 order/serializers.py:774 order/serializers.py:1760
+#: order/serializers.py:649 order/serializers.py:773 order/serializers.py:1776
 #: part/serializers.py:1210 stock/serializers.py:102 stock/serializers.py:691
 #: stock/serializers.py:851 stock/serializers.py:977 stock/serializers.py:1425
 #: stock/serializers.py:1681 stock/templates/stock/item_base.html:394
@@ -1339,7 +1339,7 @@ msgstr "Место хранения для завершенной продукц
 
 #: build/serializers.py:530 build/templates/build/build_base.html:159
 #: build/templates/build/detail.html:62 order/models.py:477
-#: order/models.py:1003 order/models.py:2159 order/serializers.py:682
+#: order/models.py:1003 order/models.py:2159 order/serializers.py:681
 #: stock/admin.py:164 stock/serializers.py:1028 stock/serializers.py:1569
 #: stock/templates/stock/item_base.html:427
 #: templates/js/translated/barcode.js:252 templates/js/translated/build.js:2363
@@ -1412,7 +1412,7 @@ msgstr "Подтвердите, что складские позиции не б
 msgid "Required stock has not been fully allocated"
 msgstr "Необходимые запасы не были полностью зарезервированы"
 
-#: build/serializers.py:749 order/serializers.py:341 order/serializers.py:1344
+#: build/serializers.py:749 order/serializers.py:340 order/serializers.py:1360
 msgid "Accept Incomplete"
 msgstr "Разрешить незавершенные производимые детали"
 
@@ -1456,7 +1456,7 @@ msgstr "bom_item.part должна указывать на ту же часть,
 msgid "Item must be in stock"
 msgstr "Элемент должен быть в наличии"
 
-#: build/serializers.py:941 order/serializers.py:1330
+#: build/serializers.py:941 order/serializers.py:1346
 #, python-brace-format
 msgid "Available quantity ({q}) exceeded"
 msgstr "Превышено доступное количество ({q})"
@@ -1469,7 +1469,7 @@ msgstr "Продукция должна быть указан для резер�
 msgid "Build output cannot be specified for allocation of untracked parts"
 msgstr "Продукция не может быть указана для резервирования не отслеживаемых частей"
 
-#: build/serializers.py:978 order/serializers.py:1589
+#: build/serializers.py:978 order/serializers.py:1605
 msgid "Allocation items must be provided"
 msgstr "Необходимо указать резервируемые элементы"
 
@@ -1535,7 +1535,7 @@ msgid "BOM Reference"
 msgstr ""
 
 #: build/serializers.py:1178 company/models.py:852
-#: company/templates/company/supplier_part.html:160 order/serializers.py:686
+#: company/templates/company/supplier_part.html:160 order/serializers.py:685
 #: stock/admin.py:228 stock/models.py:818 stock/serializers.py:1579
 #: stock/templates/stock/item_base.html:240
 #: templates/js/translated/company.js:1646
@@ -1630,8 +1630,8 @@ msgstr "Позиция BOM"
 msgid "Allocated Stock"
 msgstr "Зарезервированные Запасы"
 
-#: build/serializers.py:1301 part/admin.py:132 part/bom.py:181
-#: part/serializers.py:897 part/serializers.py:1600
+#: build/serializers.py:1301 order/serializers.py:1170 part/admin.py:132
+#: part/bom.py:181 part/serializers.py:897 part/serializers.py:1600
 #: part/templates/part/part_base.html:210 templates/js/translated/bom.js:1208
 #: templates/js/translated/build.js:2804 templates/js/translated/part.js:709
 #: templates/js/translated/part.js:2152
@@ -1639,7 +1639,7 @@ msgstr "Зарезервированные Запасы"
 msgid "On Order"
 msgstr "В заказе"
 
-#: build/serializers.py:1306 part/serializers.py:1602
+#: build/serializers.py:1306 order/serializers.py:1171 part/serializers.py:1602
 #: templates/js/translated/build.js:2808
 #: templates/js/translated/table_filters.js:360
 msgid "In Production"
@@ -1833,7 +1833,7 @@ msgstr "Остатки не были полностью зарезервиров
 
 #: build/templates/build/build_base.html:168
 #: build/templates/build/detail.html:138 order/models.py:309
-#: order/models.py:1391 order/serializers.py:175
+#: order/models.py:1391 order/serializers.py:174
 #: order/templates/order/order_base.html:191
 #: order/templates/order/return_order_base.html:167
 #: order/templates/order/sales_order_base.html:199
@@ -2082,7 +2082,7 @@ msgstr "Новый заказ на производство"
 msgid "Build Order Details"
 msgstr "Подробности Заказа на Производство"
 
-#: build/templates/build/sidebar.html:8 order/serializers.py:83
+#: build/templates/build/sidebar.html:8 order/serializers.py:82
 #: order/templates/order/po_sidebar.html:5
 #: order/templates/order/return_order_detail.html:18
 #: order/templates/order/so_sidebar.html:5
@@ -4334,7 +4334,7 @@ msgid "Select manufacturer"
 msgstr "Выберите производителя"
 
 #: company/models.py:505 company/templates/company/manufacturer_part.html:101
-#: company/templates/company/supplier_part.html:153 order/serializers.py:552
+#: company/templates/company/supplier_part.html:153 order/serializers.py:551
 #: part/serializers.py:563 templates/js/translated/company.js:351
 #: templates/js/translated/company.js:1117
 #: templates/js/translated/company.js:1312
@@ -4385,7 +4385,7 @@ msgstr "Единицы измерения параметра"
 
 #: company/models.py:662 company/templates/company/supplier_part.html:7
 #: company/templates/company/supplier_part.html:24 order/api.py:440
-#: order/serializers.py:487 stock/models.py:798
+#: order/serializers.py:486 stock/models.py:798
 #: stock/templates/stock/item_base.html:233
 #: templates/js/translated/build.js:1052
 #: templates/js/translated/company.js:1600
@@ -4447,7 +4447,7 @@ msgid "Supplier part description"
 msgstr "Описание детали поставщика"
 
 #: company/models.py:835 company/templates/company/supplier_part.html:187
-#: order/serializers.py:694 part/admin.py:415 part/models.py:4281
+#: order/serializers.py:693 part/admin.py:415 part/models.py:4281
 #: part/templates/part/upload_bom.html:59
 #: report/templates/report/inventree_bill_of_materials_report.html:140
 #: report/templates/report/inventree_purchase_order_report.html:32
@@ -4785,7 +4785,7 @@ msgstr ""
 
 #: company/templates/company/manufacturer_part.html:65
 #: company/templates/company/supplier_part.html:97 order/api.py:446
-#: order/serializers.py:560
+#: order/serializers.py:559
 msgid "Internal Part"
 msgstr "Внутренняя деталь"
 
@@ -4885,7 +4885,7 @@ msgstr ""
 msgid "No supplier information available"
 msgstr ""
 
-#: company/templates/company/supplier_part.html:139 order/serializers.py:549
+#: company/templates/company/supplier_part.html:139 order/serializers.py:548
 #: part/bom.py:287 part/bom.py:319 part/serializers.py:547
 #: templates/js/translated/company.js:349 templates/js/translated/part.js:1790
 #: templates/js/translated/pricing.js:510
@@ -5269,7 +5269,7 @@ msgstr ""
 msgid "Total Price"
 msgstr "Общая стоимость"
 
-#: order/api.py:149 order/serializers.py:94
+#: order/api.py:149 order/serializers.py:93
 #: order/templates/order/order_base.html:123
 #: order/templates/order/return_order_base.html:116
 #: order/templates/order/sales_order_base.html:125
@@ -5327,11 +5327,11 @@ msgstr "Заказ на возврат"
 msgid "Total price for this order"
 msgstr ""
 
-#: order/models.py:96 order/serializers.py:72
+#: order/models.py:96 order/serializers.py:71
 msgid "Order Currency"
 msgstr "Валюта Заказа"
 
-#: order/models.py:99 order/serializers.py:73
+#: order/models.py:99 order/serializers.py:72
 msgid "Currency for this order (leave blank to use company default)"
 msgstr ""
 
@@ -5598,8 +5598,8 @@ msgstr "Проверн"
 msgid "User who checked this shipment"
 msgstr ""
 
-#: order/models.py:1795 order/models.py:2018 order/serializers.py:1454
-#: order/serializers.py:1564 templates/js/translated/model_renderers.js:455
+#: order/models.py:1795 order/models.py:2018 order/serializers.py:1470
+#: order/serializers.py:1580 templates/js/translated/model_renderers.js:455
 msgid "Shipment"
 msgstr "Отправление"
 
@@ -5655,7 +5655,7 @@ msgstr ""
 msgid "Allocation quantity cannot exceed stock quantity"
 msgstr ""
 
-#: order/models.py:1998 order/serializers.py:1324
+#: order/models.py:1998 order/serializers.py:1340
 msgid "Quantity must be 1 for serialized stock item"
 msgstr "Количество должно быть 1 для сериализированных складских позиций"
 
@@ -5737,180 +5737,180 @@ msgstr ""
 msgid "Return Order Extra Line"
 msgstr ""
 
-#: order/serializers.py:87
+#: order/serializers.py:86
 msgid "Completed Lines"
 msgstr ""
 
-#: order/serializers.py:327
+#: order/serializers.py:326
 msgid "Order cannot be cancelled"
 msgstr ""
 
-#: order/serializers.py:342 order/serializers.py:1345
+#: order/serializers.py:341 order/serializers.py:1361
 msgid "Allow order to be closed with incomplete line items"
 msgstr ""
 
-#: order/serializers.py:352 order/serializers.py:1355
+#: order/serializers.py:351 order/serializers.py:1371
 msgid "Order has incomplete line items"
 msgstr ""
 
-#: order/serializers.py:502
+#: order/serializers.py:501
 msgid "Order is not open"
 msgstr "Заказ не открыт"
 
-#: order/serializers.py:523
+#: order/serializers.py:522
 msgid "Auto Pricing"
 msgstr ""
 
-#: order/serializers.py:525
+#: order/serializers.py:524
 msgid "Automatically calculate purchase price based on supplier part data"
 msgstr ""
 
-#: order/serializers.py:535
+#: order/serializers.py:534
 msgid "Purchase price currency"
 msgstr "Валюта цены закупки"
 
-#: order/serializers.py:541
+#: order/serializers.py:540
 msgid "Merge Items"
 msgstr ""
 
-#: order/serializers.py:543
+#: order/serializers.py:542
 msgid "Merge items with the same part, destination and target date into one line item"
 msgstr ""
 
-#: order/serializers.py:556 part/models.py:1032
+#: order/serializers.py:555 part/models.py:1032
 msgid "Internal Part Number"
 msgstr "Внутренний код детали"
 
-#: order/serializers.py:564
+#: order/serializers.py:563
 msgid "Internal Part Name"
 msgstr ""
 
-#: order/serializers.py:580
+#: order/serializers.py:579
 msgid "Supplier part must be specified"
 msgstr ""
 
-#: order/serializers.py:583
+#: order/serializers.py:582
 msgid "Purchase order must be specified"
 msgstr ""
 
-#: order/serializers.py:591
+#: order/serializers.py:590
 msgid "Supplier must match purchase order"
 msgstr ""
 
-#: order/serializers.py:592
+#: order/serializers.py:591
 msgid "Purchase order must match supplier"
 msgstr ""
 
-#: order/serializers.py:635 order/serializers.py:1425
+#: order/serializers.py:634 order/serializers.py:1441
 msgid "Line Item"
 msgstr "Позиция"
 
-#: order/serializers.py:641
+#: order/serializers.py:640
 msgid "Line item does not match purchase order"
 msgstr ""
 
-#: order/serializers.py:651 order/serializers.py:775 order/serializers.py:1761
+#: order/serializers.py:650 order/serializers.py:774 order/serializers.py:1777
 msgid "Select destination location for received items"
 msgstr "Выберите место назначения для полученных элементов"
 
-#: order/serializers.py:667 templates/js/translated/purchase_order.js:1130
+#: order/serializers.py:666 templates/js/translated/purchase_order.js:1130
 #: templates/js/translated/stock.js:1200
 msgid "Enter batch code for incoming stock items"
 msgstr "Введите код партии для поступающих складских позиций"
 
-#: order/serializers.py:675 templates/js/translated/purchase_order.js:1155
+#: order/serializers.py:674 templates/js/translated/purchase_order.js:1155
 msgid "Enter serial numbers for incoming stock items"
 msgstr "Введите серийные номера для входящих складских позиций"
 
-#: order/serializers.py:687
+#: order/serializers.py:686
 msgid "Override packaging information for incoming stock items"
 msgstr ""
 
-#: order/serializers.py:695
+#: order/serializers.py:694
 msgid "Additional note for incoming stock items"
 msgstr ""
 
-#: order/serializers.py:702 templates/js/translated/barcode.js:52
+#: order/serializers.py:701 templates/js/translated/barcode.js:52
 msgid "Barcode"
 msgstr "Штрих-код"
 
-#: order/serializers.py:703
+#: order/serializers.py:702
 msgid "Scanned barcode"
 msgstr "Сканированный штрих-код"
 
-#: order/serializers.py:719
+#: order/serializers.py:718
 msgid "Barcode is already in use"
 msgstr ""
 
-#: order/serializers.py:743
+#: order/serializers.py:742
 msgid "An integer quantity must be provided for trackable parts"
 msgstr "Для отслеживаемых деталей должно быть указано целочисленное количество"
 
-#: order/serializers.py:791 order/serializers.py:1777
+#: order/serializers.py:790 order/serializers.py:1793
 msgid "Line items must be provided"
 msgstr ""
 
-#: order/serializers.py:807
+#: order/serializers.py:806
 msgid "Destination location must be specified"
 msgstr ""
 
-#: order/serializers.py:818
+#: order/serializers.py:817
 msgid "Supplied barcode values must be unique"
 msgstr ""
 
-#: order/serializers.py:1166
+#: order/serializers.py:1182
 msgid "Sale price currency"
 msgstr "Валюта цены продажи"
 
-#: order/serializers.py:1227
+#: order/serializers.py:1243
 msgid "No shipment details provided"
 msgstr ""
 
-#: order/serializers.py:1288 order/serializers.py:1434
+#: order/serializers.py:1304 order/serializers.py:1450
 msgid "Line item is not associated with this order"
 msgstr ""
 
-#: order/serializers.py:1307
+#: order/serializers.py:1323
 msgid "Quantity must be positive"
 msgstr ""
 
-#: order/serializers.py:1444
+#: order/serializers.py:1460
 msgid "Enter serial numbers to allocate"
 msgstr "Введите серийные номера для резервирования"
 
-#: order/serializers.py:1466 order/serializers.py:1572
+#: order/serializers.py:1482 order/serializers.py:1588
 msgid "Shipment has already been shipped"
 msgstr ""
 
-#: order/serializers.py:1469 order/serializers.py:1575
+#: order/serializers.py:1485 order/serializers.py:1591
 msgid "Shipment is not associated with this order"
 msgstr ""
 
-#: order/serializers.py:1516
+#: order/serializers.py:1532
 msgid "No match found for the following serial numbers"
 msgstr ""
 
-#: order/serializers.py:1523
+#: order/serializers.py:1539
 msgid "The following serial numbers are already allocated"
 msgstr ""
 
-#: order/serializers.py:1731
+#: order/serializers.py:1747
 msgid "Return order line item"
 msgstr ""
 
-#: order/serializers.py:1737
+#: order/serializers.py:1753
 msgid "Line item does not match return order"
 msgstr ""
 
-#: order/serializers.py:1740
+#: order/serializers.py:1756
 msgid "Line item has already been received"
 msgstr ""
 
-#: order/serializers.py:1769
+#: order/serializers.py:1785
 msgid "Items can only be received against orders which are in progress"
 msgstr ""
 
-#: order/serializers.py:1852
+#: order/serializers.py:1868
 msgid "Line price currency"
 msgstr ""
 
@@ -7642,75 +7642,75 @@ msgstr ""
 msgid "Can Build"
 msgstr "Можно произвести"
 
-#: part/serializers.py:1842
+#: part/serializers.py:1835
 msgid "Select part to copy BOM from"
 msgstr ""
 
-#: part/serializers.py:1850
+#: part/serializers.py:1843
 msgid "Remove Existing Data"
 msgstr ""
 
-#: part/serializers.py:1851
+#: part/serializers.py:1844
 msgid "Remove existing BOM items before copying"
 msgstr ""
 
-#: part/serializers.py:1856
+#: part/serializers.py:1849
 msgid "Include Inherited"
 msgstr ""
 
-#: part/serializers.py:1857
+#: part/serializers.py:1850
 msgid "Include BOM items which are inherited from templated parts"
 msgstr ""
 
-#: part/serializers.py:1862
+#: part/serializers.py:1855
 msgid "Skip Invalid Rows"
 msgstr "Пропустить некорректные строки"
 
-#: part/serializers.py:1863
+#: part/serializers.py:1856
 msgid "Enable this option to skip invalid rows"
 msgstr ""
 
-#: part/serializers.py:1868
+#: part/serializers.py:1861
 msgid "Copy Substitute Parts"
 msgstr ""
 
-#: part/serializers.py:1869
+#: part/serializers.py:1862
 msgid "Copy substitute parts when duplicate BOM items"
 msgstr ""
 
-#: part/serializers.py:1906
+#: part/serializers.py:1899
 msgid "Clear Existing BOM"
 msgstr ""
 
-#: part/serializers.py:1907
+#: part/serializers.py:1900
 msgid "Delete existing BOM items before uploading"
 msgstr ""
 
-#: part/serializers.py:1939
+#: part/serializers.py:1932
 msgid "No part column specified"
 msgstr ""
 
-#: part/serializers.py:1983
+#: part/serializers.py:1976
 msgid "Multiple matching parts found"
 msgstr ""
 
-#: part/serializers.py:1986
+#: part/serializers.py:1979
 msgid "No matching part found"
 msgstr "Подходящая деталь не найдена"
 
-#: part/serializers.py:1989
+#: part/serializers.py:1982
 msgid "Part is not designated as a component"
 msgstr ""
 
-#: part/serializers.py:1998
+#: part/serializers.py:1991
 msgid "Quantity not provided"
 msgstr ""
 
-#: part/serializers.py:2006
+#: part/serializers.py:1999
 msgid "Invalid quantity"
 msgstr "Некорректное количество"
 
-#: part/serializers.py:2029
+#: part/serializers.py:2022
 msgid "At least one BOM item is required"
 msgstr ""
 
@@ -15184,4 +15184,3 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
-
