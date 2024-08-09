@@ -1,3 +1,4 @@
+import { IconUsers } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 export function useReturnOrderLineItemFields({
@@ -32,7 +33,13 @@ export function useReturnOrderLineItemFields({
       price_currency: {},
       target_date: {},
       notes: {},
-      link: {}
+      link: {},
+      responsible: {
+        filters: {
+          is_active: true
+        },
+        icon: <IconUsers />
+      }
     };
   }, [create, orderId, customerId]);
 }

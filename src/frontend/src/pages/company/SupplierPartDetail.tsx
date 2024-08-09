@@ -19,9 +19,13 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
+  BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -265,6 +269,24 @@ export default function SupplierPartDetail() {
   const supplierPartActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
+      <BarcodeActionDropdown
+        actions={[
+          ViewBarcodeAction({
+            model: ModelType.supplierpart,
+            pk: supplierPart.pk
+          }),
+          LinkBarcodeAction({
+            hidden:
+              supplierPart.barcode_hash ||
+              !user.hasChangeRole(UserRoles.purchase_order)
+          }),
+          UnlinkBarcodeAction({
+            hidden:
+              !supplierPart.barcode_hash ||
+              !user.hasChangeRole(UserRoles.purchase_order)
+          })
+        ]}
+      />,
       <ActionDropdown
         tooltip={t`Supplier Part Actions`}
         icon={<IconDots />}

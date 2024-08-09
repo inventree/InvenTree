@@ -14,6 +14,8 @@ export default function UserManagementPanel() {
       </Title>
       <UserTable />
 
+      <Divider />
+
       <Title order={5}>
         <Trans>Groups</Trans>
       </Title>

@@ -34,6 +34,11 @@ export function UsedInTable({
         render: (record: any) => PartColumn(record.part_detail)
       },
       {
+        accessor: 'part_detail.IPN',
+        sortable: false,
+        title: t`IPN`
+      },
+      {
         accessor: 'sub_part',
         sortable: true,
         title: t`Component`,

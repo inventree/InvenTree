@@ -7,7 +7,7 @@ import { PartListTable } from './PartTable';
 /**
  * Display variant parts for the specified parent part
  */
-export function PartVariantTable({ partId }: { partId: string }) {
+export function PartVariantTable({ part }: { part: any }) {
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -39,8 +39,13 @@ export function PartVariantTable({ partId }: { partId: string }) {
         enableDownload: false,
         tableFilters: tableFilters,
         params: {
-          ancestor: partId
+          ancestor: part.pk
         }
+      }}
+      defaultPartData={{
+        ...part,
+        variant_of: part.pk,
+        is_template: false
       }}
     />
   );

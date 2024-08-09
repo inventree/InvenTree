@@ -26,5 +26,7 @@ export const colorMap: { [key: string]: string } = {
   success: 'green',
   info: 'cyan',
   danger: 'red',
+  primary: 'blue',
+  secondary: 'gray',
   default: 'gray'
 };
