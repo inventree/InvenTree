@@ -24,12 +24,7 @@ If a different currency exchange backend is needed, or a custom implementation i
 
 ### Currency Settings
 
-In the [settings screen](./global.md), under the *Pricing* section, the following currency settings are available:
-
-| Setting | Description | Default Value |
-| --- | --- |
-| Default Currency | The selected *default* currency for the system. | USD |
-| Supported Currencies | The list of supported currencies for the system. | AUD, CAD, CNY, EUR, GBP, JPY, NZD, USD |
+Refer to the [global settings](./global.md#pricing-and-currency) documentation for more information on available currency settings.
 
 #### Supported Currencies
 
