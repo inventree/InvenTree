@@ -407,8 +407,6 @@ class SettingsTest(InvenTreeTestCase):
     @override_settings(SITE_URL=None, PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
     def test_defaults(self):
         """Populate the settings with default values."""
-        N = len(InvenTreeSetting.SETTINGS.keys())
-
         for key in InvenTreeSetting.SETTINGS.keys():
             value = InvenTreeSetting.get_setting_default(key)
 

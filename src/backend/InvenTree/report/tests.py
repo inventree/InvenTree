@@ -583,7 +583,7 @@ class TestReportTest(PrintTestMixins, ReportTest):
         InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
 
         response = self.post(
-            url, {'template': report.pk, 'items': [item.pk]}, expected_code=201
+            url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
         )
 
         # There should be a link to the generated PDF
