@@ -48,6 +48,7 @@ export type TemplateI = {
 };
 
 export interface TemplateProps {
+  modelType: ModelType;
   templateEndpoint: ApiEndpoints;
   printingEndpoint: ApiEndpoints;
   additionalFormFields?: ApiFormFieldSet;
@@ -175,18 +176,22 @@ export function TemplateTable({
           title: t`Modify`,
           tooltip: t`Modify template file`,
           icon: <IconFileCode />,
-          onClick: () => openDetailDrawer(record.pk)
+          onClick: () => openDetailDrawer(record.pk),
+          hidden: !user.hasChangePermission(templateProps.modelType)
         },
         RowEditAction({
+          hidden: !user.hasChangePermission(templateProps.modelType),
           onClick: () => {
             setSelectedTemplate(record.pk);
             editTemplate.open();
           }
         }),
         RowDuplicateAction({
+          hidden: true
           // TODO: Duplicate selected template
         }),
         RowDeleteAction({
+          hidden: !user.hasDeletePermission(templateProps.modelType),
           onClick: () => {
             setSelectedTemplate(record.pk);
             deleteTemplate.open();
@@ -252,9 +257,10 @@ export function TemplateTable({
         key="add-template"
         onClick={() => newTemplate.open()}
         tooltip={t`Add template`}
+        hidden={!user.hasAddPermission(templateProps.modelType)}
       />
     ];
-  }, []);
+  }, [user]);
 
   const modelTypeFilters = useFilters({
     url: apiUrl(templateEndpoint),

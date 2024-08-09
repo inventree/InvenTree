@@ -81,6 +81,9 @@ export function useProjectCodeFilters() {
 export function useUserFilters() {
   return useFilters({
     url: apiUrl(ApiEndpoints.user_list),
+    params: {
+      is_active: true
+    },
     transform: (item) => ({
       value: item.pk,
       label: item.username
@@ -92,6 +95,9 @@ export function useUserFilters() {
 export function useOwnerFilters() {
   return useFilters({
     url: apiUrl(ApiEndpoints.owner_list),
+    params: {
+      is_active: true
+    },
     transform: (item) => ({
       value: item.pk,
       label: item.name

@@ -136,6 +136,9 @@ export function useReturnOrderFields(): ApiFormFieldSet {
         }
       },
       responsible: {
+        filters: {
+          is_active: true
+        },
         icon: <IconUsers />
       }
     };

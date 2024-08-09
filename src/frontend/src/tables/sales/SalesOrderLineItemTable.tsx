@@ -13,6 +13,7 @@ import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useSalesOrderLineItemFields } from '../../forms/SalesOrderForms';
 import {
   useCreateApiFormModal,
@@ -34,10 +35,12 @@ import { TableHoverCard } from '../TableHoverCard';
 
 export default function SalesOrderLineItemTable({
   orderId,
-  customerId
+  customerId,
+  editable
 }: {
   orderId: number;
   customerId: number;
+  editable: boolean;
 }) {
   const user = useUserState();
   const table = useTable('sales-order-line-item');
@@ -120,6 +123,22 @@ export default function SalesOrderLineItemTable({
             extra.push(<Text size="sm">{t`Includes variant stock`}</Text>);
           }
 
+          if (record.building > 0) {
+            extra.push(
+              <Text size="sm">
+                {t`In production`}: {record.building}
+              </Text>
+            );
+          }
+
+          if (record.on_order > 0) {
+            extra.push(
+              <Text size="sm">
+                {t`On order`}: {record.on_order}
+              </Text>
+            );
+          }
+
           return (
             <TableHoverCard
               value={<Text color={color}>{text}</Text>}
@@ -197,6 +216,17 @@ export default function SalesOrderLineItemTable({
     table: table
   });
 
+  const buildOrderFields = useBuildOrderFields({ create: true });
+
+  const newBuildOrder = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Create Build Order`,
+    fields: buildOrderFields,
+    initialData: initialData,
+    follow: true,
+    modelType: ModelType.build
+  });
+
   const tableActions = useMemo(() => {
     return [
       <AddItemButton
@@ -207,7 +237,7 @@ export default function SalesOrderLineItemTable({
           });
           newLine.open();
         }}
-        hidden={!user.hasAddRole(UserRoles.sales_order)}
+        hidden={!editable || !user.hasAddRole(UserRoles.sales_order)}
       />
     ];
   }, [user, orderId]);
@@ -218,7 +248,10 @@ export default function SalesOrderLineItemTable({
 
       return [
         {
-          hidden: allocated || !user.hasChangeRole(UserRoles.sales_order),
+          hidden:
+            allocated ||
+            !editable ||
+            !user.hasChangeRole(UserRoles.sales_order),
           title: t`Allocate stock`,
           icon: <IconSquareArrowRight />,
           color: 'green'
@@ -230,7 +263,15 @@ export default function SalesOrderLineItemTable({
             !record?.part_detail?.assembly,
           title: t`Build stock`,
           icon: <IconTools />,
-          color: 'blue'
+          color: 'blue',
+          onClick: () => {
+            setInitialData({
+              part: record.part,
+              quantity: (record?.quantity ?? 1) - (record?.allocated ?? 0),
+              sales_order: orderId
+            });
+            newBuildOrder.open();
+          }
         },
         {
           hidden:
@@ -242,21 +283,21 @@ export default function SalesOrderLineItemTable({
           color: 'blue'
         },
         RowEditAction({
-          hidden: !user.hasChangeRole(UserRoles.sales_order),
+          hidden: !editable || !user.hasChangeRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedLine(record.pk);
             editLine.open();
           }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(UserRoles.sales_order),
+          hidden: !editable || !user.hasAddRole(UserRoles.sales_order),
           onClick: () => {
             setInitialData(record);
             newLine.open();
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(UserRoles.sales_order),
+          hidden: !editable || !user.hasDeleteRole(UserRoles.sales_order),
           onClick: () => {
             setSelectedLine(record.pk);
             deleteLine.open();
@@ -264,7 +305,7 @@ export default function SalesOrderLineItemTable({
         })
       ];
     },
-    [user]
+    [user, editable]
   );
 
   return (
@@ -272,6 +313,7 @@ export default function SalesOrderLineItemTable({
       {editLine.modal}
       {deleteLine.modal}
       {newLine.modal}
+      {newBuildOrder.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.sales_order_line_list)}
         tableState={table}

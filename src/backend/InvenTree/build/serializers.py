@@ -34,6 +34,7 @@ import part.serializers as part_serializers
 from users.serializers import OwnerSerializer
 
 from .models import Build, BuildLine, BuildItem
+from .status_codes import BuildStatus
 
 
 class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer):
@@ -597,6 +598,33 @@ class BuildOutputCompleteSerializer(serializers.Serializer):
                 )
 
 
+class BuildIssueSerializer(serializers.Serializer):
+    """DRF serializer for issuing a build order."""
+
+    class Meta:
+        """Serializer metaclass"""
+        fields = []
+
+    def save(self):
+        """Issue the specified build order"""
+        build = self.context['build']
+        build.issue_build()
+
+
+class BuildHoldSerializer(serializers.Serializer):
+    """DRF serializer for placing a BuildOrder on hold."""
+
+    class Meta:
+        """Serializer metaclass."""
+        fields = []
+
+    def save(self):
+        """Place the specified build on hold."""
+        build = self.context['build']
+
+        build.hold_build()
+
+
 class BuildCancelSerializer(serializers.Serializer):
     """DRF serializer class for cancelling an active BuildOrder"""
 
@@ -736,6 +764,9 @@ class BuildCompleteSerializer(serializers.Serializer):
     def validate(self, data):
         """Perform validation of this serializer prior to saving"""
         build = self.context['build']
+
+        if build.status != BuildStatus.PRODUCTION.value:
+            raise ValidationError(_("Build order must be in production state"))
 
         if build.incomplete_count > 0:
             raise ValidationError(_("Build order has incomplete outputs"))

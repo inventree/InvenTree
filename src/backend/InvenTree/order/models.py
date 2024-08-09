@@ -609,7 +609,7 @@ class PurchaseOrder(TotalPriceMixin, Order):
 
         Order must be currently PENDING.
         """
-        if self.is_pending:
+        if self.can_issue:
             self.status = PurchaseOrderStatus.PLACED.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
@@ -643,6 +643,19 @@ class PurchaseOrder(TotalPriceMixin, Order):
             trigger_event('purchaseorder.completed', id=self.pk)
 
     @transaction.atomic
+    def issue_order(self):
+        """Equivalent to 'place_order'."""
+        self.place_order()
+
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
+            PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.ON_HOLD.value,
+        ]
+
+    @transaction.atomic
     def place_order(self):
         """Attempt to transition to PLACED status."""
         return self.handle_transition(
@@ -654,6 +667,13 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """Attempt to transition to COMPLETE status."""
         return self.handle_transition(
             self.status, PurchaseOrderStatus.COMPLETE.value, self, self._action_complete
+        )
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, PurchaseOrderStatus.ON_HOLD.value, self, self._action_hold
         )
 
     @transaction.atomic
@@ -678,12 +698,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         """A PurchaseOrder can only be cancelled under the following circumstances.
 
         - Status is PLACED
-        - Status is PENDING
+        - Status is PENDING (or ON_HOLD)
         """
-        return self.status in [
-            PurchaseOrderStatus.PLACED.value,
-            PurchaseOrderStatus.PENDING.value,
-        ]
+        return self.status in PurchaseOrderStatusGroups.OPEN
 
     def _action_cancel(self, *args, **kwargs):
         """Marks the PurchaseOrder as CANCELLED."""
@@ -700,6 +717,22 @@ class PurchaseOrder(TotalPriceMixin, Order):
                 exclude=self.created_by,
                 content=InvenTreeNotificationBodies.OrderCanceled,
             )
+
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            PurchaseOrderStatus.PENDING.value,
+            PurchaseOrderStatus.PLACED.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this purchase order as 'on hold'."""
+        if self.can_hold:
+            self.status = PurchaseOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event('purchaseorder.hold', id=self.pk)
 
     # endregion
 
@@ -1074,14 +1107,38 @@ class SalesOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order'."""
         self.issue_order()
 
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
+            SalesOrderStatus.PENDING.value,
+            SalesOrderStatus.ON_HOLD.value,
+        ]
+
     def _action_place(self, *args, **kwargs):
         """Change this order from 'PENDING' to 'IN_PROGRESS'."""
-        if self.status == SalesOrderStatus.PENDING:
+        if self.can_issue:
             self.status = SalesOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('salesorder.issued', id=self.pk)
+
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            SalesOrderStatus.PENDING.value,
+            SalesOrderStatus.IN_PROGRESS.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this sales order as 'on hold'."""
+        if self.can_hold:
+            self.status = SalesOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event('salesorder.onhold', id=self.pk)
 
     def _action_complete(self, *args, **kwargs):
         """Mark this order as "complete."""
@@ -1174,6 +1231,13 @@ class SalesOrder(TotalPriceMixin, Order):
             self._action_complete,
             user=user,
             **kwargs,
+        )
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to transition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, SalesOrderStatus.ON_HOLD.value, self, self._action_hold
         )
 
     @transaction.atomic
@@ -2133,9 +2197,30 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Return True if this order is fully received."""
         return not self.lines.filter(received_date=None).exists()
 
+    @property
+    def can_hold(self):
+        """Return True if this order can be placed on hold."""
+        return self.status in [
+            ReturnOrderStatus.PENDING.value,
+            ReturnOrderStatus.IN_PROGRESS.value,
+        ]
+
+    def _action_hold(self, *args, **kwargs):
+        """Mark this order as 'on hold' (if allowed)."""
+        if self.can_hold:
+            self.status = ReturnOrderStatus.ON_HOLD.value
+            self.save()
+
+            trigger_event('returnorder.hold', id=self.pk)
+
+    @property
+    def can_cancel(self):
+        """Return True if this order can be cancelled."""
+        return self.status in ReturnOrderStatusGroups.OPEN
+
     def _action_cancel(self, *args, **kwargs):
         """Cancel this ReturnOrder (if not already cancelled)."""
-        if self.status != ReturnOrderStatus.CANCELLED:
+        if self.can_cancel:
             self.status = ReturnOrderStatus.CANCELLED.value
             self.save()
 
@@ -2151,7 +2236,7 @@ class ReturnOrder(TotalPriceMixin, Order):
 
     def _action_complete(self, *args, **kwargs):
         """Complete this ReturnOrder (if not already completed)."""
-        if self.status == ReturnOrderStatus.IN_PROGRESS:
+        if self.status == ReturnOrderStatus.IN_PROGRESS.value:
             self.status = ReturnOrderStatus.COMPLETE.value
             self.complete_date = InvenTree.helpers.current_date()
             self.save()
@@ -2162,14 +2247,29 @@ class ReturnOrder(TotalPriceMixin, Order):
         """Deprecated version of 'issue_order."""
         self.issue_order()
 
+    @property
+    def can_issue(self):
+        """Return True if this order can be issued."""
+        return self.status in [
+            ReturnOrderStatus.PENDING.value,
+            ReturnOrderStatus.ON_HOLD.value,
+        ]
+
     def _action_place(self, *args, **kwargs):
         """Issue this ReturnOrder (if currently pending)."""
-        if self.status == ReturnOrderStatus.PENDING:
+        if self.can_issue:
             self.status = ReturnOrderStatus.IN_PROGRESS.value
             self.issue_date = InvenTree.helpers.current_date()
             self.save()
 
             trigger_event('returnorder.issued', id=self.pk)
+
+    @transaction.atomic
+    def hold_order(self):
+        """Attempt to tranasition to ON_HOLD status."""
+        return self.handle_transition(
+            self.status, ReturnOrderStatus.ON_HOLD.value, self, self._action_hold
+        )
 
     @transaction.atomic
     def issue_order(self):
