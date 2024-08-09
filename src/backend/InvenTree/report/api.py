@@ -354,7 +354,7 @@ class ReportPrint(GenericAPIView):
                 for plugin in registry.with_mixin('report'):
                     try:
                         plugin.report_callback(self, instance, output, request)
-                    except Exception as e:
+                    except Exception:
                         InvenTree.exceptions.log_error(
                             f'plugins.{plugin.slug}.report_callback'
                         )
