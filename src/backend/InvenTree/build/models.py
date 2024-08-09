@@ -395,9 +395,9 @@ class Build(
     def sub_builds(self, cascade=True):
         """Return all Build Order objects under this one."""
         if cascade:
-            return Build.objects.filter(parent=self.pk)
-        descendants = self.get_descendants(include_self=True)
-        Build.objects.filter(parent__pk__in=[d.pk for d in descendants])
+            return self.get_descendants(include_self=False)
+        else:
+            return self.get_children()
 
     def sub_build_count(self, cascade=True):
         """Return the number of sub builds under this one.
@@ -406,6 +406,11 @@ class Build(
             cascade: If True (default), include cascading builds under sub builds
         """
         return self.sub_builds(cascade=cascade).count()
+
+    @property
+    def has_open_child_builds(self):
+        """Return True if this build order has any open child builds."""
+        return self.sub_builds().filter(status__in=BuildStatusGroups.ACTIVE_CODES).exists()
 
     @property
     def is_overdue(self):
@@ -576,6 +581,9 @@ class Build(
         - Untracked parts must be allocated
         """
 
+        if get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS') and self.has_open_child_builds:
+            return False
+
         if self.status != BuildStatus.PRODUCTION.value:
             return False
 
@@ -618,6 +626,10 @@ class Build(
 
         trim_allocated_stock = kwargs.pop('trim_allocated_stock', False)
         user = kwargs.pop('user', None)
+
+        # Prevent completion if there are open child builds
+        if get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS') and self.has_open_child_builds:
+            return
 
         if self.incomplete_count > 0:
             return
@@ -974,7 +986,10 @@ class Build(
         items_to_save = []
         items_to_delete = []
 
-        for build_line in self.untracked_line_items:
+        lines = self.untracked_line_items
+        lines = lines.prefetch_related('allocations')
+
+        for build_line in lines:
 
             reduce_by = build_line.allocated_quantity() - build_line.quantity
 

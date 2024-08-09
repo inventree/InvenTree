@@ -27,6 +27,7 @@ from stock.serializers import StockItemSerializerBrief, LocationBriefSerializer
 
 import common.models
 from common.serializers import ProjectCodeSerializer
+from common.settings import get_global_setting
 from importer.mixins import DataImportExportSerializerMixin
 import company.serializers
 import part.filters
@@ -764,6 +765,9 @@ class BuildCompleteSerializer(serializers.Serializer):
     def validate(self, data):
         """Perform validation of this serializer prior to saving"""
         build = self.context['build']
+
+        if get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS') and build.has_open_child_builds:
+            raise ValidationError(_("Build order has open child build orders"))
 
         if build.status != BuildStatus.PRODUCTION.value:
             raise ValidationError(_("Build order must be in production state"))

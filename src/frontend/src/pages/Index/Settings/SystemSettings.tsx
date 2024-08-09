@@ -244,6 +244,7 @@ export default function SystemSettings() {
               'BUILDORDER_REQUIRE_ACTIVE_PART',
               'BUILDORDER_REQUIRE_LOCKED_PART',
               'BUILDORDER_REQUIRE_VALID_BOM',
+              'BUILDORDER_REQUIRE_CLOSED_CHILDS',
               'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
             ]}
           />
