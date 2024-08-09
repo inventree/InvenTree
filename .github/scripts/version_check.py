@@ -18,8 +18,11 @@ from pathlib import Path
 
 import requests
 
+REPO = os.getenv('GITHUB_REPOSITORY', 'inventree/inventree')
+GITHUB_API_URL = os.getenv('GITHUB_API_URL', 'https://api.github.com')
 
-def get_existing_release_tags():
+
+def get_existing_release_tags(include_prerelease=True):
     """Request information on existing releases via the GitHub API."""
     # Check for github token
     token = os.getenv('GITHUB_TOKEN', None)
@@ -28,9 +31,7 @@ def get_existing_release_tags():
     if token:
         headers = {'Authorization': f'Bearer {token}'}
 
-    response = requests.get(
-        'https://api.github.com/repos/inventree/inventree/releases', headers=headers
-    )
+    response = requests.get(f'{GITHUB_API_URL}/repos/{REPO}/releases', headers=headers)
 
     if response.status_code != 200:
         raise ValueError(
@@ -48,6 +49,9 @@ def get_existing_release_tags():
 
         if len(match.groups()) != 3:
             print(f"Version '{tag}' did not match expected pattern")
+            continue
+
+        if not include_prerelease and release['prerelease']:
             continue
 
         tags.append([int(x) for x in match.groups()])
@@ -73,7 +77,7 @@ def check_version_number(version_string, allow_duplicate=False):
     version_tuple = [int(x) for x in match.groups()]
 
     # Look through the existing releases
-    existing = get_existing_release_tags()
+    existing = get_existing_release_tags(include_prerelease=False)
 
     # Assume that this is the highest release, unless told otherwise
     highest_release = True
@@ -90,6 +94,11 @@ def check_version_number(version_string, allow_duplicate=False):
 
 
 if __name__ == '__main__':
+    # Ensure that we are running in GH Actions
+    if os.environ.get('GITHUB_ACTIONS', '') != 'true':
+        print('This script is intended to be run within a GitHub Action!')
+        sys.exit(1)
+
     if 'only_version' in sys.argv:
         here = Path(__file__).parent.absolute()
         version_file = here.joinpath(
@@ -102,14 +111,13 @@ if __name__ == '__main__':
             results[0] = str(int(results[0]) - 1)
         print(results[0])
         exit(0)
+
     # GITHUB_REF_TYPE may be either 'branch' or 'tag'
     GITHUB_REF_TYPE = os.environ['GITHUB_REF_TYPE']
 
     # GITHUB_REF may be either 'refs/heads/<branch>' or 'refs/heads/<tag>'
     GITHUB_REF = os.environ['GITHUB_REF']
-
     GITHUB_REF_NAME = os.environ['GITHUB_REF_NAME']
-
     GITHUB_BASE_REF = os.environ['GITHUB_BASE_REF']
 
     # Print out version information, makes debugging actions *much* easier!
@@ -193,7 +201,7 @@ if __name__ == '__main__':
     # Ref: https://getridbug.com/python/how-to-set-environment-variables-in-github-actions-using-python/
     with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
         # Construct tag string
-        tags = ','.join([f'inventree/inventree:{tag}' for tag in docker_tags])
+        tags = ','.join([f'{REPO.lower()}:{tag}' for tag in docker_tags])
 
         env_file.write(f'docker_tags={tags}\n')
 

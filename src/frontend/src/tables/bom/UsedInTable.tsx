@@ -2,14 +2,13 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import { useMemo } from 'react';
 
-import { PartHoverCard } from '../../components/images/Thumbnail';
 import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../Column';
-import { ReferenceColumn } from '../ColumnRenderers';
+import { PartColumn, ReferenceColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 
@@ -31,12 +30,19 @@ export function UsedInTable({
         accessor: 'part',
         switchable: false,
         sortable: true,
-        render: (record: any) => <PartHoverCard part={record.part_detail} />
+        title: t`Assembly`,
+        render: (record: any) => PartColumn(record.part_detail)
+      },
+      {
+        accessor: 'part_detail.IPN',
+        sortable: false,
+        title: t`IPN`
       },
       {
         accessor: 'sub_part',
         sortable: true,
-        render: (record: any) => <PartHoverCard part={record.sub_part_detail} />
+        title: t`Component`,
+        render: (record: any) => PartColumn(record.sub_part_detail)
       },
       {
         accessor: 'quantity',

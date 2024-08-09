@@ -1,12 +1,38 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 228
+INVENTREE_API_VERSION = 235
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v235 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7837
+    - Adds "on_order" quantity to SalesOrderLineItem serializer
+    - Adds "building" quantity to SalesOrderLineItem serializer
+
+v234 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7829
+    - Fixes bug in the plugin metadata endpoint
+
+v233 - 2024-08-04 : https://github.com/inventree/InvenTree/pull/7807
+    - Adds new endpoints for managing state of build orders
+    - Adds new endpoints for managing state of purchase orders
+    - Adds new endpoints for managing state of sales orders
+    - Adds new endpoints for managing state of return orders
+
+v232 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7793
+    - Allow ordering of SalesOrderShipment API by 'shipment_date' and 'delivery_date'
+
+v231 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7794
+    - Optimize BuildItem and BuildLine serializers to improve API efficiency
+
+v230 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7164
+    - Adds test statistics endpoint
+
+v229 - 2024-07-31 : https://github.com/inventree/InvenTree/pull/7775
+    - Add extra exportable fields to the BomItem serializer
+
 v228 - 2024-07-18 : https://github.com/inventree/InvenTree/pull/7684
     - Adds "icon" field to the PartCategory.path and StockLocation.path API
     - Adds icon packages API endpoint

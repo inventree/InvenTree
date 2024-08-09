@@ -554,7 +554,7 @@ export function BomTable({
             modelField: 'sub_part',
             rowActions: rowActions,
             enableSelection: !partLocked,
-            enableBulkDelete: !partLocked,
+            enableBulkDelete: !partLocked && user.hasDeleteRole(UserRoles.part),
             enableDownload: true
           }}
         />

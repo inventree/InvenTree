@@ -359,6 +359,8 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
         'unit_quantity',
         'available_stock',
         'trackable',
+        'allow_variants',
+        'inherited',
     ]
 
     ordering_field_aliases = {
@@ -368,6 +370,8 @@ class BuildLineList(BuildLineEndpoint, DataExportViewMixin, ListCreateAPI):
         'consumable': 'bom_item__consumable',
         'optional': 'bom_item__optional',
         'trackable': 'bom_item__sub_part__trackable',
+        'allow_variants': 'bom_item__allow_variants',
+        'inherited': 'bom_item__inherited',
     }
 
     search_fields = [
@@ -466,8 +470,18 @@ class BuildFinish(BuildOrderContextMixin, CreateAPI):
     """API endpoint for marking a build as finished (completed)."""
 
     queryset = Build.objects.none()
-
     serializer_class = build.serializers.BuildCompleteSerializer
+
+    def get_queryset(self):
+        """Return the queryset for the BuildFinish API endpoint."""
+
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related(
+            'build_lines',
+            'build_lines__allocations'
+        )
+
+        return queryset
 
 
 class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
@@ -480,7 +494,6 @@ class BuildAutoAllocate(BuildOrderContextMixin, CreateAPI):
     """
 
     queryset = Build.objects.none()
-
     serializer_class = build.serializers.BuildAutoAllocationSerializer
 
 
@@ -496,9 +509,21 @@ class BuildAllocate(BuildOrderContextMixin, CreateAPI):
     """
 
     queryset = Build.objects.none()
-
     serializer_class = build.serializers.BuildAllocationSerializer
 
+
+class BuildIssue(BuildOrderContextMixin, CreateAPI):
+    """API endpoint for issuing a BuildOrder."""
+
+    queryset = Build.objects.all()
+    serializer_class = build.serializers.BuildIssueSerializer
+
+
+class BuildHold(BuildOrderContextMixin, CreateAPI):
+    """API endpoint for placing a BuildOrder on hold."""
+
+    queryset = Build.objects.all()
+    serializer_class = build.serializers.BuildHoldSerializer
 
 class BuildCancel(BuildOrderContextMixin, CreateAPI):
     """API endpoint for cancelling a BuildOrder."""
@@ -571,19 +596,23 @@ class BuildItemList(DataExportViewMixin, BulkDeleteMixin, ListCreateAPI):
         return self.serializer_class(*args, **kwargs)
 
     def get_queryset(self):
-        """Override the queryset method, to allow filtering by stock_item.part."""
+        """Override the queryset method, to perform custom prefetch."""
         queryset = super().get_queryset()
 
         queryset = queryset.select_related(
             'build_line',
             'build_line__build',
             'build_line__bom_item',
+            'build_line__bom_item__part',
+            'build_line__bom_item__sub_part',
             'install_into',
             'stock_item',
             'stock_item__location',
             'stock_item__part',
-            'stock_item__supplier_part',
+            'stock_item__supplier_part__part',
+            'stock_item__supplier_part__supplier',
             'stock_item__supplier_part__manufacturer_part',
+            'stock_item__supplier_part__manufacturer_part__manufacturer',
         ).prefetch_related(
             'stock_item__location__tags',
         )
@@ -655,6 +684,8 @@ build_api_urls = [
         path('create-output/', BuildOutputCreate.as_view(), name='api-build-output-create'),
         path('delete-outputs/', BuildOutputDelete.as_view(), name='api-build-output-delete'),
         path('scrap-outputs/', BuildOutputScrap.as_view(), name='api-build-output-scrap'),
+        path('issue/', BuildIssue.as_view(), name='api-build-issue'),
+        path('hold/', BuildHold.as_view(), name='api-build-hold'),
         path('finish/', BuildFinish.as_view(), name='api-build-finish'),
         path('cancel/', BuildCancel.as_view(), name='api-build-cancel'),
         path('unallocate/', BuildUnallocate.as_view(), name='api-build-unallocate'),

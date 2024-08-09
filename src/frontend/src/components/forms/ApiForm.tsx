@@ -309,17 +309,17 @@ export function ApiForm({
 
     for (const k of Object.keys(_fields)) {
       // Ensure default values override initial field spec
-      if (defaultValues[k]) {
+      if (k in defaultValues) {
         _fields[k].value = defaultValues[k];
       }
 
       // Ensure initial data overrides default values
-      if (_initialData && _initialData[k]) {
+      if (_initialData && k in _initialData) {
         _fields[k].value = _initialData[k];
       }
 
       // Ensure fetched data overrides also
-      if (_fetchedData && _fetchedData[k]) {
+      if (_fetchedData && k in _fetchedData) {
         _fields[k].value = _fetchedData[k];
       }
     }
@@ -368,6 +368,11 @@ export function ApiForm({
           return;
         }
 
+        // Do not auto-focus on a 'choice' field
+        if (field.field_type == 'choice') {
+          return;
+        }
+
         focusField = fieldName;
       });
     }
@@ -378,7 +383,7 @@ export function ApiForm({
 
     form.setFocus(focusField);
     setInitialFocus(focusField);
-  }, [props.focus, fields, form.setFocus, isLoading, initialFocus]);
+  }, [props.focus, form.setFocus, isLoading, initialFocus]);
 
   const submitForm: SubmitHandler<FieldValues> = async (data) => {
     setNonFieldErrors([]);
@@ -398,7 +403,7 @@ export function ApiForm({
       let value: any = data[key];
       let field_type = fields[key]?.field_type;
 
-      if (field_type == 'file upload') {
+      if (field_type == 'file upload' && !!value) {
         hasFiles = true;
       }
 
@@ -413,7 +418,9 @@ export function ApiForm({
         }
       }
 
-      dataForm.append(key, value);
+      if (value != undefined) {
+        dataForm.append(key, value);
+      }
     });
 
     return api({

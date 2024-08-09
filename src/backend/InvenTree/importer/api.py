@@ -47,6 +47,8 @@ class DataImporterModelList(APIView):
 class DataImportSessionList(BulkDeleteMixin, ListCreateAPI):
     """API endpoint for accessing a list of DataImportSession objects."""
 
+    permission_classes = [permissions.IsAuthenticated]
+
     queryset = importer.models.DataImportSession.objects.all()
     serializer_class = importer.serializers.DataImportSessionSerializer
 

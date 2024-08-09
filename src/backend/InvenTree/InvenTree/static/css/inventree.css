@@ -1112,3 +1112,8 @@ a {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
+
+.test-statistics-table-total-row {
+    font-weight: bold;
+    border-top-style: double;
+}

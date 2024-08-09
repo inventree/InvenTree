@@ -12,7 +12,7 @@ test('PUI - Stock', async ({ page }) => {
   await page.waitForURL('**/platform/stock/location/index/details');
 
   await page.getByRole('tab', { name: 'Stock Items' }).click();
-  await page.getByRole('cell', { name: '1551ABK' }).click();
+  await page.getByText('1551ABK').first().click();
 
   await page.getByRole('tab', { name: 'Stock', exact: true }).click();
   await page.waitForURL('**/platform/stock/**');
