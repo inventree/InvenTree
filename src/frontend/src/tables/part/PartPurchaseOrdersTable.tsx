@@ -2,6 +2,7 @@ import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
 import { useMemo } from 'react';
 
+import { ProgressBar } from '../../components/items/ProgressBar';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -56,6 +57,7 @@ export default function PartPurchaseOrdersTable({
       },
       {
         accessor: 'quantity',
+        switchable: false,
         render: (record: any) => {
           let supplier_part = record?.supplier_part_detail ?? {};
           let part = record?.part_detail ?? supplier_part?.part_detail ?? {};
@@ -79,7 +81,13 @@ export default function PartPurchaseOrdersTable({
 
           return (
             <TableHoverCard
-              value={record.quantity}
+              value={
+                <ProgressBar
+                  value={record.received}
+                  maximum={record.quantity}
+                  progressLabel
+                />
+              }
               extra={extra}
               title={t`Quantity`}
             />
@@ -90,9 +98,6 @@ export default function PartPurchaseOrdersTable({
         accessor: 'target_date',
         title: t`Target Date`
       }),
-      {
-        accessor: 'received'
-      },
       {
         accessor: 'purchase_price',
         render: (record: any) =>
