@@ -32,7 +32,7 @@ class Command(BaseCommand):
             settings['global'][key] = {
                 'name': str(setting['name']),
                 'description': str(setting['description']),
-                'default': str(InvenTreeSetting.get_setting_default(key) or ''),
+                'default': str(InvenTreeSetting.get_setting_default(key)),
                 'units': str(setting.get('units', '')),
             }
 
@@ -41,7 +41,7 @@ class Command(BaseCommand):
             settings['user'][key] = {
                 'name': str(setting['name']),
                 'description': str(setting['description']),
-                'default': str(InvenTreeUserSetting.get_setting_default(key) or ''),
+                'default': str(InvenTreeUserSetting.get_setting_default(key)),
                 'units': str(setting.get('units', '')),
             }
 
