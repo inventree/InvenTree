@@ -1074,6 +1074,16 @@ def schema(
     print('Schema export completed:', filename)
 
 
+@task
+def export_settings_definitions(c, filename='inventree_settings.json', overwrite=False):
+    """Export settings definition to a JSON file."""
+    filename = Path(filename).resolve()
+    check_file_existance(filename, overwrite)
+
+    print(f"Exporting settings definition to '{filename}'...")
+    manage(c, f'export_settings_definitions {filename}', pty=True)
+
+
 @task(default=True)
 def version(c):
     """Show the current version of InvenTree."""
@@ -1404,8 +1414,16 @@ via your signed in browser, or consider using a point release download via invok
         'compile_schema': 'Compile the schema documentation first (default: False)',
     }
 )
-def docs_server(c, address='localhost:8080', compile_schema=False):
+def docs_server(
+    c, address='localhost:8080', extract_settings=True, compile_schema=False
+):
     """Start a local mkdocs server to view the documentation."""
+    if extract_settings:
+        # Extract settings definitions
+        export_settings_definitions(
+            c, filename='docs/inventree_settings.json', overwrite=True
+        )
+
     if compile_schema:
         # Build the schema docs first
         schema(c, ignore_warnings=True, overwrite=True, filename='docs/schema.yml')
