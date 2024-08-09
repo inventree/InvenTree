@@ -11,6 +11,7 @@
 
 ARG base_image=python:3.11-alpine3.18
 FROM ${base_image} AS inventree_base
+ARG base_image
 
 # Build arguments for this image
 ARG commit_tag=""
@@ -48,13 +49,18 @@ ENV INVENTREE_BACKGROUND_WORKERS="4"
 ENV INVENTREE_WEB_ADDR=0.0.0.0
 ENV INVENTREE_WEB_PORT=8000
 
-LABEL org.label-schema.schema-version="1.0" \
-      org.label-schema.build-date=${DATE} \
-      org.label-schema.vendor="inventree" \
-      org.label-schema.name="inventree/inventree" \
-      org.label-schema.url="https://hub.docker.com/r/inventree/inventree" \
-      org.label-schema.vcs-url="https://github.com/inventree/InvenTree.git" \
-      org.label-schema.vcs-ref=${commit_tag}
+LABEL org.opencontainers.image.created=${DATE} \
+      org.opencontainers.image.vendor="inventree" \
+      org.opencontainers.image.title="InvenTree backend server" \
+      org.opencontainers.image.description="InvenTree is the open-source inventory management system" \
+      org.opencontainers.image.url="https://inventree.org" \
+      org.opencontainers.image.documentation="https://docs.inventree.org" \
+      org.opencontainers.image.source="https://github.com/inventree/InvenTree" \
+      org.opencontainers.image.revision=${commit_hash} \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.base.name="docker.io/library/${base_image}" \
+      org.opencontainers.image.version=${commit_tag}
+
 
 # Install required system level packages
 RUN apk add --no-cache \

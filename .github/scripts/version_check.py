@@ -10,6 +10,7 @@ tagged branch:
 
 """
 
+import itertools
 import json
 import os
 import re
@@ -198,10 +199,13 @@ if __name__ == '__main__':
     print(f"Version check passed for '{version}'!")
     print(f"Docker tags: '{docker_tags}'")
 
+    target_repos = [REPO.lower(), f'ghcr.io/{REPO.lower()}']
+
     # Ref: https://getridbug.com/python/how-to-set-environment-variables-in-github-actions-using-python/
     with open(os.getenv('GITHUB_ENV'), 'a') as env_file:
         # Construct tag string
-        tags = ','.join([f'{REPO.lower()}:{tag}' for tag in docker_tags])
+        tag_list = [[f'{r}:{t}' for t in docker_tags] for r in target_repos]
+        tags = ','.join(itertools.chain(*tag_list))
 
         env_file.write(f'docker_tags={tags}\n')
 

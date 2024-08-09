@@ -135,9 +135,9 @@ jobs:
         id: docker_login
         run: |
           if [ -z "${{ secrets.DOCKER_USERNAME }}" ]; then
-            echo "skip_dockerhub_login=true" >> $GITHUB_ENV
+            echo "skip_dockerhub_login=true" >> $GITHUB_OUTPUT
           else
-            echo "skip_dockerhub_login=false" >> $GITHUB_ENV
+            echo "skip_dockerhub_login=false" >> $GITHUB_OUTPUT
           fi
       - name: Login to Dockerhub
         if: github.event_name != 'pull_request' && steps.docker_login.outputs.skip_dockerhub_login != 'true'
