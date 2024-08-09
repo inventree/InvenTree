@@ -63,6 +63,21 @@ Change how logins, password-forgot, signups are handled:
 {{ globalsetting("SSO_GROUP_KEY") }}
 {{ globalsetting("SSO_REMOVE_GROUPS") }}
 
+#### Require User Email
+
+If this setting is enabled, users must provide an email address when signing up. Note that some notification and security features require a valid email address.
+
+#### Forgot Password
+
+If this setting is enabled, users can reset their password via email. This requires a valid email address to be associated with the user account.
+
+#### Enforce Multi-Factor Authentication
+
+If this setting is enabled, users must have multi-factor authentication enabled to log in.
+
+#### Auto Fil SSO Users
+
+Automatically fill out user-details from SSO account-data. If this feature is enabled the user is only asked for their username, first- and surname if those values can not be gathered from their SSO profile. This might lead to unwanted usernames bleeding over.
 
 ### Barcodes
 
