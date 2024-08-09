@@ -1126,9 +1126,9 @@ class PartFilter(rest_filters.FilterSet):
         # TODO: We should cache BOM checksums to make this process more efficient
         pks = []
 
-        for part in queryset:
-            if part.is_bom_valid() == value:
-                pks.append(part.pk)
+        for item in queryset:
+            if item.is_bom_valid() == value:
+                pks.append(item.pk)
 
         return queryset.filter(pk__in=pks)
 

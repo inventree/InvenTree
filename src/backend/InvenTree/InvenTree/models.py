@@ -93,7 +93,7 @@ class PluginValidationMixin(DiffMixin):
                     return
             except ValidationError as exc:
                 raise exc
-            except Exception as exc:
+            except Exception:
                 # Log the exception to the database
                 import InvenTree.exceptions
 
