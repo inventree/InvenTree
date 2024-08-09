@@ -8,7 +8,7 @@ msgstr ""
 "Language: id\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-08 22:04\n"
+"PO-Revision-Date: 2024-08-09 22:03\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -3921,7 +3921,7 @@ msgstr ""
 #: src/pages/sales/SalesOrderDetail.tsx:88
 #: src/tables/ColumnRenderers.tsx:121
 #: src/tables/build/BuildAllocatedStockTable.tsx:90
-#: src/tables/build/BuildLineTable.tsx:148
+#: src/tables/build/BuildLineTable.tsx:150
 msgid "Reference"
 msgstr ""
 
@@ -4571,7 +4571,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:233
 #: src/tables/bom/BomTable.tsx:314
-#: src/tables/build/BuildLineTable.tsx:129
+#: src/tables/build/BuildLineTable.tsx:131
 #: src/tables/part/PartTable.tsx:282
 #: src/tables/sales/SalesOrderLineItemTable.tsx:99
 msgid "Available Stock"
@@ -4587,7 +4587,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:254
 #: src/tables/bom/BomTable.tsx:236
-#: src/tables/build/BuildLineTable.tsx:103
+#: src/tables/build/BuildLineTable.tsx:105
 #: src/tables/sales/SalesOrderLineItemTable.tsx:137
 msgid "On order"
 msgstr ""
@@ -4747,7 +4747,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:835
 #: src/pages/stock/StockDetail.tsx:156
 #: src/pages/stock/StockDetail.tsx:591
-#: src/tables/build/BuildLineTable.tsx:44
+#: src/tables/build/BuildLineTable.tsx:46
 #: src/tables/part/PartTable.tsx:117
 #: src/tables/stock/StockItemTable.tsx:176
 #: src/tables/stock/StockItemTable.tsx:309
@@ -5548,18 +5548,18 @@ msgid "Part Information"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:211
-#: src/tables/build/BuildLineTable.tsx:112
+#: src/tables/build/BuildLineTable.tsx:114
 #: src/tables/part/PartTable.tsx:125
 msgid "External stock"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:219
-#: src/tables/build/BuildLineTable.tsx:75
+#: src/tables/build/BuildLineTable.tsx:77
 msgid "Includes substitute stock"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:228
-#: src/tables/build/BuildLineTable.tsx:85
+#: src/tables/build/BuildLineTable.tsx:87
 #: src/tables/sales/SalesOrderLineItemTable.tsx:123
 msgid "Includes variant stock"
 msgstr ""
@@ -5572,7 +5572,7 @@ msgid "Stock Information"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:284
-#: src/tables/build/BuildLineTable.tsx:212
+#: src/tables/build/BuildLineTable.tsx:214
 msgid "Consumable item"
 msgstr ""
 
@@ -5636,7 +5636,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:339
 #: src/tables/bom/UsedInTable.tsx:74
-#: src/tables/build/BuildLineTable.tsx:54
+#: src/tables/build/BuildLineTable.tsx:56
 msgid "Optional"
 msgstr ""
 
@@ -5646,7 +5646,7 @@ msgid "Show optional items"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:344
-#: src/tables/build/BuildLineTable.tsx:49
+#: src/tables/build/BuildLineTable.tsx:51
 msgid "Consumable"
 msgstr ""
 
@@ -5745,6 +5745,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:532
 #: src/tables/part/PartParameterTable.tsx:191
+#: src/tables/part/PartTestTemplateTable.tsx:252
 msgid "Part is Locked"
 msgstr ""
 
@@ -5811,69 +5812,69 @@ msgstr ""
 msgid "Delete Build Item"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:39
+#: src/tables/build/BuildLineTable.tsx:41
 #: src/tables/stock/StockItemTable.tsx:304
 msgid "Allocated"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:40
+#: src/tables/build/BuildLineTable.tsx:42
 msgid "Show allocated lines"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:45
+#: src/tables/build/BuildLineTable.tsx:47
 msgid "Show lines with available stock"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:50
+#: src/tables/build/BuildLineTable.tsx:52
 msgid "Show consumable lines"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:55
+#: src/tables/build/BuildLineTable.tsx:57
 msgid "Show optional lines"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:59
+#: src/tables/build/BuildLineTable.tsx:61
 #: src/tables/stock/StockItemTable.tsx:363
 msgid "Tracked"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:60
+#: src/tables/build/BuildLineTable.tsx:62
 msgid "Show tracked lines"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:94
+#: src/tables/build/BuildLineTable.tsx:96
 #: src/tables/sales/SalesOrderLineItemTable.tsx:129
 msgid "In production"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:126
+#: src/tables/build/BuildLineTable.tsx:128
 #: src/tables/sales/SalesOrderLineItemTable.tsx:117
 #: src/tables/stock/StockItemTable.tsx:185
 msgid "No stock available"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:165
+#: src/tables/build/BuildLineTable.tsx:167
 msgid "Gets Inherited"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:174
+#: src/tables/build/BuildLineTable.tsx:176
 msgid "Unit Quantity"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:231
+#: src/tables/build/BuildLineTable.tsx:233
 #: src/tables/sales/SalesOrderLineItemTable.tsx:223
 msgid "Create Build Order"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:255
+#: src/tables/build/BuildLineTable.tsx:264
 msgid "Allocate Stock"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:261
+#: src/tables/build/BuildLineTable.tsx:270
 msgid "Order Stock"
 msgstr ""
 
-#: src/tables/build/BuildLineTable.tsx:267
+#: src/tables/build/BuildLineTable.tsx:276
 msgid "Build Stock"
 msgstr ""
 
@@ -6573,84 +6574,100 @@ msgstr ""
 msgid "Filter by parts which have stocktake information"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:52
+#: src/tables/part/PartTestTemplateTable.tsx:50
+msgid "Test is defined for a parent template part"
+msgstr ""
+
+#: src/tables/part/PartTestTemplateTable.tsx:64
+msgid "Template Details"
+msgstr ""
+
+#: src/tables/part/PartTestTemplateTable.tsx:74
 msgid "Results"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:54
+#: src/tables/part/PartTestTemplateTable.tsx:76
 msgid "No Results"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:84
+#: src/tables/part/PartTestTemplateTable.tsx:106
 #: src/tables/stock/StockItemTestResultTable.tsx:360
 msgid "Required"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:85
+#: src/tables/part/PartTestTemplateTable.tsx:107
 msgid "Show required tests"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:89
+#: src/tables/part/PartTestTemplateTable.tsx:111
 #: src/tables/settings/TemplateTable.tsx:166
 #: src/tables/settings/TemplateTable.tsx:281
 msgid "Enabled"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:90
+#: src/tables/part/PartTestTemplateTable.tsx:112
 msgid "Show enabled tests"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:94
+#: src/tables/part/PartTestTemplateTable.tsx:116
 msgid "Requires Value"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:95
+#: src/tables/part/PartTestTemplateTable.tsx:117
 msgid "Show tests that require a value"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:99
+#: src/tables/part/PartTestTemplateTable.tsx:121
 msgid "Requires Attachment"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:100
+#: src/tables/part/PartTestTemplateTable.tsx:122
 msgid "Show tests that require an attachment"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:104
+#: src/tables/part/PartTestTemplateTable.tsx:126
 msgid "Include Inherited"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:105
+#: src/tables/part/PartTestTemplateTable.tsx:127
 msgid "Show tests from inherited templates"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:109
+#: src/tables/part/PartTestTemplateTable.tsx:131
 msgid "Has Results"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:110
+#: src/tables/part/PartTestTemplateTable.tsx:132
 msgid "Show tests which have recorded results"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:132
-#: src/tables/part/PartTestTemplateTable.tsx:207
+#: src/tables/part/PartTestTemplateTable.tsx:154
+#: src/tables/part/PartTestTemplateTable.tsx:237
 msgid "Add Test Template"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:148
+#: src/tables/part/PartTestTemplateTable.tsx:170
 msgid "Edit Test Template"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:159
+#: src/tables/part/PartTestTemplateTable.tsx:181
 msgid "Delete Test Template"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:161
+#: src/tables/part/PartTestTemplateTable.tsx:183
 msgid "This action cannot be reversed"
 msgstr ""
 
-#: src/tables/part/PartTestTemplateTable.tsx:163
+#: src/tables/part/PartTestTemplateTable.tsx:185
 msgid "Any tests results associated with this template will be deleted"
+msgstr ""
+
+#: src/tables/part/PartTestTemplateTable.tsx:204
+msgid "View Parent Part"
+msgstr ""
+
+#: src/tables/part/PartTestTemplateTable.tsx:257
+msgid "Part templates cannot be edited, as the part is locked"
 msgstr ""
 
 #: src/tables/part/PartThumbTable.tsx:201
