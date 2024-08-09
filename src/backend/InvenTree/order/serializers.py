@@ -21,7 +21,6 @@ from rest_framework.serializers import ValidationError
 from sql_util.utils import SubqueryCount
 
 import order.models
-import part.filters
 import part.filters as part_filters
 import part.models as part_models
 import stock.models
@@ -1030,8 +1029,6 @@ class SalesOrderLineItemSerializer(
             'pk',
             'allocated',
             'allocations',
-            'available_stock',
-            'available_variant_stock',
             'customer_detail',
             'quantity',
             'reference',
@@ -1046,6 +1043,11 @@ class SalesOrderLineItemSerializer(
             'shipped',
             'target_date',
             'link',
+            # Annotated fields for part stocking information
+            'available_stock',
+            'available_variant_stock',
+            'building',
+            'on_order',
         ]
 
     def __init__(self, *args, **kwargs):
@@ -1078,6 +1080,8 @@ class SalesOrderLineItemSerializer(
 
         - "overdue" status (boolean field)
         - "available_quantity"
+        - "building"
+        - "on_order"
         """
         queryset = queryset.annotate(
             overdue=Case(
@@ -1093,11 +1097,11 @@ class SalesOrderLineItemSerializer(
         # Annotate each line with the available stock quantity
         # To do this, we need to look at the total stock and any allocations
         queryset = queryset.alias(
-            total_stock=part.filters.annotate_total_stock(reference='part__'),
-            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(
+            total_stock=part_filters.annotate_total_stock(reference='part__'),
+            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(
                 reference='part__'
             ),
-            allocated_to_build_orders=part.filters.annotate_build_order_allocations(
+            allocated_to_build_orders=part_filters.annotate_build_order_allocations(
                 reference='part__'
             ),
         )
@@ -1112,19 +1116,19 @@ class SalesOrderLineItemSerializer(
         )
 
         # Filter for "variant" stock: Variant stock items must be salable and active
-        variant_stock_query = part.filters.variant_stock_query(
+        variant_stock_query = part_filters.variant_stock_query(
             reference='part__'
         ).filter(part__salable=True, part__active=True)
 
         # Also add in available "variant" stock
         queryset = queryset.alias(
-            variant_stock_total=part.filters.annotate_variant_quantity(
+            variant_stock_total=part_filters.annotate_variant_quantity(
                 variant_stock_query, reference='quantity'
             ),
-            variant_bo_allocations=part.filters.annotate_variant_quantity(
+            variant_bo_allocations=part_filters.annotate_variant_quantity(
                 variant_stock_query, reference='sales_order_allocations__quantity'
             ),
-            variant_so_allocations=part.filters.annotate_variant_quantity(
+            variant_so_allocations=part_filters.annotate_variant_quantity(
                 variant_stock_query, reference='allocations__quantity'
             ),
         )
@@ -1136,6 +1140,16 @@ class SalesOrderLineItemSerializer(
                 - F('variant_so_allocations'),
                 output_field=models.DecimalField(),
             )
+        )
+
+        # Add information about the quantity of parts currently on order
+        queryset = queryset.annotate(
+            on_order=part_filters.annotate_on_order_quantity(reference='part__')
+        )
+
+        # Add information about the quantity of parts currently in production
+        queryset = queryset.annotate(
+            building=part_filters.annotate_in_production_quantity(reference='part__')
         )
 
         return queryset
@@ -1153,6 +1167,8 @@ class SalesOrderLineItemSerializer(
     overdue = serializers.BooleanField(required=False, read_only=True)
     available_stock = serializers.FloatField(read_only=True)
     available_variant_stock = serializers.FloatField(read_only=True)
+    on_order = serializers.FloatField(label=_('On Order'), read_only=True)
+    building = serializers.FloatField(label=_('In Production'), read_only=True)
 
     quantity = InvenTreeDecimalField()
 

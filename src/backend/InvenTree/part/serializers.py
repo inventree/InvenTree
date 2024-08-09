@@ -27,7 +27,7 @@ import company.models
 import InvenTree.helpers
 import InvenTree.serializers
 import InvenTree.status
-import part.filters
+import part.filters as part_filters
 import part.helpers as part_helpers
 import part.stocktake
 import part.tasks
@@ -107,12 +107,12 @@ class CategorySerializer(
         """Annotate extra information to the queryset."""
         # Annotate the number of 'parts' which exist in each category (including subcategories!)
         queryset = queryset.annotate(
-            part_count=part.filters.annotate_category_parts(),
-            subcategories=part.filters.annotate_sub_categories(),
+            part_count=part_filters.annotate_category_parts(),
+            subcategories=part_filters.annotate_sub_categories(),
         )
 
         queryset = queryset.annotate(
-            parent_default_location=part.filters.annotate_default_location('parent__')
+            parent_default_location=part_filters.annotate_default_location('parent__')
         )
 
         return queryset
@@ -164,7 +164,7 @@ class CategoryTree(InvenTree.serializers.InvenTreeModelSerializer):
     @staticmethod
     def annotate_queryset(queryset):
         """Annotate the queryset with the number of subcategories."""
-        return queryset.annotate(subcategories=part.filters.annotate_sub_categories())
+        return queryset.annotate(subcategories=part_filters.annotate_sub_categories())
 
 
 @register_importer()
@@ -781,10 +781,10 @@ class PartSerializer(
         queryset = queryset.annotate(stock_item_count=SubqueryCount('stock_items'))
 
         # Annotate with the total variant stock quantity
-        variant_query = part.filters.variant_stock_query()
+        variant_query = part_filters.variant_stock_query()
 
         queryset = queryset.annotate(
-            variant_stock=part.filters.annotate_variant_quantity(
+            variant_stock=part_filters.annotate_variant_quantity(
                 variant_query, reference='quantity'
             )
         )
@@ -814,10 +814,10 @@ class PartSerializer(
         # TODO: Note that BomItemSerializer and BuildLineSerializer have very similar code
 
         queryset = queryset.annotate(
-            ordering=part.filters.annotate_on_order_quantity(),
-            in_stock=part.filters.annotate_total_stock(),
-            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(),
-            allocated_to_build_orders=part.filters.annotate_build_order_allocations(),
+            ordering=part_filters.annotate_on_order_quantity(),
+            in_stock=part_filters.annotate_total_stock(),
+            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(),
+            allocated_to_build_orders=part_filters.annotate_build_order_allocations(),
         )
 
         # Annotate the queryset with the 'total_in_stock' quantity
@@ -829,7 +829,7 @@ class PartSerializer(
         )
 
         queryset = queryset.annotate(
-            external_stock=part.filters.annotate_total_stock(
+            external_stock=part_filters.annotate_total_stock(
                 filter=Q(location__external=True)
             )
         )
@@ -847,12 +847,12 @@ class PartSerializer(
 
         # Annotate with the total 'required for builds' quantity
         queryset = queryset.annotate(
-            required_for_build_orders=part.filters.annotate_build_order_requirements(),
-            required_for_sales_orders=part.filters.annotate_sales_order_requirements(),
+            required_for_build_orders=part_filters.annotate_build_order_requirements(),
+            required_for_sales_orders=part_filters.annotate_sales_order_requirements(),
         )
 
         queryset = queryset.annotate(
-            category_default_location=part.filters.annotate_default_location(
+            category_default_location=part_filters.annotate_default_location(
                 'category__'
             )
         )
@@ -1684,30 +1684,23 @@ class BomItemSerializer(
 
         # Annotate with the total "on order" amount for the sub-part
         queryset = queryset.annotate(
-            on_order=part.filters.annotate_on_order_quantity(ref)
+            on_order=part_filters.annotate_on_order_quantity(ref)
         )
 
         # Annotate with the total "building" amount for the sub-part
         queryset = queryset.annotate(
-            building=Coalesce(
-                SubquerySum(
-                    'sub_part__builds__quantity',
-                    filter=Q(status__in=BuildStatusGroups.ACTIVE_CODES),
-                ),
-                Decimal(0),
-                output_field=models.DecimalField(),
-            )
+            building=part_filters.annotate_in_production_quantity(ref)
         )
 
         # Calculate "total stock" for the referenced sub_part
         # Calculate the "build_order_allocations" for the sub_part
         # Note that these fields are only aliased, not annotated
         queryset = queryset.alias(
-            total_stock=part.filters.annotate_total_stock(reference=ref),
-            allocated_to_sales_orders=part.filters.annotate_sales_order_allocations(
+            total_stock=part_filters.annotate_total_stock(reference=ref),
+            allocated_to_sales_orders=part_filters.annotate_sales_order_allocations(
                 reference=ref
             ),
-            allocated_to_build_orders=part.filters.annotate_build_order_allocations(
+            allocated_to_build_orders=part_filters.annotate_build_order_allocations(
                 reference=ref
             ),
         )
@@ -1724,7 +1717,7 @@ class BomItemSerializer(
 
         # Calculate 'external_stock'
         queryset = queryset.annotate(
-            external_stock=part.filters.annotate_total_stock(
+            external_stock=part_filters.annotate_total_stock(
                 reference=ref, filter=Q(location__external=True)
             )
         )
@@ -1733,11 +1726,11 @@ class BomItemSerializer(
 
         # Extract similar information for any 'substitute' parts
         queryset = queryset.alias(
-            substitute_stock=part.filters.annotate_total_stock(reference=ref),
-            substitute_build_allocations=part.filters.annotate_build_order_allocations(
+            substitute_stock=part_filters.annotate_total_stock(reference=ref),
+            substitute_build_allocations=part_filters.annotate_build_order_allocations(
                 reference=ref
             ),
-            substitute_sales_allocations=part.filters.annotate_sales_order_allocations(
+            substitute_sales_allocations=part_filters.annotate_sales_order_allocations(
                 reference=ref
             ),
         )
@@ -1753,16 +1746,16 @@ class BomItemSerializer(
         )
 
         # Annotate the queryset with 'available variant stock' information
-        variant_stock_query = part.filters.variant_stock_query(reference='sub_part__')
+        variant_stock_query = part_filters.variant_stock_query(reference='sub_part__')
 
         queryset = queryset.alias(
-            variant_stock_total=part.filters.annotate_variant_quantity(
+            variant_stock_total=part_filters.annotate_variant_quantity(
                 variant_stock_query, reference='quantity'
             ),
-            variant_bo_allocations=part.filters.annotate_variant_quantity(
+            variant_bo_allocations=part_filters.annotate_variant_quantity(
                 variant_stock_query, reference='sales_order_allocations__quantity'
             ),
-            variant_so_allocations=part.filters.annotate_variant_quantity(
+            variant_so_allocations=part_filters.annotate_variant_quantity(
                 variant_stock_query, reference='allocations__quantity'
             ),
         )

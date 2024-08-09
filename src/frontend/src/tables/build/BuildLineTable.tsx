@@ -5,11 +5,14 @@ import {
   IconShoppingCart,
   IconTool
 } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { useBuildOrderFields } from '../../forms/BuildForms';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -19,7 +22,15 @@ import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { TableHoverCard } from '../TableHoverCard';
 
-export default function BuildLineTable({ params = {} }: { params?: any }) {
+export default function BuildLineTable({
+  buildId,
+  outputId,
+  params = {}
+}: {
+  buildId: number;
+  outputId?: number;
+  params?: any;
+}) {
   const table = useTable('buildline');
   const user = useUserState();
 
@@ -213,60 +224,92 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
     ];
   }, []);
 
+  const buildOrderFields = useBuildOrderFields({ create: true });
+
+  const [initialData, setInitialData] = useState<any>({});
+
+  const newBuildOrder = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Create Build Order`,
+    fields: buildOrderFields,
+    initialData: initialData,
+    follow: true,
+    modelType: ModelType.build
+  });
+
   const rowActions = useCallback(
     (record: any) => {
-      let part = record.part_detail;
+      let part = record.part_detail ?? {};
 
       // Consumable items have no appropriate actions
       if (record?.bom_item_detail?.consumable) {
         return [];
       }
 
-      // Tracked items must be allocated to a particular output
-      if (record?.part_detail?.trackable) {
-        return [];
-      }
+      const hasOutput = !!outputId;
+
+      // Can allocate
+      let canAllocate =
+        user.hasChangeRole(UserRoles.build) &&
+        record.allocated < record.quantity &&
+        record.trackable == hasOutput;
+
+      let canOrder =
+        user.hasAddRole(UserRoles.purchase_order) && part.purchaseable;
+      let canBuild = user.hasAddRole(UserRoles.build) && part.assembly;
 
       return [
         {
           icon: <IconArrowRight />,
           title: t`Allocate Stock`,
-          hidden: record.allocated >= record.quantity,
+          hidden: !canAllocate,
           color: 'green'
         },
         {
           icon: <IconShoppingCart />,
           title: t`Order Stock`,
-          hidden: !part?.purchaseable,
+          hidden: !canOrder,
           color: 'blue'
         },
         {
           icon: <IconTool />,
           title: t`Build Stock`,
-          hidden: !part?.assembly,
-          color: 'blue'
+          hidden: !canBuild,
+          color: 'blue',
+          onClick: () => {
+            setInitialData({
+              part: record.part,
+              parent: buildId,
+              quantity: record.quantity - record.allocated
+            });
+            newBuildOrder.open();
+          }
         }
       ];
     },
-    [user]
+    [user, outputId]
   );
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.build_line_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          part_detail: true
-        },
-        tableFilters: tableFilters,
-        rowActions: rowActions,
-        modelType: ModelType.part,
-        modelField: 'part_detail.pk',
-        enableDownload: true
-      }}
-    />
+    <>
+      {newBuildOrder.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.build_line_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            build: buildId,
+            part_detail: true
+          },
+          tableFilters: tableFilters,
+          rowActions: rowActions,
+          modelType: ModelType.part,
+          modelField: 'part_detail.pk',
+          enableDownload: true
+        }}
+      />
+    </>
   );
 }

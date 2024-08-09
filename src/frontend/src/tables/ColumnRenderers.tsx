@@ -164,17 +164,20 @@ export function StatusColumn({
   model,
   sortable,
   accessor,
-  title
+  title,
+  hidden
 }: {
   model: ModelType;
   sortable?: boolean;
   accessor?: string;
+  hidden?: boolean;
   title?: string;
 }) {
   return {
     accessor: accessor ?? 'status',
     sortable: sortable ?? true,
     title: title,
+    hidden: hidden,
     render: TableStatusRenderer(model, accessor ?? 'status')
   };
 }
