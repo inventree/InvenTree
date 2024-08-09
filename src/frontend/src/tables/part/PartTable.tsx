@@ -303,20 +303,28 @@ function partTableFilters(): TableFilter[] {
  * @param {Object} params - The query parameters to pass to the API
  * @returns
  */
-export function PartListTable({ props }: { props: InvenTreeTableProps }) {
+export function PartListTable({
+  props,
+  defaultPartData
+}: {
+  props: InvenTreeTableProps;
+  defaultPartData?: any;
+}) {
   const tableColumns = useMemo(() => partTableColumns(), []);
   const tableFilters = useMemo(() => partTableFilters(), []);
 
   const table = useTable('part-list');
   const user = useUserState();
 
+  const initialPartData = useMemo(() => {
+    return defaultPartData ?? props.params ?? {};
+  }, [defaultPartData, props.params]);
+
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
     title: t`Add Part`,
     fields: usePartFields({ create: true }),
-    initialData: {
-      ...(props.params ?? {})
-    },
+    initialData: initialPartData,
     follow: true,
     modelType: ModelType.part
   });

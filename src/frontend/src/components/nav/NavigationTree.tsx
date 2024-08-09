@@ -15,7 +15,6 @@ import {
 import {
   IconChevronDown,
   IconChevronRight,
-  IconPoint,
   IconSitemap
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
@@ -28,6 +27,7 @@ import { ModelType } from '../../enums/ModelType';
 import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
+import { ApiIcon } from '../items/ApiIcon';
 import { StylishText } from '../items/StylishText';
 
 /*
@@ -100,7 +100,12 @@ export default function NavigationTree({
       let node = {
         ...query.data[ii],
         children: [],
-        label: query.data[ii].name,
+        label: (
+          <Group gap="xs">
+            <ApiIcon name={query.data[ii].icon} />
+            {query.data[ii].name}
+          </Group>
+        ),
         value: query.data[ii].pk.toString(),
         selected: query.data[ii].pk === selectedId
       };
@@ -157,9 +162,7 @@ export default function NavigationTree({
               ) : (
                 <IconChevronRight />
               )
-            ) : (
-              <IconPoint />
-            )}
+            ) : null}
           </ActionIcon>
           <Anchor
             onClick={(event: any) => follow(payload.node, event)}

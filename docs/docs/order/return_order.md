@@ -45,6 +45,7 @@ Each Return Order has a specific status code, as follows:
 | --- | --- |
 | Pending | The return order has been created, but not sent to the customer |
 | In Progress | The return order has been issued to the customer |
+| On Hold | The return order has been placed on hold, but is still active |
 | Complete | The return order was marked as complete, and is now closed |
 | Cancelled | The return order was cancelled, and is now closed |
 

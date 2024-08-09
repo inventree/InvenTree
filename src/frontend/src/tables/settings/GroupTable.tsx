@@ -25,6 +25,7 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
@@ -127,10 +128,15 @@ export function GroupDrawer({
 export function GroupTable() {
   const table = useTable('groups');
   const navigate = useNavigate();
+  const user = useUserState();
 
   const openDetailDrawer = useCallback(
-    (pk: number) => navigate(`group-${pk}/`),
-    []
+    (pk: number) => {
+      if (user.hasChangePermission(ModelType.group)) {
+        navigate(`group-${pk}/`);
+      }
+    },
+    [user]
   );
 
   const columns: TableColumn<GroupDetailI>[] = useMemo(() => {
@@ -138,24 +144,30 @@ export function GroupTable() {
       {
         accessor: 'name',
         sortable: true,
-        title: t`Name`
+        title: t`Name`,
+        switchable: false
       }
     ];
   }, []);
 
-  const rowActions = useCallback((record: GroupDetailI): RowAction[] => {
-    return [
-      RowEditAction({
-        onClick: () => openDetailDrawer(record.pk)
-      }),
-      RowDeleteAction({
-        onClick: () => {
-          setSelectedGroup(record.pk);
-          deleteGroup.open();
-        }
-      })
-    ];
-  }, []);
+  const rowActions = useCallback(
+    (record: GroupDetailI): RowAction[] => {
+      return [
+        RowEditAction({
+          onClick: () => openDetailDrawer(record.pk),
+          hidden: !user.hasChangePermission(ModelType.group)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeletePermission(ModelType.group),
+          onClick: () => {
+            setSelectedGroup(record.pk);
+            deleteGroup.open();
+          }
+        })
+      ];
+    },
+    [user]
+  );
 
   const [selectedGroup, setSelectedGroup] = useState<number>(-1);
 
@@ -183,11 +195,12 @@ export function GroupTable() {
         key={'add-group'}
         onClick={() => newGroup.open()}
         tooltip={t`Add group`}
+        hidden={!user.hasAddPermission(ModelType.group)}
       />
     );
 
     return actions;
-  }, []);
+  }, [user]);
 
   return (
     <>

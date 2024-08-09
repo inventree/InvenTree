@@ -15,7 +15,13 @@ from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from stock.status_codes import StockHistoryCode
 
-from .models import StockItem, StockItemTestResult, StockItemTracking, StockLocation
+from .models import (
+    StockItem,
+    StockItemTestResult,
+    StockItemTracking,
+    StockLocation,
+    StockLocationType,
+)
 
 
 class StockTestBase(InvenTreeTestCase):
@@ -1305,3 +1311,39 @@ class TestResultTest(StockTestBase):
         tests = item.testResultMap(include_installed=False)
         self.assertEqual(len(tests), 3)
         self.assertNotIn('somenewtest', tests)
+
+
+class StockLocationTest(InvenTreeTestCase):
+    """Tests for the StockLocation model."""
+
+    def test_icon(self):
+        """Test stock location icon."""
+        # No default icon set
+        loc = StockLocation.objects.create(name='Test Location')
+        loc_type = StockLocationType.objects.create(
+            name='Test Type', icon='ti:cube-send:outline'
+        )
+        self.assertEqual(loc.icon, '')
+
+        # Set a default icon
+        InvenTreeSetting.set_setting(
+            'STOCK_LOCATION_DEFAULT_ICON', 'ti:package:outline'
+        )
+        self.assertEqual(loc.icon, 'ti:package:outline')
+
+        # Assign location type and check that it takes precedence over default icon
+        loc.location_type = loc_type
+        loc.save()
+        self.assertEqual(loc.icon, 'ti:cube-send:outline')
+
+        # Set a custom icon and assert that it takes precedence over all other icons
+        loc.icon = 'ti:tag:outline'
+        loc.save()
+        self.assertEqual(loc.icon, 'ti:tag:outline')
+        InvenTreeSetting.set_setting('STOCK_LOCATION_DEFAULT_ICON', '')
+
+        # Test that the icon can be set to None again
+        loc.icon = ''
+        loc.location_type = None
+        loc.save()
+        self.assertEqual(loc.icon, '')

@@ -1,5 +1,13 @@
 import { t } from '@lingui/macro';
-import { Alert, Grid, Skeleton, Space, Stack, Text } from '@mantine/core';
+import {
+  Accordion,
+  Alert,
+  Grid,
+  Skeleton,
+  Space,
+  Stack,
+  Text
+} from '@mantine/core';
 import {
   IconBookmarks,
   IconBuilding,
@@ -15,6 +23,7 @@ import {
   IconNotes,
   IconPackages,
   IconPaperclip,
+  IconReportAnalytics,
   IconShoppingCart,
   IconStack2,
   IconTestPipe,
@@ -47,6 +56,7 @@ import {
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -75,6 +85,7 @@ import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { BomTable } from '../../tables/bom/BomTable';
 import { UsedInTable } from '../../tables/bom/UsedInTable';
+import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTable';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
@@ -83,8 +94,10 @@ import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
 import { ManufacturerPartTable } from '../../tables/purchasing/ManufacturerPartTable';
 import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
+import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import { SalesOrderTable } from '../../tables/sales/SalesOrderTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
+import { TestStatisticsTable } from '../../tables/stock/TestStatisticsTable';
 import PartPricingPanel from './PartPricingPanel';
 
 /**
@@ -127,6 +140,13 @@ export default function PartDetail() {
         label: t`Name`,
         icon: 'part',
         copy: true
+      },
+      {
+        type: 'string',
+        name: 'IPN',
+        label: t`IPN`,
+        copy: true,
+        hidden: !part.IPN
       },
       {
         type: 'string',
@@ -174,13 +194,6 @@ export default function PartDetail() {
         label: t`Category Default Location`,
         model: ModelType.stocklocation,
         hidden: part.default_location || !part.category_default_location
-      },
-      {
-        type: 'string',
-        name: 'IPN',
-        label: t`IPN`,
-        copy: true,
-        hidden: !part.IPN
       },
       {
         type: 'string',
@@ -287,7 +300,8 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
-        name: 'template',
+        icon: 'template',
+        name: 'is_template',
         label: t`Template Part`
       },
       {
@@ -529,14 +543,50 @@ export default function PartDetail() {
         label: t`Variants`,
         icon: <IconVersions />,
         hidden: !part.is_template,
-        content: <PartVariantTable partId={String(id)} />
+        content: <PartVariantTable part={part} />
       },
       {
         name: 'allocations',
         label: t`Allocations`,
         icon: <IconBookmarks />,
         hidden: !part.component && !part.salable,
-        content: <PlaceholderPanel />
+        content: (
+          <Accordion
+            multiple={true}
+            defaultValue={['buildallocations', 'salesallocations']}
+          >
+            {part.component && (
+              <Accordion.Item value="buildallocations" key="buildallocations">
+                <Accordion.Control>
+                  <StylishText size="lg">{t`Build Order Allocations`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <BuildAllocatedStockTable
+                    partId={part.pk}
+                    modelField="build"
+                    modelTarget={ModelType.build}
+                    showBuildInfo
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+            )}
+            {part.salable && (
+              <Accordion.Item value="salesallocations" key="salesallocations">
+                <Accordion.Control>
+                  <StylishText size="lg">{t`Sales Order Allocations`}</StylishText>
+                </Accordion.Control>
+                <Accordion.Panel>
+                  <SalesOrderAllocationTable
+                    partId={part.pk}
+                    modelField="order"
+                    modelTarget={ModelType.salesorder}
+                    showOrderInfo
+                  />
+                </Accordion.Panel>
+              </Accordion.Item>
+            )}
+          </Accordion>
+        )
       },
       {
         name: 'bom',
@@ -625,7 +675,23 @@ export default function PartDetail() {
         icon: <IconTestPipe />,
         hidden: !part.trackable,
         content: part?.pk ? (
-          <PartTestTemplateTable partId={part?.pk} />
+          <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
+        ) : (
+          <Skeleton />
+        )
+      },
+      {
+        name: 'test_statistics',
+        label: t`Test Statistics`,
+        icon: <IconReportAnalytics />,
+        hidden: !part.trackable,
+        content: part?.pk ? (
+          <TestStatisticsTable
+            params={{
+              pk: part.pk,
+              apiEndpoint: ApiEndpoints.part_test_statistics
+            }}
+          />
         ) : (
           <Skeleton />
         )
@@ -780,7 +846,7 @@ export default function PartDetail() {
       <DetailsBadge
         label={t`On Order` + `: ${part.ordering}`}
         color="blue"
-        visible={part.on_order > 0}
+        visible={part.ordering > 0}
         key="on_order"
       />,
       <DetailsBadge

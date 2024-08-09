@@ -59,6 +59,7 @@ export const test = baseTest.extend({
       if (
         msg.type() === 'error' &&
         !msg.text().startsWith('ERR: ') &&
+        msg.text().indexOf('downloadable font: download failed') < 0 &&
         msg
           .text()
           .indexOf(

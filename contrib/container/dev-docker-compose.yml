@@ -1,5 +1,3 @@
-version: "3.8"
-
 # Docker compose recipe for InvenTree development server
 # - Runs PostgreSQL as the database backend
 # - Uses built-in django webserver
@@ -20,7 +18,7 @@ services:
     # Use PostgreSQL as the database backend
     # Note: This can be changed to a different backend if required
     inventree-dev-db:
-        image: postgres:14
+        image: postgres:13
         expose:
             - 5432/tcp
         environment:

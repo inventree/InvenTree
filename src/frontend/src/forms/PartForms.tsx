@@ -132,7 +132,9 @@ export function partCategoryFields(): ApiFormFieldSet {
     },
     default_keywords: {},
     structural: {},
-    icon: {}
+    icon: {
+      field_type: 'icon'
+    }
   };
 
   return fields;

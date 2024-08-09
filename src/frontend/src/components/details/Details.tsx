@@ -46,7 +46,7 @@ export type DetailsField =
     );
 
 type BadgeType = 'owner' | 'user' | 'group';
-type ValueFormatterReturn = string | number | null;
+type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
   type: 'string' | 'text';
@@ -122,11 +122,11 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
             case 200:
               return response.data;
             default:
-              return undefined;
+              return {};
           }
         })
         .catch(() => {
-          return undefined;
+          return {};
         });
     }
   });

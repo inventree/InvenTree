@@ -1,7 +1,6 @@
 """Static files management for InvenTree plugins."""
 
 import logging
-from pathlib import Path
 
 from django.contrib.staticfiles.storage import staticfiles_storage
 
@@ -23,12 +22,15 @@ def clear_static_dir(path, recursive=True):
     dirs, files = staticfiles_storage.listdir(path)
 
     for f in files:
-        staticfiles_storage.delete(f'{path}/{f}')
+        staticfiles_storage.delete(f'{path}{f}')
 
     if recursive:
         for d in dirs:
-            clear_static_dir(f'{path}/{d}', recursive=True)
-            staticfiles_storage.delete(d)
+            clear_static_dir(f'{path}{d}/', recursive=True)
+            staticfiles_storage.delete(f'{path}{d}')
+
+    # Finally, delete the directory itself to remove orphan folders when uninstalling a plugin
+    staticfiles_storage.delete(path)
 
 
 def collect_plugins_static_files():

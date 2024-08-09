@@ -8,7 +8,7 @@ from rest_framework import serializers
 
 from InvenTree.serializers import InvenTreeModelSerializer
 
-from .models import Owner, RuleSet, check_user_role
+from .models import ApiToken, Owner, RuleSet, check_user_role
 
 
 class OwnerSerializer(InvenTreeModelSerializer):
@@ -116,5 +116,35 @@ def generate_permission_dict(permissions):
             perms[model] = []
 
         perms[model].append(perm)
-
     return perms
+
+
+class ApiTokenSerializer(InvenTreeModelSerializer):
+    """Serializer for the ApiToken model."""
+
+    in_use = serializers.SerializerMethodField(read_only=True)
+
+    def get_in_use(self, token: ApiToken) -> bool:
+        """Return True if the token is currently used to call the endpoint."""
+        from InvenTree.middleware import get_token_from_request
+
+        request = self.context.get('request')
+        rq_token = get_token_from_request(request)
+        return token.key == rq_token
+
+    class Meta:
+        """Meta options for ApiTokenSerializer."""
+
+        model = ApiToken
+        fields = [
+            'created',
+            'expiry',
+            'id',
+            'last_seen',
+            'name',
+            'token',
+            'active',
+            'revoked',
+            'user',
+            'in_use',
+        ]
