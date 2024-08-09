@@ -274,6 +274,6 @@ def define_env(env):
             - key: The name of the user setting to extract information for.
         """
         global USER_SETTINGS
-        setting = GLOBAL_SETTINGS[key]
+        setting = USER_SETTINGS[key]
 
         return rendersetting(setting)
