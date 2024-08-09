@@ -2,8 +2,7 @@
 
 from django.utils.translation import gettext_lazy as _
 
-from generic.states import StatusCode
-from generic.states.states import ColorEnum
+from generic.states import ColorEnum, StatusCode
 
 
 class PurchaseOrderStatus(StatusCode):

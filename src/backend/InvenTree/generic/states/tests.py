@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 from rest_framework.test import force_authenticate
 
-from generic.states.states import ColorEnum
+from generic.states import ColorEnum
 from InvenTree.unit_test import InvenTreeTestCase
 
 from .api import StatusView

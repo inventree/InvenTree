@@ -53,7 +53,7 @@ import order.validators
 import plugin.base.barcodes.helper
 import report.helpers
 import users.models
-from generic.states.states import ColorEnum, StatusCode
+from generic.states import ColorEnum, StatusCode
 from InvenTree.helpers import inheritors
 from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
