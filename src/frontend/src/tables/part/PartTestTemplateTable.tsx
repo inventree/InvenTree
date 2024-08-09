@@ -1,6 +1,7 @@
 import { Trans, t } from '@lingui/macro';
-import { Alert, Badge, Text } from '@mantine/core';
-import { useCallback, useMemo, useState } from 'react';
+import { Alert, Badge, Stack, Text } from '@mantine/core';
+import { IconArrowRight, IconLock } from '@tabler/icons-react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
@@ -22,8 +23,15 @@ import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { TableHoverCard } from '../TableHoverCard';
 
-export default function PartTestTemplateTable({ partId }: { partId: number }) {
+export default function PartTestTemplateTable({
+  partId,
+  partLocked
+}: {
+  partId: number;
+  partLocked?: boolean;
+}) {
   const table = useTable('part-test-template');
   const user = useUserState();
   const navigate = useNavigate();
@@ -35,13 +43,27 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         switchable: false,
         sortable: true,
         render: (record: any) => {
+          let extra: ReactNode[] = [];
+
+          if (record.part != partId) {
+            extra.push(
+              <Text size="sm">{t`Test is defined for a parent template part`}</Text>
+            );
+          }
+
           return (
-            <Text
-              fw={record.required && 700}
-              c={record.enabled ? undefined : 'red'}
-            >
-              {record.test_name}
-            </Text>
+            <TableHoverCard
+              value={
+                <Text
+                  fw={record.required && 700}
+                  c={record.enabled ? undefined : 'red'}
+                >
+                  {record.test_name}
+                </Text>
+              }
+              title={t`Template Details`}
+              extra={extra}
+            />
           );
         }
       },
@@ -175,20 +197,28 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       const can_delete = user.hasDeleteRole(UserRoles.part);
 
       if (record.part != partId) {
-        // No actions, as this test is defined for a parent part
-        return [];
+        // This test is defined for a parent part
+        return [
+          {
+            icon: <IconArrowRight />,
+            title: t`View Parent Part`,
+            onClick: () => {
+              navigate(getDetailUrl(ModelType.part, record.part));
+            }
+          }
+        ];
       }
 
       return [
         RowEditAction({
-          hidden: !can_edit,
+          hidden: partLocked || !can_edit,
           onClick: () => {
             setSelectedTest(record.pk);
             editTestTemplate.open();
           }
         }),
         RowDeleteAction({
-          hidden: !can_delete,
+          hidden: partLocked || !can_delete,
           onClick: () => {
             setSelectedTest(record.pk);
             deleteTestTemplate.open();
@@ -196,7 +226,7 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
         })
       ];
     },
-    [user, partId]
+    [user, partId, partLocked]
   );
 
   const tableActions = useMemo(() => {
@@ -206,36 +236,49 @@ export default function PartTestTemplateTable({ partId }: { partId: number }) {
       <AddItemButton
         tooltip={t`Add Test Template`}
         onClick={() => newTestTemplate.open()}
-        hidden={!can_add}
+        hidden={partLocked || !can_add}
       />
     ];
-  }, [user]);
+  }, [user, partLocked]);
 
   return (
     <>
       {newTestTemplate.modal}
       {editTestTemplate.modal}
       {deleteTestTemplate.modal}
-      <InvenTreeTable
-        url={apiUrl(ApiEndpoints.part_test_template_list)}
-        tableState={table}
-        columns={tableColumns}
-        props={{
-          params: {
-            part: partId,
-            part_detail: true
-          },
-          tableFilters: tableFilters,
-          tableActions: tableActions,
-          rowActions: rowActions,
-          onRowClick: (row) => {
-            if (row.part && row.part != partId) {
-              // This test is defined for a different part
-              navigate(getDetailUrl(ModelType.part, row.part));
+      <Stack gap="xs">
+        {partLocked && (
+          <Alert
+            title={t`Part is Locked`}
+            color="orange"
+            icon={<IconLock />}
+            p="xs"
+          >
+            <Text>{t`Part templates cannot be edited, as the part is locked`}</Text>
+          </Alert>
+        )}
+        <InvenTreeTable
+          url={apiUrl(ApiEndpoints.part_test_template_list)}
+          tableState={table}
+          columns={tableColumns}
+          props={{
+            params: {
+              part: partId,
+              part_detail: true
+            },
+            tableFilters: tableFilters,
+            tableActions: tableActions,
+            enableDownload: true,
+            rowActions: rowActions,
+            onRowClick: (row) => {
+              if (row.part && row.part != partId) {
+                // This test is defined for a different part
+                navigate(getDetailUrl(ModelType.part, row.part));
+              }
             }
-          }
-        }}
-      />
+          }}
+        />
+      </Stack>
     </>
   );
 }

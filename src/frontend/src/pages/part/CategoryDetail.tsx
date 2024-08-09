@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
+import { Group, LoadingOverlay, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconCategory,
   IconDots,
@@ -18,6 +18,7 @@ import {
   DeleteItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -78,7 +79,13 @@ export default function CategoryDetail() {
         type: 'text',
         name: 'name',
         label: t`Name`,
-        copy: true
+        copy: true,
+        value_formatter: () => (
+          <Group gap="xs">
+            {category.icon && <ApiIcon name={category.icon} />}
+            {category.name}
+          </Group>
+        )
       },
       {
         type: 'text',
@@ -267,7 +274,8 @@ export default function CategoryDetail() {
       { name: t`Parts`, url: '/part' },
       ...(category.path ?? []).map((c: any) => ({
         name: c.name,
-        url: getDetailUrl(ModelType.partcategory, c.pk)
+        url: getDetailUrl(ModelType.partcategory, c.pk),
+        icon: c.icon ? <ApiIcon name={c.icon} /> : undefined
       }))
     ],
     [category]
@@ -296,6 +304,7 @@ export default function CategoryDetail() {
           <PageDetail
             title={t`Part Category`}
             subtitle={category?.name}
+            icon={category?.icon && <ApiIcon name={category?.icon} />}
             breadcrumbs={breadcrumbs}
             breadcrumbAction={() => {
               setTreeOpen(true);

@@ -401,6 +401,9 @@ class BomItemResource(InvenTreeResource):
     part_ipn = Field(
         attribute='sub_part__IPN', column_name=_('Part IPN'), readonly=True
     )
+    part_revision = Field(
+        attribute='sub_part__revision', column_name=_('Part Revision'), readonly=True
+    )
     part_name = Field(
         attribute='sub_part__name', column_name=_('Part Name'), readonly=True
     )

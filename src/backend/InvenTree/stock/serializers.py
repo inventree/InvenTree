@@ -506,7 +506,10 @@ class StockItemSerializer(
             'part__category',
             'part__pricing_data',
             'supplier_part',
+            'supplier_part__part',
+            'supplier_part__supplier',
             'supplier_part__manufacturer_part',
+            'supplier_part__manufacturer_part__manufacturer',
             'supplier_part__tags',
             'test_results',
             'tags',
@@ -868,6 +871,36 @@ class UninstallStockItemSerializer(serializers.Serializer):
         note = data.get('note', '')
 
         item.uninstall_into_location(location, request.user, note)
+
+
+class TestStatisticsLineField(serializers.DictField):
+    """DRF field definition for one column of the test statistics."""
+
+    test_name = serializers.CharField()
+    results = serializers.DictField(child=serializers.IntegerField(min_value=0))
+
+
+class TestStatisticsSerializer(serializers.Serializer):
+    """DRF serializer class for the test statistics."""
+
+    results = serializers.ListField(child=TestStatisticsLineField(), read_only=True)
+
+    def to_representation(self, obj):
+        """Just pass through the test statistics from the model."""
+        if self.context['type'] == 'by-part':
+            return obj.part_test_statistics(
+                self.context['pk'],
+                self.context['finished_datetime_after'],
+                self.context['finished_datetime_before'],
+            )
+        elif self.context['type'] == 'by-build':
+            return obj.build_test_statistics(
+                self.context['pk'],
+                self.context['finished_datetime_after'],
+                self.context['finished_datetime_before'],
+            )
+
+        raise ValidationError(_('Unsupported statistic type: ' + self.context['type']))
 
 
 class ConvertStockItemSerializer(serializers.Serializer):

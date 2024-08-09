@@ -2,7 +2,6 @@ import { t } from '@lingui/macro';
 import { useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { PartHoverCard } from '../../components/images/Thumbnail';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderUser } from '../../components/render/User';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -22,6 +21,7 @@ import { TableColumn } from '../Column';
 import {
   CreationDateColumn,
   DateColumn,
+  PartColumn,
   ProjectCodeColumn,
   ReferenceColumn,
   ResponsibleColumn,
@@ -41,7 +41,7 @@ function buildOrderTableColumns(): TableColumn[] {
       accessor: 'part',
       sortable: true,
       switchable: false,
-      render: (record: any) => <PartHoverCard part={record.part_detail} />
+      render: (record: any) => PartColumn(record.part_detail)
     },
     {
       accessor: 'title',

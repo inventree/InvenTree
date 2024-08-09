@@ -360,6 +360,12 @@ class PurchaseOrderContextMixin:
         return context
 
 
+class PurchaseOrderHold(PurchaseOrderContextMixin, CreateAPI):
+    """API endpoint to place a PurchaseOrder on hold."""
+
+    serializer_class = serializers.PurchaseOrderHoldSerializer
+
+
 class PurchaseOrderCancel(PurchaseOrderContextMixin, CreateAPI):
     """API endpoint to 'cancel' a purchase order.
 
@@ -893,6 +899,12 @@ class SalesOrderContextMixin:
         return ctx
 
 
+class SalesOrderHold(SalesOrderContextMixin, CreateAPI):
+    """API endpoint to place a SalesOrder on hold."""
+
+    serializer_class = serializers.SalesOrderHoldSerializer
+
+
 class SalesOrderCancel(SalesOrderContextMixin, CreateAPI):
     """API endpoint to cancel a SalesOrder."""
 
@@ -1042,7 +1054,9 @@ class SalesOrderShipmentList(ListCreateAPI):
     serializer_class = serializers.SalesOrderShipmentSerializer
     filterset_class = SalesOrderShipmentFilter
 
-    filter_backends = [rest_filters.DjangoFilterBackend]
+    filter_backends = SEARCH_ORDER_FILTER_ALIAS
+
+    ordering_fields = ['delivery_date', 'shipment_date']
 
 
 class SalesOrderShipmentDetail(RetrieveUpdateDestroyAPI):
@@ -1194,6 +1208,12 @@ class ReturnOrderCancel(ReturnOrderContextMixin, CreateAPI):
     """API endpoint to cancel a ReturnOrder."""
 
     serializer_class = serializers.ReturnOrderCancelSerializer
+
+
+class ReturnOrderHold(ReturnOrderContextMixin, CreateAPI):
+    """API endpoint to hold a ReturnOrder."""
+
+    serializer_class = serializers.ReturnOrderHoldSerializer
 
 
 class ReturnOrderComplete(ReturnOrderContextMixin, CreateAPI):
@@ -1479,6 +1499,7 @@ order_api_urls = [
                     path(
                         'cancel/', PurchaseOrderCancel.as_view(), name='api-po-cancel'
                     ),
+                    path('hold/', PurchaseOrderHold.as_view(), name='api-po-hold'),
                     path(
                         'complete/',
                         PurchaseOrderComplete.as_view(),
@@ -1608,6 +1629,7 @@ order_api_urls = [
                         SalesOrderAllocateSerials.as_view(),
                         name='api-so-allocate-serials',
                     ),
+                    path('hold/', SalesOrderHold.as_view(), name='api-so-hold'),
                     path('cancel/', SalesOrderCancel.as_view(), name='api-so-cancel'),
                     path('issue/', SalesOrderIssue.as_view(), name='api-so-issue'),
                     path(
@@ -1707,6 +1729,7 @@ order_api_urls = [
                         ReturnOrderCancel.as_view(),
                         name='api-return-order-cancel',
                     ),
+                    path('hold/', ReturnOrderHold.as_view(), name='api-ro-hold'),
                     path(
                         'complete/',
                         ReturnOrderComplete.as_view(),

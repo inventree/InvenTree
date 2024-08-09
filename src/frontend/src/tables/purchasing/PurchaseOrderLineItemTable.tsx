@@ -5,7 +5,6 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
 import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderStockLocation } from '../../components/render/Stock';
@@ -30,6 +29,7 @@ import {
   CurrencyColumn,
   LinkColumn,
   NoteColumn,
+  PartColumn,
   ReferenceColumn,
   TargetDateColumn,
   TotalPriceColumn
@@ -124,14 +124,7 @@ export function PurchaseOrderLineItemTable({
         title: t`Internal Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => {
-          return (
-            <Thumbnail
-              text={record?.part_detail?.name}
-              src={record?.part_detail?.thumbnail ?? record?.part_detail?.image}
-            />
-          );
-        }
+        render: (record: any) => PartColumn(record.part_detail)
       },
       {
         accessor: 'description',

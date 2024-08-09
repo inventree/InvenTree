@@ -1,5 +1,3 @@
-version: "3.8"
-
 # Docker compose recipe for a production-ready InvenTree setup, with the following containers:
 # - PostgreSQL as the database backend
 # - gunicorn as the InvenTree web server
@@ -38,7 +36,7 @@ services:
     # Database service
     # Use PostgreSQL as the database backend
     inventree-db:
-        image: postgres:14
+        image: postgres:13
         container_name: inventree-db
         expose:
             - ${INVENTREE_DB_PORT:-5432}/tcp

@@ -54,11 +54,23 @@ def check_link(url) -> bool:
     return False
 
 
+def get_build_enviroment() -> str:
+    """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
+    # Check if we are in ReadTheDocs
+    if os.environ.get('READTHEDOCS') == 'True':
+        return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
+    # We are in GitHub Actions
+    elif os.environ.get('GITHUB_ACTIONS') == 'true':
+        return os.environ.get('GITHUB_REF')
+    else:
+        return 'master'
+
+
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
 
     @env.macro
-    def sourcedir(dirname, branch='master'):
+    def sourcedir(dirname, branch=None):
         """Return a link to a directory within the source code repository.
 
         Arguments:
@@ -70,6 +82,9 @@ def define_env(env):
         Raises:
             - FileNotFoundError: If the directory does not exist, or the generated URL is invalid
         """
+        if branch == None:
+            branch = get_build_enviroment()
+
         if dirname.startswith('/'):
             dirname = dirname[1:]
 
@@ -94,7 +109,7 @@ def define_env(env):
         return url
 
     @env.macro
-    def sourcefile(filename, branch='master', raw=False):
+    def sourcefile(filename, branch=None, raw=False):
         """Return a link to a file within the source code repository.
 
         Arguments:
@@ -106,6 +121,9 @@ def define_env(env):
         Raises:
             - FileNotFoundError: If the file does not exist, or the generated URL is invalid
         """
+        if branch == None:
+            branch = get_build_enviroment()
+
         if filename.startswith('/'):
             filename = filename[1:]
 

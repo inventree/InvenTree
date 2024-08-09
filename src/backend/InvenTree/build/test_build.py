@@ -15,6 +15,7 @@ import common.models
 from common.settings import set_global_setting
 import build.tasks
 from build.models import Build, BuildItem, BuildLine, generate_next_build_reference
+from build.status_codes import BuildStatus
 from part.models import Part, BomItem, BomItemSubstitute, PartTestTemplate
 from stock.models import StockItem, StockItemTestResult
 from users.models import Owner
@@ -175,6 +176,7 @@ class BuildTestBase(TestCase):
             part=cls.assembly,
             quantity=10,
             issued_by=get_user_model().objects.get(pk=1),
+            status=BuildStatus.PENDING,
         )
 
         # Create some BuildLine items we can use later on
@@ -320,6 +322,10 @@ class BuildTest(BuildTestBase):
 
         # Build is PENDING
         self.assertEqual(self.build.status, status.BuildStatus.PENDING)
+
+        self.assertTrue(self.build.is_active)
+        self.assertTrue(self.build.can_hold)
+        self.assertTrue(self.build.can_issue)
 
         # Build has two build outputs
         self.assertEqual(self.build.output_count, 2)
@@ -470,6 +476,11 @@ class BuildTest(BuildTestBase):
 
     def test_overallocation_and_trim(self):
         """Test overallocation of stock and trim function"""
+
+        self.assertEqual(self.build.status, status.BuildStatus.PENDING)
+        self.build.issue_build()
+        self.assertEqual(self.build.status, status.BuildStatus.PRODUCTION)
+
         # Fully allocate tracked stock (not eligible for trimming)
         self.allocate_stock(
             self.output_1,
@@ -516,6 +527,7 @@ class BuildTest(BuildTestBase):
 
         self.build.complete_build_output(self.output_1, None)
         self.build.complete_build_output(self.output_2, None)
+
         self.assertTrue(self.build.can_complete)
 
         n = StockItem.objects.filter(consumed_by=self.build).count()
@@ -582,6 +594,8 @@ class BuildTest(BuildTestBase):
 
         self.stock_2_1.quantity = 30
         self.stock_2_1.save()
+
+        self.build.issue_build()
 
         # Allocate non-tracked parts
         self.allocate_stock(

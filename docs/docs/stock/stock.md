@@ -6,6 +6,14 @@ title: Stock
 
 A stock location represents a physical real-world location where *Stock Items* are stored. Locations are arranged in a cascading manner and each location may contain multiple sub-locations, or stock, or both.
 
+### Icons
+
+Stock locations can be assigned custom icons (either directly or through [Stock Location Types](#stock-location-type)). When using PUI there is a custom icon picker component available that can help to select the right icon. However in CUI the icon needs to be entered manually.
+
+By default, the tabler icons package (with prefix: `ti`) is available. To manually select an item, search on the [tabler icons](https://tabler.io/icons) page for an icon and copy its name e.g. `bookmark`. Some icons have a filled and an outline version (if no variants are specified, it's an outline variant). Now these values can be put into the format: `<package-prefix>:<icon-name>:<variant>`. E.g. `ti:bookmark:outline` or `ti:bookmark:filled`.
+
+If there are some icons missing in the tabler icons package, users can even install their own custom icon packs through a plugin. See [`IconPackMixin`](../extend/plugins/icon.md).
+
 ## Stock Location Type
 
 A stock location type represents a specific type of location (e.g. one specific size of drawer, shelf, ... or box) which can be assigned to multiple stock locations. In the first place, it is used to specify an icon and having the icon in sync for all locations that use this location type, but it also serves as a data field to quickly see what type of location this is. It is planned to add e.g. drawer dimension information to the location type to add a "find a matching, empty stock location" tool.

@@ -21,6 +21,7 @@ import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
+  RenderReturnOrderLineItem,
   RenderSalesOrder,
   RenderSalesOrderShipment
 } from './Order';
@@ -73,6 +74,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.purchaseorder]: RenderPurchaseOrder,
   [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
+  [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
   [ModelType.stocklocation]: RenderStockLocation,
@@ -151,21 +153,25 @@ export function RenderRemoteInstance({
 export function RenderInlineModel({
   primary,
   secondary,
+  prefix,
   suffix,
   image,
   labels,
   url,
   navigate,
-  showSecondary = true
+  showSecondary = true,
+  tooltip
 }: {
   primary: string;
   secondary?: string;
   showSecondary?: boolean;
+  prefix?: ReactNode;
   suffix?: ReactNode;
   image?: string;
   labels?: string[];
   url?: string;
   navigate?: any;
+  tooltip?: string;
 }): ReactNode {
   // TODO: Handle labels
 
@@ -179,8 +185,9 @@ export function RenderInlineModel({
   );
 
   return (
-    <Group gap="xs" justify="space-between" wrap="nowrap">
+    <Group gap="xs" justify="space-between" wrap="nowrap" title={tooltip}>
       <Group gap="xs" justify="left" wrap="nowrap">
+        {prefix}
         {image && <Thumbnail src={image} size={18} />}
         {url ? (
           <Anchor href={url} onClick={(event: any) => onClick(event)}>

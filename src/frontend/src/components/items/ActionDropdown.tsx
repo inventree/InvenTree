@@ -89,7 +89,11 @@ export function ActionDropdown({
               {...action.indicator}
               key={action.name}
             >
-              <Tooltip label={action.tooltip} hidden={!action.tooltip}>
+              <Tooltip
+                label={action.tooltip}
+                hidden={!action.tooltip}
+                position="left"
+              >
                 <Menu.Item
                   aria-label={id}
                   leftSection={action.icon}
@@ -226,6 +230,24 @@ export function DeleteItemAction({
     onClick: onClick,
     hidden: hidden,
     disabled: disabled
+  };
+}
+
+export function HoldItemAction({
+  hidden = false,
+  tooltip,
+  onClick
+}: {
+  hidden?: boolean;
+  tooltip?: string;
+  onClick?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <InvenTreeIcon icon="hold" iconProps={{ color: 'orange' }} />,
+    name: t`Hold`,
+    tooltip: tooltip ?? t`Hold`,
+    onClick: onClick,
+    hidden: hidden
   };
 }
 

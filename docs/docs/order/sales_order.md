@@ -20,6 +20,7 @@ Each Sales Order has a specific status code, which represents the state of the o
 | --- | --- |
 | Pending | The sales order has been created, but has not been finalized or submitted |
 | In Progress | The sales order has been issued, and is in progress |
+| On Hold | The sales order has been placed on hold, but is still active |
 | Shipped | The sales order has been shipped, but is not yet complete |
 | Complete | The sales order is fully completed, and is now closed |
 | Cancelled | The sales order was cancelled, and is now closed |

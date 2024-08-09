@@ -35,7 +35,7 @@ dependencies:
   - gettext
   - nginx
   - jq
-  - libffi7
+  - "libffi7 | libffi8"
 targets:
   ubuntu-20.04: true
   debian-11: true

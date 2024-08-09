@@ -4,6 +4,7 @@
 
 /* globals
     addCachedAlert,
+    addTableFilter,
     baseCurrency,
     calculateTotalPrice,
     clearFormInput,
@@ -16,6 +17,7 @@
     formatCurrency,
     formatDecimal,
     formatPriceRange,
+    getApiIconClass,
     getCurrencyConversionRates,
     getFormFieldElement,
     getFormFieldValue,
@@ -37,8 +39,11 @@
     makeIconBadge,
     makeIconButton,
     makeRemoveButton,
+    moment,
     orderParts,
     partDetail,
+    reloadTableFilters,
+    removeTableFilter,
     renderClipboard,
     renderDate,
     renderLink,
@@ -69,6 +74,7 @@
     duplicateStockItem,
     editStockItem,
     editStockLocation,
+    filterTestStatisticsTableDateRange,
     findStockItemBySerialNumber,
     installStockItem,
     loadInstalledInTable,
@@ -77,6 +83,7 @@
     loadStockTestResultsTable,
     loadStockTrackingTable,
     loadTableFilters,
+    prepareTestStatisticsTable,
     mergeStockItems,
     removeStockRow,
     serializeStockItem,
@@ -137,8 +144,8 @@ function stockLocationTypeFields() {
         name: {},
         description: {},
         icon: {
-            help_text: `{% trans "Default icon for all locations that have no icon set (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
-            placeholder: 'fas fa-box',
+            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://tabler.io/icons" target="_blank" rel="noopener noreferrer">Tabler Icons</a>.`,
+            placeholder: 'ti:<icon-name>:<variant> (e.g. ti:alert-circle:filled)',
             icon: "fa-icons",
         },
     }
@@ -154,7 +161,6 @@ function stockLocationFields(options={}) {
             required: false,
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
-                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         name: {},
@@ -173,8 +179,8 @@ function stockLocationFields(options={}) {
             },
         },
         custom_icon: {
-            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
-            placeholder: 'fas fa-box',
+            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://tabler.io/icons" target="_blank" rel="noopener noreferrer">Tabler Icons</a>.`,
+            placeholder: 'ti:<icon-name>:<variant> (e.g. ti:alert-circle:filled)',
             icon: "fa-icons",
         },
     };
@@ -356,7 +362,6 @@ function stockItemFields(options={}) {
             },
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
-                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         quantity: {
@@ -916,7 +921,6 @@ function mergeStockItems(items, options={}) {
                 },
                 tree_picker: {
                     url: '{% url "api-location-tree" %}',
-                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                 },
             },
             notes: {
@@ -2811,9 +2815,8 @@ function loadStockLocationTable(table, options) {
                         }
                     }
 
-                    const icon = row.icon || global_settings.STOCK_LOCATION_DEFAULT_ICON;
-                    if (icon) {
-                        html += `<span class="${icon} me-1"></span>`;
+                    if (row.icon) {
+                        html += `<span class="${getApiIconClass(row.icon)} me-1"></span>`;
                     }
 
                     html += renderLink(
@@ -3262,7 +3265,6 @@ function uninstallStockItem(installed_item_id, options={}) {
                     },
                     tree_picker: {
                         url: '{% url "api-location-tree" %}',
-                        default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                     },
                 },
                 note: {
@@ -3414,4 +3416,106 @@ function setStockStatus(items, options={}) {
             $(options.table).bootstrapTable('refresh');
         }
     });
+}
+
+
+/*
+ * Load TestStatistics table.
+ */
+function loadTestStatisticsTable(table, prefix, url, options, filters = {}) {
+    inventreeGet(url, filters, {
+        async: true,
+        success: function(data) {
+            const keys = ['passed', 'failed', 'total']
+            let header = '';
+            let rows = []
+            let passed= '';
+            let failed = '';
+            let total = '';
+            $('.test-stat-result-cell').remove();
+            $.each(data[0], function(key, value){
+                if (key != "total") {
+                    header += '<th class="test-stat-result-cell">' + key + '</th>';
+                    keys.forEach(function(keyName) {
+                        var tdText = '-';
+                        if (value['total'] != '0' && value[keyName] != '0') {
+                            let percentage = ''
+                            if (keyName != 'total' && value[total] != 0) {
+                                percentage = ' (' + (100.0 * (parseFloat(value[keyName]) / parseFloat(value['total']))).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + '%)';
+                            }
+                            tdText = value[keyName] + percentage;
+                        }
+                        rows[keyName] += '<td class="test-stat-result-cell">' + tdText + '</td>';
+                    })
+                }
+            });
+            $('#' + prefix + '-test-statistics-table-header-id').after(header);
+
+            keys.forEach(function(keyName) {
+                let valueStr = data[0]['total'][keyName];
+                if (keyName != 'total' && data[0]['total']['total'] != '0') {
+                    valueStr += ' (' + (100.0 * (parseFloat(valueStr) / parseFloat(data[0]['total']['total']))).toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 2}) + '%)';
+                }
+                rows[keyName] += '<td class="test-stat-result-cell">' + valueStr + '</td>';
+                $('#' + prefix + '-test-statistics-table-body-' + keyName).after(rows[keyName]);
+            });
+            $('#' + prefix + '-test-statistics-table').show();
+            setupFilterList(prefix + "teststatistics", table, "#filter-list-" + prefix + "teststatistics", options);
+        },
+    });
+}
+
+function prepareTestStatisticsTable(keyName, apiUrl)
+{
+    let options = {
+        custom_actions: [
+            {
+                icon: 'fa-calendar-week',
+                actions: [
+                    {
+                        icon: 'fa-calendar-week',
+                        title: '{% trans "This week" %}',
+                        label: 'this-week',
+                        callback: function(data) {
+                            filterTestStatisticsTableDateRange(data, 'this-week', $("#test-statistics-table"), keyName + 'teststatistics', options);
+                        }
+                    },
+                    {
+                        icon: 'fa-calendar-week',
+                        title: '{% trans "This month" %}',
+                        label: 'this-month',
+                        callback: function(data) {
+                            filterTestStatisticsTableDateRange(data, 'this-month', $("#test-statistics-table"), keyName + 'teststatistics', options);
+                        }
+                    },
+                ],
+            }
+        ],
+        callback: function(table, filters, options) {
+            loadTestStatisticsTable($("#test-statistics-table"), keyName, apiUrl, options, filters);
+        }
+    }
+    setupFilterList(keyName + 'teststatistics', $("#test-statistics-table"), '#filter-list-' + keyName + 'teststatistics', options);
+
+    // Load test statistics table
+    loadTestStatisticsTable($("#test-statistics-table"), keyName, apiUrl, options);
+}
+
+function filterTestStatisticsTableDateRange(data, range, table, tableKey, options)
+{
+    var startDateString = '';
+    var d = new Date();
+    if (range == "this-week") {
+        startDateString = moment(new Date(d.getFullYear(), d.getMonth(), d.getDate() - (d.getDay() == 0 ? 6 : d.getDay() - 1))).format('YYYY-MM-DD');
+    } else if (range == "this-month") {
+        startDateString = moment(new Date(d.getFullYear(), d.getMonth(), 1)).format('YYYY-MM-DD');
+    } else {
+        console.warn(`Invalid range specified for filterTestStatisticsTableDateRange`);
+        return;
+    }
+    var filters = addTableFilter(tableKey, 'finished_datetime_after', startDateString);
+    removeTableFilter(tableKey, 'finished_datetime_before')
+
+    reloadTableFilters(table, filters, options);
+    setupFilterList(tableKey, table, "#filter-list-" + tableKey, options);
 }

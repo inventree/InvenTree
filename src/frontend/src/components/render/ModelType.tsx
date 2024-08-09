@@ -173,6 +173,11 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.return_order_list,
     admin_url: '/order/returnorder/'
   },
+  returnorderlineitem: {
+    label: t`Return Order Line Item`,
+    label_multiple: t`Return Order Line Items`,
+    api_endpoint: ApiEndpoints.return_order_line_list
+  },
   address: {
     label: t`Address`,
     label_multiple: t`Addresses`,
