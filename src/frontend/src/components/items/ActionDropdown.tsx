@@ -6,6 +6,7 @@ import {
   Menu,
   Tooltip
 } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import {
   IconCopy,
   IconEdit,
@@ -16,9 +17,11 @@ import {
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
+import { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
 import { notYetImplemented } from '../../functions/notifications';
+import { InvenTreeQRCode } from './QRCode';
 
 export type ActionDropdownItem = {
   icon: ReactNode;
@@ -86,7 +89,11 @@ export function ActionDropdown({
               {...action.indicator}
               key={action.name}
             >
-              <Tooltip label={action.tooltip} hidden={!action.tooltip}>
+              <Tooltip
+                label={action.tooltip}
+                hidden={!action.tooltip}
+                position="left"
+              >
                 <Menu.Item
                   aria-label={id}
                   leftSection={action.icon}
@@ -128,11 +135,20 @@ export function BarcodeActionDropdown({
 // Common action button for viewing a barcode
 export function ViewBarcodeAction({
   hidden = false,
-  onClick
+  model,
+  pk
 }: {
   hidden?: boolean;
-  onClick?: () => void;
+  model: ModelType;
+  pk: number;
 }): ActionDropdownItem {
+  const onClick = () => {
+    modals.open({
+      title: t`View Barcode`,
+      children: <InvenTreeQRCode model={model} pk={pk} />
+    });
+  };
+
   return {
     icon: <IconQrcode />,
     name: t`View`,
@@ -214,6 +230,24 @@ export function DeleteItemAction({
     onClick: onClick,
     hidden: hidden,
     disabled: disabled
+  };
+}
+
+export function HoldItemAction({
+  hidden = false,
+  tooltip,
+  onClick
+}: {
+  hidden?: boolean;
+  tooltip?: string;
+  onClick?: () => void;
+}): ActionDropdownItem {
+  return {
+    icon: <InvenTreeIcon icon="hold" iconProps={{ color: 'orange' }} />,
+    name: t`Hold`,
+    tooltip: tooltip ?? t`Hold`,
+    onClick: onClick,
+    hidden: hidden
   };
 }
 

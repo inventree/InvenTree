@@ -7,12 +7,17 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import PermissionDenied from '../../components/errors/PermissionDenied';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup } from '../../components/nav/PanelGroup';
+import { UserRoles } from '../../enums/Roles';
+import { useUserState } from '../../states/UserState';
 import { CompanyTable } from '../../tables/company/CompanyTable';
 import { PurchaseOrderTable } from '../../tables/purchasing/PurchaseOrderTable';
 
 export default function PurchasingIndex() {
+  const user = useUserState();
+
   const panels = useMemo(() => {
     return [
       {
@@ -46,12 +51,14 @@ export default function PurchasingIndex() {
     ];
   }, []);
 
+  if (!user.isLoggedIn() || !user.hasViewRole(UserRoles.purchase_order)) {
+    return <PermissionDenied />;
+  }
+
   return (
-    <>
-      <Stack>
-        <PageDetail title={t`Purchasing`} />
-        <PanelGroup pageKey="purchasing-index" panels={panels} />
-      </Stack>
-    </>
+    <Stack>
+      <PageDetail title={t`Purchasing`} />
+      <PanelGroup pageKey="purchasing-index" panels={panels} />
+    </Stack>
   );
 }

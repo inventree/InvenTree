@@ -213,7 +213,7 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 
 @register_importer()
 class ManufacturerPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
 ):
     """Serializer for ManufacturerPart object."""
 
@@ -232,6 +232,7 @@ class ManufacturerPartSerializer(
             'MPN',
             'link',
             'barcode_hash',
+            'notes',
             'tags',
         ]
 
@@ -305,7 +306,7 @@ class ManufacturerPartParameterSerializer(
 
 @register_importer()
 class SupplierPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
 ):
     """Serializer for SupplierPart object."""
 
@@ -340,6 +341,7 @@ class SupplierPartSerializer(
             'supplier_detail',
             'url',
             'updated',
+            'notes',
             'tags',
         ]
 
@@ -379,8 +381,13 @@ class SupplierPartSerializer(
             self.fields.pop('manufacturer_detail', None)
             self.fields.pop('manufacturer_part_detail', None)
 
-        if prettify is not True:
+        if brief or prettify is not True:
             self.fields.pop('pretty_name', None)
+
+        if brief:
+            self.fields.pop('tags')
+            self.fields.pop('available')
+            self.fields.pop('availability_updated')
 
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))

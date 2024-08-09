@@ -14,6 +14,7 @@ export enum ApiEndpoints {
   user_me = 'user/me/',
   user_roles = 'user/roles/',
   user_token = 'user/token/',
+  user_tokens = 'user/tokens/',
   user_simple_login = 'email/generate/',
   user_reset = 'auth/password/reset/',
   user_reset_set = 'auth/password/reset/confirm/',
@@ -38,6 +39,7 @@ export enum ApiEndpoints {
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
   barcode = 'barcode/',
+  generate_barcode = 'barcode/generate/',
   news = 'news/',
   global_status = 'generic/status/',
   version = 'version/',
@@ -45,6 +47,7 @@ export enum ApiEndpoints {
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+  icons = 'icons/',
 
   // Data import endpoints
   import_session_list = 'importer/session/',
@@ -59,9 +62,12 @@ export enum ApiEndpoints {
 
   // Build API endpoints
   build_order_list = 'build/',
+  build_order_issue = 'build/:id/issue/',
   build_order_cancel = 'build/:id/cancel/',
-  build_output_create = 'build/:id/create-output/',
+  build_order_hold = 'build/:id/hold/',
+  build_order_complete = 'build/:id/finish/',
   build_output_complete = 'build/:id/complete/',
+  build_output_create = 'build/:id/create-output/',
   build_output_scrap = 'build/:id/scrap-outputs/',
   build_output_delete = 'build/:id/delete-outputs/',
   build_line_list = 'build/line/',
@@ -112,6 +118,8 @@ export enum ApiEndpoints {
   stock_assign = 'stock/assign/',
   stock_status = 'stock/status/',
   stock_install = 'stock/:id/install',
+  build_test_statistics = 'test-statistics/by-build/:id',
+  part_test_statistics = 'test-statistics/by-part/:id',
 
   // Generator API endpoints
   generate_batch_code = 'generate/batch-code/',
@@ -119,14 +127,29 @@ export enum ApiEndpoints {
 
   // Order API endpoints
   purchase_order_list = 'order/po/',
+  purchase_order_issue = 'order/po/:id/issue/',
+  purchase_order_hold = 'order/po/:id/hold/',
+  purchase_order_cancel = 'order/po/:id/cancel/',
+  purchase_order_complete = 'order/po/:id/complete/',
   purchase_order_line_list = 'order/po-line/',
   purchase_order_receive = 'order/po/:id/receive/',
 
   sales_order_list = 'order/so/',
+  sales_order_issue = 'order/so/:id/issue/',
+  sales_order_hold = 'order/so/:id/hold/',
+  sales_order_cancel = 'order/so/:id/cancel/',
+  sales_order_ship = 'order/so/:id/ship/',
+  sales_order_complete = 'order/so/:id/complete/',
   sales_order_line_list = 'order/so-line/',
+  sales_order_allocation_list = 'order/so-allocation/',
   sales_order_shipment_list = 'order/so/shipment/',
 
   return_order_list = 'order/ro/',
+  return_order_issue = 'order/ro/:id/issue/',
+  return_order_hold = 'order/ro/:id/hold/',
+  return_order_cancel = 'order/ro/:id/cancel/',
+  return_order_complete = 'order/ro/:id/complete/',
+  return_order_line_list = 'order/ro-line/',
 
   // Template API endpoints
   label_list = 'label/template/',

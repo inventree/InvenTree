@@ -554,14 +554,14 @@ export function BomTable({
             modelField: 'sub_part',
             rowActions: rowActions,
             enableSelection: !partLocked,
-            enableBulkDelete: !partLocked,
+            enableBulkDelete: !partLocked && user.hasDeleteRole(UserRoles.part),
             enableDownload: true
           }}
         />
       </Stack>
       <ImporterDrawer
         sessionId={selectedSession ?? -1}
-        opened={selectedSession !== undefined && importOpened}
+        opened={selectedSession != undefined && importOpened}
         onClose={() => {
           setSelectedSession(undefined);
           setImportOpened(false);

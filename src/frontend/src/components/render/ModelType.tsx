@@ -143,7 +143,7 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.purchase_order_list,
     admin_url: '/order/purchaseorder/'
   },
-  purchaseorderline: {
+  purchaseorderlineitem: {
     label: t`Purchase Order Line`,
     label_multiple: t`Purchase Order Lines`,
     api_endpoint: ApiEndpoints.purchase_order_line_list
@@ -173,6 +173,11 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.return_order_list,
     admin_url: '/order/returnorder/'
   },
+  returnorderlineitem: {
+    label: t`Return Order Line Item`,
+    label_multiple: t`Return Order Line Items`,
+    api_endpoint: ApiEndpoints.return_order_line_list
+  },
   address: {
     label: t`Address`,
     label_multiple: t`Addresses`,
@@ -200,6 +205,14 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/user',
     url_detail: '/user/:pk/',
     api_endpoint: ApiEndpoints.user_list
+  },
+  group: {
+    label: t`Group`,
+    label_multiple: t`Groups`,
+    url_overview: '/user/group',
+    url_detail: '/user/group-:pk',
+    api_endpoint: ApiEndpoints.group_list,
+    admin_url: '/auth/group/'
   },
   importsession: {
     label: t`Import Session`,

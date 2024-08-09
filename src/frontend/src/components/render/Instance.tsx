@@ -1,6 +1,6 @@
 import { t } from '@lingui/macro';
 import { Alert, Anchor, Group, Skeleton, Space, Text } from '@mantine/core';
-import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback } from 'react';
 
 import { api } from '../../App';
@@ -21,6 +21,7 @@ import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
   RenderReturnOrder,
+  RenderReturnOrderLineItem,
   RenderSalesOrder,
   RenderSalesOrderShipment
 } from './Order';
@@ -37,7 +38,7 @@ import {
   RenderStockLocation,
   RenderStockLocationType
 } from './Stock';
-import { RenderOwner, RenderUser } from './User';
+import { RenderGroup, RenderOwner, RenderUser } from './User';
 
 type EnumDictionary<T extends string | symbol | number, U> = {
   [K in T]: U;
@@ -71,8 +72,9 @@ const RendererLookup: EnumDictionary<
   [ModelType.parttesttemplate]: RenderPartTestTemplate,
   [ModelType.projectcode]: RenderProjectCode,
   [ModelType.purchaseorder]: RenderPurchaseOrder,
-  [ModelType.purchaseorderline]: RenderPurchaseOrder,
+  [ModelType.purchaseorderlineitem]: RenderPurchaseOrder,
   [ModelType.returnorder]: RenderReturnOrder,
+  [ModelType.returnorderlineitem]: RenderReturnOrderLineItem,
   [ModelType.salesorder]: RenderSalesOrder,
   [ModelType.salesordershipment]: RenderSalesOrderShipment,
   [ModelType.stocklocation]: RenderStockLocation,
@@ -81,6 +83,7 @@ const RendererLookup: EnumDictionary<
   [ModelType.stockhistory]: RenderStockItem,
   [ModelType.supplierpart]: RenderSupplierPart,
   [ModelType.user]: RenderUser,
+  [ModelType.group]: RenderGroup,
   [ModelType.importsession]: RenderImportSession,
   [ModelType.reporttemplate]: RenderReportTemplate,
   [ModelType.labeltemplate]: RenderLabelTemplate,
@@ -150,21 +153,25 @@ export function RenderRemoteInstance({
 export function RenderInlineModel({
   primary,
   secondary,
+  prefix,
   suffix,
   image,
   labels,
   url,
   navigate,
-  showSecondary = true
+  showSecondary = true,
+  tooltip
 }: {
   primary: string;
   secondary?: string;
   showSecondary?: boolean;
+  prefix?: ReactNode;
   suffix?: ReactNode;
   image?: string;
   labels?: string[];
   url?: string;
   navigate?: any;
+  tooltip?: string;
 }): ReactNode {
   // TODO: Handle labels
 
@@ -178,9 +185,10 @@ export function RenderInlineModel({
   );
 
   return (
-    <Group gap="xs" justify="space-between" wrap="nowrap">
+    <Group gap="xs" justify="space-between" wrap="nowrap" title={tooltip}>
       <Group gap="xs" justify="left" wrap="nowrap">
-        {image && Thumbnail({ src: image, size: 18 })}
+        {prefix}
+        {image && <Thumbnail src={image} size={18} />}
         {url ? (
           <Anchor href={url} onClick={(event: any) => onClick(event)}>
             <Text size="sm">{primary}</Text>

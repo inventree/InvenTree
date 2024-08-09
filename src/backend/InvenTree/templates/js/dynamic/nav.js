@@ -1,5 +1,7 @@
 /* globals
+    getApiIconClass,
     inventreeGet,
+    loadApiIconPacks,
 */
 
 /* exported
@@ -163,7 +165,13 @@ function generateTreeStructure(data, options) {
     const nodes = {};
     const roots = [];
 
-    for (let node of data) {
+    if (!data || !Array.isArray(data) || data.length == 0) {
+        return [];
+    }
+
+    for (let ii = 0; ii < data.length; ii++) {
+        let node = data[ii];
+
         nodes[node.pk] = node;
         node.selectable = false;
 
@@ -174,11 +182,20 @@ function generateTreeStructure(data, options) {
 
         if (options.processNode) {
             node = options.processNode(node);
+
+            if (node.icon) {
+                node.icon = getApiIconClass(node.icon);
+            }
+
+            data[ii] = node;
         }
     }
 
-    for (let node of data) {
-        if (node.parent != null) {
+    for (let ii = 0; ii < data.length; ii++) {
+
+        let node = data[ii];
+
+        if (!!node.parent) {
             if (nodes[node.parent].nodes) {
                 nodes[node.parent].nodes.push(node);
             } else {
@@ -186,7 +203,7 @@ function generateTreeStructure(data, options) {
             }
 
             if (node.state.expanded) {
-                while (node.parent != null) {
+                while (!!node.parent) {
                     nodes[node.parent].state.expanded = true;
                     node = nodes[node.parent];
                 }
@@ -203,7 +220,7 @@ function generateTreeStructure(data, options) {
 /**
  * Enable support for breadcrumb tree navigation on this page
  */
-function enableBreadcrumbTree(options) {
+async function enableBreadcrumbTree(options) {
 
     const label = options.label;
 
@@ -213,6 +230,8 @@ function enableBreadcrumbTree(options) {
     }
 
     const filters = options.filters || {};
+
+    await loadApiIconPacks();
 
     inventreeGet(
         options.url,

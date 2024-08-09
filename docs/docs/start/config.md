@@ -54,6 +54,8 @@ The following basic options are available:
 | --- | --- | --- | --- |
 | INVENTREE_SITE_URL | site_url | Specify a fixed site URL | *Not specified* |
 | INVENTREE_DEBUG | debug | Enable [debug mode](./intro.md#debug-mode) | True |
+| INVENTREE_DEBUG_QUERYCOUNT | debug_querycount | Enable [query count logging](https://github.com/bradmontgomery/django-querycount) in the terminal | False |
+| INVENTREE_DEBUG_SHELL | debug_shell | Enable [administrator shell](https://github.com/djk2/django-admin-shell) (only in debug mode) | False |
 | INVENTREE_LOG_LEVEL | log_level | Set level of logging to terminal | WARNING |
 | INVENTREE_DB_LOGGING | db_logging | Enable logging of database messages | False |
 | INVENTREE_TIMEZONE | timezone | Server timezone | UTC |
@@ -296,6 +298,10 @@ Alternatively this location can be specified with the `INVENTREE_BACKUP_DIR` env
 ## Authentication
 
 InvenTree provides allowance for additional sign-in options. The following options are not enabled by default, and care must be taken by the system administrator when configuring these settings.
+
+| Environment Variable | Configuration File | Description | Default |
+| --- | --- | --- | --- |
+| INVENTREE_MFA_ENABLED | mfa_enabled | Enable or disable multi-factor authentication support for the InvenTree server | True |
 
 ### Single Sign On
 

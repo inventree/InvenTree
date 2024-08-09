@@ -18,7 +18,7 @@ updates:
     directories:
     - /contrib/container
     - /docs
-    - /.github
+    - /contrib/dev_reqs
     - /src/backend
     schedule:
       interval: weekly

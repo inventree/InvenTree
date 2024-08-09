@@ -1502,8 +1502,23 @@ function handleFormErrors(errors, fields={}, options={}) {
 
     for (var field_name in errors) {
 
-        var field = fields[field_name] || {};
-        var field_errors = errors[field_name];
+        let field = fields[field_name] || null;
+        let field_errors = errors[field_name];
+
+        // No matching field - append to non_field_errors
+        if (!field || field.hidden) {
+
+            if (Array.isArray(field_errors)) {
+                field_errors.forEach((err) => {
+                    non_field_errors.append(`<div class='alert alert-block alert-danger'>${err}</div>`);
+                });
+            } else {
+                non_field_errors.append(`<div class='alert alert-block alert-danger'>${field_errors.toString()}</div>`);
+            }
+
+            continue;
+        }
+
 
         // for nested objects with children and dependent fields with a child defined, extract nested errors
         if (((field.type == 'nested object') && ('children' in field)) || ((field.type == 'dependent field') && ('child' in field))) {
@@ -2236,7 +2251,6 @@ function initializeRelatedField(field, fields, options={}) {
                         data: rootNodes,
                         expandIcon: 'fas fa-plus-square large-treeview-icon',
                         collapseIcon: 'fa fa-minus-square large-treeview-icon',
-                        nodeIcon: field.tree_picker.defaultIcon,
                         color: "black",
                     });
                 }

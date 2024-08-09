@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# packager.io preinstall script
+# packager.io preinstall/preremove script
 #
 PATH=${APP_HOME}/env/bin:${APP_HOME}/:/sbin:/bin:/usr/sbin:/usr/bin:
 

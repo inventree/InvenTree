@@ -59,11 +59,14 @@ export const test = baseTest.extend({
       if (
         msg.type() === 'error' &&
         !msg.text().startsWith('ERR: ') &&
+        msg.text().indexOf('downloadable font: download failed') < 0 &&
         msg
           .text()
           .indexOf(
             'Support for defaultProps will be removed from function components in a future major release'
           ) < 0 &&
+        msg.text() !=
+          'Failed to load resource: the server responded with a status of 400 (Bad Request)' &&
         url != 'http://localhost:8000/api/user/me/' &&
         url != 'http://localhost:8000/api/user/token/' &&
         url != 'http://localhost:8000/api/barcode/' &&

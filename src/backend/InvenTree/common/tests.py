@@ -20,6 +20,7 @@ from django.urls import reverse
 
 import PIL
 
+import common.validators
 from common.settings import get_global_setting, set_global_setting
 from InvenTree.helpers import str2bool
 from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase, PluginMixin
@@ -1199,20 +1200,10 @@ class ColorThemeTest(TestCase):
     def test_choices(self):
         """Test that default choices are returned."""
         result = ColorTheme.get_color_themes_choices()
-
-        # skip due to directories not being set up
-        if not result:
-            return  # pragma: no cover
         self.assertIn(('default', 'Default'), result)
 
     def test_valid_choice(self):
         """Check that is_valid_choice works correctly."""
-        result = ColorTheme.get_color_themes_choices()
-
-        # skip due to directories not being set up
-        if not result:
-            return  # pragma: no cover
-
         # check wrong reference
         self.assertFalse(ColorTheme.is_valid_choice('abcdd'))
 
@@ -1534,3 +1525,44 @@ class ContentTypeAPITest(InvenTreeAPITestCase):
             reverse('api-contenttype-detail-modelname', kwargs={'model': None}),
             expected_code=404,
         )
+
+
+class IconAPITest(InvenTreeAPITestCase):
+    """Unit tests for the Icons API."""
+
+    def test_list(self):
+        """Test API list functionality."""
+        response = self.get(reverse('api-icon-list'), expected_code=200)
+        self.assertEqual(len(response.data), 1)
+
+        self.assertEqual(response.data[0]['prefix'], 'ti')
+        self.assertEqual(response.data[0]['name'], 'Tabler Icons')
+        for font_format in ['woff2', 'woff', 'truetype']:
+            self.assertIn(font_format, response.data[0]['fonts'])
+
+        self.assertGreater(len(response.data[0]['icons']), 1000)
+
+
+class ValidatorsTest(TestCase):
+    """Unit tests for the custom validators."""
+
+    def test_validate_icon(self):
+        """Test the validate_icon function."""
+        common.validators.validate_icon('')
+        common.validators.validate_icon(None)
+
+        with self.assertRaises(ValidationError):
+            common.validators.validate_icon('invalid')
+
+        with self.assertRaises(ValidationError):
+            common.validators.validate_icon('my:package:non-existing')
+
+        with self.assertRaises(ValidationError):
+            common.validators.validate_icon(
+                'ti:my-non-existing-icon:non-existing-variant'
+            )
+
+        with self.assertRaises(ValidationError):
+            common.validators.validate_icon('ti:package:non-existing-variant')
+
+        common.validators.validate_icon('ti:package:outline')

@@ -10,8 +10,6 @@ import {
   Stack,
   Tooltip
 } from '@mantine/core';
-import { modals } from '@mantine/modals';
-import { showNotification } from '@mantine/notifications';
 import {
   IconBarcode,
   IconFilter,
@@ -45,6 +43,7 @@ import { cancelEvent } from '../functions/events';
 import { extractAvailableFields, mapFields } from '../functions/forms';
 import { navigateToLink } from '../functions/navigation';
 import { getDetailUrl } from '../functions/urls';
+import { useDeleteApiFormModal } from '../hooks/UseForm';
 import { TableState } from '../hooks/UseTable';
 import { useLocalState } from '../states/LocalState';
 import { TableColumn } from './Column';
@@ -105,7 +104,7 @@ export type InvenTreeTableProps<T = any> = {
   enableReports?: boolean;
   afterBulkDelete?: () => void;
   pageSize?: number;
-  barcodeActions?: any[];
+  barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
   rowExpansion?: any;
@@ -156,7 +155,12 @@ export function InvenTreeTable<T = any>({
   columns: TableColumn<T>[];
   props: InvenTreeTableProps<T>;
 }) {
-  const { getTableColumnNames, setTableColumnNames } = useLocalState();
+  const {
+    getTableColumnNames,
+    setTableColumnNames,
+    getTableSorting,
+    setTableSorting
+  } = useLocalState();
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
@@ -247,7 +251,16 @@ export function InvenTreeTable<T = any>({
     if (props.enableColumnSwitching == false) {
       return false;
     } else {
-      return columns.some((col: TableColumn) => col.switchable ?? true);
+      return columns.some((col: TableColumn) => {
+        if (col.hidden == true) {
+          // Not a switchable column - is hidden
+          return false;
+        } else if (col.switchable == false) {
+          return false;
+        } else {
+          return true;
+        }
+      });
     }
   }, [columns, props.enableColumnSwitching]);
 
@@ -260,24 +273,26 @@ export function InvenTreeTable<T = any>({
 
   // Update column visibility when hiddenColumns change
   const dataColumns: any = useMemo(() => {
-    let cols = columns.map((col) => {
-      let hidden: boolean = col.hidden ?? false;
+    let cols = columns
+      .filter((col) => col?.hidden != true)
+      .map((col) => {
+        let hidden: boolean = col.hidden ?? false;
 
-      if (col.switchable ?? true) {
-        hidden = tableState.hiddenColumns.includes(col.accessor);
-      }
+        if (col.switchable ?? true) {
+          hidden = tableState.hiddenColumns.includes(col.accessor);
+        }
 
-      return {
-        ...col,
-        hidden: hidden,
-        title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
-      };
-    });
+        return {
+          ...col,
+          hidden: hidden,
+          title: col.title ?? fieldNames[col.accessor] ?? `${col.accessor}`
+        };
+      });
 
     // If row actions are available, add a column for them
     if (tableProps.rowActions) {
       cols.push({
-        accessor: 'actions',
+        accessor: '--actions--',
         title: '   ',
         hidden: false,
         switchable: false,
@@ -389,6 +404,15 @@ export function InvenTreeTable<T = any>({
     direction: 'asc'
   });
 
+  useEffect(() => {
+    const tableKey: string = tableState.tableKey.split('-')[0];
+    const sorting: DataTableSortStatus = getTableSorting(tableKey);
+
+    if (sorting) {
+      setSortStatus(sorting);
+    }
+  }, []);
+
   // Return the ordering parameter
   function getOrderingTerm() {
     let key = sortStatus.columnAccessor;
@@ -412,6 +436,9 @@ export function InvenTreeTable<T = any>({
   const handleSortStatusChange = (status: DataTableSortStatus) => {
     tableState.setPage(1);
     setSortStatus(status);
+
+    const tableKey = tableState.tableKey.split('-')[0];
+    setTableSorting(tableKey)(status);
   };
 
   // Function to perform API query to fetch required data
@@ -495,80 +522,58 @@ export function InvenTreeTable<T = any>({
     tableState.setRecords(data ?? []);
   }, [data]);
 
-  // Callback function to delete the selected records in the table
-  const deleteSelectedRecords = useCallback((ids: number[]) => {
-    if (ids.length == 0) {
-      // Ignore if no records are selected
-      return;
-    }
-
-    modals.openConfirmModal({
-      title: t`Delete selected records`,
-      children: (
-        <Alert
-          color="red"
-          title={t`Are you sure you want to delete the selected records?`}
-        >
-          {t`This action cannot be undone!`}
-        </Alert>
-      ),
-      labels: {
-        confirm: t`Delete`,
-        cancel: t`Cancel`
-      },
-      confirmProps: {
-        color: 'red'
-      },
-      onConfirm: () => {
-        api
-          .delete(url, {
-            data: {
-              items: ids
-            }
-          })
-          .then((_response) => {
-            // Refresh the table
-            refetch();
-
-            // Show notification
-            showNotification({
-              title: t`Deleted records`,
-              message: t`Records were deleted successfully`,
-              color: 'green'
-            });
-          })
-          .catch((_error) => {
-            console.warn(`Bulk delete operation failed at ${url}`);
-
-            showNotification({
-              title: t`Error`,
-              message: t`Failed to delete records`,
-              color: 'red'
-            });
-          })
-          .finally(() => {
-            tableState.clearSelectedRecords();
-            if (props.afterBulkDelete) {
-              props.afterBulkDelete();
-            }
-          });
+  const deleteRecords = useDeleteApiFormModal({
+    url: url,
+    title: t`Delete Selected Items`,
+    preFormContent: (
+      <Alert
+        color="red"
+        title={t`Are you sure you want to delete the selected items?`}
+      >
+        {t`This action cannot be undone!`}
+      </Alert>
+    ),
+    initialData: {
+      items: tableState.selectedIds
+    },
+    fields: {
+      items: {
+        hidden: true
       }
-    });
-  }, []);
+    },
+    onFormSuccess: () => {
+      tableState.clearSelectedRecords();
+      tableState.refreshTable();
 
-  // Callback when a row is clicked
-  const handleRowClick = useCallback(
+      if (props.afterBulkDelete) {
+        props.afterBulkDelete();
+      }
+    }
+  });
+
+  // Callback when a cell is clicked
+  const handleCellClick = useCallback(
     ({
       event,
       record,
-      index
+      index,
+      column,
+      columnIndex
     }: {
       event: React.MouseEvent;
       record: any;
       index: number;
+      column: any;
+      columnIndex: number;
     }) => {
-      if (props.onRowClick) {
-        // If a custom row click handler is provided, use that
+      // Ignore any click on the 'actions' column
+      if (column.accessor == '--actions--') {
+        return;
+      }
+
+      if (props.onCellClick) {
+        props.onCellClick({ event, record, index, column, columnIndex });
+      } else if (props.onRowClick) {
         props.onRowClick(record, index, event);
       } else if (tableProps.modelType) {
         const accessor = tableProps.modelField ?? 'pk';
@@ -582,11 +587,12 @@ export function InvenTreeTable<T = any>({
         }
       }
     },
-    [props.onRowClick]
+    [props.onRowClick, props.onCellClick]
   );
 
   return (
     <>
+      {deleteRecords.modal}
       {tableProps.enableFilters && (filters.length ?? 0) > 0 && (
         <Boundary label="table-filter-drawer">
           <FilterSelectDrawer
@@ -608,7 +614,7 @@ export function InvenTreeTable<T = any>({
                 enableLabels={tableProps.enableLabels}
                 enableReports={tableProps.enableReports}
               />
-              {(tableProps.barcodeActions?.length ?? 0 > 0) && (
+              {(tableProps.barcodeActions?.length ?? 0) > 0 && (
                 <ButtonMenu
                   key="barcode-actions"
                   icon={<IconBarcode />}
@@ -623,7 +629,9 @@ export function InvenTreeTable<T = any>({
                   icon={<IconTrash />}
                   color="red"
                   tooltip={t`Delete selected records`}
-                  onClick={() => deleteSelectedRecords(tableState.selectedIds)}
+                  onClick={() => {
+                    deleteRecords.open();
+                  }}
                 />
               )}
               {tableProps.tableActions?.map((group, idx) => (
@@ -642,7 +650,12 @@ export function InvenTreeTable<T = any>({
               {tableProps.enableRefresh && (
                 <ActionIcon variant="transparent" aria-label="table-refresh">
                   <Tooltip label={t`Refresh data`}>
-                    <IconRefresh onClick={() => refetch()} />
+                    <IconRefresh
+                      onClick={() => {
+                        refetch();
+                        tableState.clearSelectedRecords();
+                      }}
+                    />
                   </Tooltip>
                 </ActionIcon>
               )}
@@ -713,8 +726,7 @@ export function InvenTreeTable<T = any>({
               noRecordsText={missingRecordsText}
               records={tableState.records}
               columns={dataColumns}
-              onRowClick={handleRowClick}
-              onCellClick={tableProps.onCellClick}
+              onCellClick={handleCellClick}
               defaultColumnProps={{
                 noWrap: true,
                 textAlign: 'left',

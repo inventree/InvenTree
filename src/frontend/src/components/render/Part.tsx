@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 
 import { ModelType } from '../../enums/ModelType';
 import { getDetailUrl } from '../../functions/urls';
+import { ApiIcon } from '../items/ApiIcon';
 import { InstanceRenderInterface, RenderInlineModel } from './Instance';
 
 /**
@@ -15,7 +16,7 @@ export function RenderPart(
   const { instance } = props;
 
   let badgeText = '';
-  let badgeColor = 'green';
+  let badgeColor = '';
 
   let stock = instance.total_in_stock;
 
@@ -55,12 +56,18 @@ export function RenderPartCategory(
   props: Readonly<InstanceRenderInterface>
 ): ReactNode {
   const { instance } = props;
-  const lvl = '-'.repeat(instance.level || 0);
 
   return (
     <RenderInlineModel
       {...props}
-      primary={`${lvl} ${instance.name}`}
+      tooltip={instance.pathstring}
+      prefix={
+        <>
+          <div style={{ width: 10 * (instance.level || 0) }}></div>
+          {instance.icon && <ApiIcon name={instance.icon} />}
+        </>
+      }
+      primary={instance.name}
       secondary={instance.description}
       url={
         props.link

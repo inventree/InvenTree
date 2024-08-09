@@ -552,7 +552,6 @@ function receiveReturnOrderItems(order_id, line_items, options={}) {
                 },
                 tree_picker: {
                     url: '{% url "api-location-tree" %}',
-                    default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
                 },
             }
         },

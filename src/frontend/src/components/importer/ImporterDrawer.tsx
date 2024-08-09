@@ -16,10 +16,9 @@ import {
 import { IconCheck } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 
-import {
-  ImportSessionStatus,
-  useImportSession
-} from '../../hooks/UseImportSession';
+import { ModelType } from '../../enums/ModelType';
+import { useImportSession } from '../../hooks/UseImportSession';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { StylishText } from '../items/StylishText';
 import ImporterDataSelector from './ImportDataSelector';
 import ImporterColumnSelector from './ImporterColumnSelector';
@@ -62,19 +61,23 @@ export default function ImporterDrawer({
 }) {
   const session = useImportSession({ sessionId: sessionId });
 
+  const importSessionStatus = useStatusCodes({
+    modelType: ModelType.importsession
+  });
+
   // Map from import steps to stepper steps
   const currentStep = useMemo(() => {
     switch (session.status) {
       default:
-      case ImportSessionStatus.INITIAL:
+      case importSessionStatus.INITIAL:
         return 0;
-      case ImportSessionStatus.MAPPING:
+      case importSessionStatus.MAPPING:
         return 1;
-      case ImportSessionStatus.IMPORTING:
+      case importSessionStatus.IMPORTING:
         return 2;
-      case ImportSessionStatus.PROCESSING:
+      case importSessionStatus.PROCESSING:
         return 3;
-      case ImportSessionStatus.COMPLETE:
+      case importSessionStatus.COMPLETE:
         return 4;
     }
   }, [session.status]);
@@ -85,15 +88,15 @@ export default function ImporterDrawer({
     }
 
     switch (session.status) {
-      case ImportSessionStatus.INITIAL:
+      case importSessionStatus.INITIAL:
         return <Text>Initial : TODO</Text>;
-      case ImportSessionStatus.MAPPING:
+      case importSessionStatus.MAPPING:
         return <ImporterColumnSelector session={session} />;
-      case ImportSessionStatus.IMPORTING:
+      case importSessionStatus.IMPORTING:
         return <ImporterImportProgress session={session} />;
-      case ImportSessionStatus.PROCESSING:
+      case importSessionStatus.PROCESSING:
         return <ImporterDataSelector session={session} />;
-      case ImportSessionStatus.COMPLETE:
+      case importSessionStatus.COMPLETE:
         return (
           <Stack gap="xs">
             <Alert

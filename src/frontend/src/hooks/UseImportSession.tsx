@@ -1,22 +1,13 @@
 import { useCallback, useMemo } from 'react';
 
-import { api } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
-import { apiUrl } from '../states/ApiState';
+import { ModelType } from '../enums/ModelType';
 import { useInstance } from './UseInstance';
+import useStatusCodes from './UseStatusCodes';
 
 /*
  * Custom hook for managing the state of a data import session
  */
-
-// TODO: Load these values from the server?
-export enum ImportSessionStatus {
-  INITIAL = 0,
-  MAPPING = 10,
-  IMPORTING = 20,
-  PROCESSING = 30,
-  COMPLETE = 40
-}
 
 export type ImportSessionState = {
   sessionId: number;
@@ -24,13 +15,14 @@ export type ImportSessionState = {
   setSessionData: (data: any) => void;
   refreshSession: () => void;
   sessionQuery: any;
-  status: ImportSessionStatus;
+  status: number;
   availableFields: Record<string, any>;
   availableColumns: string[];
   mappedFields: any[];
   columnMappings: any[];
   fieldDefaults: any;
   fieldOverrides: any;
+  fieldFilters: any;
   rowCount: number;
   completedRowCount: number;
 };
@@ -53,15 +45,17 @@ export function useImportSession({
   });
 
   const setSessionData = useCallback((data: any) => {
-    console.log('setting session data:');
-    console.log(data);
     setInstance(data);
   }, []);
 
+  const importSessionStatus = useStatusCodes({
+    modelType: ModelType.importsession
+  });
+
   // Current step of the import process
-  const status: ImportSessionStatus = useMemo(() => {
-    return sessionData?.status ?? ImportSessionStatus.INITIAL;
-  }, [sessionData]);
+  const status: number = useMemo(() => {
+    return sessionData?.status ?? importSessionStatus.INITIAL;
+  }, [sessionData, importSessionStatus]);
 
   // List of available writeable database field definitions
   const availableFields: any[] = useMemo(() => {
@@ -113,6 +107,10 @@ export function useImportSession({
     return sessionData?.field_overrides ?? {};
   }, [sessionData]);
 
+  const fieldFilters: any = useMemo(() => {
+    return sessionData?.field_filters ?? {};
+  }, [sessionData]);
+
   const rowCount: number = useMemo(() => {
     return sessionData?.row_count ?? 0;
   }, [sessionData]);
@@ -134,6 +132,7 @@ export function useImportSession({
     mappedFields,
     fieldDefaults,
     fieldOverrides,
+    fieldFilters,
     rowCount,
     completedRowCount
   };
