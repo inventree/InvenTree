@@ -675,7 +675,7 @@ export default function PartDetail() {
         icon: <IconTestPipe />,
         hidden: !part.trackable,
         content: part?.pk ? (
-          <PartTestTemplateTable partId={part?.pk} />
+          <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
         ) : (
           <Skeleton />
         )
