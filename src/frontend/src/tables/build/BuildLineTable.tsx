@@ -24,9 +24,11 @@ import { TableHoverCard } from '../TableHoverCard';
 
 export default function BuildLineTable({
   buildId,
+  outputId,
   params = {}
 }: {
   buildId: number;
+  outputId?: number;
   params?: any;
 }) {
   const table = useTable('buildline');
@@ -237,30 +239,42 @@ export default function BuildLineTable({
 
   const rowActions = useCallback(
     (record: any) => {
-      let part = record.part_detail;
+      let part = record.part_detail ?? {};
 
       // Consumable items have no appropriate actions
       if (record?.bom_item_detail?.consumable) {
         return [];
       }
 
+      const hasOutput = !!outputId;
+
+      // Can allocate
+      let canAllocate =
+        user.hasChangeRole(UserRoles.build) &&
+        record.allocated < record.quantity &&
+        record.trackable == hasOutput;
+
+      let canOrder =
+        user.hasAddRole(UserRoles.purchase_order) && part.purchaseable;
+      let canBuild = user.hasAddRole(UserRoles.build) && part.assembly;
+
       return [
         {
           icon: <IconArrowRight />,
           title: t`Allocate Stock`,
-          hidden: record.allocated >= record.quantity,
+          hidden: !canAllocate,
           color: 'green'
         },
         {
           icon: <IconShoppingCart />,
           title: t`Order Stock`,
-          hidden: !part?.purchaseable,
+          hidden: !canOrder,
           color: 'blue'
         },
         {
           icon: <IconTool />,
           title: t`Build Stock`,
-          hidden: !part?.assembly || !user.hasAddRole(UserRoles.build),
+          hidden: !canBuild,
           color: 'blue',
           onClick: () => {
             setInitialData({
@@ -273,7 +287,7 @@ export default function BuildLineTable({
         }
       ];
     },
-    [user]
+    [user, outputId]
   );
 
   return (
