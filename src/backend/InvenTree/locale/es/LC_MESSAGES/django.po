@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-08 10:02+0000\n"
-"PO-Revision-Date: 2024-08-07 21:47\n"
+"PO-Revision-Date: 2024-08-09 22:04\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Language: es_MX\n"
@@ -86,7 +86,7 @@ msgstr "Notas"
 #: InvenTree/format.py:164
 #, python-brace-format
 msgid "Value '{name}' does not appear in pattern format"
-msgstr ""
+msgstr "El valor '{name}' no aparece en formato de patrón"
 
 #: InvenTree/format.py:175
 msgid "Provided value does not match required pattern: "
@@ -126,7 +126,7 @@ msgstr "El correo electrónico debe coincidir."
 
 #: InvenTree/forms.py:221
 msgid "MFA Registration is disabled."
-msgstr ""
+msgstr "El registro ha sido desactivado."
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -213,7 +213,7 @@ msgstr "La URL proporcionada no es un archivo de imagen válido"
 
 #: InvenTree/locales.py:18
 msgid "Arabic"
-msgstr ""
+msgstr "Árabe"
 
 #: InvenTree/locales.py:19
 msgid "Bulgarian"
@@ -249,7 +249,7 @@ msgstr "Español (México)"
 
 #: InvenTree/locales.py:27
 msgid "Estonian"
-msgstr ""
+msgstr "Estonia"
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -313,7 +313,7 @@ msgstr "Portugués (Brasileño)"
 
 #: InvenTree/locales.py:43
 msgid "Romanian"
-msgstr ""
+msgstr "Rumano"
 
 #: InvenTree/locales.py:44
 msgid "Russian"
@@ -377,39 +377,39 @@ msgstr "Error al ejecutar la validación del plugin"
 
 #: InvenTree/models.py:172
 msgid "Metadata must be a python dict object"
-msgstr ""
+msgstr "Los metadatos deben ser un objeto diccionario de python"
 
 #: InvenTree/models.py:178
 msgid "Plugin Metadata"
-msgstr ""
+msgstr "Metadatos del complemento"
 
 #: InvenTree/models.py:179
 msgid "JSON metadata field, for use by external plugins"
-msgstr ""
+msgstr "Campo de metadatos JSON, para uso por complementos externos"
 
 #: InvenTree/models.py:409
 msgid "Improperly formatted pattern"
-msgstr ""
+msgstr "Patrón con formato incorrecto"
 
 #: InvenTree/models.py:416
 msgid "Unknown format key specified"
-msgstr ""
+msgstr "Clave de formato especificado desconocida"
 
 #: InvenTree/models.py:422
 msgid "Missing required format key"
-msgstr ""
+msgstr "Falta la clave de formato necesaria"
 
 #: InvenTree/models.py:433
 msgid "Reference field cannot be empty"
-msgstr ""
+msgstr "El campo de servidor no puede estar vacío"
 
 #: InvenTree/models.py:441
 msgid "Reference must match required pattern"
-msgstr ""
+msgstr "La referencia debe coincidir con el patrón requerido"
 
 #: InvenTree/models.py:472
 msgid "Reference number is too large"
-msgstr ""
+msgstr "El número de referencia es demasiado grande"
 
 #: InvenTree/models.py:723
 msgid "Duplicate names cannot exist under the same parent"
@@ -515,62 +515,62 @@ msgstr "Error de servidor"
 
 #: InvenTree/models.py:1079
 msgid "An error has been logged by the server."
-msgstr ""
+msgstr "Se ha registrado un error por el servidor."
 
 #: InvenTree/serializers.py:63 part/models.py:4380
 msgid "Must be a valid number"
-msgstr ""
+msgstr "Debe ser un número válido"
 
 #: InvenTree/serializers.py:100 company/models.py:186
 #: company/templates/company/company_base.html:112 part/models.py:3108
 #: templates/InvenTree/settings/settings_staff_js.html:44
 #: templates/currency_data.html:5
 msgid "Currency"
-msgstr ""
+msgstr "Moneda"
 
 #: InvenTree/serializers.py:103
 msgid "Select currency from available options"
-msgstr ""
+msgstr "Seleccionar moneda de las opciones disponibles"
 
 #: InvenTree/serializers.py:407 templates/InvenTree/settings/user.html:33
 msgid "Username"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: InvenTree/serializers.py:409 templates/InvenTree/settings/user.html:37
 msgid "First Name"
-msgstr ""
+msgstr "Nombre"
 
 #: InvenTree/serializers.py:409
 msgid "First name of the user"
-msgstr ""
+msgstr "Nombre de usuario"
 
 #: InvenTree/serializers.py:412 templates/InvenTree/settings/user.html:41
 msgid "Last Name"
-msgstr ""
+msgstr "Apellido"
 
 #: InvenTree/serializers.py:412
 msgid "Last name of the user"
-msgstr ""
+msgstr "Apellido del usuario"
 
 #: InvenTree/serializers.py:415
 msgid "Email address of the user"
-msgstr ""
+msgstr "Dirección de email del usuario"
 
 #: InvenTree/serializers.py:439
 msgid "Staff"
-msgstr ""
+msgstr "Personal"
 
 #: InvenTree/serializers.py:439
 msgid "Does this user have staff permissions"
-msgstr ""
+msgstr "Tiene permisos de personal este usuario"
 
 #: InvenTree/serializers.py:442
 msgid "Superuser"
-msgstr ""
+msgstr "Superusuario"
 
 #: InvenTree/serializers.py:442
 msgid "Is this user a superuser"
-msgstr ""
+msgstr "Este usuario es un superusuario"
 
 #: InvenTree/serializers.py:445 common/models.py:2699 company/models.py:163
 #: company/models.py:801 machine/models.py:39 part/admin.py:88
@@ -583,89 +583,89 @@ msgstr ""
 #: templates/js/translated/table_filters.js:730
 #: templates/js/translated/table_filters.js:815 users/models.py:182
 msgid "Active"
-msgstr ""
+msgstr "Activo"
 
 #: InvenTree/serializers.py:445
 msgid "Is this user account active"
-msgstr ""
+msgstr "Esta cuenta de usuario está activa"
 
 #: InvenTree/serializers.py:463
 msgid "You do not have permission to change this user role."
-msgstr ""
+msgstr "No tiene permiso para cambiar este cargo de usuario."
 
 #: InvenTree/serializers.py:475
 msgid "Only superusers can create new users"
-msgstr ""
+msgstr "Solo los superusuarios pueden crear nuevos usuarios"
 
 #: InvenTree/serializers.py:494
 msgid "Your account has been created."
-msgstr ""
+msgstr "Su cuenta ha sido creada."
 
 #: InvenTree/serializers.py:496
 msgid "Please use the password reset function to login"
-msgstr ""
+msgstr "Por favor, utilice la función de restablecer la contraseña para iniciar sesión"
 
 #: InvenTree/serializers.py:503
 msgid "Welcome to InvenTree"
-msgstr ""
+msgstr "Bienvenido a InvenTree"
 
 #: InvenTree/serializers.py:561
 msgid "Invalid value"
-msgstr ""
+msgstr "Valor inválido"
 
 #: InvenTree/serializers.py:581 importer/models.py:63
 msgid "Data File"
-msgstr ""
+msgstr "Archivo de datos"
 
 #: InvenTree/serializers.py:582
 msgid "Select data file for upload"
-msgstr ""
+msgstr "Seleccione el archivo para subir"
 
 #: InvenTree/serializers.py:599
 msgid "Unsupported file type"
-msgstr ""
+msgstr "Tipo de archivo no soportado"
 
 #: InvenTree/serializers.py:605
 msgid "File is too large"
-msgstr ""
+msgstr "El archivo es demasiado grande"
 
 #: InvenTree/serializers.py:626
 msgid "No columns found in file"
-msgstr ""
+msgstr "No hay columnas en el archivo"
 
 #: InvenTree/serializers.py:629
 msgid "No data rows found in file"
-msgstr ""
+msgstr "No hay filas de datos en el archivo"
 
 #: InvenTree/serializers.py:742
 msgid "No data rows provided"
-msgstr ""
+msgstr "No se proporcionaron filas de datos"
 
 #: InvenTree/serializers.py:745
 msgid "No data columns supplied"
-msgstr ""
+msgstr "No hay columnas de datos para suministrar"
 
 #: InvenTree/serializers.py:812
 #, python-brace-format
 msgid "Missing required column: '{name}'"
-msgstr ""
+msgstr "Falta la columna requerida: '{name}'"
 
 #: InvenTree/serializers.py:821
 #, python-brace-format
 msgid "Duplicate column: '{col}'"
-msgstr ""
+msgstr "Columna duplicada: '{col}'"
 
 #: InvenTree/serializers.py:861
 msgid "Remote Image"
-msgstr ""
+msgstr "Imagen remota"
 
 #: InvenTree/serializers.py:862
 msgid "URL of remote image file"
-msgstr ""
+msgstr "URL de imagen remota"
 
 #: InvenTree/serializers.py:880
 msgid "Downloading images from remote URL is not enabled"
-msgstr ""
+msgstr "La descarga de imágenes desde la URL remota no está habilitada"
 
 #: InvenTree/status.py:66 part/serializers.py:1244
 msgid "Background worker check failed"
@@ -15184,3 +15184,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
