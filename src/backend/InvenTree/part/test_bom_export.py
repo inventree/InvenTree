@@ -151,7 +151,7 @@ class BomExportTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
 
         content = response.headers['Content-Disposition']
-        self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.xls"')
+        self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.xlsx"')
 
     def test_export_json(self):
         """Test BOM download in JSON format."""
