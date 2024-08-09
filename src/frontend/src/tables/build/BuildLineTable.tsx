@@ -244,11 +244,6 @@ export default function BuildLineTable({
         return [];
       }
 
-      // Tracked items must be allocated to a particular output
-      if (record?.part_detail?.trackable) {
-        return [];
-      }
-
       return [
         {
           icon: <IconArrowRight />,
