@@ -1779,6 +1779,93 @@ class StockTestResultTest(StockAPITestCase):
             expected_code=201,
         )
 
+    def _add_test_result(self, dut, template, passed):
+        StockItemTestResult.objects.create(
+            template=template,
+            stock_item=dut,
+            result=1 if passed else 0,
+            value='PASSED' if passed else 'FAILED',
+        )
+
+    def test_part_test_statistics(self):
+        """Test that part's test statistics are calculated correctly."""
+        part = Part.objects.create(name='Test part', trackable=True)
+
+        dut1 = StockItem.objects.create(part=part, serial='DUT#1')
+        dut2 = StockItem.objects.create(part=part, serial='DUT#2')
+
+        test_template1 = PartTestTemplate.objects.create(part=part, test_name='FVT1')
+        test_template2 = PartTestTemplate.objects.create(part=part, test_name='FVT2')
+
+        # create some dummy test results
+        self._add_test_result(dut1, test_template1, 0)
+        self._add_test_result(dut1, test_template1, 0)
+        self._add_test_result(dut1, test_template1, 1)
+
+        # one of the DUTs have 1 passed on FVT1 and 2 failed on FVT2
+        response = self.get(
+            reverse('api-test-statistics-by-part', kwargs={'pk': part.pk}),
+            expected_code=200,
+        )
+
+        # ensure total calculation
+        self.assertEqual(response.data[0]['total']['passed'], 1)
+        self.assertEqual(response.data[0]['total']['failed'], 2)
+        self.assertEqual(response.data[0]['total']['total'], 3)
+
+        # ensure by test type calculation
+        self.assertEqual(response.data[0]['FVT1']['passed'], 1)
+        self.assertEqual(response.data[0]['FVT1']['failed'], 2)
+        self.assertEqual(response.data[0]['FVT1']['total'], 3)
+
+        self.assertEqual(response.data[0]['FVT2']['passed'], 0)
+        self.assertEqual(response.data[0]['FVT2']['failed'], 0)
+        self.assertEqual(response.data[0]['FVT2']['total'], 0)
+
+        # add some result to the another DUT
+        self._add_test_result(dut2, test_template1, 0)
+        self._add_test_result(dut2, test_template1, 1)
+        self._add_test_result(dut2, test_template2, 0)
+        self._add_test_result(dut2, test_template2, 1)
+
+        response = self.get(
+            reverse('api-test-statistics-by-part', kwargs={'pk': part.pk}),
+            expected_code=200,
+        )
+
+        # ensure total calculation
+        self.assertEqual(response.data[0]['total']['passed'], 3)
+        self.assertEqual(response.data[0]['total']['failed'], 4)
+        self.assertEqual(response.data[0]['total']['total'], 7)
+
+        # ensure by test type calculation
+        self.assertEqual(response.data[0]['FVT1']['passed'], 2)
+        self.assertEqual(response.data[0]['FVT1']['failed'], 3)
+        self.assertEqual(response.data[0]['FVT1']['total'], 5)
+
+        self.assertEqual(response.data[0]['FVT2']['passed'], 1)
+        self.assertEqual(response.data[0]['FVT2']['failed'], 1)
+        self.assertEqual(response.data[0]['FVT2']['total'], 2)
+
+        # create an another part add some results and check that it does not alters the stats of part1
+        part2 = Part.objects.create(name='Test part2', trackable=True)
+
+        dut3 = StockItem.objects.create(part=part2, serial='DUT#3')
+
+        test_template3 = PartTestTemplate.objects.create(part=part2, test_name='FVT1')
+        self._add_test_result(dut3, test_template3, 0)
+        self._add_test_result(dut3, test_template3, 0)
+
+        response = self.get(
+            reverse('api-test-statistics-by-part', kwargs={'pk': part.pk}),
+            expected_code=200,
+        )
+
+        # ensure total calculation
+        self.assertEqual(response.data[0]['total']['passed'], 3)
+        self.assertEqual(response.data[0]['total']['failed'], 4)
+        self.assertEqual(response.data[0]['total']['total'], 7)
+
 
 class StockTrackingTest(StockAPITestCase):
     """Tests for the StockTracking API endpoints."""
