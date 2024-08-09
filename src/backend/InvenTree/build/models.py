@@ -987,7 +987,10 @@ class Build(
         items_to_save = []
         items_to_delete = []
 
-        for build_line in self.untracked_line_items:
+        lines = self.untracked_line_items
+        lines = lines.prefetch_related('allocations')
+
+        for build_line in lines:
 
             reduce_by = build_line.allocated_quantity() - build_line.quantity
 
