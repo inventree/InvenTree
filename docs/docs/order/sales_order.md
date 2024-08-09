@@ -183,3 +183,15 @@ All these fields can be edited by the user:
 {% with id="edit-shipment", url="order/edit_shipment.png", description="Edit shipment" %}
 {% include "img.html" %}
 {% endwith %}
+
+## Sales Order Settings
+
+The following [global settings](../settings/global.md) are available for sales orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("SALESORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("SALESORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("SALESORDER_DEFAULT_SHIPMENT") }}
+{{ globalsetting("SALESORDER_EDIT_COMPLETED_ORDERS") }}
+{{ globalsetting("SALESORDER_SHIP_COMPLETE") }}
