@@ -237,14 +237,6 @@ def define_env(env):
         return includefile(fn, f'Template: {base}', format='html')
 
     @env.macro
-    def settingtableheader():
-        """Return a table header for a settings table."""
-        data = '| Name | Description | Default | Units |\n'
-        data += '| ---- | ----------- | ------- | ----- |'
-
-        return data
-
-    @env.macro
     def rendersetting(setting: dict):
         """Render a provided setting object into a table row."""
         name = setting['name']
