@@ -163,27 +163,19 @@ Configuration of stock item options
 
 ### Build Orders
 
-Options for build orders
-
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Reference Pattern | String | Pattern for defining Build Order reference values | {% raw %}BO-{ref:04d}{% endraw %} |
+Refer to the [build order settings](../build/build.md#build-order-settings).
 
 ### Purchase Orders
 
-Options for purchase orders
+Refer to the [purchase order settings](../order/purchase_order.md#purchase-order-settings).
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Reference Pattern | String | Pattern for defining Purchase Order reference values | {% raw %}PO-{ref:04d}{% endraw %} |
+### Sales Orders
 
-### Sales orders
+Refer to the [sales order settings](../order/sales_order.md#sales-order-settings).
 
-Options for sales orders
+### Return Orders
 
-| Setting | Type | Description | Default |
-| --- | --- | --- | --- |
-| Reference Pattern | String | Pattern for defining Sales Order reference values | {% raw %}SO-{ref:04d}{% endraw %} |
+Refer to the [return order settings](../order/return_order.md#return-order-settings).
 
 ### Plugin Settings
 

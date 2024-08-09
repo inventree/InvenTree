@@ -1,11 +1,27 @@
 """Main entry point for the documentation build process."""
 
+import json
 import os
 import subprocess
+import sys
 import textwrap
 
 import requests
 import yaml
+
+# Cached settings dict values
+global GLOBAL_SETTINGS
+global USER_SETTINGS
+
+# Read in the InvenTree settings file
+here = os.path.dirname(__file__)
+settings_file = os.path.join(here, 'inventree_settings.json')
+
+with open(settings_file, 'r') as sf:
+    settings = json.load(sf)
+
+    GLOBAL_SETTINGS = settings['global']
+    USER_SETTINGS = settings['user']
 
 
 def get_repo_url(raw=False):
@@ -219,3 +235,45 @@ def define_env(env):
         )
 
         return includefile(fn, f'Template: {base}', format='html')
+
+    @env.macro
+    def settingtableheader():
+        """Return a table header for a settings table."""
+        data = '| Name | Description | Default | Units |\n'
+        data += '| ---- | ----------- | ------- | ----- |'
+
+        return data
+
+    @env.macro
+    def rendersetting(setting: dict):
+        """Render a provided setting object into a table row."""
+        name = setting['name']
+        description = setting['description']
+        default = setting.get('default', None)
+        units = setting.get('units', None)
+
+        return f'| {name} | {description} | {default if default is not None else ""} | {units if units is not None else ""} |'
+
+    @env.macro
+    def globalsetting(key: str):
+        """Extract information on a particular global setting.
+
+        Arguments:
+            - key: The name of the global setting to extract information for.
+        """
+        global GLOBAL_SETTINGS
+        setting = GLOBAL_SETTINGS[key]
+
+        return rendersetting(setting)
+
+    @env.macro
+    def usersetting(key: str):
+        """Extract information on a particular user setting.
+
+        Arguments:
+            - key: The name of the user setting to extract information for.
+        """
+        global USER_SETTINGS
+        setting = GLOBAL_SETTINGS[key]
+
+        return rendersetting(setting)
