@@ -1,8 +1,10 @@
 # Please keep this list sorted - if you pin a version provide a reason
 Django<5.0                              # Django package
+channels[daphne]                        # Websockers
+channels_redis                          # Websockets with Redis
 coreapi                                 # API documentation for djangorestframework
 cryptography>=40.0.0,!=40.0.2           # Core cryptographic functionality
-django-allauth[openid,saml]               # SSO for external providers via OpenID
+django-allauth[openid,saml]             # SSO for external providers via OpenID
 django-allauth-2fa                      # MFA / 2FA
 django-cleanup                          # Automated deletion of old / unused uploaded files
 django-cors-headers                     # CORS headers extension for DRF
@@ -51,6 +53,7 @@ regex                                   # Advanced regular expressions
 sentry-sdk                              # Error reporting (optional)
 setuptools                              # Standard dependency
 tablib[xls,xlsx,yaml]                   # Support for XLS and XLSX formats
+uvicorn-worker                          # ASGI worker for gunicorn
 weasyprint                              # PDF generation
 whitenoise                              # Enhanced static file serving
 

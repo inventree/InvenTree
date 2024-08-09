@@ -23,7 +23,12 @@ from django.utils.translation import gettext_lazy as _
 import pytz
 from dotenv import load_dotenv
 
-from InvenTree.cache import get_cache_config, is_global_cache_enabled
+from InvenTree.cache import (
+    cache_host,
+    cache_port,
+    get_cache_config,
+    is_global_cache_enabled,
+)
 from InvenTree.config import get_boolean_setting, get_custom_file, get_setting
 from InvenTree.ready import isInMainThread
 from InvenTree.sentry import default_sentry_dsn, init_sentry
@@ -185,6 +190,7 @@ INVENTREE_ADMIN_URL = get_setting(
 )
 
 INSTALLED_APPS = [
+    'daphne',  # ASGI enabled dev server
     # Admin site integration
     'django.contrib.admin',
     # InvenTree apps
@@ -240,6 +246,7 @@ INSTALLED_APPS = [
     'dj_rest_auth.registration',  # Registration APIs - dj-rest-auth'
     'drf_spectacular',  # API documentation
     'django_ical',  # For exporting calendars
+    'channels',  # websockets
 ]
 
 MIDDLEWARE = CONFIG.get(
@@ -517,6 +524,7 @@ if USE_JWT:
 
 # WSGI default setting
 WSGI_APPLICATION = 'InvenTree.wsgi.application'
+ASGI_APPLICATION = 'InvenTree.asgi.application'
 
 """
 Configure the database backend based on the user-specified values.
@@ -842,6 +850,17 @@ if GLOBAL_CACHE_ENABLED:  # pragma: no cover
     # If using external redis cache, make the cache the broker for Django Q
     # as well
     Q_CLUSTER['django_redis'] = 'worker'
+
+# Settings for channels
+if GLOBAL_CACHE_ENABLED:  # pragma: no cover
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {'hosts': [cache_host(), cache_port()]},
+        }
+    }
+else:
+    CHANNEL_LAYERS = {'default': {'BACKEND': 'channels.layers.InMemoryChannelLayer'}}
 
 # database user sessions
 SESSION_ENGINE = 'user_sessions.backends.db'

@@ -19,6 +19,7 @@ import { MainMenu } from './MainMenu';
 import { NavHoverMenu } from './NavHoverMenu';
 import { NavigationDrawer } from './NavigationDrawer';
 import { NotificationDrawer } from './NotificationDrawer';
+import { PageAttendanceComponent } from './PageAttendanceComponent';
 import { SearchDrawer } from './SearchDrawer';
 
 export function Header() {
@@ -103,6 +104,7 @@ export function Header() {
             <NavTabs />
           </Group>
           <Group>
+            <PageAttendanceComponent />
             <ActionIcon onClick={openSearchDrawer} variant="transparent">
               <IconSearch />
             </ActionIcon>

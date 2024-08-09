@@ -13,6 +13,7 @@ mariadb>=1.1.8
 
 # gunicorn web server
 gunicorn>=22.0.0
+uvicorn-worker                  # ASGI worker for gunicorn
 
 # LDAP required packages
 django-auth-ldap                # Django integration for ldap auth
