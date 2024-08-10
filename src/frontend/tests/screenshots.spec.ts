@@ -2,6 +2,14 @@ import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
 import { doQuickLogin } from './login.js';
 
+const screenshotSetup = async ({ page }) => {
+  // Set default viewport size
+  await page.setViewportSize({ width: 1920, height: 1080 });
+
+  // Login
+  await doQuickLogin(page);
+};
+
 /*
  * Helper method to generate a screenshot of the current page,
  * and store it in a named subdirectory.
@@ -12,17 +20,12 @@ const screenshot = async (page, prefix, name) => {
   });
 };
 
-/*
- * Take screenshots of various pages in the user interface,
- * to be used in the documentation.
- */
-test('PUI - Screenshots - Build Order', async ({ page }) => {
-  await doQuickLogin(page);
+test('Screenshots - Build Order', async ({ page }) => {
+  await screenshotSetup({ page });
 
   await page.goto(`${baseUrl}/build/`);
   await page.getByText('Widget Board (assembled)').first().waitFor();
 
-  // Close the "logged in" dialog
   await page.locator('#login').getByRole('button').click();
 
   // Screenshot of build index page
@@ -102,4 +105,36 @@ test('PUI - Screenshots - Build Order', async ({ page }) => {
   await page.getByRole('tab', { name: 'Notes' }).click();
   await page.getByLabel('toggle-notes-editing').waitFor();
   await screenshot(page, 'build', 'notes');
+});
+
+test('Screenshots - Purchase Order', async ({ page }) => {
+  await screenshotSetup({ page });
+
+  await page.goto(`${baseUrl}/purchasing/index`);
+
+  await page.locator('#login').getByRole('button').click();
+
+  // Index: Supplier Table
+  await page.getByRole('tab', { name: 'Suppliers' }).click();
+  await page.getByRole('cell', { name: 'DigiKey Electronics' }).waitFor();
+  await screenshot(page, 'purchase', 'suppliers');
+
+  // Index: Manufacturer Table
+  await page.getByRole('tab', { name: 'Manufacturers' }).click();
+  await page.getByRole('cell', { name: 'KEMET' }).waitFor();
+  await screenshot(page, 'purchase', 'manufacturers');
+
+  // Index: Purchase Order Table
+  await page.getByRole('tab', { name: 'Purchase Orders' }).click();
+  await page.getByRole('cell', { name: 'PO0002' }).waitFor();
+  await screenshot(page, 'purchase', 'purchase_orders');
+
+  // Navigate to particular order
+  await page.getByRole('cell', { name: 'PO0002' }).click();
+
+  // TODO: Order details tab
+  // TODO: Order line items tab
+  // TODO: Received stock tab
+  // TODO: Attachments tab
+  // TODO: Notes tab
 });
