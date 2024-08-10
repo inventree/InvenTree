@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-10 08:14+0000\n"
-"PO-Revision-Date: 2024-08-09 22:03\n"
+"POT-Creation-Date: 2024-08-09 23:26+0000\n"
+"PO-Revision-Date: 2024-08-10 22:05\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1358,8 +1358,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:538
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:650
@@ -1427,10 +1426,8 @@ msgid "Required build quantity has not been completed"
 msgstr "Szükséges gyártási mennyiség nem lett elérve"
 
 #: build/serializers.py:770
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Build order has open child build orders"
-msgstr "Gyártási kimenet nem egyezik a gyártási utasítással"
+msgstr ""
 
 #: build/serializers.py:773
 msgid "Build order must be in production state"
@@ -2958,16 +2955,12 @@ msgid "Prevent build order creation unless BOM has been validated"
 msgstr ""
 
 #: common/models.py:1842
-#, fuzzy
-#| msgid "Required for Build Orders"
 msgid "Require Closed Child Orders"
-msgstr "Gyártáshoz szükséges"
+msgstr ""
 
 #: common/models.py:1844
-#, fuzzy
-#| msgid "Prevent build outputs from being completed until all required tests pass"
 msgid "Prevent build order completion until all child orders are closed"
-msgstr "Nem lehet gyártási tételt befejezni amíg valamennyi kötelező teszt sikeres nem lett"
+msgstr ""
 
 #: common/models.py:1850
 msgid "Block Until Tests Pass"
@@ -15204,3 +15197,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
