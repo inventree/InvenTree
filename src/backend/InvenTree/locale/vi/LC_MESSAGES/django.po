@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-10 08:14+0000\n"
-"PO-Revision-Date: 2024-08-07 21:47\n"
+"POT-Creation-Date: 2024-08-09 23:26+0000\n"
+"PO-Revision-Date: 2024-08-10 22:05\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -1425,10 +1425,8 @@ msgid "Required build quantity has not been completed"
 msgstr "Số lượng bản dựng được yêu cầu chưa được hoàn thành"
 
 #: build/serializers.py:770
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Build order has open child build orders"
-msgstr "Đầu ra bản dựng không phù hợp với đơn đặt bản dựng"
+msgstr ""
 
 #: build/serializers.py:773
 msgid "Build order must be in production state"
@@ -2956,10 +2954,8 @@ msgid "Prevent build order creation unless BOM has been validated"
 msgstr ""
 
 #: common/models.py:1842
-#, fuzzy
-#| msgid "Stock required for Build Order"
 msgid "Require Closed Child Orders"
-msgstr "Kho được yêu cầu cho đơn đặt bản dựng"
+msgstr ""
 
 #: common/models.py:1844
 msgid "Prevent build order completion until all child orders are closed"
@@ -15200,3 +15196,4 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
+
