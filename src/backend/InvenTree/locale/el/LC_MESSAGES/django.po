@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-10 08:14+0000\n"
-"PO-Revision-Date: 2024-08-07 21:46\n"
+"POT-Creation-Date: 2024-08-09 23:26+0000\n"
+"PO-Revision-Date: 2024-08-10 22:04\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -1425,10 +1425,8 @@ msgid "Required build quantity has not been completed"
 msgstr "Ο απαιτούμενος αριθμός προϊόντων δεν έχει ολοκληρωθεί"
 
 #: build/serializers.py:770
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Build order has open child build orders"
-msgstr "Η έξοδος κατασκευής δεν ταιριάζει με την παραγγελία κατασκευής"
+msgstr ""
 
 #: build/serializers.py:773
 msgid "Build order must be in production state"
@@ -2956,10 +2954,8 @@ msgid "Prevent build order creation unless BOM has been validated"
 msgstr ""
 
 #: common/models.py:1842
-#, fuzzy
-#| msgid "Required quantity for build order"
 msgid "Require Closed Child Orders"
-msgstr "Απαιτούμενη ποσότητα για την εντολή κατασκευής"
+msgstr ""
 
 #: common/models.py:1844
 msgid "Prevent build order completion until all child orders are closed"
@@ -15200,3 +15196,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
