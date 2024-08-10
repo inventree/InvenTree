@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-10 08:14+0000\n"
-"PO-Revision-Date: 2024-08-07 21:47\n"
+"POT-Creation-Date: 2024-08-09 23:26+0000\n"
+"PO-Revision-Date: 2024-08-10 22:05\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -1425,10 +1425,8 @@ msgid "Required build quantity has not been completed"
 msgstr "Требуемое количество деталей не было произведено"
 
 #: build/serializers.py:770
-#, fuzzy
-#| msgid "Build output does not match Build Order"
 msgid "Build order has open child build orders"
-msgstr "Продукция не совпадает с заказом на производство"
+msgstr ""
 
 #: build/serializers.py:773
 msgid "Build order must be in production state"
@@ -2956,16 +2954,12 @@ msgid "Prevent build order creation unless BOM has been validated"
 msgstr ""
 
 #: common/models.py:1842
-#, fuzzy
-#| msgid "Required for Build Orders"
 msgid "Require Closed Child Orders"
-msgstr "Требуется для заказов на производство"
+msgstr ""
 
 #: common/models.py:1844
-#, fuzzy
-#| msgid "Prevent build outputs from being completed until all required tests pass"
 msgid "Prevent build order completion until all child orders are closed"
-msgstr "Запретить вывод сборки до тех пор, пока не пройдут все необходимые тесты"
+msgstr ""
 
 #: common/models.py:1850
 msgid "Block Until Tests Pass"
@@ -15202,3 +15196,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
