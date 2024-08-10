@@ -12,13 +12,22 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
-      name: 'chromium',
+      name: 'desktop_chromium',
+      grepInvert: /.*screenshots.spec.ts/,
       use: {
         ...devices['Desktop Chrome']
       }
     },
     {
-      name: 'firefox',
+      name: 'desktop_firefox',
+      grepInvert: /.*screenshots.spec.ts/,
+      use: {
+        ...devices['Desktop Firefox']
+      }
+    },
+    {
+      name: 'screenshot',
+      grep: /.*screenshots.spec.ts/,
       use: {
         ...devices['Desktop Firefox']
       }

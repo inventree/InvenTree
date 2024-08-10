@@ -534,7 +534,7 @@ jobs:
         run: cd src/frontend && npx playwright install --with-deps
       - name: Run Playwright tests
         id: tests
-        run: cd src/frontend && npx nyc playwright test
+        run: cd src/frontend && npx nyc playwright test --project desktop_*
       - uses: actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029 # pin@v4
         if: ${{ !cancelled() && steps.tests.outcome == 'failure' }}
         with:
