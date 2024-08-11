@@ -63,6 +63,7 @@ export default function PluginManagementPanel() {
               keys={[
                 'ENABLE_PLUGINS_SCHEDULE',
                 'ENABLE_PLUGINS_EVENTS',
+                'ENABLE_PLUGINS_INTERFACE',
                 'ENABLE_PLUGINS_URL',
                 'ENABLE_PLUGINS_NAVIGATION',
                 'ENABLE_PLUGINS_APP',
