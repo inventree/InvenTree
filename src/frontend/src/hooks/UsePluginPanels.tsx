@@ -43,6 +43,10 @@ export function usePluginPanels({
     enabled: pluginPanelsEnabled && !!targetModel,
     queryKey: [targetModel, targetId],
     queryFn: () => {
+      if (!pluginPanelsEnabled || !targetModel) {
+        return Promise.resolve([]);
+      }
+
       return api
         .get(apiUrl(ApiEndpoints.plugin_panel_list), {
           params: {
