@@ -42,7 +42,7 @@ export function usePluginPanels({
   const { isFetching, data } = useQuery({
     enabled: pluginPanelsEnabled && !!targetModel,
     queryKey: [targetModel, targetId],
-    queryFn: () => {
+    queryFn: async () => {
       if (!pluginPanelsEnabled || !targetModel) {
         return Promise.resolve([]);
       }
