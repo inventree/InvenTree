@@ -6,6 +6,8 @@ from import_export import widgets
 from import_export.admin import ImportExportModelAdmin
 from import_export.fields import Field
 
+import company.serializers
+import importer.admin
 from InvenTree.admin import InvenTreeResource
 from part.models import Part
 
@@ -14,7 +16,6 @@ from .models import (
     Company,
     Contact,
     ManufacturerPart,
-    ManufacturerPartAttachment,
     ManufacturerPartParameter,
     SupplierPart,
     SupplierPriceBreak,
@@ -34,9 +35,10 @@ class CompanyResource(InvenTreeResource):
 
 
 @admin.register(Company)
-class CompanyAdmin(ImportExportModelAdmin):
+class CompanyAdmin(importer.admin.DataExportAdmin, ImportExportModelAdmin):
     """Admin class for the Company model."""
 
+    serializer_class = company.serializers.CompanySerializer
     resource_class = CompanyResource
 
     list_display = ('name', 'website', 'contact')
@@ -118,15 +120,6 @@ class ManufacturerPartAdmin(ImportExportModelAdmin):
     search_fields = ['manufacturer__name', 'part__name', 'MPN']
 
     autocomplete_fields = ('part', 'manufacturer')
-
-
-@admin.register(ManufacturerPartAttachment)
-class ManufacturerPartAttachmentAdmin(ImportExportModelAdmin):
-    """Admin class for ManufacturerPartAttachment model."""
-
-    list_display = ('manufacturer_part', 'attachment', 'comment')
-
-    autocomplete_fields = ('manufacturer_part',)
 
 
 class ManufacturerPartParameterResource(InvenTreeResource):

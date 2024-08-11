@@ -11,6 +11,8 @@
 # Note: Database configuration options can also be specified from environmental variables,
 #       with the prefix INVENTREE_DB_
 #       e.g INVENTREE_DB_NAME / INVENTREE_DB_USER / INVENTREE_DB_PASSWORD
+# Do not change this section if you are using the package - use `inventree config` instead
+# TO MAINTAINERS: Do not change database strings
 database:
   # --- Available options: ---
   # ENGINE: Database engine. Selection from:
@@ -26,7 +28,7 @@ database:
 # Set debug to False to run in production mode, or use the environment variable INVENTREE_DEBUG
 debug: True
 
-# Set to False to disable the admin interfac, or use the environment variable INVENTREE_ADMIN_ENABLED
+# Set to False to disable the admin interface, or use the environment variable INVENTREE_ADMIN_ENABLED
 #admin_enabled: True
 
 # Set the admin URL, or use the environment variable INVENTREE_ADMIN_URL

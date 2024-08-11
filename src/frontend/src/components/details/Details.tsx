@@ -1,15 +1,12 @@
 import { t } from '@lingui/macro';
 import {
-  ActionIcon,
   Anchor,
   Badge,
-  CopyButton,
   Paper,
   Skeleton,
   Stack,
   Table,
-  Text,
-  Tooltip
+  Text
 } from '@mantine/core';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { getValueAtPath } from 'mantine-datatable';
@@ -24,22 +21,12 @@ import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
+import { CopyButton } from '../buttons/CopyButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
 import { getModelInfo } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
-
-export type PartIconsType = {
-  assembly: boolean;
-  template: boolean;
-  component: boolean;
-  trackable: boolean;
-  purchaseable: boolean;
-  saleable: boolean;
-  virtual: boolean;
-  active: boolean;
-};
 
 export type DetailsField =
   | {
@@ -59,7 +46,7 @@ export type DetailsField =
     );
 
 type BadgeType = 'owner' | 'user' | 'group';
-type ValueFormatterReturn = string | number | null;
+type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
   type: 'string' | 'text';
@@ -135,11 +122,11 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
             case 200:
               return response.data;
             default:
-              return null;
+              return {};
           }
         })
         .catch(() => {
-          return null;
+          return {};
         });
     }
   });
@@ -148,7 +135,9 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
 
   // Rendering a user's rame for the badge
   function _render_name() {
-    if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
+    if (!data) {
+      return '';
+    } else if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
       if (data.first_name || data.last_name) {
         return `${data.first_name} ${data.last_name}`;
       } else {
@@ -169,7 +158,7 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
           variant="filled"
           style={{ display: 'flex', alignItems: 'center' }}
         >
-          {data.name ?? _render_name()}
+          {data?.name ?? _render_name()}
         </Badge>
         <InvenTreeIcon icon={type === 'user' ? type : data.label} />
       </div>
@@ -334,26 +323,7 @@ function StatusValue(props: Readonly<FieldProps>) {
 }
 
 function CopyField({ value }: { value: string }) {
-  return (
-    <CopyButton value={value}>
-      {({ copied, copy }) => (
-        <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
-          <ActionIcon
-            color={copied ? 'teal' : 'gray'}
-            onClick={copy}
-            variant="transparent"
-            size="sm"
-          >
-            {copied ? (
-              <InvenTreeIcon icon="check" />
-            ) : (
-              <InvenTreeIcon icon="copy" />
-            )}
-          </ActionIcon>
-        </Tooltip>
-      )}
-    </CopyButton>
-  );
+  return <CopyButton value={value} />;
 }
 
 export function DetailsTableField({
@@ -398,10 +368,10 @@ export function DetailsTableField({
       >
         <InvenTreeIcon icon={field.icon ?? (field.name as InvenTreeIconType)} />
       </Table.Td>
-      <Table.Td style={{ maxWidth: '65%' }}>
+      <Table.Td style={{ maxWidth: '65%', lineBreak: 'auto' }}>
         <Text>{field.label}</Text>
       </Table.Td>
-      <Table.Td style={{}}>
+      <Table.Td style={{ lineBreak: 'anywhere' }}>
         <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
       <Table.Td style={{ width: '50' }}>

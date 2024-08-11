@@ -258,7 +258,6 @@ class RuleSet(models.Model):
                 'part_partpricing',
                 'part_bomitem',
                 'part_bomitemsubstitute',
-                'part_partattachment',
                 'part_partsellpricebreak',
                 'part_partinternalpricebreak',
                 'part_parttesttemplate',
@@ -270,13 +269,11 @@ class RuleSet(models.Model):
                 'company_supplierpart',
                 'company_manufacturerpart',
                 'company_manufacturerpartparameter',
-                'company_manufacturerpartattachment',
             ],
             'stocktake': ['part_partstocktake', 'part_partstocktakereport'],
             'stock_location': ['stock_stocklocation', 'stock_stocklocationtype'],
             'stock': [
                 'stock_stockitem',
-                'stock_stockitemattachment',
                 'stock_stockitemtracking',
                 'stock_stockitemtestresult',
             ],
@@ -288,13 +285,11 @@ class RuleSet(models.Model):
                 'build_build',
                 'build_builditem',
                 'build_buildline',
-                'build_buildorderattachment',
                 'stock_stockitem',
                 'stock_stocklocation',
             ],
             'purchase_order': [
                 'company_company',
-                'company_companyattachment',
                 'company_contact',
                 'company_address',
                 'company_manufacturerpart',
@@ -302,31 +297,26 @@ class RuleSet(models.Model):
                 'company_supplierpart',
                 'company_supplierpricebreak',
                 'order_purchaseorder',
-                'order_purchaseorderattachment',
                 'order_purchaseorderlineitem',
                 'order_purchaseorderextraline',
             ],
             'sales_order': [
                 'company_company',
-                'company_companyattachment',
                 'company_contact',
                 'company_address',
                 'order_salesorder',
                 'order_salesorderallocation',
-                'order_salesorderattachment',
                 'order_salesorderlineitem',
                 'order_salesorderextraline',
                 'order_salesordershipment',
             ],
             'return_order': [
                 'company_company',
-                'company_companyattachment',
                 'company_contact',
                 'company_address',
                 'order_returnorder',
                 'order_returnorderlineitem',
                 'order_returnorderextraline',
-                'order_returnorderattachment',
             ],
         }
 
@@ -344,6 +334,7 @@ class RuleSet(models.Model):
             'admin_logentry',
             'contenttypes_contenttype',
             # Models which currently do not require permissions
+            'common_attachment',
             'common_colortheme',
             'common_customunit',
             'common_inventreesetting',
@@ -366,6 +357,10 @@ class RuleSet(models.Model):
             'django_q_task',
             'django_q_schedule',
             'django_q_success',
+            # Importing
+            'importer_dataimportsession',
+            'importer_dataimportcolumnmap',
+            'importer_dataimportrow',
         ]
 
     RULESET_CHANGE_INHERIT = [('part', 'partparameter'), ('part', 'bomitem')]
@@ -394,7 +389,7 @@ class RuleSet(models.Model):
     )
 
     can_view = models.BooleanField(
-        verbose_name=_('View'), default=True, help_text=_('Permission to view items')
+        verbose_name=_('View'), default=False, help_text=_('Permission to view items')
     )
 
     can_add = models.BooleanField(
@@ -414,7 +409,7 @@ class RuleSet(models.Model):
     )
 
     @classmethod
-    def check_table_permission(cls, user, table, permission):
+    def check_table_permission(cls, user: User, table, permission):
         """Check if the provided user has the specified permission against the table."""
         # Superuser knows no bounds
         if user.is_superuser:
@@ -673,7 +668,7 @@ def update_group_roles(group, debug=False):
                         )
 
 
-def clear_user_role_cache(user):
+def clear_user_role_cache(user: User):
     """Remove user role permission information from the cache.
 
     - This function is called whenever the user / group is updated
@@ -683,30 +678,11 @@ def clear_user_role_cache(user):
     """
     for role in RuleSet.get_ruleset_models().keys():
         for perm in ['add', 'change', 'view', 'delete']:
-            key = f'role_{user}_{role}_{perm}'
+            key = f'role_{user.pk}_{role}_{perm}'
             cache.delete(key)
 
 
-def get_user_roles(user):
-    """Return all roles available to a given user."""
-    roles = set()
-
-    for group in user.groups.all():
-        for rule in group.rule_sets.all():
-            name = rule.name
-            if rule.can_view:
-                roles.add(f'{name}.view')
-            if rule.can_add:
-                roles.add(f'{name}.add')
-            if rule.can_change:
-                roles.add(f'{name}.change')
-            if rule.can_delete:
-                roles.add(f'{name}.delete')
-
-    return roles
-
-
-def check_user_role(user, role, permission):
+def check_user_role(user: User, role, permission):
     """Check if a user has a particular role:permission combination.
 
     If the user is a superuser, this will return True
@@ -715,11 +691,11 @@ def check_user_role(user, role, permission):
         return True
 
     # First, check the cache
-    key = f'role_{user}_{role}_{permission}'
+    key = f'role_{user.pk}_{role}_{permission}'
 
     try:
         result = cache.get(key)
-    except Exception:
+    except Exception:  # pragma: no cover
         result = None
 
     if result is not None:
@@ -750,7 +726,7 @@ def check_user_role(user, role, permission):
     # Save result to cache
     try:
         cache.set(key, result, timeout=3600)
-    except Exception:
+    except Exception:  # pragma: no cover
         pass
 
     return result

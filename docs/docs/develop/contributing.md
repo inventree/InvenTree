@@ -125,7 +125,7 @@ The core software modules are targeting the following versions:
 | Python | {{ config.extra.min_python_version }} | Minimum required version |
 | Invoke | {{ config.extra.min_invoke_version }} | Minimum required version |
 | Django | {{ config.extra.django_version }} | Pinned version |
-| Node | 18 | Only needed for frontend development |
+| Node | 20 | Only needed for frontend development |
 
 Any other software dependencies are handled by the project package config.
 

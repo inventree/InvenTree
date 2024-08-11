@@ -31,6 +31,9 @@ class Migration(migrations.Migration):
                 ('is_customer', models.BooleanField(default=False, help_text='Do you sell items to this company?')),
                 ('is_supplier', models.BooleanField(default=True, help_text='Do you purchase items from this company?')),
             ],
+            options={
+                'verbose_name': 'Company',
+            }
         ),
         migrations.CreateModel(
             name='Contact',
@@ -41,6 +44,9 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(blank=True, max_length=254)),
                 ('role', models.CharField(blank=True, max_length=100)),
             ],
+            options={
+                'verbose_name': 'Contact',
+            }
         ),
         migrations.CreateModel(
             name='SupplierPart',
@@ -60,6 +66,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'part_supplierpart',
+                'verbose_name': 'Supplier Part',
             },
         ),
         migrations.CreateModel(
@@ -71,6 +78,7 @@ class Migration(migrations.Migration):
                 ('part', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='pricebreaks', to='company.SupplierPart')),
             ],
             options={
+                'verbose_name': 'Supplier Price Break',
                 'db_table': 'part_supplierpricebreak',
             },
         ),

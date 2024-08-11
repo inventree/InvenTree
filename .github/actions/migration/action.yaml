@@ -13,5 +13,5 @@ runs:
           invoke export-records -f data.json
           python3 ./src/backend/InvenTree/manage.py flush --noinput
           invoke migrate
-          invoke import-records -f data.json
-          invoke import-records -f data.json
+          invoke import-records -c -f data.json
+          invoke import-records -c -f data.json

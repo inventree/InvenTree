@@ -1,11 +1,51 @@
 """Validation helpers for common models."""
 
 import re
+from typing import Union
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 
+import common.icons
 from common.settings import get_global_setting
+
+
+def attachment_model_types():
+    """Return a list of valid attachment model choices."""
+    import InvenTree.models
+
+    return list(
+        InvenTree.helpers_model.getModelsWithMixin(
+            InvenTree.models.InvenTreeAttachmentMixin
+        )
+    )
+
+
+def attachment_model_options():
+    """Return a list of options for models which support attachments."""
+    return [
+        (model.__name__.lower(), model._meta.verbose_name)
+        for model in attachment_model_types()
+    ]
+
+
+def attachment_model_class_from_label(label: str):
+    """Return the model class for the given label."""
+    if not label:
+        raise ValidationError(_('No attachment model type provided'))
+
+    for model in attachment_model_types():
+        if model.__name__.lower() == label.lower():
+            return model
+
+    raise ValidationError(_('Invalid attachment model type') + f": '{label}'")
+
+
+def validate_attachment_model_type(value):
+    """Ensure that the provided attachment model is valid."""
+    model_names = [el[0] for el in attachment_model_options()]
+    if value not in model_names:
+        raise ValidationError('Model type does not support attachments')
 
 
 def validate_notes_model_type(value):
@@ -65,3 +105,11 @@ def validate_email_domains(setting):
             raise ValidationError(_('An empty domain is not allowed.'))
         if not re.match(r'^@[a-zA-Z0-9\.\-_]+$', domain):
             raise ValidationError(_(f'Invalid domain name: {domain}'))
+
+
+def validate_icon(name: Union[str, None]):
+    """Validate the provided icon name, and ignore if empty."""
+    if name == '' or name is None:
+        return
+
+    common.icons.validate_icon(name)

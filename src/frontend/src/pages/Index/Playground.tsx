@@ -27,7 +27,7 @@ import {
 } from '../../hooks/UseForm';
 
 // Generate some example forms using the modal API forms interface
-const fields = partCategoryFields({});
+const fields = partCategoryFields();
 
 function ApiFormsPlayground() {
   const editCategory = useEditApiFormModal({
@@ -54,20 +54,6 @@ function ApiFormsPlayground() {
     pk: 1,
     title: 'Edit Part',
     fields: editPartFields
-  });
-
-  const newAttachment = useCreateApiFormModal({
-    url: ApiEndpoints.part_attachment_list,
-    title: 'Create Attachment',
-    fields: {
-      part: {},
-      attachment: {},
-      comment: {}
-    },
-    initialData: {
-      part: 1
-    },
-    successMessage: 'Attachment uploaded'
   });
 
   const [active, setActive] = useState(true);
@@ -130,9 +116,6 @@ function ApiFormsPlayground() {
         <Button onClick={() => editCategory.open()}>Edit Category</Button>
         {editCategory.modal}
 
-        <Button onClick={() => newAttachment.open()}>Create Attachment</Button>
-        {newAttachment.modal}
-
         <Button onClick={() => openCreatePart()}>Create Part new Modal</Button>
         {createPartModal}
       </Group>
@@ -163,16 +146,14 @@ function ApiFormsPlayground() {
 function StatusLabelPlayground() {
   const [status, setStatus] = useState<string>('10');
   return (
-    <>
-      <Group>
-        <Text>Stock Status</Text>
-        <TextInput
-          value={status}
-          onChange={(event) => setStatus(event.currentTarget.value)}
-        />
-        <StatusRenderer type={ModelType.stockitem} status={status} />
-      </Group>
-    </>
+    <Group>
+      <Text>Stock Status</Text>
+      <TextInput
+        value={status}
+        onChange={(event) => setStatus(event.currentTarget.value)}
+      />
+      <StatusRenderer type={ModelType.stockitem} status={status} />
+    </Group>
   );
 }
 
@@ -219,14 +200,12 @@ function PlaygroundArea({
   content: ReactNode;
 }) {
   return (
-    <>
-      <Accordion.Item value={`accordion-playground-${title}`}>
-        <Accordion.Control>
-          <Text>{title}</Text>
-        </Accordion.Control>
-        <Accordion.Panel>{content}</Accordion.Panel>
-      </Accordion.Item>
-    </>
+    <Accordion.Item value={`accordion-playground-${title}`}>
+      <Accordion.Control>
+        <Text>{title}</Text>
+      </Accordion.Control>
+      <Accordion.Panel>{content}</Accordion.Panel>
+    </Accordion.Item>
   );
 }
 

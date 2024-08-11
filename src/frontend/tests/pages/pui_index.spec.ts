@@ -49,22 +49,16 @@ test('PUI - Pages - Index - Playground', async ({ page }) => {
 
   // EditCategory
   await page.getByRole('button', { name: 'Edit Category' }).click();
-  await page.locator('.css-fehojk-Input2').first().click();
+  await page.getByLabel('related-field-parent').click();
   await page.getByText('Category 0').click();
   await page
     .getByLabel('Edit Category')
     .getByRole('button', { name: 'Cancel' })
     .click();
 
-  // Create Attachment
-  await page.getByRole('button', { name: 'Create Attachment' }).click();
-  await page.getByLabel('Attachment *').waitFor();
-  await page.getByRole('button', { name: 'Cancel' }).click();
-  // TODO: actually create an attachment
-
   // Create Part new Modal
   await page.getByRole('button', { name: 'Create Part new Modal' }).click();
-  await page.locator('.css-fehojk-Input2').first().click();
+  await page.getByLabel('related-field-category').click();
   await page.getByText('Category 0').click();
   await page
     .getByLabel('Create part')

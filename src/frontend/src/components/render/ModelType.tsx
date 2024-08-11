@@ -113,6 +113,11 @@ export const ModelInformationDict: ModelDict = {
     cui_detail: '/build/line/:pk/',
     api_endpoint: ApiEndpoints.build_line_list
   },
+  builditem: {
+    label: t`Build Item`,
+    label_multiple: t`Build Items`,
+    api_endpoint: ApiEndpoints.build_item_list
+  },
   company: {
     label: t`Company`,
     label_multiple: t`Companies`,
@@ -138,7 +143,7 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.purchase_order_list,
     admin_url: '/order/purchaseorder/'
   },
-  purchaseorderline: {
+  purchaseorderlineitem: {
     label: t`Purchase Order Line`,
     label_multiple: t`Purchase Order Lines`,
     api_endpoint: ApiEndpoints.purchase_order_line_list
@@ -168,6 +173,11 @@ export const ModelInformationDict: ModelDict = {
     api_endpoint: ApiEndpoints.return_order_list,
     admin_url: '/order/returnorder/'
   },
+  returnorderlineitem: {
+    label: t`Return Order Line Item`,
+    label_multiple: t`Return Order Line Items`,
+    api_endpoint: ApiEndpoints.return_order_line_list
+  },
   address: {
     label: t`Address`,
     label_multiple: t`Addresses`,
@@ -195,6 +205,21 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/user',
     url_detail: '/user/:pk/',
     api_endpoint: ApiEndpoints.user_list
+  },
+  group: {
+    label: t`Group`,
+    label_multiple: t`Groups`,
+    url_overview: '/user/group',
+    url_detail: '/user/group-:pk',
+    api_endpoint: ApiEndpoints.group_list,
+    admin_url: '/auth/group/'
+  },
+  importsession: {
+    label: t`Import Session`,
+    label_multiple: t`Import Sessions`,
+    url_overview: '/import',
+    url_detail: '/import/:pk/',
+    api_endpoint: ApiEndpoints.import_session_list
   },
   labeltemplate: {
     label: t`Label Template`,

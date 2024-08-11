@@ -12,6 +12,29 @@ from users.models import ApiToken
 class UserAPITests(InvenTreeAPITestCase):
     """Tests for user API endpoints."""
 
+    def test_user_options(self):
+        """Tests for the User OPTIONS request."""
+        self.assignRole('admin.add')
+        response = self.options(reverse('api-user-list'), expected_code=200)
+
+        fields = response.data['actions']['POST']
+
+        # Check some of the field values
+        self.assertEqual(fields['username']['label'], 'Username')
+
+        self.assertEqual(fields['email']['label'], 'Email')
+        self.assertEqual(fields['email']['help_text'], 'Email address of the user')
+
+        self.assertEqual(fields['is_active']['label'], 'Active')
+        self.assertEqual(
+            fields['is_active']['help_text'], 'Is this user account active'
+        )
+
+        self.assertEqual(fields['is_staff']['label'], 'Staff')
+        self.assertEqual(
+            fields['is_staff']['help_text'], 'Does this user have staff permissions'
+        )
+
     def test_user_api(self):
         """Tests for User API endpoints."""
         response = self.get(reverse('api-user-list'), expected_code=200)
@@ -47,6 +70,25 @@ class UserAPITests(InvenTreeAPITestCase):
         )
 
         self.assertIn('name', response.data)
+
+    def test_logout(self):
+        """Test api logout endpoint."""
+        token_key = self.get(url=reverse('api-token')).data['token']
+        self.client.logout()
+        self.client.credentials(HTTP_AUTHORIZATION='Token ' + token_key)
+
+        self.post(reverse('api-logout'), expected_code=200)
+        self.get(reverse('api-token'), expected_code=401)
+
+    def test_login_redirect(self):
+        """Test login redirect endpoint."""
+        response = self.get(reverse('api-login-redirect'), expected_code=302)
+        self.assertEqual(response.url, '/index/')
+
+        # PUI
+        self.put(reverse('api-ui-preference'), {'preferred_method': 'pui'})
+        response = self.get(reverse('api-login-redirect'), expected_code=302)
+        self.assertEqual(response.url, '/platform/logged-in/')
 
 
 class UserTokenTests(InvenTreeAPITestCase):
@@ -156,3 +198,13 @@ class UserTokenTests(InvenTreeAPITestCase):
         token.save()
 
         self.client.get(me, expected_code=200)
+
+    def test_buildin_token(self):
+        """Test the built-in token authentication."""
+        response = self.post(
+            reverse('rest_login'),
+            {'username': self.username, 'password': self.password},
+            expected_code=200,
+        )
+        self.assertIn('key', response.data)
+        self.assertTrue(response.data['key'].startswith('inv-'))

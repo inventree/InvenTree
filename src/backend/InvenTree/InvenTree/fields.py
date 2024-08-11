@@ -33,7 +33,7 @@ class InvenTreeRestURLField(RestURLField):
 
     def run_validation(self, data=empty):
         """Override default validation behaviour for this field type."""
-        strict_urls = get_global_setting('INVENTREE_STRICT_URLS', True, cache=False)
+        strict_urls = get_global_setting('INVENTREE_STRICT_URLS', cache=False)
 
         if not strict_urls and data is not empty and '://' not in data:
             # Validate as if there were a schema provided

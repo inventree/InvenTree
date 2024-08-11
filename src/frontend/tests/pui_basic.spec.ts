@@ -1,5 +1,5 @@
 import { expect, test } from './baseFixtures.js';
-import { baseUrl, loginUrl, user } from './defaults.js';
+import { baseUrl, user } from './defaults.js';
 import { doLogin, doQuickLogin } from './login.js';
 
 test('PUI - Basic Login Test', async ({ page }) => {
@@ -54,4 +54,5 @@ test('PUI - Quick Login Test', async ({ page }) => {
   // Logout (via URL)
   await page.goto(`${baseUrl}/logout/`);
   await page.waitForURL('**/platform/login');
+  await page.getByLabel('username');
 });

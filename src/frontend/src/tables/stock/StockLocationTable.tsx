@@ -1,11 +1,14 @@
 import { t } from '@lingui/macro';
+import { Group } from '@mantine/core';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { stockLocationFields } from '../../forms/StockForms';
+import { useFilters } from '../../hooks/UseFilter';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -26,6 +29,14 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   const table = useTable('stocklocation');
   const user = useUserState();
 
+  const locationTypeFilters = useFilters({
+    url: apiUrl(ApiEndpoints.stock_location_type_list),
+    transform: (item) => ({
+      value: item.pk,
+      label: item.name
+    })
+  });
+
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
@@ -35,27 +46,38 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
       },
       {
         name: 'structural',
-        label: t`structural`,
+        label: t`Structural`,
         description: t`Show structural locations`
       },
       {
         name: 'external',
-        label: t`external`,
+        label: t`External`,
         description: t`Show external locations`
       },
       {
         name: 'has_location_type',
         label: t`Has location type`
+      },
+      {
+        name: 'location_type',
+        label: t`Location Type`,
+        description: t`Filter by location type`,
+        choices: locationTypeFilters.choices
       }
-      // TODO: location_type
     ];
-  }, []);
+  }, [locationTypeFilters.choices]);
 
   const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'name',
-        switchable: false
+        switchable: false,
+        render: (record: any) => (
+          <Group gap="xs">
+            {record.icon && <ApiIcon name={record.icon} />}
+            {record.name}
+          </Group>
+        )
       },
       DescriptionColumn({}),
       {
@@ -83,7 +105,8 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
   const newLocation = useCreateApiFormModal({
     url: ApiEndpoints.stock_location_list,
     title: t`Add Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
+    focus: 'name',
     initialData: {
       parent: parentId
     },
@@ -98,7 +121,7 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
     url: ApiEndpoints.stock_location_list,
     pk: selectedLocation,
     title: t`Edit Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
     onFormSuccess: (record: any) => table.updateRecord(record)
   });
 
@@ -145,7 +168,8 @@ export function StockLocationTable({ parentId }: { parentId?: any }) {
           enableLabels: true,
           enableReports: true,
           params: {
-            parent: parentId
+            parent: parentId,
+            top_level: parentId === undefined ? true : undefined
           },
           tableFilters: tableFilters,
           tableActions: tableActions,

@@ -9,7 +9,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import FieldError, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q, Sum
@@ -20,6 +20,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
+from djmoney.contrib.exchange.models import convert_money
 from mptt.managers import TreeManager
 from mptt.models import MPTTModel, TreeForeignKey
 from taggit.managers import TaggableManager
@@ -32,12 +33,15 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
+from build import models as BuildModels
+from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from order.status_codes import SalesOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
+from stock import models as StockModels
 from stock.generators import generate_batch_code
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
@@ -85,6 +89,7 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Default icon for all locations that have no icon set (optional)'),
+        validators=[validate_icon],
     )
 
 
@@ -116,6 +121,8 @@ class StockLocation(
 
     ITEM_PARENT_KEY = 'location'
 
+    EXTRA_PATH_FIELDS = ['icon']
+
     objects = StockLocationManager()
 
     class Meta:
@@ -141,11 +148,16 @@ class StockLocation(
         """Return API url."""
         return reverse('api-location-list')
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SL'
+
     def report_context(self):
         """Return report context data for this StockLocation."""
         return {
             'location': self,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'parent': self.parent,
             'stock_location': self,
             'stock_items': self.get_stock_items(),
@@ -157,6 +169,7 @@ class StockLocation(
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
         db_column='icon',
+        validators=[validate_icon],
     )
 
     owner = models.ForeignKey(
@@ -205,6 +218,11 @@ class StockLocation(
 
         if self.location_type:
             return self.location_type.icon
+
+        if default_icon := get_global_setting(
+            'STOCK_LOCATION_DEFAULT_ICON', cache=True
+        ):
+            return default_icon
 
         return ''
 
@@ -316,6 +334,7 @@ def default_delete_on_deplete():
 
 
 class StockItem(
+    InvenTree.models.InvenTreeAttachmentMixin,
     InvenTree.models.InvenTreeBarcodeMixin,
     InvenTree.models.InvenTreeNotesMixin,
     report.mixins.InvenTreeReportMixin,
@@ -365,6 +384,11 @@ class StockItem(
         """Custom API instance filters."""
         return {'parent': {'exclude_tree': self.pk}}
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SI'
+
     def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
         keys = []
@@ -395,7 +419,7 @@ class StockItem(
             'item': self,
             'name': self.part.full_name,
             'part': self.part,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'qr_url': self.get_absolute_url(),
             'parameters': self.part.parameters_map(),
             'quantity': InvenTree.helpers.normalize(self.quantity),
@@ -712,8 +736,6 @@ class StockItem(
                     self.delete_on_deplete = False
 
         except PartModels.Part.DoesNotExist:
-            # This gets thrown if self.supplier_part is null
-            # TODO - Find a test than can be performed...
             pass
 
         # Ensure that the item cannot be assigned to itself
@@ -1107,7 +1129,11 @@ class StockItem(
 
         item.add_tracking_entry(code, user, deltas, notes=notes)
 
-        trigger_event('stockitem.assignedtocustomer', id=self.id, customer=customer.id)
+        trigger_event(
+            'stockitem.assignedtocustomer',
+            id=self.id,
+            customer=customer.id if customer else None,
+        )
 
         # Return the reference to the stock item
         return item
@@ -1705,6 +1731,12 @@ class StockItem(
 
         parent_id = self.parent.pk if self.parent else None
 
+        # Keep track of pricing data for the merged data
+        pricing_data = []
+
+        if self.purchase_price:
+            pricing_data.append([self.purchase_price, self.quantity])
+
         for other in other_items:
             # If the stock item cannot be merged, return
             if not self.can_merge(other, raise_error=raise_error, **kwargs):
@@ -1713,10 +1745,14 @@ class StockItem(
                 )
                 return
 
+        for other in other_items:
             tree_ids.add(other.tree_id)
 
-        for other in other_items:
             self.quantity += other.quantity
+
+            if other.purchase_price:
+                # Only add pricing data if it is available
+                pricing_data.append([other.purchase_price, other.quantity])
 
             # Any "build order allocations" for the other item must be assigned to this one
             for allocation in other.allocations.all():
@@ -1743,7 +1779,31 @@ class StockItem(
             deltas={'location': location.pk if location else None},
         )
 
+        # Update the location of the item
         self.location = location
+
+        # Update the unit price - calculate weighted average of available pricing data
+        if len(pricing_data) > 0:
+            unit_price, quantity = pricing_data[0]
+
+            # Use the first currency as the base currency
+            base_currency = unit_price.currency
+
+            total_price = unit_price * quantity
+
+            for price, qty in pricing_data[1:]:
+                # Attempt to convert the price to the base currency
+                try:
+                    price = convert_money(price, base_currency)
+                    total_price += price * qty
+                    quantity += qty
+                except Exception:
+                    # Skip this entry, cannot convert to base currency
+                    continue
+
+            if quantity > 0:
+                self.purchase_price = total_price / quantity
+
         self.save()
 
         # Rebuild stock trees as required
@@ -2255,23 +2315,6 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
         instance.part.schedule_pricing_update(create=True)
 
 
-class StockItemAttachment(InvenTree.models.InvenTreeAttachment):
-    """Model for storing file attachments against a StockItem object."""
-
-    @staticmethod
-    def get_api_url():
-        """Return API url."""
-        return reverse('api-stock-attachment-list')
-
-    def getSubdir(self):
-        """Override attachment location."""
-        return os.path.join('stock_files', str(self.stock_item.id))
-
-    stock_item = models.ForeignKey(
-        StockItem, on_delete=models.CASCADE, related_name='attachments'
-    )
-
-
 class StockItemTracking(InvenTree.models.InvenTreeModel):
     """Stock tracking entry - used for tracking history of a particular StockItem.
 
@@ -2291,6 +2334,11 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
         user: The user associated with this tracking info
         deltas: The changes associated with this history item
     """
+
+    class Meta:
+        """Meta data for the StockItemTracking class."""
+
+        verbose_name = _('Stock Item Tracking')
 
     @staticmethod
     def get_api_url():
@@ -2360,6 +2408,11 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         date: Date the test result was recorded
     """
 
+    class Meta:
+        """Meta data for the StockItemTestResult class."""
+
+        verbose_name = _('Stock Item Test Result')
+
     def __str__(self):
         """Return string representation."""
         return f'{self.test_name} - {self.result}'
@@ -2407,6 +2460,67 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     def key(self):
         """Return key for test."""
         return InvenTree.helpers.generateTestKey(self.test_name)
+
+    def calculate_test_statistics_for_test_template(
+        self, query_base, test_template, ret, start, end
+    ):
+        """Helper function to calculate the passed/failed/total tests count per test template type."""
+        query = query_base & Q(template=test_template.pk)
+        if start is not None and end is not None:
+            query = query & Q(started_datetime__range=(start, end))
+        elif start is not None and end is None:
+            query = query & Q(started_datetime__gt=start)
+        elif start is None and end is not None:
+            query = query & Q(started_datetime__lt=end)
+
+        passed = StockModels.StockItemTestResult.objects.filter(
+            query & Q(result=True)
+        ).count()
+        failed = StockModels.StockItemTestResult.objects.filter(
+            query & ~Q(result=True)
+        ).count()
+        if test_template.test_name not in ret:
+            ret[test_template.test_name] = {'passed': 0, 'failed': 0, 'total': 0}
+        ret[test_template.test_name]['passed'] += passed
+        ret[test_template.test_name]['failed'] += failed
+        ret[test_template.test_name]['total'] += passed + failed
+        ret['total']['passed'] += passed
+        ret['total']['failed'] += failed
+        ret['total']['total'] += passed + failed
+        return ret
+
+    def build_test_statistics(self, build_order_pk, start, end):
+        """Generate a statistics matrix for each test template based on the test executions result counts."""
+        build = BuildModels.Build.objects.get(pk=build_order_pk)
+        if not build or not build.part.trackable:
+            return {}
+
+        test_templates = build.part.getTestTemplates()
+        ret = {'total': {'passed': 0, 'failed': 0, 'total': 0}}
+        for build_item in build.get_build_outputs():
+            for test_template in test_templates:
+                query_base = Q(stock_item=build_item)
+                ret = self.calculate_test_statistics_for_test_template(
+                    query_base, test_template, ret, start, end
+                )
+        return ret
+
+    def part_test_statistics(self, part_pk, start, end):
+        """Generate a statistics matrix for each test template based on the test executions result counts."""
+        part = PartModels.Part.objects.get(pk=part_pk)
+
+        if not part or not part.trackable:
+            return {}
+
+        test_templates = part.getTestTemplates()
+        ret = {'total': {'passed': 0, 'failed': 0, 'total': 0}}
+        for bo in part.stock_entries():
+            for test_template in test_templates:
+                query_base = Q(stock_item=bo)
+                ret = self.calculate_test_statistics_for_test_template(
+                    query_base, test_template, ret, start, end
+                )
+        return ret
 
     stock_item = models.ForeignKey(
         StockItem, on_delete=models.CASCADE, related_name='test_results'

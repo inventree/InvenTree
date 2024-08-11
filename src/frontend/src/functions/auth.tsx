@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
+import { NavigateFunction } from 'react-router-dom';
 
 import { api, setApiDefaults } from '../App';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
@@ -11,14 +12,42 @@ import { fetchGlobalStates } from '../states/states';
 import { showLoginNotification } from './notifications';
 
 /**
+ * sends a request to the specified url from a form. this will change the window location.
+ * @param {string} path the path to send the post request to
+ * @param {object} params the parameters to add to the url
+ * @param {string} [method=post] the method to use on the form
+ *
+ * Source https://stackoverflow.com/questions/133925/javascript-post-request-like-a-form-submit/133997#133997
+ */
+
+function post(path: string, params: any, method = 'post') {
+  const form = document.createElement('form');
+  form.method = method;
+  form.action = path;
+
+  for (const key in params) {
+    if (params.hasOwnProperty(key)) {
+      const hiddenField = document.createElement('input');
+      hiddenField.type = 'hidden';
+      hiddenField.name = key;
+      hiddenField.value = params[key];
+
+      form.appendChild(hiddenField);
+    }
+  }
+
+  document.body.appendChild(form);
+  form.submit();
+}
+
+/**
  * Attempt to login using username:password combination.
  * If login is successful, an API token will be returned.
  * This API token is used for any future API requests.
  */
 export const doBasicLogin = async (username: string, password: string) => {
   const { host } = useLocalState.getState();
-  const { clearUserState, setToken, fetchUserState, isLoggedIn } =
-    useUserState.getState();
+  const { clearUserState, setToken, fetchUserState } = useUserState.getState();
 
   if (username.length == 0 || password.length == 0) {
     return;
@@ -50,11 +79,23 @@ export const doBasicLogin = async (username: string, password: string) => {
         }
       }
     })
-    .catch(() => {});
+    .catch((err) => {
+      if (
+        err?.response?.status == 403 &&
+        err?.response?.data?.detail == 'MFA required for this user'
+      ) {
+        post(apiUrl(ApiEndpoints.user_login), {
+          username: username,
+          password: password,
+          csrfmiddlewaretoken: getCsrfCookie(),
+          mfa: true
+        });
+      }
+    });
 
   if (result) {
     await fetchUserState();
-    await fetchGlobalStates();
+    fetchGlobalStates();
   } else {
     clearUserState();
   }
@@ -65,7 +106,7 @@ export const doBasicLogin = async (username: string, password: string) => {
  *
  * @arg deleteToken: If true, delete the token from the server
  */
-export const doLogout = async (navigate: any) => {
+export const doLogout = async (navigate: NavigateFunction) => {
   const { clearUserState, isLoggedIn } = useUserState.getState();
 
   // Logout from the server session

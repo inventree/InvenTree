@@ -2,14 +2,15 @@
  * Common rendering functions for table column data.
  */
 import { t } from '@lingui/macro';
-import { Anchor, Skeleton, Text } from '@mantine/core';
+import { Anchor, Group, Skeleton, Text, Tooltip } from '@mantine/core';
+import { IconExclamationCircle, IconLock } from '@tabler/icons-react';
 
 import { YesNoButton } from '../components/buttons/YesNoButton';
 import { Thumbnail } from '../components/images/Thumbnail';
 import { ProgressBar } from '../components/items/ProgressBar';
 import { TableStatusRenderer } from '../components/render/StatusRenderer';
 import { RenderOwner } from '../components/render/User';
-import { formatCurrency, renderDate } from '../defaults/formatters';
+import { formatCurrency, formatDate } from '../defaults/formatters';
 import { ModelType } from '../enums/ModelType';
 import { resolveItem } from '../functions/conversion';
 import { cancelEvent } from '../functions/events';
@@ -19,10 +20,24 @@ import { ProjectCodeHoverCard } from './TableHoverCard';
 // Render a Part instance within a table
 export function PartColumn(part: any, full_name?: boolean) {
   return part ? (
-    <Thumbnail
-      src={part?.thumbnail ?? part?.image}
-      text={full_name ? part?.full_name : part?.name}
-    />
+    <Group justify="space-between" wrap="nowrap">
+      <Thumbnail
+        src={part?.thumbnail ?? part?.image}
+        text={full_name ? part?.full_name : part?.name}
+      />
+      <Group justify="flex-end" wrap="nowrap" gap="xs">
+        {part?.active == false && (
+          <Tooltip label={t`Part is not active`}>
+            <IconExclamationCircle color="red" size={16} />
+          </Tooltip>
+        )}
+        {part?.locked && (
+          <Tooltip label={t`Part is locked`}>
+            <IconLock size={16} />
+          </Tooltip>
+        )}
+      </Group>
+    </Group>
   ) : (
     <Skeleton />
   );
@@ -148,16 +163,22 @@ export function ProjectCodeColumn(props: TableColumnProps): TableColumn {
 export function StatusColumn({
   model,
   sortable,
-  accessor
+  accessor,
+  title,
+  hidden
 }: {
   model: ModelType;
   sortable?: boolean;
   accessor?: string;
+  hidden?: boolean;
+  title?: string;
 }) {
   return {
     accessor: accessor ?? 'status',
     sortable: sortable ?? true,
-    render: TableStatusRenderer(model)
+    title: title,
+    hidden: hidden,
+    render: TableStatusRenderer(model, accessor ?? 'status')
   };
 }
 
@@ -180,7 +201,7 @@ export function DateColumn(props: TableColumnProps): TableColumn {
     title: t`Date`,
     switchable: true,
     render: (record: any) =>
-      renderDate(resolveItem(record, props.accessor ?? 'date')),
+      formatDate(resolveItem(record, props.accessor ?? 'date')),
     ...props
   };
 }

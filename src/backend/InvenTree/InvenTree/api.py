@@ -8,7 +8,6 @@ from pathlib import Path
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
-from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import OrmQ
@@ -21,9 +20,7 @@ from rest_framework.views import APIView
 
 import InvenTree.version
 import users.models
-from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
-from InvenTree.permissions import RolePermission
 from InvenTree.templatetags.inventree_extras import plugins_info
 from part.models import Part
 from plugin.serializers import MetadataSerializer
@@ -311,8 +308,26 @@ class BulkDeleteMixin:
     - Speed (single API call and DB query)
     """
 
+    def validate_delete(self, queryset, request) -> None:
+        """Perform validation right before deletion.
+
+        Arguments:
+            queryset: The queryset to be deleted
+            request: The request object
+
+        Returns:
+            None
+
+        Raises:
+            ValidationError: If the deletion should not proceed
+        """
+        pass
+
     def filter_delete_queryset(self, queryset, request):
-        """Provide custom filtering for the queryset *before* it is deleted."""
+        """Provide custom filtering for the queryset *before* it is deleted.
+
+        The default implementation does nothing, just returns the queryset.
+        """
         return queryset
 
     def delete(self, request, *args, **kwargs):
@@ -371,6 +386,9 @@ class BulkDeleteMixin:
             if filters:
                 queryset = queryset.filter(**filters)
 
+            # Run a final validation step (should raise an error if the deletion should not proceed)
+            self.validate_delete(queryset, request)
+
             n_deleted = queryset.count()
             queryset.delete()
 
@@ -381,58 +399,6 @@ class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
     """Custom API endpoint which provides BulkDelete functionality in addition to List and Create."""
 
     ...
-
-
-class APIDownloadMixin:
-    """Mixin for enabling a LIST endpoint to be downloaded a file.
-
-    To download the data, add the ?export=<fmt> to the query string.
-
-    The implementing class must provided a download_queryset method,
-    e.g.
-
-    def download_queryset(self, queryset, export_format):
-        dataset = StockItemResource().export(queryset=queryset)
-
-        filedata = dataset.export(export_format)
-
-        filename = 'InvenTree_Stocktake_{date}.{fmt}'.format(
-            date=datetime.now().strftime("%d-%b-%Y"),
-            fmt=export_format
-        )
-
-        return DownloadFile(filedata, filename)
-    """
-
-    def get(self, request, *args, **kwargs):
-        """Generic handler for a download request."""
-        export_format = request.query_params.get('export', None)
-
-        if export_format and export_format in ['csv', 'tsv', 'xls', 'xlsx']:
-            queryset = self.filter_queryset(self.get_queryset())
-            return self.download_queryset(queryset, export_format)
-        # Default to the parent class implementation
-        return super().get(request, *args, **kwargs)
-
-    def download_queryset(self, queryset, export_format):
-        """This function must be implemented to provide a downloadFile request."""
-        raise NotImplementedError('download_queryset method not implemented!')
-
-
-class AttachmentMixin:
-    """Mixin for creating attachment objects, and ensuring the user information is saved correctly."""
-
-    permission_classes = [permissions.IsAuthenticated, RolePermission]
-
-    filter_backends = SEARCH_ORDER_FILTER
-
-    search_fields = ['attachment', 'comment', 'link']
-
-    def perform_create(self, serializer):
-        """Save the user information when a file is uploaded."""
-        attachment = serializer.save()
-        attachment.user = self.request.user
-        attachment.save()
 
 
 class APISearchViewSerializer(serializers.Serializer):

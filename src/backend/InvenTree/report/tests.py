@@ -15,14 +15,14 @@ from PIL import Image
 
 import report.models as report_models
 from build.models import Build
-from common.models import InvenTreeSetting
+from common.models import Attachment, InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from order.models import ReturnOrder, SalesOrder
 from plugin.registry import registry
 from report.models import LabelTemplate, ReportTemplate
 from report.templatetags import barcode as barcode_tags
 from report.templatetags import report as report_tags
-from stock.models import StockItem, StockItemAttachment
+from stock.models import StockItem
 
 
 class ReportTagTest(TestCase):
@@ -185,6 +185,31 @@ class ReportTagTest(TestCase):
         for tz, fmt, expected in tests:
             result = report_tags.format_datetime(time, tz, fmt)
             self.assertEqual(result, expected)
+
+    def test_icon(self):
+        """Test the icon template tag."""
+        for icon in [None, '', 'not:the-correct-format', 'any-non-existent-icon']:
+            self.assertEqual(report_tags.icon(icon), '')
+
+        self.assertEqual(
+            report_tags.icon('ti:package:outline'),
+            f'<i class="icon " style="font-family: inventree-icon-font-ti">{chr(int("eaff", 16))}</i>',
+        )
+        self.assertEqual(
+            report_tags.icon(
+                'ti:package:outline', **{'class': 'my-custom-class my-seconds-class'}
+            ),
+            f'<i class="icon my-custom-class my-seconds-class" style="font-family: inventree-icon-font-ti">{chr(int("eaff", 16))}</i>',
+        )
+
+    def test_include_icon_fonts(self):
+        """Test the include_icon_fonts template tag."""
+        style = report_tags.include_icon_fonts()
+
+        self.assertIn('@font-face {', style)
+        self.assertIn("font-family: 'inventree-icon-font-ti';", style)
+        self.assertIn('tabler-icons/tabler-icons.ttf', style)
+        self.assertIn('.icon {', style)
 
 
 class BarcodeTagTest(TestCase):
@@ -502,7 +527,7 @@ class PrintTestMixins:
             },
             expected_code=201,
             max_query_time=15,
-            max_query_count=1000,  # TODO: Should look into this
+            max_query_count=500 * len(qs),
         )
 
 
@@ -548,7 +573,9 @@ class TestReportTest(PrintTestMixins, ReportTest):
         self.assertEqual(response.data['output'].startswith('/media/report/'), True)
 
         # By default, this should *not* have created an attachment against this stockitem
-        self.assertFalse(StockItemAttachment.objects.filter(stock_item=item).exists())
+        self.assertFalse(
+            Attachment.objects.filter(model_id=item.pk, model_type='stockitem').exists()
+        )
 
         return
         # TODO @matmair - Re-add this test after https://github.com/inventree/InvenTree/pull/7074/files#r1600694356 is resolved
@@ -556,14 +583,16 @@ class TestReportTest(PrintTestMixins, ReportTest):
         InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
 
         response = self.post(
-            url, {'template': report.pk, 'items': [item.pk]}, expected_code=201
+            url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
         )
 
         # There should be a link to the generated PDF
         self.assertEqual(response.data['output'].startswith('/media/report/'), True)
 
         # Check that a report has been uploaded
-        attachment = StockItemAttachment.objects.filter(stock_item=item).first()
+        attachment = Attachment.objects.filter(
+            model_id=item.pk, model_type='stockitem'
+        ).first()
         self.assertIsNotNone(attachment)
 
     def test_mdl_build(self):

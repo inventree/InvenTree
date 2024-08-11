@@ -1,11 +1,26 @@
 """Main entry point for the documentation build process."""
 
+import json
 import os
 import subprocess
 import textwrap
 
 import requests
 import yaml
+
+# Cached settings dict values
+global GLOBAL_SETTINGS
+global USER_SETTINGS
+
+# Read in the InvenTree settings file
+here = os.path.dirname(__file__)
+settings_file = os.path.join(here, 'inventree_settings.json')
+
+with open(settings_file, 'r') as sf:
+    settings = json.load(sf)
+
+    GLOBAL_SETTINGS = settings['global']
+    USER_SETTINGS = settings['user']
 
 
 def get_repo_url(raw=False):
@@ -54,11 +69,23 @@ def check_link(url) -> bool:
     return False
 
 
+def get_build_enviroment() -> str:
+    """Returns the branch we are currently building on, based on the environment variables of the various CI platforms."""
+    # Check if we are in ReadTheDocs
+    if os.environ.get('READTHEDOCS') == 'True':
+        return os.environ.get('READTHEDOCS_GIT_IDENTIFIER')
+    # We are in GitHub Actions
+    elif os.environ.get('GITHUB_ACTIONS') == 'true':
+        return os.environ.get('GITHUB_REF')
+    else:
+        return 'master'
+
+
 def define_env(env):
     """Define custom environment variables for the documentation build process."""
 
     @env.macro
-    def sourcedir(dirname, branch='master'):
+    def sourcedir(dirname, branch=None):
         """Return a link to a directory within the source code repository.
 
         Arguments:
@@ -70,6 +97,9 @@ def define_env(env):
         Raises:
             - FileNotFoundError: If the directory does not exist, or the generated URL is invalid
         """
+        if branch == None:
+            branch = get_build_enviroment()
+
         if dirname.startswith('/'):
             dirname = dirname[1:]
 
@@ -94,7 +124,7 @@ def define_env(env):
         return url
 
     @env.macro
-    def sourcefile(filename, branch='master', raw=False):
+    def sourcefile(filename, branch=None, raw=False):
         """Return a link to a file within the source code repository.
 
         Arguments:
@@ -106,6 +136,9 @@ def define_env(env):
         Raises:
             - FileNotFoundError: If the file does not exist, or the generated URL is invalid
         """
+        if branch == None:
+            branch = get_build_enviroment()
+
         if filename.startswith('/'):
             filename = filename[1:]
 
@@ -201,3 +234,37 @@ def define_env(env):
         )
 
         return includefile(fn, f'Template: {base}', format='html')
+
+    @env.macro
+    def rendersetting(setting: dict):
+        """Render a provided setting object into a table row."""
+        name = setting['name']
+        description = setting['description']
+        default = setting.get('default', None)
+        units = setting.get('units', None)
+
+        return f'| {name} | {description} | {default if default is not None else ""} | {units if units is not None else ""} |'
+
+    @env.macro
+    def globalsetting(key: str):
+        """Extract information on a particular global setting.
+
+        Arguments:
+            - key: The name of the global setting to extract information for.
+        """
+        global GLOBAL_SETTINGS
+        setting = GLOBAL_SETTINGS[key]
+
+        return rendersetting(setting)
+
+    @env.macro
+    def usersetting(key: str):
+        """Extract information on a particular user setting.
+
+        Arguments:
+            - key: The name of the user setting to extract information for.
+        """
+        global USER_SETTINGS
+        setting = USER_SETTINGS[key]
+
+        return rendersetting(setting)

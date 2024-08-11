@@ -19,7 +19,7 @@ import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowDeleteAction, RowEditAction } from '../RowActions';
 
-export default function PartCategoryTemplateTable({}: {}) {
+export default function PartCategoryTemplateTable() {
   const table = useTable('part-category-parameter-templates');
   const user = useUserState();
 
@@ -147,7 +147,8 @@ export default function PartCategoryTemplateTable({}: {}) {
         props={{
           rowActions: rowActions,
           tableFilters: tableFilters,
-          tableActions: tableActions
+          tableActions: tableActions,
+          enableDownload: true
         }}
       />
     </>

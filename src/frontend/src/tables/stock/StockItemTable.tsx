@@ -4,7 +4,7 @@ import { ReactNode, useMemo } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { ActionDropdown } from '../../components/items/ActionDropdown';
-import { formatCurrency } from '../../defaults/formatters';
+import { formatCurrency, formatPriceRange } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -46,6 +46,16 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'part',
       sortable: true,
       render: (record: any) => PartColumn(record?.part_detail)
+    },
+    {
+      accessor: 'part_detail.IPN',
+      title: t`IPN`,
+      sortable: true
+    },
+    {
+      accessor: 'part_detail.revision',
+      title: t`Revision`,
+      sortable: true
     },
     DescriptionColumn({
       accessor: 'part_detail.description'
@@ -218,13 +228,15 @@ function stockItemTableColumns(): TableColumn[] {
     }),
     DateColumn({
       accessor: 'stocktake_date',
-      title: t`Stocktake`,
+      title: t`Stocktake Date`,
       sortable: true
     }),
     DateColumn({
+      title: t`Expiry Date`,
       accessor: 'expiry_date'
     }),
     DateColumn({
+      title: t`Last Updated`,
       accessor: 'updated'
     }),
     // TODO: purchase order
@@ -237,10 +249,32 @@ function stockItemTableColumns(): TableColumn[] {
         formatCurrency(record.purchase_price, {
           currency: record.purchase_price_currency
         })
+    },
+    {
+      accessor: 'packaging',
+      sortable: true
+    },
+    {
+      accessor: 'stock_value',
+      title: t`Stock Value`,
+      sortable: false,
+      render: (record: any) => {
+        let min_price =
+          record.purchase_price || record.part_detail?.pricing_min;
+        let max_price =
+          record.purchase_price || record.part_detail?.pricing_max;
+        let currency = record.purchase_price_currency || undefined;
+
+        return formatPriceRange(min_price, max_price, {
+          currency: currency,
+          multiplier: record.quantity
+        });
+      }
+    },
+    {
+      accessor: 'notes',
+      sortable: false
     }
-    // TODO: stock value
-    // TODO: packaging
-    // TODO: notes
   ];
 }
 

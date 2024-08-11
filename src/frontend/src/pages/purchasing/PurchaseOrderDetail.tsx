@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -12,6 +12,7 @@ import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -23,10 +24,12 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
+  HoldItemAction,
   LinkBarcodeAction,
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { StatusRenderer } from '../../components/render/StatusRenderer';
@@ -40,6 +43,7 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
@@ -57,7 +61,8 @@ export default function PurchaseOrderDetail() {
   const {
     instance: order,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.purchase_order_list,
     pk: id,
@@ -134,26 +139,12 @@ export default function PurchaseOrderDetail() {
 
     let tr: DetailsField[] = [
       {
-        type: 'text',
-        name: 'line_items',
-        label: t`Line Items`,
-        icon: 'list'
-      },
-      {
         type: 'progressbar',
         name: 'completed',
         icon: 'progress',
         label: t`Completed Line Items`,
         total: order.line_items,
         progress: order.completed_lines
-      },
-      {
-        type: 'progressbar',
-        name: 'shipments',
-        icon: 'shipment',
-        label: t`Completed Shipments`,
-        total: order.shipments,
-        progress: order.completed_shipments
       },
       {
         type: 'text',
@@ -255,6 +246,7 @@ export default function PurchaseOrderDetail() {
         icon: <IconList />,
         content: (
           <PurchaseOrderLineItemTable
+            order={order}
             orderId={Number(id)}
             supplierId={Number(order.supplier)}
           />
@@ -279,9 +271,8 @@ export default function PurchaseOrderDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.purchase_order_attachment_list}
-            model="order"
-            pk={Number(id)}
+            model_type={ModelType.purchaseorder}
+            model_id={order.pk}
           />
         )
       },
@@ -300,12 +291,84 @@ export default function PurchaseOrderDetail() {
     ];
   }, [order, id, user]);
 
+  const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
+
+  const issueOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_issue, order.pk),
+    title: t`Issue Purchase Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Issue this order`,
+    successMessage: t`Order issued`
+  });
+
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_cancel, order.pk),
+    title: t`Cancel Purchase Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Cancel this order`,
+    successMessage: t`Order cancelled`
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_hold, order.pk),
+    title: t`Hold Purchase Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.purchase_order_complete, order.pk),
+    title: t`Complete Purchase Order`,
+    successMessage: t`Order completed`,
+    timeout: 10000,
+    fields: {
+      accept_incomplete: {}
+    },
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as complete`
+  });
+
   const poActions = useMemo(() => {
+    const canEdit: boolean = user.hasChangeRole(UserRoles.purchase_order);
+
+    const canIssue: boolean =
+      canEdit &&
+      (order.status == poStatus.PENDING || order.status == poStatus.ON_HOLD);
+
+    const canHold: boolean =
+      canEdit &&
+      (order.status == poStatus.PENDING || order.status == poStatus.PLACED);
+
+    const canComplete: boolean = canEdit && order.status == poStatus.PLACED;
+
+    const canCancel: boolean =
+      canEdit &&
+      order.status != poStatus.CANCELLED &&
+      order.status != poStatus.COMPLETE;
+
     return [
+      <PrimaryActionButton
+        title={t`Issue Order`}
+        icon="issue"
+        hidden={!canIssue}
+        color="blue"
+        onClick={issueOrder.open}
+      />,
+      <PrimaryActionButton
+        title={t`Complete Order`}
+        icon="complete"
+        hidden={!canComplete}
+        color="green"
+        onClick={completeOrder.open}
+      />,
       <AdminButton model={ModelType.purchaseorder} pk={order.pk} />,
       <BarcodeActionDropdown
         actions={[
-          ViewBarcodeAction({}),
+          ViewBarcodeAction({
+            model: ModelType.purchaseorder,
+            pk: order.pk
+          }),
           LinkBarcodeAction({
             hidden: order?.barcode_hash
           }),
@@ -324,22 +387,31 @@ export default function PurchaseOrderDetail() {
         icon={<IconDots />}
         actions={[
           EditItemAction({
-            hidden: !user.hasChangeRole(UserRoles.purchase_order),
+            hidden: !canEdit,
+            tooltip: t`Edit order`,
             onClick: () => {
               editPurchaseOrder.open();
             }
           }),
-          CancelItemAction({
-            tooltip: t`Cancel order`
-          }),
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),
-            onClick: () => duplicatePurchaseOrder.open()
+            onClick: () => duplicatePurchaseOrder.open(),
+            tooltip: t`Duplicate order`
+          }),
+          HoldItemAction({
+            tooltip: t`Hold order`,
+            hidden: !canHold,
+            onClick: holdOrder.open
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel order`,
+            hidden: !canCancel,
+            onClick: cancelOrder.open
           })
         ]}
       />
     ];
-  }, [id, order, user]);
+  }, [id, order, user, poStatus]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
@@ -355,19 +427,25 @@ export default function PurchaseOrderDetail() {
 
   return (
     <>
+      {issueOrder.modal}
+      {holdOrder.modal}
+      {cancelOrder.modal}
+      {completeOrder.modal}
       {editPurchaseOrder.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Purchase Order` + `: ${order.reference}`}
-          subtitle={order.description}
-          imageUrl={order.supplier_detail?.image}
-          breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
-          actions={poActions}
-          badges={orderBadges}
-        />
-        <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
-      </Stack>
+      {duplicatePurchaseOrder.modal}
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Purchase Order` + `: ${order.reference}`}
+            subtitle={order.description}
+            imageUrl={order.supplier_detail?.image}
+            breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
+            actions={poActions}
+            badges={orderBadges}
+          />
+          <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

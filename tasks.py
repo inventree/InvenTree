@@ -47,6 +47,8 @@ def apps():
         'build',
         'common',
         'company',
+        'importer',
+        'machine',
         'order',
         'part',
         'report',
@@ -86,6 +88,9 @@ def content_excludes(
         'common.notificationentry',
         'common.notificationmessage',
         'user_sessions.session',
+        'importer.dataimportsession',
+        'importer.dataimportcolumnmap',
+        'importer.dataimportrow',
         'report.labeloutput',
         'report.reportoutput',
     ]
@@ -131,30 +136,41 @@ def managePyPath():
     return managePyDir().joinpath('manage.py')
 
 
-def manage(c, cmd, pty: bool = False):
+def run(c, cmd, path: Path = None, pty=False, env=None):
+    """Runs a given command a given path.
+
+    Args:
+        c: Command line context.
+        cmd: Command to run.
+        path: Path to run the command in.
+        pty (bool, optional): Run an interactive session. Defaults to False.
+    """
+    env = env or {}
+    path = path or localDir()
+    c.run(f'cd "{path}" && {cmd}', pty=pty, env=env)
+
+
+def manage(c, cmd, pty: bool = False, env=None):
     """Runs a given command against django's "manage.py" script.
 
     Args:
         c: Command line context.
         cmd: Django command to run.
         pty (bool, optional): Run an interactive session. Defaults to False.
+        env (dict, optional): Environment variables to pass to the command. Defaults to None.
     """
-    c.run(
-        'cd "{path}" && python3 manage.py {cmd}'.format(path=managePyDir(), cmd=cmd),
-        pty=pty,
-    )
+    run(c, f'python3 manage.py {cmd}', managePyDir(), pty, env)
 
 
-def yarn(c, cmd, pty: bool = False):
+def yarn(c, cmd):
     """Runs a given command against the yarn package manager.
 
     Args:
         c: Command line context.
         cmd: Yarn command to run.
-        pty (bool, optional): Run an interactive session. Defaults to False.
     """
-    path = localDir().joinpath('src').joinpath('frontend')
-    c.run(f'cd "{path}" && {cmd}', pty=pty)
+    path = localDir().joinpath('src', 'frontend')
+    run(c, cmd, path, False)
 
 
 def node_available(versions: bool = False, bypass_yarn: bool = False):
@@ -192,14 +208,14 @@ def node_available(versions: bool = False, bypass_yarn: bool = False):
     return ret(yarn_passes and node_version, node_version, yarn_version)
 
 
-def check_file_existance(filename: str, overwrite: bool = False):
+def check_file_existance(filename: Path, overwrite: bool = False):
     """Checks if a file exists and asks the user if it should be overwritten.
 
     Args:
         filename (str): Name of the file to check.
         overwrite (bool, optional): Overwrite the file without asking. Defaults to False.
     """
-    if Path(filename).is_file() and overwrite is False:
+    if filename.is_file() and overwrite is False:
         response = input(
             'Warning: file already exists. Do you want to overwrite? [y/N]: '
         )
@@ -222,10 +238,10 @@ def plugins(c, uv=False):
 
     # Install the plugins
     if not uv:
-        c.run(f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
+        run(c, f"pip3 install --disable-pip-version-check -U -r '{plugin_file}'")
     else:
         c.run('pip3 install --no-cache-dir --disable-pip-version-check uv')
-        c.run(f"uv pip install -r '{plugin_file}'")
+        run(c, f"uv pip install -r '{plugin_file}'")
 
     # Collect plugin static files
     manage(c, 'collectplugins')
@@ -246,22 +262,24 @@ def install(c, uv=False):
         c.run(
             'pip3 install --no-cache-dir --disable-pip-version-check -U pip setuptools'
         )
-        c.run(
-            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}'
+        run(
+            c,
+            f'pip3 install --no-cache-dir --disable-pip-version-check -U --require-hashes -r {INSTALL_FILE}',
         )
     else:
         c.run(
             'pip3 install --no-cache-dir --disable-pip-version-check -U uv setuptools'
         )
-        c.run(f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
+        run(c, f'uv pip install -U --require-hashes  -r {INSTALL_FILE}')
 
     # Run plugins install
     plugins(c, uv=uv)
 
     # Compile license information
     lic_path = managePyDir().joinpath('InvenTree', 'licenses.txt')
-    c.run(
-        f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}'
+    run(
+        c,
+        f'pip-licenses --format=json --with-license-file --no-license-path > {lic_path}',
     )
 
 
@@ -271,14 +289,14 @@ def setup_dev(c, tests=False):
     print("Installing required python packages from 'src/backend/requirements-dev.txt'")
 
     # Install required Python packages with PIP
-    c.run('pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
+    run(c, 'pip3 install -U --require-hashes -r src/backend/requirements-dev.txt')
 
     # Install pre-commit hook
     print('Installing pre-commit for checks before git commits...')
-    c.run('pre-commit install')
+    run(c, 'pre-commit install')
 
     # Update all the hooks
-    c.run('pre-commit autoupdate')
+    run(c, 'pre-commit autoupdate')
     print('pre-commit set up is done...')
 
     # Set up test-data if flag is set
@@ -355,7 +373,7 @@ def translate_stats(c):
     except Exception:
         print('WARNING: Translation files could not be compiled:')
 
-    path = Path('src', 'backend', 'InvenTree', 'script', 'translation_stats.py')
+    path = managePyDir().joinpath('script', 'translation_stats.py')
     c.run(f'python3 {path}')
 
 
@@ -462,9 +480,16 @@ def migrate(c):
     manage(c, 'makemigrations')
     manage(c, 'runmigrations', pty=True)
     manage(c, 'migrate --run-syncdb')
+    manage(c, 'remove_stale_contenttypes --include-stale-apps --no-input', pty=True)
 
     print('========================================')
     print('InvenTree database migrations completed!')
+
+
+@task(help={'app': 'Specify an app to show migrations for (leave blank for all apps)'})
+def showmigrations(c, app=''):
+    """Show the migration status of the database."""
+    manage(c, f'showmigrations {app}', pty=True)
 
 
 @task(
@@ -569,14 +594,15 @@ def export_records(
     If you want only one file, with permissions, then additionally add argument -i / --include-permissions
     """
     # Get an absolute path to the file
-    if not os.path.isabs(filename):
-        filename = localDir().joinpath(filename).resolve()
+    target = Path(filename)
+    if not target.is_absolute():
+        target = localDir().joinpath(filename).resolve()
 
-    print(f"Exporting database records to file '{filename}'")
+    print(f"Exporting database records to file '{target}'")
 
-    check_file_existance(filename, overwrite)
+    check_file_existance(target, overwrite)
 
-    tmpfile = f'{filename}.tmp'
+    tmpfile = f'{target}.tmp'
 
     excludes = content_excludes(
         allow_tokens=include_tokens,
@@ -615,7 +641,7 @@ def export_records(
             data_out.append(entry)
 
     # Write the processed data to file
-    with open(filename, 'w') as f_out:
+    with open(target, 'w') as f_out:
         f_out.write(json.dumps(data_out, indent=2))
 
     print('Data export completed')
@@ -638,26 +664,27 @@ def import_records(
 ):
     """Import database records from a file."""
     # Get an absolute path to the supplied filename
-    if not os.path.isabs(filename):
-        filename = localDir().joinpath(filename)
+    target = Path(filename)
+    if not target.is_absolute():
+        target = localDir().joinpath(filename)
 
-    if not os.path.exists(filename):
-        print(f"Error: File '{filename}' does not exist")
+    if not target.exists():
+        print(f"Error: File '{target}' does not exist")
         sys.exit(1)
 
     if clear:
         delete_data(c, force=True)
 
-    print(f"Importing database records from '{filename}'")
+    print(f"Importing database records from '{target}'")
 
     # We need to load 'auth' data (users / groups) *first*
     # This is due to the users.owner model, which has a ContentType foreign key
-    authfile = f'{filename}.auth.json'
+    authfile = f'{target}.auth.json'
 
     # Pre-process the data, to remove any "permissions" specified for a user or group
-    datafile = f'{filename}.data.json'
+    datafile = f'{target}.data.json'
 
-    with open(filename, 'r') as f_in:
+    with open(target, 'r') as f_in:
         try:
             data = json.loads(f_in.read())
         except json.JSONDecodeError as exc:
@@ -789,11 +816,10 @@ def gunicorn(c, address='0.0.0.0:8000', workers=None):
 
     Note: This server will not auto-reload in response to code changes.
     """
-    here = os.path.dirname(os.path.abspath(__file__))
-    config_file = os.path.join(here, 'contrib', 'container', 'gunicorn.conf.py')
-    chdir = os.path.join(here, 'src', 'backend', 'InvenTree')
-
-    cmd = f'gunicorn -c {config_file} InvenTree.wsgi -b {address} --chdir {chdir}'
+    config_file = localDir().joinpath('contrib', 'container', 'gunicorn.conf.py')
+    cmd = (
+        f'gunicorn -c {config_file} InvenTree.wsgi -b {address} --chdir {managePyDir()}'
+    )
 
     if workers:
         cmd += f' --workers={workers}'
@@ -970,14 +996,18 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     if not ignore_update:
         update(c)
 
+    template_dir = localDir().joinpath(path)
+
     # Remove old data directory
-    if os.path.exists(path):
+    if template_dir.exists():
         print('Removing old data ...')
-        c.run(f'rm {path} -r')
+        c.run(f'rm {template_dir} -r')
 
     # Get test data
     print('Cloning demo dataset ...')
-    c.run(f'git clone https://github.com/inventree/demo-dataset {path} -v --depth=1')
+    c.run(
+        f'git clone https://github.com/inventree/demo-dataset {template_dir} -v --depth=1'
+    )
     print('========================================')
 
     # Make sure migrations are done - might have just deleted sqlite database
@@ -986,11 +1016,11 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
 
     # Load data
     print('Loading database records ...')
-    import_records(c, filename=f'{path}/inventree_data.json', clear=True)
+    import_records(c, filename=template_dir.joinpath('inventree_data.json'), clear=True)
 
     # Copy media files
     print('Copying media files ...')
-    src = Path(path).joinpath('media').resolve()
+    src = template_dir.joinpath('media')
     dst = get_media_dir()
 
     print(f'Copying media files - "{src}" to "{dst}"')
@@ -1008,13 +1038,15 @@ def setup_test(c, ignore_update=False, dev=False, path='inventree-demo-dataset')
     help={
         'filename': "Output filename (default = 'schema.yml')",
         'overwrite': 'Overwrite existing files without asking first (default = off/False)',
+        'no_default': 'Do not use default settings for schema (default = off/False)',
     }
 )
-def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
+def schema(
+    c, filename='schema.yml', overwrite=False, ignore_warnings=False, no_default=False
+):
     """Export current API schema."""
+    filename = Path(filename).resolve()
     check_file_existance(filename, overwrite)
-
-    filename = os.path.abspath(filename)
 
     print(f"Exporting schema file to '{filename}'")
 
@@ -1023,11 +1055,33 @@ def schema(c, filename='schema.yml', overwrite=False, ignore_warnings=False):
     if not ignore_warnings:
         cmd += ' --fail-on-warn'
 
-    manage(c, cmd, pty=True)
+    envs = {}
+    if not no_default:
+        envs['INVENTREE_SITE_URL'] = (
+            'http://localhost:8000'  # Default site URL - to ensure server field is stable
+        )
+        envs['INVENTREE_PLUGINS_ENABLED'] = (
+            'False'  # Disable plugins to ensure they are kep out of schema
+        )
+        envs['INVENTREE_CURRENCY_CODES'] = (
+            'AUD,CNY,EUR,USD'  # Default currency codes to ensure they are stable
+        )
 
-    assert os.path.exists(filename)
+    manage(c, cmd, pty=True, env=envs)
+
+    assert filename.exists()
 
     print('Schema export completed:', filename)
+
+
+@task
+def export_settings_definitions(c, filename='inventree_settings.json', overwrite=False):
+    """Export settings definition to a JSON file."""
+    filename = Path(filename).resolve()
+    check_file_existance(filename, overwrite)
+
+    print(f"Exporting settings definition to '{filename}'...")
+    manage(c, f'export_settings_definitions {filename}', pty=True)
 
 
 @task(default=True)
@@ -1062,8 +1116,8 @@ API         {InvenTreeVersion.inventreeApiVersion()}
 Node        {node if node else 'N/A'}
 Yarn        {yarn if yarn else 'N/A'}
 
-Commit hash:{InvenTreeVersion.inventreeCommitHash()}
-Commit date:{InvenTreeVersion.inventreeCommitDate()}"""
+Commit hash: {InvenTreeVersion.inventreeCommitHash()}
+Commit date: {InvenTreeVersion.inventreeCommitDate()}"""
     )
     if len(sys.argv) == 1 and sys.argv[0].startswith('/opt/inventree/env/lib/python'):
         print(
@@ -1197,12 +1251,12 @@ def frontend_download(
         if not extract:
             return
 
-        dest_path = Path(__file__).parent / 'src/backend' / 'InvenTree/web/static/web'
+        dest_path = managePyDir().joinpath('web', 'static', 'web')
 
         # if clean, delete static/web directory
         if clean:
             shutil.rmtree(dest_path, ignore_errors=True)
-            os.makedirs(dest_path)
+            dest_path.mkdir()
             print(f'Cleaned directory: {dest_path}')
 
         # unzip build to static folder
@@ -1228,6 +1282,34 @@ def frontend_download(
 
             handle_extract(dst.name)
 
+    def check_already_current(tag=None, sha=None):
+        """Check if the currently available frontend is already the requested one."""
+        ref = 'tag' if tag else 'commit'
+
+        if tag:
+            current = managePyDir().joinpath('web', 'static', 'web', '.vite', 'tag.txt')
+        elif sha:
+            current = managePyDir().joinpath('web', 'static', 'web', '.vite', 'sha.txt')
+        else:
+            raise ValueError('Either tag or sha needs to be set')
+
+        if not current.exists():
+            print(
+                f'Current frontend information for {ref} is not available - this is expected in some cases'
+            )
+            return False
+
+        current_content = current.read_text().strip()
+        ref_value = tag or sha
+        if current_content == ref_value:
+            print(f'Frontend {ref} is already `{ref_value}`')
+            return True
+        else:
+            print(
+                f'Frontend {ref} is not expected `{ref_value}` but `{current_content}` - new version will be downloaded'
+            )
+            return False
+
     # if zip file is specified, try to extract it directly
     if file:
         handle_extract(file)
@@ -1244,8 +1326,24 @@ def frontend_download(
                 ['git', 'rev-parse', 'HEAD'], encoding='utf-8'
             ).strip()
         except Exception:
-            print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
-            return
+            # .deb Packages contain extra information in the VERSION file
+            version_file = localDir().joinpath('VERSION')
+            if not version_file.exists():
+                return
+            from dotenv import dotenv_values  # noqa: WPS433
+
+            content = dotenv_values(version_file)
+            if (
+                'INVENTREE_PKG_INSTALLER' in content
+                and content['INVENTREE_PKG_INSTALLER'] == 'PKG'
+            ):
+                ref = content.get('INVENTREE_COMMIT_SHA')
+                print(
+                    f'[INFO] Running in package environment, got commit "{ref}" from VERSION file'
+                )
+            else:
+                print("[ERROR] Cannot get current ref via 'git rev-parse HEAD'")
+                return
 
     if ref is None and tag is None:
         print('[ERROR] Either ref or tag needs to be set.')
@@ -1253,6 +1351,8 @@ def frontend_download(
     if tag:
         tag = tag.lstrip('v')
         try:
+            if check_already_current(tag=tag):
+                return
             handle_download(
                 f'https://github.com/{repo}/releases/download/{tag}/frontend-build.zip'
             )
@@ -1268,6 +1368,8 @@ Then try continuing by running: invoke frontend-download --file <path-to-downloa
         return
 
     if ref:
+        if check_already_current(sha=ref):
+            return
         # get workflow run from all workflow runs on that particular ref
         workflow_runs = requests.get(
             f'https://api.github.com/repos/{repo}/actions/runs?head_sha={ref}',
@@ -1314,9 +1416,28 @@ via your signed in browser, or consider using a point release download via invok
 )
 def docs_server(c, address='localhost:8080', compile_schema=False):
     """Start a local mkdocs server to view the documentation."""
+    # Extract settings definitions
+    export_settings_definitions(
+        c, filename='docs/inventree_settings.json', overwrite=True
+    )
+
     if compile_schema:
         # Build the schema docs first
         schema(c, ignore_warnings=True, overwrite=True, filename='docs/schema.yml')
-        c.run('python docs/extract_schema.py docs/schema.yml')
+        run(c, 'python docs/extract_schema.py docs/schema.yml')
 
-    c.run(f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+    run(c, f'mkdocs serve -a {address} -f docs/mkdocs.yml')
+
+
+@task
+def clear_generated(c):
+    """Clear generated files from `inv update`."""
+    # pyc/pyo files
+    run(c, 'find . -name "*.pyc" -exec rm -f {} +')
+    run(c, 'find . -name "*.pyo" -exec rm -f {} +')
+    # cache folders
+    run(c, 'find . -name "__pycache__" -exec rm -rf {} +')
+
+    # Generated translations
+    run(c, 'find . -name "django.mo" -exec rm -f {} +')
+    run(c, 'find . -name "messages.mo" -exec rm -f {} +')

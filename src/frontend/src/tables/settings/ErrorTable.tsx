@@ -8,6 +8,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { useDeleteApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
 import { RowAction, RowDeleteAction } from '../RowActions';
@@ -17,6 +18,7 @@ import { RowAction, RowDeleteAction } from '../RowActions';
  */
 export default function ErrorReportTable() {
   const table = useTable('error-report');
+  const user = useUserState();
 
   const [error, setError] = useState<string>('');
 
@@ -90,7 +92,7 @@ export default function ErrorReportTable() {
         tableState={table}
         columns={columns}
         props={{
-          enableBulkDelete: true,
+          enableBulkDelete: user.isStaff(),
           enableSelection: true,
           rowActions: rowActions,
           onRowClick: (row) => {

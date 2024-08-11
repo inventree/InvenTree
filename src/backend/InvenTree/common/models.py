@@ -9,9 +9,11 @@ import hmac
 import json
 import logging
 import os
+import sys
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
+from io import BytesIO
 from secrets import compare_digest
 from typing import Any, Callable, TypedDict, Union
 
@@ -23,6 +25,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.humanize.templatetags.humanize import naturaltime
 from django.core.cache import cache
 from django.core.exceptions import ValidationError
+from django.core.files.storage import default_storage
 from django.core.validators import MaxValueValidator, MinValueValidator, URLValidator
 from django.db import models, transaction
 from django.db.models.signals import post_delete, post_save
@@ -35,6 +38,7 @@ from django.utils.translation import gettext_lazy as _
 from djmoney.contrib.exchange.exceptions import MissingRate
 from djmoney.contrib.exchange.models import convert_money
 from rest_framework.exceptions import PermissionDenied
+from taggit.managers import TaggableManager
 
 import build.validators
 import common.currency
@@ -46,11 +50,24 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import plugin.base.barcodes.helper
 import report.helpers
 import users.models
+from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
 logger = logging.getLogger('inventree')
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired
+else:
+
+    class NotRequired:  # pragma: no cover
+        """NotRequired type helper is only supported with Python 3.11+."""
+
+        def __class_getitem__(cls, item):
+            """Return the item."""
+            return item
 
 
 class MetaMixin(models.Model):
@@ -111,6 +128,11 @@ class BaseURLValidator(URLValidator):
 
 class ProjectCode(InvenTree.models.InvenTreeMetadataModel):
     """A ProjectCode is a unique identifier for a project."""
+
+    class Meta:
+        """Class options for the ProjectCode model."""
+
+        verbose_name = _('Project Code')
 
     @staticmethod
     def get_api_url():
@@ -549,25 +571,25 @@ class BaseInvenTreeSetting(models.Model):
         """
         key = str(key).strip().upper()
 
-        filters = {
-            'key__iexact': key,
-            # Optionally filter by other keys
-            **cls.get_filters(**kwargs),
-        }
-
         # Unless otherwise specified, attempt to create the setting
         create = kwargs.pop('create', True)
 
         # Specify if cache lookup should be performed
         do_cache = kwargs.pop('cache', django_settings.GLOBAL_CACHE_ENABLED)
 
-        # Prevent saving to the database during data import
-        if InvenTree.ready.isImportingData():
-            create = False
-            do_cache = False
+        filters = {
+            'key__iexact': key,
+            # Optionally filter by other keys
+            **cls.get_filters(**kwargs),
+        }
 
-        # Prevent saving to the database during migrations
-        if InvenTree.ready.isRunningMigrations():
+        # Prevent saving to the database during certain operations
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
             create = False
             do_cache = False
 
@@ -594,33 +616,21 @@ class BaseInvenTreeSetting(models.Model):
             setting = None
 
         # Setting does not exist! (Try to create it)
-        if not setting:
-            # Prevent creation of new settings objects when importing data
-            if (
-                InvenTree.ready.isImportingData()
-                or not InvenTree.ready.canAppAccessDatabase(
-                    allow_test=True, allow_shell=True
-                )
-            ):
-                create = False
+        if not setting and create:
+            # Attempt to create a new settings object
+            default_value = cls.get_setting_default(key, **kwargs)
+            setting = cls(key=key, value=default_value, **kwargs)
 
-            if create:
-                # Attempt to create a new settings object
-
-                default_value = cls.get_setting_default(key, **kwargs)
-
-                setting = cls(key=key, value=default_value, **kwargs)
-
-                try:
-                    # Wrap this statement in "atomic", so it can be rolled back if it fails
-                    with transaction.atomic():
-                        setting.save(**kwargs)
-                except (IntegrityError, OperationalError, ProgrammingError):
-                    # It might be the case that the database isn't created yet
-                    pass
-                except ValidationError:
-                    # The setting failed validation - might be due to duplicate keys
-                    pass
+            try:
+                # Wrap this statement in "atomic", so it can be rolled back if it fails
+                with transaction.atomic():
+                    setting.save(**kwargs)
+            except (IntegrityError, OperationalError, ProgrammingError):
+                # It might be the case that the database isn't created yet
+                pass
+            except ValidationError:
+                # The setting failed validation - might be due to duplicate keys
+                pass
 
         if setting and do_cache:
             # Cache this setting object
@@ -692,6 +702,15 @@ class BaseInvenTreeSetting(models.Model):
             )
 
         if change_user is not None and not change_user.is_staff:
+            return
+
+        # Do not write to the database under certain conditions
+        if (
+            InvenTree.ready.isImportingData()
+            or InvenTree.ready.isRunningMigrations()
+            or InvenTree.ready.isRebuildingData()
+            or InvenTree.ready.isRunningBackup()
+        ):
             return
 
         attempts = int(kwargs.get('attempts', 3))
@@ -1161,7 +1180,7 @@ class InvenTreeSettingsKeyType(SettingsKeyType):
         requires_restart: If True, a server restart is required after changing the setting
     """
 
-    requires_restart: bool
+    requires_restart: NotRequired[bool]
 
 
 class InvenTreeSetting(BaseInvenTreeSetting):
@@ -1390,11 +1409,29 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': True,
             'validator': bool,
         },
+        'BARCODE_SHOW_TEXT': {
+            'name': _('Barcode Show Data'),
+            'description': _('Display barcode data in browser as text'),
+            'default': False,
+            'validator': bool,
+        },
+        'BARCODE_GENERATION_PLUGIN': {
+            'name': _('Barcode Generation Plugin'),
+            'description': _('Plugin to use for internal barcode data generation'),
+            'choices': plugin.base.barcodes.helper.barcode_plugins,
+            'default': 'inventreebarcode',
+        },
         'PART_ENABLE_REVISION': {
             'name': _('Part Revisions'),
             'description': _('Enable revision field for Part'),
             'validator': bool,
             'default': True,
+        },
+        'PART_REVISION_ASSEMBLY_ONLY': {
+            'name': _('Assembly Revision Only'),
+            'description': _('Only allow revisions for assembly parts'),
+            'validator': bool,
+            'default': False,
         },
         'PART_ALLOW_DELETE_FROM_ASSEMBLY': {
             'name': _('Allow Deletion from Assembly'),
@@ -1521,6 +1558,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Part Category Default Icon'),
             'description': _('Part category default icon (empty means no icon)'),
             'default': '',
+            'validator': common.validators.validate_icon,
         },
         'PART_PARAMETER_ENFORCE_UNITS': {
             'name': _('Enforce Parameter Units'),
@@ -1742,6 +1780,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Stock Location Default Icon'),
             'description': _('Stock location default icon (empty means no icon)'),
             'default': '',
+            'validator': common.validators.validate_icon,
         },
         'STOCK_SHOW_INSTALLED_ITEMS': {
             'name': _('Show Installed Stock Items'),
@@ -1776,6 +1815,34 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         'BUILDORDER_REQUIRE_RESPONSIBLE': {
             'name': _('Require Responsible Owner'),
             'description': _('A responsible owner must be assigned to each order'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_ACTIVE_PART': {
+            'name': _('Require Active Part'),
+            'description': _('Prevent build order creation for inactive parts'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_LOCKED_PART': {
+            'name': _('Require Locked Part'),
+            'description': _('Prevent build order creation for unlocked parts'),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_VALID_BOM': {
+            'name': _('Require Valid BOM'),
+            'description': _(
+                'Prevent build order creation unless BOM has been validated'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_CLOSED_CHILDS': {
+            'name': _('Require Closed Child Orders'),
+            'description': _(
+                'Prevent build order completion until all child orders are closed'
+            ),
             'default': False,
             'validator': bool,
         },
@@ -1908,6 +1975,38 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'LOGIN_ENABLE_SSO_GROUP_SYNC': {
+            'name': _('Enable SSO group sync'),
+            'description': _(
+                'Enable synchronizing InvenTree groups with groups provided by the IdP'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'SSO_GROUP_KEY': {
+            'name': _('SSO group key'),
+            'description': _(
+                'The name of the groups claim attribute provided by the IdP'
+            ),
+            'default': 'groups',
+            'validator': str,
+        },
+        'SSO_GROUP_MAP': {
+            'name': _('SSO group map'),
+            'description': _(
+                'A mapping from SSO groups to local InvenTree groups. If the local group does not exist, it will be created.'
+            ),
+            'validator': json.loads,
+            'default': '{}',
+        },
+        'SSO_REMOVE_GROUPS': {
+            'name': _('Remove groups outside of SSO'),
+            'description': _(
+                'Whether groups assigned to the user should be removed if they are not backend by the IdP. Disabling this setting might cause security issues'
+            ),
+            'default': True,
+            'validator': bool,
+        },
         'LOGIN_MAIL_REQUIRED': {
             'name': _('Email required'),
             'description': _('Require user to supply mail on signup'),
@@ -1944,7 +2043,9 @@ class InvenTreeSetting(BaseInvenTreeSetting):
         },
         'SIGNUP_GROUP': {
             'name': _('Group on signup'),
-            'description': _('Group to which new users are assigned on registration'),
+            'description': _(
+                'Group to which new users are assigned on registration. If SSO group sync is enabled, this group is only set if no group can be assigned from the IdP.'
+            ),
             'default': '',
             'choices': settings_group_options,
         },
@@ -2425,36 +2526,6 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(0)],
             'default': 100,
         },
-        'DEFAULT_PART_LABEL_TEMPLATE': {
-            'name': _('Default part label template'),
-            'description': _('The part label template to be automatically selected'),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_ITEM_LABEL_TEMPLATE': {
-            'name': _('Default stock item template'),
-            'description': _(
-                'The stock item label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LOCATION_LABEL_TEMPLATE': {
-            'name': _('Default stock location label template'),
-            'description': _(
-                'The stock location label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
-        'DEFAULT_LINE_LABEL_TEMPLATE': {
-            'name': _('Default build line label template'),
-            'description': _(
-                'The build line label template to be automatically selected'
-            ),
-            'validator': [int],
-            'default': '',
-        },
         'NOTIFICATION_ERROR_REPORT': {
             'name': _('Receive error reports'),
             'description': _('Receive notifications for system errors'),
@@ -2542,18 +2613,27 @@ class ColorTheme(models.Model):
     name = models.CharField(max_length=20, default='', blank=True)
 
     user = models.CharField(max_length=150, unique=True)
+    user_obj = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
 
     @classmethod
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
-        if not django_settings.STATIC_COLOR_THEMES_DIR.exists():
-            logger.error('Theme directory does not exist')
+        color_theme_dir = (
+            django_settings.STATIC_COLOR_THEMES_DIR
+            if django_settings.STATIC_COLOR_THEMES_DIR.exists()
+            else django_settings.BASE_DIR.joinpath(
+                'InvenTree', 'static', 'css', 'color-themes'
+            )
+        )
+
+        if not color_theme_dir.exists():
+            logger.error(f'Theme directory "{color_theme_dir}" does not exist')
             return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
 
-        for file in django_settings.STATIC_COLOR_THEMES_DIR.iterdir():
+        for file in color_theme_dir.iterdir():
             files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)
@@ -2992,6 +3072,11 @@ class CustomUnit(models.Model):
     https://pint.readthedocs.io/en/stable/advanced/defining.html
     """
 
+    class Meta:
+        """Class meta options."""
+
+        verbose_name = _('Custom Unit')
+
     def fmt_string(self):
         """Construct a unit definition string e.g. 'dog_year = 52 * day = dy'."""
         fmt = f'{self.name} = {self.definition}'
@@ -3000,6 +3085,18 @@ class CustomUnit(models.Model):
             fmt += f' = {self.symbol}'
 
         return fmt
+
+    def validate_unique(self, exclude=None) -> None:
+        """Ensure that the custom unit is unique."""
+        super().validate_unique(exclude)
+
+        if self.symbol:
+            if (
+                CustomUnit.objects.filter(symbol=self.symbol)
+                .exclude(pk=self.pk)
+                .exists()
+            ):
+                raise ValidationError({'symbol': _('Unit symbol must be unique')})
 
     def clean(self):
         """Validate that the provided custom unit is indeed valid."""
@@ -3042,7 +3139,6 @@ class CustomUnit(models.Model):
         max_length=10,
         verbose_name=_('Symbol'),
         help_text=_('Optional unit symbol'),
-        unique=True,
         blank=True,
     )
 
@@ -3062,3 +3158,184 @@ def after_custom_unit_updated(sender, instance, **kwargs):
     from InvenTree.conversion import reload_unit_registry
 
     reload_unit_registry()
+
+
+def rename_attachment(instance, filename):
+    """Callback function to rename an uploaded attachment file.
+
+    Arguments:
+        - instance: The Attachment instance
+        - filename: The original filename of the uploaded file
+
+    Returns:
+        - The new filename for the uploaded file, e.g. 'attachments/<model_type>/<model_id>/<filename>'
+    """
+    # Remove any illegal characters from the filename
+    illegal_chars = '\'"\\`~#|!@#$%^&*()[]{}<>?;:+=,'
+
+    for c in illegal_chars:
+        filename = filename.replace(c, '')
+
+    filename = os.path.basename(filename)
+
+    # Generate a new filename for the attachment
+    return os.path.join(
+        'attachments', str(instance.model_type), str(instance.model_id), filename
+    )
+
+
+class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel):
+    """Class which represents an uploaded file attachment.
+
+    An attachment can be either an uploaded file, or an external URL.
+
+    Attributes:
+        attachment: The uploaded file
+        url: An external URL
+        comment: A comment or description for the attachment
+        user: The user who uploaded the attachment
+        upload_date: The date the attachment was uploaded
+        file_size: The size of the uploaded file
+        metadata: Arbitrary metadata for the attachment (inherit from MetadataMixin)
+        tags: Tags for the attachment
+    """
+
+    class Meta:
+        """Metaclass options."""
+
+        verbose_name = _('Attachment')
+
+    def save(self, *args, **kwargs):
+        """Custom 'save' method for the Attachment model.
+
+        - Record the file size of the uploaded attachment (if applicable)
+        - Ensure that the 'content_type' and 'object_id' fields are set
+        - Run extra validations
+        """
+        # Either 'attachment' or 'link' must be specified!
+        if not self.attachment and not self.link:
+            raise ValidationError({
+                'attachment': _('Missing file'),
+                'link': _('Missing external link'),
+            })
+
+        if self.attachment:
+            if self.attachment.name.lower().endswith('.svg'):
+                self.attachment.file.file = self.clean_svg(self.attachment)
+        else:
+            self.file_size = 0
+
+        super().save(*args, **kwargs)
+
+        # Update file size
+        if self.file_size == 0 and self.attachment:
+            # Get file size
+            if default_storage.exists(self.attachment.name):
+                try:
+                    self.file_size = default_storage.size(self.attachment.name)
+                except Exception:
+                    pass
+
+            if self.file_size != 0:
+                super().save()
+
+    def clean_svg(self, field):
+        """Sanitize SVG file before saving."""
+        cleaned = sanitize_svg(field.file.read())
+        return BytesIO(bytes(cleaned, 'utf8'))
+
+    def __str__(self):
+        """Human name for attachment."""
+        if self.attachment is not None:
+            return os.path.basename(self.attachment.name)
+        return str(self.link)
+
+    model_type = models.CharField(
+        max_length=100,
+        validators=[common.validators.validate_attachment_model_type],
+        help_text=_('Target model type for this image'),
+    )
+
+    model_id = models.PositiveIntegerField()
+
+    attachment = models.FileField(
+        upload_to=rename_attachment,
+        verbose_name=_('Attachment'),
+        help_text=_('Select file to attach'),
+        blank=True,
+        null=True,
+    )
+
+    link = InvenTree.fields.InvenTreeURLField(
+        blank=True,
+        null=True,
+        verbose_name=_('Link'),
+        help_text=_('Link to external URL'),
+    )
+
+    comment = models.CharField(
+        blank=True,
+        max_length=250,
+        verbose_name=_('Comment'),
+        help_text=_('Attachment comment'),
+    )
+
+    upload_user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        verbose_name=_('User'),
+        help_text=_('User'),
+    )
+
+    upload_date = models.DateField(
+        auto_now_add=True,
+        null=True,
+        blank=True,
+        verbose_name=_('Upload date'),
+        help_text=_('Date the file was uploaded'),
+    )
+
+    file_size = models.PositiveIntegerField(
+        default=0, verbose_name=_('File size'), help_text=_('File size in bytes')
+    )
+
+    tags = TaggableManager(blank=True)
+
+    @property
+    def basename(self):
+        """Base name/path for attachment."""
+        if self.attachment:
+            return os.path.basename(self.attachment.name)
+        return None
+
+    def fully_qualified_url(self):
+        """Return a 'fully qualified' URL for this attachment.
+
+        - If the attachment is a link to an external resource, return the link
+        - If the attachment is an uploaded file, return the fully qualified media URL
+        """
+        if self.link:
+            return self.link
+
+        if self.attachment:
+            import InvenTree.helpers_model
+
+            media_url = InvenTree.helpers.getMediaUrl(self.attachment.url)
+            return InvenTree.helpers_model.construct_absolute_url(media_url)
+
+        return ''
+
+    def check_permission(self, permission, user):
+        """Check if the user has the required permission for this attachment."""
+        from InvenTree.models import InvenTreeAttachmentMixin
+
+        model_class = common.validators.attachment_model_class_from_label(
+            self.model_type
+        )
+
+        if not issubclass(model_class, InvenTreeAttachmentMixin):
+            raise ValidationError(_('Invalid model type specified for attachment'))
+
+        return model_class.check_attachment_permission(permission, user)

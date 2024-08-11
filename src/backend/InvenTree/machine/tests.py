@@ -32,7 +32,7 @@ class TestMachineRegistryMixin(TestCase):
         registry.driver_instances = {}
         registry.machines = {}
         registry.base_drivers = []
-        registry.errors = []
+        registry.set_shared_state('errors', [])
 
         return super().tearDown()
 
@@ -111,7 +111,7 @@ class TestDriverMachineInterface(TestMachineRegistryMixin, TestCase):
         self.machines = [self.machine1, self.machine2, self.machine3]
 
         # init registry
-        registry.initialize()
+        registry.initialize(main=True)
 
         # mock machine implementation
         self.machine_mocks = {
@@ -230,7 +230,7 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
             active=True,
         )
 
-        registry.initialize()
+        registry.initialize(main=True)
         driver_instance = cast(
             TestingLabelPrinterDriver,
             registry.get_driver_instance('testing-label-printer'),
@@ -292,7 +292,7 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         # test the single print label method calls
         self.assertEqual(self.print_label.call_count, 2)
         self.assertEqual(self.print_label.call_args.args[0], self.machine.machine)
-        self.assertEqual(self.print_label.call_args.args[1], label)
+        self.assertEqual(self.print_label.call_args.args[1], template)
         self.assertEqual(self.print_label.call_args.args[2], parts[1])
         self.assertIn('printing_options', self.print_labels.call_args.kwargs)
         self.assertEqual(

@@ -1,7 +1,9 @@
 import { t } from '@lingui/macro';
 import {
+  Container,
   Flex,
   FocusTrap,
+  Group,
   Modal,
   NumberInput,
   Table,
@@ -39,7 +41,10 @@ import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
-import { useBatchCodeGenerator } from '../hooks/UseGenerator';
+import {
+  useBatchCodeGenerator,
+  useSerialNumberGenerator
+} from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
 
 /*
@@ -173,6 +178,9 @@ export function usePurchaseOrderFields(): ApiFormFieldSet {
         }
       },
       responsible: {
+        filters: {
+          is_active: true
+        },
         icon: <IconUsers />
       }
     };
@@ -219,12 +227,30 @@ function LineItemFormRow({
     }
   });
 
+  const serialNumberGenerator = useSerialNumberGenerator((value: any) => {
+    if (!serials) {
+      setSerials(value);
+    }
+  });
+
+  const [packagingOpen, packagingHandlers] = useDisclosure(false, {
+    onClose: () => {
+      input.changeFn(input.idx, 'packaging', undefined);
+    }
+  });
+
+  const [noteOpen, noteHandlers] = useDisclosure(false, {
+    onClose: () => {
+      input.changeFn(input.idx, 'note', undefined);
+    }
+  });
+
   // State for serializing
   const [batchCode, setBatchCode] = useState<string>('');
   const [serials, setSerials] = useState<string>('');
   const [batchOpen, batchHandlers] = useDisclosure(false, {
     onClose: () => {
-      input.changeFn(input.idx, 'batch_code', '');
+      input.changeFn(input.idx, 'batch_code', undefined);
       input.changeFn(input.idx, 'serial_numbers', '');
     },
     onOpen: () => {
@@ -233,18 +259,13 @@ function LineItemFormRow({
         part: record?.supplier_part_detail?.part,
         order: record?.order
       });
+      // Generate new serial numbers
+      serialNumberGenerator.update({
+        part: record?.supplier_part_detail?.part,
+        quantity: input.item.quantity
+      });
     }
   });
-
-  // Change form value when state is altered
-  useEffect(() => {
-    input.changeFn(input.idx, 'batch_code', batchCode);
-  }, [batchCode]);
-
-  // Change form value when state is altered
-  useEffect(() => {
-    input.changeFn(input.idx, 'serial_numbers', serials);
-  }, [serials]);
 
   // Status value
   const [statusOpen, statusHandlers] = useDisclosure(false, {
@@ -361,27 +382,43 @@ function LineItemFormRow({
         <Table.Td style={{ width: '1%', whiteSpace: 'nowrap' }}>
           <Flex gap="1px">
             <ActionButton
+              size="sm"
               onClick={() => locationHandlers.toggle()}
               icon={<InvenTreeIcon icon="location" />}
               tooltip={t`Set Location`}
               tooltipAlignment="top"
-              variant={locationOpen ? 'filled' : 'outline'}
+              variant={locationOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
+              size="sm"
               onClick={() => batchHandlers.toggle()}
               icon={<InvenTreeIcon icon="batch_code" />}
               tooltip={t`Assign Batch Code${
                 record.trackable && ' and Serial Numbers'
               }`}
               tooltipAlignment="top"
-              variant={batchOpen ? 'filled' : 'outline'}
+              variant={batchOpen ? 'filled' : 'transparent'}
+            />
+            <ActionButton
+              size="sm"
+              icon={<InvenTreeIcon icon="packaging" />}
+              tooltip={t`Adjust Packaging`}
+              onClick={() => packagingHandlers.toggle()}
+              variant={packagingOpen ? 'filled' : 'transparent'}
             />
             <ActionButton
               onClick={() => statusHandlers.toggle()}
               icon={<InvenTreeIcon icon="status" />}
               tooltip={t`Change Status`}
               tooltipAlignment="top"
-              variant={statusOpen ? 'filled' : 'outline'}
+              variant={statusOpen ? 'filled' : 'transparent'}
+            />
+            <ActionButton
+              icon={<InvenTreeIcon icon="note" />}
+              tooltip={t`Add Note`}
+              tooltipAlignment="top"
+              variant={noteOpen ? 'filled' : 'transparent'}
+              onClick={() => noteHandlers.toggle()}
             />
             {barcode ? (
               <ActionButton
@@ -397,7 +434,7 @@ function LineItemFormRow({
                 icon={<InvenTreeIcon icon="barcode" />}
                 tooltip={t`Scan Barcode`}
                 tooltipAlignment="top"
-                variant="outline"
+                variant="transparent"
                 onClick={() => open()}
               />
             )}
@@ -413,33 +450,34 @@ function LineItemFormRow({
       </Table.Tr>
       {locationOpen && (
         <Table.Tr>
-          <Table.Td colSpan={4}>
-            <Flex align="end" gap={5}>
-              <div style={{ flexGrow: '1' }}>
-                <StandaloneField
-                  fieldDefinition={{
-                    field_type: 'related field',
-                    model: ModelType.stocklocation,
-                    api_url: apiUrl(ApiEndpoints.stock_location_list),
-                    filters: {
-                      structural: false
-                    },
-                    onValueChange: (value) => {
-                      setLocation(value);
-                    },
-                    description: locationDescription,
-                    value: location,
-                    label: t`Location`,
-                    icon: <InvenTreeIcon icon="location" />
-                  }}
-                  defaultValue={
-                    record.destination ??
-                    (record.destination_detail
-                      ? record.destination_detail.pk
-                      : null)
-                  }
-                />
-              </div>
+          <Table.Td colSpan={10}>
+            <Group grow preventGrowOverflow={false} justify="flex-apart" p="xs">
+              <Container flex={0} p="xs">
+                <InvenTreeIcon icon="downright" />
+              </Container>
+              <StandaloneField
+                fieldDefinition={{
+                  field_type: 'related field',
+                  model: ModelType.stocklocation,
+                  api_url: apiUrl(ApiEndpoints.stock_location_list),
+                  filters: {
+                    structural: false
+                  },
+                  onValueChange: (value) => {
+                    setLocation(value);
+                  },
+                  description: locationDescription,
+                  value: location,
+                  label: t`Location`,
+                  icon: <InvenTreeIcon icon="location" />
+                }}
+                defaultValue={
+                  record.destination ??
+                  (record.destination_detail
+                    ? record.destination_detail.pk
+                    : null)
+                }
+              />
               <Flex style={{ marginBottom: '7px' }}>
                 {(record.part_detail.default_location ||
                   record.part_detail.category_default_location) && (
@@ -474,67 +512,57 @@ function LineItemFormRow({
                     />
                   )}
               </Flex>
-            </Flex>
-          </Table.Td>
-          <Table.Td>
-            <div
-              style={{
-                height: '100%',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(6, 1fr)',
-                gridTemplateRows: 'auto',
-                alignItems: 'end'
-              }}
-            >
-              <InvenTreeIcon icon="downleft" />
-            </div>
+            </Group>
           </Table.Td>
         </Table.Tr>
       )}
       <TableFieldExtraRow
         visible={batchOpen}
-        colSpan={4}
-        content={
-          <StandaloneField
-            fieldDefinition={{
-              field_type: 'string',
-              onValueChange: (value) => setBatchCode(value),
-              label: 'Batch Code',
-              value: batchCode
-            }}
-          />
-        }
+        onValueChange={(value) => input.changeFn(input.idx, 'batch', value)}
+        fieldDefinition={{
+          field_type: 'string',
+          label: t`Batch Code`,
+          value: batchCode
+        }}
       />
       <TableFieldExtraRow
         visible={batchOpen && record.trackable}
-        colSpan={4}
-        content={
-          <StandaloneField
-            fieldDefinition={{
-              field_type: 'string',
-              onValueChange: (value) => setSerials(value),
-              label: 'Serial numbers',
-              value: serials
-            }}
-          />
+        onValueChange={(value) =>
+          input.changeFn(input.idx, 'serial_numbers', value)
         }
+        fieldDefinition={{
+          field_type: 'string',
+          label: t`Serial numbers`,
+          value: serials
+        }}
+      />
+      <TableFieldExtraRow
+        visible={packagingOpen}
+        onValueChange={(value) => input.changeFn(input.idx, 'packaging', value)}
+        fieldDefinition={{
+          field_type: 'string',
+          label: t`Packaging`
+        }}
+        defaultValue={record?.supplier_part_detail?.packaging}
       />
       <TableFieldExtraRow
         visible={statusOpen}
-        colSpan={4}
-        content={
-          <StandaloneField
-            fieldDefinition={{
-              field_type: 'choice',
-              api_url: apiUrl(ApiEndpoints.stock_status),
-              choices: statuses,
-              label: 'Status',
-              onValueChange: (value) =>
-                input.changeFn(input.idx, 'status', value)
-            }}
-            defaultValue={10}
-          />
-        }
+        defaultValue={10}
+        onValueChange={(value) => input.changeFn(input.idx, 'status', value)}
+        fieldDefinition={{
+          field_type: 'choice',
+          api_url: apiUrl(ApiEndpoints.stock_status),
+          choices: statuses,
+          label: t`Status`
+        }}
+      />
+      <TableFieldExtraRow
+        visible={noteOpen}
+        onValueChange={(value) => input.changeFn(input.idx, 'note', value)}
+        fieldDefinition={{
+          field_type: 'string',
+          label: t`Note`
+        }}
       />
     </>
   );
@@ -608,7 +636,7 @@ export function useReceiveLineItems(props: LineItemsForm) {
           />
         );
       },
-      headers: ['Part', 'SKU', 'Received', 'Quantity to receive', 'Actions']
+      headers: [t`Part`, t`SKU`, t`Received`, t`Quantity`, t`Actions`]
     },
     location: {
       filters: {

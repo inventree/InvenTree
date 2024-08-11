@@ -115,8 +115,13 @@ class InvenTreeMetadata(SimpleMetadata):
 
         return metadata
 
-    def override_value(self, field_name, field_value, model_value):
+    def override_value(self, field_name: str, field_key: str, field_value, model_value):
         """Override a value on the serializer with a matching value for the model.
+
+        Often, the serializer field will point to an underlying model field,
+        which contains extra information (which is translated already).
+
+        Rather than duplicating this information in the serializer, we can extract it from the model.
 
         This is used to override the serializer values with model values,
         if (and *only* if) the model value should take precedence.
@@ -125,17 +130,28 @@ class InvenTreeMetadata(SimpleMetadata):
         - field_value is None
         - model_value is callable, and field_value is not (this indicates that the model value is translated)
         - model_value is not a string, and field_value is a string (this indicates that the model value is translated)
+
+        Arguments:
+            - field_name: The name of the field
+            - field_key: The property key to override
+            - field_value: The value of the field (if available)
+            - model_value: The equivalent value of the model (if available)
         """
-        if model_value and not field_value:
+        if field_value is None and model_value is not None:
             return model_value
 
-        if field_value and not model_value:
+        if model_value is None and field_value is not None:
             return field_value
 
+        # Callable values will be evaluated later
         if callable(model_value) and not callable(field_value):
             return model_value
 
-        if type(model_value) is not str and type(field_value) is str:
+        if callable(field_value) and not callable(model_value):
+            return field_value
+
+        # Prioritize translated text over raw string values
+        if type(field_value) is str and type(model_value) is not str:
             return model_value
 
         return field_value
@@ -143,6 +159,8 @@ class InvenTreeMetadata(SimpleMetadata):
     def get_serializer_info(self, serializer):
         """Override get_serializer_info so that we can add 'default' values to any fields whose Meta.model specifies a default value."""
         self.serializer = serializer
+
+        request = getattr(self, 'request', None)
 
         serializer_info = super().get_serializer_info(serializer)
 
@@ -153,11 +171,18 @@ class InvenTreeMetadata(SimpleMetadata):
                     # Already know about this one
                     continue
 
-                if hasattr(serializer, field_name):
-                    field = getattr(serializer, field_name)
+                if field := getattr(serializer, field_name, None):
                     serializer_info[field_name] = self.get_field_info(field)
 
         model_class = None
+
+        # Extract read_only_fields and write_only_fields from the Meta class (if available)
+        if meta := getattr(serializer, 'Meta', None):
+            read_only_fields = getattr(meta, 'read_only_fields', [])
+            write_only_fields = getattr(meta, 'write_only_fields', [])
+        else:
+            read_only_fields = []
+            write_only_fields = []
 
         # Attributes to copy extra attributes from the model to the field (if they don't exist)
         # Note that the attributes may be named differently on the underlying model!
@@ -172,16 +197,20 @@ class InvenTreeMetadata(SimpleMetadata):
 
             model_fields = model_meta.get_field_info(model_class)
 
-            model_default_func = getattr(model_class, 'api_defaults', None)
-
-            if model_default_func:
-                model_default_values = model_class.api_defaults(self.request)
+            if model_default_func := getattr(model_class, 'api_defaults', None):
+                model_default_values = model_default_func(request=request) or {}
             else:
                 model_default_values = {}
 
             # Iterate through simple fields
             for name, field in model_fields.fields.items():
                 if name in serializer_info.keys():
+                    if name in read_only_fields:
+                        serializer_info[name]['read_only'] = True
+
+                    if name in write_only_fields:
+                        serializer_info[name]['write_only'] = True
+
                     if field.has_default():
                         default = field.default
 
@@ -197,10 +226,12 @@ class InvenTreeMetadata(SimpleMetadata):
                         serializer_info[name]['default'] = model_default_values[name]
 
                     for field_key, model_key in extra_attributes.items():
-                        field_value = serializer_info[name].get(field_key, None)
+                        field_value = getattr(serializer.fields[name], field_key, None)
                         model_value = getattr(field, model_key, None)
 
-                        if value := self.override_value(name, field_value, model_value):
+                        if value := self.override_value(
+                            name, field_key, field_value, model_value
+                        ):
                             serializer_info[name][field_key] = value
 
             # Iterate through relations
@@ -213,6 +244,12 @@ class InvenTreeMetadata(SimpleMetadata):
                     # Ignore reverse relations
                     continue
 
+                if name in read_only_fields:
+                    serializer_info[name]['read_only'] = True
+
+                if name in write_only_fields:
+                    serializer_info[name]['write_only'] = True
+
                 # Extract and provide the "limit_choices_to" filters
                 # This is used to automatically filter AJAX requests
                 serializer_info[name]['filters'] = (
@@ -220,10 +257,12 @@ class InvenTreeMetadata(SimpleMetadata):
                 )
 
                 for field_key, model_key in extra_attributes.items():
-                    field_value = serializer_info[name].get(field_key, None)
+                    field_value = getattr(serializer.fields[name], field_key, None)
                     model_value = getattr(relation.model_field, model_key, None)
 
-                    if value := self.override_value(name, field_value, model_value):
+                    if value := self.override_value(
+                        name, field_key, field_value, model_value
+                    ):
                         serializer_info[name][field_key] = value
 
                 if name in model_default_values:
@@ -241,7 +280,8 @@ class InvenTreeMetadata(SimpleMetadata):
 
         if instance is None and model_class is not None:
             # Attempt to find the instance based on kwargs lookup
-            kwargs = getattr(self.view, 'kwargs', None)
+            view = getattr(self, 'view', None)
+            kwargs = getattr(view, 'kwargs', None) if view else None
 
             if kwargs:
                 pk = None
@@ -298,8 +338,10 @@ class InvenTreeMetadata(SimpleMetadata):
 
         # Force non-nullable fields to read as "required"
         # (even if there is a default value!)
-        if not field.allow_null and not (
-            hasattr(field, 'allow_blank') and field.allow_blank
+        if (
+            'required' not in field_info
+            and not field.allow_null
+            and not (hasattr(field, 'allow_blank') and field.allow_blank)
         ):
             field_info['required'] = True
 
@@ -326,8 +368,11 @@ class InvenTreeMetadata(SimpleMetadata):
                     field_info['api_url'] = '/api/user/'
                 elif field_info['model'] == 'contenttype':
                     field_info['api_url'] = '/api/contenttype/'
-                else:
+                elif hasattr(model, 'get_api_url'):
                     field_info['api_url'] = model.get_api_url()
+                else:
+                    logger.warning("'get_api_url' method not defined for %s", model)
+                    field_info['api_url'] = getattr(model, 'api_url', None)
 
                 # Handle custom 'primary key' field
                 field_info['pk_field'] = getattr(field, 'pk_field', 'pk') or 'pk'

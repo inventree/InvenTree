@@ -22,6 +22,7 @@ type UseFilterProps = {
 export function useFilters(props: UseFilterProps) {
   const query = useQuery({
     enabled: true,
+    gcTime: 500,
     queryKey: [props.url, props.method, props.params],
     queryFn: async () => {
       return await api
@@ -44,7 +45,15 @@ export function useFilters(props: UseFilterProps) {
   });
 
   const choices: TableFilterChoice[] = useMemo(() => {
-    return query.data?.map(props.transform) ?? [];
+    let opts = query.data?.map(props.transform) ?? [];
+
+    // Ensure stringiness
+    return opts.map((opt: any) => {
+      return {
+        value: opt.value.toString(),
+        label: opt?.label?.toString() ?? opt.value.toString()
+      };
+    });
   }, [props.transform, query.data]);
 
   const refresh = useCallback(() => {
@@ -72,6 +81,9 @@ export function useProjectCodeFilters() {
 export function useUserFilters() {
   return useFilters({
     url: apiUrl(ApiEndpoints.user_list),
+    params: {
+      is_active: true
+    },
     transform: (item) => ({
       value: item.pk,
       label: item.username
@@ -83,6 +95,9 @@ export function useUserFilters() {
 export function useOwnerFilters() {
   return useFilters({
     url: apiUrl(ApiEndpoints.owner_list),
+    params: {
+      is_active: true
+    },
     transform: (item) => ({
       value: item.pk,
       label: item.name

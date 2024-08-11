@@ -353,14 +353,6 @@ class PartRelatedAdmin(admin.ModelAdmin):
     autocomplete_fields = ('part_1', 'part_2')
 
 
-class PartAttachmentAdmin(admin.ModelAdmin):
-    """Admin class for the PartAttachment model."""
-
-    list_display = ('part', 'attachment', 'comment')
-
-    autocomplete_fields = ('part',)
-
-
 class PartTestTemplateAdmin(admin.ModelAdmin):
     """Admin class for the PartTestTemplate model."""
 
@@ -408,6 +400,9 @@ class BomItemResource(InvenTreeResource):
     )
     part_ipn = Field(
         attribute='sub_part__IPN', column_name=_('Part IPN'), readonly=True
+    )
+    part_revision = Field(
+        attribute='sub_part__revision', column_name=_('Part Revision'), readonly=True
     )
     part_name = Field(
         attribute='sub_part__name', column_name=_('Part Name'), readonly=True
@@ -607,7 +602,6 @@ class PartInternalPriceBreakAdmin(admin.ModelAdmin):
 admin.site.register(models.Part, PartAdmin)
 admin.site.register(models.PartCategory, PartCategoryAdmin)
 admin.site.register(models.PartRelated, PartRelatedAdmin)
-admin.site.register(models.PartAttachment, PartAttachmentAdmin)
 admin.site.register(models.BomItem, BomItemAdmin)
 admin.site.register(models.PartParameterTemplate, ParameterTemplateAdmin)
 admin.site.register(models.PartParameter, ParameterAdmin)

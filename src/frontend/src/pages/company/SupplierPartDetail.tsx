@@ -1,34 +1,43 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconCurrencyDollar,
   IconDots,
   IconInfoCircle,
+  IconNotes,
   IconPackages,
   IconShoppingCart
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
+  BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -43,10 +52,13 @@ export default function SupplierPartDetail() {
 
   const user = useUserState();
 
+  const navigate = useNavigate();
+
   const {
     instance: supplierPart,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.supplier_part_list,
     pk: id,
@@ -238,6 +250,18 @@ export default function SupplierPartDetail() {
         ) : (
           <Skeleton />
         )
+      },
+      {
+        name: 'notes',
+        label: t`Notes`,
+        icon: <IconNotes />,
+        content: (
+          <NotesEditor
+            modelType={ModelType.supplierpart}
+            modelId={supplierPart.pk}
+            editable={user.hasChangeRole(UserRoles.purchase_order)}
+          />
+        )
       }
     ];
   }, [supplierPart]);
@@ -245,6 +269,24 @@ export default function SupplierPartDetail() {
   const supplierPartActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
+      <BarcodeActionDropdown
+        actions={[
+          ViewBarcodeAction({
+            model: ModelType.supplierpart,
+            pk: supplierPart.pk
+          }),
+          LinkBarcodeAction({
+            hidden:
+              supplierPart.barcode_hash ||
+              !user.hasChangeRole(UserRoles.purchase_order)
+          }),
+          UnlinkBarcodeAction({
+            hidden:
+              !supplierPart.barcode_hash ||
+              !user.hasChangeRole(UserRoles.purchase_order)
+          })
+        ]}
+      />,
       <ActionDropdown
         tooltip={t`Supplier Part Actions`}
         icon={<IconDots />}
@@ -255,10 +297,11 @@ export default function SupplierPartDetail() {
           }),
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),
-            onClick: () => editSuppliertPart.open()
+            onClick: () => editSupplierPart.open()
           }),
           DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+            onClick: () => deleteSupplierPart.open()
           })
         ]}
       />
@@ -267,12 +310,21 @@ export default function SupplierPartDetail() {
 
   const supplierPartFields = useSupplierPartFields();
 
-  const editSuppliertPart = useEditApiFormModal({
+  const editSupplierPart = useEditApiFormModal({
     url: ApiEndpoints.supplier_part_list,
     pk: supplierPart?.pk,
     title: t`Edit Supplier Part`,
     fields: supplierPartFields,
     onFormSuccess: refreshInstance
+  });
+
+  const deleteSupplierPart = useDeleteApiFormModal({
+    url: ApiEndpoints.supplier_part_list,
+    pk: supplierPart?.pk,
+    title: t`Delete Supplier Part`,
+    onFormSuccess: () => {
+      navigate(getDetailUrl(ModelType.part, supplierPart.part));
+    }
   });
 
   const duplicateSupplierPart = useCreateApiFormModal({
@@ -311,19 +363,22 @@ export default function SupplierPartDetail() {
 
   return (
     <>
-      {editSuppliertPart.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`Supplier Part`}
-          subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
-          breadcrumbs={breadcrumbs}
-          badges={badges}
-          actions={supplierPartActions}
-          imageUrl={supplierPart?.part_detail?.thumbnail}
-        />
-        <PanelGroup pageKey="supplierpart" panels={panels} />
-      </Stack>
+      {deleteSupplierPart.modal}
+      {duplicateSupplierPart.modal}
+      {editSupplierPart.modal}
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`Supplier Part`}
+            subtitle={`${supplierPart.SKU} - ${supplierPart?.part_detail?.name}`}
+            breadcrumbs={breadcrumbs}
+            badges={badges}
+            actions={supplierPartActions}
+            imageUrl={supplierPart?.part_detail?.thumbnail}
+          />
+          <PanelGroup pageKey="supplierpart" panels={panels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

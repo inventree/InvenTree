@@ -84,6 +84,9 @@ def getNewestMigrationFile(app, exclude_extension=True):
             newest_num = num
             newest_file = f
 
+    if not newest_file:  # pragma: no cover
+        return newest_file
+
     if exclude_extension:
         newest_file = newest_file.replace('.py', '')
 
@@ -153,6 +156,17 @@ class UserMixin:
         self.client.logout()
 
     @classmethod
+    def clearRoles(cls):
+        """Remove all user roles from the registered user."""
+        for ruleset in cls.group.rule_sets.all():
+            ruleset.can_view = False
+            ruleset.can_change = False
+            ruleset.can_delete = False
+            ruleset.can_add = False
+
+            ruleset.save()
+
+    @classmethod
     def assignRole(cls, role=None, assign_all: bool = False, group=None):
         """Set the user roles for the registered user.
 
@@ -190,7 +204,8 @@ class UserMixin:
                     ruleset.can_add = True
 
                 ruleset.save()
-                break
+                if not assign_all:
+                    break
 
 
 class PluginMixin:
@@ -229,7 +244,7 @@ class ExchangeRateMixin:
 
 
 class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
-    """Testcase with user setup buildin."""
+    """Testcase with user setup build in."""
 
     pass
 
@@ -267,7 +282,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
                 f'Query count exceeded at {url}: Expected < {value} queries, got {n}'
             )  # pragma: no cover
 
-        if verbose:
+        if verbose or n >= value:
             msg = '\r\n%s' % json.dumps(
                 context.captured_queries, indent=4
             )  # pragma: no cover
@@ -296,7 +311,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
                 if hasattr(response, 'content'):
                     print('content:', response.content)
 
-            self.assertEqual(expected_code, response.status_code)
+            self.assertEqual(response.status_code, expected_code)
 
     def getActions(self, url):
         """Return a dict of the 'actions' available at a given endpoint.
@@ -314,17 +329,17 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         if data is None:
             data = {}
 
-        expected_code = kwargs.pop('expected_code', None)
-
         kwargs['format'] = kwargs.get('format', 'json')
 
-        max_queries = kwargs.get('max_query_count', self.MAX_QUERY_COUNT)
-        max_query_time = kwargs.get('max_query_time', self.MAX_QUERY_TIME)
+        expected_code = kwargs.pop('expected_code', None)
+        max_queries = kwargs.pop('max_query_count', self.MAX_QUERY_COUNT)
+        max_query_time = kwargs.pop('max_query_time', self.MAX_QUERY_TIME)
 
         t1 = time.time()
 
         with self.assertNumQueriesLessThan(max_queries, url=url):
             response = method(url, data, **kwargs)
+
         t2 = time.time()
         dt = t2 - t1
 
@@ -401,12 +416,12 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
         # Extract filename
         disposition = response.headers['Content-Disposition']
 
-        result = re.search(r'attachment; filename="([\w.]+)"', disposition)
+        result = re.search(r'attachment; filename="([\w\d\-.]+)"', disposition)
 
         fn = result.groups()[0]
 
         if expected_fn is not None:
-            self.assertEqual(expected_fn, fn)
+            self.assertRegex(fn, expected_fn)
 
         if decode:
             # Decode data and return as StringIO file object

@@ -118,7 +118,7 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     if last_success:
         threshold = datetime.now() - timedelta(days=n_days)
 
-        if last_success > threshold:
+        if last_success.date() > threshold.date():
             logger.info(
                 "Last successful run for '%s' was too recent - skipping task", task_name
             )
@@ -256,8 +256,8 @@ def offload_task(
             _func(*args, **kwargs)
         except Exception as exc:
             log_error('InvenTree.offload_task')
-            raise_warning(f"WARNING: '{taskname}' not started due to {str(exc)}")
-            return False
+            raise_warning(f"WARNING: '{taskname}' failed due to {str(exc)}")
+            raise exc
 
     # Finally, task either completed successfully or was offloaded
     return True

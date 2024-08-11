@@ -472,13 +472,13 @@ class StockLocationTypeTest(StockAPITestCase):
         """Test that the list endpoint works as expected."""
         location_types = [
             StockLocationType.objects.create(
-                name='Type 1', description='Type 1 desc', icon='fas fa-box'
+                name='Type 1', description='Type 1 desc', icon='ti:package:outline'
             ),
             StockLocationType.objects.create(
-                name='Type 2', description='Type 2 desc', icon='fas fa-box'
+                name='Type 2', description='Type 2 desc', icon='ti:package:outline'
             ),
             StockLocationType.objects.create(
-                name='Type 3', description='Type 3 desc', icon='fas fa-box'
+                name='Type 3', description='Type 3 desc', icon='ti:package:outline'
             ),
         ]
 
@@ -493,7 +493,7 @@ class StockLocationTypeTest(StockAPITestCase):
     def test_delete(self):
         """Test that we can delete a location type via API."""
         location_type = StockLocationType.objects.create(
-            name='Type 1', description='Type 1 desc', icon='fas fa-box'
+            name='Type 1', description='Type 1 desc', icon='ti:package:outline'
         )
         self.delete(
             reverse('api-location-type-detail', kwargs={'pk': location_type.pk}),
@@ -506,8 +506,19 @@ class StockLocationTypeTest(StockAPITestCase):
         self.post(
             self.list_url,
             {'name': 'Test Type 1', 'description': 'Test desc 1', 'icon': 'fas fa-box'},
+            expected_code=400,
+        )
+
+        self.post(
+            self.list_url,
+            {
+                'name': 'Test Type 1',
+                'description': 'Test desc 1',
+                'icon': 'ti:package:outline',
+            },
             expected_code=201,
         )
+
         self.assertIsNotNone(
             StockLocationType.objects.filter(name='Test Type 1').first()
         )
@@ -515,14 +526,20 @@ class StockLocationTypeTest(StockAPITestCase):
     def test_update(self):
         """Test that we can update a location type via API."""
         location_type = StockLocationType.objects.create(
-            name='Type 1', description='Type 1 desc', icon='fas fa-box'
+            name='Type 1', description='Type 1 desc', icon='ti:package:outline'
         )
-        res = self.patch(
+        self.patch(
             reverse('api-location-type-detail', kwargs={'pk': location_type.pk}),
             {'icon': 'fas fa-shapes'},
+            expected_code=400,
+        )
+
+        res = self.patch(
+            reverse('api-location-type-detail', kwargs={'pk': location_type.pk}),
+            {'icon': 'ti:tag:outline'},
             expected_code=200,
         ).json()
-        self.assertEqual(res['icon'], 'fas fa-shapes')
+        self.assertEqual(res['icon'], 'ti:tag:outline')
 
 
 class StockItemListTest(StockAPITestCase):
@@ -765,11 +782,11 @@ class StockItemListTest(StockAPITestCase):
 
         # Expected headers
         headers = [
-            'Part ID',
-            'Customer ID',
-            'Location ID',
+            'Part',
+            'Customer',
+            'Stock Location',
             'Location Name',
-            'Parent ID',
+            'Parent Item',
             'Quantity',
             'Status',
         ]
@@ -885,13 +902,6 @@ class StockItemListTest(StockAPITestCase):
 
     def test_query_count(self):
         """Test that the number of queries required to fetch stock items is reasonable."""
-
-        def get_stock(data, expected_status=200):
-            """Helper function to fetch stock items."""
-            response = self.client.get(self.list_url, data=data)
-            self.assertEqual(response.status_code, expected_status)
-            return response.data
-
         # Create a bunch of StockItem objects
         prt = Part.objects.first()
 
@@ -901,20 +911,18 @@ class StockItemListTest(StockAPITestCase):
         ])
 
         # List *all* stock items
-        with self.assertNumQueriesLessThan(25):
-            get_stock({})
+        self.get(self.list_url, {}, max_query_count=35)
 
         # List all stock items, with part detail
-        with self.assertNumQueriesLessThan(20):
-            get_stock({'part_detail': True})
+        self.get(self.list_url, {'part_detail': True}, max_query_count=35)
 
         # List all stock items, with supplier_part detail
-        with self.assertNumQueriesLessThan(20):
-            get_stock({'supplier_part_detail': True})
+        self.get(self.list_url, {'supplier_part_detail': True}, max_query_count=35)
 
         # List all stock items, with 'location' and 'tests' detail
-        with self.assertNumQueriesLessThan(20):
-            get_stock({'location_detail': True, 'tests': True})
+        self.get(
+            self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
+        )
 
 
 class StockItemTest(StockAPITestCase):

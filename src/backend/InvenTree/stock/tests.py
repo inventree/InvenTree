@@ -15,7 +15,13 @@ from order.models import SalesOrder
 from part.models import Part, PartTestTemplate
 from stock.status_codes import StockHistoryCode
 
-from .models import StockItem, StockItemTestResult, StockItemTracking, StockLocation
+from .models import (
+    StockItem,
+    StockItemTestResult,
+    StockItemTracking,
+    StockLocation,
+    StockLocationType,
+)
 
 
 class StockTestBase(InvenTreeTestCase):
@@ -755,23 +761,14 @@ class StockTest(StockTestBase):
         # First, we will create a stock location structure
 
         A = StockLocation.objects.create(name='A', description='Top level location')
-
         B1 = StockLocation.objects.create(name='B1', parent=A)
-
         B2 = StockLocation.objects.create(name='B2', parent=A)
-
         B3 = StockLocation.objects.create(name='B3', parent=A)
-
         C11 = StockLocation.objects.create(name='C11', parent=B1)
-
         C12 = StockLocation.objects.create(name='C12', parent=B1)
-
         C21 = StockLocation.objects.create(name='C21', parent=B2)
-
         C22 = StockLocation.objects.create(name='C22', parent=B2)
-
         C31 = StockLocation.objects.create(name='C31', parent=B3)
-
         C32 = StockLocation.objects.create(name='C32', parent=B3)
 
         # Check that the tree_id is correct for each sublocation
@@ -895,6 +892,62 @@ class StockTest(StockTestBase):
 
             self.assertEqual(len(p.metadata.keys()), 4)
 
+    def test_merge(self):
+        """Test merging of multiple stock items."""
+        from djmoney.money import Money
+
+        part = Part.objects.first()
+        part.stock_items.all().delete()
+
+        # Test simple merge without any pricing information
+        s1 = StockItem.objects.create(part=part, quantity=10)
+        s2 = StockItem.objects.create(part=part, quantity=20)
+        s3 = StockItem.objects.create(part=part, quantity=30)
+
+        self.assertEqual(part.stock_items.count(), 3)
+        s1.merge_stock_items([s2, s3])
+        self.assertEqual(part.stock_items.count(), 1)
+        s1.refresh_from_db()
+        self.assertEqual(s1.quantity, 60)
+        self.assertIsNone(s1.purchase_price)
+
+        part.stock_items.all().delete()
+
+        # Create some stock items with pricing information
+        s1 = StockItem.objects.create(part=part, quantity=10, purchase_price=None)
+        s2 = StockItem.objects.create(
+            part=part, quantity=15, purchase_price=Money(10, 'USD')
+        )
+        s3 = StockItem.objects.create(part=part, quantity=30)
+
+        self.assertEqual(part.stock_items.count(), 3)
+        s1.merge_stock_items([s2, s3])
+        self.assertEqual(part.stock_items.count(), 1)
+        s1.refresh_from_db()
+        self.assertEqual(s1.quantity, 55)
+        self.assertEqual(s1.purchase_price, Money(10, 'USD'))
+
+        part.stock_items.all().delete()
+
+        s1 = StockItem.objects.create(
+            part=part, quantity=10, purchase_price=Money(5, 'USD')
+        )
+        s2 = StockItem.objects.create(
+            part=part, quantity=25, purchase_price=Money(10, 'USD')
+        )
+        s3 = StockItem.objects.create(
+            part=part, quantity=5, purchase_price=Money(75, 'USD')
+        )
+
+        self.assertEqual(part.stock_items.count(), 3)
+        s1.merge_stock_items([s2, s3])
+        self.assertEqual(part.stock_items.count(), 1)
+        s1.refresh_from_db()
+        self.assertEqual(s1.quantity, 40)
+
+        # Final purchase price should be the weighted average
+        self.assertAlmostEqual(s1.purchase_price.amount, 16.875, places=3)
+
 
 class StockBarcodeTest(StockTestBase):
     """Run barcode tests for the stock app."""
@@ -904,12 +957,6 @@ class StockBarcodeTest(StockTestBase):
         item = StockItem.objects.get(pk=1)
 
         self.assertEqual(StockItem.barcode_model_type(), 'stockitem')
-
-        # Call format_barcode method
-        barcode = item.format_barcode(brief=False)
-
-        for key in ['tool', 'version', 'instance', 'stockitem']:
-            self.assertIn(key, barcode)
 
         # Render simple barcode data for the StockItem
         barcode = item.barcode
@@ -921,7 +968,7 @@ class StockBarcodeTest(StockTestBase):
 
         loc = StockLocation.objects.get(pk=1)
 
-        barcode = loc.format_barcode(brief=True)
+        barcode = loc.format_barcode()
         self.assertEqual('{"stocklocation": 1}', barcode)
 
 
@@ -1264,3 +1311,39 @@ class TestResultTest(StockTestBase):
         tests = item.testResultMap(include_installed=False)
         self.assertEqual(len(tests), 3)
         self.assertNotIn('somenewtest', tests)
+
+
+class StockLocationTest(InvenTreeTestCase):
+    """Tests for the StockLocation model."""
+
+    def test_icon(self):
+        """Test stock location icon."""
+        # No default icon set
+        loc = StockLocation.objects.create(name='Test Location')
+        loc_type = StockLocationType.objects.create(
+            name='Test Type', icon='ti:cube-send:outline'
+        )
+        self.assertEqual(loc.icon, '')
+
+        # Set a default icon
+        InvenTreeSetting.set_setting(
+            'STOCK_LOCATION_DEFAULT_ICON', 'ti:package:outline'
+        )
+        self.assertEqual(loc.icon, 'ti:package:outline')
+
+        # Assign location type and check that it takes precedence over default icon
+        loc.location_type = loc_type
+        loc.save()
+        self.assertEqual(loc.icon, 'ti:cube-send:outline')
+
+        # Set a custom icon and assert that it takes precedence over all other icons
+        loc.icon = 'ti:tag:outline'
+        loc.save()
+        self.assertEqual(loc.icon, 'ti:tag:outline')
+        InvenTreeSetting.set_setting('STOCK_LOCATION_DEFAULT_ICON', '')
+
+        # Test that the icon can be set to None again
+        loc.icon = ''
+        loc.location_type = None
+        loc.save()
+        self.assertEqual(loc.icon, '')

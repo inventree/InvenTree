@@ -1,33 +1,38 @@
 import { t } from '@lingui/macro';
-import { Grid, LoadingOverlay, Skeleton, Stack } from '@mantine/core';
+import { Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconBuildingWarehouse,
   IconDots,
   IconInfoCircle,
   IconList,
+  IconNotes,
   IconPaperclip
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
 import { ItemDetailsGrid } from '../../components/details/ItemDetails';
+import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
   EditItemAction
 } from '../../components/items/ActionDropdown';
+import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useManufacturerPartFields } from '../../forms/CompanyForms';
+import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
+  useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
@@ -40,11 +45,13 @@ import { SupplierPartTable } from '../../tables/purchasing/SupplierPartTable';
 export default function ManufacturerPartDetail() {
   const { id } = useParams();
   const user = useUserState();
+  const navigate = useNavigate();
 
   const {
     instance: manufacturerPart,
     instanceQuery,
-    refreshInstance
+    refreshInstance,
+    requestStatus
   } = useInstance({
     endpoint: ApiEndpoints.manufacturer_part_list,
     pk: id,
@@ -173,9 +180,20 @@ export default function ManufacturerPartDetail() {
         icon: <IconPaperclip />,
         content: (
           <AttachmentTable
-            endpoint={ApiEndpoints.manufacturer_part_attachment_list}
-            model="manufacturer_part"
-            pk={manufacturerPart?.pk}
+            model_type={ModelType.manufacturerpart}
+            model_id={manufacturerPart?.pk}
+          />
+        )
+      },
+      {
+        name: 'notes',
+        label: t`Notes`,
+        icon: <IconNotes />,
+        content: (
+          <NotesEditor
+            modelType={ModelType.manufacturerpart}
+            modelId={manufacturerPart.pk}
+            editable={user.hasChangeRole(UserRoles.purchase_order)}
           />
         )
       }
@@ -203,6 +221,15 @@ export default function ManufacturerPartDetail() {
     modelType: ModelType.manufacturerpart
   });
 
+  const deleteManufacturerPart = useDeleteApiFormModal({
+    url: ApiEndpoints.manufacturer_part_list,
+    pk: manufacturerPart?.pk,
+    title: t`Delete Manufacturer Part`,
+    onFormSuccess: () => {
+      navigate(getDetailUrl(ModelType.part, manufacturerPart.part));
+    }
+  });
+
   const manufacturerPartActions = useMemo(() => {
     return [
       <AdminButton
@@ -222,7 +249,8 @@ export default function ManufacturerPartDetail() {
             onClick: () => editManufacturerPart.open()
           }),
           DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+            onClick: () => deleteManufacturerPart.open()
           })
         ]}
       />
@@ -244,18 +272,21 @@ export default function ManufacturerPartDetail() {
 
   return (
     <>
+      {deleteManufacturerPart.modal}
+      {duplicateManufacturerPart.modal}
       {editManufacturerPart.modal}
-      <Stack gap="xs">
-        <LoadingOverlay visible={instanceQuery.isFetching} />
-        <PageDetail
-          title={t`ManufacturerPart`}
-          subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
-          breadcrumbs={breadcrumbs}
-          actions={manufacturerPartActions}
-          imageUrl={manufacturerPart?.part_detail?.thumbnail}
-        />
-        <PanelGroup pageKey="manufacturerpart" panels={panels} />
-      </Stack>
+      <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
+        <Stack gap="xs">
+          <PageDetail
+            title={t`ManufacturerPart`}
+            subtitle={`${manufacturerPart.MPN} - ${manufacturerPart.part_detail?.name}`}
+            breadcrumbs={breadcrumbs}
+            actions={manufacturerPartActions}
+            imageUrl={manufacturerPart?.part_detail?.thumbnail}
+          />
+          <PanelGroup pageKey="manufacturerpart" panels={panels} />
+        </Stack>
+      </InstanceDetail>
     </>
   );
 }

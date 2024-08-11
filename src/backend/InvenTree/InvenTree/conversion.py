@@ -153,7 +153,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
     if unit:
         try:
             valid = unit in ureg
-        except Exception as exc:
+        except Exception:
             valid = False
 
         if not valid:
@@ -196,7 +196,7 @@ def convert_physical_value(value: str, unit: str = None, strip_units=True):
         try:
             value = convert_value(attempt, unit)
             break
-        except Exception as exc:
+        except Exception:
             value = None
 
     if value is None:

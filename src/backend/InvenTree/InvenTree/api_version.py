@@ -1,11 +1,115 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 206
+INVENTREE_API_VERSION = 236
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
+
 INVENTREE_API_TEXT = """
+
+v236 - 2024-08-10 : https://github.com/inventree/InvenTree/pull/7844
+    - Adds "supplier_name" to the PurchaseOrder API serializer
+
+v235 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7837
+    - Adds "on_order" quantity to SalesOrderLineItem serializer
+    - Adds "building" quantity to SalesOrderLineItem serializer
+
+v234 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7829
+    - Fixes bug in the plugin metadata endpoint
+
+v233 - 2024-08-04 : https://github.com/inventree/InvenTree/pull/7807
+    - Adds new endpoints for managing state of build orders
+    - Adds new endpoints for managing state of purchase orders
+    - Adds new endpoints for managing state of sales orders
+    - Adds new endpoints for managing state of return orders
+
+v232 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7793
+    - Allow ordering of SalesOrderShipment API by 'shipment_date' and 'delivery_date'
+
+v231 - 2024-08-03 : https://github.com/inventree/InvenTree/pull/7794
+    - Optimize BuildItem and BuildLine serializers to improve API efficiency
+
+v230 - 2024-05-05 : https://github.com/inventree/InvenTree/pull/7164
+    - Adds test statistics endpoint
+
+v229 - 2024-07-31 : https://github.com/inventree/InvenTree/pull/7775
+    - Add extra exportable fields to the BomItem serializer
+
+v228 - 2024-07-18 : https://github.com/inventree/InvenTree/pull/7684
+    - Adds "icon" field to the PartCategory.path and StockLocation.path API
+    - Adds icon packages API endpoint
+
+v227 - 2024-07-19 : https://github.com/inventree/InvenTree/pull/7693/
+    - Adds endpoints to list and revoke the tokens issued to the current user
+
+v226 - 2024-07-15 : https://github.com/inventree/InvenTree/pull/7648
+    - Adds barcode generation API endpoint
+
+v225 - 2024-07-17 : https://github.com/inventree/InvenTree/pull/7671
+    - Adds "filters" field to DataImportSession API
+
+v224 - 2024-07-14 : https://github.com/inventree/InvenTree/pull/7667
+    - Add notes field to ManufacturerPart and SupplierPart API endpoints
+
+v223 - 2024-07-14 : https://github.com/inventree/InvenTree/pull/7649
+    - Allow adjustment of "packaging" field when receiving items against a purchase order
+
+v222 - 2024-07-14 : https://github.com/inventree/InvenTree/pull/7635
+    - Adjust the BomItem API endpoint to improve data import process
+
+v221 - 2024-07-13 : https://github.com/inventree/InvenTree/pull/7636
+    - Adds missing fields from StockItemBriefSerializer
+    - Adds missing fields from PartBriefSerializer
+    - Adds extra exportable fields to BuildItemSerializer
+
+v220 - 2024-07-11 : https://github.com/inventree/InvenTree/pull/7585
+    - Adds "revision_of" field to Part serializer
+    - Adds new API filters for "revision" status
+
+v219 - 2024-07-11 : https://github.com/inventree/InvenTree/pull/7611
+    - Adds new fields to the BuildItem API endpoints
+    - Adds new ordering / filtering options to the BuildItem API endpoints
+
+v218 - 2024-07-11 : https://github.com/inventree/InvenTree/pull/7619
+    - Adds "can_build" field to the BomItem API
+
+v217 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7599
+    - Fixes bug in "project_code" field for order API endpoints
+
+v216 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7595
+    - Moves API endpoint for contenttype lookup by model name
+
+v215 - 2024-07-09 : https://github.com/inventree/InvenTree/pull/7591
+    - Adds additional fields to the BuildLine serializer
+
+v214 - 2024-07-08 : https://github.com/inventree/InvenTree/pull/7587
+    - Adds "default_location_detail" field to the Part API
+
+v213 - 2024-07-06 : https://github.com/inventree/InvenTree/pull/7527
+    - Adds 'locked' field to Part API
+
+v212 - 2024-07-06 : https://github.com/inventree/InvenTree/pull/7562
+    - Makes API generation more robust (no functional changes)
+
+v211 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/6911
+    - Adds API endpoints for managing data import and export
+
+v210 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7518
+    - Adds translateable text to User API fields
+
+v209 - 2024-06-26 : https://github.com/inventree/InvenTree/pull/7514
+    - Add "top_level" filter to PartCategory API endpoint
+    - Add "top_level" filter to StockLocation API endpoint
+
+v208 - 2024-06-19 : https://github.com/inventree/InvenTree/pull/7479
+    - Adds documentation for the user roles API endpoint (no functional changes)
+
+v207 - 2024-06-09 : https://github.com/inventree/InvenTree/pull/7420
+    - Moves all "Attachment" models into a single table
+    - All "Attachment" operations are now performed at /api/attachment/
+    - Add permissions information to /api/user/roles/ endpoint
+
 v206 - 2024-06-08 : https://github.com/inventree/InvenTree/pull/7417
     - Adds "choices" field to the PartTestTemplate model
 
@@ -111,7 +215,7 @@ v178 - 2024-02-29 : https://github.com/inventree/InvenTree/pull/6604
     - Adds "external_stock" field to the Part API endpoint
     - Adds "external_stock" field to the BomItem API endpoint
     - Adds "external_stock" field to the BuildLine API endpoint
-    - Stock quantites represented in the BuildLine API endpoint are now filtered by Build.source_location
+    - Stock quantities represented in the BuildLine API endpoint are now filtered by Build.source_location
 
 v177 - 2024-02-27 : https://github.com/inventree/InvenTree/pull/6581
     - Adds "subcategoies" count to PartCategoryTree serializer

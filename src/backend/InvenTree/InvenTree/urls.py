@@ -21,6 +21,7 @@ from sesame.views import LoginView
 import build.api
 import common.api
 import company.api
+import importer.api
 import machine.api
 import order.api
 import part.api
@@ -34,6 +35,7 @@ from company.urls import company_urls, manufacturer_part_urls, supplier_part_url
 from order.urls import order_urls
 from part.urls import part_urls
 from plugin.urls import get_plugin_urls
+from stock.api import test_statistics_api_urls
 from stock.urls import stock_urls
 from web.urls import api_urls as web_api_urls
 from web.urls import urlpatterns as platform_urls
@@ -80,11 +82,19 @@ admin.site.site_header = 'InvenTree Admin'
 
 apipatterns = [
     # Global search
+    path('admin/', include(common.api.admin_api_urls)),
+    path('bom/', include(part.api.bom_api_urls)),
+    path('build/', include(build.api.build_api_urls)),
+    path('company/', include(company.api.company_api_urls)),
+    path('importer/', include(importer.api.importer_api_urls)),
+    path('label/', include(report.api.label_api_urls)),
+    path('machine/', include(machine.api.machine_api_urls)),
+    path('order/', include(order.api.order_api_urls)),
+    path('part/', include(part.api.part_api_urls)),
+    path('report/', include(report.api.report_api_urls)),
     path('search/', APISearchView.as_view(), name='api-search'),
     path('settings/', include(common.api.settings_api_urls)),
-    path('part/', include(part.api.part_api_urls)),
-    path('bom/', include(part.api.bom_api_urls)),
-    path('company/', include(company.api.company_api_urls)),
+    path('stock/', include(stock.api.stock_api_urls)),
     path(
         'generate/',
         include([
@@ -100,14 +110,8 @@ apipatterns = [
             ),
         ]),
     ),
-    path('stock/', include(stock.api.stock_api_urls)),
-    path('build/', include(build.api.build_api_urls)),
-    path('order/', include(order.api.order_api_urls)),
-    path('label/', include(report.api.label_api_urls)),
-    path('report/', include(report.api.report_api_urls)),
-    path('machine/', include(machine.api.machine_api_urls)),
+    path('test-statistics/', include(test_statistics_api_urls)),
     path('user/', include(users.api.user_urls)),
-    path('admin/', include(common.api.admin_api_urls)),
     path('web/', include(web_api_urls)),
     # Plugin endpoints
     path('', include(plugin.api.plugin_api_urls)),

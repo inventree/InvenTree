@@ -1,5 +1,7 @@
 """API for the plugin app."""
 
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.urls import include, path, re_path
 from django.utils.translation import gettext_lazy as _
@@ -267,7 +269,9 @@ class PluginSettingList(ListAPI):
     filterset_fields = ['plugin__active', 'plugin__key']
 
 
-def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
+def check_plugin(
+    plugin_slug: Optional[str], plugin_pk: Optional[int]
+) -> InvenTreePlugin:
     """Check that a plugin for the provided slug exists and get the config.
 
     Args:
@@ -287,16 +291,16 @@ def check_plugin(plugin_slug: str, plugin_pk: int) -> InvenTreePlugin:
         raise NotFound(detail='Plugin not specified')
 
     # Define filter
-    filter = {}
+    filters = {}
     if plugin_slug:
-        filter['key'] = plugin_slug
+        filters['key'] = plugin_slug
     elif plugin_pk:
-        filter['pk'] = plugin_pk
+        filters['pk'] = plugin_pk
     ref = plugin_slug or plugin_pk
 
     # Check that the 'plugin' specified is valid
     try:
-        plugin_cgf = PluginConfig.objects.filter(**filter).first()
+        plugin_cgf = PluginConfig.objects.filter(**filters).first()
     except PluginConfig.DoesNotExist:
         raise NotFound(detail=f"Plugin '{ref}' not installed")
 
@@ -420,16 +424,20 @@ class PluginPanelList(APIView):
     @extend_schema(responses={200: PluginSerializers.PluginPanelSerializer(many=True)})
     def get(self, request):
         """Show available plugin panels."""
+        target_model = request.query_params.get('target_model', None)
+        target_id = request.query_params.get('target_id', None)
+
         panels = []
 
         # Extract all plugins from the registry which provide custom panels
-        for _plugin in registry.with_mixin('panel', active=True):
-            # TODO: Allow plugins to fill this data out
-            ...
+        for _plugin in registry.with_mixin('ui', active=True):
+            # Allow plugins to fill this data out
+            plugin_panels = _plugin.get_custom_panels(target_model, target_id, request)
 
-        user = request.user
-        target_model = request.query_params.get('target_model', None)
-        target_id = request.query_params.get('target_id', None)
+            if plugin_panels and type(plugin_panels) is list:
+                for panel in plugin_panels:
+                    # TODO: Validate each panel before inserting
+                    panels.append(panel)
 
         if target_model == 'part' and target_id:
             panels = [
@@ -472,6 +480,13 @@ class PluginPanelList(APIView):
         return Response(PluginSerializers.PluginPanelSerializer(panels, many=True).data)
 
 
+class PluginMetadataView(MetadataView):
+    """Metadata API endpoint for the PluginConfig model."""
+
+    lookup_field = 'key'
+    lookup_url_kwarg = 'plugin'
+
+
 plugin_api_urls = [
     path('action/', ActionPluginView.as_view(), name='api-action-plugin'),
     path('barcode/', include(barcode_api_urls)),
@@ -502,7 +517,7 @@ plugin_api_urls = [
                     )
                 ]),
             ),
-            # Lookup for individual plugins (based on 'key', not 'pk')
+            # Lookup for individual plugins (based on 'plugin', not 'pk')
             path(
                 '<str:plugin>/',
                 include([
@@ -523,7 +538,7 @@ plugin_api_urls = [
                     ),
                     path(
                         'metadata/',
-                        MetadataView.as_view(),
+                        PluginMetadataView.as_view(),
                         {'model': PluginConfig, 'lookup_field': 'key'},
                         name='api-plugin-metadata',
                     ),

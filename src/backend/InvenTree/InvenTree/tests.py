@@ -1,6 +1,5 @@
 """Test general functions and helpers."""
 
-import json
 import os
 import time
 from datetime import datetime, timedelta
@@ -787,33 +786,6 @@ class TestIncrement(TestCase):
 
             result = helpers.increment(a)
             self.assertEqual(result, b)
-
-
-class TestMakeBarcode(TestCase):
-    """Tests for barcode string creation."""
-
-    def test_barcode_extended(self):
-        """Test creation of barcode with extended data."""
-        bc = helpers.MakeBarcode(
-            'part', 3, {'id': 3, 'url': 'www.google.com'}, brief=False
-        )
-
-        self.assertIn('part', bc)
-        self.assertIn('tool', bc)
-        self.assertIn('"tool": "InvenTree"', bc)
-
-        data = json.loads(bc)
-
-        self.assertEqual(data['part']['id'], 3)
-        self.assertEqual(data['part']['url'], 'www.google.com')
-
-    def test_barcode_brief(self):
-        """Test creation of simple barcode."""
-        bc = helpers.MakeBarcode('stockitem', 7)
-
-        data = json.loads(bc)
-        self.assertEqual(len(data), 1)
-        self.assertEqual(data['stockitem'], 7)
 
 
 class TestDownloadFile(TestCase):

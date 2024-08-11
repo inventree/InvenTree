@@ -404,6 +404,17 @@ class UserSerializer(InvenTreeModelSerializer):
 
         read_only_fields = ['username']
 
+    username = serializers.CharField(label=_('Username'), help_text=_('Username'))
+    first_name = serializers.CharField(
+        label=_('First Name'), help_text=_('First name of the user')
+    )
+    last_name = serializers.CharField(
+        label=_('Last Name'), help_text=_('Last name of the user')
+    )
+    email = serializers.EmailField(
+        label=_('Email'), help_text=_('Email address of the user')
+    )
+
 
 class ExendedUserSerializer(UserSerializer):
     """Serializer for a User with a bit more info."""
@@ -423,6 +434,16 @@ class ExendedUserSerializer(UserSerializer):
         ]
 
         read_only_fields = UserSerializer.Meta.read_only_fields + ['groups']
+
+    is_staff = serializers.BooleanField(
+        label=_('Staff'), help_text=_('Does this user have staff permissions')
+    )
+    is_superuser = serializers.BooleanField(
+        label=_('Superuser'), help_text=_('Is this user a superuser')
+    )
+    is_active = serializers.BooleanField(
+        label=_('Active'), help_text=_('Is this user account active')
+    )
 
     def validate(self, attrs):
         """Expanded validation for changing user role."""
@@ -507,43 +528,6 @@ class InvenTreeAttachmentSerializerField(serializers.FileField):
             return None
 
         return os.path.join(str(settings.MEDIA_URL), str(value))
-
-
-class InvenTreeAttachmentSerializer(InvenTreeModelSerializer):
-    """Special case of an InvenTreeModelSerializer, which handles an "attachment" model.
-
-    The only real addition here is that we support "renaming" of the attachment file.
-    """
-
-    @staticmethod
-    def attachment_fields(extra_fields=None):
-        """Default set of fields for an attachment serializer."""
-        fields = [
-            'pk',
-            'attachment',
-            'filename',
-            'link',
-            'comment',
-            'upload_date',
-            'user',
-            'user_detail',
-        ]
-
-        if extra_fields:
-            fields += extra_fields
-
-        return fields
-
-    user_detail = UserSerializer(source='user', read_only=True, many=False)
-
-    attachment = InvenTreeAttachmentSerializerField(required=False, allow_null=False)
-
-    # The 'filename' field must be present in the serializer
-    filename = serializers.CharField(
-        label=_('Filename'), required=False, source='basename', allow_blank=False
-    )
-
-    upload_date = serializers.DateField(read_only=True)
 
 
 class InvenTreeImageSerializerField(serializers.ImageField):
@@ -872,7 +856,7 @@ class RemoteImageMixin(metaclass=serializers.SerializerMetaclass):
 
     remote_image = serializers.URLField(
         required=False,
-        allow_blank=False,
+        allow_blank=True,
         write_only=True,
         label=_('Remote Image'),
         help_text=_('URL of remote image file'),

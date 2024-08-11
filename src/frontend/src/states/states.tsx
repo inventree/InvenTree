@@ -1,5 +1,6 @@
 import { setApiDefaults } from '../App';
 import { useServerApiState } from './ApiState';
+import { useIconState } from './IconState';
 import { useGlobalSettingsState, useUserSettingsState } from './SettingsState';
 import { useGlobalStatusState } from './StatusState';
 import { useUserState } from './UserState';
@@ -23,6 +24,7 @@ export interface UserProps {
   is_staff?: boolean;
   is_superuser?: boolean;
   roles?: Record<string, string[]>;
+  permissions?: Record<string, string[]>;
 }
 
 // Type interface fully defining the current server
@@ -134,8 +136,8 @@ export function fetchGlobalStates() {
   setApiDefaults();
 
   useServerApiState.getState().fetchServerApiState();
-  useUserState.getState().fetchUserState();
   useUserSettingsState.getState().fetchSettings();
   useGlobalSettingsState.getState().fetchSettings();
   useGlobalStatusState.getState().fetchStatus();
+  useIconState.getState().fetchIcons();
 }

@@ -1,16 +1,17 @@
 import { t } from '@lingui/macro';
 import { Text } from '@mantine/core';
-import { IconSquareArrowRight } from '@tabler/icons-react';
+import { IconFileArrowLeft, IconSquareArrowRight } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
 import { ActionButton } from '../../components/buttons/ActionButton';
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { Thumbnail } from '../../components/images/Thumbnail';
+import ImporterDrawer from '../../components/importer/ImporterDrawer';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { RenderStockLocation } from '../../components/render/Stock';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { dataImporterSessionFields } from '../../forms/ImporterForms';
 import {
   usePurchaseOrderLineItemFields,
   useReceiveLineItems
@@ -20,13 +21,16 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
+import { TableColumn } from '../Column';
 import {
   CurrencyColumn,
   LinkColumn,
   NoteColumn,
+  PartColumn,
   ReferenceColumn,
   TargetDateColumn,
   TotalPriceColumn
@@ -43,10 +47,12 @@ import { TableHoverCard } from '../TableHoverCard';
  * Display a table of purchase order line items, for a specific order
  */
 export function PurchaseOrderLineItemTable({
+  order,
   orderId,
   supplierId,
   params
 }: {
+  order: any;
   orderId: number;
   supplierId?: number;
   params?: any;
@@ -55,31 +61,71 @@ export function PurchaseOrderLineItemTable({
 
   const user = useUserState();
 
-  const [singleRecord, setSingeRecord] = useState(null);
+  // Data import
+  const [importOpened, setImportOpened] = useState<boolean>(false);
+  const [selectedSession, setSelectedSession] = useState<number | undefined>(
+    undefined
+  );
+
+  const importSessionFields = useMemo(() => {
+    let fields = dataImporterSessionFields();
+
+    fields.model_type.hidden = true;
+    fields.model_type.value = ModelType.purchaseorderlineitem;
+
+    // Specify override values for import
+    fields.field_overrides.value = {
+      order: orderId
+    };
+
+    // Specify default values based on the order data
+    fields.field_defaults.value = {
+      purchase_price_currency:
+        order?.order_currency || order?.supplier_detail?.currency || undefined
+    };
+
+    fields.field_filters.value = {
+      part: {
+        supplier: supplierId,
+        active: true
+      }
+    };
+
+    return fields;
+  }, [order, orderId, supplierId]);
+
+  const importLineItems = useCreateApiFormModal({
+    url: ApiEndpoints.import_session_list,
+    title: t`Import Line Items`,
+    fields: importSessionFields,
+    onFormSuccess: (response: any) => {
+      setSelectedSession(response.pk);
+      setImportOpened(true);
+    }
+  });
+
+  const [singleRecord, setSingleRecord] = useState(null);
+
   const receiveLineItems = useReceiveLineItems({
     items: singleRecord ? [singleRecord] : table.selectedRecords,
     orderPk: orderId,
     formProps: {
       // Timeout is a small hack to prevent function being called before re-render
-      onClose: () => setTimeout(() => setSingeRecord(null), 500)
+      onClose: () => {
+        table.refreshTable();
+        setTimeout(() => setSingleRecord(null), 500);
+      }
     }
   });
 
-  const tableColumns = useMemo(() => {
+  const tableColumns: TableColumn[] = useMemo(() => {
     return [
       {
         accessor: 'part',
         title: t`Internal Part`,
         sortable: true,
         switchable: false,
-        render: (record: any) => {
-          return (
-            <Thumbnail
-              text={record?.part_detail?.name}
-              src={record?.part_detail?.thumbnail ?? record?.part_detail?.image}
-            />
-          );
-        }
+        render: (record: any) => PartColumn(record.part_detail)
       },
       {
         accessor: 'description',
@@ -138,17 +184,21 @@ export function PurchaseOrderLineItemTable({
         )
       },
       {
-        accessor: 'pack_quantity',
+        accessor: 'supplier_part_detail.packaging',
         sortable: false,
-        title: t`Pack Quantity`,
-        render: (record: any) => record?.supplier_part_detail?.pack_quantity
+        title: t`Packaging`
       },
       {
-        accessor: 'SKU',
+        accessor: 'supplier_part_detail.pack_quantity',
+        sortable: false,
+        title: t`Pack Quantity`
+      },
+      {
+        accessor: 'supplier_part_detail.SKU',
         title: t`Supplier Code`,
         switchable: false,
         sortable: true,
-        render: (record: any) => record?.supplier_part_detail?.SKU
+        ordering: 'SKU'
       },
       {
         accessor: 'supplier_link',
@@ -224,18 +274,28 @@ export function PurchaseOrderLineItemTable({
     table: table
   });
 
+  const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
+
+  const orderOpen: boolean = useMemo(() => {
+    return (
+      order.status == poStatus.PENDING ||
+      order.status == poStatus.PLACED ||
+      order.status == poStatus.ON_HOLD
+    );
+  }, [order, poStatus]);
+
   const rowActions = useCallback(
     (record: any) => {
       let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
       return [
         {
-          hidden: received,
+          hidden: received || !orderOpen,
           title: t`Receive line item`,
           icon: <IconSquareArrowRight />,
           color: 'green',
           onClick: () => {
-            setSingeRecord(record);
+            setSingleRecord(record);
             receiveLineItems.open();
           }
         },
@@ -247,7 +307,7 @@ export function PurchaseOrderLineItemTable({
           }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(UserRoles.purchase_order),
+          hidden: !orderOpen || !user.hasAddRole(UserRoles.purchase_order),
           onClick: () => {
             setInitialData({ ...record });
             newLine.open();
@@ -262,12 +322,18 @@ export function PurchaseOrderLineItemTable({
         })
       ];
     },
-    [orderId, user]
+    [orderId, user, orderOpen]
   );
 
   // Custom table actions
   const tableActions = useMemo(() => {
     return [
+      <ActionButton
+        hidden={!orderOpen || !user.hasAddRole(UserRoles.purchase_order)}
+        tooltip={t`Import Line Items`}
+        icon={<IconFileArrowLeft />}
+        onClick={() => importLineItems.open()}
+      />,
       <AddItemButton
         tooltip={t`Add line item`}
         onClick={() => {
@@ -276,19 +342,21 @@ export function PurchaseOrderLineItemTable({
           });
           newLine.open();
         }}
-        hidden={!user?.hasAddRole(UserRoles.purchase_order)}
+        hidden={!orderOpen || !user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}
         disabled={table.selectedRecords.length === 0}
+        hidden={!orderOpen || !user.hasChangeRole(UserRoles.purchase_order)}
       />
     ];
-  }, [orderId, user, table]);
+  }, [orderId, user, table, orderOpen]);
 
   return (
     <>
+      {importLineItems.modal}
       {receiveLineItems.modal}
       {newLine.modal}
       {editLine.modal}
@@ -307,7 +375,17 @@ export function PurchaseOrderLineItemTable({
           },
           rowActions: rowActions,
           tableActions: tableActions,
-          modelType: ModelType.supplierpart
+          modelType: ModelType.supplierpart,
+          modelField: 'part'
+        }}
+      />
+      <ImporterDrawer
+        sessionId={selectedSession ?? -1}
+        opened={selectedSession != undefined && importOpened}
+        onClose={() => {
+          setSelectedSession(undefined);
+          setImportOpened(false);
+          table.refreshTable();
         }}
       />
     </>

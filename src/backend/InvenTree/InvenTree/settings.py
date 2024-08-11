@@ -18,7 +18,6 @@ import django.conf.locale
 import django.core.exceptions
 from django.core.validators import URLValidator
 from django.http import Http404
-from django.utils.translation import gettext_lazy as _
 
 import pytz
 from dotenv import load_dotenv
@@ -198,6 +197,7 @@ INSTALLED_APPS = [
     'stock.apps.StockConfig',
     'users.apps.UsersConfig',
     'machine.apps.MachineConfig',
+    'importer.apps.ImporterConfig',
     'web',
     'generic',
     'InvenTree.apps.InvenTreeConfig',  # InvenTree app runs last
@@ -296,10 +296,11 @@ ADMIN_SHELL_IMPORT_MODELS = False
 if (
     DEBUG
     and INVENTREE_ADMIN_ENABLED
+    and not TESTING
     and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
 ):  # noqa
     try:
-        import django_admin_shell
+        import django_admin_shell  # noqa: F401
 
         INSTALLED_APPS.append('django_admin_shell')
         ADMIN_SHELL_ENABLE = True
@@ -1208,6 +1209,9 @@ ACCOUNT_FORMS = {
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
+ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.forms.CustomTOTPDeviceForm'}
+# Determine if multi-factor authentication is enabled for this server (default = True)
+MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'
@@ -1272,7 +1276,7 @@ PLUGIN_TESTING_SETUP = get_setting(
 )  # Load plugins from setup hooks in testing?
 PLUGIN_TESTING_EVENTS = False  # Flag if events are tested right now
 PLUGIN_RETRY = get_setting(
-    'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 5
+    'INVENTREE_PLUGIN_RETRY', 'PLUGIN_RETRY', 3, typecast=int
 )  # How often should plugin loading be tried?
 PLUGIN_FILE_CHECKED = False  # Was the plugin file checked?
 
