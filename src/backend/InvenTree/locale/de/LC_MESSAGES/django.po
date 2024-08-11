@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-09 23:26+0000\n"
-"PO-Revision-Date: 2024-08-10 22:04\n"
+"PO-Revision-Date: 2024-08-11 22:15\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -126,7 +126,7 @@ msgstr "E-Mail Adressen müssen übereinstimmen."
 
 #: InvenTree/forms.py:221
 msgid "MFA Registration is disabled."
-msgstr ""
+msgstr "MFA Registrierung ist deaktiviert."
 
 #: InvenTree/forms.py:259 InvenTree/forms.py:267
 msgid "The provided primary email address is not valid."
@@ -213,7 +213,7 @@ msgstr "Angegebene URL ist kein gültiges Bild"
 
 #: InvenTree/locales.py:18
 msgid "Arabic"
-msgstr ""
+msgstr "Arabisch"
 
 #: InvenTree/locales.py:19
 msgid "Bulgarian"
@@ -249,7 +249,7 @@ msgstr "Spanisch (Mexikanisch)"
 
 #: InvenTree/locales.py:27
 msgid "Estonian"
-msgstr ""
+msgstr "Estnisch"
 
 #: InvenTree/locales.py:28
 msgid "Farsi / Persian"
@@ -570,7 +570,7 @@ msgstr "Administrator"
 
 #: InvenTree/serializers.py:442
 msgid "Is this user a superuser"
-msgstr "Ist dieser Benutzer ein Adminstrator"
+msgstr "Ist dieser Benutzer ein Administrator"
 
 #: InvenTree/serializers.py:445 common/models.py:2707 company/models.py:163
 #: company/models.py:801 machine/models.py:39 part/admin.py:88
