@@ -1,16 +1,16 @@
 import { t } from '@lingui/macro';
 import { Alert, Text } from '@mantine/core';
-import { useTimeout } from '@mantine/hooks';
-import { Icon24Hours } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { api } from '../App';
 import { PanelType } from '../components/nav/Panel';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
+import { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';
 import { InvenTreeIcon } from '../functions/icons';
 import { apiUrl } from '../states/ApiState';
+import { useGlobalSettingsState } from '../states/SettingsState';
 
 export type PluginPanelState = {
   panels: PanelType[];
@@ -29,12 +29,22 @@ export function usePluginPanels({
   targetModel,
   targetId
 }: {
-  targetModel: string;
+  targetModel?: ModelType | string;
   targetId?: string | number | null;
 }): PluginPanelState {
+  const globalSettings = useGlobalSettingsState();
+
+  const pluginPanelsEnabled = useMemo(
+    () => globalSettings.isSet('ENABLE_PLUGINS_INTERFACE'),
+    [globalSettings]
+  );
+
   const { isFetching, data } = useQuery({
+    enabled: pluginPanelsEnabled && !!targetModel,
     queryKey: [targetModel, targetId],
     queryFn: () => {
+      console.log('Fetching plugin panels:', targetModel, targetId);
+
       return api
         .get(apiUrl(ApiEndpoints.plugin_panel_list), {
           params: {

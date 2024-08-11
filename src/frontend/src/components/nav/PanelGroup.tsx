@@ -20,8 +20,10 @@ import {
   useParams
 } from 'react-router-dom';
 
+import { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { navigateToLink } from '../../functions/navigation';
+import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
@@ -30,6 +32,8 @@ import { PanelType } from './Panel';
 export type PanelProps = {
   pageKey: string;
   panels: PanelType[];
+  targetModel?: ModelType | string;
+  targetId?: number;
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
@@ -40,15 +44,28 @@ function BasePanelGroup({
   panels,
   onPanelChange,
   selectedPanel,
+  targetModel,
+  targetId,
   collapsible = true
 }: Readonly<PanelProps>): ReactNode {
   const location = useLocation();
   const navigate = useNavigate();
   const { panel } = useParams();
 
+  // Hook to load plugins for this panel
+  const pluginPanels = usePluginPanels({
+    targetModel: targetModel,
+    targetId: targetId
+  });
+
+  const allPanels = useMemo(
+    () => [...panels, ...pluginPanels.panels],
+    [panels, pluginPanels.panels]
+  );
+
   const activePanels = useMemo(
-    () => panels.filter((panel) => !panel.hidden && !panel.disabled),
-    [panels]
+    () => allPanels.filter((panel) => !panel.hidden && !panel.disabled),
+    [allPanels]
   );
 
   const setLastUsedPanel = useLocalState((state) =>
@@ -112,7 +129,7 @@ function BasePanelGroup({
           keepMounted={false}
         >
           <Tabs.List justify="left">
-            {panels.map(
+            {allPanels.map(
               (panel) =>
                 !panel.hidden && (
                   <Tooltip
@@ -155,7 +172,7 @@ function BasePanelGroup({
               </ActionIcon>
             )}
           </Tabs.List>
-          {panels.map(
+          {allPanels.map(
             (panel) =>
               !panel.hidden && (
                 <Tabs.Panel
