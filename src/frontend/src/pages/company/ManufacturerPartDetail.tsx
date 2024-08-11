@@ -284,7 +284,12 @@ export default function ManufacturerPartDetail() {
             actions={manufacturerPartActions}
             imageUrl={manufacturerPart?.part_detail?.thumbnail}
           />
-          <PanelGroup pageKey="manufacturerpart" panels={panels} />
+          <PanelGroup
+            pageKey="manufacturerpart"
+            panels={panels}
+            targetModel={ModelType.manufacturerpart}
+            targetId={manufacturerPart.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

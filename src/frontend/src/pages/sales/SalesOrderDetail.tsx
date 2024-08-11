@@ -483,7 +483,12 @@ export default function SalesOrderDetail() {
             actions={soActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
           />
-          <PanelGroup pageKey="salesorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="salesorder"
+            panels={orderPanels}
+            targetModel={ModelType.salesorder}
+            targetId={order.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

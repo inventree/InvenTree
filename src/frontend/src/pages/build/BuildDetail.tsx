@@ -539,7 +539,12 @@ export default function BuildDetail() {
             ]}
             actions={buildActions}
           />
-          <PanelGroup pageKey="build" panels={buildPanels} />
+          <PanelGroup
+            pageKey="build"
+            panels={buildPanels}
+            targetModel={ModelType.build}
+            targetId={build.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

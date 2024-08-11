@@ -393,7 +393,12 @@ export default function Stock() {
               setTreeOpen(true);
             }}
           />
-          <PanelGroup pageKey="stocklocation" panels={locationPanels} />
+          <PanelGroup
+            pageKey="stocklocation"
+            panels={locationPanels}
+            targetModel={ModelType.stocklocation}
+            targetId={location.pk}
+          />
           {transferStockItems.modal}
           {countStockItems.modal}
         </Stack>

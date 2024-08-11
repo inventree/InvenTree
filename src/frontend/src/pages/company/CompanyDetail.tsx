@@ -331,7 +331,12 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             breadcrumbs={props.breadcrumbs}
             badges={badges}
           />
-          <PanelGroup pageKey="company" panels={companyPanels} />
+          <PanelGroup
+            pageKey="company"
+            panels={companyPanels}
+            targetModel={ModelType.company}
+            targetId={company.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

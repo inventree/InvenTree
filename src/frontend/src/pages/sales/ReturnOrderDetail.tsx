@@ -431,7 +431,12 @@ export default function ReturnOrderDetail() {
             actions={orderActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
           />
-          <PanelGroup pageKey="returnorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="returnorder"
+            panels={orderPanels}
+            targetModel={ModelType.returnorder}
+            targetId={order.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

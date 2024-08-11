@@ -322,7 +322,12 @@ export default function CategoryDetail() {
             }}
             actions={categoryActions}
           />
-          <PanelGroup pageKey="partcategory" panels={categoryPanels} />
+          <PanelGroup
+            pageKey="partcategory"
+            panels={categoryPanels}
+            targetModel={ModelType.partcategory}
+            targetId={category.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

@@ -443,7 +443,12 @@ export default function PurchaseOrderDetail() {
             actions={poActions}
             badges={orderBadges}
           />
-          <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
+          <PanelGroup
+            pageKey="purchaseorder"
+            panels={orderPanels}
+            targetModel={ModelType.purchaseorder}
+            targetId={order.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>

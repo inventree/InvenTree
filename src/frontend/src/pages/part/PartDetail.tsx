@@ -1095,7 +1095,12 @@ export default function PartDetail() {
               )
             }
           />
-          <PanelGroup pageKey="part" panels={partPanels} />
+          <PanelGroup
+            pageKey="part"
+            panels={partPanels}
+            targetModel={ModelType.part}
+            targetId={part.pk}
+          />
           {transferStockItems.modal}
           {countStockItems.modal}
         </Stack>

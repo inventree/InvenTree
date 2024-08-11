@@ -376,7 +376,12 @@ export default function SupplierPartDetail() {
             actions={supplierPartActions}
             imageUrl={supplierPart?.part_detail?.thumbnail}
           />
-          <PanelGroup pageKey="supplierpart" panels={panels} />
+          <PanelGroup
+            pageKey="supplierpart"
+            panels={panels}
+            targetModel={ModelType.supplierpart}
+            targetId={supplierPart.pk}
+          />
         </Stack>
       </InstanceDetail>
     </>
