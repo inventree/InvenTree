@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 
 import plugin.serializers as PluginSerializers
 from common.api import GlobalSettingsPermissions
+from common.settings import get_global_setting
 from InvenTree.api import MetadataView
 from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import (
@@ -429,53 +430,56 @@ class PluginPanelList(APIView):
 
         panels = []
 
-        # Extract all plugins from the registry which provide custom panels
-        for _plugin in registry.with_mixin('ui', active=True):
-            # Allow plugins to fill this data out
-            plugin_panels = _plugin.get_custom_panels(target_model, target_id, request)
+        if get_global_setting('ENABLE_PLUGINS_INTERFACE'):
+            # Extract all plugins from the registry which provide custom panels
+            for _plugin in registry.with_mixin('ui', active=True):
+                # Allow plugins to fill this data out
+                plugin_panels = _plugin.get_custom_panels(
+                    target_model, target_id, request
+                )
 
-            if plugin_panels and type(plugin_panels) is list:
-                for panel in plugin_panels:
-                    # TODO: Validate each panel before inserting
-                    panels.append(panel)
+                if plugin_panels and type(plugin_panels) is list:
+                    for panel in plugin_panels:
+                        # TODO: Validate each panel before inserting
+                        panels.append(panel)
 
-        if target_model == 'part' and target_id:
-            panels = [
-                *panels,
-                {
-                    'plugin': 'myplugin',
-                    'name': 'test-plugin',
-                    'label': 'My Plugin',
-                    'icon': 'part',
-                    'content': '<div>hello world</div>',
-                },
-                {
-                    'plugin': 'myplugin',
-                    'name': 'test-plugin-2',
-                    'label': 'My Plugin 2',
-                    'icon': 'email',
-                    'content': '<div>hello world 2</div>',
-                },
-                {
-                    'plugin': 'myplugin',
-                    'name': 'test-plugin-3',
-                    'label': 'My Plugin 3',
-                    'icon': 'website',
-                    'content': '<div>hello world 3</div>',
-                },
-            ]
+            if target_model == 'part' and target_id:
+                panels = [
+                    *panels,
+                    {
+                        'plugin': 'myplugin',
+                        'name': 'test-plugin',
+                        'label': 'My Plugin',
+                        'icon': 'part',
+                        'content': '<div>hello world</div>',
+                    },
+                    {
+                        'plugin': 'myplugin',
+                        'name': 'test-plugin-2',
+                        'label': 'My Plugin 2',
+                        'icon': 'email',
+                        'content': '<div>hello world 2</div>',
+                    },
+                    {
+                        'plugin': 'myplugin',
+                        'name': 'test-plugin-3',
+                        'label': 'My Plugin 3',
+                        'icon': 'website',
+                        'content': '<div>hello world 3</div>',
+                    },
+                ]
 
-        if target_model == 'partcategory':
-            panels = [
-                *panels,
-                {
-                    'plugin': 'cat',
-                    'name': 'demo-cat',
-                    'label': 'Custom Category',
-                    'icon': 'customer',
-                    'content': 'This should only appear for a category',
-                },
-            ]
+            if target_model == 'partcategory':
+                panels = [
+                    *panels,
+                    {
+                        'plugin': 'cat',
+                        'name': 'demo-cat',
+                        'label': 'Custom Category',
+                        'icon': 'customer',
+                        'content': 'This should only appear for a category',
+                    },
+                ]
 
         return Response(PluginSerializers.PluginPanelSerializer(panels, many=True).data)
 
