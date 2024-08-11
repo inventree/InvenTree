@@ -43,6 +43,7 @@ import { PanelType } from './Panel';
 export type PanelProps = {
   pageKey: string;
   panels: PanelType[];
+  targetInstance?: any;
   targetModel?: ModelType | string;
   targetId?: number | null;
   selectedPanel?: string;
@@ -55,6 +56,7 @@ function BasePanelGroup({
   panels,
   onPanelChange,
   selectedPanel,
+  targetInstance,
   targetModel,
   targetId,
   collapsible = true

@@ -10,6 +10,7 @@ import { PanelType } from '../nav/Panel';
 interface PluginPanelProps extends PanelType {
   src?: string;
   params?: any;
+  targetInstance?: any;
   targetModel?: ModelType | string;
   targetId?: string | number | null;
 }
@@ -22,6 +23,7 @@ interface PluginPanelParameters {
   props: PluginPanelProps;
   targetModel?: ModelType | string;
   targetId?: number | null;
+  targetInstance?: any;
   api: AxiosInstance;
 }
 
@@ -39,6 +41,7 @@ function PanelNoContent() {
  *
  * - api instance
  * - custom context data from server
+ * - model instance (already fetched via API)
  */
 
 /**
@@ -68,7 +71,8 @@ export default function PluginPanel({ props }: { props: PluginPanelProps }) {
         props: props,
         api: api,
         targetModel: props.targetModel,
-        targetId: props.targetId
+        targetId: props.targetId,
+        targetInstance: props.targetInstance
       });
     }
   };

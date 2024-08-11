@@ -18,9 +18,11 @@ export type PluginPanelState = {
 };
 
 export function usePluginPanels({
+  targetInstance,
   targetModel,
   targetId
 }: {
+  targetInstance?: any;
   targetModel?: ModelType | string;
   targetId?: string | number | null;
 }): PluginPanelState {
@@ -33,7 +35,7 @@ export function usePluginPanels({
 
   // API query to fetch information on available plugin panels
   const { isFetching, data } = useQuery({
-    enabled: pluginPanelsEnabled && !!targetModel,
+    enabled: pluginPanelsEnabled && !!targetModel && targetId != undefined,
     queryKey: [targetModel, targetId],
     queryFn: async () => {
       if (!pluginPanelsEnabled || !targetModel) {
@@ -63,7 +65,16 @@ export function usePluginPanels({
           name: identifierString(`${pluginKey}-${panel.name}`),
           label: panel.label || t`Plugin Panel`,
           icon: <InvenTreeIcon icon={panel.icon ?? 'plugin'} />,
-          content: <PluginPanel props={panel} />
+          content: (
+            <PluginPanel
+              props={{
+                ...panel,
+                targetId: targetId,
+                targetModel: targetModel,
+                targetInstance: targetInstance
+              }}
+            />
+          )
         };
       }) ?? []
     );
