@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-10 22:04\n"
+"PO-Revision-Date: 2024-08-11 22:15\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -356,43 +356,43 @@ msgstr "Client-Fehler aufgetreten"
 
 #: src/components/errors/GenericErrorPage.tsx:50
 msgid "Status Code"
-msgstr ""
+msgstr "Statuscode"
 
 #: src/components/errors/GenericErrorPage.tsx:63
 msgid "Return to the index page"
-msgstr ""
+msgstr "Zurück zur Startseite"
 
 #: src/components/errors/NotAuthenticated.tsx:8
 msgid "Not Authenticated"
-msgstr ""
+msgstr "Nicht authentifiziert"
 
 #: src/components/errors/NotAuthenticated.tsx:9
 msgid "You are not logged in."
-msgstr ""
+msgstr "Sie sind nicht angemeldet."
 
 #: src/components/errors/NotFound.tsx:8
 msgid "Page Not Found"
-msgstr ""
+msgstr "Seite nicht gefunden"
 
 #: src/components/errors/NotFound.tsx:9
 msgid "This page does not exist"
-msgstr ""
+msgstr "Diese Seite existiert nicht"
 
 #: src/components/errors/PermissionDenied.tsx:8
 msgid "Permission Denied"
-msgstr ""
+msgstr "Zugriff verweigert"
 
 #: src/components/errors/PermissionDenied.tsx:9
 msgid "You do not have permission to view this page."
-msgstr ""
+msgstr "Ihnen fehlt die Berechtigung diese Seite anzuzeigen."
 
 #: src/components/errors/ServerError.tsx:8
 msgid "Server Error"
-msgstr ""
+msgstr "Serverfehler"
 
 #: src/components/errors/ServerError.tsx:9
 msgid "A server error occurred"
-msgstr ""
+msgstr "Ein Serverfehler ist aufgetreten"
 
 #: src/components/forms/ApiForm.tsx:151
 #: src/components/forms/ApiForm.tsx:555
@@ -405,7 +405,7 @@ msgstr "Formularfehler"
 
 #: src/components/forms/ApiForm.tsx:563
 msgid "Errors exist for one or more form fields"
-msgstr ""
+msgstr "Fehler für ein oder mehrere Formularfelder vorhanden"
 
 #: src/components/forms/ApiForm.tsx:665
 #: src/tables/plugin/PluginListTable.tsx:388
@@ -643,11 +643,11 @@ msgstr "Status: <0>worker</0> ({0}), <1>Plugins</1>{1}"
 
 #: src/components/forms/fields/IconField.tsx:81
 msgid "No icon selected"
-msgstr ""
+msgstr "Kein Symbol ausgewählt"
 
 #: src/components/forms/fields/IconField.tsx:159
 msgid "Uncategorized"
-msgstr ""
+msgstr "Nicht kategorisiert"
 
 #: src/components/forms/fields/IconField.tsx:209
 #: src/components/nav/Layout.tsx:70
@@ -657,7 +657,7 @@ msgstr "Suchen..."
 
 #: src/components/forms/fields/IconField.tsx:223
 msgid "Select category"
-msgstr ""
+msgstr "Kategorie auswählen"
 
 #: src/components/forms/fields/IconField.tsx:232
 msgid "Select pack"
@@ -665,7 +665,7 @@ msgstr ""
 
 #: src/components/forms/fields/IconField.tsx:237
 msgid "{0} icons"
-msgstr ""
+msgstr "{0} Symbole"
 
 #: src/components/forms/fields/RelatedModelField.tsx:318
 #: src/pages/Index/Settings/UserSettings.tsx:96
@@ -702,43 +702,43 @@ msgstr "Vorschaubild"
 
 #: src/components/importer/ImportDataSelector.tsx:166
 msgid "Importing Rows"
-msgstr ""
+msgstr "Importiere Zeilen"
 
 #: src/components/importer/ImportDataSelector.tsx:167
 msgid "Please wait while the data is imported"
-msgstr ""
+msgstr "Bitte warten... während die Daten importiert werden"
 
 #: src/components/importer/ImportDataSelector.tsx:184
 msgid "An error occurred while importing data"
-msgstr ""
+msgstr "Beim Importieren der Daten ist ein Fehler aufgetreten"
 
 #: src/components/importer/ImportDataSelector.tsx:205
 msgid "Edit Data"
-msgstr ""
+msgstr "Daten ändern"
 
 #: src/components/importer/ImportDataSelector.tsx:233
 msgid "Delete Row"
-msgstr ""
+msgstr "Zeile löschen"
 
 #: src/components/importer/ImportDataSelector.tsx:263
 msgid "Row"
-msgstr ""
+msgstr "Zeile"
 
 #: src/components/importer/ImportDataSelector.tsx:281
 msgid "Row contains errors"
-msgstr ""
+msgstr "Zeile enthält Fehler"
 
 #: src/components/importer/ImportDataSelector.tsx:322
 msgid "Accept"
-msgstr ""
+msgstr "Annehmen"
 
 #: src/components/importer/ImportDataSelector.tsx:355
 msgid "Valid"
-msgstr ""
+msgstr "Gültig"
 
 #: src/components/importer/ImportDataSelector.tsx:356
 msgid "Filter by row validation status"
-msgstr ""
+msgstr "Filtern nach Zeilenvalidierung"
 
 #: src/components/importer/ImportDataSelector.tsx:361
 #: src/tables/build/BuildOutputTable.tsx:205
@@ -747,24 +747,24 @@ msgstr "Fertigstellen"
 
 #: src/components/importer/ImportDataSelector.tsx:362
 msgid "Filter by row completion status"
-msgstr ""
+msgstr "Filtern nach Zeilenvollständigkeit"
 
 #: src/components/importer/ImportDataSelector.tsx:379
 msgid "Import selected rows"
-msgstr ""
+msgstr "Ausgewählte Zeilen importieren"
 
 #: src/components/importer/ImportDataSelector.tsx:394
 msgid "Processing Data"
-msgstr ""
+msgstr "Daten werden verarbeiten"
 
 #: src/components/importer/ImporterColumnSelector.tsx:50
 #: src/components/importer/ImporterColumnSelector.tsx:176
 msgid "An error occurred"
-msgstr ""
+msgstr "Ein Fehler ist aufgetreten"
 
 #: src/components/importer/ImporterColumnSelector.tsx:62
 msgid "Select column, or leave blank to ignore this field."
-msgstr ""
+msgstr "Spalte auswählen oder leer lassen, um dieses Feld zu ignorieren."
 
 #: src/components/importer/ImporterColumnSelector.tsx:91
 #~ msgid "Select a column from the data file"
@@ -780,51 +780,51 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:182
 msgid "Ignore this field"
-msgstr ""
+msgstr "Dieses Feld ignorieren"
 
 #: src/components/importer/ImporterColumnSelector.tsx:196
 msgid "Mapping data columns to database fields"
-msgstr ""
+msgstr "Spalten zu Datenbankfeldern zuordnen"
 
 #: src/components/importer/ImporterColumnSelector.tsx:201
 msgid "Accept Column Mapping"
-msgstr ""
+msgstr "Spaltenzuordnung akzeptieren"
 
 #: src/components/importer/ImporterColumnSelector.tsx:214
 msgid "Database Field"
-msgstr ""
+msgstr "Datenbankfeld"
 
 #: src/components/importer/ImporterColumnSelector.tsx:215
 msgid "Field Description"
-msgstr ""
+msgstr "Feldbeschreibung"
 
 #: src/components/importer/ImporterColumnSelector.tsx:216
 msgid "Imported Column"
-msgstr ""
+msgstr "Importierte Spalte"
 
 #: src/components/importer/ImporterColumnSelector.tsx:217
 msgid "Default Value"
-msgstr ""
+msgstr "Standard-Wert"
 
 #: src/components/importer/ImporterDrawer.tsx:44
 msgid "Upload File"
-msgstr ""
+msgstr "Datei hochgeladen"
 
 #: src/components/importer/ImporterDrawer.tsx:45
 msgid "Map Columns"
-msgstr ""
+msgstr "Spalten zuordnen"
 
 #: src/components/importer/ImporterDrawer.tsx:46
 msgid "Import Data"
-msgstr ""
+msgstr "Daten importieren"
 
 #: src/components/importer/ImporterDrawer.tsx:47
 msgid "Process Data"
-msgstr ""
+msgstr "Daten verarbeiten"
 
 #: src/components/importer/ImporterDrawer.tsx:48
 msgid "Complete Import"
-msgstr ""
+msgstr "Import abschließen"
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
@@ -832,36 +832,36 @@ msgstr ""
 
 #: src/components/importer/ImporterDrawer.tsx:104
 msgid "Import Complete"
-msgstr ""
+msgstr "Import abgeschlossen"
 
 #: src/components/importer/ImporterDrawer.tsx:107
 msgid "Data has been imported successfully"
-msgstr ""
+msgstr "Daten wurden erfolgreich importiert"
 
 #: src/components/importer/ImporterDrawer.tsx:109
 #: src/components/importer/ImporterDrawer.tsx:118
 msgid "Close"
-msgstr ""
+msgstr "Schließen"
 
 #: src/components/importer/ImporterDrawer.tsx:115
 msgid "Unknown Status"
-msgstr ""
+msgstr "Unbekannter Status"
 
 #: src/components/importer/ImporterDrawer.tsx:116
 msgid "Import session has unknown status"
-msgstr ""
+msgstr "Importsitzung hat einen unbekannten Status"
 
 #: src/components/importer/ImporterDrawer.tsx:135
 msgid "Importing Data"
-msgstr ""
+msgstr "Importiere Daten"
 
 #: src/components/importer/ImporterImportProgress.tsx:36
 msgid "Importing Records"
-msgstr ""
+msgstr "Importiere Datensätze"
 
 #: src/components/importer/ImporterImportProgress.tsx:39
 msgid "Imported rows"
-msgstr ""
+msgstr "Importierte Zeilen"
 
 #: src/components/items/ActionDropdown.tsx:128
 msgid "Barcode Actions"
@@ -869,7 +869,7 @@ msgstr "Barcode-Aktionen"
 
 #: src/components/items/ActionDropdown.tsx:147
 msgid "View Barcode"
-msgstr ""
+msgstr "Barcode anzeigen"
 
 #: src/components/items/ActionDropdown.tsx:154
 msgid "View"
@@ -908,7 +908,7 @@ msgstr "Element löschen"
 #: src/components/items/ActionDropdown.tsx:247
 #: src/components/items/ActionDropdown.tsx:248
 msgid "Hold"
-msgstr ""
+msgstr "Angehalten"
 
 #: src/components/items/ActionDropdown.tsx:284
 #: src/tables/RowActions.tsx:31
@@ -963,27 +963,27 @@ msgstr "Dieses Panel ist ein Platzhalter."
 
 #: src/components/items/QRCode.tsx:87
 msgid "Low (7%)"
-msgstr ""
+msgstr "Niedrig (7%)"
 
 #: src/components/items/QRCode.tsx:88
 msgid "Medium (15%)"
-msgstr ""
+msgstr "Mittel (15%)"
 
 #: src/components/items/QRCode.tsx:89
 msgid "Quartile (25%)"
-msgstr ""
+msgstr "Viertel (25%)"
 
 #: src/components/items/QRCode.tsx:90
 msgid "High (30%)"
-msgstr ""
+msgstr "Hoch (30%)"
 
 #: src/components/items/QRCode.tsx:107
 msgid "Barcode Data:"
-msgstr ""
+msgstr "Barcode-Daten:"
 
 #: src/components/items/QRCode.tsx:118
 msgid "Select Error Correction Level"
-msgstr ""
+msgstr "Fehlerkorrektur-Level auswählen"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Version Information"
@@ -1658,7 +1658,7 @@ msgstr "Benutzer"
 
 #: src/components/render/ModelType.tsx:210
 msgid "Group"
-msgstr ""
+msgstr "Gruppe"
 
 #: src/components/render/ModelType.tsx:211
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:20
@@ -1669,11 +1669,11 @@ msgstr "Gruppen"
 
 #: src/components/render/ModelType.tsx:218
 msgid "Import Session"
-msgstr ""
+msgstr "Importsitzung"
 
 #: src/components/render/ModelType.tsx:219
 msgid "Import Sessions"
-msgstr ""
+msgstr "Importsitzungen"
 
 #: src/components/render/ModelType.tsx:225
 msgid "Label Template"
@@ -2194,7 +2194,7 @@ msgstr "Boxen anzeigen"
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Arabic"
-msgstr ""
+msgstr "Arabisch"
 
 #: src/contexts/LanguageContext.tsx:21
 msgid "Bulgarian"
@@ -2230,7 +2230,7 @@ msgstr "Spanisch (Mexikanisch)"
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Estonian"
-msgstr ""
+msgstr "Estnisch"
 
 #: src/contexts/LanguageContext.tsx:30
 msgid "Farsi / Persian"
@@ -2782,7 +2782,7 @@ msgstr "Status ändern"
 
 #: src/forms/PurchaseOrderForms.tsx:418
 msgid "Add Note"
-msgstr ""
+msgstr "Notiz hinzufügen"
 
 #: src/forms/PurchaseOrderForms.tsx:444
 #: src/forms/StockForms.tsx:428
@@ -2828,7 +2828,7 @@ msgstr "Losnummer"
 
 #: src/forms/PurchaseOrderForms.tsx:535
 msgid "Serial numbers"
-msgstr ""
+msgstr "Seriennummern"
 
 #: src/forms/PurchaseOrderForms.tsx:544
 #: src/forms/StockForms.tsx:443
@@ -2867,7 +2867,7 @@ msgstr "Notiz"
 #: src/pages/company/SupplierPartDetail.tsx:127
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:57
 msgid "SKU"
-msgstr "Art.-Nr."
+msgstr "SKU"
 
 #: src/forms/PurchaseOrderForms.tsx:639
 #: src/tables/part/PartPurchaseOrdersTable.tsx:120
@@ -3509,7 +3509,7 @@ msgstr "Multifaktor-Authentifizierung ist nicht für Ihr Konto eingerichtet"
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:92
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:407
 msgid "Token"
-msgstr ""
+msgstr "Token"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:139
 msgid "The following email addresses are associated with your account:"
@@ -3569,15 +3569,15 @@ msgstr "Sie können sich mit einem der folgenden Drittanbieterkonten bei Ihrem K
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:368
 msgid "Token is used - no actions"
-msgstr ""
+msgstr "Token in Verwendung - keine Aktionen"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:375
 msgid "Revoke"
-msgstr ""
+msgstr "Widerrufen"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:389
 msgid "No tokens configured"
-msgstr ""
+msgstr "Keine Token konfiguriert"
 
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:398
 #: src/pages/part/PartDetail.tsx:295
@@ -5187,7 +5187,7 @@ msgstr ""
 
 #: src/pages/sales/SalesOrderDetail.tsx:393
 msgid "Ship Order"
-msgstr ""
+msgstr "Bestellung versenden"
 
 #: src/pages/stock/LocationDetail.tsx:116
 msgid "Parent Location"
@@ -7335,7 +7335,7 @@ msgstr ""
 
 #: src/tables/settings/ImportSessionTable.tsx:122
 msgid "Filter by user"
-msgstr ""
+msgstr "Nach Benutzer filtern"
 
 #: src/tables/settings/PendingTasksTable.tsx:38
 msgid "Arguments"
@@ -7485,23 +7485,23 @@ msgstr "Benutzer hinzugefügt"
 
 #: src/tables/settings/UserTable.tsx:285
 msgid "Show active users"
-msgstr ""
+msgstr "Aktive Benutzer anzeigen"
 
 #: src/tables/settings/UserTable.tsx:289
 msgid "Staff"
-msgstr ""
+msgstr "Mitarbeiter"
 
 #: src/tables/settings/UserTable.tsx:290
 msgid "Show staff users"
-msgstr ""
+msgstr "Mitarbeiter anzeigen"
 
 #: src/tables/settings/UserTable.tsx:294
 msgid "Superuser"
-msgstr ""
+msgstr "Administrator"
 
 #: src/tables/settings/UserTable.tsx:295
 msgid "Show superusers"
-msgstr ""
+msgstr "Administratoren anzeigen"
 
 #: src/tables/settings/UserTable.tsx:305
 msgid "Edit user"
