@@ -34,7 +34,6 @@ import {
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
-import { usePluginPanels } from '../../hooks/UsePluginPanels';
 import { useUserState } from '../../states/UserState';
 import ParametricPartTable from '../../tables/part/ParametricPartTable';
 import { PartCategoryTable } from '../../tables/part/PartCategoryTable';
@@ -233,7 +232,7 @@ export default function CategoryDetail() {
     ];
   }, [id, user, category.pk]);
 
-  const categoryPanels: PanelType[] = useMemo(
+  const panels: PanelType[] = useMemo(
     () => [
       {
         name: 'details',
@@ -270,15 +269,6 @@ export default function CategoryDetail() {
     ],
     [category, id]
   );
-
-  const pluginPanels = usePluginPanels({
-    targetModel: ModelType.partcategory,
-    targetId: id
-  });
-
-  const panels: PanelType[] = useMemo(() => {
-    return [...categoryPanels, ...pluginPanels.panels];
-  }, [categoryPanels, pluginPanels]);
 
   const breadcrumbs = useMemo(
     () => [
@@ -324,7 +314,7 @@ export default function CategoryDetail() {
           />
           <PanelGroup
             pageKey="partcategory"
-            panels={categoryPanels}
+            panels={panels}
             targetModel={ModelType.partcategory}
             targetId={category.pk}
           />
