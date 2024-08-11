@@ -15,7 +15,7 @@ from django.db.models.functions import Coalesce
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer
+from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer, InvenTreeCustomStatusSerializerMixin
 
 import InvenTree.helpers
 from InvenTree.serializers import InvenTreeDecimalField, NotesFieldMixin
@@ -37,7 +37,7 @@ from .models import Build, BuildLine, BuildItem
 from .status_codes import BuildStatus
 
 
-class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer):
+class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTreeCustomStatusSerializerMixin, InvenTreeModelSerializer):
     """Serializes a Build object."""
 
     class Meta:
@@ -66,6 +66,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'quantity',
             'status',
             'status_text',
+            'status_custom_key',
             'target_date',
             'take_from',
             'notes',

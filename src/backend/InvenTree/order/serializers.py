@@ -43,6 +43,7 @@ from InvenTree.helpers import (
 )
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
+    InvenTreeCustomStatusSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
@@ -161,6 +162,7 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'address_detail',
             'status',
             'status_text',
+            'status_custom_key',
             'notes',
             'barcode_hash',
             'overdue',
@@ -216,7 +218,11 @@ class AbstractExtraLineMeta:
 
 @register_importer()
 class PurchaseOrderSerializer(
-    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin,
+    TotalPriceMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for a PurchaseOrder object."""
 
@@ -860,7 +866,11 @@ class PurchaseOrderReceiveSerializer(serializers.Serializer):
 
 @register_importer()
 class SalesOrderSerializer(
-    NotesFieldMixin, TotalPriceMixin, AbstractOrderSerializer, InvenTreeModelSerializer
+    NotesFieldMixin,
+    TotalPriceMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the SalesOrder model class."""
 
@@ -1643,7 +1653,11 @@ class SalesOrderExtraLineSerializer(
 
 @register_importer()
 class ReturnOrderSerializer(
-    NotesFieldMixin, AbstractOrderSerializer, TotalPriceMixin, InvenTreeModelSerializer
+    NotesFieldMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    AbstractOrderSerializer,
+    TotalPriceMixin,
+    InvenTreeModelSerializer,
 ):
     """Serializer for the ReturnOrder model class."""
 
