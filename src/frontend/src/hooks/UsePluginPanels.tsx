@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 
 import { api } from '../App';
 import { PanelType } from '../components/nav/Panel';
+import PluginPanel from '../components/plugins/PluginPanel';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';
@@ -15,15 +16,6 @@ import { useGlobalSettingsState } from '../states/SettingsState';
 export type PluginPanelState = {
   panels: PanelType[];
 };
-
-// Placeholder content for a panel with no content
-function PanelNoContent() {
-  return (
-    <Alert color="red" title={t`No Content`}>
-      <Text>{t`No content provided for this plugin`}</Text>
-    </Alert>
-  );
-}
 
 export function usePluginPanels({
   targetModel,
@@ -39,6 +31,7 @@ export function usePluginPanels({
     [globalSettings]
   );
 
+  // API query to fetch information on available plugin panels
   const { isFetching, data } = useQuery({
     enabled: pluginPanelsEnabled && !!targetModel,
     queryKey: [targetModel, targetId],
@@ -70,7 +63,7 @@ export function usePluginPanels({
           name: identifierString(`${pluginKey}-${panel.name}`),
           label: panel.label || t`Plugin Panel`,
           icon: <InvenTreeIcon icon={panel.icon ?? 'plugin'} />,
-          content: panel.content || <PanelNoContent />
+          content: <PluginPanel props={panel} />
         };
       }) ?? []
     );
