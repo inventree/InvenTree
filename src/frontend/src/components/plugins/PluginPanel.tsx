@@ -21,7 +21,7 @@ interface PluginPanelParameters {
   target: HTMLDivElement;
   props: PluginPanelProps;
   targetModel?: ModelType | string;
-  targetId?: number;
+  targetId?: number | null;
   api: AxiosInstance;
 }
 

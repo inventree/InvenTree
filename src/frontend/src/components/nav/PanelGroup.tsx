@@ -29,11 +29,22 @@ import { Boundary } from '../Boundary';
 import { StylishText } from '../items/StylishText';
 import { PanelType } from './Panel';
 
+/**
+ * Set of properties which define a panel group:
+ *
+ * @param pageKey - Unique key for this panel group
+ * @param panels - List of panels to display
+ * @param targetModel - The target model for this panel group
+ * @param targetId - The target ID for this panel group (set to *null* for groups which do not target a specific model instance)
+ * @param selectedPanel - The currently selected panel
+ * @param onPanelChange - Callback when the active panel changes
+ * @param collapsible - If true, the panel group can be collapsed (defaults to true)
+ */
 export type PanelProps = {
   pageKey: string;
   panels: PanelType[];
   targetModel?: ModelType | string;
-  targetId?: number;
+  targetId?: number | null;
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
