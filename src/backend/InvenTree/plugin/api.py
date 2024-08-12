@@ -463,9 +463,18 @@ plugin_api_urls = [
         'plugins/',
         include([
             path(
-                'panels/',
+                'ui/',
                 include([
-                    path('', PluginPanelList.as_view(), name='api-plugin-panel-list')
+                    path(
+                        'panels/',
+                        include([
+                            path(
+                                '',
+                                PluginPanelList.as_view(),
+                                name='api-plugin-panel-list',
+                            )
+                        ]),
+                    )
                 ]),
             ),
             # Plugin management
