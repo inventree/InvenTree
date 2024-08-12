@@ -312,7 +312,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: matmair/InvenTree
+          slug: inventree/InvenTree
           flags: backend
 
   postgres:
@@ -444,7 +444,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: matmair/InvenTree
+          slug: inventree/InvenTree
           flags: migrations
 
   migrations-checks:
@@ -549,7 +549,7 @@ jobs:
         if: always()
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          slug: matmair/InvenTree
+          slug: inventree/InvenTree
           flags: pui
 
   platform_ui_build:
