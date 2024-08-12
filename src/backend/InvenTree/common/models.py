@@ -1840,6 +1840,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'BUILDORDER_REQUIRE_CLOSED_CHILDS': {
+            'name': _('Require Closed Child Orders'),
+            'description': _(
+                'Prevent build order completion until all child orders are closed'
+            ),
+            'default': False,
+            'validator': bool,
+        },
         'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS': {
             'name': _('Block Until Tests Pass'),
             'description': _(

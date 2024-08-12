@@ -572,7 +572,7 @@ class PluginsRegistry:
                 try:
                     self._init_plugin(plg, plugin_configs)
                     break
-                except IntegrationPluginError as error:
+                except IntegrationPluginError:
                     # Error has been handled downstream
                     pass
                 except Exception as error:

@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 from decimal import Decimal
 from enum import IntEnum
-from pathlib import Path
 from random import randint
 
 from django.core.exceptions import ValidationError
@@ -13,7 +12,6 @@ from django.test.utils import CaptureQueriesContext
 from django.urls import reverse
 
 import PIL
-from rest_framework import status
 from rest_framework.test import APIClient
 
 import build.models
@@ -371,7 +369,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
                 params['delete_parts'] = '1'
             if delete_child_categories:
                 params['delete_child_categories'] = '1'
-            response = self.delete(url, params, expected_code=204)
+            self.delete(url, params, expected_code=204)
 
             if delete_parts:
                 if i == Target.delete_subcategories_delete_parts:
@@ -539,7 +537,7 @@ class PartCategoryAPITest(InvenTreeAPITestCase):
         )
         sub4 = PartCategory.objects.create(name='sub4', parent=sub3)
         sub5 = PartCategory.objects.create(name='sub5', parent=sub2)
-        part = Part.objects.create(name='test', category=sub4)
+        Part.objects.create(name='test', category=sub4)
         PartCategory.objects.rebuild()
 
         # This query will trigger an internal server error if annotation results are not limited to 1
@@ -973,7 +971,7 @@ class PartAPITest(PartAPITestBase):
         """Return list of part thumbnails."""
         url = reverse('api-part-thumbs')
 
-        response = self.get(url)
+        self.get(url)
 
     def test_paginate(self):
         """Test pagination of the Part list API."""

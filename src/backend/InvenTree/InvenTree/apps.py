@@ -11,7 +11,7 @@ from django.core.exceptions import AppRegistryNotReady
 from django.db import transaction
 from django.db.utils import IntegrityError, OperationalError
 
-from allauth.socialaccount.signals import social_account_added, social_account_updated
+from allauth.socialaccount.signals import social_account_updated
 
 import InvenTree.conversion
 import InvenTree.ready
