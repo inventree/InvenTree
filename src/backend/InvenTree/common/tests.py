@@ -1651,3 +1651,6 @@ class CustomStatusTest(TestCase):
         instance = InvenTreeCustomUserStateModel.objects.create(**data)
         self.assertEqual(data['key'], instance.key)
         self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 1)
+        self.assertEqual(
+            instance.__str__(), 'Stock Item (StockStatus): OK - advanced | 11 (10)'
+        )

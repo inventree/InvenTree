@@ -3400,7 +3400,7 @@ class InvenTreeCustomUserStateModel(models.Model):
 
     def __str__(self) -> str:
         """Return string representation of the custom state."""
-        return f'{self.model} ({self.reference_status}): {self.name} | {self.key} ({self.logical_key})'
+        return f'{self.model.name} ({self.reference_status}): {self.name} | {self.key} ({self.logical_key})'
 
     def save(self, *args, **kwargs) -> None:
         """Ensure that the custom state is valid before saving."""
