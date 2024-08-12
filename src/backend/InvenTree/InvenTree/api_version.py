@@ -9,8 +9,8 @@ INVENTREE_API_VERSION = 237
 INVENTREE_API_TEXT = """
 
 v237 - 2024-08-09 : https://github.com/inventree/InvenTree/pull/7862
-    - Added custom status fields to various serializers
-    - Added endpoints to admin custom status fields
+    - Adds custom status fields to various serializers
+    - Adds endpoints to admin custom status fields
 
 v236 - 2024-08-10 : https://github.com/inventree/InvenTree/pull/7844
     - Adds "supplier_name" to the PurchaseOrder API serializer
