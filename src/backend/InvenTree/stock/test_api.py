@@ -925,10 +925,15 @@ class StockItemListTest(StockAPITestCase):
             self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
         )
 
-    def test_custom_status(self):
-        """Tests custom stock status codes."""
-        # Create a custom stock status code
-        status = InvenTreeCustomUserStateModel.objects.create(
+
+class CustomStockItemStatusTest(StockAPITestCase):
+    """Tests for custom stock item statuses."""
+
+    list_url = reverse('api-stock-list')
+
+    def setUp(self):
+        """Setup for all tests."""
+        self.status = InvenTreeCustomUserStateModel.objects.create(
             key=11,
             name='OK - advanced',
             label='OK - adv.',
@@ -937,24 +942,7 @@ class StockItemListTest(StockAPITestCase):
             model=ContentType.objects.get(model='stockitem'),
             reference_status='StockStatus',
         )
-
-        # Create a stock item with the custom status code via the API
-        response = self.post(
-            self.list_url,
-            {
-                'name': 'Test Type 1',
-                'description': 'Test desc 1',
-                'quantity': 1,
-                'part': 1,
-                'status_custom_key': status.key,
-            },
-            expected_code=201,
-        )
-        self.assertEqual(response.data['status'], status.logical_key)
-        self.assertEqual(response.data['status_custom_key'], status.key)
-
-        # Update the stock item with another custom status code via the API
-        status2 = InvenTreeCustomUserStateModel.objects.create(
+        self.status2 = InvenTreeCustomUserStateModel.objects.create(
             key=51,
             name='attention 2',
             label='attention 2',
@@ -963,22 +951,41 @@ class StockItemListTest(StockAPITestCase):
             model=ContentType.objects.get(model='stockitem'),
             reference_status='StockStatus',
         )
+
+    def test_custom_status(self):
+        """Tests interaction with states."""
+        # Create a stock item with the custom status code via the API
+        response = self.post(
+            self.list_url,
+            {
+                'name': 'Test Type 1',
+                'description': 'Test desc 1',
+                'quantity': 1,
+                'part': 1,
+                'status_custom_key': self.status.key,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['status'], self.status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status.key)
+
+        # Update the stock item with another custom status code via the API
         response2 = self.patch(
             reverse('api-stock-detail', kwargs={'pk': response.data['pk']}),
-            {'status_custom_key': status2.key},
+            {'status_custom_key': self.status2.key},
             expected_code=200,
         )
-        self.assertEqual(response2.data['status'], status2.logical_key)
-        self.assertEqual(response2.data['status_custom_key'], status2.key)
+        self.assertEqual(response2.data['status'], self.status2.logical_key)
+        self.assertEqual(response2.data['status_custom_key'], self.status2.key)
 
         # Try if status_custom_key is rewrite with status bying set
         response3 = self.patch(
             reverse('api-stock-detail', kwargs={'pk': response.data['pk']}),
-            {'status': status.logical_key},
+            {'status': self.status.logical_key},
             expected_code=200,
         )
-        self.assertEqual(response3.data['status'], status.logical_key)
-        self.assertEqual(response3.data['status_custom_key'], status.logical_key)
+        self.assertEqual(response3.data['status'], self.status.logical_key)
+        self.assertEqual(response3.data['status_custom_key'], self.status.logical_key)
 
 
 class StockItemTest(StockAPITestCase):
