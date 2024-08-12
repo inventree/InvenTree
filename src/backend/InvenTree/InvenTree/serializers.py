@@ -221,9 +221,11 @@ class InvenTreeCustomStatusSerializerMixin:
     def create(self, validated_data):
         """Ensure the custom field is set when the leader is set initially."""
         self.gather_custom_fields()
-        for field in self._custom_fields_leader:
-            if field in self.initial_data:
-                validated_data[f'{field}_custom_key'] = int(self.initial_data[field])
+        for field in self._custom_fields_follower:
+            if field not in self.initial_data:
+                validated_data[field] = int(
+                    self.initial_data[field.replace('_custom_key', '')]
+                )
         return super().create(validated_data)
 
     def update(self, instance, validated_data):

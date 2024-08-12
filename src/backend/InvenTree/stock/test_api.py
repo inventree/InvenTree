@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from enum import IntEnum
 
 import django.http
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
@@ -17,7 +18,7 @@ from rest_framework import status
 import build.models
 import company.models
 import part.models
-from common.models import InvenTreeSetting
+from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
@@ -923,6 +924,34 @@ class StockItemListTest(StockAPITestCase):
         self.get(
             self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
         )
+
+    def test_custom_status(self):
+        """Tests custom stock status codes."""
+        # Create a custom stock status code
+        status = InvenTreeCustomUserStateModel.objects.create(
+            key=11,
+            name='OK - advanced',
+            label='OK - adv.',
+            color='secondary',
+            logical_key=10,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
+        # Create a stock item with the custom status code via the API
+        response = self.post(
+            self.list_url,
+            {
+                'name': 'Test Type 1',
+                'description': 'Test desc 1',
+                'quantity': 1,
+                'part': 1,
+                'status_custom_key': status.key,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['status'], status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], status.key)
 
 
 class StockItemTest(StockAPITestCase):
