@@ -301,6 +301,8 @@ class InvenTreeCustomStatusSerializerMixin:
                 leader_field = self.fields[field_name.replace('_custom_key', '')]
                 if hasattr(leader_field, 'choices'):
                     field_kwargs['choices'] = list(leader_field.choices.items())
+                if getattr(leader_field, 'read_only', False) is True:
+                    field_kwargs['read_only'] = True
 
             if not field_kwargs.get('choices', None):
                 field_kwargs['choices'] = []
