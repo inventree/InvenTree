@@ -29,7 +29,11 @@ import stock.status_codes
 from common.settings import get_global_setting
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
-from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
+from InvenTree.serializers import (
+    InvenTreeCurrencySerializer,
+    InvenTreeCustomStatusSerializerMixin,
+    InvenTreeDecimalField,
+)
 
 from .models import (
     StockItem,
@@ -1215,7 +1219,9 @@ class LocationSerializer(
 
 @register_importer()
 class StockTrackingSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeModelSerializer
+    DataImportExportSerializerMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    InvenTree.serializers.InvenTreeModelSerializer,
 ):
     """Serializer for StockItemTracking model."""
 
@@ -1232,11 +1238,18 @@ class StockTrackingSerializer(
             'label',
             'notes',
             'tracking_type',
+            'tracking_type_custom_key',
             'user',
             'user_detail',
         ]
 
-        read_only_fields = ['date', 'user', 'label', 'tracking_type']
+        read_only_fields = [
+            'date',
+            'user',
+            'label',
+            'tracking_type',
+            'tracking_type_custom_key',
+        ]
 
     def __init__(self, *args, **kwargs):
         """Add detail fields."""
