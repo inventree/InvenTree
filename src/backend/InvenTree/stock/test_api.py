@@ -953,6 +953,33 @@ class StockItemListTest(StockAPITestCase):
         self.assertEqual(response.data['status'], status.logical_key)
         self.assertEqual(response.data['status_custom_key'], status.key)
 
+        # Update the stock item with another custom status code via the API
+        status2 = InvenTreeCustomUserStateModel.objects.create(
+            key=51,
+            name='attention 2',
+            label='attention 2',
+            color='secondary',
+            logical_key=50,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+        response2 = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': response.data['pk']}),
+            {'status_custom_key': status2.key},
+            expected_code=200,
+        )
+        self.assertEqual(response2.data['status'], status2.logical_key)
+        self.assertEqual(response2.data['status_custom_key'], status2.key)
+
+        # Try if status_custom_key is rewrite with status bying set
+        response3 = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': response.data['pk']}),
+            {'status': status.logical_key},
+            expected_code=200,
+        )
+        self.assertEqual(response3.data['status'], status.logical_key)
+        self.assertEqual(response3.data['status_custom_key'], status.logical_key)
+
 
 class StockItemTest(StockAPITestCase):
     """Series of API tests for the StockItem API."""

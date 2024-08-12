@@ -32,6 +32,7 @@ from InvenTree.generic_fields import (
     ExtraCustomChoiceField,
     InvenTreeCustomStatusExtraModelField,
     InvenTreeCustomStatusModelField,
+    get_logical_value,
 )
 
 
@@ -239,6 +240,16 @@ class InvenTreeCustomStatusSerializerMixin:
                 != getattr(self.instance, f'{field}_custom_key', None)
             ):
                 setattr(self.instance, f'{field}_custom_key', self.initial_data[field])
+        for field in self._custom_fields_follower:
+            if (
+                field in validated_data
+                and field.replace('_custom_key', '') not in self.initial_data
+            ):
+                reference = get_logical_value(
+                    validated_data[field],
+                    self.fields[field].choice_mdl._meta.model_name,
+                )
+                validated_data[field.replace('_custom_key', '')] = reference.logical_key
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):

@@ -9,6 +9,13 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 
 
+def get_logical_value(value, model: str):
+    """Get the state model for the selected value."""
+    from common.models import InvenTreeCustomUserStateModel
+
+    return InvenTreeCustomUserStateModel.objects.get(key=value, model__model=model)
+
+
 class CustomChoiceField(serializers.ChoiceField):
     """Custom Choice Field."""
 
@@ -24,14 +31,6 @@ class CustomChoiceField(serializers.ChoiceField):
         self.choice_field = choice_field
         self.is_is_custom = is_custom
 
-    def get_logical_value(self, value):
-        """Get the state model for the selected value."""
-        from common.models import InvenTreeCustomUserStateModel
-
-        return InvenTreeCustomUserStateModel.objects.get(
-            key=value, model__model=self.choice_mdl._meta.model_name
-        )
-
     def to_internal_value(self, data):
         """Map the choice (that might be a custom one) back to the logical value."""
         try:
@@ -40,7 +39,7 @@ class CustomChoiceField(serializers.ChoiceField):
             from common.models import InvenTreeCustomUserStateModel
 
             try:
-                logical = self.get_logical_value(data)
+                logical = get_logical_value(data, self.choice_mdl._meta.model_name)
                 if self.is_is_custom:
                     return logical.key
                 return logical.logical_key
