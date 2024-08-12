@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-11 22:15\n"
+"PO-Revision-Date: 2024-08-12 22:11\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -908,7 +908,7 @@ msgstr "删除项目"
 #: src/components/items/ActionDropdown.tsx:247
 #: src/components/items/ActionDropdown.tsx:248
 msgid "Hold"
-msgstr ""
+msgstr "挂起"
 
 #: src/components/items/ActionDropdown.tsx:284
 #: src/tables/RowActions.tsx:31
@@ -4141,82 +4141,82 @@ msgstr "取消生产订单"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:309
 #: src/pages/sales/SalesOrderDetail.tsx:341
 msgid "Order cancelled"
-msgstr ""
+msgstr "订单已取消"
 
 #: src/pages/build/BuildDetail.tsx:388
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:308
 #: src/pages/sales/ReturnOrderDetail.tsx:306
 #: src/pages/sales/SalesOrderDetail.tsx:340
 msgid "Cancel this order"
-msgstr ""
+msgstr "取消此订单"
 
 #: src/pages/build/BuildDetail.tsx:397
 msgid "Hold Build Order"
-msgstr ""
+msgstr "挂起生产订单"
 
 #: src/pages/build/BuildDetail.tsx:399
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:316
 #: src/pages/sales/ReturnOrderDetail.tsx:314
 #: src/pages/sales/SalesOrderDetail.tsx:348
 msgid "Place this order on hold"
-msgstr ""
+msgstr "将此订单挂起"
 
 #: src/pages/build/BuildDetail.tsx:400
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:317
 #: src/pages/sales/ReturnOrderDetail.tsx:315
 #: src/pages/sales/SalesOrderDetail.tsx:349
 msgid "Order placed on hold"
-msgstr ""
+msgstr "挂起订单"
 
 #: src/pages/build/BuildDetail.tsx:405
 msgid "Issue Build Order"
-msgstr ""
+msgstr "发出生产订单"
 
 #: src/pages/build/BuildDetail.tsx:407
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:300
 #: src/pages/sales/ReturnOrderDetail.tsx:298
 #: src/pages/sales/SalesOrderDetail.tsx:332
 msgid "Issue this order"
-msgstr ""
+msgstr "发出这个订单"
 
 #: src/pages/build/BuildDetail.tsx:408
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:301
 #: src/pages/sales/ReturnOrderDetail.tsx:299
 #: src/pages/sales/SalesOrderDetail.tsx:333
 msgid "Order issued"
-msgstr ""
+msgstr "订单发起"
 
 #: src/pages/build/BuildDetail.tsx:413
 msgid "Complete Build Order"
-msgstr ""
+msgstr "完成生产订单"
 
 #: src/pages/build/BuildDetail.tsx:415
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:329
 #: src/pages/sales/ReturnOrderDetail.tsx:322
 #: src/pages/sales/SalesOrderDetail.tsx:356
 msgid "Mark this order as complete"
-msgstr ""
+msgstr "标记该订单为已完成"
 
 #: src/pages/build/BuildDetail.tsx:416
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:323
 #: src/pages/sales/ReturnOrderDetail.tsx:323
 #: src/pages/sales/SalesOrderDetail.tsx:357
 msgid "Order completed"
-msgstr ""
+msgstr "订单已完成"
 
 #: src/pages/build/BuildDetail.tsx:447
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:352
 #: src/pages/sales/ReturnOrderDetail.tsx:352
 #: src/pages/sales/SalesOrderDetail.tsx:386
 msgid "Issue Order"
-msgstr ""
+msgstr "发布订单"
 
 #: src/pages/build/BuildDetail.tsx:454
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:359
 #: src/pages/sales/ReturnOrderDetail.tsx:359
 #: src/pages/sales/SalesOrderDetail.tsx:400
 msgid "Complete Order"
-msgstr ""
+msgstr "完成订单"
 
 #: src/pages/build/BuildDetail.tsx:481
 msgid "Build Order Actions"
@@ -4227,21 +4227,21 @@ msgstr "生产订单操作"
 #: src/pages/sales/ReturnOrderDetail.tsx:391
 #: src/pages/sales/SalesOrderDetail.tsx:433
 msgid "Edit order"
-msgstr ""
+msgstr "编辑订单"
 
 #: src/pages/build/BuildDetail.tsx:491
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:399
 #: src/pages/sales/ReturnOrderDetail.tsx:397
 #: src/pages/sales/SalesOrderDetail.tsx:438
 msgid "Duplicate order"
-msgstr ""
+msgstr "复制订单"
 
 #: src/pages/build/BuildDetail.tsx:495
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:402
 #: src/pages/sales/ReturnOrderDetail.tsx:402
 #: src/pages/sales/SalesOrderDetail.tsx:441
 msgid "Hold order"
-msgstr ""
+msgstr "挂起订单"
 
 #: src/pages/build/BuildDetail.tsx:500
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:407
@@ -5087,19 +5087,19 @@ msgstr "订单细节"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:298
 msgid "Issue Purchase Order"
-msgstr ""
+msgstr "发布采购订单"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:306
 msgid "Cancel Purchase Order"
-msgstr ""
+msgstr "取消采购订单"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:314
 msgid "Hold Purchase Order"
-msgstr ""
+msgstr "挂起采购订单"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:322
 msgid "Complete Purchase Order"
-msgstr ""
+msgstr "完成采购订单"
 
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:386
 #: src/pages/sales/ReturnOrderDetail.tsx:386
@@ -5125,23 +5125,23 @@ msgstr "添加退货订单"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:296
 msgid "Issue Return Order"
-msgstr ""
+msgstr "发布退货订单"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:304
 msgid "Cancel Return Order"
-msgstr ""
+msgstr "取消退货订单"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:307
 msgid "Order canceled"
-msgstr ""
+msgstr "订单已取消"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:312
 msgid "Hold Return Order"
-msgstr ""
+msgstr "挂起退货订单"
 
 #: src/pages/sales/ReturnOrderDetail.tsx:320
 msgid "Complete Return Order"
-msgstr ""
+msgstr "完成退货订单"
 
 #: src/pages/sales/SalesIndex.tsx:38
 msgid "Customers"
@@ -5171,23 +5171,23 @@ msgstr "配送"
 
 #: src/pages/sales/SalesOrderDetail.tsx:330
 msgid "Issue Sales Order"
-msgstr ""
+msgstr "发布销售订单"
 
 #: src/pages/sales/SalesOrderDetail.tsx:338
 msgid "Cancel Sales Order"
-msgstr ""
+msgstr "取消销售订单"
 
 #: src/pages/sales/SalesOrderDetail.tsx:346
 msgid "Hold Sales Order"
-msgstr ""
+msgstr "挂起销售订单"
 
 #: src/pages/sales/SalesOrderDetail.tsx:354
 msgid "Complete Sales Order"
-msgstr ""
+msgstr "完成销售订单"
 
 #: src/pages/sales/SalesOrderDetail.tsx:393
 msgid "Ship Order"
-msgstr ""
+msgstr "装货单"
 
 #: src/pages/stock/LocationDetail.tsx:116
 msgid "Parent Location"
@@ -5795,7 +5795,7 @@ msgstr "显示分配给构建输出的项目"
 #: src/tables/part/PartPurchaseOrdersTable.tsx:125
 #: src/tables/sales/SalesOrderAllocationTable.tsx:61
 msgid "Order Status"
-msgstr ""
+msgstr "订单状态"
 
 #: src/tables/build/BuildAllocatedStockTable.tsx:96
 #: src/tables/sales/SalesOrderAllocationTable.tsx:74
@@ -5874,7 +5874,7 @@ msgstr "单位数量"
 #: src/tables/build/BuildLineTable.tsx:233
 #: src/tables/sales/SalesOrderLineItemTable.tsx:223
 msgid "Create Build Order"
-msgstr ""
+msgstr "创建生产订单"
 
 #: src/tables/build/BuildLineTable.tsx:264
 msgid "Allocate Stock"
@@ -6466,15 +6466,15 @@ msgstr "总数量"
 
 #: src/tables/part/PartPurchaseOrdersTable.tsx:115
 msgid "Pending"
-msgstr ""
+msgstr "待定"
 
 #: src/tables/part/PartPurchaseOrdersTable.tsx:116
 msgid "Show pending orders"
-msgstr ""
+msgstr "显示待定的订单"
 
 #: src/tables/part/PartPurchaseOrdersTable.tsx:121
 msgid "Show received items"
-msgstr ""
+msgstr "显示已收到的条目"
 
 #: src/tables/part/PartTable.tsx:77
 msgid "Minimum stock"
@@ -6604,11 +6604,11 @@ msgstr "按有盘点信息的零件筛选"
 
 #: src/tables/part/PartTestTemplateTable.tsx:50
 msgid "Test is defined for a parent template part"
-msgstr ""
+msgstr "测试被定义为父模板部分"
 
 #: src/tables/part/PartTestTemplateTable.tsx:64
 msgid "Template Details"
-msgstr ""
+msgstr "模版详情"
 
 #: src/tables/part/PartTestTemplateTable.tsx:74
 msgid "Results"
@@ -6692,11 +6692,11 @@ msgstr "任何与此模板相关的测试结果将被删除"
 
 #: src/tables/part/PartTestTemplateTable.tsx:204
 msgid "View Parent Part"
-msgstr ""
+msgstr "查看父部分"
 
 #: src/tables/part/PartTestTemplateTable.tsx:257
 msgid "Part templates cannot be edited, as the part is locked"
-msgstr ""
+msgstr "模板参数无法编辑，因为组件已锁定"
 
 #: src/tables/part/PartThumbTable.tsx:201
 msgid "Select"
@@ -7485,23 +7485,23 @@ msgstr "已添加用户"
 
 #: src/tables/settings/UserTable.tsx:285
 msgid "Show active users"
-msgstr ""
+msgstr "显示活跃用户"
 
 #: src/tables/settings/UserTable.tsx:289
 msgid "Staff"
-msgstr ""
+msgstr "工作人员"
 
 #: src/tables/settings/UserTable.tsx:290
 msgid "Show staff users"
-msgstr ""
+msgstr "显示工作人员用户"
 
 #: src/tables/settings/UserTable.tsx:294
 msgid "Superuser"
-msgstr ""
+msgstr "超级用户"
 
 #: src/tables/settings/UserTable.tsx:295
 msgid "Show superusers"
-msgstr ""
+msgstr "显示超级用户"
 
 #: src/tables/settings/UserTable.tsx:305
 msgid "Edit user"
