@@ -33,6 +33,7 @@ from .models import (
     Attachment,
     ColorTheme,
     CustomUnit,
+    InvenTreeCustomUserStateModel,
     InvenTreeSetting,
     InvenTreeUserSetting,
     NotesImage,
@@ -1566,3 +1567,89 @@ class ValidatorsTest(TestCase):
             common.validators.validate_icon('ti:package:non-existing-variant')
 
         common.validators.validate_icon('ti:package:outline')
+
+
+class CustomStatusTest(TestCase):
+    """Unit tests for the custom status model."""
+
+    def setUp(self):
+        """Setup for all tests."""
+        self.data = {
+            'key': 11,
+            'name': 'OK - advanced',
+            'label': 'OK - adv.',
+            'color': 'secondary',
+            'logical_key': 10,
+            'model': ContentType.objects.get(model='stockitem'),
+            'reference_status': 'StockStatus',
+        }
+
+    def test_validation_model(self):
+        """Test that model is present."""
+        data = self.data
+        data.pop('model')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_key(self):
+        """Tests Model must have a key."""
+        data = self.data
+        data.pop('key')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_logicalkey(self):
+        """Tests Logical key must be present."""
+        data = self.datadata.pop('logical_key')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_reference(self):
+        """Tests Reference status must be present."""
+        data = self.data
+        data.pop('reference_status')
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_logical_unique(self):
+        """Tests Logical key must be unique."""
+        data = self.data
+        data['logical_key'] = data['key']
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_reference_exsists(self):
+        """Tests Reference status set not found."""
+        data = self.data
+        data['reference_status'] = 'abcd'
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_key_unique(self):
+        """Tests Key must be different from the logical keys of the reference."""
+        data = self.data
+        data['key'] = 50
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation_logical_key_exsists(self):
+        """Tests Logical key must be in the logical keys of the reference status."""
+        data = self.data
+        data['logical_key'] = 12
+        with self.assertRaises(ValidationError):
+            InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
+
+    def test_validation(self):
+        """Tests Valid run."""
+        data = self.data
+        instance = InvenTreeCustomUserStateModel.objects.create(**data)
+        self.assertEqual(data['key'], instance.key)
+        self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 1)
