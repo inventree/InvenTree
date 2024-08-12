@@ -124,6 +124,17 @@ class GeneralStateTest(InvenTreeTestCase):
         # label
         self.assertEqual(GeneralStatus.label(10), 'Pending')
 
+    def test_color(self):
+        """Test that the color enum validation works."""
+        with self.assertRaises(ValueError) as e:
+
+            class TTTT(StatusCode):
+                PENDING = 10, _('Pending'), 'invalid'
+
+        self.assertEqual(
+            str(e.exception), "Invalid color value 'invalid' for status 'Pending'"
+        )
+
     def test_tag_function(self):
         """Test that the status code tag functions."""
         from .tags import status_label
