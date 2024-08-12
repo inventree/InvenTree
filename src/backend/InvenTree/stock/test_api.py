@@ -933,6 +933,7 @@ class CustomStockItemStatusTest(StockAPITestCase):
 
     def setUp(self):
         """Setup for all tests."""
+        super().setUp()
         self.status = InvenTreeCustomUserStateModel.objects.create(
             key=11,
             name='OK - advanced',
@@ -986,6 +987,21 @@ class CustomStockItemStatusTest(StockAPITestCase):
         )
         self.assertEqual(response3.data['status'], self.status.logical_key)
         self.assertEqual(response3.data['status_custom_key'], self.status.logical_key)
+
+    def test_options(self):
+        """Test the StockItem OPTIONS endpoint to contain custom StockStatuses."""
+        response = self.options(self.list_url)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the response contains the custom StockStatuses
+        actions = response.data['actions']['POST']
+        self.assertIn('status_custom_key', actions)
+        status_custom_key = actions['status_custom_key']
+        self.assertEqual(len(status_custom_key['choices']), 10)
+        status = status_custom_key['choices'][1]
+        self.assertEqual(status['value'], self.status.key)
+        self.assertEqual(status['display_name'], self.status.label)
 
 
 class StockItemTest(StockAPITestCase):
