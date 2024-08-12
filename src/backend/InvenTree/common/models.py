@@ -3422,7 +3422,7 @@ class InvenTreeCustomUserStateModel(models.Model):
         if self.key == self.logical_key:
             raise ValidationError({'key': _('Key must be different from logical key')})
 
-        if self.reference_status is None:
+        if self.reference_status is None or self.reference_status == '':
             raise ValidationError({
                 'reference_status': _('Reference status must be selected')
             })
