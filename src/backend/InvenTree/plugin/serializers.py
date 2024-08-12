@@ -311,10 +311,26 @@ class PluginPanelSerializer(serializers.Serializer):
     class Meta:
         """Meta for serializer."""
 
-        fields = ['plugin', 'name', 'label', 'icon']
+        fields = ['plugin', 'name', 'label', 'icon', 'content', 'source']
 
-    plugin = serializers.CharField(label=_('Plugin Key'))
-    name = serializers.CharField(label=_('Panel Name'))
-    label = serializers.CharField(label=_('Panel Label'))
-    icon = serializers.CharField(label=_('Panel Icon'))
-    content = serializers.CharField(label=_('Panel Content'))
+    # Required fields
+    plugin = serializers.CharField(
+        label=_('Plugin Key'), required=True, allow_blank=False
+    )
+    name = serializers.CharField(
+        label=_('Panel Name'), required=True, allow_blank=False
+    )
+    label = serializers.CharField(
+        label=_('Panel Title'), required=True, allow_blank=False
+    )
+
+    # Optional fields
+    icon = serializers.CharField(
+        label=_('Panel Icon'), required=False, allow_blank=True
+    )
+    content = serializers.CharField(
+        label=_('Panel Content (HTML)'), required=False, allow_blank=True
+    )
+    source = serializers.CharField(
+        label=_('Panel Source (javascript)'), required=False, allow_blank=True
+    )
