@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger('inventree')
 
 
-class UserIterfaceMixin:
+class UserInterfaceMixin:
     """Plugin mixin class which handles injection of custom elements into the front-end interface.
 
     - All content is accessed via the API, as requested by the user interface.
