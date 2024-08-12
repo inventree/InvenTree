@@ -2,7 +2,9 @@
 
 from django.utils.translation import gettext_lazy as _
 
+from part.models import Part
 from plugin import InvenTreePlugin
+from plugin.helpers import render_template, render_text
 from plugin.mixins import SettingsMixin, UserInterfaceMixin
 
 
@@ -36,19 +38,47 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
 
         # First, add a custom panel which will appear on every type of page
         # This panel will contain a simple message
+
+        content = render_text(
+            """
+            This is a <i>sample panel</i> which appears on every page.
+            It renders a simple string of <b>HTML</b> content.
+
+            <br>
+            <h5>Instance Details:</h5>
+            <ul>
+            <li>Instance Type: {{ instance_type }}</li>
+            <li>Instance ID: {{ instance_id }}</li>
+            </ul>
+            """,
+            context={'instance_type': instance_type, 'instance_id': instance_id},
+        )
+
         panels.append({
             'name': 'sample_panel',
             'label': 'Sample Panel',
-            'content': 'This is a <i>sample panel</i> which appears on every page. It renders a simple string of <b>HTML</b> content.',
+            'content': content,
         })
 
         # Next, add a custom panel which will appear on the 'part' page
+        # Note that this content is rendered from a template file,
+        # using the django templating system
         if self.get_setting('ENABLE_PART_PANELS') and instance_type == 'part':
-            panels.append({
-                'name': 'part_panel',
-                'label': 'Part Panel',
-                'content': 'This is a custom panel which appears on the <b>Part</b> view page.',
-            })
+            try:
+                part = Part.objects.get(pk=instance_id)
+            except (Part.DoesNotExist, ValueError):
+                part = None
+
+            if part:
+                content = render_template(
+                    self, 'uidemo/custom_part_panel.html', context={'part': part}
+                )
+
+                panels.append({
+                    'name': 'part_panel',
+                    'label': 'Part Panel',
+                    'content': content,
+                })
 
         # Next, add a custom panel which will appear on the 'purchaseorder' page
         if (
