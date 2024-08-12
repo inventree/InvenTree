@@ -7,6 +7,7 @@ from rest_framework import permissions, serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
+from generic.states.custom import get_custom_classes
 from InvenTree.serializers import EmptySerializer
 
 from .states import StatusCode
@@ -73,18 +74,8 @@ class AllStatusViews(StatusView):
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
-        data = {}
-
-        def discover_status_codes(parent_status_class, prefix=None):
-            """Recursively discover status classes."""
-            for status_class in parent_status_class.__subclasses__():
-                name = '__'.join([*(prefix or []), status_class.__name__])
-                data[name] = {
-                    'class': status_class.__name__,
-                    'values': status_class.dict(),
-                }
-                discover_status_codes(status_class, [name])
-
-        discover_status_codes(StatusCode)
-
+        data = {
+            k.__name__: {'class': k.__name__, 'values': k.dict()}
+            for k in get_custom_classes()
+        }
         return Response(data)

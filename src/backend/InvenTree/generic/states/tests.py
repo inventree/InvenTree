@@ -1,12 +1,15 @@
 """Tests for the generic states module."""
 
+from django.contrib.contenttypes.models import ContentType
 from django.test.client import RequestFactory
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
 from rest_framework.test import force_authenticate
 
+from common.models import InvenTreeCustomUserStateModel
 from generic.states import ColorEnum
-from InvenTree.unit_test import InvenTreeTestCase
+from InvenTree.unit_test import InvenTreeAPITestCase, InvenTreeTestCase
 
 from .api import StatusView
 from .states import StatusCode
@@ -192,3 +195,48 @@ class GeneralStateTest(InvenTreeTestCase):
         self.assertEqual(
             str(e.exception), '`status_class` not a valid StatusCode class'
         )
+
+
+class ApiTests(InvenTreeAPITestCase):
+    """Test the API for the generic states module."""
+
+    def test_all_states(self):
+        """Test the API endpoint for listing all status models."""
+        response = self.get(reverse('api-status-all'))
+
+        # Test the BuildStatus model
+        build_status = response.data['BuildStatus']
+        self.assertEqual(build_status['class'], 'BuildStatus')
+        self.assertEqual(len(build_status['values']), 5)
+        pending = build_status['values']['PENDING']
+        self.assertEqual(pending['key'], 10)
+        self.assertEqual(pending['name'], 'PENDING')
+        self.assertEqual(pending['label'], 'Pending')
+
+        # Test the StockStatus model (static)
+        stock_status = response.data['StockStatus']
+        self.assertEqual(stock_status['class'], 'StockStatus')
+        self.assertEqual(len(stock_status['values']), 8)
+        in_stock = stock_status['values']['OK']
+        self.assertEqual(in_stock['key'], 10)
+        self.assertEqual(in_stock['name'], 'OK')
+        self.assertEqual(in_stock['label'], 'OK')
+
+        # Add custom status
+        InvenTreeCustomUserStateModel.objects.create(
+            key=11,
+            name='OK - advanced',
+            label='OK - adv.',
+            color='secondary',
+            logical_key=10,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+        response = self.get(reverse('api-status-all'))
+        stock_status_cstm = response.data['StockStatus']
+        self.assertEqual(stock_status_cstm['class'], 'StockStatus')
+        self.assertEqual(len(stock_status_cstm['values']), 9)
+        ok_advanced = stock_status_cstm['values']['OK']
+        self.assertEqual(ok_advanced['key'], 10)
+        self.assertEqual(ok_advanced['name'], 'OK')
+        self.assertEqual(ok_advanced['label'], 'OK')
