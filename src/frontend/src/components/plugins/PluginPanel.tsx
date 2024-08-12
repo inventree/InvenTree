@@ -8,7 +8,7 @@ import { ModelType } from '../../enums/ModelType';
 import { PanelType } from '../nav/Panel';
 
 interface PluginPanelProps extends PanelType {
-  src?: string;
+  source?: string;
   params?: any;
   targetInstance?: any;
   targetModel?: ModelType | string;
@@ -61,8 +61,14 @@ export default function PluginPanel({ props }: { props: PluginPanelProps }) {
   const ref = useRef<HTMLDivElement>();
 
   const loadExternalSource = async () => {
+    if (!props.source) {
+      return;
+    }
+
+    // TODO: Gate where this content may be loaded from (e.g. only allow certain domains)
+
     // Load content from external source
-    const src = await import(/* @vite-ignore */ props.src ?? '');
+    const src = await import(/* @vite-ignore */ props.source ?? '');
 
     // We expect the external source to define a function which will render the content
     if (src && src.render_panel && typeof src.render_panel === 'function') {
@@ -78,20 +84,20 @@ export default function PluginPanel({ props }: { props: PluginPanelProps }) {
   };
 
   useEffect(() => {
-    if (props.src) {
+    if (props.source) {
       // Load content from external source
       loadExternalSource();
     } else if (props.content) {
       // If content is provided directly, render it into the panel
-      // ref.current.innerHTML = props.content;
-    } else {
-      // Something... went wrong?
+      if (ref) {
+        ref.current?.setHTMLUnsafe(props.content.toString());
+      }
     }
   }, [props]);
 
-  if (!props.content && !props.src) {
+  if (!props.content && !props.source) {
     return <PanelNoContent />;
   }
 
-  return <div ref={ref as any}>{props.content}</div>;
+  return <div ref={ref as any}></div>;
 }
