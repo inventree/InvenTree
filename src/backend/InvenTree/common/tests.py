@@ -1602,7 +1602,8 @@ class CustomStatusTest(TestCase):
 
     def test_validation_logicalkey(self):
         """Tests Logical key must be present."""
-        data = self.datadata.pop('logical_key')
+        data = self.data
+        data.pop('logical_key')
         with self.assertRaises(ValidationError):
             InvenTreeCustomUserStateModel.objects.create(**data)
         self.assertEqual(InvenTreeCustomUserStateModel.objects.count(), 0)
