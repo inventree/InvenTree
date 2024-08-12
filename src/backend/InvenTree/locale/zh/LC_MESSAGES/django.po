@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-09 23:26+0000\n"
-"PO-Revision-Date: 2024-08-11 22:15\n"
+"PO-Revision-Date: 2024-08-12 22:11\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -1426,11 +1426,11 @@ msgstr "未完成所需生产数量"
 
 #: build/serializers.py:770
 msgid "Build order has open child build orders"
-msgstr ""
+msgstr "生产订单有打开的子生产订单"
 
 #: build/serializers.py:773
 msgid "Build order must be in production state"
-msgstr ""
+msgstr "生产订单必须处于生产状态"
 
 #: build/serializers.py:776 templates/js/translated/build.js:304
 msgid "Build order has incomplete outputs"
@@ -1684,7 +1684,7 @@ msgstr "生產"
 #: build/status_codes.py:13 order/status_codes.py:14 order/status_codes.py:49
 #: order/status_codes.py:79
 msgid "On Hold"
-msgstr ""
+msgstr "被挂起"
 
 #: build/status_codes.py:14 order/status_codes.py:16 order/status_codes.py:51
 #: order/status_codes.py:82
@@ -1788,7 +1788,7 @@ msgstr "复制生产操作"
 
 #: build/templates/build/build_base.html:76
 msgid "Hold Build"
-msgstr ""
+msgstr "挂起生产"
 
 #: build/templates/build/build_base.html:79
 msgid "Cancel Build"
@@ -1804,7 +1804,7 @@ msgstr ""
 
 #: build/templates/build/build_base.html:88
 msgid "Issue Build"
-msgstr ""
+msgstr "问题创建"
 
 #: build/templates/build/build_base.html:91
 #: build/templates/build/build_base.html:92
@@ -1904,11 +1904,11 @@ msgstr "優先等級"
 
 #: build/templates/build/build_base.html:267
 msgid "Issue Build Order"
-msgstr ""
+msgstr "发布生产订单"
 
 #: build/templates/build/build_base.html:271
 msgid "Issue this Build Order?"
-msgstr ""
+msgstr "发布此生产订单？"
 
 #: build/templates/build/build_base.html:302
 msgid "Delete Build Order"
@@ -2955,11 +2955,11 @@ msgstr "除非物料清单已验证，否则禁止创建生产订单"
 
 #: common/models.py:1842
 msgid "Require Closed Child Orders"
-msgstr ""
+msgstr "需要关闭的子订单"
 
 #: common/models.py:1844
 msgid "Prevent build order completion until all child orders are closed"
-msgstr ""
+msgstr "在所有子订单关闭之前，阻止生产订单的完成"
 
 #: common/models.py:1850
 msgid "Block Until Tests Pass"
@@ -6010,7 +6010,7 @@ msgstr "再次订购"
 #: order/templates/order/return_order_base.html:78
 #: order/templates/order/sales_order_base.html:77
 msgid "Hold order"
-msgstr ""
+msgstr "挂起订单"
 
 #: order/templates/order/order_base.html:78
 #: order/templates/order/return_order_base.html:81
@@ -13054,11 +13054,11 @@ msgstr "通知将在此处加载"
 
 #: templates/js/translated/order.js:48
 msgid "Hold Order"
-msgstr ""
+msgstr "挂起订单"
 
 #: templates/js/translated/order.js:53
 msgid "Are you sure you wish to place this order on hold?"
-msgstr ""
+msgstr "您确定要挂起此订单吗？"
 
 #: templates/js/translated/order.js:114
 msgid "Add Extra Line Item"
