@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-10 08:14+0000\n"
+"POT-Creation-Date: 2024-08-13 05:26+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2106,15 +2106,19 @@ msgstr ""
 msgid "Test Statistics"
 msgstr ""
 
-#: common/api.py:692
+#: common/api.py:693
 msgid "Is Link"
 msgstr ""
 
-#: common/api.py:700
+#: common/api.py:701
 msgid "Is File"
 msgstr ""
 
-#: common/api.py:742
+#: common/api.py:744
+msgid "User does not have permission to delete these attachments"
+msgstr ""
+
+#: common/api.py:761
 msgid "User does not have permission to delete this attachment"
 msgstr ""
 
@@ -3932,7 +3936,7 @@ msgstr ""
 msgid "File size in bytes"
 msgstr ""
 
-#: common/models.py:3339 common/serializers.py:557
+#: common/models.py:3339 common/serializers.py:562
 msgid "Invalid model type specified for attachment"
 msgstr ""
 
@@ -4038,7 +4042,7 @@ msgstr ""
 msgid "Model Type"
 msgstr ""
 
-#: common/serializers.py:563
+#: common/serializers.py:565
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr ""
 

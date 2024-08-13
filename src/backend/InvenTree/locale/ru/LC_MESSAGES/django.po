@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-09 23:26+0000\n"
+"POT-Creation-Date: 2024-08-13 05:26+0000\n"
 "PO-Revision-Date: 2024-08-10 22:05\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
@@ -2105,15 +2105,21 @@ msgstr "Незавершенная продукция"
 msgid "Test Statistics"
 msgstr ""
 
-#: common/api.py:692
+#: common/api.py:693
 msgid "Is Link"
 msgstr "Ссылка"
 
-#: common/api.py:700
+#: common/api.py:701
 msgid "Is File"
 msgstr "Файл"
 
-#: common/api.py:742
+#: common/api.py:744
+#, fuzzy
+#| msgid "User does not have permission to delete this attachment"
+msgid "User does not have permission to delete these attachments"
+msgstr "У пользователя нет прав на удаление этого вложения"
+
+#: common/api.py:761
 msgid "User does not have permission to delete this attachment"
 msgstr "У пользователя нет прав на удаление этого вложения"
 
@@ -3931,7 +3937,7 @@ msgstr ""
 msgid "File size in bytes"
 msgstr ""
 
-#: common/models.py:3339 common/serializers.py:557
+#: common/models.py:3339 common/serializers.py:562
 msgid "Invalid model type specified for attachment"
 msgstr ""
 
@@ -4037,7 +4043,7 @@ msgstr "Имя файла"
 msgid "Model Type"
 msgstr ""
 
-#: common/serializers.py:563
+#: common/serializers.py:565
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr ""
 
@@ -15196,4 +15202,3 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
-

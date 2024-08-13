@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-09 23:26+0000\n"
+"POT-Creation-Date: 2024-08-13 05:26+0000\n"
 "PO-Revision-Date: 2024-08-12 22:11\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
@@ -2105,15 +2105,21 @@ msgstr "未完成的产出"
 msgid "Test Statistics"
 msgstr "测试统计"
 
-#: common/api.py:692
+#: common/api.py:693
 msgid "Is Link"
 msgstr "是否链接"
 
-#: common/api.py:700
+#: common/api.py:701
 msgid "Is File"
 msgstr "是否为文件"
 
-#: common/api.py:742
+#: common/api.py:744
+#, fuzzy
+#| msgid "User does not have permission to delete this attachment"
+msgid "User does not have permission to delete these attachments"
+msgstr "用户没有权限删除此附件"
+
+#: common/api.py:761
 msgid "User does not have permission to delete this attachment"
 msgstr "用户没有权限删除此附件"
 
@@ -3931,7 +3937,7 @@ msgstr "文件大小"
 msgid "File size in bytes"
 msgstr "文件大小，以字节为单位"
 
-#: common/models.py:3339 common/serializers.py:557
+#: common/models.py:3339 common/serializers.py:562
 msgid "Invalid model type specified for attachment"
 msgstr "为附件指定的模型类型无效"
 
@@ -4037,7 +4043,7 @@ msgstr "檔案名稱"
 msgid "Model Type"
 msgstr "模型类型"
 
-#: common/serializers.py:563
+#: common/serializers.py:565
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "用户无权为此模式创建或编辑附件"
 
@@ -15196,4 +15202,3 @@ msgstr "编辑项目的权限"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "删除项目的权限"
-

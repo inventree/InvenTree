@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-09 23:26+0000\n"
+"POT-Creation-Date: 2024-08-13 05:26+0000\n"
 "PO-Revision-Date: 2024-08-10 22:05\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
@@ -2105,15 +2105,21 @@ msgstr "Ufullstendige artikler"
 msgid "Test Statistics"
 msgstr ""
 
-#: common/api.py:692
+#: common/api.py:693
 msgid "Is Link"
 msgstr "Er lenke"
 
-#: common/api.py:700
+#: common/api.py:701
 msgid "Is File"
 msgstr "Er fil"
 
-#: common/api.py:742
+#: common/api.py:744
+#, fuzzy
+#| msgid "User does not have permission to delete this attachment"
+msgid "User does not have permission to delete these attachments"
+msgstr "Brukeren har ikke tillatelse til å slette dette vedlegget"
+
+#: common/api.py:761
 msgid "User does not have permission to delete this attachment"
 msgstr "Brukeren har ikke tillatelse til å slette dette vedlegget"
 
@@ -3931,7 +3937,7 @@ msgstr "Filstørrelse"
 msgid "File size in bytes"
 msgstr "Filstørrelse i byte"
 
-#: common/models.py:3339 common/serializers.py:557
+#: common/models.py:3339 common/serializers.py:562
 msgid "Invalid model type specified for attachment"
 msgstr "Ugyldig modelltype spesifisert for vedlegg"
 
@@ -4037,7 +4043,7 @@ msgstr "Filnavn"
 msgid "Model Type"
 msgstr "Modelltype"
 
-#: common/serializers.py:563
+#: common/serializers.py:565
 msgid "User does not have permission to create or edit attachments for this model"
 msgstr "Brukeren har ikke tillatelse tillatelse å opprette eller endre vedlegg for denne modellen"
 
@@ -15196,4 +15202,3 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
-
