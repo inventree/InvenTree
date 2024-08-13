@@ -969,24 +969,40 @@ class CustomStockItemStatusTest(StockAPITestCase):
         )
         self.assertEqual(response.data['status'], self.status.logical_key)
         self.assertEqual(response.data['status_custom_key'], self.status.key)
+        pk = response.data['pk']
 
         # Update the stock item with another custom status code via the API
-        response2 = self.patch(
-            reverse('api-stock-detail', kwargs={'pk': response.data['pk']}),
+        response = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': pk}),
             {'status_custom_key': self.status2.key},
             expected_code=200,
         )
-        self.assertEqual(response2.data['status'], self.status2.logical_key)
-        self.assertEqual(response2.data['status_custom_key'], self.status2.key)
+        self.assertEqual(response.data['status'], self.status2.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status2.key)
 
         # Try if status_custom_key is rewrite with status bying set
-        response3 = self.patch(
-            reverse('api-stock-detail', kwargs={'pk': response.data['pk']}),
+        response = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': pk}),
             {'status': self.status.logical_key},
             expected_code=200,
         )
-        self.assertEqual(response3.data['status'], self.status.logical_key)
-        self.assertEqual(response3.data['status_custom_key'], self.status.logical_key)
+        self.assertEqual(response.data['status'], self.status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status.logical_key)
+
+        # Create a stock item with a normal status code via the API
+        response = self.post(
+            self.list_url,
+            {
+                'name': 'Test Type 1',
+                'description': 'Test desc 1',
+                'quantity': 1,
+                'part': 1,
+                'status_key': self.status.key,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['status'], self.status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status.logical_key)
 
     def test_options(self):
         """Test the StockItem OPTIONS endpoint to contain custom StockStatuses."""
