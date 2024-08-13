@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 236
+INVENTREE_API_VERSION = 237
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v237 - 2024-08-13 : https://github.com/inventree/InvenTree/pull/7863
+    - Reimplement "bulk delete" operation for Attachment model
+    - Fix permission checks for Attachment API endpoints
 
 v236 - 2024-08-10 : https://github.com/inventree/InvenTree/pull/7844
     - Adds "supplier_name" to the PurchaseOrder API serializer
