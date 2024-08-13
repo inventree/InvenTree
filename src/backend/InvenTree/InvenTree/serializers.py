@@ -264,7 +264,7 @@ class InvenTreeCustomStatusSerializerMixin:
             self._is_gathering = True
             # Gather fields
             self._custom_fields = {
-                k: v.is_is_custom
+                k: v.is_custom
                 for k, v in self.fields.items()
                 if isinstance(v, CustomChoiceField)
             }

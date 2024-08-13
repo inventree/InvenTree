@@ -29,7 +29,7 @@ class CustomChoiceField(serializers.ChoiceField):
         super().__init__(choices, **kwargs)
         self.choice_mdl = choice_mdl
         self.choice_field = choice_field
-        self.is_is_custom = is_custom
+        self.is_custom = is_custom
 
     def to_internal_value(self, data):
         """Map the choice (that might be a custom one) back to the logical value."""
@@ -40,7 +40,7 @@ class CustomChoiceField(serializers.ChoiceField):
 
             try:
                 logical = get_logical_value(data, self.choice_mdl._meta.model_name)
-                if self.is_is_custom:
+                if self.is_custom:
                     return logical.key
                 return logical.logical_key
             except InvenTreeCustomUserStateModel.DoesNotExist:
