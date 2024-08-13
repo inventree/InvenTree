@@ -4,6 +4,7 @@ import json
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
@@ -706,7 +707,7 @@ class AttachmentFilter(rest_filters.FilterSet):
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
 
-class AttachmentList(ListCreateAPI):
+class AttachmentList(BulkDeleteMixin, ListCreateAPI):
     """List API endpoint for Attachment objects."""
 
     queryset = common.models.Attachment.objects.all()
@@ -724,6 +725,24 @@ class AttachmentList(ListCreateAPI):
         attachment = serializer.save()
         attachment.upload_user = self.request.user
         attachment.save()
+
+    def validate_delete(self, queryset, request) -> None:
+        """Ensure that the user has correct permissions for a bulk-delete.
+
+        - Extract all model types from the provided queryset
+        - Ensure that the user has correct 'delete' permissions for each model
+        """
+        from common.validators import attachment_model_class_from_label
+        from users.models import check_user_permission
+
+        model_types = queryset.values_list('model_type', flat=True).distinct()
+
+        for model_type in model_types:
+            if model_class := attachment_model_class_from_label(model_type):
+                if not check_user_permission(request.user, model_class, 'delete'):
+                    raise ValidationError(
+                        _('User does not have permission to delete these attachments')
+                    )
 
 
 class AttachmentDetail(RetrieveUpdateDestroyAPI):
