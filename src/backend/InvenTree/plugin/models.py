@@ -154,14 +154,6 @@ class PluginConfig(InvenTree.models.MetadataMixin, models.Model):
                 warnings.warn('A reload was triggered', stacklevel=2)
             registry.reload_plugins()
 
-            # Update static files for this plugin
-            if self.active:
-                plugin.staticfiles.copy_plugin_static_files(
-                    self.key, check_reload=False
-                )
-            else:
-                plugin.staticfiles.clear_plugin_static_files(self.key)
-
     @admin.display(boolean=True, description=_('Installed'))
     def is_installed(self) -> bool:
         """Simple check to determine if this plugin is installed.

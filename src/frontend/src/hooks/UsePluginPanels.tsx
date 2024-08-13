@@ -78,7 +78,7 @@ export function usePluginPanels({
         };
       }) ?? []
     );
-  }, [data]);
+  }, [data, targetId, targetModel, targetInstance]);
 
   return {
     panels: panels

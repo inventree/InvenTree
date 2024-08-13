@@ -68,6 +68,7 @@ function BasePanelGroup({
   // Hook to load plugins for this panel
   const pluginPanels = usePluginPanels({
     targetModel: targetModel,
+    targetInstance: targetInstance,
     targetId: targetId
   });
 

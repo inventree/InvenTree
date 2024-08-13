@@ -1098,6 +1098,7 @@ export default function PartDetail() {
           <PanelGroup
             pageKey="part"
             panels={partPanels}
+            targetInstance={part}
             targetModel={ModelType.part}
             targetId={part.pk}
           />
