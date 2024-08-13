@@ -337,7 +337,7 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
         cfg.delete()
 
     # Remove static files associated with this plugin
-    plugin.staticfiles.clear_static_dir(f'plugins/{cfg.key}/', recursive=True)
+    plugin.staticfiles.clear_plugin_static_files(cfg.key)
 
     # Reload the plugin registry
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)

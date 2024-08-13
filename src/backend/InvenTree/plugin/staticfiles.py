@@ -115,3 +115,8 @@ def copy_plugin_static_files(slug, check_reload=True):
             copied += 1
 
     logger.info("Copied %s static files for plugin '%s'.", copied, slug)
+
+
+def clear_plugin_static_files(slug: str, recursive: bool = True):
+    """Clear static files for the specified plugin."""
+    clear_static_dir(f'plugins/{slug}/', recursive=recursive)
