@@ -135,7 +135,7 @@ class GeneralStateTest(InvenTreeTestCase):
             str(e.exception), "Invalid color value 'invalid' for status 'Pending'"
         )
 
-    def test_tag_function(self):
+    def test_tag_status_label(self):
         """Test that the status code tag functions."""
         from .tags import status_label
 
