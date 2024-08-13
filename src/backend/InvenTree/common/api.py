@@ -707,38 +707,12 @@ class AttachmentFilter(rest_filters.FilterSet):
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
 
-class AttachmentPermission(permissions.BasePermission):
-    """Permission class for the Attachment API endpoints.
-
-    As the 'Attachment' class references other models,
-    we need to check that the user has the permissions required
-    for the model that the attachment is attached to.
-    """
-
-    def has_permission(self, request, view):
-        """Check if the user has permission to access the Attachment API."""
-        print('AttachmentPermission.has_permission:', request.user, request.method)
-
-        return super().has_permission(request, view)
-
-    def has_object_permission(self, request, view, obj):
-        """Check if the user has permission to access the Attachment object."""
-        print(
-            'AttachmentPermission.has_object_permission:',
-            request.user,
-            request.method,
-            obj,
-        )
-
-        return super().has_object_permission(request, view, obj)
-
-
 class AttachmentList(BulkDeleteMixin, ListCreateAPI):
     """List API endpoint for Attachment objects."""
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [permissions.IsAuthenticated, AttachmentPermission]
+    permission_classes = [permissions.IsAuthenticated]
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = AttachmentFilter
