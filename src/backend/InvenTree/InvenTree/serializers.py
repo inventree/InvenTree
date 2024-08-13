@@ -219,16 +219,6 @@ class InvenTreeCustomStatusSerializerMixin:
     _custom_fields_follower: Optional[list] = None
     _is_gathering = False
 
-    def create(self, validated_data):
-        """Ensure the custom field is set when the leader is set initially."""
-        self.gather_custom_fields()
-        for field in self._custom_fields_follower:
-            if field not in self.initial_data:
-                validated_data[field] = int(
-                    self.initial_data[field.replace('_custom_key', '')]
-                )
-        return super().create(validated_data)
-
     def update(self, instance, validated_data):
         """Ensure the custom field is updated if the leader was changed."""
         self.gather_custom_fields()
@@ -256,13 +246,10 @@ class InvenTreeCustomStatusSerializerMixin:
         """Ensure custom state fields are not served empty."""
         data = super().to_representation(instance)
         for field in self.gather_custom_fields():
-            try:
-                if data[field] is None:
-                    data[field] = data[
-                        field.replace('_custom_key', '')
-                    ]  # Use "normal" status field instead
-            except KeyError:
-                pass
+            if data[field] is None:
+                data[field] = data[
+                    field.replace('_custom_key', '')
+                ]  # Use "normal" status field instead
         return data
 
     def gather_custom_fields(self):
