@@ -2,9 +2,12 @@ import { t } from '@lingui/macro';
 import { Alert, Text } from '@mantine/core';
 import { AxiosInstance } from 'axios';
 import { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
 import { ModelType } from '../../enums/ModelType';
+import { useLocalState } from '../../states/LocalState';
+import { useUserState } from '../../states/UserState';
 import { PanelType } from '../nav/Panel';
 
 interface PluginPanelProps extends PanelType {
@@ -25,6 +28,9 @@ interface PluginPanelParameters {
   targetId?: number | null;
   targetInstance?: any;
   api: AxiosInstance;
+  user: any;
+  host: string;
+  navigate: any;
 }
 
 // Placeholder content for a panel with no content
@@ -60,22 +66,40 @@ function PanelNoContent() {
 export default function PluginPanel({ props }: { props: PluginPanelProps }) {
   const ref = useRef<HTMLDivElement>();
 
+  const host = useLocalState((s) => s.host);
+  const user = useUserState();
+  const navigate = useNavigate();
+
   const loadExternalSource = async () => {
-    if (!props.source) {
+    let source: string = props.source ?? '';
+
+    if (!source) {
       return;
+    }
+
+    if (source.startsWith('/')) {
+      // Prefix the source with the host URL
+      source = `${host}${source}`;
     }
 
     // TODO: Gate where this content may be loaded from (e.g. only allow certain domains)
 
     // Load content from external source
-    const src = await import(/* @vite-ignore */ props.source ?? '');
+    const module = await import(/* @vite-ignore */ source ?? '');
 
     // We expect the external source to define a function which will render the content
-    if (src && src.render_panel && typeof src.render_panel === 'function') {
-      src.render_panel({
+    if (
+      module &&
+      module.render_panel &&
+      typeof module.render_panel === 'function'
+    ) {
+      module.render_panel({
         target: ref.current,
         props: props,
         api: api,
+        host: host,
+        user: user,
+        navigate: navigate,
         targetModel: props.targetModel,
         targetId: props.targetId,
         targetInstance: props.targetInstance
