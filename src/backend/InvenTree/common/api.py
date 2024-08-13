@@ -4,6 +4,7 @@ import json
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
@@ -706,12 +707,38 @@ class AttachmentFilter(rest_filters.FilterSet):
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
 
-class AttachmentList(ListCreateAPI):
+class AttachmentPermission(permissions.BasePermission):
+    """Permission class for the Attachment API endpoints.
+
+    As the 'Attachment' class references other models,
+    we need to check that the user has the permissions required
+    for the model that the attachment is attached to.
+    """
+
+    def has_permission(self, request, view):
+        """Check if the user has permission to access the Attachment API."""
+        print('AttachmentPermission.has_permission:', request.user, request.method)
+
+        return super().has_permission(request, view)
+
+    def has_object_permission(self, request, view, obj):
+        """Check if the user has permission to access the Attachment object."""
+        print(
+            'AttachmentPermission.has_object_permission:',
+            request.user,
+            request.method,
+            obj,
+        )
+
+        return super().has_object_permission(request, view, obj)
+
+
+class AttachmentList(BulkDeleteMixin, ListCreateAPI):
     """List API endpoint for Attachment objects."""
 
     queryset = common.models.Attachment.objects.all()
     serializer_class = common.serializers.AttachmentSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, AttachmentPermission]
 
     filter_backends = SEARCH_ORDER_FILTER
     filterset_class = AttachmentFilter
@@ -724,6 +751,24 @@ class AttachmentList(ListCreateAPI):
         attachment = serializer.save()
         attachment.upload_user = self.request.user
         attachment.save()
+
+    def validate_delete(self, queryset, request) -> None:
+        """Ensure that the user has correct permissions for a bulk-delete.
+
+        - Extract all model types from the provided queryset
+        - Ensure that the user has correct 'delete' permissions for each model
+        """
+        from common.validators import attachment_model_class_from_label
+        from users.models import check_user_permission
+
+        model_types = queryset.values_list('model_type', flat=True).distinct()
+
+        for model_type in model_types:
+            if model_class := attachment_model_class_from_label(model_type):
+                if not check_user_permission(request.user, model_class, 'delete'):
+                    raise ValidationError(
+                        _('User does not have permission to delete these attachments')
+                    )
 
 
 class AttachmentDetail(RetrieveUpdateDestroyAPI):
