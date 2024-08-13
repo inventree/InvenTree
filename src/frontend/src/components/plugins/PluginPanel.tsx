@@ -9,28 +9,14 @@ import { ModelType } from '../../enums/ModelType';
 import { useLocalState } from '../../states/LocalState';
 import { useUserState } from '../../states/UserState';
 import { PanelType } from '../nav/Panel';
+import { PluginElementProps } from './PluginElement';
 
 interface PluginPanelProps extends PanelType {
   source?: string;
   params?: any;
-  targetInstance?: any;
-  targetModel?: ModelType | string;
-  targetId?: string | number | null;
-}
-
-/*
- * Definition of what we pass into a plugin panel
- */
-interface PluginPanelParameters {
-  target: HTMLDivElement;
-  props: PluginPanelProps;
-  targetModel?: ModelType | string;
-  targetId?: number | null;
-  targetInstance?: any;
-  api: AxiosInstance;
-  user: any;
-  host: string;
-  navigate: any;
+  instance?: any;
+  model?: ModelType | string;
+  id?: number | null;
 }
 
 // Placeholder content for a panel with no content
@@ -93,17 +79,19 @@ export default function PluginPanel({ props }: { props: PluginPanelProps }) {
       module.render_panel &&
       typeof module.render_panel === 'function'
     ) {
-      module.render_panel({
+      // Set of attributes to pass through to the plugin for rendering
+      let attributes: PluginElementProps = {
         target: ref.current,
-        props: props,
+        model: props.model,
+        id: props.id,
+        instance: props.instance,
         api: api,
-        host: host,
         user: user,
-        navigate: navigate,
-        targetModel: props.targetModel,
-        targetId: props.targetId,
-        targetInstance: props.targetInstance
-      });
+        host: host,
+        navigate: navigate
+      };
+
+      module.render_panel(attributes);
     }
   };
 

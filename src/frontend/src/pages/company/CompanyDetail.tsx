@@ -334,9 +334,9 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
           <PanelGroup
             pageKey="company"
             panels={companyPanels}
-            targetInstance={company}
-            targetModel={ModelType.company}
-            targetId={company.pk}
+            instance={company}
+            model={ModelType.company}
+            id={company.pk}
           />
         </Stack>
       </InstanceDetail>

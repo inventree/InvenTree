@@ -379,9 +379,9 @@ export default function SupplierPartDetail() {
           <PanelGroup
             pageKey="supplierpart"
             panels={panels}
-            targetInstance={supplierPart}
-            targetModel={ModelType.supplierpart}
-            targetId={supplierPart.pk}
+            instance={supplierPart}
+            model={ModelType.supplierpart}
+            id={supplierPart.pk}
           />
         </Stack>
       </InstanceDetail>

@@ -396,9 +396,9 @@ export default function Stock() {
           <PanelGroup
             pageKey="stocklocation"
             panels={locationPanels}
-            targetModel={ModelType.stocklocation}
-            targetId={location.pk}
-            targetInstance={location}
+            model={ModelType.stocklocation}
+            id={location.pk}
+            instance={location}
           />
           {transferStockItems.modal}
           {countStockItems.modal}

@@ -34,8 +34,9 @@ import { PanelType } from './Panel';
  *
  * @param pageKey - Unique key for this panel group
  * @param panels - List of panels to display
- * @param targetModel - The target model for this panel group
- * @param targetId - The target ID for this panel group (set to *null* for groups which do not target a specific model instance)
+ * @param model - The target model for this panel group (e.g. 'part' / 'salesorder')
+ * @param id - The target ID for this panel group (set to *null* for groups which do not target a specific model instance)
+ * @param instance - The target model instance for this panel group
  * @param selectedPanel - The currently selected panel
  * @param onPanelChange - Callback when the active panel changes
  * @param collapsible - If true, the panel group can be collapsed (defaults to true)
@@ -43,9 +44,9 @@ import { PanelType } from './Panel';
 export type PanelProps = {
   pageKey: string;
   panels: PanelType[];
-  targetInstance?: any;
-  targetModel?: ModelType | string;
-  targetId?: number | null;
+  instance?: any;
+  model?: ModelType | string;
+  id?: number | null;
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
@@ -56,9 +57,9 @@ function BasePanelGroup({
   panels,
   onPanelChange,
   selectedPanel,
-  targetInstance,
-  targetModel,
-  targetId,
+  instance,
+  model,
+  id,
   collapsible = true
 }: Readonly<PanelProps>): ReactNode {
   const location = useLocation();
@@ -67,9 +68,9 @@ function BasePanelGroup({
 
   // Hook to load plugins for this panel
   const pluginPanels = usePluginPanels({
-    targetModel: targetModel,
-    targetInstance: targetInstance,
-    targetId: targetId
+    model: model,
+    instance: instance,
+    id: id
   });
 
   const allPanels = useMemo(

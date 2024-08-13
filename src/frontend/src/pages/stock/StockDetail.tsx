@@ -631,9 +631,9 @@ export default function StockDetail() {
         <PanelGroup
           pageKey="stockitem"
           panels={stockPanels}
-          targetModel={ModelType.stockitem}
-          targetId={stockitem.pk}
-          targetInstance={stockitem}
+          model={ModelType.stockitem}
+          id={stockitem.pk}
+          instance={stockitem}
         />
         {editStockItem.modal}
         {duplicateStockItem.modal}

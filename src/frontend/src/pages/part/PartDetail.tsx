@@ -1098,9 +1098,9 @@ export default function PartDetail() {
           <PanelGroup
             pageKey="part"
             panels={partPanels}
-            targetInstance={part}
-            targetModel={ModelType.part}
-            targetId={part.pk}
+            instance={part}
+            model={ModelType.part}
+            id={part.pk}
           />
           {transferStockItems.modal}
           {countStockItems.modal}

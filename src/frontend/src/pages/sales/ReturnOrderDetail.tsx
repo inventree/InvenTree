@@ -434,9 +434,9 @@ export default function ReturnOrderDetail() {
           <PanelGroup
             pageKey="returnorder"
             panels={orderPanels}
-            targetModel={ModelType.returnorder}
-            targetInstance={order}
-            targetId={order.pk}
+            model={ModelType.returnorder}
+            instance={order}
+            id={order.pk}
           />
         </Stack>
       </InstanceDetail>
