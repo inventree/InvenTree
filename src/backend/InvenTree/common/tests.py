@@ -158,6 +158,29 @@ class AttachmentTest(InvenTreeAPITestCase):
         # Upload should now work!
         response = self.post(url, data, expected_code=201)
 
+        pk = response.data['pk']
+
+        # Edit the attachment via API
+        response = self.patch(
+            reverse('api-attachment-detail', kwargs={'pk': pk}),
+            {'comment': 'New comment'},
+            expected_code=200,
+        )
+
+        self.assertEqual(response.data['comment'], 'New comment')
+
+        attachment = Attachment.objects.get(pk=pk)
+        self.assertEqual(attachment.comment, 'New comment')
+
+        # And check that we cannot edit the attachment without the correct permissions
+        self.clearRoles()
+
+        self.patch(
+            reverse('api-attachment-detail', kwargs={'pk': pk}),
+            {'comment': 'New comment 2'},
+            expected_code=403,
+        )
+
         # Try to delete the attachment via API (should fail)
         attachment = part.attachments.first()
         url = reverse('api-attachment-detail', kwargs={'pk': attachment.pk})

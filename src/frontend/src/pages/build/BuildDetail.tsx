@@ -96,6 +96,14 @@ export default function BuildDetail() {
         model: ModelType.part
       },
       {
+        type: 'text',
+        name: 'part_detail.IPN',
+        icon: 'part',
+        label: t`IPN`,
+        hidden: !build.part_detail?.IPN,
+        copy: true
+      },
+      {
         type: 'status',
         name: 'status',
         label: t`Status`,
@@ -104,13 +112,15 @@ export default function BuildDetail() {
       {
         type: 'text',
         name: 'reference',
-        label: t`Reference`
+        label: t`Reference`,
+        copy: true
       },
       {
         type: 'text',
         name: 'title',
         label: t`Description`,
-        icon: 'description'
+        icon: 'description',
+        copy: true
       },
       {
         type: 'link',
