@@ -543,7 +543,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
     def save(self):
         """Override the save method to handle the model_type field."""
         from InvenTree.models import InvenTreeAttachmentMixin
-        from users.models import check_user_permissions
+        from users.models import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
 
@@ -557,7 +557,7 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         if not issubclass(target_model_class, InvenTreeAttachmentMixin):
             raise PermissionDenied(_('Invalid model type specified for attachment'))
 
-        if not check_user_permissions(user, target_model_class, 'change'):
+        if not check_user_permission(user, target_model_class, 'change'):
             raise PermissionDenied(
                 _('User does not have permission to attach files against this model')
             )
