@@ -561,18 +561,16 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         if not issubclass(target_model_class, InvenTreeAttachmentMixin):
             raise PermissionDenied(_('Invalid model type specified for attachment'))
 
+        permission_error_msg = _(
+            'User does not have permission to create or edit attachments for this model'
+        )
+
         if not check_user_permission(user, target_model_class, 'change'):
-            raise PermissionDenied(
-                _('User does not have permission to attach files against this model')
-            )
+            raise PermissionDenied(permission_error_msg)
 
         # Check that the user has the required permissions to attach files to the target model
         if not target_model_class.check_attachment_permission('change', user):
-            raise PermissionDenied(
-                _(
-                    'User does not have permission to create or edit attachments for this model'
-                )
-            )
+            raise PermissionDenied(_(permission_error_msg))
 
         return super().save(**kwargs)
 
