@@ -269,6 +269,9 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
 
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
 
+    # Update static files
+    plugin.staticfiles.collect_plugins_static_files()
+
     return ret
 
 
@@ -332,6 +335,9 @@ def uninstall_plugin(cfg: plugin.models.PluginConfig, user=None, delete_config=T
     if delete_config:
         # Remove the plugin configuration from the database
         cfg.delete()
+
+    # Remove static files associated with this plugin
+    plugin.staticfiles.clear_static_dir(f'plugins/{cfg.key}/', recursive=True)
 
     # Reload the plugin registry
     registry.reload_plugins(full_reload=True, force_reload=True, collect=True)
