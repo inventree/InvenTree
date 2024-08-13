@@ -311,13 +311,21 @@ class InvenTreeCustomStatusSerializerMixin:
             # Inherit choices from leader
             self.gather_custom_fields()
             if field_name in self._custom_fields:
-                leader_field = self.fields[field_name.replace('_custom_key', '')]
+                leader_field_name = field_name.replace('_custom_key', '')
+                leader_field = self.fields[leader_field_name]
                 if hasattr(leader_field, 'choices'):
                     field_kwargs['choices'] = list(leader_field.choices.items())
+                elif hasattr(model_field.model, leader_field_name):
+                    leader_model_field = getattr(
+                        model_field.model, leader_field_name
+                    ).field
+                    if hasattr(leader_model_field, 'choices'):
+                        field_kwargs['choices'] = leader_model_field.choices
+
                 if getattr(leader_field, 'read_only', False) is True:
                     field_kwargs['read_only'] = True
 
-            if not field_kwargs.get('choices', None):
+            if 'choices' not in field_kwargs:
                 field_kwargs['choices'] = []
 
         return field_cls, field_kwargs
