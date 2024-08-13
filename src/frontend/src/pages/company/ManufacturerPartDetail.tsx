@@ -287,6 +287,7 @@ export default function ManufacturerPartDetail() {
           <PanelGroup
             pageKey="manufacturerpart"
             panels={panels}
+            targetInstance={manufacturerPart}
             targetModel={ModelType.manufacturerpart}
             targetId={manufacturerPart.pk}
           />

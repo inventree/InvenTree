@@ -488,6 +488,7 @@ export default function SalesOrderDetail() {
             panels={orderPanels}
             targetModel={ModelType.salesorder}
             targetId={order.pk}
+            targetInstance={order}
           />
         </Stack>
       </InstanceDetail>

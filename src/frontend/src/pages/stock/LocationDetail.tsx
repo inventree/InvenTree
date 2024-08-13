@@ -398,6 +398,7 @@ export default function Stock() {
             panels={locationPanels}
             targetModel={ModelType.stocklocation}
             targetId={location.pk}
+            targetInstance={location}
           />
           {transferStockItems.modal}
           {countStockItems.modal}

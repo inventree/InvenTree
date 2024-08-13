@@ -542,6 +542,7 @@ export default function BuildDetail() {
           <PanelGroup
             pageKey="build"
             panels={buildPanels}
+            targetInstance={build}
             targetModel={ModelType.build}
             targetId={build.pk}
           />

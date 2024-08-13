@@ -316,6 +316,7 @@ export default function CategoryDetail() {
             pageKey="partcategory"
             panels={panels}
             targetModel={ModelType.partcategory}
+            targetInstance={category}
             targetId={category.pk}
           />
         </Stack>

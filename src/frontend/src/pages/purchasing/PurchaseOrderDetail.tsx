@@ -447,6 +447,7 @@ export default function PurchaseOrderDetail() {
             pageKey="purchaseorder"
             panels={orderPanels}
             targetModel={ModelType.purchaseorder}
+            targetInstance={order}
             targetId={order.pk}
           />
         </Stack>

@@ -633,6 +633,7 @@ export default function StockDetail() {
           panels={stockPanels}
           targetModel={ModelType.stockitem}
           targetId={stockitem.pk}
+          targetInstance={stockitem}
         />
         {editStockItem.modal}
         {duplicateStockItem.modal}
