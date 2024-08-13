@@ -2363,7 +2363,7 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
         return getattr(self, 'title', '')
 
-    tracking_type = InvenTreeCustomStatusModelField(default=StockHistoryCode.LEGACY)
+    tracking_type = models.IntegerField(default=StockHistoryCode.LEGACY)
 
     item = models.ForeignKey(
         StockItem, on_delete=models.CASCADE, related_name='tracking_info'

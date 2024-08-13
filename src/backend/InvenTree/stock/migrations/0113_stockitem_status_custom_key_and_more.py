@@ -24,17 +24,6 @@ class Migration(migrations.Migration):
                 verbose_name="Custom status key",
             ),
         ),
-        migrations.AddField(
-            model_name="stockitemtracking",
-            name="tracking_type_custom_key",
-            field=InvenTree.generic_fields.InvenTreeCustomStatusExtraModelField(
-                blank=True,
-                default=None,
-                help_text="Additional status information for this item",
-                null=True,
-                verbose_name="Custom status key",
-            ),
-        ),
         migrations.AlterField(
             model_name="stockitem",
             name="status",
@@ -42,13 +31,6 @@ class Migration(migrations.Migration):
                 choices=InvenTree.status_codes.StockStatus.items(),
                 default=10,
                 validators=[django.core.validators.MinValueValidator(0)],
-            ),
-        ),
-        migrations.AlterField(
-            model_name="stockitemtracking",
-            name="tracking_type",
-            field=InvenTree.generic_fields.InvenTreeCustomStatusModelField(
-                default=stock.status_codes.StockHistoryCode["LEGACY"]
             ),
         ),
     ]
