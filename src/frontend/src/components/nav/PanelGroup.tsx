@@ -132,7 +132,6 @@ function BasePanelGroup({
                     <Tabs.Tab
                       p="xs"
                       value={panel.name}
-                      //                    icon={(<InvenTreeIcon icon={panel.name}/>)}  // Enable when implementing Icon manager everywhere
                       leftSection={panel.icon}
                       hidden={panel.hidden}
                       disabled={panel.disabled}
