@@ -8,7 +8,7 @@ msgstr ""
 "Language: da\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-10 22:04\n"
+"PO-Revision-Date: 2024-08-14 10:21\n"
 "Last-Translator: \n"
 "Language-Team: Danish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -5606,7 +5606,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:310
 #~ msgid "Show asssmbled items"
-#~ msgstr ""
+#~ msgstr "Show asssmbled items"
 
 #: src/tables/bom/BomTable.tsx:315
 msgid "Show items with available stock"
@@ -7874,3 +7874,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
