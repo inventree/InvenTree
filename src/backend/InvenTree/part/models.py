@@ -4510,7 +4510,8 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
     """Callback function when a part price break is created or updated."""
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.schedule_pricing_update(create=True)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=True)
 
 
 @receiver(post_delete, sender=BomItem, dispatch_uid='post_delete_bom_item')
@@ -4526,7 +4527,8 @@ def update_pricing_after_delete(sender, instance, **kwargs):
     """Callback function when a part price break is deleted."""
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.schedule_pricing_update(create=False)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=False)
 
 
 class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):
