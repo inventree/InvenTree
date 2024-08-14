@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-14 04:54+0000\n"
-"PO-Revision-Date: 2024-08-10 22:04\n"
+"PO-Revision-Date: 2024-08-14 06:22\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -2114,10 +2114,8 @@ msgid "Is File"
 msgstr ""
 
 #: common/api.py:744
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete these attachments"
-msgstr "Käyttäjän oikeudet eivät riitä kohteen tarkastelemiseen"
+msgstr ""
 
 #: common/api.py:761
 msgid "User does not have permission to delete this attachment"
@@ -15202,3 +15200,4 @@ msgstr "Oikeus muokata kohteita"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
+
