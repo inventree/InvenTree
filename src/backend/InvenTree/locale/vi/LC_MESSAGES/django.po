@@ -15201,4 +15201,3 @@ msgstr "Quyển để sửa mục"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Quyền để xóa mục"
-

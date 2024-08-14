@@ -15201,4 +15201,3 @@ msgstr "項目を編集する権限"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
-

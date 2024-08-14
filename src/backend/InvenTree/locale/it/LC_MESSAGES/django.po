@@ -15201,4 +15201,3 @@ msgstr "Permessi per modificare gli elementi"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Autorizzazione ad eliminare gli elementi"
-

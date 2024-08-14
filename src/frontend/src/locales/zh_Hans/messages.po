@@ -7874,4 +7874,3 @@ msgstr "阅读文档"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr "忽略并继续到桌面视图"
-

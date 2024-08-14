@@ -15201,4 +15201,3 @@ msgstr "Oprávnění k úpravě položek"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Oprávnění k odstranění položek"
-

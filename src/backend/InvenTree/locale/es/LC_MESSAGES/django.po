@@ -15201,4 +15201,3 @@ msgstr "Permisos para editar artículos"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Permiso para eliminar artículos"
-
