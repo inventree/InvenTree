@@ -388,6 +388,8 @@ export default function Stock() {
             subtitle={location?.name}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}
+            editAction={editLocation.open}
+            editEnabled={user.hasChangePermission(ModelType.stocklocation)}
             breadcrumbs={breadcrumbs}
             breadcrumbAction={() => {
               setTreeOpen(true);

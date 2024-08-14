@@ -283,6 +283,8 @@ export default function ManufacturerPartDetail() {
             breadcrumbs={breadcrumbs}
             actions={manufacturerPartActions}
             imageUrl={manufacturerPart?.part_detail?.thumbnail}
+            editAction={editManufacturerPart.open}
+            editEnabled={user.hasChangePermission(ModelType.manufacturerpart)}
           />
           <PanelGroup
             pageKey="manufacturerpart"

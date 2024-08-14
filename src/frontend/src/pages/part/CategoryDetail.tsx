@@ -311,6 +311,8 @@ export default function CategoryDetail() {
               setTreeOpen(true);
             }}
             actions={categoryActions}
+            editAction={editCategory.open}
+            editEnabled={user.hasChangePermission(ModelType.partcategory)}
           />
           <PanelGroup
             pageKey="partcategory"

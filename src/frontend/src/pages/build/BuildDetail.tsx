@@ -542,6 +542,8 @@ export default function BuildDetail() {
             title={build.reference}
             subtitle={build.title}
             badges={buildBadges}
+            editAction={editBuild.open}
+            editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
             breadcrumbs={[
               { name: t`Build Orders`, url: '/build' },

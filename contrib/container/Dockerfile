@@ -74,8 +74,9 @@ RUN apk add --no-cache \
     # MySQL / MariaDB client
     mariadb-client mariadb-connector-c \
     && \
-    # fonts
-    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-noto terminus-font && fc-cache -f
+    # font support
+    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-terminus font-noto font-noto-cjk font-noto-extra \
+    && fc-cache -f
 
 EXPOSE 8000
 

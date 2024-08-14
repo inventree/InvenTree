@@ -19,6 +19,13 @@ test('PUI - Pages - Build Order', async ({ page }) => {
 
   // This build order should be "on hold"
   await page.getByText('On Hold').first().waitFor();
+
+  // Edit the build order (via keyboard shortcut)
+  await page.keyboard.press('Control+E');
+  await page.getByLabel('text-field-title').waitFor();
+  await page.getByLabel('related-field-project_code').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
   await page.getByRole('button', { name: 'Issue Order' }).click();
   await page.getByRole('button', { name: 'Cancel' }).click();
 

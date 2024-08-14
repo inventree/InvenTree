@@ -621,6 +621,8 @@ export default function StockDetail() {
           title={t`Stock Item`}
           subtitle={stockitem.part_detail?.full_name}
           imageUrl={stockitem.part_detail?.thumbnail}
+          editAction={editStockItem.open}
+          editEnabled={user.hasChangePermission(ModelType.stockitem)}
           badges={stockBadges}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {

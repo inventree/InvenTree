@@ -1059,6 +1059,8 @@ export default function PartDetail() {
             breadcrumbAction={() => {
               setTreeOpen(true);
             }}
+            editAction={editPart.open}
+            editEnabled={user.hasChangeRole(UserRoles.part)}
             actions={partActions}
             detail={
               enableRevisionSelection ? (
