@@ -96,14 +96,17 @@ export function LanguageContext({ children }: { children: JSX.Element }) {
           locales.push('en-us');
         }
 
-        let new_locales = locales.join(', ');
+        // Ensure that the locales are properly formatted
+        let new_locales = locales
+          .map((locale) => locale?.replaceAll('_', '-').toLowerCase())
+          .join(', ');
 
         if (new_locales == api.defaults.headers.common['Accept-Language']) {
           return;
         }
 
         // Update default Accept-Language headers
-        api.defaults.headers.common['Accept-Language'] = locales.join(', ');
+        api.defaults.headers.common['Accept-Language'] = new_locales;
 
         // Reload server state (and refresh status codes)
         fetchGlobalStates();
