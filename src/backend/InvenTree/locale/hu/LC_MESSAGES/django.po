@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-14 10:15+0000\n"
-"PO-Revision-Date: 2024-08-10 22:05\n"
+"POT-Creation-Date: 2024-08-14 06:35+0000\n"
+"PO-Revision-Date: 2024-08-14 10:22\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1366,8 +1366,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:538
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:650
@@ -2124,10 +2123,8 @@ msgid "Is File"
 msgstr ""
 
 #: common/api.py:744
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete these attachments"
-msgstr "Nincs jogosultságod az adatok megtekintéséhez"
+msgstr ""
 
 #: common/api.py:761
 msgid "User does not have permission to delete this attachment"
@@ -15205,3 +15202,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
