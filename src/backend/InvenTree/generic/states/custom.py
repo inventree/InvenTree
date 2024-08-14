@@ -6,9 +6,9 @@ from InvenTree.helpers import inheritors
 from .states import StatusCode
 
 
-def get_custom_status_labels():
+def get_custom_status_labels(include_custom: bool = True):
     """Return a dict of custom status labels."""
-    return {cls.tag(): cls for cls in get_custom_classes()}
+    return {cls.tag(): cls for cls in get_custom_classes(include_custom)}
 
 
 def get_custom_classes(include_custom: bool = True):

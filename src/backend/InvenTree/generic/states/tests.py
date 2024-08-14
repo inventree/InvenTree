@@ -136,7 +136,7 @@ class GeneralStateTest(InvenTreeTestCase):
         )
 
     def test_tag_status_label(self):
-        """Test that the status code tag functions."""
+        """Test that the status_label tag."""
         from .tags import status_label
 
         self.assertEqual(
@@ -151,6 +151,21 @@ class GeneralStateTest(InvenTreeTestCase):
 
         # Test non-existent key
         self.assertEqual(status_label('general', 100), '100')
+
+    def test_tag_display_status_label(self):
+        """Test that the display_status_label tag (mainly the same as status_label)."""
+        from .tags import display_status_label
+
+        self.assertEqual(
+            display_status_label('general', 10, 11),
+            "<span class='badge rounded-pill bg-secondary'>Pending</span>",
+        )
+        # Fallback
+        self.assertEqual(display_status_label('general', None, 11), '11')
+        self.assertEqual(
+            display_status_label('general', None, 10),
+            "<span class='badge rounded-pill bg-secondary'>Pending</span>",
+        )
 
     def test_api(self):
         """Test StatusView API view."""
