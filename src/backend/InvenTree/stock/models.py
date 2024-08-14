@@ -2293,7 +2293,8 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
         )
 
         # Schedule an update on parent part pricing
-        instance.part.schedule_pricing_update(create=False)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2312,7 +2313,8 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
         )
 
         # Schedule an update on parent part pricing
-        instance.part.schedule_pricing_update(create=True)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):

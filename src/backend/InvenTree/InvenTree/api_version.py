@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 237
+INVENTREE_API_VERSION = 238
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v238 - 2024-08-14 : https://github.com/inventree/InvenTree/pull/7874
+    - Add "assembly" filter to BuildLine API endpoint
 
 v237 - 2024-08-13 : https://github.com/inventree/InvenTree/pull/7863
     - Reimplement "bulk delete" operation for Attachment model

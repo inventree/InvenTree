@@ -13,6 +13,8 @@ export function usePartFields({
 }: {
   create?: boolean;
 }): ApiFormFieldSet {
+  const settings = useGlobalSettingsState.getState();
+
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       category: {
@@ -93,8 +95,6 @@ export function usePartFields({
       };
     }
 
-    const settings = useGlobalSettingsState.getState();
-
     if (settings.isSet('PART_REVISION_ASSEMBLY_ONLY')) {
       fields.revision_of.filters['assembly'] = true;
     }
@@ -111,7 +111,7 @@ export function usePartFields({
     }
 
     return fields;
-  }, [create]);
+  }, [create, settings]);
 }
 
 /**
