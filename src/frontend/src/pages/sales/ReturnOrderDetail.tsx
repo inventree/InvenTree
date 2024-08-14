@@ -430,6 +430,8 @@ export default function ReturnOrderDetail() {
             badges={orderBadges}
             actions={orderActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            editAction={editReturnOrder.open}
+            editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />
           <PanelGroup pageKey="returnorder" panels={orderPanels} />
         </Stack>

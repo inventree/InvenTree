@@ -442,6 +442,8 @@ export default function PurchaseOrderDetail() {
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
             actions={poActions}
             badges={orderBadges}
+            editAction={editPurchaseOrder.open}
+            editEnabled={user.hasChangePermission(ModelType.purchaseorder)}
           />
           <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
         </Stack>

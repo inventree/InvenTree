@@ -482,6 +482,8 @@ export default function SalesOrderDetail() {
             badges={orderBadges}
             actions={soActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            editAction={editSalesOrder.open}
+            editEnabled={user.hasChangePermission(ModelType.salesorder)}
           />
           <PanelGroup pageKey="salesorder" panels={orderPanels} />
         </Stack>
