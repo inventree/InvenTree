@@ -290,6 +290,7 @@ class BuildLineFilter(rest_filters.FilterSet):
     # Fields on related models
     consumable = rest_filters.BooleanFilter(label=_('Consumable'), field_name='bom_item__consumable')
     optional = rest_filters.BooleanFilter(label=_('Optional'), field_name='bom_item__optional')
+    assembly = rest_filters.BooleanFilter(label=_('Assembly'), field_name='bom_item__sub_part__assembly')
     tracked = rest_filters.BooleanFilter(label=_('Tracked'), field_name='bom_item__sub_part__trackable')
 
     allocated = rest_filters.BooleanFilter(label=_('Allocated'), method='filter_allocated')
