@@ -295,7 +295,7 @@ export function useCompleteBuildOutputsForm({
           };
         })
       },
-      status: {},
+      status_custom_key: {},
       location: {
         filters: {
           structural: false
