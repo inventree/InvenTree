@@ -23,14 +23,18 @@ def get_status_api_response(base_class=StatusCode, prefix=None):
             'class': k.__name__,
             'values': k.dict(),
         }
-        for k in get_custom_classes(base_class)
+        for k in get_custom_classes(base_class=base_class, subclass=False)
     }
 
 
-def get_custom_classes(include_custom: bool = True, base_class=StatusCode):
+def get_custom_classes(
+    include_custom: bool = True, base_class=StatusCode, subclass=False
+):
     """Return a dict of status classes (custom and class defined)."""
+    discovered_classes = inheritors(base_class, subclass)
+
     if not include_custom:
-        return inheritors(base_class)
+        return discovered_classes
 
     # Gather DB settings
     custom_db_states = {}
@@ -43,7 +47,7 @@ def get_custom_classes(include_custom: bool = True, base_class=StatusCode):
     custom_db_mdls_keys = custom_db_mdls.keys()
 
     states = {}
-    for cls in inheritors(base_class):
+    for cls in discovered_classes:
         tag = cls.tag()
         states[tag] = cls
         if custom_db_mdls and tag in custom_db_mdls_keys:
