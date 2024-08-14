@@ -7,7 +7,7 @@ from rest_framework import permissions, serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
-from generic.states.custom import get_custom_classes
+from generic.states.custom import get_status_api_response
 from InvenTree.serializers import EmptySerializer
 
 from .states import StatusCode
@@ -74,8 +74,5 @@ class AllStatusViews(StatusView):
 
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
-        data = {
-            k.__name__: {'class': k.__name__, 'values': k.dict()}
-            for k in get_custom_classes()
-        }
+        data = get_status_api_response()
         return Response(data)

@@ -11,10 +11,26 @@ def get_custom_status_labels(include_custom: bool = True):
     return {cls.tag(): cls for cls in get_custom_classes(include_custom)}
 
 
-def get_custom_classes(include_custom: bool = True):
+def get_status_api_response(base_class=StatusCode, prefix=None):
+    """Return a dict of status classes (custom and class defined).
+
+    Args:
+        base_class: The base class to search for subclasses.
+        prefix: A list of strings to prefix the class names with.
+    """
+    return {
+        '__'.join([*(prefix or []), k.__name__]): {
+            'class': k.__name__,
+            'values': k.dict(),
+        }
+        for k in get_custom_classes(base_class)
+    }
+
+
+def get_custom_classes(include_custom: bool = True, base_class=StatusCode):
     """Return a dict of status classes (custom and class defined)."""
     if not include_custom:
-        return inheritors(StatusCode)
+        return inheritors(base_class)
 
     # Gather DB settings
     custom_db_states = {}
@@ -27,7 +43,7 @@ def get_custom_classes(include_custom: bool = True):
     custom_db_mdls_keys = custom_db_mdls.keys()
 
     states = {}
-    for cls in inheritors(StatusCode):
+    for cls in inheritors(base_class):
         tag = cls.tag()
         states[tag] = cls
         if custom_db_mdls and tag in custom_db_mdls_keys:
@@ -46,5 +62,5 @@ def get_custom_classes(include_custom: bool = True):
                     ]
 
             # Re-assemble the enum
-            states[tag] = StatusCode(f'{tag.capitalize()}Status', data)
+            states[tag] = base_class(f'{tag.capitalize()}Status', data)
     return states.values()
