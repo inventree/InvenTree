@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-14 06:27\n"
+"PO-Revision-Date: 2024-08-14 06:30\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -4219,7 +4219,7 @@ msgstr ""
 #: src/pages/sales/ReturnOrderDetail.tsx:352
 #: src/pages/sales/SalesOrderDetail.tsx:386
 msgid "Issue Order"
-msgstr ""
+msgstr "Utfärda Order"
 
 #: src/pages/build/BuildDetail.tsx:464
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:359
@@ -4230,35 +4230,35 @@ msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:491
 msgid "Build Order Actions"
-msgstr ""
+msgstr "Åtgärder Tillverknings order"
 
 #: src/pages/build/BuildDetail.tsx:497
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:391
 #: src/pages/sales/ReturnOrderDetail.tsx:391
 #: src/pages/sales/SalesOrderDetail.tsx:433
 msgid "Edit order"
-msgstr ""
+msgstr "Redigera order"
 
 #: src/pages/build/BuildDetail.tsx:501
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:399
 #: src/pages/sales/ReturnOrderDetail.tsx:397
 #: src/pages/sales/SalesOrderDetail.tsx:438
 msgid "Duplicate order"
-msgstr ""
+msgstr "Duplicera order"
 
 #: src/pages/build/BuildDetail.tsx:505
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:402
 #: src/pages/sales/ReturnOrderDetail.tsx:402
 #: src/pages/sales/SalesOrderDetail.tsx:441
 msgid "Hold order"
-msgstr ""
+msgstr "Pausa order"
 
 #: src/pages/build/BuildDetail.tsx:510
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:407
 #: src/pages/sales/ReturnOrderDetail.tsx:407
 #: src/pages/sales/SalesOrderDetail.tsx:446
 msgid "Cancel order"
-msgstr ""
+msgstr "Avbryt order"
 
 #: src/pages/build/BuildIndex.tsx:23
 #~ msgid "Build order created"
@@ -4586,7 +4586,7 @@ msgstr "Länk"
 #: src/tables/part/PartTable.tsx:282
 #: src/tables/sales/SalesOrderLineItemTable.tsx:99
 msgid "Available Stock"
-msgstr ""
+msgstr "Tillgängligt lager"
 
 #: src/pages/part/PartDetail.tsx:241
 msgid "Variant Stock"
@@ -4601,7 +4601,7 @@ msgstr ""
 #: src/tables/build/BuildLineTable.tsx:105
 #: src/tables/sales/SalesOrderLineItemTable.tsx:137
 msgid "On order"
-msgstr ""
+msgstr "På order"
 
 #: src/pages/part/PartDetail.tsx:264
 msgid "Allocated to Build Orders"
