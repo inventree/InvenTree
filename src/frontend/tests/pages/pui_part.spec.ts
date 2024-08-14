@@ -226,6 +226,15 @@ test('PUI - Pages - Part - Notes', async ({ page }) => {
   await page.goto(`${baseUrl}/part/69/notes`);
 
   // Enable editing
+  await page.getByLabel('toggle-notes-editing').waitFor();
+
+  // Use keyboard shortcut to "edit" the part
+  await page.keyboard.press('Control+E');
+  await page.getByLabel('text-field-name').waitFor();
+  await page.getByLabel('text-field-description').waitFor();
+  await page.getByLabel('related-field-category').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
+
   await page.getByLabel('toggle-notes-editing').click();
 
   // Enter some text
