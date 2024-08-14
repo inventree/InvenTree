@@ -44,6 +44,12 @@ function buildOrderTableColumns(): TableColumn[] {
       render: (record: any) => PartColumn(record.part_detail)
     },
     {
+      accessor: 'part_detail.IPN',
+      sortable: true,
+      switchable: true,
+      title: t`IPN`
+    },
+    {
       accessor: 'title',
       sortable: false
     },

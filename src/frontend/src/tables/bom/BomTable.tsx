@@ -307,7 +307,7 @@ export function BomTable({
       {
         name: 'sub_part_assembly',
         label: t`Assembled Part`,
-        description: t`Show asssmbled items`
+        description: t`Show assembled items`
       },
       {
         name: 'available_stock',
