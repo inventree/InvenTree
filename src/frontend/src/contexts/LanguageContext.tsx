@@ -25,7 +25,7 @@ export const getSupportedLanguages = (): Record<string, string> => {
     el: t`Greek`,
     en: t`English`,
     es: t`Spanish`,
-    'es-mx': t`Spanish (Mexican)`,
+    es_MX: t`Spanish (Mexican)`,
     et: t`Estonian`,
     fa: t`Farsi / Persian`,
     fi: t`Finnish`,
@@ -41,7 +41,7 @@ export const getSupportedLanguages = (): Record<string, string> => {
     no: t`Norwegian`,
     pl: t`Polish`,
     pt: t`Portuguese`,
-    'pt-br': t`Portuguese (Brazilian)`,
+    pt_BR: t`Portuguese (Brazilian)`,
     ro: t`Romanian`,
     ru: t`Russian`,
     sk: t`Slovak`,
@@ -51,8 +51,8 @@ export const getSupportedLanguages = (): Record<string, string> => {
     tr: t`Turkish`,
     uk: t`Ukrainian`,
     vi: t`Vietnamese`,
-    'zh-hans': t`Chinese (Simplified)`,
-    'zh-hant': t`Chinese (Traditional)`
+    zh_Hans: t`Chinese (Simplified)`,
+    zh_Hant: t`Chinese (Traditional)`
   };
 };
 
