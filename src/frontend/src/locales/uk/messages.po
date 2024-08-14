@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-10 22:05\n"
+"PO-Revision-Date: 2024-08-14 06:40\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -5606,7 +5606,7 @@ msgstr ""
 
 #: src/tables/bom/BomTable.tsx:310
 #~ msgid "Show asssmbled items"
-#~ msgstr ""
+#~ msgstr "Show asssmbled items"
 
 #: src/tables/bom/BomTable.tsx:315
 msgid "Show items with available stock"
@@ -7874,3 +7874,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
