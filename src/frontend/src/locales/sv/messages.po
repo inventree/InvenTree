@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-10 22:05\n"
+"PO-Revision-Date: 2024-08-14 06:22\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -384,7 +384,7 @@ msgstr ""
 
 #: src/components/errors/PermissionDenied.tsx:9
 msgid "You do not have permission to view this page."
-msgstr ""
+msgstr "Du saknar behörighet att visa denna sida."
 
 #: src/components/errors/ServerError.tsx:8
 msgid "Server Error"
@@ -392,7 +392,7 @@ msgstr "Serverfel"
 
 #: src/components/errors/ServerError.tsx:9
 msgid "A server error occurred"
-msgstr ""
+msgstr "Ett serverfel inträffade"
 
 #: src/components/forms/ApiForm.tsx:151
 #: src/components/forms/ApiForm.tsx:555
@@ -405,7 +405,7 @@ msgstr "Formulär fel"
 
 #: src/components/forms/ApiForm.tsx:563
 msgid "Errors exist for one or more form fields"
-msgstr ""
+msgstr "Fel finns för ett eller flera formulärfält"
 
 #: src/components/forms/ApiForm.tsx:665
 #: src/tables/plugin/PluginListTable.tsx:388
@@ -643,11 +643,11 @@ msgstr "Stat: <0>arbetare</0> ({0}), <1>plugins</1>{1}"
 
 #: src/components/forms/fields/IconField.tsx:81
 msgid "No icon selected"
-msgstr ""
+msgstr "Ingen ikon vald"
 
 #: src/components/forms/fields/IconField.tsx:159
 msgid "Uncategorized"
-msgstr ""
+msgstr "Okategoriserade"
 
 #: src/components/forms/fields/IconField.tsx:209
 #: src/components/nav/Layout.tsx:70
@@ -657,15 +657,15 @@ msgstr "Sök..."
 
 #: src/components/forms/fields/IconField.tsx:223
 msgid "Select category"
-msgstr ""
+msgstr "Välj kategori"
 
 #: src/components/forms/fields/IconField.tsx:232
 msgid "Select pack"
-msgstr ""
+msgstr "Välj paket"
 
 #: src/components/forms/fields/IconField.tsx:237
 msgid "{0} icons"
-msgstr ""
+msgstr "{0} ikoner"
 
 #: src/components/forms/fields/RelatedModelField.tsx:318
 #: src/pages/Index/Settings/UserSettings.tsx:96
@@ -702,19 +702,19 @@ msgstr "Miniatyrbild"
 
 #: src/components/importer/ImportDataSelector.tsx:166
 msgid "Importing Rows"
-msgstr ""
+msgstr "Importerar rader"
 
 #: src/components/importer/ImportDataSelector.tsx:167
 msgid "Please wait while the data is imported"
-msgstr ""
+msgstr "Vänligen vänta medan data importeras"
 
 #: src/components/importer/ImportDataSelector.tsx:184
 msgid "An error occurred while importing data"
-msgstr ""
+msgstr "Ett fel inträffade vid import av data"
 
 #: src/components/importer/ImportDataSelector.tsx:205
 msgid "Edit Data"
-msgstr ""
+msgstr "Redigera data"
 
 #: src/components/importer/ImportDataSelector.tsx:233
 msgid "Delete Row"
@@ -726,45 +726,45 @@ msgstr "Rad"
 
 #: src/components/importer/ImportDataSelector.tsx:281
 msgid "Row contains errors"
-msgstr ""
+msgstr "Rad innehåller fel"
 
 #: src/components/importer/ImportDataSelector.tsx:322
 msgid "Accept"
-msgstr ""
+msgstr "Acceptera"
 
 #: src/components/importer/ImportDataSelector.tsx:355
 msgid "Valid"
-msgstr ""
+msgstr "Giltig"
 
 #: src/components/importer/ImportDataSelector.tsx:356
 msgid "Filter by row validation status"
-msgstr ""
+msgstr "Filtrera efter radvalideringsstatus"
 
 #: src/components/importer/ImportDataSelector.tsx:361
 #: src/tables/build/BuildOutputTable.tsx:205
 msgid "Complete"
-msgstr ""
+msgstr "Slutförd"
 
 #: src/components/importer/ImportDataSelector.tsx:362
 msgid "Filter by row completion status"
-msgstr ""
+msgstr "Filtrera efter radvalideringsstatus"
 
 #: src/components/importer/ImportDataSelector.tsx:379
 msgid "Import selected rows"
-msgstr ""
+msgstr "Importera markerade rader"
 
 #: src/components/importer/ImportDataSelector.tsx:394
 msgid "Processing Data"
-msgstr ""
+msgstr "Bearbetar data"
 
 #: src/components/importer/ImporterColumnSelector.tsx:50
 #: src/components/importer/ImporterColumnSelector.tsx:176
 msgid "An error occurred"
-msgstr ""
+msgstr "Ett fel inträffade"
 
 #: src/components/importer/ImporterColumnSelector.tsx:62
 msgid "Select column, or leave blank to ignore this field."
-msgstr ""
+msgstr "Välj kolumn eller lämna tomt för att ignorera detta fält."
 
 #: src/components/importer/ImporterColumnSelector.tsx:91
 #~ msgid "Select a column from the data file"
@@ -780,51 +780,51 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:182
 msgid "Ignore this field"
-msgstr ""
+msgstr "Ignorera det här fältet"
 
 #: src/components/importer/ImporterColumnSelector.tsx:196
 msgid "Mapping data columns to database fields"
-msgstr ""
+msgstr "Mappning av datakolumner till databasfält"
 
 #: src/components/importer/ImporterColumnSelector.tsx:201
 msgid "Accept Column Mapping"
-msgstr ""
+msgstr "Godkänn kolumnmappning"
 
 #: src/components/importer/ImporterColumnSelector.tsx:214
 msgid "Database Field"
-msgstr ""
+msgstr "Databas fält"
 
 #: src/components/importer/ImporterColumnSelector.tsx:215
 msgid "Field Description"
-msgstr ""
+msgstr "Fältbeskrivning"
 
 #: src/components/importer/ImporterColumnSelector.tsx:216
 msgid "Imported Column"
-msgstr ""
+msgstr "Importerad kolumn"
 
 #: src/components/importer/ImporterColumnSelector.tsx:217
 msgid "Default Value"
-msgstr ""
+msgstr "Standardvärde"
 
 #: src/components/importer/ImporterDrawer.tsx:44
 msgid "Upload File"
-msgstr ""
+msgstr "Ladda upp fil"
 
 #: src/components/importer/ImporterDrawer.tsx:45
 msgid "Map Columns"
-msgstr ""
+msgstr "Mappa Kolumner"
 
 #: src/components/importer/ImporterDrawer.tsx:46
 msgid "Import Data"
-msgstr ""
+msgstr "Importera data"
 
 #: src/components/importer/ImporterDrawer.tsx:47
 msgid "Process Data"
-msgstr ""
+msgstr "Bearbetar data"
 
 #: src/components/importer/ImporterDrawer.tsx:48
 msgid "Complete Import"
-msgstr ""
+msgstr "Slutför import"
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
@@ -832,36 +832,36 @@ msgstr ""
 
 #: src/components/importer/ImporterDrawer.tsx:104
 msgid "Import Complete"
-msgstr ""
+msgstr "Import slutförd"
 
 #: src/components/importer/ImporterDrawer.tsx:107
 msgid "Data has been imported successfully"
-msgstr ""
+msgstr "Data har importerats framgångsrikt"
 
 #: src/components/importer/ImporterDrawer.tsx:109
 #: src/components/importer/ImporterDrawer.tsx:118
 msgid "Close"
-msgstr ""
+msgstr "Stäng"
 
 #: src/components/importer/ImporterDrawer.tsx:115
 msgid "Unknown Status"
-msgstr ""
+msgstr "Okänd status"
 
 #: src/components/importer/ImporterDrawer.tsx:116
 msgid "Import session has unknown status"
-msgstr ""
+msgstr "Importsessionen har okänd status"
 
 #: src/components/importer/ImporterDrawer.tsx:135
 msgid "Importing Data"
-msgstr ""
+msgstr "Importerar data"
 
 #: src/components/importer/ImporterImportProgress.tsx:36
 msgid "Importing Records"
-msgstr ""
+msgstr "Importerar poster"
 
 #: src/components/importer/ImporterImportProgress.tsx:39
 msgid "Imported rows"
-msgstr ""
+msgstr "Importerade rader"
 
 #: src/components/items/ActionDropdown.tsx:128
 msgid "Barcode Actions"
@@ -869,7 +869,7 @@ msgstr "Streckkods åtgärder"
 
 #: src/components/items/ActionDropdown.tsx:147
 msgid "View Barcode"
-msgstr ""
+msgstr "Visa streckkod"
 
 #: src/components/items/ActionDropdown.tsx:154
 msgid "View"
@@ -908,7 +908,7 @@ msgstr "Radera objekt"
 #: src/components/items/ActionDropdown.tsx:247
 #: src/components/items/ActionDropdown.tsx:248
 msgid "Hold"
-msgstr ""
+msgstr "Vänta"
 
 #: src/components/items/ActionDropdown.tsx:284
 #: src/tables/RowActions.tsx:31
@@ -963,27 +963,27 @@ msgstr "Denna panel är en platshållare."
 
 #: src/components/items/QRCode.tsx:87
 msgid "Low (7%)"
-msgstr ""
+msgstr "Låg (7%)"
 
 #: src/components/items/QRCode.tsx:88
 msgid "Medium (15%)"
-msgstr ""
+msgstr "Medel (15%)"
 
 #: src/components/items/QRCode.tsx:89
 msgid "Quartile (25%)"
-msgstr ""
+msgstr "Kvartil (25%)"
 
 #: src/components/items/QRCode.tsx:90
 msgid "High (30%)"
-msgstr ""
+msgstr "Hög (30%)"
 
 #: src/components/items/QRCode.tsx:107
 msgid "Barcode Data:"
-msgstr ""
+msgstr "Streckkodsdata:"
 
 #: src/components/items/QRCode.tsx:118
 msgid "Select Error Correction Level"
-msgstr ""
+msgstr "Välj felkorrigeringsnivå"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:99
 msgid "Version Information"
@@ -2146,19 +2146,19 @@ msgstr "Språk"
 
 #: src/components/widgets/FeedbackWidget.tsx:19
 msgid "Something is new: Platform UI"
-msgstr ""
+msgstr "Något är nytt: Plattformsgränssnitt"
 
 #: src/components/widgets/FeedbackWidget.tsx:21
 msgid "We are building a new UI with a modern stack. What you currently see is not fixed and will be redesigned but demonstrates the UI/UX possibilities we will have going forward."
-msgstr ""
+msgstr "Vi bygger upp ett nytt UI med en modern stack. Det du ser för närvarande är inte fixat och kommer att bli omdesignad men visar de UI/UX möjligheter vi kommer att ha framöver."
 
 #: src/components/widgets/FeedbackWidget.tsx:32
 msgid "Provide Feedback"
-msgstr ""
+msgstr "Lämna feedback"
 
 #: src/components/widgets/GetStartedWidget.tsx:11
 msgid "Getting started"
-msgstr ""
+msgstr "Komma igång"
 
 #: src/components/widgets/MarkdownEditor.tsx:108
 #~ msgid "Failed to upload image"
@@ -2170,27 +2170,27 @@ msgstr ""
 
 #: src/components/widgets/WidgetLayout.tsx:166
 msgid "Layout"
-msgstr ""
+msgstr "Layout"
 
 #: src/components/widgets/WidgetLayout.tsx:172
 msgid "Reset Layout"
-msgstr ""
+msgstr "Återställ Layout"
 
 #: src/components/widgets/WidgetLayout.tsx:185
 msgid "Stop Edit"
-msgstr ""
+msgstr "Stoppa redigering"
 
 #: src/components/widgets/WidgetLayout.tsx:185
 msgid "Edit Layout"
-msgstr ""
+msgstr "Redigera Layout"
 
 #: src/components/widgets/WidgetLayout.tsx:191
 msgid "Appearance"
-msgstr ""
+msgstr "Utseende"
 
 #: src/components/widgets/WidgetLayout.tsx:203
 msgid "Show Boxes"
-msgstr ""
+msgstr "Visa rutor"
 
 #: src/contexts/LanguageContext.tsx:20
 msgid "Arabic"
@@ -2202,7 +2202,7 @@ msgstr "Bulgariska"
 
 #: src/contexts/LanguageContext.tsx:22
 msgid "Czech"
-msgstr ""
+msgstr "Tjeckiska"
 
 #: src/contexts/LanguageContext.tsx:23
 msgid "Danish"
@@ -2226,15 +2226,15 @@ msgstr "Spanska"
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "Spanska (Mexikanska)"
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Estonian"
-msgstr ""
+msgstr "Estniska"
 
 #: src/contexts/LanguageContext.tsx:30
 msgid "Farsi / Persian"
-msgstr ""
+msgstr "Farsi / Persiska"
 
 #: src/contexts/LanguageContext.tsx:31
 msgid "Finnish"
@@ -2246,7 +2246,7 @@ msgstr "Franska"
 
 #: src/contexts/LanguageContext.tsx:33
 msgid "Hebrew"
-msgstr ""
+msgstr "Hebreiska"
 
 #: src/contexts/LanguageContext.tsx:34
 msgid "Hindi"
@@ -2266,7 +2266,7 @@ msgstr "Japanska"
 
 #: src/contexts/LanguageContext.tsx:38
 msgid "Korean"
-msgstr ""
+msgstr "Koreanska"
 
 #: src/contexts/LanguageContext.tsx:39
 msgid "Latvian"
@@ -2274,7 +2274,7 @@ msgstr "Lettiska"
 
 #: src/contexts/LanguageContext.tsx:40
 msgid "Dutch"
-msgstr ""
+msgstr "Holländska"
 
 #: src/contexts/LanguageContext.tsx:41
 msgid "Norwegian"
@@ -2286,11 +2286,11 @@ msgstr "Polska"
 
 #: src/contexts/LanguageContext.tsx:43
 msgid "Portuguese"
-msgstr ""
+msgstr "Portugisiska"
 
 #: src/contexts/LanguageContext.tsx:44
 msgid "Portuguese (Brazilian)"
-msgstr ""
+msgstr "Portugisiska (brasiliansk)"
 
 #: src/contexts/LanguageContext.tsx:45
 msgid "Romanian"
@@ -2306,7 +2306,7 @@ msgstr "Slovakiska"
 
 #: src/contexts/LanguageContext.tsx:48
 msgid "Slovenian"
-msgstr ""
+msgstr "Slovenska"
 
 #: src/contexts/LanguageContext.tsx:49
 msgid "Swedish"
@@ -2314,7 +2314,7 @@ msgstr "Svenska"
 
 #: src/contexts/LanguageContext.tsx:50
 msgid "Thai"
-msgstr ""
+msgstr "Thailändska"
 
 #: src/contexts/LanguageContext.tsx:51
 msgid "Turkish"
@@ -2326,15 +2326,15 @@ msgstr "Ukrainska"
 
 #: src/contexts/LanguageContext.tsx:53
 msgid "Vietnamese"
-msgstr ""
+msgstr "Vietnamesiska"
 
 #: src/contexts/LanguageContext.tsx:54
 msgid "Chinese (Simplified)"
-msgstr ""
+msgstr "Kinesiska (Förenklad)"
 
 #: src/contexts/LanguageContext.tsx:55
 msgid "Chinese (Traditional)"
-msgstr ""
+msgstr "Kinesiska (Traditionell)"
 
 #: src/defaults/actions.tsx:16
 #: src/defaults/links.tsx:27
@@ -2352,17 +2352,17 @@ msgstr "Kontrollpanel"
 
 #: src/defaults/actions.tsx:24
 msgid "Go to the InvenTree dashboard"
-msgstr ""
+msgstr "Gå till instrumentpanelen för InvenTree"
 
 #: src/defaults/actions.tsx:31
 msgid "Visit the documentation to learn more about InvenTree"
-msgstr ""
+msgstr "Besök dokumentationen för att läsa mer om InvenTree"
 
 #: src/defaults/actions.tsx:37
 #: src/defaults/links.tsx:98
 #: src/defaults/links.tsx:128
 msgid "About InvenTree"
-msgstr ""
+msgstr "Om InvenTree"
 
 #: src/defaults/actions.tsx:38
 #: src/defaults/links.tsx:129
@@ -2371,7 +2371,7 @@ msgstr "Om InvenTree org"
 
 #: src/defaults/actions.tsx:44
 msgid "Server Information"
-msgstr ""
+msgstr "Serverinformation"
 
 #: src/defaults/actions.tsx:45
 #: src/defaults/links.tsx:123
@@ -2381,16 +2381,16 @@ msgstr "Om denna Inventree instans"
 #: src/defaults/actions.tsx:51
 #: src/defaults/links.tsx:111
 msgid "License Information"
-msgstr ""
+msgstr "Licensinformation"
 
 #: src/defaults/actions.tsx:52
 #: src/defaults/links.tsx:135
 msgid "Licenses for dependencies of the service"
-msgstr ""
+msgstr "Licenser för beroenden av tjänsten"
 
 #: src/defaults/actions.tsx:59
 msgid "Open the main navigation menu"
-msgstr ""
+msgstr "Öppna huvudnavigeringsmenyn"
 
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
@@ -2398,7 +2398,7 @@ msgstr "Prenumererade artiklar"
 
 #: src/defaults/dashboardItems.tsx:22
 msgid "Subscribed Categories"
-msgstr ""
+msgstr "Prenumererade kategorier"
 
 #: src/defaults/dashboardItems.tsx:29
 msgid "Latest Parts"
@@ -2491,7 +2491,7 @@ msgstr "Demo"
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:442
 #: src/pages/purchasing/PurchasingIndex.tsx:60
 msgid "Purchasing"
-msgstr ""
+msgstr "Inköp"
 
 #: src/defaults/links.tsx:37
 #: src/defaults/menuItems.tsx:53
@@ -2500,13 +2500,13 @@ msgstr ""
 #: src/pages/sales/SalesIndex.tsx:53
 #: src/pages/sales/SalesOrderDetail.tsx:484
 msgid "Sales"
-msgstr ""
+msgstr "Försäljning"
 
 #: src/defaults/links.tsx:41
 #: src/defaults/menuItems.tsx:71
 #: src/pages/Index/Playground.tsx:217
 msgid "Playground"
-msgstr ""
+msgstr "Lekplats"
 
 #: src/defaults/links.tsx:55
 msgid "Getting Started"
@@ -2551,7 +2551,7 @@ msgstr "Vanliga frågor (FAQ)"
 #: src/defaults/links.tsx:85
 #: src/defaults/links.tsx:122
 msgid "System Information"
-msgstr ""
+msgstr "Systeminformation"
 
 #: src/defaults/links.tsx:117
 #~ msgid "Licenses for packages used by InvenTree"
@@ -2599,7 +2599,7 @@ msgstr "Användarattribut och designinställningar."
 
 #: src/defaults/menuItems.tsx:23
 msgid "View for interactive scanning and multiple actions."
-msgstr ""
+msgstr "Visa interaktiv skanning och flera åtgärder."
 
 #: src/defaults/menuItems.tsx:24
 #~ msgid "The fluid of Smeargle’s tail secretions changes in the intensity"
@@ -2679,15 +2679,15 @@ msgstr ""
 
 #: src/forms/BuildForms.tsx:158
 msgid "Next serial number"
-msgstr ""
+msgstr "Nästa serienummer"
 
 #: src/forms/BuildForms.tsx:162
 msgid "Latest serial number"
-msgstr ""
+msgstr "Senaste serienummer"
 
 #: src/forms/BuildForms.tsx:234
 msgid "Remove output"
-msgstr ""
+msgstr "Ta bort utdata"
 
 #: src/forms/BuildForms.tsx:316
 msgid "Complete Build Outputs"
@@ -2712,11 +2712,11 @@ msgstr ""
 
 #: src/forms/BuildForms.tsx:426
 msgid "Selected build outputs will be deleted"
-msgstr ""
+msgstr "Valda tillverknings produkter kommer att raderas"
 
 #: src/forms/BuildForms.tsx:453
 msgid "Build outputs have been cancelled"
-msgstr ""
+msgstr "Tillverknings produkter har raderats"
 
 #: src/forms/CompanyForms.tsx:150
 #~ msgid "Company updated"
@@ -2732,7 +2732,7 @@ msgstr ""
 
 #: src/forms/PartForms.tsx:123
 msgid "Parent part category"
-msgstr ""
+msgstr "Överordnad kategori"
 
 #: src/forms/PartForms.tsx:129
 #~ msgid "Part updated"
@@ -2740,7 +2740,7 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:300
 msgid "Choose Location"
-msgstr ""
+msgstr "Välj plats"
 
 #: src/forms/PurchaseOrderForms.tsx:308
 msgid "Item Destination selected"
@@ -7868,3 +7868,4 @@ msgstr "Läs dokumenten"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
