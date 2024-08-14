@@ -75,7 +75,7 @@ RUN apk add --no-cache \
     mariadb-client mariadb-connector-c \
     && \
     # font support
-    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-terminus font-inconsolata font-dejavu font-noto font-noto-cjk font-noto-extra \
+    apk --update --upgrade --no-cache add fontconfig ttf-freefont font-terminus font-noto font-noto-cjk font-noto-extra \
     && fc-cache -f
 
 EXPOSE 8000
