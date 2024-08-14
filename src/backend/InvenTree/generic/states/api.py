@@ -9,6 +9,7 @@ from rest_framework.response import Response
 
 from generic.states.custom import get_status_api_response
 from InvenTree.serializers import EmptySerializer
+from machine.machine_type import MachineStatus
 
 from .states import StatusCode
 
@@ -75,4 +76,6 @@ class AllStatusViews(StatusView):
     def get(self, request, *args, **kwargs):
         """Perform a GET request to learn information about status codes."""
         data = get_status_api_response()
+        # Extend with MachineStatus classes
+        data.update(get_status_api_response(MachineStatus, prefix=['MachineStatus']))
         return Response(data)
