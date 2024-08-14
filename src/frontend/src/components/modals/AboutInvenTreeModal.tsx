@@ -28,7 +28,7 @@ type AboutLookupRef = {
   copy?: boolean;
 };
 
-export function AboutInvenTreeModal({
+export default function AboutInvenTreeModal({
   context,
   id
 }: ContextModalProps<{

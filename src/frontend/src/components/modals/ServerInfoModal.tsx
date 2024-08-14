@@ -13,7 +13,7 @@ import { ContextModalProps } from '@mantine/modals';
 import { useServerApiState } from '../../states/ApiState';
 import { OnlyStaff } from '../items/OnlyStaff';
 
-export function ServerInfoModal({
+export default function ServerInfoModal({
   context,
   id
 }: ContextModalProps<{ modalBody: string }>) {

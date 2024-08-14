@@ -50,7 +50,7 @@ export function LicenceView(entries: Readonly<any[]>) {
   );
 }
 
-export function LicenseModal() {
+export default function LicenseModal() {
   const { data, isFetching, isError } = useQuery({
     queryKey: ['license'],
     queryFn: () =>

@@ -2,14 +2,24 @@ import { t } from '@lingui/macro';
 import { MantineProvider, createTheme } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
+import { lazy } from 'react';
 
-import { AboutInvenTreeModal } from '../components/modals/AboutInvenTreeModal';
-import { LicenseModal } from '../components/modals/LicenseModal';
-import { QrCodeModal } from '../components/modals/QrCodeModal';
-import { ServerInfoModal } from '../components/modals/ServerInfoModal';
 import { useLocalState } from '../states/LocalState';
 import { LanguageContext } from './LanguageContext';
 import { colorSchema } from './colorSchema';
+
+// Lazy load global modals
+const AboutInvenTreeModal = lazy(
+  () => import('../components/modals/AboutInvenTreeModal')
+);
+
+const LicenseModal = lazy(() => import('../components/modals/LicenseModal'));
+
+const QrCodeModal = lazy(() => import('../components/modals/QrCodeModal'));
+
+const ServerInfoModal = lazy(
+  () => import('../components/modals/ServerInfoModal')
+);
 
 export function ThemeContext({ children }: { children: JSX.Element }) {
   const [primaryColor, whiteColor, blackColor, radius] = useLocalState(

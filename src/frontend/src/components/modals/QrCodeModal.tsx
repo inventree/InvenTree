@@ -26,7 +26,7 @@ import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
-export function QrCodeModal({
+export default function QrCodeModal({
   context,
   id
 }: ContextModalProps<{ modalBody: string }>) {
