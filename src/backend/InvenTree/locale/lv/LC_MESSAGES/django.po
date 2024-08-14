@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-14 10:15+0000\n"
-"PO-Revision-Date: 2024-08-10 22:06\n"
+"POT-Creation-Date: 2024-08-14 06:35+0000\n"
+"PO-Revision-Date: 2024-08-14 10:22\n"
 "Last-Translator: \n"
 "Language-Team: Latvian\n"
 "Language: lv_LV\n"
@@ -2122,10 +2122,8 @@ msgid "Is File"
 msgstr ""
 
 #: common/api.py:744
-#, fuzzy
-#| msgid "User does not have permission to view this model"
 msgid "User does not have permission to delete these attachments"
-msgstr "Lietotājam nav atļaujas, lai apskatītu šo modeli"
+msgstr ""
 
 #: common/api.py:761
 msgid "User does not have permission to delete this attachment"
@@ -15203,3 +15201,4 @@ msgstr ""
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr ""
+
