@@ -248,6 +248,14 @@ class ApiTests(InvenTreeAPITestCase):
         self.assertEqual(in_stock['name'], 'OK')
         self.assertEqual(in_stock['label'], 'OK')
 
+        # MachineStatus model
+        machine_status = response.data['MachineStatus__LabelPrinterStatus']
+        self.assertEqual(machine_status['class'], 'LabelPrinterStatus')
+        self.assertEqual(len(machine_status['values']), 6)
+        connected = machine_status['values']['CONNECTED']
+        self.assertEqual(connected['key'], 100)
+        self.assertEqual(connected['name'], 'CONNECTED')
+
         # Add custom status
         InvenTreeCustomUserStateModel.objects.create(
             key=11,
