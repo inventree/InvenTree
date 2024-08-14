@@ -1430,6 +1430,14 @@ def docs_server(c, address='localhost:8080', compile_schema=False):
 
 
 @task
+def docs_generate_screenshots(c):
+    """Regenerate UI screenshots for the documentation."""
+    # Ensure frontend requirements are met
+    run(c, 'npx playwright install --install-deps', path='./src/frontend')
+    run(c, 'npx playwright test --project screenshot', path='./src/frontend')
+
+
+@task
 def clear_generated(c):
     """Clear generated files from `inv update`."""
     # pyc/pyo files
