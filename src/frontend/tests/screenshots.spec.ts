@@ -138,3 +138,27 @@ test('Screenshots - Purchase Order', async ({ page }) => {
   // TODO: Attachments tab
   // TODO: Notes tab
 });
+
+// TODO: Sales Order
+
+// TODO: Return Order
+
+// TODO: Supplier Part
+
+// TODO: Manufacturer Part
+
+// TODO: Company
+
+// TODO: Part Detail
+
+// TODO: Part Category
+
+// TODO: Stock Item Details
+
+// TODO: Stock Location
+
+// TODO: User Settings
+
+// TODO: System Settings
+
+// TODO: Admin Panel
