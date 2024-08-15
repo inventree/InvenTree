@@ -40,19 +40,19 @@ export default function ExtraLineItemTable({
         switchable: false
       },
       {
-        accessor: 'unit_price',
+        accessor: 'price',
         title: t`Unit Price`,
         render: (record: any) =>
-          formatCurrency(record.unit_price, {
-            currency: record.unit_price_currency
+          formatCurrency(record.price, {
+            currency: record.price_currency
           })
       },
       {
         accessor: 'total_price',
         title: t`Total Price`,
         render: (record: any) =>
-          formatCurrency(record.total_price, {
-            currency: record.total_price_currency,
+          formatCurrency(record.price, {
+            currency: record.price_currency,
             multiplier: record.quantity
           })
       },
