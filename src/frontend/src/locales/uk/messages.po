@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-14 10:21\n"
+"PO-Revision-Date: 2024-08-15 18:21\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -73,7 +73,7 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:444
 #: src/tables/stock/StockItemTestResultTable.tsx:294
 msgid "Error"
-msgstr ""
+msgstr "Помилка"
 
 #: src/components/buttons/PrintingActions.tsx:107
 msgid "The label could not be generated"
@@ -81,7 +81,7 @@ msgstr ""
 
 #: src/components/buttons/PrintingActions.tsx:122
 msgid "Print Report"
-msgstr ""
+msgstr "Надрукувати звіт"
 
 #: src/components/buttons/PrintingActions.tsx:138
 msgid "Generate"
@@ -130,12 +130,12 @@ msgstr ""
 #: src/components/buttons/YesNoButton.tsx:33
 #: src/tables/Filter.tsx:51
 msgid "Yes"
-msgstr ""
+msgstr "Так"
 
 #: src/components/buttons/YesNoButton.tsx:33
 #: src/tables/Filter.tsx:52
 msgid "No"
-msgstr ""
+msgstr "Ні"
 
 #: src/components/details/Details.tsx:292
 msgid "No name defined"
@@ -166,7 +166,7 @@ msgstr ""
 #: src/tables/FilterSelectDrawer.tsx:205
 #: src/tables/build/BuildOutputTable.tsx:225
 msgid "Cancel"
-msgstr ""
+msgstr "Скасувати"
 
 #: src/components/details/DetailsImage.tsx:97
 msgid "Drag and drop to upload"
@@ -185,27 +185,27 @@ msgstr ""
 #: src/contexts/ThemeContext.tsx:43
 #: src/pages/Index/Settings/AccountSettings/AccountDetailPanel.tsx:56
 msgid "Submit"
-msgstr ""
+msgstr "Відправити"
 
 #: src/components/details/DetailsImage.tsx:272
 msgid "Select from existing images"
-msgstr ""
+msgstr "Обрати з існуючих зображень"
 
 #: src/components/details/DetailsImage.tsx:280
 msgid "Select Image"
-msgstr ""
+msgstr "Вибрати зображення"
 
 #: src/components/details/DetailsImage.tsx:292
 msgid "Upload new image"
-msgstr ""
+msgstr "Завантажити нове зображення"
 
 #: src/components/details/DetailsImage.tsx:299
 msgid "Upload Image"
-msgstr ""
+msgstr "Завантажити зображення"
 
 #: src/components/details/DetailsImage.tsx:312
 msgid "Delete image"
-msgstr ""
+msgstr "Видалити зображення"
 
 #: src/components/details/PartIcons.tsx:43
 #~ msgid "Part is a template part (variants can be made from this part)"
@@ -237,37 +237,37 @@ msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:66
 msgid "Image upload failed"
-msgstr ""
+msgstr "Не вдалося завантажити зображення"
 
 #: src/components/editors/NotesEditor.tsx:156
 #: src/components/forms/ApiForm.tsx:467
 #: src/tables/bom/BomTable.tsx:435
 msgid "Success"
-msgstr ""
+msgstr "Успіх"
 
 #: src/components/editors/NotesEditor.tsx:157
 msgid "Notes saved successfully"
-msgstr ""
+msgstr "Примітки успішно збережено"
 
 #: src/components/editors/NotesEditor.tsx:166
 msgid "Failed to save notes"
-msgstr ""
+msgstr "Не вдалося зберегти примітки"
 
 #: src/components/editors/NotesEditor.tsx:198
 msgid "Preview Notes"
-msgstr ""
+msgstr "Попередній перегляд приміток"
 
 #: src/components/editors/NotesEditor.tsx:198
 msgid "Edit Notes"
-msgstr ""
+msgstr "Редагувати примітки"
 
 #: src/components/editors/NotesEditor.tsx:212
 msgid "Save Notes"
-msgstr ""
+msgstr "Зберегти примітки"
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
-msgstr ""
+msgstr "Код"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:44
 #~ msgid "Failed to parse error response from server."
@@ -279,20 +279,20 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/PdfPreview/index.tsx:9
 msgid "PDF Preview"
-msgstr ""
+msgstr "Попередній перегляд PDF"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:104
 msgid "Error loading template"
-msgstr ""
+msgstr "Помилка при завантаженні шаблону"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:116
 msgid "Error saving template"
-msgstr ""
+msgstr "Помилка збереження шаблону"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:146
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:274
 msgid "Save & Reload Preview"
-msgstr ""
+msgstr "Зберегти і перезавантажити попередній перегляд"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:151
 msgid "Are you sure you want to Save & Reload the preview?"
@@ -405,12 +405,12 @@ msgstr ""
 
 #: src/components/forms/ApiForm.tsx:563
 msgid "Errors exist for one or more form fields"
-msgstr ""
+msgstr "Існують деякі помилки для одного або декількох полів"
 
 #: src/components/forms/ApiForm.tsx:665
 #: src/tables/plugin/PluginListTable.tsx:388
 msgid "Update"
-msgstr ""
+msgstr "Оновити"
 
 #: src/components/forms/ApiForm.tsx:685
 #: src/components/items/ActionDropdown.tsx:228
@@ -420,7 +420,7 @@ msgstr ""
 #: src/tables/RowActions.tsx:71
 #: src/tables/plugin/PluginListTable.tsx:420
 msgid "Delete"
-msgstr ""
+msgstr "Видалити"
 
 #: src/components/forms/AuthenticationForm.tsx:48
 #: src/components/forms/AuthenticationForm.tsx:74
@@ -430,11 +430,11 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:51
 msgid "Login successful"
-msgstr ""
+msgstr "Вхід успішний"
 
 #: src/components/forms/AuthenticationForm.tsx:52
 msgid "Logged in successfully"
-msgstr ""
+msgstr "Вхід успішно виконано"
 
 #: src/components/forms/AuthenticationForm.tsx:52
 #~ msgid "Welcome back!"
@@ -446,14 +446,14 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:58
 msgid "Login failed"
-msgstr ""
+msgstr "Не вдалося увійти"
 
 #: src/components/forms/AuthenticationForm.tsx:59
 #: src/components/forms/AuthenticationForm.tsx:76
 #: src/components/forms/AuthenticationForm.tsx:211
 #: src/functions/auth.tsx:164
 msgid "Check your input and try again."
-msgstr ""
+msgstr "Перевірте введені дані та повторіть спробу."
 
 #: src/components/forms/AuthenticationForm.tsx:65
 #: src/functions/auth.tsx:74
@@ -463,45 +463,45 @@ msgstr ""
 #: src/components/forms/AuthenticationForm.tsx:70
 #: src/functions/auth.tsx:155
 msgid "Mail delivery successful"
-msgstr ""
+msgstr "Пошту відправлено"
 
 #: src/components/forms/AuthenticationForm.tsx:71
 msgid "Check your inbox for the login link. If you have an account, you will receive a login link. Check in spam too."
-msgstr ""
+msgstr "Перевірте вашу поштову скриньку для входу. Якщо у вас є обліковий запис, ви отримаєте посилання для входу. Також перевірте спам."
 
 #: src/components/forms/AuthenticationForm.tsx:75
 msgid "Mail delivery failed"
-msgstr ""
+msgstr "Пошту не вдалося відправити"
 
 #: src/components/forms/AuthenticationForm.tsx:95
 msgid "Or continue with other methods"
-msgstr ""
+msgstr "Або продовжити з іншими методами"
 
 #: src/components/forms/AuthenticationForm.tsx:106
 #: src/components/forms/AuthenticationForm.tsx:227
 msgid "Username"
-msgstr ""
+msgstr "Ім'я користувача"
 
 #: src/components/forms/AuthenticationForm.tsx:107
 #: src/components/forms/AuthenticationForm.tsx:228
 msgid "Your username"
-msgstr ""
+msgstr "Ваше ім’я користувача"
 
 #: src/components/forms/AuthenticationForm.tsx:112
 #: src/components/forms/AuthenticationForm.tsx:240
 #: src/pages/Auth/Set-Password.tsx:106
 msgid "Password"
-msgstr ""
+msgstr "Пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:113
 #: src/components/forms/AuthenticationForm.tsx:241
 msgid "Your password"
-msgstr ""
+msgstr "Ваш пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:125
 #: src/pages/Auth/Reset.tsx:26
 msgid "Reset password"
-msgstr ""
+msgstr "Скинути пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:131
 #~ msgid "Log in"
@@ -512,13 +512,13 @@ msgstr ""
 #: src/pages/Auth/Reset.tsx:31
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:51
 msgid "Email"
-msgstr ""
+msgstr "Електронна пошта"
 
 #: src/components/forms/AuthenticationForm.tsx:135
 #: src/pages/Auth/Reset.tsx:32
 #: src/pages/Auth/Set-Password.tsx:107
 msgid "We will send you a link to login - if you are registered"
-msgstr ""
+msgstr "Ми надішлемо вам авторизаційне посилання - якщо ви зареєстровані"
 
 #: src/components/forms/AuthenticationForm.tsx:136
 #~ msgid "I will use username and password"
@@ -526,65 +526,65 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:151
 msgid "Send me an email"
-msgstr ""
+msgstr "Надіслати мені ел. листа"
 
 #: src/components/forms/AuthenticationForm.tsx:153
 msgid "Use username and password"
-msgstr ""
+msgstr "Використати ім'я користувача та пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:162
 msgid "Log In"
-msgstr ""
+msgstr "Увійти"
 
 #: src/components/forms/AuthenticationForm.tsx:164
 msgid "Send Email"
-msgstr ""
+msgstr "Надіслати листа"
 
 #: src/components/forms/AuthenticationForm.tsx:193
 msgid "Registration successful"
-msgstr ""
+msgstr "Реєстрація успішна"
 
 #: src/components/forms/AuthenticationForm.tsx:194
 msgid "Please confirm your email address to complete the registration"
-msgstr ""
+msgstr "Будь ласка, перевірте свою електронну адресу для завершення реєстрації"
 
 #: src/components/forms/AuthenticationForm.tsx:210
 msgid "Input error"
-msgstr ""
+msgstr "Помилка у вхідних даних"
 
 #: src/components/forms/AuthenticationForm.tsx:234
 msgid "This will be used for a confirmation"
-msgstr ""
+msgstr "Це буде використано для підтвердження"
 
 #: src/components/forms/AuthenticationForm.tsx:246
 msgid "Password repeat"
-msgstr ""
+msgstr "Повтор пароля"
 
 #: src/components/forms/AuthenticationForm.tsx:247
 msgid "Repeat password"
-msgstr ""
+msgstr "Повторіть пароль"
 
 #: src/components/forms/AuthenticationForm.tsx:259
 #: src/components/forms/AuthenticationForm.tsx:304
 msgid "Register"
-msgstr ""
+msgstr "Реєстрація"
 
 #: src/components/forms/AuthenticationForm.tsx:265
 msgid "Or use SSO"
-msgstr ""
+msgstr "Або використайте SSO"
 
 #: src/components/forms/AuthenticationForm.tsx:296
 msgid "Don't have an account?"
-msgstr ""
+msgstr "Не маєте облікового запису?"
 
 #: src/components/forms/AuthenticationForm.tsx:315
 msgid "Go back to login"
-msgstr ""
+msgstr "Повернутися до входу"
 
 #: src/components/forms/HostOptionsForm.tsx:36
 #: src/components/forms/HostOptionsForm.tsx:67
 msgid "Host"
-msgstr ""
+msgstr "Хост"
 
 #: src/components/forms/HostOptionsForm.tsx:42
 #: src/components/forms/HostOptionsForm.tsx:70
@@ -615,7 +615,7 @@ msgstr ""
 
 #: src/components/forms/HostOptionsForm.tsx:90
 msgid "Save"
-msgstr ""
+msgstr "Зберегти"
 
 #: src/components/forms/InstanceOptions.tsx:43
 msgid "Select destination instance"
@@ -627,11 +627,11 @@ msgstr ""
 
 #: src/components/forms/InstanceOptions.tsx:98
 msgid "Version: {0}"
-msgstr ""
+msgstr "Версія: {0}"
 
 #: src/components/forms/InstanceOptions.tsx:100
 msgid "API:{0}"
-msgstr ""
+msgstr "API:{0}"
 
 #: src/components/forms/InstanceOptions.tsx:102
 msgid "Name: {0}"
@@ -643,21 +643,21 @@ msgstr ""
 
 #: src/components/forms/fields/IconField.tsx:81
 msgid "No icon selected"
-msgstr ""
+msgstr "Не вибрано жодного значка"
 
 #: src/components/forms/fields/IconField.tsx:159
 msgid "Uncategorized"
-msgstr ""
+msgstr "Без категорії"
 
 #: src/components/forms/fields/IconField.tsx:209
 #: src/components/nav/Layout.tsx:70
 #: src/tables/part/PartThumbTable.tsx:192
 msgid "Search..."
-msgstr ""
+msgstr "Пошук..."
 
 #: src/components/forms/fields/IconField.tsx:223
 msgid "Select category"
-msgstr ""
+msgstr "Виберіть категорію"
 
 #: src/components/forms/fields/IconField.tsx:232
 msgid "Select pack"
@@ -7874,3 +7874,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
