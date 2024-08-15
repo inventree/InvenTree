@@ -655,6 +655,9 @@ class ContentTypeList(ListAPI):
     queryset = ContentType.objects.all()
     serializer_class = common.serializers.ContentTypeSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['pk']
+    search_fields = ['pk', 'app_label', 'model']
 
 
 class ContentTypeDetail(RetrieveAPI):
