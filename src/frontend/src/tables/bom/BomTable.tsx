@@ -300,6 +300,11 @@ export function BomTable({
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
       {
+        name: 'sub_part_testable',
+        label: t`Testable Part`,
+        description: t`Show testable items`
+      },
+      {
         name: 'sub_part_trackable',
         label: t`Trackable Part`,
         description: t`Show trackable items`
