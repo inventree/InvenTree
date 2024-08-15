@@ -53,9 +53,8 @@ import order.validators
 import plugin.base.barcodes.helper
 import report.helpers
 import users.models
-from generic.states import ColorEnum, StatusCode
+from generic.states import ColorEnum
 from generic.states.custom import get_custom_classes
-from InvenTree.helpers import inheritors
 from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
@@ -3376,7 +3375,6 @@ class InvenTreeCustomUserStateModel(models.Model):
         verbose_name=_('Color'),
         help_text=_('Color that will be displayed in the frontend'),
     )
-
     logical_key = models.IntegerField(
         verbose_name=_('Logical Key'),
         help_text=_(
@@ -3435,9 +3433,12 @@ class InvenTreeCustomUserStateModel(models.Model):
             })
 
         # Ensure that the key is not in the range of the logical keys of the reference status
-        ref_set = [
-            x for x in inheritors(StatusCode) if x.__name__ == self.reference_status
-        ]
+        ref_set = list(
+            filter(
+                lambda x: x.__name__ == self.reference_status,
+                get_custom_classes(include_custom=False),
+            )
+        )
         if len(ref_set) == 0:
             raise ValidationError({
                 'reference_status': _('Reference status set not found')
