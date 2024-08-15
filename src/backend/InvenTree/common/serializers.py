@@ -329,6 +329,9 @@ class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
         ]
 
     model_name = serializers.CharField(read_only=True, source='model.name')
+    reference_status = serializers.ChoiceField(
+        choices=common_models.state_reference_mappings()
+    )
 
 
 class FlagSerializer(serializers.Serializer):

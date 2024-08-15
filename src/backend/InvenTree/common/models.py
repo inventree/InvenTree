@@ -3391,7 +3391,6 @@ class InvenTreeCustomUserStateModel(models.Model):
     )
     reference_status = models.CharField(
         max_length=250,
-        choices=state_reference_mappings(),
         verbose_name=_('Reference Status Set'),
         help_text=_('Status set that is extended with this custom state'),
     )
