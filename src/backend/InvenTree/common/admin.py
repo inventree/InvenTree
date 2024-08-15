@@ -111,4 +111,3 @@ class NewsFeedEntryAdmin(admin.ModelAdmin):
 
 
 admin.site.register(common.models.WebhookMessage, ImportExportModelAdmin)
-admin.site.register(common.models.InvenTreeCustomUserStateModel, admin.ModelAdmin)
