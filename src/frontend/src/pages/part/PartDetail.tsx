@@ -680,7 +680,7 @@ export default function PartDetail() {
         name: 'test_templates',
         label: t`Test Templates`,
         icon: <IconTestPipe />,
-        hidden: !part.trackable,
+        hidden: !part.testable,
         content: part?.pk ? (
           <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
         ) : (
@@ -691,7 +691,7 @@ export default function PartDetail() {
         name: 'test_statistics',
         label: t`Test Statistics`,
         icon: <IconReportAnalytics />,
-        hidden: !part.trackable,
+        hidden: !part.testable,
         content: part?.pk ? (
           <TestStatisticsTable
             params={{
