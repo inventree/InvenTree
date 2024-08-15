@@ -1,6 +1,5 @@
 """Helper functions for custom status labels."""
 
-from common.models import InvenTreeCustomUserStateModel
 from InvenTree.helpers import inheritors
 
 from .states import StatusCode
@@ -37,6 +36,8 @@ def get_custom_classes(
         return discovered_classes
 
     # Gather DB settings
+    from common.models import InvenTreeCustomUserStateModel
+
     custom_db_states = {}
     custom_db_mdls = {}
     for item in list(InvenTreeCustomUserStateModel.objects.all()):
