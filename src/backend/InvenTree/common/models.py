@@ -3371,7 +3371,7 @@ class InvenTreeCustomUserStateModel(models.Model):
     color = models.CharField(
         max_length=10,
         choices=state_color_mappings(),
-        default=str(ColorEnum.secondary),
+        default=ColorEnum.secondary.value,
         verbose_name=_('Color'),
         help_text=_('Color that will be displayed in the frontend'),
     )
