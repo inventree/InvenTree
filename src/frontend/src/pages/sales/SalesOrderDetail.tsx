@@ -287,6 +287,7 @@ export default function SalesOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.sales_order_extra_line_list}
                   orderId={order.pk}
+                  role={UserRoles.sales_order}
                 />
               </Accordion.Panel>
             </Accordion.Item>

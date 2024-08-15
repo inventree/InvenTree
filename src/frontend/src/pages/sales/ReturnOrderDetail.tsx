@@ -248,6 +248,7 @@ export default function ReturnOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.return_order_extra_line_list}
                   orderId={order.pk}
+                  role={UserRoles.return_order}
                 />
               </Accordion.Panel>
             </Accordion.Item>

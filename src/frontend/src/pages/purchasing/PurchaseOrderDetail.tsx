@@ -271,6 +271,7 @@ export default function PurchaseOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.purchase_order_extra_line_list}
                   orderId={order.pk}
+                  role={UserRoles.purchase_order}
                 />
               </Accordion.Panel>
             </Accordion.Item>

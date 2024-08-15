@@ -3,6 +3,8 @@ import { useMemo } from 'react';
 
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -12,10 +14,12 @@ import { InvenTreeTable } from '../InvenTreeTable';
 
 export default function ExtraLineItemTable({
   endpoint,
-  orderId
+  orderId,
+  role
 }: {
   endpoint: ApiEndpoints;
   orderId: number;
+  role: UserRoles;
 }) {
   const table = useTable('extra-line-item');
   const user = useUserState();
