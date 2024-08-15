@@ -317,6 +317,12 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
+        name: 'testable',
+        label: t`Testable Part`,
+        icon: 'test'
+      },
+      {
+        type: 'boolean',
         name: 'trackable',
         label: t`Trackable Part`
       },
