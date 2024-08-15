@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -28,6 +28,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -46,6 +47,7 @@ import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
 
 /**
@@ -223,10 +225,33 @@ export default function ReturnOrderDetail() {
         label: t`Line Items`,
         icon: <IconList />,
         content: (
-          <ReturnOrderLineItemTable
-            orderId={order.pk}
-            customerId={order.customer}
-          />
+          <Accordion
+            multiple={true}
+            defaultValue={['line-items', 'extra-items']}
+          >
+            <Accordion.Item value="line-items" key="lineitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <ReturnOrderLineItemTable
+                  orderId={order.pk}
+                  customerId={order.customer}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="extra-items" key="extraitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <ExtraLineItemTable
+                  endpoint={ApiEndpoints.return_order_extra_line_list}
+                  orderId={order.pk}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
         )
       },
       {
