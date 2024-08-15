@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
+import { AddItemButton } from '../../components/buttons/AddItemButton';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
@@ -11,6 +12,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ExtraLineItemTable({
   endpoint,
@@ -63,6 +65,29 @@ export default function ExtraLineItemTable({
     ];
   }, []);
 
+  const rowActions = useCallback(
+    (record: any) => {
+      return [
+        RowEditAction({
+          hidden: !user.hasChangeRole(role)
+        }),
+        RowDeleteAction({
+          hidden: !user.hasDeleteRole(role)
+        })
+      ];
+    },
+    [user, role]
+  );
+
+  const tableActions = useMemo(() => {
+    return [
+      <AddItemButton
+        tooltip={t`Add Extra Line Item`}
+        hidden={!user.hasAddRole(role)}
+      />
+    ];
+  }, [user, role]);
+
   return (
     <>
       <InvenTreeTable
@@ -72,7 +97,9 @@ export default function ExtraLineItemTable({
         props={{
           params: {
             order: orderId
-          }
+          },
+          rowActions: rowActions,
+          tableActions: tableActions
         }}
       />
     </>
