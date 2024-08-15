@@ -2,12 +2,20 @@
 
 import inspect
 
+from django.urls import include, path
+
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import permissions, serializers
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 
+import common.models
+import common.serializers
 from generic.states.custom import get_status_api_response
+from importer.mixins import DataExportViewMixin
+from InvenTree.filters import SEARCH_ORDER_FILTER
+from InvenTree.mixins import ListCreateAPI, RetrieveUpdateDestroyAPI
+from InvenTree.permissions import IsStaffOrReadOnly
 from InvenTree.serializers import EmptySerializer
 from machine.machine_type import MachineStatus
 
@@ -79,3 +87,47 @@ class AllStatusViews(StatusView):
         # Extend with MachineStatus classes
         data.update(get_status_api_response(MachineStatus, prefix=['MachineStatus']))
         return Response(data)
+
+
+# Custom states
+class CustomStateList(DataExportViewMixin, ListCreateAPI):
+    """List view for all custom states."""
+
+    queryset = common.models.InvenTreeCustomUserStateModel.objects.all()
+    serializer_class = common.serializers.CustomStateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+    filter_backends = SEARCH_ORDER_FILTER
+    ordering_fields = ['key']
+    search_fields = ['key', 'name', 'label', 'reference_status']
+
+
+class CustomStateDetail(RetrieveUpdateDestroyAPI):
+    """Detail view for a particular custom states."""
+
+    queryset = common.models.InvenTreeCustomUserStateModel.objects.all()
+    serializer_class = common.serializers.CustomStateSerializer
+    permission_classes = [permissions.IsAuthenticated, IsStaffOrReadOnly]
+
+
+urlpattern = [
+    path(
+        '',
+        include([
+            path(
+                f'<str:{StatusView.MODEL_REF}>/',
+                include([path('', StatusView.as_view(), name='api-status')]),
+            ),
+            path('', AllStatusViews.as_view(), name='api-status-all'),
+        ]),
+    ),
+    # Custom state
+    path(
+        'custom-state/',
+        include([
+            path(
+                '<int:pk>/', CustomStateDetail.as_view(), name='api-custom-state-detail'
+            ),
+            path('', CustomStateList.as_view(), name='api-custom-state-list'),
+        ]),
+    ),
+]

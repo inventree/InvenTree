@@ -42,6 +42,7 @@ export enum ApiEndpoints {
   generate_barcode = 'barcode/generate/',
   news = 'news/',
   global_status = 'generic/status/',
+  custom_state_list = 'generic/custom-state/',
   version = 'version/',
   license = 'license/',
   sso_providers = 'auth/providers/',

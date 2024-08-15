@@ -29,7 +29,7 @@ import common.models
 import common.serializers
 from common.icons import get_icon_packs
 from common.settings import get_global_setting
-from generic.states.api import AllStatusViews, StatusView
+from generic.states.api import urlpattern as generic_states_api_urls
 from importer.mixins import DataExportViewMixin
 from InvenTree.api import BulkDeleteMixin, MetadataView
 from InvenTree.config import CONFIG_LOOKUPS
@@ -965,16 +965,7 @@ common_api_urls = [
         ]),
     ),
     # Status
-    path(
-        'generic/status/',
-        include([
-            path(
-                f'<str:{StatusView.MODEL_REF}>/',
-                include([path('', StatusView.as_view(), name='api-status')]),
-            ),
-            path('', AllStatusViews.as_view(), name='api-status-all'),
-        ]),
-    ),
+    path('generic/status/', include(generic_states_api_urls)),
     # Contenttype
     path(
         'contenttype/',

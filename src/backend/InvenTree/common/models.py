@@ -54,6 +54,7 @@ import plugin.base.barcodes.helper
 import report.helpers
 import users.models
 from generic.states import ColorEnum, StatusCode
+from generic.states.custom import get_custom_classes
 from InvenTree.helpers import inheritors
 from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
@@ -3348,6 +3349,11 @@ def state_color_mappings():
     return [(a.name, a.value) for a in ColorEnum]
 
 
+def state_reference_mappings():
+    """Return a list of custom user state references."""
+    return [(a.__name__, a.__name__) for a in get_custom_classes(include_custom=False)]
+
+
 class InvenTreeCustomUserStateModel(models.Model):
     """Custom model to extends any registered state with extra custom, user defined states."""
 
@@ -3387,6 +3393,7 @@ class InvenTreeCustomUserStateModel(models.Model):
     )
     reference_status = models.CharField(
         max_length=250,
+        choices=state_reference_mappings(),
         verbose_name=_('Reference Status Set'),
         help_text=_('Status set that is extended with this custom state'),
     )
