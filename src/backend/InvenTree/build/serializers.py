@@ -1238,6 +1238,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'reference',
             'consumable',
             'optional',
+            'testable',
             'trackable',
             'inherited',
             'allow_variants',
