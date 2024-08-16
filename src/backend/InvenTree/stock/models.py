@@ -37,8 +37,8 @@ from build import models as BuildModels
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
+from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from InvenTree.generic_fields import InvenTreeCustomStatusModelField
 from InvenTree.status_codes import (
     SalesOrderStatusGroups,
     StockHistoryCode,

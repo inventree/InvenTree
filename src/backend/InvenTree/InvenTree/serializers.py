@@ -4,7 +4,6 @@ import os
 from collections import OrderedDict
 from copy import deepcopy
 from decimal import Decimal
-from typing import Optional
 
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -18,7 +17,7 @@ from djmoney.money import Money
 from djmoney.utils import MONEY_CLASSES, get_currency_field_name
 from rest_framework import serializers
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.fields import ChoiceField, empty
+from rest_framework.fields import empty
 from rest_framework.mixins import ListModelMixin
 from rest_framework.serializers import DecimalField
 from rest_framework.utils import model_meta
@@ -27,13 +26,6 @@ from taggit.serializers import TaggitSerializer
 import common.models as common_models
 from common.currency import currency_code_default, currency_code_mappings
 from InvenTree.fields import InvenTreeRestURLField, InvenTreeURLField
-from InvenTree.generic_fields import (
-    CustomChoiceField,
-    ExtraCustomChoiceField,
-    InvenTreeCustomStatusExtraModelField,
-    InvenTreeCustomStatusModelField,
-    get_logical_value,
-)
 
 
 class EmptySerializer(serializers.Serializer):
@@ -209,113 +201,6 @@ class DependentField(serializers.Field):
             return self.child.to_representation(value)
 
         return None
-
-
-class InvenTreeCustomStatusSerializerMixin:
-    """Mixin to ensure custom status fields are set."""
-
-    _custom_fields: Optional[list] = None
-    _custom_fields_leader: Optional[list] = None
-    _custom_fields_follower: Optional[list] = None
-    _is_gathering = False
-
-    def update(self, instance, validated_data):
-        """Ensure the custom field is updated if the leader was changed."""
-        self.gather_custom_fields()
-        for field in self._custom_fields_leader:
-            if (
-                field in self.initial_data
-                and self.instance
-                and self.initial_data[field]
-                != getattr(self.instance, f'{field}_custom_key', None)
-            ):
-                setattr(self.instance, f'{field}_custom_key', self.initial_data[field])
-        for field in self._custom_fields_follower:
-            if (
-                field in validated_data
-                and field.replace('_custom_key', '') not in self.initial_data
-            ):
-                reference = get_logical_value(
-                    validated_data[field],
-                    self.fields[field].choice_mdl._meta.model_name,
-                )
-                validated_data[field.replace('_custom_key', '')] = reference.logical_key
-        return super().update(instance, validated_data)
-
-    def to_representation(self, instance):
-        """Ensure custom state fields are not served empty."""
-        data = super().to_representation(instance)
-        for field in self.gather_custom_fields():
-            if data[field] is None:
-                data[field] = data[
-                    field.replace('_custom_key', '')
-                ]  # Use "normal" status field instead
-        return data
-
-    def gather_custom_fields(self):
-        """Gather all custom fields on the serializer."""
-        if self._custom_fields_follower:
-            self._is_gathering = False
-            return self._custom_fields_follower
-
-        if self._is_gathering:
-            self._custom_fields = {}
-        else:
-            self._is_gathering = True
-            # Gather fields
-            self._custom_fields = {
-                k: v.is_custom
-                for k, v in self.fields.items()
-                if isinstance(v, CustomChoiceField)
-            }
-
-        # Separate fields for easier/cheaper access
-        self._custom_fields_follower = [k for k, v in self._custom_fields.items() if v]
-        self._custom_fields_leader = [
-            k for k, v in self._custom_fields.items() if not v
-        ]
-
-        return self._custom_fields_follower
-
-    def build_standard_field(self, field_name, model_field):
-        """Use custom field for custom status model.
-
-        This is required because of DRF overwriting all fields with choice sets.
-        """
-        field_cls, field_kwargs = super().build_standard_field(field_name, model_field)
-        if issubclass(field_cls, ChoiceField) and isinstance(
-            model_field, InvenTreeCustomStatusModelField
-        ):
-            field_cls = CustomChoiceField
-            field_kwargs['choice_mdl'] = model_field.model
-            field_kwargs['choice_field'] = model_field.name
-        elif isinstance(model_field, InvenTreeCustomStatusExtraModelField):
-            field_cls = ExtraCustomChoiceField
-            field_kwargs['choice_mdl'] = model_field.model
-            field_kwargs['choice_field'] = model_field.name
-            field_kwargs['is_custom'] = True
-
-            # Inherit choices from leader
-            self.gather_custom_fields()
-            if field_name in self._custom_fields:
-                leader_field_name = field_name.replace('_custom_key', '')
-                leader_field = self.fields[leader_field_name]
-                if hasattr(leader_field, 'choices'):
-                    field_kwargs['choices'] = list(leader_field.choices.items())
-                elif hasattr(model_field.model, leader_field_name):
-                    leader_model_field = getattr(
-                        model_field.model, leader_field_name
-                    ).field
-                    if hasattr(leader_model_field, 'choices'):
-                        field_kwargs['choices'] = leader_model_field.choices
-
-                if getattr(leader_field, 'read_only', False) is True:
-                    field_kwargs['read_only'] = True
-
-            if 'choices' not in field_kwargs:
-                field_kwargs['choices'] = []
-
-        return field_cls, field_kwargs
 
 
 class InvenTreeModelSerializer(serializers.ModelSerializer):

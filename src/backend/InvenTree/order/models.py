@@ -37,13 +37,13 @@ from common.notifications import InvenTreeNotificationBodies
 from common.settings import get_global_setting
 from company.models import Address, Company, Contact, SupplierPart
 from generic.states import StateTransitionMixin
+from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.exceptions import log_error
 from InvenTree.fields import (
     InvenTreeModelMoneyField,
     InvenTreeURLField,
     RoundingDecimalField,
 )
-from InvenTree.generic_fields import InvenTreeCustomStatusModelField
 from InvenTree.helpers import decimal2string, pui_url
 from InvenTree.helpers_model import notify_responsible
 from order.status_codes import (

@@ -14,6 +14,7 @@ from taggit.serializers import TagListSerializerField
 
 import common.models as common_models
 import common.validators
+import generic.states.custom
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
@@ -330,7 +331,7 @@ class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
 
     model_name = serializers.CharField(read_only=True, source='model.name')
     reference_status = serializers.ChoiceField(
-        choices=common_models.state_reference_mappings()
+        choices=generic.states.custom.state_reference_mappings()
     )
 
 

@@ -2,39 +2,47 @@
 
 from decimal import Decimal
 
-from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.translation import gettext_lazy as _
-
-from django.db import models
-from django.db.models import ExpressionWrapper, F, FloatField
-from django.db.models import Case, Sum, When, Value
-from django.db.models import BooleanField, Q
+from django.db import models, transaction
+from django.db.models import (
+    BooleanField,
+    Case,
+    ExpressionWrapper,
+    F,
+    FloatField,
+    Q,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer, InvenTreeCustomStatusSerializerMixin
-
-import InvenTree.helpers
-from InvenTree.serializers import InvenTreeDecimalField, NotesFieldMixin
-from stock.status_codes import StockStatus
-
-from stock.generators import generate_batch_code
-from stock.models import StockItem, StockLocation
-from stock.serializers import StockItemSerializerBrief, LocationBriefSerializer
-
 import common.models
-from common.serializers import ProjectCodeSerializer
-from common.settings import get_global_setting
-from importer.mixins import DataImportExportSerializerMixin
 import company.serializers
+import InvenTree.helpers
 import part.filters
 import part.serializers as part_serializers
+from common.serializers import ProjectCodeSerializer
+from common.settings import get_global_setting
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
+from importer.mixins import DataImportExportSerializerMixin
+from InvenTree.serializers import (
+    InvenTreeDecimalField,
+    InvenTreeModelSerializer,
+    NotesFieldMixin,
+    UserSerializer,
+)
+from stock.generators import generate_batch_code
+from stock.models import StockItem, StockLocation
+from stock.serializers import LocationBriefSerializer, StockItemSerializerBrief
+from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer
 
-from .models import Build, BuildLine, BuildItem
+from .models import Build, BuildItem, BuildLine
 from .status_codes import BuildStatus
 
 

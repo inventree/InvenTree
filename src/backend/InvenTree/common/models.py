@@ -54,7 +54,7 @@ import plugin.base.barcodes.helper
 import report.helpers
 import users.models
 from generic.states import ColorEnum
-from generic.states.custom import get_custom_classes
+from generic.states.custom import get_custom_classes, state_color_mappings
 from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
@@ -3341,16 +3341,6 @@ class Attachment(InvenTree.models.MetadataMixin, InvenTree.models.InvenTreeModel
             raise ValidationError(_('Invalid model type specified for attachment'))
 
         return model_class.check_attachment_permission(permission, user)
-
-
-def state_color_mappings():
-    """Return a list of custom user state colors."""
-    return [(a.name, a.value) for a in ColorEnum]
-
-
-def state_reference_mappings():
-    """Return a list of custom user state references."""
-    return [(a.__name__, a.__name__) for a in get_custom_classes(include_custom=False)]
 
 
 class InvenTreeCustomUserStateModel(models.Model):

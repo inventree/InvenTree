@@ -2,7 +2,7 @@
 
 from InvenTree.helpers import inheritors
 
-from .states import StatusCode
+from .states import ColorEnum, StatusCode
 
 
 def get_custom_status_labels(include_custom: bool = True):
@@ -24,6 +24,23 @@ def get_status_api_response(base_class=StatusCode, prefix=None):
         }
         for k in get_custom_classes(base_class=base_class, subclass=False)
     }
+
+
+def state_color_mappings():
+    """Return a list of custom user state colors."""
+    return [(a.name, a.value) for a in ColorEnum]
+
+
+def state_reference_mappings():
+    """Return a list of custom user state references."""
+    return [(a.__name__, a.__name__) for a in get_custom_classes(include_custom=False)]
+
+
+def get_logical_value(value, model: str):
+    """Return the state model for the selected value."""
+    from common.models import InvenTreeCustomUserStateModel
+
+    return InvenTreeCustomUserStateModel.objects.get(key=value, model__model=model)
 
 
 def get_custom_classes(

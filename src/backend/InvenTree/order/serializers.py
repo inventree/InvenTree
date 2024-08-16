@@ -32,6 +32,7 @@ from company.serializers import (
     ContactSerializer,
     SupplierPartSerializer,
 )
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import (
@@ -43,7 +44,6 @@ from InvenTree.helpers import (
 )
 from InvenTree.serializers import (
     InvenTreeCurrencySerializer,
-    InvenTreeCustomStatusSerializerMixin,
     InvenTreeDecimalField,
     InvenTreeModelSerializer,
     InvenTreeMoneySerializer,
