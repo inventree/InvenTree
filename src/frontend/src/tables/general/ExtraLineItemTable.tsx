@@ -1,18 +1,29 @@
 import { t } from '@lingui/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
+import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
+import { extraLineItemFields } from '../../forms/CommonForms';
+import {
+  useCreateApiFormModal,
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import {
+  RowDeleteAction,
+  RowDuplicateAction,
+  RowEditAction
+} from '../RowActions';
 
 export default function ExtraLineItemTable({
   endpoint,
@@ -65,14 +76,56 @@ export default function ExtraLineItemTable({
     ];
   }, []);
 
+  const [initialData, setInitialData] = useState<any>({});
+
+  const [selectedLine, setSelectedLine] = useState<number>(0);
+
+  const newLineItem = useCreateApiFormModal({
+    url: endpoint,
+    title: t`Add Line Item`,
+    fields: extraLineItemFields(),
+    initialData: initialData,
+    table: table
+  });
+
+  const editLineItem = useEditApiFormModal({
+    url: endpoint,
+    pk: selectedLine,
+    title: t`Edit Line Item`,
+    fields: extraLineItemFields(),
+    table: table
+  });
+
+  const deleteLineItem = useDeleteApiFormModal({
+    url: endpoint,
+    pk: selectedLine,
+    title: t`Delete Line Item`,
+    table: table
+  });
+
   const rowActions = useCallback(
     (record: any) => {
       return [
         RowEditAction({
-          hidden: !user.hasChangeRole(role)
+          hidden: !user.hasChangeRole(role),
+          onClick: () => {
+            setSelectedLine(record.pk);
+            editLineItem.open();
+          }
+        }),
+        RowDuplicateAction({
+          hidden: !user.hasAddRole(role),
+          onClick: () => {
+            setInitialData({ ...record });
+            newLineItem.open();
+          }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeleteRole(role)
+          hidden: !user.hasDeleteRole(role),
+          onClick: () => {
+            setSelectedLine(record.pk);
+            deleteLineItem.open();
+          }
         })
       ];
     },
@@ -84,12 +137,21 @@ export default function ExtraLineItemTable({
       <AddItemButton
         tooltip={t`Add Extra Line Item`}
         hidden={!user.hasAddRole(role)}
+        onClick={() => {
+          setInitialData({
+            order: orderId
+          });
+          newLineItem.open();
+        }}
       />
     ];
   }, [user, role]);
 
   return (
     <>
+      {newLineItem.modal}
+      {editLineItem.modal}
+      {deleteLineItem.modal}
       <InvenTreeTable
         tableState={table}
         url={apiUrl(endpoint)}
