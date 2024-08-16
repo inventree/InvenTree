@@ -18,28 +18,27 @@
 */
 
 
-// Construct a dynamic API filter for the "issued by" field
-function constructIssuedByFilter() {
+// Construct a dynamic API filter for an "owner"
+function constructOwnerFilter(title) {
     return {
-        title: '{% trans "Issued By" %}',
+        title: title,
         options: function() {
-            let users = {};
-
-            inventreeGet('{% url "api-user-list" %}', {}, {
+            var ownersList = {};
+            inventreeGet('{% url "api-owner-list" %}', {}, {
                 async: false,
                 success: function(response) {
-                    for (let user of response) {
-                        users[user.pk] = {
-                            key: user.pk,
-                            value: user.username
+                    for (var key in response) {
+                        let owner = response[key];
+                        ownersList[owner.pk] = {
+                            key: owner.pk,
+                            value: `${owner.name} (${owner.label})`,
                         };
                     }
                 }
             });
-
-            return users;
-        }
-    }
+            return ownersList;
+        },
+    };
 }
 
 // Construct a dynamic API filter for the "project" field
@@ -549,26 +548,8 @@ function getBuildTableFilters() {
             type: 'bool',
             title: '{% trans "Assigned to me" %}',
         },
-        assigned_to: {
-            title: '{% trans "Responsible" %}',
-            options: function() {
-                var ownersList = {};
-                inventreeGet('{% url "api-owner-list" %}', {}, {
-                    async: false,
-                    success: function(response) {
-                        for (var key in response) {
-                            let owner = response[key];
-                            ownersList[owner.pk] = {
-                                key: owner.pk,
-                                value: `${owner.name} (${owner.label})`,
-                            };
-                        }
-                    }
-                });
-                return ownersList;
-            },
-        },
-        issued_by: constructIssuedByFilter(),
+        assigned_to: constructOwnerFilter('{% trans "Responsible" %}'),
+        issued_by: constructOwnerFilter('{% trans "Issued By" %}'),
     };
 
     if (global_settings.PROJECT_CODES_ENABLED) {
