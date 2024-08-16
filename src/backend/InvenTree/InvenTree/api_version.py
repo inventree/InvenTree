@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 239
+INVENTREE_API_VERSION = 240
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v240 - 2024-08-16 : https://github.com/inventree/InvenTree/pull/7900
+    - Adjust "issued_by" filter for the BuildOrder list endpoint
+    - Adjust "assigned_to" filter for the BuildOrder list endpoint
 
 v239 - 2024-08-15 : https://github.com/inventree/InvenTree/pull/7888
     - Adds "testable" field to the Part model
