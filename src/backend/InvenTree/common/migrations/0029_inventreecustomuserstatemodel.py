@@ -3,7 +3,7 @@
 import django.db.models.deletion
 from django.db import migrations, models
 
-from common.models import state_reference_mappings
+from common.models import state_color_mappings
 
 
 class Migration(migrations.Migration):
@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
                 (
                     "color",
                     models.CharField(
-                        choices=state_reference_mappings(),
+                        choices=state_color_mappings(),
                         default="secondary",
                         help_text="Color that will be displayed in the frontend",
                         max_length=10,
