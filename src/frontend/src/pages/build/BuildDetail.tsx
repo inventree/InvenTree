@@ -11,7 +11,6 @@ import {
   IconListNumbers,
   IconNotes,
   IconPaperclip,
-  IconQrcode,
   IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
@@ -322,7 +321,7 @@ export default function BuildDetail() {
         name: 'test-results',
         label: t`Test Results`,
         icon: <IconChecklist />,
-        hidden: !build.part_detail?.trackable,
+        hidden: !build.part_detail?.testable,
         content: build.pk ? (
           <BuildOrderTestTable buildId={build.pk} partId={build.part} />
         ) : (
@@ -341,7 +340,7 @@ export default function BuildDetail() {
             }}
           />
         ),
-        hidden: !build?.part_detail?.trackable
+        hidden: !build?.part_detail?.testable
       },
       {
         name: 'attachments',
@@ -542,6 +541,8 @@ export default function BuildDetail() {
             title={build.reference}
             subtitle={build.title}
             badges={buildBadges}
+            editAction={editBuild.open}
+            editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
             breadcrumbs={[
               { name: t`Build Orders`, url: '/build' },

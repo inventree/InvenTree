@@ -1297,7 +1297,7 @@ function loadBuildOutputTable(build_info, options={}) {
     });
 
     // Request list of required tests for the part being assembled
-    if (build_info.trackable) {
+    if (build_info.testable) {
         inventreeGet(
             '{% url "api-part-test-template-list" %}',
             {

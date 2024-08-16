@@ -119,7 +119,7 @@ export default function StockDetail() {
         name: 'tests',
         label: `Completed Tests`,
         icon: 'progress',
-        hidden: !part?.trackable
+        hidden: !part?.testable
       },
       {
         type: 'text',
@@ -348,7 +348,7 @@ export default function StockDetail() {
         name: 'testdata',
         label: t`Test Data`,
         icon: <IconChecklist />,
-        hidden: !stockitem?.part_detail?.trackable,
+        hidden: !stockitem?.part_detail?.testable,
         content: stockitem?.pk ? (
           <StockItemTestResultTable
             itemId={stockitem.pk}
@@ -621,6 +621,8 @@ export default function StockDetail() {
           title={t`Stock Item`}
           subtitle={stockitem.part_detail?.full_name}
           imageUrl={stockitem.part_detail?.thumbnail}
+          editAction={editStockItem.open}
+          editEnabled={user.hasChangePermission(ModelType.stockitem)}
           badges={stockBadges}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {

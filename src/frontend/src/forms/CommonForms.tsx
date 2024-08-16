@@ -31,3 +31,18 @@ export function customUnitsFields(): ApiFormFieldSet {
     symbol: {}
   };
 }
+
+export function extraLineItemFields(): ApiFormFieldSet {
+  return {
+    order: {
+      hidden: true
+    },
+    reference: {},
+    description: {},
+    quantity: {},
+    price: {},
+    price_currency: {},
+    notes: {},
+    link: {}
+  };
+}

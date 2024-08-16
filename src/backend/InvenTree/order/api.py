@@ -77,7 +77,7 @@ class OrderFilter(rest_filters.FilterSet):
     """Base class for custom API filters for the OrderList endpoint."""
 
     # Filter against order status
-    status = rest_filters.NumberFilter(label='Order Status', method='filter_status')
+    status = rest_filters.NumberFilter(label=_('Order Status'), method='filter_status')
 
     def filter_status(self, queryset, name, value):
         """Filter by integer status code."""
@@ -85,11 +85,11 @@ class OrderFilter(rest_filters.FilterSet):
 
     # Exact match for reference
     reference = rest_filters.CharFilter(
-        label='Filter by exact reference', field_name='reference', lookup_expr='iexact'
+        label=_('Order Reference'), field_name='reference', lookup_expr='iexact'
     )
 
     assigned_to_me = rest_filters.BooleanFilter(
-        label='assigned_to_me', method='filter_assigned_to_me'
+        label=_('Assigned to me'), method='filter_assigned_to_me'
     )
 
     def filter_assigned_to_me(self, queryset, name, value):
@@ -113,7 +113,7 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.exclude(self.Meta.model.overdue_filter())
 
     outstanding = rest_filters.BooleanFilter(
-        label='outstanding', method='filter_outstanding'
+        label=_('Outstanding'), method='filter_outstanding'
     )
 
     def filter_outstanding(self, queryset, name, value):
@@ -123,11 +123,13 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.exclude(status__in=self.Meta.model.get_status_class().OPEN)
 
     project_code = rest_filters.ModelChoiceFilter(
-        queryset=common.models.ProjectCode.objects.all(), field_name='project_code'
+        queryset=common.models.ProjectCode.objects.all(),
+        field_name='project_code',
+        label=_('Project Code'),
     )
 
     has_project_code = rest_filters.BooleanFilter(
-        label='has_project_code', method='filter_has_project_code'
+        method='filter_has_project_code', label=_('Has Project Code')
     )
 
     def filter_has_project_code(self, queryset, name, value):
@@ -137,7 +139,7 @@ class OrderFilter(rest_filters.FilterSet):
         return queryset.filter(project_code=None)
 
     assigned_to = rest_filters.ModelChoiceFilter(
-        queryset=Owner.objects.all(), field_name='responsible'
+        queryset=Owner.objects.all(), field_name='responsible', label=_('Responsible')
     )
 
 

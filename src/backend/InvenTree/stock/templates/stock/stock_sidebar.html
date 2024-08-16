@@ -8,7 +8,7 @@
 {% trans "Allocations" as text %}
 {% include "sidebar_item.html" with label="allocations" text=text icon="fa-bookmark" %}
 {% endif %}
-{% if item.part.trackable %}
+{% if item.part.testable %}
 {% trans "Test Data" as text %}
 {% include "sidebar_item.html" with label='test-data' text=text icon="fa-vial" %}
 {% endif %}

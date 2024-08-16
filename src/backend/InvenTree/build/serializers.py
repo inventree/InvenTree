@@ -1247,6 +1247,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'reference',
             'consumable',
             'optional',
+            'testable',
             'trackable',
             'inherited',
             'allow_variants',
@@ -1291,6 +1292,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     reference = serializers.CharField(source='bom_item.reference', label=_('Reference'), read_only=True)
     consumable = serializers.BooleanField(source='bom_item.consumable', label=_('Consumable'), read_only=True)
     optional = serializers.BooleanField(source='bom_item.optional', label=_('Optional'), read_only=True)
+    testable = serializers.BooleanField(source='bom_item.sub_part.testable', label=_('Testable'), read_only=True)
     trackable = serializers.BooleanField(source='bom_item.sub_part.trackable', label=_('Trackable'), read_only=True)
     inherited = serializers.BooleanField(source='bom_item.inherited', label=_('Inherited'), read_only=True)
     allow_variants = serializers.BooleanField(source='bom_item.allow_variants', label=_('Allow Variants'), read_only=True)

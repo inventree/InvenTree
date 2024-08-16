@@ -62,6 +62,11 @@ export default function BuildLineTable({
         description: t`Show assembled items`
       },
       {
+        name: 'testable',
+        label: t`Testable`,
+        description: t`Show testable items`
+      },
+      {
         name: 'tracked',
         label: t`Tracked`,
         description: t`Show tracked lines`

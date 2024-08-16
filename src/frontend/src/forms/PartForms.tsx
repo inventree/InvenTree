@@ -13,7 +13,7 @@ export function usePartFields({
 }: {
   create?: boolean;
 }): ApiFormFieldSet {
-  const settings = useGlobalSettingsState.getState();
+  const settings = useGlobalSettingsState();
 
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
@@ -55,6 +55,7 @@ export function usePartFields({
       component: {},
       assembly: {},
       is_template: {},
+      testable: {},
       trackable: {},
       purchaseable: {},
       salable: {},

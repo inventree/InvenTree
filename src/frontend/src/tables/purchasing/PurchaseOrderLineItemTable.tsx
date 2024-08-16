@@ -241,7 +241,7 @@ export function PurchaseOrderLineItemTable({
     supplierId: supplierId
   });
 
-  const [initialData, setInitialData] = useState({});
+  const [initialData, setInitialData] = useState<any>({});
 
   const newLine = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
