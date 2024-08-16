@@ -55,6 +55,7 @@ export function usePartFields({
       component: {},
       assembly: {},
       is_template: {},
+      testable: {},
       trackable: {},
       purchaseable: {},
       salable: {},

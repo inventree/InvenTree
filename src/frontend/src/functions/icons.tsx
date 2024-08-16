@@ -129,6 +129,7 @@ const icons = {
   shipment: IconTruckDelivery,
   scheduling: IconCalendarStats,
   test_templates: IconTestPipe,
+  test: IconTestPipe,
   related_parts: IconLayersLinked,
   attachments: IconPaperclip,
   note: IconNotes,
