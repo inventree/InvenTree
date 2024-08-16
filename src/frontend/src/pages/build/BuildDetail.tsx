@@ -11,7 +11,6 @@ import {
   IconListNumbers,
   IconNotes,
   IconPaperclip,
-  IconQrcode,
   IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
