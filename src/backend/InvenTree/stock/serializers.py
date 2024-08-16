@@ -27,6 +27,7 @@ import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
@@ -327,7 +328,7 @@ class StockItemSerializerBrief(
 @register_importer()
 class StockItemSerializer(
     DataImportExportSerializerMixin,
-    InvenTree.serializers.InvenTreeCustomStatusSerializerMixin,
+    InvenTreeCustomStatusSerializerMixin,
     InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Serializer for a StockItem.
