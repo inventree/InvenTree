@@ -142,6 +142,10 @@ function getVariantsTableFilters() {
             type: 'bool',
             title: '{% trans "Virtual" %}',
         },
+        testable: {
+            type: 'bool',
+            title: '{% trans "Testable" %}',
+        },
         trackable: {
             type: 'bool',
             title: '{% trans "Trackable" %}',
@@ -153,6 +157,10 @@ function getVariantsTableFilters() {
 // Return a dictionary of filters for the BOM table
 function getBOMTableFilters() {
     return {
+        sub_part_testable: {
+            type: 'bool',
+            title: '{% trans "Testable Part" %}',
+        },
         sub_part_trackable: {
             type: 'bool',
             title: '{% trans "Trackable Part" %}',
@@ -784,6 +792,10 @@ function getPartTableFilters() {
         is_template: {
             type: 'bool',
             title: '{% trans "Template" %}',
+        },
+        testable: {
+            type: 'bool',
+            title: '{% trans "Testable" %}',
         },
         trackable: {
             type: 'bool',

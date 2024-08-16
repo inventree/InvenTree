@@ -47,9 +47,14 @@ export default function BuildOutputTable({ build }: { build: any }) {
 
   // Fetch the test templates associated with the partId
   const { data: testTemplates } = useQuery({
-    queryKey: ['buildoutputtests', partId],
+    queryKey: ['buildoutputtests', partId, build],
     queryFn: async () => {
       if (!partId || partId < 0) {
+        return [];
+      }
+
+      // If the part is not testable, return an empty array
+      if (!build?.part_detail?.testable) {
         return [];
       }
 
