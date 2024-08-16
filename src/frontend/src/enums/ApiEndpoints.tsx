@@ -132,6 +132,7 @@ export enum ApiEndpoints {
   purchase_order_cancel = 'order/po/:id/cancel/',
   purchase_order_complete = 'order/po/:id/complete/',
   purchase_order_line_list = 'order/po-line/',
+  purchase_order_extra_line_list = 'order/po-extra-line/',
   purchase_order_receive = 'order/po/:id/receive/',
 
   sales_order_list = 'order/so/',
@@ -141,6 +142,7 @@ export enum ApiEndpoints {
   sales_order_ship = 'order/so/:id/ship/',
   sales_order_complete = 'order/so/:id/complete/',
   sales_order_line_list = 'order/so-line/',
+  sales_order_extra_line_list = 'order/so-extra-line/',
   sales_order_allocation_list = 'order/so-allocation/',
   sales_order_shipment_list = 'order/so/shipment/',
 
@@ -150,6 +152,7 @@ export enum ApiEndpoints {
   return_order_cancel = 'order/ro/:id/cancel/',
   return_order_complete = 'order/ro/:id/complete/',
   return_order_line_list = 'order/ro-line/',
+  return_order_extra_line_list = 'order/ro-extra-line/',
 
   // Template API endpoints
   label_list = 'label/template/',

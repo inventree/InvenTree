@@ -38,6 +38,7 @@ import Select from 'react-select';
 
 import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -314,6 +315,12 @@ export default function PartDetail() {
         type: 'boolean',
         name: 'component',
         label: t`Component Part`
+      },
+      {
+        type: 'boolean',
+        name: 'testable',
+        label: t`Testable Part`,
+        icon: 'test'
       },
       {
         type: 'boolean',
@@ -674,7 +681,7 @@ export default function PartDetail() {
         name: 'test_templates',
         label: t`Test Templates`,
         icon: <IconTestPipe />,
-        hidden: !part.trackable,
+        hidden: !part.testable,
         content: part?.pk ? (
           <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
         ) : (
@@ -685,7 +692,7 @@ export default function PartDetail() {
         name: 'test_statistics',
         label: t`Test Statistics`,
         icon: <IconReportAnalytics />,
-        hidden: !part.trackable,
+        hidden: !part.testable,
         content: part?.pk ? (
           <TestStatisticsTable
             params={{
@@ -973,6 +980,12 @@ export default function PartDetail() {
           })
         ]}
         key="action_dropdown"
+      />,
+      <PrintingActions
+        modelType={ModelType.part}
+        items={[part.pk]}
+        enableReports
+        enableLabels
       />,
       <ActionDropdown
         tooltip={t`Stock Actions`}
