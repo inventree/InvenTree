@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Group, Text } from '@mantine/core';
+import { Alert, Group, Text } from '@mantine/core';
 import {
   IconArrowRight,
   IconCircleMinus,
@@ -246,6 +246,8 @@ export default function BuildLineTable({
 
   const [initialData, setInitialData] = useState<any>({});
 
+  const [selectedLine, setSelectedLine] = useState<number | null>(null);
+
   const newBuildOrder = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Create Build Order`,
@@ -253,6 +255,35 @@ export default function BuildLineTable({
     initialData: initialData,
     follow: true,
     modelType: ModelType.build
+  });
+
+  const deallocateStock = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_deallocate,
+    pk: build.pk,
+    title: t`Deallocate Stock`,
+    fields: {
+      build_line: {
+        hidden: true
+      },
+      output: {
+        hidden: true,
+        value: null
+      }
+    },
+    initialData: {
+      build_line: selectedLine
+    },
+    preFormContent: (
+      <Alert color="red" title={t`Deallocate Stock`}>
+        {selectedLine == undefined ? (
+          <Text>{t`Deallocate all untracked stock for this build order`}</Text>
+        ) : (
+          <Text>{t`Deallocate stock from the selected line item`}</Text>
+        )}
+      </Alert>
+    ),
+    successMessage: t`Stock has been deallocated`,
+    table: table
   });
 
   const rowActions = useCallback(
@@ -298,7 +329,11 @@ export default function BuildLineTable({
           icon: <IconCircleMinus />,
           title: t`Deallocate Stock`,
           hidden: !canDeallocate,
-          color: 'red'
+          color: 'red',
+          onClick: () => {
+            setSelectedLine(record.pk);
+            deallocateStock.open();
+          }
         },
         {
           icon: <IconShoppingCart />,
@@ -335,25 +370,38 @@ export default function BuildLineTable({
         tooltip={t`Auto Allocate Stock`}
         hidden={!visible}
         color="blue"
+        disabled={table.hasSelectedRecords}
+        onClick={() => {
+          // TODO
+        }}
       />,
       <ActionButton
         icon={<IconArrowRight />}
         tooltip={t`Allocate Stock`}
         hidden={!visible}
         color="green"
+        onClick={() => {
+          // TODO
+        }}
       />,
       <ActionButton
         icon={<IconCircleMinus />}
         tooltip={t`Deallocate Stock`}
         hidden={!visible}
+        disabled={table.hasSelectedRecords}
         color="red"
+        onClick={() => {
+          setSelectedLine(null);
+          deallocateStock.open();
+        }}
       />
     ];
-  }, [user, build, buildStatus]);
+  }, [user, build, buildStatus, table.hasSelectedRecords]);
 
   return (
     <>
       {newBuildOrder.modal}
+      {deallocateStock.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.build_line_list)}
         tableState={table}
