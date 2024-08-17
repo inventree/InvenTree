@@ -272,6 +272,12 @@ export default function BuildLineTable({
         record.allocated < record.quantity &&
         record.trackable == hasOutput;
 
+      // Can de-allocate
+      let canDeallocate =
+        user.hasChangeRole(UserRoles.build) &&
+        record.allocated > 0 &&
+        record.trackable == hasOutput;
+
       let canOrder =
         user.hasAddRole(UserRoles.purchase_order) && part.purchaseable;
       let canBuild = user.hasAddRole(UserRoles.build) && part.assembly;
@@ -282,6 +288,12 @@ export default function BuildLineTable({
           title: t`Allocate Stock`,
           hidden: !canAllocate,
           color: 'green'
+        },
+        {
+          icon: <IconCircleMinus />,
+          title: t`Deallocate Stock`,
+          hidden: !canDeallocate,
+          color: 'red'
         },
         {
           icon: <IconShoppingCart />,
@@ -350,8 +362,6 @@ export default function BuildLineTable({
           tableActions: tableActions,
           tableFilters: tableFilters,
           rowActions: rowActions,
-          modelType: ModelType.part,
-          modelField: 'part_detail.pk',
           enableDownload: true,
           enableSelection: true
         }}
