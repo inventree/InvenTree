@@ -257,6 +257,36 @@ export default function BuildLineTable({
     modelType: ModelType.build
   });
 
+  const autoAllocateStock = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_auto_allocate,
+    pk: build.pk,
+    title: t`Allocate Stock`,
+    fields: {
+      location: {
+        filters: {
+          structural: false
+        }
+      },
+      exclude_location: {},
+      interchangeable: {},
+      substitutes: {},
+      optional_items: {}
+    },
+    initialData: {
+      location: build.take_from,
+      interchangeable: true,
+      substitutes: true,
+      optional_items: false
+    },
+    successMessage: t`Auto allocation in progress`,
+    table: table,
+    preFormContent: (
+      <Alert color="green" title={t`Auto Allocate Stock`}>
+        <Text>{t`Automatically allocate stock to this build according to the selected options`}</Text>
+      </Alert>
+    )
+  });
+
   const deallocateStock = useCreateApiFormModal({
     url: ApiEndpoints.build_order_deallocate,
     pk: build.pk,
@@ -370,9 +400,8 @@ export default function BuildLineTable({
         tooltip={t`Auto Allocate Stock`}
         hidden={!visible}
         color="blue"
-        disabled={table.hasSelectedRecords}
         onClick={() => {
-          // TODO
+          autoAllocateStock.open();
         }}
       />,
       <ActionButton
@@ -400,6 +429,7 @@ export default function BuildLineTable({
 
   return (
     <>
+      {autoAllocateStock.modal}
       {newBuildOrder.modal}
       {deallocateStock.modal}
       <InvenTreeTable
