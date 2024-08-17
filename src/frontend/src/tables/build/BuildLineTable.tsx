@@ -195,7 +195,7 @@ export default function BuildLineTable({
         ordering: 'unit_quantity',
         render: (record: any) => {
           return (
-            <Group justify="space-between">
+            <Group justify="space-between" wrap="nowrap">
               <Text>{record.bom_item_detail?.quantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>
@@ -207,9 +207,10 @@ export default function BuildLineTable({
       {
         accessor: 'quantity',
         sortable: true,
+        switchable: false,
         render: (record: any) => {
           return (
-            <Group justify="space-between">
+            <Group justify="space-between" wrap="nowrap">
               <Text>{record.quantity}</Text>
               {record?.part_detail?.units && (
                 <Text size="xs">[{record.part_detail.units}]</Text>
