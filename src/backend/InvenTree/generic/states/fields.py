@@ -14,7 +14,10 @@ from .custom import get_logical_value
 
 
 class CustomChoiceField(serializers.ChoiceField):
-    """Custom Choice Field."""
+    """Custom Choice Field.
+
+    This is not intended to be used directly.
+    """
 
     def __init__(self, choices: Iterable, **kwargs):
         """Initialize the field."""
@@ -70,7 +73,10 @@ class CustomChoiceField(serializers.ChoiceField):
 
 
 class ExtraCustomChoiceField(CustomChoiceField):
-    """Custom Choice Field that returns value of status if empty."""
+    """Custom Choice Field that returns value of status if empty.
+
+    This is not intended to be used directly.
+    """
 
     def to_representation(self, value):
         """Return the value of the status if it is empty."""
@@ -80,7 +86,8 @@ class ExtraCustomChoiceField(CustomChoiceField):
 class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
     """Custom model field for extendable status codes.
 
-    Adds a secondary _custom_key field to the model which can be used to store additional status information.
+    Adds a secondary *_custom_key field to the model which can be used to store additional status information.
+    Models using this model field must also include the InvenTreeCustomStatusSerializerMixin in all serializers that create or update the value.
     """
 
     def deconstruct(self):
@@ -118,11 +125,17 @@ class InvenTreeCustomStatusModelField(models.PositiveIntegerField):
 
 
 class ExtraInvenTreeCustomStatusModelField(models.PositiveIntegerField):
-    """Cusotm field used to detect custom extenteded fields."""
+    """Custom field used to detect custom extenteded fields.
+
+    This is not intended to be used directly, if you want to support custom states in your model use InvenTreeCustomStatusModelField.
+    """
 
 
 class InvenTreeCustomStatusSerializerMixin:
-    """Mixin to ensure custom status fields are set."""
+    """Mixin to ensure custom status fields are set.
+
+    This mixin must be used to ensure that custom status fields are set correctly when updating a model.
+    """
 
     _custom_fields: Optional[list] = None
     _custom_fields_leader: Optional[list] = None
