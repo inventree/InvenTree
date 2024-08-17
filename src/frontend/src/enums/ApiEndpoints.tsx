@@ -71,6 +71,7 @@ export enum ApiEndpoints {
   build_output_scrap = 'build/:id/scrap-outputs/',
   build_output_delete = 'build/:id/delete-outputs/',
   build_order_auto_allocate = 'build/:id/auto-allocate/',
+  build_order_allocate = 'build/:id/allocate/',
   build_order_deallocate = 'build/:id/unallocate/',
   build_line_list = 'build/line/',
   build_item_list = 'build/item/',

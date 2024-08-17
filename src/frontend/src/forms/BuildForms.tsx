@@ -10,7 +10,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -20,6 +20,7 @@ import { ModelType } from '../enums/ModelType';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
+import { useSelectedRows } from '../hooks/UseSelectedRows';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn, StatusColumn } from '../tables/ColumnRenderers';
@@ -234,7 +235,7 @@ function buildOutputFormTable(outputs: any[], onRemove: (output: any) => void) {
               tooltip={t`Remove output`}
               icon={<InvenTreeIcon icon="cancel" />}
               color="red"
-              onClick={() => onRemove(record)}
+              onClick={() => onRemove(record.pk)}
               disabled={outputs.length <= 1}
             />
           )
@@ -253,13 +254,11 @@ export function useCompleteBuildOutputsForm({
   outputs: any[];
   onFormSuccess: (response: any) => void;
 }) {
-  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
-
   const [location, setLocation] = useState<number | null>(null);
 
-  useEffect(() => {
-    setSelectedOutputs(outputs);
-  }, [outputs]);
+  const { selectedRows, removeRow } = useSelectedRows({
+    rows: outputs
+  });
 
   useEffect(() => {
     if (location) {
@@ -271,25 +270,15 @@ export function useCompleteBuildOutputsForm({
     );
   }, [location, build.destination, build.part_detail]);
 
-  // Remove a selected output from the list
-  const removeOutput = useCallback(
-    (output: any) => {
-      setSelectedOutputs(
-        selectedOutputs.filter((item) => item.pk != output.pk)
-      );
-    },
-    [selectedOutputs]
-  );
-
   const preFormContent = useMemo(() => {
-    return buildOutputFormTable(selectedOutputs, removeOutput);
-  }, [selectedOutputs, removeOutput]);
+    return buildOutputFormTable(selectedRows, removeRow);
+  }, [selectedRows, removeRow]);
 
   const buildOutputCompleteFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         hidden: true,
-        value: selectedOutputs.map((output) => {
+        value: selectedRows.map((output: any) => {
           return {
             output: output.pk
           };
@@ -308,7 +297,7 @@ export function useCompleteBuildOutputsForm({
       notes: {},
       accept_incomplete_allocation: {}
     };
-  }, [selectedOutputs, location]);
+  }, [selectedRows, location]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_complete, build.pk),
@@ -321,6 +310,41 @@ export function useCompleteBuildOutputsForm({
   });
 }
 
+/*
+ * Dynamic form for allocating stock against multiple build order line items
+ */
+export function useAllocateStockToBuild({
+  buildId,
+  outputId,
+  build,
+  outputs,
+  onFormSuccess
+}: {
+  buildId: number;
+  outputId?: number | undefined;
+  build: any;
+  outputs: any[];
+  onFormSuccess: (response: any) => void;
+}) {
+  const { selectedRows, removeRow } = useSelectedRows({
+    rows: outputs
+  });
+
+  const buildAllocateFields: ApiFormFieldSet = useMemo(() => {
+    return {};
+  }, []);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.build_order_allocate,
+    pk: buildId,
+    title: t`Allocate Stock`,
+    fields: buildAllocateFields
+  });
+}
+
+/*
+ * Dynamic form for scraping multiple build outputs
+ */
 export function useScrapBuildOutputsForm({
   build,
   outputs,
@@ -331,21 +355,10 @@ export function useScrapBuildOutputsForm({
   onFormSuccess: (response: any) => void;
 }) {
   const [location, setLocation] = useState<number | null>(null);
-  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
 
-  useEffect(() => {
-    setSelectedOutputs(outputs);
-  }, [outputs]);
-
-  // Remove a selected output from the list
-  const removeOutput = useCallback(
-    (output: any) => {
-      setSelectedOutputs(
-        selectedOutputs.filter((item) => item.pk != output.pk)
-      );
-    },
-    [selectedOutputs]
-  );
+  const { selectedRows, removeRow } = useSelectedRows({
+    rows: outputs
+  });
 
   useEffect(() => {
     if (location) {
@@ -358,14 +371,14 @@ export function useScrapBuildOutputsForm({
   }, [location, build.destination, build.part_detail]);
 
   const preFormContent = useMemo(() => {
-    return buildOutputFormTable(selectedOutputs, removeOutput);
-  }, [selectedOutputs, removeOutput]);
+    return buildOutputFormTable(selectedRows, removeRow);
+  }, [selectedRows, removeRow]);
 
   const buildOutputScrapFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         hidden: true,
-        value: selectedOutputs.map((output) => {
+        value: selectedRows.map((output: any) => {
           return {
             output: output.pk,
             quantity: output.quantity
@@ -381,7 +394,7 @@ export function useScrapBuildOutputsForm({
       notes: {},
       discard_allocations: {}
     };
-  }, [location, selectedOutputs]);
+  }, [location, selectedRows]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_scrap, build.pk),
@@ -403,21 +416,9 @@ export function useCancelBuildOutputsForm({
   outputs: any[];
   onFormSuccess: (response: any) => void;
 }) {
-  const [selectedOutputs, setSelectedOutputs] = useState<any[]>([]);
-
-  useEffect(() => {
-    setSelectedOutputs(outputs);
-  }, [outputs]);
-
-  // Remove a selected output from the list
-  const removeOutput = useCallback(
-    (output: any) => {
-      setSelectedOutputs(
-        selectedOutputs.filter((item) => item.pk != output.pk)
-      );
-    },
-    [selectedOutputs]
-  );
+  const { selectedRows, removeRow } = useSelectedRows({
+    rows: outputs
+  });
 
   const preFormContent = useMemo(() => {
     return (
@@ -425,23 +426,23 @@ export function useCancelBuildOutputsForm({
         <Alert color="red" title={t`Cancel Build Outputs`}>
           <Text>{t`Selected build outputs will be deleted`}</Text>
         </Alert>
-        {buildOutputFormTable(selectedOutputs, removeOutput)}
+        {buildOutputFormTable(selectedRows, removeRow)}
       </Stack>
     );
-  }, [selectedOutputs, removeOutput]);
+  }, [selectedRows, removeRow]);
 
   const buildOutputCancelFields: ApiFormFieldSet = useMemo(() => {
     return {
       outputs: {
         hidden: true,
-        value: selectedOutputs.map((output) => {
+        value: selectedRows.map((output: any) => {
           return {
             output: output.pk
           };
         })
       }
     };
-  }, [selectedOutputs]);
+  }, [selectedRows]);
 
   return useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.build_output_delete, build.pk),
