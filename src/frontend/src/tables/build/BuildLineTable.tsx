@@ -2,17 +2,22 @@ import { t } from '@lingui/macro';
 import { Group, Text } from '@mantine/core';
 import {
   IconArrowRight,
+  IconCircleMinus,
   IconShoppingCart,
-  IconTool
+  IconTool,
+  IconTransferIn,
+  IconWand
 } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 
+import { ActionButton } from '../../components/buttons/ActionButton';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -24,15 +29,18 @@ import { TableHoverCard } from '../TableHoverCard';
 
 export default function BuildLineTable({
   buildId,
+  build,
   outputId,
   params = {}
 }: {
   buildId: number;
+  build: any;
   outputId?: number;
   params?: any;
 }) {
   const table = useTable('buildline');
   const user = useUserState();
+  const buildStatus = useStatusCodes({ modelType: ModelType.build });
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -300,6 +308,32 @@ export default function BuildLineTable({
     [user, outputId]
   );
 
+  const tableActions = useMemo(() => {
+    const production = build.status == buildStatus.PRODUCTION;
+    const canEdit = user.hasChangeRole(UserRoles.build);
+    const visible = production && canEdit;
+    return [
+      <ActionButton
+        icon={<IconWand />}
+        tooltip={t`Auto Allocate Stock`}
+        hidden={!visible}
+        color="blue"
+      />,
+      <ActionButton
+        icon={<IconArrowRight />}
+        tooltip={t`Allocate Stock`}
+        hidden={!visible}
+        color="green"
+      />,
+      <ActionButton
+        icon={<IconCircleMinus />}
+        tooltip={t`Deallocate Stock`}
+        hidden={!visible}
+        color="red"
+      />
+    ];
+  }, [user, build, buildStatus]);
+
   return (
     <>
       {newBuildOrder.modal}
@@ -313,11 +347,13 @@ export default function BuildLineTable({
             build: buildId,
             part_detail: true
           },
+          tableActions: tableActions,
           tableFilters: tableFilters,
           rowActions: rowActions,
           modelType: ModelType.part,
           modelField: 'part_detail.pk',
-          enableDownload: true
+          enableDownload: true,
+          enableSelection: true
         }}
       />
     </>

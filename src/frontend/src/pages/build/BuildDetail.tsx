@@ -256,7 +256,7 @@ export default function BuildDetail() {
         label: t`Line Items`,
         icon: <IconListNumbers />,
         content: build?.pk ? (
-          <BuildLineTable buildId={build.pk} />
+          <BuildLineTable build={build} buildId={build.pk} />
         ) : (
           <Skeleton />
         )
