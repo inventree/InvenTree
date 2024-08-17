@@ -8,7 +8,7 @@ msgstr ""
 "Language: pl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-16 18:33\n"
+"PO-Revision-Date: 2024-08-17 18:37\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
@@ -690,7 +690,7 @@ msgstr ""
 
 #: src/components/forms/fields/TableField.tsx:76
 msgid "No entries available"
-msgstr ""
+msgstr "Brak wpisów"
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -698,47 +698,47 @@ msgstr ""
 
 #: src/components/images/Thumbnail.tsx:12
 msgid "Thumbnail"
-msgstr ""
+msgstr "Miniaturka"
 
 #: src/components/importer/ImportDataSelector.tsx:166
 msgid "Importing Rows"
-msgstr ""
+msgstr "Import wierszy"
 
 #: src/components/importer/ImportDataSelector.tsx:167
 msgid "Please wait while the data is imported"
-msgstr ""
+msgstr "Proszę czekać na zaimportowanie danych"
 
 #: src/components/importer/ImportDataSelector.tsx:184
 msgid "An error occurred while importing data"
-msgstr ""
+msgstr "Nastąpił błąd podczas importowania %s"
 
 #: src/components/importer/ImportDataSelector.tsx:205
 msgid "Edit Data"
-msgstr ""
+msgstr "Edytuj dane"
 
 #: src/components/importer/ImportDataSelector.tsx:233
 msgid "Delete Row"
-msgstr ""
+msgstr "Usuń wiersz"
 
 #: src/components/importer/ImportDataSelector.tsx:263
 msgid "Row"
-msgstr ""
+msgstr "Wiersz"
 
 #: src/components/importer/ImportDataSelector.tsx:281
 msgid "Row contains errors"
-msgstr ""
+msgstr "Wiersz zawiera błędy"
 
 #: src/components/importer/ImportDataSelector.tsx:322
 msgid "Accept"
-msgstr ""
+msgstr "Zaakceptuj"
 
 #: src/components/importer/ImportDataSelector.tsx:355
 msgid "Valid"
-msgstr ""
+msgstr "Ważny"
 
 #: src/components/importer/ImportDataSelector.tsx:356
 msgid "Filter by row validation status"
-msgstr ""
+msgstr "Filtruj według stanu walidacji wierszy"
 
 #: src/components/importer/ImportDataSelector.tsx:361
 #: src/tables/build/BuildOutputTable.tsx:263
