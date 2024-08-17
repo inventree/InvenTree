@@ -264,6 +264,11 @@ export default function BuildLineTable({
         return [];
       }
 
+      // Only allow actions when build is in production
+      if (!build?.status || build.status != buildStatus.PRODUCTION) {
+        return [];
+      }
+
       const hasOutput = !!outputId;
 
       // Can allocate
@@ -317,7 +322,7 @@ export default function BuildLineTable({
         }
       ];
     },
-    [user, outputId]
+    [user, outputId, build, buildStatus]
   );
 
   const tableActions = useMemo(() => {
