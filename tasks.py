@@ -1431,7 +1431,7 @@ def docs_server(c, address='localhost:8080', compile_schema=False):
 
 @task
 def clear_generated(c):
-    """Clear generated files from `inv update`."""
+    """Clear generated files from `invoke update`."""
     # pyc/pyo files
     run(c, 'find . -name "*.pyc" -exec rm -f {} +')
     run(c, 'find . -name "*.pyo" -exec rm -f {} +')
