@@ -7,6 +7,13 @@ import { InvenTreeIcon } from '../../../functions/icons';
 import { StandaloneField } from '../StandaloneField';
 import { ApiFormFieldType } from './ApiFormField';
 
+export interface TableFieldRowProps {
+  item: any;
+  idx: number;
+  changeFn: (idx: number, key: string, value: any) => void;
+  removeFn: (idx: number) => void;
+}
+
 export function TableField({
   definition,
   fieldName,
@@ -49,7 +56,7 @@ export function TableField({
             // Table fields require render function
             if (!definition.modelRenderer) {
               return (
-                <Table.Tr>{t`modelRenderer entry required for tables`}</Table.Tr>
+                <Table.Tr key="table-row-no-renderer">{t`modelRenderer entry required for tables`}</Table.Tr>
               );
             }
             return definition.modelRenderer({
@@ -60,7 +67,7 @@ export function TableField({
             });
           })
         ) : (
-          <Table.Tr>
+          <Table.Tr key="table-row-no-entries">
             <Table.Td
               style={{ textAlign: 'center' }}
               colSpan={definition.headers?.length}
