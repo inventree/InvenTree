@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 240
+INVENTREE_API_VERSION = 241
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v241 - 2024-09-18 : https://github.com/inventree/InvenTree/pull/7906
+    - Adjusts required fields for the MeUserDetail endpoint
 
 v240 - 2024-08-16 : https://github.com/inventree/InvenTree/pull/7900
     - Adjust "issued_by" filter for the BuildOrder list endpoint
