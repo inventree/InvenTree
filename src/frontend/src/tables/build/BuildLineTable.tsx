@@ -15,7 +15,10 @@ import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
-import { useBuildOrderFields } from '../../forms/BuildForms';
+import {
+  useAllocateStockToBuildForm,
+  useBuildOrderFields
+} from '../../forms/BuildForms';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
@@ -249,6 +252,8 @@ export default function BuildLineTable({
 
   const [selectedLine, setSelectedLine] = useState<number | null>(null);
 
+  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+
   const newBuildOrder = useCreateApiFormModal({
     url: ApiEndpoints.build_order_list,
     title: t`Create Build Order`,
@@ -286,6 +291,16 @@ export default function BuildLineTable({
         <Text>{t`Automatically allocate stock to this build according to the selected options`}</Text>
       </Alert>
     )
+  });
+
+  const allowcateStock = useAllocateStockToBuildForm({
+    build: build,
+    outputId: null,
+    buildId: build.pk,
+    lineItems: selectedRows,
+    onFormSuccess: () => {
+      table.refreshTable();
+    }
   });
 
   const deallocateStock = useCreateApiFormModal({
@@ -354,7 +369,11 @@ export default function BuildLineTable({
           icon: <IconArrowRight />,
           title: t`Allocate Stock`,
           hidden: !canAllocate,
-          color: 'green'
+          color: 'green',
+          onClick: () => {
+            setSelectedRows([record]);
+            allowcateStock.open();
+          }
         },
         {
           icon: <IconCircleMinus />,
@@ -409,9 +428,15 @@ export default function BuildLineTable({
         icon={<IconArrowRight />}
         tooltip={t`Allocate Stock`}
         hidden={!visible}
+        disabled={!table.hasSelectedRecords}
         color="green"
         onClick={() => {
-          // TODO
+          setSelectedRows(
+            table.selectedRecords.filter(
+              (r) => r.allocated < r.quantity && !r.trackable
+            )
+          );
+          allowcateStock.open();
         }}
       />,
       <ActionButton
@@ -426,12 +451,19 @@ export default function BuildLineTable({
         }}
       />
     ];
-  }, [user, build, buildStatus, table.hasSelectedRecords]);
+  }, [
+    user,
+    build,
+    buildStatus,
+    table.hasSelectedRecords,
+    table.selectedRecords
+  ]);
 
   return (
     <>
       {autoAllocateStock.modal}
       {newBuildOrder.modal}
+      {allowcateStock.modal}
       {deallocateStock.modal}
       <InvenTreeTable
         url={apiUrl(ApiEndpoints.build_line_list)}

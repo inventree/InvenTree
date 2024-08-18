@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Alert, Stack, Text } from '@mantine/core';
+import { Alert, Stack, Table, Text } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,
@@ -11,12 +11,20 @@ import {
 } from '@tabler/icons-react';
 import { DataTable } from 'mantine-datatable';
 import { useEffect, useMemo, useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
-import { ApiFormFieldSet } from '../components/forms/fields/ApiFormField';
+import { StandaloneField } from '../components/forms/StandaloneField';
+import {
+  ApiFormFieldSet,
+  ApiFormFieldType
+} from '../components/forms/fields/ApiFormField';
+import { TableFieldRowProps } from '../components/forms/fields/TableField';
+import { ProgressBar } from '../components/items/ProgressBar';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
+import { resolveItem } from '../functions/conversion';
 import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
@@ -311,38 +319,6 @@ export function useCompleteBuildOutputsForm({
 }
 
 /*
- * Dynamic form for allocating stock against multiple build order line items
- */
-export function useAllocateStockToBuild({
-  buildId,
-  outputId,
-  build,
-  outputs,
-  onFormSuccess
-}: {
-  buildId: number;
-  outputId?: number | undefined;
-  build: any;
-  outputs: any[];
-  onFormSuccess: (response: any) => void;
-}) {
-  const { selectedRows, removeRow } = useSelectedRows({
-    rows: outputs
-  });
-
-  const buildAllocateFields: ApiFormFieldSet = useMemo(() => {
-    return {};
-  }, []);
-
-  return useCreateApiFormModal({
-    url: ApiEndpoints.build_order_allocate,
-    pk: buildId,
-    title: t`Allocate Stock`,
-    fields: buildAllocateFields
-  });
-}
-
-/*
  * Dynamic form for scraping multiple build outputs
  */
 export function useScrapBuildOutputsForm({
@@ -452,5 +428,174 @@ export function useCancelBuildOutputsForm({
     preFormContent: preFormContent,
     onFormSuccess: onFormSuccess,
     successMessage: t`Build outputs have been cancelled`
+  });
+}
+
+function buildAllocationFormTable(
+  outputs: any[],
+  onRemove: (output: any) => void
+) {
+  return (
+    <DataTable
+      idAccessor="pk"
+      records={outputs}
+      columns={[
+        {
+          accessor: 'part',
+          title: t`Part`,
+          render: (record: any) => PartColumn(record.part_detail)
+        },
+        {
+          accessor: 'allocated',
+          title: t`Allocated`,
+          render: (record: any) => (
+            <ProgressBar
+              value={record.allocated}
+              maximum={record.quantity}
+              progressLabel
+            />
+          )
+        },
+        {
+          accessor: 'actions',
+          title: '',
+          render: (record: any) => (
+            <ActionButton
+              key={`remove-line-${record.pk}`}
+              tooltip={t`Remove line`}
+              icon={<InvenTreeIcon icon="cancel" />}
+              color="red"
+              onClick={() => onRemove(record.pk)}
+              disabled={outputs.length <= 1}
+            />
+          )
+        }
+      ]}
+    />
+  );
+}
+
+// Construct a single row in the 'allocate stock to build' table
+function BuildAllocateLineRow({
+  props,
+  record
+}: {
+  props: TableFieldRowProps;
+  record: any;
+}) {
+  const stockField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'related field',
+      api_url: apiUrl(ApiEndpoints.stock_item_list),
+      model: ModelType.stockitem,
+      filters: {
+        part_detail: true,
+        location_detail: true,
+        bom_item: record.bom_item
+      },
+      value: props.item.stock_item,
+      name: 'stock_item',
+      onValueChange: (value: any) => {
+        props.changeFn(props.idx, 'stock_item', value);
+      }
+    };
+  }, [record]);
+
+  const quantityField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'number',
+      name: 'quantity',
+      required: true,
+      value: props.item.quantity,
+      onValueChange: (value: any) => {
+        props.changeFn(props.idx, 'quantity', value);
+      }
+    };
+  }, [record]);
+
+  const partDetail = useMemo(
+    () => PartColumn(record.part_detail),
+    [record.part_detail]
+  );
+
+  return (
+    <>
+      <Table.Tr key={`table-row-${record.pk}`}>
+        <Table.Td>{partDetail}</Table.Td>
+        <Table.Td>
+          <ProgressBar
+            value={record.allocated}
+            maximum={record.quantity}
+            progressLabel
+          />
+        </Table.Td>
+        <Table.Td>
+          <StandaloneField
+            fieldDefinition={stockField}
+            error={props.rowErrors?.stock_item?.message}
+          />
+        </Table.Td>
+        <Table.Td>
+          <StandaloneField
+            fieldDefinition={quantityField}
+            error={props.rowErrors?.quantity?.message}
+          />
+        </Table.Td>
+      </Table.Tr>
+    </>
+  );
+}
+
+/*
+ * Dynamic form for allocating stock against multiple build order line items
+ */
+export function useAllocateStockToBuildForm({
+  buildId,
+  outputId,
+  build,
+  lineItems,
+  onFormSuccess
+}: {
+  buildId: number;
+  outputId?: number | null;
+  build: any;
+  lineItems: any[];
+  onFormSuccess: (response: any) => void;
+}) {
+  const buildAllocateFields: ApiFormFieldSet = useMemo(() => {
+    const fields: ApiFormFieldSet = {
+      items: {
+        field_type: 'table',
+        value: [],
+        headers: [t`Part`, t`Allocated`, t`Stock Item`, t`Quantity`],
+        modelRenderer: (row: TableFieldRowProps) => {
+          // Find the matching record from the passed 'lineItems'
+          const record =
+            lineItems.find((item) => item.pk == row.item.build_line) ?? {};
+          return <BuildAllocateLineRow props={row} record={record} />;
+        }
+      }
+    };
+
+    return fields;
+  }, [lineItems]);
+
+  return useCreateApiFormModal({
+    url: ApiEndpoints.build_order_allocate,
+    pk: buildId,
+    title: t`Allocate Stock`,
+    fields: buildAllocateFields,
+    onFormSuccess: onFormSuccess,
+    initialData: {
+      items: lineItems.map((item) => {
+        return {
+          build_line: item.pk,
+          stock_item: undefined,
+          quantity: Math.max(0, item.quantity - item.allocated),
+          output: null
+        };
+      })
+    },
+    size: '80%'
   });
 }
