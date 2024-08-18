@@ -1,6 +1,6 @@
 import { Trans, t } from '@lingui/macro';
 import { Container, Group, Table } from '@mantine/core';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { FieldValues, UseControllerReturn } from 'react-hook-form';
 
 import { InvenTreeIcon } from '../../../functions/icons';
@@ -10,6 +10,7 @@ import { ApiFormFieldType } from './ApiFormField';
 export interface TableFieldRowProps {
   item: any;
   idx: number;
+  rowErrors: any;
   control: UseControllerReturn<FieldValues, any>;
   changeFn: (idx: number, key: string, value: any) => void;
   removeFn: (idx: number) => void;
@@ -42,6 +43,16 @@ export function TableField({
     field.onChange(val);
   };
 
+  // Extract errors associated with the current row
+  const rowErrors = useCallback(
+    (idx: number) => {
+      if (Array.isArray(error)) {
+        return error[idx];
+      }
+    },
+    [error]
+  );
+
   return (
     <Table highlightOnHover striped aria-label={`table-field-${field.name}`}>
       <Table.Thead>
@@ -60,9 +71,11 @@ export function TableField({
                 <Table.Tr key="table-row-no-renderer">{t`modelRenderer entry required for tables`}</Table.Tr>
               );
             }
+
             return definition.modelRenderer({
               item: item,
               idx: idx,
+              rowErrors: rowErrors(idx),
               control: control,
               changeFn: onRowFieldChange,
               removeFn: removeRow

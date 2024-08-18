@@ -506,7 +506,7 @@ export function ApiForm({
                       // Special handling for "table" fields - they have nested errors
                       v.forEach((item: any, idx: number) => {
                         for (const [key, value] of Object.entries(item)) {
-                          const path = `${k}.${idx}.${key}`;
+                          const path: string = `${k}.${idx}.${key}`;
                           if (Array.isArray(value)) {
                             form.setError(path, { message: value.join(', ') });
                           }
