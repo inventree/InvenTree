@@ -10,6 +10,7 @@ import { ApiFormFieldType } from './ApiFormField';
 export interface TableFieldRowProps {
   item: any;
   idx: number;
+  control: UseControllerReturn<FieldValues, any>;
   changeFn: (idx: number, key: string, value: any) => void;
   removeFn: (idx: number) => void;
 }
@@ -62,6 +63,7 @@ export function TableField({
             return definition.modelRenderer({
               item: item,
               idx: idx,
+              control: control,
               changeFn: onRowFieldChange,
               removeFn: removeRow
             });
