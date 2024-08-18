@@ -8,7 +8,7 @@ msgstr ""
 "Language: uk\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-16 18:33\n"
+"PO-Revision-Date: 2024-08-18 19:00\n"
 "Last-Translator: \n"
 "Language-Team: Ukrainian\n"
 "Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
@@ -28,11 +28,11 @@ msgstr "Сталася помилка під час рендерингу цьо�
 
 #: src/components/DashboardItemProxy.tsx:34
 msgid "Title"
-msgstr ""
+msgstr "Заголовок"
 
 #: src/components/buttons/AdminButton.tsx:80
 msgid "Open in admin interface"
-msgstr ""
+msgstr "Відкрити в інтерфейсі адміністратора"
 
 #: src/components/buttons/CopyButton.tsx:18
 #~ msgid "Copy to clipboard"
@@ -40,23 +40,23 @@ msgstr ""
 
 #: src/components/buttons/CopyButton.tsx:24
 msgid "Copied"
-msgstr ""
+msgstr "Скопійовано"
 
 #: src/components/buttons/CopyButton.tsx:24
 msgid "Copy"
-msgstr ""
+msgstr "Копіювати"
 
 #: src/components/buttons/PrintingActions.tsx:93
 msgid "Print Label"
-msgstr ""
+msgstr "Друк етикетки"
 
 #: src/components/buttons/PrintingActions.tsx:99
 msgid "Print"
-msgstr ""
+msgstr "Друк"
 
 #: src/components/buttons/PrintingActions.tsx:100
 msgid "Label printing completed successfully"
-msgstr ""
+msgstr "Етикетку успішно роздруковано"
 
 #: src/components/buttons/PrintingActions.tsx:106
 #: src/components/buttons/PrintingActions.tsx:144
@@ -85,35 +85,35 @@ msgstr "Надрукувати звіт"
 
 #: src/components/buttons/PrintingActions.tsx:138
 msgid "Generate"
-msgstr ""
+msgstr "Створити"
 
 #: src/components/buttons/PrintingActions.tsx:139
 msgid "Report printing completed successfully"
-msgstr ""
+msgstr "Звіт успішно надруковано"
 
 #: src/components/buttons/PrintingActions.tsx:145
 msgid "The report could not be generated"
-msgstr ""
+msgstr "Не вдалося згенерувати звіт"
 
 #: src/components/buttons/PrintingActions.tsx:173
 msgid "Printing Actions"
-msgstr ""
+msgstr "Дії друку"
 
 #: src/components/buttons/PrintingActions.tsx:178
 msgid "Print Labels"
-msgstr ""
+msgstr "Друк етикеток"
 
 #: src/components/buttons/PrintingActions.tsx:184
 msgid "Print Reports"
-msgstr ""
+msgstr "Друк звітів"
 
 #: src/components/buttons/ScanButton.tsx:15
 msgid "Scan QR code"
-msgstr ""
+msgstr "Сканувати QR-код"
 
 #: src/components/buttons/ScanButton.tsx:20
 msgid "Open QR code scanner"
-msgstr ""
+msgstr "Відкрити сканер QR-коду"
 
 #: src/components/buttons/SpotlightButton.tsx:14
 msgid "Open spotlight"
@@ -125,7 +125,7 @@ msgstr ""
 
 #: src/components/buttons/YesNoButton.tsx:17
 msgid "Fail"
-msgstr ""
+msgstr "Помилка"
 
 #: src/components/buttons/YesNoButton.tsx:33
 #: src/tables/Filter.tsx:51
@@ -139,15 +139,15 @@ msgstr "Ні"
 
 #: src/components/details/Details.tsx:292
 msgid "No name defined"
-msgstr ""
+msgstr "Ім'я не визначено"
 
 #: src/components/details/DetailsImage.tsx:65
 msgid "Remove Image"
-msgstr ""
+msgstr "Видалити зображення"
 
 #: src/components/details/DetailsImage.tsx:68
 msgid "Remove the associated image from this item?"
-msgstr ""
+msgstr "Видалити пов'язане зображення з цього елемента?"
 
 #: src/components/details/DetailsImage.tsx:71
 #: src/forms/StockForms.tsx:533
@@ -155,7 +155,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:306
 #: src/pages/stock/StockDetail.tsx:523
 msgid "Remove"
-msgstr ""
+msgstr "Видалити"
 
 #: src/components/details/DetailsImage.tsx:71
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
@@ -170,15 +170,15 @@ msgstr "Скасувати"
 
 #: src/components/details/DetailsImage.tsx:97
 msgid "Drag and drop to upload"
-msgstr ""
+msgstr "Перетягніть сюди, щоб завантажити"
 
 #: src/components/details/DetailsImage.tsx:100
 msgid "Click to select file(s)"
-msgstr ""
+msgstr "Натисніть, щоб вибрати файл(и)"
 
 #: src/components/details/DetailsImage.tsx:226
 msgid "Clear"
-msgstr ""
+msgstr "Очистити"
 
 #: src/components/details/DetailsImage.tsx:232
 #: src/components/forms/ApiForm.tsx:627
@@ -308,11 +308,11 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:157
 msgid "Save & Reload"
-msgstr ""
+msgstr "Зберегти та перезавантажити"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:189
 msgid "Preview updated"
-msgstr ""
+msgstr "Перегляд оновлено"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:190
 msgid "The preview has been updated successfully."
@@ -324,7 +324,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:266
 msgid "Reload preview"
-msgstr ""
+msgstr "Перезавантажити попередній перегляд"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:267
 msgid "Use the currently stored template from the server"
