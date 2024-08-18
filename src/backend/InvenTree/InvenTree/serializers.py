@@ -406,13 +406,13 @@ class UserSerializer(InvenTreeModelSerializer):
 
     username = serializers.CharField(label=_('Username'), help_text=_('Username'))
     first_name = serializers.CharField(
-        label=_('First Name'), help_text=_('First name of the user', blank=True)
+        label=_('First Name'), help_text=_('First name of the user'), allow_blank=True
     )
     last_name = serializers.CharField(
-        label=_('Last Name'), help_text=_('Last name of the user', blank=True)
+        label=_('Last Name'), help_text=_('Last name of the user'), allow_blank=True
     )
     email = serializers.EmailField(
-        label=_('Email'), help_text=_('Email address of the user', blank=True)
+        label=_('Email'), help_text=_('Email address of the user'), allow_blank=True
     )
 
 
