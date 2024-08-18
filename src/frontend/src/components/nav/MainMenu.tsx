@@ -74,7 +74,7 @@ export function MainMenu() {
             colorScheme === 'dark' ? vars.colors.yellow[4] : vars.colors.blue[6]
           }
         >
-          <Trans>Color Mode</Trans>
+          <Trans>Change Color Mode</Trans>
         </Menu.Item>
         {user?.is_staff && <Menu.Divider />}
         {user?.is_staff && (
