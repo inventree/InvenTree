@@ -157,7 +157,7 @@ jobs:
           dev-install: true
           update: true
       - name: Export API Documentation
-        run: invoke schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
+        run: invoke dev.schema --ignore-warnings --filename src/backend/InvenTree/schema.yml
       - name: Upload schema
         uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # pin@v4.3.6
         with:
@@ -191,7 +191,7 @@ jobs:
           diff --color -u src/backend/InvenTree/schema.yml api.yaml
           diff -u src/backend/InvenTree/schema.yml api.yaml && echo "no difference in API schema " || exit 2
       - name: Check schema - including warnings
-        run: invoke schema
+        run: invoke dev.schema
         continue-on-error: true
       - name: Extract version for publishing
         id: version
@@ -262,9 +262,9 @@ jobs:
         run: git clone --depth 1 https://github.com/inventree/${{ env.wrapper_name }} ./${{ env.wrapper_name }}
       - name: Start InvenTree Server
         run: |
-          invoke delete-data -f
-          invoke import-fixtures
-          invoke server -a 127.0.0.1:12345 &
+          invoke dev.delete-data -f
+          invoke dev.import-fixtures
+          invoke dev.server -a 127.0.0.1:12345 &
           invoke wait
       - name: Run Tests For `${{ env.wrapper_name }}`
         run: |
@@ -302,11 +302,11 @@ jobs:
       - name: Data Export Test
         uses: ./.github/actions/migration
       - name: Test Translations
-        run: invoke translate
+        run: invoke dev.translate
       - name: Check Migration Files
         run: python3 .github/scripts/check_migration_files.py
       - name: Coverage Tests
-        run: invoke test --coverage
+        run: invoke dev.test --coverage
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
         if: always()
@@ -355,7 +355,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke dev.test
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -399,7 +399,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test
+        run: invoke dev.test
       - name: Data Export Test
         uses: ./.github/actions/migration
 
@@ -438,7 +438,7 @@ jobs:
           dev-install: true
           update: true
       - name: Run Tests
-        run: invoke test --migrations --report --coverage
+        run: invoke dev.test --migrations --report --coverage
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@e28ff129e5465c2c0dcc6f003fc735cb6ae0c673 # pin@v4.5.0
         if: always()
@@ -525,9 +525,9 @@ jobs:
           install: true
           update: true
       - name: Set up test data
-        run: invoke setup-test -i
+        run: invoke dev.setup-test -i
       - name: Rebuild thumbnails
-        run: invoke rebuild-thumbnails
+        run: invoke int.rebuild-thumbnails
       - name: Install dependencies
         run: inv frontend-compile
       - name: Install Playwright Browsers

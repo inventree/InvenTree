@@ -9,7 +9,7 @@ export SETUP_ENVS=PATH,APP_HOME,INVENTREE_MEDIA_ROOT,INVENTREE_STATIC_ROOT,INVEN
 
 if test -f "${APP_HOME}/env/bin/pip"; then
   echo "# Clearing precompiled files"
-  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke clear-generated"
+  sudo -u ${APP_USER} --preserve-env=$SETUP_ENVS bash -c "cd ${APP_HOME} && invoke int.clear-generated"
 else
   echo "# No python environment found - skipping"
 fi

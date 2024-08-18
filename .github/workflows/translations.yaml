@@ -38,7 +38,7 @@ jobs:
           npm: true
           apt-dependency: gettext
       - name: Make Translations
-        run: invoke translate
+        run: invoke dev.translate
       - name: Commit files
         run: |
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
