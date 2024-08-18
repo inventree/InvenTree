@@ -8,7 +8,7 @@ msgstr ""
 "Language: pl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-17 18:37\n"
+"PO-Revision-Date: 2024-08-18 19:00\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
@@ -743,7 +743,7 @@ msgstr "Filtruj według stanu walidacji wierszy"
 #: src/components/importer/ImportDataSelector.tsx:361
 #: src/tables/build/BuildOutputTable.tsx:263
 msgid "Complete"
-msgstr ""
+msgstr "Zakończono"
 
 #: src/components/importer/ImportDataSelector.tsx:362
 msgid "Filter by row completion status"
@@ -751,20 +751,20 @@ msgstr ""
 
 #: src/components/importer/ImportDataSelector.tsx:379
 msgid "Import selected rows"
-msgstr ""
+msgstr "Importuj wybrane wiersze"
 
 #: src/components/importer/ImportDataSelector.tsx:394
 msgid "Processing Data"
-msgstr ""
+msgstr "Przetwarzanie danych"
 
 #: src/components/importer/ImporterColumnSelector.tsx:50
 #: src/components/importer/ImporterColumnSelector.tsx:176
 msgid "An error occurred"
-msgstr ""
+msgstr "Wystąpił błąd"
 
 #: src/components/importer/ImporterColumnSelector.tsx:62
 msgid "Select column, or leave blank to ignore this field."
-msgstr ""
+msgstr "Wybierz kolumnę lub pozostaw puste, aby zignorować to pole."
 
 #: src/components/importer/ImporterColumnSelector.tsx:91
 #~ msgid "Select a column from the data file"
@@ -780,51 +780,51 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:182
 msgid "Ignore this field"
-msgstr ""
+msgstr "Ignoruj to pole"
 
 #: src/components/importer/ImporterColumnSelector.tsx:196
 msgid "Mapping data columns to database fields"
-msgstr ""
+msgstr "Odwzorowanie kolumn danych do pól bazy"
 
 #: src/components/importer/ImporterColumnSelector.tsx:201
 msgid "Accept Column Mapping"
-msgstr ""
+msgstr "Akceptuj mapowanie kolumn"
 
 #: src/components/importer/ImporterColumnSelector.tsx:214
 msgid "Database Field"
-msgstr ""
+msgstr "Pole bazy danych"
 
 #: src/components/importer/ImporterColumnSelector.tsx:215
 msgid "Field Description"
-msgstr ""
+msgstr "Opis pola"
 
 #: src/components/importer/ImporterColumnSelector.tsx:216
 msgid "Imported Column"
-msgstr ""
+msgstr "Zaimportowana kolumna"
 
 #: src/components/importer/ImporterColumnSelector.tsx:217
 msgid "Default Value"
-msgstr ""
+msgstr "Wartość domyślna"
 
 #: src/components/importer/ImporterDrawer.tsx:44
 msgid "Upload File"
-msgstr ""
+msgstr "Wyślij plik"
 
 #: src/components/importer/ImporterDrawer.tsx:45
 msgid "Map Columns"
-msgstr ""
+msgstr "Przypisz kolumny"
 
 #: src/components/importer/ImporterDrawer.tsx:46
 msgid "Import Data"
-msgstr ""
+msgstr "Importuj dane"
 
 #: src/components/importer/ImporterDrawer.tsx:47
 msgid "Process Data"
-msgstr ""
+msgstr "Przetwórz dane"
 
 #: src/components/importer/ImporterDrawer.tsx:48
 msgid "Complete Import"
-msgstr ""
+msgstr "Zakończ import"
 
 #: src/components/importer/ImporterDrawer.tsx:97
 #~ msgid "Cancel import session"
@@ -832,44 +832,44 @@ msgstr ""
 
 #: src/components/importer/ImporterDrawer.tsx:104
 msgid "Import Complete"
-msgstr ""
+msgstr "Import zakończony"
 
 #: src/components/importer/ImporterDrawer.tsx:107
 msgid "Data has been imported successfully"
-msgstr ""
+msgstr "Dane zostały zaimportowane"
 
 #: src/components/importer/ImporterDrawer.tsx:109
 #: src/components/importer/ImporterDrawer.tsx:118
 msgid "Close"
-msgstr ""
+msgstr "Zamknij"
 
 #: src/components/importer/ImporterDrawer.tsx:115
 msgid "Unknown Status"
-msgstr ""
+msgstr "Status nieznany"
 
 #: src/components/importer/ImporterDrawer.tsx:116
 msgid "Import session has unknown status"
-msgstr ""
+msgstr "Sesja importu ma nieznany status"
 
 #: src/components/importer/ImporterDrawer.tsx:135
 msgid "Importing Data"
-msgstr ""
+msgstr "Importowanie danych"
 
 #: src/components/importer/ImporterImportProgress.tsx:36
 msgid "Importing Records"
-msgstr ""
+msgstr "Importowanie wpisów"
 
 #: src/components/importer/ImporterImportProgress.tsx:39
 msgid "Imported rows"
-msgstr ""
+msgstr "Zaimportowane wiersze"
 
 #: src/components/items/ActionDropdown.tsx:128
 msgid "Barcode Actions"
-msgstr ""
+msgstr "Akcje kodów kreskowych"
 
 #: src/components/items/ActionDropdown.tsx:147
 msgid "View Barcode"
-msgstr ""
+msgstr "Pokaż kod kreskowy"
 
 #: src/components/items/ActionDropdown.tsx:154
 msgid "View"
@@ -963,19 +963,19 @@ msgstr "Ten panel jest placeholder."
 
 #: src/components/items/QRCode.tsx:87
 msgid "Low (7%)"
-msgstr ""
+msgstr "Niski (7%)"
 
 #: src/components/items/QRCode.tsx:88
 msgid "Medium (15%)"
-msgstr ""
+msgstr "Średni (15%)"
 
 #: src/components/items/QRCode.tsx:89
 msgid "Quartile (25%)"
-msgstr ""
+msgstr "Kwartyl (25%)"
 
 #: src/components/items/QRCode.tsx:90
 msgid "High (30%)"
-msgstr ""
+msgstr "Wysoki (30%)"
 
 #: src/components/items/QRCode.tsx:107
 msgid "Barcode Data:"
@@ -1282,7 +1282,7 @@ msgstr "Pierwsze kroki"
 
 #: src/components/nav/NavHoverMenu.tsx:103
 msgid "Overview over high-level objects, functions and possible usecases."
-msgstr ""
+msgstr "Przegląd obiektów, funkcji i możliwych zastosowań."
 
 #: src/components/nav/NavigationDrawer.tsx:57
 msgid "Navigation"
@@ -1423,33 +1423,33 @@ msgstr ""
 #: src/tables/part/PartPurchaseOrdersTable.tsx:49
 #: src/tables/purchasing/SupplierPartTable.tsx:68
 msgid "Supplier Part"
-msgstr ""
+msgstr "Część dostawcy"
 
 #: src/components/render/ModelType.tsx:46
 msgid "Supplier Parts"
-msgstr ""
+msgstr "Części dostawcy"
 
 #: src/components/render/ModelType.tsx:54
 #: src/pages/company/ManufacturerPartDetail.tsx:132
 #: src/tables/part/PartPurchaseOrdersTable.tsx:55
 msgid "Manufacturer Part"
-msgstr ""
+msgstr "Część Producenta"
 
 #: src/components/render/ModelType.tsx:55
 msgid "Manufacturer Parts"
-msgstr ""
+msgstr "Części producenta"
 
 #: src/components/render/ModelType.tsx:63
 #: src/pages/part/CategoryDetail.tsx:305
 msgid "Part Category"
-msgstr ""
+msgstr "Kategoria części"
 
 #: src/components/render/ModelType.tsx:64
 #: src/pages/part/CategoryDetail.tsx:258
 #: src/pages/part/CategoryDetail.tsx:296
 #: src/pages/part/PartDetail.tsx:1055
 msgid "Part Categories"
-msgstr ""
+msgstr "Kategorie części"
 
 #: src/components/render/ModelType.tsx:72
 #: src/pages/stock/StockDetail.tsx:621
@@ -1522,11 +1522,11 @@ msgstr ""
 #: src/components/render/ModelType.tsx:122
 #: src/pages/company/CompanyDetail.tsx:327
 msgid "Company"
-msgstr ""
+msgstr "Firma"
 
 #: src/components/render/ModelType.tsx:123
 msgid "Companies"
-msgstr ""
+msgstr "Firmy"
 
 #: src/components/render/ModelType.tsx:131
 #: src/tables/TableHoverCard.tsx:58
@@ -1535,12 +1535,12 @@ msgstr ""
 #: src/tables/sales/ReturnOrderTable.tsx:55
 #: src/tables/sales/SalesOrderTable.tsx:62
 msgid "Project Code"
-msgstr ""
+msgstr "Kod projektu"
 
 #: src/components/render/ModelType.tsx:132
 #: src/pages/Index/Settings/AdminCenter/Index.tsx:128
 msgid "Project Codes"
-msgstr ""
+msgstr "Kody projektu"
 
 #: src/components/render/ModelType.tsx:138
 #: src/pages/part/pricing/PurchaseHistoryPanel.tsx:32
@@ -1548,7 +1548,7 @@ msgstr ""
 #: src/tables/part/PartPurchaseOrdersTable.tsx:32
 #: src/tables/stock/StockTrackingTable.tsx:107
 msgid "Purchase Order"
-msgstr ""
+msgstr "Zlecenie zakupu"
 
 #: src/components/render/ModelType.tsx:139
 #: src/pages/Index/Settings/SystemSettings.tsx:255
@@ -1557,15 +1557,15 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:656
 #: src/pages/purchasing/PurchasingIndex.tsx:25
 msgid "Purchase Orders"
-msgstr ""
+msgstr "Zlecenia zakupu"
 
 #: src/components/render/ModelType.tsx:147
 msgid "Purchase Order Line"
-msgstr ""
+msgstr "Pozycja zlecenia zakupu"
 
 #: src/components/render/ModelType.tsx:148
 msgid "Purchase Order Lines"
-msgstr ""
+msgstr "Pozycje zlecenia zakupu"
 
 #: src/components/render/ModelType.tsx:152
 #: src/pages/build/BuildDetail.tsx:152
@@ -1616,19 +1616,19 @@ msgstr ""
 #: src/components/render/ModelType.tsx:182
 #: src/tables/company/AddressTable.tsx:47
 msgid "Address"
-msgstr ""
+msgstr "Adres"
 
 #: src/components/render/ModelType.tsx:183
 #: src/pages/company/CompanyDetail.tsx:250
 msgid "Addresses"
-msgstr ""
+msgstr "Adresy"
 
 #: src/components/render/ModelType.tsx:189
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:184
 #: src/pages/sales/ReturnOrderDetail.tsx:162
 #: src/pages/sales/SalesOrderDetail.tsx:171
 msgid "Contact"
-msgstr ""
+msgstr "Kontakt"
 
 #: src/components/render/ModelType.tsx:190
 #: src/pages/company/CompanyDetail.tsx:244
@@ -1658,7 +1658,7 @@ msgstr "Użytkownicy"
 
 #: src/components/render/ModelType.tsx:210
 msgid "Group"
-msgstr ""
+msgstr "Grupa"
 
 #: src/components/render/ModelType.tsx:211
 #: src/pages/Index/Settings/AdminCenter/UserManagementPanel.tsx:20
@@ -1669,11 +1669,11 @@ msgstr "Grupy"
 
 #: src/components/render/ModelType.tsx:218
 msgid "Import Session"
-msgstr ""
+msgstr "Importuj sesje"
 
 #: src/components/render/ModelType.tsx:219
 msgid "Import Sessions"
-msgstr ""
+msgstr "Importuj sesje"
 
 #: src/components/render/ModelType.tsx:225
 msgid "Label Template"
@@ -1717,7 +1717,7 @@ msgstr "Nieaktywny"
 #: src/tables/bom/BomTable.tsx:203
 #: src/tables/part/PartTable.tsx:134
 msgid "No stock"
-msgstr ""
+msgstr "Brak w magazynie"
 
 #: src/components/render/Part.tsx:30
 #: src/defaults/links.tsx:30
@@ -1779,7 +1779,7 @@ msgstr "Błąd edycji ustawień"
 
 #: src/components/settings/SettingList.tsx:162
 msgid "No settings specified"
-msgstr ""
+msgstr "Nie podano ustawień"
 
 #: src/components/tables/FilterGroup.tsx:29
 #~ msgid "Add table filter"
@@ -2390,7 +2390,7 @@ msgstr ""
 
 #: src/defaults/actions.tsx:59
 msgid "Open the main navigation menu"
-msgstr ""
+msgstr "Otwórz główne menu nawigacji"
 
 #: src/defaults/dashboardItems.tsx:15
 msgid "Subscribed Parts"
@@ -2410,7 +2410,7 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:43
 msgid "Recently Updated"
-msgstr ""
+msgstr "Ostatnia aktualizacja"
 
 #: src/defaults/dashboardItems.tsx:50
 #: src/tables/part/PartTable.tsx:238
@@ -2500,7 +2500,7 @@ msgstr "Zakupy"
 #: src/pages/sales/SalesIndex.tsx:53
 #: src/pages/sales/SalesOrderDetail.tsx:509
 msgid "Sales"
-msgstr ""
+msgstr "Sprzedaże"
 
 #: src/defaults/links.tsx:41
 #: src/defaults/menuItems.tsx:71
@@ -2510,35 +2510,35 @@ msgstr ""
 
 #: src/defaults/links.tsx:55
 msgid "Getting Started"
-msgstr ""
+msgstr "Pierwsze Kroki"
 
 #: src/defaults/links.tsx:56
 msgid "Getting started with InvenTree"
-msgstr ""
+msgstr "Pierwsze kroki z InvenTree"
 
 #: src/defaults/links.tsx:62
 msgid "API"
-msgstr ""
+msgstr "API"
 
 #: src/defaults/links.tsx:63
 msgid "InvenTree API documentation"
-msgstr ""
+msgstr "Dokumentacja API InvenTree"
 
 #: src/defaults/links.tsx:68
 msgid "Developer Manual"
-msgstr ""
+msgstr "Podręcznik programisty"
 
 #: src/defaults/links.tsx:69
 msgid "InvenTree developer manual"
-msgstr ""
+msgstr "Podręcznik programisty InvenTree"
 
 #: src/defaults/links.tsx:74
 msgid "FAQ"
-msgstr ""
+msgstr "FAQ"
 
 #: src/defaults/links.tsx:75
 msgid "Frequently asked questions"
-msgstr ""
+msgstr "Najczęściej zadawane pytania"
 
 #: src/defaults/links.tsx:76
 #~ msgid "Instance"
@@ -2551,7 +2551,7 @@ msgstr ""
 #: src/defaults/links.tsx:85
 #: src/defaults/links.tsx:122
 msgid "System Information"
-msgstr ""
+msgstr "Informacje o systemie"
 
 #: src/defaults/links.tsx:117
 #~ msgid "Licenses for packages used by InvenTree"
@@ -2559,7 +2559,7 @@ msgstr ""
 
 #: src/defaults/links.tsx:134
 msgid "Licenses"
-msgstr ""
+msgstr "Licencje"
 
 #: src/defaults/menuItems.tsx:7
 #~ msgid "Open sourcea"
@@ -2679,11 +2679,11 @@ msgstr ""
 
 #: src/forms/BuildForms.tsx:158
 msgid "Next serial number"
-msgstr ""
+msgstr "Następny numer seryjny"
 
 #: src/forms/BuildForms.tsx:162
 msgid "Latest serial number"
-msgstr ""
+msgstr "Ostatni numer seryjny"
 
 #: src/forms/BuildForms.tsx:234
 msgid "Remove output"
@@ -2761,11 +2761,11 @@ msgstr ""
 #: src/forms/PurchaseOrderForms.tsx:343
 #: src/forms/PurchaseOrderForms.tsx:435
 msgid "Scan Barcode"
-msgstr ""
+msgstr "Zeskanuj kod kreskowy"
 
 #: src/forms/PurchaseOrderForms.tsx:388
 msgid "Set Location"
-msgstr ""
+msgstr "Ustaw lokalizację"
 
 #: src/forms/PurchaseOrderForms.tsx:396
 msgid "Assign Batch Code{0}"
@@ -2782,12 +2782,12 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:418
 msgid "Add Note"
-msgstr ""
+msgstr "Dodaj notatkę"
 
 #: src/forms/PurchaseOrderForms.tsx:444
 #: src/forms/StockForms.tsx:428
 msgid "Remove item from list"
-msgstr ""
+msgstr "Usuń element z listy"
 
 #: src/forms/PurchaseOrderForms.tsx:471
 #: src/forms/StockForms.tsx:499
@@ -2806,7 +2806,7 @@ msgstr "Lokalizacja"
 
 #: src/forms/PurchaseOrderForms.tsx:486
 msgid "Store at default location"
-msgstr ""
+msgstr "Zapisz w domyślnej lokalizacji"
 
 #: src/forms/PurchaseOrderForms.tsx:499
 msgid "Store at line item destination"
@@ -2828,7 +2828,7 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:535
 msgid "Serial numbers"
-msgstr ""
+msgstr "Numery seryjne"
 
 #: src/forms/PurchaseOrderForms.tsx:544
 #: src/forms/StockForms.tsx:443
@@ -2837,7 +2837,7 @@ msgstr ""
 #: src/pages/stock/StockDetail.tsx:243
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:189
 msgid "Packaging"
-msgstr ""
+msgstr "Opakowanie"
 
 #: src/forms/PurchaseOrderForms.tsx:556
 #: src/pages/build/BuildDetail.tsx:108
@@ -2912,7 +2912,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:124
 msgid "Serial Numbers"
-msgstr ""
+msgstr "Numery seryjne"
 
 #: src/forms/StockForms.tsx:125
 msgid "Enter serial numbers for new stock (or leave blank)"
