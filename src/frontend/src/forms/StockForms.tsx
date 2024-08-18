@@ -322,13 +322,6 @@ function StockOperationsRow({
     [item]
   );
 
-  const changeSubItem = useCallback(
-    (key: string, value: any) => {
-      input.changeFn(input.idx, key, value);
-    },
-    [input]
-  );
-
   const removeAndRefresh = () => {
     input.removeFn(input.idx);
   };
