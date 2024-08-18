@@ -495,11 +495,22 @@ function BuildAllocateLineRow({
       },
       value: props.item.stock_item,
       name: 'stock_item',
-      onValueChange: (value: any) => {
+      onValueChange: (value: any, instance: any) => {
         props.changeFn(props.idx, 'stock_item', value);
+
+        // Update the allocated quantity based on the selected stock item
+        if (instance) {
+          let available = instance.quantity - instance.allocated;
+
+          props.changeFn(
+            props.idx,
+            'quantity',
+            Math.min(props.item.quantity, available)
+          );
+        }
       }
     };
-  }, [record]);
+  }, [props]);
 
   const quantityField: ApiFormFieldType = useMemo(() => {
     return {
@@ -511,7 +522,7 @@ function BuildAllocateLineRow({
         props.changeFn(props.idx, 'quantity', value);
       }
     };
-  }, [record]);
+  }, [props]);
 
   const partDetail = useMemo(
     () => PartColumn(record.part_detail),
