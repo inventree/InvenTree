@@ -402,17 +402,17 @@ class UserSerializer(InvenTreeModelSerializer):
         model = User
         fields = ['pk', 'username', 'first_name', 'last_name', 'email']
 
-        read_only_fields = ['username']
+        read_only_fields = ['username', 'email']
 
     username = serializers.CharField(label=_('Username'), help_text=_('Username'))
     first_name = serializers.CharField(
-        label=_('First Name'), help_text=_('First name of the user')
+        label=_('First Name'), help_text=_('First name of the user', blank=True)
     )
     last_name = serializers.CharField(
-        label=_('Last Name'), help_text=_('Last name of the user')
+        label=_('Last Name'), help_text=_('Last name of the user', blank=True)
     )
     email = serializers.EmailField(
-        label=_('Email'), help_text=_('Email address of the user')
+        label=_('Email'), help_text=_('Email address of the user', blank=True)
     )
 
 
