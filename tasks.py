@@ -10,7 +10,7 @@ import sys
 from pathlib import Path
 from platform import python_version
 
-from invoke import task
+from invoke import Collection, task
 
 
 def checkPythonVersion():
@@ -367,7 +367,7 @@ def translate_stats(c):
     The file generated from this is needed for the UI.
     """
     # Recompile the translation files (.mo)
-    # We do not run 'invoke translate' here, as that will touch the source (.po) files too!
+    # We do not run 'invoke dev.translate' here, as that will touch the source (.po) files too!
     try:
         manage(c, 'compilemessages', pty=True)
     except Exception:
@@ -1441,3 +1441,54 @@ def clear_generated(c):
     # Generated translations
     run(c, 'find . -name "django.mo" -exec rm -f {} +')
     run(c, 'find . -name "messages.mo" -exec rm -f {} +')
+
+
+# Collection sorting
+dev = Collection(
+    delete_data,
+    docs_server,
+    frontend_dev,
+    gunicorn,
+    import_fixtures,
+    schema,
+    server,
+    setup_dev,
+    setup_test,
+    test,
+    test_translations,
+    translate,
+    worker,
+)
+int = Collection(
+    clean_settings,
+    clear_generated,
+    export_settings_definitions,
+    frontend_build,
+    frontend_check,
+    frontend_compile,
+    frontend_install,
+    frontend_trans,
+    render_js_files,
+    rebuild_models,
+    rebuild_thumbnails,
+    showmigrations,
+    translate_stats,
+)
+ns = Collection(
+    backup,
+    export_records,
+    frontend_download,
+    import_records,
+    install,
+    migrate,
+    plugins,
+    remove_mfa,
+    restore,
+    static,
+    superuser,
+    update,
+    version,
+    wait,
+)
+ns.add_collection(dev, 'dev')
+ns.add_collection(int, 'int')
