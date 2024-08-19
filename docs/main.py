@@ -16,7 +16,7 @@ global USER_SETTINGS
 here = os.path.dirname(__file__)
 settings_file = os.path.join(here, 'inventree_settings.json')
 
-with open(settings_file) as sf:
+with open(settings_file, encoding='utf-8') as sf:
     settings = json.load(sf)
 
     GLOBAL_SETTINGS = settings['global']
@@ -27,7 +27,7 @@ def get_repo_url(raw=False):
     """Return the repository URL for the current project."""
     mkdocs_yml = os.path.join(os.path.dirname(__file__), 'mkdocs.yml')
 
-    with open(mkdocs_yml) as f:
+    with open(mkdocs_yml, encoding='utf-8') as f:
         mkdocs_config = yaml.safe_load(f)
         repo_name = mkdocs_config['repo_name']
 
@@ -47,7 +47,7 @@ def check_link(url) -> bool:
 
     # Keep a local cache file of URLs we have already checked
     if os.path.exists(CACHE_FILE):
-        with open(CACHE_FILE) as f:
+        with open(CACHE_FILE, encoding='utf-8') as f:
             cache = f.read().splitlines()
 
         if url in cache:
@@ -59,7 +59,7 @@ def check_link(url) -> bool:
         response = requests.head(url, timeout=5000)
         if response.status_code == 200:
             # Update the cache file
-            with open(CACHE_FILE, 'a') as f:
+            with open(CACHE_FILE, 'a', encoding='utf-8') as f:
                 f.write(f'{url}\n')
 
             return True
@@ -177,7 +177,7 @@ def define_env(env):
 
         assert subprocess.call(command, shell=True) == 0
 
-        with open(output) as f:
+        with open(output, encoding='utf-8') as f:
             content = f.read()
 
         return content
@@ -214,7 +214,7 @@ def define_env(env):
         if not os.path.exists(path):
             raise FileNotFoundError(f'Required file {path} does not exist.')
 
-        with open(path) as f:
+        with open(path, encoding='utf-8') as f:
             content = f.read()
 
         data = f'??? abstract "{title}"\n\n'

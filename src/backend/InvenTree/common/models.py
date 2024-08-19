@@ -2060,7 +2060,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'description': _(
                 'Check that all plugins are installed on startup - enable in container environments'
             ),
-            'default': str(os.getenv('INVENTREE_DOCKER', False)).lower()
+            'default': str(os.getenv('INVENTREE_DOCKER', 'False')).lower()
             in ['1', 'true'],
             'validator': bool,
             'requires_restart': True,

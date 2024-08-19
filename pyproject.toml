@@ -20,13 +20,18 @@ src = ["src/backend/InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "RUF", "UP", "W"]
+select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "PLE", "PLW", "RUF", "UP", "W"]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff
 # - S # for security stuff (bandit)
 
 ignore = [
+    "PLE1205",
+    # - PLE1205 - Too many arguments for logging format string
+    "PLW2901",
+    # - PLW2901 - Outer {outer_kind} variable {name} overwritten by inner {inner_kind} target
+    "PLW0602","PLW0603","PLW0604",  # global variable things
     "RUF015",
     # - RUF015 - Prefer next({iterable}) over single element slice
     "RUF012",

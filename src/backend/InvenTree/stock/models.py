@@ -41,7 +41,7 @@ from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from order.status_codes import SalesOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
-from stock import models as StockModels
+from stock import models as StockModels  # noqa: PLW0406
 from stock.generators import generate_batch_code
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
