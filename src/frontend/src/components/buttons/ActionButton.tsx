@@ -12,7 +12,7 @@ export type ActionButtonProps = {
   size?: number | string;
   radius?: number | string;
   disabled?: boolean;
-  onClick: () => void;
+  onClick: (event?: any) => void;
   hidden?: boolean;
   tooltipAlignment?: FloatingPosition;
 };
@@ -41,7 +41,9 @@ export function ActionButton(props: ActionButtonProps) {
           aria-label={`action-button-${identifierString(
             props.tooltip ?? props.text ?? ''
           )}`}
-          onClick={props.onClick}
+          onClick={() => {
+            props.onClick();
+          }}
           variant={props.variant ?? 'transparent'}
         >
           <Group gap="xs" wrap="nowrap">

@@ -21,6 +21,7 @@ import { TableColumn } from '../Column';
 import { BooleanColumn, PartColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function BuildLineTable({

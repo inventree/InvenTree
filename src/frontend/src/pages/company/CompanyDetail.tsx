@@ -37,7 +37,10 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { companyFields } from '../../forms/CompanyForms';
-import { useEditApiFormModal } from '../../hooks/UseForm';
+import {
+  useDeleteApiFormModal,
+  useEditApiFormModal
+} from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
 import { useUserState } from '../../states/UserState';
 import { AddressTable } from '../../tables/company/AddressTable';
@@ -289,6 +292,13 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
     onFormSuccess: refreshInstance
   });
 
+  const deleteCompany = useDeleteApiFormModal({
+    url: ApiEndpoints.company_list,
+    pk: company?.pk,
+    title: t`Delete Company`,
+    onFormSuccess: refreshInstance
+  });
+
   const companyActions = useMemo(() => {
     return [
       <AdminButton model={ModelType.company} pk={company.pk} />,
@@ -301,7 +311,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             onClick: () => editCompany.open()
           }),
           DeleteItemAction({
-            hidden: !user.hasDeleteRole(UserRoles.purchase_order)
+            hidden: !user.hasDeleteRole(UserRoles.purchase_order),
+            onClick: () => deleteCompany.open()
           })
         ]}
       />
@@ -321,6 +332,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
   return (
     <>
       {editCompany.modal}
+      {deleteCompany.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">
           <PageDetail

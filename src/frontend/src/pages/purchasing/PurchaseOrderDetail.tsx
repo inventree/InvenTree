@@ -39,6 +39,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -396,10 +397,12 @@ export default function PurchaseOrderDetail() {
             pk: order.pk
           }),
           LinkBarcodeAction({
-            hidden: order?.barcode_hash
+            hidden: order?.barcode_hash,
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
-            hidden: !order?.barcode_hash
+            hidden: !order?.barcode_hash,
+            onClick: notYetImplemented
           })
         ]}
       />,

@@ -23,8 +23,8 @@ import { InvenTreeIcon } from '../../functions/icons';
 import { InvenTreeQRCode } from './QRCode';
 
 export type ActionDropdownItem = {
-  icon: ReactNode;
-  name: string;
+  icon?: ReactNode;
+  name?: string;
   tooltip?: string;
   disabled?: boolean;
   hidden?: boolean;
