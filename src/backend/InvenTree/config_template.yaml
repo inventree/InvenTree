@@ -38,6 +38,9 @@ debug: True
 # Options: DEBUG / INFO / WARNING / ERROR / CRITICAL
 log_level: WARNING
 
+# Configure if logs should be output in JSON format
+# Use environment variable INVENTREE_JSON_LOG
+json_log: False
 # Enable database-level logging, or use the environment variable INVENTREE_DB_LOGGING
 db_logging: False
 

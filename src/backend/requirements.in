@@ -26,6 +26,7 @@ django-q-sentry                         # sentry.io integration for django-q
 django-sesame                           # Magic link authentication
 django-sql-utils                        # Advanced query annotation / aggregation
 django-sslserver                        # Secure HTTP development server
+django-structlog                        # Structured logging
 django-stdimage                         # Advanced ImageField management
 django-taggit                           # Tagging support
 django-user-sessions                    # user sessions in DB
