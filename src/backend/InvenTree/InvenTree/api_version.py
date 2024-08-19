@@ -1,12 +1,33 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 235
+INVENTREE_API_VERSION = 241
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v241 - 2024-09-18 : https://github.com/inventree/InvenTree/pull/7906
+    - Adjusts required fields for the MeUserDetail endpoint
+
+v240 - 2024-08-16 : https://github.com/inventree/InvenTree/pull/7900
+    - Adjust "issued_by" filter for the BuildOrder list endpoint
+    - Adjust "assigned_to" filter for the BuildOrder list endpoint
+
+v239 - 2024-08-15 : https://github.com/inventree/InvenTree/pull/7888
+    - Adds "testable" field to the Part model
+    - Adds associated filters to various API endpoints
+
+v238 - 2024-08-14 : https://github.com/inventree/InvenTree/pull/7874
+    - Add "assembly" filter to BuildLine API endpoint
+
+v237 - 2024-08-13 : https://github.com/inventree/InvenTree/pull/7863
+    - Reimplement "bulk delete" operation for Attachment model
+    - Fix permission checks for Attachment API endpoints
+
+v236 - 2024-08-10 : https://github.com/inventree/InvenTree/pull/7844
+    - Adds "supplier_name" to the PurchaseOrder API serializer
 
 v235 - 2024-08-08 : https://github.com/inventree/InvenTree/pull/7837
     - Adds "on_order" quantity to SalesOrderLineItem serializer

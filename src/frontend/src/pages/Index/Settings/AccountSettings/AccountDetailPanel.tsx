@@ -17,8 +17,12 @@ export function AccountDetailPanel() {
   const form = useForm({ initialValues: user });
   const [editing, setEditing] = useToggle([false, true] as const);
   function SaveData(values: any) {
+    // copy values over to break form rendering link
+    const urlVals = { ...values };
+    urlVals.is_active = true;
+    // send
     api
-      .put(apiUrl(ApiEndpoints.user_me), values)
+      .put(apiUrl(ApiEndpoints.user_me), urlVals)
       .then((res) => {
         if (res.status === 200) {
           setEditing();

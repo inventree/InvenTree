@@ -21,6 +21,7 @@ import {
   useDeleteApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
+import useStatusCodes from '../../hooks/UseStatusCodes';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
@@ -36,6 +37,7 @@ import {
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
+  RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
@@ -48,11 +50,13 @@ import { TableHoverCard } from '../TableHoverCard';
 export function PurchaseOrderLineItemTable({
   order,
   orderId,
+  currency,
   supplierId,
   params
 }: {
   order: any;
   orderId: number;
+  currency: string;
   supplierId?: number;
   params?: any;
 }) {
@@ -240,13 +244,16 @@ export function PurchaseOrderLineItemTable({
     supplierId: supplierId
   });
 
-  const [initialData, setInitialData] = useState({});
+  const [initialData, setInitialData] = useState<any>({});
 
   const newLine = useCreateApiFormModal({
     url: ApiEndpoints.purchase_order_line_list,
     title: t`Add Line Item`,
     fields: addPurchaseOrderFields,
-    initialData: initialData,
+    initialData: {
+      ...initialData,
+      purchase_price_currency: currency
+    },
     table: table
   });
 
@@ -273,13 +280,23 @@ export function PurchaseOrderLineItemTable({
     table: table
   });
 
+  const poStatus = useStatusCodes({ modelType: ModelType.purchaseorder });
+
+  const orderOpen: boolean = useMemo(() => {
+    return (
+      order.status == poStatus.PENDING ||
+      order.status == poStatus.PLACED ||
+      order.status == poStatus.ON_HOLD
+    );
+  }, [order, poStatus]);
+
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
       return [
         {
-          hidden: received,
+          hidden: received || !orderOpen,
           title: t`Receive line item`,
           icon: <IconSquareArrowRight />,
           color: 'green',
@@ -296,7 +313,7 @@ export function PurchaseOrderLineItemTable({
           }
         }),
         RowDuplicateAction({
-          hidden: !user.hasAddRole(UserRoles.purchase_order),
+          hidden: !orderOpen || !user.hasAddRole(UserRoles.purchase_order),
           onClick: () => {
             setInitialData({ ...record });
             newLine.open();
@@ -311,14 +328,14 @@ export function PurchaseOrderLineItemTable({
         })
       ];
     },
-    [orderId, user]
+    [orderId, user, orderOpen]
   );
 
   // Custom table actions
   const tableActions = useMemo(() => {
     return [
       <ActionButton
-        hidden={!user.hasAddRole(UserRoles.purchase_order)}
+        hidden={!orderOpen || !user.hasAddRole(UserRoles.purchase_order)}
         tooltip={t`Import Line Items`}
         icon={<IconFileArrowLeft />}
         onClick={() => importLineItems.open()}
@@ -331,16 +348,17 @@ export function PurchaseOrderLineItemTable({
           });
           newLine.open();
         }}
-        hidden={!user?.hasAddRole(UserRoles.purchase_order)}
+        hidden={!orderOpen || !user?.hasAddRole(UserRoles.purchase_order)}
       />,
       <ActionButton
         text={t`Receive items`}
         icon={<IconSquareArrowRight />}
         onClick={() => receiveLineItems.open()}
         disabled={table.selectedRecords.length === 0}
+        hidden={!orderOpen || !user.hasChangeRole(UserRoles.purchase_order)}
       />
     ];
-  }, [orderId, user, table]);
+  }, [orderId, user, table, orderOpen]);
 
   return (
     <>

@@ -133,7 +133,11 @@ export function SearchDrawer({
     return [
       {
         model: ModelType.part,
-        parameters: {},
+        parameters: {
+          active: userSettings.isSet('SEARCH_HIDE_INACTIVE_PARTS')
+            ? true
+            : undefined
+        },
         enabled:
           user.hasViewRole(UserRoles.part) &&
           userSettings.isSet('SEARCH_PREVIEW_SHOW_PARTS')
@@ -173,7 +177,10 @@ export function SearchDrawer({
         model: ModelType.stockitem,
         parameters: {
           part_detail: true,
-          location_detail: true
+          location_detail: true,
+          in_stock: userSettings.isSet('SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK')
+            ? true
+            : undefined
         },
         enabled:
           user.hasViewRole(UserRoles.stock) &&
@@ -206,7 +213,12 @@ export function SearchDrawer({
       {
         model: ModelType.purchaseorder,
         parameters: {
-          supplier_detail: true
+          supplier_detail: true,
+          outstanding: userSettings.isSet(
+            'SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS'
+          )
+            ? true
+            : undefined
         },
         enabled:
           user.hasViewRole(UserRoles.purchase_order) &&
@@ -215,7 +227,12 @@ export function SearchDrawer({
       {
         model: ModelType.salesorder,
         parameters: {
-          customer_detail: true
+          customer_detail: true,
+          outstanding: userSettings.isSet(
+            'SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS'
+          )
+            ? true
+            : undefined
         },
         enabled:
           user.hasViewRole(UserRoles.sales_order) &&
@@ -224,7 +241,12 @@ export function SearchDrawer({
       {
         model: ModelType.returnorder,
         parameters: {
-          customer_detail: true
+          customer_detail: true,
+          outstanding: userSettings.isSet(
+            'SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS'
+          )
+            ? true
+            : undefined
         },
         enabled:
           user.hasViewRole(UserRoles.return_order) &&
@@ -250,7 +272,7 @@ export function SearchDrawer({
 
     let params: any = {
       offset: 0,
-      limit: 10, // TODO: Make this configurable (based on settings)
+      limit: userSettings.getSetting('SEARCH_PREVIEW_RESULTS', '10'),
       search: searchText,
       search_regex: searchRegex,
       search_whole: searchWhole

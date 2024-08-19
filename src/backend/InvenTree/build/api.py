@@ -37,7 +37,6 @@ class BuildFilter(rest_filters.FilterSet):
             'parent',
             'sales_order',
             'part',
-            'issued_by',
         ]
 
     status = rest_filters.NumberFilter(label='Status')
@@ -58,7 +57,10 @@ class BuildFilter(rest_filters.FilterSet):
             return queryset.filter(Build.OVERDUE_FILTER)
         return queryset.exclude(Build.OVERDUE_FILTER)
 
-    assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
+    assigned_to_me = rest_filters.BooleanFilter(
+        label=_('Assigned to me'),
+        method='filter_assigned_to_me'
+    )
 
     def filter_assigned_to_me(self, queryset, name, value):
         """Filter by orders which are assigned to the current user."""
@@ -71,10 +73,33 @@ class BuildFilter(rest_filters.FilterSet):
             return queryset.filter(responsible__in=owners)
         return queryset.exclude(responsible__in=owners)
 
-    assigned_to = rest_filters.NumberFilter(label='responsible', method='filter_responsible')
+    issued_by = rest_filters.ModelChoiceFilter(
+        queryset=Owner.objects.all(),
+        label=_('Issued By'),
+        method='filter_issued_by'
+    )
 
-    def filter_responsible(self, queryset, name, value):
+    def filter_issued_by(self, queryset, name, owner):
+        """Filter by 'owner' which issued the order."""
+
+        if owner.label() == 'user':
+            user = User.objects.get(pk=owner.owner_id)
+            return queryset.filter(issued_by=user)
+        elif owner.label() == 'group':
+            group = User.objects.filter(groups__pk=owner.owner_id)
+            return queryset.filter(issued_by__in=group)
+        else:
+            return queryset.none()
+
+    assigned_to = rest_filters.ModelChoiceFilter(
+        queryset=Owner.objects.all(),
+        field_name='responsible',
+        label=_('Assigned To')
+    )
+
+    def filter_responsible(self, queryset, name, owner):
         """Filter by orders which are assigned to the specified owner."""
+
         owners = list(Owner.objects.filter(pk=value))
 
         # if we query by a user, also find all ownerships through group memberships
@@ -290,7 +315,9 @@ class BuildLineFilter(rest_filters.FilterSet):
     # Fields on related models
     consumable = rest_filters.BooleanFilter(label=_('Consumable'), field_name='bom_item__consumable')
     optional = rest_filters.BooleanFilter(label=_('Optional'), field_name='bom_item__optional')
+    assembly = rest_filters.BooleanFilter(label=_('Assembly'), field_name='bom_item__sub_part__assembly')
     tracked = rest_filters.BooleanFilter(label=_('Tracked'), field_name='bom_item__sub_part__trackable')
+    testable = rest_filters.BooleanFilter(label=_('Testable'), field_name='bom_item__sub_part__testable')
 
     allocated = rest_filters.BooleanFilter(label=_('Allocated'), method='filter_allocated')
 

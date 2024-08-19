@@ -682,6 +682,18 @@ def clear_user_role_cache(user: User):
             cache.delete(key)
 
 
+def check_user_permission(user: User, model, permission):
+    """Check if the user has a particular permission against a given model type.
+
+    Arguments:
+        user: The user object to check
+        model: The model class to check (e.g. Part)
+        permission: The permission to check (e.g. 'view' / 'delete')
+    """
+    permission_name = f'{model._meta.app_label}.{permission}_{model._meta.model_name}'
+    return user.has_perm(permission_name)
+
+
 def check_user_role(user: User, role, permission):
     """Check if a user has a particular role:permission combination.
 

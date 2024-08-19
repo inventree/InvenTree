@@ -8,7 +8,6 @@ from pathlib import Path
 from django.conf import settings
 from django.db import transaction
 from django.http import JsonResponse
-from django.urls import include, path
 from django.utils.translation import gettext_lazy as _
 
 from django_q.models import OrmQ
@@ -21,9 +20,7 @@ from rest_framework.views import APIView
 
 import InvenTree.version
 import users.models
-from InvenTree.filters import SEARCH_ORDER_FILTER
 from InvenTree.mixins import ListCreateAPI
-from InvenTree.permissions import RolePermission
 from InvenTree.templatetags.inventree_extras import plugins_info
 from part.models import Part
 from plugin.serializers import MetadataSerializer

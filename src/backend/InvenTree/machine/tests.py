@@ -292,7 +292,7 @@ class TestLabelPrinterMachineType(TestMachineRegistryMixin, InvenTreeAPITestCase
         # test the single print label method calls
         self.assertEqual(self.print_label.call_count, 2)
         self.assertEqual(self.print_label.call_args.args[0], self.machine.machine)
-        self.assertEqual(self.print_label.call_args.args[1], label)
+        self.assertEqual(self.print_label.call_args.args[1], template)
         self.assertEqual(self.print_label.call_args.args[2], parts[1])
         self.assertIn('printing_options', self.print_labels.call_args.kwargs)
         self.assertEqual(

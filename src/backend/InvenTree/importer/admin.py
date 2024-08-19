@@ -1,7 +1,6 @@
 """Admin site specification for the 'importer' app."""
 
 from django.contrib import admin
-from django.urls import path
 
 import importer.models
 import importer.registry

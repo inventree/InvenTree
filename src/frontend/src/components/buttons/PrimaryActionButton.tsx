@@ -1,7 +1,6 @@
 import { Button, Tooltip } from '@mantine/core';
 
 import { InvenTreeIcon, InvenTreeIconType } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
 
 /**
  * A "primary action" button for display on a page detail, (for example)
@@ -19,7 +18,7 @@ export default function PrimaryActionButton({
   icon?: InvenTreeIconType;
   color?: string;
   hidden?: boolean;
-  onClick?: () => void;
+  onClick: () => void;
 }) {
   if (hidden) {
     return null;
@@ -32,7 +31,7 @@ export default function PrimaryActionButton({
         color={color}
         radius="sm"
         p="xs"
-        onClick={onClick ?? notYetImplemented}
+        onClick={onClick}
       >
         {title}
       </Button>

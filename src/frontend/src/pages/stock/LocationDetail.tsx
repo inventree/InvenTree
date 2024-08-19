@@ -38,6 +38,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useDeleteApiFormModal,
@@ -280,6 +281,7 @@ export default function Stock() {
       <AdminButton model={ModelType.stocklocation} pk={location.pk} />,
       <ActionButton
         icon={<InvenTreeIcon icon="stocktake" />}
+        onClick={notYetImplemented}
         variant="outline"
         size="lg"
       />,
@@ -290,17 +292,23 @@ export default function Stock() {
               model: ModelType.stocklocation,
               pk: location.pk
             }),
-            LinkBarcodeAction({}),
-            UnlinkBarcodeAction({}),
+            LinkBarcodeAction({
+              onClick: notYetImplemented
+            }),
+            UnlinkBarcodeAction({
+              onClick: notYetImplemented
+            }),
             {
               name: 'Scan in stock items',
               icon: <InvenTreeIcon icon="stock" />,
-              tooltip: 'Scan items'
+              tooltip: 'Scan items',
+              onClick: notYetImplemented
             },
             {
               name: 'Scan in container',
               icon: <InvenTreeIcon icon="unallocated_stock" />,
-              tooltip: 'Scan container'
+              tooltip: 'Scan container',
+              onClick: notYetImplemented
             }
           ]}
         />
@@ -388,6 +396,8 @@ export default function Stock() {
             subtitle={location?.name}
             icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}
+            editAction={editLocation.open}
+            editEnabled={user.hasChangePermission(ModelType.stocklocation)}
             breadcrumbs={breadcrumbs}
             breadcrumbAction={() => {
               setTreeOpen(true);

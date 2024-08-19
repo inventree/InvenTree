@@ -3,7 +3,6 @@
 import datetime
 import hashlib
 import io
-import json
 import logging
 import os
 import os.path
@@ -27,7 +26,6 @@ from bleach import clean
 from djmoney.money import Money
 from PIL import Image
 
-import InvenTree.version
 from common.currency import currency_code_default
 
 from .settings import MEDIA_URL, STATIC_URL

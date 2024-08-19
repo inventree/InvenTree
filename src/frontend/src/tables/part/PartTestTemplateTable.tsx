@@ -22,7 +22,7 @@ import { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function PartTestTemplateTable({
@@ -192,7 +192,7 @@ export default function PartTestTemplateTable({
   });
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       const can_edit = user.hasChangeRole(UserRoles.part);
       const can_delete = user.hasDeleteRole(UserRoles.part);
 

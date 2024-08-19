@@ -8,11 +8,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import {
-  useOwnerFilters,
-  useProjectCodeFilters,
-  useUserFilters
-} from '../../hooks/UseFilter';
+import { useOwnerFilters, useProjectCodeFilters } from '../../hooks/UseFilter';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -42,6 +38,12 @@ function buildOrderTableColumns(): TableColumn[] {
       sortable: true,
       switchable: false,
       render: (record: any) => PartColumn(record.part_detail)
+    },
+    {
+      accessor: 'part_detail.IPN',
+      sortable: true,
+      switchable: true,
+      title: t`IPN`
     },
     {
       accessor: 'title',
@@ -97,8 +99,7 @@ export function BuildOrderTable({
   const tableColumns = useMemo(() => buildOrderTableColumns(), []);
 
   const projectCodeFilters = useProjectCodeFilters();
-  const userFilters = useUserFilters();
-  const responsibleFilters = useOwnerFilters();
+  const ownerFilters = useOwnerFilters();
 
   const tableFilters: TableFilter[] = useMemo(() => {
     return [
@@ -141,20 +142,16 @@ export function BuildOrderTable({
         name: 'issued_by',
         label: t`Issued By`,
         description: t`Filter by user who issued this order`,
-        choices: userFilters.choices
+        choices: ownerFilters.choices
       },
       {
         name: 'assigned_to',
         label: t`Responsible`,
         description: t`Filter by responsible owner`,
-        choices: responsibleFilters.choices
+        choices: ownerFilters.choices
       }
     ];
-  }, [
-    projectCodeFilters.choices,
-    userFilters.choices,
-    responsibleFilters.choices
-  ]);
+  }, [projectCodeFilters.choices, ownerFilters.choices]);
 
   const user = useUserState();
 

@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -29,6 +29,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -38,6 +39,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { usePurchaseOrderFields } from '../../forms/PurchaseOrderForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -45,8 +47,10 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import { PurchaseOrderLineItemTable } from '../../tables/purchasing/PurchaseOrderLineItemTable';
 import { StockItemTable } from '../../tables/stock/StockItemTable';
 
@@ -57,6 +61,7 @@ export default function PurchaseOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const {
     instance: order,
@@ -71,6 +76,14 @@ export default function PurchaseOrderDetail() {
     },
     refetchOnMount: true
   });
+
+  const orderCurrency = useMemo(() => {
+    return (
+      order.order_currency ||
+      order.supplier_detail?.currency ||
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [order, globalSettings]);
 
   const purchaseOrderFields = usePurchaseOrderFields();
 
@@ -245,11 +258,37 @@ export default function PurchaseOrderDetail() {
         label: t`Line Items`,
         icon: <IconList />,
         content: (
-          <PurchaseOrderLineItemTable
-            order={order}
-            orderId={Number(id)}
-            supplierId={Number(order.supplier)}
-          />
+          <Accordion
+            multiple={true}
+            defaultValue={['line-items', 'extra-items']}
+          >
+            <Accordion.Item value="line-items" key="lineitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <PurchaseOrderLineItemTable
+                  order={order}
+                  currency={orderCurrency}
+                  orderId={Number(id)}
+                  supplierId={Number(order.supplier)}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="extra-items" key="extraitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <ExtraLineItemTable
+                  endpoint={ApiEndpoints.purchase_order_extra_line_list}
+                  orderId={order.pk}
+                  currency={orderCurrency}
+                  role={UserRoles.purchase_order}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
         )
       },
       {
@@ -370,10 +409,12 @@ export default function PurchaseOrderDetail() {
             pk: order.pk
           }),
           LinkBarcodeAction({
-            hidden: order?.barcode_hash
+            hidden: order?.barcode_hash,
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
-            hidden: !order?.barcode_hash
+            hidden: !order?.barcode_hash,
+            onClick: notYetImplemented
           })
         ]}
       />,
@@ -442,6 +483,8 @@ export default function PurchaseOrderDetail() {
             breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
             actions={poActions}
             badges={orderBadges}
+            editAction={editPurchaseOrder.open}
+            editEnabled={user.hasChangePermission(ModelType.purchaseorder)}
           />
           <PanelGroup pageKey="purchaseorder" panels={orderPanels} />
         </Stack>

@@ -27,6 +27,7 @@ from stock.serializers import StockItemSerializerBrief, LocationBriefSerializer
 
 import common.models
 from common.serializers import ProjectCodeSerializer
+from common.settings import get_global_setting
 from importer.mixins import DataImportExportSerializerMixin
 import company.serializers
 import part.filters
@@ -765,6 +766,9 @@ class BuildCompleteSerializer(serializers.Serializer):
         """Perform validation of this serializer prior to saving"""
         build = self.context['build']
 
+        if get_global_setting('BUILDORDER_REQUIRE_CLOSED_CHILDS') and build.has_open_child_builds:
+            raise ValidationError(_("Build order has open child build orders"))
+
         if build.status != BuildStatus.PRODUCTION.value:
             raise ValidationError(_("Build order must be in production state"))
 
@@ -1234,6 +1238,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
             'reference',
             'consumable',
             'optional',
+            'testable',
             'trackable',
             'inherited',
             'allow_variants',
@@ -1278,6 +1283,7 @@ class BuildLineSerializer(DataImportExportSerializerMixin, InvenTreeModelSeriali
     reference = serializers.CharField(source='bom_item.reference', label=_('Reference'), read_only=True)
     consumable = serializers.BooleanField(source='bom_item.consumable', label=_('Consumable'), read_only=True)
     optional = serializers.BooleanField(source='bom_item.optional', label=_('Optional'), read_only=True)
+    testable = serializers.BooleanField(source='bom_item.sub_part.testable', label=_('Testable'), read_only=True)
     trackable = serializers.BooleanField(source='bom_item.sub_part.trackable', label=_('Trackable'), read_only=True)
     inherited = serializers.BooleanField(source='bom_item.inherited', label=_('Inherited'), read_only=True)
     allow_variants = serializers.BooleanField(source='bom_item.allow_variants', label=_('Allow Variants'), read_only=True)

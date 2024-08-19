@@ -1126,9 +1126,9 @@ class PartFilter(rest_filters.FilterSet):
         # TODO: We should cache BOM checksums to make this process more efficient
         pks = []
 
-        for part in queryset:
-            if part.is_bom_valid() == value:
-                pks.append(part.pk)
+        for item in queryset:
+            if item.is_bom_valid() == value:
+                pks.append(item.pk)
 
         return queryset.filter(pk__in=pks)
 
@@ -1156,6 +1156,8 @@ class PartFilter(rest_filters.FilterSet):
     component = rest_filters.BooleanFilter()
 
     trackable = rest_filters.BooleanFilter()
+
+    testable = rest_filters.BooleanFilter()
 
     purchaseable = rest_filters.BooleanFilter()
 
@@ -1748,20 +1750,28 @@ class BomFilter(rest_filters.FilterSet):
 
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(
-        label='Master part is active', field_name='part__active'
+        label='Assembly part is active', field_name='part__active'
     )
 
     part_trackable = rest_filters.BooleanFilter(
-        label='Master part is trackable', field_name='part__trackable'
+        label='Assembly part is trackable', field_name='part__trackable'
+    )
+
+    part_testable = rest_filters.BooleanFilter(
+        label=_('Assembly part is testable'), field_name='part__testable'
     )
 
     # Filters for linked 'sub_part'
     sub_part_trackable = rest_filters.BooleanFilter(
-        label='Sub part is trackable', field_name='sub_part__trackable'
+        label='Component part is trackable', field_name='sub_part__trackable'
+    )
+
+    sub_part_testable = rest_filters.BooleanFilter(
+        label=_('Component part is testable'), field_name='sub_part__testable'
     )
 
     sub_part_assembly = rest_filters.BooleanFilter(
-        label='Sub part is an assembly', field_name='sub_part__assembly'
+        label='Component part is an assembly', field_name='sub_part__assembly'
     )
 
     available_stock = rest_filters.BooleanFilter(

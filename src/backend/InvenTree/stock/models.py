@@ -9,7 +9,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import FieldError, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q, Sum
@@ -2293,7 +2293,8 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
         )
 
         # Schedule an update on parent part pricing
-        instance.part.schedule_pricing_update(create=False)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2312,7 +2313,8 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
         )
 
         # Schedule an update on parent part pricing
-        instance.part.schedule_pricing_update(create=True)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):

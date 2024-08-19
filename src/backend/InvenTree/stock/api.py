@@ -1,6 +1,5 @@
 """JSON API for the Stock app."""
 
-import json
 from collections import OrderedDict
 from datetime import timedelta
 
@@ -59,7 +58,6 @@ from order.serializers import (
 )
 from part.models import BomItem, Part, PartCategory
 from part.serializers import PartBriefSerializer
-from stock.admin import LocationResource, StockItemResource
 from stock.generators import generate_batch_code, generate_serial_number
 from stock.models import (
     StockItem,

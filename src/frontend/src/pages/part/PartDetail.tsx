@@ -38,6 +38,7 @@ import Select from 'react-select';
 
 import { api } from '../../App';
 import AdminButton from '../../components/buttons/AdminButton';
+import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import DetailsBadge from '../../components/details/DetailsBadge';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -73,6 +74,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -89,6 +91,7 @@ import BuildAllocatedStockTable from '../../tables/build/BuildAllocatedStockTabl
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import { PartParameterTable } from '../../tables/part/PartParameterTable';
+import PartPurchaseOrdersTable from '../../tables/part/PartPurchaseOrdersTable';
 import PartTestTemplateTable from '../../tables/part/PartTestTemplateTable';
 import { PartVariantTable } from '../../tables/part/PartVariantTable';
 import { RelatedPartTable } from '../../tables/part/RelatedPartTable';
@@ -316,6 +319,12 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
+        name: 'testable',
+        label: t`Testable Part`,
+        icon: 'test'
+      },
+      {
+        type: 'boolean',
         name: 'trackable',
         label: t`Trackable Part`
       },
@@ -367,7 +376,7 @@ export default function PartDetail() {
     ];
 
     // Add in price range data
-    id &&
+    if (id) {
       br.push({
         type: 'string',
         name: 'pricing',
@@ -404,6 +413,7 @@ export default function PartDetail() {
           );
         }
       });
+    }
 
     // Add in stocktake information
     if (id && part.last_stocktake) {
@@ -423,7 +433,11 @@ export default function PartDetail() {
                 .then((response) => {
                   switch (response.status) {
                     case 200:
-                      return response.data[response.data.length - 1];
+                      if (response.data.length > 0) {
+                        return response.data[response.data.length - 1];
+                      } else {
+                        return null;
+                      }
                     default:
                       return null;
                   }
@@ -648,7 +662,7 @@ export default function PartDetail() {
         label: t`Purchase Orders`,
         icon: <IconShoppingCart />,
         hidden: !part.purchaseable,
-        content: <PlaceholderPanel />
+        content: <PartPurchaseOrdersTable partId={part.pk} />
       },
       {
         name: 'sales_orders',
@@ -673,7 +687,7 @@ export default function PartDetail() {
         name: 'test_templates',
         label: t`Test Templates`,
         icon: <IconTestPipe />,
-        hidden: !part.trackable,
+        hidden: !part.testable,
         content: part?.pk ? (
           <PartTestTemplateTable partId={part?.pk} partLocked={part.locked} />
         ) : (
@@ -684,7 +698,7 @@ export default function PartDetail() {
         name: 'test_statistics',
         label: t`Test Statistics`,
         icon: <IconReportAnalytics />,
-        hidden: !part.trackable,
+        hidden: !part.testable,
         content: part?.pk ? (
           <TestStatisticsTable
             params={{
@@ -965,13 +979,21 @@ export default function PartDetail() {
             pk: part.pk
           }),
           LinkBarcodeAction({
-            hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
+            hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
-            hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
+            hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
+            onClick: notYetImplemented
           })
         ]}
         key="action_dropdown"
+      />,
+      <PrintingActions
+        modelType={ModelType.part}
+        items={[part.pk]}
+        enableReports
+        enableLabels
       />,
       <ActionDropdown
         tooltip={t`Stock Actions`}
@@ -1056,6 +1078,8 @@ export default function PartDetail() {
             breadcrumbAction={() => {
               setTreeOpen(true);
             }}
+            editAction={editPart.open}
+            editEnabled={user.hasChangeRole(UserRoles.part)}
             actions={partActions}
             detail={
               enableRevisionSelection ? (

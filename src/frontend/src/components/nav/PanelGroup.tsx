@@ -21,6 +21,7 @@ import {
 } from 'react-router-dom';
 
 import { identifierString } from '../../functions/conversion';
+import { cancelEvent } from '../../functions/events';
 import { navigateToLink } from '../../functions/navigation';
 import { useLocalState } from '../../states/LocalState';
 import { Boundary } from '../Boundary';
@@ -78,12 +79,12 @@ function BasePanelGroup({
   const handlePanelChange = useCallback(
     (panel: string | null, event?: any) => {
       if (activePanels.findIndex((p) => p.name === panel) === -1) {
-        setLastUsedPanel('');
-        return navigate('../');
+        panel = '';
       }
 
       if (event && (event?.ctrlKey || event?.shiftKey)) {
         const url = `${location.pathname}/../${panel}`;
+        cancelEvent(event);
         navigateToLink(url, navigate, event);
       } else {
         navigate(`../${panel}`);
@@ -117,12 +118,7 @@ function BasePanelGroup({
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
       <Paper p="sm" radius="xs" shadow="xs">
-        <Tabs
-          value={panel}
-          orientation="vertical"
-          onChange={handlePanelChange}
-          keepMounted={false}
-        >
+        <Tabs value={panel} orientation="vertical" keepMounted={false}>
           <Tabs.List justify="left">
             {panels.map(
               (panel) =>
@@ -136,7 +132,6 @@ function BasePanelGroup({
                     <Tabs.Tab
                       p="xs"
                       value={panel.name}
-                      //                    icon={(<InvenTreeIcon icon={panel.name}/>)}  // Enable when implementing Icon manager everywhere
                       leftSection={panel.icon}
                       hidden={panel.hidden}
                       disabled={panel.disabled}

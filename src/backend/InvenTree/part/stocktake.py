@@ -3,7 +3,6 @@
 import io
 import logging
 import time
-from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile

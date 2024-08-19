@@ -188,6 +188,9 @@ function partFields(options={}) {
             default: global_settings.PART_TEMPLATE,
             group: 'attributes',
         },
+        testable: {
+            group: 'attributes',
+        },
         trackable: {
             default: global_settings.PART_TRACKABLE,
             group: 'attributes',

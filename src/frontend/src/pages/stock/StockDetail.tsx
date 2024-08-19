@@ -32,7 +32,6 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
@@ -51,6 +50,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -120,7 +120,7 @@ export default function StockDetail() {
         name: 'tests',
         label: `Completed Tests`,
         icon: 'progress',
-        hidden: !part?.trackable
+        hidden: !part?.testable
       },
       {
         type: 'text',
@@ -349,7 +349,7 @@ export default function StockDetail() {
         name: 'testdata',
         label: t`Test Data`,
         icon: <IconChecklist />,
-        hidden: !stockitem?.part_detail?.trackable,
+        hidden: !stockitem?.part_detail?.testable,
         content: stockitem?.pk ? (
           <StockItemTestResultTable
             itemId={stockitem.pk}
@@ -484,11 +484,13 @@ export default function StockDetail() {
           }),
           LinkBarcodeAction({
             hidden:
-              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
+              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
             hidden:
-              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
+              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
+            onClick: notYetImplemented
           })
         ]}
       />,
@@ -622,6 +624,8 @@ export default function StockDetail() {
           title={t`Stock Item`}
           subtitle={stockitem.part_detail?.full_name}
           imageUrl={stockitem.part_detail?.thumbnail}
+          editAction={editStockItem.open}
+          editEnabled={user.hasChangePermission(ModelType.stockitem)}
           badges={stockBadges}
           breadcrumbs={breadcrumbs}
           breadcrumbAction={() => {
