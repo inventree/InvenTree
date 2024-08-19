@@ -209,7 +209,7 @@ class DataImportSession(models.Model):
 
         missing_fields = []
 
-        for field in required_fields.keys():
+        for field in required_fields:
             # An override value exists
             if field in field_overrides:
                 continue

@@ -113,9 +113,8 @@ def get_field_label(field) -> str:
     Returns:
         str: Field label
     """
-    if field:
-        if label := getattr(field, 'label', None):
-            return label
+    if field and (label := getattr(field, 'label', None)):
+        return label
 
     # TODO: Check if the field is a model field
 

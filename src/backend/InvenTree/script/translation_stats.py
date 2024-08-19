@@ -59,10 +59,7 @@ if __name__ == '__main__':
 
         (total, covered, uncovered) = stats
 
-        if total > 0:
-            percentage = int(covered / total * 100)
-        else:
-            percentage = 0
+        percentage = int(covered / total * 100) if total > 0 else 0
 
         if verbose:
             print(f"| {locale.ljust(4, ' ')} : {str(percentage).rjust(4, ' ')}% |")
@@ -78,9 +75,6 @@ if __name__ == '__main__':
     with open(STAT_FILE, 'w') as target:
         json.dump(locales_perc, target)
 
-    if len(percentages) > 0:
-        avg = int(sum(percentages) / len(percentages))
-    else:
-        avg = 0
+    avg = int(sum(percentages) / len(percentages)) if len(percentages) > 0 else 0
 
     print(f'InvenTree translation coverage: {avg}%')

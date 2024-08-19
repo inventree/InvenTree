@@ -97,10 +97,7 @@ def generateTestKey(test_name: str) -> str:
         if char.isidentifier():
             return True
 
-        if char.isalnum():
-            return True
-
-        return False
+        return bool(char.isalnum())
 
     # Remove any characters that cannot be used to represent a variable
     key = ''.join([c for c in key if valid_char(c)])
@@ -490,10 +487,7 @@ def extract_serial_numbers(input_string, expected_quantity: int, starting_value=
     except ValueError:
         raise ValidationError([_('Invalid quantity provided')])
 
-    if input_string:
-        input_string = str(input_string).strip()
-    else:
-        input_string = ''
+    input_string = str(input_string).strip() if input_string else ''
 
     if len(input_string) == 0:
         raise ValidationError([_('Empty serial number string')])
@@ -827,7 +821,7 @@ def hash_barcode(barcode_data):
 def hash_file(filename: Union[str, Path], storage: Union[Storage, None] = None):
     """Return the MD5 hash of a file."""
     content = (
-        open(filename, 'rb').read()
+        open(filename, 'rb').read()  # noqa: SIM115
         if storage is None
         else storage.open(str(filename), 'rb').read()
     )

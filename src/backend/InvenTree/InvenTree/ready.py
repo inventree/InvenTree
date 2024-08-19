@@ -58,10 +58,7 @@ def isInServerThread():
     if 'runserver' in sys.argv:
         return True
 
-    if 'gunicorn' in sys.argv[0]:
-        return True
-
-    return False
+    return 'gunicorn' in sys.argv[0]
 
 
 def isInMainThread():
@@ -122,11 +119,7 @@ def canAppAccessDatabase(
     if not allow_plugins:
         excluded_commands.extend(['collectplugins'])
 
-    for cmd in excluded_commands:
-        if cmd in sys.argv:
-            return False
-
-    return True
+    return all(cmd not in sys.argv for cmd in excluded_commands)
 
 
 def isPluginRegistryLoaded():

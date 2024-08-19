@@ -216,10 +216,7 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
             identifier in url for identifier in ['git+https', 'hg+https', 'svn+svn']
         ]:
             # using a VCS provider
-            if packagename:
-                full_pkg = f'{packagename}@{url}'
-            else:
-                full_pkg = url
+            full_pkg = f'{packagename}@{url}' if packagename else url
         elif url:
             install_name.append('-i')
             full_pkg = url
@@ -244,10 +241,9 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
         ret['result'] = ret['success'] = _('Installed plugin successfully')
         ret['output'] = str(result, 'utf-8')
 
-        if packagename:
-            if path := check_package_path(packagename):
-                # Override result information
-                ret['result'] = _(f'Installed plugin into {path}')
+        if packagename and (path := check_package_path(packagename)):
+            # Override result information
+            ret['result'] = _(f'Installed plugin into {path}')
 
     except subprocess.CalledProcessError as error:
         handle_pip_error(error, 'plugin_install')

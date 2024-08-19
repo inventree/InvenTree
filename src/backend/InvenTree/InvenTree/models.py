@@ -390,10 +390,7 @@ class ReferenceIndexingMixin(models.Model):
             except Exception:
                 # If anything goes wrong, return the most recent reference
                 recent = cls.get_most_recent_item()
-                if recent:
-                    reference = recent.reference
-                else:
-                    reference = ''
+                reference = recent.reference if recent else ''
 
         return reference
 
@@ -410,14 +407,14 @@ class ReferenceIndexingMixin(models.Model):
             })
 
         # Check that only 'allowed' keys are provided
-        for key in info.keys():
-            if key not in ctx.keys():
+        for key in info:
+            if key not in ctx:
                 raise ValidationError({
                     'value': _('Unknown format key specified') + f": '{key}'"
                 })
 
         # Check that the 'ref' variable is specified
-        if 'ref' not in info.keys():
+        if 'ref' not in info:
             raise ValidationError({
                 'value': _('Missing required format key') + ": 'ref'"
             })

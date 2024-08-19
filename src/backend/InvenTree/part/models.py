@@ -230,10 +230,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Get all unique parameter names for all parts from this category."""
         unique_parameters_names = []
 
-        if prefetch:
-            parts = prefetch
-        else:
-            parts = self.prefetch_parts_parameters(cascade=cascade)
+        parts = prefetch or self.prefetch_parts_parameters(cascade=cascade)
 
         for part in parts:
             for parameter in part.parameters.all():
@@ -247,10 +244,7 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         """Get all parameter names and values for all parts from this category."""
         category_parameters = []
 
-        if prefetch:
-            parts = prefetch
-        else:
-            parts = self.prefetch_parts_parameters(cascade=cascade)
+        parts = prefetch or self.prefetch_parts_parameters(cascade=cascade)
 
         for part in parts:
             part_parameters = {
@@ -917,24 +911,26 @@ class Part(
                     'IPN': _('Duplicate IPN not allowed in part settings')
                 })
 
-        if self.revision_of and self.revision:
-            if (
+        if (
+            self.revision_of
+            and self.revision
+            and (
                 Part.objects.exclude(pk=self.pk)
                 .filter(revision_of=self.revision_of, revision=self.revision)
                 .exists()
-            ):
-                raise ValidationError(_('Duplicate part revision already exists.'))
+            )
+        ):
+            raise ValidationError(_('Duplicate part revision already exists.'))
 
         # Ensure unique across (Name, revision, IPN) (as specified)
-        if self.revision or self.IPN:
-            if (
-                Part.objects.exclude(pk=self.pk)
-                .filter(name=self.name, revision=self.revision, IPN=self.IPN)
-                .exists()
-            ):
-                raise ValidationError(
-                    _('Part with this Name, IPN and Revision already exists.')
-                )
+        if (self.revision or self.IPN) and (
+            Part.objects.exclude(pk=self.pk)
+            .filter(name=self.name, revision=self.revision, IPN=self.IPN)
+            .exists()
+        ):
+            raise ValidationError(
+                _('Part with this Name, IPN and Revision already exists.')
+            )
 
     def clean(self):
         """Perform cleaning operations for the Part model.
@@ -3872,16 +3868,18 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
 
         # Validate the parameter data against the template units
-        if get_global_setting(
-            'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+        if (
+            get_global_setting(
+                'PART_PARAMETER_ENFORCE_UNITS', True, cache=False, create=False
+            )
+            and self.template.units
         ):
-            if self.template.units:
-                try:
-                    InvenTree.conversion.convert_physical_value(
-                        self.data, self.template.units
-                    )
-                except ValidationError as e:
-                    raise ValidationError({'data': e.message})
+            try:
+                InvenTree.conversion.convert_physical_value(
+                    self.data, self.template.units
+                )
+            except ValidationError as e:
+                raise ValidationError({'data': e.message})
 
         # Validate the parameter data against the template choices
         if choices := self.template.get_choices():
@@ -4189,9 +4187,8 @@ class BomItem(
         # Check if the part was changed
         deltas = self.get_field_deltas()
 
-        if 'part' in deltas:
-            if old_part := deltas['part'].get('old', None):
-                self.check_part_lock(old_part)
+        if 'part' in deltas and (old_part := deltas['part'].get('old', None)):
+            self.check_part_lock(old_part)
 
         # Update the 'validated' field based on checksum calculation
         self.validated = self.is_line_valid

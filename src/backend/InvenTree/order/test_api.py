@@ -1527,7 +1527,7 @@ class SalesOrderTest(OrderTest):
             self.download_file(
                 reverse('api-so-list'),
                 {'export': fmt},
-                decode=True if fmt == 'csv' else False,
+                decode=fmt == 'csv',
                 expected_code=200,
                 expected_fn=r'InvenTree_SalesOrder_.+',
             )

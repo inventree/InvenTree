@@ -83,10 +83,7 @@ class MatchItemForm(forms.Form):
         if 'file_manager' in kwargs:
             file_manager = kwargs.pop('file_manager')
 
-        if 'row_data' in kwargs:
-            row_data = kwargs.pop('row_data')
-        else:
-            row_data = None
+        row_data = kwargs.pop('row_data') if 'row_data' in kwargs else None
 
         super().__init__(*args, **kwargs)
 

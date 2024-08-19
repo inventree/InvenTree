@@ -86,9 +86,7 @@ class StatusCode(BaseEnum):
             return False
         if callable(value):
             return False
-        if not isinstance(value.value, int):
-            return False
-        return True
+        return isinstance(value.value, int)
 
     @classmethod
     def values(cls, key=None):

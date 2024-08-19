@@ -143,11 +143,7 @@ class NotificationMethod:
 
         # Check if method globally enabled
         plg_instance = registry.get_plugin(plg_cls.NAME.lower())
-        if plg_instance and not plg_instance.get_setting(self.GLOBAL_SETTING):
-            return True
-
-        # Lets go!
-        return False
+        return plg_instance and not plg_instance.get_setting(self.GLOBAL_SETTING)
 
     def usersetting(self, target):
         """Returns setting for this method for a given user."""

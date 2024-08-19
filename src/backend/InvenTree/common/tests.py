@@ -392,7 +392,7 @@ class SettingsTest(InvenTreeTestCase):
             'before_save',
         ]
 
-        for k in setting.keys():
+        for k in setting:
             self.assertIn(k, allowed_keys)
 
         # Check default value for boolean settings
@@ -430,7 +430,7 @@ class SettingsTest(InvenTreeTestCase):
     @override_settings(SITE_URL=None, PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
     def test_defaults(self):
         """Populate the settings with default values."""
-        for key in InvenTreeSetting.SETTINGS.keys():
+        for key in InvenTreeSetting.SETTINGS:
             value = InvenTreeSetting.get_setting_default(key)
 
             try:
@@ -519,7 +519,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
 
         n_public_settings = len([
-            k for k in InvenTreeSetting.SETTINGS.keys() if not k.startswith('_')
+            k for k in InvenTreeSetting.SETTINGS if not k.startswith('_')
         ])
 
         # Number of results should match the number of settings

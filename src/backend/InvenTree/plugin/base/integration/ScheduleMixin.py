@@ -148,7 +148,7 @@ class ScheduleMixin:
     def get_task_names(self):
         """All defined task names."""
         # Returns a list of all task names associated with this plugin instance
-        return [self.get_task_name(key) for key in self.scheduled_tasks.keys()]
+        return [self.get_task_name(key) for key in self.scheduled_tasks]
 
     def register_tasks(self):
         """Register the tasks with the database."""

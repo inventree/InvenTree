@@ -175,10 +175,7 @@ if __name__ == '__main__':
             print(f"Version number '{version}' does not match tag '{version_tag}'")
             sys.exit
 
-        if highest_release:
-            docker_tags = [version_tag, 'stable']
-        else:
-            docker_tags = [version_tag]
+        docker_tags = [version_tag, 'stable'] if highest_release else [version_tag]
 
     elif GITHUB_REF_TYPE == 'branch':
         # Otherwise we know we are targeting the 'master' branch

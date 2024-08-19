@@ -1183,10 +1183,7 @@ class StockItem(
         if self.allocations.count() > 0:
             return True
 
-        if self.sales_order_allocations.count() > 0:
-            return True
-
-        return False
+        return self.sales_order_allocations.count() > 0
 
     def build_allocation_count(self):
         """Return the total quantity allocated to builds."""
@@ -1260,10 +1257,7 @@ class StockItem(
         if self.installed_item_count() > 0:
             return False
 
-        if self.sales_order is not None:
-            return False
-
-        return True
+        return not self.sales_order is not None
 
     def get_installed_items(self, cascade: bool = False) -> set[StockItem]:
         """Return all stock items which are *installed* in this one!
@@ -1422,10 +1416,7 @@ class StockItem(
         if self.belongs_to is not None:
             return False
 
-        if self.sales_order is not None:
-            return False
-
-        return True
+        return not self.sales_order is not None
 
     @property
     def tracking_info_count(self):
@@ -2204,7 +2195,7 @@ class StockItem(
             for item in installed_items:
                 item_results = item.testResultMap()
 
-                for key in item_results.keys():
+                for key in item_results:
                     # Results from sub items should not override master ones
                     if key not in result_map:
                         result_map[key] = item_results[key]
@@ -2353,7 +2344,7 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
     def label(self):
         """Return label."""
-        if self.tracking_type in StockHistoryCode.keys():
+        if self.tracking_type in StockHistoryCode:
             return StockHistoryCode.label(self.tracking_type)
 
         return getattr(self, 'title', '')

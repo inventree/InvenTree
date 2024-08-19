@@ -354,10 +354,9 @@ class StockLocationFilter(rest_filters.FilterSet):
         top_level = str2bool(self.data.get('top_level', None))
 
         # If the parent is *not* provided, update the results based on the "cascade" value
-        if not parent or top_level:
-            if not value:
-                # If "cascade" is False, only return top-level location
-                queryset = queryset.filter(parent=None)
+        if (not parent or top_level) and not value:
+            # If "cascade" is False, only return top-level location
+            queryset = queryset.filter(parent=None)
 
         return queryset
 
@@ -1452,17 +1451,17 @@ class StockTrackingList(DataExportViewMixin, ListAPI):
         delta_models = self.get_delta_model_map()
 
         # Construct a set of related models we need to lookup for later
-        related_model_lookups = {key: set() for key in delta_models.keys()}
+        related_model_lookups = {key: set() for key in delta_models}
 
         # Run a first pass through the data to determine which related models we need to lookup
         for item in data:
             deltas = item['deltas'] or {}
 
-            for key in delta_models.keys():
+            for key in delta_models:
                 if key in deltas:
                     related_model_lookups[key].add(deltas[key])
 
-        for key in delta_models.keys():
+        for key in delta_models:
             model, serializer = delta_models[key]
 
             # Fetch all related models in one go

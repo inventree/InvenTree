@@ -32,10 +32,7 @@ class ApiTokenAdmin(admin.ModelAdmin):
 
     def get_fields(self, request, obj=None):
         """Return list of fields to display."""
-        if obj:
-            fields = ['token']
-        else:
-            fields = ['key']
+        fields = ['token'] if obj else ['key']
 
         fields += [
             'user',

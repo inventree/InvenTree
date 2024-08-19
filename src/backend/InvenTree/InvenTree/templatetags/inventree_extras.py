@@ -410,10 +410,7 @@ def progress_bar(val, max_val, *args, **kwargs):
     else:
         style = ''
 
-    if max_val != 0:
-        percent = float(val / max_val) * 100
-    else:
-        percent = 0
+    percent = float(val / max_val) * 100 if max_val != 0 else 0
 
     if percent > 100:
         percent = 100

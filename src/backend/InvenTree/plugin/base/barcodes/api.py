@@ -335,9 +335,8 @@ class BarcodePOAllocate(BarcodeView):
         if not part and not supplier_part and not manufacturer_part:
             raise ValidationError({'error': _('No matching part data found')})
 
-        if part:
-            if part_id := part.get('pk', None):
-                supplier_parts = supplier_parts.filter(part__pk=part_id)
+        if part and (part_id := part.get('pk', None)):
+            supplier_parts = supplier_parts.filter(part__pk=part_id)
 
         if supplier_part:
             if supplier_part_id := supplier_part.get('pk', None):

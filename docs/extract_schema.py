@@ -54,9 +54,7 @@ def top_level_path(path: str) -> str:
 
 def generate_schema_file(key: str) -> None:
     """Generate a schema file for the provided key."""
-    description = (
-        SPECIAL_PATHS[key] if key in SPECIAL_PATHS else 'General API Endpoints'
-    )
+    description = SPECIAL_PATHS.get(key, 'General API Endpoints')
 
     output = f"""
     ---

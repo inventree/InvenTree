@@ -362,10 +362,7 @@ class FileManagementFormView(MultiStepFormView):
         duplicates = []
 
         for col in self.column_names:
-            if col in self.column_selections:
-                guess = self.column_selections[col]
-            else:
-                guess = None
+            guess = self.column_selections.get(col, None)
 
             if guess:
                 n = list(self.column_selections.values()).count(

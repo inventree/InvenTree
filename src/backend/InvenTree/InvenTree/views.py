@@ -285,7 +285,7 @@ class AjaxMixin(InvenTreeRoleMixin):
         # Custom feedback`data
         fb = self.get_data()
 
-        for key in fb.keys():
+        for key in fb:
             data[key] = fb[key]
 
         return JsonResponse(data, safe=False)

@@ -106,10 +106,7 @@ def construct_format_regex(fmt_string: str) -> str:
         # Add a named capture group for the format entry
         if name:
             # Check if integer values are required
-            if _fmt.endswith('d'):
-                c = r'\d'
-            else:
-                c = '.'
+            c = '\\d' if _fmt.endswith('d') else '.'
 
             # Specify width
             # TODO: Introspect required width
@@ -160,7 +157,7 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
     """
     info = parse_format_string(fmt_string)
 
-    if name not in info.keys():
+    if name not in info:
         raise NameError(_(f"Value '{name}' does not appear in pattern format"))
 
     # Construct a regular expression for matching against the provided format string
@@ -199,7 +196,7 @@ def format_money(
     Raises:
         ValueError: format string is incorrectly specified
     """
-    language = (None and translation.get_language()) or settings.LANGUAGE_CODE
+    language = (None) or settings.LANGUAGE_CODE
     locale = Locale.parse(translation.to_locale(language))
     if format:
         pattern = parse_pattern(format)

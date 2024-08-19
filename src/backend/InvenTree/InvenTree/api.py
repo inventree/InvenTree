@@ -77,7 +77,7 @@ class LicenseView(APIView):
         # Ensure we do not have any duplicate 'name' values in the list
         for entry in data:
             name = None
-            for key in entry.keys():
+            for key in entry:
                 if key.lower() == 'name':
                     name = entry[key]
                     break

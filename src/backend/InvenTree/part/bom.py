@@ -244,10 +244,7 @@ def ExportBom(
                         manufacturer_name = ''
 
                     # Extract the "MPN" field from the Manufacturer Part
-                    if mp_part:
-                        manufacturer_mpn = mp_part.MPN
-                    else:
-                        manufacturer_mpn = ''
+                    manufacturer_mpn = mp_part.MPN if mp_part else ''
 
                     # Generate a column name for this manufacturer
                     k_man = f'{_("Manufacturer")}_{mp_idx}'
@@ -270,10 +267,7 @@ def ExportBom(
                             else:
                                 supplier_name = ''
 
-                            if sp_part:
-                                supplier_sku = sp_part.SKU
-                            else:
-                                supplier_sku = ''
+                            supplier_sku = sp_part.SKU if sp_part else ''
 
                             # Generate column names for this supplier
                             k_sup = (
@@ -307,10 +301,7 @@ def ExportBom(
 
                     supplier_parts_used.add(sp_part)
 
-                    if sp_part.supplier:
-                        supplier_name = sp_part.supplier.name
-                    else:
-                        supplier_name = ''
+                    supplier_name = sp_part.supplier.name if sp_part.supplier else ''
 
                     supplier_sku = sp_part.SKU
 

@@ -489,10 +489,7 @@ def split_model(model):
     *app, model = model.split('_')
 
     # handle models that have
-    if len(app) > 1:
-        app = '_'.join(app)
-    else:
-        app = app[0]
+    app = '_'.join(app) if len(app) > 1 else app[0]
 
     return model, app
 
@@ -674,7 +671,7 @@ def clear_user_role_cache(user: User):
     Args:
         user: The User object to be expunged from the cache
     """
-    for role in RuleSet.get_ruleset_models().keys():
+    for role in RuleSet.get_ruleset_models():
         for perm in ['add', 'change', 'view', 'delete']:
             key = f'role_{user.pk}_{role}_{perm}'
             cache.delete(key)

@@ -740,13 +740,12 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         base_quantity = line_item.part.base_quantity(quantity)
 
         # Does the quantity need to be "integer" (for trackable parts?)
-        if base_part.trackable:
-            if Decimal(base_quantity) != int(base_quantity):
-                raise ValidationError({
-                    'quantity': _(
-                        'An integer quantity must be provided for trackable parts'
-                    )
-                })
+        if base_part.trackable and Decimal(base_quantity) != int(base_quantity):
+            raise ValidationError({
+                'quantity': _(
+                    'An integer quantity must be provided for trackable parts'
+                )
+            })
 
         # If serial numbers are provided
         if serial_numbers:

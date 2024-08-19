@@ -379,7 +379,7 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
 
         tag_object = super().update(instance, validated_data)
 
-        for key in to_be_tagged.keys():
+        for key in to_be_tagged:
             # re-add the tagmanager
             new_tagobject = tag_object.__class__.objects.get(id=tag_object.id)
             setattr(tag_object, key, getattr(new_tagobject, key))
@@ -803,11 +803,10 @@ class DataFileExtractSerializer(serializers.Serializer):
             required = field.get('required', False)
 
             # Check for missing required columns
-            if required:
-                if name not in self.columns:
-                    raise serializers.ValidationError(
-                        _(f"Missing required column: '{name}'")
-                    )
+            if required and name not in self.columns:
+                raise serializers.ValidationError(
+                    _(f"Missing required column: '{name}'")
+                )
 
         for col in self.columns:
             if not col:

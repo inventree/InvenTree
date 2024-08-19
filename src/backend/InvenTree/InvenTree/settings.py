@@ -949,10 +949,7 @@ USE_I18N = True
 
 # Do not use native timezone support in "test" mode
 # It generates a *lot* of cruft in the logs
-if not TESTING:
-    USE_TZ = True  # pragma: no cover
-else:
-    USE_TZ = False
+USE_TZ = bool(not TESTING)
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d']
 

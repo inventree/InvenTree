@@ -3090,13 +3090,10 @@ class CustomUnit(models.Model):
         """Ensure that the custom unit is unique."""
         super().validate_unique(exclude)
 
-        if self.symbol:
-            if (
-                CustomUnit.objects.filter(symbol=self.symbol)
-                .exclude(pk=self.pk)
-                .exists()
-            ):
-                raise ValidationError({'symbol': _('Unit symbol must be unique')})
+        if self.symbol and (
+            CustomUnit.objects.filter(symbol=self.symbol).exclude(pk=self.pk).exists()
+        ):
+            raise ValidationError({'symbol': _('Unit symbol must be unique')})
 
     def clean(self):
         """Validate that the provided custom unit is indeed valid."""

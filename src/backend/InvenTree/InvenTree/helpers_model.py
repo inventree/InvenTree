@@ -114,10 +114,7 @@ def download_image_from_url(remote_url, timeout=2.5):
     # Add user specified user-agent to request (if specified)
     user_agent = get_global_setting('INVENTREE_DOWNLOAD_FROM_URL_USER_AGENT')
 
-    if user_agent:
-        headers = {'User-Agent': user_agent}
-    else:
-        headers = None
+    headers = {'User-Agent': user_agent} if user_agent else None
 
     try:
         response = requests.get(

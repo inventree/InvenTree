@@ -20,13 +20,19 @@ src = ["src/backend/InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C", "C4", "D", "F", "I", "N", "PIE", "UP", "W"]
+select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "UP", "W"]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff
 # - S # for security stuff (bandit)
 
 ignore = [
+    "SIM117",
+    # - SIM117 - Use a single with statement with multiple contexts instead of nested with statements
+    "SIM102",
+    # - SIM102 - Use a single if statement instead of nested if statements
+    "SIM105",
+    # - SIM105 - Use contextlib.suppress({exception}) instead of try-except-pass
     "C901",
     # - C901 - function is too complex
     "N999",
