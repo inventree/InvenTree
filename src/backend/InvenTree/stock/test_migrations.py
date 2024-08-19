@@ -200,7 +200,7 @@ class TestTestResultMigration(MigratorTestCase):
                 )
 
                 # Create some test results
-                for _k, v in self.test_keys.items():
+                for v in self.test_keys.values():
                     StockItemTestResult.objects.create(
                         stock_item=si, test=v, result=True, value=f'Result: {ii} : {jj}'
                     )

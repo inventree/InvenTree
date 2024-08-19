@@ -200,7 +200,7 @@ class ScheduleMixin:
         try:
             from django_q.models import Schedule
 
-            for key, _ in self.scheduled_tasks.items():
+            for key in self.scheduled_tasks:
                 task_name = self.get_task_name(key)
 
                 try:
