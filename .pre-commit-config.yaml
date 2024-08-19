@@ -24,7 +24,7 @@ repos:
     - id: ruff
       args: [
         --fix,
-        --unsafe-fixes,
+        # --unsafe-fixes,
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
