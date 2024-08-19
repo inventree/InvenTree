@@ -126,8 +126,20 @@ export default function BuildLineTable({
       );
     }
 
+    const sufficient = available >= record.quantity - record.allocated;
+
+    if (!sufficient) {
+      extra.push(
+        <Text key="insufficient" c="orange" size="sm">
+          {t`Insufficient stock`}
+        </Text>
+      );
+    }
+
     return (
       <TableHoverCard
+        icon={sufficient ? 'info' : 'exclamation'}
+        iconColor={sufficient ? 'blue' : 'orange'}
         value={
           available > 0 ? (
             available
