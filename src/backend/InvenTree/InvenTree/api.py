@@ -26,7 +26,7 @@ from part.models import Part
 from plugin.serializers import MetadataSerializer
 from users.models import ApiToken
 
-from .email import is_email_configured
+from .helpers_email import is_email_configured
 from .mixins import ListAPI, RetrieveUpdateAPI
 from .status import check_system_health, is_worker_running
 from .version import inventreeApiText

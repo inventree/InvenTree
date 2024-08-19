@@ -1,6 +1,6 @@
 """Provides extra global data to all templates."""
 
-import InvenTree.email
+import InvenTree.helpers_email
 import InvenTree.status
 from generic.states import StatusCode
 from InvenTree.helpers import inheritors
@@ -25,7 +25,7 @@ def health_status(request):
 
     status = {
         'django_q_running': InvenTree.status.is_worker_running(),
-        'email_configured': InvenTree.email.is_email_configured(),
+        'email_configured': InvenTree.helpers_email.is_email_configured(),
     }
 
     # The following keys are required to denote system health
