@@ -31,10 +31,12 @@ import { RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId,
-  customerId
+  customerId,
+  currency
 }: {
   orderId: number;
   customerId: number;
+  currency: string;
 }) {
   const table = useTable('return-order-line-item');
   const user = useUserState();
@@ -57,7 +59,8 @@ export default function ReturnOrderLineItemTable({
     title: t`Add Line Item`,
     fields: newLineFields,
     initialData: {
-      order: orderId
+      order: orderId,
+      price_currency: currency
     },
     table: table
   });
