@@ -28,7 +28,7 @@ export type ActionDropdownItem = {
   tooltip?: string;
   disabled?: boolean;
   hidden?: boolean;
-  onClick: () => void;
+  onClick: (event?: any) => void;
   indicator?: Omit<IndicatorProps, 'children'>;
 };
 
@@ -96,7 +96,7 @@ export function ActionDropdown({
                 <Menu.Item
                   aria-label={id}
                   leftSection={action.icon}
-                  onClick={() => action.onClick}
+                  onClick={action.onClick}
                   disabled={action.disabled}
                 >
                   {action.name}

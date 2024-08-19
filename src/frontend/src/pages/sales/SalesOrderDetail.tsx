@@ -457,23 +457,23 @@ export default function SalesOrderDetail() {
         actions={[
           EditItemAction({
             hidden: !canEdit,
-            onClick: () => editSalesOrder.open(),
+            onClick: editSalesOrder.open,
             tooltip: t`Edit order`
           }),
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.sales_order),
-            onClick: () => duplicateSalesOrder.open(),
+            onClick: duplicateSalesOrder.open,
             tooltip: t`Duplicate order`
           }),
           HoldItemAction({
             tooltip: t`Hold order`,
             hidden: !canHold,
-            onClick: () => holdOrder.open()
+            onClick: holdOrder.open
           }),
           CancelItemAction({
             tooltip: t`Cancel order`,
             hidden: !canCancel,
-            onClick: () => cancelOrder.open()
+            onClick: cancelOrder.open
           })
         ]}
       />
