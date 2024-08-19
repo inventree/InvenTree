@@ -181,7 +181,7 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
 def format_money(
     money: Money,
     decimal_places: Optional[int] = None,
-    format: Optional[str] = None,
+    fmt: Optional[str] = None,
     include_symbol: bool = True,
 ) -> str:
     """Format money object according to the currently set local.
@@ -189,7 +189,7 @@ def format_money(
     Args:
         money (Money): The money object to format
         decimal_places (int): Number of decimal places to use
-        format (str): Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
+        fmt (str): Format pattern according LDML / the babel format pattern syntax (https://babel.pocoo.org/en/latest/numbers.html)
 
     Returns:
         str: The formatted string
@@ -199,8 +199,8 @@ def format_money(
     """
     language = (None) or settings.LANGUAGE_CODE
     locale = Locale.parse(translation.to_locale(language))
-    if format:
-        pattern = parse_pattern(format)
+    if fmt:
+        pattern = parse_pattern(fmt)
     else:
         pattern = locale.currency_formats['standard']
         if decimal_places is not None:

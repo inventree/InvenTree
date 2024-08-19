@@ -136,7 +136,7 @@ class CurrencyExchangeView(APIView):
     serializer_class = None
 
     @extend_schema(responses={200: common.serializers.CurrencyExchangeSerializer})
-    def get(self, request, format=None):
+    def get(self, request, fmt=None):
         """Return information on available currency conversions."""
         # Extract a list of all available rates
         try:
@@ -563,7 +563,7 @@ class BackgroundTaskOverview(APIView):
     permission_classes = [permissions.IsAuthenticated, IsAdminUser]
     serializer_class = None
 
-    def get(self, request, format=None):
+    def get(self, request, fmt=None):
         """Return information about the current status of the background task queue."""
         import django_q.models as q_models
 

@@ -59,7 +59,7 @@ ignore = [
     "B904",
 
     # Remove fast
-    "A001", "A002","A003","B018"
+    "A001", "A002", "B018"
 ]
 
 [tool.ruff.lint.pydocstyle]

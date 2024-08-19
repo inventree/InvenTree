@@ -200,12 +200,13 @@ def define_env(env):
         return assets
 
     @env.macro
-    def includefile(filename: str, title: str, format: str = ''):
+    def includefile(filename: str, title: str, fmt: str = ''):
         """Include a file in the documentation, in a 'collapse' block.
 
         Arguments:
             - filename: The name of the file to include (relative to the top-level directory)
             - title:
+            - fmt:
         """
         here = os.path.dirname(__file__)
         path = os.path.join(here, '..', filename)
@@ -218,7 +219,7 @@ def define_env(env):
             content = f.read()
 
         data = f'??? abstract "{title}"\n\n'
-        data += f'    ```{format}\n'
+        data += f'    ```{fmt}\n'
         data += textwrap.indent(content, '    ')
         data += '\n\n'
         data += '    ```\n\n'
@@ -233,7 +234,7 @@ def define_env(env):
             'src', 'backend', 'InvenTree', 'report', 'templates', filename
         )
 
-        return includefile(fn, f'Template: {base}', format='html')
+        return includefile(fn, f'Template: {base}', fmt='html')
 
     @env.macro
     def rendersetting(setting: dict):

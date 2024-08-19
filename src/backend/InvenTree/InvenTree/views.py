@@ -328,11 +328,11 @@ class AjaxUpdateView(AjaxMixin, UpdateView):
             request, self.get_form(), context=self.get_context_data()
         )
 
-    def save(self, object, form, **kwargs):
+    def save(self, obj, form, **kwargs):
         """Method for updating the object in the database. Default implementation is very simple, but can be overridden if required.
 
         Args:
-            object: The current object, to be updated
+            obj: The current object, to be updated
             form: The validated form
 
         Returns:
