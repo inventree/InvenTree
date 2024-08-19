@@ -375,7 +375,7 @@ export default function PartDetail() {
     ];
 
     // Add in price range data
-    id &&
+    if (id) {
       br.push({
         type: 'string',
         name: 'pricing',
@@ -412,6 +412,7 @@ export default function PartDetail() {
           );
         }
       });
+    }
 
     // Add in stocktake information
     if (id && part.last_stocktake) {
@@ -431,7 +432,11 @@ export default function PartDetail() {
                 .then((response) => {
                   switch (response.status) {
                     case 200:
-                      return response.data[response.data.length - 1];
+                      if (response.data.length > 0) {
+                        return response.data[response.data.length - 1];
+                      } else {
+                        return null;
+                      }
                     default:
                       return null;
                   }

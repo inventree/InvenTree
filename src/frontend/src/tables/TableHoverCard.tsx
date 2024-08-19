@@ -3,6 +3,8 @@ import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { ReactNode } from 'react';
 
+import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
+
 /*
  * A custom hovercard element for displaying extra information in a table cell.
  * If a table cell has extra information available,
@@ -11,11 +13,15 @@ import { ReactNode } from 'react';
 export function TableHoverCard({
   value, // The value of the cell
   extra, // The extra information to display
-  title // The title of the hovercard
+  title, // The title of the hovercard
+  icon, // The icon to display
+  iconColor // The icon color
 }: {
   value: any;
   extra?: ReactNode;
   title?: string;
+  icon?: InvenTreeIconType;
+  iconColor?: string;
 }) {
   // If no extra information presented, just return the raw value
   if (!extra) {
@@ -31,7 +37,10 @@ export function TableHoverCard({
       <HoverCard.Target>
         <Group gap="xs" justify="space-between" wrap="nowrap">
           {value}
-          <IconInfoCircle size="16" color="blue" />
+          <InvenTreeIcon
+            icon={icon ?? 'info'}
+            iconProps={{ size: 16, color: iconColor ?? 'blue' }}
+          />
         </Group>
       </HoverCard.Target>
       <HoverCard.Dropdown>

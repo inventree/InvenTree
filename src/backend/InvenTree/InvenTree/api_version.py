@@ -1,16 +1,19 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 241
+INVENTREE_API_VERSION = 242
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v241 - 2024-08-14 : https://github.com/inventree/InvenTree/pull/7862
+v242 - 2024-08-19 : https://github.com/inventree/InvenTree/pull/7862
     - Adds custom status fields to various serializers
     - Adds endpoints to admin custom status fields
+
+v241 - 2024-09-18 : https://github.com/inventree/InvenTree/pull/7906
+    - Adjusts required fields for the MeUserDetail endpoint
 
 v240 - 2024-08-16 : https://github.com/inventree/InvenTree/pull/7900
     - Adjust "issued_by" filter for the BuildOrder list endpoint

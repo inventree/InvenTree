@@ -49,11 +49,13 @@ import { TableHoverCard } from '../TableHoverCard';
 export function PurchaseOrderLineItemTable({
   order,
   orderId,
+  currency,
   supplierId,
   params
 }: {
   order: any;
   orderId: number;
+  currency: string;
   supplierId?: number;
   params?: any;
 }) {
@@ -247,7 +249,10 @@ export function PurchaseOrderLineItemTable({
     url: ApiEndpoints.purchase_order_line_list,
     title: t`Add Line Item`,
     fields: addPurchaseOrderFields,
-    initialData: initialData,
+    initialData: {
+      ...initialData,
+      purchase_price_currency: currency
+    },
     table: table
   });
 

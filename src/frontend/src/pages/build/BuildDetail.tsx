@@ -312,7 +312,10 @@ export default function BuildDetail() {
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
         content: build.pk ? (
-          <BuildOrderTable parentBuildId={build.pk} />
+          <BuildOrderTable
+            parentBuildId={build.pk}
+            salesOrderId={build.sales_order}
+          />
         ) : (
           <Skeleton />
         )
