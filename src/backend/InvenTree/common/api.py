@@ -47,7 +47,7 @@ from plugin.models import NotificationUserSetting
 from plugin.serializers import NotificationUserSettingSerializer
 
 
-class CsrfExemptMixin(object):
+class CsrfExemptMixin:
     """Exempts the view from CSRF requirements."""
 
     @method_decorator(csrf_exempt)

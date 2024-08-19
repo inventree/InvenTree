@@ -1,5 +1,4 @@
 """Provides system status functionality checks."""
-# -*- coding: utf-8 -*-
 
 import logging
 from datetime import timedelta

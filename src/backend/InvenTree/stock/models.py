@@ -477,8 +477,7 @@ class StockItem(
 
                 serial_int = abs(serial_int)
 
-                if serial_int > clip:
-                    serial_int = clip
+                serial_int = min(serial_int, clip)
 
                 self.serial_int = serial_int
                 return
@@ -584,7 +583,7 @@ class StockItem(
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-        super(StockItem, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # If user information is provided, and no existing note exists, create one!
         if user and self.tracking_info.count() == 0:
@@ -619,7 +618,7 @@ class StockItem(
         If the StockItem is serialized, the same serial number.
         cannot exist for the same part (or part tree).
         """
-        super(StockItem, self).validate_unique(exclude)
+        super().validate_unique(exclude)
 
         # If the serial number is set, make sure it is not a duplicate
         if self.serial:
@@ -2022,8 +2021,7 @@ class StockItem(
         except (InvalidOperation, ValueError):
             return
 
-        if quantity < 0:
-            quantity = 0
+        quantity = max(quantity, 0)
 
         self.quantity = quantity
 
@@ -2208,7 +2206,7 @@ class StockItem(
 
                 for key in item_results.keys():
                     # Results from sub items should not override master ones
-                    if key not in result_map.keys():
+                    if key not in result_map:
                         result_map[key] = item_results[key]
 
         return result_map
@@ -2585,7 +2583,5 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         verbose_name=_('Finished'),
         help_text=_('The timestamp of the test finish'),
     )
-
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     date = models.DateTimeField(auto_now_add=True, editable=False)

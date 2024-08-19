@@ -110,7 +110,7 @@ class Command(BaseCommand):
 
         # Import icon map file
         if kwargs['input_file']:
-            with open(kwargs['input_file'], 'r') as f:
+            with open(kwargs['input_file']) as f:
                 icons = json.load(f)
 
             self.stdout.write(f'Loaded icon map for {len(icons.keys())} icons')

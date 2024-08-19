@@ -89,7 +89,7 @@ def check_version_number(version_string, allow_duplicate=False):
 
         if release > version_tuple:
             highest_release = False
-            print(f'Found newer release: {str(release)}')
+            print(f'Found newer release: {release!s}')
 
     return highest_release
 
@@ -134,7 +134,7 @@ if __name__ == '__main__':
 
     version = None
 
-    with open(version_file, 'r') as f:
+    with open(version_file) as f:
         text = f.read()
 
         # Extract the InvenTree software version

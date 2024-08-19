@@ -974,23 +974,17 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                             'The supplier part has a pack size defined, but flag use_pack_size not set'
                         )
                     })
-                else:
-                    if bool(data.get('use_pack_size')):
-                        quantity = data['quantity'] = supplier_part.base_quantity(
-                            quantity
-                        )
+                elif bool(data.get('use_pack_size')):
+                    quantity = data['quantity'] = supplier_part.base_quantity(quantity)
 
-                        # Divide purchase price by pack size, to save correct price per stock item
-                        if (
-                            data['purchase_price']
-                            and supplier_part.pack_quantity_native
-                        ):
-                            try:
-                                data['purchase_price'] = float(
-                                    data['purchase_price']
-                                ) / float(supplier_part.pack_quantity_native)
-                            except ValueError:
-                                pass
+                    # Divide purchase price by pack size, to save correct price per stock item
+                    if data['purchase_price'] and supplier_part.pack_quantity_native:
+                        try:
+                            data['purchase_price'] = float(
+                                data['purchase_price']
+                            ) / float(supplier_part.pack_quantity_native)
+                        except ValueError:
+                            pass
 
         # Now remove the flag from data, so that it doesn't interfere with saving
         # Do this regardless of results above
@@ -1240,8 +1234,6 @@ class StockItemTestResultMixin:
 
 class StockItemTestResultDetail(StockItemTestResultMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for StockItemTestResult."""
-
-    pass
 
 
 class StockItemTestResultFilter(rest_filters.FilterSet):

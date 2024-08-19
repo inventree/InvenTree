@@ -206,7 +206,7 @@ def offload_task(
             raise_warning(f"WARNING: '{taskname}' not offloaded - Function not found")
             return False
         except Exception as exc:
-            raise_warning(f"WARNING: '{taskname}' not offloaded due to {str(exc)}")
+            raise_warning(f"WARNING: '{taskname}' not offloaded due to {exc!s}")
             log_error('InvenTree.offload_task')
             return False
     else:
@@ -256,7 +256,7 @@ def offload_task(
             _func(*args, **kwargs)
         except Exception as exc:
             log_error('InvenTree.offload_task')
-            raise_warning(f"WARNING: '{taskname}' failed due to {str(exc)}")
+            raise_warning(f"WARNING: '{taskname}' failed due to {exc!s}")
             raise exc
 
     # Finally, task either completed successfully or was offloaded

@@ -46,7 +46,7 @@ def top_level_path(path: str) -> str:
 
     key = path.split('/')[1]
 
-    if key in SPECIAL_PATHS.keys():
+    if key in SPECIAL_PATHS:
         return key
 
     return GENERAL_PATH
@@ -173,7 +173,7 @@ def parse_api_file(filename: str):
 
     The intent is to make the API schema easier to peruse on the documentation.
     """
-    with open(filename, 'r') as f:
+    with open(filename) as f:
         data = yaml.safe_load(f)
 
     paths = data['paths']

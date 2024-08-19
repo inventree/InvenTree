@@ -498,7 +498,7 @@ def primitive_to_javascript(primitive):
     elif type(primitive) in [int, float]:
         return primitive
     # Wrap with quotes
-    return format_html("'{}'", primitive)  # noqa: P103
+    return format_html("'{}'", primitive)
 
 
 @register.simple_tag()

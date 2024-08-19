@@ -20,13 +20,15 @@ src = ["src/backend/InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C4", "D", "I", "N", "F"]
+select = ["A", "B", "C", "C4", "D", "F", "I", "N", "PIE", "UP", "W"]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff
 # - S # for security stuff (bandit)
 
 ignore = [
+    "C901",
+    # - C901 - function is too complex
     "N999",
     # - N802 - function name should be lowercase
 	"N802",

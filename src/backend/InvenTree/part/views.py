@@ -414,7 +414,7 @@ class PartDetailFromIPN(PartDetail):
         if not self.object:
             return HttpResponseRedirect(reverse('part-index'))
 
-        return super(PartDetailFromIPN, self).get(request, *args, **kwargs)
+        return super().get(request, *args, **kwargs)
 
 
 class PartImageSelect(AjaxUpdateView):

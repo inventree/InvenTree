@@ -130,7 +130,7 @@ def download_image_from_url(remote_url, timeout=2.5):
         # Throw an error if anything goes wrong
         response.raise_for_status()
     except requests.exceptions.ConnectionError as exc:
-        raise Exception(_('Connection error') + f': {str(exc)}')
+        raise Exception(_('Connection error') + f': {exc!s}')
     except requests.exceptions.Timeout as exc:
         raise exc
     except requests.exceptions.HTTPError:
@@ -138,7 +138,7 @@ def download_image_from_url(remote_url, timeout=2.5):
             _('Server responded with invalid status code') + f': {response.status_code}'
         )
     except Exception as exc:
-        raise Exception(_('Exception occurred') + f': {str(exc)}')
+        raise Exception(_('Exception occurred') + f': {exc!s}')
 
     if response.status_code != 200:
         raise Exception(

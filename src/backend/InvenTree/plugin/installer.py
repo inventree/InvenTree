@@ -220,15 +220,11 @@ def install_plugin(url=None, packagename=None, user=None, version=None):
                 full_pkg = f'{packagename}@{url}'
             else:
                 full_pkg = url
-        else:  # pragma: no cover
-            # using a custom package repositories
-            # This is only for pypa compliant directory services (all current are tested above)
-            # and not covered by tests.
-            if url:
-                install_name.append('-i')
-                full_pkg = url
-            elif packagename:
-                full_pkg = packagename
+        elif url:
+            install_name.append('-i')
+            full_pkg = url
+        elif packagename:
+            full_pkg = packagename
 
     elif packagename:
         # use pypi

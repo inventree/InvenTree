@@ -312,7 +312,6 @@ class FileManagementFormView(MultiStepFormView):
         This method is very specific to the type of data found in the file,
         therefore overwrite it in the subclass.
         """
-        pass
 
     def get_clean_items(self):
         """Returns dict with all cleaned values."""

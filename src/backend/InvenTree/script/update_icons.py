@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     print('Generating icon list...')
     with open(
-        os.path.join(TMP_FOLDER, 'node_modules', '@tabler', 'icons', 'icons.json'), 'r'
+        os.path.join(TMP_FOLDER, 'node_modules', '@tabler', 'icons', 'icons.json')
     ) as f:
         icons = json.load(f)
 

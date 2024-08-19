@@ -471,9 +471,9 @@ class SupplierBarcodeMixin(BarcodeMixin):
             # 2. check if it's defined on the part
             # 3. check if there's 1 or 0 stock locations defined in InvenTree
             #    -> assume all stock is going into that location (or no location)
-            if location := line_item.destination:
-                pass
-            elif location := supplier_part.part.get_default_location():
+            if (location := line_item.destination) or (
+                location := supplier_part.part.get_default_location()
+            ):
                 pass
             elif StockLocation.objects.count() <= 1:
                 if not (location := StockLocation.objects.first()):

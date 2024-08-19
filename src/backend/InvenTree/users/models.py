@@ -557,10 +557,8 @@ def update_group_roles(group, debug=False):
 
             permissions_to_add.add(permission_string)
 
-        else:
-            # A forbidden action will be ignored if we have already allowed it
-            if permission_string not in permissions_to_add:
-                permissions_to_delete.add(permission_string)
+        elif permission_string not in permissions_to_add:
+            permissions_to_delete.add(permission_string)
 
     # Pre-fetch all the RuleSet objects
     rulesets = {

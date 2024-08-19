@@ -57,7 +57,7 @@ def fetch_rtd_versions():
     versions = sorted(versions, key=lambda x: StrictVersion(x['version']), reverse=True)
 
     # Add "latest" version first
-    if not any((x['title'] == 'latest' for x in versions)):
+    if not any(x['title'] == 'latest' for x in versions):
         versions.insert(
             0,
             {
@@ -70,7 +70,7 @@ def fetch_rtd_versions():
     # Ensure we have the 'latest' version
     current_version = os.environ.get('READTHEDOCS_VERSION', None)
 
-    if current_version and not any((x['title'] == current_version for x in versions)):
+    if current_version and not any(x['title'] == current_version for x in versions):
         versions.append({
             'version': current_version,
             'title': current_version,

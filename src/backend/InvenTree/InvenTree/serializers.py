@@ -390,8 +390,6 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
 class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
     """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
 
-    pass
-
 
 class UserSerializer(InvenTreeModelSerializer):
     """Serializer for a User."""
@@ -704,7 +702,6 @@ class DataFileUploadSerializer(serializers.Serializer):
 
     def save(self):
         """Empty overwrite for save."""
-        ...
 
 
 class DataFileExtractSerializer(serializers.Serializer):
@@ -824,7 +821,6 @@ class DataFileExtractSerializer(serializers.Serializer):
 
     def save(self):
         """No "save" action for this serializer."""
-        pass
 
 
 class NotesFieldMixin:

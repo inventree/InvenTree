@@ -25,10 +25,9 @@ def checkPythonVersion():
 
     valid = True
 
-    if sys.version_info.major < REQ_MAJOR:
-        valid = False
-
-    elif sys.version_info.major == REQ_MAJOR and sys.version_info.minor < REQ_MINOR:
+    if sys.version_info.major < REQ_MAJOR or (
+        sys.version_info.major == REQ_MAJOR and sys.version_info.minor < REQ_MINOR
+    ):
         valid = False
 
     if not valid:
@@ -618,7 +617,7 @@ def export_records(
     print('Running data post-processing step...')
 
     # Post-process the file, to remove any "permissions" specified for a user or group
-    with open(tmpfile, 'r') as f_in:
+    with open(tmpfile) as f_in:
         data = json.loads(f_in.read())
 
     data_out = []
@@ -684,7 +683,7 @@ def import_records(
     # Pre-process the data, to remove any "permissions" specified for a user or group
     datafile = f'{target}.data.json'
 
-    with open(target, 'r') as f_in:
+    with open(target) as f_in:
         try:
             data = json.loads(f_in.read())
         except json.JSONDecodeError as exc:
@@ -836,7 +835,7 @@ def server(c, address='127.0.0.1:8000'):
 
     Note: This is *not* sufficient for a production installation.
     """
-    manage(c, 'runserver {address}'.format(address=address), pty=True)
+    manage(c, f'runserver {address}', pty=True)
 
 
 @task(pre=[wait])
@@ -880,16 +879,16 @@ def test_translations(c):
 
     # compile regex
     reg = re.compile(
-        r'[a-zA-Z0-9]{1}'  # match any single letter and number  # noqa: W504
-        + r'(?![^{\(\<]*[}\)\>])'  # that is not inside curly brackets, brackets or a tag  # noqa: W504
-        + r'(?<![^\%][^\(][)][a-z])'  # that is not a specially formatted variable with singles  # noqa: W504
+        r'[a-zA-Z0-9]{1}'  # match any single letter and number
+        + r'(?![^{\(\<]*[}\)\>])'  # that is not inside curly brackets, brackets or a tag
+        + r'(?<![^\%][^\(][)][a-z])'  # that is not a specially formatted variable with singles
         + r'(?![^\\][\n])'  # that is not a newline
     )
     last_string = ''
 
     # loop through input file lines
-    with open(file_path, 'rt') as file_org:
-        with open(new_file_path, 'wt') as file_new:
+    with open(file_path) as file_org:
+        with open(new_file_path, 'w') as file_new:
             for line in file_org:
                 if line.startswith('msgstr "'):
                     # write output -> replace regex matches with x in the read in (multi)string
@@ -1330,7 +1329,7 @@ def frontend_download(
             version_file = localDir().joinpath('VERSION')
             if not version_file.exists():
                 return
-            from dotenv import dotenv_values  # noqa: WPS433
+            from dotenv import dotenv_values
 
             content = dotenv_values(version_file)
             if (

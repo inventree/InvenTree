@@ -321,7 +321,6 @@ class BulkDeleteMixin:
         Raises:
             ValidationError: If the deletion should not proceed
         """
-        pass
 
     def filter_delete_queryset(self, queryset, request):
         """Provide custom filtering for the queryset *before* it is deleted.
@@ -397,8 +396,6 @@ class BulkDeleteMixin:
 
 class ListCreateDestroyAPIView(BulkDeleteMixin, ListCreateAPI):
     """Custom API endpoint which provides BulkDelete functionality in addition to List and Create."""
-
-    ...
 
 
 class APISearchViewSerializer(serializers.Serializer):

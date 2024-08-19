@@ -1099,4 +1099,4 @@ def after_error_logged(sender, instance: Error, created: bool, **kwargs):
 
         except Exception as exc:
             """We do not want to throw an exception while reporting an exception"""
-            logger.error(exc)  # noqa: LOG005
+            logger.error(exc)

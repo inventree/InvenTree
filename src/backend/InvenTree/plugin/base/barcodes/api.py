@@ -594,7 +594,7 @@ class BarcodeSOAllocate(BarcodeView):
                 raise ValidationError(response)
 
         # If we have sufficient information, we can allocate the stock item
-        if all((x is not None for x in [line_item, sales_order, shipment, quantity])):
+        if all(x is not None for x in [line_item, sales_order, shipment, quantity]):
             order.models.SalesOrderAllocation.objects.create(
                 line=line_item, shipment=shipment, item=stock_item, quantity=quantity
             )

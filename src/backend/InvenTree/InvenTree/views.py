@@ -180,7 +180,7 @@ class InvenTreeRoleMixin(PermissionRequiredMixin):
             AjaxUpdateView: 'change',
         }
 
-        for view_class in permission_map.keys():
+        for view_class in permission_map:
             if issubclass(type(self), view_class):
                 return permission_map[view_class]
 
@@ -238,7 +238,6 @@ class AjaxMixin(InvenTreeRoleMixin):
         Ref: https://docs.djangoproject.com/en/dev/topics/forms/
         """
         # Do nothing by default
-        pass
 
     def renderJsonResponse(self, request, form=None, data=None, context=None):
         """Render a JSON response based on specific class context.
@@ -578,13 +577,9 @@ class UserSessionOverride:
 class CustomSessionDeleteView(UserSessionOverride, SessionDeleteView):
     """Revert to settings after session delete."""
 
-    pass
-
 
 class CustomSessionDeleteOtherView(UserSessionOverride, SessionDeleteOtherView):
     """Revert to settings after session delete."""
-
-    pass
 
 
 class CustomLoginView(LoginView):

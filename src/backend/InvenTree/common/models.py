@@ -246,7 +246,7 @@ class BaseInvenTreeSetting(models.Model):
 
         If a particular setting is not present, create it with the default value
         """
-        cache_key = f'BUILD_DEFAULT_VALUES:{str(cls.__name__)}'
+        cache_key = f'BUILD_DEFAULT_VALUES:{cls.__name__!s}'
 
         try:
             if InvenTree.helpers.str2bool(cache.get(cache_key, False)):
@@ -329,7 +329,7 @@ class BaseInvenTreeSetting(models.Model):
         - The unique KEY string
         - Any key:value kwargs associated with the particular setting type (e.g. user-id)
         """
-        key = f'{str(cls.__name__)}:{setting_key}'
+        key = f'{cls.__name__!s}:{setting_key}'
 
         for k, v in kwargs.items():
             key += f'_{k}:{v}'

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Provides extra global data to all templates."""
 
 import InvenTree.email

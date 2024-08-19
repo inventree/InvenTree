@@ -107,7 +107,7 @@ def construct_format_regex(fmt_string: str) -> str:
         if name:
             # Check if integer values are required
             if _fmt.endswith('d'):
-                c = '\d'
+                c = r'\d'
             else:
                 c = '.'
 
@@ -199,7 +199,7 @@ def format_money(
     Raises:
         ValueError: format string is incorrectly specified
     """
-    language = None and translation.get_language() or settings.LANGUAGE_CODE
+    language = (None and translation.get_language()) or settings.LANGUAGE_CODE
     locale = Locale.parse(translation.to_locale(language))
     if format:
         pattern = parse_pattern(format)

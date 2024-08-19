@@ -190,12 +190,12 @@ def uploaded_image(
     elif width is not None:
         # Resize the image, width only
         wpercent = width / float(img.size[0])
-        hsize = int((float(img.size[1]) * float(wpercent)))
+        hsize = int(float(img.size[1]) * float(wpercent))
         img = img.resize((width, hsize))
     elif height is not None:
         # Resize the image, height only
         hpercent = height / float(img.size[1])
-        wsize = int((float(img.size[0]) * float(hpercent)))
+        wsize = int(float(img.size[0]) * float(hpercent))
         img = img.resize((wsize, height))
 
     # Optionally rotate the image

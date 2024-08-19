@@ -215,7 +215,7 @@ class DataImportSession(models.Model):
                 continue
 
             # A default value exists
-            if field in field_defaults and field_defaults[field]:
+            if field_defaults.get(field):
                 continue
 
             # The field has been mapped to a data column

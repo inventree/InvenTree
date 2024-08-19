@@ -7,7 +7,7 @@ import sys
 
 def calculate_coverage(filename):
     """Calculate translation coverage for a .po file."""
-    with open(filename, 'r') as f:
+    with open(filename) as f:
         lines = f.readlines()
 
     lines_count = 0
@@ -19,7 +19,7 @@ def calculate_coverage(filename):
             lines_count += 1
 
         elif line.startswith('msgstr'):
-            if line.startswith('msgstr ""') or line.startswith("msgstr ''"):
+            if line.startswith(('msgstr ""', "msgstr ''")):
                 lines_uncovered += 1
             else:
                 lines_covered += 1
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 
     percentages = []
 
-    for locale in locales.keys():
+    for locale in locales:
         locale_file = locales[locale]
         stats = calculate_coverage(locale_file)
 

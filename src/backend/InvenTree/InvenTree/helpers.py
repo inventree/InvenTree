@@ -12,12 +12,12 @@ from pathlib import Path
 from typing import TypeVar, Union
 from wsgiref.util import FileWrapper
 
-import django.utils.timezone as timezone
 from django.conf import settings
 from django.contrib.staticfiles.storage import StaticFilesStorage
 from django.core.exceptions import FieldError, ValidationError
 from django.core.files.storage import Storage, default_storage
 from django.http import StreamingHttpResponse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 import pytz
@@ -800,10 +800,10 @@ def remove_non_printable_characters(
     if remove_unicode:
         # Remove Unicode control characters
         if remove_newline:
-            cleaned = regex.sub('[^\P{C}]+', '', cleaned)
+            cleaned = regex.sub(r'[^\P{C}]+', '', cleaned)
         else:
             # Use 'negative-lookahead' to exclude newline character
-            cleaned = regex.sub('(?![\x0a])[^\P{C}]+', '', cleaned)
+            cleaned = regex.sub('(?![\x0a])[^\\P{C}]+', '', cleaned)
 
     return cleaned
 

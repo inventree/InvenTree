@@ -466,8 +466,6 @@ class PartTestTemplateMixin:
 class PartTestTemplateDetail(PartTestTemplateMixin, RetrieveUpdateDestroyAPI):
     """Detail endpoint for PartTestTemplate model."""
 
-    pass
-
 
 class PartTestTemplateList(PartTestTemplateMixin, DataExportViewMixin, ListCreateAPI):
     """API endpoint for listing (and creating) a PartTestTemplate."""
@@ -1570,8 +1568,6 @@ class PartParameterTemplateList(
 class PartParameterTemplateDetail(PartParameterTemplateMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for accessing the detail view for a PartParameterTemplate object."""
 
-    pass
-
 
 class PartParameterAPIMixin:
     """Mixin class for PartParameter API endpoints."""
@@ -1662,8 +1658,6 @@ class PartParameterList(PartParameterAPIMixin, DataExportViewMixin, ListCreateAP
 
 class PartParameterDetail(PartParameterAPIMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single PartParameter object."""
-
-    pass
 
 
 class PartStocktakeFilter(rest_filters.FilterSet):
@@ -1921,8 +1915,6 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):
     """API endpoint for detail view of a single BomItem object."""
-
-    pass
 
 
 class BomImportUpload(CreateAPI):
