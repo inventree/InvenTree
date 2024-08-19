@@ -18,6 +18,7 @@ import {
   useScrapBuildOutputsForm
 } from '../../forms/BuildForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -245,19 +246,21 @@ export default function BuildOutputTable({ build }: { build: any }) {
   }, [user, table.selectedRecords, table.hasSelectedRecords]);
 
   const rowActions = useCallback(
-    (record: any) => {
-      let actions: RowAction[] = [
+    (record: any): RowAction[] => {
+      return [
         {
           title: t`Allocate`,
           tooltip: t`Allocate stock to build output`,
           color: 'blue',
-          icon: <InvenTreeIcon icon="plus" />
+          icon: <InvenTreeIcon icon="plus" />,
+          onClick: notYetImplemented
         },
         {
           title: t`Deallocate`,
           tooltip: t`Deallocate stock from build output`,
           color: 'red',
-          icon: <InvenTreeIcon icon="minus" />
+          icon: <InvenTreeIcon icon="minus" />,
+          onClick: notYetImplemented
         },
         {
           title: t`Complete`,
@@ -290,8 +293,6 @@ export default function BuildOutputTable({ build }: { build: any }) {
           }
         }
       ];
-
-      return actions;
     },
     [user, partId]
   );

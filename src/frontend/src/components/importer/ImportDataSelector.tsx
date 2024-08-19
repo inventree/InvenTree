@@ -22,7 +22,11 @@ import { apiUrl } from '../../states/ApiState';
 import { TableColumn } from '../../tables/Column';
 import { TableFilter } from '../../tables/Filter';
 import { InvenTreeTable } from '../../tables/InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../../tables/RowActions';
+import {
+  RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '../../tables/RowActions';
 import { ActionButton } from '../buttons/ActionButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ApiFormFieldSet } from '../forms/fields/ApiFormField';
@@ -316,7 +320,7 @@ export default function ImporterDataSelector({
   }, [session]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         {
           title: t`Accept`,

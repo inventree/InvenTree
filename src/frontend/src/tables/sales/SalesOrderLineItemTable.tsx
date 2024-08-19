@@ -15,6 +15,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
 import { useSalesOrderLineItemFields } from '../../forms/SalesOrderForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -27,6 +28,7 @@ import { TableColumn } from '../Column';
 import { DateColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
+  RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
@@ -243,7 +245,7 @@ export default function SalesOrderLineItemTable({
   }, [user, orderId]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       const allocated = (record?.allocated ?? 0) > (record?.quantity ?? 0);
 
       return [
@@ -254,7 +256,8 @@ export default function SalesOrderLineItemTable({
             !user.hasChangeRole(UserRoles.sales_order),
           title: t`Allocate stock`,
           icon: <IconSquareArrowRight />,
-          color: 'green'
+          color: 'green',
+          onClick: notYetImplemented
         },
         {
           hidden:
@@ -280,7 +283,8 @@ export default function SalesOrderLineItemTable({
             !record?.part_detail?.purchaseable,
           title: t`Order stock`,
           icon: <IconShoppingCart />,
-          color: 'blue'
+          color: 'blue',
+          onClick: notYetImplemented
         },
         RowEditAction({
           hidden: !editable || !user.hasChangeRole(UserRoles.sales_order),

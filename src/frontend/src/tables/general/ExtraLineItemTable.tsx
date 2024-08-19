@@ -20,6 +20,7 @@ import { TableColumn } from '../Column';
 import { LinkColumn, NoteColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
+  RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
@@ -104,7 +105,7 @@ export default function ExtraLineItemTable({
   });
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(role),

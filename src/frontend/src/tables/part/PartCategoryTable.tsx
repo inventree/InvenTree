@@ -20,7 +20,7 @@ import { TableColumn } from '../Column';
 import { DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowEditAction } from '../RowActions';
+import { RowAction, RowEditAction } from '../RowActions';
 
 /**
  * PartCategoryTable - Displays a table of part categories
@@ -117,7 +117,7 @@ export function PartCategoryTable({ parentId }: { parentId?: any }) {
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       let can_edit = user.hasChangeRole(UserRoles.part_category);
 
       return [
