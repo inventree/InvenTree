@@ -11,7 +11,6 @@ import {
   IconListNumbers,
   IconNotes,
   IconPaperclip,
-  IconQrcode,
   IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
@@ -96,6 +95,14 @@ export default function BuildDetail() {
         model: ModelType.part
       },
       {
+        type: 'text',
+        name: 'part_detail.IPN',
+        icon: 'part',
+        label: t`IPN`,
+        hidden: !build.part_detail?.IPN,
+        copy: true
+      },
+      {
         type: 'status',
         name: 'status',
         label: t`Status`,
@@ -104,13 +111,15 @@ export default function BuildDetail() {
       {
         type: 'text',
         name: 'reference',
-        label: t`Reference`
+        label: t`Reference`,
+        copy: true
       },
       {
         type: 'text',
         name: 'title',
         label: t`Description`,
-        icon: 'description'
+        icon: 'description',
+        copy: true
       },
       {
         type: 'link',
@@ -303,7 +312,10 @@ export default function BuildDetail() {
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
         content: build.pk ? (
-          <BuildOrderTable parentBuildId={build.pk} />
+          <BuildOrderTable
+            parentBuildId={build.pk}
+            salesOrderId={build.sales_order}
+          />
         ) : (
           <Skeleton />
         )
@@ -312,7 +324,7 @@ export default function BuildDetail() {
         name: 'test-results',
         label: t`Test Results`,
         icon: <IconChecklist />,
-        hidden: !build.part_detail?.trackable,
+        hidden: !build.part_detail?.testable,
         content: build.pk ? (
           <BuildOrderTestTable buildId={build.pk} partId={build.part} />
         ) : (
@@ -331,7 +343,7 @@ export default function BuildDetail() {
             }}
           />
         ),
-        hidden: !build?.part_detail?.trackable
+        hidden: !build?.part_detail?.testable
       },
       {
         name: 'attachments',
@@ -532,6 +544,8 @@ export default function BuildDetail() {
             title={build.reference}
             subtitle={build.title}
             badges={buildBadges}
+            editAction={editBuild.open}
+            editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
             breadcrumbs={[
               { name: t`Build Orders`, url: '/build' },

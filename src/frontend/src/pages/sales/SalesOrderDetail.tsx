@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
-  IconBook,
   IconBookmark,
   IconDots,
   IconInfoCircle,
@@ -32,6 +31,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -48,9 +48,11 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
 import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
 import SalesOrderLineItemTable from '../../tables/sales/SalesOrderLineItemTable';
 import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
@@ -62,6 +64,8 @@ export default function SalesOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
 
   const {
     instance: order,
@@ -75,6 +79,14 @@ export default function SalesOrderDetail() {
       customer_detail: true
     }
   });
+
+  const orderCurrency = useMemo(() => {
+    return (
+      order.order_currency ||
+      order.customer_detail?.currency ||
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [order, globalSettings]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -259,14 +271,40 @@ export default function SalesOrderDetail() {
         label: t`Line Items`,
         icon: <IconList />,
         content: (
-          <SalesOrderLineItemTable
-            orderId={order.pk}
-            customerId={order.customer}
-            editable={
-              order.status != soStatus.COMPLETE &&
-              order.status != soStatus.CANCELLED
-            }
-          />
+          <Accordion
+            multiple={true}
+            defaultValue={['line-items', 'extra-items']}
+          >
+            <Accordion.Item value="line-items" key="lineitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <SalesOrderLineItemTable
+                  orderId={order.pk}
+                  currency={orderCurrency}
+                  customerId={order.customer}
+                  editable={
+                    order.status != soStatus.COMPLETE &&
+                    order.status != soStatus.CANCELLED
+                  }
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="extra-items" key="extraitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <ExtraLineItemTable
+                  endpoint={ApiEndpoints.sales_order_extra_line_list}
+                  orderId={order.pk}
+                  currency={orderCurrency}
+                  role={UserRoles.sales_order}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
         )
       },
       {
@@ -482,6 +520,8 @@ export default function SalesOrderDetail() {
             badges={orderBadges}
             actions={soActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            editAction={editSalesOrder.open}
+            editEnabled={user.hasChangePermission(ModelType.salesorder)}
           />
           <PanelGroup pageKey="salesorder" panels={orderPanels} />
         </Stack>

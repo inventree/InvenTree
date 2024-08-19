@@ -32,24 +32,44 @@ This screen allows the user to customize display of items on the InvenTree home 
 
 ### Search Settings
 
-Customize settings for search results
+Customize settings for search results:
 
-{% with id="user-search", url="settings/user_search.png", description="User Search Settings" %}
-{% include 'img.html' %}
-{% endwith %}
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ usersetting("SEARCH_WHOLE") }}
+{{ usersetting("SEARCH_REGEX") }}
+{{ usersetting("SEARCH_PREVIEW_RESULTS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_PARTS") }}
+{{ usersetting("SEARCH_HIDE_INACTIVE_PARTS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_SUPPLIER_PARTS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_MANUFACTURER_PARTS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_CATEGORIES") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_STOCK") }}
+{{ usersetting("SEARCH_PREVIEW_HIDE_UNAVAILABLE_STOCK") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_LOCATIONS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_COMPANIES") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_BUILD_ORDERS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_PURCHASE_ORDERS") }}
+{{ usersetting("SEARCH_PREVIEW_EXCLUDE_INACTIVE_PURCHASE_ORDERS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_SALES_ORDERS") }}
+{{ usersetting("SEARCH_PREVIEW_EXCLUDE_INACTIVE_SALES_ORDERS") }}
+{{ usersetting("SEARCH_PREVIEW_SHOW_RETURN_ORDERS") }}
+{{ usersetting("SEARCH_PREVIEW_EXCLUDE_INACTIVE_RETURN_ORDERS") }}
 
 ### Notifications
 
-Settings related to notification messages
+Settings related to notification messages:
 
-{% with id="user-notification", url="settings/user_notifications.png", description="User Notification Settings" %}
-{% include 'img.html' %}
-{% endwith %}
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ usersetting("NOTIFICATION_ERROR_REPORT") }}
 
 ### Reporting
 
-Settings for label printing and report generation
+Settings for label printing and report generation:
 
-{% with id="user-reporting", url="settings/user_reporting.png", description="User Reporting Settings" %}
-{% include 'img.html' %}
-{% endwith %}
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ usersetting("REPORT_INLINE") }}
+{{ usersetting("LABEL_INLINE") }}
+{{ usersetting("LABEL_DEFAULT_PRINTER") }}

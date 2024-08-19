@@ -375,6 +375,8 @@ export default function SupplierPartDetail() {
             badges={badges}
             actions={supplierPartActions}
             imageUrl={supplierPart?.part_detail?.thumbnail}
+            editAction={editSupplierPart.open}
+            editEnabled={user.hasChangePermission(ModelType.supplierpart)}
           />
           <PanelGroup pageKey="supplierpart" panels={panels} />
         </Stack>

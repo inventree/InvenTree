@@ -15,7 +15,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 
-import common.models
 import InvenTree.exceptions
 import InvenTree.helpers
 import InvenTree.models

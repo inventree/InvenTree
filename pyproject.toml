@@ -20,7 +20,7 @@ src = ["src/backend/InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C4", "D", "I", "N"]
+select = ["A", "B", "C4", "D", "I", "N", "F"]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff

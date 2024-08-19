@@ -57,6 +57,16 @@ export default function BuildLineTable({
         description: t`Show optional lines`
       },
       {
+        name: 'assembly',
+        label: t`Assembly`,
+        description: t`Show assembled items`
+      },
+      {
+        name: 'testable',
+        label: t`Testable`,
+        description: t`Show testable items`
+      },
+      {
         name: 'tracked',
         label: t`Tracked`,
         description: t`Show tracked lines`
@@ -116,8 +126,20 @@ export default function BuildLineTable({
       );
     }
 
+    const sufficient = available >= record.quantity - record.allocated;
+
+    if (!sufficient) {
+      extra.push(
+        <Text key="insufficient" c="orange" size="sm">
+          {t`Insufficient stock`}
+        </Text>
+      );
+    }
+
     return (
       <TableHoverCard
+        icon={sufficient ? 'info' : 'exclamation'}
+        iconColor={sufficient ? 'blue' : 'orange'}
         value={
           available > 0 ? (
             available
@@ -142,6 +164,16 @@ export default function BuildLineTable({
         sortable: true,
         switchable: false,
         render: (record: any) => PartColumn(record.part_detail)
+      },
+      {
+        accessor: 'record.part_detail.IPN',
+        sortable: false,
+        title: t`IPN`
+      },
+      {
+        accessor: 'record.part_detail.description',
+        sortable: false,
+        title: t`Description`
       },
       {
         accessor: 'bom_item_detail.reference',

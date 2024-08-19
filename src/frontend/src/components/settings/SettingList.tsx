@@ -136,6 +136,10 @@ export function SettingList({
             (s: any) => s.key === key
           );
 
+          if (settingsState?.settings && !setting) {
+            console.error(`Setting ${key} not found`);
+          }
+
           return (
             <React.Fragment key={key}>
               {setting ? (

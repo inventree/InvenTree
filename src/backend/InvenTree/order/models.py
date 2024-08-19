@@ -1,7 +1,6 @@
 """Order model definitions."""
 
 import logging
-import os
 import sys
 from datetime import datetime
 from decimal import Decimal
@@ -1162,7 +1161,8 @@ class SalesOrder(TotalPriceMixin, Order):
 
         # Schedule pricing update for any referenced parts
         for line in self.lines.all():
-            line.part.schedule_pricing_update(create=True)
+            if line.part:
+                line.part.schedule_pricing_update(create=True)
 
         trigger_event('salesorder.completed', id=self.pk)
 

@@ -50,7 +50,7 @@
 {% trans "Stocktake" as text %}
 {% include "sidebar_item.html" with label="stocktake" text=text icon="fa-clipboard-check" %}
 {% endif %}
-{% if part.trackable %}
+{% if part.testable %}
 {% trans "Test Templates" as text %}
 {% include "sidebar_item.html" with label="test-templates" text=text icon="fa-vial" %}
 {% trans "Test Statistics" as text %}

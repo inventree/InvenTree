@@ -92,4 +92,4 @@ def copy_plugin_static_files(slug, check_reload=True):
             logger.debug('- copied %s to %s', str(item), str(destination_path))
             copied += 1
 
-    logger.info(f"Copied %s static files for plugin '%s'.", copied, slug)
+    logger.info("Copied %s static files for plugin '%s'.", copied, slug)

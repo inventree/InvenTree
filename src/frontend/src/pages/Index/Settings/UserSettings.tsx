@@ -11,7 +11,6 @@ import {
 } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { PlaceholderPanel } from '../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { UserSettingList } from '../../../components/settings/SettingList';
@@ -46,7 +45,33 @@ export default function UserSettings() {
         name: 'dashboard',
         label: t`Dashboard`,
         icon: <IconDeviceDesktopAnalytics />,
-        content: <PlaceholderPanel />
+        content: (
+          <UserSettingList
+            keys={[
+              // TODO: These will be replaced with "dashboard" settings,
+              // once the new dashboard is implemented
+              'HOMEPAGE_HIDE_INACTIVE',
+              'HOMEPAGE_PART_STARRED',
+              'HOMEPAGE_CATEGORY_STARRED',
+              'HOMEPAGE_PART_LATEST',
+              'HOMEPAGE_BOM_REQUIRES_VALIDATION',
+              'HOMEPAGE_STOCK_RECENT',
+              'HOMEPAGE_STOCK_LOW',
+              'HOMEPAGE_SHOW_STOCK_DEPLETED',
+              'HOMEPAGE_BUILD_STOCK_NEEDED',
+              'HOMEPAGE_STOCK_EXPIRED',
+              'HOMEPAGE_STOCK_STALE',
+              'HOMEPAGE_BUILD_PENDING',
+              'HOMEPAGE_BUILD_OVERDUE',
+              'HOMEPAGE_PO_OUTSTANDING',
+              'HOMEPAGE_PO_OVERDUE',
+              'HOMEPAGE_SO_OUTSTANDING',
+              'HOMEPAGE_SO_OVERDUE',
+              'HOMEPAGE_SO_SHIPMENTS_PENDING',
+              'HOMEPAGE_NEWS'
+            ]}
+          />
+        )
       },
       {
         name: 'display',
@@ -123,7 +148,11 @@ export default function UserSettings() {
     <Stack gap="xs">
       <SettingsHeader
         title={t`Account Settings`}
-        subtitle={`${user?.first_name} ${user?.last_name}`}
+        subtitle={
+          user?.first_name && user?.last_name
+            ? `${user?.first_name} ${user?.last_name}`
+            : null
+        }
         shorthand={user?.username || ''}
         switch_link="/settings/system"
         switch_text={<Trans>Switch to System Setting</Trans>}

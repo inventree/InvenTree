@@ -12,7 +12,7 @@ import company.models
 import order.models
 import part.models
 import stock.models
-from common.settings import get_global_setting, set_global_setting
+from common.settings import set_global_setting
 from InvenTree.unit_test import InvenTreeTestCase
 from order.status_codes import PurchaseOrderStatus
 

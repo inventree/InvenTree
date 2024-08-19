@@ -330,6 +330,8 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
             imageUrl={company.image}
             breadcrumbs={props.breadcrumbs}
             badges={badges}
+            editAction={editCompany.open}
+            editEnabled={user.hasChangePermission(ModelType.company)}
           />
           <PanelGroup pageKey="company" panels={companyPanels} />
         </Stack>

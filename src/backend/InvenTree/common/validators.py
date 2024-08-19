@@ -45,7 +45,7 @@ def validate_attachment_model_type(value):
     """Ensure that the provided attachment model is valid."""
     model_names = [el[0] for el in attachment_model_options()]
     if value not in model_names:
-        raise ValidationError(f'Model type does not support attachments')
+        raise ValidationError('Model type does not support attachments')
 
 
 def validate_notes_model_type(value):
