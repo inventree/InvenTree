@@ -444,11 +444,10 @@ class SettingsTest(InvenTreeTestCase):
             # Any fields marked as 'boolean' must have a default value specified
             setting = InvenTreeSetting.get_setting_object(key)
 
-            if setting.is_bool():
-                if setting.default_value not in [True, False]:
-                    raise ValueError(
-                        f'Non-boolean default value specified for {key}'
-                    )  # pragma: no cover
+            if setting.is_bool() and setting.default_value not in [True, False]:
+                raise ValueError(
+                    f'Non-boolean default value specified for {key}'
+                )  # pragma: no cover
 
     def test_global_setting_caching(self):
         """Test caching operations for the global settings class."""

@@ -28,10 +28,12 @@ def get_token_from_request(request):
         if auth_header := request.headers.get(k, None):
             auth_header = auth_header.strip().lower().split()
 
-            if len(auth_header) > 1:
-                if auth_header[0].strip().lower().replace(':', '') in token_keys:
-                    token = auth_header[1]
-                    return token
+            if (
+                len(auth_header) > 1
+                and auth_header[0].strip().lower().replace(':', '') in token_keys
+            ):
+                token = auth_header[1]
+                return token
 
     return None
 

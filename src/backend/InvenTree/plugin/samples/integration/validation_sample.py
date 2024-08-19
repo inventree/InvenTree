@@ -66,24 +66,26 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
         # Print debug message to console (intentional)
         print('Validating model instance:', instance.__class__, f'<{instance.pk}>')
 
-        if isinstance(instance, part.models.BomItem):
-            if self.get_setting('BOM_ITEM_INTEGER'):
-                if float(instance.quantity) != int(instance.quantity):
-                    self.raise_error({
-                        'quantity': 'Bom item quantity must be an integer'
-                    })
+        if (
+            isinstance(instance, part.models.BomItem)
+            and self.get_setting('BOM_ITEM_INTEGER')
+            and float(instance.quantity) != int(instance.quantity)
+        ):
+            self.raise_error({'quantity': 'Bom item quantity must be an integer'})
 
-        if isinstance(instance, part.models.Part):
-            # If the part description is being updated, prevent it from being reduced in length
+        # If the part description is being updated, prevent it from being reduced in length
+        if (
+            isinstance(instance, part.models.Part)
+            and deltas
+            and 'description' in deltas
+        ):
+            old_desc = deltas['description']['old']
+            new_desc = deltas['description']['new']
 
-            if deltas and 'description' in deltas:
-                old_desc = deltas['description']['old']
-                new_desc = deltas['description']['new']
-
-                if len(new_desc) < len(old_desc):
-                    self.raise_error({
-                        'description': 'Part description cannot be shortened'
-                    })
+            if len(new_desc) < len(old_desc):
+                self.raise_error({
+                    'description': 'Part description cannot be shortened'
+                })
 
     def validate_part_name(self, name: str, part):
         """Custom validation for Part name field.
@@ -126,14 +128,12 @@ class SampleValidatorPlugin(SettingsMixin, ValidationMixin, InvenTreePlugin):
 
         These examples are silly, but serve to demonstrate how the feature could be used
         """
-        if self.get_setting('SERIAL_MUST_BE_PALINDROME'):
-            if serial != serial[::-1]:
-                self.raise_error('Serial must be a palindrome')
+        if self.get_setting('SERIAL_MUST_BE_PALINDROME') and serial != serial[::-1]:
+            self.raise_error('Serial must be a palindrome')
 
-        if self.get_setting('SERIAL_MUST_MATCH_PART'):
-            # Serial must start with the same letter as the linked part, for some reason
-            if serial[0] != part.name[0]:
-                self.raise_error('Serial number must start with same letter as part')
+        # Serial must start with the same letter as the linked part, for some reason
+        if self.get_setting('SERIAL_MUST_MATCH_PART') and serial[0] != part.name[0]:
+            self.raise_error('Serial number must start with same letter as part')
 
     def validate_batch_code(self, batch_code: str, item):
         """Ensure that a particular batch code meets specification.

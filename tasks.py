@@ -628,9 +628,11 @@ def export_records(
             model_name = entry.get('model', None)
 
             # Ignore any temporary settings (start with underscore)
-            if model_name in ['common.inventreesetting', 'common.inventreeusersetting']:
-                if entry['fields'].get('key', '').startswith('_'):
-                    continue
+            if model_name in [
+                'common.inventreesetting',
+                'common.inventreeusersetting',
+            ] and entry['fields'].get('key', '').startswith('_'):
+                continue
 
             if model_name == 'auth.group':
                 entry['fields']['permissions'] = []

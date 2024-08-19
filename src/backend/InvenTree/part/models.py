@@ -515,11 +515,13 @@ class Part(
         if self.active:
             raise ValidationError(_('Cannot delete this part as it is still active'))
 
-        if not get_global_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', cache=False):
-            if BomItem.objects.filter(sub_part=self).exists():
-                raise ValidationError(
-                    _('Cannot delete this part as it is used in an assembly')
-                )
+        if (
+            not get_global_setting('PART_ALLOW_DELETE_FROM_ASSEMBLY', cache=False)
+            and BomItem.objects.filter(sub_part=self).exists()
+        ):
+            raise ValidationError(
+                _('Cannot delete this part as it is used in an assembly')
+            )
 
         super().delete()
 
@@ -711,13 +713,12 @@ class Part(
                     'revision': _('Revision code must be specified')
                 })
 
-            if get_global_setting('PART_REVISION_ASSEMBLY_ONLY'):
-                if not self.assembly or not self.revision_of.assembly:
-                    raise ValidationError({
-                        'revision_of': _(
-                            'Revisions are only allowed for assembly parts'
-                        )
-                    })
+            if (
+                get_global_setting('PART_REVISION_ASSEMBLY_ONLY') and not self.assembly
+            ) or not self.revision_of.assembly:
+                raise ValidationError({
+                    'revision_of': _('Revisions are only allowed for assembly parts')
+                })
 
             # Cannot have a revision of a "template" part
             if self.revision_of.is_template:
@@ -2753,13 +2754,15 @@ class PartPricing(common.models.MetaMixin):
                 sub_part_min = self.convert(sub_part_pricing.overall_min)
                 sub_part_max = self.convert(sub_part_pricing.overall_max)
 
-                if sub_part_min is not None:
-                    if bom_item_min is None or sub_part_min < bom_item_min:
-                        bom_item_min = sub_part_min
+                if (
+                    sub_part_min is not None and bom_item_min is None
+                ) or sub_part_min < bom_item_min:
+                    bom_item_min = sub_part_min
 
-                if sub_part_max is not None:
-                    if bom_item_max is None or sub_part_max > bom_item_max:
-                        bom_item_max = sub_part_max
+                if (
+                    sub_part_max is not None and bom_item_max is None
+                ) or sub_part_max > bom_item_max:
+                    bom_item_max = sub_part_max
 
             # Update cumulative totals
             if bom_item_min is not None:
@@ -2962,13 +2965,11 @@ class PartPricing(common.models.MetaMixin):
                 v_min = self.convert(v.pricing.overall_min)
                 v_max = self.convert(v.pricing.overall_max)
 
-                if v_min is not None:
-                    if variant_min is None or v_min < variant_min:
-                        variant_min = v_min
+                if (v_min is not None and variant_min is None) or v_min < variant_min:
+                    variant_min = v_min
 
-                if v_max is not None:
-                    if variant_max is None or v_max > variant_max:
-                        variant_max = v_max
+                if (v_max is not None and variant_max is None) or v_max > variant_max:
+                    variant_max = v_max
 
         if self.variant_cost_min != variant_min or self.variant_cost_max != variant_max:
             self.price_modified = True
@@ -3800,12 +3801,15 @@ def post_save_part_parameter_template(sender, instance, created, **kwargs):
     """Callback function when a PartParameterTemplate is created or saved."""
     import part.tasks as part_tasks
 
-    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        if not created:
-            # Schedule a background task to rebuild the parameters against this template
-            InvenTree.tasks.offload_task(
-                part_tasks.rebuild_parameters, instance.pk, force_async=True
-            )
+    if (
+        InvenTree.ready.canAppAccessDatabase()
+        and not InvenTree.ready.isImportingData()
+        and not created
+    ):
+        # Schedule a background task to rebuild the parameters against this template
+        InvenTree.tasks.offload_task(
+            part_tasks.rebuild_parameters, instance.pk, force_async=True
+        )
 
 
 class PartParameter(InvenTree.models.InvenTreeMetadataModel):
@@ -3922,11 +3926,14 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
             except ValueError:
                 self.data_numeric = None
 
-        if self.data_numeric is not None and type(self.data_numeric) is float:
-            # Prevent out of range numbers, etc
-            # Ref: https://github.com/inventree/InvenTree/issues/7593
-            if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
-                self.data_numeric = None
+        # Prevent out of range numbers, etc
+        # Ref: https://github.com/inventree/InvenTree/issues/7593
+        if (
+            self.data_numeric is not None
+            and type(self.data_numeric) is float
+            and math.isnan(self.data_numeric)
+        ) or math.isinf(self.data_numeric):
+            self.data_numeric = None
 
     part = models.ForeignKey(
         Part,
@@ -4509,9 +4516,12 @@ def update_bom_build_lines(sender, instance, created, **kwargs):
 def update_pricing_after_edit(sender, instance, created, **kwargs):
     """Callback function when a part price break is created or updated."""
     # Update part pricing *unless* we are importing data
-    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        if instance.part:
-            instance.part.schedule_pricing_update(create=True)
+    if (
+        InvenTree.ready.canAppAccessDatabase()
+        and not InvenTree.ready.isImportingData()
+        and instance.part
+    ):
+        instance.part.schedule_pricing_update(create=True)
 
 
 @receiver(post_delete, sender=BomItem, dispatch_uid='post_delete_bom_item')
@@ -4526,9 +4536,12 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
 def update_pricing_after_delete(sender, instance, **kwargs):
     """Callback function when a part price break is deleted."""
     # Update part pricing *unless* we are importing data
-    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        if instance.part:
-            instance.part.schedule_pricing_update(create=False)
+    if (
+        InvenTree.ready.canAppAccessDatabase()
+        and not InvenTree.ready.isImportingData()
+        and instance.part
+    ):
+        instance.part.schedule_pricing_update(create=False)
 
 
 class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):

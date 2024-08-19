@@ -195,15 +195,13 @@ class PluginsRegistry:
 
         for plugin in self.plugins.values():
             if plugin.mixin_enabled(mixin):
-                if active is not None:
-                    # Filter by 'active' status of plugin
-                    if active != plugin.is_active():
-                        continue
+                # Filter by 'active' status of plugin
+                if active is not None and active != plugin.is_active():
+                    continue
 
-                if builtin is not None:
-                    # Filter by 'builtin' status of plugin
-                    if builtin != plugin.is_builtin:
-                        continue
+                # Filter by 'builtin' status of plugin
+                if builtin is not None and builtin != plugin.is_builtin:
+                    continue
 
                 result.append(plugin)
 
@@ -396,21 +394,20 @@ class PluginsRegistry:
                 collected_plugins.append(item)
 
         # From this point any plugins are considered "external" and only loaded if plugins are explicitly enabled
-        if settings.PLUGINS_ENABLED:
-            # Check if not running in testing mode and apps should be loaded from hooks
-            if (not settings.PLUGIN_TESTING) or (
-                settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP
-            ):
-                # Collect plugins from setup entry points
-                for entry in get_entrypoints():
-                    try:
-                        plugin = entry.load()
-                        plugin.is_package = True
-                        plugin.package_name = getattr(entry.dist, 'name', None)
-                        plugin._get_package_metadata()
-                        collected_plugins.append(plugin)
-                    except Exception as error:  # pragma: no cover
-                        handle_error(error, do_raise=False, log_name='discovery')
+        # Check if not running in testing mode and apps should be loaded from hooks
+        if (settings.PLUGINS_ENABLED and (not settings.PLUGIN_TESTING)) or (
+            settings.PLUGIN_TESTING and settings.PLUGIN_TESTING_SETUP
+        ):
+            # Collect plugins from setup entry points
+            for entry in get_entrypoints():
+                try:
+                    plugin = entry.load()
+                    plugin.is_package = True
+                    plugin.package_name = getattr(entry.dist, 'name', None)
+                    plugin._get_package_metadata()
+                    collected_plugins.append(plugin)
+                except Exception as error:  # pragma: no cover
+                    handle_error(error, do_raise=False, log_name='discovery')
 
         # Log collected plugins
         logger.info('Collected %s plugins', len(collected_plugins))

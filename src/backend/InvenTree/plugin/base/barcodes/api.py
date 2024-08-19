@@ -563,10 +563,13 @@ class BarcodeSOAllocate(BarcodeView):
         sales_order = kwargs['sales_order']
         shipment = self.get_shipment(**kwargs)
 
-        if stock_item is not None and line_item is not None:
-            if stock_item.part != line_item.part:
-                result['error'] = _('Stock item does not match line item')
-                raise ValidationError(result)
+        if (
+            stock_item is not None
+            and line_item is not None
+            and stock_item.part != line_item.part
+        ):
+            result['error'] = _('Stock item does not match line item')
+            raise ValidationError(result)
 
         quantity = kwargs.get('quantity', None)
 
@@ -587,10 +590,13 @@ class BarcodeSOAllocate(BarcodeView):
             'quantity': quantity,
         }
 
-        if stock_item is not None and quantity is not None:
-            if stock_item.unallocated_quantity() < quantity:
-                response['error'] = _('Insufficient stock available')
-                raise ValidationError(response)
+        if (
+            stock_item is not None
+            and quantity is not None
+            and stock_item.unallocated_quantity() < quantity
+        ):
+            response['error'] = _('Insufficient stock available')
+            raise ValidationError(response)
 
         # If we have sufficient information, we can allocate the stock item
         if all(x is not None for x in [line_item, sales_order, shipment, quantity]):

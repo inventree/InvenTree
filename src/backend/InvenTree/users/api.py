@@ -95,13 +95,12 @@ class OwnerList(ListAPI):
             if not search_match:
                 continue
 
-            if is_active is not None:
-                # Skip any users which do not match the required *is_active* value
-                if (
-                    result.owner_type.name == 'user'
-                    and result.owner_id not in matching_user_ids
-                ):
-                    continue
+            # Skip any users which do not match the required *is_active* value
+            if is_active is not None and (
+                result.owner_type.name == 'user'
+                and result.owner_id not in matching_user_ids
+            ):
+                continue
 
             # If we get here, there is no reason *not* to include this result
             results.append(result)

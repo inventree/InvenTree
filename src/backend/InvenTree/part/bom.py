@@ -91,9 +91,10 @@ def ExportBom(
 
             bom_items.append(item)
 
-            if cascade and item.sub_part.assembly:
-                if max_levels is None or level < max_levels:
-                    add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
+            if (
+                cascade and item.sub_part.assembly and max_levels is None
+            ) or level < max_levels:
+                add_items(item.sub_part.bom_items.all().order_by('id'), level + 1)
 
     top_level_items = part.get_bom_items().order_by('id')
 

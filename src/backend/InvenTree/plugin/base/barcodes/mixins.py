@@ -477,9 +477,10 @@ class SupplierBarcodeMixin(BarcodeMixin):
                 location := supplier_part.part.get_default_location()
             ):
                 pass
-            elif StockLocation.objects.count() <= 1:
-                if not (location := StockLocation.objects.first()):
-                    no_stock_locations = True
+            elif StockLocation.objects.count() <= 1 and not (
+                location := StockLocation.objects.first()
+            ):
+                no_stock_locations = True
 
         response = {
             'lineitem': {'pk': line_item.pk, 'purchase_order': purchase_order.pk}

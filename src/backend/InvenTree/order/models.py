@@ -232,19 +232,20 @@ class Order(
         super().clean()
 
         # Check if a responsible owner is required for this order type
-        if self.REQUIRE_RESPONSIBLE_SETTING:
-            if get_global_setting(self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False):
-                if not self.responsible:
-                    raise ValidationError({
-                        'responsible': _('Responsible user or group must be specified')
-                    })
+        if (
+            self.REQUIRE_RESPONSIBLE_SETTING
+            and get_global_setting(self.REQUIRE_RESPONSIBLE_SETTING, backup_value=False)
+            and not self.responsible
+        ):
+            raise ValidationError({
+                'responsible': _('Responsible user or group must be specified')
+            })
 
         # Check that the referenced 'contact' matches the correct 'company'
-        if self.company and self.contact:
-            if self.contact.company != self.company:
-                raise ValidationError({
-                    'contact': _('Contact does not match selected company')
-                })
+        if self.company and self.contact and self.contact.company != self.company:
+            raise ValidationError({
+                'contact': _('Contact does not match selected company')
+            })
 
     def report_context(self):
         """Generate context data for the reporting interface."""
@@ -783,10 +784,9 @@ class PurchaseOrder(TotalPriceMixin, Order):
         # Extract optional packaging field
         packaging = kwargs.get('packaging', None)
 
-        if not packaging:
-            # Default to the packaging field for the linked supplier part
-            if line.part:
-                packaging = line.part.packaging
+        # Default to the packaging field for the linked supplier part
+        if not packaging and line.part:
+            packaging = line.part.packaging
 
         # Extract optional barcode field
         barcode = kwargs.get('barcode', None)
@@ -866,10 +866,11 @@ class PurchaseOrder(TotalPriceMixin, Order):
         line.save()
 
         # Has this order been completed?
-        if len(self.pending_line_items()) == 0:
-            if get_global_setting('PURCHASEORDER_AUTO_COMPLETE', True):
-                self.received_by = user
-                self.complete_order()  # This will save the model
+        if len(self.pending_line_items()) == 0 and get_global_setting(
+            'PURCHASEORDER_AUTO_COMPLETE', True
+        ):
+            self.received_by = user
+            self.complete_order()  # This will save the model
 
         # Issue a notification to interested parties, that this order has been "updated"
         notify_responsible(
@@ -1455,10 +1456,13 @@ class PurchaseOrderLineItem(OrderLineItem):
         """
         super().clean()
 
-        if self.order.supplier and self.part:
-            # Supplier part *must* point to the same supplier!
-            if self.part.supplier != self.order.supplier:
-                raise ValidationError({'part': _('Supplier part must match supplier')})
+        # Supplier part *must* point to the same supplier!
+        if (
+            self.order.supplier
+            and self.part
+            and self.part.supplier != self.order.supplier
+        ):
+            raise ValidationError({'part': _('Supplier part must match supplier')})
 
     def __str__(self):
         """Render a string representation of a PurchaseOrderLineItem instance."""
