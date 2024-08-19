@@ -8,7 +8,7 @@ msgstr ""
 "Language: no\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-16 18:33\n"
+"PO-Revision-Date: 2024-08-19 19:54\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -5592,7 +5592,7 @@ msgstr "Tabellfiltre"
 
 #: src/tables/UploadAction.tsx:7
 #~ msgid "Upload Data"
-#~ msgstr ""
+#~ msgstr "Upload Data"
 
 #: src/tables/bom/BomTable.tsx:95
 msgid "This BOM item is defined for a different parent"
@@ -7947,3 +7947,4 @@ msgstr "Les dokumentasjonen"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
