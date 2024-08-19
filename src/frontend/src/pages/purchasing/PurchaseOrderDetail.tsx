@@ -46,6 +46,7 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
@@ -59,6 +60,7 @@ export default function PurchaseOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+  const globalSettings = useGlobalSettingsState();
 
   const {
     instance: order,
@@ -73,6 +75,14 @@ export default function PurchaseOrderDetail() {
     },
     refetchOnMount: true
   });
+
+  const orderCurrency = useMemo(() => {
+    return (
+      order.order_currency ||
+      order.supplier_detail?.currency ||
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [order, globalSettings]);
 
   const purchaseOrderFields = usePurchaseOrderFields();
 
@@ -258,6 +268,7 @@ export default function PurchaseOrderDetail() {
               <Accordion.Panel>
                 <PurchaseOrderLineItemTable
                   order={order}
+                  currency={orderCurrency}
                   orderId={Number(id)}
                   supplierId={Number(order.supplier)}
                 />
@@ -271,6 +282,7 @@ export default function PurchaseOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.purchase_order_extra_line_list}
                   orderId={order.pk}
+                  currency={orderCurrency}
                   role={UserRoles.purchase_order}
                 />
               </Accordion.Panel>
