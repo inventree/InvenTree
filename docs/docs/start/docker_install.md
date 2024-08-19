@@ -247,7 +247,7 @@ index 8adee63..dc3993c 100644
 -        image: inventree/inventree:${INVENTREE_TAG:-stable}
 +        image: inventree/inventree:${INVENTREE_TAG:-stable}-custom
 +        pull_policy: never
-         command: invoke dev.worker
+         command: invoke int.worker
          depends_on:
              - inventree-server
 ```

@@ -1457,7 +1457,6 @@ dev = Collection(
     test,
     test_translations,
     translate,
-    worker,
 )
 int = Collection(
     clean_settings,
@@ -1473,6 +1472,7 @@ int = Collection(
     rebuild_thumbnails,
     showmigrations,
     translate_stats,
+    worker,
 )
 ns = Collection(
     backup,
