@@ -2,10 +2,8 @@ import { t } from '@lingui/macro';
 import { useCallback, useMemo, useState } from 'react';
 
 import { AddItemButton } from '../../components/buttons/AddItemButton';
-import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
 import { formatCurrency } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { extraLineItemFields } from '../../forms/CommonForms';
 import {
@@ -28,10 +26,12 @@ import {
 export default function ExtraLineItemTable({
   endpoint,
   orderId,
+  currency,
   role
 }: {
   endpoint: ApiEndpoints;
   orderId: number;
+  currency: string;
   role: UserRoles;
 }) {
   const table = useTable('extra-line-item');
@@ -84,7 +84,10 @@ export default function ExtraLineItemTable({
     url: endpoint,
     title: t`Add Line Item`,
     fields: extraLineItemFields(),
-    initialData: initialData,
+    initialData: {
+      ...initialData,
+      price_currency: currency
+    },
     table: table
   });
 

@@ -35,10 +35,12 @@ import { TableHoverCard } from '../TableHoverCard';
 
 export default function SalesOrderLineItemTable({
   orderId,
+  currency,
   customerId,
   editable
 }: {
   orderId: number;
+  currency: string;
   customerId: number;
   editable: boolean;
 }) {
@@ -191,7 +193,10 @@ export default function SalesOrderLineItemTable({
     url: ApiEndpoints.sales_order_line_list,
     title: t`Add Line Item`,
     fields: createLineFields,
-    initialData: initialData,
+    initialData: {
+      ...initialData,
+      sale_price_currency: currency
+    },
     table: table
   });
 
