@@ -118,8 +118,8 @@ class DataImportSession(models.Model):
         """
         mapping = {}
 
-        for map in self.column_mappings.all():
-            mapping[map.field] = map.column
+        for i in self.column_mappings.all():
+            mapping[i.field] = i.column
 
         return mapping
 

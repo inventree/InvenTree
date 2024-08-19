@@ -1033,12 +1033,12 @@ class TestVersionNumber(TestCase):
 
         # Check that the current .git values work too
 
-        hash = str(
+        git_hash = str(
             subprocess.check_output('git rev-parse --short HEAD'.split()), 'utf-8'
         ).strip()
 
         # On some systems the hash is a different length, so just check the first 6 characters
-        self.assertEqual(hash[:6], version.inventreeCommitHash()[:6])
+        self.assertEqual(git_hash[:6], version.inventreeCommitHash()[:6])
 
         d = (
             str(subprocess.check_output('git show -s --format=%ci'.split()), 'utf-8')
@@ -1438,8 +1438,8 @@ class BarcodeMixinTest(InvenTreeTestCase):
             '{"part": 17, "stockitem": 12}': 'c88c11ed0628eb7fef0d59b098b96975',
         }
 
-        for barcode, hash in hashing_tests.items():
-            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), hash)
+        for barcode, expected in hashing_tests.items():
+            self.assertEqual(InvenTree.helpers.hash_barcode(barcode), expected)
 
 
 class SanitizerTest(TestCase):
