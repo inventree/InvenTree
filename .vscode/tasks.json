@@ -9,19 +9,19 @@
     {
       "label": "worker",
       "type": "shell",
-      "command": "invoke worker",
+      "command": "invoke int.worker",
       "problemMatcher": [],
     },
     {
       "label": "clean-settings",
       "type": "shell",
-      "command": "invoke clean-settings",
+      "command": "invoke int.clean-settings",
       "problemMatcher": [],
     },
     {
       "label": "delete-data",
       "type": "shell",
-      "command": "invoke delete-data",
+      "command": "invoke dev.delete-data",
       "problemMatcher": [],
     },
     {
@@ -33,19 +33,19 @@
     {
       "label": "server",
       "type": "shell",
-      "command": "invoke server",
+      "command": "invoke dev.server",
       "problemMatcher": [],
     },
     {
       "label": "setup-dev",
       "type": "shell",
-      "command": "invoke setup-dev",
+      "command": "invoke dev.setup-dev",
       "problemMatcher": [],
     },
     {
       "label": "setup-test",
       "type": "shell",
-      "command": "invoke setup-test -i --path dev/inventree-demo-dataset",
+      "command": "invoke dev.setup-test -i --path dev/inventree-demo-dataset",
       "problemMatcher": [],
     },
     {
@@ -57,7 +57,7 @@
     {
       "label": "test",
       "type": "shell",
-      "command": "invoke test",
+      "command": "invoke dev.test",
       "problemMatcher": [],
     },
     {
