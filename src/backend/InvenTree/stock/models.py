@@ -2342,7 +2342,7 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
     def label(self):
         """Return label."""
-        if self.tracking_type in StockHistoryCode:
+        if self.tracking_type in StockHistoryCode.keys():  # noqa: SIM118
             return StockHistoryCode.label(self.tracking_type)
 
         return getattr(self, 'title', '')
