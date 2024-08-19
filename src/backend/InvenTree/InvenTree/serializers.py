@@ -89,7 +89,7 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
         )
 
         if allow_blank:
-            choices = [('', '---------')] + choices
+            choices = [('', '---------'), *choices]
 
         kwargs['choices'] = choices
 
@@ -424,14 +424,15 @@ class ExendedUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         """Metaclass defines serializer fields."""
 
-        fields = UserSerializer.Meta.fields + [
+        fields = [
+            *UserSerializer.Meta.fields,
             'groups',
             'is_staff',
             'is_superuser',
             'is_active',
         ]
 
-        read_only_fields = UserSerializer.Meta.read_only_fields + ['groups']
+        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
 
     is_staff = serializers.BooleanField(
         label=_('Staff'), help_text=_('Does this user have staff permissions')

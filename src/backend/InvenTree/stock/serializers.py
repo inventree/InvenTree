@@ -1519,7 +1519,7 @@ def stock_item_adjust_status_options():
 
     In particular, include a Null option for the status field.
     """
-    return [(None, _('No Change'))] + stock.status_codes.StockStatus.items()
+    return [(None, _('No Change')), *stock.status_codes.StockStatus.items()]
 
 
 class StockAdjustmentItemSerializer(serializers.Serializer):

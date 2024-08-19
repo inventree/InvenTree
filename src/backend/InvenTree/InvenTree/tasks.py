@@ -9,7 +9,7 @@ import time
 import warnings
 from dataclasses import dataclass
 from datetime import datetime, timedelta
-from typing import Callable
+from typing import Callable, Optional
 
 from django.conf import settings
 from django.core.exceptions import AppRegistryNotReady
@@ -291,7 +291,7 @@ class TaskRegister:
 
     task_list: list[ScheduledTask] = []
 
-    def register(self, task, schedule, minutes: int = None):
+    def register(self, task, schedule, minutes: Optional[int] = None):
         """Register a task with the que."""
         self.task_list.append(ScheduledTask(task, schedule, minutes))
 
@@ -299,7 +299,9 @@ class TaskRegister:
 tasks = TaskRegister()
 
 
-def scheduled_task(interval: str, minutes: int = None, tasklist: TaskRegister = None):
+def scheduled_task(
+    interval: str, minutes: Optional[int] = None, tasklist: TaskRegister = None
+):
     """Register the given task as a scheduled task.
 
     Example:

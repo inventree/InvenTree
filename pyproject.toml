@@ -20,13 +20,17 @@ src = ["src/backend/InvenTree"]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "UP", "W"]
+select = ["A", "B", "C", "C4", "D", "F", "I", "N", "SIM", "PIE", "RUF", "UP", "W"]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff
 # - S # for security stuff (bandit)
 
 ignore = [
+    "RUF015",
+    # - RUF015 - Prefer next({iterable}) over single element slice
+    "RUF012",
+    # - RUF012 - Mutable class attributes should be annotated with typing.ClassVar
     "SIM117",
     # - SIM117 - Use a single with statement with multiple contexts instead of nested with statements
     "SIM102",

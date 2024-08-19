@@ -164,7 +164,8 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'notes',
             'barcode_hash',
             'overdue',
-        ] + extra_fields
+            *extra_fields,
+        ]
 
 
 class AbstractLineItemSerializer:
@@ -433,7 +434,7 @@ class PurchaseOrderLineItemSerializer(
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
-        return ['auto_pricing', 'merge_items'] + super().skip_create_fields()
+        return ['auto_pricing', 'merge_items', *super().skip_create_fields()]
 
     @staticmethod
     def annotate_queryset(queryset):

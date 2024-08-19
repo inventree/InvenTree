@@ -38,7 +38,7 @@ class MachineRegistry(
 
     def handle_error(self, error: Union[Exception, str]):
         """Helper function for capturing errors with the machine registry."""
-        self.set_shared_state('errors', self.errors + [error])
+        self.set_shared_state('errors', [*self.errors, error])
 
     def initialize(self, main: bool = False):
         """Initialize the machine registry."""

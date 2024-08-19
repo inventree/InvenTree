@@ -9,6 +9,7 @@ import subprocess
 import sys
 from pathlib import Path
 from platform import python_version
+from typing import Optional
 
 from invoke import task
 
@@ -135,7 +136,7 @@ def managePyPath():
     return managePyDir().joinpath('manage.py')
 
 
-def run(c, cmd, path: Path = None, pty=False, env=None):
+def run(c, cmd, path: Optional[Path] = None, pty=False, env=None):
     """Runs a given command a given path.
 
     Args:

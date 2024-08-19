@@ -2,6 +2,7 @@
 
 import json
 import logging
+from typing import Optional
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError as DjangoValidationError
@@ -537,7 +538,10 @@ class DataImportRow(models.Model):
         return overrides
 
     def extract_data(
-        self, available_fields: dict = None, field_mapping: dict = None, commit=True
+        self,
+        available_fields: Optional[dict] = None,
+        field_mapping: Optional[dict] = None,
+        commit=True,
     ):
         """Extract row data from the provided data dictionary."""
         if not field_mapping:

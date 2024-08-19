@@ -2,6 +2,7 @@
 
 import logging
 import re
+from typing import Optional
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
@@ -133,7 +134,7 @@ def convert_value(value, unit):
     return value
 
 
-def convert_physical_value(value: str, unit: str = None, strip_units=True):
+def convert_physical_value(value: str, unit: Optional[str] = None, strip_units=True):
     """Validate that the provided value is a valid physical quantity.
 
     Arguments:

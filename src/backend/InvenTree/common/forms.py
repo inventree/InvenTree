@@ -65,7 +65,7 @@ class MatchFieldForm(forms.Form):
         for col in columns:
             field_name = col['name']
             self.fields[field_name] = forms.ChoiceField(
-                choices=[('', '-' * 10)] + headers_choices,
+                choices=[('', '-' * 10), *headers_choices],
                 required=False,
                 widget=forms.Select(attrs={'class': 'select fieldselect'}),
             )
@@ -131,7 +131,7 @@ class MatchItemForm(forms.Form):
                         item_match = row['match_' + col_guess]
                         # Set field select box
                         self.fields[field_name] = forms.ChoiceField(
-                            choices=[('', '-' * 10)] + item_options,
+                            choices=[('', '-' * 10), *item_options],
                             required=False,
                             widget=forms.Select(attrs={'class': 'select bomselect'}),
                         )
@@ -151,7 +151,7 @@ class MatchItemForm(forms.Form):
                         field_name = 'item_select-' + str(row['index'])
                         # Set field select box
                         self.fields[field_name] = forms.ChoiceField(
-                            choices=[('', '-' * 10)] + item_options,
+                            choices=[('', '-' * 10), *item_options],
                             required=False,
                             widget=forms.Select(attrs={'class': 'select bomselect'}),
                         )

@@ -856,7 +856,7 @@ class InvenTreeTree(MetadataMixin, PluginValidationMixin, MPTTModel):
         Returns:
             List of category names from the top level to this category
         """
-        return self.parentpath + [self]
+        return [*self.parentpath, self]
 
     def get_path(self):
         """Return a list of element in the item tree.

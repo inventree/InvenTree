@@ -4,6 +4,7 @@ Primarily BOM upload tools.
 """
 
 from collections import OrderedDict
+from typing import Optional
 
 from django.utils.translation import gettext as _
 
@@ -40,7 +41,11 @@ def MakeBomTemplate(fmt):
 
 
 def ExportBom(
-    part: Part, fmt='csv', cascade: bool = False, max_levels: int = None, **kwargs
+    part: Part,
+    fmt='csv',
+    cascade: bool = False,
+    max_levels: Optional[int] = None,
+    **kwargs,
 ):
     """Export a BOM (Bill of Materials) for a given part.
 

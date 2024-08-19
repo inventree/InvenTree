@@ -9,7 +9,7 @@ import os.path
 import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
-from typing import TypeVar, Union
+from typing import Optional, TypeVar, Union
 from wsgiref.util import FileWrapper
 
 from django.conf import settings
@@ -859,7 +859,7 @@ def server_timezone() -> str:
     return settings.TIME_ZONE
 
 
-def to_local_time(time, target_tz: str = None):
+def to_local_time(time, target_tz: Optional[str] = None):
     """Convert the provided time object to the local timezone.
 
     Arguments:

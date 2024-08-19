@@ -2,6 +2,7 @@
 
 import re
 import string
+from typing import Optional
 
 from django.conf import settings
 from django.utils import translation
@@ -179,8 +180,8 @@ def extract_named_group(name: str, value: str, fmt_string: str) -> str:
 
 def format_money(
     money: Money,
-    decimal_places: int = None,
-    format: str = None,
+    decimal_places: Optional[int] = None,
+    format: Optional[str] = None,
     include_symbol: bool = True,
 ) -> str:
     """Format money object according to the currently set local.

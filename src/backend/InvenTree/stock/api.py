@@ -1025,7 +1025,7 @@ class StockList(DataExportViewMixin, ListCreateDestroyAPIView):
                     msg += ' : '
                     msg += ','.join([str(e) for e in invalid])
 
-                    raise ValidationError({'serial_numbers': errors + [msg]})
+                    raise ValidationError({'serial_numbers': [*errors, msg]})
 
             except DjangoValidationError as e:
                 raise ValidationError({

@@ -1432,7 +1432,7 @@ class StockItem(
         self,
         entry_type: int,
         user: User,
-        deltas: dict = None,
+        deltas: dict | None = None,
         notes: str = '',
         **kwargs,
     ):
