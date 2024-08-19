@@ -8,6 +8,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderLineItemFields } from '../../forms/ReturnOrderForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useDeleteApiFormModal,
@@ -27,7 +28,7 @@ import {
 } from '../ColumnRenderers';
 import { StatusFilterOptions, TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function ReturnOrderLineItemTable({
   orderId,
@@ -148,14 +149,15 @@ export default function ReturnOrderLineItemTable({
   }, [user, orderId]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       const received: boolean = !!record?.received_date;
 
       return [
         {
           hidden: received || !user.hasChangeRole(UserRoles.return_order),
           title: t`Receive Item`,
-          icon: <IconSquareArrowRight />
+          icon: <IconSquareArrowRight />,
+          onClick: notYetImplemented
         },
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.return_order),

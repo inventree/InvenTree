@@ -15,6 +15,7 @@ import {
 } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 
 export default function SalesOrderAllocationTable({
   partId,
@@ -102,7 +103,7 @@ export default function SalesOrderAllocationTable({
   }, []);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [];
     },
     [user]

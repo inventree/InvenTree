@@ -4,76 +4,45 @@ import { IconCopy, IconDots, IconEdit, IconTrash } from '@tabler/icons-react';
 import { ReactNode, useMemo, useState } from 'react';
 
 import { cancelEvent } from '../functions/events';
-import { notYetImplemented } from '../functions/notifications';
 
 // Type definition for a table row action
 export type RowAction = {
-  title: string;
+  title?: string;
   tooltip?: string;
   color?: string;
-  icon: ReactNode;
-  onClick?: () => void;
+  icon?: ReactNode;
+  onClick: () => void;
   hidden?: boolean;
   disabled?: boolean;
 };
 
 // Component for duplicating a row in a table
-export function RowDuplicateAction({
-  onClick,
-  tooltip,
-  hidden
-}: {
-  onClick?: () => void;
-  tooltip?: string;
-  hidden?: boolean;
-}): RowAction {
+export function RowDuplicateAction(props: RowAction): RowAction {
   return {
+    ...props,
     title: t`Duplicate`,
     color: 'green',
-    tooltip: tooltip,
-    onClick: onClick,
-    icon: <IconCopy />,
-    hidden: hidden
+    icon: <IconCopy />
   };
 }
 
 // Component for editing a row in a table
-export function RowEditAction({
-  onClick,
-  tooltip,
-  hidden
-}: {
-  onClick?: () => void;
-  tooltip?: string;
-  hidden?: boolean;
-}): RowAction {
+export function RowEditAction(props: RowAction): RowAction {
   return {
+    ...props,
     title: t`Edit`,
     color: 'blue',
-    tooltip: tooltip,
-    onClick: onClick,
-    icon: <IconEdit />,
-    hidden: hidden
+    icon: <IconEdit />
   };
 }
 
 // Component for deleting a row in a table
-export function RowDeleteAction({
-  onClick,
-  tooltip,
-  hidden
-}: {
-  onClick?: () => void;
-  tooltip?: string;
-  hidden?: boolean;
-}): RowAction {
+export function RowDeleteAction(props: RowAction): RowAction {
   return {
+    ...props,
     title: t`Delete`,
     color: 'red',
-    tooltip: tooltip,
-    onClick: onClick,
-    icon: <IconTrash />,
-    hidden: hidden
+    icon: <IconTrash />
   };
 }
 
@@ -120,13 +89,7 @@ export function RowActions({
           onClick={(event) => {
             // Prevent clicking on the action from selecting the row itself
             cancelEvent(event);
-
-            if (action.onClick) {
-              action.onClick();
-            } else {
-              notYetImplemented();
-            }
-
+            action.onClick();
             setOpened(false);
           }}
           disabled={action.disabled || false}

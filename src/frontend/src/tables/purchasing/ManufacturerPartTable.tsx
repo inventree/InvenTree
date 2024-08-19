@@ -18,7 +18,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DescriptionColumn, LinkColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 /*
  * Construct a table listing manufacturer parts
@@ -108,7 +108,7 @@ export function ManufacturerPartTable({ params }: { params: any }): ReactNode {
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.purchase_order),

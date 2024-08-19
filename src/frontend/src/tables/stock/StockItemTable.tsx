@@ -21,6 +21,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -506,7 +507,8 @@ export function StockItemTable({
             name: t`Order stock`,
             icon: <InvenTreeIcon icon="buy" />,
             tooltip: t`Order new stock`,
-            disabled: !can_add_order || !can_change_order
+            disabled: !can_add_order || !can_change_order,
+            onClick: notYetImplemented
           },
           {
             name: t`Assign to customer`,

@@ -37,6 +37,7 @@ import {
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
+  RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
@@ -290,7 +291,7 @@ export function PurchaseOrderLineItemTable({
   }, [order, poStatus]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
       return [
