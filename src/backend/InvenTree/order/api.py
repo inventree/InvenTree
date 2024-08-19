@@ -1350,13 +1350,15 @@ class OrderCalendarExport(ICalFeed):
         # No login yet - check in headers
         if 'authorization' in request.headers:
             auth = request.headers['authorization'].split()
-            # NOTE: We are only support basic authentication for now.
-            if len(auth) == 2 and auth[0].lower() == 'basic':
-                uname, passwd = base64.b64decode(auth[1]).decode('ascii').split(':')
-                user = authenticate(username=uname, password=passwd)
-                if user is not None and user.is_active:
-                    login(request, user)
-                    request.user = user
+            if len(auth) == 2:
+                # NOTE: We are only support basic authentication for now.
+                #
+                if auth[0].lower() == 'basic':
+                    uname, passwd = base64.b64decode(auth[1]).decode('ascii').split(':')
+                    user = authenticate(username=uname, password=passwd)
+                    if user is not None and user.is_active:
+                        login(request, user)
+                        request.user = user
 
         # Check again
         if request.user.is_authenticated:

@@ -34,10 +34,9 @@ logger = logging.getLogger('inventree')
 # string representation of a user
 def user_model_str(self):
     """Function to override the default Django User __str__."""
-    if (
-        get_global_setting('DISPLAY_FULL_NAMES', cache=True) and self.first_name
-    ) or self.last_name:
-        return f'{self.first_name} {self.last_name}'
+    if get_global_setting('DISPLAY_FULL_NAMES', cache=True):
+        if self.first_name or self.last_name:
+            return f'{self.first_name} {self.last_name}'
     return self.username
 
 
@@ -422,19 +421,19 @@ class RuleSet(models.Model):
 
         # Work out which roles touch the given table
         for role in cls.RULESET_NAMES:
-            if table in cls.get_ruleset_models()[role] and check_user_role(
-                user, role, permission
-            ):
-                return True
+            if table in cls.get_ruleset_models()[role]:
+                if check_user_role(user, role, permission):
+                    return True
 
         # Check for children models which inherits from parent role
         for parent, child in cls.RULESET_CHANGE_INHERIT:
             # Get child model name
             parent_child_string = f'{parent}_{child}'
 
-            # Check if parent role has change permission
-            if parent_child_string == table and check_user_role(user, parent, 'change'):
-                return True
+            if parent_child_string == table:
+                # Check if parent role has change permission
+                if check_user_role(user, parent, 'change'):
+                    return True
 
         # Print message instead of throwing an error
         name = getattr(user, 'name', user.pk)

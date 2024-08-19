@@ -730,16 +730,13 @@ class SupplierPart(
                 raise ValidationError({'pack_quantity': e.messages})
 
         # Ensure that the linked manufacturer_part points to the same part!
-        if (
-            self.manufacturer_part
-            and self.part
-            and self.manufacturer_part.part != self.part
-        ):
-            raise ValidationError({
-                'manufacturer_part': _(
-                    'Linked manufacturer part must reference the same base part'
-                )
-            })
+        if self.manufacturer_part and self.part:
+            if self.manufacturer_part.part != self.part:
+                raise ValidationError({
+                    'manufacturer_part': _(
+                        'Linked manufacturer part must reference the same base part'
+                    )
+                })
 
     def save(self, *args, **kwargs):
         """Overriding save method to connect an existing ManufacturerPart."""
@@ -1052,13 +1049,9 @@ class SupplierPriceBreak(common.models.PriceBreak):
 )
 def after_save_supplier_price(sender, instance, created, **kwargs):
     """Callback function when a SupplierPriceBreak is created or updated."""
-    if (
-        InvenTree.ready.canAppAccessDatabase()
-        and not InvenTree.ready.isImportingData()
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=True)
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+        if instance.part and instance.part.part:
+            instance.part.part.schedule_pricing_update(create=True)
 
 
 @receiver(
@@ -1068,10 +1061,6 @@ def after_save_supplier_price(sender, instance, created, **kwargs):
 )
 def after_delete_supplier_price(sender, instance, **kwargs):
     """Callback function when a SupplierPriceBreak is deleted."""
-    if (
-        InvenTree.ready.canAppAccessDatabase()
-        and not InvenTree.ready.isImportingData()
-        and instance.part
-        and instance.part.part
-    ):
-        instance.part.part.schedule_pricing_update(create=False)
+    if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
+        if instance.part and instance.part.part:
+            instance.part.part.schedule_pricing_update(create=False)

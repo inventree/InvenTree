@@ -700,37 +700,39 @@ class StockItem(
 
         # The 'supplier_part' field must point to the same part!
         try:
-            if self.supplier_part is not None and self.supplier_part.part != self.part:
-                raise ValidationError({
-                    'supplier_part': _(
-                        f"Part type ('{self.supplier_part.part}') must be {self.part}"
-                    )
-                })
-
-            # A part with a serial number MUST have the quantity set to 1
-            if self.part is not None and self.serial:
-                if self.quantity > 1:
+            if self.supplier_part is not None:
+                if self.supplier_part.part != self.part:
                     raise ValidationError({
-                        'quantity': _(
-                            'Quantity must be 1 for item with a serial number'
-                        ),
-                        'serial': _(
-                            'Serial number cannot be set if quantity greater than 1'
-                        ),
-                    })
-
-                if self.quantity == 0:
-                    self.quantity = 1
-
-                elif self.quantity > 1:
-                    raise ValidationError({
-                        'quantity': _(
-                            'Quantity must be 1 for item with a serial number'
+                        'supplier_part': _(
+                            f"Part type ('{self.supplier_part.part}') must be {self.part}"
                         )
                     })
 
-                # Serial numbered items cannot be deleted on depletion
-                self.delete_on_deplete = False
+            if self.part is not None:
+                # A part with a serial number MUST have the quantity set to 1
+                if self.serial:
+                    if self.quantity > 1:
+                        raise ValidationError({
+                            'quantity': _(
+                                'Quantity must be 1 for item with a serial number'
+                            ),
+                            'serial': _(
+                                'Serial number cannot be set if quantity greater than 1'
+                            ),
+                        })
+
+                    if self.quantity == 0:
+                        self.quantity = 1
+
+                    elif self.quantity > 1:
+                        raise ValidationError({
+                            'quantity': _(
+                                'Quantity must be 1 for item with a serial number'
+                            )
+                        })
+
+                    # Serial numbered items cannot be deleted on depletion
+                    self.delete_on_deplete = False
 
         except PartModels.Part.DoesNotExist:
             pass

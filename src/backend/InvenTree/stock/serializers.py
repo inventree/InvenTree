@@ -795,11 +795,14 @@ class InstallStockItemSerializer(serializers.Serializer):
         parent_item = self.context['item']
         parent_part = parent_item.part
 
-        # Check if the selected part is in the Bill of Materials of the parent item
         if get_global_setting(
             'STOCK_ENFORCE_BOM_INSTALLATION', backup_value=True, cache=False
-        ) and not parent_part.check_if_part_in_bom(stock_item.part):
-            raise ValidationError(_('Selected part is not in the Bill of Materials'))
+        ):
+            # Check if the selected part is in the Bill of Materials of the parent item
+            if not parent_part.check_if_part_in_bom(stock_item.part):
+                raise ValidationError(
+                    _('Selected part is not in the Bill of Materials')
+                )
 
         return stock_item
 

@@ -115,9 +115,10 @@ def exception_handler(exc, context):
 
         log_error(context['request'].path)
 
-    # Convert errors returned under the label '__all__' to 'non_field_errors'
-    if response is not None and '__all__' in response.data:
-        response.data['non_field_errors'] = response.data['__all__']
-        del response.data['__all__']
+    if response is not None:
+        # Convert errors returned under the label '__all__' to 'non_field_errors'
+        if '__all__' in response.data:
+            response.data['non_field_errors'] = response.data['__all__']
+            del response.data['__all__']
 
     return response

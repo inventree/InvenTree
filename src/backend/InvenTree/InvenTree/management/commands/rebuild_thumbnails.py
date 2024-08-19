@@ -34,9 +34,10 @@ class Command(BaseCommand):
             if x and x.path:
                 img_paths.append(x.path)
 
-        if len(img_paths) > 0 and all(os.path.exists(path) for path in img_paths):
-            # All images exist - skip further work
-            return
+        if len(img_paths) > 0:
+            if all(os.path.exists(path) for path in img_paths):
+                # All images exist - skip further work
+                return
 
         logger.info("Generating thumbnail image for '%s'", img)
 

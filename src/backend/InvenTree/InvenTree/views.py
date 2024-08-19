@@ -426,21 +426,20 @@ class SetPasswordView(AjaxUpdateView):
         old_password = request.POST.get('old_password', '')
         user = self.request.user
 
-        # Passwords must match
-        if valid and p1 != p2:
-            error = _('Password fields must match')
-            form.add_error('enter_password', error)
-            form.add_error('confirm_password', error)
-            valid = False
+        if valid:
+            # Passwords must match
 
-        # Old password must be correct
-        if (
-            valid
-            and user.has_usable_password()
-            and not user.check_password(old_password)
-        ):
-            form.add_error('old_password', _('Wrong password provided'))
-            valid = False
+            if p1 != p2:
+                error = _('Password fields must match')
+                form.add_error('enter_password', error)
+                form.add_error('confirm_password', error)
+                valid = False
+
+        if valid:
+            # Old password must be correct
+            if user.has_usable_password() and not user.check_password(old_password):
+                form.add_error('old_password', _('Wrong password provided'))
+                valid = False
 
         if valid:
             try:
