@@ -8,7 +8,7 @@ msgstr ""
 "Language: pl\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-18 19:00\n"
+"PO-Revision-Date: 2024-08-19 19:54\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
@@ -1504,11 +1504,11 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:95
 msgid "Stock History"
-msgstr ""
+msgstr "Historia magazynu"
 
 #: src/components/render/ModelType.tsx:96
 msgid "Stock Histories"
-msgstr ""
+msgstr "Historia magazynu"
 
 #: src/components/render/ModelType.tsx:100
 #: src/defaults/links.tsx:31
@@ -1591,7 +1591,7 @@ msgstr "Pozycje zlecenia zakupu"
 #: src/tables/sales/SalesOrderAllocationTable.tsx:50
 #: src/tables/stock/StockTrackingTable.tsx:118
 msgid "Sales Order"
-msgstr ""
+msgstr "Zlecenie sprzedaży"
 
 #: src/components/render/ModelType.tsx:153
 #: src/pages/Index/Settings/SystemSettings.tsx:270
@@ -1599,7 +1599,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:669
 #: src/pages/sales/SalesIndex.tsx:26
 msgid "Sales Orders"
-msgstr ""
+msgstr "Zlecenia Sprzedaży"
 
 #: src/components/render/ModelType.tsx:161
 msgid "Sales Order Shipment"
@@ -2468,7 +2468,7 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:106
 msgid "Overdue Purchase Orders"
-msgstr ""
+msgstr "Zaległe zlecenia zakupu"
 
 #: src/defaults/dashboardItems.tsx:113
 msgid "Outstanding Sales Orders"
@@ -2476,11 +2476,11 @@ msgstr ""
 
 #: src/defaults/dashboardItems.tsx:120
 msgid "Overdue Sales Orders"
-msgstr ""
+msgstr "Zaległe zlecenia sprzedaży"
 
 #: src/defaults/dashboardItems.tsx:127
 msgid "Current News"
-msgstr ""
+msgstr "Aktualności"
 
 #: src/defaults/defaultHostList.tsx:8
 #~ msgid "InvenTree Demo"
@@ -2753,7 +2753,7 @@ msgstr ""
 
 #: src/forms/PartForms.tsx:124
 msgid "Parent part category"
-msgstr ""
+msgstr "Kategoria części nadrzędnej"
 
 #: src/forms/PartForms.tsx:129
 #~ msgid "Part updated"
@@ -2761,7 +2761,7 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:300
 msgid "Choose Location"
-msgstr ""
+msgstr "Wybierz lokalizację"
 
 #: src/forms/PurchaseOrderForms.tsx:308
 msgid "Item Destination selected"
@@ -2777,7 +2777,7 @@ msgstr ""
 
 #: src/forms/PurchaseOrderForms.tsx:332
 msgid "Default location selected"
-msgstr ""
+msgstr "Wybrano domyślną lokalizację"
 
 #: src/forms/PurchaseOrderForms.tsx:343
 #: src/forms/PurchaseOrderForms.tsx:435
@@ -2790,16 +2790,16 @@ msgstr "Ustaw lokalizację"
 
 #: src/forms/PurchaseOrderForms.tsx:396
 msgid "Assign Batch Code{0}"
-msgstr ""
+msgstr "Przypisz kod partii{0}"
 
 #: src/forms/PurchaseOrderForms.tsx:405
 #: src/forms/StockForms.tsx:420
 msgid "Adjust Packaging"
-msgstr ""
+msgstr "Dostosuj opakowanie"
 
 #: src/forms/PurchaseOrderForms.tsx:412
 msgid "Change Status"
-msgstr ""
+msgstr "Zmień status"
 
 #: src/forms/PurchaseOrderForms.tsx:418
 msgid "Add Note"
@@ -2845,7 +2845,7 @@ msgstr ""
 #: src/tables/build/BuildOrderTestTable.tsx:188
 #: src/tables/sales/SalesOrderAllocationTable.tsx:87
 msgid "Batch Code"
-msgstr ""
+msgstr "Kod partii"
 
 #: src/forms/PurchaseOrderForms.tsx:535
 msgid "Serial numbers"
@@ -2876,26 +2876,26 @@ msgstr "Opakowanie"
 #: src/tables/stock/StockItemTable.tsx:294
 #: src/tables/stock/StockTrackingTable.tsx:52
 msgid "Status"
-msgstr ""
+msgstr "Status"
 
 #: src/forms/PurchaseOrderForms.tsx:564
 #: src/pages/company/SupplierPartDetail.tsx:110
 #: src/tables/ColumnRenderers.tsx:132
 msgid "Note"
-msgstr ""
+msgstr "Notatka"
 
 #: src/forms/PurchaseOrderForms.tsx:639
 #: src/pages/company/SupplierPartDetail.tsx:128
 #: src/tables/purchasing/SupplierPriceBreakTable.tsx:57
 msgid "SKU"
-msgstr ""
+msgstr "SKU"
 
 #: src/forms/PurchaseOrderForms.tsx:639
 #: src/tables/part/PartPurchaseOrdersTable.tsx:120
 #: src/tables/purchasing/PurchaseOrderLineItemTable.tsx:178
 #: src/tables/sales/ReturnOrderLineItemTable.tsx:127
 msgid "Received"
-msgstr ""
+msgstr "Otrzymano"
 
 #: src/forms/PurchaseOrderForms.tsx:639
 #: src/forms/StockForms.tsx:499
@@ -2921,7 +2921,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:104
 msgid "Add given quantity as packs instead of individual items"
-msgstr ""
+msgstr "Dodaj podaną ilość jako paczkę zamiast poszczególnych produktów"
 
 #: src/forms/StockForms.tsx:110
 #~ msgid "Create Stock Item"
@@ -2929,7 +2929,7 @@ msgstr ""
 
 #: src/forms/StockForms.tsx:117
 msgid "Enter initial quantity for this stock item"
-msgstr ""
+msgstr "Wprowadź początkową ilość dla tego towaru"
 
 #: src/forms/StockForms.tsx:124
 msgid "Serial Numbers"
@@ -2937,7 +2937,7 @@ msgstr "Numery seryjne"
 
 #: src/forms/StockForms.tsx:125
 msgid "Enter serial numbers for new stock (or leave blank)"
-msgstr ""
+msgstr "Wprowadź numery seryjne dla nowego stanu (lub pozostaw puste)"
 
 #: src/forms/StockForms.tsx:158
 #~ msgid "Stock item updated"
@@ -2948,7 +2948,7 @@ msgstr ""
 #: src/tables/stock/StockItemTable.tsx:417
 #: src/tables/stock/StockItemTable.tsx:535
 msgid "Add Stock Item"
-msgstr ""
+msgstr "Dodaj element magazynowy"
 
 #: src/forms/StockForms.tsx:362
 msgid "Loading..."
@@ -2956,7 +2956,7 @@ msgstr "Ładowanie..."
 
 #: src/forms/StockForms.tsx:408
 msgid "Move to default location"
-msgstr ""
+msgstr "Przenieś do domyślnej lokalizacji"
 
 #: src/forms/StockForms.tsx:499
 #: src/forms/StockForms.tsx:533
@@ -2970,7 +2970,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:843
 #: src/tables/stock/StockItemTable.tsx:325
 msgid "In Stock"
-msgstr ""
+msgstr "Na stanie"
 
 #: src/forms/StockForms.tsx:499
 msgid "Move"
@@ -2986,29 +2986,29 @@ msgstr "Dodaj"
 #: src/pages/Index/Scan.tsx:266
 #: src/pages/stock/StockDetail.tsx:508
 msgid "Count"
-msgstr ""
+msgstr "Ilość"
 
 #: src/forms/StockForms.tsx:835
 msgid "Add Stock"
-msgstr ""
+msgstr "Dodaj stan"
 
 #: src/forms/StockForms.tsx:844
 msgid "Remove Stock"
-msgstr ""
+msgstr "Usuń stan"
 
 #: src/forms/StockForms.tsx:853
 #: src/pages/part/PartDetail.tsx:1017
 msgid "Transfer Stock"
-msgstr ""
+msgstr "Przenieś stan"
 
 #: src/forms/StockForms.tsx:862
 #: src/pages/part/PartDetail.tsx:1006
 msgid "Count Stock"
-msgstr ""
+msgstr "Policz stan"
 
 #: src/forms/StockForms.tsx:871
 msgid "Change Stock Status"
-msgstr ""
+msgstr "Zmień status stanu magazynowego"
 
 #: src/forms/StockForms.tsx:880
 msgid "Merge Stock"
@@ -5592,7 +5592,7 @@ msgstr ""
 
 #: src/tables/UploadAction.tsx:7
 #~ msgid "Upload Data"
-#~ msgstr ""
+#~ msgstr "Upload Data"
 
 #: src/tables/bom/BomTable.tsx:95
 msgid "This BOM item is defined for a different parent"
@@ -7947,3 +7947,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
