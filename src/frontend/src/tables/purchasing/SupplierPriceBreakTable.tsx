@@ -61,7 +61,11 @@ export function SupplierPriceBreakColumns(): TableColumn[] {
       render: (record: any) => {
         return (
           <Anchor
-            href={getDetailUrl(ModelType.supplierpart, record.part_detail.pk)}
+            href={getDetailUrl(
+              ModelType.supplierpart,
+              record.part_detail.pk,
+              true
+            )}
           >
             {record.part_detail.SKU}
           </Anchor>
