@@ -12,6 +12,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { notYetImplemented } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -20,6 +21,7 @@ import { TableColumn } from '../Column';
 import { BooleanColumn, PartColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function BuildLineTable({
@@ -166,12 +168,12 @@ export default function BuildLineTable({
         render: (record: any) => PartColumn(record.part_detail)
       },
       {
-        accessor: 'record.part_detail.IPN',
+        accessor: 'part_detail.IPN',
         sortable: false,
         title: t`IPN`
       },
       {
-        accessor: 'record.part_detail.description',
+        accessor: 'part_detail.description',
         sortable: false,
         title: t`Description`
       },
@@ -270,7 +272,7 @@ export default function BuildLineTable({
   });
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       let part = record.part_detail ?? {};
 
       // Consumable items have no appropriate actions
@@ -295,13 +297,15 @@ export default function BuildLineTable({
           icon: <IconArrowRight />,
           title: t`Allocate Stock`,
           hidden: !canAllocate,
-          color: 'green'
+          color: 'green',
+          onClick: notYetImplemented
         },
         {
           icon: <IconShoppingCart />,
           title: t`Order Stock`,
           hidden: !canOrder,
-          color: 'blue'
+          color: 'blue',
+          onClick: notYetImplemented
         },
         {
           icon: <IconTool />,

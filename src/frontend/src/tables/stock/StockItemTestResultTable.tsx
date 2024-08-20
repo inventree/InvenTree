@@ -32,7 +32,12 @@ import { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowActions, RowDeleteAction, RowEditAction } from '../RowActions';
+import {
+  RowAction,
+  RowActions,
+  RowDeleteAction,
+  RowEditAction
+} from '../RowActions';
 
 export default function StockItemTestResultTable({
   partId,
@@ -301,7 +306,7 @@ export default function StockItemTestResultTable({
   );
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       if (record.stock_item != undefined && record.stock_item != itemId) {
         // Test results for other stock items cannot be edited
         return [];

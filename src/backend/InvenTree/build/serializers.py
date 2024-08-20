@@ -85,6 +85,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'responsible',
             'responsible_detail',
             'priority',
+            'level',
         ]
 
         read_only_fields = [
@@ -93,7 +94,10 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'completion_data',
             'status',
             'status_text',
+            'level',
         ]
+
+    level = serializers.IntegerField(label=_('Build Level'), read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
