@@ -166,7 +166,9 @@ class CompanySerializer(
 
     image = InvenTreeImageSerializerField(required=False, allow_null=True)
 
-    email = serializers.EmailField(required=False, default='', allow_blank=True)
+    email = serializers.EmailField(
+        required=False, default='', allow_blank=True, allow_null=True
+    )
 
     parts_supplied = serializers.IntegerField(read_only=True)
     parts_manufactured = serializers.IntegerField(read_only=True)
