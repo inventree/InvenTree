@@ -124,7 +124,7 @@ class APITests(InvenTreeAPITestCase):
         self.group.rule_sets.all().delete()
         update_group_roles(self.group)
 
-        response = self.get(url)
+        response = self.get(url, expected_code=401)
 
         # Not logged in, so cannot access user role data
         self.assertIn(response.status_code, [401, 403])
