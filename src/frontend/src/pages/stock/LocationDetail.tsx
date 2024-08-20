@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Skeleton, Stack, Text } from '@mantine/core';
+import { Group, Skeleton, Stack, Text } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -23,6 +23,7 @@ import {
   UnlinkBarcodeAction,
   ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
+import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import NavigationTree from '../../components/nav/NavigationTree';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -37,6 +38,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useDeleteApiFormModal,
@@ -85,7 +87,13 @@ export default function Stock() {
         type: 'text',
         name: 'name',
         label: t`Name`,
-        copy: true
+        copy: true,
+        value_formatter: () => (
+          <Group gap="xs">
+            {location.icon && <ApiIcon name={location.icon} />}
+            {location.name}
+          </Group>
+        )
       },
       {
         type: 'text',
@@ -210,7 +218,7 @@ export default function Stock() {
     url: ApiEndpoints.stock_location_list,
     pk: id,
     title: t`Edit Stock Location`,
-    fields: stockLocationFields({}),
+    fields: stockLocationFields(),
     onFormSuccess: refreshInstance
   });
 
@@ -273,26 +281,38 @@ export default function Stock() {
       <AdminButton model={ModelType.stocklocation} pk={location.pk} />,
       <ActionButton
         icon={<InvenTreeIcon icon="stocktake" />}
+        onClick={notYetImplemented}
         variant="outline"
         size="lg"
       />,
-      <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({}),
-          LinkBarcodeAction({}),
-          UnlinkBarcodeAction({}),
-          {
-            name: 'Scan in stock items',
-            icon: <InvenTreeIcon icon="stock" />,
-            tooltip: 'Scan items'
-          },
-          {
-            name: 'Scan in container',
-            icon: <InvenTreeIcon icon="unallocated_stock" />,
-            tooltip: 'Scan container'
-          }
-        ]}
-      />,
+      location.pk ? (
+        <BarcodeActionDropdown
+          actions={[
+            ViewBarcodeAction({
+              model: ModelType.stocklocation,
+              pk: location.pk
+            }),
+            LinkBarcodeAction({
+              onClick: notYetImplemented
+            }),
+            UnlinkBarcodeAction({
+              onClick: notYetImplemented
+            }),
+            {
+              name: 'Scan in stock items',
+              icon: <InvenTreeIcon icon="stock" />,
+              tooltip: 'Scan items',
+              onClick: notYetImplemented
+            },
+            {
+              name: 'Scan in container',
+              icon: <InvenTreeIcon icon="unallocated_stock" />,
+              tooltip: 'Scan container',
+              onClick: notYetImplemented
+            }
+          ]}
+        />
+      ) : null,
       <PrintingActions
         modelType={ModelType.stocklocation}
         items={[location.pk ?? 0]}
@@ -347,7 +367,8 @@ export default function Stock() {
       { name: t`Stock`, url: '/stock' },
       ...(location.path ?? []).map((l: any) => ({
         name: l.name,
-        url: getDetailUrl(ModelType.stocklocation, l.pk)
+        url: getDetailUrl(ModelType.stocklocation, l.pk),
+        icon: l.icon ? <ApiIcon name={l.icon} /> : undefined
       }))
     ],
     [location]
@@ -373,7 +394,10 @@ export default function Stock() {
           <PageDetail
             title={t`Stock Items`}
             subtitle={location?.name}
+            icon={location?.icon && <ApiIcon name={location?.icon} />}
             actions={locationActions}
+            editAction={editLocation.open}
+            editEnabled={user.hasChangePermission(ModelType.stocklocation)}
             breadcrumbs={breadcrumbs}
             breadcrumbAction={() => {
               setTreeOpen(true);

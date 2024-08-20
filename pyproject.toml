@@ -16,11 +16,11 @@ exclude = [
 src = ["src/backend/InvenTree"]
 # line-length = 120
 
-[tool.ruff.extend-per-file-ignores]
+[tool.ruff.lint.extend-per-file-ignores]
 "__init__.py" = ["D104"]
 
 [tool.ruff.lint]
-select = ["A", "B", "C4", "D", "I", "N"]
+select = ["A", "B", "C4", "D", "I", "N", "F"]
 # Things that should be enabled in the future:
 # - LOG
 # - DJ # for Django stuff
@@ -87,4 +87,4 @@ known_django="django"
 sections=["FUTURE","STDLIB","DJANGO","THIRDPARTY","FIRSTPARTY","LOCALFOLDER"]
 
 [tool.codespell]
-ignore-words-list = ["assertIn","SME"]
+ignore-words-list = ["assertIn","SME","intoto"]

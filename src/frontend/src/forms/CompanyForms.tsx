@@ -41,7 +41,8 @@ export function useSupplierPartFields() {
       },
       supplier: {
         filters: {
-          active: true
+          active: true,
+          is_supplier: true
         }
       },
       SKU: {
@@ -69,7 +70,12 @@ export function useManufacturerPartFields() {
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       part: {},
-      manufacturer: {},
+      manufacturer: {
+        filters: {
+          active: true,
+          is_manufacturer: true
+        }
+      },
       MPN: {},
       description: {},
       link: {}

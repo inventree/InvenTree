@@ -21,6 +21,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -46,6 +47,16 @@ function stockItemTableColumns(): TableColumn[] {
       accessor: 'part',
       sortable: true,
       render: (record: any) => PartColumn(record?.part_detail)
+    },
+    {
+      accessor: 'part_detail.IPN',
+      title: t`IPN`,
+      sortable: true
+    },
+    {
+      accessor: 'part_detail.revision',
+      title: t`Revision`,
+      sortable: true
     },
     DescriptionColumn({
       accessor: 'part_detail.description'
@@ -218,13 +229,15 @@ function stockItemTableColumns(): TableColumn[] {
     }),
     DateColumn({
       accessor: 'stocktake_date',
-      title: t`Stocktake`,
+      title: t`Stocktake Date`,
       sortable: true
     }),
     DateColumn({
+      title: t`Expiry Date`,
       accessor: 'expiry_date'
     }),
     DateColumn({
+      title: t`Last Updated`,
       accessor: 'updated'
     }),
     // TODO: purchase order
@@ -494,7 +507,8 @@ export function StockItemTable({
             name: t`Order stock`,
             icon: <InvenTreeIcon icon="buy" />,
             tooltip: t`Order new stock`,
-            disabled: !can_add_order || !can_change_order
+            disabled: !can_add_order || !can_change_order,
+            onClick: notYetImplemented
           },
           {
             name: t`Assign to customer`,

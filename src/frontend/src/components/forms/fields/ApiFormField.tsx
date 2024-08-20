@@ -1,15 +1,7 @@
 import { t } from '@lingui/macro';
-import {
-  Alert,
-  FileInput,
-  NumberInput,
-  Stack,
-  Switch,
-  TextInput
-} from '@mantine/core';
+import { Alert, FileInput, NumberInput, Stack, Switch } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { useId } from '@mantine/hooks';
-import { IconX } from '@tabler/icons-react';
 import { ReactNode, useCallback, useEffect, useMemo } from 'react';
 import { Control, FieldValues, useController } from 'react-hook-form';
 
@@ -17,9 +9,12 @@ import { ModelType } from '../../../enums/ModelType';
 import { isTrue } from '../../../functions/conversion';
 import { ChoiceField } from './ChoiceField';
 import DateField from './DateField';
+import { DependentField } from './DependentField';
+import IconField from './IconField';
 import { NestedObjectField } from './NestedObjectField';
 import { RelatedModelField } from './RelatedModelField';
 import { TableField } from './TableField';
+import TextField from './TextField';
 
 export type ApiFormData = UseFormReturnType<Record<string, unknown>>;
 
@@ -64,6 +59,7 @@ export type ApiFormFieldType = {
     | 'email'
     | 'url'
     | 'string'
+    | 'icon'
     | 'boolean'
     | 'date'
     | 'datetime'
@@ -74,12 +70,14 @@ export type ApiFormFieldType = {
     | 'choice'
     | 'file upload'
     | 'nested object'
+    | 'dependent field'
     | 'table';
   api_url?: string;
   pk_field?: string;
   model?: ModelType;
   modelRenderer?: (instance: any) => ReactNode;
   filters?: any;
+  child?: ApiFormFieldType;
   children?: { [key: string]: ApiFormFieldType };
   required?: boolean;
   choices?: any[];
@@ -94,6 +92,7 @@ export type ApiFormFieldType = {
   onValueChange?: (value: any, record?: any) => void;
   adjustFilters?: (value: ApiFormAdjustFilterType) => any;
   headers?: string[];
+  depends_on?: string[];
 };
 
 /**
@@ -103,12 +102,16 @@ export function ApiFormField({
   fieldName,
   definition,
   control,
-  hideLabels
+  hideLabels,
+  url,
+  setFields
 }: {
   fieldName: string;
   definition: ApiFormFieldType;
   control: Control<FieldValues, any>;
   hideLabels?: boolean;
+  url?: string;
+  setFields?: React.Dispatch<React.SetStateAction<ApiFormFieldSet>>;
 }) {
   const fieldId = useId();
   const controller = useController({
@@ -122,7 +125,11 @@ export function ApiFormField({
   const { value, ref } = field;
 
   useEffect(() => {
-    if (definition.field_type === 'nested object') return;
+    if (
+      definition.field_type === 'nested object' ||
+      definition.field_type === 'dependent field'
+    )
+      return;
 
     // hook up the value state to the input field
     if (definition.value !== undefined) {
@@ -136,7 +143,7 @@ export function ApiFormField({
       label: hideLabels ? undefined : definition.label,
       description: hideLabels ? undefined : definition.description
     };
-  }, [definition]);
+  }, [hideLabels, definition]);
 
   // pull out onValueChange as this can cause strange errors when passing the
   // definition to the input components via spread syntax
@@ -189,7 +196,7 @@ export function ApiFormField({
     }
 
     return val;
-  }, [value]);
+  }, [definition.field_type, value]);
 
   // Coerce the value to a (stringified) boolean value
   const booleanValue: boolean = useMemo(() => {
@@ -211,22 +218,16 @@ export function ApiFormField({
       case 'url':
       case 'string':
         return (
-          <TextInput
-            {...reducedDefinition}
-            ref={field.ref}
-            id={fieldId}
-            aria-label={`text-field-${field.name}`}
-            type={definition.field_type}
-            value={value || ''}
-            error={error?.message}
-            radius="sm"
-            onChange={(event) => onChange(event.currentTarget.value)}
-            rightSection={
-              value && !definition.required ? (
-                <IconX size="1rem" color="red" onClick={() => onChange('')} />
-              ) : null
-            }
+          <TextField
+            definition={reducedDefinition}
+            controller={controller}
+            fieldName={fieldName}
+            onChange={onChange}
           />
+        );
+      case 'icon':
+        return (
+          <IconField definition={fieldDefinition} controller={controller} />
         );
       case 'boolean':
         return (
@@ -291,6 +292,18 @@ export function ApiFormField({
             definition={fieldDefinition}
             fieldName={fieldName}
             control={control}
+            url={url}
+            setFields={setFields}
+          />
+        );
+      case 'dependent field':
+        return (
+          <DependentField
+            definition={fieldDefinition}
+            fieldName={fieldName}
+            control={control}
+            url={url}
+            setFields={setFields}
           />
         );
       case 'table':

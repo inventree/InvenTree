@@ -10,6 +10,7 @@ from sql_util.utils import SubqueryCount
 from taggit.serializers import TagListSerializerField
 
 import part.filters
+import part.serializers as part_serializers
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import (
@@ -22,7 +23,6 @@ from InvenTree.serializers import (
     NotesFieldMixin,
     RemoteImageMixin,
 )
-from part.serializers import PartBriefSerializer
 
 from .models import (
     Address,
@@ -215,7 +215,7 @@ class ContactSerializer(DataImportExportSerializerMixin, InvenTreeModelSerialize
 
 @register_importer()
 class ManufacturerPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
 ):
     """Serializer for ManufacturerPart object."""
 
@@ -234,6 +234,7 @@ class ManufacturerPartSerializer(
             'MPN',
             'link',
             'barcode_hash',
+            'notes',
             'tags',
         ]
 
@@ -256,7 +257,9 @@ class ManufacturerPartSerializer(
         if prettify is not True:
             self.fields.pop('pretty_name', None)
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part_detail = part_serializers.PartBriefSerializer(
+        source='part', many=False, read_only=True
+    )
 
     manufacturer_detail = CompanyBriefSerializer(
         source='manufacturer', many=False, read_only=True
@@ -305,7 +308,7 @@ class ManufacturerPartParameterSerializer(
 
 @register_importer()
 class SupplierPartSerializer(
-    DataImportExportSerializerMixin, InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin, InvenTreeTagModelSerializer, NotesFieldMixin
 ):
     """Serializer for SupplierPart object."""
 
@@ -340,6 +343,7 @@ class SupplierPartSerializer(
             'supplier_detail',
             'url',
             'updated',
+            'notes',
             'tags',
         ]
 
@@ -379,8 +383,13 @@ class SupplierPartSerializer(
             self.fields.pop('manufacturer_detail', None)
             self.fields.pop('manufacturer_part_detail', None)
 
-        if prettify is not True:
+        if brief or prettify is not True:
             self.fields.pop('pretty_name', None)
+
+        if brief:
+            self.fields.pop('tags')
+            self.fields.pop('available')
+            self.fields.pop('availability_updated')
 
     # Annotated field showing total in-stock quantity
     in_stock = serializers.FloatField(read_only=True, label=_('In Stock'))
@@ -389,7 +398,9 @@ class SupplierPartSerializer(
 
     pack_quantity_native = serializers.FloatField(read_only=True)
 
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part_detail = part_serializers.PartBriefSerializer(
+        source='part', many=False, read_only=True
+    )
 
     supplier_detail = CompanyBriefSerializer(
         source='supplier', many=False, read_only=True

@@ -84,6 +84,9 @@ def getNewestMigrationFile(app, exclude_extension=True):
             newest_num = num
             newest_file = f
 
+    if not newest_file:  # pragma: no cover
+        return newest_file
+
     if exclude_extension:
         newest_file = newest_file.replace('.py', '')
 
@@ -201,7 +204,8 @@ class UserMixin:
                     ruleset.can_add = True
 
                 ruleset.save()
-                break
+                if not assign_all:
+                    break
 
 
 class PluginMixin:

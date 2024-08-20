@@ -10,7 +10,13 @@ export function RenderOwner({
     instance && (
       <RenderInlineModel
         primary={instance.name}
-        suffix={instance.label == 'group' ? <IconUsersGroup /> : <IconUser />}
+        suffix={
+          instance.label == 'group' ? (
+            <IconUsersGroup size={16} />
+          ) : (
+            <IconUser size={16} />
+          )
+        }
       />
     )
   );
@@ -27,4 +33,10 @@ export function RenderUser({
       />
     )
   );
+}
+
+export function RenderGroup({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return instance && <RenderInlineModel primary={instance.name} />;
 }

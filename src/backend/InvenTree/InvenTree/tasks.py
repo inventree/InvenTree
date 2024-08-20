@@ -118,7 +118,7 @@ def check_daily_holdoff(task_name: str, n_days: int = 1) -> bool:
     if last_success:
         threshold = datetime.now() - timedelta(days=n_days)
 
-        if last_success > threshold:
+        if last_success.date() > threshold.date():
             logger.info(
                 "Last successful run for '%s' was too recent - skipping task", task_name
             )

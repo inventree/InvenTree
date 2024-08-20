@@ -4,11 +4,13 @@ import { IconHome, IconLink, IconPointer } from '@tabler/icons-react';
 import { NavigateFunction } from 'react-router-dom';
 
 import { useLocalState } from '../states/LocalState';
+import { useUserState } from '../states/UserState';
 import { aboutInvenTree, docLinks, licenseInfo, serverInfo } from './links';
 import { menuItems } from './menuItems';
 
 export function getActions(navigate: NavigateFunction) {
   const setNavigationOpen = useLocalState((state) => state.setNavigationOpen);
+  const { user } = useUserState();
 
   const actions: SpotlightActionData[] = [
     {
@@ -61,6 +63,16 @@ export function getActions(navigate: NavigateFunction) {
       leftSection: <IconPointer size="1.2rem" />
     }
   ];
+
+  // Staff actions
+  user?.is_staff &&
+    actions.push({
+      id: 'admin-center',
+      label: t`Admin Center`,
+      description: t`Go to the Admin Center`,
+      onClick: () => navigate(menuItems['settings-admin'].link),
+      leftSection: <IconLink size="1.2rem" />
+    });
 
   return actions;
 }

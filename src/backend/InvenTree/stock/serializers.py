@@ -17,19 +17,19 @@ from taggit.serializers import TagListSerializerField
 
 import build.models
 import company.models
+import company.serializers as company_serializers
 import InvenTree.helpers
 import InvenTree.serializers
 import order.models
 import part.filters as part_filters
 import part.models as part_models
+import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
-from company.serializers import SupplierPartSerializer
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
-from part.serializers import PartBriefSerializer, PartTestTemplateSerializer
 
 from .models import (
     StockItem,
@@ -233,7 +233,9 @@ class StockItemTestResultSerializer(
         label=_('Test template for this result'),
     )
 
-    template_detail = PartTestTemplateSerializer(source='template', read_only=True)
+    template_detail = part_serializers.PartTestTemplateSerializer(
+        source='template', read_only=True
+    )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
         required=False
@@ -304,6 +306,7 @@ class StockItemSerializerBrief(
             'location',
             'quantity',
             'serial',
+            'batch',
             'supplier_part',
             'barcode_hash',
         ]
@@ -503,7 +506,10 @@ class StockItemSerializer(
             'part__category',
             'part__pricing_data',
             'supplier_part',
+            'supplier_part__part',
+            'supplier_part__supplier',
             'supplier_part__manufacturer_part',
+            'supplier_part__manufacturer_part__manufacturer',
             'supplier_part__tags',
             'test_results',
             'tags',
@@ -560,7 +566,7 @@ class StockItemSerializer(
     sku = serializers.CharField(source='supplier_part.SKU', read_only=True)
 
     # Optional detail fields, which can be appended via query parameters
-    supplier_part_detail = SupplierPartSerializer(
+    supplier_part_detail = company_serializers.SupplierPartSerializer(
         source='supplier_part',
         supplier_detail=False,
         manufacturer_detail=False,
@@ -568,7 +574,9 @@ class StockItemSerializer(
         many=False,
         read_only=True,
     )
-    part_detail = PartBriefSerializer(source='part', many=False, read_only=True)
+    part_detail = part_serializers.PartBriefSerializer(
+        source='part', many=False, read_only=True
+    )
 
     location_detail = LocationBriefSerializer(
         source='location', many=False, read_only=True
@@ -863,6 +871,36 @@ class UninstallStockItemSerializer(serializers.Serializer):
         note = data.get('note', '')
 
         item.uninstall_into_location(location, request.user, note)
+
+
+class TestStatisticsLineField(serializers.DictField):
+    """DRF field definition for one column of the test statistics."""
+
+    test_name = serializers.CharField()
+    results = serializers.DictField(child=serializers.IntegerField(min_value=0))
+
+
+class TestStatisticsSerializer(serializers.Serializer):
+    """DRF serializer class for the test statistics."""
+
+    results = serializers.ListField(child=TestStatisticsLineField(), read_only=True)
+
+    def to_representation(self, obj):
+        """Just pass through the test statistics from the model."""
+        if self.context['type'] == 'by-part':
+            return obj.part_test_statistics(
+                self.context['pk'],
+                self.context['finished_datetime_after'],
+                self.context['finished_datetime_before'],
+            )
+        elif self.context['type'] == 'by-build':
+            return obj.build_test_statistics(
+                self.context['pk'],
+                self.context['finished_datetime_after'],
+                self.context['finished_datetime_before'],
+            )
+
+        raise ValidationError(_('Unsupported statistic type: ' + self.context['type']))
 
 
 class ConvertStockItemSerializer(serializers.Serializer):

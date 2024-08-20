@@ -17,7 +17,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction } from '../RowActions';
+import { RowAction, RowDeleteAction } from '../RowActions';
 
 /**
  * Construct a table listing related parts for a given part
@@ -111,7 +111,7 @@ export function RelatedPartTable({ partId }: { partId: number }): ReactNode {
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowDeleteAction({
           hidden: !user.hasDeleteRole(UserRoles.part),

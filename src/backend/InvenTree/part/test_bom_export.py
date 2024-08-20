@@ -111,6 +111,7 @@ class BomExportTest(InvenTreeTestCase):
                 'Parent Name',
                 'Part ID',
                 'Part IPN',
+                'Part Revision',
                 'Part Name',
                 'Description',
                 'Assembly',
@@ -150,22 +151,7 @@ class BomExportTest(InvenTreeTestCase):
         self.assertEqual(response.status_code, 200)
 
         content = response.headers['Content-Disposition']
-        self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.xls"')
-
-    def test_export_xlsx(self):
-        """Test BOM download in XLSX format."""
-        params = {
-            'format': 'xlsx',
-            'cascade': True,
-            'parameter_data': True,
-            'stock_data': True,
-            'supplier_data': True,
-            'manufacturer_data': True,
-        }
-
-        response = self.client.get(self.url, data=params)
-
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(content, 'attachment; filename="BOB | Bob | A2_BOM.xlsx"')
 
     def test_export_json(self):
         """Test BOM download in JSON format."""

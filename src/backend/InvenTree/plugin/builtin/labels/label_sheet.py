@@ -5,13 +5,13 @@ import math
 
 from django.core.exceptions import ValidationError
 from django.core.files.base import ContentFile
-from django.http import JsonResponse
 from django.utils.translation import gettext_lazy as _
 
 import weasyprint
 from rest_framework import serializers
 
 import report.helpers
+from InvenTree.helpers import str2bool
 from plugin import InvenTreePlugin
 from plugin.mixins import LabelPrintingMixin, SettingsMixin
 from report.models import LabelOutput, LabelTemplate
@@ -64,7 +64,14 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
 
     BLOCKING_PRINT = True
 
-    SETTINGS = {}
+    SETTINGS = {
+        'DEBUG': {
+            'name': _('Debug mode'),
+            'description': _('Enable debug mode - returns raw HTML instead of PDF'),
+            'validator': bool,
+            'default': False,
+        }
+    }
 
     PrintingOptionsSerializer = LabelPrintingOptionsSerializer
 
@@ -135,11 +142,16 @@ class InvenTreeLabelSheetPlugin(LabelPrintingMixin, SettingsMixin, InvenTreePlug
         # Render to a single HTML document
         html_data = self.wrap_pages(pages, **document_data)
 
-        # Render HTML to PDF
-        html = weasyprint.HTML(string=html_data)
-        document = html.render().write_pdf()
+        if str2bool(self.get_setting('DEBUG')):
+            # In debug mode return with the raw HTML
+            output.output = ContentFile(html_data, 'labels.html')
+        else:
+            # Render HTML to PDF
+            html = weasyprint.HTML(string=html_data)
+            document = html.render().write_pdf()
 
-        output.output = ContentFile(document, 'labels.pdf')
+            output.output = ContentFile(document, 'labels.pdf')
+
         output.progress = 100
         output.complete = True
         output.save()

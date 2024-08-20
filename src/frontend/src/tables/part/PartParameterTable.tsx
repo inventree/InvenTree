@@ -20,7 +20,7 @@ import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DescriptionColumn, PartColumn } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 /**
@@ -105,7 +105,7 @@ export function PartParameterTable({
     ];
   }, [partId]);
 
-  const partParameterFields: ApiFormFieldSet = usePartParameterFields();
+  const partParameterFields: ApiFormFieldSet = usePartParameterFields({});
 
   const newParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
@@ -140,7 +140,7 @@ export function PartParameterTable({
 
   // Callback for row actions
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       // Actions not allowed for "variant" rows
       if (String(partId) != String(record.part)) {
         return [];
@@ -189,7 +189,7 @@ export function PartParameterTable({
         {partLocked && (
           <Alert
             title={t`Part is Locked`}
-            color="red"
+            color="orange"
             icon={<IconLock />}
             p="xs"
           >

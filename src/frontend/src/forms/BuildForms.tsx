@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Alert, Stack, Text } from '@mantine/core';
+import { Alert, Stack, Text } from '@mantine/core';
 import {
   IconCalendar,
   IconLink,
@@ -21,6 +21,7 @@ import { InvenTreeIcon } from '../functions/icons';
 import { useCreateApiFormModal } from '../hooks/UseForm';
 import { useBatchCodeGenerator } from '../hooks/UseGenerator';
 import { apiUrl } from '../states/ApiState';
+import { useGlobalSettingsState } from '../states/SettingsState';
 import { PartColumn, StatusColumn } from '../tables/ColumnRenderers';
 
 /**
@@ -43,6 +44,8 @@ export function useBuildOrderFields({
     }
   });
 
+  const globalSettings = useGlobalSettingsState();
+
   return useMemo(() => {
     return {
       reference: {},
@@ -50,7 +53,13 @@ export function useBuildOrderFields({
         disabled: !create,
         filters: {
           assembly: true,
-          virtual: false
+          virtual: false,
+          active: globalSettings.isSet('BUILDORDER_REQUIRE_ACTIVE_PART')
+            ? true
+            : undefined,
+          locked: globalSettings.isSet('BUILDORDER_REQUIRE_LOCKED_PART')
+            ? true
+            : undefined
         },
         onValueChange(value: any, record?: any) {
           // Adjust the destination location for the build order
@@ -98,7 +107,10 @@ export function useBuildOrderFields({
         icon: <IconLink />
       },
       issued_by: {
-        icon: <IconUser />
+        icon: <IconUser />,
+        filters: {
+          is_active: true
+        }
       },
       responsible: {
         icon: <IconUsersGroup />,
@@ -107,7 +119,7 @@ export function useBuildOrderFields({
         }
       }
     };
-  }, [create, destination, batchCode]);
+  }, [create, destination, batchCode, globalSettings]);
 }
 
 export function useBuildOrderOutputFields({

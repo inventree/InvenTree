@@ -2,6 +2,7 @@
 
 /* globals
     blankImage,
+    getApiIconClass,
     partStockLabel,
     renderLink,
     select2Thumbnail
@@ -274,7 +275,7 @@ function renderStockLocation(data, parameters={}) {
 function renderStockLocationType(data, parameters={}) {
     return renderModel(
         {
-            text: `<span class="${data.icon} me-1"></span>${data.name}`,
+            text: `<span class="${getApiIconClass(data.icon)} me-1"></span>${data.name}`,
         },
         parameters
     );

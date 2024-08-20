@@ -17,7 +17,7 @@ import { TableColumn } from '../Column';
 import { BooleanColumn, DescriptionColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export default function PartParameterTemplateTable() {
   const table = useTable('part-parameter-templates');
@@ -114,7 +114,7 @@ export default function PartParameterTemplateTable() {
 
   // Callback for row actions
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),

@@ -9,7 +9,7 @@ from decimal import Decimal, InvalidOperation
 
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.exceptions import FieldError, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models, transaction
 from django.db.models import Q, Sum
@@ -33,12 +33,15 @@ import InvenTree.ready
 import InvenTree.tasks
 import report.mixins
 import report.models
+from build import models as BuildModels
+from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
 from order.status_codes import SalesOrderStatusGroups
 from part import models as PartModels
 from plugin.events import trigger_event
+from stock import models as StockModels
 from stock.generators import generate_batch_code
 from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
@@ -86,6 +89,7 @@ class StockLocationType(InvenTree.models.MetadataMixin, models.Model):
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Default icon for all locations that have no icon set (optional)'),
+        validators=[validate_icon],
     )
 
 
@@ -117,6 +121,8 @@ class StockLocation(
 
     ITEM_PARENT_KEY = 'location'
 
+    EXTRA_PATH_FIELDS = ['icon']
+
     objects = StockLocationManager()
 
     class Meta:
@@ -142,11 +148,16 @@ class StockLocation(
         """Return API url."""
         return reverse('api-location-list')
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SL'
+
     def report_context(self):
         """Return report context data for this StockLocation."""
         return {
             'location': self,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'parent': self.parent,
             'stock_location': self,
             'stock_items': self.get_stock_items(),
@@ -158,6 +169,7 @@ class StockLocation(
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
         db_column='icon',
+        validators=[validate_icon],
     )
 
     owner = models.ForeignKey(
@@ -206,6 +218,11 @@ class StockLocation(
 
         if self.location_type:
             return self.location_type.icon
+
+        if default_icon := get_global_setting(
+            'STOCK_LOCATION_DEFAULT_ICON', cache=True
+        ):
+            return default_icon
 
         return ''
 
@@ -367,6 +384,11 @@ class StockItem(
         """Custom API instance filters."""
         return {'parent': {'exclude_tree': self.pk}}
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'SI'
+
     def get_test_keys(self, include_installed=True):
         """Construct a flattened list of test 'keys' for this StockItem."""
         keys = []
@@ -397,7 +419,7 @@ class StockItem(
             'item': self,
             'name': self.part.full_name,
             'part': self.part,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'qr_url': self.get_absolute_url(),
             'parameters': self.part.parameters_map(),
             'quantity': InvenTree.helpers.normalize(self.quantity),
@@ -714,8 +736,6 @@ class StockItem(
                     self.delete_on_deplete = False
 
         except PartModels.Part.DoesNotExist:
-            # This gets thrown if self.supplier_part is null
-            # TODO - Find a test than can be performed...
             pass
 
         # Ensure that the item cannot be assigned to itself
@@ -1109,7 +1129,11 @@ class StockItem(
 
         item.add_tracking_entry(code, user, deltas, notes=notes)
 
-        trigger_event('stockitem.assignedtocustomer', id=self.id, customer=customer.id)
+        trigger_event(
+            'stockitem.assignedtocustomer',
+            id=self.id,
+            customer=customer.id if customer else None,
+        )
 
         # Return the reference to the stock item
         return item
@@ -1773,7 +1797,7 @@ class StockItem(
                     price = convert_money(price, base_currency)
                     total_price += price * qty
                     quantity += qty
-                except:
+                except Exception:
                     # Skip this entry, cannot convert to base currency
                     continue
 
@@ -2269,7 +2293,8 @@ def after_delete_stock_item(sender, instance: StockItem, **kwargs):
         )
 
         # Schedule an update on parent part pricing
-        instance.part.schedule_pricing_update(create=False)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=False)
 
 
 @receiver(post_save, sender=StockItem, dispatch_uid='stock_item_post_save_log')
@@ -2288,7 +2313,8 @@ def after_save_stock_item(sender, instance: StockItem, created, **kwargs):
         )
 
         # Schedule an update on parent part pricing
-        instance.part.schedule_pricing_update(create=True)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=True)
 
 
 class StockItemTracking(InvenTree.models.InvenTreeModel):
@@ -2436,6 +2462,67 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
     def key(self):
         """Return key for test."""
         return InvenTree.helpers.generateTestKey(self.test_name)
+
+    def calculate_test_statistics_for_test_template(
+        self, query_base, test_template, ret, start, end
+    ):
+        """Helper function to calculate the passed/failed/total tests count per test template type."""
+        query = query_base & Q(template=test_template.pk)
+        if start is not None and end is not None:
+            query = query & Q(started_datetime__range=(start, end))
+        elif start is not None and end is None:
+            query = query & Q(started_datetime__gt=start)
+        elif start is None and end is not None:
+            query = query & Q(started_datetime__lt=end)
+
+        passed = StockModels.StockItemTestResult.objects.filter(
+            query & Q(result=True)
+        ).count()
+        failed = StockModels.StockItemTestResult.objects.filter(
+            query & ~Q(result=True)
+        ).count()
+        if test_template.test_name not in ret:
+            ret[test_template.test_name] = {'passed': 0, 'failed': 0, 'total': 0}
+        ret[test_template.test_name]['passed'] += passed
+        ret[test_template.test_name]['failed'] += failed
+        ret[test_template.test_name]['total'] += passed + failed
+        ret['total']['passed'] += passed
+        ret['total']['failed'] += failed
+        ret['total']['total'] += passed + failed
+        return ret
+
+    def build_test_statistics(self, build_order_pk, start, end):
+        """Generate a statistics matrix for each test template based on the test executions result counts."""
+        build = BuildModels.Build.objects.get(pk=build_order_pk)
+        if not build or not build.part.trackable:
+            return {}
+
+        test_templates = build.part.getTestTemplates()
+        ret = {'total': {'passed': 0, 'failed': 0, 'total': 0}}
+        for build_item in build.get_build_outputs():
+            for test_template in test_templates:
+                query_base = Q(stock_item=build_item)
+                ret = self.calculate_test_statistics_for_test_template(
+                    query_base, test_template, ret, start, end
+                )
+        return ret
+
+    def part_test_statistics(self, part_pk, start, end):
+        """Generate a statistics matrix for each test template based on the test executions result counts."""
+        part = PartModels.Part.objects.get(pk=part_pk)
+
+        if not part or not part.trackable:
+            return {}
+
+        test_templates = part.getTestTemplates()
+        ret = {'total': {'passed': 0, 'failed': 0, 'total': 0}}
+        for bo in part.stock_entries():
+            for test_template in test_templates:
+                query_base = Q(stock_item=bo)
+                ret = self.calculate_test_statistics_for_test_template(
+                    query_base, test_template, ret, start, end
+                )
+        return ret
 
     stock_item = models.ForeignKey(
         StockItem, on_delete=models.CASCADE, related_name='test_results'

@@ -76,8 +76,6 @@ def generate_batch_code(**kwargs):
 
 def generate_serial_number(part=None, quantity=1, **kwargs) -> str:
     """Generate a default 'serial number' for a new StockItem."""
-    from plugin.registry import registry
-
     quantity = quantity or 1
 
     if part is None:

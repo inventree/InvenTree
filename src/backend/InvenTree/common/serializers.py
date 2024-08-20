@@ -540,11 +540,16 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         allow_null=False,
     )
 
-    def save(self):
+    def save(self, **kwargs):
         """Override the save method to handle the model_type field."""
         from InvenTree.models import InvenTreeAttachmentMixin
+        from users.models import check_user_permission
 
         model_type = self.validated_data.get('model_type', None)
+
+        if model_type is None:
+            if self.instance:
+                model_type = self.instance.model_type
 
         # Ensure that the user has permission to attach files to the specified model
         user = self.context.get('request').user
@@ -556,12 +561,33 @@ class AttachmentSerializer(InvenTreeModelSerializer):
         if not issubclass(target_model_class, InvenTreeAttachmentMixin):
             raise PermissionDenied(_('Invalid model type specified for attachment'))
 
+        permission_error_msg = _(
+            'User does not have permission to create or edit attachments for this model'
+        )
+
+        if not check_user_permission(user, target_model_class, 'change'):
+            raise PermissionDenied(permission_error_msg)
+
         # Check that the user has the required permissions to attach files to the target model
         if not target_model_class.check_attachment_permission('change', user):
-            raise PermissionDenied(
-                _(
-                    'User does not have permission to create or edit attachments for this model'
-                )
-            )
+            raise PermissionDenied(_(permission_error_msg))
 
-        return super().save()
+        return super().save(**kwargs)
+
+
+class IconSerializer(serializers.Serializer):
+    """Serializer for an icon."""
+
+    name = serializers.CharField()
+    category = serializers.CharField()
+    tags = serializers.ListField(child=serializers.CharField())
+    variants = serializers.DictField(child=serializers.CharField())
+
+
+class IconPackageSerializer(serializers.Serializer):
+    """Serializer for a list of icons."""
+
+    name = serializers.CharField()
+    prefix = serializers.CharField()
+    fonts = serializers.DictField(child=serializers.CharField())
+    icons = serializers.DictField(child=IconSerializer())

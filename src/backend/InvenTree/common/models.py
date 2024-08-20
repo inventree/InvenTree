@@ -9,12 +9,13 @@ import hmac
 import json
 import logging
 import os
+import sys
 import uuid
 from datetime import timedelta, timezone
 from enum import Enum
 from io import BytesIO
 from secrets import compare_digest
-from typing import Any, Callable, Collection, TypedDict, Union
+from typing import Any, Callable, TypedDict, Union
 
 from django.apps import apps
 from django.conf import settings as django_settings
@@ -49,12 +50,24 @@ import InvenTree.ready
 import InvenTree.tasks
 import InvenTree.validators
 import order.validators
+import plugin.base.barcodes.helper
 import report.helpers
 import users.models
 from InvenTree.sanitizer import sanitize_svg
 from plugin import registry
 
 logger = logging.getLogger('inventree')
+
+if sys.version_info >= (3, 11):
+    from typing import NotRequired
+else:
+
+    class NotRequired:  # pragma: no cover
+        """NotRequired type helper is only supported with Python 3.11+."""
+
+        def __class_getitem__(cls, item):
+            """Return the item."""
+            return item
 
 
 class MetaMixin(models.Model):
@@ -1167,7 +1180,7 @@ class InvenTreeSettingsKeyType(SettingsKeyType):
         requires_restart: If True, a server restart is required after changing the setting
     """
 
-    requires_restart: bool
+    requires_restart: NotRequired[bool]
 
 
 class InvenTreeSetting(BaseInvenTreeSetting):
@@ -1402,11 +1415,23 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': False,
             'validator': bool,
         },
+        'BARCODE_GENERATION_PLUGIN': {
+            'name': _('Barcode Generation Plugin'),
+            'description': _('Plugin to use for internal barcode data generation'),
+            'choices': plugin.base.barcodes.helper.barcode_plugins,
+            'default': 'inventreebarcode',
+        },
         'PART_ENABLE_REVISION': {
             'name': _('Part Revisions'),
             'description': _('Enable revision field for Part'),
             'validator': bool,
             'default': True,
+        },
+        'PART_REVISION_ASSEMBLY_ONLY': {
+            'name': _('Assembly Revision Only'),
+            'description': _('Only allow revisions for assembly parts'),
+            'validator': bool,
+            'default': False,
         },
         'PART_ALLOW_DELETE_FROM_ASSEMBLY': {
             'name': _('Allow Deletion from Assembly'),
@@ -1533,6 +1558,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Part Category Default Icon'),
             'description': _('Part category default icon (empty means no icon)'),
             'default': '',
+            'validator': common.validators.validate_icon,
         },
         'PART_PARAMETER_ENFORCE_UNITS': {
             'name': _('Enforce Parameter Units'),
@@ -1754,6 +1780,7 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Stock Location Default Icon'),
             'description': _('Stock location default icon (empty means no icon)'),
             'default': '',
+            'validator': common.validators.validate_icon,
         },
         'STOCK_SHOW_INSTALLED_ITEMS': {
             'name': _('Show Installed Stock Items'),
@@ -1807,6 +1834,14 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'name': _('Require Valid BOM'),
             'description': _(
                 'Prevent build order creation unless BOM has been validated'
+            ),
+            'default': False,
+            'validator': bool,
+        },
+        'BUILDORDER_REQUIRE_CLOSED_CHILDS': {
+            'name': _('Require Closed Child Orders'),
+            'description': _(
+                'Prevent build order completion until all child orders are closed'
             ),
             'default': False,
             'validator': bool,
@@ -2583,14 +2618,22 @@ class ColorTheme(models.Model):
     @classmethod
     def get_color_themes_choices(cls):
         """Get all color themes from static folder."""
-        if not django_settings.STATIC_COLOR_THEMES_DIR.exists():
-            logger.error('Theme directory does not exist')
+        color_theme_dir = (
+            django_settings.STATIC_COLOR_THEMES_DIR
+            if django_settings.STATIC_COLOR_THEMES_DIR.exists()
+            else django_settings.BASE_DIR.joinpath(
+                'InvenTree', 'static', 'css', 'color-themes'
+            )
+        )
+
+        if not color_theme_dir.exists():
+            logger.error(f'Theme directory "{color_theme_dir}" does not exist')
             return []
 
         # Get files list from css/color-themes/ folder
         files_list = []
 
-        for file in django_settings.STATIC_COLOR_THEMES_DIR.iterdir():
+        for file in color_theme_dir.iterdir():
             files_list.append([file.stem, file.suffix])
 
         # Get color themes choices (CSS sheets)

@@ -35,6 +35,10 @@ function partTableColumns(): TableColumn[] {
       sortable: true
     },
     {
+      accessor: 'revision',
+      sortable: true
+    },
+    {
       accessor: 'units',
       sortable: true
     },
@@ -43,6 +47,11 @@ function partTableColumns(): TableColumn[] {
       accessor: 'category',
       sortable: true,
       render: (record: any) => record.category_detail?.pathstring
+    },
+    {
+      accessor: 'default_location',
+      sortable: true,
+      render: (record: any) => record.default_location_detail?.pathstring
     },
     {
       accessor: 'total_in_stock',
@@ -195,6 +204,12 @@ function partTableFilters(): TableFilter[] {
       type: 'boolean'
     },
     {
+      name: 'testable',
+      label: t`Testable`,
+      description: t`Filter by testable attribute`,
+      type: 'boolean'
+    },
+    {
       name: 'trackable',
       label: t`Trackable`,
       description: t`Filter by trackable attribute`,
@@ -253,6 +268,16 @@ function partTableFilters(): TableFilter[] {
       type: 'boolean'
     },
     {
+      name: 'is_revision',
+      label: t`Is Revision`,
+      description: t`Filter by parts which are revisions`
+    },
+    {
+      name: 'has_revisions',
+      label: t`Has Revisions`,
+      description: t`Filter by parts which have revisions`
+    },
+    {
       name: 'has_pricing',
       label: t`Has Pricing`,
       description: t`Filter by parts which have pricing information`,
@@ -284,20 +309,28 @@ function partTableFilters(): TableFilter[] {
  * @param {Object} params - The query parameters to pass to the API
  * @returns
  */
-export function PartListTable({ props }: { props: InvenTreeTableProps }) {
+export function PartListTable({
+  props,
+  defaultPartData
+}: {
+  props: InvenTreeTableProps;
+  defaultPartData?: any;
+}) {
   const tableColumns = useMemo(() => partTableColumns(), []);
   const tableFilters = useMemo(() => partTableFilters(), []);
 
   const table = useTable('part-list');
   const user = useUserState();
 
+  const initialPartData = useMemo(() => {
+    return defaultPartData ?? props.params ?? {};
+  }, [defaultPartData, props.params]);
+
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,
     title: t`Add Part`,
     fields: usePartFields({ create: true }),
-    initialData: {
-      ...(props.params ?? {})
-    },
+    initialData: initialPartData,
     follow: true,
     modelType: ModelType.part
   });
@@ -327,7 +360,8 @@ export function PartListTable({ props }: { props: InvenTreeTableProps }) {
           tableActions: tableActions,
           params: {
             ...props.params,
-            category_detail: true
+            category_detail: true,
+            location_detail: true
           }
         }}
       />

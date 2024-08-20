@@ -8,7 +8,7 @@ import {
   IconUpload,
   IconX
 } from '@tabler/icons-react';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ActionButton } from '../../components/buttons/ActionButton';
@@ -262,7 +262,7 @@ export function AttachmentTable({
 
   // Construct row actions for the attachment table
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangePermission(model_type),

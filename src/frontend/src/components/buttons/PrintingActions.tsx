@@ -1,7 +1,8 @@
 import { t } from '@lingui/macro';
 import { notifications } from '@mantine/notifications';
 import { IconPrinter, IconReport, IconTags } from '@tabler/icons-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
@@ -32,31 +33,28 @@ export function PrintingActions({
 
   const [pluginKey, setPluginKey] = useState<string>('');
 
-  const loadFields = useCallback(() => {
-    if (!enableLabels) {
-      return;
-    }
-
-    api
-      .options(apiUrl(ApiEndpoints.label_print), {
-        params: {
-          plugin: pluginKey || undefined
-        }
-      })
-      .then((response: any) => {
-        setExtraFields(extractAvailableFields(response, 'POST') || {});
-      })
-      .catch(() => {});
-  }, [enableLabels, pluginKey]);
-
-  useEffect(() => {
-    loadFields();
-  }, [loadFields, pluginKey]);
-
-  const [extraFields, setExtraFields] = useState<ApiFormFieldSet>({});
+  // Fetch available printing fields via OPTIONS request
+  const printingFields = useQuery({
+    enabled: enableLabels,
+    queryKey: ['printingFields', modelType, pluginKey],
+    gcTime: 500,
+    queryFn: () =>
+      api
+        .options(apiUrl(ApiEndpoints.label_print), {
+          params: {
+            plugin: pluginKey || undefined
+          }
+        })
+        .then((response: any) => {
+          return extractAvailableFields(response, 'POST') || {};
+        })
+        .catch(() => {
+          return {};
+        })
+  });
 
   const labelFields: ApiFormFieldSet = useMemo(() => {
-    let fields: ApiFormFieldSet = extraFields;
+    let fields: ApiFormFieldSet = printingFields.data || {};
 
     // Override field values
     fields['template'] = {
@@ -88,16 +86,17 @@ export function PrintingActions({
     };
 
     return fields;
-  }, [extraFields, items, loadFields]);
+  }, [printingFields.data, items]);
 
   const labelModal = useCreateApiFormModal({
     url: apiUrl(ApiEndpoints.label_print),
     title: t`Print Label`,
     fields: labelFields,
-    timeout: (items.length + 1) * 1000,
+    timeout: (items.length + 1) * 5000,
     onClose: () => {
       setPluginKey('');
     },
+    submitText: t`Print`,
     successMessage: t`Label printing completed successfully`,
     onFormSuccess: (response: any) => {
       setPluginKey('');
@@ -122,7 +121,7 @@ export function PrintingActions({
   const reportModal = useCreateApiFormModal({
     title: t`Print Report`,
     url: apiUrl(ApiEndpoints.report_print),
-    timeout: (items.length + 1) * 1000,
+    timeout: (items.length + 1) * 5000,
     fields: {
       template: {
         filters: {
@@ -136,6 +135,7 @@ export function PrintingActions({
         value: items
       }
     },
+    submitText: t`Generate`,
     successMessage: t`Report printing completed successfully`,
     onFormSuccess: (response: any) => {
       if (!response.complete) {

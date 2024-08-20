@@ -19,6 +19,7 @@ import {
   LineItemsProgressColumn,
   ProjectCodeColumn,
   ReferenceColumn,
+  ResponsibleColumn,
   ShipmentDateColumn,
   StatusColumn,
   TargetDateColumn
@@ -129,6 +130,7 @@ export function SalesOrderTable({
       CreationDateColumn({}),
       TargetDateColumn({}),
       ShipmentDateColumn({}),
+      ResponsibleColumn({}),
       {
         accessor: 'total_price',
         title: t`Total Price`,

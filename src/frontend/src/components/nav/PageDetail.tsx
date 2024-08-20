@@ -1,4 +1,5 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
+import { useHotkeys } from '@mantine/hooks';
 import { Fragment, ReactNode } from 'react';
 
 import { ApiImage } from '../images/ApiImage';
@@ -7,6 +8,7 @@ import { Breadcrumb, BreadcrumbList } from './BreadcrumbList';
 
 interface PageDetailInterface {
   title?: string;
+  icon?: ReactNode;
   subtitle?: string;
   imageUrl?: string;
   detail?: ReactNode;
@@ -14,6 +16,8 @@ interface PageDetailInterface {
   breadcrumbs?: Breadcrumb[];
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
+  editAction?: () => void;
+  editEnabled?: boolean;
 }
 
 /**
@@ -24,14 +28,28 @@ interface PageDetailInterface {
  */
 export function PageDetail({
   title,
+  icon,
   subtitle,
   detail,
   badges,
   imageUrl,
   breadcrumbs,
   breadcrumbAction,
-  actions
+  actions,
+  editAction,
+  editEnabled
 }: Readonly<PageDetailInterface>) {
+  useHotkeys([
+    [
+      'mod+E',
+      () => {
+        if (editEnabled ?? true) {
+          editAction?.();
+        }
+      }
+    ]
+  ]);
+
   return (
     <Stack gap="xs">
       {breadcrumbs && breadcrumbs.length > 0 && (
@@ -50,9 +68,12 @@ export function PageDetail({
               <Stack gap="xs">
                 {title && <StylishText size="lg">{title}</StylishText>}
                 {subtitle && (
-                  <Text size="md" truncate>
-                    {subtitle}
-                  </Text>
+                  <Group gap="xs">
+                    {icon}
+                    <Text size="md" truncate>
+                      {subtitle}
+                    </Text>
+                  </Group>
                 )}
               </Stack>
             </Group>

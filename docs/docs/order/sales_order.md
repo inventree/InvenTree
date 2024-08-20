@@ -20,6 +20,7 @@ Each Sales Order has a specific status code, which represents the state of the o
 | --- | --- |
 | Pending | The sales order has been created, but has not been finalized or submitted |
 | In Progress | The sales order has been issued, and is in progress |
+| On Hold | The sales order has been placed on hold, but is still active |
 | Shipped | The sales order has been shipped, but is not yet complete |
 | Complete | The sales order is fully completed, and is now closed |
 | Cancelled | The sales order was cancelled, and is now closed |
@@ -182,3 +183,15 @@ All these fields can be edited by the user:
 {% with id="edit-shipment", url="order/edit_shipment.png", description="Edit shipment" %}
 {% include "img.html" %}
 {% endwith %}
+
+## Sales Order Settings
+
+The following [global settings](../settings/global.md) are available for sales orders:
+
+| Name | Description | Default | Units |
+| ---- | ----------- | ------- | ----- |
+{{ globalsetting("SALESORDER_REFERENCE_PATTERN") }}
+{{ globalsetting("SALESORDER_REQUIRE_RESPONSIBLE") }}
+{{ globalsetting("SALESORDER_DEFAULT_SHIPMENT") }}
+{{ globalsetting("SALESORDER_EDIT_COMPLETED_ORDERS") }}
+{{ globalsetting("SALESORDER_SHIP_COMPLETE") }}

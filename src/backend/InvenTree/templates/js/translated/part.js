@@ -11,6 +11,7 @@
     formatCurrency,
     formatDecimal,
     formatPriceRange,
+    getApiIconClass,
     getCurrencyConversionRates,
     getFormFieldValue,
     getTableData,
@@ -130,11 +131,11 @@ function partFields(options={}) {
             },
             tree_picker: {
                 url: '{% url "api-part-category-tree" %}',
-                default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
             },
         },
         name: {},
         IPN: {},
+        revision_of: {},
         revision: {
             icon: 'fa-code-branch',
         },
@@ -154,7 +155,6 @@ function partFields(options={}) {
             },
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
-                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         default_supplier: {
@@ -186,6 +186,9 @@ function partFields(options={}) {
         },
         is_template: {
             default: global_settings.PART_TEMPLATE,
+            group: 'attributes',
+        },
+        testable: {
             group: 'attributes',
         },
         trackable: {
@@ -227,6 +230,7 @@ function partFields(options={}) {
     // Pop 'revision' field
     if (!global_settings.PART_ENABLE_REVISION) {
         delete fields['revision'];
+        delete fields['revision_of'];
     }
 
     if (options.create || options.duplicate) {
@@ -309,7 +313,6 @@ function categoryFields(options={}) {
             required: false,
             tree_picker: {
                 url: '{% url "api-part-category-tree" %}',
-                default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
             },
         },
         name: {},
@@ -321,7 +324,6 @@ function categoryFields(options={}) {
             },
             tree_picker: {
                 url: '{% url "api-location-tree" %}',
-                default_icon: global_settings.STOCK_LOCATION_DEFAULT_ICON,
             },
         },
         default_keywords: {
@@ -329,8 +331,9 @@ function categoryFields(options={}) {
         },
         structural: {},
         icon: {
-            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://fontawesome.com/v5/search?s=solid" target="_blank" rel="noopener noreferrer">Font Awesome</a>.`,
-            placeholder: 'fas fa-tag',
+            help_text: `{% trans "Icon (optional) - Explore all available icons on" %} <a href="https://tabler.io/icons" target="_blank" rel="noopener noreferrer">Tabler Icons</a>.`,
+            placeholder: 'ti:<icon-name>:<variant> (e.g. ti:alert-circle:filled)',
+            icon: "fa-icons",
         },
     };
 
@@ -2213,7 +2216,6 @@ function setPartCategory(data, options={}) {
             category: {
                 tree_picker: {
                     url: '{% url "api-part-category-tree" %}',
-                    default_icon: global_settings.PART_CATEGORY_DEFAULT_ICON,
                 },
             },
         },
@@ -2276,6 +2278,7 @@ function loadPartTable(table, url, options={}) {
 
     // Ensure category detail is included
     options.params['category_detail'] = true;
+    options.params['location_detail'] = true;
 
     let filters = {};
 
@@ -2389,6 +2392,19 @@ function loadPartTable(table, url, options={}) {
         }
     });
 
+    columns.push({
+        field: 'default_location',
+        title: '{% trans "Default Location" %}',
+        sortable: true,
+        formatter: function(value, row) {
+            if (row.default_location && row.default_location_detail) {
+                let text = shortenString(row.default_location_detail.pathstring);
+                return withTitle(renderLink(text, `/stock/location/${row.default_location}/`), row.default_location_detail.pathstring);
+            } else {
+                return '-';
+            }
+        }
+    });
 
     columns.push({
         field: 'total_in_stock',
@@ -2766,9 +2782,8 @@ function loadPartCategoryTable(table, options) {
                         }
                     }
 
-                    const icon = row.icon || global_settings.PART_CATEGORY_DEFAULT_ICON;
-                    if (icon) {
-                        html += `<span class="${icon} me-1"></span>`;
+                    if (row.icon) {
+                        html += `<span class="${getApiIconClass(row.icon)} me-1"></span>`;
                     }
 
                     html += renderLink(
@@ -2937,8 +2952,8 @@ function loadPartTestTemplateTable(table, options) {
                     if (row.part == part) {
                         let html = '';
 
-                        html += makeEditButton('button-test-edit', pk, '{% trans "Edit test result" %}');
-                        html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test result" %}');
+                        html += makeEditButton('button-test-edit', pk, '{% trans "Edit test template" %}');
+                        html += makeDeleteButton('button-test-delete', pk, '{% trans "Delete test template" %}');
 
                         return wrapButtons(html);
                     } else {

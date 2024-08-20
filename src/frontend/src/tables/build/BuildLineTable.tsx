@@ -5,22 +5,34 @@ import {
   IconShoppingCart,
   IconTool
 } from '@tabler/icons-react';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { PartHoverCard } from '../../components/images/Thumbnail';
 import { ProgressBar } from '../../components/items/ProgressBar';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
+import { UserRoles } from '../../enums/Roles';
+import { useBuildOrderFields } from '../../forms/BuildForms';
+import { notYetImplemented } from '../../functions/notifications';
+import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
-import { BooleanColumn } from '../ColumnRenderers';
+import { BooleanColumn, PartColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
-export default function BuildLineTable({ params = {} }: { params?: any }) {
+export default function BuildLineTable({
+  buildId,
+  outputId,
+  params = {}
+}: {
+  buildId: number;
+  outputId?: number;
+  params?: any;
+}) {
   const table = useTable('buildline');
   const user = useUserState();
 
@@ -45,6 +57,16 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         name: 'optional',
         label: t`Optional`,
         description: t`Show optional lines`
+      },
+      {
+        name: 'assembly',
+        label: t`Assembly`,
+        description: t`Show assembled items`
+      },
+      {
+        name: 'testable',
+        label: t`Testable`,
+        description: t`Show testable items`
       },
       {
         name: 'tracked',
@@ -106,8 +128,20 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
       );
     }
 
+    const sufficient = available >= record.quantity - record.allocated;
+
+    if (!sufficient) {
+      extra.push(
+        <Text key="insufficient" c="orange" size="sm">
+          {t`Insufficient stock`}
+        </Text>
+      );
+    }
+
     return (
       <TableHoverCard
+        icon={sufficient ? 'info' : 'exclamation'}
+        iconColor={sufficient ? 'blue' : 'orange'}
         value={
           available > 0 ? (
             available
@@ -131,7 +165,17 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         ordering: 'part',
         sortable: true,
         switchable: false,
-        render: (record: any) => <PartHoverCard part={record.part_detail} />
+        render: (record: any) => PartColumn(record.part_detail)
+      },
+      {
+        accessor: 'part_detail.IPN',
+        sortable: false,
+        title: t`IPN`
+      },
+      {
+        accessor: 'part_detail.description',
+        sortable: false,
+        title: t`Description`
       },
       {
         accessor: 'bom_item_detail.reference',
@@ -140,12 +184,21 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
         title: t`Reference`
       },
       BooleanColumn({
+        accessor: 'bom_item_detail.optional',
+        ordering: 'optional'
+      }),
+      BooleanColumn({
         accessor: 'bom_item_detail.consumable',
         ordering: 'consumable'
       }),
       BooleanColumn({
-        accessor: 'bom_item_detail.optional',
-        ordering: 'optional'
+        accessor: 'bom_item_detail.allow_variants',
+        ordering: 'allow_variants'
+      }),
+      BooleanColumn({
+        accessor: 'bom_item_detail.inherited',
+        ordering: 'inherited',
+        title: t`Gets Inherited`
       }),
       BooleanColumn({
         accessor: 'part_detail.trackable',
@@ -205,60 +258,94 @@ export default function BuildLineTable({ params = {} }: { params?: any }) {
     ];
   }, []);
 
+  const buildOrderFields = useBuildOrderFields({ create: true });
+
+  const [initialData, setInitialData] = useState<any>({});
+
+  const newBuildOrder = useCreateApiFormModal({
+    url: ApiEndpoints.build_order_list,
+    title: t`Create Build Order`,
+    fields: buildOrderFields,
+    initialData: initialData,
+    follow: true,
+    modelType: ModelType.build
+  });
+
   const rowActions = useCallback(
-    (record: any) => {
-      let part = record.part_detail;
+    (record: any): RowAction[] => {
+      let part = record.part_detail ?? {};
 
       // Consumable items have no appropriate actions
       if (record?.bom_item_detail?.consumable) {
         return [];
       }
 
-      // Tracked items must be allocated to a particular output
-      if (record?.part_detail?.trackable) {
-        return [];
-      }
+      const hasOutput = !!outputId;
+
+      // Can allocate
+      let canAllocate =
+        user.hasChangeRole(UserRoles.build) &&
+        record.allocated < record.quantity &&
+        record.trackable == hasOutput;
+
+      let canOrder =
+        user.hasAddRole(UserRoles.purchase_order) && part.purchaseable;
+      let canBuild = user.hasAddRole(UserRoles.build) && part.assembly;
 
       return [
         {
           icon: <IconArrowRight />,
           title: t`Allocate Stock`,
-          hidden: record.allocated >= record.quantity,
-          color: 'green'
+          hidden: !canAllocate,
+          color: 'green',
+          onClick: notYetImplemented
         },
         {
           icon: <IconShoppingCart />,
           title: t`Order Stock`,
-          hidden: !part?.purchaseable,
-          color: 'blue'
+          hidden: !canOrder,
+          color: 'blue',
+          onClick: notYetImplemented
         },
         {
           icon: <IconTool />,
           title: t`Build Stock`,
-          hidden: !part?.assembly,
-          color: 'blue'
+          hidden: !canBuild,
+          color: 'blue',
+          onClick: () => {
+            setInitialData({
+              part: record.part,
+              parent: buildId,
+              quantity: record.quantity - record.allocated
+            });
+            newBuildOrder.open();
+          }
         }
       ];
     },
-    [user]
+    [user, outputId]
   );
 
   return (
-    <InvenTreeTable
-      url={apiUrl(ApiEndpoints.build_line_list)}
-      tableState={table}
-      columns={tableColumns}
-      props={{
-        params: {
-          ...params,
-          part_detail: true
-        },
-        tableFilters: tableFilters,
-        rowActions: rowActions,
-        modelType: ModelType.part,
-        modelField: 'part_detail.pk',
-        enableDownload: true
-      }}
-    />
+    <>
+      {newBuildOrder.modal}
+      <InvenTreeTable
+        url={apiUrl(ApiEndpoints.build_line_list)}
+        tableState={table}
+        columns={tableColumns}
+        props={{
+          params: {
+            ...params,
+            build: buildId,
+            part_detail: true
+          },
+          tableFilters: tableFilters,
+          rowActions: rowActions,
+          modelType: ModelType.part,
+          modelField: 'part_detail.pk',
+          enableDownload: true
+        }}
+      />
+    </>
   );
 }

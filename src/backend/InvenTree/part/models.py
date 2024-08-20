@@ -5,6 +5,7 @@ from __future__ import annotations
 import decimal
 import hashlib
 import logging
+import math
 import os
 import re
 from datetime import timedelta
@@ -49,8 +50,8 @@ import users.models
 from build import models as BuildModels
 from build.status_codes import BuildStatusGroups
 from common.currency import currency_code_default
-from common.models import InvenTreeSetting
-from common.settings import get_global_setting, set_global_setting
+from common.icons import validate_icon
+from common.settings import get_global_setting
 from company.models import SupplierPart
 from InvenTree import helpers, validators
 from InvenTree.fields import InvenTreeURLField
@@ -78,6 +79,8 @@ class PartCategory(InvenTree.models.InvenTreeTree):
     """
 
     ITEM_PARENT_KEY = 'category'
+
+    EXTRA_PATH_FIELDS = ['icon']
 
     class Meta:
         """Metaclass defines extra model properties."""
@@ -122,12 +125,36 @@ class PartCategory(InvenTree.models.InvenTreeTree):
         help_text=_('Default keywords for parts in this category'),
     )
 
-    icon = models.CharField(
+    _icon = models.CharField(
         blank=True,
         max_length=100,
         verbose_name=_('Icon'),
         help_text=_('Icon (optional)'),
+        validators=[validate_icon],
+        db_column='icon',
     )
+
+    @property
+    def icon(self):
+        """Return the icon associated with this PartCategory or the default icon."""
+        if self._icon:
+            return self._icon
+
+        if default_icon := get_global_setting('PART_CATEGORY_DEFAULT_ICON', cache=True):
+            return default_icon
+
+        return ''
+
+    @icon.setter
+    def icon(self, value):
+        """Setter for icon field."""
+        default_icon = get_global_setting('PART_CATEGORY_DEFAULT_ICON', cache=True)
+
+        # if icon is not defined previously and new value is default icon, do not save it
+        if not self._icon and value == default_icon:
+            return
+
+        self._icon = value
 
     @staticmethod
     def get_api_url():
@@ -376,6 +403,7 @@ class Part(
         component: Can this part be used to make other parts?
         purchaseable: Can this part be purchased from suppliers?
         trackable: Trackable parts can have unique serial numbers assigned, etc, etc
+        testable: Testable parts can have test results recorded against their stock items
         active: Is this part active? Parts are deactivated instead of being deleted
         locked: This part is locked and cannot be edited
         virtual: Is this part "virtual"? e.g. a software product or similar
@@ -415,6 +443,11 @@ class Part(
         """Return API query filters for limiting field results against this instance."""
         return {'variant_of': {'exclude_tree': self.pk}}
 
+    @classmethod
+    def barcode_model_type_code(cls):
+        """Return the associated barcode model type code for this model."""
+        return 'PA'
+
     def report_context(self):
         """Return custom report context information."""
         return {
@@ -425,11 +458,11 @@ class Part(
             'name': self.name,
             'parameters': self.parameters_map(),
             'part': self,
-            'qr_data': self.format_barcode(brief=True),
+            'qr_data': self.barcode,
             'qr_url': self.get_absolute_url(),
             'revision': self.revision,
             'test_template_list': self.getTestTemplates(),
-            'test_templates': self.getTestTemplates(),
+            'test_templates': self.getTestTemplateMap(),
         }
 
     def get_context_data(self, request, **kwargs):
@@ -661,6 +694,49 @@ class Part(
             if match is None:
                 raise ValidationError(_(f'IPN must match regex pattern {pattern}'))
 
+    def validate_revision(self):
+        """Check the 'revision' and 'revision_of' fields."""
+        # Part cannot be a revision of itself
+        if self.revision_of:
+            if self.revision_of == self:
+                raise ValidationError({
+                    'revision_of': _('Part cannot be a revision of itself')
+                })
+
+            # Part cannot be a revision of a part which is itself a revision
+            if self.revision_of.revision_of:
+                raise ValidationError({
+                    'revision_of': _(
+                        'Cannot make a revision of a part which is already a revision'
+                    )
+                })
+
+            # If this part is a revision, it must have a revision code
+            if not self.revision:
+                raise ValidationError({
+                    'revision': _('Revision code must be specified')
+                })
+
+            if get_global_setting('PART_REVISION_ASSEMBLY_ONLY'):
+                if not self.assembly or not self.revision_of.assembly:
+                    raise ValidationError({
+                        'revision_of': _(
+                            'Revisions are only allowed for assembly parts'
+                        )
+                    })
+
+            # Cannot have a revision of a "template" part
+            if self.revision_of.is_template:
+                raise ValidationError({
+                    'revision_of': _('Cannot make a revision of a template part')
+                })
+
+            # parent part must point to the same template (via variant_of)
+            if self.variant_of != self.revision_of.variant_of:
+                raise ValidationError({
+                    'revision_of': _('Parent part must point to the same template')
+                })
+
     def validate_serial_number(
         self,
         serial: str,
@@ -841,15 +917,24 @@ class Part(
                     'IPN': _('Duplicate IPN not allowed in part settings')
                 })
 
+        if self.revision_of and self.revision:
+            if (
+                Part.objects.exclude(pk=self.pk)
+                .filter(revision_of=self.revision_of, revision=self.revision)
+                .exists()
+            ):
+                raise ValidationError(_('Duplicate part revision already exists.'))
+
         # Ensure unique across (Name, revision, IPN) (as specified)
-        if (
-            Part.objects.exclude(pk=self.pk)
-            .filter(name=self.name, revision=self.revision, IPN=self.IPN)
-            .exists()
-        ):
-            raise ValidationError(
-                _('Part with this Name, IPN and Revision already exists.')
-            )
+        if self.revision or self.IPN:
+            if (
+                Part.objects.exclude(pk=self.pk)
+                .filter(name=self.name, revision=self.revision, IPN=self.IPN)
+                .exists()
+            ):
+                raise ValidationError(
+                    _('Part with this Name, IPN and Revision already exists.')
+                )
 
     def clean(self):
         """Perform cleaning operations for the Part model.
@@ -865,6 +950,9 @@ class Part(
             raise ValidationError({
                 'category': _('Parts cannot be assigned to structural part categories!')
             })
+
+        # Check the 'revision' and 'revision_of' fields
+        self.validate_revision()
 
         super().clean()
 
@@ -951,6 +1039,16 @@ class Part(
         null=True,
         help_text=_('Part revision or version number'),
         verbose_name=_('Revision'),
+    )
+
+    revision_of = models.ForeignKey(
+        'part.Part',
+        related_name='revisions',
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        help_text=_('Is this part a revision of another part?'),
+        verbose_name=_('Revision Of'),
     )
 
     link = InvenTreeURLField(
@@ -1067,6 +1165,12 @@ class Part(
         default=part_settings.part_trackable_default,
         verbose_name=_('Trackable'),
         help_text=_('Does this part have tracking for unique items?'),
+    )
+
+    testable = models.BooleanField(
+        default=False,
+        verbose_name=_('Testable'),
+        help_text=_('Can this part have test results recorded against it?'),
     )
 
     purchaseable = models.BooleanField(
@@ -3820,6 +3924,12 @@ class PartParameter(InvenTree.models.InvenTreeMetadataModel):
             except ValueError:
                 self.data_numeric = None
 
+        if self.data_numeric is not None and type(self.data_numeric) is float:
+            # Prevent out of range numbers, etc
+            # Ref: https://github.com/inventree/InvenTree/issues/7593
+            if math.isnan(self.data_numeric) or math.isinf(self.data_numeric):
+                self.data_numeric = None
+
     part = models.ForeignKey(
         Part,
         on_delete=models.CASCADE,
@@ -4101,16 +4211,16 @@ class BomItem(
         """
         # TODO: Perhaps control this with a global setting?
 
-        msg = _('BOM item cannot be modified - assembly is locked')
-
         if assembly.locked:
-            raise ValidationError(msg)
+            raise ValidationError(_('BOM item cannot be modified - assembly is locked'))
 
         # If this BOM item is inherited, check all variants of the assembly
         if self.inherited:
             for part in assembly.get_descendants(include_self=False):
                 if part.locked:
-                    raise ValidationError(msg)
+                    raise ValidationError(
+                        _('BOM item cannot be modified - variant assembly is locked')
+                    )
 
     # A link to the parent part
     # Each part will get a reverse lookup field 'bom_items'
@@ -4406,7 +4516,8 @@ def update_pricing_after_edit(sender, instance, created, **kwargs):
     """Callback function when a part price break is created or updated."""
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.schedule_pricing_update(create=True)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=True)
 
 
 @receiver(post_delete, sender=BomItem, dispatch_uid='post_delete_bom_item')
@@ -4422,7 +4533,8 @@ def update_pricing_after_delete(sender, instance, **kwargs):
     """Callback function when a part price break is deleted."""
     # Update part pricing *unless* we are importing data
     if InvenTree.ready.canAppAccessDatabase() and not InvenTree.ready.isImportingData():
-        instance.part.schedule_pricing_update(create=False)
+        if instance.part:
+            instance.part.schedule_pricing_update(create=False)
 
 
 class BomItemSubstitute(InvenTree.models.InvenTreeMetadataModel):

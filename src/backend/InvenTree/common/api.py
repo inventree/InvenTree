@@ -4,11 +4,13 @@ import json
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.http.response import HttpResponse
 from django.urls import include, path, re_path
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext_lazy as _
+from django.views.decorators.cache import cache_control
 from django.views.decorators.csrf import csrf_exempt
 
 import django_q.models
@@ -25,6 +27,7 @@ from rest_framework.views import APIView
 
 import common.models
 import common.serializers
+from common.icons import get_icon_packs
 from common.settings import get_global_setting
 from generic.states.api import AllStatusViews, StatusView
 from importer.mixins import DataExportViewMixin
@@ -704,7 +707,7 @@ class AttachmentFilter(rest_filters.FilterSet):
         return queryset.filter(Q(attachment=None) | Q(attachment='')).distinct()
 
 
-class AttachmentList(ListCreateAPI):
+class AttachmentList(BulkDeleteMixin, ListCreateAPI):
     """List API endpoint for Attachment objects."""
 
     queryset = common.models.Attachment.objects.all()
@@ -722,6 +725,24 @@ class AttachmentList(ListCreateAPI):
         attachment = serializer.save()
         attachment.upload_user = self.request.user
         attachment.save()
+
+    def validate_delete(self, queryset, request) -> None:
+        """Ensure that the user has correct permissions for a bulk-delete.
+
+        - Extract all model types from the provided queryset
+        - Ensure that the user has correct 'delete' permissions for each model
+        """
+        from common.validators import attachment_model_class_from_label
+        from users.models import check_user_permission
+
+        model_types = queryset.values_list('model_type', flat=True).distinct()
+
+        for model_type in model_types:
+            if model_class := attachment_model_class_from_label(model_type):
+                if not check_user_permission(request.user, model_class, 'delete'):
+                    raise ValidationError(
+                        _('User does not have permission to delete these attachments')
+                    )
 
 
 class AttachmentDetail(RetrieveUpdateDestroyAPI):
@@ -741,6 +762,18 @@ class AttachmentDetail(RetrieveUpdateDestroyAPI):
             )
 
         return super().destroy(request, *args, **kwargs)
+
+
+@method_decorator(cache_control(public=True, max_age=86400), name='dispatch')
+class IconList(ListAPI):
+    """List view for available icon packages."""
+
+    serializer_class = common.serializers.IconPackageSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        """Return a list of all available icon packages."""
+        return get_icon_packs().values()
 
 
 settings_api_urls = [
@@ -950,13 +983,15 @@ common_api_urls = [
                 '<int:pk>/', ContentTypeDetail.as_view(), name='api-contenttype-detail'
             ),
             path(
-                '<str:model>/',
+                'model/<str:model>/',
                 ContentTypeModelDetail.as_view(),
                 name='api-contenttype-detail-modelname',
             ),
             path('', ContentTypeList.as_view(), name='api-contenttype-list'),
         ]),
     ),
+    # Icons
+    path('icons/', IconList.as_view(), name='api-icon-list'),
 ]
 
 admin_api_urls = [

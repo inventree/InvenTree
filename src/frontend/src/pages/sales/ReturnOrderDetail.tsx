@@ -1,5 +1,5 @@
 import { t } from '@lingui/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
   IconDots,
   IconInfoCircle,
@@ -11,6 +11,7 @@ import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -18,11 +19,16 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
+  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  HoldItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -32,13 +38,19 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import useStatusCodes from '../../hooks/UseStatusCodes';
+import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
+import ReturnOrderLineItemTable from '../../tables/sales/ReturnOrderLineItemTable';
 
 /**
  * Detail page for a single ReturnOrder
@@ -47,6 +59,8 @@ export default function ReturnOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
 
   const {
     instance: order,
@@ -60,6 +74,14 @@ export default function ReturnOrderDetail() {
       customer_detail: true
     }
   });
+
+  const orderCurrency = useMemo(() => {
+    return (
+      order.order_currency ||
+      order.customer_detail?.currency ||
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [order, globalSettings]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -97,7 +119,7 @@ export default function ReturnOrderDetail() {
         type: 'status',
         name: 'status',
         label: t`Status`,
-        model: ModelType.salesorder
+        model: ModelType.returnorder
       }
     ];
 
@@ -115,15 +137,6 @@ export default function ReturnOrderDetail() {
         label: t`Completed Line Items`,
         total: order.line_items,
         progress: order.completed_lines
-      },
-      {
-        type: 'progressbar',
-        name: 'shipments',
-        icon: 'shipment',
-        label: t`Completed Shipments`,
-        total: order.shipments,
-        progress: order.completed_shipments
-        // TODO: Fix this progress bar
       },
       {
         type: 'text',
@@ -223,7 +236,38 @@ export default function ReturnOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <PlaceholderPanel />
+        content: (
+          <Accordion
+            multiple={true}
+            defaultValue={['line-items', 'extra-items']}
+          >
+            <Accordion.Item value="line-items" key="lineitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <ReturnOrderLineItemTable
+                  orderId={order.pk}
+                  customerId={order.customer}
+                  currency={orderCurrency}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="extra-items" key="extraitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <ExtraLineItemTable
+                  endpoint={ApiEndpoints.return_order_extra_line_list}
+                  orderId={order.pk}
+                  currency={orderCurrency}
+                  role={UserRoles.return_order}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+        )
       },
       {
         name: 'attachments',
@@ -287,9 +331,94 @@ export default function ReturnOrderDetail() {
     follow: true
   });
 
+  const issueOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.return_order_issue, order.pk),
+    title: t`Issue Return Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Issue this order`,
+    successMessage: t`Order issued`
+  });
+
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.return_order_cancel, order.pk),
+    title: t`Cancel Return Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Cancel this order`,
+    successMessage: t`Order canceled`
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.return_order_hold, order.pk),
+    title: t`Hold Return Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.return_order_complete, order.pk),
+    title: t`Complete Return Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as complete`,
+    successMessage: t`Order completed`
+  });
+
+  const roStatus = useStatusCodes({ modelType: ModelType.returnorder });
+
   const orderActions = useMemo(() => {
+    const canEdit: boolean = user.hasChangeRole(UserRoles.return_order);
+
+    const canIssue: boolean =
+      canEdit &&
+      (order.status == roStatus.PENDING || order.status == roStatus.ON_HOLD);
+
+    const canHold: boolean =
+      canEdit &&
+      (order.status == roStatus.PENDING ||
+        order.status == roStatus.PLACED ||
+        order.status == roStatus.IN_PROGRESS);
+
+    const canCancel: boolean =
+      canEdit &&
+      (order.status == roStatus.PENDING ||
+        order.status == roStatus.IN_PROGRESS ||
+        order.status == roStatus.ON_HOLD);
+
+    const canComplete: boolean =
+      canEdit && order.status == roStatus.IN_PROGRESS;
+
     return [
+      <PrimaryActionButton
+        title={t`Issue Order`}
+        icon="issue"
+        hidden={!canIssue}
+        color="blue"
+        onClick={() => issueOrder.open()}
+      />,
+      <PrimaryActionButton
+        title={t`Complete Order`}
+        icon="complete"
+        hidden={!canComplete}
+        color="green"
+        onClick={() => completeOrder.open()}
+      />,
       <AdminButton model={ModelType.returnorder} pk={order.pk} />,
+      <BarcodeActionDropdown
+        actions={[
+          ViewBarcodeAction({
+            model: ModelType.returnorder,
+            pk: order.pk
+          }),
+          LinkBarcodeAction({
+            hidden: order?.barcode_hash,
+            onClick: notYetImplemented
+          }),
+          UnlinkBarcodeAction({
+            hidden: !order?.barcode_hash,
+            onClick: notYetImplemented
+          })
+        ]}
+      />,
       <PrintingActions
         modelType={ModelType.returnorder}
         items={[order.pk]}
@@ -301,25 +430,38 @@ export default function ReturnOrderDetail() {
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.return_order),
+            tooltip: t`Edit order`,
             onClick: () => {
               editReturnOrder.open();
             }
           }),
-          CancelItemAction({
-            tooltip: t`Cancel order`
-          }),
           DuplicateItemAction({
+            tooltip: t`Duplicate order`,
             hidden: !user.hasChangeRole(UserRoles.return_order),
             onClick: () => duplicateReturnOrder.open()
+          }),
+          HoldItemAction({
+            tooltip: t`Hold order`,
+            hidden: !canHold,
+            onClick: () => holdOrder.open()
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel order`,
+            hidden: !canCancel,
+            onClick: () => cancelOrder.open()
           })
         ]}
       />
     ];
-  }, [user, order]);
+  }, [user, order, roStatus]);
 
   return (
     <>
       {editReturnOrder.modal}
+      {issueOrder.modal}
+      {cancelOrder.modal}
+      {holdOrder.modal}
+      {completeOrder.modal}
       {duplicateReturnOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">
@@ -330,6 +472,8 @@ export default function ReturnOrderDetail() {
             badges={orderBadges}
             actions={orderActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            editAction={editReturnOrder.open}
+            editEnabled={user.hasChangePermission(ModelType.returnorder)}
           />
           <PanelGroup pageKey="returnorder" panels={orderPanels} />
         </Stack>

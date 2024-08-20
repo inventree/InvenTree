@@ -18,7 +18,6 @@ import django.conf.locale
 import django.core.exceptions
 from django.core.validators import URLValidator
 from django.http import Http404
-from django.utils.translation import gettext_lazy as _
 
 import pytz
 from dotenv import load_dotenv
@@ -301,7 +300,7 @@ if (
     and get_boolean_setting('INVENTREE_DEBUG_SHELL', 'debug_shell', False)
 ):  # noqa
     try:
-        import django_admin_shell
+        import django_admin_shell  # noqa: F401
 
         INSTALLED_APPS.append('django_admin_shell')
         ADMIN_SHELL_ENABLE = True
@@ -1210,6 +1209,9 @@ ACCOUNT_FORMS = {
     'reset_password_from_key': 'allauth.account.forms.ResetPasswordKeyForm',
     'disconnect': 'allauth.socialaccount.forms.DisconnectForm',
 }
+ALLAUTH_2FA_FORMS = {'setup': 'InvenTree.forms.CustomTOTPDeviceForm'}
+# Determine if multi-factor authentication is enabled for this server (default = True)
+MFA_ENABLED = get_boolean_setting('INVENTREE_MFA_ENABLED', 'mfa_enabled', True)
 
 SOCIALACCOUNT_ADAPTER = 'InvenTree.forms.CustomSocialAccountAdapter'
 ACCOUNT_ADAPTER = 'InvenTree.forms.CustomAccountAdapter'

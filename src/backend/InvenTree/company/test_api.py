@@ -2,8 +2,6 @@
 
 from django.urls import reverse
 
-from rest_framework import status
-
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part
 
@@ -59,23 +57,18 @@ class CompanyTest(InvenTreeAPITestCase):
         url = reverse('api-company-detail', kwargs={'pk': self.acme.pk})
         response = self.get(url, expected_code=200)
 
+        self.assertIn('name', response.data.keys())
         self.assertEqual(response.data['name'], 'ACME')
 
         # Change the name of the company
         # Note we should not have the correct permissions (yet)
         data = response.data
-        response = self.patch(url, data, expected_code=400)
-
-        self.assignRole('company.change')
 
         # Update the name and set the currency to a valid value
         data['name'] = 'ACMOO'
         data['currency'] = 'NZD'
 
         response = self.patch(url, data, expected_code=200)
-
-        print('PATCH response:')
-        print(response.data)
 
         self.assertEqual(response.data['name'], 'ACMOO')
         self.assertEqual(response.data['currency'], 'NZD')
@@ -165,7 +158,7 @@ class CompanyTest(InvenTreeAPITestCase):
 class ContactTest(InvenTreeAPITestCase):
     """Tests for the Contact models."""
 
-    roles = []
+    roles = ['purchase_order.view']
 
     @classmethod
     def setUpTestData(cls):
@@ -271,7 +264,7 @@ class ContactTest(InvenTreeAPITestCase):
 class AddressTest(InvenTreeAPITestCase):
     """Test cases for Address API endpoints."""
 
-    roles = []
+    roles = ['purchase_order.view']
 
     @classmethod
     def setUpTestData(cls):

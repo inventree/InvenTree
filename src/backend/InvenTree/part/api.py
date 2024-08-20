@@ -43,7 +43,6 @@ from InvenTree.mixins import (
 from InvenTree.permissions import RolePermission
 from InvenTree.serializers import EmptySerializer
 from order.status_codes import PurchaseOrderStatusGroups, SalesOrderStatusGroups
-from part.admin import PartCategoryResource, PartResource
 from stock.models import StockLocation
 
 from . import serializers as part_serializers
@@ -245,7 +244,7 @@ class CategoryList(CategoryMixin, DataExportViewMixin, ListCreateAPI):
     # Use hierarchical ordering by default
     ordering = ['tree_id', 'lft', 'name']
 
-    search_fields = ['name', 'description']
+    search_fields = ['name', 'description', 'pathstring']
 
 
 class CategoryDetail(CategoryMixin, CustomRetrieveUpdateDestroyAPI):
@@ -911,7 +910,27 @@ class PartFilter(rest_filters.FilterSet):
         """Metaclass options for this filter set."""
 
         model = Part
-        fields = []
+        fields = ['revision_of']
+
+    is_revision = rest_filters.BooleanFilter(
+        label=_('Is Revision'), method='filter_is_revision'
+    )
+
+    def filter_is_revision(self, queryset, name, value):
+        """Filter by whether the Part is a revision or not."""
+        if str2bool(value):
+            return queryset.exclude(revision_of=None)
+        return queryset.filter(revision_of=None)
+
+    has_revisions = rest_filters.BooleanFilter(
+        label=_('Has Revisions'), method='filter_has_revisions'
+    )
+
+    def filter_has_revisions(self, queryset, name, value):
+        """Filter by whether the Part has any revisions or not."""
+        if str2bool(value):
+            return queryset.exclude(revision_count=0)
+        return queryset.filter(revision_count=0)
 
     has_units = rest_filters.BooleanFilter(label='Has units', method='filter_has_units')
 
@@ -1107,9 +1126,9 @@ class PartFilter(rest_filters.FilterSet):
         # TODO: We should cache BOM checksums to make this process more efficient
         pks = []
 
-        for part in queryset:
-            if part.is_bom_valid() == value:
-                pks.append(part.pk)
+        for item in queryset:
+            if item.is_bom_valid() == value:
+                pks.append(item.pk)
 
         return queryset.filter(pk__in=pks)
 
@@ -1137,6 +1156,8 @@ class PartFilter(rest_filters.FilterSet):
     component = rest_filters.BooleanFilter()
 
     trackable = rest_filters.BooleanFilter()
+
+    testable = rest_filters.BooleanFilter()
 
     purchaseable = rest_filters.BooleanFilter()
 
@@ -1176,6 +1197,10 @@ class PartMixin:
 
         queryset = part_serializers.PartSerializer.annotate_queryset(queryset)
 
+        # Annotate with parameter template data?
+        if str2bool(self.request.query_params.get('parameters', False)):
+            queryset = queryset.prefetch_related('parameters', 'parameters__template')
+
         return queryset
 
     def get_serializer(self, *args, **kwargs):
@@ -1204,6 +1229,7 @@ class PartMixin:
 
             kwargs['parameters'] = str2bool(params.get('parameters', None))
             kwargs['category_detail'] = str2bool(params.get('category_detail', False))
+            kwargs['location_detail'] = str2bool(params.get('location_detail', False))
             kwargs['path_detail'] = str2bool(params.get('path_detail', False))
 
         except AttributeError:
@@ -1354,11 +1380,14 @@ class PartList(PartMixin, DataExportViewMixin, ListCreateAPI):
         'total_in_stock',
         'unallocated_stock',
         'category',
+        'default_location',
         'last_stocktake',
         'units',
         'pricing_min',
         'pricing_max',
         'pricing_updated',
+        'revision',
+        'revision_count',
     ]
 
     ordering_field_aliases = {
@@ -1721,20 +1750,28 @@ class BomFilter(rest_filters.FilterSet):
 
     # Filters for linked 'part'
     part_active = rest_filters.BooleanFilter(
-        label='Master part is active', field_name='part__active'
+        label='Assembly part is active', field_name='part__active'
     )
 
     part_trackable = rest_filters.BooleanFilter(
-        label='Master part is trackable', field_name='part__trackable'
+        label='Assembly part is trackable', field_name='part__trackable'
+    )
+
+    part_testable = rest_filters.BooleanFilter(
+        label=_('Assembly part is testable'), field_name='part__testable'
     )
 
     # Filters for linked 'sub_part'
     sub_part_trackable = rest_filters.BooleanFilter(
-        label='Sub part is trackable', field_name='sub_part__trackable'
+        label='Component part is trackable', field_name='sub_part__trackable'
+    )
+
+    sub_part_testable = rest_filters.BooleanFilter(
+        label=_('Component part is testable'), field_name='sub_part__testable'
     )
 
     sub_part_assembly = rest_filters.BooleanFilter(
-        label='Sub part is an assembly', field_name='sub_part__assembly'
+        label='Component part is an assembly', field_name='sub_part__assembly'
     )
 
     available_stock = rest_filters.BooleanFilter(
@@ -1839,7 +1876,6 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     """
 
     filterset_class = BomFilter
-
     filter_backends = SEARCH_ORDER_FILTER_ALIAS
 
     search_fields = [
@@ -1853,6 +1889,7 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
     ]
 
     ordering_fields = [
+        'can_build',
         'quantity',
         'sub_part',
         'available_stock',
@@ -1875,13 +1912,11 @@ class BomList(BomMixin, DataExportViewMixin, ListCreateDestroyAPIView):
         'pricing_updated': 'sub_part__pricing_data__updated',
     }
 
-    def filter_delete_queryset(self, queryset, request):
+    def validate_delete(self, queryset, request) -> None:
         """Ensure that there are no 'locked' items."""
         for bom_item in queryset:
             # Note: Calling check_part_lock may raise a ValidationError
             bom_item.check_part_lock(bom_item.part)
-
-        return super().filter_delete_queryset(queryset, request)
 
 
 class BomDetail(BomMixin, RetrieveUpdateDestroyAPI):

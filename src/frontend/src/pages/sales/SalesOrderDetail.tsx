@@ -1,19 +1,20 @@
 import { t } from '@lingui/macro';
-import { Grid, Skeleton, Stack } from '@mantine/core';
+import { Accordion, Grid, Skeleton, Stack } from '@mantine/core';
 import {
+  IconBookmark,
   IconDots,
   IconInfoCircle,
   IconList,
   IconNotes,
   IconPaperclip,
   IconTools,
-  IconTruckDelivery,
-  IconTruckLoading
+  IconTruckDelivery
 } from '@tabler/icons-react';
 import { ReactNode, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import AdminButton from '../../components/buttons/AdminButton';
+import PrimaryActionButton from '../../components/buttons/PrimaryActionButton';
 import { PrintingActions } from '../../components/buttons/PrintingActions';
 import { DetailsField, DetailsTable } from '../../components/details/Details';
 import { DetailsImage } from '../../components/details/DetailsImage';
@@ -21,11 +22,16 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
+  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
-  EditItemAction
+  EditItemAction,
+  HoldItemAction,
+  LinkBarcodeAction,
+  UnlinkBarcodeAction,
+  ViewBarcodeAction
 } from '../../components/items/ActionDropdown';
-import { PlaceholderPanel } from '../../components/items/Placeholder';
+import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
 import { PanelGroup, PanelType } from '../../components/nav/PanelGroup';
@@ -35,14 +41,22 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSalesOrderFields } from '../../forms/SalesOrderForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
 } from '../../hooks/UseForm';
 import { useInstance } from '../../hooks/UseInstance';
+import useStatusCodes from '../../hooks/UseStatusCodes';
+import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { BuildOrderTable } from '../../tables/build/BuildOrderTable';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
+import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
+import SalesOrderAllocationTable from '../../tables/sales/SalesOrderAllocationTable';
+import SalesOrderLineItemTable from '../../tables/sales/SalesOrderLineItemTable';
+import SalesOrderShipmentTable from '../../tables/sales/SalesOrderShipmentTable';
 
 /**
  * Detail page for a single SalesOrder
@@ -51,6 +65,8 @@ export default function SalesOrderDetail() {
   const { id } = useParams();
 
   const user = useUserState();
+
+  const globalSettings = useGlobalSettingsState();
 
   const {
     instance: order,
@@ -64,6 +80,14 @@ export default function SalesOrderDetail() {
       customer_detail: true
     }
   });
+
+  const orderCurrency = useMemo(() => {
+    return (
+      order.order_currency ||
+      order.customer_detail?.currency ||
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [order, globalSettings]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -107,12 +131,6 @@ export default function SalesOrderDetail() {
 
     let tr: DetailsField[] = [
       {
-        type: 'text',
-        name: 'line_items',
-        label: t`Line Items`,
-        icon: 'list'
-      },
-      {
         type: 'progressbar',
         name: 'completed',
         icon: 'progress',
@@ -126,8 +144,8 @@ export default function SalesOrderDetail() {
         icon: 'shipment',
         label: t`Completed Shipments`,
         total: order.shipments,
-        progress: order.completed_shipments
-        // TODO: Fix this progress bar
+        progress: order.completed_shipments,
+        hidden: !order.shipments
       },
       {
         type: 'text',
@@ -215,6 +233,8 @@ export default function SalesOrderDetail() {
     );
   }, [order, instanceQuery]);
 
+  const soStatus = useStatusCodes({ modelType: ModelType.salesorder });
+
   const salesOrderFields = useSalesOrderFields();
 
   const editSalesOrder = useEditApiFormModal({
@@ -251,19 +271,62 @@ export default function SalesOrderDetail() {
         name: 'line-items',
         label: t`Line Items`,
         icon: <IconList />,
-        content: <PlaceholderPanel />
+        content: (
+          <Accordion
+            multiple={true}
+            defaultValue={['line-items', 'extra-items']}
+          >
+            <Accordion.Item value="line-items" key="lineitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <SalesOrderLineItemTable
+                  orderId={order.pk}
+                  currency={orderCurrency}
+                  customerId={order.customer}
+                  editable={
+                    order.status != soStatus.COMPLETE &&
+                    order.status != soStatus.CANCELLED
+                  }
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+            <Accordion.Item value="extra-items" key="extraitems">
+              <Accordion.Control>
+                <StylishText size="lg">{t`Extra Line Items`}</StylishText>
+              </Accordion.Control>
+              <Accordion.Panel>
+                <ExtraLineItemTable
+                  endpoint={ApiEndpoints.sales_order_extra_line_list}
+                  orderId={order.pk}
+                  currency={orderCurrency}
+                  role={UserRoles.sales_order}
+                />
+              </Accordion.Panel>
+            </Accordion.Item>
+          </Accordion>
+        )
       },
       {
-        name: 'pending-shipments',
-        label: t`Pending Shipments`,
-        icon: <IconTruckLoading />,
-        content: <PlaceholderPanel />
-      },
-      {
-        name: 'completed-shipments',
-        label: t`Completed Shipments`,
+        name: 'shipments',
+        label: t`Shipments`,
         icon: <IconTruckDelivery />,
-        content: <PlaceholderPanel />
+        content: <SalesOrderShipmentTable orderId={order.pk} />
+      },
+      {
+        name: 'allocations',
+        label: t`Allocated Stock`,
+        icon: <IconBookmark />,
+        content: (
+          <SalesOrderAllocationTable
+            orderId={order.pk}
+            showPartInfo
+            allowEdit
+            modelField="item"
+            modelTarget={ModelType.stockitem}
+          />
+        )
       },
       {
         name: 'build-orders',
@@ -299,11 +362,103 @@ export default function SalesOrderDetail() {
         )
       }
     ];
-  }, [order, id, user]);
+  }, [order, id, user, soStatus]);
+
+  const issueOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_issue, order.pk),
+    title: t`Issue Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Issue this order`,
+    successMessage: t`Order issued`
+  });
+
+  const cancelOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_cancel, order.pk),
+    title: t`Cancel Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Cancel this order`,
+    successMessage: t`Order cancelled`
+  });
+
+  const holdOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_hold, order.pk),
+    title: t`Hold Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Place this order on hold`,
+    successMessage: t`Order placed on hold`
+  });
+
+  const completeOrder = useCreateApiFormModal({
+    url: apiUrl(ApiEndpoints.sales_order_complete, order.pk),
+    title: t`Complete Sales Order`,
+    onFormSuccess: refreshInstance,
+    preFormWarning: t`Mark this order as complete`,
+    successMessage: t`Order completed`,
+    fields: {
+      accept_incomplete: {}
+    }
+  });
 
   const soActions = useMemo(() => {
+    const canEdit: boolean = user.hasChangeRole(UserRoles.sales_order);
+
+    const canIssue: boolean =
+      canEdit &&
+      (order.status == soStatus.PENDING || order.status == soStatus.ON_HOLD);
+
+    const canCancel: boolean =
+      canEdit &&
+      (order.status == soStatus.PENDING ||
+        order.status == soStatus.ON_HOLD ||
+        order.status == soStatus.IN_PROGRESS);
+
+    const canHold: boolean =
+      canEdit &&
+      (order.status == soStatus.PENDING ||
+        order.status == soStatus.IN_PROGRESS);
+
+    const canShip: boolean = canEdit && order.status == soStatus.IN_PROGRESS;
+    const canComplete: boolean = canEdit && order.status == soStatus.SHIPPED;
+
     return [
+      <PrimaryActionButton
+        title={t`Issue Order`}
+        icon="issue"
+        hidden={!canIssue}
+        color="blue"
+        onClick={issueOrder.open}
+      />,
+      <PrimaryActionButton
+        title={t`Ship Order`}
+        icon="deliver"
+        hidden={!canShip}
+        color="blue"
+        onClick={completeOrder.open}
+      />,
+      <PrimaryActionButton
+        title={t`Complete Order`}
+        icon="complete"
+        hidden={!canComplete}
+        color="green"
+        onClick={completeOrder.open}
+      />,
       <AdminButton model={ModelType.salesorder} pk={order.pk} />,
+      <BarcodeActionDropdown
+        actions={[
+          ViewBarcodeAction({
+            model: ModelType.salesorder,
+            pk: order.pk
+          }),
+          LinkBarcodeAction({
+            hidden: order?.barcode_hash,
+            onClick: notYetImplemented
+          }),
+          UnlinkBarcodeAction({
+            hidden: !order?.barcode_hash,
+            onClick: notYetImplemented
+          })
+        ]}
+      />,
       <PrintingActions
         modelType={ModelType.salesorder}
         items={[order.pk]}
@@ -314,20 +469,29 @@ export default function SalesOrderDetail() {
         icon={<IconDots />}
         actions={[
           EditItemAction({
-            hidden: !user.hasChangeRole(UserRoles.sales_order),
-            onClick: () => editSalesOrder.open()
-          }),
-          CancelItemAction({
-            tooltip: t`Cancel order`
+            hidden: !canEdit,
+            onClick: editSalesOrder.open,
+            tooltip: t`Edit order`
           }),
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.sales_order),
-            onClick: () => duplicateSalesOrder.open()
+            onClick: duplicateSalesOrder.open,
+            tooltip: t`Duplicate order`
+          }),
+          HoldItemAction({
+            tooltip: t`Hold order`,
+            hidden: !canHold,
+            onClick: holdOrder.open
+          }),
+          CancelItemAction({
+            tooltip: t`Cancel order`,
+            hidden: !canCancel,
+            onClick: cancelOrder.open
           })
         ]}
       />
     ];
-  }, [user, order]);
+  }, [user, order, soStatus]);
 
   const orderBadges: ReactNode[] = useMemo(() => {
     return instanceQuery.isLoading
@@ -344,7 +508,12 @@ export default function SalesOrderDetail() {
 
   return (
     <>
+      {issueOrder.modal}
+      {cancelOrder.modal}
+      {holdOrder.modal}
+      {completeOrder.modal}
       {editSalesOrder.modal}
+      {duplicateSalesOrder.modal}
       <InstanceDetail status={requestStatus} loading={instanceQuery.isFetching}>
         <Stack gap="xs">
           <PageDetail
@@ -354,6 +523,8 @@ export default function SalesOrderDetail() {
             badges={orderBadges}
             actions={soActions}
             breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            editAction={editSalesOrder.open}
+            editEnabled={user.hasChangePermission(ModelType.salesorder)}
           />
           <PanelGroup pageKey="salesorder" panels={orderPanels} />
         </Stack>

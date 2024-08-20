@@ -1,19 +1,17 @@
 import { t } from '@lingui/macro';
 import {
-  ActionIcon,
   Anchor,
   Badge,
-  CopyButton,
+  Group,
   Paper,
   Skeleton,
   Stack,
   Table,
-  Text,
-  Tooltip
+  Text
 } from '@mantine/core';
-import { useSuspenseQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getValueAtPath } from 'mantine-datatable';
-import { Suspense, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -24,22 +22,12 @@ import { navigateToLink } from '../../functions/navigation';
 import { getDetailUrl } from '../../functions/urls';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
+import { CopyButton } from '../buttons/CopyButton';
 import { YesNoButton } from '../buttons/YesNoButton';
 import { ProgressBar } from '../items/ProgressBar';
 import { StylishText } from '../items/StylishText';
 import { getModelInfo } from '../render/ModelType';
 import { StatusRenderer } from '../render/StatusRenderer';
-
-export type PartIconsType = {
-  assembly: boolean;
-  template: boolean;
-  component: boolean;
-  trackable: boolean;
-  purchaseable: boolean;
-  saleable: boolean;
-  virtual: boolean;
-  active: boolean;
-};
 
 export type DetailsField =
   | {
@@ -59,7 +47,7 @@ export type DetailsField =
     );
 
 type BadgeType = 'owner' | 'user' | 'group';
-type ValueFormatterReturn = string | number | null;
+type ValueFormatterReturn = string | number | null | React.ReactNode;
 
 type StringDetailField = {
   type: 'string' | 'text';
@@ -109,7 +97,7 @@ type FieldProps = {
  * Badge appends icon to describe type of Owner
  */
 function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
-  const { data } = useSuspenseQuery({
+  const { data } = useQuery({
     queryKey: ['badge', type, pk],
     queryFn: async () => {
       let path: string = '';
@@ -124,6 +112,8 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
         case 'group':
           path = ApiEndpoints.group_list;
           break;
+        default:
+          return {};
       }
 
       const url = apiUrl(path, pk);
@@ -135,20 +125,24 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
             case 200:
               return response.data;
             default:
-              return undefined;
+              return {};
           }
         })
         .catch(() => {
-          return undefined;
+          return {};
         });
     }
   });
 
   const settings = useGlobalSettingsState();
 
+  if (!data || data.isLoading || data.isFetching) {
+    return <Skeleton height={12} radius="md" />;
+  }
+
   // Rendering a user's rame for the badge
   function _render_name() {
-    if (!data) {
+    if (!data || !data.pk) {
       return '';
     } else if (type === 'user' && settings.isSet('DISPLAY_FULL_NAMES')) {
       if (data.first_name || data.last_name) {
@@ -164,18 +158,16 @@ function NameBadge({ pk, type }: { pk: string | number; type: BadgeType }) {
   }
 
   return (
-    <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <Badge
-          color="dark"
-          variant="filled"
-          style={{ display: 'flex', alignItems: 'center' }}
-        >
-          {data?.name ?? _render_name()}
-        </Badge>
-        <InvenTreeIcon icon={type === 'user' ? type : data.label} />
-      </div>
-    </Suspense>
+    <Group wrap="nowrap" gap="sm" justify="right">
+      <Badge
+        color="dark"
+        variant="filled"
+        style={{ display: 'flex', alignItems: 'center' }}
+      >
+        {data?.name ?? _render_name()}
+      </Badge>
+      <InvenTreeIcon icon={type === 'user' ? type : data.label} />
+    </Group>
   );
 }
 
@@ -208,15 +200,15 @@ function TableStringValue(props: Readonly<FieldProps>) {
         alignItems: 'flex-start'
       }}
     >
-      <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
-        <span>
+      <Group wrap="nowrap" gap="xs" justify="space-apart">
+        <Group wrap="nowrap" gap="xs" justify="left">
           {value ? value : props.field_data?.unit && '0'}{' '}
           {props.field_data.unit == true && props.unit}
-        </span>
-      </Suspense>
-      {props.field_data.user && (
-        <NameBadge pk={props.field_data?.user} type="user" />
-      )}
+        </Group>
+        {props.field_data.user && (
+          <NameBadge pk={props.field_data?.user} type="user" />
+        )}
+      </Group>
     </div>
   );
 }
@@ -228,7 +220,7 @@ function BooleanValue(props: Readonly<FieldProps>) {
 function TableAnchorValue(props: Readonly<FieldProps>) {
   const navigate = useNavigate();
 
-  const { data } = useSuspenseQuery({
+  const { data } = useQuery({
     queryKey: ['detail', props.field_data.model, props.field_value],
     queryFn: async () => {
       if (!props.field_data?.model) {
@@ -273,6 +265,10 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
     [detailUrl]
   );
 
+  if (!data || data.isLoading || data.isFetching) {
+    return <Skeleton height={12} radius="md" />;
+  }
+
   if (props.field_data.external) {
     return (
       <Anchor
@@ -307,7 +303,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
   }
 
   return (
-    <Suspense fallback={<Skeleton width={200} height={20} radius="xl" />}>
+    <div>
       {make_link ? (
         <Anchor href="#" onClick={handleLinkClick}>
           <Text>{value}</Text>
@@ -315,7 +311,7 @@ function TableAnchorValue(props: Readonly<FieldProps>) {
       ) : (
         <Text>{value}</Text>
       )}
-    </Suspense>
+    </div>
   );
 }
 
@@ -336,26 +332,7 @@ function StatusValue(props: Readonly<FieldProps>) {
 }
 
 function CopyField({ value }: { value: string }) {
-  return (
-    <CopyButton value={value}>
-      {({ copied, copy }) => (
-        <Tooltip label={copied ? t`Copied` : t`Copy`} withArrow>
-          <ActionIcon
-            color={copied ? 'teal' : 'gray'}
-            onClick={copy}
-            variant="transparent"
-            size="sm"
-          >
-            {copied ? (
-              <InvenTreeIcon icon="check" />
-            ) : (
-              <InvenTreeIcon icon="copy" />
-            )}
-          </ActionIcon>
-        </Tooltip>
-      )}
-    </CopyButton>
-  );
+  return <CopyButton value={value} />;
 }
 
 export function DetailsTableField({
@@ -400,10 +377,10 @@ export function DetailsTableField({
       >
         <InvenTreeIcon icon={field.icon ?? (field.name as InvenTreeIconType)} />
       </Table.Td>
-      <Table.Td style={{ maxWidth: '65%' }}>
+      <Table.Td style={{ maxWidth: '65%', lineBreak: 'auto' }}>
         <Text>{field.label}</Text>
       </Table.Td>
-      <Table.Td style={{}}>
+      <Table.Td style={{ lineBreak: 'anywhere' }}>
         <FieldType field_data={field} field_value={fieldValue} />
       </Table.Td>
       <Table.Td style={{ width: '50' }}>

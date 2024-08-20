@@ -47,6 +47,60 @@ export function useSalesOrderFields(): ApiFormFieldSet {
   }, []);
 }
 
+export function useSalesOrderLineItemFields({
+  customerId,
+  orderId,
+  create
+}: {
+  customerId?: number;
+  orderId?: number;
+  create?: boolean;
+}): ApiFormFieldSet {
+  const fields = useMemo(() => {
+    return {
+      order: {
+        filters: {
+          customer_detail: true
+        },
+        disabled: true,
+        value: create ? orderId : undefined
+      },
+      part: {
+        filters: {
+          active: true,
+          salable: true
+        }
+      },
+      reference: {},
+      quantity: {},
+      sale_price: {},
+      sale_price_currency: {},
+      target_date: {},
+      notes: {},
+      link: {}
+    };
+  }, []);
+
+  return fields;
+}
+
+export function useSalesOrderShipmentFields(): ApiFormFieldSet {
+  return useMemo(() => {
+    return {
+      order: {
+        disabled: true
+      },
+      reference: {},
+      shipment_date: {},
+      delivery_date: {},
+      tracking_number: {},
+      invoice_number: {},
+      link: {},
+      notes: {}
+    };
+  }, []);
+}
+
 export function useReturnOrderFields(): ApiFormFieldSet {
   return useMemo(() => {
     return {
@@ -82,6 +136,9 @@ export function useReturnOrderFields(): ApiFormFieldSet {
         }
       },
       responsible: {
+        filters: {
+          is_active: true
+        },
         icon: <IconUsers />
       }
     };

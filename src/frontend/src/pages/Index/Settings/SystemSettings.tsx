@@ -1,5 +1,5 @@
 import { Trans, t } from '@lingui/macro';
-import { Stack } from '@mantine/core';
+import { Skeleton, Stack } from '@mantine/core';
 import {
   IconBellCog,
   IconCategory,
@@ -98,7 +98,8 @@ export default function SystemSettings() {
               'BARCODE_ENABLE',
               'BARCODE_INPUT_DELAY',
               'BARCODE_WEBCAM_SUPPORT',
-              'BARCODE_SHOW_TEXT'
+              'BARCODE_SHOW_TEXT',
+              'BARCODE_GENERATION_PLUGIN'
             ]}
           />
         )
@@ -168,23 +169,18 @@ export default function SystemSettings() {
         )
       },
       {
-        name: 'categories',
-        label: t`Part Categories`,
-        icon: <IconSitemap />,
-        content: <PlaceholderPanel />
-      },
-      {
         name: 'parts',
         label: t`Parts`,
         icon: <IconCategory />,
         content: (
           <GlobalSettingList
             keys={[
-              'PART_ENABLE_REVISION',
               'PART_IPN_REGEX',
               'PART_ALLOW_DUPLICATE_IPN',
               'PART_ALLOW_EDIT_IPN',
               'PART_ALLOW_DELETE_FROM_ASSEMBLY',
+              'PART_ENABLE_REVISION',
+              'PART_REVISION_ASSEMBLY_ONLY',
               'PART_NAME_FORMAT',
               'PART_SHOW_RELATED',
               'PART_CREATE_INITIAL',
@@ -248,6 +244,7 @@ export default function SystemSettings() {
               'BUILDORDER_REQUIRE_ACTIVE_PART',
               'BUILDORDER_REQUIRE_LOCKED_PART',
               'BUILDORDER_REQUIRE_VALID_BOM',
+              'BUILDORDER_REQUIRE_CLOSED_CHILDS',
               'PREVENT_BUILD_COMPLETION_HAVING_INCOMPLETED_TESTS'
             ]}
           />
@@ -305,6 +302,10 @@ export default function SystemSettings() {
   const user = useUserState();
 
   const [server] = useServerApiState((state) => [state.server]);
+
+  if (!user.isLoggedIn()) {
+    return <Skeleton />;
+  }
 
   return (
     <>

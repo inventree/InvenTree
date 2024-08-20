@@ -1,6 +1,6 @@
 import { test } from './baseFixtures.js';
 import { baseUrl } from './defaults.js';
-import { doLogout, doQuickLogin } from './login.js';
+import { doQuickLogin } from './login.js';
 
 test('PUI - Parts', async ({ page }) => {
   await doQuickLogin(page);
@@ -101,8 +101,7 @@ test('PUI - Sales', async ({ page }) => {
     .getByText('Selling some stuff')
     .waitFor();
   await page.getByRole('tab', { name: 'Line Items' }).click();
-  await page.getByRole('tab', { name: 'Pending Shipments' }).click();
-  await page.getByRole('tab', { name: 'Completed Shipments' }).click();
+  await page.getByRole('tab', { name: 'Shipments' }).click();
   await page.getByRole('tab', { name: 'Build Orders' }).click();
   await page.getByText('No records found').first().waitFor();
   await page.getByRole('tab', { name: 'Attachments' }).click();
@@ -188,11 +187,26 @@ test('PUI - Company', async ({ page }) => {
   await page.getByRole('tab', { name: 'Purchase Orders' }).click();
   await page.getByRole('cell', { name: 'Molex connectors' }).first().waitFor();
   await page.getByRole('tab', { name: 'Stock Items' }).click();
-  await page.getByRole('cell', { name: 'Blue plastic enclosure' }).waitFor();
+  await page
+    .getByRole('cell', { name: 'Blue plastic enclosure' })
+    .first()
+    .waitFor();
   await page.getByRole('tab', { name: 'Contacts' }).click();
   await page.getByRole('cell', { name: 'jimmy.mcleod@digikey.com' }).waitFor();
   await page.getByRole('tab', { name: 'Addresses' }).click();
   await page.getByRole('cell', { name: 'Carla Tunnel' }).waitFor();
   await page.getByRole('tab', { name: 'Attachments' }).click();
   await page.getByRole('tab', { name: 'Notes' }).click();
+
+  // Let's edit the company details
+  await page.getByLabel('action-menu-company-actions').click();
+  await page.getByLabel('action-menu-company-actions-edit').click();
+
+  await page.getByLabel('text-field-name').fill('');
+  await page.getByLabel('text-field-website').fill('invalid-website');
+  await page.getByRole('button', { name: 'Submit' }).click();
+
+  await page.getByText('This field may not be blank.').waitFor();
+  await page.getByText('Enter a valid URL.').waitFor();
+  await page.getByRole('button', { name: 'Cancel' }).click();
 });

@@ -28,7 +28,6 @@ Details provides information about the particular part. Parts details can be dis
 {% with id="part_overview", url="part/part_overview.png", description="Part details" %}
 {% include 'img.html' %}
 {% endwith %}
-<p></p>
 
 A Part is defined in the system by the following parameters:
 
@@ -38,7 +37,7 @@ A Part is defined in the system by the following parameters:
 
 **Description** - Longer form text field describing the Part
 
-**Revision** - An optional revision code denoting the particular version for the part. Used when there are multiple revisions of the same master part object.
+**Revision** - An optional revision code denoting the particular version for the part. Used when there are multiple revisions of the same master part object. Read [more about part revisions here](./revision.md).
 
 **Keywords** - Optional few words to describe the part and make the part search more efficient.
 
@@ -62,7 +61,7 @@ Parts can have multiple defined parameters.
 
 If a part is a *Template Part* then the *Variants* tab will be visible.
 
-[Read about Part templates](./template.md)
+[Read about Part templates and variants](./template.md)
 
 ### Stock
 
@@ -132,9 +131,9 @@ The *Scheduling* tab provides an overview of the *predicted* future availability
 
 The *Stocktake* tab provide historical stock level information, based on user-provided stocktake data. Refer to the [stocktake documentation](./stocktake.md) for further information.
 
-### Tests
+### Test Templates
 
-If a part is marked as *trackable*, the user can define tests which must be performed on any stock items which are instances of this part. [Read more about testing](./test.md).
+If a part is marked as *testable*, the user can define tests which must be performed on any stock items which are instances of this part. [Read more about testing](./test.md).
 
 ### Related Parts
 
