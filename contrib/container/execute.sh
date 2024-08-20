@@ -2,7 +2,7 @@
 
 # File to check existence
 db_version_old="${INVENTREE_HOME}/db_version.old"
-db_version_new="${INVENTREE_HOME}/db_version"
+new_version="$(python3 .github/scripts/version_check.py only_version)"
 
 # Check if the file exists
 if [ ! -e "$db_version_old" ]; then
@@ -11,10 +11,9 @@ if [ ! -e "$db_version_old" ]; then
     invoke update || exit 2
 
     echo "Setup command completed."
-    cp  "$db_version_new" "$db_version_old"
+    echo "$db_version" > "$db_version_old"
 fi
 old_version=$(cat "$db_version_old")
-new_version=$(cat "$db_version_new")
 echo "old version $old_version"
 echo "new version $new_version"
 # Number to compare (replace with your actual value)
@@ -34,8 +33,8 @@ if [ "$(awk -v num1=$old_version -v num2=$new_version 'BEGIN { print (num1 < num
 
     echo "Update successful"
 
-    # Copy the old version to the new version after update
-    cp  "$db_version_new" "$db_version_old"
+    # Write the the new version to the old version file after update
+    echo "$db_version" > "$db_version_old"
 fi
 
 echo "Database migration/update checks completed."
