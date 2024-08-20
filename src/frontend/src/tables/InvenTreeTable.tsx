@@ -53,7 +53,6 @@ import { TableFilter } from './Filter';
 import { FilterSelectDrawer } from './FilterSelectDrawer';
 import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
-import { UploadAction } from './UploadAction';
 
 const defaultPageSize: number = 25;
 
@@ -66,7 +65,6 @@ const defaultPageSize: number = 25;
  * @param noRecordsText : string - Text to display when no records are found
  * @param enableBulkDelete : boolean - Enable bulk deletion of records
  * @param enableDownload : boolean - Enable download actions
- * @param enableUpload : boolean - Enable upload actions
  * @param enableFilters : boolean - Enable filter actions
  * @param enableSelection : boolean - Enable row selection
  * @param enableSearch : boolean - Enable search actions
@@ -83,7 +81,7 @@ const defaultPageSize: number = 25;
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
- * @param onCellClick : (event: any, record: any, recordIndex: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
+ * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
  */
 export type InvenTreeTableProps<T = any> = {
@@ -92,7 +90,6 @@ export type InvenTreeTableProps<T = any> = {
   noRecordsText?: string;
   enableBulkDelete?: boolean;
   enableDownload?: boolean;
-  enableUpload?: boolean;
   enableFilters?: boolean;
   enableSelection?: boolean;
   enableSearch?: boolean;
@@ -125,7 +122,6 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   params: {},
   noRecordsText: t`No records found`,
   enableDownload: false,
-  enableUpload: false,
   enableLabels: false,
   enableReports: false,
   enableFilters: true,
@@ -168,12 +164,14 @@ export function InvenTreeTable<T = any>({
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
     return (
-      props.tableFilters?.map((filter) => {
-        return {
-          ...filter,
-          label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
-        };
-      }) ?? []
+      props.tableFilters
+        ?.filter((f: any) => f.active != false)
+        ?.map((filter) => {
+          return {
+            ...filter,
+            label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
+          };
+        }) ?? []
     );
   }, [props.tableFilters, fieldNames]);
 
@@ -607,7 +605,6 @@ export function InvenTreeTable<T = any>({
         <Stack gap="sm">
           <Group justify="apart" grow wrap="nowrap">
             <Group justify="left" key="custom-actions" gap={5} wrap="nowrap">
-              {tableProps.enableUpload && <UploadAction key="upload-action" />}
               <PrintingActions
                 items={tableState.selectedIds}
                 modelType={tableProps.modelType}

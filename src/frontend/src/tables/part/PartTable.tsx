@@ -204,6 +204,12 @@ function partTableFilters(): TableFilter[] {
       type: 'boolean'
     },
     {
+      name: 'testable',
+      label: t`Testable`,
+      description: t`Filter by testable attribute`,
+      type: 'boolean'
+    },
+    {
       name: 'trackable',
       label: t`Trackable`,
       description: t`Filter by trackable attribute`,

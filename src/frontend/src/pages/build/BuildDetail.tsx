@@ -11,7 +11,6 @@ import {
   IconListNumbers,
   IconNotes,
   IconPaperclip,
-  IconQrcode,
   IconReportAnalytics,
   IconSitemap
 } from '@tabler/icons-react';
@@ -44,6 +43,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -313,7 +313,10 @@ export default function BuildDetail() {
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
         content: build.pk ? (
-          <BuildOrderTable parentBuildId={build.pk} />
+          <BuildOrderTable
+            parentBuildId={build.pk}
+            salesOrderId={build.sales_order}
+          />
         ) : (
           <Skeleton />
         )
@@ -322,7 +325,7 @@ export default function BuildDetail() {
         name: 'test-results',
         label: t`Test Results`,
         icon: <IconChecklist />,
-        hidden: !build.part_detail?.trackable,
+        hidden: !build.part_detail?.testable,
         content: build.pk ? (
           <BuildOrderTestTable buildId={build.pk} partId={build.part} />
         ) : (
@@ -341,7 +344,7 @@ export default function BuildDetail() {
             }}
           />
         ),
-        hidden: !build?.part_detail?.trackable
+        hidden: !build?.part_detail?.testable
       },
       {
         name: 'attachments',
@@ -475,10 +478,12 @@ export default function BuildDetail() {
             pk: build.pk
           }),
           LinkBarcodeAction({
-            hidden: build?.barcode_hash
+            hidden: build?.barcode_hash,
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
-            hidden: !build?.barcode_hash
+            hidden: !build?.barcode_hash,
+            onClick: notYetImplemented
           })
         ]}
       />,

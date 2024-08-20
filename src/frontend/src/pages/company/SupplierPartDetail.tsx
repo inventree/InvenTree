@@ -34,6 +34,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
+import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -278,12 +279,14 @@ export default function SupplierPartDetail() {
           LinkBarcodeAction({
             hidden:
               supplierPart.barcode_hash ||
-              !user.hasChangeRole(UserRoles.purchase_order)
+              !user.hasChangeRole(UserRoles.purchase_order),
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
             hidden:
               !supplierPart.barcode_hash ||
-              !user.hasChangeRole(UserRoles.purchase_order)
+              !user.hasChangeRole(UserRoles.purchase_order),
+            onClick: notYetImplemented
           })
         ]}
       />,

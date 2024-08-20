@@ -16,7 +16,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 
 export function AddressTable({
   companyId,
@@ -146,7 +146,7 @@ export function AddressTable({
   });
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       let can_edit =
         user.hasChangeRole(UserRoles.purchase_order) ||
         user.hasChangeRole(UserRoles.sales_order);

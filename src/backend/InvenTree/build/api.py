@@ -34,10 +34,8 @@ class BuildFilter(rest_filters.FilterSet):
         """Metaclass options."""
         model = Build
         fields = [
-            'parent',
             'sales_order',
             'part',
-            'issued_by',
         ]
 
     status = rest_filters.NumberFilter(label='Status')
@@ -50,6 +48,35 @@ class BuildFilter(rest_filters.FilterSet):
             return queryset.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
         return queryset.exclude(status__in=BuildStatusGroups.ACTIVE_CODES)
 
+    cascade = rest_filters.BooleanFilter(label=_('Cascade'), method='filter_cascade')
+
+    def filter_cascade(self, queryset, name, value):
+        """Filter by whether or not the build is a 'cascade' build.
+
+        Note: this only applies when the 'parent' field filter is specified.
+        """
+
+        # No filtering here, see 'filter_parent'
+        return queryset
+
+    parent = rest_filters.ModelChoiceFilter(
+        queryset=Build.objects.all(),
+        label=_('Parent Build'),
+        field_name='parent',
+        method='filter_parent'
+    )
+
+    def filter_parent(self, queryset, name, parent):
+        """Filter by 'parent' build order."""
+
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if cascade:
+            builds = parent.get_descendants(include_self=False)
+            return queryset.filter(pk__in=[b.pk for b in builds])
+
+        return queryset.filter(parent=parent)
+
     overdue = rest_filters.BooleanFilter(label='Build is overdue', method='filter_overdue')
 
     def filter_overdue(self, queryset, name, value):
@@ -58,7 +85,10 @@ class BuildFilter(rest_filters.FilterSet):
             return queryset.filter(Build.OVERDUE_FILTER)
         return queryset.exclude(Build.OVERDUE_FILTER)
 
-    assigned_to_me = rest_filters.BooleanFilter(label='assigned_to_me', method='filter_assigned_to_me')
+    assigned_to_me = rest_filters.BooleanFilter(
+        label=_('Assigned to me'),
+        method='filter_assigned_to_me'
+    )
 
     def filter_assigned_to_me(self, queryset, name, value):
         """Filter by orders which are assigned to the current user."""
@@ -71,10 +101,33 @@ class BuildFilter(rest_filters.FilterSet):
             return queryset.filter(responsible__in=owners)
         return queryset.exclude(responsible__in=owners)
 
-    assigned_to = rest_filters.NumberFilter(label='responsible', method='filter_responsible')
+    issued_by = rest_filters.ModelChoiceFilter(
+        queryset=Owner.objects.all(),
+        label=_('Issued By'),
+        method='filter_issued_by'
+    )
 
-    def filter_responsible(self, queryset, name, value):
+    def filter_issued_by(self, queryset, name, owner):
+        """Filter by 'owner' which issued the order."""
+
+        if owner.label() == 'user':
+            user = User.objects.get(pk=owner.owner_id)
+            return queryset.filter(issued_by=user)
+        elif owner.label() == 'group':
+            group = User.objects.filter(groups__pk=owner.owner_id)
+            return queryset.filter(issued_by__in=group)
+        else:
+            return queryset.none()
+
+    assigned_to = rest_filters.ModelChoiceFilter(
+        queryset=Owner.objects.all(),
+        field_name='responsible',
+        label=_('Assigned To')
+    )
+
+    def filter_responsible(self, queryset, name, owner):
         """Filter by orders which are assigned to the specified owner."""
+
         owners = list(Owner.objects.filter(pk=value))
 
         # if we query by a user, also find all ownerships through group memberships
@@ -150,6 +203,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'responsible',
         'project_code',
         'priority',
+        'level',
     ]
 
     ordering_field_aliases = {
@@ -292,6 +346,7 @@ class BuildLineFilter(rest_filters.FilterSet):
     optional = rest_filters.BooleanFilter(label=_('Optional'), field_name='bom_item__optional')
     assembly = rest_filters.BooleanFilter(label=_('Assembly'), field_name='bom_item__sub_part__assembly')
     tracked = rest_filters.BooleanFilter(label=_('Tracked'), field_name='bom_item__sub_part__trackable')
+    testable = rest_filters.BooleanFilter(label=_('Testable'), field_name='bom_item__sub_part__testable')
 
     allocated = rest_filters.BooleanFilter(label=_('Allocated'), method='filter_allocated')
 

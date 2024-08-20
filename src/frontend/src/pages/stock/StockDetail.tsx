@@ -50,6 +50,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -119,7 +120,7 @@ export default function StockDetail() {
         name: 'tests',
         label: `Completed Tests`,
         icon: 'progress',
-        hidden: !part?.trackable
+        hidden: !part?.testable
       },
       {
         type: 'text',
@@ -348,7 +349,7 @@ export default function StockDetail() {
         name: 'testdata',
         label: t`Test Data`,
         icon: <IconChecklist />,
-        hidden: !stockitem?.part_detail?.trackable,
+        hidden: !stockitem?.part_detail?.testable,
         content: stockitem?.pk ? (
           <StockItemTestResultTable
             itemId={stockitem.pk}
@@ -483,11 +484,13 @@ export default function StockDetail() {
           }),
           LinkBarcodeAction({
             hidden:
-              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
+              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
             hidden:
-              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
+              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
+            onClick: notYetImplemented
           })
         ]}
       />,
