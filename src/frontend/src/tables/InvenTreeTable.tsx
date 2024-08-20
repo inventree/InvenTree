@@ -81,7 +81,7 @@ const defaultPageSize: number = 25;
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
- * @param onCellClick : (event: any, record: any, recordIndex: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
+ * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
  */
 export type InvenTreeTableProps<T = any> = {
@@ -164,12 +164,14 @@ export function InvenTreeTable<T = any>({
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
     return (
-      props.tableFilters?.map((filter) => {
-        return {
-          ...filter,
-          label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
-        };
-      }) ?? []
+      props.tableFilters
+        ?.filter((f: any) => f.active != false)
+        ?.map((filter) => {
+          return {
+            ...filter,
+            label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
+          };
+        }) ?? []
     );
   }, [props.tableFilters, fieldNames]);
 

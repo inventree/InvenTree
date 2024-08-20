@@ -34,7 +34,6 @@ class BuildFilter(rest_filters.FilterSet):
         """Metaclass options."""
         model = Build
         fields = [
-            'parent',
             'sales_order',
             'part',
         ]
@@ -48,6 +47,35 @@ class BuildFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
         return queryset.exclude(status__in=BuildStatusGroups.ACTIVE_CODES)
+
+    cascade = rest_filters.BooleanFilter(label=_('Cascade'), method='filter_cascade')
+
+    def filter_cascade(self, queryset, name, value):
+        """Filter by whether or not the build is a 'cascade' build.
+
+        Note: this only applies when the 'parent' field filter is specified.
+        """
+
+        # No filtering here, see 'filter_parent'
+        return queryset
+
+    parent = rest_filters.ModelChoiceFilter(
+        queryset=Build.objects.all(),
+        label=_('Parent Build'),
+        field_name='parent',
+        method='filter_parent'
+    )
+
+    def filter_parent(self, queryset, name, parent):
+        """Filter by 'parent' build order."""
+
+        cascade = str2bool(self.data.get('cascade', False))
+
+        if cascade:
+            builds = parent.get_descendants(include_self=False)
+            return queryset.filter(pk__in=[b.pk for b in builds])
+
+        return queryset.filter(parent=parent)
 
     overdue = rest_filters.BooleanFilter(label='Build is overdue', method='filter_overdue')
 
@@ -175,6 +203,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'responsible',
         'project_code',
         'priority',
+        'level',
     ]
 
     ordering_field_aliases = {
