@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-19 19:54\n"
+"PO-Revision-Date: 2024-08-20 19:50\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -6427,7 +6427,7 @@ msgstr ""
 
 #: src/tables/part/ParametricPartTable.tsx:82
 #~ msgid "Edit parameter"
-#~ msgstr ""
+#~ msgstr "Edit parameter"
 
 #: src/tables/part/ParametricPartTable.tsx:127
 msgid "Add Part Parameter"
@@ -7962,3 +7962,4 @@ msgstr "Läs dokumenten"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
