@@ -135,17 +135,15 @@ LOGGING = {
 if json_log:  # pragma: no cover
     LOGGING['handlers']['log_file'] = {
         'class': 'logging.handlers.WatchedFileHandler',
-        'filename': BASE_DIR.joinpath('logs.json'),
+        'filename': str(BASE_DIR.joinpath('logs.json')),
         'formatter': 'json_formatter',
     }
 else:
-    LOGGING['handlers']['log_file'] = (
-        {
-            'class': 'logging.handlers.WatchedFileHandler',
-            'filename': BASE_DIR.joinpath('logs.log'),
-            'formatter': 'key_value',
-        },
-    )
+    LOGGING['handlers']['log_file'] = {
+        'class': 'logging.handlers.WatchedFileHandler',
+        'filename': str(BASE_DIR.joinpath('logs.log')),
+        'formatter': 'key_value',
+    }
 
 structlog.configure(
     processors=[
