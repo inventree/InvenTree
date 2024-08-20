@@ -2,7 +2,7 @@
 
 # File to check existence
 db_version_old="${INVENTREE_HOME}/db_version.old"
-new_version="$(python3 .github/scripts/version_check.py only_version)"
+new_version="$(python3 ${INVENTREE_HOME}/.github/scripts/version_check.py only_version)"
 
 # Check if the file exists
 if [ ! -e "$db_version_old" ]; then
