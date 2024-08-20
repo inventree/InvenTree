@@ -164,12 +164,14 @@ export function InvenTreeTable<T = any>({
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
     return (
-      props.tableFilters?.map((filter) => {
-        return {
-          ...filter,
-          label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
-        };
-      }) ?? []
+      props.tableFilters
+        ?.filter((f: any) => f.active != false)
+        ?.map((filter) => {
+          return {
+            ...filter,
+            label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
+          };
+        }) ?? []
     );
   }, [props.tableFilters, fieldNames]);
 
