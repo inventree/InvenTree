@@ -293,10 +293,12 @@ export default function Stock() {
               pk: location.pk
             }),
             LinkBarcodeAction({
-              onClick: notYetImplemented
+              model: ModelType.stocklocation,
+              pk: location.pk
             }),
             UnlinkBarcodeAction({
-              onClick: notYetImplemented
+              model: ModelType.stocklocation,
+              pk: location.pk
             }),
             {
               name: 'Scan in stock items',

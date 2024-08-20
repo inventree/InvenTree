@@ -485,12 +485,14 @@ export default function StockDetail() {
           LinkBarcodeAction({
             hidden:
               stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
-            onClick: notYetImplemented
+            model: ModelType.stockitem,
+            pk: stockitem.pk
           }),
           UnlinkBarcodeAction({
             hidden:
               !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
-            onClick: notYetImplemented
+            model: ModelType.stockitem,
+            pk: stockitem.pk
           })
         ]}
       />,

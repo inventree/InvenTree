@@ -280,13 +280,15 @@ export default function SupplierPartDetail() {
             hidden:
               supplierPart.barcode_hash ||
               !user.hasChangeRole(UserRoles.purchase_order),
-            onClick: notYetImplemented
+            model: ModelType.supplierpart,
+            pk: supplierPart.pk
           }),
           UnlinkBarcodeAction({
             hidden:
               !supplierPart.barcode_hash ||
               !user.hasChangeRole(UserRoles.purchase_order),
-            onClick: notYetImplemented
+            model: ModelType.supplierpart,
+            pk: supplierPart.pk
           })
         ]}
       />,

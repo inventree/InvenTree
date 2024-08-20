@@ -451,11 +451,13 @@ export default function SalesOrderDetail() {
           }),
           LinkBarcodeAction({
             hidden: order?.barcode_hash,
-            onClick: notYetImplemented
+            model: ModelType.salesorder,
+            pk: order.pk
           }),
           UnlinkBarcodeAction({
             hidden: !order?.barcode_hash,
-            onClick: notYetImplemented
+            model: ModelType.salesorder,
+            pk: order.pk
           })
         ]}
       />,

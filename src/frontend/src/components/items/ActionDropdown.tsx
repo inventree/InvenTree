@@ -20,7 +20,7 @@ import { ReactNode, useMemo } from 'react';
 import { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
-import { InvenTreeQRCode } from './QRCode';
+import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from './QRCode';
 
 export type ActionDropdownItem = {
   icon?: ReactNode;
@@ -151,28 +151,79 @@ export function ViewBarcodeAction({
   };
 }
 
-// Common action button for linking a custom barcode
-export function LinkBarcodeAction(
-  props: ActionDropdownItem
-): ActionDropdownItem {
+function GeneralBarcodeAction({
+  hidden = false,
+  model,
+  pk,
+  title,
+  icon,
+  tooltip,
+  ChildItem
+}: {
+  hidden?: boolean;
+  model: ModelType;
+  pk: number;
+  title: string;
+  icon: ReactNode;
+  tooltip: string;
+  ChildItem: any;
+}): ActionDropdownItem {
+  const onClick = () => {
+    modals.open({
+      title: title,
+      children: <ChildItem model={model} pk={pk} />
+    });
+  };
+
   return {
-    ...props,
-    icon: <IconLink />,
-    name: t`Link Barcode`,
-    tooltip: t`Link custom barcode`
+    icon: icon,
+    name: title,
+    tooltip: tooltip,
+    onClick: onClick,
+    hidden: hidden
   };
 }
 
+// Common action button for linking a custom barcode
+export function LinkBarcodeAction({
+  hidden = false,
+  model,
+  pk
+}: {
+  hidden?: boolean;
+  model: ModelType;
+  pk: number;
+}): ActionDropdownItem {
+  return GeneralBarcodeAction({
+    hidden: hidden,
+    model: model,
+    pk: pk,
+    title: t`Link Barcode`,
+    icon: <IconLink />,
+    tooltip: t`Link a custom barcode to this item`,
+    ChildItem: QRCodeLink
+  });
+}
+
 // Common action button for un-linking a custom barcode
-export function UnlinkBarcodeAction(
-  props: ActionDropdownItem
-): ActionDropdownItem {
-  return {
-    ...props,
+export function UnlinkBarcodeAction({
+  hidden = false,
+  model,
+  pk
+}: {
+  hidden?: boolean;
+  model: ModelType;
+  pk: number;
+}): ActionDropdownItem {
+  return GeneralBarcodeAction({
+    hidden: hidden,
+    model: model,
+    pk: pk,
+    title: t`Unlink Barcode`,
     icon: <IconUnlink />,
-    name: t`Unlink Barcode`,
-    tooltip: t`Unlink custom barcode`
-  };
+    tooltip: t`Unlink custom barcode`,
+    ChildItem: QRCodeUnlink
+  });
 }
 
 // Common action button for editing an item

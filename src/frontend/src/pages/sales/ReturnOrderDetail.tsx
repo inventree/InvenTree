@@ -411,11 +411,13 @@ export default function ReturnOrderDetail() {
           }),
           LinkBarcodeAction({
             hidden: order?.barcode_hash,
-            onClick: notYetImplemented
+            model: ModelType.returnorder,
+            pk: order.pk
           }),
           UnlinkBarcodeAction({
             hidden: !order?.barcode_hash,
-            onClick: notYetImplemented
+            model: ModelType.returnorder,
+            pk: order.pk
           })
         ]}
       />,

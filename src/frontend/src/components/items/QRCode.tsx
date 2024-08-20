@@ -1,14 +1,17 @@
 import { Trans, t } from '@lingui/macro';
 import {
   Box,
+  Button,
   Code,
   Group,
   Image,
   Select,
   Skeleton,
   Stack,
-  Text
+  Text,
+  TextInput
 } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
 import { useEffect, useMemo, useState } from 'react';
@@ -126,5 +129,60 @@ export const InvenTreeQRCode = ({
         </Group>
       )}
     </Stack>
+  );
+};
+
+export const QRCodeLink = ({ model, pk }: { model: ModelType; pk: number }) => {
+  const [barcode, setBarcode] = useState<string>();
+  function linkBarcode() {
+    api
+      .post(apiUrl(ApiEndpoints.barcode_link), {
+        [model]: pk,
+        barcode: barcode
+      })
+      .then((response) => {
+        modals.closeAll();
+        location.reload();
+      });
+  }
+  return (
+    <Box>
+      <TextInput
+        label={t`Barcode`}
+        value={barcode}
+        placeholder={t`Scan barcode data here using barcode scanner`}
+        onChange={(event) => setBarcode(event.target.value)}
+      />
+      <Button color="green" onClick={linkBarcode} mt="lg" fullWidth>
+        <Trans>Link</Trans>
+      </Button>
+    </Box>
+  );
+};
+
+export const QRCodeUnlink = ({
+  model,
+  pk
+}: {
+  model: ModelType;
+  pk: number;
+}) => {
+  function unlinkBarcode() {
+    api
+      .post(apiUrl(ApiEndpoints.barcode_unlink), { [model]: pk })
+      .then((response) => {
+        modals.closeAll();
+        location.reload();
+      });
+  }
+  return (
+    <Box>
+      <Text>
+        <Trans>This will remove the link to the associated barcode</Trans>
+      </Text>
+      <Button color="red" onClick={unlinkBarcode}>
+        <Trans>Unlink Barcode</Trans>
+      </Button>
+    </Box>
   );
 };

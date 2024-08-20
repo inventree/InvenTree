@@ -410,11 +410,13 @@ export default function PurchaseOrderDetail() {
           }),
           LinkBarcodeAction({
             hidden: order?.barcode_hash,
-            onClick: notYetImplemented
+            model: ModelType.purchaseorder,
+            pk: order.pk
           }),
           UnlinkBarcodeAction({
             hidden: !order?.barcode_hash,
-            onClick: notYetImplemented
+            model: ModelType.purchaseorder,
+            pk: order.pk
           })
         ]}
       />,

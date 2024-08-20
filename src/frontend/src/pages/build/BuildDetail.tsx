@@ -479,11 +479,13 @@ export default function BuildDetail() {
           }),
           LinkBarcodeAction({
             hidden: build?.barcode_hash,
-            onClick: notYetImplemented
+            model: ModelType.build,
+            pk: build.pk
           }),
           UnlinkBarcodeAction({
             hidden: !build?.barcode_hash,
-            onClick: notYetImplemented
+            model: ModelType.build,
+            pk: build.pk
           })
         ]}
       />,
