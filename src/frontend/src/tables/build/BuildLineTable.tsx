@@ -168,12 +168,12 @@ export default function BuildLineTable({
         render: (record: any) => PartColumn(record.part_detail)
       },
       {
-        accessor: 'record.part_detail.IPN',
+        accessor: 'part_detail.IPN',
         sortable: false,
         title: t`IPN`
       },
       {
-        accessor: 'record.part_detail.description',
+        accessor: 'part_detail.description',
         sortable: false,
         title: t`Description`
       },
