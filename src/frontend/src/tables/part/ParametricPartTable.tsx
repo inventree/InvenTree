@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
-import { ActionIcon, Group, Tooltip } from '@mantine/core';
+import { Group } from '@mantine/core';
 import { useHover } from '@mantine/hooks';
-import { IconEdit } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -117,7 +116,9 @@ export default function ParametricPartTable({
   const [selectedTemplate, setSelectedTemplate] = useState<number>(0);
   const [selectedParameter, setSelectedParameter] = useState<number>(0);
 
-  const partParameterFields: ApiFormFieldSet = usePartParameterFields();
+  const partParameterFields: ApiFormFieldSet = usePartParameterFields({
+    editTemplate: false
+  });
 
   const addParameter = useCreateApiFormModal({
     url: ApiEndpoints.part_parameter_list,
