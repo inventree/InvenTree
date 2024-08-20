@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-20 08:21+0000\n"
-"PO-Revision-Date: 2024-08-16 18:34\n"
+"POT-Creation-Date: 2024-08-20 01:22+0000\n"
+"PO-Revision-Date: 2024-08-20 19:51\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Language: pt_PT\n"
@@ -1258,10 +1258,8 @@ msgid "Destination stock item"
 msgstr "Destino do Item do Estoque"
 
 #: build/serializers.py:91
-#, fuzzy
-#| msgid "Build Line"
 msgid "Build Level"
-msgstr "Linha de produção"
+msgstr ""
 
 #: build/serializers.py:99 build/serializers.py:1190 build/serializers.py:1279
 #: part/admin.py:41 part/admin.py:408 part/models.py:4102 part/stocktake.py:219
@@ -15238,3 +15236,4 @@ msgstr "Permissões para editar itens"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Permissão para excluir itens"
+
