@@ -11,7 +11,7 @@ if [ ! -e "$db_version_old" ]; then
     invoke update || exit 2
 
     echo "Setup command completed."
-    echo "$db_version" > "$db_version_old"
+    echo "$new_version" > "$db_version_old"
 fi
 old_version=$(cat "$db_version_old")
 echo "old version $old_version"
@@ -34,7 +34,7 @@ if [ "$(awk -v num1=$old_version -v num2=$new_version 'BEGIN { print (num1 < num
     echo "Update successful"
 
     # Write the the new version to the old version file after update
-    echo "$db_version" > "$db_version_old"
+    echo "$new_version" > "$db_version_old"
 fi
 
 echo "Database migration/update checks completed."
