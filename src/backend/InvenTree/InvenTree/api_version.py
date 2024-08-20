@@ -7,6 +7,7 @@ INVENTREE_API_VERSION = 243
 
 
 INVENTREE_API_TEXT = """
+
 v243 - 2024-08-22 : https://github.com/inventree/InvenTree/pull/7520
     - Documented pagination fields (no functional changes)
 
