@@ -46,6 +46,7 @@ export type PanelProps = {
   selectedPanel?: string;
   onPanelChange?: (panel: string) => void;
   collapsible?: boolean;
+  ml?: string;
 };
 
 function BasePanelGroup({
@@ -53,7 +54,8 @@ function BasePanelGroup({
   panels,
   onPanelChange,
   selectedPanel,
-  collapsible = true
+  collapsible = true,
+  ml = ''
 }: Readonly<PanelProps>): ReactNode {
   const location = useLocation();
   const navigate = useNavigate();
@@ -117,7 +119,7 @@ function BasePanelGroup({
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
-      <Paper p="sm" radius="xs" shadow="xs">
+      <Paper p="sm" radius="xs" shadow="xs" ml={ml}>
         <Tabs value={panel} orientation="vertical" keepMounted={false}>
           <Tabs.List justify="left">
             {panels.map(

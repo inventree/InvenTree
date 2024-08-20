@@ -228,6 +228,7 @@ export default function AdminCenter() {
             pageKey="admin-center"
             panels={adminCenterPanels}
             collapsible={true}
+            ml={'sm'}
           />
         </Stack>
       ) : (
