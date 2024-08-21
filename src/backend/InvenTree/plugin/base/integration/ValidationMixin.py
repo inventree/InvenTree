@@ -63,7 +63,7 @@ class ValidationMixin:
             None: or True (refer to class docstring)
 
         Raises:
-            ValidationError: if the instance cannot be deleted
+            ValidationError: If the instance cannot be deleted
         """
         return None
 
@@ -81,7 +81,7 @@ class ValidationMixin:
             None: or True (refer to class docstring)
 
         Raises:
-            ValidationError: if the instance is invalid
+            ValidationError: If the instance is invalid
         """
         return None
 
@@ -96,7 +96,7 @@ class ValidationMixin:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed name is objectionable
+            ValidationError: If the proposed name is objectionable
         """
         return None
 
@@ -111,7 +111,7 @@ class ValidationMixin:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed IPN is objectionable
+            ValidationError: If the proposed IPN is objectionable
         """
         return None
 
@@ -128,7 +128,7 @@ class ValidationMixin:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed batch code is objectionable
+            ValidationError: If the proposed batch code is objectionable
         """
         return None
 
@@ -162,7 +162,7 @@ class ValidationMixin:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed serial is objectionable
+            ValidationError: If the proposed serial is objectionable
         """
         return None
 
@@ -214,6 +214,6 @@ class ValidationMixin:
             None or True (refer to class docstring)
 
         Raises:
-            ValidationError if the proposed parameter value is objectionable
+            ValidationError: If the proposed parameter value is objectionable
         """
         pass
