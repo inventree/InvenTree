@@ -38,6 +38,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/SalesOrderForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -45,6 +46,7 @@ import {
 import { useInstance } from '../../hooks/UseInstance';
 import useStatusCodes from '../../hooks/UseStatusCodes';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { AttachmentTable } from '../../tables/general/AttachmentTable';
 import ExtraLineItemTable from '../../tables/general/ExtraLineItemTable';
@@ -58,6 +60,8 @@ export default function ReturnOrderDetail() {
 
   const user = useUserState();
 
+  const globalSettings = useGlobalSettingsState();
+
   const {
     instance: order,
     instanceQuery,
@@ -70,6 +74,14 @@ export default function ReturnOrderDetail() {
       customer_detail: true
     }
   });
+
+  const orderCurrency = useMemo(() => {
+    return (
+      order.order_currency ||
+      order.customer_detail?.currency ||
+      globalSettings.getSetting('INVENTREE_DEFAULT_CURRENCY')
+    );
+  }, [order, globalSettings]);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -237,6 +249,7 @@ export default function ReturnOrderDetail() {
                 <ReturnOrderLineItemTable
                   orderId={order.pk}
                   customerId={order.customer}
+                  currency={orderCurrency}
                 />
               </Accordion.Panel>
             </Accordion.Item>
@@ -248,6 +261,7 @@ export default function ReturnOrderDetail() {
                 <ExtraLineItemTable
                   endpoint={ApiEndpoints.return_order_extra_line_list}
                   orderId={order.pk}
+                  currency={orderCurrency}
                   role={UserRoles.return_order}
                 />
               </Accordion.Panel>
@@ -396,10 +410,12 @@ export default function ReturnOrderDetail() {
             pk: order.pk
           }),
           LinkBarcodeAction({
-            hidden: order?.barcode_hash
+            hidden: order?.barcode_hash,
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
-            hidden: !order?.barcode_hash
+            hidden: !order?.barcode_hash,
+            onClick: notYetImplemented
           })
         ]}
       />,

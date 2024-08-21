@@ -28,6 +28,7 @@ export type TableFilter = {
   defaultValue?: any;
   value?: any;
   displayValue?: any;
+  active?: boolean;
 };
 
 /**

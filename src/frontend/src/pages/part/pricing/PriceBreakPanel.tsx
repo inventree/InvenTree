@@ -19,7 +19,11 @@ import { apiUrl } from '../../../states/ApiState';
 import { useUserState } from '../../../states/UserState';
 import { TableColumn } from '../../../tables/Column';
 import { InvenTreeTable } from '../../../tables/InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../../../tables/RowActions';
+import {
+  RowAction,
+  RowDeleteAction,
+  RowEditAction
+} from '../../../tables/RowActions';
 import { NoPricingData } from './PricingPanel';
 
 export default function PriceBreakPanel({
@@ -113,7 +117,7 @@ export default function PriceBreakPanel({
   }, [user]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       return [
         RowEditAction({
           hidden: !user.hasChangeRole(UserRoles.part),

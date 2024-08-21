@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Divider, Group, HoverCard, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import { ReactNode, useMemo } from 'react';
 
 import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
 
@@ -23,12 +23,26 @@ export function TableHoverCard({
   icon?: InvenTreeIconType;
   iconColor?: string;
 }) {
-  // If no extra information presented, just return the raw value
-  if (!extra) {
-    return value;
-  }
+  const extraItems: ReactNode = useMemo(() => {
+    if (Array.isArray(extra)) {
+      if (extra.length == 0) {
+        return null;
+      }
 
-  if (Array.isArray(extra) && extra.length == 0) {
+      return (
+        <Stack gap="xs">
+          {extra.map((item, idx) => (
+            <div key={t`item-${idx}`}>{item}</div>
+          ))}
+        </Stack>
+      );
+    } else {
+      return extra;
+    }
+  }, [extra]);
+
+  // If no extra information presented, just return the raw value
+  if (!extraItems) {
     return value;
   }
 
@@ -50,7 +64,7 @@ export function TableHoverCard({
             <Text fw="bold">{title}</Text>
           </Group>
           <Divider />
-          {extra}
+          {extraItems}
         </Stack>
       </HoverCard.Dropdown>
     </HoverCard>

@@ -20,16 +20,15 @@ import { ReactNode, useMemo } from 'react';
 import { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
 import { InvenTreeQRCode } from './QRCode';
 
 export type ActionDropdownItem = {
-  icon: ReactNode;
-  name: string;
+  icon?: ReactNode;
+  name?: string;
   tooltip?: string;
   disabled?: boolean;
   hidden?: boolean;
-  onClick?: () => void;
+  onClick: (event?: any) => void;
   indicator?: Omit<IndicatorProps, 'children'>;
 };
 
@@ -97,13 +96,7 @@ export function ActionDropdown({
                 <Menu.Item
                   aria-label={id}
                   leftSection={action.icon}
-                  onClick={() => {
-                    if (action.onClick != undefined) {
-                      action.onClick();
-                    } else {
-                      notYetImplemented();
-                    }
-                  }}
+                  onClick={action.onClick}
                   disabled={action.disabled}
                 >
                   {action.name}
@@ -159,131 +152,79 @@ export function ViewBarcodeAction({
 }
 
 // Common action button for linking a custom barcode
-export function LinkBarcodeAction({
-  hidden = false,
-  onClick
-}: {
-  hidden?: boolean;
-  onClick?: () => void;
-}): ActionDropdownItem {
+export function LinkBarcodeAction(
+  props: ActionDropdownItem
+): ActionDropdownItem {
   return {
+    ...props,
     icon: <IconLink />,
     name: t`Link Barcode`,
-    tooltip: t`Link custom barcode`,
-    onClick: onClick,
-    hidden: hidden
+    tooltip: t`Link custom barcode`
   };
 }
 
 // Common action button for un-linking a custom barcode
-export function UnlinkBarcodeAction({
-  hidden = false,
-  onClick
-}: {
-  hidden?: boolean;
-  onClick?: () => void;
-}): ActionDropdownItem {
+export function UnlinkBarcodeAction(
+  props: ActionDropdownItem
+): ActionDropdownItem {
   return {
+    ...props,
     icon: <IconUnlink />,
     name: t`Unlink Barcode`,
-    tooltip: t`Unlink custom barcode`,
-    onClick: onClick,
-    hidden: hidden
+    tooltip: t`Unlink custom barcode`
   };
 }
 
 // Common action button for editing an item
-export function EditItemAction({
-  hidden = false,
-  tooltip,
-  onClick
-}: {
-  hidden?: boolean;
-  tooltip?: string;
-  onClick?: () => void;
-}): ActionDropdownItem {
+export function EditItemAction(props: ActionDropdownItem): ActionDropdownItem {
   return {
+    ...props,
     icon: <IconEdit color="blue" />,
     name: t`Edit`,
-    tooltip: tooltip ?? `Edit item`,
-    onClick: onClick,
-    hidden: hidden
+    tooltip: props.tooltip ?? t`Edit item`
   };
 }
 
 // Common action button for deleting an item
-export function DeleteItemAction({
-  hidden = false,
-  disabled = false,
-  tooltip,
-  onClick
-}: {
-  hidden?: boolean;
-  disabled?: boolean;
-  tooltip?: string;
-  onClick?: () => void;
-}): ActionDropdownItem {
+export function DeleteItemAction(
+  props: ActionDropdownItem
+): ActionDropdownItem {
   return {
+    ...props,
     icon: <IconTrash color="red" />,
     name: t`Delete`,
-    tooltip: tooltip ?? t`Delete item`,
-    onClick: onClick,
-    hidden: hidden,
-    disabled: disabled
+    tooltip: props.tooltip ?? t`Delete item`
   };
 }
 
-export function HoldItemAction({
-  hidden = false,
-  tooltip,
-  onClick
-}: {
-  hidden?: boolean;
-  tooltip?: string;
-  onClick?: () => void;
-}): ActionDropdownItem {
+export function HoldItemAction(props: ActionDropdownItem): ActionDropdownItem {
   return {
+    ...props,
     icon: <InvenTreeIcon icon="hold" iconProps={{ color: 'orange' }} />,
     name: t`Hold`,
-    tooltip: tooltip ?? t`Hold`,
-    onClick: onClick,
-    hidden: hidden
+    tooltip: props.tooltip ?? t`Hold`
   };
 }
 
-export function CancelItemAction({
-  hidden = false,
-  tooltip,
-  onClick
-}: {
-  hidden?: boolean;
-  tooltip?: string;
-  onClick?: () => void;
-}): ActionDropdownItem {
+export function CancelItemAction(
+  props: ActionDropdownItem
+): ActionDropdownItem {
   return {
+    ...props,
     icon: <InvenTreeIcon icon="cancel" iconProps={{ color: 'red' }} />,
     name: t`Cancel`,
-    tooltip: tooltip ?? t`Cancel`,
-    onClick: onClick,
-    hidden: hidden
+    tooltip: props.tooltip ?? t`Cancel`
   };
 }
 
 // Common action button for duplicating an item
-export function DuplicateItemAction({
-  hidden = false,
-  tooltip,
-  onClick
-}: {
-  hidden?: boolean;
-  tooltip?: string;
-  onClick?: () => void;
-}): ActionDropdownItem {
+export function DuplicateItemAction(
+  props: ActionDropdownItem
+): ActionDropdownItem {
   return {
+    ...props,
     icon: <IconCopy color="green" />,
     name: t`Duplicate`,
-    tooltip: tooltip ?? t`Duplicate item`,
-    onClick: onClick,
-    hidden: hidden
+    tooltip: props.tooltip ?? t`Duplicate item`
   };
 }

@@ -1,14 +1,22 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 241
+INVENTREE_API_VERSION = 243
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
 
-v241 - 2024-09-18 : https://github.com/inventree/InvenTree/pull/7906
+v243 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7940
+    - Expose "ancestor" filter to the BuildOrder API
+
+v242 - 2024-08-20 : https://github.com/inventree/InvenTree/pull/7932
+    - Adds "level" attribute to BuildOrder serializer
+    - Allow ordering of BuildOrder API by "level" attribute
+    - Allow "parent" filter for BuildOrder API to have "cascade=True" option
+
+v241 - 2024-08-18 : https://github.com/inventree/InvenTree/pull/7906
     - Adjusts required fields for the MeUserDetail endpoint
 
 v240 - 2024-08-16 : https://github.com/inventree/InvenTree/pull/7900
