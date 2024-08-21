@@ -1,12 +1,15 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 244
+INVENTREE_API_VERSION = 245
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v245 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7520
+    - Documented pagination fields (no functional changes)
 
 v244 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7941
     - Adds "create_child_builds" field to the Build API
