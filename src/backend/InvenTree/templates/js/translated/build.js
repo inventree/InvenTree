@@ -154,6 +154,9 @@ function newBuildOrder(options={}) {
 
     var fields = buildFormFields();
 
+    // Add "create_child_builds" field
+    fields.create_child_builds = {};
+
     // Specify the target part
     if (options.part) {
         fields.part.value = options.part;
