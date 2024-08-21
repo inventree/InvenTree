@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-21 07:44+0000\n"
-"PO-Revision-Date: 2024-08-20 19:51\n"
+"PO-Revision-Date: 2024-08-21 19:56\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Language: zh_CN\n"
@@ -734,10 +734,8 @@ msgid "Parent Build"
 msgstr "上層生產工單"
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "取消生产操作"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -1274,16 +1272,12 @@ msgid "Project Code Label"
 msgstr "项目编码标签"
 
 #: build/serializers.py:124
-#, fuzzy
-#| msgid "Child Build Orders"
 msgid "Create Child Builds"
-msgstr "子生产订单"
+msgstr ""
 
 #: build/serializers.py:125
-#, fuzzy
-#| msgid "Build order has open child build orders"
 msgid "Automatically generate child build orders"
-msgstr "生产订单有打开的子生产订单"
+msgstr ""
 
 #: build/serializers.py:207 build/serializers.py:959
 #: templates/js/translated/build.js:1045 templates/js/translated/build.js:1498
@@ -8198,10 +8192,8 @@ msgid "Show Part Details"
 msgstr "显示零件详情"
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Required for Build Orders"
 msgid "Required for Orders"
-msgstr "生产订单所需"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15261,3 +15253,4 @@ msgstr "编辑项目的权限"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "删除项目的权限"
+
