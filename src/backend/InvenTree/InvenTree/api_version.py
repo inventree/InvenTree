@@ -1,12 +1,23 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 242
+INVENTREE_API_VERSION = 245
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v245 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7520
+    - Documented pagination fields (no functional changes)
+
+v244 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7941
+    - Adds "create_child_builds" field to the Build API
+    - Write-only field to create child builds from the API
+    - Only available when creating a new build order
+
+v243 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7940
+    - Expose "ancestor" filter to the BuildOrder API
 
 v242 - 2024-08-20 : https://github.com/inventree/InvenTree/pull/7932
     - Adds "level" attribute to BuildOrder serializer
