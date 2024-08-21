@@ -1,5 +1,6 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  Alert,
   Box,
   Button,
   Code,
@@ -95,6 +96,15 @@ export const InvenTreeQRCode = ({
 
   return (
     <Stack>
+      {mdl_prop.hash ? (
+        <Alert variant="outline" color="red" title={t`Custom bascode`}>
+          <Trans>
+            A custom barcode is registered for this item. The shown code is not
+            that custom barcode.
+          </Trans>
+        </Alert>
+      ) : null}
+
       <QRCode data={data} ecl={ecl} {...props} />
 
       {data && settings.getSetting('BARCODE_SHOW_TEXT', 'false') && (

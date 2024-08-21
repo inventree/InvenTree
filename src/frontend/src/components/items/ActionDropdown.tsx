@@ -125,7 +125,7 @@ export function BarcodeActionDropdown({
   perm?: boolean;
 }>) {
   const hidden = hash === null;
-  const prop = { model, pk };
+  const prop = { model, pk, hash };
   return (
     <ActionDropdown
       tooltip={t`Barcode Actions`}
@@ -163,6 +163,7 @@ export function BarcodeActionDropdown({
 export type QrCodeType = {
   model: ModelType;
   pk: number;
+  hash?: boolean | null;
 };
 
 function GeneralBarcodeAction({
