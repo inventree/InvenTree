@@ -27,6 +27,7 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { ActionButton } from '../../../../components/buttons/ActionButton';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
@@ -95,6 +96,7 @@ const CurrencyTable = Loadable(
 
 export default function AdminCenter() {
   const user = useUserState();
+  const navigate = useNavigate();
 
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
@@ -210,7 +212,7 @@ export default function AdminCenter() {
           radius="sm"
           variant="filled"
           tooltip={t`Go to Home`}
-          onClick={() => console.log('Home')}
+          onClick={() => navigate('home')}
         />
         <Divider orientation="vertical" mx="md" />
         <SimpleGrid cols={3}>
