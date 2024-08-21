@@ -203,7 +203,9 @@ class ValidationMixin:
         """
         return None
 
-    def validate_part_parameter(self, parameter, data) -> None:
+    def validate_part_parameter(
+        self, parameter: part.models.PartParameter, data: str
+    ) -> None:
         """Validate a parameter value.
 
         Arguments:
