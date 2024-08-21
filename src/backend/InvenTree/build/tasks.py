@@ -200,8 +200,28 @@ def create_child_builds(build_id: int) -> None:
     except (Build.DoesNotExist, ValueError):
         return
 
-    print("creating child builds for:", build_order)
+    assembly_items = build_order.part.get_bom_items().filter(sub_part__assembly=True)
 
+    for item in assembly_items:
+        quantity = item.quantity * build_order.quantity
+
+        sub_order = build.models.Build.objects.create(
+            part=item.sub_part,
+            quantity=quantity,
+            title=build_order.title,
+            batch=build_order.batch,
+            parent=build_order,
+            target_date=build_order.target_date,
+            sales_order=build_order.sales_order,
+            issued_by=build_order.issued_by,
+            responsible=build_order.responsible,
+        )
+
+        # Offload the child build order creation to the background task queue
+        InvenTree.tasks.offload_task(
+            create_child_builds,
+            sub_order.pk
+        )
 
 
 def notify_overdue_build_order(bo: build.models.Build):
