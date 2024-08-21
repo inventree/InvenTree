@@ -66,6 +66,7 @@ export default function CurrencyTable() {
       tableState={table}
       columns={columns}
       props={{
+        idAccessor: 'currency',
         tableActions: tableActions,
         dataFormatter: (data: any) => {
           let rates = data.exchange_rates ?? {};

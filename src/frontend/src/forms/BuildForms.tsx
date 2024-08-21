@@ -47,7 +47,7 @@ export function useBuildOrderFields({
   const globalSettings = useGlobalSettingsState();
 
   return useMemo(() => {
-    return {
+    let fields: ApiFormFieldSet = {
       reference: {},
       part: {
         disabled: !create,
@@ -119,6 +119,12 @@ export function useBuildOrderFields({
         }
       }
     };
+
+    if (create) {
+      fields.create_child_builds = {};
+    }
+
+    return fields;
   }, [create, destination, batchCode, globalSettings]);
 }
 
@@ -295,7 +301,7 @@ export function useCompleteBuildOutputsForm({
           };
         })
       },
-      status: {},
+      status_custom_key: {},
       location: {
         filters: {
           structural: false

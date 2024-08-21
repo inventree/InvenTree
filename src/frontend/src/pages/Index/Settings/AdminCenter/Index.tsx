@@ -68,6 +68,10 @@ const ProjectCodeTable = Loadable(
   lazy(() => import('../../../../tables/settings/ProjectCodeTable'))
 );
 
+const CustomStateTable = Loadable(
+  lazy(() => import('../../../../tables/settings/CustomStateTable'))
+);
+
 const CustomUnitsTable = Loadable(
   lazy(() => import('../../../../tables/settings/CustomUnitsTable'))
 );
@@ -134,6 +138,12 @@ export default function AdminCenter() {
             <ProjectCodeTable />
           </Stack>
         )
+      },
+      {
+        name: 'customstates',
+        label: t`Custom States`,
+        icon: <IconListDetails />,
+        content: <CustomStateTable />
       },
       {
         name: 'customunits',

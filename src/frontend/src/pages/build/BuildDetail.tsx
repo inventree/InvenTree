@@ -526,7 +526,7 @@ export default function BuildDetail() {
       ? []
       : [
           <StatusRenderer
-            status={build.status}
+            status={build.status_custom_key}
             type={ModelType.build}
             options={{ size: 'lg' }}
           />

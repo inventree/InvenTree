@@ -491,7 +491,10 @@ class PrintTestMixins:
 
     def do_activate_plugin(self):
         """Activate the 'samplelabel' plugin."""
-        config = registry.get_plugin(self.plugin_ref).plugin_config()
+        plugin = registry.get_plugin(self.plugin_ref)
+        self.assertIsNotNone(plugin)
+        config = plugin.plugin_config()
+        self.assertIsNotNone(config)
         config.active = True
         config.save()
 
