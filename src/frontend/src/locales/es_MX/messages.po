@@ -8,7 +8,7 @@ msgstr ""
 "Language: es_MX\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-19 19:55\n"
+"PO-Revision-Date: 2024-08-20 19:50\n"
 "Last-Translator: \n"
 "Language-Team: Spanish, Mexico\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -69,7 +69,7 @@ msgstr "Impresión de etiqueta completada con éxito"
 #: src/components/nav/SearchDrawer.tsx:448
 #: src/pages/ErrorPage.tsx:11
 #: src/pages/part/PartPricingPanel.tsx:67
-#: src/tables/InvenTreeTable.tsx:493
+#: src/tables/InvenTreeTable.tsx:495
 #: src/tables/bom/BomTable.tsx:450
 #: src/tables/stock/StockItemTestResultTable.tsx:299
 msgid "Error"
@@ -128,12 +128,12 @@ msgid "Fail"
 msgstr "Falló"
 
 #: src/components/buttons/YesNoButton.tsx:33
-#: src/tables/Filter.tsx:51
+#: src/tables/Filter.tsx:52
 msgid "Yes"
 msgstr "Sí"
 
 #: src/components/buttons/YesNoButton.tsx:33
-#: src/tables/Filter.tsx:52
+#: src/tables/Filter.tsx:53
 msgid "No"
 msgstr "No"
 
@@ -928,7 +928,7 @@ msgid "Read More"
 msgstr ""
 
 #: src/components/items/ErrorItem.tsx:5
-#: src/tables/InvenTreeTable.tsx:485
+#: src/tables/InvenTreeTable.tsx:487
 msgid "Unknown error"
 msgstr ""
 
@@ -1546,8 +1546,8 @@ msgid "Companies"
 msgstr ""
 
 #: src/components/render/ModelType.tsx:131
-#: src/tables/TableHoverCard.tsx:67
-#: src/tables/build/BuildOrderTable.tsx:132
+#: src/tables/TableHoverCard.tsx:81
+#: src/tables/build/BuildOrderTable.tsx:140
 #: src/tables/purchasing/PurchaseOrderTable.tsx:64
 #: src/tables/sales/ReturnOrderTable.tsx:55
 #: src/tables/sales/SalesOrderTable.tsx:62
@@ -2865,7 +2865,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:148
 #: src/pages/sales/ReturnOrderDetail.tsx:121
 #: src/pages/sales/SalesOrderDetail.tsx:127
-#: src/tables/build/BuildOrderTable.tsx:114
+#: src/tables/build/BuildOrderTable.tsx:122
 #: src/tables/machine/MachineListTable.tsx:335
 #: src/tables/part/PartPurchaseOrdersTable.tsx:37
 #: src/tables/purchasing/PurchaseOrderTable.tsx:55
@@ -3603,12 +3603,12 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:398
 #: src/pages/part/PartDetail.tsx:297
 #: src/tables/bom/UsedInTable.tsx:84
-#: src/tables/build/BuildOrderTable.tsx:109
+#: src/tables/build/BuildOrderTable.tsx:110
 #: src/tables/company/CompanyTable.tsx:61
 #: src/tables/company/CompanyTable.tsx:95
 #: src/tables/machine/MachineListTable.tsx:332
 #: src/tables/machine/MachineListTable.tsx:594
-#: src/tables/part/ParametricPartTable.tsx:222
+#: src/tables/part/ParametricPartTable.tsx:223
 #: src/tables/part/PartTable.tsx:178
 #: src/tables/part/PartVariantTable.tsx:15
 #: src/tables/plugin/PluginListTable.tsx:149
@@ -3947,7 +3947,7 @@ msgstr ""
 #: src/tables/bom/BomTable.tsx:118
 #: src/tables/bom/UsedInTable.tsx:39
 #: src/tables/build/BuildLineTable.tsx:173
-#: src/tables/build/BuildOrderTable.tsx:46
+#: src/tables/build/BuildOrderTable.tsx:55
 #: src/tables/sales/SalesOrderLineItemTable.tsx:62
 #: src/tables/stock/StockItemTable.tsx:53
 msgid "IPN"
@@ -4004,7 +4004,7 @@ msgid "Completed Outputs"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:165
-#: src/tables/build/BuildOrderTable.tsx:143
+#: src/tables/build/BuildOrderTable.tsx:151
 msgid "Issued By"
 msgstr ""
 
@@ -4013,7 +4013,7 @@ msgstr ""
 #: src/pages/purchasing/PurchaseOrderDetail.tsx:220
 #: src/pages/sales/ReturnOrderDetail.tsx:199
 #: src/pages/sales/SalesOrderDetail.tsx:208
-#: src/tables/build/BuildOrderTable.tsx:149
+#: src/tables/build/BuildOrderTable.tsx:157
 #: src/tables/purchasing/PurchaseOrderTable.tsx:75
 #: src/tables/sales/ReturnOrderTable.tsx:66
 #: src/tables/sales/SalesOrderTable.tsx:73
@@ -4165,8 +4165,8 @@ msgid "Edit Build Order"
 msgstr ""
 
 #: src/pages/build/BuildDetail.tsx:384
-#: src/tables/build/BuildOrderTable.tsx:164
-#: src/tables/build/BuildOrderTable.tsx:179
+#: src/tables/build/BuildOrderTable.tsx:172
+#: src/tables/build/BuildOrderTable.tsx:187
 msgid "Add Build Order"
 msgstr ""
 
@@ -4656,7 +4656,7 @@ msgstr ""
 
 #: src/pages/part/PartDetail.tsx:302
 #: src/pages/part/PartDetail.tsx:873
-#: src/tables/part/ParametricPartTable.tsx:227
+#: src/tables/part/ParametricPartTable.tsx:228
 #: src/tables/part/PartTable.tsx:184
 msgid "Locked"
 msgstr ""
@@ -5452,30 +5452,30 @@ msgstr ""
 msgid "Download Data"
 msgstr ""
 
-#: src/tables/Filter.tsx:88
-#: src/tables/build/BuildOrderTable.tsx:127
+#: src/tables/Filter.tsx:89
+#: src/tables/build/BuildOrderTable.tsx:135
 msgid "Assigned to me"
 msgstr ""
 
-#: src/tables/Filter.tsx:89
-#: src/tables/build/BuildOrderTable.tsx:128
+#: src/tables/Filter.tsx:90
+#: src/tables/build/BuildOrderTable.tsx:136
 msgid "Show orders assigned to me"
 msgstr ""
 
-#: src/tables/Filter.tsx:96
+#: src/tables/Filter.tsx:97
 msgid "Outstanding"
 msgstr ""
 
-#: src/tables/Filter.tsx:97
+#: src/tables/Filter.tsx:98
 msgid "Show outstanding orders"
 msgstr ""
 
-#: src/tables/Filter.tsx:104
-#: src/tables/build/BuildOrderTable.tsx:120
+#: src/tables/Filter.tsx:105
+#: src/tables/build/BuildOrderTable.tsx:128
 msgid "Overdue"
 msgstr ""
 
-#: src/tables/Filter.tsx:105
+#: src/tables/Filter.tsx:106
 msgid "Show overdue orders"
 msgstr ""
 
@@ -5515,28 +5515,28 @@ msgid "Clear Filters"
 msgstr ""
 
 #: src/tables/InvenTreeTable.tsx:123
-#: src/tables/InvenTreeTable.tsx:429
-#: src/tables/InvenTreeTable.tsx:453
+#: src/tables/InvenTreeTable.tsx:431
+#: src/tables/InvenTreeTable.tsx:455
 msgid "No records found"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:464
+#: src/tables/InvenTreeTable.tsx:466
 msgid "Server returned incorrect data type"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:472
+#: src/tables/InvenTreeTable.tsx:474
 msgid "Bad request"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:475
+#: src/tables/InvenTreeTable.tsx:477
 msgid "Unauthorized"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:478
+#: src/tables/InvenTreeTable.tsx:480
 msgid "Forbidden"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:481
+#: src/tables/InvenTreeTable.tsx:483
 msgid "Not found"
 msgstr ""
 
@@ -5544,15 +5544,15 @@ msgstr ""
 #~ msgid "Are you sure you want to delete the selected records?"
 #~ msgstr "Are you sure you want to delete the selected records?"
 
-#: src/tables/InvenTreeTable.tsx:523
+#: src/tables/InvenTreeTable.tsx:525
 msgid "Delete Selected Items"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:527
+#: src/tables/InvenTreeTable.tsx:529
 msgid "Are you sure you want to delete the selected items?"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:529
+#: src/tables/InvenTreeTable.tsx:531
 msgid "This action cannot be undone!"
 msgstr ""
 
@@ -5573,21 +5573,25 @@ msgstr ""
 #~ msgid "Print actions"
 #~ msgstr "Print actions"
 
-#: src/tables/InvenTreeTable.tsx:616
-#: src/tables/InvenTreeTable.tsx:617
+#: src/tables/InvenTreeTable.tsx:618
+#: src/tables/InvenTreeTable.tsx:619
 msgid "Barcode actions"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:626
+#: src/tables/InvenTreeTable.tsx:628
 msgid "Delete selected records"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:647
+#: src/tables/InvenTreeTable.tsx:649
 msgid "Refresh data"
 msgstr ""
 
-#: src/tables/InvenTreeTable.tsx:673
+#: src/tables/InvenTreeTable.tsx:675
 msgid "Table filters"
+msgstr ""
+
+#: src/tables/TableHoverCard.tsx:35
+msgid "item-{idx}"
 msgstr ""
 
 #: src/tables/UploadAction.tsx:7
@@ -5809,7 +5813,7 @@ msgid "Edit Substitutes"
 msgstr ""
 
 #: src/tables/bom/BomTable.tsx:539
-#: src/tables/part/PartParameterTable.tsx:191
+#: src/tables/part/PartParameterTable.tsx:193
 #: src/tables/part/PartTestTemplateTable.tsx:252
 msgid "Part is Locked"
 msgstr ""
@@ -5820,7 +5824,7 @@ msgstr ""
 
 #: src/tables/bom/UsedInTable.tsx:33
 #: src/tables/build/BuildLineTable.tsx:63
-#: src/tables/part/ParametricPartTable.tsx:232
+#: src/tables/part/ParametricPartTable.tsx:233
 #: src/tables/part/PartTable.tsx:190
 #: src/tables/stock/StockItemTable.tsx:300
 msgid "Assembly"
@@ -5954,11 +5958,19 @@ msgstr ""
 msgid "Build Stock"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:110
+#: src/tables/build/BuildOrderTable.tsx:111
 msgid "Show active orders"
 msgstr "Mostrar órdenes activas"
 
-#: src/tables/build/BuildOrderTable.tsx:115
+#: src/tables/build/BuildOrderTable.tsx:116
+msgid "Cascade"
+msgstr ""
+
+#: src/tables/build/BuildOrderTable.tsx:117
+msgid "Display recursive child orders"
+msgstr ""
+
+#: src/tables/build/BuildOrderTable.tsx:123
 #: src/tables/part/PartPurchaseOrdersTable.tsx:126
 #: src/tables/purchasing/PurchaseOrderTable.tsx:56
 #: src/tables/sales/ReturnOrderTable.tsx:47
@@ -5966,36 +5978,36 @@ msgstr "Mostrar órdenes activas"
 msgid "Filter by order status"
 msgstr "Filtrar por estado de la orden"
 
-#: src/tables/build/BuildOrderTable.tsx:122
+#: src/tables/build/BuildOrderTable.tsx:130
 msgid "Show overdue status"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:133
+#: src/tables/build/BuildOrderTable.tsx:141
 #: src/tables/purchasing/PurchaseOrderTable.tsx:65
 #: src/tables/sales/ReturnOrderTable.tsx:56
 #: src/tables/sales/SalesOrderTable.tsx:63
 msgid "Filter by project code"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:138
+#: src/tables/build/BuildOrderTable.tsx:146
 #: src/tables/purchasing/PurchaseOrderTable.tsx:70
 #: src/tables/sales/ReturnOrderTable.tsx:61
 #: src/tables/sales/SalesOrderTable.tsx:68
 msgid "Has Project Code"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:139
+#: src/tables/build/BuildOrderTable.tsx:147
 #: src/tables/purchasing/PurchaseOrderTable.tsx:71
 #: src/tables/sales/ReturnOrderTable.tsx:62
 #: src/tables/sales/SalesOrderTable.tsx:69
 msgid "Filter by whether the purchase order has a project code"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:144
+#: src/tables/build/BuildOrderTable.tsx:152
 msgid "Filter by user who issued this order"
 msgstr ""
 
-#: src/tables/build/BuildOrderTable.tsx:150
+#: src/tables/build/BuildOrderTable.tsx:158
 #: src/tables/purchasing/PurchaseOrderTable.tsx:76
 #: src/tables/sales/ReturnOrderTable.tsx:67
 #: src/tables/sales/SalesOrderTable.tsx:74
@@ -6409,34 +6421,33 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#: src/tables/part/ParametricPartTable.tsx:77
-#: src/tables/part/PartParameterTable.tsx:95
-msgid "Internal Units"
+#: src/tables/part/ParametricPartTable.tsx:74
+msgid "Click to edit"
 msgstr ""
 
 #: src/tables/part/ParametricPartTable.tsx:82
-msgid "Edit parameter"
-msgstr ""
+#~ msgid "Edit parameter"
+#~ msgstr "Edit parameter"
 
-#: src/tables/part/ParametricPartTable.tsx:125
+#: src/tables/part/ParametricPartTable.tsx:127
 msgid "Add Part Parameter"
 msgstr ""
 
-#: src/tables/part/ParametricPartTable.tsx:139
-#: src/tables/part/PartParameterTable.tsx:128
-#: src/tables/part/PartParameterTable.tsx:151
+#: src/tables/part/ParametricPartTable.tsx:141
+#: src/tables/part/PartParameterTable.tsx:130
+#: src/tables/part/PartParameterTable.tsx:153
 msgid "Edit Part Parameter"
 msgstr ""
 
-#: src/tables/part/ParametricPartTable.tsx:223
+#: src/tables/part/ParametricPartTable.tsx:224
 msgid "Show active parts"
 msgstr ""
 
-#: src/tables/part/ParametricPartTable.tsx:228
+#: src/tables/part/ParametricPartTable.tsx:229
 msgid "Show locked parts"
 msgstr ""
 
-#: src/tables/part/ParametricPartTable.tsx:233
+#: src/tables/part/ParametricPartTable.tsx:234
 msgid "Show assembly parts"
 msgstr ""
 
@@ -6491,24 +6502,28 @@ msgstr ""
 #~ msgid "[{0}]"
 #~ msgstr "[{0}]"
 
-#: src/tables/part/PartParameterTable.tsx:112
+#: src/tables/part/PartParameterTable.tsx:97
+msgid "Internal Units"
+msgstr ""
+
+#: src/tables/part/PartParameterTable.tsx:114
 msgid "New Part Parameter"
 msgstr ""
 
-#: src/tables/part/PartParameterTable.tsx:137
-#: src/tables/part/PartParameterTable.tsx:159
+#: src/tables/part/PartParameterTable.tsx:139
+#: src/tables/part/PartParameterTable.tsx:161
 msgid "Delete Part Parameter"
 msgstr ""
 
-#: src/tables/part/PartParameterTable.tsx:177
+#: src/tables/part/PartParameterTable.tsx:179
 msgid "Add parameter"
 msgstr ""
 
-#: src/tables/part/PartParameterTable.tsx:196
+#: src/tables/part/PartParameterTable.tsx:198
 msgid "Part parameters cannot be edited, as the part is locked"
 msgstr ""
 
-#: src/tables/part/PartParameterTable.tsx:210
+#: src/tables/part/PartParameterTable.tsx:212
 #: src/tables/stock/StockItemTable.tsx:335
 msgid "Include Variants"
 msgstr ""
