@@ -125,14 +125,14 @@ export function BarcodeActionDropdown({
   perm?: boolean;
 }>) {
   const hidden = hash === null;
+  const prop = { model, pk };
   return (
     <ActionDropdown
       tooltip={t`Barcode Actions`}
       icon={<IconQrcode />}
       actions={[
         GeneralBarcodeAction({
-          model: model,
-          pk: pk,
+          mdl_prop: prop,
           title: t`View`,
           icon: <IconQrcode />,
           tooltip: t`View barcode`,
@@ -140,8 +140,7 @@ export function BarcodeActionDropdown({
         }),
         GeneralBarcodeAction({
           hidden: hidden || hash || !permission,
-          model: model,
-          pk: pk,
+          mdl_prop: prop,
           title: t`Link Barcode`,
           icon: <IconLink />,
           tooltip: t`Link a custom barcode to this item`,
@@ -149,8 +148,7 @@ export function BarcodeActionDropdown({
         }),
         GeneralBarcodeAction({
           hidden: hidden || !hash || !permission,
-          model: model,
-          pk: pk,
+          mdl_prop: prop,
           title: t`Unlink Barcode`,
           icon: <IconUnlink />,
           tooltip: t`Unlink custom barcode`,
@@ -162,18 +160,21 @@ export function BarcodeActionDropdown({
   );
 }
 
+export type QrCodeType = {
+  model: ModelType;
+  pk: number;
+};
+
 function GeneralBarcodeAction({
   hidden = false,
-  model,
-  pk,
+  mdl_prop,
   title,
   icon,
   tooltip,
   ChildItem
 }: {
   hidden?: boolean;
-  model: ModelType;
-  pk: number;
+  mdl_prop: QrCodeType;
   title: string;
   icon: ReactNode;
   tooltip: string;
@@ -182,7 +183,7 @@ function GeneralBarcodeAction({
   const onClick = () => {
     modals.open({
       title: title,
-      children: <ChildItem model={model} pk={pk} />
+      children: <ChildItem mdl_prop={mdl_prop} />
     });
   };
 

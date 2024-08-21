@@ -18,10 +18,10 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
+import { QrCodeType } from './ActionDropdown';
 
 type QRCodeProps = {
   ecl?: 'L' | 'M' | 'Q' | 'H';
@@ -54,15 +54,13 @@ export const QRCode = ({ data, ecl = 'Q', margin = 1 }: QRCodeProps) => {
 };
 
 type InvenTreeQRCodeProps = {
-  model: ModelType;
-  pk: number;
+  mdl_prop: QrCodeType;
   showEclSelector?: boolean;
 } & Omit<QRCodeProps, 'data'>;
 
 export const InvenTreeQRCode = ({
+  mdl_prop,
   showEclSelector = true,
-  model,
-  pk,
   ecl: eclProp = 'Q',
   ...props
 }: InvenTreeQRCodeProps) => {
@@ -74,11 +72,11 @@ export const InvenTreeQRCode = ({
   }, [eclProp]);
 
   const { data } = useQuery({
-    queryKey: ['qr-code', model, pk],
+    queryKey: ['qr-code', mdl_prop.model, mdl_prop.pk],
     queryFn: async () => {
       const res = await api.post(apiUrl(ApiEndpoints.generate_barcode), {
-        model,
-        pk
+        model: mdl_prop.model,
+        pk: mdl_prop.pk
       });
 
       return res.data?.barcode as string;
@@ -132,13 +130,13 @@ export const InvenTreeQRCode = ({
   );
 };
 
-export const QRCodeLink = ({ model, pk }: { model: ModelType; pk: number }) => {
+export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   const [barcode, setBarcode] = useState('');
 
   function linkBarcode() {
     api
       .post(apiUrl(ApiEndpoints.barcode_link), {
-        [model]: pk,
+        [mdl_prop.model]: mdl_prop.pk,
         barcode: barcode
       })
       .then((response) => {
@@ -161,16 +159,12 @@ export const QRCodeLink = ({ model, pk }: { model: ModelType; pk: number }) => {
   );
 };
 
-export const QRCodeUnlink = ({
-  model,
-  pk
-}: {
-  model: ModelType;
-  pk: number;
-}) => {
+export const QRCodeUnlink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   function unlinkBarcode() {
     api
-      .post(apiUrl(ApiEndpoints.barcode_unlink), { [model]: pk })
+      .post(apiUrl(ApiEndpoints.barcode_unlink), {
+        [mdl_prop.model]: mdl_prop.pk
+      })
       .then((response) => {
         modals.closeAll();
         location.reload();
