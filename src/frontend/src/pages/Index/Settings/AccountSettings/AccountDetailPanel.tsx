@@ -1,11 +1,26 @@
 import { Trans, t } from '@lingui/macro';
-import { Button, Group, Stack, Text, TextInput, Title } from '@mantine/core';
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Stack,
+  Table,
+  Text,
+  TextInput,
+  Title,
+  Tooltip
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useToggle } from '@mantine/hooks';
+import { IconEdit } from '@tabler/icons-react';
+import { useMemo } from 'react';
 
 import { api } from '../../../../App';
 import { EditButton } from '../../../../components/buttons/EditButton';
+import { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
+import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
+import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { apiUrl } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
 
@@ -14,66 +29,57 @@ export function AccountDetailPanel() {
     state.user,
     state.fetchUserState
   ]);
-  const form = useForm({ initialValues: user });
-  const [editing, setEditing] = useToggle([false, true] as const);
-  function SaveData(values: any) {
-    // copy values over to break form rendering link
-    const urlVals = { ...values };
-    urlVals.is_active = true;
-    // send
-    api
-      .put(apiUrl(ApiEndpoints.user_me), urlVals)
-      .then((res) => {
-        if (res.status === 200) {
-          setEditing();
-          fetchUserState();
-        }
-      })
-      .catch(() => {
-        console.error('ERR: Error saving user data');
-      });
-  }
+
+  const userFields: ApiFormFieldSet = useMemo(() => {
+    return {
+      first_name: {},
+      last_name: {}
+    };
+  }, []);
+
+  const editUser = useEditApiFormModal({
+    title: t`Edit User Information`,
+    url: ApiEndpoints.user_me,
+    onFormSuccess: fetchUserState,
+    fields: userFields,
+    successMessage: t`User details updated`
+  });
 
   return (
-    <form onSubmit={form.onSubmit((values) => SaveData(values))}>
-      <Group>
-        <Title order={3}>
-          <Trans>Account Details</Trans>
-        </Title>
-        <EditButton setEditing={setEditing} editing={editing} />
-      </Group>
-      <Group>
-        {editing ? (
-          <Stack gap="xs">
-            <TextInput
-              label="first name"
-              placeholder={t`First name`}
-              {...form.getInputProps('first_name')}
-            />
-            <TextInput
-              label="Last name"
-              placeholder={t`Last name`}
-              {...form.getInputProps('last_name')}
-            />
-            <Group justify="right" mt="md">
-              <Button type="submit">
-                <Trans>Submit</Trans>
-              </Button>
-            </Group>
-          </Stack>
-        ) : (
-          <Stack gap="0">
-            <Text>
-              <Trans>First name: </Trans>
-              {form.values.first_name}
-            </Text>
-            <Text>
-              <Trans>Last name: </Trans>
-              {form.values.last_name}
-            </Text>
-          </Stack>
-        )}
-      </Group>
-    </form>
+    <>
+      {editUser.modal}
+      <Stack gap="xs">
+        <Group justify="space-between">
+          <StylishText size="xl">
+            <Trans>User Details</Trans>
+          </StylishText>
+          <Tooltip label={t`Edit User Information`}>
+            <ActionIcon variant="default" onClick={editUser.open}>
+              <IconEdit />
+            </ActionIcon>
+          </Tooltip>
+        </Group>
+        <Table>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>Username</Trans>
+            </Table.Td>
+            <Table.Td>{user?.username}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>First Name</Trans>
+            </Table.Td>
+            <Table.Td>{user?.first_name}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>Last Name</Trans>
+            </Table.Td>
+            <Table.Td>{user?.last_name}</Table.Td>
+          </Table.Tr>
+        </Table>
+      </Stack>
+    </>
   );
 }
