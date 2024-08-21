@@ -74,6 +74,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -128,6 +129,10 @@ export default function PartDetail() {
     },
     refetchOnMount: true
   });
+
+  part.required =
+    (part?.required_for_build_orders ?? 0) +
+    (part?.required_for_sales_orders ?? 0);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -258,6 +263,13 @@ export default function PartDetail() {
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
+        type: 'string',
+        name: 'required',
+        label: t`Required for Orders`,
+        hidden: part.required <= 0,
+        icon: 'tick_off'
+      },
+      {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
         total: part.required_for_build_orders,
@@ -284,7 +296,7 @@ export default function PartDetail() {
         type: 'string',
         name: 'building',
         unit: true,
-        label: t`Building`,
+        label: t`In Production`,
         hidden: !part.assembly || !part.building
       }
     ];
@@ -375,7 +387,7 @@ export default function PartDetail() {
     ];
 
     // Add in price range data
-    id &&
+    if (id) {
       br.push({
         type: 'string',
         name: 'pricing',
@@ -412,6 +424,7 @@ export default function PartDetail() {
           );
         }
       });
+    }
 
     // Add in stocktake information
     if (id && part.last_stocktake) {
@@ -431,7 +444,11 @@ export default function PartDetail() {
                 .then((response) => {
                   switch (response.status) {
                     case 200:
-                      return response.data[response.data.length - 1];
+                      if (response.data.length > 0) {
+                        return response.data[response.data.length - 1];
+                      } else {
+                        return null;
+                      }
                     default:
                       return null;
                   }
@@ -832,6 +849,9 @@ export default function PartDetail() {
       return [];
     }
 
+    const required =
+      part.required_for_build_orders + part.required_for_sales_orders;
+
     return [
       <DetailsBadge
         label={t`In Stock` + `: ${part.total_in_stock}`}
@@ -850,6 +870,12 @@ export default function PartDetail() {
         color="orange"
         visible={part.total_in_stock == 0}
         key="no_stock"
+      />,
+      <DetailsBadge
+        label={t`Required` + `: ${required}`}
+        color="grape"
+        visible={required > 0}
+        key="required"
       />,
       <DetailsBadge
         label={t`On Order` + `: ${part.ordering}`}
@@ -973,10 +999,12 @@ export default function PartDetail() {
             pk: part.pk
           }),
           LinkBarcodeAction({
-            hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
+            hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
-            hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part)
+            hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
+            onClick: notYetImplemented
           })
         ]}
         key="action_dropdown"

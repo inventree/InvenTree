@@ -12,6 +12,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { notYetImplemented } from '../../functions/notifications';
 import { useCreateApiFormModal } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
@@ -20,6 +21,7 @@ import { TableColumn } from '../Column';
 import { BooleanColumn, PartColumn } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
+import { RowAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 export default function BuildLineTable({
@@ -126,8 +128,20 @@ export default function BuildLineTable({
       );
     }
 
+    const sufficient = available >= record.quantity - record.allocated;
+
+    if (!sufficient) {
+      extra.push(
+        <Text key="insufficient" c="orange" size="sm">
+          {t`Insufficient stock`}
+        </Text>
+      );
+    }
+
     return (
       <TableHoverCard
+        icon={sufficient ? 'info' : 'exclamation'}
+        iconColor={sufficient ? 'blue' : 'orange'}
         value={
           available > 0 ? (
             available
@@ -152,6 +166,16 @@ export default function BuildLineTable({
         sortable: true,
         switchable: false,
         render: (record: any) => PartColumn(record.part_detail)
+      },
+      {
+        accessor: 'part_detail.IPN',
+        sortable: false,
+        title: t`IPN`
+      },
+      {
+        accessor: 'part_detail.description',
+        sortable: false,
+        title: t`Description`
       },
       {
         accessor: 'bom_item_detail.reference',
@@ -248,7 +272,7 @@ export default function BuildLineTable({
   });
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       let part = record.part_detail ?? {};
 
       // Consumable items have no appropriate actions
@@ -273,13 +297,15 @@ export default function BuildLineTable({
           icon: <IconArrowRight />,
           title: t`Allocate Stock`,
           hidden: !canAllocate,
-          color: 'green'
+          color: 'green',
+          onClick: notYetImplemented
         },
         {
           icon: <IconShoppingCart />,
           title: t`Order Stock`,
           hidden: !canOrder,
-          color: 'blue'
+          color: 'blue',
+          onClick: notYetImplemented
         },
         {
           icon: <IconTool />,

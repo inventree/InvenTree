@@ -21,9 +21,11 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
+import build.tasks
 import common.models
 import company.serializers
 import InvenTree.helpers
+import InvenTree.tasks
 import part.filters
 import part.serializers as part_serializers
 from common.serializers import ProjectCodeSerializer
@@ -85,6 +87,10 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'responsible',
             'responsible_detail',
             'priority',
+            'level',
+
+            # Additional fields used only for build order creation
+            'create_child_builds',
         ]
 
         read_only_fields = [
@@ -93,7 +99,12 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'completion_data',
             'status',
             'status_text',
+            'level',
         ]
+
+    reference = serializers.CharField(required=True)
+
+    level = serializers.IntegerField(label=_('Build Level'), read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
 
@@ -116,6 +127,12 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
     project_code_label = serializers.CharField(source='project_code.code', read_only=True, label=_('Project Code Label'))
 
     project_code_detail = ProjectCodeSerializer(source='project_code', many=False, read_only=True)
+
+    create_child_builds = serializers.BooleanField(
+        default=False, required=False, write_only=True,
+        label=_('Create Child Builds'),
+        help_text=_('Automatically generate child build orders'),
+    )
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -141,13 +158,19 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required"""
         part_detail = kwargs.pop('part_detail', True)
+        create = kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
 
-        if part_detail is not True:
+        if not create:
+            self.fields.pop('create_child_builds', None)
+
+        if not part_detail:
             self.fields.pop('part_detail', None)
 
-    reference = serializers.CharField(required=True)
+    def skip_create_fields(self):
+        """Return a list of fields to skip during model creation."""
+        return ['create_child_builds']
 
     def validate_reference(self, reference):
         """Custom validation for the Build reference field"""
@@ -155,6 +178,22 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
         Build.validate_reference_field(reference)
 
         return reference
+
+    def create(self, validated_data):
+        """Save the Build object."""
+
+        build_order = super().create(validated_data)
+
+        create_child_builds = self.validated_data.pop('create_child_builds', False)
+
+        if create_child_builds:
+            # Pass child build creation off to the background thread
+            InvenTree.tasks.offload_task(
+                build.tasks.create_child_builds,
+                build_order.pk,
+            )
+
+        return build_order
 
 
 class BuildOutputSerializer(serializers.Serializer):

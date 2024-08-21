@@ -108,21 +108,70 @@ By default, part names are not subject to any particular naming conventions or r
 
 If the custom method determines that the part name is *objectionable*, it should throw a `ValidationError` which will be handled upstream by parent calling methods.
 
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_part_name
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
 ### Part IPN
 
-Validation of the Part IPN (Internal Part Number) field is exposed to custom plugins via the `validate_part_IPN` method. Any plugins which extend the `ValidationMixin` class can implement this method, and raise a `ValidationError` if the IPN value does not match a required convention.
+Validation of the Part IPN (Internal Part Number) field is exposed to custom plugins via the `validate_part_ipn` method. Any plugins which extend the `ValidationMixin` class can implement this method, and raise a `ValidationError` if the IPN value does not match a required convention.
+
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_part_ipn
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
 
 ### Part Parameter Values
 
 [Part parameters](../../part/parameter.md) can also have custom validation rules applied, by implementing the `validate_part_parameter` method. A plugin which implements this method should raise a `ValidationError` with an appropriate message if the part parameter value does not match a required convention.
 
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_part_parameter
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
 ### Batch Codes
 
 [Batch codes](../../stock/tracking.md#batch-codes) can be generated and/or validated by custom plugins.
 
+#### Validate Batch Code
+
 The `validate_batch_code` method allows plugins to raise an error if a batch code input by the user does not meet a particular pattern.
 
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_batch_code
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
+#### Generate Batch Code
+
 The `generate_batch_code` method can be implemented to generate a new batch code, based on a set of provided information.
+
+::: plugin.base.integration.ValidationMixin.ValidationMixin.generate_batch_code
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
 
 ### Serial Numbers
 
@@ -134,17 +183,30 @@ The default InvenTree [serial numbering system](../../stock/tracking.md#serial-n
 
 Custom serial number validation can be implemented using the `validate_serial_number` method. A *proposed* serial number is passed to this method, which then has the opportunity to raise a `ValidationError` to indicate that the serial number is not valid.
 
+::: plugin.base.integration.ValidationMixin.ValidationMixin.validate_serial_number
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
+!!! info "Stock Item"
+    If the `stock_item` argument is provided, then this stock item has already been assigned with the provided serial number. This stock item should be excluded from any subsequent checks for *uniqueness*. The `stock_item` parameter is optional, and may be `None` if the serial number is being validated in a context where no stock item is available.
+
 ##### Example
 
 A plugin which requires all serial numbers to be valid hexadecimal values may implement this method as follows:
 
 ```python
-def validate_serial_number(self, serial: str, part: Part):
+def validate_serial_number(self, serial: str, part: Part, stock_item: StockItem = None):
     """Validate the supplied serial number
 
     Arguments:
         serial: The proposed serial number (string)
         part: The Part instance for which this serial number is being validated
+        stock_item: The StockItem instance for which this serial number is being validated
     """
 
     try:
@@ -160,6 +222,15 @@ While InvenTree supports arbitrary text values in the serial number fields, behi
 
 A custom plugin can implement the `convert_serial_to_int` method to determine how a particular serial number is converted to an integer representation.
 
+::: plugin.base.integration.ValidationMixin.ValidationMixin.convert_serial_to_int
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
+
 !!! info "Not Required"
     If this method is not implemented, or the serial number cannot be converted to an integer, then the sorting algorithm falls back to the text (string) value
 
@@ -168,6 +239,15 @@ A custom plugin can implement the `convert_serial_to_int` method to determine ho
 A core component of the InvenTree serial number system is the ability to *increment* serial numbers - to determine the *next* serial number value in a sequence.
 
 For custom serial number schemes, it is important to provide a method to generate the *next* serial number given a current value. The `increment_serial_number` method can be implemented by a plugin to achieve this.
+
+::: plugin.base.integration.ValidationMixin.ValidationMixin.increment_serial_number
+    options:
+      show_bases: False
+      show_root_heading: False
+      show_root_toc_entry: False
+      show_sources: True
+      summary: False
+      members: []
 
 !!! info "Invalid Increment"
     If the provided number cannot be incremented (or an error occurs) the method should return `None`
