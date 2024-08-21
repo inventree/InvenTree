@@ -155,7 +155,8 @@ export function InvenTreeTable<T = any>({
     getTableColumnNames,
     setTableColumnNames,
     getTableSorting,
-    setTableSorting
+    setTableSorting,
+    loader
   } = useLocalState();
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
@@ -699,7 +700,7 @@ export function InvenTreeTable<T = any>({
               withTableBorder
               striped
               highlightOnHover
-              loaderType="dots"
+              loaderType={loader}
               pinLastColumn={tableProps.rowActions != undefined}
               idAccessor={tableProps.idAccessor}
               minHeight={300}

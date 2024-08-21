@@ -102,7 +102,7 @@ export function UserTheme({ height }: { height: number }) {
             </Table.Td>
             <Table.Td>
               <Group justify="left">
-                <Loader type={themeLoader} mah={18} />
+                <Loader type={themeLoader} mah={16} size="sm" />
               </Group>
             </Table.Td>
           </Table.Tr>
