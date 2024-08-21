@@ -1,9 +1,12 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  ActionIcon,
   Alert,
   Box,
   Button,
   Code,
+  Divider,
+  Flex,
   Group,
   Image,
   Select,
@@ -12,13 +15,17 @@ import {
   Text,
   TextInput
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
+import { IconQrcode } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
 import { useEffect, useMemo, useState } from 'react';
+import { set } from 'react-hook-form';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
+import { InputImageBarcode, ScanItem } from '../../pages/Index/Scan';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
@@ -142,27 +149,43 @@ export const InvenTreeQRCode = ({
 
 export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   const [barcode, setBarcode] = useState('');
+  const [isScanning, toggleIsScanning] = useDisclosure(false);
 
-  function linkBarcode() {
+  function linkBarcode(value?: string) {
     api
       .post(apiUrl(ApiEndpoints.barcode_link), {
         [mdl_prop.model]: mdl_prop.pk,
-        barcode: barcode
+        barcode: value || barcode
       })
       .then((response) => {
         modals.closeAll();
         location.reload();
       });
   }
+  const actionSubmit = (data: ScanItem[]) => {
+    linkBarcode(data[0].data);
+  };
   return (
     <Box>
-      <TextInput
-        label={t`Barcode`}
-        value={barcode}
-        onChange={(event) => setBarcode(event.currentTarget.value)}
-        placeholder={t`Scan barcode data here using barcode scanner`}
-      />
-      <Button color="green" onClick={linkBarcode} mt="lg" fullWidth>
+      {isScanning ? (
+        <>
+          <InputImageBarcode action={actionSubmit} />
+          <Divider />
+        </>
+      ) : null}
+      <Flex align="flex-end" w="100%">
+        <ActionIcon variant="subtle" onClick={toggleIsScanning.toggle}>
+          <IconQrcode />
+        </ActionIcon>
+        <TextInput
+          label={t`Barcode`}
+          value={barcode}
+          onChange={(event) => setBarcode(event.currentTarget.value)}
+          placeholder={t`Scan barcode data here using barcode scanner`}
+          w="100%"
+        />
+      </Flex>
+      <Button color="green" onClick={() => linkBarcode()} mt="lg" fullWidth>
         <Trans>Link</Trans>
       </Button>
     </Box>
