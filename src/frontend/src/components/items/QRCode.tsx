@@ -133,7 +133,8 @@ export const InvenTreeQRCode = ({
 };
 
 export const QRCodeLink = ({ model, pk }: { model: ModelType; pk: number }) => {
-  const [barcode, setBarcode] = useState<string>();
+  const [barcode, setBarcode] = useState('');
+
   function linkBarcode() {
     api
       .post(apiUrl(ApiEndpoints.barcode_link), {
@@ -150,8 +151,8 @@ export const QRCodeLink = ({ model, pk }: { model: ModelType; pk: number }) => {
       <TextInput
         label={t`Barcode`}
         value={barcode}
+        onChange={(event) => setBarcode(event.currentTarget.value)}
         placeholder={t`Scan barcode data here using barcode scanner`}
-        onChange={(event) => setBarcode(event.target.value)}
       />
       <Button color="green" onClick={linkBarcode} mt="lg" fullWidth>
         <Trans>Link</Trans>
