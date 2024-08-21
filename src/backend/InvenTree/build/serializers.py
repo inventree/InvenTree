@@ -91,6 +91,8 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'level',
         ]
 
+    reference = serializers.CharField(required=True)
+
     level = serializers.IntegerField(label=_('Build Level'), read_only=True)
 
     url = serializers.CharField(source='get_absolute_url', read_only=True)
@@ -115,7 +117,11 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
 
     project_code_detail = ProjectCodeSerializer(source='project_code', many=False, read_only=True)
 
-    create_child_builds = serializers.BooleanField(default=False, required=False, label=_('Create Child Builds'), write_only=True)
+    create_child_builds = serializers.BooleanField(
+        default=False, required=False, write_only=True,
+        label=_('Create Child Builds'),
+        help_text=_('Automatically generate child build orders'),
+    )
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -151,7 +157,9 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
         if not part_detail:
             self.fields.pop('part_detail', None)
 
-    reference = serializers.CharField(required=True)
+    def skip_create_fields(self):
+        """Return a list of fields to skip during model creation."""
+        return ['create_child_builds']
 
     def validate_reference(self, reference):
         """Custom validation for the Build reference field"""
@@ -160,14 +168,17 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
 
         return reference
 
-    def save(self):
+    def create(self, validated_data):
         """Save the Build object."""
 
-        data = self.validated_data
+        create_child_builds = validated_data.pop('create_child_builds', False)
 
-        print("data:", data)
+        print("data:", validated_data)
 
-        super().save()
+        build = super().create(validated_data)
+
+        # TODO: Implement child build order creation
+        return build
 
 
 class BuildOutputSerializer(serializers.Serializer):
