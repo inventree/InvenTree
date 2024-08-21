@@ -319,12 +319,6 @@ class PurchaseOrderHoldSerializer(OrderAdjustSerializer):
 class PurchaseOrderCancelSerializer(OrderAdjustSerializer):
     """Serializer for cancelling a PurchaseOrder."""
 
-    def get_context_data(self):
-        """Return custom context information about the order."""
-        self.order = self.context['order']
-
-        return {'can_cancel': self.order.can_cancel}
-
     def save(self):
         """Save the serializer to 'cancel' the order."""
         if not self.order.can_cancel:
