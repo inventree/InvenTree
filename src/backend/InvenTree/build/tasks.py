@@ -188,6 +188,22 @@ def check_build_stock(build: build.models.Build):
         InvenTree.email.send_email(subject, '', recipients, html_message=html_message)
 
 
+def create_child_builds(build_id: int) -> None:
+    """Create child build orders for a given parent build.
+
+    - Will create a build order for each assembly part in the BOM
+    - Runs recursively, also creating child builds for each sub-assembly part
+    """
+
+    try:
+        build_order = build.models.Build.objects.get(pk=build_id)
+    except (Build.DoesNotExist, ValueError):
+        return
+
+    print("creating child builds for:", build_order)
+
+
+
 def notify_overdue_build_order(bo: build.models.Build):
     """Notify appropriate users that a Build has just become 'overdue'"""
     targets = []

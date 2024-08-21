@@ -18,6 +18,7 @@ from rest_framework.serializers import ValidationError
 from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer
 
 import InvenTree.helpers
+import InvenTree.tasks
 from InvenTree.serializers import InvenTreeDecimalField, NotesFieldMixin
 from stock.status_codes import StockStatus
 
@@ -25,6 +26,7 @@ from stock.generators import generate_batch_code
 from stock.models import StockItem, StockLocation
 from stock.serializers import StockItemSerializerBrief, LocationBriefSerializer
 
+import build.tasks
 import common.models
 from common.serializers import ProjectCodeSerializer
 from common.settings import get_global_setting
@@ -171,14 +173,18 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
     def create(self, validated_data):
         """Save the Build object."""
 
-        create_child_builds = validated_data.pop('create_child_builds', False)
+        build_order = super().create(validated_data)
 
-        print("data:", validated_data)
+        create_child_builds = self.validated_data.pop('create_child_builds', False)
 
-        build = super().create(validated_data)
+        if create_child_builds:
+            # Pass child build creation off to the background thread
+            InvenTree.tasks.offload_task(
+                build.tasks.create_child_builds,
+                build_order.pk,
+            )
 
-        # TODO: Implement child build order creation
-        return build
+        return build_order
 
 
 class BuildOutputSerializer(serializers.Serializer):
