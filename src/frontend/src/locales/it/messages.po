@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-20 19:50\n"
+"PO-Revision-Date: 2024-08-21 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -5982,11 +5982,11 @@ msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:116
 #~ msgid "Cascade"
-#~ msgstr ""
+#~ msgstr "Cascade"
 
 #: src/tables/build/BuildOrderTable.tsx:117
 #~ msgid "Display recursive child orders"
-#~ msgstr ""
+#~ msgstr "Display recursive child orders"
 
 #: src/tables/build/BuildOrderTable.tsx:122
 msgid "Show overdue status"
@@ -7967,3 +7967,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
