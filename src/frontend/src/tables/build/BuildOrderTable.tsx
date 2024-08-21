@@ -110,13 +110,6 @@ export function BuildOrderTable({
         description: t`Show active orders`
       },
       {
-        name: 'cascade',
-        type: 'boolean',
-        label: t`Cascade`,
-        description: t`Display recursive child orders`,
-        active: !!parentBuildId
-      },
-      {
         name: 'status',
         label: t`Status`,
         description: t`Filter by order status`,
@@ -200,8 +193,7 @@ export function BuildOrderTable({
         props={{
           params: {
             part: partId,
-            sales_order: salesOrderId,
-            parent: parentBuildId,
+            ancestor: parentBuildId,
             part_detail: true
           },
           tableActions: tableActions,
