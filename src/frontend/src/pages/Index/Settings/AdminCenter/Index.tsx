@@ -104,7 +104,8 @@ export default function AdminCenter() {
         name: 'home',
         label: t`Home`,
         icon: <IconHome />,
-        content: <HomePanel />
+        content: <HomePanel />,
+        showHeadline: false
       },
       {
         name: 'user',
