@@ -8,7 +8,7 @@ msgstr ""
 "Language: es\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-20 19:49\n"
+"PO-Revision-Date: 2024-08-21 19:54\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -52,7 +52,7 @@ msgstr "Imprimir etiqueta"
 
 #: src/components/buttons/PrintingActions.tsx:99
 msgid "Print"
-msgstr ""
+msgstr "Imprimir"
 
 #: src/components/buttons/PrintingActions.tsx:100
 msgid "Label printing completed successfully"
@@ -352,23 +352,23 @@ msgstr ""
 
 #: src/components/errors/ClientError.tsx:24
 msgid "Client error occurred"
-msgstr ""
+msgstr "Ha ocurrido un error de cliente"
 
 #: src/components/errors/GenericErrorPage.tsx:50
 msgid "Status Code"
-msgstr ""
+msgstr "Código de estado"
 
 #: src/components/errors/GenericErrorPage.tsx:63
 msgid "Return to the index page"
-msgstr ""
+msgstr "Volver a la página índice"
 
 #: src/components/errors/NotAuthenticated.tsx:8
 msgid "Not Authenticated"
-msgstr ""
+msgstr "No autenticado"
 
 #: src/components/errors/NotAuthenticated.tsx:9
 msgid "You are not logged in."
-msgstr ""
+msgstr "No has iniciado sesión."
 
 #: src/components/errors/NotFound.tsx:8
 msgid "Page Not Found"
@@ -917,7 +917,7 @@ msgstr ""
 #: src/components/items/ActionDropdown.tsx:227
 #: src/tables/RowActions.tsx:23
 msgid "Duplicate"
-msgstr ""
+msgstr "Duplicar"
 
 #: src/components/items/ActionDropdown.tsx:228
 msgid "Duplicate item"
@@ -925,7 +925,7 @@ msgstr ""
 
 #: src/components/items/DocTooltip.tsx:92
 msgid "Read More"
-msgstr ""
+msgstr "Leer más"
 
 #: src/components/items/ErrorItem.tsx:5
 #: src/tables/InvenTreeTable.tsx:487
@@ -1171,7 +1171,7 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:57
 msgid "Docker Mode"
-msgstr ""
+msgstr "Modo Docker"
 
 #: src/components/modals/ServerInfoModal.tsx:60
 msgid "Server is deployed using docker"
@@ -1211,7 +1211,7 @@ msgstr ""
 
 #: src/components/modals/ServerInfoModal.tsx:109
 msgid "Email Settings"
-msgstr ""
+msgstr "Configuración del correo electrónico"
 
 #: src/components/modals/ServerInfoModal.tsx:113
 msgid "Email settings not configured"
@@ -2970,7 +2970,7 @@ msgstr ""
 #: src/pages/part/PartDetail.tsx:857
 #: src/tables/stock/StockItemTable.tsx:325
 msgid "In Stock"
-msgstr ""
+msgstr "Disponible"
 
 #: src/forms/StockForms.tsx:499
 msgid "Move"
@@ -5982,11 +5982,11 @@ msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:116
 #~ msgid "Cascade"
-#~ msgstr ""
+#~ msgstr "Cascade"
 
 #: src/tables/build/BuildOrderTable.tsx:117
 #~ msgid "Display recursive child orders"
-#~ msgstr ""
+#~ msgstr "Display recursive child orders"
 
 #: src/tables/build/BuildOrderTable.tsx:122
 msgid "Show overdue status"
@@ -7967,3 +7967,4 @@ msgstr ""
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
