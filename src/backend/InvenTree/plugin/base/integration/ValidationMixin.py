@@ -143,12 +143,18 @@ class ValidationMixin:
         """
         return None
 
-    def validate_serial_number(self, serial: str, part: part.models.Part):
+    def validate_serial_number(
+        self,
+        serial: str,
+        part: part.models.Part,
+        stock_item: stock.models.StockItem = None,
+    ):
         """Validate the supplied serial number.
 
         Arguments:
             serial: The proposed serial number (string)
             part: The Part instance for which this serial number is being validated
+            stock_item: The StockItem instance for which this serial number is being validated (if applicable)
 
         Returns:
             None or True (refer to class docstring)
