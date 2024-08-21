@@ -77,6 +77,9 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'responsible_detail',
             'priority',
             'level',
+
+            # Additional fields used only for build order creation
+            'create_child_builds',
         ]
 
         read_only_fields = [
@@ -112,6 +115,8 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
 
     project_code_detail = ProjectCodeSerializer(source='project_code', many=False, read_only=True)
 
+    create_child_builds = serializers.BooleanField(default=False, required=False, label=_('Create Child Builds'), write_only=True)
+
     @staticmethod
     def annotate_queryset(queryset):
         """Add custom annotations to the BuildSerializer queryset, performing database queries as efficiently as possible.
@@ -136,10 +141,14 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
     def __init__(self, *args, **kwargs):
         """Determine if extra serializer fields are required"""
         part_detail = kwargs.pop('part_detail', True)
+        create = kwargs.pop('create', False)
 
         super().__init__(*args, **kwargs)
 
-        if part_detail is not True:
+        if not create:
+            self.fields.pop('create_child_builds', None)
+
+        if not part_detail:
             self.fields.pop('part_detail', None)
 
     reference = serializers.CharField(required=True)
@@ -150,6 +159,15 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
         Build.validate_reference_field(reference)
 
         return reference
+
+    def save(self):
+        """Save the Build object."""
+
+        data = self.validated_data
+
+        print("data:", data)
+
+        super().save()
 
 
 class BuildOutputSerializer(serializers.Serializer):
