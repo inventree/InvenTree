@@ -1,14 +1,5 @@
-import { Trans, t } from '@lingui/macro';
-import {
-  Divider,
-  Flex,
-  Paper,
-  SimpleGrid,
-  Skeleton,
-  Stack,
-  Text,
-  Title
-} from '@mantine/core';
+import { t } from '@lingui/macro';
+import { Divider, Skeleton, Stack } from '@mantine/core';
 import {
   IconCoins,
   IconCpu,
@@ -27,16 +18,15 @@ import {
   IconUsersGroup
 } from '@tabler/icons-react';
 import { lazy, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { ActionButton } from '../../../../components/buttons/ActionButton';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
-import { PlaceholderPill } from '../../../../components/items/Placeholder';
 import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
+import { generateQuickAction } from './generateQuickAction';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))
@@ -97,7 +87,16 @@ const CurrencyTable = Loadable(
 export default function AdminCenter() {
   const user = useUserState();
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const panel = useMemo(() => {
+    return location.pathname.replace('/settings/admin/', '');
+  }, [location.pathname]);
+  const showQuickAction: boolean = useMemo(() => {
+    return panel !== 'home';
+  }, [panel]);
+
+  const QuickAction = generateQuickAction(navigate);
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -200,41 +199,6 @@ export default function AdminCenter() {
     ];
   }, []);
 
-  const QuickAction = () => (
-    <Stack gap={'xs'} ml={'sm'}>
-      <Title order={5}>
-        <Trans>Quick Actions</Trans>
-      </Title>
-      <Flex align={'flex-end'}>
-        <ActionButton
-          icon={<IconHome />}
-          color="blue"
-          size="lg"
-          radius="sm"
-          variant="filled"
-          tooltip={t`Go to Home`}
-          onClick={() => navigate('home')}
-        />
-        <Divider orientation="vertical" mx="md" />
-        <SimpleGrid cols={3}>
-          <Paper shadow="xs" p="sm" withBorder>
-            <Text>
-              <Trans>Add a new user</Trans>
-            </Text>
-          </Paper>
-
-          <Paper shadow="xs" p="sm" withBorder>
-            <PlaceholderPill />
-          </Paper>
-
-          <Paper shadow="xs" p="sm" withBorder>
-            <PlaceholderPill />
-          </Paper>
-        </SimpleGrid>
-      </Flex>
-    </Stack>
-  );
-
   if (!user.isLoggedIn()) {
     return <Skeleton />;
   }
@@ -249,7 +213,7 @@ export default function AdminCenter() {
             switch_link="/settings/system"
             switch_text="System Settings"
           />
-          <QuickAction />
+          {showQuickAction ? <QuickAction /> : null}
           <PanelGroup
             pageKey="admin-center"
             panels={adminCenterPanels}
