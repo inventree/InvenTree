@@ -26,7 +26,7 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
-  BarcodeActionDropdown2,
+  BarcodeActionDropdown,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
@@ -467,10 +467,10 @@ export default function BuildDetail() {
         onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.build} pk={build.pk} />,
-      <BarcodeActionDropdown2
+      <BarcodeActionDropdown
         model={ModelType.build}
         pk={build.pk}
-        current_barcode={build?.barcode_hash}
+        hash={build?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.build}

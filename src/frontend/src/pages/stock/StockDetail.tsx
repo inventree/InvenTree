@@ -27,10 +27,7 @@ import {
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  EditItemAction
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -476,24 +473,10 @@ export default function StockDetail() {
     () => [
       <AdminButton model={ModelType.stockitem} pk={stockitem.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.stockitem,
-            pk: stockitem.pk
-          }),
-          LinkBarcodeAction({
-            hidden:
-              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
-            model: ModelType.stockitem,
-            pk: stockitem.pk
-          }),
-          UnlinkBarcodeAction({
-            hidden:
-              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
-            model: ModelType.stockitem,
-            pk: stockitem.pk
-          })
-        ]}
+        model={ModelType.stockitem}
+        pk={stockitem.pk}
+        hash={stockitem?.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.stock)}
       />,
       <PrintingActions
         modelType={ModelType.stockitem}

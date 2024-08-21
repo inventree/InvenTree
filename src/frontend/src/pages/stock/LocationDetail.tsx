@@ -18,10 +18,7 @@ import {
   ActionDropdown,
   BarcodeActionDropdown,
   DeleteItemAction,
-  EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  EditItemAction
 } from '../../components/items/ActionDropdown';
 import { ApiIcon } from '../../components/items/ApiIcon';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -287,19 +284,9 @@ export default function Stock() {
       />,
       location.pk ? (
         <BarcodeActionDropdown
+          model={ModelType.stocklocation}
+          pk={location.pk}
           actions={[
-            ViewBarcodeAction({
-              model: ModelType.stocklocation,
-              pk: location.pk
-            }),
-            LinkBarcodeAction({
-              model: ModelType.stocklocation,
-              pk: location.pk
-            }),
-            UnlinkBarcodeAction({
-              model: ModelType.stocklocation,
-              pk: location.pk
-            }),
             {
               name: 'Scan in stock items',
               icon: <InvenTreeIcon icon="stock" />,

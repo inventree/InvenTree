@@ -51,10 +51,7 @@ import {
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  EditItemAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
@@ -972,22 +969,10 @@ export default function PartDetail() {
     return [
       <AdminButton model={ModelType.part} pk={part.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.part,
-            pk: part.pk
-          }),
-          LinkBarcodeAction({
-            hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
-            model: ModelType.part,
-            pk: part.pk
-          }),
-          UnlinkBarcodeAction({
-            hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
-            model: ModelType.part,
-            pk: part.pk
-          })
-        ]}
+        model={ModelType.part}
+        pk={part.pk}
+        hash={part?.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.part)}
         key="action_dropdown"
       />,
       <PrintingActions

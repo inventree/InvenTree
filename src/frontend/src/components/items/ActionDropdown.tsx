@@ -112,72 +112,54 @@ export function ActionDropdown({
 
 // Dropdown menu for barcode actions
 export function BarcodeActionDropdown({
-  actions
-}: {
-  actions: ActionDropdownItem[];
-}) {
+  model,
+  pk,
+  hash = null,
+  actions = [],
+  perm: permission = true
+}: Readonly<{
+  model: ModelType;
+  pk: number;
+  hash?: boolean | null;
+  actions?: ActionDropdownItem[];
+  perm?: boolean;
+}>) {
+  const hidden = hash === null;
   return (
     <ActionDropdown
       tooltip={t`Barcode Actions`}
       icon={<IconQrcode />}
-      actions={actions}
+      actions={[
+        GeneralBarcodeAction({
+          model: model,
+          pk: pk,
+          title: t`View`,
+          icon: <IconQrcode />,
+          tooltip: t`View barcode`,
+          ChildItem: InvenTreeQRCode
+        }),
+        GeneralBarcodeAction({
+          hidden: hidden || hash || !permission,
+          model: model,
+          pk: pk,
+          title: t`Link Barcode`,
+          icon: <IconLink />,
+          tooltip: t`Link a custom barcode to this item`,
+          ChildItem: QRCodeLink
+        }),
+        GeneralBarcodeAction({
+          hidden: hidden || !hash || !permission,
+          model: model,
+          pk: pk,
+          title: t`Unlink Barcode`,
+          icon: <IconUnlink />,
+          tooltip: t`Unlink custom barcode`,
+          ChildItem: QRCodeUnlink
+        }),
+        ...actions
+      ]}
     />
   );
-}
-
-export function BarcodeActionDropdown2({
-  current_barcode = null,
-  model,
-  pk
-}: Readonly<{
-  current_barcode: boolean | null;
-  model: ModelType;
-  pk: number;
-}>) {
-  const hidden = current_barcode === null;
-  const actions = [
-    ViewBarcodeAction({
-      model: model,
-      pk: pk
-    }),
-    LinkBarcodeAction({
-      hidden: hidden || current_barcode,
-      model: model,
-      pk: pk
-    }),
-    UnlinkBarcodeAction({
-      hidden: hidden || !current_barcode,
-      model: model,
-      pk: pk
-    })
-  ];
-  return <BarcodeActionDropdown actions={actions} />;
-}
-
-// Common action button for viewing a barcode
-export function ViewBarcodeAction({
-  hidden = false,
-  model,
-  pk
-}: {
-  hidden?: boolean;
-  model: ModelType;
-  pk: number;
-}): ActionDropdownItem {
-  const onClick = () => {
-    modals.open({
-      title: t`View Barcode`,
-      children: <InvenTreeQRCode model={model} pk={pk} />
-    });
-  };
-
-  return {
-    icon: <IconQrcode />,
-    name: t`View`,
-    tooltip: t`View barcode`,
-    onClick: onClick,
-    hidden: hidden
-  };
 }
 
 function GeneralBarcodeAction({
@@ -211,48 +193,6 @@ function GeneralBarcodeAction({
     onClick: onClick,
     hidden: hidden
   };
-}
-
-// Common action button for linking a custom barcode
-export function LinkBarcodeAction({
-  hidden = false,
-  model,
-  pk
-}: {
-  hidden?: boolean;
-  model: ModelType;
-  pk: number;
-}): ActionDropdownItem {
-  return GeneralBarcodeAction({
-    hidden: hidden,
-    model: model,
-    pk: pk,
-    title: t`Link Barcode`,
-    icon: <IconLink />,
-    tooltip: t`Link a custom barcode to this item`,
-    ChildItem: QRCodeLink
-  });
-}
-
-// Common action button for un-linking a custom barcode
-export function UnlinkBarcodeAction({
-  hidden = false,
-  model,
-  pk
-}: {
-  hidden?: boolean;
-  model: ModelType;
-  pk: number;
-}): ActionDropdownItem {
-  return GeneralBarcodeAction({
-    hidden: hidden,
-    model: model,
-    pk: pk,
-    title: t`Unlink Barcode`,
-    icon: <IconUnlink />,
-    tooltip: t`Unlink custom barcode`,
-    ChildItem: QRCodeUnlink
-  });
 }
 
 // Common action button for editing an item
