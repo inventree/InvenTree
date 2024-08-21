@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-21 07:44+0000\n"
-"PO-Revision-Date: 2024-08-20 19:51\n"
+"PO-Revision-Date: 2024-08-21 19:56\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "Language: ru_RU\n"
@@ -734,10 +734,8 @@ msgid "Parent Build"
 msgstr "Родительский заказ на производство"
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "Отменить производство"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -1274,16 +1272,12 @@ msgid "Project Code Label"
 msgstr "Название кода проекта"
 
 #: build/serializers.py:124
-#, fuzzy
-#| msgid "Child Build Orders"
 msgid "Create Child Builds"
-msgstr "Дочерние заказы на производство"
+msgstr ""
 
 #: build/serializers.py:125
-#, fuzzy
-#| msgid "Automatically allocate stock to build"
 msgid "Automatically generate child build orders"
-msgstr "Автоматически зарезервировать остатки для производства"
+msgstr ""
 
 #: build/serializers.py:207 build/serializers.py:959
 #: templates/js/translated/build.js:1045 templates/js/translated/build.js:1498
@@ -8198,10 +8192,8 @@ msgid "Show Part Details"
 msgstr "Показать описание детали"
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Required for Build Orders"
 msgid "Required for Orders"
-msgstr "Требуется для заказов на производство"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15261,3 +15253,4 @@ msgstr "Разрешение на редактирование элементо�
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Разрешение на удаление элементов"
+
