@@ -72,7 +72,6 @@ test('PUI - Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByLabel('action-menu-barcode-actions-view').click();
   await page.getByRole('img', { name: 'QR Code' }).waitFor();
   await page.getByRole('banner').getByRole('button').click();
-  await page.waitForTimeout(500);
 
   // Link to barcode
   await page.getByLabel('action-menu-barcode-actions').click();
@@ -82,7 +81,6 @@ test('PUI - Purchase Orders - Barcodes', async ({ page }) => {
     .getByPlaceholder('Scan barcode data here using')
     .fill('1234567890');
   await page.getByRole('button', { name: 'Link' }).click();
-
   await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 
   // Unlink barcode
@@ -91,4 +89,6 @@ test('PUI - Purchase Orders - Barcodes', async ({ page }) => {
   await page.getByRole('heading', { name: 'Unlink Barcode' }).waitFor();
   await page.getByText('This will remove the link to').waitFor();
   await page.getByRole('button', { name: 'Unlink Barcode' }).click();
+  await page.waitForTimeout(500);
+  await page.getByRole('button', { name: 'Issue Order' }).waitFor();
 });
