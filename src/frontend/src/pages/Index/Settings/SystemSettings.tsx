@@ -21,7 +21,8 @@ import { useMemo } from 'react';
 
 import PermissionDenied from '../../../components/errors/PermissionDenied';
 import { PlaceholderPanel } from '../../../components/items/Placeholder';
-import { PanelGroup, PanelType } from '../../../components/nav/PanelGroup';
+import { PanelType } from '../../../components/nav/Panel';
+import { PanelGroup } from '../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../components/nav/SettingsHeader';
 import { GlobalSettingList } from '../../../components/settings/SettingList';
 import { useServerApiState } from '../../../states/ApiState';
