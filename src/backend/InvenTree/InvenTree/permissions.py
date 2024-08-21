@@ -99,6 +99,18 @@ class IsSuperuser(permissions.IsAdminUser):
         return bool(request.user and request.user.is_superuser)
 
 
+class IsSuperuserOrReadOnly(permissions.IsAdminUser):
+    """Allow read-only access to any user, but write access is restricted to superuser users."""
+
+    def has_permission(self, request, view):
+        """Check if the user is a superuser."""
+        return bool(
+            request.user
+            and request.user.is_superuser
+            or request.method in permissions.SAFE_METHODS
+        )
+
+
 class IsStaffOrReadOnly(permissions.IsAdminUser):
     """Allows read-only access to any user, but write access is restricted to staff users."""
 
