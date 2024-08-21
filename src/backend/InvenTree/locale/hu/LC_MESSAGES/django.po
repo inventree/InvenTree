@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-21 07:44+0000\n"
-"PO-Revision-Date: 2024-08-20 19:50\n"
+"PO-Revision-Date: 2024-08-21 19:56\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -734,10 +734,8 @@ msgid "Parent Build"
 msgstr "Szülő gyártás"
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "Gyártás törlése"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -1274,16 +1272,12 @@ msgid "Project Code Label"
 msgstr "Projekt kód címke"
 
 #: build/serializers.py:124
-#, fuzzy
-#| msgid "Child Build Orders"
 msgid "Create Child Builds"
-msgstr "Alárendelt gyártások"
+msgstr ""
 
 #: build/serializers.py:125
-#, fuzzy
-#| msgid "Automatically allocate stock to build"
 msgid "Automatically generate child build orders"
-msgstr "Automatikus készlet foglalás a gyártáshoz"
+msgstr ""
 
 #: build/serializers.py:207 build/serializers.py:959
 #: templates/js/translated/build.js:1045 templates/js/translated/build.js:1498
@@ -1413,8 +1407,7 @@ msgstr "Hiányos foglalás elfogadása"
 
 #: build/serializers.py:577
 msgid "Complete outputs if stock has not been fully allocated"
-msgstr ""
-"Kimenetek befejezése akkor is ha a készlet nem\n"
+msgstr "Kimenetek befejezése akkor is ha a készlet nem\n"
 "lett teljesen lefoglalva"
 
 #: build/serializers.py:689
@@ -8200,10 +8193,8 @@ msgid "Show Part Details"
 msgstr "Alkatrész részletei"
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Required for Build Orders"
 msgid "Required for Orders"
-msgstr "Gyártáshoz szükséges"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15263,3 +15254,4 @@ msgstr "Jogosultság tételek szerkesztéséhez"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Jogosultság tételek törléséhez"
+
