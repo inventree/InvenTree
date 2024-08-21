@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-08-21 07:44+0000\n"
-"PO-Revision-Date: 2024-08-20 19:50\n"
+"PO-Revision-Date: 2024-08-21 19:55\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -373,7 +373,7 @@ msgstr "Correo electrónico"
 
 #: InvenTree/models.py:103
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Error al ejecutar la validación del plug-in"
 
 #: InvenTree/models.py:172
 msgid "Metadata must be a python dict object"
@@ -734,10 +734,8 @@ msgid "Parent Build"
 msgstr "Construcción o Armado Superior"
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "Cancelar construcción o armado"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -856,7 +854,7 @@ msgstr "Opción no válida para la construcción padre"
 
 #: build/models.py:174 order/models.py:239
 msgid "Responsible user or group must be specified"
-msgstr ""
+msgstr "Se debe especificar un usuario o grupo responsable"
 
 #: build/models.py:180
 msgid "Build order part cannot be changed"
@@ -1274,16 +1272,12 @@ msgid "Project Code Label"
 msgstr ""
 
 #: build/serializers.py:124
-#, fuzzy
-#| msgid "Child Build Orders"
 msgid "Create Child Builds"
-msgstr "Órdenes de Trabajo herederas"
+msgstr ""
 
 #: build/serializers.py:125
-#, fuzzy
-#| msgid "Automatically allocate stock to build"
 msgid "Automatically generate child build orders"
-msgstr "Asignar existencias automáticamente a contrucción"
+msgstr ""
 
 #: build/serializers.py:207 build/serializers.py:959
 #: templates/js/translated/build.js:1045 templates/js/translated/build.js:1498
@@ -8198,10 +8192,8 @@ msgid "Show Part Details"
 msgstr "Mostrar Detalles de Parte"
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Required for Orders"
-msgstr "Volver a Pedidos"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15261,3 +15253,4 @@ msgstr "Permisos para editar artículos"
 #: users/models.py:408
 msgid "Permission to delete items"
 msgstr "Permiso para eliminar artículos"
+
