@@ -26,14 +26,11 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
-  BarcodeActionDropdown,
+  BarcodeActionDropdown2,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  HoldItemAction
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -470,23 +467,10 @@ export default function BuildDetail() {
         onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.build} pk={build.pk} />,
-      <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.build,
-            pk: build.pk
-          }),
-          LinkBarcodeAction({
-            hidden: build?.barcode_hash,
-            model: ModelType.build,
-            pk: build.pk
-          }),
-          UnlinkBarcodeAction({
-            hidden: !build?.barcode_hash,
-            model: ModelType.build,
-            pk: build.pk
-          })
-        ]}
+      <BarcodeActionDropdown2
+        model={ModelType.build}
+        pk={build.pk}
+        current_barcode={build?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.build}

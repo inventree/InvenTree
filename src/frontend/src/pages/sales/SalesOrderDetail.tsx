@@ -22,14 +22,11 @@ import { ItemDetailsGrid } from '../../components/details/ItemDetails';
 import NotesEditor from '../../components/editors/NotesEditor';
 import {
   ActionDropdown,
-  BarcodeActionDropdown,
+  BarcodeActionDropdown2,
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  HoldItemAction
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -442,23 +439,10 @@ export default function SalesOrderDetail() {
         onClick={completeOrder.open}
       />,
       <AdminButton model={ModelType.salesorder} pk={order.pk} />,
-      <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.salesorder,
-            pk: order.pk
-          }),
-          LinkBarcodeAction({
-            hidden: order?.barcode_hash,
-            model: ModelType.salesorder,
-            pk: order.pk
-          }),
-          UnlinkBarcodeAction({
-            hidden: !order?.barcode_hash,
-            model: ModelType.salesorder,
-            pk: order.pk
-          })
-        ]}
+      <BarcodeActionDropdown2
+        model={ModelType.salesorder}
+        pk={order.pk}
+        current_barcode={order?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.salesorder}

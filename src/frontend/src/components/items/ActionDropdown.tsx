@@ -125,6 +125,35 @@ export function BarcodeActionDropdown({
   );
 }
 
+export function BarcodeActionDropdown2({
+  current_barcode = null,
+  model,
+  pk
+}: Readonly<{
+  current_barcode: boolean | null;
+  model: ModelType;
+  pk: number;
+}>) {
+  const hidden = current_barcode === null;
+  const actions = [
+    ViewBarcodeAction({
+      model: model,
+      pk: pk
+    }),
+    LinkBarcodeAction({
+      hidden: hidden || current_barcode,
+      model: model,
+      pk: pk
+    }),
+    UnlinkBarcodeAction({
+      hidden: hidden || !current_barcode,
+      model: model,
+      pk: pk
+    })
+  ];
+  return <BarcodeActionDropdown actions={actions} />;
+}
+
 // Common action button for viewing a barcode
 export function ViewBarcodeAction({
   hidden = false,
