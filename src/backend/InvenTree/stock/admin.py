@@ -142,6 +142,7 @@ class StockItemResource(InvenTreeResource):
             'barcode_hash',
             'barcode_data',
             'owner',
+            'status_custom_key',
         ]
 
     id = Field(

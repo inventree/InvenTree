@@ -2,6 +2,7 @@
 
 import enum
 import re
+from enum import Enum
 
 
 class BaseEnum(enum.IntEnum):
@@ -65,10 +66,23 @@ class StatusCode(BaseEnum):
         # Normal item definition
         if len(args) == 1:
             obj.label = args[0]
-            obj.color = 'secondary'
+            obj.color = ColorEnum.secondary
         else:
             obj.label = args[1]
-            obj.color = args[2] if len(args) > 2 else 'secondary'
+            obj.color = args[2] if len(args) > 2 else ColorEnum.secondary
+
+        # Ensure color is a valid value
+        if isinstance(obj.color, str):
+            try:
+                obj.color = ColorEnum(obj.color)
+            except ValueError:
+                raise ValueError(
+                    f"Invalid color value '{obj.color}' for status '{obj.label}'"
+                )
+
+        # Set color value as string
+        obj.color = obj.color.value
+        obj.color_class = obj.color
 
         return obj
 
@@ -181,3 +195,15 @@ class StatusCode(BaseEnum):
         ret['list'] = cls.list()
 
         return ret
+
+
+class ColorEnum(Enum):
+    """Enum for color values."""
+
+    primary = 'primary'
+    secondary = 'secondary'
+    success = 'success'
+    danger = 'danger'
+    warning = 'warning'
+    info = 'info'
+    dark = 'dark'

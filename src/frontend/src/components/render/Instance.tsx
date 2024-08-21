@@ -16,7 +16,11 @@ import {
   RenderManufacturerPart,
   RenderSupplierPart
 } from './Company';
-import { RenderImportSession, RenderProjectCode } from './Generic';
+import {
+  RenderContentType,
+  RenderImportSession,
+  RenderProjectCode
+} from './Generic';
 import { ModelInformationDict } from './ModelType';
 import {
   RenderPurchaseOrder,
@@ -87,7 +91,8 @@ const RendererLookup: EnumDictionary<
   [ModelType.importsession]: RenderImportSession,
   [ModelType.reporttemplate]: RenderReportTemplate,
   [ModelType.labeltemplate]: RenderLabelTemplate,
-  [ModelType.pluginconfig]: RenderPlugin
+  [ModelType.pluginconfig]: RenderPlugin,
+  [ModelType.contenttype]: RenderContentType
 };
 
 export type RenderInstanceProps = {
