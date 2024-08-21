@@ -1,19 +1,26 @@
 import { Trans, t } from '@lingui/macro';
 import {
+  ActionIcon,
   Button,
+  ColorInput,
   ColorPicker,
   Container,
   DEFAULT_THEME,
   Group,
   Loader,
   Select,
+  Slider,
   Table,
   Title,
   useMantineTheme
 } from '@mantine/core';
+import { IconReload, IconRestore } from '@tabler/icons-react';
+import { useState } from 'react';
 
 import { ColorToggle } from '../../../../components/items/ColorToggle';
 import { LanguageSelect } from '../../../../components/items/LanguageSelect';
+import { SizeMarks } from '../../../../defaults/defaults';
+import { notYetImplemented } from '../../../../functions/notifications';
 import { IS_DEV } from '../../../../main';
 import { useLocalState } from '../../../../states/LocalState';
 
@@ -26,12 +33,47 @@ const LOOKUP = Object.assign(
 );
 
 export function UserTheme({ height }: { height: number }) {
+  const theme = useMantineTheme();
+
   const [themeLoader, setThemeLoader] = useLocalState((state) => [
     state.loader,
     state.setLoader
   ]);
 
-  const theme = useMantineTheme();
+  // white color
+  const [whiteColor, setWhiteColor] = useState(theme.white);
+
+  function changeWhite(color: string) {
+    useLocalState.setState({ whiteColor: color });
+    setWhiteColor(color);
+  }
+
+  // black color
+  const [blackColor, setBlackColor] = useState(theme.black);
+
+  function changeBlack(color: string) {
+    useLocalState.setState({ blackColor: color });
+    setBlackColor(color);
+  }
+  // radius
+  function getMark(value: number) {
+    const obj = SizeMarks.find((mark) => mark.value === value);
+    if (obj) return obj;
+    return SizeMarks[0];
+  }
+
+  function getDefaultRadius() {
+    const obj = SizeMarks.find(
+      (mark) => mark.label === useLocalState.getState().radius
+    );
+    if (obj) return obj.value;
+    return 50;
+  }
+  const [radius, setRadius] = useState(getDefaultRadius());
+  function changeRadius(value: number) {
+    setRadius(value);
+    useLocalState.setState({ radius: getMark(value).label });
+  }
 
   // Set theme primary color
   function changePrimary(color: string) {
@@ -89,6 +131,66 @@ export function UserTheme({ height }: { height: number }) {
           </Table.Tr>
           <Table.Tr>
             <Table.Td>
+              <Trans>Highlight color</Trans>
+            </Table.Td>
+            <Table.Td>
+              <ColorPicker
+                format="hex"
+                onChange={changePrimary}
+                withPicker={false}
+                swatches={Object.keys(LOOKUP)}
+              />
+            </Table.Td>
+            <Table.Td>
+              <Button color={theme.primaryColor} variant="light">
+                <Trans>Example</Trans>
+              </Button>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>White color</Trans>
+            </Table.Td>
+            <Table.Td>
+              <ColorInput value={whiteColor} onChange={changeWhite} />
+            </Table.Td>
+            <Table.Td>
+              <ActionIcon variant="default" onClick={notYetImplemented}>
+                <IconRestore />
+              </ActionIcon>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>Black color</Trans>
+            </Table.Td>
+            <Table.Td>
+              <ColorInput value={blackColor} onChange={changeBlack} />
+            </Table.Td>
+            <Table.Td>
+              <ActionIcon variant="default" onClick={notYetImplemented}>
+                <IconRestore />
+              </ActionIcon>
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>Border Radius</Trans>
+            </Table.Td>
+            <Table.Td>
+              <Slider
+                label={(val) => getMark(val).label}
+                defaultValue={50}
+                step={25}
+                marks={SizeMarks}
+                value={radius}
+                onChange={changeRadius}
+                mb={18}
+              />
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
               <Trans>Loader</Trans>
             </Table.Td>
             <Table.Td>
@@ -104,24 +206,6 @@ export function UserTheme({ height }: { height: number }) {
               <Group justify="left">
                 <Loader type={themeLoader} mah={16} size="sm" />
               </Group>
-            </Table.Td>
-          </Table.Tr>
-          <Table.Tr>
-            <Table.Td>
-              <Trans>Highlight color</Trans>
-            </Table.Td>
-            <Table.Td>
-              <ColorPicker
-                format="hex"
-                onChange={changePrimary}
-                withPicker={false}
-                swatches={Object.keys(LOOKUP)}
-              />
-            </Table.Td>
-            <Table.Td>
-              <Button color={theme.primaryColor} variant="light">
-                <Trans>Example</Trans>
-              </Button>
             </Table.Td>
           </Table.Tr>
         </Table.Tbody>

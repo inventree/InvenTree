@@ -1,27 +1,11 @@
 import { Trans, t } from '@lingui/macro';
-import {
-  ActionIcon,
-  Button,
-  Group,
-  Stack,
-  Table,
-  Text,
-  TextInput,
-  Title,
-  Tooltip
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { useToggle } from '@mantine/hooks';
+import { ActionIcon, Group, Stack, Table, Title, Tooltip } from '@mantine/core';
 import { IconEdit } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { api } from '../../../../App';
-import { EditButton } from '../../../../components/buttons/EditButton';
 import { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
-import { StylishText } from '../../../../components/items/StylishText';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
-import { apiUrl } from '../../../../states/ApiState';
 import { useUserState } from '../../../../states/UserState';
 
 export function AccountDetailPanel() {
@@ -50,9 +34,9 @@ export function AccountDetailPanel() {
       {editUser.modal}
       <Stack gap="xs">
         <Group justify="space-between">
-          <StylishText size="xl">
+          <Title order={3}>
             <Trans>User Details</Trans>
-          </StylishText>
+          </Title>
           <Tooltip label={t`Edit User Information`}>
             <ActionIcon variant="default" onClick={editUser.open}>
               <IconEdit />
