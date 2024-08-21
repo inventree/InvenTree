@@ -10,26 +10,36 @@ import {
 } from '@mantine/core';
 import { IconHome } from '@tabler/icons-react';
 
-import { ActionButton } from '../../../../components/buttons/ActionButton';
-import { PlaceholderPill } from '../../../../components/items/Placeholder';
+import { ActionButton } from '../buttons/ActionButton';
+import { PlaceholderPill } from '../items/Placeholder';
 
-export function generateQuickAction(navigate: any) {
-  return () => (
-    <Stack gap={'xs'} ml={'sm'}>
+export const QuickAction = ({
+  navigate,
+  ml = 'sm'
+}: {
+  navigate?: any;
+  ml?: string;
+}) => {
+  return (
+    <Stack gap={'xs'} ml={ml}>
       <Title order={5}>
         <Trans>Quick Actions</Trans>
       </Title>
       <Flex align={'flex-end'}>
-        <ActionButton
-          icon={<IconHome />}
-          color="blue"
-          size="lg"
-          radius="sm"
-          variant="filled"
-          tooltip={t`Go to Home`}
-          onClick={() => navigate('home')}
-        />
-        <Divider orientation="vertical" mx="md" />
+        {navigate ? (
+          <>
+            <ActionButton
+              icon={<IconHome />}
+              color="blue"
+              size="lg"
+              radius="sm"
+              variant="filled"
+              tooltip={t`Go to Home`}
+              onClick={() => navigate('home')}
+            />
+            <Divider orientation="vertical" mx="md" />
+          </>
+        ) : null}
         <SimpleGrid cols={3}>
           <Paper shadow="xs" p="sm" withBorder>
             <Text>
@@ -48,4 +58,4 @@ export function generateQuickAction(navigate: any) {
       </Flex>
     </Stack>
   );
-}
+};

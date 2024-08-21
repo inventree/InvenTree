@@ -23,10 +23,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import PermissionDenied from '../../../../components/errors/PermissionDenied';
 import { PanelGroup, PanelType } from '../../../../components/nav/PanelGroup';
 import { SettingsHeader } from '../../../../components/nav/SettingsHeader';
+import { QuickAction } from '../../../../components/settings/QuickAction';
 import { GlobalSettingList } from '../../../../components/settings/SettingList';
 import { Loadable } from '../../../../functions/loading';
 import { useUserState } from '../../../../states/UserState';
-import { generateQuickAction } from './generateQuickAction';
 
 const ReportTemplatePanel = Loadable(
   lazy(() => import('./ReportTemplatePanel'))
@@ -96,7 +96,6 @@ export default function AdminCenter() {
     return panel !== 'home';
   }, [panel]);
 
-  const QuickAction = generateQuickAction(navigate);
   const adminCenterPanels: PanelType[] = useMemo(() => {
     return [
       {
@@ -213,7 +212,7 @@ export default function AdminCenter() {
             switch_link="/settings/system"
             switch_text="System Settings"
           />
-          {showQuickAction ? <QuickAction /> : null}
+          {showQuickAction ? <QuickAction navigate={navigate} /> : null}
           <PanelGroup
             pageKey="admin-center"
             panels={adminCenterPanels}

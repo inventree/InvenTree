@@ -1,8 +1,10 @@
 import { Trans, t } from '@lingui/macro';
-import { Alert, Button, Divider, Stack, Title } from '@mantine/core';
+import { Alert, Button, Stack, Title } from '@mantine/core';
 import { IconBrandGithub } from '@tabler/icons-react';
 
-export default function HomePanel() {
+import { QuickAction } from '../../../../components/settings/QuickAction';
+
+export default function HomePanel(): JSX.Element {
   return (
     <Stack gap="xs">
       <Alert color="blue" title={t`This is new!`}>
@@ -21,10 +23,7 @@ export default function HomePanel() {
           <IconBrandGithub /> <Trans>Open an issue</Trans>
         </Button>
       </Alert>
-      <Title order={5}>
-        <Trans>Quick actions</Trans>
-      </Title>
-      TBD
+      <QuickAction ml="" />
       <Title order={5}>
         <Trans>System status</Trans>
       </Title>
