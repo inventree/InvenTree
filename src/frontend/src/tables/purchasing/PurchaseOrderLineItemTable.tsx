@@ -37,6 +37,7 @@ import {
 } from '../ColumnRenderers';
 import { InvenTreeTable } from '../InvenTreeTable';
 import {
+  RowAction,
   RowDeleteAction,
   RowDuplicateAction,
   RowEditAction
@@ -49,11 +50,13 @@ import { TableHoverCard } from '../TableHoverCard';
 export function PurchaseOrderLineItemTable({
   order,
   orderId,
+  currency,
   supplierId,
   params
 }: {
   order: any;
   orderId: number;
+  currency: string;
   supplierId?: number;
   params?: any;
 }) {
@@ -247,7 +250,10 @@ export function PurchaseOrderLineItemTable({
     url: ApiEndpoints.purchase_order_line_list,
     title: t`Add Line Item`,
     fields: addPurchaseOrderFields,
-    initialData: initialData,
+    initialData: {
+      ...initialData,
+      purchase_price_currency: currency
+    },
     table: table
   });
 
@@ -285,7 +291,7 @@ export function PurchaseOrderLineItemTable({
   }, [order, poStatus]);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       let received = (record?.received ?? 0) >= (record?.quantity ?? 0);
 
       return [

@@ -23,6 +23,7 @@ import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { bomItemFields } from '../../forms/BomForms';
 import { dataImporterSessionFields } from '../../forms/ImporterForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useApiFormModal,
   useCreateApiFormModal,
@@ -41,7 +42,7 @@ import {
 } from '../ColumnRenderers';
 import { TableFilter } from '../Filter';
 import { InvenTreeTable } from '../InvenTreeTable';
-import { RowDeleteAction, RowEditAction } from '../RowActions';
+import { RowAction, RowDeleteAction, RowEditAction } from '../RowActions';
 import { TableHoverCard } from '../TableHoverCard';
 
 // Calculate the total stock quantity available for a given BomItem
@@ -454,7 +455,7 @@ export function BomTable({
   }, []);
 
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       // If this BOM item is defined for a *different* parent, then it cannot be edited
       if (record.part && record.part != partId) {
         return [
@@ -488,7 +489,8 @@ export function BomTable({
           title: t`Edit Substitutes`,
           color: 'blue',
           hidden: partLocked || !user.hasChangeRole(UserRoles.part),
-          icon: <IconSwitch3 />
+          icon: <IconSwitch3 />,
+          onClick: notYetImplemented
         },
         RowDeleteAction({
           hidden: partLocked || !user.hasDeleteRole(UserRoles.part),

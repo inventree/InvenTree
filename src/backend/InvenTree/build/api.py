@@ -34,7 +34,6 @@ class BuildFilter(rest_filters.FilterSet):
         """Metaclass options."""
         model = Build
         fields = [
-            'parent',
             'sales_order',
             'part',
         ]
@@ -48,6 +47,24 @@ class BuildFilter(rest_filters.FilterSet):
         if str2bool(value):
             return queryset.filter(status__in=BuildStatusGroups.ACTIVE_CODES)
         return queryset.exclude(status__in=BuildStatusGroups.ACTIVE_CODES)
+
+    parent = rest_filters.ModelChoiceFilter(
+        queryset=Build.objects.all(),
+        label=_('Parent Build'),
+        field_name='parent',
+    )
+
+    ancestor = rest_filters.ModelChoiceFilter(
+        queryset=Build.objects.all(),
+        label=_('Ancestor Build'),
+        method='filter_ancestor'
+    )
+
+    def filter_ancestor(self, queryset, name, parent):
+        """Filter by 'parent' build order."""
+
+        builds = parent.get_descendants(include_self=False)
+        return queryset.filter(pk__in=[b.pk for b in builds])
 
     overdue = rest_filters.BooleanFilter(label='Build is overdue', method='filter_overdue')
 
@@ -175,6 +192,7 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
         'responsible',
         'project_code',
         'priority',
+        'level',
     ]
 
     ordering_field_aliases = {
@@ -223,22 +241,6 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
             except (ValueError, Build.DoesNotExist):
                 pass
 
-        # Filter by "ancestor" builds
-        ancestor = params.get('ancestor', None)
-
-        if ancestor is not None:
-            try:
-                ancestor = Build.objects.get(pk=ancestor)
-
-                descendants = ancestor.get_descendants(include_self=True)
-
-                queryset = queryset.filter(
-                    parent__pk__in=[b.pk for b in descendants]
-                )
-
-            except (ValueError, Build.DoesNotExist):
-                pass
-
         # Filter by 'date range'
         min_date = params.get('min_date', None)
         max_date = params.get('max_date', None)
@@ -251,11 +253,12 @@ class BuildList(DataExportViewMixin, BuildMixin, ListCreateAPI):
     def get_serializer(self, *args, **kwargs):
         """Add extra context information to the endpoint serializer."""
         try:
-            part_detail = str2bool(self.request.GET.get('part_detail', None))
+            part_detail = str2bool(self.request.GET.get('part_detail', True))
         except AttributeError:
-            part_detail = None
+            part_detail = True
 
         kwargs['part_detail'] = part_detail
+        kwargs['create'] = True
 
         return self.serializer_class(*args, **kwargs)
 

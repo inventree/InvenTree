@@ -43,6 +43,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
+import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -312,7 +313,10 @@ export default function BuildDetail() {
         label: t`Child Build Orders`,
         icon: <IconSitemap />,
         content: build.pk ? (
-          <BuildOrderTable parentBuildId={build.pk} />
+          <BuildOrderTable
+            parentBuildId={build.pk}
+            salesOrderId={build.sales_order}
+          />
         ) : (
           <Skeleton />
         )
@@ -474,10 +478,12 @@ export default function BuildDetail() {
             pk: build.pk
           }),
           LinkBarcodeAction({
-            hidden: build?.barcode_hash
+            hidden: build?.barcode_hash,
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
-            hidden: !build?.barcode_hash
+            hidden: !build?.barcode_hash,
+            onClick: notYetImplemented
           })
         ]}
       />,

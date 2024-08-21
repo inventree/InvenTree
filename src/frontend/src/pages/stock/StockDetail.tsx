@@ -50,6 +50,7 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
+import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -483,11 +484,13 @@ export default function StockDetail() {
           }),
           LinkBarcodeAction({
             hidden:
-              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
+              stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
+            onClick: notYetImplemented
           }),
           UnlinkBarcodeAction({
             hidden:
-              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock)
+              !stockitem?.barcode_hash || !user.hasChangeRole(UserRoles.stock),
+            onClick: notYetImplemented
           })
         ]}
       />,

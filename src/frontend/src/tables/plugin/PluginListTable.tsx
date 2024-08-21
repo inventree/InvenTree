@@ -351,7 +351,7 @@ export default function PluginListTable() {
 
   // Determine available actions for a given plugin
   const rowActions = useCallback(
-    (record: any) => {
+    (record: any): RowAction[] => {
       // TODO: Plugin actions should be updated based on on the users's permissions
 
       let actions: RowAction[] = [];
