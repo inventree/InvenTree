@@ -241,6 +241,11 @@ export const ModelInformationDict: ModelDict = {
     url_overview: '/pluginconfig',
     url_detail: '/pluginconfig/:pk/',
     api_endpoint: ApiEndpoints.plugin_list
+  },
+  contenttype: {
+    label: t`Content Type`,
+    label_multiple: t`Content Types`,
+    api_endpoint: ApiEndpoints.content_type_list
   }
 };
 

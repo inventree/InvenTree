@@ -296,7 +296,7 @@ export default function ReturnOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status}
+            status={order.status_custom_key}
             type={ModelType.returnorder}
             options={{ size: 'lg' }}
           />

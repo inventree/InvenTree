@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../App';
 import { YesNoButton } from '../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../components/forms/fields/ApiFormField';
+import { formatDecimal } from '../../defaults/formatters';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
@@ -65,7 +66,8 @@ function ParameterCell({
     parameter.data_numeric &&
     parameter.data_numeric != parameter.data
   ) {
-    extra.push(`${parameter.data_numeric} [${template.units}]`);
+    const numeric = formatDecimal(parameter.data_numeric, { digits: 15 });
+    extra.push(`${numeric} [${template.units}]`);
   }
 
   if (hovered && canEdit) {
@@ -80,7 +82,7 @@ function ParameterCell({
             value={value ?? '-'}
             extra={extra}
             icon={hovered && canEdit ? 'edit' : 'info'}
-            title={t`Internal Units`}
+            title={template.name}
           />
         </Group>
       </Group>

@@ -178,7 +178,7 @@ export function StatusColumn({
     sortable: sortable ?? true,
     title: title,
     hidden: hidden,
-    render: TableStatusRenderer(model, accessor ?? 'status')
+    render: TableStatusRenderer(model, accessor ?? 'status_custom_key')
   };
 }
 

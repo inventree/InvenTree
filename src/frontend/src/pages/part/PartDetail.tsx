@@ -126,6 +126,10 @@ export default function PartDetail() {
     refetchOnMount: true
   });
 
+  part.required =
+    (part?.required_for_build_orders ?? 0) +
+    (part?.required_for_sales_orders ?? 0);
+
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
       return <Skeleton />;
@@ -255,6 +259,13 @@ export default function PartDetail() {
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
+        type: 'string',
+        name: 'required',
+        label: t`Required for Orders`,
+        hidden: part.required <= 0,
+        icon: 'tick_off'
+      },
+      {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
         total: part.required_for_build_orders,
@@ -281,7 +292,7 @@ export default function PartDetail() {
         type: 'string',
         name: 'building',
         unit: true,
-        label: t`Building`,
+        label: t`In Production`,
         hidden: !part.assembly || !part.building
       }
     ];
@@ -834,6 +845,9 @@ export default function PartDetail() {
       return [];
     }
 
+    const required =
+      part.required_for_build_orders + part.required_for_sales_orders;
+
     return [
       <DetailsBadge
         label={t`In Stock` + `: ${part.total_in_stock}`}
@@ -852,6 +866,12 @@ export default function PartDetail() {
         color="orange"
         visible={part.total_in_stock == 0}
         key="no_stock"
+      />,
+      <DetailsBadge
+        label={t`Required` + `: ${required}`}
+        color="grape"
+        visible={required > 0}
+        key="required"
       />,
       <DetailsBadge
         label={t`On Order` + `: ${part.ordering}`}

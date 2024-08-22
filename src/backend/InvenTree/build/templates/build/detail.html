@@ -60,7 +60,7 @@
                 <tr>
                     <td><span class='fas fa-info'></span></td>
                     <td>{% trans "Status" %}</td>
-                    <td>{% status_label 'build' build.status %}</td>
+                    <td>{% display_status_label 'build' build.status_custom_key build.status %}</td>
                 </tr>
                 <tr>
                     <td><span class='fas fa-check-circle'></span></td>

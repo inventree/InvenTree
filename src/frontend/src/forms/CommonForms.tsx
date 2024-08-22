@@ -12,6 +12,18 @@ export function projectCodeFields(): ApiFormFieldSet {
   };
 }
 
+export function customStateFields(): ApiFormFieldSet {
+  return {
+    key: {},
+    name: {},
+    label: {},
+    color: {},
+    logical_key: {},
+    model: {},
+    reference_status: {}
+  };
+}
+
 export function customUnitsFields(): ApiFormFieldSet {
   return {
     name: {},

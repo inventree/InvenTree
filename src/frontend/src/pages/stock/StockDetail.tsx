@@ -585,7 +585,7 @@ export default function StockDetail() {
             key="batch"
           />,
           <StatusRenderer
-            status={stockitem.status}
+            status={stockitem.status_custom_key}
             type={ModelType.stockitem}
             options={{ size: 'lg' }}
             key="status"
