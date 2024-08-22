@@ -1154,10 +1154,12 @@ pycparser==2.22 \
     --hash=sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6 \
     --hash=sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc
     # via cffi
-pydyf==0.11.0 \
-    --hash=sha256:0aaf9e2ebbe786ec7a78ec3fbffa4cdcecde53fd6f563221d53c6bc1328848a3 \
-    --hash=sha256:394dddf619cca9d0c55715e3c55ea121a9bf9cbc780cdc1201a2427917b86b64
-    # via weasyprint
+pydyf==0.10.0 \
+    --hash=sha256:357194593efaf61d7b48ab97c3d59722114934967c3df3d7878ca6dd25b04c30 \
+    --hash=sha256:ef76b6c0976a091a9e15827fb5800e5e37e7cd1a3ca4d4bd19d10a14ea8c0ae3
+    # via
+    #   -r src/backend/requirements.in
+    #   weasyprint
 pyjwt==2.9.0 \
     --hash=sha256:3b02fb0f44517787776cf48f2ae25d8e14f300e6d7545a4315cee571a415e850 \
     --hash=sha256:7e1e5b56cc735432a7369cbfa0efe50fa113ebecdc04ae6922deba8b84582d0c
