@@ -22,10 +22,7 @@ import {
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  EditItemAction
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -34,7 +31,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useSupplierPartFields } from '../../forms/CompanyForms';
-import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -271,24 +267,10 @@ export default function SupplierPartDetail() {
     return [
       <AdminButton model={ModelType.supplierpart} pk={supplierPart.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.supplierpart,
-            pk: supplierPart.pk
-          }),
-          LinkBarcodeAction({
-            hidden:
-              supplierPart.barcode_hash ||
-              !user.hasChangeRole(UserRoles.purchase_order),
-            onClick: notYetImplemented
-          }),
-          UnlinkBarcodeAction({
-            hidden:
-              !supplierPart.barcode_hash ||
-              !user.hasChangeRole(UserRoles.purchase_order),
-            onClick: notYetImplemented
-          })
-        ]}
+        model={ModelType.supplierpart}
+        pk={supplierPart.pk}
+        hash={supplierPart.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.purchase_order)}
       />,
       <ActionDropdown
         tooltip={t`Supplier Part Actions`}

@@ -138,7 +138,7 @@ export function useStockFields({
         value: batchCode,
         onValueChange: (value) => setBatchCode(value)
       },
-      status: {},
+      status_custom_key: {},
       expiry_date: {
         // TODO: icon
       },
@@ -613,7 +613,7 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
       },
       headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
     },
-    status: {},
+    status_custom_key: {},
     note: {}
   };
 
@@ -915,10 +915,14 @@ export function stockLocationFields(): ApiFormFieldSet {
 // Construct a set of fields for
 export function useTestResultFields({
   partId,
-  itemId
+  itemId,
+  templateId,
+  editTemplate = false
 }: {
   partId: number;
   itemId: number;
+  templateId: number | undefined;
+  editTemplate?: boolean;
 }): ApiFormFieldSet {
   // Valid field choices
   const [choices, setChoices] = useState<any[]>([]);
@@ -940,6 +944,7 @@ export function useTestResultFields({
         hidden: true
       },
       template: {
+        disabled: !editTemplate && !!templateId,
         filters: {
           include_inherited: true,
           part: partId
@@ -983,5 +988,13 @@ export function useTestResultFields({
         hidden: !includeTestStation
       }
     };
-  }, [choices, fieldType, partId, itemId, includeTestStation]);
+  }, [
+    choices,
+    editTemplate,
+    fieldType,
+    partId,
+    itemId,
+    templateId,
+    includeTestStation
+  ]);
 }

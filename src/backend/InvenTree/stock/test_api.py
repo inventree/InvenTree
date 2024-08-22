@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from enum import IntEnum
 
 import django.http
+from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django.urls import reverse
 
@@ -17,7 +18,7 @@ from rest_framework import status
 import build.models
 import company.models
 import part.models
-from common.models import InvenTreeSetting
+from common.models import InvenTreeCustomUserStateModel, InvenTreeSetting
 from InvenTree.unit_test import InvenTreeAPITestCase
 from part.models import Part, PartTestTemplate
 from stock.models import (
@@ -923,6 +924,100 @@ class StockItemListTest(StockAPITestCase):
         self.get(
             self.list_url, {'location_detail': True, 'tests': True}, max_query_count=35
         )
+
+
+class CustomStockItemStatusTest(StockAPITestCase):
+    """Tests for custom stock item statuses."""
+
+    list_url = reverse('api-stock-list')
+
+    def setUp(self):
+        """Setup for all tests."""
+        super().setUp()
+        self.status = InvenTreeCustomUserStateModel.objects.create(
+            key=11,
+            name='OK - advanced',
+            label='OK - adv.',
+            color='secondary',
+            logical_key=10,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+        self.status2 = InvenTreeCustomUserStateModel.objects.create(
+            key=51,
+            name='attention 2',
+            label='attention 2',
+            color='secondary',
+            logical_key=50,
+            model=ContentType.objects.get(model='stockitem'),
+            reference_status='StockStatus',
+        )
+
+    def test_custom_status(self):
+        """Tests interaction with states."""
+        # Create a stock item with the custom status code via the API
+        response = self.post(
+            self.list_url,
+            {
+                'name': 'Test Type 1',
+                'description': 'Test desc 1',
+                'quantity': 1,
+                'part': 1,
+                'status_custom_key': self.status.key,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['status'], self.status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status.key)
+        pk = response.data['pk']
+
+        # Update the stock item with another custom status code via the API
+        response = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': pk}),
+            {'status_custom_key': self.status2.key},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['status'], self.status2.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status2.key)
+
+        # Try if status_custom_key is rewrite with status bying set
+        response = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': pk}),
+            {'status': self.status.logical_key},
+            expected_code=200,
+        )
+        self.assertEqual(response.data['status'], self.status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status.logical_key)
+
+        # Create a stock item with a normal status code via the API
+        response = self.post(
+            self.list_url,
+            {
+                'name': 'Test Type 1',
+                'description': 'Test desc 1',
+                'quantity': 1,
+                'part': 1,
+                'status_key': self.status.key,
+            },
+            expected_code=201,
+        )
+        self.assertEqual(response.data['status'], self.status.logical_key)
+        self.assertEqual(response.data['status_custom_key'], self.status.logical_key)
+
+    def test_options(self):
+        """Test the StockItem OPTIONS endpoint to contain custom StockStatuses."""
+        response = self.options(self.list_url)
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check that the response contains the custom StockStatuses
+        actions = response.data['actions']['POST']
+        self.assertIn('status_custom_key', actions)
+        status_custom_key = actions['status_custom_key']
+        self.assertEqual(len(status_custom_key['choices']), 10)
+        status = status_custom_key['choices'][1]
+        self.assertEqual(status['value'], self.status.key)
+        self.assertEqual(status['display_name'], self.status.label)
 
 
 class StockItemTest(StockAPITestCase):

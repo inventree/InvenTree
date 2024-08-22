@@ -15,6 +15,12 @@ export function RenderProjectCode({
   );
 }
 
+export function RenderContentType({
+  instance
+}: Readonly<InstanceRenderInterface>): ReactNode {
+  return instance && <RenderInlineModel primary={instance.app_labeled_name} />;
+}
+
 export function RenderImportSession({
   instance
 }: {
