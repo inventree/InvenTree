@@ -34,7 +34,11 @@ from InvenTree.mixins import (
     RetrieveUpdateAPI,
     RetrieveUpdateDestroyAPI,
 )
-from InvenTree.serializers import ExendedUserSerializer, UserCreateSerializer
+from InvenTree.serializers import (
+    ExtendedUserSerializer,
+    MeUserSerializer,
+    UserCreateSerializer,
+)
 from InvenTree.settings import FRONTEND_URL_BASE
 from users.models import ApiToken, Owner
 from users.serializers import (
@@ -135,12 +139,16 @@ class UserDetail(RetrieveUpdateDestroyAPI):
     """Detail endpoint for a single user."""
 
     queryset = User.objects.all()
-    serializer_class = ExendedUserSerializer
+    serializer_class = ExtendedUserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class MeUserDetail(RetrieveUpdateAPI, UserDetail):
     """Detail endpoint for current user."""
+
+    serializer_class = MeUserSerializer
+
+    rolemap = {'POST': 'view', 'PUT': 'view', 'PATCH': 'view'}
 
     def get_object(self):
         """Always return the current user object."""
