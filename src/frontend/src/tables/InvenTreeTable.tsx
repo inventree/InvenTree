@@ -195,8 +195,9 @@ export function InvenTreeTable<T = any>({
             // Extract field information from the API
 
             let names: Record<string, string> = {};
+
             let fields: ApiFormFieldSet =
-              extractAvailableFields(response, 'POST', true) || {};
+              extractAvailableFields(response, 'GET', true) || {};
 
             // Extract flattened map of fields
             mapFields(fields, (path, field) => {
