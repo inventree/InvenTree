@@ -36,6 +36,8 @@ export type TableState = {
   setRecordCount: (count: number) => void;
   page: number;
   setPage: (page: number) => void;
+  pageSize: number;
+  setPageSize: (pageSize: number) => void;
   records: any[];
   setRecords: (records: any[]) => void;
   updateRecord: (record: any) => void;
@@ -99,6 +101,7 @@ export function useTable(tableName: string): TableState {
 
   // Pagination data
   const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(25);
 
   // A list of hidden columns, saved to local storage
   const [hiddenColumns, setHiddenColumns] = useLocalStorage<string[]>({
@@ -158,6 +161,8 @@ export function useTable(tableName: string): TableState {
     setRecordCount,
     page,
     setPage,
+    pageSize,
+    setPageSize,
     records,
     setRecords,
     updateRecord,
