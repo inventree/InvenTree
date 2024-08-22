@@ -39,6 +39,8 @@ export type TableState = {
   records: any[];
   setRecords: (records: any[]) => void;
   updateRecord: (record: any) => void;
+  editable: boolean;
+  setEditable: (value: boolean) => void;
 };
 
 /**
@@ -131,6 +133,8 @@ export function useTable(tableName: string): TableState {
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  const [editable, setEditable] = useState<boolean>(false);
+
   return {
     tableKey,
     refreshTable,
@@ -156,6 +160,8 @@ export function useTable(tableName: string): TableState {
     setPage,
     records,
     setRecords,
-    updateRecord
+    updateRecord,
+    editable,
+    setEditable
   };
 }
