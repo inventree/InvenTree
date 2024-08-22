@@ -3,6 +3,7 @@ import { ActionIcon, Group, Stack, Table, Title, Tooltip } from '@mantine/core';
 import { IconDots, IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
+import { YesNoButton } from '../../../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
@@ -76,6 +77,22 @@ export function AccountDetailPanel() {
               <Trans>Last Name</Trans>
             </Table.Td>
             <Table.Td>{user?.last_name}</Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>Staff Access</Trans>
+            </Table.Td>
+            <Table.Td>
+              <YesNoButton value={user?.is_staff} />
+            </Table.Td>
+          </Table.Tr>
+          <Table.Tr>
+            <Table.Td>
+              <Trans>Superuser</Trans>
+            </Table.Td>
+            <Table.Td>
+              <YesNoButton value={user?.is_superuser} />
+            </Table.Td>
           </Table.Tr>
         </Table>
       </Stack>
