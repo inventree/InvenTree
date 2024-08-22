@@ -507,7 +507,11 @@ export default function SalesOrderDetail() {
             imageUrl={order.customer_detail?.image}
             badges={orderBadges}
             actions={soActions}
-            breadcrumbs={[{ name: t`Sales`, url: '/sales/' }]}
+            breadcrumbs={[
+              { name: t`Sales`, url: '/sales/' },
+
+              { name: order.reference, url: `/sales/sales-order/${order.pk}` }
+            ]}
             editAction={editSalesOrder.open}
             editEnabled={user.hasChangePermission(ModelType.salesorder)}
           />

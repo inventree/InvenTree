@@ -465,7 +465,13 @@ export default function PurchaseOrderDetail() {
             title={t`Purchase Order` + `: ${order.reference}`}
             subtitle={order.description}
             imageUrl={order.supplier_detail?.image}
-            breadcrumbs={[{ name: t`Purchasing`, url: '/purchasing/' }]}
+            breadcrumbs={[
+              { name: t`Purchasing`, url: '/purchasing/' },
+              {
+                name: order.reference,
+                url: `/purchasing/purchase-order/${order.pk}`
+              }
+            ]}
             actions={poActions}
             badges={orderBadges}
             editAction={editPurchaseOrder.open}
