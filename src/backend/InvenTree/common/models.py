@@ -3355,7 +3355,7 @@ class InvenTreeCustomUserStateModel(models.Model):
     )
     label = models.CharField(
         max_length=250,
-        verbose_name=_('label'),
+        verbose_name=_('Label'),
         help_text=_('Label that will be displayed in the frontend'),
     )
     color = models.CharField(
