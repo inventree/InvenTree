@@ -1,3 +1,5 @@
+import { ApiFormFieldType } from '../components/forms/fields/ApiFormField';
+
 export type TableColumnProps<T = any> = {
   accessor?: string; // The key in the record to access
   title?: string; // The title of the column - Note: this may be supplied by the API, and is not required, but it can be overridden if required
@@ -5,6 +7,8 @@ export type TableColumnProps<T = any> = {
   sortable?: boolean; // Whether the column is sortable
   switchable?: boolean; // Whether the column is switchable
   hidden?: boolean; // Whether the column is hidden
+  editable?: boolean; // Whether the value of this column can be edited
+  definition?: ApiFormFieldType; // Optional field definition for the column
   render?: (record: T, index?: number) => any; // A custom render function
   filter?: any; // A custom filter function
   filtering?: boolean; // Whether the column is filterable
