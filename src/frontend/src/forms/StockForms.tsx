@@ -923,10 +923,12 @@ export function stockLocationFields(): ApiFormFieldSet {
 export function useTestResultFields({
   partId,
   itemId,
+  templateId,
   editTemplate = false
 }: {
   partId: number;
   itemId: number;
+  templateId: number | undefined;
   editTemplate?: boolean;
 }): ApiFormFieldSet {
   // Valid field choices
@@ -949,7 +951,7 @@ export function useTestResultFields({
         hidden: true
       },
       template: {
-        disabled: !editTemplate,
+        disabled: !editTemplate && !!templateId,
         filters: {
           include_inherited: true,
           part: partId
@@ -993,5 +995,13 @@ export function useTestResultFields({
         hidden: !includeTestStation
       }
     };
-  }, [choices, editTemplate, fieldType, partId, itemId, includeTestStation]);
+  }, [
+    choices,
+    editTemplate,
+    fieldType,
+    partId,
+    itemId,
+    templateId,
+    includeTestStation
+  ]);
 }
