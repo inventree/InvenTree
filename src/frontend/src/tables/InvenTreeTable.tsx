@@ -697,6 +697,7 @@ export function InvenTreeTable<T = any>({
 
             <DataTable
               withTableBorder
+              withColumnBorders
               striped
               highlightOnHover
               loaderType="dots"
