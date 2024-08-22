@@ -1,10 +1,12 @@
 import { Trans, t } from '@lingui/macro';
 import { ActionIcon, Group, Stack, Table, Title, Tooltip } from '@mantine/core';
-import { IconEdit } from '@tabler/icons-react';
+import { IconDots, IconEdit, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
 import { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
+import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
+import { notYetImplemented } from '../../../../functions/notifications';
 import { useEditApiFormModal } from '../../../../hooks/UseForm';
 import { useUserState } from '../../../../states/UserState';
 
@@ -37,11 +39,24 @@ export function AccountDetailPanel() {
           <Title order={3}>
             <Trans>User Details</Trans>
           </Title>
-          <Tooltip label={t`Edit User Information`}>
-            <ActionIcon variant="default" onClick={editUser.open}>
-              <IconEdit />
-            </ActionIcon>
-          </Tooltip>
+          <ActionDropdown
+            tooltip={t`User Actions`}
+            icon={<IconDots />}
+            actions={[
+              {
+                name: t`Edit User`,
+                icon: <IconUser />,
+                tooltip: t`Edit User Information`,
+                onClick: editUser.open
+              },
+              {
+                name: t`Set Password`,
+                icon: <IconKey />,
+                tooltip: t`Set User Password`,
+                onClick: notYetImplemented
+              }
+            ]}
+          />
         </Group>
         <Table>
           <Table.Tr>
