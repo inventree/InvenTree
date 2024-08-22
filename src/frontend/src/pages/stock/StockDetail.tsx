@@ -529,6 +529,7 @@ export default function StockDetail() {
       <ActionDropdown
         tooltip={t`Stock Item Actions`}
         icon={<IconDots />}
+        noindicator
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.stock),

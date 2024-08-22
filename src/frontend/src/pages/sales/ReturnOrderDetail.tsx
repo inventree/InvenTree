@@ -412,6 +412,7 @@ export default function ReturnOrderDetail() {
       <ActionDropdown
         tooltip={t`Order Actions`}
         icon={<IconDots />}
+        noindicator
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.return_order),

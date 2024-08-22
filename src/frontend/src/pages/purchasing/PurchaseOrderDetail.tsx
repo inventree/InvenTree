@@ -411,6 +411,7 @@ export default function PurchaseOrderDetail() {
       <ActionDropdown
         tooltip={t`Order Actions`}
         icon={<IconDots />}
+        noindicator
         actions={[
           EditItemAction({
             hidden: !canEdit,

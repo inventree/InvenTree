@@ -1032,6 +1032,7 @@ export default function PartDetail() {
       <ActionDropdown
         tooltip={t`Part Actions`}
         icon={<IconDots />}
+        noindicator
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.part),

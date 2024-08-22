@@ -305,6 +305,7 @@ export default function CompanyDetail(props: Readonly<CompanyDetailProps>) {
       <ActionDropdown
         tooltip={t`Company Actions`}
         icon={<IconDots />}
+        noindicator
         actions={[
           EditItemAction({
             hidden: !user.hasChangeRole(UserRoles.purchase_order),

@@ -258,6 +258,7 @@ function MachineDrawer({
           <ActionDropdown
             tooltip={t`Machine Actions`}
             icon={<IconDots />}
+            noindicator
             actions={[
               EditItemAction({
                 tooltip: t`Edit machine`,

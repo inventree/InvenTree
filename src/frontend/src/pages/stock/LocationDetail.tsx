@@ -334,6 +334,7 @@ export default function Stock() {
       <ActionDropdown
         tooltip={t`Location Actions`}
         icon={<IconDots />}
+        noindicator
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.stock_location),

@@ -480,6 +480,7 @@ export default function BuildDetail() {
       <ActionDropdown
         tooltip={t`Build Order Actions`}
         icon={<IconDots />}
+        noindicator
         actions={[
           EditItemAction({
             onClick: () => editBuild.open(),

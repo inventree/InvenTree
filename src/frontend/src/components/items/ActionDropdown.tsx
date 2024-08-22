@@ -1,6 +1,7 @@
 import { t } from '@lingui/macro';
 import {
   ActionIcon,
+  Group,
   Indicator,
   IndicatorProps,
   Menu,
@@ -9,6 +10,7 @@ import {
 import { modals } from '@mantine/modals';
 import {
   IconCopy,
+  IconDotsVertical,
   IconEdit,
   IconLink,
   IconQrcode,
@@ -42,13 +44,15 @@ export function ActionDropdown({
   tooltip,
   actions,
   disabled = false,
-  hidden = false
+  hidden = false,
+  noindicator = false
 }: {
   icon: ReactNode;
   tooltip: string;
   actions: ActionDropdownItem[];
   disabled?: boolean;
   hidden?: boolean;
+  noindicator?: boolean;
 }) {
   const hasActions = useMemo(() => {
     return actions.some((action) => !action.hidden);
@@ -67,15 +71,20 @@ export function ActionDropdown({
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
           <Tooltip label={tooltip} hidden={!tooltip}>
-            <ActionIcon
-              size="lg"
-              radius="sm"
-              variant="transparent"
-              disabled={disabled}
-              aria-label={menuName}
-            >
-              {icon}
-            </ActionIcon>
+            <Group gap={0}>
+              <ActionIcon
+                size="lg"
+                radius="sm"
+                variant="transparent"
+                disabled={disabled}
+                aria-label={menuName}
+              >
+                {icon}
+              </ActionIcon>
+              {noindicator || disabled ? null : (
+                <IconDotsVertical stroke={1.5} />
+              )}
+            </Group>
           </Tooltip>
         </Menu.Target>
       </Indicator>

@@ -215,6 +215,7 @@ export default function CategoryDetail() {
       <ActionDropdown
         tooltip={t`Category Actions`}
         icon={<IconDots />}
+        noindicator
         actions={[
           EditItemAction({
             hidden: !id || !user.hasChangeRole(UserRoles.part_category),

@@ -275,6 +275,7 @@ export default function SupplierPartDetail() {
       <ActionDropdown
         tooltip={t`Supplier Part Actions`}
         icon={<IconDots />}
+        noindicator
         actions={[
           DuplicateItemAction({
             hidden: !user.hasAddRole(UserRoles.purchase_order),
