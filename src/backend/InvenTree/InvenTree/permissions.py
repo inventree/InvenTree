@@ -79,6 +79,9 @@ class RolePermission(permissions.BasePermission):
             # Extract the model name associated with this request
             model = get_model_for_view(view)
 
+            if model is None:
+                return True
+
             app_label = model._meta.app_label
             model_name = model._meta.model_name
 

@@ -154,6 +154,13 @@ class MeUserDetail(RetrieveUpdateAPI, UserDetail):
         """Always return the current user object."""
         return self.request.user
 
+    def get_permission_model(self):
+        """Return the model for the permission check.
+
+        Note that for this endpoint, the current user can *always* edit their own details.
+        """
+        return None
+
 
 class UserList(ListCreateAPI):
     """List endpoint for detail on all users."""
