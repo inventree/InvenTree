@@ -1,9 +1,9 @@
 import { Trans, t } from '@lingui/macro';
-import { ActionIcon, Group, Stack, Table, Title, Tooltip } from '@mantine/core';
-import { IconDots, IconEdit, IconKey, IconUser } from '@tabler/icons-react';
+import { Group, Stack, Table, Title } from '@mantine/core';
+import { IconDots, IconKey, IconUser } from '@tabler/icons-react';
 import { useMemo } from 'react';
 
-import { YesNoButton } from '../../../../components/buttons/YesNoButton';
+import { YesNoUndefinedButton } from '../../../../components/buttons/YesNoButton';
 import { ApiFormFieldSet } from '../../../../components/forms/fields/ApiFormField';
 import { ActionDropdown } from '../../../../components/items/ActionDropdown';
 import { ApiEndpoints } from '../../../../enums/ApiEndpoints';
@@ -59,6 +59,7 @@ export function AccountDetailPanel() {
             ]}
           />
         </Group>
+
         <Table>
           <Table.Tr>
             <Table.Td>
@@ -83,7 +84,7 @@ export function AccountDetailPanel() {
               <Trans>Staff Access</Trans>
             </Table.Td>
             <Table.Td>
-              <YesNoButton value={user?.is_staff} />
+              <YesNoUndefinedButton value={user?.is_staff} />
             </Table.Td>
           </Table.Tr>
           <Table.Tr>
@@ -91,7 +92,7 @@ export function AccountDetailPanel() {
               <Trans>Superuser</Trans>
             </Table.Td>
             <Table.Td>
-              <YesNoButton value={user?.is_superuser} />
+              <YesNoUndefinedButton value={user?.is_superuser} />
             </Table.Td>
           </Table.Tr>
         </Table>
