@@ -155,7 +155,10 @@ export function UserTheme({ height }: { height: number }) {
               <ColorInput value={whiteColor} onChange={changeWhite} />
             </Table.Td>
             <Table.Td>
-              <ActionIcon variant="default" onClick={notYetImplemented}>
+              <ActionIcon
+                variant="default"
+                onClick={() => changeWhite('#FFFFFF')}
+              >
                 <IconRestore />
               </ActionIcon>
             </Table.Td>
@@ -168,7 +171,10 @@ export function UserTheme({ height }: { height: number }) {
               <ColorInput value={blackColor} onChange={changeBlack} />
             </Table.Td>
             <Table.Td>
-              <ActionIcon variant="default" onClick={notYetImplemented}>
+              <ActionIcon
+                variant="default"
+                onClick={() => changeBlack('#000000')}
+              >
                 <IconRestore />
               </ActionIcon>
             </Table.Td>
