@@ -158,7 +158,7 @@ src="{% static 'img/blank_image.png' %}"
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
         <td>
-            {% status_label 'build' build.status %}
+            {% display_status_label 'build' build.status_custom_key build.status %}
         </td>
     </tr>
     {% if build.target_date %}
@@ -225,7 +225,7 @@ src="{% static 'img/blank_image.png' %}"
 
 {% block page_data %}
 <h3>
-    {% status_label 'build' build.status large=True %}
+    {% display_status_label 'build' build.status_custom_key build.status large=True %}
     {% if build.is_overdue %}
     <span class='badge rounded-pill bg-danger'>{% trans "Overdue" %}</span>
     {% endif %}

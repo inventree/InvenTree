@@ -125,6 +125,7 @@ class LabelMixinTests(PrintTestMixins, InvenTreeAPITestCase):
         self.assertGreater(len(plugins), 0)
 
         plugin = registry.get_plugin('samplelabelprinter')
+        self.assertIsNotNone(plugin)
         config = plugin.plugin_config()
 
         # Ensure that the plugin is not active

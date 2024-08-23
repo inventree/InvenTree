@@ -27,6 +27,7 @@ import part.serializers as part_serializers
 import stock.filters
 import stock.status_codes
 from common.settings import get_global_setting
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.serializers import InvenTreeCurrencySerializer, InvenTreeDecimalField
@@ -238,7 +239,10 @@ class StockItemTestResultSerializer(
     )
 
     attachment = InvenTree.serializers.InvenTreeAttachmentSerializerField(
-        required=False
+        required=False,
+        allow_null=True,
+        label=_('Attachment'),
+        help_text=_('Test result attachment'),
     )
 
     def validate(self, data):
@@ -326,7 +330,9 @@ class StockItemSerializerBrief(
 
 @register_importer()
 class StockItemSerializer(
-    DataImportExportSerializerMixin, InvenTree.serializers.InvenTreeTagModelSerializer
+    DataImportExportSerializerMixin,
+    InvenTreeCustomStatusSerializerMixin,
+    InvenTree.serializers.InvenTreeTagModelSerializer,
 ):
     """Serializer for a StockItem.
 
@@ -373,6 +379,7 @@ class StockItemSerializer(
             'serial',
             'status',
             'status_text',
+            'status_custom_key',
             'stocktake_date',
             'supplier_part',
             'sku',

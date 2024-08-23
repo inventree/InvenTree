@@ -37,13 +37,18 @@ from build import models as BuildModels
 from common.icons import validate_icon
 from common.settings import get_global_setting
 from company import models as CompanyModels
+from generic.states.fields import InvenTreeCustomStatusModelField
 from InvenTree.fields import InvenTreeModelMoneyField, InvenTreeURLField
-from order.status_codes import SalesOrderStatusGroups
+from InvenTree.status_codes import (
+    SalesOrderStatusGroups,
+    StockHistoryCode,
+    StockStatus,
+    StockStatusGroups,
+)
 from part import models as PartModels
 from plugin.events import trigger_event
 from stock import models as StockModels
 from stock.generators import generate_batch_code
-from stock.status_codes import StockHistoryCode, StockStatus, StockStatusGroups
 from users.models import Owner
 
 logger = logging.getLogger('inventree')
@@ -940,7 +945,7 @@ class StockItem(
         help_text=_('Delete this Stock Item when stock is depleted'),
     )
 
-    status = models.PositiveIntegerField(
+    status = InvenTreeCustomStatusModelField(
         default=StockStatus.OK.value,
         choices=StockStatus.items(),
         validators=[MinValueValidator(0)],
