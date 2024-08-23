@@ -1,12 +1,16 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 248
+INVENTREE_API_VERSION = 249
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+
+v249 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7978
+    - Sort status enums
+
 v248 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7965
     - Small adjustments to labels for new custom status fields
 
