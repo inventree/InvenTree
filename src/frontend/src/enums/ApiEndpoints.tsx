@@ -39,14 +39,18 @@ export enum ApiEndpoints {
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
   barcode = 'barcode/',
+  barcode_link = 'barcode/link/',
+  barcode_unlink = 'barcode/unlink/',
   generate_barcode = 'barcode/generate/',
   news = 'news/',
   global_status = 'generic/status/',
+  custom_state_list = 'generic/status/custom/',
   version = 'version/',
   license = 'license/',
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+  content_type_list = 'contenttype/',
   icons = 'icons/',
 
   // Data import endpoints

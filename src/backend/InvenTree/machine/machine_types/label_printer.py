@@ -12,6 +12,7 @@ from PIL.Image import Image
 from rest_framework import serializers
 from rest_framework.request import Request
 
+from generic.states import ColorEnum
 from machine.machine_type import BaseDriver, BaseMachineType, MachineStatus
 from plugin import registry as plg_registry
 from plugin.base.label.mixins import LabelPrintingMixin
@@ -228,12 +229,12 @@ class LabelPrinterStatus(MachineStatus):
         DISCONNECTED: The driver cannot establish a connection to the printer
     """
 
-    CONNECTED = 100, _('Connected'), 'success'
-    UNKNOWN = 101, _('Unknown'), 'secondary'
-    PRINTING = 110, _('Printing'), 'primary'
-    NO_MEDIA = 301, _('No media'), 'warning'
-    PAPER_JAM = 302, _('Paper jam'), 'warning'
-    DISCONNECTED = 400, _('Disconnected'), 'danger'
+    CONNECTED = 100, _('Connected'), ColorEnum.success
+    UNKNOWN = 101, _('Unknown'), ColorEnum.secondary
+    PRINTING = 110, _('Printing'), ColorEnum.primary
+    NO_MEDIA = 301, _('No media'), ColorEnum.warning
+    PAPER_JAM = 302, _('Paper jam'), ColorEnum.warning
+    DISCONNECTED = 400, _('Disconnected'), ColorEnum.danger
 
 
 class LabelPrinterMachine(BaseMachineType):

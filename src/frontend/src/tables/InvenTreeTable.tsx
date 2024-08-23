@@ -55,6 +55,7 @@ import { RowAction, RowActions } from './RowActions';
 import { TableSearchInput } from './Search';
 
 const defaultPageSize: number = 25;
+const PAGE_SIZES = [10, 15, 20, 25, 50, 100, 500];
 
 /**
  * Set of optional properties which can be passed to an InvenTreeTable component
@@ -74,14 +75,13 @@ const defaultPageSize: number = 25;
  * @param enableRefresh : boolean - Enable refresh actions
  * @param enableColumnSwitching : boolean - Enable column switching
  * @param enableColumnCaching : boolean - Enable caching of column names via API
- * @param pageSize : number - Number of records per page
  * @param barcodeActions : any[] - List of barcode actions
  * @param tableFilters : TableFilter[] - List of custom filters
  * @param tableActions : any[] - List of custom action groups
  * @param dataFormatter : (data: any) => any - Callback function to reformat data returned by server (if not in default format)
  * @param rowActions : (record: any) => RowAction[] - Callback function to generate row actions
  * @param onRowClick : (record: any, index: number, event: any) => void - Callback function when a row is clicked
- * @param onCellClick : (event: any, record: any, recordIndex: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
+ * @param onCellClick : (event: any, record: any, index: number, column: any, columnIndex: number) => void - Callback function when a cell is clicked
  * @param modelType: ModelType - The model type for the table
  */
 export type InvenTreeTableProps<T = any> = {
@@ -100,7 +100,6 @@ export type InvenTreeTableProps<T = any> = {
   enableLabels?: boolean;
   enableReports?: boolean;
   afterBulkDelete?: () => void;
-  pageSize?: number;
   barcodeActions?: React.ReactNode[];
   tableFilters?: TableFilter[];
   tableActions?: React.ReactNode[];
@@ -129,7 +128,6 @@ const defaultInvenTreeTableProps: InvenTreeTableProps = {
   enableRefresh: true,
   enableSearch: true,
   enableSelection: false,
-  pageSize: defaultPageSize,
   defaultSortColumn: '',
   barcodeActions: [],
   tableFilters: [],
@@ -164,12 +162,14 @@ export function InvenTreeTable<T = any>({
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
     return (
-      props.tableFilters?.map((filter) => {
-        return {
-          ...filter,
-          label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
-        };
-      }) ?? []
+      props.tableFilters
+        ?.filter((f: any) => f.active != false)
+        ?.map((filter) => {
+          return {
+            ...filter,
+            label: filter.label ?? fieldNames[filter.name] ?? `${filter.name}`
+          };
+        }) ?? []
     );
   }, [props.tableFilters, fieldNames]);
 
@@ -358,7 +358,8 @@ export function InvenTreeTable<T = any>({
 
     // Pagination
     if (tableProps.enablePagination && paginate) {
-      let pageSize = tableProps.pageSize ?? defaultPageSize;
+      let pageSize = tableState.pageSize ?? defaultPageSize;
+      if (pageSize != tableState.pageSize) tableState.setPageSize(pageSize);
       queryParams.limit = pageSize;
       queryParams.offset = (tableState.page - 1) * pageSize;
     }
@@ -586,6 +587,12 @@ export function InvenTreeTable<T = any>({
     [props.onRowClick, props.onCellClick]
   );
 
+  // pagination refresth table if pageSize changes
+  function updatePageSize(newData: number) {
+    tableState.setPageSize(newData);
+    tableState.refreshTable();
+  }
+
   return (
     <>
       {deleteRecords.modal}
@@ -695,6 +702,7 @@ export function InvenTreeTable<T = any>({
 
             <DataTable
               withTableBorder
+              withColumnBorders
               striped
               highlightOnHover
               loaderType="dots"
@@ -702,7 +710,7 @@ export function InvenTreeTable<T = any>({
               idAccessor={tableProps.idAccessor}
               minHeight={300}
               totalRecords={tableState.recordCount}
-              recordsPerPage={tableProps.pageSize ?? defaultPageSize}
+              recordsPerPage={tableState.pageSize}
               page={tableState.page}
               onPageChange={tableState.setPage}
               sortStatus={sortStatus}
@@ -730,6 +738,8 @@ export function InvenTreeTable<T = any>({
                   overflow: 'hidden'
                 })
               }}
+              recordsPerPageOptions={PAGE_SIZES}
+              onRecordsPerPageChange={updatePageSize}
             />
           </Box>
         </Stack>

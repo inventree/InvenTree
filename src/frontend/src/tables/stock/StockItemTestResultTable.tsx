@@ -238,14 +238,15 @@ export default function StockItemTestResultTable({
     ];
   }, [itemId]);
 
-  const resultFields: ApiFormFieldSet = useTestResultFields({
-    partId: partId,
-    itemId: itemId
-  });
-
   const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
     undefined
   );
+
+  const resultFields: ApiFormFieldSet = useTestResultFields({
+    partId: partId,
+    itemId: itemId,
+    templateId: selectedTemplate
+  });
 
   const newTestModal = useCreateApiFormModal({
     url: ApiEndpoints.stock_test_result_list,

@@ -953,8 +953,15 @@ def get_objectreference(
 Inheritors_T = TypeVar('Inheritors_T')
 
 
-def inheritors(cls: type[Inheritors_T]) -> set[type[Inheritors_T]]:
-    """Return all classes that are subclasses from the supplied cls."""
+def inheritors(
+    cls: type[Inheritors_T], subclasses: bool = True
+) -> set[type[Inheritors_T]]:
+    """Return all classes that are subclasses from the supplied cls.
+
+    Args:
+        cls: The class to search for subclasses
+        subclasses: Include subclasses of subclasses (default = True)
+    """
     subcls = set()
     work = [cls]
 
@@ -963,7 +970,8 @@ def inheritors(cls: type[Inheritors_T]) -> set[type[Inheritors_T]]:
         for child in parent.__subclasses__():
             if child not in subcls:
                 subcls.add(child)
-                work.append(child)
+                if subclasses:
+                    work.append(child)
     return subcls
 
 

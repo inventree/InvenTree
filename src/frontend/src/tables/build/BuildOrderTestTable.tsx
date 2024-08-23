@@ -67,7 +67,8 @@ export default function BuildOrderTestTable({
 
   const testResultFields: ApiFormFieldSet = useTestResultFields({
     partId: partId,
-    itemId: selectedOutput
+    itemId: selectedOutput,
+    templateId: selectedTemplate
   });
 
   const createTestResult = useCreateApiFormModal({
