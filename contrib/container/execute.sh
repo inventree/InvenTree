@@ -12,6 +12,7 @@ if [ ! -e "$db_version_old" ]; then
 
     echo "Setup command completed."
     echo "$new_version" > "$db_version_old"
+    exit 0
 fi
 old_version=$(cat "$db_version_old")
 echo "old version $old_version"
