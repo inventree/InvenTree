@@ -41,7 +41,7 @@ class CustomChoiceField(serializers.ChoiceField):
                 if self.is_custom:
                     return logical.key
                 return logical.logical_key
-            except ObjectDoesNotExist:
+            except (ObjectDoesNotExist, Exception):
                 raise serializers.ValidationError('Invalid choice')
 
     def get_field_info(self, field, field_info):
