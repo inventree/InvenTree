@@ -44,7 +44,7 @@ jobs:
         run: rm -rf src/backend/InvenTree/static
       - name: Remove all local changes that are not *.po files
         run: |
-          git add /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po /src/frontend/src/locales/en/messages.po
+          git add src/backend/InvenTree/locale/en/LC_MESSAGES/django.po src/frontend/src/locales/en/messages.po
           git commit -m "add translations"
           git reset --hard
           git reset HEAD~
