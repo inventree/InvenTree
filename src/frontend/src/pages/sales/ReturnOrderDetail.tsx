@@ -23,10 +23,7 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  HoldItemAction
 } from '../../components/items/ActionDropdown';
 import { StylishText } from '../../components/items/StylishText';
 import InstanceDetail from '../../components/nav/InstanceDetail';
@@ -39,7 +36,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useReturnOrderFields } from '../../forms/SalesOrderForms';
-import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -301,7 +297,7 @@ export default function ReturnOrderDetail() {
       ? []
       : [
           <StatusRenderer
-            status={order.status}
+            status={order.status_custom_key}
             type={ModelType.returnorder}
             options={{ size: 'lg' }}
           />
@@ -405,20 +401,9 @@ export default function ReturnOrderDetail() {
       />,
       <AdminButton model={ModelType.returnorder} pk={order.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.returnorder,
-            pk: order.pk
-          }),
-          LinkBarcodeAction({
-            hidden: order?.barcode_hash,
-            onClick: notYetImplemented
-          }),
-          UnlinkBarcodeAction({
-            hidden: !order?.barcode_hash,
-            onClick: notYetImplemented
-          })
-        ]}
+        model={ModelType.returnorder}
+        pk={order.pk}
+        hash={order?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.returnorder}

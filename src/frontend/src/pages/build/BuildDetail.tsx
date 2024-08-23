@@ -30,10 +30,7 @@ import {
   CancelItemAction,
   DuplicateItemAction,
   EditItemAction,
-  HoldItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  HoldItemAction
 } from '../../components/items/ActionDropdown';
 import InstanceDetail from '../../components/nav/InstanceDetail';
 import { PageDetail } from '../../components/nav/PageDetail';
@@ -44,7 +41,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { UserRoles } from '../../enums/Roles';
 import { useBuildOrderFields } from '../../forms/BuildForms';
-import { notYetImplemented } from '../../functions/notifications';
 import {
   useCreateApiFormModal,
   useEditApiFormModal
@@ -473,20 +469,9 @@ export default function BuildDetail() {
       />,
       <AdminButton model={ModelType.build} pk={build.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.build,
-            pk: build.pk
-          }),
-          LinkBarcodeAction({
-            hidden: build?.barcode_hash,
-            onClick: notYetImplemented
-          }),
-          UnlinkBarcodeAction({
-            hidden: !build?.barcode_hash,
-            onClick: notYetImplemented
-          })
-        ]}
+        model={ModelType.build}
+        pk={build.pk}
+        hash={build?.barcode_hash}
       />,
       <PrintingActions
         modelType={ModelType.build}
@@ -527,7 +512,7 @@ export default function BuildDetail() {
       ? []
       : [
           <StatusRenderer
-            status={build.status}
+            status={build.status_custom_key}
             type={ModelType.build}
             options={{ size: 'lg' }}
           />

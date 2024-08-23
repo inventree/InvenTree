@@ -20,7 +20,7 @@ import { ReactNode, useMemo } from 'react';
 import { ModelType } from '../../enums/ModelType';
 import { identifierString } from '../../functions/conversion';
 import { InvenTreeIcon } from '../../functions/icons';
-import { InvenTreeQRCode } from './QRCode';
+import { InvenTreeQRCode, QRCodeLink, QRCodeUnlink } from './QRCode';
 
 export type ActionDropdownItem = {
   icon?: ReactNode;
@@ -112,66 +112,88 @@ export function ActionDropdown({
 
 // Dropdown menu for barcode actions
 export function BarcodeActionDropdown({
-  actions
-}: {
-  actions: ActionDropdownItem[];
-}) {
+  model,
+  pk,
+  hash = null,
+  actions = [],
+  perm: permission = true
+}: Readonly<{
+  model: ModelType;
+  pk: number;
+  hash?: boolean | null;
+  actions?: ActionDropdownItem[];
+  perm?: boolean;
+}>) {
+  const hidden = hash === null;
+  const prop = { model, pk, hash };
   return (
     <ActionDropdown
       tooltip={t`Barcode Actions`}
       icon={<IconQrcode />}
-      actions={actions}
+      actions={[
+        GeneralBarcodeAction({
+          mdl_prop: prop,
+          title: t`View`,
+          icon: <IconQrcode />,
+          tooltip: t`View barcode`,
+          ChildItem: InvenTreeQRCode
+        }),
+        GeneralBarcodeAction({
+          hidden: hidden || hash || !permission,
+          mdl_prop: prop,
+          title: t`Link Barcode`,
+          icon: <IconLink />,
+          tooltip: t`Link a custom barcode to this item`,
+          ChildItem: QRCodeLink
+        }),
+        GeneralBarcodeAction({
+          hidden: hidden || !hash || !permission,
+          mdl_prop: prop,
+          title: t`Unlink Barcode`,
+          icon: <IconUnlink />,
+          tooltip: t`Unlink custom barcode`,
+          ChildItem: QRCodeUnlink
+        }),
+        ...actions
+      ]}
     />
   );
 }
 
-// Common action button for viewing a barcode
-export function ViewBarcodeAction({
-  hidden = false,
-  model,
-  pk
-}: {
-  hidden?: boolean;
+export type QrCodeType = {
   model: ModelType;
   pk: number;
+  hash?: boolean | null;
+};
+
+function GeneralBarcodeAction({
+  hidden = false,
+  mdl_prop,
+  title,
+  icon,
+  tooltip,
+  ChildItem
+}: {
+  hidden?: boolean;
+  mdl_prop: QrCodeType;
+  title: string;
+  icon: ReactNode;
+  tooltip: string;
+  ChildItem: any;
 }): ActionDropdownItem {
   const onClick = () => {
     modals.open({
-      title: t`View Barcode`,
-      children: <InvenTreeQRCode model={model} pk={pk} />
+      title: title,
+      children: <ChildItem mdl_prop={mdl_prop} />
     });
   };
 
   return {
-    icon: <IconQrcode />,
-    name: t`View`,
-    tooltip: t`View barcode`,
+    icon: icon,
+    name: title,
+    tooltip: tooltip,
     onClick: onClick,
     hidden: hidden
-  };
-}
-
-// Common action button for linking a custom barcode
-export function LinkBarcodeAction(
-  props: ActionDropdownItem
-): ActionDropdownItem {
-  return {
-    ...props,
-    icon: <IconLink />,
-    name: t`Link Barcode`,
-    tooltip: t`Link custom barcode`
-  };
-}
-
-// Common action button for un-linking a custom barcode
-export function UnlinkBarcodeAction(
-  props: ActionDropdownItem
-): ActionDropdownItem {
-  return {
-    ...props,
-    icon: <IconUnlink />,
-    name: t`Unlink Barcode`,
-    tooltip: t`Unlink custom barcode`
   };
 }
 

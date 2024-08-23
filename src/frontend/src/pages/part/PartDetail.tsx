@@ -51,10 +51,7 @@ import {
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  EditItemAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
@@ -75,7 +72,6 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -995,20 +991,10 @@ export default function PartDetail() {
     return [
       <AdminButton model={ModelType.part} pk={part.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.part,
-            pk: part.pk
-          }),
-          LinkBarcodeAction({
-            hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
-            onClick: notYetImplemented
-          }),
-          UnlinkBarcodeAction({
-            hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
-            onClick: notYetImplemented
-          })
-        ]}
+        model={ModelType.part}
+        pk={part.pk}
+        hash={part?.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.part)}
         key="action_dropdown"
       />,
       <PrintingActions

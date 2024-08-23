@@ -21,7 +21,7 @@ export function RenderPurchaseOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status,
+        status: instance.status_custom_key,
         type: ModelType.purchaseorder
       })}
       image={supplier.thumnbnail || supplier.image}
@@ -49,7 +49,7 @@ export function RenderReturnOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status,
+        status: instance.status_custom_key,
         type: ModelType.returnorder
       })}
       image={customer.thumnbnail || customer.image}
@@ -94,7 +94,7 @@ export function RenderSalesOrder(
       primary={instance.reference}
       secondary={instance.description}
       suffix={StatusRenderer({
-        status: instance.status,
+        status: instance.status_custom_key,
         type: ModelType.salesorder
       })}
       image={customer.thumnbnail || customer.image}
