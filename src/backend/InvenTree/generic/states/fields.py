@@ -41,7 +41,7 @@ class CustomChoiceField(serializers.ChoiceField):
                 if self.is_custom:
                     return logical.key
                 return logical.logical_key
-            except ObjectDoesNotExist:
+            except (ObjectDoesNotExist, Exception):
                 raise serializers.ValidationError('Invalid choice')
 
     def get_field_info(self, field, field_info):
@@ -145,24 +145,32 @@ class InvenTreeCustomStatusSerializerMixin:
     def update(self, instance, validated_data):
         """Ensure the custom field is updated if the leader was changed."""
         self.gather_custom_fields()
+        # Mirror values from leader to follower
         for field in self._custom_fields_leader:
+            follower_field_name = f'{field}_custom_key'
             if (
                 field in self.initial_data
                 and self.instance
                 and self.initial_data[field]
-                != getattr(self.instance, f'{field}_custom_key', None)
+                != getattr(self.instance, follower_field_name, None)
             ):
-                setattr(self.instance, f'{field}_custom_key', self.initial_data[field])
+                setattr(self.instance, follower_field_name, self.initial_data[field])
+
+        # Mirror values from follower to leader
         for field in self._custom_fields_follower:
-            if (
-                field in validated_data
-                and field.replace('_custom_key', '') not in self.initial_data
-            ):
-                reference = get_logical_value(
-                    validated_data[field],
-                    self.fields[field].choice_mdl._meta.model_name,
-                )
-                validated_data[field.replace('_custom_key', '')] = reference.logical_key
+            leader_field_name = field.replace('_custom_key', '')
+            if field in validated_data and leader_field_name not in self.initial_data:
+                try:
+                    reference = get_logical_value(
+                        validated_data[field],
+                        self.fields[field].choice_mdl._meta.model_name,
+                    )
+                    validated_data[leader_field_name] = reference.logical_key
+                except (ObjectDoesNotExist, Exception):
+                    if validated_data[field] in self.fields[leader_field_name].choices:
+                        validated_data[leader_field_name] = validated_data[field]
+                    else:
+                        raise serializers.ValidationError('Invalid choice')
         return super().update(instance, validated_data)
 
     def to_representation(self, instance):
