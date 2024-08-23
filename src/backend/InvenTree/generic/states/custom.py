@@ -40,7 +40,10 @@ def get_logical_value(value, model: str):
     """Return the state model for the selected value."""
     from common.models import InvenTreeCustomUserStateModel
 
-    return InvenTreeCustomUserStateModel.objects.get(key=value, model__model=model)
+    try:
+        return InvenTreeCustomUserStateModel.objects.get(key=value, model__model=model)
+    except InvenTreeCustomUserStateModel.DoesNotExist:
+        return None
 
 
 def get_custom_classes(
