@@ -138,7 +138,7 @@ export function useStockFields({
         value: batchCode,
         onValueChange: (value) => setBatchCode(value)
       },
-      status_custom_key: {},
+      status: {},
       expiry_date: {
         // TODO: icon
       },
