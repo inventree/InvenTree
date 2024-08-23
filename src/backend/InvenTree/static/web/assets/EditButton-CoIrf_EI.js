@@ -1,0 +1,1 @@
+import{j as i,b6 as s,Z as a,dv as c}from"./vendor-B0vSnHFf.js";function d({setEditing:n,editing:o,disabled:r,saveIcon:t}){return t=t||i.jsx(c,{}),i.jsx(s,{onClick:()=>n(),disabled:r,variant:"default",children:o?t:i.jsx(a,{})})}export{d as E};

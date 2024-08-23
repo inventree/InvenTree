@@ -1,0 +1,159 @@
+.import-preview .errors {
+  position: relative;
+}
+
+.validation-error-count {
+  display: inline-block;
+  background-color: #e40000;
+  border-radius: 6px;
+  color: white;
+  font-size: 0.9em;
+  position: relative;
+  font-weight: bold;
+  margin-top: -2px;
+  padding: 0.2em 0.4em;
+}
+
+.validation-error-container {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  background-color: #ffc1c1;
+  padding: 14px 15px 10px;
+  top: 25px;
+  margin: 0 0 20px 0;
+  width: 200px;
+  z-index: 2;
+}
+
+html[data-theme="light"] .validation-error-container {
+  background-color: #ffc1c1;
+}
+
+table.import-preview tr.skip, html[data-theme="light"] table.import-preview tr.skip  {
+  background-color: #d2d2d2;
+}
+
+table.import-preview tr.new, html[data-theme="light"] table.import-preview tr.new {
+  background-color: #bdd8b2;
+}
+
+table.import-preview tr.delete, html[data-theme="light"] table.import-preview tr.delete {
+  background-color: #f9bebf;
+}
+
+table.import-preview tr.update, html[data-theme="light"] table.import-preview tr.update {
+  background-color: #fdfdcf;
+}
+
+table.import-preview td ins, html[data-theme="light"] table.import-preview td ins {
+  background-color: #e6ffe6 !important;
+}
+
+html[data-theme="light"] table.import-preview td del {
+  background-color: #ffe6e6 !important;
+}
+
+.import-preview td:hover .validation-error-count {
+  z-index: 3;
+}
+.import-preview td:hover .validation-error-container {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.validation-error-list {
+  margin: 0;
+  padding: 0;
+}
+
+.validation-error-list li {
+  list-style: none;
+  margin: 0;
+}
+
+.validation-error-list > li > ul {
+  margin: 8px 0;
+  padding: 0;
+}
+
+.validation-error-list > li > ul > li {
+  padding: 0;
+  margin: 0 0 10px;
+  line-height: 1.28em;
+}
+
+.validation-error-field-label {
+  display: block;
+  border-bottom: 1px solid #e40000;
+  color: #e40000;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 0.85em;
+}
+
+@media (prefers-color-scheme: dark) {
+  table.import-preview tr.skip {
+    background-color: #2d2d2d;
+  }
+
+  table.import-preview tr.new {
+    background-color: #42274d;
+  }
+
+  table.import-preview tr.delete {
+    background-color: #064140;
+  }
+
+  table.import-preview tr.update {
+    background-color: #020230;
+  }
+
+  .validation-error-container {
+    background-color: #003e3e;
+  }
+
+  /*
+  these declarations are necessary to forcibly override the
+  formatting applied by the diff-match-patch python library
+   */
+  table.import-preview td ins {
+    background-color: #190019 !important;
+  }
+
+  table.import-preview td del {
+    background-color: #001919 !important;
+  }
+}
+
+html[data-theme="dark"] table.import-preview tr.skip {
+  background-color: #2d2d2d;
+}
+
+html[data-theme="dark"] table.import-preview tr.new {
+  background-color: #42274d;
+}
+
+html[data-theme="dark"] table.import-preview tr.delete {
+  background-color: #064140;
+}
+
+html[data-theme="dark"] table.import-preview tr.update {
+  background-color: #020230;
+}
+
+html[data-theme="dark"] .validation-error-container {
+  background-color: #003e3e;
+}
+
+/*
+these declarations are necessary to forcibly override the
+formatting applied by the diff-match-patch python library
+ */
+html[data-theme="dark"] table.import-preview td ins {
+  background-color: #190019 !important;
+}
+
+html[data-theme="dark"] table.import-preview td del {
+  background-color: #001919 !important;
+}

@@ -1,0 +1,1 @@
+import{j as r,i as o}from"./vendor-B0vSnHFf.js";import{E as t}from"./GenericErrorPage-BifXQa91.js";import"./BaseContext-DSwOqL9e.js";import"./index-CDdQlqFV.js";import"./DesktopAppView-CofLSp00.js";function p(){return r.jsx(t,{title:o._({id:"boJlGf"}),message:o._({id:"CcD0eu"})})}export{p as default};

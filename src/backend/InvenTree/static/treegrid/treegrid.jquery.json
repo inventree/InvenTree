@@ -1,0 +1,37 @@
+{
+    "name": "treegrid",
+    "description": "jquery plugin for showing a HTML table as tree",
+    "keywords": [
+        "treegrid",
+        "tree",
+        "grid",
+        "explorer",
+        "file",
+        "table",
+        "tree",
+        "ui"
+    ],
+    "version": "0.3.0",
+    "title": "TreeGrid plugin for jQuery",
+    "author": {
+        "name": "Pomazan Max"
+    },
+    "maintainers": [
+        {
+            "name": "Pomazan Max"
+        }
+    ],
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://opensource.org/licenses/MIT"
+        }
+    ],
+    "bugs": "https://github.com/maxazan/jquery-treegrid/issues",
+    "homepage": "http://maxazan.github.io/jquery-treegrid/",
+    "docs": "http://maxazan.github.io/jquery-treegrid/",
+    "demo": "http://maxazan.github.io/jquery-treegrid/",
+    "dependencies": {
+        "jquery": ">=1.10.0"
+    }
+}

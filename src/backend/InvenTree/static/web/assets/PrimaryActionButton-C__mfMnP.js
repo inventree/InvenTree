@@ -1,0 +1,1 @@
+import{j as n,b5 as a,q as m}from"./vendor-B0vSnHFf.js";import{I as u}from"./BaseContext-DSwOqL9e.js";function p({title:r,tooltip:o,icon:t,color:s,hidden:e,onClick:i}){return e?null:n.jsx(a,{label:o??r,position:"bottom",hidden:!o,children:n.jsx(m,{leftSection:t&&n.jsx(u,{icon:t}),color:s,radius:"sm",p:"xs",onClick:i,children:r})})}export{p as P};

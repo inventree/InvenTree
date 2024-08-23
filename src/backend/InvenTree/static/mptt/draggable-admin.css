@@ -1,0 +1,80 @@
+.field-tree_actions {
+  width: 50px;
+  padding: 2px;
+}
+
+.field-tree_actions > div {
+  display: inline-block;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  width: 18px;
+  height: 18px;
+  margin: 7px 2px 0 0;
+}
+
+.tree-node {
+  cursor: pointer;
+}
+.tree-node.children {
+  background-image: url(disclosure-down-black.png);
+}
+.tree-node.closed {
+  background-image: url(disclosure-right-black.png);
+}
+
+.drag-handle {
+  background-image: url(arrow-move-black.png);
+  cursor: move;
+}
+
+/* focus */
+#result_list tbody tr:focus {
+  background-color: var(--selected-row, #ffc) !important;
+  outline: 0px;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .tree-node.children {
+    background-image: url(disclosure-down-white.png);
+  }
+  html:not([data-theme="light"]) .tree-node.closed {
+    background-image: url(disclosure-right-white.png);
+  }
+  html:not([data-theme="light"]) .drag-handle {
+    background-image: url(arrow-move-white.png);
+  }
+
+  html:not([data-theme="light"]) #result_list tbody tr:focus {
+    background-color: var(--selected-row, #00363a) !important;
+    outline: 0px;
+  }
+}
+
+#drag-line {
+  position: absolute;
+  height: 3px;
+  font-size: 0px;
+  background-color: #417690;
+}
+
+#drag-line:before {
+  content: " ";
+  display: block;
+  position: absolute;
+  height: 10px;
+  width: 10px;
+  background: #417690;
+  margin: -3px 0 0 0;
+  border-radius: 9px;
+}
+
+#drag-line span {
+  display: block;
+  position: absolute;
+  left: 15px;
+  bottom: 0;
+  width: 300px;
+  height: 18px;
+  color: #417690;
+  font-size: 12px;
+}

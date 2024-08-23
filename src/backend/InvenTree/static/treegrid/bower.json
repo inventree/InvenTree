@@ -1,0 +1,33 @@
+{
+  "name": "jquery-treegrid",
+  "description": "TreeGrid plugin for jQuery.",
+  "version": "0.3.0",
+  "homepage": "http://maxazan.github.io/jquery-treegrid",
+  "license": "MIT",
+  "ignore": [
+    "examples",
+    "tests",
+    "**/.*",
+    "composer.json",
+    "index.html",
+    "params.json",
+    "style.css",
+    "test.html",
+    "treegrid.jquery.json"
+  ],
+  "keywords": [
+    "jquery",
+    "javascript",
+    "plugin",
+    "bootstrap",
+    "treegrid",
+    "treeview"
+  ],
+  "dependencies": {
+    "jquery": ">= 1.9.1",
+    "jquery.cookie": ">= 1.4.1"
+  },
+  "authors": [
+    "Maksym Pomazan"
+  ]
+}

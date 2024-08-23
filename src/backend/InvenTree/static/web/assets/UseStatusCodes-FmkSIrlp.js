@@ -1,0 +1,1 @@
+import{r}from"./vendor-B0vSnHFf.js";import{j as u}from"./Instance-Co8OMzcE.js";import{j as n}from"./index-CDdQlqFV.js";function f({modelType:t}){const a=n.getState().status;return r.useMemo(()=>{const s=u(t)||{};let e={};for(let o in s)e[o]=s[o].key;return e},[t,a])}export{f as u};
