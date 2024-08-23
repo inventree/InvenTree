@@ -1,12 +1,18 @@
 """InvenTree API version information."""
 
 # InvenTree API version
-INVENTREE_API_VERSION = 246
+INVENTREE_API_VERSION = 248
 
 """Increment this API version number whenever there is a significant change to the API that any clients need to know about."""
 
 
 INVENTREE_API_TEXT = """
+v248 - 2024-08-23 : https://github.com/inventree/InvenTree/pull/7965
+    - Small adjustments to labels for new custom status fields
+
+v247 - 2024-08-22 : https://github.com/inventree/InvenTree/pull/7956
+    - Adjust "attachment" field on StockItemTestResult serializer
+    - Allow null values for attachment
 
 v246 - 2024-08-21 : https://github.com/inventree/InvenTree/pull/7862
     - Adds custom status fields to various serializers
