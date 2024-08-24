@@ -554,12 +554,14 @@ function BuildAllocateLineRow({
         </Table.Td>
         <Table.Td>
           <StandaloneField
+            fieldName="stock_item"
             fieldDefinition={stockField}
             error={props.rowErrors?.stock_item?.message}
           />
         </Table.Td>
         <Table.Td>
           <StandaloneField
+            fieldName="quantity"
             fieldDefinition={quantityField}
             error={props.rowErrors?.quantity?.message}
           />

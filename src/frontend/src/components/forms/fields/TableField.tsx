@@ -34,6 +34,7 @@ export function TableField({
   const onRowFieldChange = (idx: number, key: string, value: any) => {
     const val = field.value;
     val[idx][key] = value;
+
     field.onChange(val);
   };
 
@@ -114,11 +115,13 @@ export function TableFieldExtraRow({
   fieldDefinition,
   defaultValue,
   emptyValue,
+  error,
   onValueChange
 }: {
   visible: boolean;
   fieldDefinition: ApiFormFieldType;
   defaultValue?: any;
+  error?: string;
   emptyValue?: any;
   onValueChange: (value: any) => void;
 }) {
@@ -151,6 +154,7 @@ export function TableFieldExtraRow({
             <StandaloneField
               fieldDefinition={field}
               defaultValue={defaultValue}
+              error={error}
             />
           </Group>
         </Table.Td>
