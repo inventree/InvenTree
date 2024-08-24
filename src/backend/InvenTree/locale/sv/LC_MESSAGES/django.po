@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-22 07:02+0000\n"
-"PO-Revision-Date: 2024-08-20 19:51\n"
+"POT-Creation-Date: 2024-08-22 03:50+0000\n"
+"PO-Revision-Date: 2024-08-24 20:59\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Language: sv_SE\n"
@@ -731,13 +731,11 @@ msgstr "Om InvenTree"
 #: build/templates/build/build_base.html:191
 #: build/templates/build/detail.html:87
 msgid "Parent Build"
-msgstr "Överordnat Bygge"
+msgstr "Föregående tillverkning"
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "Avbryt bygge"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -759,7 +757,7 @@ msgstr ""
 
 #: build/api.py:275
 msgid "Build must be cancelled before it can be deleted"
-msgstr "Byggnationen måste avbrytas innan den kan tas bort"
+msgstr "Tillverkningen måste avbrytas innan den kan tas bort"
 
 #: build/api.py:319 build/serializers.py:1332 part/models.py:4281
 #: templates/js/translated/bom.js:997 templates/js/translated/bom.js:1037
@@ -864,7 +862,7 @@ msgstr ""
 
 #: build/models.py:242
 msgid "Build Order Reference"
-msgstr "Byggorderreferens"
+msgstr "Tillverknings order referens"
 
 #: build/models.py:243 build/serializers.py:1331 order/models.py:468
 #: order/models.py:979 order/models.py:1374 order/models.py:2136
@@ -888,7 +886,7 @@ msgstr ""
 
 #: build/models.py:263
 msgid "BuildOrder to which this build is allocated"
-msgstr "Byggorder till vilken detta bygge är tilldelad"
+msgstr "Tillverknings order till vilken detta produkt är tilldelad"
 
 #: build/models.py:268 build/serializers.py:1322
 #: build/templates/build/build_base.html:105
@@ -944,7 +942,7 @@ msgstr "Del"
 
 #: build/models.py:276
 msgid "Select part to build"
-msgstr "Välj del att bygga"
+msgstr "Välj del att tillverka"
 
 #: build/models.py:281
 msgid "Sales Order Reference"
@@ -974,7 +972,7 @@ msgstr "Välj plats där de färdiga objekten kommer att lagras"
 
 #: build/models.py:307
 msgid "Build Quantity"
-msgstr "Bygg kvantitet"
+msgstr "Tillverkat antal"
 
 #: build/models.py:310
 msgid "Number of stock items to build"
@@ -990,11 +988,11 @@ msgstr "Antal lagerposter som har slutförts"
 
 #: build/models.py:320
 msgid "Build Status"
-msgstr "Byggstatus"
+msgstr "Tillverknings status"
 
 #: build/models.py:324
 msgid "Build status code"
-msgstr "Bygg statuskod"
+msgstr "Tillverkning statuskod"
 
 #: build/models.py:333 build/serializers.py:346 build/serializers.py:1242
 #: order/serializers.py:670 stock/models.py:864 stock/serializers.py:77
@@ -1020,7 +1018,7 @@ msgstr "Datum för slutförande"
 
 #: build/models.py:345
 msgid "Target date for build completion. Build will be overdue after this date."
-msgstr "Måldatum för färdigställande. Byggandet kommer att förfallas efter detta datum."
+msgstr "Måldatum för färdigställande. Tillverkningen kommer att förfallas efter detta datum."
 
 #: build/models.py:348 order/models.py:527 order/models.py:2181
 #: templates/js/translated/build.js:2422
@@ -1037,7 +1035,7 @@ msgstr "Utfärdad av"
 
 #: build/models.py:363
 msgid "User who issued this build order"
-msgstr "Användare som utfärdade denna byggorder"
+msgstr "Användare som utfärdade denna tillverknings order"
 
 #: build/models.py:371 build/templates/build/build_base.html:212
 #: build/templates/build/detail.html:122 common/models.py:167 order/api.py:142
@@ -1106,11 +1104,11 @@ msgstr ""
 #: build/models.py:674
 #, python-brace-format
 msgid "Build order {build} has been completed"
-msgstr "Byggorder {build} har slutförts"
+msgstr "Tillverknings order {build} har slutförts"
 
 #: build/models.py:680
 msgid "A build order has been completed"
-msgstr "En byggorder har slutförts"
+msgstr "En tillverknings order har slutförts"
 
 #: build/models.py:968 build/models.py:1056
 msgid "No build output specified"
@@ -1274,10 +1272,8 @@ msgid "Project Code Label"
 msgstr ""
 
 #: build/serializers.py:133
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Create Child Builds"
-msgstr "Avbryt bygge"
+msgstr ""
 
 #: build/serializers.py:134
 msgid "Automatically generate child build orders"
@@ -3988,16 +3984,12 @@ msgid "Value that will be saved in the models database"
 msgstr ""
 
 #: common/models.py:3354
-#, fuzzy
-#| msgid "Last name of the user"
 msgid "Name of the state"
-msgstr "Efternamn på användaren"
+msgstr ""
 
 #: common/models.py:3358
-#, fuzzy
-#| msgid "Labels"
 msgid "label"
-msgstr "Etiketter"
+msgstr ""
 
 #: common/models.py:3359
 msgid "Label that will be displayed in the frontend"
@@ -4005,7 +3997,7 @@ msgstr ""
 
 #: common/models.py:3365
 msgid "Color"
-msgstr ""
+msgstr "Färg"
 
 #: common/models.py:3366
 msgid "Color that will be displayed in the frontend"
@@ -4028,26 +4020,20 @@ msgid "Model this state is associated with"
 msgstr ""
 
 #: common/models.py:3384
-#, fuzzy
-#| msgid "Reference"
 msgid "Reference Status Set"
-msgstr "Referens"
+msgstr ""
 
 #: common/models.py:3385
 msgid "Status set that is extended with this custom state"
 msgstr ""
 
 #: common/models.py:3391
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom State"
-msgstr "Kund"
+msgstr ""
 
 #: common/models.py:3392
-#, fuzzy
-#| msgid "Customers"
 msgid "Custom States"
-msgstr "Kunder"
+msgstr ""
 
 #: common/models.py:3407
 msgid "Model must be selected"
@@ -5138,10 +5124,8 @@ msgid "New Company"
 msgstr "Nytt företag"
 
 #: generic/states/fields.py:118
-#, fuzzy
-#| msgid "Stock status"
 msgid "Custom status key"
-msgstr "Lagerstatus"
+msgstr ""
 
 #: generic/states/fields.py:119
 msgid "Additional status information for this item"
@@ -8309,10 +8293,8 @@ msgid "Show Part Details"
 msgstr ""
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Required for Orders"
-msgstr "Byggordrar"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15368,3 +15350,4 @@ msgstr ""
 #: users/models.py:409
 msgid "Permission to delete items"
 msgstr ""
+
