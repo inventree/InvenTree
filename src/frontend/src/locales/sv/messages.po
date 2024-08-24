@@ -8,7 +8,7 @@ msgstr ""
 "Language: sv\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-20 19:50\n"
+"PO-Revision-Date: 2024-08-24 20:58\n"
 "Last-Translator: \n"
 "Language-Team: Swedish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -877,7 +877,7 @@ msgstr "Visa streckkod"
 
 #: src/components/items/ActionDropdown.tsx:140
 #~ msgid "View Barcode"
-#~ msgstr "Visa streckkod"
+#~ msgstr "View Barcode"
 
 #: src/components/items/ActionDropdown.tsx:144
 msgid "Link Barcode"
@@ -899,7 +899,7 @@ msgstr "Ta bort länk för anpassad streckkod"
 
 #: src/components/items/ActionDropdown.tsx:162
 #~ msgid "Link custom barcode"
-#~ msgstr "Länka anpassad streckkod"
+#~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:205
 #: src/tables/RowActions.tsx:33
@@ -908,7 +908,7 @@ msgstr "Redigera"
 
 #: src/components/items/ActionDropdown.tsx:206
 msgid "Edit item"
-msgstr ""
+msgstr "Redigera objekt"
 
 #: src/components/items/ActionDropdown.tsx:218
 msgid "Delete item"
@@ -1004,7 +1004,7 @@ msgstr "Välj felkorrigeringsnivå"
 
 #: src/components/items/QRCode.tsx:160
 msgid "Barcode"
-msgstr ""
+msgstr "Streckkod"
 
 #: src/components/items/QRCode.tsx:163
 msgid "Scan barcode data here using barcode scanner"
@@ -1359,7 +1359,7 @@ msgstr "Notifikationer"
 
 #: src/components/nav/NotificationDrawer.tsx:94
 msgid "Mark all as read"
-msgstr ""
+msgstr "Markera alla som lästa"
 
 #: src/components/nav/NotificationDrawer.tsx:104
 msgid "View all notifications"
@@ -4420,7 +4420,7 @@ msgstr "Redigera företag"
 
 #: src/pages/company/CompanyDetail.tsx:298
 msgid "Delete Company"
-msgstr ""
+msgstr "Radera företag"
 
 #: src/pages/company/CompanyDetail.tsx:306
 msgid "Company Actions"
@@ -6021,11 +6021,11 @@ msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:116
 #~ msgid "Cascade"
-#~ msgstr ""
+#~ msgstr "Cascade"
 
 #: src/tables/build/BuildOrderTable.tsx:117
 #~ msgid "Display recursive child orders"
-#~ msgstr ""
+#~ msgstr "Display recursive child orders"
 
 #: src/tables/build/BuildOrderTable.tsx:122
 msgid "Show overdue status"
@@ -7342,7 +7342,7 @@ msgstr ""
 
 #: src/tables/settings/CustomStateTable.tsx:36
 msgid "Display Name"
-msgstr ""
+msgstr "Visningsnamn"
 
 #: src/tables/settings/CustomStateTable.tsx:52
 msgid "Model"
@@ -8030,3 +8030,4 @@ msgstr "Läs dokumenten"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
