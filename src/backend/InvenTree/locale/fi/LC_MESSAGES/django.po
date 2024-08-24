@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-22 07:02+0000\n"
-"PO-Revision-Date: 2024-08-20 19:50\n"
+"POT-Creation-Date: 2024-08-22 03:50+0000\n"
+"PO-Revision-Date: 2024-08-24 20:59\n"
 "Last-Translator: \n"
 "Language-Team: Finnish\n"
 "Language: fi_FI\n"
@@ -4028,16 +4028,12 @@ msgid "Status set that is extended with this custom state"
 msgstr ""
 
 #: common/models.py:3391
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom State"
-msgstr "Asiakas"
+msgstr ""
 
 #: common/models.py:3392
-#, fuzzy
-#| msgid "Customers"
 msgid "Custom States"
-msgstr "Asiakkaat"
+msgstr ""
 
 #: common/models.py:3407
 msgid "Model must be selected"
@@ -15354,3 +15350,4 @@ msgstr "Oikeus muokata kohteita"
 #: users/models.py:409
 msgid "Permission to delete items"
 msgstr "Oikeus poistaa kohteita"
+
