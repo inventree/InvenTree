@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-22 07:02+0000\n"
-"PO-Revision-Date: 2024-08-20 19:51\n"
+"POT-Creation-Date: 2024-08-22 03:50+0000\n"
+"PO-Revision-Date: 2024-08-24 20:59\n"
 "Last-Translator: \n"
 "Language-Team: Dutch\n"
 "Language: nl_NL\n"
@@ -734,10 +734,8 @@ msgid "Parent Build"
 msgstr "Bovenliggende Productie"
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "Annuleer Productie"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -1274,16 +1272,12 @@ msgid "Project Code Label"
 msgstr ""
 
 #: build/serializers.py:133
-#, fuzzy
-#| msgid "Child Build Orders"
 msgid "Create Child Builds"
-msgstr "Onderliggende Productieorders"
+msgstr ""
 
 #: build/serializers.py:134
-#, fuzzy
-#| msgid "Automatically allocate stock to build"
 msgid "Automatically generate child build orders"
-msgstr "Automatisch voorraad toewijzen aan productie"
+msgstr ""
 
 #: build/serializers.py:216 build/serializers.py:968
 #: templates/js/translated/build.js:1045 templates/js/translated/build.js:1498
@@ -3990,10 +3984,8 @@ msgid "Value that will be saved in the models database"
 msgstr ""
 
 #: common/models.py:3354
-#, fuzzy
-#| msgid "Header of this message"
 msgid "Name of the state"
-msgstr "Koptekst van dit bericht"
+msgstr ""
 
 #: common/models.py:3358
 msgid "label"
@@ -4024,48 +4016,36 @@ msgid "Model"
 msgstr ""
 
 #: common/models.py:3380
-#, fuzzy
-#| msgid "Line item is not associated with this order"
 msgid "Model this state is associated with"
-msgstr "Artikelregel is niet gekoppeld aan deze bestelling"
+msgstr ""
 
 #: common/models.py:3384
-#, fuzzy
-#| msgid "Reference"
 msgid "Reference Status Set"
-msgstr "Referentie"
+msgstr ""
 
 #: common/models.py:3385
 msgid "Status set that is extended with this custom state"
 msgstr ""
 
 #: common/models.py:3391
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom State"
-msgstr "Klant"
+msgstr ""
 
 #: common/models.py:3392
-#, fuzzy
-#| msgid "Customers"
 msgid "Custom States"
-msgstr "Klanten"
+msgstr ""
 
 #: common/models.py:3407
-#, fuzzy
-#| msgid "Purchase order must be specified"
 msgid "Model must be selected"
-msgstr "Inkooporder moet worden gespecificeerd"
+msgstr ""
 
 #: common/models.py:3410
 msgid "Key must be selected"
 msgstr ""
 
 #: common/models.py:3413
-#, fuzzy
-#| msgid "Purchase order must be specified"
 msgid "Logical key must be selected"
-msgstr "Inkooporder moet worden gespecificeerd"
+msgstr ""
 
 #: common/models.py:3417
 msgid "Key must be different from logical key"
@@ -5148,10 +5128,8 @@ msgid "Custom status key"
 msgstr ""
 
 #: generic/states/fields.py:119
-#, fuzzy
-#| msgid "Additional context for this line"
 msgid "Additional status information for this item"
-msgstr "Additionele context voor deze regel"
+msgstr ""
 
 #: generic/states/tests.py:22 order/status_codes.py:13
 msgid "Placed"
@@ -8315,10 +8293,8 @@ msgid "Show Part Details"
 msgstr ""
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Required for Orders"
-msgstr "Terug naar Orders"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15374,3 +15350,4 @@ msgstr ""
 #: users/models.py:409
 msgid "Permission to delete items"
 msgstr ""
+
