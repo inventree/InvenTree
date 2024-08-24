@@ -8,7 +8,7 @@ msgstr ""
 "Language: hu\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-20 19:50\n"
+"PO-Revision-Date: 2024-08-24 20:58\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -877,7 +877,7 @@ msgstr "Vonalkód megtekintése"
 
 #: src/components/items/ActionDropdown.tsx:140
 #~ msgid "View Barcode"
-#~ msgstr ""
+#~ msgstr "View Barcode"
 
 #: src/components/items/ActionDropdown.tsx:144
 msgid "Link Barcode"
@@ -899,7 +899,7 @@ msgstr "Egyedi vonalkód leválasztása"
 
 #: src/components/items/ActionDropdown.tsx:162
 #~ msgid "Link custom barcode"
-#~ msgstr "Egyedi vonalkód hozzárendelése"
+#~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:205
 #: src/tables/RowActions.tsx:33
@@ -6021,11 +6021,11 @@ msgstr "Rendelési állapot szűrés"
 
 #: src/tables/build/BuildOrderTable.tsx:116
 #~ msgid "Cascade"
-#~ msgstr ""
+#~ msgstr "Cascade"
 
 #: src/tables/build/BuildOrderTable.tsx:117
 #~ msgid "Display recursive child orders"
-#~ msgstr ""
+#~ msgstr "Display recursive child orders"
 
 #: src/tables/build/BuildOrderTable.tsx:122
 msgid "Show overdue status"
@@ -8030,3 +8030,4 @@ msgstr "Olvasd el a dokumentációt"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
