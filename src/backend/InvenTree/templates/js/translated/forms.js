@@ -298,8 +298,7 @@ function constructDeleteForm(fields, options) {
  * - closeText: Text for the "close" button
  * - fields: list of fields to display, with the following options
  *      - filters: API query filters
- *      - onEdit: callback or array of callbacks which get fired when field is edited - does not get triggered until the field loses focus, ref: https://api.jquery.com/change/
- *      - onInput: callback or array of callbacks which get fired when an input is detected in the field
+ *      - onEdit: callback or array of callbacks which get fired when field is edited
  *      - secondary: Define a secondary modal form for this field
  *      - label: Specify custom label
  *      - help_text: Specify custom help_text
@@ -1660,23 +1659,6 @@ function addFieldCallback(name, field, options) {
                 onEdit(value, name, field, options);
             }
         });
-    }
-
-    if(field.onInput){
-
-        el.on('input', function(){
-            var value = getFormFieldValue(name, field, options);
-            let onInputHandlers = field.onInput;
-
-            if (!Array.isArray(onInputHandlers)) {
-                onInputHandlers = [onInputHandlers];
-            }
-
-            for (const onInput of onInputHandlers) {
-                onInput(value, name, field, options);
-            }
-        });
-
     }
 
     // attach field callback for nested fields
