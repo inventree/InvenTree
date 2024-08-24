@@ -650,6 +650,7 @@ export function useAllocateStockToBuildForm({
     title: t`Allocate Stock`,
     fields: buildAllocateFields,
     preFormContent: preFormContent,
+    successMessage: t`Stock items allocated`,
     onFormSuccess: onFormSuccess,
     initialData: {
       items: lineItems.map((item) => {
