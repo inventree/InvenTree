@@ -10,6 +10,7 @@ import {
   InsertAdmonition,
   InsertImage,
   InsertTable,
+  InsertThematicBreak,
   ListsToggle,
   MDXEditor,
   type MDXEditorMethods,
@@ -24,6 +25,7 @@ import {
   markdownShortcutPlugin,
   quotePlugin,
   tablePlugin,
+  thematicBreakPlugin,
   toolbarPlugin
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
@@ -186,7 +188,8 @@ export default function NotesEditor({
       listsPlugin(),
       markdownShortcutPlugin(),
       quotePlugin(),
-      tablePlugin()
+      tablePlugin(),
+      thematicBreakPlugin()
     ];
 
     let toolbar: ReactNode[] = [];
@@ -225,7 +228,8 @@ export default function NotesEditor({
           <Separator key="separator-4" />,
           <CreateLink key="create-link" />,
           <InsertTable key="insert-table" />,
-          <InsertAdmonition key="insert-admonition" />
+          <InsertAdmonition key="insert-admonition" />,
+          <InsertThematicBreak key="insert-thematic-break" />
         ];
       }
     }
@@ -255,6 +259,14 @@ export default function NotesEditor({
   ]);
 
   return (
-    <MDXEditor ref={ref} markdown={''} readOnly={!editable} plugins={plugins} />
+    <MDXEditor
+      ref={ref}
+      markdown={''}
+      readOnly={!editable}
+      plugins={plugins}
+      toMarkdownOptions={{
+        rule: '-' // Use dashes for thematic breaks
+      }}
+    />
   );
 }
