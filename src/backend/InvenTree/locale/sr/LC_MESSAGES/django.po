@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-22 07:02+0000\n"
-"PO-Revision-Date: 2024-08-20 19:51\n"
+"POT-Creation-Date: 2024-08-22 03:50+0000\n"
+"PO-Revision-Date: 2024-08-24 21:00\n"
 "Last-Translator: \n"
 "Language-Team: Serbian (Latin)\n"
 "Language: sr_CS\n"
@@ -4020,10 +4020,8 @@ msgid "Model this state is associated with"
 msgstr ""
 
 #: common/models.py:3384
-#, fuzzy
-#| msgid "Reference"
 msgid "Reference Status Set"
-msgstr "Referenca"
+msgstr ""
 
 #: common/models.py:3385
 msgid "Status set that is extended with this custom state"
@@ -8295,10 +8293,8 @@ msgid "Show Part Details"
 msgstr ""
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Required for Orders"
-msgstr "Nalozi za izradu"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15354,3 +15350,4 @@ msgstr ""
 #: users/models.py:409
 msgid "Permission to delete items"
 msgstr ""
+
