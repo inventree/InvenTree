@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-20 19:50\n"
+"PO-Revision-Date: 2024-08-24 20:59\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese, Brazilian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -877,7 +877,7 @@ msgstr "Ver código de barras"
 
 #: src/components/items/ActionDropdown.tsx:140
 #~ msgid "View Barcode"
-#~ msgstr ""
+#~ msgstr "View Barcode"
 
 #: src/components/items/ActionDropdown.tsx:144
 msgid "Link Barcode"
@@ -899,7 +899,7 @@ msgstr "Desvincular código de barras personalizado"
 
 #: src/components/items/ActionDropdown.tsx:162
 #~ msgid "Link custom barcode"
-#~ msgstr "Vincular código de barras personalizado"
+#~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:205
 #: src/tables/RowActions.tsx:33
@@ -6021,11 +6021,11 @@ msgstr "Filtrar por estado do pedido"
 
 #: src/tables/build/BuildOrderTable.tsx:116
 #~ msgid "Cascade"
-#~ msgstr ""
+#~ msgstr "Cascade"
 
 #: src/tables/build/BuildOrderTable.tsx:117
 #~ msgid "Display recursive child orders"
-#~ msgstr ""
+#~ msgstr "Display recursive child orders"
 
 #: src/tables/build/BuildOrderTable.tsx:122
 msgid "Show overdue status"
@@ -8030,3 +8030,4 @@ msgstr "Leia a documentação"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
