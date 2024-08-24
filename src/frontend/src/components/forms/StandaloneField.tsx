@@ -16,10 +16,13 @@ export function StandaloneField({
   hideLabels?: boolean;
   error?: string;
 }) {
+  // Field must have a defined name
+  const name = useMemo(() => fieldName ?? 'field', [fieldName]);
+
   const defaultValues = useMemo(() => {
     if (defaultValue)
       return {
-        field: defaultValue
+        [name]: defaultValue
       };
     return {};
   }, [defaultValue]);
@@ -33,14 +36,14 @@ export function StandaloneField({
     form.clearErrors();
 
     if (!!error) {
-      form.setError(fieldName ?? 'field', { message: error });
+      form.setError(name, { message: error });
     }
   }, [form, error]);
 
   return (
     <FormProvider {...form}>
       <ApiFormField
-        fieldName={fieldName ?? 'field'}
+        fieldName={name}
         definition={fieldDefinition}
         control={form.control}
         hideLabels={hideLabels}
