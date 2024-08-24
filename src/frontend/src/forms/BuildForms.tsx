@@ -495,6 +495,7 @@ function BuildAllocateLineRow({
       api_url: apiUrl(ApiEndpoints.stock_item_list),
       model: ModelType.stockitem,
       filters: {
+        available: true,
         part_detail: true,
         location_detail: true,
         bom_item: record.bom_item
