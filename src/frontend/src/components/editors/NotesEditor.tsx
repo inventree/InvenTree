@@ -1,4 +1,5 @@
 import { t } from '@lingui/macro';
+import { ActionIcon, Group, Paper, Stack } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
   AdmonitionDirectiveDescriptor,
@@ -29,7 +30,12 @@ import {
   toolbarPlugin
 } from '@mdxeditor/editor';
 import '@mdxeditor/editor/style.css';
-import { IconDeviceFloppy, IconEdit, IconEye } from '@tabler/icons-react';
+import {
+  IconDeviceFloppy,
+  IconEdit,
+  IconEye,
+  IconX
+} from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import React from 'react';
@@ -39,6 +45,7 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { ModelType } from '../../enums/ModelType';
 import { apiUrl } from '../../states/ApiState';
 import { useLocalState } from '../../states/LocalState';
+import { ActionButton } from '../buttons/ActionButton';
 import { ModelInformationDict } from '../render/ModelType';
 
 /*
@@ -186,52 +193,47 @@ export default function NotesEditor({
       linkPlugin(),
       linkDialogPlugin(),
       listsPlugin(),
-      markdownShortcutPlugin(),
       quotePlugin(),
       tablePlugin(),
-      thematicBreakPlugin()
+      thematicBreakPlugin(),
+      markdownShortcutPlugin()
     ];
 
     let toolbar: ReactNode[] = [];
-    if (editable) {
+    if (editable && editing) {
       toolbar = [
         <ButtonWithTooltip
-          key="toggle-editing"
-          aria-label="toggle-notes-editing"
-          title={editing ? t`Preview Notes` : t`Edit Notes`}
-          onClick={() => setEditing(!editing)}
+          key="save-notes"
+          aria-label="save-notes"
+          onClick={() => saveNotes()}
+          title={t`Save Notes`}
+          disabled={false}
         >
-          {editing ? <IconEye /> : <IconEdit />}
-        </ButtonWithTooltip>
+          <IconDeviceFloppy color="green" />
+        </ButtonWithTooltip>,
+        <ButtonWithTooltip
+          key="close-notes"
+          aria-label="close-notes"
+          onClick={() => setEditing(false)}
+          title={t`Close Editor`}
+          disabled={false}
+        >
+          <IconX color="red" />
+        </ButtonWithTooltip>,
+        <Separator key="separator-1" />,
+        <UndoRedo key="undo-redo" />,
+        <Separator key="separator-2" />,
+        <BoldItalicUnderlineToggles key="bold-italic-underline" />,
+        <CodeToggle key="code-toggle" />,
+        <ListsToggle key="lists-toggle" />,
+        <Separator key="separator-3" />,
+        <BlockTypeSelect key="block-type" />,
+        <Separator key="separator-4" />,
+        <CreateLink key="create-link" />,
+        <InsertTable key="insert-table" />,
+        <InsertAdmonition key="insert-admonition" />,
+        <InsertThematicBreak key="insert-thematic-break" />
       ];
-
-      if (editing) {
-        toolbar = [
-          ...toolbar,
-          <ButtonWithTooltip
-            key="save-notes"
-            aria-label="save-notes"
-            onClick={() => saveNotes()}
-            title={t`Save Notes`}
-            disabled={false}
-          >
-            <IconDeviceFloppy />
-          </ButtonWithTooltip>,
-          <Separator key="separator-1" />,
-          <UndoRedo key="undo-redo" />,
-          <Separator key="separator-2" />,
-          <BoldItalicUnderlineToggles key="bold-italic-underline" />,
-          <CodeToggle key="code-toggle" />,
-          <ListsToggle key="lists-toggle" />,
-          <Separator key="separator-3" />,
-          <BlockTypeSelect key="block-type" />,
-          <Separator key="separator-4" />,
-          <CreateLink key="create-link" />,
-          <InsertTable key="insert-table" />,
-          <InsertAdmonition key="insert-admonition" />,
-          <InsertThematicBreak key="insert-thematic-break" />
-        ];
-      }
     }
 
     // If the user is allowed to edit, then add the toolbar
@@ -259,14 +261,29 @@ export default function NotesEditor({
   ]);
 
   return (
-    <MDXEditor
-      ref={ref}
-      markdown={''}
-      readOnly={!editable}
-      plugins={plugins}
-      toMarkdownOptions={{
-        rule: '-' // Use dashes for thematic breaks
-      }}
-    />
+    <Paper p="sm" shadow="xs">
+      <Stack gap="xs">
+        {editable && (
+          <Group justify="left">
+            {!editing && (
+              <ActionButton
+                tooltip={t`Edit`}
+                onClick={() => setEditing(true)}
+                icon={<IconEdit color="blue" />}
+              />
+            )}
+          </Group>
+        )}
+        <MDXEditor
+          ref={ref}
+          markdown={''}
+          readOnly={!editing}
+          plugins={plugins}
+          toMarkdownOptions={{
+            rule: '-' // Use dashes for thematic breaks
+          }}
+        />
+      </Stack>
+    </Paper>
   );
 }
