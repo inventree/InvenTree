@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-22 07:02+0000\n"
-"PO-Revision-Date: 2024-08-20 19:51\n"
+"POT-Creation-Date: 2024-08-22 03:50+0000\n"
+"PO-Revision-Date: 2024-08-24 20:59\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Language: ja_JP\n"
@@ -734,10 +734,8 @@ msgid "Parent Build"
 msgstr ""
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "組立をキャンセル"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -1274,10 +1272,8 @@ msgid "Project Code Label"
 msgstr ""
 
 #: build/serializers.py:133
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Create Child Builds"
-msgstr "組立をキャンセル"
+msgstr ""
 
 #: build/serializers.py:134
 msgid "Automatically generate child build orders"
@@ -4032,26 +4028,20 @@ msgid "Status set that is extended with this custom state"
 msgstr ""
 
 #: common/models.py:3391
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom State"
-msgstr "顧客"
+msgstr ""
 
 #: common/models.py:3392
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom States"
-msgstr "顧客"
+msgstr ""
 
 #: common/models.py:3407
 msgid "Model must be selected"
 msgstr ""
 
 #: common/models.py:3410
-#, fuzzy
-#| msgid "Part must be salable"
 msgid "Key must be selected"
-msgstr "パーツは販売可能でなければなりません"
+msgstr ""
 
 #: common/models.py:3413
 msgid "Logical key must be selected"
@@ -8303,10 +8293,8 @@ msgid "Show Part Details"
 msgstr ""
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Build Orders"
 msgid "Required for Orders"
-msgstr "組立注文"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15362,3 +15350,4 @@ msgstr "項目を編集する権限"
 #: users/models.py:409
 msgid "Permission to delete items"
 msgstr "項目を削除する権限"
+
