@@ -1011,7 +1011,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
     class Meta:
         """Metaclass options."""
 
-        fields = ['items', 'status', 'note']
+        fields = ['items', 'status_custom_key', 'note']
 
     items = serializers.PrimaryKeyRelatedField(
         queryset=StockItem.objects.all(),
@@ -1029,7 +1029,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
 
         return items
 
-    status = serializers.ChoiceField(
+    status_custom_key = serializers.ChoiceField(
         choices=stock.status_codes.StockStatus.items(),
         default=stock.status_codes.StockStatus.OK.value,
         label=_('Status'),
@@ -1048,7 +1048,7 @@ class StockChangeStatusSerializer(serializers.Serializer):
         data = self.validated_data
 
         items = data['items']
-        status = data['status']
+        status = data['status_custom_key']
 
         request = self.context['request']
         user = getattr(request, 'user', None)

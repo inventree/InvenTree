@@ -1,10 +1,9 @@
 import { t } from '@lingui/macro';
-import { Flex, Group, NumberInput, Skeleton, Table, Text } from '@mantine/core';
+import { Flex, Group, Skeleton, Table, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
-import { reorderRecords } from 'mantine-datatable';
-import { Suspense, useCallback, useMemo, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
@@ -33,7 +32,6 @@ import {
   useBatchCodeGenerator,
   useSerialNumberGenerator
 } from '../hooks/UseGenerator';
-import { itemTopBorder } from '../main.css';
 import { apiUrl } from '../states/ApiState';
 import { useGlobalSettingsState } from '../states/SettingsState';
 
@@ -145,7 +143,9 @@ export function useStockFields({
         value: batchCode,
         onValueChange: (value) => setBatchCode(value)
       },
-      status_custom_key: {},
+      status_custom_key: {
+        label: t`Stock Status`
+      },
       expiry_date: {
         // TODO: icon
       },
@@ -599,9 +599,9 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
         return (
           <StockOperationsRow
             props={row}
-            key={row.item.pk}
+            key={row.item}
             merge
-            record={records[row.item.pk]}
+            record={records[row.item]}
           />
         );
       },
