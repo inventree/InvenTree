@@ -458,7 +458,10 @@ export default function BuildLineTable({
         onClick={() => {
           setSelectedRows(
             table.selectedRecords.filter(
-              (r) => r.allocated < r.quantity && !r.trackable
+              (r) =>
+                r.allocated < r.quantity &&
+                !r.trackable &&
+                !r.bom_item_detail.consumable
             )
           );
           allowcateStock.open();
