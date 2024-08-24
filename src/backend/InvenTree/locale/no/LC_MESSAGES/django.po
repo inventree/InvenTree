@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-22 07:02+0000\n"
-"PO-Revision-Date: 2024-08-20 19:51\n"
+"POT-Creation-Date: 2024-08-22 03:50+0000\n"
+"PO-Revision-Date: 2024-08-24 20:59\n"
 "Last-Translator: \n"
 "Language-Team: Norwegian\n"
 "Language: no_NO\n"
@@ -734,10 +734,8 @@ msgid "Parent Build"
 msgstr "Overordnet produksjon"
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "Kanseller produksjon"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -1274,16 +1272,12 @@ msgid "Project Code Label"
 msgstr "Etikett for prosjektkode"
 
 #: build/serializers.py:133
-#, fuzzy
-#| msgid "Child Build Orders"
 msgid "Create Child Builds"
-msgstr "Underordnede Produksjonsordrer"
+msgstr ""
 
 #: build/serializers.py:134
-#, fuzzy
-#| msgid "Automatically allocate stock to build"
 msgid "Automatically generate child build orders"
-msgstr "Automatisk tildel lagerbeholdning til produksjon"
+msgstr ""
 
 #: build/serializers.py:216 build/serializers.py:968
 #: templates/js/translated/build.js:1045 templates/js/translated/build.js:1498
@@ -3990,16 +3984,12 @@ msgid "Value that will be saved in the models database"
 msgstr ""
 
 #: common/models.py:3354
-#, fuzzy
-#| msgid "Last name of the user"
 msgid "Name of the state"
-msgstr "Etternavn på brukeren"
+msgstr ""
 
 #: common/models.py:3358
-#, fuzzy
-#| msgid "Labels"
 msgid "label"
-msgstr "Etiketter"
+msgstr ""
 
 #: common/models.py:3359
 msgid "Label that will be displayed in the frontend"
@@ -4022,66 +4012,48 @@ msgid "State logical key that is equal to this custom state in business logic"
 msgstr ""
 
 #: common/models.py:3379
-#, fuzzy
-#| msgid "Model Type"
 msgid "Model"
-msgstr "Modelltype"
+msgstr ""
 
 #: common/models.py:3380
-#, fuzzy
-#| msgid "Line item is not associated with this order"
 msgid "Model this state is associated with"
-msgstr "Linjeelement er ikke knyttet til denne ordren"
+msgstr ""
 
 #: common/models.py:3384
-#, fuzzy
-#| msgid "Reference"
 msgid "Reference Status Set"
-msgstr "Referanse"
+msgstr ""
 
 #: common/models.py:3385
 msgid "Status set that is extended with this custom state"
 msgstr ""
 
 #: common/models.py:3391
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom State"
-msgstr "Kunde"
+msgstr ""
 
 #: common/models.py:3392
-#, fuzzy
-#| msgid "Customers"
 msgid "Custom States"
-msgstr "Kunder"
+msgstr ""
 
 #: common/models.py:3407
-#, fuzzy
-#| msgid "This option must be selected"
 msgid "Model must be selected"
-msgstr "Dette alternativet må være valgt"
+msgstr ""
 
 #: common/models.py:3410
-#, fuzzy
-#| msgid "This option must be selected"
 msgid "Key must be selected"
-msgstr "Dette alternativet må være valgt"
+msgstr ""
 
 #: common/models.py:3413
-#, fuzzy
-#| msgid "This option must be selected"
 msgid "Logical key must be selected"
-msgstr "Dette alternativet må være valgt"
+msgstr ""
 
 #: common/models.py:3417
 msgid "Key must be different from logical key"
 msgstr ""
 
 #: common/models.py:3421
-#, fuzzy
-#| msgid "This option must be selected"
 msgid "Reference status must be selected"
-msgstr "Dette alternativet må være valgt"
+msgstr ""
 
 #: common/models.py:3433
 msgid "Reference status set not found"
@@ -5152,16 +5124,12 @@ msgid "New Company"
 msgstr "Nytt Firma"
 
 #: generic/states/fields.py:118
-#, fuzzy
-#| msgid "Stock item status code"
 msgid "Custom status key"
-msgstr "Lagervare statuskode"
+msgstr ""
 
 #: generic/states/fields.py:119
-#, fuzzy
-#| msgid "Add initial supplier information for this part"
 msgid "Additional status information for this item"
-msgstr "Legg til innledende leverandørinformasjon for denne delen"
+msgstr ""
 
 #: generic/states/tests.py:22 order/status_codes.py:13
 msgid "Placed"
@@ -8325,10 +8293,8 @@ msgid "Show Part Details"
 msgstr "Vis detaljer for del"
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Required for Orders"
-msgstr "Returner til ordrer"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15384,3 +15350,4 @@ msgstr "Tillatelse til å endre elementer"
 #: users/models.py:409
 msgid "Permission to delete items"
 msgstr "Tillatelse til å slette elementer"
+
