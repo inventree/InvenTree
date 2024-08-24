@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2024-08-20 19:50\n"
+"PO-Revision-Date: 2024-08-24 20:58\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -77,7 +77,7 @@ msgstr "Hata"
 
 #: src/components/buttons/PrintingActions.tsx:107
 msgid "The label could not be generated"
-msgstr ""
+msgstr "Etiket üretilemedi"
 
 #: src/components/buttons/PrintingActions.tsx:122
 msgid "Print Report"
@@ -155,7 +155,7 @@ msgstr ""
 #: src/pages/Index/Settings/AccountSettings/SecurityContent.tsx:306
 #: src/pages/stock/StockDetail.tsx:510
 msgid "Remove"
-msgstr ""
+msgstr "Kaldır"
 
 #: src/components/details/DetailsImage.tsx:71
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:158
@@ -259,7 +259,7 @@ msgstr ""
 
 #: src/components/editors/NotesEditor.tsx:198
 msgid "Edit Notes"
-msgstr ""
+msgstr "Notları düzenle"
 
 #: src/components/editors/NotesEditor.tsx:212
 msgid "Save Notes"
@@ -267,7 +267,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/CodeEditor/index.tsx:9
 msgid "Code"
-msgstr ""
+msgstr "Kod"
 
 #: src/components/editors/TemplateEditor/PdfPreview/PdfPreview.tsx:44
 #~ msgid "Failed to parse error response from server."
@@ -312,7 +312,7 @@ msgstr ""
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:189
 msgid "Preview updated"
-msgstr ""
+msgstr "Güncelleneni önizle"
 
 #: src/components/editors/TemplateEditor/TemplateEditor.tsx:190
 msgid "The preview has been updated successfully."
@@ -360,7 +360,7 @@ msgstr ""
 
 #: src/components/errors/GenericErrorPage.tsx:63
 msgid "Return to the index page"
-msgstr ""
+msgstr "Dizin sayfasına dön"
 
 #: src/components/errors/NotAuthenticated.tsx:8
 msgid "Not Authenticated"
@@ -546,7 +546,7 @@ msgstr ""
 
 #: src/components/forms/AuthenticationForm.tsx:194
 msgid "Please confirm your email address to complete the registration"
-msgstr ""
+msgstr "Kaydı tamamlamak için lütfen e-posta adresinizi doğrulayın"
 
 #: src/components/forms/AuthenticationForm.tsx:210
 msgid "Input error"
@@ -690,7 +690,7 @@ msgstr ""
 
 #: src/components/forms/fields/TableField.tsx:76
 msgid "No entries available"
-msgstr ""
+msgstr "Kullanılabilir girdi yok"
 
 #: src/components/images/DetailsImage.tsx:252
 #~ msgid "Select image"
@@ -780,7 +780,7 @@ msgstr ""
 
 #: src/components/importer/ImporterColumnSelector.tsx:182
 msgid "Ignore this field"
-msgstr ""
+msgstr "Bu alanı yok say"
 
 #: src/components/importer/ImporterColumnSelector.tsx:196
 msgid "Mapping data columns to database fields"
@@ -877,7 +877,7 @@ msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:140
 #~ msgid "View Barcode"
-#~ msgstr ""
+#~ msgstr "View Barcode"
 
 #: src/components/items/ActionDropdown.tsx:144
 msgid "Link Barcode"
@@ -899,7 +899,7 @@ msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:162
 #~ msgid "Link custom barcode"
-#~ msgstr ""
+#~ msgstr "Link custom barcode"
 
 #: src/components/items/ActionDropdown.tsx:205
 #: src/tables/RowActions.tsx:33
@@ -912,7 +912,7 @@ msgstr ""
 
 #: src/components/items/ActionDropdown.tsx:218
 msgid "Delete item"
-msgstr ""
+msgstr "Ögeyi sil"
 
 #: src/components/items/ActionDropdown.tsx:226
 #: src/components/items/ActionDropdown.tsx:227
@@ -984,7 +984,7 @@ msgstr ""
 
 #: src/components/items/QRCode.tsx:92
 msgid "High (30%)"
-msgstr ""
+msgstr "Yüksek (%30)"
 
 #: src/components/items/QRCode.tsx:100
 msgid "Custom bascode"
@@ -1044,7 +1044,7 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:125
 msgid "InvenTree Version"
-msgstr ""
+msgstr "InvenTree Sürümü"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:131
 msgid "Commit Hash"
@@ -1073,11 +1073,11 @@ msgstr ""
 
 #: src/components/modals/AboutInvenTreeModal.tsx:162
 msgid "Links"
-msgstr ""
+msgstr "Bağlantılar"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:168
 msgid "InvenTree Documentation"
-msgstr ""
+msgstr "InvenTree Belgelendirmesi"
 
 #: src/components/modals/AboutInvenTreeModal.tsx:169
 msgid "View Code on GitHub"
@@ -1122,7 +1122,7 @@ msgstr ""
 
 #: src/components/modals/LicenseModal.tsx:85
 msgid "{key} Packages"
-msgstr ""
+msgstr "{key} Paket"
 
 #: src/components/modals/QrCodeModal.tsx:72
 msgid "Unknown response"
@@ -1463,7 +1463,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:39
 msgid "Part Test Templates"
-msgstr ""
+msgstr "Parça Test Şablonları"
 
 #: src/components/render/ModelType.tsx:45
 #: src/pages/company/SupplierPartDetail.tsx:199
@@ -1757,7 +1757,7 @@ msgstr ""
 
 #: src/components/render/ModelType.tsx:247
 msgid "Content Types"
-msgstr ""
+msgstr "İçerik Türleri"
 
 #: src/components/render/Order.tsx:121
 msgid "Shipment"
@@ -1837,7 +1837,7 @@ msgstr ""
 
 #: src/components/settings/SettingList.tsx:162
 msgid "No settings specified"
-msgstr ""
+msgstr "Ayar belirtilmemiş"
 
 #: src/components/tables/FilterGroup.tsx:29
 #~ msgid "Add table filter"
@@ -2284,7 +2284,7 @@ msgstr ""
 
 #: src/contexts/LanguageContext.tsx:28
 msgid "Spanish (Mexican)"
-msgstr ""
+msgstr "İspanyolca (Meksika)"
 
 #: src/contexts/LanguageContext.tsx:29
 msgid "Estonian"
@@ -2485,7 +2485,7 @@ msgstr "Tükenmiş Stok"
 
 #: src/defaults/dashboardItems.tsx:64
 msgid "Required for Build Orders"
-msgstr ""
+msgstr "Yapı Siparişleri için Gerekli"
 
 #: src/defaults/dashboardItems.tsx:71
 msgid "Expired Stock"
@@ -6021,11 +6021,11 @@ msgstr ""
 
 #: src/tables/build/BuildOrderTable.tsx:116
 #~ msgid "Cascade"
-#~ msgstr ""
+#~ msgstr "Cascade"
 
 #: src/tables/build/BuildOrderTable.tsx:117
 #~ msgid "Display recursive child orders"
-#~ msgstr ""
+#~ msgstr "Display recursive child orders"
 
 #: src/tables/build/BuildOrderTable.tsx:122
 msgid "Show overdue status"
@@ -8030,3 +8030,4 @@ msgstr "Belgeleri okuyun"
 #: src/views/MobileAppView.tsx:35
 msgid "Ignore and continue to Desktop view"
 msgstr ""
+
