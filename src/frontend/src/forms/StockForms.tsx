@@ -449,9 +449,9 @@ function mapAdjustmentItems(items: any[]) {
     return {
       pk: elem.pk,
       quantity: elem.quantity,
-      batch: elem.batch,
-      status: elem.status,
-      packaging: elem.packaging,
+      batch: elem.batch || undefined,
+      status: elem.status || undefined,
+      packaging: elem.packaging || undefined,
       obj: elem
     };
   });
