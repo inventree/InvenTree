@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-22 07:02+0000\n"
-"PO-Revision-Date: 2024-08-20 19:51\n"
+"POT-Creation-Date: 2024-08-22 03:50+0000\n"
+"PO-Revision-Date: 2024-08-24 21:00\n"
 "Last-Translator: \n"
 "Language-Team: Indonesian\n"
 "Language: id_ID\n"
@@ -734,10 +734,8 @@ msgid "Parent Build"
 msgstr "Produksi Induk"
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "Batalkan Produksi"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -1274,10 +1272,8 @@ msgid "Project Code Label"
 msgstr ""
 
 #: build/serializers.py:133
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Create Child Builds"
-msgstr "Batalkan Produksi"
+msgstr ""
 
 #: build/serializers.py:134
 msgid "Automatically generate child build orders"
@@ -4024,10 +4020,8 @@ msgid "Model this state is associated with"
 msgstr ""
 
 #: common/models.py:3384
-#, fuzzy
-#| msgid "Reference"
 msgid "Reference Status Set"
-msgstr "Referensi"
+msgstr ""
 
 #: common/models.py:3385
 msgid "Status set that is extended with this custom state"
@@ -8299,10 +8293,8 @@ msgid "Show Part Details"
 msgstr ""
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Stock required for build order"
 msgid "Required for Orders"
-msgstr "Stok dibutuhkan untuk order produksi"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15358,3 +15350,4 @@ msgstr ""
 #: users/models.py:409
 msgid "Permission to delete items"
 msgstr ""
+
