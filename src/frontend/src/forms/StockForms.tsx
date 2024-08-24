@@ -607,7 +607,7 @@ function stockChangeStatusFields(items: any[]): ApiFormFieldSet {
       },
       headers: [t`Part`, t`Location`, t`In Stock`, t`Actions`]
     },
-    status_custom_key: {},
+    status: {},
     note: {}
   };
 
