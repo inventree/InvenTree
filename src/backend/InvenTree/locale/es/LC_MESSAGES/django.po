@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-22 07:02+0000\n"
-"PO-Revision-Date: 2024-08-20 19:50\n"
+"POT-Creation-Date: 2024-08-22 03:50+0000\n"
+"PO-Revision-Date: 2024-08-24 20:59\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -373,7 +373,7 @@ msgstr "Correo electrónico"
 
 #: InvenTree/models.py:103
 msgid "Error running plugin validation"
-msgstr ""
+msgstr "Error al ejecutar la validación del plug-in"
 
 #: InvenTree/models.py:172
 msgid "Metadata must be a python dict object"
@@ -734,10 +734,8 @@ msgid "Parent Build"
 msgstr "Construcción o Armado Superior"
 
 #: build/api.py:59
-#, fuzzy
-#| msgid "Cancel Build"
 msgid "Ancestor Build"
-msgstr "Cancelar construcción o armado"
+msgstr ""
 
 #: build/api.py:78 order/api.py:92 templates/js/translated/table_filters.js:101
 #: templates/js/translated/table_filters.js:549
@@ -856,7 +854,7 @@ msgstr "Opción no válida para la construcción padre"
 
 #: build/models.py:175 order/models.py:240
 msgid "Responsible user or group must be specified"
-msgstr ""
+msgstr "Se debe especificar un usuario o grupo responsable"
 
 #: build/models.py:181
 msgid "Build order part cannot be changed"
@@ -1274,16 +1272,12 @@ msgid "Project Code Label"
 msgstr ""
 
 #: build/serializers.py:133
-#, fuzzy
-#| msgid "Child Build Orders"
 msgid "Create Child Builds"
-msgstr "Órdenes de Trabajo herederas"
+msgstr ""
 
 #: build/serializers.py:134
-#, fuzzy
-#| msgid "Automatically allocate stock to build"
 msgid "Automatically generate child build orders"
-msgstr "Asignar existencias automáticamente a contrucción"
+msgstr ""
 
 #: build/serializers.py:216 build/serializers.py:968
 #: templates/js/translated/build.js:1045 templates/js/translated/build.js:1498
@@ -3990,16 +3984,12 @@ msgid "Value that will be saved in the models database"
 msgstr ""
 
 #: common/models.py:3354
-#, fuzzy
-#| msgid "Name of machine"
 msgid "Name of the state"
-msgstr "Nombre de la máquina"
+msgstr ""
 
 #: common/models.py:3358
-#, fuzzy
-#| msgid "Labels"
 msgid "label"
-msgstr "Etiquetas"
+msgstr ""
 
 #: common/models.py:3359
 msgid "Label that will be displayed in the frontend"
@@ -4026,60 +4016,44 @@ msgid "Model"
 msgstr ""
 
 #: common/models.py:3380
-#, fuzzy
-#| msgid "Line item is not associated with this order"
 msgid "Model this state is associated with"
-msgstr "La partida no está asociada con este pedido"
+msgstr ""
 
 #: common/models.py:3384
-#, fuzzy
-#| msgid "Reference"
 msgid "Reference Status Set"
-msgstr "Referencia"
+msgstr ""
 
 #: common/models.py:3385
 msgid "Status set that is extended with this custom state"
 msgstr ""
 
 #: common/models.py:3391
-#, fuzzy
-#| msgid "Customer"
 msgid "Custom State"
-msgstr "Cliente"
+msgstr ""
 
 #: common/models.py:3392
-#, fuzzy
-#| msgid "Customers"
 msgid "Custom States"
-msgstr "Clientes"
+msgstr ""
 
 #: common/models.py:3407
-#, fuzzy
-#| msgid "This option must be selected"
 msgid "Model must be selected"
-msgstr "Esta opción debe ser seleccionada"
+msgstr ""
 
 #: common/models.py:3410
-#, fuzzy
-#| msgid "This option must be selected"
 msgid "Key must be selected"
-msgstr "Esta opción debe ser seleccionada"
+msgstr ""
 
 #: common/models.py:3413
-#, fuzzy
-#| msgid "This option must be selected"
 msgid "Logical key must be selected"
-msgstr "Esta opción debe ser seleccionada"
+msgstr ""
 
 #: common/models.py:3417
 msgid "Key must be different from logical key"
 msgstr ""
 
 #: common/models.py:3421
-#, fuzzy
-#| msgid "This option must be selected"
 msgid "Reference status must be selected"
-msgstr "Esta opción debe ser seleccionada"
+msgstr ""
 
 #: common/models.py:3433
 msgid "Reference status set not found"
@@ -5154,10 +5128,8 @@ msgid "Custom status key"
 msgstr ""
 
 #: generic/states/fields.py:119
-#, fuzzy
-#| msgid "Add initial supplier information for this part"
 msgid "Additional status information for this item"
-msgstr "Añadir información inicial del proveedor para esta parte"
+msgstr ""
 
 #: generic/states/tests.py:22 order/status_codes.py:13
 msgid "Placed"
@@ -8321,10 +8293,8 @@ msgid "Show Part Details"
 msgstr "Mostrar Detalles de Parte"
 
 #: part/templates/part/part_base.html:217
-#, fuzzy
-#| msgid "Return to Orders"
 msgid "Required for Orders"
-msgstr "Volver a Pedidos"
+msgstr ""
 
 #: part/templates/part/part_base.html:225
 #: stock/templates/stock/item_base.html:388
@@ -15380,3 +15350,4 @@ msgstr "Permisos para editar artículos"
 #: users/models.py:409
 msgid "Permission to delete items"
 msgstr "Permiso para eliminar artículos"
+
