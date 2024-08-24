@@ -485,10 +485,12 @@ function buildAllocationFormTable(
 // Construct a single row in the 'allocate stock to build' table
 function BuildAllocateLineRow({
   props,
-  record
+  record,
+  sourceLocation
 }: {
   props: TableFieldRowProps;
   record: any;
+  sourceLocation: number | undefined;
 }) {
   const stockField: ApiFormFieldType = useMemo(() => {
     return {
@@ -499,7 +501,9 @@ function BuildAllocateLineRow({
         available: true,
         part_detail: true,
         location_detail: true,
-        bom_item: record.bom_item
+        bom_item: record.bom_item,
+        location: sourceLocation,
+        cascade: sourceLocation ? true : undefined
       },
       value: props.item.stock_item,
       name: 'stock_item',
@@ -584,6 +588,10 @@ export function useAllocateStockToBuildForm({
   lineItems: any[];
   onFormSuccess: (response: any) => void;
 }) {
+  const [sourceLocation, setSourceLocation] = useState<number | undefined>(
+    undefined
+  );
+
   const buildAllocateFields: ApiFormFieldSet = useMemo(() => {
     const fields: ApiFormFieldSet = {
       items: {
@@ -594,19 +602,54 @@ export function useAllocateStockToBuildForm({
           // Find the matching record from the passed 'lineItems'
           const record =
             lineItems.find((item) => item.pk == row.item.build_line) ?? {};
-          return <BuildAllocateLineRow props={row} record={record} />;
+          return (
+            <BuildAllocateLineRow
+              props={row}
+              record={record}
+              sourceLocation={sourceLocation}
+            />
+          );
         }
       }
     };
 
     return fields;
-  }, [lineItems]);
+  }, [lineItems, sourceLocation]);
+
+  useEffect(() => {
+    setSourceLocation(build.take_from);
+  }, [build.take_from]);
+
+  const sourceLocationField: ApiFormFieldType = useMemo(() => {
+    return {
+      field_type: 'related field',
+      api_url: apiUrl(ApiEndpoints.stock_location_list),
+      model: ModelType.stocklocation,
+      required: false,
+      label: t`Source Location`,
+      description: t`Select the source location for the stock allocation`,
+      name: 'source_location',
+      value: build.take_from,
+      onValueChange: (value: any) => {
+        setSourceLocation(value);
+      }
+    };
+  }, [build?.take_from]);
+
+  const preFormContent = useMemo(() => {
+    return (
+      <Stack gap="xs">
+        <StandaloneField fieldDefinition={sourceLocationField} />
+      </Stack>
+    );
+  }, [sourceLocationField]);
 
   return useCreateApiFormModal({
     url: ApiEndpoints.build_order_allocate,
     pk: buildId,
     title: t`Allocate Stock`,
     fields: buildAllocateFields,
+    preFormContent: preFormContent,
     onFormSuccess: onFormSuccess,
     initialData: {
       items: lineItems.map((item) => {
