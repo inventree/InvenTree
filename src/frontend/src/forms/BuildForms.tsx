@@ -15,6 +15,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
+import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   ApiFormFieldSet,
@@ -558,6 +559,9 @@ function BuildAllocateLineRow({
             fieldDefinition={quantityField}
             error={props.rowErrors?.quantity?.message}
           />
+        </Table.Td>
+        <Table.Td>
+          <RemoveRowButton onClick={() => props.removeFn(props.idx)} />
         </Table.Td>
       </Table.Tr>
     </>

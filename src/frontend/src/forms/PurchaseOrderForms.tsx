@@ -28,6 +28,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
+import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import { StandaloneField } from '../components/forms/StandaloneField';
 import {
   ApiFormAdjustFilterType,
@@ -438,13 +439,7 @@ function LineItemFormRow({
                 onClick={() => open()}
               />
             )}
-            <ActionButton
-              onClick={() => input.removeFn(input.idx)}
-              icon={<InvenTreeIcon icon="square_x" />}
-              tooltip={t`Remove item from list`}
-              tooltipAlignment="top"
-              color="red"
-            />
+            <RemoveRowButton onClick={() => input.removeFn(input.idx)} />
           </Flex>
         </Table.Td>
       </Table.Tr>

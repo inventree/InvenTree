@@ -7,6 +7,7 @@ import { Suspense, useCallback, useMemo, useState } from 'react';
 
 import { api } from '../App';
 import { ActionButton } from '../components/buttons/ActionButton';
+import RemoveRowButton from '../components/buttons/RemoveRowButton';
 import {
   ApiFormAdjustFilterType,
   ApiFormFieldSet
@@ -415,13 +416,7 @@ function StockOperationsRow({
                 variant={packagingOpen ? 'filled' : 'transparent'}
               />
             )}
-            <ActionButton
-              onClick={() => input.removeFn(input.idx)}
-              icon={<InvenTreeIcon icon="square_x" />}
-              tooltip={t`Remove item from list`}
-              tooltipAlignment="top"
-              color="red"
-            />
+            <RemoveRowButton onClick={() => input.removeFn(input.idx)} />
           </Flex>
         </Table.Td>
       </Table.Tr>
