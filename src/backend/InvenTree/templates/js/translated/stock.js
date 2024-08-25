@@ -380,7 +380,7 @@ function stockItemFields(options={}) {
         batch: {
             icon: 'fa-layer-group',
         },
-        status: {},
+        status_custom_key: {},
         expiry_date: {
             icon: 'fa-calendar-alt',
         },

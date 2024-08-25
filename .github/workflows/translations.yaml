@@ -40,6 +40,16 @@ jobs:
           apt-dependency: gettext
       - name: Make Translations
         run: invoke translate
+      - name: Remove compiled static files
+        run: rm -rf src/backend/InvenTree/static
+      - name: Remove all local changes that are not *.po files
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add src/backend/InvenTree/locale/en/LC_MESSAGES/django.po src/frontend/src/locales/en/messages.po
+          git commit -m "add translations"
+          git reset --hard
+          git reset HEAD~
       - name: crowdin action
         uses: crowdin/github-action@6ed209d411599a981ccb978df3be9dc9b8a81699 # pin@v2
         with:
