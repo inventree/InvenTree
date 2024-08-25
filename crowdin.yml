@@ -1,6 +1,8 @@
 "commit_message": "Fix: New translations %original_file_name% from Crowdin"
 "append_commit_message": false
 
+"preserve_hierarchy": true
+
 files:
   - source: /src/backend/InvenTree/locale/en/LC_MESSAGES/django.po
     dest: /%original_path%/%file_name%
