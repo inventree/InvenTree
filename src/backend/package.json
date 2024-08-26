@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "eslint": "^9.9.0",
+    "eslint": "^9.9.1",
     "eslint-config-google": "^0.14.0"
   },
   "type": "module"
