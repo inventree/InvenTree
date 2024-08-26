@@ -1004,6 +1004,14 @@ class CustomStockItemStatusTest(StockAPITestCase):
         self.assertEqual(response.data['status'], self.status.logical_key)
         self.assertEqual(response.data['status_custom_key'], self.status.logical_key)
 
+        # Test case with wrong key
+        response = self.patch(
+            reverse('api-stock-detail', kwargs={'pk': pk}),
+            {'status_custom_key': 23456789},
+            expected_code=400,
+        )
+        self.assertIn('Invalid choice', str(response.data))
+
     def test_options(self):
         """Test the StockItem OPTIONS endpoint to contain custom StockStatuses."""
         response = self.options(self.list_url)

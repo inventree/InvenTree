@@ -18,8 +18,11 @@ export function ProgressBar(props: Readonly<ProgressBarProps>) {
     let maximum = props.maximum ?? 100;
     let value = Math.max(props.value, 0);
 
-    // Calculate progress as a percentage of the maximum value
-    return Math.min(100, (value / maximum) * 100);
+    if (maximum == 0) {
+      return 0;
+    }
+
+    return (value / maximum) * 100;
   }, [props]);
 
   return (
