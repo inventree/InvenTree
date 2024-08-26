@@ -551,7 +551,7 @@ function InputManual({ action }: Readonly<ScanInputInterface>) {
 /* Input that uses QR code detection from images */
 export function InputImageBarcode({
   action,
-  notScanningPlaceholder = t`Start scanning by selecting a camera and pressing the play button`
+  notScanningPlaceholder = t`Start scanning by selecting a camera and pressing the play button.`
 }: Readonly<BarcodeInputProps>) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
