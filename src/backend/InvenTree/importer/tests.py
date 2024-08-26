@@ -19,7 +19,7 @@ class ImporterTest(InvenTreeTestCase):
 
         fn = os.path.join(os.path.dirname(__file__), 'test_data', 'companies.csv')
 
-        with open(fn, 'r') as input_file:
+        with open(fn, encoding='utf-8') as input_file:
             data = input_file.read()
 
         session = DataImportSession.objects.create(
@@ -61,4 +61,3 @@ class ImporterTest(InvenTreeTestCase):
 
     def test_field_defaults(self):
         """Test default field values."""
-        ...

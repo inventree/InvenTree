@@ -641,7 +641,7 @@ class StockItemListTest(StockAPITestCase):
             StockStatus.REJECTED.value: 0,
         }
 
-        for code in codes.keys():
+        for code in codes:
             num = codes[code]
 
             response = self.get_stock(status=code)

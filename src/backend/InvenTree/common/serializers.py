@@ -574,9 +574,8 @@ class AttachmentSerializer(InvenTreeModelSerializer):
 
         model_type = self.validated_data.get('model_type', None)
 
-        if model_type is None:
-            if self.instance:
-                model_type = self.instance.model_type
+        if model_type is None and self.instance:
+            model_type = self.instance.model_type
 
         # Ensure that the user has permission to attach files to the specified model
         user = self.context.get('request').user

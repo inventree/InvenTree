@@ -1618,7 +1618,7 @@ class PartDetailTests(PartAPITestBase):
 
         # Try to upload a non-image file
         test_path = BASE_DIR / '_testfolder' / 'dummy_image'
-        with open(f'{test_path}.txt', 'w') as dummy_image:
+        with open(f'{test_path}.txt', 'w', encoding='utf-8') as dummy_image:
             dummy_image.write('hello world')
 
         with open(f'{test_path}.txt', 'rb') as dummy_image:

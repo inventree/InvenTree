@@ -1,34 +1,31 @@
-"""Background task definitions for the BuildOrder app"""
+"""Background task definitions for the BuildOrder app."""
 
+import logging
 from datetime import timedelta
 from decimal import Decimal
-import logging
 
 from django.contrib.auth.models import User
-from django.utils.translation import gettext_lazy as _
 from django.template.loader import render_to_string
+from django.utils.translation import gettext_lazy as _
 
 from allauth.account.models import EmailAddress
 
-from plugin.events import trigger_event
-import common.notifications
 import build.models
-import InvenTree.email
+import common.notifications
 import InvenTree.helpers
+import InvenTree.helpers_email
 import InvenTree.helpers_model
 import InvenTree.tasks
-from InvenTree.ready import isImportingData
-from build.status_codes import BuildStatusGroups
-
 import part.models as part_models
-
+from build.status_codes import BuildStatusGroups
+from InvenTree.ready import isImportingData
+from plugin.events import trigger_event
 
 logger = logging.getLogger('inventree')
 
 
 def auto_allocate_build(build_id: int, **kwargs):
     """Run auto-allocation for a specified BuildOrder."""
-
     build_order = build.models.Build.objects.filter(pk=build_id).first()
 
     if not build_order:
@@ -40,7 +37,6 @@ def auto_allocate_build(build_id: int, **kwargs):
 
 def complete_build_allocations(build_id: int, user_id: int):
     """Complete build allocations for a specified BuildOrder."""
-
     build_order = build.models.Build.objects.filter(pk=build_id).first()
 
     if user_id:
@@ -185,7 +181,7 @@ def check_build_stock(build: build.models.Build):
 
         recipients = emails.values_list('email', flat=True)
 
-        InvenTree.email.send_email(subject, '', recipients, html_message=html_message)
+        InvenTree.helpers_email.send_email(subject, '', recipients, html_message=html_message)
 
 
 def create_child_builds(build_id: int) -> None:
@@ -225,7 +221,7 @@ def create_child_builds(build_id: int) -> None:
 
 
 def notify_overdue_build_order(bo: build.models.Build):
-    """Notify appropriate users that a Build has just become 'overdue'"""
+    """Notify appropriate users that a Build has just become 'overdue'."""
     targets = []
 
     if bo.issued_by:
@@ -265,7 +261,7 @@ def notify_overdue_build_order(bo: build.models.Build):
 
 @InvenTree.tasks.scheduled_task(InvenTree.tasks.ScheduledTask.DAILY)
 def check_overdue_build_orders():
-    """Check if any outstanding BuildOrders have just become overdue
+    """Check if any outstanding BuildOrders have just become overdue.
 
     - This check is performed daily
     - Look at the 'target_date' of any outstanding BuildOrder objects

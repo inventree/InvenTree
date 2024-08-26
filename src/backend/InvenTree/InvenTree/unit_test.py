@@ -246,8 +246,6 @@ class ExchangeRateMixin:
 class InvenTreeTestCase(ExchangeRateMixin, UserMixin, TestCase):
     """Testcase with user setup build in."""
 
-    pass
-
 
 class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
     """Base class for running InvenTree API tests."""
@@ -283,9 +281,7 @@ class InvenTreeAPITestCase(ExchangeRateMixin, UserMixin, APITestCase):
             )  # pragma: no cover
 
         if verbose or n >= value:
-            msg = '\r\n%s' % json.dumps(
-                context.captured_queries, indent=4
-            )  # pragma: no cover
+            msg = f'\r\n{json.dumps(context.captured_queries, indent=4)}'  # pragma: no cover
         else:
             msg = None
 

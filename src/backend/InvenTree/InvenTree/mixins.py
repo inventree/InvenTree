@@ -128,13 +128,9 @@ class CreateAPI(CleanMixin, generics.CreateAPIView):
 class RetrieveAPI(generics.RetrieveAPIView):
     """View for retrieve API."""
 
-    pass
-
 
 class RetrieveUpdateAPI(CleanMixin, generics.RetrieveUpdateAPIView):
     """View for retrieve and update API."""
-
-    pass
 
 
 class CustomDestroyModelMixin:

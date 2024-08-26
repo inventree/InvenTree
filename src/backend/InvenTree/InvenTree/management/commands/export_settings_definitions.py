@@ -47,7 +47,7 @@ class Command(BaseCommand):
 
         filename = kwargs.get('filename', 'inventree_settings.json')
 
-        with open(filename, 'w') as f:
+        with open(filename, 'w', encoding='utf-8') as f:
             json.dump(settings, f, indent=4)
 
         print(f"Exported InvenTree settings definitions to '{filename}'")
