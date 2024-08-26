@@ -9,22 +9,6 @@ import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 import { BarcodeInput } from '../items/BarcodeInput';
 
-function ScanArea({ values }: Readonly<{ values: string[] }>) {
-  if (values.length == 0)
-    return (
-      <Text c={'grey'}>
-        <Trans>No scans yet!</Trans>
-      </Text>
-    );
-  return (
-    <ScrollArea style={{ height: 200 }} type="auto" offsetScrollbars>
-      {values.map((value, index) => (
-        <div key={`${index}-${value}`}>{value}</div>
-      ))}
-    </ScrollArea>
-  );
-}
-
 export function QrCodeModal({
   context,
   id
@@ -50,8 +34,17 @@ export function QrCodeModal({
   return (
     <Stack gap="xs">
       <BarcodeInput onScan={onScanAction} />
-
-      <ScanArea values={values} />
+      {values.length == 0 ? (
+        <Text c={'grey'}>
+          <Trans>No scans yet!</Trans>
+        </Text>
+      ) : (
+        <ScrollArea style={{ height: 200 }} type="auto" offsetScrollbars>
+          {values.map((value, index) => (
+            <div key={`${index}-${value}`}>{value}</div>
+          ))}
+        </ScrollArea>
+      )}
       <Button
         fullWidth
         mt="md"
