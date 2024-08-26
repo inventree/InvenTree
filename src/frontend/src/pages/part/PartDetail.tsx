@@ -51,10 +51,7 @@ import {
   BarcodeActionDropdown,
   DeleteItemAction,
   DuplicateItemAction,
-  EditItemAction,
-  LinkBarcodeAction,
-  UnlinkBarcodeAction,
-  ViewBarcodeAction
+  EditItemAction
 } from '../../components/items/ActionDropdown';
 import { PlaceholderPanel } from '../../components/items/Placeholder';
 import { StylishText } from '../../components/items/StylishText';
@@ -74,7 +71,6 @@ import {
   useTransferStockItem
 } from '../../forms/StockForms';
 import { InvenTreeIcon } from '../../functions/icons';
-import { notYetImplemented } from '../../functions/notifications';
 import { getDetailUrl } from '../../functions/urls';
 import {
   useCreateApiFormModal,
@@ -129,6 +125,10 @@ export default function PartDetail() {
     },
     refetchOnMount: true
   });
+
+  part.required =
+    (part?.required_for_build_orders ?? 0) +
+    (part?.required_for_sales_orders ?? 0);
 
   const detailsPanel = useMemo(() => {
     if (instanceQuery.isFetching) {
@@ -259,6 +259,13 @@ export default function PartDetail() {
         hidden: !part.purchaseable || part.ordering <= 0
       },
       {
+        type: 'string',
+        name: 'required',
+        label: t`Required for Orders`,
+        hidden: part.required <= 0,
+        icon: 'tick_off'
+      },
+      {
         type: 'progressbar',
         name: 'allocated_to_build_orders',
         total: part.required_for_build_orders,
@@ -285,7 +292,7 @@ export default function PartDetail() {
         type: 'string',
         name: 'building',
         unit: true,
-        label: t`Building`,
+        label: t`In Production`,
         hidden: !part.assembly || !part.building
       }
     ];
@@ -615,7 +622,7 @@ export default function PartDetail() {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly,
+        hidden: !part.assembly || !part.active,
         content: part?.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {
@@ -838,6 +845,9 @@ export default function PartDetail() {
       return [];
     }
 
+    const required =
+      part.required_for_build_orders + part.required_for_sales_orders;
+
     return [
       <DetailsBadge
         label={t`In Stock` + `: ${part.total_in_stock}`}
@@ -856,6 +866,12 @@ export default function PartDetail() {
         color="orange"
         visible={part.total_in_stock == 0}
         key="no_stock"
+      />,
+      <DetailsBadge
+        label={t`Required` + `: ${required}`}
+        color="grape"
+        visible={required > 0}
+        key="required"
       />,
       <DetailsBadge
         label={t`On Order` + `: ${part.ordering}`}
@@ -973,20 +989,10 @@ export default function PartDetail() {
     return [
       <AdminButton model={ModelType.part} pk={part.pk} />,
       <BarcodeActionDropdown
-        actions={[
-          ViewBarcodeAction({
-            model: ModelType.part,
-            pk: part.pk
-          }),
-          LinkBarcodeAction({
-            hidden: part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
-            onClick: notYetImplemented
-          }),
-          UnlinkBarcodeAction({
-            hidden: !part?.barcode_hash || !user.hasChangeRole(UserRoles.part),
-            onClick: notYetImplemented
-          })
-        ]}
+        model={ModelType.part}
+        pk={part.pk}
+        hash={part?.barcode_hash}
+        perm={user.hasChangeRole(UserRoles.part)}
         key="action_dropdown"
       />,
       <PrintingActions

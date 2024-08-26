@@ -425,7 +425,7 @@
     <tr>
         <td><span class='fas fa-info'></span></td>
         <td>{% trans "Status" %}</td>
-        <td>{% status_label 'stock' item.status %}</td>
+        <td>{% display_status_label 'stock' item.status_custom_key item.status %}</td>
     </tr>
     {% if item.expiry_date %}
     <tr>

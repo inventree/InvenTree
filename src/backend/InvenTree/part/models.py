@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import decimal
 import hashlib
+import inspect
 import logging
 import math
 import os
@@ -769,7 +770,22 @@ class Part(
             for plugin in registry.with_mixin('validation'):
                 # Run the serial number through each custom validator
                 # If the plugin returns 'True' we will skip any subsequent validation
-                if plugin.validate_serial_number(serial, self):
+
+                result = False
+
+                if hasattr(plugin, 'validate_serial_number'):
+                    signature = inspect.signature(plugin.validate_serial_number)
+
+                    if 'stock_item' in signature.parameters:
+                        # 2024-08-21: New method signature accepts a 'stock_item' parameter
+                        result = plugin.validate_serial_number(
+                            serial, self, stock_item=stock_item
+                        )
+                    else:
+                        # Old method signature - does not accept a 'stock_item' parameter
+                        result = plugin.validate_serial_number(serial, self)
+
+                if result is True:
                     return True
         except ValidationError as exc:
             if raise_error:

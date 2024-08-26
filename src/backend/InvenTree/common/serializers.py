@@ -14,6 +14,7 @@ from taggit.serializers import TagListSerializerField
 
 import common.models as common_models
 import common.validators
+import generic.states.custom
 from importer.mixins import DataImportExportSerializerMixin
 from importer.registry import register_importer
 from InvenTree.helpers import get_objectreference
@@ -306,6 +307,32 @@ class ProjectCodeSerializer(DataImportExportSerializerMixin, InvenTreeModelSeria
         fields = ['pk', 'code', 'description', 'responsible', 'responsible_detail']
 
     responsible_detail = OwnerSerializer(source='responsible', read_only=True)
+
+
+@register_importer()
+class CustomStateSerializer(DataImportExportSerializerMixin, InvenTreeModelSerializer):
+    """Serializer for the custom state model."""
+
+    class Meta:
+        """Meta options for CustomStateSerializer."""
+
+        model = common_models.InvenTreeCustomUserStateModel
+        fields = [
+            'pk',
+            'key',
+            'name',
+            'label',
+            'color',
+            'logical_key',
+            'model',
+            'model_name',
+            'reference_status',
+        ]
+
+    model_name = serializers.CharField(read_only=True, source='model.name')
+    reference_status = serializers.ChoiceField(
+        choices=generic.states.custom.state_reference_mappings()
+    )
 
 
 class FlagSerializer(serializers.Serializer):

@@ -39,14 +39,18 @@ export enum ApiEndpoints {
   settings_global_list = 'settings/global/',
   settings_user_list = 'settings/user/',
   barcode = 'barcode/',
+  barcode_link = 'barcode/link/',
+  barcode_unlink = 'barcode/unlink/',
   generate_barcode = 'barcode/generate/',
   news = 'news/',
   global_status = 'generic/status/',
+  custom_state_list = 'generic/status/custom/',
   version = 'version/',
   license = 'license/',
   sso_providers = 'auth/providers/',
   group_list = 'user/group/',
   owner_list = 'user/owner/',
+  content_type_list = 'contenttype/',
   icons = 'icons/',
 
   // Data import endpoints
@@ -70,6 +74,9 @@ export enum ApiEndpoints {
   build_output_create = 'build/:id/create-output/',
   build_output_scrap = 'build/:id/scrap-outputs/',
   build_output_delete = 'build/:id/delete-outputs/',
+  build_order_auto_allocate = 'build/:id/auto-allocate/',
+  build_order_allocate = 'build/:id/allocate/',
+  build_order_deallocate = 'build/:id/unallocate/',
   build_line_list = 'build/line/',
   build_item_list = 'build/item/',
 
