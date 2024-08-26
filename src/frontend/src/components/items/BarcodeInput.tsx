@@ -23,7 +23,7 @@ export function BarcodeInput({
   placeholder = t`Scan barcode data here using barcode scanner`,
   label = t`Barcode`,
   actionText = t`Scan`
-}: BarcodeInputProps) {
+}: Readonly<BarcodeInputProps>) {
   const [isScanning, setIsScanning] = useState(false);
 
   return (
