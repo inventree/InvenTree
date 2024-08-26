@@ -725,6 +725,7 @@ export function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
         />
         {scanningEnabled ? (
           <ActionIcon
+            size="input-sm"
             onClick={btnStopScanning}
             title={t`Stop scanning`}
             variant="default"
@@ -733,6 +734,7 @@ export function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
           </ActionIcon>
         ) : (
           <ActionIcon
+            size="input-sm"
             onClick={btnStartScanning}
             title={t`Start scanning`}
             disabled={!camId}
