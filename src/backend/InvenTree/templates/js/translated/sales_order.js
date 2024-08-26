@@ -851,10 +851,10 @@ function loadSalesOrderTable(table, options) {
             },
             {
                 sortable: true,
-                field: 'status',
+                field: 'status_custom_key',
                 title: '{% trans "Status" %}',
                 formatter: function(value, row) {
-                    return salesOrderStatusDisplay(row.status);
+                    return salesOrderStatusDisplay(row.status_custom_key);
                 }
             },
             {

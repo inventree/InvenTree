@@ -2,45 +2,53 @@
 
 from decimal import Decimal
 
-from django.db import transaction
 from django.core.exceptions import ValidationError as DjangoValidationError
-from django.utils.translation import gettext_lazy as _
-
-from django.db import models
-from django.db.models import ExpressionWrapper, F, FloatField
-from django.db.models import Case, Sum, When, Value
-from django.db.models import BooleanField, Q
+from django.db import models, transaction
+from django.db.models import (
+    BooleanField,
+    Case,
+    ExpressionWrapper,
+    F,
+    FloatField,
+    Q,
+    Sum,
+    Value,
+    When,
+)
 from django.db.models.functions import Coalesce
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 
-from InvenTree.serializers import InvenTreeModelSerializer, UserSerializer
-
-import InvenTree.helpers
-import InvenTree.tasks
-from InvenTree.serializers import InvenTreeDecimalField, NotesFieldMixin
-from stock.status_codes import StockStatus
-
-from stock.generators import generate_batch_code
-from stock.models import StockItem, StockLocation
-from stock.serializers import StockItemSerializerBrief, LocationBriefSerializer
-
 import build.tasks
 import common.models
-from common.serializers import ProjectCodeSerializer
-from common.settings import get_global_setting
-from importer.mixins import DataImportExportSerializerMixin
 import company.serializers
+import InvenTree.helpers
+import InvenTree.tasks
 import part.filters
 import part.serializers as part_serializers
+from common.serializers import ProjectCodeSerializer
+from common.settings import get_global_setting
+from generic.states.fields import InvenTreeCustomStatusSerializerMixin
+from importer.mixins import DataImportExportSerializerMixin
+from InvenTree.serializers import (
+    InvenTreeDecimalField,
+    InvenTreeModelSerializer,
+    NotesFieldMixin,
+    UserSerializer,
+)
+from stock.generators import generate_batch_code
+from stock.models import StockItem, StockLocation
+from stock.serializers import LocationBriefSerializer, StockItemSerializerBrief
+from stock.status_codes import StockStatus
 from users.serializers import OwnerSerializer
 
-from .models import Build, BuildLine, BuildItem
+from .models import Build, BuildItem, BuildLine
 from .status_codes import BuildStatus
 
 
-class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTreeModelSerializer):
+class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTreeCustomStatusSerializerMixin, InvenTreeModelSerializer):
     """Serializes a Build object."""
 
     class Meta:
@@ -69,6 +77,7 @@ class BuildSerializer(NotesFieldMixin, DataImportExportSerializerMixin, InvenTre
             'quantity',
             'status',
             'status_text',
+            'status_custom_key',
             'target_date',
             'take_from',
             'notes',
@@ -882,8 +891,8 @@ class BuildUnallocationSerializer(serializers.Serializer):
         data = self.validated_data
 
         build.deallocate_stock(
-            build_line=data['build_line'],
-            output=data['output']
+            build_line=data.get('build_line', None),
+            output=data.get('output', None),
         )
 
 

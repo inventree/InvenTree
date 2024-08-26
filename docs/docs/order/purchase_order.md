@@ -38,6 +38,8 @@ Refer to the source code for the Purchase Order status codes:
         show_source: True
         members: []
 
+Purchase Order Status supports [custom states](../concepts/custom_states.md).
+
 ### Purchase Order Currency
 
 The currency code can be specified for an individual purchase order. If not specified, the default currency specified against the [supplier](./company.md#suppliers) will be used.
