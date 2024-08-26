@@ -44,13 +44,9 @@ class MixinImplementationError(ValueError):
     Mostly raised if constant is missing
     """
 
-    pass
-
 
 class MixinNotImplementedError(NotImplementedError):
     """Error if necessary mixin function was not overwritten."""
-
-    pass
 
 
 def log_error(error, reference: str = 'general'):

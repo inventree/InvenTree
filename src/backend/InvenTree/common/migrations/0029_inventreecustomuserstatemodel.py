@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
                     models.CharField(
                         help_text="Label that will be displayed in the frontend",
                         max_length=250,
-                        verbose_name="label",
+                        verbose_name="Label",
                     ),
                 ),
                 (

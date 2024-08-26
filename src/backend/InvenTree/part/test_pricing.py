@@ -111,7 +111,6 @@ class PartPricingTests(InvenTreeTestCase):
 
     def test_invalid_rate(self):
         """Ensure that conversion behaves properly with missing rates."""
-        ...
 
     def test_simple(self):
         """Tests for hard-coded values."""

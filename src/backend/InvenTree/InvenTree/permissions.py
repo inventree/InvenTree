@@ -105,8 +105,7 @@ class IsStaffOrReadOnly(permissions.IsAdminUser):
     def has_permission(self, request, view):
         """Check if the user is a superuser."""
         return bool(
-            request.user
-            and request.user.is_staff
+            (request.user and request.user.is_staff)
             or request.method in permissions.SAFE_METHODS
         )
 

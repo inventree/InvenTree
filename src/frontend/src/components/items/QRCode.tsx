@@ -98,7 +98,7 @@ export const InvenTreeQRCode = ({
   return (
     <Stack>
       {mdl_prop.hash ? (
-        <Alert variant="outline" color="red" title={t`Custom bascode`}>
+        <Alert variant="outline" color="red" title={t`Custom barcode`}>
           <Trans>
             A custom barcode is registered for this item. The shown code is not
             that custom barcode.

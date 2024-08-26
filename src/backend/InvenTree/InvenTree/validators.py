@@ -96,7 +96,6 @@ def validate_sales_order_reference(value):
 
 def validate_tree_name(value):
     """Placeholder for legacy function used in migrations."""
-    ...
 
 
 def validate_overage(value):

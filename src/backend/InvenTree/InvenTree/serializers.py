@@ -89,7 +89,7 @@ class InvenTreeCurrencySerializer(serializers.ChoiceField):
         )
 
         if allow_blank:
-            choices = [('', '---------')] + choices
+            choices = [('', '---------'), *choices]
 
         kwargs['choices'] = choices
 
@@ -379,7 +379,7 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
 
         tag_object = super().update(instance, validated_data)
 
-        for key in to_be_tagged.keys():
+        for key in to_be_tagged:
             # re-add the tagmanager
             new_tagobject = tag_object.__class__.objects.get(id=tag_object.id)
             setattr(tag_object, key, getattr(new_tagobject, key))
@@ -389,8 +389,6 @@ class InvenTreeTaggitSerializer(TaggitSerializer):
 
 class InvenTreeTagModelSerializer(InvenTreeTaggitSerializer, InvenTreeModelSerializer):
     """Combination of InvenTreeTaggitSerializer and InvenTreeModelSerializer."""
-
-    pass
 
 
 class UserSerializer(InvenTreeModelSerializer):
@@ -426,14 +424,15 @@ class ExendedUserSerializer(UserSerializer):
     class Meta(UserSerializer.Meta):
         """Metaclass defines serializer fields."""
 
-        fields = UserSerializer.Meta.fields + [
+        fields = [
+            *UserSerializer.Meta.fields,
             'groups',
             'is_staff',
             'is_superuser',
             'is_active',
         ]
 
-        read_only_fields = UserSerializer.Meta.read_only_fields + ['groups']
+        read_only_fields = [*UserSerializer.Meta.read_only_fields, 'groups']
 
     is_staff = serializers.BooleanField(
         label=_('Staff'), help_text=_('Does this user have staff permissions')
@@ -704,7 +703,6 @@ class DataFileUploadSerializer(serializers.Serializer):
 
     def save(self):
         """Empty overwrite for save."""
-        ...
 
 
 class DataFileExtractSerializer(serializers.Serializer):
@@ -806,11 +804,10 @@ class DataFileExtractSerializer(serializers.Serializer):
             required = field.get('required', False)
 
             # Check for missing required columns
-            if required:
-                if name not in self.columns:
-                    raise serializers.ValidationError(
-                        _(f"Missing required column: '{name}'")
-                    )
+            if required and name not in self.columns:
+                raise serializers.ValidationError(
+                    _(f"Missing required column: '{name}'")
+                )
 
         for col in self.columns:
             if not col:
@@ -824,7 +821,6 @@ class DataFileExtractSerializer(serializers.Serializer):
 
     def save(self):
         """No "save" action for this serializer."""
-        pass
 
 
 class NotesFieldMixin:

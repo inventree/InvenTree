@@ -38,7 +38,7 @@ class TemplateTagTest(InvenTreeTestCase):
         manifest_file = Path(__file__).parent.joinpath('static/web/.vite/manifest.json')
         # Try with removed manifest file
         manifest_file.rename(manifest_file.with_suffix('.json.bak'))  # Rename
-        resp = resp = spa_helper.spa_bundle()
+        resp = spa_helper.spa_bundle()
         self.assertIsNone(resp)
         manifest_file.with_suffix('.json.bak').rename(
             manifest_file.with_suffix('.json')
