@@ -49,9 +49,11 @@ export function BarcodeInput({
         }
         w="100%"
       />
-      <Button color="green" onClick={onAction} mt="lg" fullWidth>
-        {actionText}
-      </Button>
+      {onAction ? (
+        <Button color="green" onClick={onAction} mt="lg" fullWidth>
+          {actionText}
+        </Button>
+      ) : null}
     </Box>
   );
 }
