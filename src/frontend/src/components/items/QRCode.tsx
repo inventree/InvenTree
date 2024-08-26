@@ -173,18 +173,22 @@ export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
           <Divider />
         </>
       ) : null}
-      <Flex align="flex-end" w="100%">
-        <ActionIcon variant="subtle" onClick={toggleIsScanning.toggle}>
-          <IconQrcode />
-        </ActionIcon>
-        <TextInput
-          label={t`Barcode`}
-          value={barcode}
-          onChange={(event) => setBarcode(event.currentTarget.value)}
-          placeholder={t`Scan barcode data here using barcode scanner`}
-          w="100%"
-        />
-      </Flex>
+      <TextInput
+        label={t`Barcode`}
+        value={barcode}
+        onChange={(event) => setBarcode(event.currentTarget.value)}
+        placeholder={t`Scan barcode data here using barcode scanner`}
+        leftSection={
+          <ActionIcon
+            variant="subtle"
+            onClick={toggleIsScanning.toggle}
+            size="input-sm"
+          >
+            <IconQrcode />
+          </ActionIcon>
+        }
+        w="100%"
+      />
       <Button color="green" onClick={() => linkBarcode()} mt="lg" fullWidth>
         <Trans>Link</Trans>
       </Button>
