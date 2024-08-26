@@ -26,10 +26,26 @@ import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
 import { apiUrl } from '../../states/ApiState';
 
+function ScanArea({ values }: Readonly<{ values: string[] }>) {
+  if (values.length == 0)
+    return (
+      <Text c={'grey'}>
+        <Trans>No scans yet!</Trans>
+      </Text>
+    );
+  return (
+    <ScrollArea style={{ height: 200 }} type="auto" offsetScrollbars>
+      {values.map((value, index) => (
+        <div key={`${index}-${value}`}>{value}</div>
+      ))}
+    </ScrollArea>
+  );
+}
+
 export function QrCodeModal({
   context,
   id
-}: ContextModalProps<{ modalBody: string }>) {
+}: Readonly<ContextModalProps<{ modalBody: string }>>) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
     key: 'camId',
@@ -176,17 +192,7 @@ export function QrCodeModal({
               <Trans>Stop scanning</Trans>
             </Button>
           </Group>
-          {values.length == 0 ? (
-            <Text c={'grey'}>
-              <Trans>No scans yet!</Trans>
-            </Text>
-          ) : (
-            <ScrollArea style={{ height: 200 }} type="auto" offsetScrollbars>
-              {values.map((value, index) => (
-                <div key={index}>{value}</div>
-              ))}
-            </ScrollArea>
-          )}
+          <ScanArea values={values} />
         </>
       )}
       <Button
