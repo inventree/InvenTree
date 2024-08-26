@@ -62,7 +62,7 @@ class RuleSetModelTest(TestCase):
         assigned_models = set()
 
         # Now check that each defined model is a valid table name
-        for key in RuleSet.get_ruleset_models().keys():
+        for key in RuleSet.get_ruleset_models():
             models = RuleSet.get_ruleset_models()[key]
 
             for m in models:

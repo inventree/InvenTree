@@ -46,10 +46,7 @@ def rename_company_image(instance, filename):
     """
     base = 'company_images'
 
-    if filename.count('.') > 0:
-        ext = filename.split('.')[-1]
-    else:
-        ext = ''
+    ext = filename.split('.')[-1] if filename.count('.') > 0 else ''
 
     fn = f'company_{instance.pk}_img'
 

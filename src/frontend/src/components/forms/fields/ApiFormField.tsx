@@ -204,8 +204,8 @@ export function ApiFormField({
   }, [value]);
 
   // Construct the individual field
-  function buildField() {
-    switch (definition.field_type) {
+  const fieldInstance = useMemo(() => {
+    switch (fieldDefinition.field_type) {
       case 'related field':
         return (
           <RelatedModelField
@@ -236,7 +236,7 @@ export function ApiFormField({
             checked={booleanValue}
             ref={ref}
             id={fieldId}
-            aria-label={`boolean-field-${field.name}`}
+            aria-label={`boolean-field-${fieldName}`}
             radius="lg"
             size="sm"
             error={error?.message}
@@ -322,16 +322,30 @@ export function ApiFormField({
           </Alert>
         );
     }
-  }
+  }, [
+    booleanValue,
+    control,
+    controller,
+    field,
+    fieldId,
+    fieldName,
+    fieldDefinition,
+    numericalValue,
+    onChange,
+    reducedDefinition,
+    ref,
+    setFields,
+    value
+  ]);
 
-  if (definition.hidden) {
+  if (fieldDefinition.hidden) {
     return null;
   }
 
   return (
     <Stack>
       {definition.preFieldContent}
-      {buildField()}
+      {fieldInstance}
       {definition.postFieldContent}
     </Stack>
   );

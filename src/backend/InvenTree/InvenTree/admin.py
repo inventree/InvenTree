@@ -104,14 +104,16 @@ class InvenTreeResource(ModelResource):
             attribute = getattr(field, 'attribute', field_name)
 
             # Check if the associated database field is a non-nullable string
-            if db_field := db_fields.get(attribute):
-                if (
+            if (
+                (db_field := db_fields.get(attribute))
+                and (
                     isinstance(db_field, CharField)
                     and db_field.blank
                     and not db_field.null
-                ):
-                    if column not in self.CONVERT_NULL_FIELDS:
-                        self.CONVERT_NULL_FIELDS.append(column)
+                )
+                and column not in self.CONVERT_NULL_FIELDS
+            ):
+                self.CONVERT_NULL_FIELDS.append(column)
 
         return super().before_import(dataset, using_transactions, dry_run, **kwargs)
 

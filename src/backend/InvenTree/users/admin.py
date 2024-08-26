@@ -32,10 +32,7 @@ class ApiTokenAdmin(admin.ModelAdmin):
 
     def get_fields(self, request, obj=None):
         """Return list of fields to display."""
-        if obj:
-            fields = ['token']
-        else:
-            fields = ['key']
+        fields = ['token'] if obj else ['key']
 
         fields += [
             'user',
@@ -66,7 +63,7 @@ class RuleSetInline(admin.TabularInline):
     can_delete = False
     verbose_name = 'Ruleset'
     verbose_plural_name = 'Rulesets'
-    fields = ['name'] + list(RuleSet.RULE_OPTIONS)
+    fields = ['name', *list(RuleSet.RULE_OPTIONS)]
     readonly_fields = ['name']
     max_num = len(RuleSet.RULESET_CHOICES)
     min_num = 1
@@ -292,8 +289,6 @@ class InvenTreeUserAdmin(UserAdmin):
 @admin.register(Owner)
 class OwnerAdmin(admin.ModelAdmin):
     """Custom admin interface for the Owner model."""
-
-    pass
 
 
 admin.site.unregister(Group)

@@ -71,7 +71,7 @@ def check_prohibited_tags(data):
 for filename in pathlib.Path(js_i18n_dir).rglob('*.js'):
     print(f"Checking file 'translated/{os.path.basename(filename)}':")
 
-    with open(filename, 'r') as js_file:
+    with open(filename, encoding='utf-8') as js_file:
         data = js_file.readlines()
 
     errors += check_invalid_tag(data)
@@ -81,7 +81,7 @@ for filename in pathlib.Path(js_dynamic_dir).rglob('*.js'):
     print(f"Checking file 'dynamic/{os.path.basename(filename)}':")
 
     # Check that the 'dynamic' files do not contains any translated strings
-    with open(filename, 'r') as js_file:
+    with open(filename, encoding='utf-8') as js_file:
         data = js_file.readlines()
 
     invalid_tags = ['blocktrans', 'blocktranslate', 'trans', 'translate']

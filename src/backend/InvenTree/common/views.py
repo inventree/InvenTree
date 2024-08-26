@@ -312,7 +312,6 @@ class FileManagementFormView(MultiStepFormView):
         This method is very specific to the type of data found in the file,
         therefore overwrite it in the subclass.
         """
-        pass
 
     def get_clean_items(self):
         """Returns dict with all cleaned values."""
@@ -363,10 +362,7 @@ class FileManagementFormView(MultiStepFormView):
         duplicates = []
 
         for col in self.column_names:
-            if col in self.column_selections:
-                guess = self.column_selections[col]
-            else:
-                guess = None
+            guess = self.column_selections.get(col, None)
 
             if guess:
                 n = list(self.column_selections.values()).count(

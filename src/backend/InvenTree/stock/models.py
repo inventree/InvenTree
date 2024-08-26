@@ -47,7 +47,7 @@ from InvenTree.status_codes import (
 )
 from part import models as PartModels
 from plugin.events import trigger_event
-from stock import models as StockModels
+from stock import models as StockModels  # noqa: PLW0406
 from stock.generators import generate_batch_code
 from users.models import Owner
 
@@ -482,8 +482,7 @@ class StockItem(
 
                 serial_int = abs(serial_int)
 
-                if serial_int > clip:
-                    serial_int = clip
+                serial_int = min(serial_int, clip)
 
                 self.serial_int = serial_int
                 return
@@ -589,7 +588,7 @@ class StockItem(
             except (ValueError, StockItem.DoesNotExist):
                 pass
 
-        super(StockItem, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
         # If user information is provided, and no existing note exists, create one!
         if user and self.tracking_info.count() == 0:
@@ -624,7 +623,7 @@ class StockItem(
         If the StockItem is serialized, the same serial number.
         cannot exist for the same part (or part tree).
         """
-        super(StockItem, self).validate_unique(exclude)
+        super().validate_unique(exclude)
 
         # If the serial number is set, make sure it is not a duplicate
         if self.serial:
@@ -1189,10 +1188,7 @@ class StockItem(
         if self.allocations.count() > 0:
             return True
 
-        if self.sales_order_allocations.count() > 0:
-            return True
-
-        return False
+        return self.sales_order_allocations.count() > 0
 
     def build_allocation_count(self):
         """Return the total quantity allocated to builds."""
@@ -1266,10 +1262,7 @@ class StockItem(
         if self.installed_item_count() > 0:
             return False
 
-        if self.sales_order is not None:
-            return False
-
-        return True
+        return not self.sales_order is not None
 
     def get_installed_items(self, cascade: bool = False) -> set[StockItem]:
         """Return all stock items which are *installed* in this one!
@@ -1428,10 +1421,7 @@ class StockItem(
         if self.belongs_to is not None:
             return False
 
-        if self.sales_order is not None:
-            return False
-
-        return True
+        return not self.sales_order is not None
 
     @property
     def tracking_info_count(self):
@@ -1447,7 +1437,7 @@ class StockItem(
         self,
         entry_type: int,
         user: User,
-        deltas: dict = None,
+        deltas: dict | None = None,
         notes: str = '',
         **kwargs,
     ):
@@ -2027,8 +2017,7 @@ class StockItem(
         except (InvalidOperation, ValueError):
             return
 
-        if quantity < 0:
-            quantity = 0
+        quantity = max(quantity, 0)
 
         self.quantity = quantity
 
@@ -2211,9 +2200,9 @@ class StockItem(
             for item in installed_items:
                 item_results = item.testResultMap()
 
-                for key in item_results.keys():
+                for key in item_results:
                     # Results from sub items should not override master ones
-                    if key not in result_map.keys():
+                    if key not in result_map:
                         result_map[key] = item_results[key]
 
         return result_map
@@ -2360,7 +2349,7 @@ class StockItemTracking(InvenTree.models.InvenTreeModel):
 
     def label(self):
         """Return label."""
-        if self.tracking_type in StockHistoryCode.keys():
+        if self.tracking_type in StockHistoryCode.keys():  # noqa: SIM118
             return StockHistoryCode.label(self.tracking_type)
 
         return getattr(self, 'title', '')
@@ -2590,7 +2579,5 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         verbose_name=_('Finished'),
         help_text=_('The timestamp of the test finish'),
     )
-
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, blank=True, null=True)
 
     date = models.DateTimeField(auto_now_add=True, editable=False)
