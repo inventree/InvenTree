@@ -714,13 +714,14 @@ export function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
 
   return (
     <Stack gap="xs">
-      <Group gap="xs">
+      <Group gap="xs" preventGrowOverflow>
         <Select
           value={cameraValue}
           onChange={setCameraValue}
           data={cameras.map((device) => {
             return { value: device.id, label: device.label };
           })}
+          maw={200}
           size="sm"
         />
         {scanningEnabled ? (
