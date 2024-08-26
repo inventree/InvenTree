@@ -3,23 +3,23 @@ import { ActionIcon, Box, Button, Divider, TextInput } from '@mantine/core';
 import { IconQrcode } from '@tabler/icons-react';
 import React, { useState } from 'react';
 
-import { InputImageBarcode, ScanItem } from '../../pages/Index/Scan';
+import { InputImageBarcode } from '../../pages/Index/Scan';
 
 type BarcodeInputProps = {
-  value: string;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  onAction: () => void;
-  onScan: (data: ScanItem[]) => void;
+  onScan: (decodedText: string) => void;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onAction?: () => void;
   placeholder?: string;
   label?: string;
   actionText?: string;
 };
 
 export function BarcodeInput({
+  onScan,
   value,
   onChange,
-  onAction: onAction,
-  onScan,
+  onAction,
   placeholder = t`Scan barcode data here using barcode scanner`,
   label = t`Barcode`,
   actionText = t`Scan`

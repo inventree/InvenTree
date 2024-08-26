@@ -155,8 +155,8 @@ export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
         location.reload();
       });
   }
-  const actionSubmit = (data: ScanItem[]) => {
-    linkBarcode(data[0].data);
+  const actionSubmit = (decodedText: string) => {
+    linkBarcode(decodedText);
   };
 
   const handleLinkBarcode = () => {

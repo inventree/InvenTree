@@ -222,7 +222,21 @@ export default function Scan() {
       case InputMethod.Manual:
         return <InputManual action={addItems} />;
       case InputMethod.ImageBarcode:
-        return <InputImageBarcode action={addItems} />;
+        return (
+          <InputImageBarcode
+            action={(decodedText: string) => {
+              addItems([
+                {
+                  id: randomId(),
+                  ref: decodedText,
+                  data: decodedText,
+                  timestamp: new Date(),
+                  source: InputMethod.ImageBarcode
+                }
+              ]);
+            }}
+          />
+        );
       default:
         return <Text>No input selected</Text>;
     }
@@ -493,7 +507,8 @@ export interface ScanInputInterface {
   action: (items: ScanItem[]) => void;
 }
 
-interface BarcodeInputProps extends ScanInputInterface {
+interface BarcodeInputProps {
+  action: (decodedText: string) => void;
   notScanningPlaceholder?: string;
 }
 
@@ -608,15 +623,7 @@ export function InputImageBarcode({
     lastValue = decodedText;
 
     // submit value upstream
-    action([
-      {
-        id: randomId(),
-        ref: decodedText,
-        data: decodedText,
-        timestamp: new Date(),
-        source: InputMethod.ImageBarcode
-      }
-    ]);
+    action(decodedText);
 
     qrCodeScanner?.resume();
   }
