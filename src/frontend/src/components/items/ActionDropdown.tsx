@@ -1,7 +1,6 @@
 import { t } from '@lingui/macro';
 import {
-  ActionIcon,
-  Group,
+  Button,
   Indicator,
   IndicatorProps,
   Menu,
@@ -9,8 +8,8 @@ import {
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import {
+  IconChevronDown,
   IconCopy,
-  IconDotsVertical,
   IconEdit,
   IconLink,
   IconQrcode,
@@ -71,20 +70,24 @@ export function ActionDropdown({
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
           <Tooltip label={tooltip} hidden={!tooltip}>
-            <Group gap={0}>
-              <ActionIcon
-                size="lg"
-                radius="sm"
-                variant="transparent"
-                disabled={disabled}
-                aria-label={menuName}
-              >
-                {icon}
-              </ActionIcon>
-              {noindicator || disabled ? null : (
-                <IconDotsVertical stroke={1.5} />
-              )}
-            </Group>
+            <Button
+              radius="sm"
+              variant="outline"
+              disabled={disabled}
+              aria-label={menuName}
+              p="0"
+              size="sm"
+              rightSection={
+                noindicator || disabled ? null : (
+                  <IconChevronDown stroke={1.5} />
+                )
+              }
+              styles={{
+                section: { margin: 0 }
+              }}
+            >
+              {icon}
+            </Button>
           </Tooltip>
         </Menu.Target>
       </Indicator>
