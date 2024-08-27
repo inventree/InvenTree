@@ -69,7 +69,7 @@ export function ActionDropdown({
     <Menu position="bottom-end" key={menuName}>
       <Indicator disabled={!indicatorProps} {...indicatorProps?.indicator}>
         <Menu.Target>
-          <Tooltip label={tooltip} hidden={!tooltip}>
+          <Tooltip label={tooltip} hidden={!tooltip} position="bottom">
             <Button
               radius="sm"
               variant={noindicator ? 'transparent' : 'subtle'}
