@@ -3260,7 +3260,7 @@ clsx@^1.1.1:
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
   integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
 
-clsx@^2.0.0, clsx@^2.1.0, clsx@^2.1.1:
+clsx@^2.0.0, clsx@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/clsx/-/clsx-2.1.1.tgz#eed397c9fd8bd882bfb18deab7102049a2f32999"
   integrity sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==
@@ -4532,6 +4532,11 @@ make-dir@^4.0.0:
   integrity sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==
   dependencies:
     semver "^7.5.3"
+
+mantine-contextmenu@^7.11.3:
+  version "7.11.3"
+  resolved "https://registry.yarnpkg.com/mantine-contextmenu/-/mantine-contextmenu-7.11.3.tgz#ce2243dd5069aa3acc6aae4fb8e169e90b3af5bf"
+  integrity sha512-E2YfK5AggpxBCAMRn6T/XDeq4fArJqNWmT78azrJSvB1ox/8v+oBznOxh4A2bgHJabp908M5puw+pnjGZ/AC5A==
 
 mantine-datatable@^7.11.3:
   version "7.11.3"
