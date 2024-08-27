@@ -11,6 +11,7 @@ import {
   Stack,
   Text
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
@@ -18,7 +19,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { api } from '../../App';
 import { ApiEndpoints } from '../../enums/ApiEndpoints';
-import { ScanItem } from '../../pages/Index/Scan';
 import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
@@ -143,6 +143,7 @@ export const InvenTreeQRCode = ({
 
 export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   const [barcode, setBarcode] = useState('');
+  const [isScanning, toggleIsScanning] = useDisclosure(false);
 
   function linkBarcode(value?: string) {
     api
