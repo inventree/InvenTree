@@ -60,7 +60,7 @@ jobs:
           create_pull_request: true
           pull_request_title: 'New Crowdin updates'
           pull_request_body: 'New Crowdin translations by [Crowdin GH Action](https://github.com/crowdin/github-action)'
-          pull_request_base_branch_name: 'l10'
+          pull_request_base_branch_name: 'master'
           pull_request_labels: 'translations'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
