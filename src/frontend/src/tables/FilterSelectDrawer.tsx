@@ -65,6 +65,9 @@ function FilterAddGroup({
   availableFilters: TableFilter[];
 }) {
   const filterOptions: TableFilterChoice[] = useMemo(() => {
+    if (!tableState?.activeFilters || tableState.activeFilters.length == 0) {
+      return [];
+    }
     let activeFilterNames =
       tableState.activeFilters?.map((flt) => flt.name) ?? [];
 
