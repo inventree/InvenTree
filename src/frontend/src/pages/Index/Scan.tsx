@@ -55,7 +55,7 @@ import { notYetImplemented } from '../../functions/notifications';
 import { IS_DEV_OR_DEMO } from '../../main';
 import { apiUrl } from '../../states/ApiState';
 
-interface ScanItem {
+export interface ScanItem {
   id: string;
   ref: string;
   data: any;
@@ -545,7 +545,7 @@ function InputManual({ action }: Readonly<ScanInputInterface>) {
 }
 
 /* Input that uses QR code detection from images */
-function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
+export function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
   const [qrCodeScanner, setQrCodeScanner] = useState<Html5Qrcode | null>(null);
   const [camId, setCamId] = useLocalStorage<CameraDevice | null>({
     key: 'camId',
@@ -714,17 +714,19 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
 
   return (
     <Stack gap="xs">
-      <Group gap="xs">
+      <Group gap="xs" preventGrowOverflow>
         <Select
           value={cameraValue}
           onChange={setCameraValue}
           data={cameras.map((device) => {
             return { value: device.id, label: device.label };
           })}
+          maw={200}
           size="sm"
         />
         {scanningEnabled ? (
           <ActionIcon
+            size="input-sm"
             onClick={btnStopScanning}
             title={t`Stop scanning`}
             variant="default"
@@ -733,6 +735,7 @@ function InputImageBarcode({ action }: Readonly<ScanInputInterface>) {
           </ActionIcon>
         ) : (
           <ActionIcon
+            size="input-sm"
             onClick={btnStartScanning}
             title={t`Start scanning`}
             disabled={!camId}
