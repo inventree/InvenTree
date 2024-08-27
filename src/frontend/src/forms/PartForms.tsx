@@ -9,12 +9,14 @@ import { useGlobalSettingsState } from '../states/SettingsState';
  * Construct a set of fields for creating / editing a Part instance
  */
 export function usePartFields({
-  create = false
+  create = false,
+  part_testable
 }: {
   create?: boolean;
+  part_testable?: boolean;
 }): ApiFormFieldSet {
   const settings = useGlobalSettingsState();
-
+  const [testable, setTestable] = useState(part_testable);
   return useMemo(() => {
     const fields: ApiFormFieldSet = {
       category: {
@@ -55,7 +57,14 @@ export function usePartFields({
       component: {},
       assembly: {},
       is_template: {},
-      testable: {},
+      testable: {
+        onValueChange: (value) => {
+          setTestable(value);
+        }
+      },
+      complete_build_after_all_required_tests_passed: {
+        hidden: !testable
+      },
       trackable: {},
       purchaseable: {},
       salable: {},
@@ -112,7 +121,7 @@ export function usePartFields({
     }
 
     return fields;
-  }, [create, settings]);
+  }, [create, settings, testable]);
 }
 
 /**

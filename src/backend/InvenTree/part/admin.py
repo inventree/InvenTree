@@ -113,6 +113,11 @@ class PartResource(InvenTreeResource):
         column_name=_('Trackable'),
         widget=widgets.BooleanWidget(),
     )
+    complate_build_after_all_required_tests_passed = Field(
+        attribute='complate_build_after_all_required_tests_passed',
+        column_name=_('Complete build outputs when all tests passed'),
+        widget=widgets.BooleanWidget(),
+    )
     virtual = Field(
         attribute='virtual', column_name=_('Virtual'), widget=widgets.BooleanWidget()
     )

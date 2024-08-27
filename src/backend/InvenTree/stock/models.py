@@ -2423,6 +2423,23 @@ class StockItemTestResult(InvenTree.models.InvenTreeMetadataModel):
         super().clean()
         super().validate_unique()
         super().save(*args, **kwargs)
+        self.handle_build_completion(**kwargs)
+
+    def handle_build_completion(self, **kwargs):
+        """Handle the auto complete build item if all tests passed feature."""
+        if (
+            not self.result
+            or not self.stock_item.part.complete_build_after_all_required_tests_passed
+            or not self.stock_item.build
+        ):
+            return
+
+        if self.stock_item.passedAllRequiredTests():
+            user = kwargs.pop('user', None)
+
+            if user is None:
+                user = getattr(self, '_user', None)
+            self.stock_item.build.complete_build_output(self.stock_item, user)
 
     def clean(self):
         """Make sure all values - including for templates - are provided."""

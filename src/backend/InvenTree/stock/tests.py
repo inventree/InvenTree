@@ -1312,6 +1312,87 @@ class TestResultTest(StockTestBase):
         self.assertEqual(len(tests), 3)
         self.assertNotIn('somenewtest', tests)
 
+    def test_auto_complete_build_on_all_passed(self):
+        """Test auto completion of the build.
+
+        Test the autocompletion of the build item in the case if all required tests
+        are passed and this feature is enabled for a part.
+
+        """
+        part = Part.objects.create(
+            name='Part which autocomplete build outputs when all tests passed',
+            testable=True,
+            trackable=True,
+            complete_build_after_all_required_tests_passed=True,
+        )
+
+        build = Build.objects.create(part=part)
+        build.create_build_output(1)
+        build_item = build.get_build_outputs()[0]
+
+        # Create 3 tests: 2 required, 1 non-required
+        test_template_reqd1 = PartTestTemplate.objects.create(
+            test_name='FVT1', required=True, part=part
+        )
+
+        test_template_reqd2 = PartTestTemplate.objects.create(
+            test_name='FVT2', required=True, part=part
+        )
+
+        test_template_non_reqd = PartTestTemplate.objects.create(
+            test_name='Polishing', required=False, part=part
+        )
+
+        # Make two failed tests on the required tests
+        StockItemTestResult.objects.create(
+            stock_item=build_item, result=False, template=test_template_reqd1
+        )
+
+        StockItemTestResult.objects.create(
+            stock_item=build_item, result=False, template=test_template_reqd2
+        )
+
+        # Make a pass on the non required test
+        StockItemTestResult.objects.create(
+            stock_item=build_item, result=True, template=test_template_non_reqd
+        )
+
+        build_item = build.get_build_outputs()[0]
+        # At this point it shall not be marked as completed
+        self.assertTrue(build_item.is_building)
+
+        # Make two passed tests on the two required tests
+        StockItemTestResult.objects.create(
+            stock_item=build_item, result=True, template=test_template_reqd1
+        )
+
+        StockItemTestResult.objects.create(
+            stock_item=build_item, result=True, template=test_template_reqd2
+        )
+
+        # The build output shall be complete now
+        self.assertFalse(build_item.is_building)
+
+        # Disable the auto complete feature, create a new build output
+        part.complete_build_after_all_required_tests_passed = False
+        part.save()
+
+        build.create_build_output(1)
+        build_item = build.get_build_outputs()[1]
+
+        # Make two passed tests on the required tests
+        StockItemTestResult.objects.create(
+            stock_item=build_item, result=True, template=test_template_reqd1
+        )
+
+        StockItemTestResult.objects.create(
+            stock_item=build_item, result=True, template=test_template_reqd2
+        )
+
+        # At this point it shall not be marked as completed
+        # as the autocomplete feature is disabled
+        self.assertTrue(build_item.is_building)
+
 
 class StockLocationTest(InvenTreeTestCase):
     """Tests for the StockLocation model."""

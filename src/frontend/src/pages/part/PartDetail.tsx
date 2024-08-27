@@ -332,6 +332,12 @@ export default function PartDetail() {
       },
       {
         type: 'boolean',
+        name: 'complete_build_after_all_required_tests_passed',
+        label: t`Complete build output after tests are passed`,
+        icon: 'progress'
+      },
+      {
+        type: 'boolean',
         name: 'trackable',
         label: t`Trackable Part`
       },
@@ -901,7 +907,10 @@ export default function PartDetail() {
     ];
   }, [part, instanceQuery]);
 
-  const partFields = usePartFields({ create: false });
+  const partFields = usePartFields({
+    create: false,
+    part_testable: part.testable
+  });
 
   const editPart = useEditApiFormModal({
     url: ApiEndpoints.part_list,
@@ -911,7 +920,10 @@ export default function PartDetail() {
     onFormSuccess: refreshInstance
   });
 
-  const createPartFields = usePartFields({ create: true });
+  const createPartFields = usePartFields({
+    create: true,
+    part_testable: part.testable
+  });
 
   const duplicatePartFields: ApiFormFieldSet = useMemo(() => {
     return {

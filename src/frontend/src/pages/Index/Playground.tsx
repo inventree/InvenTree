@@ -37,8 +37,11 @@ function ApiFormsPlayground() {
     fields: fields
   });
 
-  const createPartFields = usePartFields({ create: true });
-  const editPartFields = usePartFields({ create: false });
+  const createPartFields = usePartFields({
+    create: true,
+    part_testable: false
+  });
+  const editPartFields = usePartFields({ create: false, part_testable: false });
 
   const newPart = useCreateApiFormModal({
     url: ApiEndpoints.part_list,

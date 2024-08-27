@@ -1185,6 +1185,14 @@ class Part(
         help_text=_('Can this part have test results recorded against it?'),
     )
 
+    complete_build_after_all_required_tests_passed = models.BooleanField(
+        default=False,
+        verbose_name=_('Complete build output if all tests passed'),
+        help_text=_(
+            'Automatically set the build outputs completed if all required tests are passed'
+        ),
+    )
+
     purchaseable = models.BooleanField(
         default=part_settings.part_purchaseable_default,
         verbose_name=_('Purchaseable'),

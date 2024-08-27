@@ -660,6 +660,7 @@ class PartSerializer(
             'component',
             'creation_date',
             'creation_user',
+            'complete_build_after_all_required_tests_passed',
             'default_expiry',
             'default_location',
             'default_location_detail',
