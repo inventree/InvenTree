@@ -1132,7 +1132,7 @@ pillow==10.4.0 \
     #   qrcode
     #   weasyprint
 pint==0.24.3 \
-    --hash=sha256:3e98bdf01f4dcf840cc0207c0b6f7510d4e0c6288efc1bf470626e875c831172 \
+    --hash=sha256:d98667e46fd03a1b94694fbfa104ec30858684d8ab26952e2a348b48059089bb \
     --hash=sha256:998b695e84a34d11702da4a8b9457a39bb5c7ab5ec68db90e948e30878e421f1
     # via -r src/backend/requirements.in
 pip-licenses==5.0.0 \
