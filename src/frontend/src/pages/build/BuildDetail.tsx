@@ -535,10 +535,8 @@ export default function BuildDetail() {
             editAction={editBuild.open}
             editEnabled={user.hasChangePermission(ModelType.part)}
             imageUrl={build.part_detail?.image ?? build.part_detail?.thumbnail}
-            breadcrumbs={[
-              { name: t`Build Orders`, url: '/build' },
-              { name: build.reference, url: `/build/${build.pk}` }
-            ]}
+            breadcrumbs={[{ name: t`Build Orders`, url: '/build' }]}
+            last_crumb={[{ name: build.reference, url: `/build/${build.pk}` }]}
             actions={buildActions}
           />
           <PanelGroup pageKey="build" panels={buildPanels} />

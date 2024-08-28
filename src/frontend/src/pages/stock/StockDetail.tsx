@@ -612,6 +612,12 @@ export default function StockDetail() {
           editEnabled={user.hasChangePermission(ModelType.stockitem)}
           badges={stockBadges}
           breadcrumbs={breadcrumbs}
+          last_crumb={[
+            {
+              name: stockitem.name,
+              url: `/stock/item/${stockitem.pk}/`
+            }
+          ]}
           breadcrumbAction={() => {
             setTreeOpen(true);
           }}
