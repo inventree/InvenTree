@@ -587,6 +587,7 @@ export default function PartDetail() {
                     modelField="build"
                     modelTarget={ModelType.build}
                     showBuildInfo
+                    allowEdit
                   />
                 </Accordion.Panel>
               </Accordion.Item>
@@ -622,7 +623,7 @@ export default function PartDetail() {
         name: 'builds',
         label: t`Build Orders`,
         icon: <IconTools />,
-        hidden: !part.assembly,
+        hidden: !part.assembly || !part.active,
         content: part?.pk ? <BuildOrderTable partId={part.pk} /> : <Skeleton />
       },
       {

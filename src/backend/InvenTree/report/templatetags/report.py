@@ -190,12 +190,12 @@ def uploaded_image(
     elif width is not None:
         # Resize the image, width only
         wpercent = width / float(img.size[0])
-        hsize = int((float(img.size[1]) * float(wpercent)))
+        hsize = int(float(img.size[1]) * float(wpercent))
         img = img.resize((width, hsize))
     elif height is not None:
         # Resize the image, height only
         hpercent = height / float(img.size[1])
-        wsize = int((float(img.size[0]) * float(hpercent)))
+        wsize = int(float(img.size[0]) * float(hpercent))
         img = img.resize((wsize, height))
 
     # Optionally rotate the image
@@ -444,35 +444,35 @@ def format_number(number, **kwargs):
 
 
 @register.simple_tag
-def format_datetime(datetime, timezone=None, format=None):
+def format_datetime(datetime, timezone=None, fmt=None):
     """Format a datetime object for display.
 
     Arguments:
         datetime: The datetime object to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        format: The format string to use (defaults to ISO formatting)
+        fmt: The format string to use (defaults to ISO formatting)
     """
     datetime = InvenTree.helpers.to_local_time(datetime, timezone)
 
-    if format:
-        return datetime.strftime(format)
+    if fmt:
+        return datetime.strftime(fmt)
     else:
         return datetime.isoformat()
 
 
 @register.simple_tag
-def format_date(date, timezone=None, format=None):
+def format_date(date, timezone=None, fmt=None):
     """Format a date object for display.
 
     Arguments:
         date: The date to format
         timezone: The timezone to use for the date (defaults to the server timezone)
-        format: The format string to use (defaults to ISO formatting)
+        fmt: The format string to use (defaults to ISO formatting)
     """
     date = InvenTree.helpers.to_local_time(date, timezone).date()
 
-    if format:
-        return date.strftime(format)
+    if fmt:
+        return date.strftime(fmt)
     else:
         return date.isoformat()
 

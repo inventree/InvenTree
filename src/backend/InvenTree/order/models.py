@@ -1048,19 +1048,11 @@ class SalesOrder(TotalPriceMixin, Order):
 
     def is_fully_allocated(self):
         """Return True if all line items are fully allocated."""
-        for line in self.lines.all():
-            if not line.is_fully_allocated():
-                return False
-
-        return True
+        return all(line.is_fully_allocated() for line in self.lines.all())
 
     def is_overallocated(self):
         """Return true if any lines in the order are over-allocated."""
-        for line in self.lines.all():
-            if line.is_overallocated():
-                return True
-
-        return False
+        return any(line.is_overallocated() for line in self.lines.all())
 
     def is_completed(self):
         """Check if this order is "shipped" (all line items delivered)."""

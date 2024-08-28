@@ -9,9 +9,9 @@ import {
   Select,
   Skeleton,
   Stack,
-  Text,
-  TextInput
+  Text
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { modals } from '@mantine/modals';
 import { useQuery } from '@tanstack/react-query';
 import QR from 'qrcode';
@@ -23,6 +23,7 @@ import { apiUrl } from '../../states/ApiState';
 import { useGlobalSettingsState } from '../../states/SettingsState';
 import { CopyButton } from '../buttons/CopyButton';
 import { QrCodeType } from './ActionDropdown';
+import { BarcodeInput } from './BarcodeInput';
 
 type QRCodeProps = {
   ecl?: 'L' | 'M' | 'Q' | 'H';
@@ -97,7 +98,7 @@ export const InvenTreeQRCode = ({
   return (
     <Stack>
       {mdl_prop.hash ? (
-        <Alert variant="outline" color="red" title={t`Custom bascode`}>
+        <Alert variant="outline" color="red" title={t`Custom barcode`}>
           <Trans>
             A custom barcode is registered for this item. The shown code is not
             that custom barcode.
@@ -142,30 +143,35 @@ export const InvenTreeQRCode = ({
 
 export const QRCodeLink = ({ mdl_prop }: { mdl_prop: QrCodeType }) => {
   const [barcode, setBarcode] = useState('');
+  const [isScanning, toggleIsScanning] = useDisclosure(false);
 
-  function linkBarcode() {
+  function linkBarcode(value?: string) {
     api
       .post(apiUrl(ApiEndpoints.barcode_link), {
         [mdl_prop.model]: mdl_prop.pk,
-        barcode: barcode
+        barcode: value || barcode
       })
       .then((response) => {
         modals.closeAll();
         location.reload();
       });
   }
+  const actionSubmit = (decodedText: string) => {
+    linkBarcode(decodedText);
+  };
+
+  const handleLinkBarcode = () => {
+    linkBarcode(barcode);
+  };
+
   return (
-    <Box>
-      <TextInput
-        label={t`Barcode`}
-        value={barcode}
-        onChange={(event) => setBarcode(event.currentTarget.value)}
-        placeholder={t`Scan barcode data here using barcode scanner`}
-      />
-      <Button color="green" onClick={linkBarcode} mt="lg" fullWidth>
-        <Trans>Link</Trans>
-      </Button>
-    </Box>
+    <BarcodeInput
+      value={barcode}
+      onChange={(event) => setBarcode(event.currentTarget.value)}
+      onScan={actionSubmit}
+      onAction={handleLinkBarcode}
+      actionText={t`Link`}
+    />
   );
 };
 

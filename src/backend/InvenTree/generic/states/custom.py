@@ -33,7 +33,8 @@ def state_color_mappings():
 
 def state_reference_mappings():
     """Return a list of custom user state references."""
-    return [(a.__name__, a.__name__) for a in get_custom_classes(include_custom=False)]
+    classes = get_custom_classes(include_custom=False)
+    return [(a.__name__, a.__name__) for a in sorted(classes, key=lambda x: x.__name__)]
 
 
 def get_logical_value(value, model: str):

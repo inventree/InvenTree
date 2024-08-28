@@ -63,7 +63,7 @@ class PluginFilter(rest_filters.FilterSet):
             match = True
 
             for mixin in mixins:
-                if mixin not in result.mixins().keys():
+                if mixin not in result.mixins():
                     match = False
                     break
 

@@ -166,7 +166,8 @@ class AbstractOrderSerializer(DataImportExportSerializerMixin, serializers.Seria
             'notes',
             'barcode_hash',
             'overdue',
-        ] + extra_fields
+            *extra_fields,
+        ]
 
 
 class AbstractLineItemSerializer:
@@ -433,7 +434,7 @@ class PurchaseOrderLineItemSerializer(
 
     def skip_create_fields(self):
         """Return a list of fields to skip when creating a new object."""
-        return ['auto_pricing', 'merge_items'] + super().skip_create_fields()
+        return ['auto_pricing', 'merge_items', *super().skip_create_fields()]
 
     @staticmethod
     def annotate_queryset(queryset):
@@ -740,13 +741,12 @@ class PurchaseOrderLineItemReceiveSerializer(serializers.Serializer):
         base_quantity = line_item.part.base_quantity(quantity)
 
         # Does the quantity need to be "integer" (for trackable parts?)
-        if base_part.trackable:
-            if Decimal(base_quantity) != int(base_quantity):
-                raise ValidationError({
-                    'quantity': _(
-                        'An integer quantity must be provided for trackable parts'
-                    )
-                })
+        if base_part.trackable and Decimal(base_quantity) != int(base_quantity):
+            raise ValidationError({
+                'quantity': _(
+                    'An integer quantity must be provided for trackable parts'
+                )
+            })
 
         # If serial numbers are provided
         if serial_numbers:

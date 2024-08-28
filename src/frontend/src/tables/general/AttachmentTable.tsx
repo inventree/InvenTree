@@ -107,6 +107,11 @@ export function AttachmentTable({
 
   const validPk = useMemo(() => model_id > 0, [model_id]);
 
+  const canDelete = useMemo(
+    () => user.hasDeletePermission(model_type),
+    [user, model_type]
+  );
+
   const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const allowDragAndDrop: boolean = useMemo(() => {
@@ -272,7 +277,7 @@ export function AttachmentTable({
           }
         }),
         RowDeleteAction({
-          hidden: !user.hasDeletePermission(model_type),
+          hidden: !canDelete,
           onClick: () => {
             setSelectedAttachment(record.pk);
             deleteAttachment.open();
@@ -297,7 +302,8 @@ export function AttachmentTable({
             columns={tableColumns}
             props={{
               noRecordsText: t`No attachments found`,
-              enableSelection: true,
+              enableSelection: canDelete,
+              enableBulkDelete: canDelete,
               tableActions: tableActions,
               tableFilters: tableFilters,
               rowActions: rowActions,
