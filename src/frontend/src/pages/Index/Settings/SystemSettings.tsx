@@ -161,8 +161,7 @@ export default function SystemSettings() {
               'REPORT_ENABLE',
               'REPORT_DEFAULT_PAGE_SIZE',
               'REPORT_DEBUG_MODE',
-              'REPORT_LOG_ERRORS',
-              'REPORT_ENABLE_TEST_REPORT'
+              'REPORT_LOG_ERRORS'
             ]}
           />
         )

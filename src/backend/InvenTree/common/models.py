@@ -1704,12 +1704,6 @@ class InvenTreeSetting(BaseInvenTreeSetting):
             'default': 'A4',
             'choices': report.helpers.report_page_size_options,
         },
-        'REPORT_ENABLE_TEST_REPORT': {
-            'name': _('Enable Test Reports'),
-            'description': _('Enable generation of test reports'),
-            'default': True,
-            'validator': bool,
-        },
         'SERIAL_NUMBER_GLOBALLY_UNIQUE': {
             'name': _('Globally Unique Serials'),
             'description': _('Serial numbers for stock items must be globally unique'),
