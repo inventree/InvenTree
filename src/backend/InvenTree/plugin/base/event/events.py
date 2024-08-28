@@ -51,6 +51,9 @@ def register_event(event, *args, **kwargs):
     """
     logger.debug("Registering triggered event: '%s'", event)
 
+    # Check if the plugin registry requires reloading
+    registry.check_reload()
+
     # Determine if there are any plugins which are interested in responding
     if settings.PLUGIN_TESTING or get_global_setting('ENABLE_PLUGINS_EVENTS'):
         # Check if the plugin registry needs to be reloaded
