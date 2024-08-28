@@ -284,7 +284,10 @@ export default function ManufacturerPartDetail() {
             last_crumb={[
               {
                 name: manufacturerPart.MPN,
-                url: `/purchasing/manufacturer-part/${manufacturerPart.pk}/`
+                url: getDetailUrl(
+                  ModelType.manufacturerpart,
+                  manufacturerPart.pk
+                )
               }
             ]}
             actions={manufacturerPartActions}
