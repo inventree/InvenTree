@@ -580,24 +580,6 @@ class TestReportTest(PrintTestMixins, ReportTest):
             Attachment.objects.filter(model_id=item.pk, model_type='stockitem').exists()
         )
 
-        return
-        # TODO @matmair - Re-add this test after https://github.com/inventree/InvenTree/pull/7074/files#r1600694356 is resolved
-        # Change the setting, now the test report should be attached automatically
-        InvenTreeSetting.set_setting('REPORT_ATTACH_TEST_REPORT', True, None)
-
-        response = self.post(
-            url, {'template': template.pk, 'items': [item.pk]}, expected_code=201
-        )
-
-        # There should be a link to the generated PDF
-        self.assertEqual(response.data['output'].startswith('/media/report/'), True)
-
-        # Check that a report has been uploaded
-        attachment = Attachment.objects.filter(
-            model_id=item.pk, model_type='stockitem'
-        ).first()
-        self.assertIsNotNone(attachment)
-
     def test_mdl_build(self):
         """Test the Build model."""
         self.run_print_test(Build, 'build', label=False)
