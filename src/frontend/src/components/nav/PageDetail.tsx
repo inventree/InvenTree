@@ -1,7 +1,8 @@
 import { Group, Paper, Space, Stack, Text } from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
-import { Fragment, ReactNode } from 'react';
+import { Fragment, ReactNode, useMemo } from 'react';
 
+import { useUserSettingsState } from '../../states/SettingsState';
 import { ApiImage } from '../images/ApiImage';
 import { StylishText } from '../items/StylishText';
 import { Breadcrumb, BreadcrumbList } from './BreadcrumbList';
@@ -14,6 +15,7 @@ interface PageDetailInterface {
   detail?: ReactNode;
   badges?: ReactNode[];
   breadcrumbs?: Breadcrumb[];
+  last_crumb?: Breadcrumb[];
   breadcrumbAction?: () => void;
   actions?: ReactNode[];
   editAction?: () => void;
@@ -34,11 +36,13 @@ export function PageDetail({
   badges,
   imageUrl,
   breadcrumbs,
+  last_crumb,
   breadcrumbAction,
   actions,
   editAction,
   editEnabled
 }: Readonly<PageDetailInterface>) {
+  const userSettings = useUserSettingsState();
   useHotkeys([
     [
       'mod+E',
@@ -50,12 +54,21 @@ export function PageDetail({
     ]
   ]);
 
+  // breadcrumb caching
+  const computedBreadcrumbs = useMemo(() => {
+    if (userSettings.isSet('ENABLE_LAST_BREADCRUMB')) {
+      return [...(breadcrumbs ?? []), ...(last_crumb ?? [])];
+    } else {
+      return breadcrumbs;
+    }
+  }, [breadcrumbs, last_crumb, userSettings]);
+
   return (
     <Stack gap="xs">
-      {breadcrumbs && breadcrumbs.length > 0 && (
+      {computedBreadcrumbs && computedBreadcrumbs.length > 0 && (
         <BreadcrumbList
           navCallback={breadcrumbAction}
-          breadcrumbs={breadcrumbs}
+          breadcrumbs={computedBreadcrumbs}
         />
       )}
       <Paper p="xs" radius="xs" shadow="xs">

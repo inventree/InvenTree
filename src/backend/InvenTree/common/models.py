@@ -2528,6 +2528,14 @@ class InvenTreeUserSetting(BaseInvenTreeSetting):
             'validator': [int, MinValueValidator(0)],
             'default': 100,
         },
+        'ENABLE_LAST_BREADCRUMB': {
+            'name': _('Show Last Breadcrumb'),
+            'description': _(
+                'Show the current page in breadcrumbs of the navigation bar (if available)'
+            ),
+            'default': False,
+            'validator': bool,
+        },
         'NOTIFICATION_ERROR_REPORT': {
             'name': _('Receive error reports'),
             'description': _('Receive notifications for system errors'),
