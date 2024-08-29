@@ -914,11 +914,13 @@ export function useTestResultFields({
   partId,
   itemId,
   templateId,
+  editing = false,
   editTemplate = false
 }: {
   partId: number;
   itemId: number;
   templateId: number | undefined;
+  editing?: boolean;
   editTemplate?: boolean;
 }): ApiFormFieldSet {
   // Valid field choices
@@ -927,7 +929,7 @@ export function useTestResultFields({
   // Field type for the "value" input
   const [fieldType, setFieldType] = useState<'string' | 'choice'>('string');
 
-  const settings = useGlobalSettingsState.getState();
+  const settings = useGlobalSettingsState();
 
   const includeTestStation = useMemo(
     () => settings.isSet('TEST_STATION_DATA'),
@@ -935,7 +937,7 @@ export function useTestResultFields({
   );
 
   return useMemo(() => {
-    return {
+    let fields: ApiFormFieldSet = {
       stock_item: {
         value: itemId,
         hidden: true
@@ -985,8 +987,16 @@ export function useTestResultFields({
         hidden: !includeTestStation
       }
     };
+
+    if (editing) {
+      // Prevent changing uploaded attachments
+      delete fields.attachment;
+    }
+
+    return fields;
   }, [
     choices,
+    editing,
     editTemplate,
     fieldType,
     partId,
