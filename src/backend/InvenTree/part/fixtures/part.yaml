@@ -78,6 +78,7 @@
     salable: true
     assembly: true
     trackable: true
+    testable: true
     tree_id: 0
     level: 0
     lft: 0
