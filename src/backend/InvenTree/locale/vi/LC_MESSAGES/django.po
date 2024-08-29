@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: inventree\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-08-26 23:06+0000\n"
-"PO-Revision-Date: 2024-08-26 23:09\n"
+"POT-Creation-Date: 2024-08-29 07:07+0000\n"
+"PO-Revision-Date: 2024-08-29 07:10\n"
 "Last-Translator: \n"
 "Language-Team: Vietnamese\n"
 "Language: vi_VN\n"
@@ -683,23 +683,23 @@ msgstr "Kiểm tra tình trạng hệ thống InvenTree thất bại"
 msgid "Unknown database"
 msgstr "Không rõ cơ sở dữ liệu"
 
-#: InvenTree/validators.py:32 InvenTree/validators.py:34
+#: InvenTree/validators.py:32
 msgid "Invalid physical unit"
 msgstr "Đơn vị vật lý không hợp lệ"
 
-#: InvenTree/validators.py:40
+#: InvenTree/validators.py:38
 msgid "Not a valid currency code"
 msgstr "Mã tiền tệ không hợp lệ"
 
-#: InvenTree/validators.py:117 InvenTree/validators.py:133
+#: InvenTree/validators.py:115 InvenTree/validators.py:131
 msgid "Overage value must not be negative"
 msgstr "Giá trị hàng hóa dư không thể là số âm"
 
-#: InvenTree/validators.py:135
+#: InvenTree/validators.py:133
 msgid "Overage must not exceed 100%"
 msgstr "Hàng hóa dư thừa không thể vượt quá 100%"
 
-#: InvenTree/validators.py:141
+#: InvenTree/validators.py:139
 msgid "Invalid value for overage"
 msgstr "Giá trị không hợp lệ cho hàng hóa dư thừa"
 
@@ -7246,8 +7246,8 @@ msgid "Choices must be unique"
 msgstr "Lựa chọn phải duy nhất"
 
 #: part/models.py:3587
-msgid "Test templates can only be created for trackable parts"
-msgstr "Chỉ có thể tạo mẫu kiểm thử cho sản phẩm có thể theo dõi"
+msgid "Test templates can only be created for testable parts"
+msgstr ""
 
 #: part/models.py:3598
 msgid "Test template with the same key already exists for part"
