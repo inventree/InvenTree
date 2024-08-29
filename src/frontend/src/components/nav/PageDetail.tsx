@@ -56,7 +56,7 @@ export function PageDetail({
 
   // breadcrumb caching
   const computedBreadcrumbs = useMemo(() => {
-    if (userSettings.isSet('ENABLE_LAST_BREADCRUMB')) {
+    if (userSettings.isSet('ENABLE_LAST_BREADCRUMB', false)) {
       return [...(breadcrumbs ?? []), ...(last_crumb ?? [])];
     } else {
       return breadcrumbs;
