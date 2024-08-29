@@ -10,6 +10,7 @@
     creation_date: '2018-01-01'
     tree_id: 0
     purchaseable: True
+    testable: False
     level: 0
     lft: 0
     rght: 0
@@ -78,6 +79,7 @@
     salable: true
     assembly: true
     trackable: true
+    testable: true
     tree_id: 0
     level: 0
     lft: 0
@@ -136,7 +138,8 @@
     name: 'Chair Template'
     description: 'A chair, which is actually just a template part'
     is_template: True
-    trackable: true
+    trackable: false
+    testable: true
     creation_date: '2027-10-10'
     salable: true
     category: 7
@@ -151,7 +154,8 @@
     name: 'Blue Chair'
     description: 'A variant chair part which is blue'
     variant_of: 10000
-    trackable: true
+    trackable: false
+    testable: true
     creation_date: '2028-11-11'
     category: 7
     tree_id: 1
@@ -166,7 +170,8 @@
     description: 'A variant chair part which is red'
     variant_of: 10000
     IPN: "R.CH"
-    trackable: true
+    trackable: false
+    testable: true
     salable: true
     creation_date: '2029-12-12'
     category: 7
@@ -183,7 +188,8 @@
     variant_of: 10000
     is_template: true
     category: 7
-    trackable: true
+    trackable: false
+    testable: true
     creation_date: '2030-01-01'
     tree_id: 1
     level: 0
@@ -200,6 +206,7 @@
     category: 7
     creation_date: '2031-02-02'
     trackable: true
+    testable: true
     tree_id: 1
     level: 0
     lft: 0
