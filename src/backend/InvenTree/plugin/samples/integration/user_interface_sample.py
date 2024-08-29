@@ -30,6 +30,12 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             'default': False,
             'validator': bool,
         },
+        'ENABLE_BROKEN_PANELS': {
+            'name': _('Enable Broken Panels'),
+            'description': _('Enable broken panels for testing'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     def get_custom_panels(self, instance_type: str, instance_id: int, request):
@@ -59,6 +65,14 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             'label': 'Sample Panel',
             'content': content,
         })
+
+        # A broken panel which tries to load a non-existent JS file
+        if self.get_setting('ENABLE_BROKEN_PANElS'):
+            panels.append({
+                'name': 'broken_panel',
+                'label': 'Broken Panel',
+                'source': '/this/does/not/exist.js',
+            })
 
         # Next, add a custom panel which will appear on the 'part' page
         # Note that this content is rendered from a template file,
