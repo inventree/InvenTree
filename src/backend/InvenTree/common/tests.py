@@ -393,7 +393,7 @@ class SettingsTest(InvenTreeTestCase):
             'before_save',
         ]
 
-        for k in setting.keys():
+        for k in setting:
             self.assertIn(k, allowed_keys)
 
         # Check default value for boolean settings
@@ -431,7 +431,7 @@ class SettingsTest(InvenTreeTestCase):
     @override_settings(SITE_URL=None, PLUGIN_TESTING=True, PLUGIN_TESTING_SETUP=True)
     def test_defaults(self):
         """Populate the settings with default values."""
-        for key in InvenTreeSetting.SETTINGS.keys():
+        for key in InvenTreeSetting.SETTINGS:
             value = InvenTreeSetting.get_setting_default(key)
 
             try:
@@ -520,7 +520,7 @@ class GlobalSettingsApiTest(InvenTreeAPITestCase):
         response = self.get(url, expected_code=200)
 
         n_public_settings = len([
-            k for k in InvenTreeSetting.SETTINGS.keys() if not k.startswith('_')
+            k for k in InvenTreeSetting.SETTINGS if not k.startswith('_')
         ])
 
         # Number of results should match the number of settings
@@ -832,11 +832,9 @@ class PluginSettingsApiTest(PluginMixin, InvenTreeAPITestCase):
 
     def test_invalid_setting_key(self):
         """Test that an invalid setting key returns a 404."""
-        ...
 
     def test_uninitialized_setting(self):
         """Test that requesting an uninitialized setting creates the setting."""
-        ...
 
 
 class ErrorReportTest(InvenTreeAPITestCase):
@@ -934,7 +932,7 @@ class WebhookMessageTests(TestCase):
     def test_bad_token(self):
         """Test that a wrong token is not working."""
         response = self.client.post(
-            self.url, content_type=CONTENT_TYPE_JSON, **{'HTTP_TOKEN': '1234567fghj'}
+            self.url, content_type=CONTENT_TYPE_JSON, HTTP_TOKEN='1234567fghj'
         )
 
         assert response.status_code == HTTPStatus.FORBIDDEN
@@ -957,7 +955,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data="{'this': 123}",
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+            HTTP_TOKEN=str(self.endpoint_def.token),
         )
 
         assert response.status_code == HTTPStatus.NOT_ACCEPTABLE
@@ -1005,7 +1003,7 @@ class WebhookMessageTests(TestCase):
         response = self.client.post(
             self.url,
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str('68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=')},
+            HTTP_TOKEN='68MXtc/OiXdA5e2Nq9hATEVrZFpLb3Zb0oau7n8s31I=',
         )
 
         assert response.status_code == HTTPStatus.OK
@@ -1020,7 +1018,7 @@ class WebhookMessageTests(TestCase):
             self.url,
             data={'this': 'is a message'},
             content_type=CONTENT_TYPE_JSON,
-            **{'HTTP_TOKEN': str(self.endpoint_def.token)},
+            HTTP_TOKEN=str(self.endpoint_def.token),
         )
 
         assert response.status_code == HTTPStatus.OK

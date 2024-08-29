@@ -456,7 +456,7 @@ urlpatterns = []
 if settings.INVENTREE_ADMIN_ENABLED:
     admin_url = settings.INVENTREE_ADMIN_URL
 
-    if settings.ADMIN_SHELL_ENABLE:  # noqa
+    if settings.ADMIN_SHELL_ENABLE:
         urlpatterns += [path(f'{admin_url}/shell/', include('django_admin_shell.urls'))]
 
     urlpatterns += [

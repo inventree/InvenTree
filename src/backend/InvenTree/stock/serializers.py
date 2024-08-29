@@ -428,7 +428,7 @@ class StockItemSerializer(
         tests = kwargs.pop('tests', False)
         path_detail = kwargs.pop('path_detail', False)
 
-        super(StockItemSerializer, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         if not part_detail:
             self.fields.pop('part_detail', None)
@@ -1526,7 +1526,7 @@ def stock_item_adjust_status_options():
 
     In particular, include a Null option for the status field.
     """
-    return [(None, _('No Change'))] + stock.status_codes.StockStatus.items()
+    return [(None, _('No Change')), *stock.status_codes.StockStatus.items()]
 
 
 class StockAdjustmentItemSerializer(serializers.Serializer):

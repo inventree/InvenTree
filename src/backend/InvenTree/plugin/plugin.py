@@ -7,6 +7,7 @@ from datetime import datetime
 from distutils.sysconfig import get_python_lib
 from importlib.metadata import PackageNotFoundError, metadata
 from pathlib import Path
+from typing import Optional
 
 from django.conf import settings
 from django.urls.base import reverse
@@ -27,7 +28,7 @@ class MetaBase:
     SLUG = None
     TITLE = None
 
-    def get_meta_value(self, key: str, old_key: str = None, __default=None):
+    def get_meta_value(self, key: str, old_key: Optional[str] = None, __default=None):
         """Reference a meta item with a key.
 
         Args:

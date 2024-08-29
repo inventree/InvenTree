@@ -2000,9 +2000,8 @@ class BomImportExtractSerializer(InvenTree.serializers.DataFileExtractSerializer
 
         if part is None:
             row['errors']['part'] = _('No matching part found')
-        else:
-            if not part.component:
-                row['errors']['part'] = _('Part is not designated as a component')
+        elif not part.component:
+            row['errors']['part'] = _('Part is not designated as a component')
 
         # Update the 'part' value in the row
         row['part'] = part.pk if part is not None else None

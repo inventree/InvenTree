@@ -1,5 +1,7 @@
 """Validation mixin class definition."""
 
+from typing import Optional
+
 from django.core.exceptions import ValidationError
 from django.db.models import Model
 
@@ -67,7 +69,9 @@ class ValidationMixin:
         """
         return None
 
-    def validate_model_instance(self, instance: Model, deltas: dict = None) -> None:
+    def validate_model_instance(
+        self, instance: Model, deltas: Optional[dict] = None
+    ) -> None:
         """Run custom validation on a database model instance.
 
         This method is called when a model instance is being validated.
@@ -218,4 +222,3 @@ class ValidationMixin:
         Raises:
             ValidationError: If the proposed parameter value is objectionable
         """
-        pass

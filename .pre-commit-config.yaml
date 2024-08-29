@@ -17,17 +17,18 @@ repos:
     -   id: check-yaml
     -   id: mixed-line-ending
 -   repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.5.1
+    rev: v0.6.1
     hooks:
     - id: ruff-format
       args: [--preview]
     - id: ruff
       args: [
         --fix,
+        # --unsafe-fixes,
         --preview
       ]
 -   repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.2.13
+    rev: 0.2.37
     hooks:
       - id: pip-compile
         name: pip-compile requirements-dev.in
@@ -77,7 +78,7 @@ repos:
       - "prettier@^2.4.1"
       - "@trivago/prettier-plugin-sort-imports"
 - repo: https://github.com/pre-commit/mirrors-eslint
-  rev: "v9.6.0"
+  rev: "v9.9.0"
   hooks:
   - id: eslint
     additional_dependencies:

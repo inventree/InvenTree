@@ -144,8 +144,6 @@ class PluginConfigInstallSerializer(serializers.Serializer):
 class PluginConfigEmptySerializer(serializers.Serializer):
     """Serializer for a PluginConfig."""
 
-    ...
-
 
 class PluginReloadSerializer(serializers.Serializer):
     """Serializer for remotely forcing plugin registry reload."""
