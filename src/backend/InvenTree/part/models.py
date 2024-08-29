@@ -3605,7 +3605,7 @@ class PartTestTemplate(InvenTree.models.InvenTreeMetadataModel):
         Part,
         on_delete=models.CASCADE,
         related_name='test_templates',
-        limit_choices_to={'trackable': True},
+        limit_choices_to={'testable': True},
         verbose_name=_('Part'),
     )
 
