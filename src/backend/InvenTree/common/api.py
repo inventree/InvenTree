@@ -549,7 +549,7 @@ class AllUnitList(ListAPI):
         data = {
             'default_system': reg.default_system,
             'available_systems': dir(reg.sys),
-            'available_units': {k: all_units[k] for k in list(all_units)[:10]},
+            'available_units': all_units,
         }
         return Response(data)
 
