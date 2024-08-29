@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
 import { Alert, Text } from '@mantine/core';
-import { AxiosInstance } from 'axios';
-import { useEffect, useRef } from 'react';
+import { IconExclamationCircle } from '@tabler/icons-react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -56,6 +56,10 @@ export default function PluginPanel({ props }: { props: PluginPanelProps }) {
   const user = useUserState();
   const navigate = useNavigate();
 
+  const [errorDetail, setErrorDetail] = useState<ReactNode | undefined>(
+    undefined
+  );
+
   const loadExternalSource = async () => {
     let source: string = props.source ?? '';
 
@@ -70,11 +74,21 @@ export default function PluginPanel({ props }: { props: PluginPanelProps }) {
 
     // TODO: Gate where this content may be loaded from (e.g. only allow certain domains)
 
+    let loaded: boolean = false;
+
     // Load content from external source
-    const module = await import(/* @vite-ignore */ source ?? '');
+    const module = await import(/* @vite-ignore */ source ?? '')
+      .catch((error) => {
+        setErrorDetail(error.toString());
+      })
+      .then((module) => {
+        loaded = true;
+        return module;
+      });
 
     // We expect the external source to define a function which will render the content
     if (
+      loaded &&
       module &&
       module.render_panel &&
       typeof module.render_panel === 'function'
@@ -96,6 +110,8 @@ export default function PluginPanel({ props }: { props: PluginPanelProps }) {
   };
 
   useEffect(() => {
+    setErrorDetail(undefined);
+
     if (props.source) {
       // Load content from external source
       loadExternalSource();
@@ -107,9 +123,19 @@ export default function PluginPanel({ props }: { props: PluginPanelProps }) {
     }
   }, [props]);
 
-  if (!props.content && !props.source) {
+  if (errorDetail) {
+    return (
+      <Alert
+        color="red"
+        title={t`Error Loading Plugin`}
+        icon={<IconExclamationCircle />}
+      >
+        {errorDetail}
+      </Alert>
+    );
+  } else if (!props.content && !props.source) {
     return <PanelNoContent />;
+  } else {
+    return <div ref={ref as any}></div>;
   }
-
-  return <div ref={ref as any}></div>;
 }
