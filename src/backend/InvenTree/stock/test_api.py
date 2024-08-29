@@ -1784,9 +1784,9 @@ class StockTestResultTest(StockAPITestCase):
 
         stock_item = StockItem.objects.get(pk=1)
 
-        # Ensure the part is marked as "trackable"
+        # Ensure the part is marked as "testable"
         p = stock_item.part
-        p.trackable = True
+        p.testable = True
         p.save()
 
         # Create some objects (via the API)
@@ -1799,7 +1799,6 @@ class StockTestResultTest(StockAPITestCase):
                     'result': True,
                     'value': 'Test result value',
                 },
-                # expected_code=201,
             )
 
             tests.append(response.data['pk'])

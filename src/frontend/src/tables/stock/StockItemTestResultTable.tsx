@@ -27,6 +27,7 @@ import {
 } from '../../hooks/UseForm';
 import { useTable } from '../../hooks/UseTable';
 import { apiUrl } from '../../states/ApiState';
+import { useGlobalSettingsState } from '../../states/SettingsState';
 import { useUserState } from '../../states/UserState';
 import { TableColumn } from '../Column';
 import { DateColumn, DescriptionColumn, NoteColumn } from '../ColumnRenderers';
@@ -49,6 +50,11 @@ export default function StockItemTestResultTable({
   const user = useUserState();
   const table = useTable('stocktests');
 
+  const globalSettings = useGlobalSettingsState();
+  const includeTestStation = useMemo(
+    () => globalSettings.isSet('TEST_STATION_DATA'),
+    [globalSettings]
+  );
   // Fetch the test templates required for this stock item
   const { data: testTemplates } = useQuery({
     queryKey: ['stocktesttemplates', partId, itemId],
@@ -203,12 +209,14 @@ export default function StockItemTestResultTable({
       {
         accessor: 'test_station',
         sortable: true,
-        title: t`Test station`
+        title: t`Test station`,
+        hidden: !includeTestStation
       },
       {
         accessor: 'started_datetime',
         sortable: true,
         title: t`Started`,
+        hidden: !includeTestStation,
         render: (record: any) => {
           return (
             <Group justify="space-between">
@@ -224,6 +232,7 @@ export default function StockItemTestResultTable({
         accessor: 'finished_datetime',
         sortable: true,
         title: t`Finished`,
+        hidden: !includeTestStation,
         render: (record: any) => {
           return (
             <Group justify="space-between">
@@ -236,21 +245,29 @@ export default function StockItemTestResultTable({
         }
       }
     ];
-  }, [itemId]);
+  }, [itemId, includeTestStation]);
 
   const [selectedTemplate, setSelectedTemplate] = useState<number | undefined>(
     undefined
   );
 
-  const resultFields: ApiFormFieldSet = useTestResultFields({
+  const newResultFields: ApiFormFieldSet = useTestResultFields({
     partId: partId,
     itemId: itemId,
-    templateId: selectedTemplate
+    templateId: selectedTemplate,
+    editing: false
+  });
+
+  const editResultFields: ApiFormFieldSet = useTestResultFields({
+    partId: partId,
+    itemId: itemId,
+    templateId: selectedTemplate,
+    editing: true
   });
 
   const newTestModal = useCreateApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
-    fields: useMemo(() => ({ ...resultFields }), [resultFields]),
+    fields: useMemo(() => ({ ...newResultFields }), [newResultFields]),
     initialData: {
       template: selectedTemplate,
       result: true
@@ -265,7 +282,7 @@ export default function StockItemTestResultTable({
   const editTestModal = useEditApiFormModal({
     url: ApiEndpoints.stock_test_result_list,
     pk: selectedTest,
-    fields: useMemo(() => ({ ...resultFields }), [resultFields]),
+    fields: useMemo(() => ({ ...editResultFields }), [editResultFields]),
     title: t`Edit Test Result`,
     table: table,
     successMessage: t`Test result updated`
