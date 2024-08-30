@@ -63,6 +63,7 @@ function BasePanelGroup({
   id,
   collapsible = true
 }: Readonly<PanelProps>): ReactNode {
+  const localState = useLocalState();
   const location = useLocation();
   const navigate = useNavigate();
   const { panel } = useParams();
@@ -77,8 +78,8 @@ function BasePanelGroup({
   });
 
   const allPanels = useMemo(
-    () => [...panels, ...pluginPanels.panels],
-    [panels, pluginPanels.panels]
+    () => [...panels, ...pluginPanels],
+    [panels, pluginPanels]
   );
 
   const activePanels = useMemo(
@@ -86,8 +87,13 @@ function BasePanelGroup({
     [allPanels]
   );
 
-  const setLastUsedPanel = useLocalState((state) =>
-    state.setLastUsedPanel(pageKey)
+  const changePanel = useCallback(
+    (value: string) => {
+      if (value != panel) {
+        localState.setLastUsedPanel(pageKey)(value);
+      }
+    },
+    [localState, pageKey, panel]
   );
 
   // Callback when the active panel changes
@@ -110,15 +116,8 @@ function BasePanelGroup({
         onPanelChange(panel);
       }
     },
-    [activePanels, setLastUsedPanel, navigate, location, onPanelChange]
+    [activePanels, navigate, location, onPanelChange]
   );
-
-  useEffect(() => {
-    if (panel) {
-      setLastUsedPanel(panel);
-    }
-    // panel is intentionally no dependency as this should only run on initial render
-  }, [setLastUsedPanel]);
 
   // if the selected panel state changes update the current panel
   useEffect(() => {
@@ -130,10 +129,10 @@ function BasePanelGroup({
   // Update the active panel when panels changes and the active is no longer available
   useEffect(() => {
     if (activePanels.findIndex((p) => p.name === panel) === -1) {
-      setLastUsedPanel('');
+      changePanel('');
       return navigate('../');
     }
-  }, [activePanels, panel]);
+  }, [activePanels, changePanel, panel]);
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
