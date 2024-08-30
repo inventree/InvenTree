@@ -67,6 +67,8 @@ function BasePanelGroup({
   const navigate = useNavigate();
   const { panel } = useParams();
 
+  const [expanded, setExpanded] = useState<boolean>(true);
+
   // Hook to load plugins for this panel
   const pluginPanels = usePluginPanels({
     model: model,
@@ -87,13 +89,6 @@ function BasePanelGroup({
   const setLastUsedPanel = useLocalState((state) =>
     state.setLastUsedPanel(pageKey)
   );
-
-  useEffect(() => {
-    if (panel) {
-      setLastUsedPanel(panel);
-    }
-    // panel is intentionally no dependency as this should only run on initial render
-  }, [setLastUsedPanel]);
 
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
@@ -118,6 +113,13 @@ function BasePanelGroup({
     [activePanels, setLastUsedPanel, navigate, location, onPanelChange]
   );
 
+  useEffect(() => {
+    if (panel) {
+      setLastUsedPanel(panel);
+    }
+    // panel is intentionally no dependency as this should only run on initial render
+  }, [setLastUsedPanel]);
+
   // if the selected panel state changes update the current panel
   useEffect(() => {
     if (selectedPanel && selectedPanel !== panel) {
@@ -133,8 +135,6 @@ function BasePanelGroup({
     }
   }, [activePanels, panel]);
 
-  const [expanded, setExpanded] = useState<boolean>(true);
-
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
       <Paper p="sm" radius="xs" shadow="xs">
@@ -144,13 +144,14 @@ function BasePanelGroup({
               (panel) =>
                 !panel.hidden && (
                   <Tooltip
-                    label={panel.label}
+                    label={`tooltip-${panel.name}`}
                     key={panel.name}
                     disabled={expanded}
                     position="right"
                   >
                     <Tabs.Tab
                       p="xs"
+                      key={`panel-label-${panel.name}`}
                       value={panel.name}
                       leftSection={panel.icon}
                       hidden={panel.hidden}
@@ -186,7 +187,7 @@ function BasePanelGroup({
             (panel) =>
               !panel.hidden && (
                 <Tabs.Panel
-                  key={panel.name}
+                  key={`panel-${panel.name}`}
                   value={panel.name}
                   aria-label={`nav-panel-${identifierString(
                     `${pageKey}-${panel.name}`
