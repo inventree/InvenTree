@@ -1,7 +1,7 @@
 import { t } from '@lingui/macro';
-import { Alert, Text } from '@mantine/core';
+import { Alert, Loader, LoadingOverlay, Text } from '@mantine/core';
 import { IconExclamationCircle } from '@tabler/icons-react';
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { api } from '../../App';
@@ -13,10 +13,13 @@ import { PluginElementProps } from './PluginElement';
 
 interface PluginPanelProps extends PanelType {
   source?: string;
+  renderFunction?: string;
+  hiddenFunction?: string;
   params?: any;
   instance?: any;
   model?: ModelType | string;
   id?: number | null;
+  pluginKey: string;
 }
 
 // Placeholder content for a panel with no content
@@ -24,6 +27,19 @@ function PanelNoContent() {
   return (
     <Alert color="red" title={t`No Content`}>
       <Text>{t`No content provided for this plugin`}</Text>
+    </Alert>
+  );
+}
+
+// Placeholder content for a panel which has failed to load
+function PanelErrorContent({ error }: { error: ReactNode | undefined }) {
+  return (
+    <Alert
+      color="red"
+      title={t`Error Loading Plugin`}
+      icon={<IconExclamationCircle />}
+    >
+      <Text>{error}</Text>
     </Alert>
   );
 }
@@ -49,52 +65,34 @@ function PanelNoContent() {
  *  - `element` is the HTML element to render the content into
  *  - `params` is the set of run-time parameters to pass to the content rendering function
  */
-export default function PluginPanel({ props }: { props: PluginPanelProps }) {
-  const ref = useRef<HTMLDivElement>();
+export default function PluginPanel(props: PluginPanelProps): PanelType {
+  return {
+    ...props,
+    content: `Hello world, from ${props.pluginKey}: ${props.name}`
+  };
 
-  const host = useLocalState((s) => s.host);
+  // TODO: Get this working!
+  // Note: Having these hooks below the "return" above causes errors,
+  // Warning: React has detected a change in the order of Hooks called by BasePanelGroup. This will lead to bugs and errors if not fixed
+
+  /*
+  const ref = useRef<HTMLDivElement>();
   const user = useUserState();
   const navigate = useNavigate();
 
+  const [ isLoading, setIsLoading ] = useState<boolean>(false);
   const [errorDetail, setErrorDetail] = useState<ReactNode | undefined>(
     undefined
   );
 
-  const loadExternalSource = async () => {
-    let source: string = props.source ?? '';
+  // External module which defines the plugin content
+  const [ pluginModule, setPluginModule ] = useState<any>(null);
 
-    if (!source) {
-      return;
-    }
+    const host = useLocalState.getState().host;
 
-    if (source.startsWith('/')) {
-      // Prefix the source with the host URL
-      source = `${host}${source}`;
-    }
-
-    // TODO: Gate where this content may be loaded from (e.g. only allow certain domains)
-
-    let loaded: boolean = false;
-
-    // Load content from external source
-    const module = await import(/* @vite-ignore */ source ?? '')
-      .catch((error) => {
-        setErrorDetail(error.toString());
-      })
-      .then((module) => {
-        loaded = true;
-        return module;
-      });
-
-    // We expect the external source to define a function which will render the content
-    if (
-      loaded &&
-      module &&
-      module.render_panel &&
-      typeof module.render_panel === 'function'
-    ) {
-      // Set of attributes to pass through to the plugin for rendering
-      let attributes: PluginElementProps = {
+    // Attributes to pass through to the plugin module
+    const attributes : PluginElementProps= useMemo(() => {
+      return {
         target: ref.current,
         model: props.model,
         id: props.id,
@@ -104,38 +102,121 @@ export default function PluginPanel({ props }: { props: PluginPanelProps }) {
         host: host,
         navigate: navigate
       };
+    }, [props, ref.current, api, user, navigate]);
 
-      module.render_panel(attributes);
-    }
-  };
 
+
+  // Reload external source if the source URL changes
   useEffect(() => {
-    setErrorDetail(undefined);
+    loadExternalSource(props.source || '');
+  }, [props.source]);
 
-    if (props.source) {
-      // Load content from external source
-      loadExternalSource();
+  // Memoize the panel rendering function
+  const renderPanel = useMemo(() => {
+    const renderFunction = props.renderFunction || 'renderPanel';
+
+    console.log("renderPanel memo:", renderFunction, pluginModule);
+
+    if (pluginModule && pluginModule[renderFunction]) {
+      return pluginModule[renderFunction];
+    }
+    return null;
+  }, [pluginModule, props.renderFunction]);
+
+  // Memoize if the panel is hidden
+  const isPanelHidden : boolean = useMemo(() => {
+    const hiddenFunction = props.hiddenFunction || 'isPanelHidden';
+
+    console.log("hiddenFunction memo:", hiddenFunction, pluginModule);
+    console.log("- attributes:", attributes);
+
+    if (pluginModule && pluginModule[hiddenFunction]) {
+      return !!pluginModule[hiddenFunction](attributes);
+    } else {
+      return false;
+    }
+  }, [attributes, pluginModule, props.hiddenFunction]);
+
+  // Construct the panel content
+  const panelContent = useMemo(() => {
+    if (isLoading) {
+      return <Loader />;
+    } else if (errorDetail) {
+      return <PanelErrorContent error={errorDetail} />;
+    } else if (!props.content && !props.source) {
+      return <PanelNoContent />;
+    } else {
+      return <div ref={ref as any}></div>;
+    }
+  }, [props, errorDetail, isLoading]);
+
+  // Regenerate the panel content as required
+  useEffect(() => {
+    // If a panel rendering function is provided, use that
+
+    console.log("Regenerating panel content...");
+
+    if (renderPanel) {
+      console.log("- using external rendering function");
+      renderPanel(attributes);
     } else if (props.content) {
       // If content is provided directly, render it into the panel
+      console.log("- using direct content");
       if (ref) {
         ref.current?.setHTMLUnsafe(props.content.toString());
       }
     }
-  }, [props]);
+  }, [ref, renderPanel, props.content, attributes]);
 
-  if (errorDetail) {
-    return (
-      <Alert
-        color="red"
-        title={t`Error Loading Plugin`}
-        icon={<IconExclamationCircle />}
-      >
-        {errorDetail}
-      </Alert>
-    );
-  } else if (!props.content && !props.source) {
-    return <PanelNoContent />;
-  } else {
-    return <div ref={ref as any}></div>;
+  // Load external source content
+  const loadExternalSource = async (source: string) => {
+
+    const host = useLocalState.getState().host;
+
+    if (!source) {
+      setErrorDetail(undefined);
+      setPluginModule(null);
+      return;
+    }
+
+    if (source.startsWith('/')) {
+      // Prefix the source with the host URL
+      source = `${host}${source}`;
+    }
+
+    // TODO: Gate where this content may be loaded from (e.g. only allow certain domains)
+    // TODO: Add a timeout for loading external content
+    // TODO: Restrict to certain file types (e.g. .js)
+
+    let errorMessage : ReactNode = undefined;
+
+    console.log("Loading plugin module from:", source);
+
+    setIsLoading(true);
+
+    // Load content from external source
+    const module = await import(/* @vite-ignore * / source ?? '')
+      .catch((error) => {
+        errorMessage = error.toString();
+        return null;
+      })
+      .then((module) => {
+        return module;
+      });
+
+    setIsLoading(false);
+
+    console.log("Loaded plugin module:", module);
+
+    setPluginModule(module);
+    setErrorDetail(errorMessage);
   }
+
+  // Return the panel state
+  return {
+    ...props,
+    content: panelContent,
+    hidden: isPanelHidden,
+  }
+  */
 }
