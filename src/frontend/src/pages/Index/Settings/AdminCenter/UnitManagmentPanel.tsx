@@ -39,7 +39,7 @@ function AllUnitTable() {
         enableColumnSwitching: false,
         dataFormatter: (data: any) => {
           let units = data.available_units ?? {};
-          return Object.entries(units).map(([key, values]) => {
+          return Object.entries(units).map(([key, values]: [string, any]) => {
             return {
               name: values.name,
               is_alias: values.is_alias,
