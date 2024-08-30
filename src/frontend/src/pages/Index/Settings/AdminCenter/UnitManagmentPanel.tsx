@@ -40,7 +40,6 @@ function AllUnitTable() {
         dataFormatter: (data: any) => {
           let units = data.available_units ?? {};
           return Object.entries(units).map(([key, values]) => {
-            console.log(values);
             return {
               name: values.name,
               is_alias: values.is_alias,
