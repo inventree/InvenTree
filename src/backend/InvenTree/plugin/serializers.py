@@ -350,7 +350,6 @@ class PluginPanelSerializer(serializers.Serializer):
     render_function = serializers.CharField(
         label=_('Render Function'),
         help_text=_('Function to render the panel content'),
-        default='renderPanel',
         required=False,
         allow_blank=True,
     )
@@ -358,7 +357,6 @@ class PluginPanelSerializer(serializers.Serializer):
     hidden_function = serializers.CharField(
         label=_('Hidden Function'),
         help_text=_('Function name to determine if the the panel content is hidden'),
-        default='isPanelHidden',
         required=False,
         allow_blank=True,
     )
