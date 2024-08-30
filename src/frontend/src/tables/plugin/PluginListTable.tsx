@@ -508,33 +508,28 @@ export default function PluginListTable() {
 
   // Custom table actions
   const tableActions = useMemo(() => {
-    let actions = [];
-
-    if (user.user?.is_superuser && pluginsEnabled) {
-      actions.push(
-        <ActionButton
-          color="green"
-          icon={<IconRefresh />}
-          tooltip={t`Reload Plugins`}
-          onClick={reloadPlugins}
-        />
-      );
-
-      actions.push(
-        <ActionButton
-          color="green"
-          icon={<IconPlaylistAdd />}
-          tooltip={t`Install Plugin`}
-          onClick={() => {
-            setPluginPackage('');
-            installPluginModal.open();
-          }}
-          disabled={plugins_install_disabled || false}
-        />
-      );
+    if (!user.isSuperuser() || !pluginsEnabled) {
+      return [];
     }
 
-    return actions;
+    return [
+      <ActionButton
+        color="green"
+        icon={<IconRefresh />}
+        tooltip={t`Reload Plugins`}
+        onClick={reloadPlugins}
+      />,
+      <ActionButton
+        color="green"
+        icon={<IconPlaylistAdd />}
+        tooltip={t`Install Plugin`}
+        onClick={() => {
+          setPluginPackage('');
+          installPluginModal.open();
+        }}
+        disabled={plugins_install_disabled || false}
+      />
+    ];
   }, [user, pluginsEnabled]);
 
   return (
