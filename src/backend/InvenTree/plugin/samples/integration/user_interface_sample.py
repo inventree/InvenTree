@@ -36,6 +36,12 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
             'default': True,
             'validator': bool,
         },
+        'ENABLE_DYNAMIC_PANEL': {
+            'name': _('Enable Dynamic Panel'),
+            'description': _('Enable dynamic panels for testing'),
+            'default': True,
+            'validator': bool,
+        },
     }
 
     def get_custom_panels(self, instance_type: str, instance_id: int, request):
@@ -72,6 +78,14 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
                 'name': 'broken_panel',
                 'label': 'Broken Panel',
                 'source': '/this/does/not/exist.js',
+            })
+
+        # A dynamic panel which will be injected into the UI (loaded from external file)
+        if self.get_setting('ENABLE_DYNAMIC_PANEL'):
+            panels.append({
+                'name': 'dynamic_panel',
+                'label': 'Dynamic Panel',
+                'source': '/static/plugin/sample_panel.js',
             })
 
         # Next, add a custom panel which will appear on the 'part' page

@@ -309,15 +309,27 @@ class PluginPanelSerializer(serializers.Serializer):
     class Meta:
         """Meta for serializer."""
 
-        fields = ['plugin', 'name', 'label', 'icon', 'content', 'source']
+        fields = [
+            'plugin',
+            'name',
+            'label',
+            # Following fields are optional
+            'icon',
+            'content',
+            'source',
+            'render_function',
+            'hidden_function',
+        ]
 
     # Required fields
     plugin = serializers.CharField(
         label=_('Plugin Key'), required=True, allow_blank=False
     )
+
     name = serializers.CharField(
         label=_('Panel Name'), required=True, allow_blank=False
     )
+
     label = serializers.CharField(
         label=_('Panel Title'), required=True, allow_blank=False
     )
@@ -326,9 +338,27 @@ class PluginPanelSerializer(serializers.Serializer):
     icon = serializers.CharField(
         label=_('Panel Icon'), required=False, allow_blank=True
     )
+
     content = serializers.CharField(
         label=_('Panel Content (HTML)'), required=False, allow_blank=True
     )
+
     source = serializers.CharField(
         label=_('Panel Source (javascript)'), required=False, allow_blank=True
+    )
+
+    render_function = serializers.CharField(
+        label=_('Render Function'),
+        help_text=_('Function to render the panel content'),
+        default='renderPanel',
+        required=False,
+        allow_blank=True,
+    )
+
+    hidden_function = serializers.CharField(
+        label=_('Hidden Function'),
+        help_text=_('Function name to determine if the the panel content is hidden'),
+        default='isPanelHidden',
+        required=False,
+        allow_blank=True,
     )
