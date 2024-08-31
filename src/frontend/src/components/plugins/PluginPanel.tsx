@@ -14,8 +14,6 @@ export type PluginPanelProps = {
   icon?: string;
   content?: string;
   source?: string;
-  render_function?: string;
-  hidden_function?: string;
 };
 
 export async function isPluginPanelHidden({
@@ -30,11 +28,9 @@ export async function isPluginPanelHidden({
     return false;
   }
 
-  const hiddenFunction = pluginProps.hidden_function ?? 'isPanelHidden';
-
   let result: boolean = false;
 
-  await findExternalPluginFunction(pluginProps.source, hiddenFunction).then(
+  await findExternalPluginFunction(pluginProps.source, 'isPanelHidden').then(
     (func) => {
       if (func) {
         try {
@@ -82,9 +78,7 @@ export default function PluginPanelContent({
   const reloadPluginContent = async () => {
     // If a "source" URL is provided, load the content from that URL
     if (pluginProps.source) {
-      const renderFunc = pluginProps.render_function || 'renderPanel';
-
-      findExternalPluginFunction(pluginProps.source, renderFunc).then(
+      findExternalPluginFunction(pluginProps.source, 'renderPanel').then(
         (func) => {
           if (func) {
             try {
@@ -94,10 +88,7 @@ export default function PluginPanelContent({
               setError(t`Error occurred while rendering plugin content`);
             }
           } else {
-            setError(
-              t`Failed to load plugin method` +
-                `: ${pluginProps.source} -> ${renderFunc}`
-            );
+            setError(t`Plugin did not provide panel rendering function`);
           }
         }
       );

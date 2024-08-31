@@ -40,13 +40,14 @@ class UserInterfaceMixin:
         - The following keys can be specified:
         {
             'name': 'panel_name',  # The name of the panel (required, must be a valid DOM ID)
-            'title': 'Panel Title',  # The title of the panel (required, human readable)
+            'label': 'Panel Title',  # The title of the panel (required, human readable)
             'icon': 'icon-name',  # Icon name (optional, must be a valid icon identifier)
             'content': 'Panel content',  # Raw content of the panel (optional)
-            'src': 'static/plugin/panel.js',  # Path to a JavaScript file to be loaded (optional)
+            'source': 'static/plugin/panel.js',  # Path to a JavaScript file to be loaded (optional)
+            'context': {'key': 'value'},  # Context data (JSON) to be passed to the client side rendering (optional)
         }
 
-        - Either 'src' or 'content' must be provided
+        - Either 'source' or 'content' must be provided
 
         """
         # Default implementation returns an empty list

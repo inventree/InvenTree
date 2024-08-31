@@ -317,8 +317,7 @@ class PluginPanelSerializer(serializers.Serializer):
             'icon',
             'content',
             'source',
-            'render_function',
-            'hidden_function',
+            'context',
         ]
 
     # Required fields
@@ -347,16 +346,6 @@ class PluginPanelSerializer(serializers.Serializer):
         label=_('Panel Source (javascript)'), required=False, allow_blank=True
     )
 
-    render_function = serializers.CharField(
-        label=_('Render Function'),
-        help_text=_('Function to render the panel content'),
-        required=False,
-        allow_blank=True,
-    )
-
-    hidden_function = serializers.CharField(
-        label=_('Hidden Function'),
-        help_text=_('Function name to determine if the the panel content is hidden'),
-        required=False,
-        allow_blank=True,
+    context = serializers.JSONField(
+        label=_('Panel Context'), required=False, allow_null=True
     )
