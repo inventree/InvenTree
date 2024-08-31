@@ -84,8 +84,9 @@ class SampleUserInterfacePlugin(SettingsMixin, UserInterfaceMixin, InvenTreePlug
         if self.get_setting('ENABLE_DYNAMIC_PANEL'):
             panels.append({
                 'name': 'dynamic_panel',
-                'label': 'Dynamic Panel',
+                'label': 'Dynamic Part Panel',
                 'source': '/static/plugin/sample_panel.js',
+                'icon': 'part',
             })
 
         # Next, add a custom panel which will appear on the 'part' page

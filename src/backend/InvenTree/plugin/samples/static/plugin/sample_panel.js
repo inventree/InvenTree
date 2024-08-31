@@ -42,11 +42,6 @@ export function isPanelHidden(context) {
         return true;
     }
 
-    // Hide the panel if the model type is not 'part', and the part is not active
-    if (context.model == 'part' && context.instance && !context.instance.active) {
-        console.log("Hiding panel because part is not active");
-        return true;
-    }
-
-    return false;
+    // Only display for active parts
+    return context.model != 'part' || !context.instance || !context.instance.active;
 }
