@@ -5,6 +5,8 @@ Allows integration of custom UI elements into the React user interface.
 
 import logging
 
+from rest_framework.request import Request
+
 logger = logging.getLogger('inventree')
 
 
@@ -25,7 +27,9 @@ class UserInterfaceMixin:
         super().__init__()
         self.add_mixin('ui', True, __class__)
 
-    def get_custom_panels(self, instance_type: str, instance_id: int, request):
+    def get_custom_panels(
+        self, instance_type: str, instance_id: int, request: Request
+    ) -> list:
         """Return a list of custom panels to be injected into the UI.
 
         Args:
@@ -34,7 +38,7 @@ class UserInterfaceMixin:
             request: HTTPRequest object (including user information)
 
         Returns:
-            list of dict: A list of custom panels to be injected into the UI
+            list: A list of custom panels to be injected into the UI
 
         - The returned list should contain a dict for each custom panel to be injected into the UI:
         - The following keys can be specified:
