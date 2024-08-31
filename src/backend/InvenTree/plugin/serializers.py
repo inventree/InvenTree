@@ -317,7 +317,6 @@ class PluginPanelSerializer(serializers.Serializer):
             'icon',
             'content',
             'source',
-            'context',
         ]
 
     # Required fields
@@ -344,8 +343,4 @@ class PluginPanelSerializer(serializers.Serializer):
 
     source = serializers.CharField(
         label=_('Panel Source (javascript)'), required=False, allow_blank=True
-    )
-
-    context = serializers.JSONField(
-        label=_('Panel Context'), required=False, allow_null=True
     )
