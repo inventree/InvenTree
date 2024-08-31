@@ -26,7 +26,7 @@ The InvenTree server tries to locate the `config.yaml` configuration file on sta
 
 The configuration file *template* can be found on [GitHub]({{ sourcefile("src/backend/InvenTree/config_template.yaml") }}), and is shown below:
 
-{{ includefile("src/backend/InvenTree/config_template.yaml", "Configuration File Template", format="yaml") }}
+{{ includefile("src/backend/InvenTree/config_template.yaml", "Configuration File Template", fmt="yaml") }}
 
 !!! info "Template File"
     The default configuration file (as defined by the template linked above) will be copied to the specified configuration file location on first run, if a configuration file is not found in that location.
