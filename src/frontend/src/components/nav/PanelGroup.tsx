@@ -66,6 +66,7 @@ function BasePanelGroup({
   const localState = useLocalState();
   const location = useLocation();
   const navigate = useNavigate();
+
   const { panel } = useParams();
 
   const [expanded, setExpanded] = useState<boolean>(true);
@@ -87,22 +88,9 @@ function BasePanelGroup({
     [allPanels]
   );
 
-  const changePanel = useCallback(
-    (value: string) => {
-      if (value != panel) {
-        localState.setLastUsedPanel(pageKey)(value);
-      }
-    },
-    [localState, pageKey, panel]
-  );
-
   // Callback when the active panel changes
   const handlePanelChange = useCallback(
     (panel: string | null, event?: any) => {
-      if (activePanels.findIndex((p) => p.name === panel) === -1) {
-        panel = '';
-      }
-
       if (event && (event?.ctrlKey || event?.shiftKey)) {
         const url = `${location.pathname}/../${panel}`;
         cancelEvent(event);
@@ -126,18 +114,19 @@ function BasePanelGroup({
     }
   }, [selectedPanel, panel]);
 
-  // Update the active panel when panels changes and the active is no longer available
-  useEffect(() => {
+  // Determine the current panels selection (must be a valid panel)
+  const currentPanel: string = useMemo(() => {
     if (activePanels.findIndex((p) => p.name === panel) === -1) {
-      changePanel('');
-      return navigate('../');
+      return activePanels[0]?.name ?? '';
+    } else {
+      return panel ?? '';
     }
-  }, [activePanels, changePanel, panel]);
+  }, [activePanels, panel]);
 
   return (
     <Boundary label={`PanelGroup-${pageKey}`}>
       <Paper p="sm" radius="xs" shadow="xs">
-        <Tabs value={panel} orientation="vertical" keepMounted={false}>
+        <Tabs value={currentPanel} orientation="vertical" keepMounted={false}>
           <Tabs.List justify="left">
             {allPanels.map(
               (panel) =>
