@@ -1,16 +1,23 @@
-import { t } from '@lingui/macro';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { api } from '../App';
 import { PanelType } from '../components/nav/Panel';
-import PluginPanel from '../components/plugins/PluginPanel';
+import { PluginContext } from '../components/plugins/PluginContext';
+import {
+  PluginPanelProps,
+  isPluginPanelHidden
+} from '../components/plugins/PluginPanel';
+import PluginPanelContent from '../components/plugins/PluginPanel';
 import { ApiEndpoints } from '../enums/ApiEndpoints';
 import { ModelType } from '../enums/ModelType';
 import { identifierString } from '../functions/conversion';
 import { InvenTreeIcon, InvenTreeIconType } from '../functions/icons';
 import { apiUrl } from '../states/ApiState';
+import { useLocalState } from '../states/LocalState';
 import { useGlobalSettingsState } from '../states/SettingsState';
+import { useUserState } from '../states/UserState';
 
 export function usePluginPanels({
   instance,
@@ -21,6 +28,9 @@ export function usePluginPanels({
   model?: ModelType | string;
   id?: string | number | null;
 }): PanelType[] {
+  const host = useLocalState.getState().host;
+  const navigate = useNavigate();
+  const user = useUserState();
   const globalSettings = useGlobalSettingsState();
 
   const pluginPanelsEnabled: boolean = useMemo(
@@ -29,7 +39,7 @@ export function usePluginPanels({
   );
 
   // API query to fetch initial information on available plugin panels
-  const { isFetching, data: pluginPanels } = useQuery({
+  const { isFetching, data: pluginData } = useQuery({
     enabled: pluginPanelsEnabled && !!model && id != undefined,
     queryKey: [model, id],
     queryFn: async () => {
@@ -52,10 +62,44 @@ export function usePluginPanels({
     }
   });
 
-  return (
-    pluginPanels?.map((pluginPanelProps: any) => {
-      const iconName: string = pluginPanelProps.icon || 'plugin';
+  const pluginPanels: PanelType[] = useMemo(() => {
+    return (
+      pluginData?.map((props: PluginPanelProps) => {
+        const iconName: string = props.icon || 'plugin';
+        const content: any = props.content || 'some content here';
 
+        // Construct the plugin attributes - to be passed through for rendering
+        const pluginContext: PluginContext = {
+          pluginName: props.plugin,
+          target: undefined,
+          model: model,
+          id: id,
+          instance: instance,
+          user: user,
+          navigate: navigate,
+          host: host,
+          api: api
+        };
+
+        const isHidden = isPluginPanelHidden({
+          pluginProps: props,
+          pluginContext: pluginContext
+        });
+
+        return {
+          name: identifierString(`plugin-panel-${props.plugin}-${props.name}`),
+          label: props.label,
+          icon: <InvenTreeIcon icon={iconName as InvenTreeIconType} />,
+          content: (
+            <PluginPanelContent
+              pluginProps={props}
+              pluginContext={pluginContext}
+            />
+          ),
+          hidden: isHidden
+        };
+
+        /*
       return PluginPanel({
         ...pluginPanelProps,
         name: identifierString(
@@ -68,6 +112,10 @@ export function usePluginPanels({
         instance: instance,
         pluginKey: pluginPanelProps.plugin || 'plugin'
       });
-    }) ?? []
-  );
+      */
+      }) ?? []
+    );
+  }, [pluginData, id, model, instance, user, navigate, host]);
+
+  return pluginPanels;
 }

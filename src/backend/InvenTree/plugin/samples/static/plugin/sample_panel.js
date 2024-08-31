@@ -17,7 +17,14 @@ export function renderPanel(context) {
         return;
     }
 
-    target.innerHTML = `hello world!`;
+    target.innerHTML = `
+    <h4>Dynamic Panel Content</h4>
+
+    <p>This panel has been dynamically rendered by the plugin system.</p>
+    <p>It can be hidden or displayed based on the provided context.</p>
+    `;
+
+    console.log("renderPanel:", context);
 }
 
 
