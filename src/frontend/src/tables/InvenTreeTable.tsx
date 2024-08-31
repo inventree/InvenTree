@@ -12,11 +12,18 @@ import {
 } from '@mantine/core';
 import {
   IconBarcode,
+  IconEdit,
+  IconEye,
   IconFilter,
   IconRefresh,
   IconTrash
 } from '@tabler/icons-react';
 import { useQuery } from '@tanstack/react-query';
+import {
+  ContextMenuContent,
+  ContextMenuItemOptions,
+  useContextMenu
+} from 'mantine-contextmenu';
 import {
   DataTable,
   DataTableCellClickHandler,
@@ -112,6 +119,7 @@ export type InvenTreeTableProps<T = any> = {
   modelType?: ModelType;
   rowStyle?: (record: T, index: number) => any;
   modelField?: string;
+  onRowContextMenu?: (record: T, event: any) => void;
 };
 
 /**
@@ -158,6 +166,7 @@ export function InvenTreeTable<T = any>({
   const [fieldNames, setFieldNames] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
+  const { showContextMenu } = useContextMenu();
 
   // Construct table filters - note that we can introspect filter labels from column names
   const filters: TableFilter[] = useMemo(() => {
@@ -587,6 +596,28 @@ export function InvenTreeTable<T = any>({
     [props.onRowClick, props.onCellClick]
   );
 
+  // Callback when a row is right-clicked
+  const handleRowContextMenu = ({
+    record,
+    event
+  }: {
+    record: any;
+    event: any;
+  }) => {
+    if (props.onRowContextMenu) {
+      return props.onRowContextMenu(record, event);
+    } else if (props.rowActions) {
+      const rowActions = props.rowActions(record);
+      return showContextMenu(
+        rowActions.map((action) => ({
+          key: action.title ?? '',
+          icon: action.icon,
+          onClick: action.onClick
+        }))
+      )(event);
+    }
+  };
+
   // pagination refresth table if pageSize changes
   function updatePageSize(newData: number) {
     tableState.setPageSize(newData);
@@ -741,6 +772,7 @@ export function InvenTreeTable<T = any>({
               }}
               recordsPerPageOptions={PAGE_SIZES}
               onRecordsPerPageChange={updatePageSize}
+              onRowContextMenu={handleRowContextMenu}
             />
           </Box>
         </Stack>
