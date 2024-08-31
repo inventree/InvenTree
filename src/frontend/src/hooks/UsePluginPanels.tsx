@@ -1,3 +1,4 @@
+import { useMantineTheme } from '@mantine/core';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +32,7 @@ export function usePluginPanels({
   const host = useLocalState.getState().host;
   const navigate = useNavigate();
   const user = useUserState();
+  const theme = useMantineTheme();
   const globalSettings = useGlobalSettingsState();
 
   const pluginPanelsEnabled: boolean = useMemo(
@@ -71,9 +73,10 @@ export function usePluginPanels({
       user: user,
       host: host,
       api: api,
-      navigate: navigate
+      navigate: navigate,
+      theme: theme
     };
-  }, [instance, model, id, user, host, api, navigate]);
+  }, [instance, model, theme, id, user, host, api, navigate]);
 
   // Track which panels are hidden: { panelName: true/false }
   // We need to memoize this as the plugins can determine this dynamically

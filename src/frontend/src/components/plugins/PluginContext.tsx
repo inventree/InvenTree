@@ -1,3 +1,4 @@
+import { MantineTheme } from '@mantine/core';
 import { AxiosInstance } from 'axios';
 
 import { ModelType } from '../../enums/ModelType';
@@ -23,4 +24,5 @@ export type PluginContext = {
   user: any;
   host: string;
   navigate: any;
+  theme: MantineTheme;
 };
